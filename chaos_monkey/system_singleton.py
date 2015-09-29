@@ -2,7 +2,6 @@
 import sys
 import ctypes
 import logging
-import winerror
 from abc import ABCMeta, abstractmethod
 from config import WormConfiguration
 
@@ -70,18 +69,41 @@ class WindowsSystemSingleton(_SystemSingleton):
 
 
 class LinuxSystemSingleton(_SystemSingleton):
+    def __init__(self):
+        self._unix_sock_name = str(WormConfiguration.singleton_mutex_name)
+        self._sock_handle = None
+
     @property
     def locked(self):
-        return False
+        return self._sock_handle is not None
 
     def try_lock(self):
+        assert self._sock_handle is None, "Singleton already locked"
+        
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        
+        try:
+            sock.bind('\0' + self._unix_sock_name)
+        except socket.error, e:
+            LOG.error("Cannot acquire system singleton %r, error code %d, error: %s",
+                self._unix_sock_name, e.args[0], e.args[1])
+            return False
+        
+        self._sock_handle = sock
+
+        LOG.debug("Global singleton mutex %r acquired",
+          self._unix_sock_name)
+
         return True
 
     def unlock(self):
-        pass
-
+        assert self._sock_handle is not None, "Singleton not locked"
+        self._sock_handle.close()
+        self._sock_handle = None
 
 if sys.platform == "win32":
+    import winerror
     SystemSingleton = WindowsSystemSingleton
 else:
+    import socket
     SystemSingleton = LinuxSystemSingleton
