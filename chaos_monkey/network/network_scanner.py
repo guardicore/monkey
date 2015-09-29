@@ -4,6 +4,7 @@ import socket
 import logging
 from network import HostScanner
 from config import WormConfiguration
+from info import local_ips
 
 __author__ = 'itamar'
 
@@ -18,8 +19,7 @@ class NetworkScanner(object):
 
     def initialize(self):
         # get local ip addresses
-        local_hostname = socket.gethostname()
-        self._ip_addresses = socket.gethostbyname_ex(local_hostname)[2]
+        self._ip_addresses = local_ips()
 
         if not self._ip_addresses:
             raise Exception("Cannot find local IP address for the machine")

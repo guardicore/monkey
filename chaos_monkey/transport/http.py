@@ -1,6 +1,7 @@
 import urllib, BaseHTTPServer, threading, os.path
 import shutil
 import struct
+import monkeyfs
 from logging import getLogger
 
 __author__ = 'hoffer'
@@ -39,7 +40,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 total += chunk
                 start_range += chunk
 
-            if f.tell() == os.fstat(f.fileno()).st_size:
+            if f.tell() == monkeyfs.getsize(self.filename):
                self.report_download()
 
             f.close()
@@ -56,10 +57,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             return        
         f = None
         try:
-            # Always read in binary mode. Opening files in text mode may cause
-            # newline translations, making the actual size of the content
-            # transmitted *less* than the content-length!
-            f = open(self.filename, 'rb')
+            f = monkeyfs.open(self.filename, 'rb')
         except IOError:
             self.send_error(404, "File not found")
             return (None, 0, 0)

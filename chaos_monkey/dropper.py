@@ -8,10 +8,14 @@ import pprint
 import logging
 import subprocess
 from ctypes import c_char_p
-from win32process import DETACHED_PROCESS
 from control import ControlClient
 from model import MONKEY_CMDLINE
 from config import WormConfiguration
+
+if "win32" == sys.platform:
+    from win32process import DETACHED_PROCESS
+else:
+    DETACHED_PROCESS = 0
 
 __author__ = 'itamar'
 
@@ -21,22 +25,19 @@ MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
 class MonkeyDrops(object):
     def __init__(self, args):
-        if 1 < len(args):
-            LOG.debug("Invalid arguments count for dropper")
-            raise ValueError("Invalid arguments count for dropper")
-
         if args:
             dest_path = os.path.expandvars(args[0])
         else:
-            dest_path = os.path.expandvars(WormConfiguration.dropper_target_path)
+            dest_path = os.path.expandvars(WormConfiguration.dropper_target_path if sys.platform == "win32" \
+                                            else WormConfiguration.dropper_target_path_linux)
+
+        self._monkey_args = args[1:]
 
         self._config = {'source_path': os.path.abspath(sys.argv[0]),
                         'destination_path': args[0]}
 
     def initialize(self):
         LOG.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
-
-        new_config = ControlClient.get_control_config()
 
     def start(self):
         # we copy/move only in case path is different
@@ -87,6 +88,9 @@ class MonkeyDrops(object):
 
         monkey_cmdline = MONKEY_CMDLINE % {'monkey_path': self._config['destination_path'],
                                            }
+
+        if 0 != len(self._monkey_args):
+            monkey_cmdline = "%s %s" % (monkey_cmdline, " ".join(self._monkey_args))
         monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=DETACHED_PROCESS)
