@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monkeys Admin</title>
+    <meta charset="UTF-8">
+
+    <!-- js -->
+    <script type="text/javascript" src="./js/vis.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="./js/typeahead.bundle.min.js"></script>
+
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/sb-admin-2/sb-admin-2.js"></script>
+    <script type="text/javascript" src="./js/sb-admin-2/metisMenu.js"></script>
+    <script type="text/javascript" src="./js/jsoneditor.js"></script>
+    <script type="text/javascript" src="./js/monkeys-admin.js"></script>
+ 
+    <script type="text/javascript" src="./js/jquery.dataTables.min.js"></script>
+
+    <!-- css -->
+    <link type="text/css" href="./css/vis.min.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/monkeys-admin.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/typeahead.css" rel="stylesheet"/>
+    <!-- <link type="text/css" href="./css/font-awesome.min.css" rel="stylesheet"/> -->
+    <link type="text/css" href="./css/bootstrap.min.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/sb-admin-2/sb-admin-2.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/sb-admin-2/metisMenu.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/jquery.dataTables.min.css" rel="stylesheet"/>
+
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+</head>
+
+<body onload="initAdmin();" onresize="network.redraw();" onkeypress="onKeyPress(event);">
+
+    <div id="wrapper" class="row col-lg-12">
+
+        <!-- Space added so the other sections aren't sticked to the top of the page -->
+        <div class="row col-lg-12">
+            <div class="clearfix"></br></div>
+        </div>
+        <!-- /. -->
+
+        <!-- Network section -->
+        <div class="col-lg-9 col-md-12 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#monkeysmap" data-toggle="collapse">Map</a>
+                    <p id="generationDate" class="pull-right text-muted"></p>
+                </div>
+                <div id="monkeysmap" class="panel-body panel-collapse collapse in">
+                    <!-- The network is drawn here -->
+                </div>
+            </div>
+            <!-- Telemetries section -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#telemetries" data-toggle="collapse">Telemetries</a>
+                </div>
+                <div id="telemetries" class="panel-body panel-collapse collapse">
+                <table class="table table-bordered table-hover" id="telemetris-table">
+                  <thead>
+                    <tr><th>Time</th><th>Type</th><th>Data</th></tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>                    
+                </div>
+            </div>
+            <!-- /.Telemetries section -->        
+        </div>
+        <!-- /.Network section -->
+
+        <!-- Options section -->
+        <div class="col-lg-3 col-md-6 col-sm-6">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#options" data-toggle="collapse">Options</a>
+                </div>
+                <div id="options" class="panel-body panel-collapse collapse">
+
+                    <!-- General options -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a href="#general" data-toggle="collapse">General</a>
+                        </div>
+                        <div id="general" class="panel-body panel-collapse collapse in">
+
+                            <div id="options-feedback">
+                                <!-- Notifications goes here -->
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.General options -->
+
+
+                </div>
+            </div>
+        </div>
+        <!-- /.Options section -->
+
+        <!-- Details section -->
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#details" data-toggle="collapse">Details</a>
+                </div>
+                <div id="details" class="panel-body panel-collapse collapse in">
+                    <div id="search" class="input-group custom-search-form">
+                        <input id="monkeySearch" class="form-control typeahead" type="text"
+                            placeholder="Find a monkey..." onchange="selectNode(undefined, false)">
+                        </input>
+                        <span class="input-group-btn">
+                            <button id="btnFocus" class="btn btn-default" type="button" 
+                                onclick="toggleFocusOnNode()"style="margin-top:-4px">
+                                    Focus
+                            </button>
+                        </span>
+                    </div>
+                    <hr>
+                    <div id="selectionInfo">
+                        <label>No selection</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.Details section -->
+
+        <!-- Config section -->
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#config" data-toggle="collapse">Config</a>
+                </div>
+                <div id="config" class="panel-body panel-collapse collapse in">
+                    <span class="input-group-btn">
+                        <button id="btnGeneralConfigLoad" class="btn btn-default" type="button" 
+                            onclick="loadGeneralConfig()" style="margin-top:-4px">
+                                Load
+                        </button>
+                        <button id="btnGeneralConfigUpdate" class="btn btn-default" type="button" 
+                            onclick="updateGeneralConfig()" style="margin-top:-4px">
+                                Update
+                        </button>
+                    </span>
+                    <div id="general-config">
+                    </div>                    
+                        <span class="input-group-btn">
+                            <button id="btnConfigLoad" style="display: none;" class="btn btn-default" type="button" 
+                                onclick="loadMonkeyConfig()" style="margin-top:-4px">
+                                    Load
+                            </button>
+                            <button id="btnConfigUpdate" style="display: none;" class="btn btn-default" type="button" 
+                                onclick="updateMonkeyConfig()" style="margin-top:-4px">
+                                    Update
+                            </button>
+                        </span>
+                    <div style="display: none;" id="monkey-config">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.Config section --> 
+
+    </div>
+
+</body>
+</html>
