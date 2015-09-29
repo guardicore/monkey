@@ -1,10 +1,15 @@
-
 __author__ = 'itamar'
 
 class VictimHost(object):
     def __init__(self, ip_addr):
         self.ip_addr = ip_addr
         self.cred = {}
+        self.os = {}
+        self.services = {}
+        self.monkey_exe = None
+
+    def as_dict(self):
+        return self.__dict__
 
     def __hash__(self):
         return hash(self.ip_addr)
