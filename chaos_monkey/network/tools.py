@@ -1,7 +1,7 @@
 import socket
 import select
 
-DEFAULT_TIMEOUT = 30
+DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
 
 def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):

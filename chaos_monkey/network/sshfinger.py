@@ -13,7 +13,7 @@ from model.host import VictimHost
 SSH_PORT = 22
 SSH_SERVICE = 'tcp-22'
 SSH_REGEX = 'SSH-\d\.\d-OpenSSH'
-TIMEOUT = 30
+TIMEOUT = 10
 BANNER_READ = 1024
 LINUX_DIST_SSH = ['ubuntu', 'debian']
 

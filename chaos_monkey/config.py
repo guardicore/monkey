@@ -96,6 +96,8 @@ class Configuration(object):
     ### monkey config
     ###########################
 
+    alive = True
+
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
     # how long to wait between scan iterations
@@ -127,11 +129,11 @@ class Configuration(object):
 
     #range_class = RelativeRange
     range_size = 8
-    range_class = ClassCRange
-    range_fixed = ("10.0.0.1")
+    range_class = FixedRange
+    range_fixed = ("10.0.0.9", "10.0.0.13", "192.168.1.100", "192.168.1.87")
 
     # TCP Scanner
-    tcp_target_ports = [22, 445, 135]
+    tcp_target_ports = [22, 445, 135, 3389]
     tcp_scan_timeout = 1000 # 1000 Milliseconds
     tcp_scan_interval = 200
     tcp_scan_get_banner = True
@@ -157,6 +159,7 @@ class Configuration(object):
     ssh_user = "root"
     ssh_passwords = ["root", "toor", "1234", "12345678"]
 
-    alive = True
+    #rdp exploiter
+    rdp_use_vbs_download = True
 
 WormConfiguration = Configuration()
