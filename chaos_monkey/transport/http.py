@@ -61,8 +61,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         except IOError:
             self.send_error(404, "File not found")
             return (None, 0, 0)
-        fs = os.fstat(f.fileno())
-        size = int(fs[6])
+        size = monkeyfs.getsize(self.filename)
         start_range = 0
         end_range = size
         
@@ -100,8 +99,13 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 class InternalHTTPServer(BaseHTTPServer.HTTPServer):
     def handle_error(self, request, client_address):
-        #ToDo: find a better error message.
-        #LOG.debug("HTTPServer error from %s:%s" % client_address)
+        #ToDo: debug log error
+        # import sys
+        # import traceback
+        # print >>sys.stderr, '-'*40
+        # print >>sys.stderr, 'Exception happened during processing of request from', client_address
+        # traceback.print_exc()
+        # print >>sys.stderr, '-'*40        
         pass
 
 class HTTPServer(threading.Thread):

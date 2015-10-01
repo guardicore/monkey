@@ -101,10 +101,10 @@ class Configuration(object):
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
     # how long to wait between scan iterations
-    timeout_between_iterations = 10
+    timeout_between_iterations = 120
 
     # how many scan iterations to perform on each run
-    max_iterations = 2
+    max_iterations = 5
 
     scanner_class = TcpScanner
     finger_classes = (PingScanner, SSHFinger, SMBFinger)
