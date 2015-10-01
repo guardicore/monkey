@@ -5,6 +5,8 @@ __author__ = 'hoffer'
 
 MONKEYFS_PREFIX = 'monkeyfs://'
 
+open_orig = open
+
 class VirtualFile(BytesIO):
     _vfs = {} #virtual File-System 
 
@@ -50,4 +52,4 @@ def open(name, mode='r', buffering=-1):
     if name.startswith(MONKEYFS_PREFIX):
         return VirtualFile(name, mode, buffering)
     else:
-        return open(name, mode=mode, buffering=buffering)
+        return open_orig(name, mode=mode, buffering=buffering)
