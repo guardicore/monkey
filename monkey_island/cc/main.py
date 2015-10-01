@@ -135,7 +135,7 @@ class Telemetry(restful.Resource):
                         update_parent.append(monkey)
                 if 1 == len(update_parent):
                     update_parent[0]['parent'] = telemetry_json['monkey_guid']
-                    mongo.db.monkey.update({'guid' : update_parent[0].guid})
+                    mongo.db.monkey.update({"guid": update_parent[0]['guid']}, {"$set" : update_parent[0]}, upsert=False)
         except:
             pass
 
