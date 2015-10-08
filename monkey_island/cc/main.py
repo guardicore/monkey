@@ -66,11 +66,19 @@ class Monkey(restful.Resource):
 
     def patch(self, guid):
         monkey_json = json.loads(request.data);
-        update = {"$set" : {'modifytime':datetime.now(), 'keepalive':datetime.now()}}
+        update = {"$set" : {'modifytime':datetime.now()}}
+        
+        if monkey_json.has_key('keepalive'):
+            update['$set']['keepalive'] = dateutil.parser.parse(monkey_json['keepalive'])
+        else:
+            update['$set']['keepalive'] = datetime.now()
         if monkey_json.has_key('config'):
             update['$set']['config'] = monkey_json['config']
-        return mongo.db.monkey.update({"guid": guid},\
-                        update,\
+        if monkey_json.has_key('tunnel'):
+            update['$set']['tunnel'] = monkey_json['tunnel']
+        
+        return mongo.db.monkey.update({"guid": guid},
+                        update,
                         upsert=False)
 
     def post(self, **kw):
@@ -82,24 +90,32 @@ class Monkey(restful.Resource):
 
         monkey_json['modifytime'] = datetime.now()
 
+        # if new monkey, change config according to general config.
+        db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
+        if not db_monkey:
+            general_config = mongo.db.config.find_one({'name' : 'generalconfig'}) or {}
+            monkey_json['config'] = monkey_json.get('config', {})
+            monkey_json['config'].update(general_config)
+        else:
+            db_config = db_monkey.get('config', {})
+            if db_config.has_key('current_server'):
+                del db_config['current_server']
+            monkey_json.get('config', {}).update(db_config)
+            
+            if not monkey_json.has_key('parent') and db_monkey.get('parent'):
+                monkey_json['parent'] = db_monkey.get('parent')
+
         # try to find new monkey parent
         parent = monkey_json.get('parent')
         if (not parent  or parent == monkey_json.get('guid')) and monkey_json.has_key('ip_addresses'):
             exploit_telem = [x for x in mongo.db.telemetry.find({'telem_type': {'$eq' : 'exploit'}, \
                                 'data.machine.ip_addr' : {'$in' : monkey_json['ip_addresses']}})]
             if 1 == len(exploit_telem):
-                monkey_json['parent'] = exploit_telem[0].get('monkey_guid')
+                monkey_json['parent'] = exploit_telem[0].get('monkey_guid')                
 
-        # if new monkey, change config according to general config.
-        db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
-        if not db_monkey:
-            general_config = mongo.db.config.find_one({'name' : 'generalconfig'}) or {}
-            monkey_json['config']= monkey_json.get('config', {})
-            monkey_json['config'].update(general_config)
-        else:
-            monkey_json.update(db_monkey)
-
-        return mongo.db.monkey.update({"guid": monkey_json["guid"]}, {"$set" : monkey_json}, upsert=True)
+        return mongo.db.monkey.update({"guid": monkey_json["guid"]},
+                                      {"$set" : monkey_json},
+                                      upsert=True)
 
 class Telemetry(restful.Resource):
     def get(self, **kw):
