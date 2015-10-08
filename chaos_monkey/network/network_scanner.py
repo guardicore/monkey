@@ -43,7 +43,7 @@ class NetworkScanner(object):
         victims_count = 0
 
         for range in self._ranges:
-            LOG.debug("Scanning for potantional victims in the network %r", range)
+            LOG.debug("Scanning for potential victims in the network %r", range)
             for victim in range:
                 # skip self IP address
                 if victim.ip_addr in self._ip_addresses:
@@ -53,7 +53,7 @@ class NetworkScanner(object):
 
                 # if scanner detect machine is up, add it to victims list
                 if scanner.is_host_alive(victim):
-                    LOG.debug("Found potational victim: %r", victim)
+                    LOG.debug("Found potential victim: %r", victim)
                     victims_count += 1
                     yield victim
 

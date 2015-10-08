@@ -101,10 +101,10 @@ class Configuration(object):
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
     # how long to wait between scan iterations
-    timeout_between_iterations = 120
+    timeout_between_iterations = 10
 
     # how many scan iterations to perform on each run
-    max_iterations = 5
+    max_iterations = 3
 
     scanner_class = TcpScanner
     finger_classes = (PingScanner, SSHFinger, SMBFinger)
@@ -130,11 +130,11 @@ class Configuration(object):
     #range_class = RelativeRange
     range_size = 8
     range_class = FixedRange
-    range_fixed = ("10.0.0.9", "10.0.0.13", "192.168.1.100", "192.168.1.87")
+    range_fixed = ("10.0.0.9", "10.0.0.13", "192.168.1.87")
 
     # TCP Scanner
     tcp_target_ports = [22, 445, 135, 3389]
-    tcp_scan_timeout = 1000 # 1000 Milliseconds
+    tcp_scan_timeout = 3000 # 3000 Milliseconds
     tcp_scan_interval = 200
     tcp_scan_get_banner = True
 

@@ -1,8 +1,11 @@
 import socket
 import select
+import logging
 
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
+
+LOG = logging.getLogger(__name__)
 
 def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -10,8 +13,11 @@ def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
 
     try:
         sock.connect((ip, port))
-    except socket.error:
+    except socket.timeout:
         return (False, None)
+    except socket.error, exc:
+        LOG.debug("Check port: %s:%s, Exception: %s", ip, port, exc)
+        return (False, None)        
 
     banner = None
 

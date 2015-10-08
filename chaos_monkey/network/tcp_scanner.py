@@ -26,7 +26,7 @@ class TcpScanner(HostScanner, HostFinger):
             
             is_open, banner = check_port_tcp(host.ip_addr, 
                                             target_port, 
-                                            self._config.tcp_scan_interval / 1000.0,
+                                            self._config.tcp_scan_timeout / 1000.0,
                                             self._config.tcp_scan_get_banner)
 
             if is_open:
