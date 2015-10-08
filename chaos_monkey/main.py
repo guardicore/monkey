@@ -97,7 +97,7 @@ def main():
         if WormConfiguration.serialize_config:
           with open(config_file, 'w') as config_fo:
             json_dict = WormConfiguration.as_dict()
-            json.dump(json_dict, config_fo)
+            json.dump(json_dict, config_fo, skipkeys=True, sort_keys=True, indent=4, separators=(',', ': '))
           
         return True
     finally:

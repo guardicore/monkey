@@ -2,6 +2,8 @@ import sys
 import socket
 import struct
 import array
+import psutil
+from random import randint
 
 __author__ = 'hoffer'
 
@@ -40,3 +42,17 @@ else:
                     #name of interface is (namestr[i:i+16].split('\0', 1)[0]
         finally:
             return result
+
+def get_free_tcp_port(min_range=1000, max_range=65535):
+    start_range = min(1, min_range)
+    max_range = min(65535, max_range)
+    
+    in_use = [conn.laddr[1] for conn in psutil.net_connections()]
+
+    for i in range(min_range, max_range):
+        port = randint(start_range, max_range)
+        
+        if not port in in_use:
+            return port
+
+    return None

