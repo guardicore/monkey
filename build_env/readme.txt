@@ -24,6 +24,10 @@ Windows:
 	python -m pip install psutil	
 	python -m pip install PyInstaller
 	type > C:\Python27\Lib\site-packages\zope\__init__.py
+6. Put source code in C:\Code\monkey\chaos_monkey
+7. Download and extract UPX binary to C:\Code\monkey\chaos_monkey\bin\upx.exe:
+	http://upx.sourceforge.net/download/upx391w.zip
+8. Run C:\Code\monkey\chaos_monkey\build_windows.bat to build, output is in dist\monkey.exe
 
 Linux (Tested on Ubuntu 12.04):
 1. Run:
@@ -43,6 +47,12 @@ Linux (Tested on Ubuntu 12.04):
 	sudo pip install psutil
 	sudo pip install https://github.com/pyinstaller/pyinstaller/releases/download/3.0.dev2/PyInstaller-3.0.dev2.tar.gz
 	sudo apt-get install winbind
+2. Put source code in /home/user/Code/monkey/chaos_monkey
+3. To build, run in terminal:
+	cd /home/user/Code/monkey/chaos_monkey
+	chmod +x build_linux.sh
+	./build_linux.sh
+   output is in dist/monkey
 
 How to connect build environment to c&c:
 - will auto compile the source code stored in the c&c and update the c&c binaries accordingly
