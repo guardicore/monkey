@@ -77,5 +77,15 @@ Linux (Tested on Ubuntu 12.04):
 		sudo mount -a
 	7. Check if sources exist in /mnt/sources
 		If not, edit hosts file - add a line in /etc/hosts with c&c ip and hostname and remount.
-	8. put build_from_cc.sh in /home/user and run.
+	8. put build_from_cc.sh in /home/user and run with name of output binary (as appeared on c&c) as parameter,
+		for example: build_from_cc.sh monkey-linux-32
 		use Ctrl+C to manualy check compilation and Ctrl+\ to exit script.
+
+Windows:
+	1. Setup c&c according to readme in monkey_island folder
+	2. Setup net use to c&c server:
+		net use Z:\ \\monkeycc\sources /persistent:yes
+		net use X:\ \\monkeycc\binaries /persistent:yes
+	3. mkdir C:\Code
+	4. Extract build_from_cc.bat to c:\code and run with name of output binary (as appeared on c&c) as parameter,
+		for example: build_from_cc.bat monkey-windows-64.exe
