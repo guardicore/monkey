@@ -8,6 +8,7 @@ class TransportProxyBase(Thread):
         self.dest_port = dest_port
         self._stopped = False
         super(TransportProxyBase, self).__init__()
+        self.daemon = True
 
     def stop(self):
         self._stopped = True        

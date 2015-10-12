@@ -37,21 +37,31 @@ def find_tunnel(attempts=3, timeout=DEFAULT_TIMEOUT):
     for attempt in range(0, attempts):
         try:
             sock.sendto("?", (MCAST_GROUP, MCAST_PORT))
-            answer, address = sock.recvfrom(BUFFER_READ)
+            tunnels = []
+            
+            while True:
+                try:
+                    answer, address = sock.recvfrom(BUFFER_READ)
+                    if not answer in ['?', '+', '-']:
+                        tunnels.append(answer)
+                except socket.timeout:
+                    break
 
-            while answer in ['?', '+', '-']:
-                answer, address = sock.recvfrom(BUFFER_READ)
+            for tunnel in tunnels:
+                if tunnel.find(':') != -1:
+                    address, port = tunnel.split(':', 1)
+                    if address in l_ips:
+                        continue
+                        
+                    LOG.debug("Checking tunnel %s:%d" % (address, port))
+                    is_open,_ = check_port_tcp(address, int(port))
+                    if not is_open:
+                        LOG.debug("Could not connect to %s:%d" % (address, port))
+                        continue
 
-            if answer.find(':') != -1:
-                address, port = answer.split(':', 1)
-                if address in l_ips:
-                    continue
-                if not check_port_tcp(address, int(port)):
-                    continue
-
-                sock.sendto("+", (address, MCAST_PORT))
-                sock.close()
-                return (address, port)
+                    sock.sendto("+", (address, MCAST_PORT))
+                    sock.close()
+                    return (address, port)
         except:
             continue
 
@@ -78,6 +88,7 @@ class MonkeyTunnel(Thread):
         self._stopped = False
         self._clients = []
         super(MonkeyTunnel, self).__init__()
+        self.daemon = True
 
     def run(self):
         self._broad_sock = _set_multicast_socket(self._timeout)
