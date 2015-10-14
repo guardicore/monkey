@@ -98,17 +98,19 @@ class Configuration(object):
 
     alive = True
 
+    self_delete_in_cleanup = True
+
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
     # how long to wait between scan iterations
-    timeout_between_iterations = 10
+    timeout_between_iterations = 300
 
     # how many scan iterations to perform on each run
     max_iterations = 3
 
     scanner_class = TcpScanner
-    finger_classes = (PingScanner, SSHFinger, SMBFinger)
-    exploiter_classes = (SSHExploiter, SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter)
+    finger_classes = (SMBFinger, SSHFinger, PingScanner)
+    exploiter_classes = (SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, SSHExploiter)
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 14
@@ -120,7 +122,9 @@ class Configuration(object):
 
     command_servers = ["russian-mail-brides.com:5000"]
 
-    serialize_config = True
+    serialize_config = False
+
+    retry_failed_explotation = True
 
     ###########################
     ### scanners config
@@ -130,10 +134,10 @@ class Configuration(object):
     #range_class = RelativeRange
     range_size = 8
     range_class = FixedRange
-    range_fixed = ("10.0.0.9", "10.0.0.13", "192.168.1.87")
+    range_fixed = ("10.0.0.9", "10.0.0.13", "192.168.1.100", "192.168.1.95", "50.50.50.56", "50.50.50.4")
 
     # TCP Scanner
-    tcp_target_ports = [22, 445, 135, 3389]
+    tcp_target_ports = [22, 2222, 445, 135, 3389]
     tcp_scan_timeout = 3000 # 3000 Milliseconds
     tcp_scan_interval = 200
     tcp_scan_get_banner = True

