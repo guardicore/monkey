@@ -90,12 +90,12 @@ class Monkey(restful.Resource):
 
         monkey_json['modifytime'] = datetime.now()
 
-        # if new monkey, change config according to general config.
+        # if new monkey, change config according to "new monkeys" config.
         db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
         if not db_monkey:
-            general_config = mongo.db.config.find_one({'name' : 'generalconfig'}) or {}
+            new_config = mongo.db.config.find_one({'name' : 'newconfig'}) or {}
             monkey_json['config'] = monkey_json.get('config', {})
-            monkey_json['config'].update(general_config)
+            monkey_json['config'].update(new_config)
         else:
             db_config = db_monkey.get('config', {})
             if db_config.has_key('current_server'):
@@ -157,16 +157,16 @@ class Telemetry(restful.Resource):
 
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
 
-class GeneralConfig(restful.Resource):
+class NewConfig(restful.Resource):
     def get(self):
-        config = mongo.db.config.find_one({'name' : 'generalconfig'}) or {}
+        config = mongo.db.config.find_one({'name' : 'newconfig'}) or {}
         if config.has_key('name'):
             del config['name']
         return config
 
     def post(self):
         config_json = json.loads(request.data)
-        return mongo.db.config.update({'name' : 'generalconfig'}, {"$set" : config_json}, upsert=True)
+        return mongo.db.config.update({'name' : 'newconfig'}, {"$set" : config_json}, upsert=True)
 
 
 class MonkeyDownload(restful.Resource):
@@ -234,7 +234,7 @@ api.representations = DEFAULT_REPRESENTATIONS
 api.add_resource(Root, '/api')
 api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
 api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry/<string:monkey_guid>')
-api.add_resource(GeneralConfig, '/api/config/general')
+api.add_resource(NewConfig, '/api/config/new')
 api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/', '/api/monkey/download/<string:path>')
 
 if __name__ == '__main__':

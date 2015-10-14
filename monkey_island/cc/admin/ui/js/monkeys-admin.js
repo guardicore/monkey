@@ -28,7 +28,7 @@ const ICONS_EXT = ".png";
 var focusedOnNode = false; 
 
 var monkeyCfg = undefined;
-var generalCfg = undefined;
+var newCfg = undefined;
 var telemTable = undefined;
 JSONEditor.defaults.theme = 'bootstrap3';
 
@@ -74,7 +74,7 @@ function initAdmin() {
                             disable_edit_json: false,
                             });
 
-    generalCfg = new JSONEditor(document.getElementById('general-config'),{
+    newCfg = new JSONEditor(document.getElementById('new-config'),{
                             schema: {
                               type: "object",
                               title: "New Monkeys",
@@ -90,7 +90,7 @@ function initAdmin() {
                             },
                             disable_edit_json: false,
                             });
-    generalCfg.setValue({alive: true});
+    newCfg.setValue({alive: true});
 
     telemTable = $("#telemetris-table").DataTable({
         "ordering": false,
@@ -336,11 +336,11 @@ function toggleFocusOnNode() {
     }
 }
 
-function loadGeneralConfig() {
-    $.getJSON('/api/config/general', function(json) {
+function loadNewMonkeysConfig() {
+    $.getJSON('/api/config/new', function(json) {
         if (jQuery.isEmptyObject(json))
         {
-            generalCfg.setValue({alive: true});
+            newCfg.setValue({alive: true});
         }
         else
         {
@@ -349,31 +349,31 @@ function loadGeneralConfig() {
                 json.alive = true;
             }
             delete json.id;
-            generalCfg.setValue(json);
+            newCfg.setValue(json);
         }
     });
 }
 
-function updateGeneralConfig() {
-    var curr_config = generalCfg.getValue()
+function updateNewMonkeysConfig() {
+    var curr_config = newCfg.getValue()
 
     $.ajax({
             headers : {
                 'Accept' : 'application/json',
                 'Content-Type' : 'application/json'
             },
-            url : '/api/config/general',
+            url : '/api/config/new',
             type : 'POST',
             data : JSON.stringify(curr_config),
             success : function(response, textStatus, jqXhr) {
-                console.log("General config successfully updated!");
+                console.log("New monkeys config successfully updated!");
             },
             error : function(jqXHR, textStatus, errorThrown) {
                 // log the error to the console
                 console.log("The following error occured: " + textStatus, errorThrown);
             },
             complete : function() {
-                console.log("Sending general config update...");
+                console.log("Sending new monkeys config update...");
             }
         });
 }
