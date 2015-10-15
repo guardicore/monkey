@@ -74,6 +74,8 @@ def main():
     if WormConfiguration.use_file_logging:
         LOG_CONFIG['handlers']['file']['filename'] = log_path
         LOG_CONFIG['root']['handlers'].append('file')
+    else:
+        del LOG_CONFIG['handlers']['file']
 
     logging.config.dictConfig(LOG_CONFIG)
     LOG = logging.getLogger()
