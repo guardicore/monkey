@@ -47,7 +47,7 @@ def main():
     arg_parser.add_argument('-c', '--config')
     opts, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
     if opts.config:
-      config_file = ops.config
+      config_file = opts.config
 
     if os.path.isfile(config_file):
         # using print because config can also change log locations
