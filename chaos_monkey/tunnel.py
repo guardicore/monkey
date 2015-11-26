@@ -98,7 +98,7 @@ class MonkeyTunnel(Thread):
     def run(self):
         self._broad_sock = _set_multicast_socket(self._timeout)
 
-        l_ips = local_ips()
+        self.l_ips = local_ips()
 
         self.local_port = get_free_tcp_port()
 
@@ -117,7 +117,7 @@ class MonkeyTunnel(Thread):
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)
                 if '?' == search:
-                    ip_match = get_close_matches(address[0], l_ips) or l_ips
+                    ip_match = get_close_matches(address[0], self.l_ips) or self.l_ips
                     if ip_match:
                         answer = '%s:%d' % (ip_match[0], self.local_port)
                         LOG.debug("Got tunnel request from %s, answering with %s", address[0], answer)
@@ -147,7 +147,7 @@ class MonkeyTunnel(Thread):
 
     def set_tunnel_for_host(self, host):
         assert isinstance(host, VictimHost)
-        ip_match = get_close_matches(host.ip_addr, local_ips()) or l_ips
+        ip_match = get_close_matches(host.ip_addr, local_ips()) or self.l_ips
         host.default_tunnel = '%s:%d' % (ip_match[0], self.local_port)
 
     def stop(self):
