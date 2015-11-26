@@ -61,7 +61,6 @@ class ChaosMonkey(object):
             firewall.add_firewall_rule()
 
         ControlClient.wakeup(parent=self._parent, default_tunnel=self._default_tunnel)
-        
         monkey_tunnel = ControlClient.create_control_tunnel()
         if monkey_tunnel:
             monkey_tunnel.start()

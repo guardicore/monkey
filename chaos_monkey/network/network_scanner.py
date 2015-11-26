@@ -13,6 +13,7 @@ LOG = logging.getLogger(__name__)
 
 SCAN_DELAY = 0
 
+
 class NetworkScanner(object):
     def __init__(self):
         self._ip_addresses = None
@@ -26,14 +27,12 @@ class NetworkScanner(object):
             raise Exception("Cannot find local IP address for the machine")
 
         LOG.info("Found local IP addresses of the machine: %r", self._ip_addresses)
-
         # for fixed range, only scan once.
         if WormConfiguration.range_class is FixedRange:
             self._ranges = [WormConfiguration.range_class('0.0.0.0')]
         else:
             self._ranges = [WormConfiguration.range_class(ip_address)
                             for ip_address in self._ip_addresses]
-
         LOG.info("Base local networks to scan are: %r", self._ranges)
 
     def get_victim_machines(self, scan_type, max_find=5):

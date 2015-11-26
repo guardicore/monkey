@@ -14,6 +14,7 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.dirname(sys.argv[0]), 'monkey.bin')
 
+
 def _cast_by_example(value, example):
     example_type = type(example)
     if example_type is str:
@@ -35,17 +36,18 @@ def _cast_by_example(value, example):
     else:
         return None
 
+
 class Configuration(object):
 
     def from_dict(self, data):
-        for key,value in data.items():
+        for key, value in data.items():
             if key.startswith('_'):
                 continue
 
             try:
                 default_value = getattr(Configuration, key)
             except AttributeError:
-                continue
+                raise
             
             setattr(self, key, _cast_by_example(value, default_value))
 
@@ -79,7 +81,7 @@ class Configuration(object):
     ###########################               
 
     use_file_logging = True
-    dropper_log_path =  os.path.expandvars("%temp%\~df1562.tmp") if sys.platform == "win32" else '/tmp/user-1562'
+    dropper_log_path = os.path.expandvars("%temp%\~df1562.tmp") if sys.platform == "win32" else '/tmp/user-1562'
     monkey_log_path = os.path.expandvars("%temp%\~df1563.tmp") if sys.platform == "win32" else '/tmp/user-1563'
 
     ###########################
@@ -98,7 +100,7 @@ class Configuration(object):
 
     alive = True
 
-    self_delete_in_cleanup = True
+    self_delete_in_cleanup = False
 
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
@@ -134,7 +136,7 @@ class Configuration(object):
     #range_class = RelativeRange
     range_size = 8
     range_class = FixedRange
-    range_fixed = ("10.0.0.9", "10.0.0.13", "192.168.1.100", "192.168.1.95", "50.50.50.56", "50.50.50.4")
+    range_fixed = ("10.0.1.39", )
 
     # TCP Scanner
     tcp_target_ports = [22, 2222, 445, 135, 3389]
@@ -157,7 +159,7 @@ class Configuration(object):
 
     # psexec exploiter
     psexec_user = "Administrator"
-    psexec_passwords = ["Password1!", "1234", "password", "password", "12345678"]
+    psexec_passwords = ["Password1!", "1234", "password", "12345678"]
 
     #ssh exploiter
     ssh_user = "root"

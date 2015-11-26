@@ -30,6 +30,7 @@ LOG_CONFIG = {'version': 1,
                        'handlers': ['console']},
                }
 
+
 def main():
     global LOG
 
@@ -39,7 +40,7 @@ def main():
     monkey_mode = sys.argv[1]
 
     if not monkey_mode in [MONKEY_ARG, DROPPER_ARG]:
-      return True
+        return True
 
     config_file = EXTERNAL_CONFIG_FILE
 
@@ -47,17 +48,18 @@ def main():
     arg_parser.add_argument('-c', '--config')
     opts, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
     if opts.config:
-      config_file = opts.config
-
+        config_file = opts.config
+    print "Config file is: %s" % config_file
     if os.path.isfile(config_file):
         # using print because config can also change log locations
         print "Loading config from %s." % config_file
         try:
-          with open(config_file) as config_fo:
-              json_dict = json.load(config_fo)
-              WormConfiguration.from_dict(json_dict)
-        except ValueError:
-          print "Error loading config, using default."
+            with open(config_file) as config_fo:
+                json_dict = json.load(config_fo)
+                WormConfiguration.from_dict(json_dict)
+                print "Configuration loaded: %r" % WormConfiguration.as_dict()
+        except ValueError as e:
+            print "Error loading config, using default: %s" % e
 
     try:
         if MONKEY_ARG == monkey_mode:
@@ -94,7 +96,7 @@ def main():
 
     try:
         monkey.start()
-        
+
         if WormConfiguration.serialize_config:
           with open(config_file, 'w') as config_fo:
             json_dict = WormConfiguration.as_dict()

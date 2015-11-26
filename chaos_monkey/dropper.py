@@ -23,6 +23,7 @@ LOG = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
+
 class MonkeyDrops(object):
     def __init__(self, args):
         if args:

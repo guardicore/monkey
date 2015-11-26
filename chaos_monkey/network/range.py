@@ -1,4 +1,3 @@
-
 import socket
 import random
 import struct
@@ -6,6 +5,7 @@ from abc import ABCMeta, abstractmethod
 from model.host import VictimHost
 
 __author__ = 'itamar'
+
 
 class NetworkRange(object):
     __metaclass__ = ABCMeta

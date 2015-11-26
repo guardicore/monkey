@@ -37,7 +37,8 @@ MONKEY_DOWNLOADS = [
 {
     'type' : 'windows',
     'filename' : 'monkey-windows-32.exe',
-},]
+},
+]
 
 MONGO_URL = os.environ.get('MONGO_URL')
 if not MONGO_URL:
@@ -49,7 +50,6 @@ mongo = PyMongo(app)
 
 
 class Monkey(restful.Resource):
-
     def get(self, **kw):
         guid = kw.get('guid')
         timestamp = request.args.get('timestamp')
@@ -77,9 +77,7 @@ class Monkey(restful.Resource):
         if monkey_json.has_key('tunnel'):
             update['$set']['tunnel'] = monkey_json['tunnel']
         
-        return mongo.db.monkey.update({"guid": guid},
-                        update,
-                        upsert=False)
+        return mongo.db.monkey.update({"guid": guid}, update, upsert=False)
 
     def post(self, **kw):
         monkey_json = json.loads(request.data)
@@ -116,6 +114,7 @@ class Monkey(restful.Resource):
         return mongo.db.monkey.update({"guid": monkey_json["guid"]},
                                       {"$set" : monkey_json},
                                       upsert=True)
+
 
 class Telemetry(restful.Resource):
     def get(self, **kw):
@@ -157,6 +156,7 @@ class Telemetry(restful.Resource):
 
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
 
+
 class NewConfig(restful.Resource):
     def get(self):
         config = mongo.db.config.find_one({'name' : 'newconfig'}) or {}
@@ -180,7 +180,7 @@ class MonkeyDownload(restful.Resource):
             result  = None
             for download in MONKEY_DOWNLOADS:
                 if host_os.get('type') == download.get('type') and \
-                    host_os.get('machine') == download.get('machine'):
+                                host_os.get('machine') == download.get('machine'):
                     result = download
                     break
 
@@ -192,12 +192,14 @@ class MonkeyDownload(restful.Resource):
 
         return {}
 
+
 class Root(restful.Resource):
     def get(self):
         return {
             'status': 'OK',
             'mongo': str(mongo.db),
         }
+
 
 def normalize_obj(obj):
     if obj.has_key('_id') and not obj.has_key('id'):
@@ -217,11 +219,13 @@ def normalize_obj(obj):
                     value[i] = normalize_obj(value[i])
     return obj
 
+
 def output_json(obj, code, headers=None):
     obj = normalize_obj(obj)
     resp = make_response(bson.json_util.dumps(obj), code)
     resp.headers.extend(headers or {})
     return resp
+
 
 @app.route('/admin/<path:path>')
 def send_admin(path):
