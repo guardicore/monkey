@@ -49,7 +49,7 @@ class ChaosMonkey(object):
         self._dropper_path = sys.argv[0]
 
     def start(self):
-        LOG.info("WinWorm is running...")
+        LOG.info("Monkey is running...")
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
