@@ -1,0 +1,38 @@
+h1. Infected Chaos Monkey
+
+h2. Datacenter Security Tool
+
+h3. "http://www.guardicore.com/the-infected-chaos-monkey/":http://www.guardicore.com/the-infected-chaos-monkey/
+
+The Infected Chaos Monkey is a security tool which tests your Data Center's ability to withstand perimeter breach and internal server infection. 
+It uses various methods to propagate through a data center, and reports its success to a centralized C&C server.
+
+Features include:
+
+* Multiple propagation techniques:
+** Predefined passwords
+** Common exploits
+* Multiple propagation protocols:
+** SSH 
+** SMB
+** RDP
+* A C&C server with a dedicated UI to visualize the Monkey's progress inside the data center
+
+h2. Getting Started
+
+h3. Requirements
+
+h3. Installation
+
+h2. Usage
+
+h3. Running the C&C Server
+
+h3. Unleashing the Monkey
+
+h2. Options
+
+
+h1. License
+
+
