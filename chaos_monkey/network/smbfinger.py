@@ -1,8 +1,8 @@
 import socket
 import struct
 import logging
-from chaos_monkey.network import HostFinger
-from chaos_monkey.model.host import VictimHost
+from network import HostFinger
+from model.host import VictimHost
 from odict import odict
 
 SMB_PORT = 445

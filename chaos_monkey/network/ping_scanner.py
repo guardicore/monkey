@@ -3,7 +3,7 @@ import sys
 import subprocess
 import logging
 from . import HostScanner, HostFinger
-from chaos_monkey.model.host import VictimHost
+from model.host import VictimHost
 import re
 
 __author__ = 'itamar'

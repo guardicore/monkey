@@ -1,7 +1,7 @@
 import time
-from chaos_monkey.network import HostScanner, HostFinger
-from chaos_monkey.model.host import VictimHost
-from chaos_monkey.network.tools import check_port_tcp
+from network import HostScanner, HostFinger
+from model.host import VictimHost
+from network.tools import check_port_tcp
 
 __author__ = 'itamar'
 

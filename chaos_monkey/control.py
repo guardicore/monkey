@@ -26,10 +26,10 @@ class ControlClient(object):
         for server in WormConfiguration.command_servers:
             try:
                 hostname = gethostname()
-                if None == parent:
+                if not parent:
                     parent = GUID
 
-                WormConfiguration.current_server =  server                
+                WormConfiguration.current_server = server
 
                 monkey = {'guid': GUID,
                           'hostname': hostname,
@@ -41,18 +41,16 @@ class ControlClient(object):
                 if ControlClient.proxies:
                     monkey['tunnel'] = ControlClient.proxies.get('https')
                 
-                reply = requests.post("https://%s/api/monkey" % (server,), 
-                                        data=json.dumps(monkey),
-                                        headers={'content-type' : 'application/json'},
-                                        verify=False, 
-                                        proxies=ControlClient.proxies)
-                
+                reply = requests.post("https://%s/api/monkey" % (server,),
+                                      data=json.dumps(monkey),
+                                      headers={'content-type': 'application/json'},
+                                      verify=False,
+                                      proxies=ControlClient.proxies)
                 break
 
             except Exception, exc:
                 WormConfiguration.current_server = ''
-                LOG.warn("Error connecting to control server %s: %s",
-                         server, exc)
+                LOG.warn("Error connecting to control server %s: %s", server, exc)
 
         if not WormConfiguration.current_server:
             if not ControlClient.proxies:
@@ -75,7 +73,7 @@ class ControlClient(object):
                 monkey['tunnel'] = ControlClient.proxies.get('https')            
             reply = requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
                                    data=json.dumps(monkey),
-                                   headers={'content-type' : 'application/json'},
+                                   headers={'content-type': 'application/json'},
                                    verify=False,
                                    proxies=ControlClient.proxies)
         except Exception, exc:
@@ -84,14 +82,14 @@ class ControlClient(object):
             return {}
 
     @staticmethod
-    def send_telemetry(tele_type='general',data=''):
+    def send_telemetry(tele_type='general', data=''):
         if not WormConfiguration.current_server:
             return        
         try:
             telemetry = {'monkey_guid': GUID, 'telem_type': tele_type, 'data' : data}
             reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
                                   data=json.dumps(telemetry),
-                                  headers={'content-type' : 'application/json'},
+                                  headers={'content-type': 'application/json'},
                                   verify=False,
                                   proxies=ControlClient.proxies)
         except Exception, exc:
@@ -123,10 +121,10 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return None        
         try:
-            reply = requests.post("https://%s/api/monkey/download" % (WormConfiguration.current_server,), 
-                                    data=json.dumps(host.as_dict()),
-                                    headers={'content-type' : 'application/json'},
-                                    verify=False, proxies=ControlClient.proxies)
+            reply = requests.post("https://%s/api/monkey/download" % (WormConfiguration.current_server,),
+                                  data=json.dumps(host.as_dict()),
+                                  headers={'content-type': 'application/json'},
+                                  verify=False, proxies=ControlClient.proxies)
 
             if 200 == reply.status_code:
                 result_json = reply.json()

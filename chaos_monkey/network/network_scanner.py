@@ -1,7 +1,7 @@
 import time
 import logging
 from . import HostScanner
-from chaos_monkey.config import WormConfiguration
+from config import WormConfiguration
 from info import local_ips
 from range import *
 

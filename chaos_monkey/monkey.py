@@ -32,7 +32,7 @@ class ChaosMonkey(object):
         self._fingerprint = None
 
     def initialize(self):
-        LOG.info("WinWorm is initializing...")
+        LOG.info("Monkey is initializing...")
 
         if not self._singleton.try_lock():
             raise Exception("Another instance of the monkey is already running")
@@ -82,7 +82,7 @@ class ChaosMonkey(object):
                     finger.get_host_fingerprint(machine)
 
                 ControlClient.send_telemetry('scan', {'machine': machine.as_dict(),
-                                                        'scanner' : WormConfiguration.scanner_class.__name__})                    
+                                                      'scanner': WormConfiguration.scanner_class.__name__})
 
                 # skip machines that we've already exploited
                 if machine in self._exploited_machines:
@@ -107,16 +107,14 @@ class ChaosMonkey(object):
                                  exploiter.__class__.__name__, machine)
                         continue
 
-                    LOG.info("Trying to exploit %r with exploiter %s...",
-                             machine, exploiter.__class__.__name__)
+                    LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
 
                     try:
                         if exploiter.exploit_host(machine):
                             successful_exploiter = exploiter
                             break
                         else:
-                            LOG.info("Failed exploiting %r with exploiter %s",
-                                     machine, exploiter.__class__.__name__)
+                            LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
                     except Exception, exc:
                         LOG.error("Exception while attacking %s using %s: %s",
                                   machine, exploiter.__class__.__name__, exc)

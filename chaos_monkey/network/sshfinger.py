@@ -1,7 +1,7 @@
 import re
-from chaos_monkey.network import HostFinger
-from chaos_monkey.network.tools import check_port_tcp
-from chaos_monkey.model.host import VictimHost
+from network import HostFinger
+from network.tools import check_port_tcp
+from model.host import VictimHost
 
 SSH_PORT = 22
 SSH_SERVICE_DEFAULT = 'tcp-22'

@@ -10,6 +10,9 @@ from monkey import ChaosMonkey
 import argparse
 import json
 
+if __name__ == "__main__":
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 __author__ = 'itamar'
 
 LOG = None

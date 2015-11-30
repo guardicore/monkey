@@ -2,7 +2,7 @@ import socket
 import random
 import struct
 from abc import ABCMeta, abstractmethod
-from chaos_monkey.model.host import VictimHost
+from model.host import VictimHost
 
 __author__ = 'itamar'
 
