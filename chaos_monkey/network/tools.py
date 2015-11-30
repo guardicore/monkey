@@ -7,6 +7,7 @@ BANNER_READ = 1024
 
 LOG = logging.getLogger(__name__)
 
+
 def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(timeout)
@@ -14,10 +15,10 @@ def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
     try:
         sock.connect((ip, port))
     except socket.timeout:
-        return (False, None)
+        return False, None
     except socket.error, exc:
         LOG.debug("Check port: %s:%s, Exception: %s", ip, port, exc)
-        return (False, None)        
+        return False, None
 
     banner = None
 
@@ -30,7 +31,8 @@ def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
         pass
     
     sock.close()
-    return (True, banner)
+    return True, banner
+
 
 def check_port_udp(ip, port, timeout=DEFAULT_TIMEOUT):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -47,4 +49,4 @@ def check_port_udp(ip, port, timeout=DEFAULT_TIMEOUT):
         pass
     sock.close()
 
-    return (is_open, data)
+    return is_open, data

@@ -1,23 +1,21 @@
-import re
-import sys
 import socket
 import struct
-import string
 import logging
-from network import HostFinger
-from model.host import VictimHost
+from chaos_monkey.network import HostFinger
+from chaos_monkey.model.host import VictimHost
 from odict import odict
-import select
 
 SMB_PORT = 445
 SMB_SERVICE = 'tcp-445'
 
 LOG = logging.getLogger(__name__)
 
-class Packet():
+
+class Packet(object):
     fields = odict([
         ("data", ""),
     ])
+
     def __init__(self, **kw):
         self.fields = odict(self.__class__.fields)
         for k,v in kw.items():
@@ -25,8 +23,10 @@ class Packet():
                 self.fields[k] = v(self.fields[k])
             else:
                 self.fields[k] = v
+
     def __str__(self):
         return "".join(map(str, self.fields.values()))
+
 
 ##### SMB Packets #####
 class SMBHeader(Packet):
@@ -45,6 +45,7 @@ class SMBHeader(Packet):
         ("mid", "\x00\x00"),
     ])
 
+
 class SMBNego(Packet):
     fields = odict([
         ("wordcount", "\x00"),
@@ -54,6 +55,7 @@ class SMBNego(Packet):
     
     def calculate(self):
         self.fields["bcc"] = struct.pack("<h",len(str(self.fields["data"])))
+
 
 class SMBNegoFingerData(Packet):
     fields = odict([
@@ -70,6 +72,7 @@ class SMBNegoFingerData(Packet):
         ("separator6","\x02"),
         ("dialect6", "\x4e\x54\x20\x4c\x4d\x20\x30\x2e\x31\x32\x00"),
     ])      
+
 
 class SMBSessionFingerData(Packet):
     fields = odict([
@@ -88,8 +91,10 @@ class SMBSessionFingerData(Packet):
         ("Data","\x60\x48\x06\x06\x2b\x06\x01\x05\x05\x02\xa0\x3e\x30\x3c\xa0\x0e\x30\x0c\x06\x0a\x2b\x06\x01\x04\x01\x82\x37\x02\x02\x0a\xa2\x2a\x04\x28\x4e\x54\x4c\x4d\x53\x53\x50\x00\x01\x00\x00\x00\x07\x82\x08\xa2\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x01\x28\x0a\x00\x00\x00\x0f\x00\x57\x00\x69\x00\x6e\x00\x64\x00\x6f\x00\x77\x00\x73\x00\x20\x00\x32\x00\x30\x00\x30\x00\x32\x00\x20\x00\x53\x00\x65\x00\x72\x00\x76\x00\x69\x00\x63\x00\x65\x00\x20\x00\x50\x00\x61\x00\x63\x00\x6b\x00\x20\x00\x33\x00\x20\x00\x32\x00\x36\x00\x30\x00\x30\x00\x00\x00\x57\x00\x69\x00\x6e\x00\x64\x00\x6f\x00\x77\x00\x73\x00\x20\x00\x32\x00\x30\x00\x30\x00\x32\x00\x20\x00\x35\x00\x2e\x00\x31\x00\x00\x00\x00\x00"),
 
     ])
-    def calculate(self): 
+
+    def calculate(self):
         self.fields["bcc1"] = struct.pack("<i", len(str(self.fields["Data"])))[:2]
+
 
 class SMBFinger(HostFinger):
     def __init__(self):

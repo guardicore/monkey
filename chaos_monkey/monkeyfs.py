@@ -7,10 +7,11 @@ MONKEYFS_PREFIX = 'monkeyfs://'
 
 open_orig = open
 
-class VirtualFile(BytesIO):
-    _vfs = {} #virtual File-System 
 
-    def __init__(self, name, mode = 'r', buffering = None):
+class VirtualFile(BytesIO):
+    _vfs = {}  # virtual File-System
+
+    def __init__(self, name, mode='r', buffering=None):
         if not name.startswith(MONKEYFS_PREFIX):
             name = MONKEYFS_PREFIX + name
         self.name = name
@@ -32,11 +33,13 @@ class VirtualFile(BytesIO):
     def isfile(path):
         return VirtualFile._vfs.has_key(path)
 
+
 def getsize(path):
     if path.startswith(MONKEYFS_PREFIX):
         return VirtualFile.getsize(path)
     else:
         return os.stat(path).st_size
+
 
 def isfile(path):
     if path.startswith(MONKEYFS_PREFIX):
@@ -44,11 +47,13 @@ def isfile(path):
     else:
         return os.path.isfile(path)
 
+
 def virtual_path(name):
     return "%s%s" % (MONKEYFS_PREFIX, name)
 
+
 def open(name, mode='r', buffering=-1):
-    #use normal open for regular paths, and our "virtual" open for monkeyfs:// paths
+    # use normal open for regular paths, and our "virtual" open for monkeyfs:// paths
     if name.startswith(MONKEYFS_PREFIX):
         return VirtualFile(name, mode, buffering)
     else:

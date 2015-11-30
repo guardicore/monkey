@@ -1,7 +1,8 @@
-import os,socket,threading,time
+import socket, threading, time
 import StringIO
 
 __author__ = 'hoffer'
+
 
 class FTPServer(threading.Thread):
     def __init__(self, local_ip, local_port, files):
@@ -47,13 +48,16 @@ class FTPServer(threading.Thread):
             self.conn.send('451 Sorry.\r\n')
     def USER(self,cmd):
         self.conn.send('331 OK.\r\n')
+
     def PASS(self,cmd):
         self.conn.send('230 OK.\r\n')
-        #self.conn.send('530 Incorrect.\r\n')
+
     def QUIT(self,cmd):
         self.conn.send('221 Goodbye.\r\n')
+
     def NOOP(self,cmd):
         self.conn.send('200 OK.\r\n')
+
     def TYPE(self,cmd):
         self.mode=cmd[5]
         self.conn.send('200 Binary mode.\r\n')
@@ -71,7 +75,7 @@ class FTPServer(threading.Thread):
         if self.pasv_mode:
             self.servsock.close()
             self.pasv_mode = False
-        l=cmd[5:].split(',')
+        l = cmd[5:].split(',')
         self.dataAddr='.'.join(l[:4])
         self.dataPort=(int(l[4])<<8)+int(l[5])
         self.conn.send('200 Get port.\r\n')
@@ -97,7 +101,6 @@ class FTPServer(threading.Thread):
         if self.pasv_mode:
             self.servsock.close()
 
-
     def LIST(self,cmd):
         self.conn.send('150 Here comes the directory listing.\r\n')
         self.start_datasock()
@@ -109,8 +112,8 @@ class FTPServer(threading.Thread):
 
     def toListItem(self,fn):
         fullmode='rwxrwxrwx'
-        mode=''
-        d='-'
+        mode = ''
+        d = '-'
         ftime=time.strftime(' %b %d %H:%M ', time.gmtime())
         return d+fullmode+' 1 user group '+str(self.files[fn].tell())+ftime+fn
 

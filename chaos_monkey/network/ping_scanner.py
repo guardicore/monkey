@@ -2,8 +2,8 @@ import os
 import sys
 import subprocess
 import logging
-from network import HostScanner, HostFinger
-from model.host import VictimHost
+from . import HostScanner, HostFinger
+from chaos_monkey.model.host import VictimHost
 import re
 
 __author__ = 'itamar'
@@ -16,6 +16,7 @@ WINDOWS_TTL = 128
 
 LOG = logging.getLogger(__name__)
 
+
 class PingScanner(HostScanner, HostFinger):
     def __init__(self):
         self._config = __import__('config').WormConfiguration
@@ -27,7 +28,7 @@ class PingScanner(HostScanner, HostFinger):
 
         timeout = self._config.ping_scan_timeout
         if not "win32" == sys.platform:
-            timeout = timeout / 1000
+            timeout /= 1000
 
         return 0 == subprocess.call(["ping",
                                      PING_COUNT_FLAG, "1",
@@ -41,15 +42,15 @@ class PingScanner(HostScanner, HostFinger):
 
         timeout = self._config.ping_scan_timeout
         if not "win32" == sys.platform:
-            timeout = timeout / 1000
+            timeout /= 1000
 
-        sub_proc = subprocess.Popen(["ping", 
-                        PING_COUNT_FLAG,
-                        "1", 
-                        PING_TIMEOUT_FLAG, 
-                        str(timeout), host.ip_addr], 
-                        stdout=subprocess.PIPE, 
-                        stderr=subprocess.PIPE)
+        sub_proc = subprocess.Popen(["ping",
+                                     PING_COUNT_FLAG,
+                                     "1",
+                                     PING_TIMEOUT_FLAG,
+                                     str(timeout), host.ip_addr],
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
 
         output = " ".join(sub_proc.communicate())
         regex_result = self._ttl_regex.search(output)

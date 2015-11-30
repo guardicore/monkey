@@ -17,16 +17,17 @@ MCAST_GROUP = '224.1.1.1'
 MCAST_PORT = 5007
 BUFFER_READ = 1024
 DEFAULT_TIMEOUT = 10
-QUIT_TIMEOUT = 1200 #20 minutes
+QUIT_TIMEOUT = 1200  # 20 minutes
+
 
 def _set_multicast_socket(timeout=DEFAULT_TIMEOUT):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     sock.settimeout(timeout)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(('', MCAST_PORT))
-    sock.setsockopt(socket.IPPROTO_IP, 
-                          socket.IP_ADD_MEMBERSHIP, 
-                          struct.pack("4sl", socket.inet_aton(MCAST_GROUP), socket.INADDR_ANY))
+    sock.setsockopt(socket.IPPROTO_IP,
+                    socket.IP_ADD_MEMBERSHIP,
+                    struct.pack("4sl", socket.inet_aton(MCAST_GROUP), socket.INADDR_ANY))
     return sock
 
 
@@ -64,12 +65,13 @@ def find_tunnel(default=None, attempts=3, timeout=DEFAULT_TIMEOUT):
 
                     sock.sendto("+", (address, MCAST_PORT))
                     sock.close()
-                    return (address, port)
+                    return address, port
         except Exception, exc:
             LOG.debug("Caught exception in tunnel lookup: %s", exc)
             continue
 
     return None
+
 
 def quit_tunnel(address, timeout=DEFAULT_TIMEOUT):
     try:
@@ -94,12 +96,11 @@ class MonkeyTunnel(Thread):
         self.local_port = None
         super(MonkeyTunnel, self).__init__()
         self.daemon = True
+        self.l_ips = None
 
     def run(self):
         self._broad_sock = _set_multicast_socket(self._timeout)
-
         self.l_ips = local_ips()
-
         self.local_port = get_free_tcp_port()
 
         if not self.local_port:

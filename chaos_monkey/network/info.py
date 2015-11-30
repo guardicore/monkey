@@ -14,6 +14,7 @@ if sys.platform == "win32":
 
 else:
     import fcntl    
+
     def local_ips():
         result = []
         try:
@@ -39,9 +40,10 @@ else:
                 addr = socket.inet_ntoa(namestr[i+20:i+24])
                 if not addr.startswith('127'):
                     result.append(addr)
-                    #name of interface is (namestr[i:i+16].split('\0', 1)[0]
+                    # name of interface is (namestr[i:i+16].split('\0', 1)[0]
         finally:
             return result
+
 
 def get_free_tcp_port(min_range=1000, max_range=65535):
     start_range = min(1, min_range)
@@ -52,7 +54,7 @@ def get_free_tcp_port(min_range=1000, max_range=65535):
     for i in range(min_range, max_range):
         port = randint(start_range, max_range)
         
-        if not port in in_use:
+        if port not in in_use:
             return port
 
     return None

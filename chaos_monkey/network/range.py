@@ -2,7 +2,7 @@ import socket
 import random
 import struct
 from abc import ABCMeta, abstractmethod
-from model.host import VictimHost
+from chaos_monkey.model.host import VictimHost
 
 __author__ = 'itamar'
 
@@ -35,7 +35,7 @@ class ClassCRange(NetworkRange):
 
     def __repr__(self):
         return "<ClassCRange %s-%s>" % (socket.inet_ntoa(struct.pack(">L", self._base_address + 1)),
-                                         socket.inet_ntoa(struct.pack(">L", self._base_address + 254)))
+                                        socket.inet_ntoa(struct.pack(">L", self._base_address + 254)))
 
     def _get_range(self):
         return range(1, 254)

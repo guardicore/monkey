@@ -1,7 +1,5 @@
-import sys
 import socket
 import select
-import time
 from threading import Thread
 from base import TransportProxyBase
 from logging import getLogger
@@ -11,9 +9,10 @@ DEFAULT_TIMEOUT = 10
 
 LOG = getLogger(__name__)
 
+
 class SocketsPipe(Thread):
     def __init__(self, source, dest, timeout=DEFAULT_TIMEOUT):
-        Thread.__init__( self )
+        Thread.__init__(self)
         self.source = source
         self.dest = dest
         self.timeout = timeout
@@ -43,7 +42,8 @@ class SocketsPipe(Thread):
         
         self.source.close()
         self.dest.close()
-        
+
+
 class TcpProxy(TransportProxyBase):
     
     def run(self):

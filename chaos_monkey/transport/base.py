@@ -1,5 +1,6 @@
 from threading import Thread
 
+
 class TransportProxyBase(Thread):
     def __init__(self, local_port, dest_host=None, dest_port=None, local_host=''):
         self.local_host = local_host
@@ -11,4 +12,4 @@ class TransportProxyBase(Thread):
         self.daemon = True
 
     def stop(self):
-        self._stopped = True        
+        self._stopped = True

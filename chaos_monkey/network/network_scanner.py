@@ -1,11 +1,9 @@
-
 import time
-import socket
 import logging
-from network import HostScanner
-from config import WormConfiguration
+from . import HostScanner
+from chaos_monkey.config import WormConfiguration
 from info import local_ips
-from network.range import *
+from range import *
 
 __author__ = 'itamar'
 

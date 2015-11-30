@@ -1,6 +1,4 @@
 import urllib, BaseHTTPServer, threading, os.path
-import shutil
-import struct
 import monkeyfs
 from logging import getLogger
 from base import TransportProxyBase
@@ -11,6 +9,7 @@ import socket
 __author__ = 'hoffer'
 
 LOG = getLogger(__name__)
+
 
 class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -23,8 +22,8 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def report_download():
         pass
 
-    def do_POST (self):
-        self.send_error (501, "Unsupported method (POST)")
+    def do_POST(self):
+        self.send_error(501, "Unsupported method (POST)")
         return 
 
     def do_GET(self):
@@ -45,7 +44,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 start_range += chunk
 
             if f.tell() == monkeyfs.getsize(self.filename):
-               self.report_download()
+                self.report_download()
 
             f.close()
 
@@ -64,7 +63,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             f = monkeyfs.open(self.filename, 'rb')
         except IOError:
             self.send_error(404, "File not found")
-            return (None, 0, 0)
+            return None, 0, 0
         size = monkeyfs.getsize(self.filename)
         start_range = 0
         end_range = size
@@ -93,12 +92,12 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_header("Content-Range", 'bytes ' + str(start_range) + '-' + str(end_range - 1) + '/' + str(size))
         self.send_header("Content-Length", min(end_range - start_range, size))
         self.end_headers()
-        return (f, start_range, end_range)
+        return f, start_range, end_range
 
     def log_message(self, format, *args):
         LOG.debug("FileServHTTPRequestHandler: %s - - [%s] %s" % (self.address_string(),
-                          self.log_date_time_string(),
-                          format % args))        
+                                                                  self.log_date_time_string(),
+                                                                  format % args))
 
 
 class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -146,6 +145,7 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                           self.log_date_time_string(),
                           format % args))
 
+
 class InternalHTTPServer(BaseHTTPServer.HTTPServer):
     def handle_error(self, request, client_address):
         #ToDo: debug log error
@@ -156,6 +156,7 @@ class InternalHTTPServer(BaseHTTPServer.HTTPServer):
         # traceback.print_exc()
         # print >>sys.stderr, '-'*40        
         pass
+
 
 class HTTPServer(threading.Thread):
     def __init__(self, local_ip, local_port, filename, max_downloads=1):
@@ -172,8 +173,8 @@ class HTTPServer(threading.Thread):
             filename = self._filename
             @staticmethod
             def report_download():
-                self.downloads+=1
-        
+                self.downloads += 1
+
         httpd = InternalHTTPServer((self._local_ip, self._local_port), TempHandler)
         httpd.timeout = 0.5
         
@@ -185,6 +186,7 @@ class HTTPServer(threading.Thread):
     def stop(self, timeout=60):
         self._stopped = True
         self.join(timeout)
+
 
 class HTTPConnectProxy(TransportProxyBase):
     def run(self):

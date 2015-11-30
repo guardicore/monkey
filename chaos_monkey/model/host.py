@@ -1,5 +1,6 @@
 __author__ = 'itamar'
 
+
 class VictimHost(object):
     def __init__(self, ip_addr):
         self.ip_addr = ip_addr

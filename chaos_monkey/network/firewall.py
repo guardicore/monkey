@@ -2,6 +2,7 @@ import subprocess
 import sys
 import platform
 
+
 class FirewallApp(object):
     def is_enabled(self, **kwargs):
         return False
@@ -24,8 +25,10 @@ class FirewallApp(object):
     def close(self):
         return
 
+
 def _run_netsh_cmd(command, args):
-    cmd = subprocess.Popen("netsh %s %s" % (command, " ".join(['%s="%s"'%(key,value) for key,value in args.items() if value])), stdout=subprocess.PIPE)
+    cmd = subprocess.Popen("netsh %s %s" % (command, " ".join(['%s="%s"' % (key, value) for key, value in args.items()
+                                                               if value])), stdout=subprocess.PIPE)
     return cmd.stdout.read().strip().lower().endswith('ok.')
 
 
@@ -76,14 +79,14 @@ class WinAdvFirewall(FirewallApp):
             return None
 
     def listen_allowed(self, **kwargs):
-        if False == self.is_enabled():
+        if not self.is_enabled():
             return True
 
         for rule in self._rules.values():
             if rule.get('program') == sys.executable and \
-                'in' == rule.get('dir') and \
-                'allow' == rule.get('action') and \
-                4 == len(rule.keys()):
+                            'in' == rule.get('dir') and \
+                            'allow' == rule.get('action') and \
+                            4 == len(rule.keys()):
                 return True
         return False
 
@@ -144,12 +147,11 @@ class WinFirewall(FirewallApp):
             return None
 
     def listen_allowed(self, **kwargs):
-        if False == self.is_enabled():
+        if not self.is_enabled():
             return True
 
         for rule in self._rules.values():
-            if rule.get('program') == sys.executable and \
-                'ENABLE' == rule.get('mode'):
+            if rule.get('program') == sys.executable and 'ENABLE' == rule.get('mode'):
                 return True
         return False            
 

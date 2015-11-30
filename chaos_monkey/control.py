@@ -1,13 +1,11 @@
-
 import json
-import random
 import logging
 import requests
 import platform
 import monkeyfs
 from network.info import local_ips
-from socket import gethostname, gethostbyname_ex
-from config import WormConfiguration, Configuration, GUID
+from socket import gethostname
+from config import WormConfiguration, GUID
 from transport.tcp import TcpProxy
 from transport.http import HTTPConnectProxy
 import tunnel
@@ -18,6 +16,7 @@ requests.packages.urllib3.disable_warnings()
 
 LOG = logging.getLogger(__name__)
 DOWNLOAD_CHUNK = 1024
+
 
 class ControlClient(object):
     proxies = {}
@@ -32,13 +31,12 @@ class ControlClient(object):
 
                 WormConfiguration.current_server =  server                
 
-                monkey = {  'guid': GUID,
-                            'hostname' : hostname,
-                            'ip_addresses' : local_ips(),
-                            'description' : " ".join(platform.uname()),
-                            'config' : WormConfiguration.as_dict(),
-                            'parent' : parent,
-                }
+                monkey = {'guid': GUID,
+                          'hostname': hostname,
+                          'ip_addresses': local_ips(),
+                          'description': " ".join(platform.uname()),
+                          'config': WormConfiguration.as_dict(),
+                          'parent': parent}
 
                 if ControlClient.proxies:
                     monkey['tunnel'] = ControlClient.proxies.get('https')
@@ -75,11 +73,11 @@ class ControlClient(object):
             monkey = {}
             if ControlClient.proxies:
                 monkey['tunnel'] = ControlClient.proxies.get('https')            
-            reply = requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID), 
-                                    data=json.dumps(monkey),
-                                    headers={'content-type' : 'application/json'},
-                                    verify=False, 
-                                    proxies=ControlClient.proxies)
+            reply = requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+                                   data=json.dumps(monkey),
+                                   headers={'content-type' : 'application/json'},
+                                   verify=False,
+                                   proxies=ControlClient.proxies)
         except Exception, exc:
             LOG.warn("Error connecting to control server %s: %s",
                      WormConfiguration.current_server, exc)
@@ -91,12 +89,11 @@ class ControlClient(object):
             return        
         try:
             telemetry = {'monkey_guid': GUID, 'telem_type': tele_type, 'data' : data}
-            reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,), 
-                                    data=json.dumps(telemetry),
-                                    headers={'content-type' : 'application/json'},
-                                    verify=False, 
-                                    proxies=ControlClient.proxies)
-
+            reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
+                                  data=json.dumps(telemetry),
+                                  headers={'content-type' : 'application/json'},
+                                  verify=False,
+                                  proxies=ControlClient.proxies)
         except Exception, exc:
             LOG.warn("Error connecting to control server %s: %s",
                      WormConfiguration.current_server, exc)
@@ -106,9 +103,9 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return        
         try:
-            reply = requests.get("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID), 
-                                verify=False, 
-                                proxies=ControlClient.proxies)
+            reply = requests.get("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+                                 verify=False,
+                                 proxies=ControlClient.proxies)
 
         except Exception, exc:
             LOG.warn("Error connecting to control server %s: %s",
@@ -141,7 +138,8 @@ class ControlClient(object):
                 if monkeyfs.isfile(dest_file) and size == monkeyfs.getsize(dest_file):
                     return dest_file
                 else:
-                    download = requests.get("https://%s/api/monkey/download/%s" % (WormConfiguration.current_server, filename),
+                    download = requests.get("https://%s/api/monkey/download/%s" %
+                                            (WormConfiguration.current_server, filename),
                                             verify=False, 
                                             proxies=ControlClient.proxies)
 
@@ -158,7 +156,6 @@ class ControlClient(object):
                      WormConfiguration.current_server, exc)
         
         return None
-
 
     @staticmethod
     def create_control_tunnel():
@@ -178,6 +175,3 @@ class ControlClient(object):
             target_addr, target_port = None, None
 
         return tunnel.MonkeyTunnel(proxy_class, target_addr=target_addr, target_port=target_port)
-
-
-

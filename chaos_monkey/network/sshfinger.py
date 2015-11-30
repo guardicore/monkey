@@ -1,14 +1,7 @@
 import re
-import sys
-import socket
-import struct
-import string
-import logging
-from network import HostFinger
-import socket
-import select
-from network.tools import check_port_tcp
-from model.host import VictimHost
+from chaos_monkey.network import HostFinger
+from chaos_monkey.network.tools import check_port_tcp
+from chaos_monkey.model.host import VictimHost
 
 SSH_PORT = 22
 SSH_SERVICE_DEFAULT = 'tcp-22'
@@ -16,6 +9,7 @@ SSH_REGEX = 'SSH-\d\.\d-OpenSSH'
 TIMEOUT = 10
 BANNER_READ = 1024
 LINUX_DIST_SSH = ['ubuntu', 'debian']
+
 
 class SSHFinger(HostFinger):
     def __init__(self):
@@ -28,7 +22,7 @@ class SSHFinger(HostFinger):
             if banner.lower().find(dist) != -1:
                 host.os['type'] = 'linux'
                 os_version = banner.split(' ').pop().strip()
-                if not host.os.has_key('version'):
+                if 'version' not in host.os:
                     host.os['version'] = os_version
                 else:
                     host.services[service]['os-version'] = os_version
@@ -37,7 +31,7 @@ class SSHFinger(HostFinger):
     def get_host_fingerprint(self, host):
         assert isinstance(host, VictimHost)
 
-        for name,data in host.services.items():
+        for name, data in host.services.items():
             banner = data.get('banner', '')
             if self._banner_regex.search(banner):
                 self._banner_match(name, host, banner)

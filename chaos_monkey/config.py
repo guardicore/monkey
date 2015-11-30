@@ -1,13 +1,12 @@
-
 import os
 import sys
-import ntpath
-from network.range import ClassCRange, RelativeRange, FixedRange
+from network.range import FixedRange
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger
 from abc import ABCMeta
 import uuid
 import types
+
 __author__ = 'itamar'
 
 GUID = str(uuid.getnode())
@@ -78,7 +77,7 @@ class Configuration(object):
 
     ###########################
     ### logging config
-    ###########################               
+    ###########################
 
     use_file_logging = True
     dropper_log_path = os.path.expandvars("%temp%\~df1562.tmp") if sys.platform == "win32" else '/tmp/user-1562'

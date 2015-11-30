@@ -1,4 +1,3 @@
-
 import sys
 import ctypes
 import logging
@@ -8,6 +7,7 @@ from config import WormConfiguration
 __author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)
+
 
 class _SystemSingleton(object):
     __metaclass__ = ABCMeta
@@ -44,7 +44,7 @@ class WindowsSystemSingleton(_SystemSingleton):
         last_error = ctypes.windll.kernel32.GetLastError()
         if not handle:
             LOG.error("Cannot acquire system singleton %r, unknown error %d",
-                       self._mutex_name, last_error)
+                      self._mutex_name, last_error)
 
             return False
 
@@ -86,13 +86,12 @@ class LinuxSystemSingleton(_SystemSingleton):
             sock.bind('\0' + self._unix_sock_name)
         except socket.error, e:
             LOG.error("Cannot acquire system singleton %r, error code %d, error: %s",
-                self._unix_sock_name, e.args[0], e.args[1])
+                      self._unix_sock_name, e.args[0], e.args[1])
             return False
         
         self._sock_handle = sock
 
-        LOG.debug("Global singleton mutex %r acquired",
-          self._unix_sock_name)
+        LOG.debug("Global singleton mutex %r acquired", self._unix_sock_name)
 
         return True
 

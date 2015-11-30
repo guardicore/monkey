@@ -2,11 +2,10 @@ import sys
 import os
 import time
 import logging
-import platform
 from system_singleton import SystemSingleton
 from network.firewall import app as firewall
 from control import ControlClient
-from config import WormConfiguration, EXTERNAL_CONFIG_FILE
+from config import WormConfiguration
 from network.network_scanner import NetworkScanner
 import tunnel
 import argparse
@@ -17,14 +16,6 @@ __author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)
 
-# TODO:
-# 1. Remote dating of copied file
-# 2. OS Detection prior to exploit
-# 3. Exploit using token credentials
-# 4. OS Support for exploitation modules (win / linux specific)
-# 5. Linux portability
-# 6. Clear eventlog after exploitation
-# 7. Add colors to logger
 
 class ChaosMonkey(object):
     def __init__(self, args):
@@ -35,6 +26,10 @@ class ChaosMonkey(object):
         self._parent = None
         self._default_tunnel = None
         self._args = args
+        self._network = None
+        self._dropper_path = None
+        self._exploiters = None
+        self._fingerprint = None
 
     def initialize(self):
         LOG.info("WinWorm is initializing...")
@@ -52,7 +47,6 @@ class ChaosMonkey(object):
         self._keep_running = True
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
-
 
     def start(self):
         LOG.info("WinWorm is running...")
@@ -97,11 +91,9 @@ class ChaosMonkey(object):
                     continue
                 elif machine in self._fail_exploitation_machines:
                     if WormConfiguration.retry_failed_explotation:
-                        LOG.debug("%r - exploitation failed before, trying again",
-                                 machine)
+                        LOG.debug("%r - exploitation failed before, trying again", machine)
                     else:
-                        LOG.debug("Skipping %r - exploitation failed before",
-                                 machine)
+                        LOG.debug("Skipping %r - exploitation failed before", machine)
                         continue
 
                 successful_exploiter = None
@@ -146,7 +138,6 @@ class ChaosMonkey(object):
                         break
                 else:
                     self._fail_exploitation_machines.add(machine)
-
 
             time.sleep(WormConfiguration.timeout_between_iterations)
 

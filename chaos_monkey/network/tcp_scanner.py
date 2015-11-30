@@ -1,14 +1,12 @@
-
 import time
-import socket
-from network import HostScanner, HostFinger
-from model.host import VictimHost
-from network.tools import check_port_tcp
-import select
+from chaos_monkey.network import HostScanner, HostFinger
+from chaos_monkey.model.host import VictimHost
+from chaos_monkey.network.tools import check_port_tcp
 
 __author__ = 'itamar'
 
 BANNER_READ = 1024
+
 
 class TcpScanner(HostScanner, HostFinger):
     def __init__(self):
@@ -30,7 +28,7 @@ class TcpScanner(HostScanner, HostFinger):
                                             self._config.tcp_scan_get_banner)
 
             if is_open:
-                count+=1
+                count += 1
                 service = 'tcp-' + str(target_port)
                 host.services[service] = {}
                 if banner:

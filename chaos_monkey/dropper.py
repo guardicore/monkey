@@ -1,4 +1,3 @@
-
 import os
 import sys
 import time
@@ -8,7 +7,6 @@ import pprint
 import logging
 import subprocess
 from ctypes import c_char_p
-from control import ControlClient
 from model import MONKEY_CMDLINE
 from config import WormConfiguration
 
@@ -26,14 +24,7 @@ MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
 class MonkeyDrops(object):
     def __init__(self, args):
-        if args:
-            dest_path = os.path.expandvars(args[0])
-        else:
-            dest_path = os.path.expandvars(WormConfiguration.dropper_target_path if sys.platform == "win32" \
-                                            else WormConfiguration.dropper_target_path_linux)
-
         self._monkey_args = args[1:]
-
         self._config = {'source_path': os.path.abspath(sys.argv[0]),
                         'destination_path': args[0]}
 
@@ -112,8 +103,7 @@ class MonkeyDrops(object):
             try:
                 os.remove(self._config['source_path'])
             except Exception, exc:
-                LOG.debug("Error removing source file '%s': %s",
-                      self._config['source_path'], exc)
+                LOG.debug("Error removing source file '%s': %s", self._config['source_path'], exc)
 
                 # mark the file for removal on next boot
                 dropper_source_path_ctypes = c_char_p(self._config['source_path'])
