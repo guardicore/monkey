@@ -86,7 +86,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return        
         try:
-            telemetry = {'monkey_guid': GUID, 'telem_type': tele_type, 'data' : data}
+            telemetry = {'monkey_guid': GUID, 'telem_type': tele_type, 'data': data}
             reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
                                   data=json.dumps(telemetry),
                                   headers={'content-type': 'application/json'},

