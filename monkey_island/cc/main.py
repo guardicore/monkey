@@ -1,7 +1,6 @@
 import os
 from flask import Flask, request, abort, send_from_directory
 from flask.ext import restful
-from flask.ext.restful import reqparse
 from flask.ext.pymongo import PyMongo
 from flask import make_response
 import bson.json_util
@@ -10,39 +9,39 @@ from datetime import datetime
 import dateutil.parser
 
 MONKEY_DOWNLOADS = [
-{
-    'type' : 'linux',
-    'machine' : 'x86_64',
-    'filename' : 'monkey-linux-64',
-},
-{
-    'type' : 'linux',
-    'machine' : 'i686',
-    'filename' : 'monkey-linux-32',
-},
-{
-    'type' : 'linux',
-    'filename' : 'monkey-linux-32',
-},
-{
-    'type' : 'windows',
-    'machine' : 'x86',
-    'filename' : 'monkey-linux-32.exe',
-},
-{
-    'type' : 'windows',
-    'machine' : 'amd64',
-    'filename' : 'monkey-windows-64.exe',
-},
-{
-    'type' : 'windows',
-    'filename' : 'monkey-windows-32.exe',
-},
+    {
+        'type': 'linux',
+        'machine': 'x86_64',
+        'filename': 'monkey-linux-64',
+    },
+    {
+        'type': 'linux',
+        'machine': 'i686',
+        'filename': 'monkey-linux-32',
+    },
+    {
+        'type': 'linux',
+        'filename': 'monkey-linux-32',
+    },
+    {
+        'type': 'windows',
+        'machine': 'x86',
+        'filename': 'monkey-linux-32.exe',
+    },
+    {
+        'type': 'windows',
+        'machine': 'amd64',
+        'filename': 'monkey-windows-64.exe',
+    },
+    {
+        'type': 'windows',
+        'filename': 'monkey-windows-32.exe',
+    },
 ]
 
 MONGO_URL = os.environ.get('MONGO_URL')
 if not MONGO_URL:
-    MONGO_URL = "mongodb://localhost:27017/monkeyisland";
+    MONGO_URL = "mongodb://localhost:27017/monkeyisland"
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = MONGO_URL
@@ -54,7 +53,7 @@ class Monkey(restful.Resource):
         guid = kw.get('guid')
         timestamp = request.args.get('timestamp')
 
-        if None != guid:
+        if guid:
             return mongo.db.monkey.find_one_or_404({"guid": guid})
         else:
             result = {'timestamp': datetime.now().isoformat()}
@@ -65,8 +64,8 @@ class Monkey(restful.Resource):
             return result
 
     def patch(self, guid):
-        monkey_json = json.loads(request.data);
-        update = {"$set" : {'modifytime':datetime.now()}}
+        monkey_json = json.loads(request.data)
+        update = {"$set": {'modifytime': datetime.now()}}
         
         if monkey_json.has_key('keepalive'):
             update['$set']['keepalive'] = dateutil.parser.parse(monkey_json['keepalive'])
@@ -91,7 +90,7 @@ class Monkey(restful.Resource):
         # if new monkey, change config according to "new monkeys" config.
         db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
         if not db_monkey:
-            new_config = mongo.db.config.find_one({'name' : 'newconfig'}) or {}
+            new_config = mongo.db.config.find_one({'name': 'newconfig'}) or {}
             monkey_json['config'] = monkey_json.get('config', {})
             monkey_json['config'].update(new_config)
         else:
@@ -106,13 +105,14 @@ class Monkey(restful.Resource):
         # try to find new monkey parent
         parent = monkey_json.get('parent')
         if (not parent  or parent == monkey_json.get('guid')) and monkey_json.has_key('ip_addresses'):
-            exploit_telem = [x for x in mongo.db.telemetry.find({'telem_type': {'$eq' : 'exploit'}, \
-                                'data.machine.ip_addr' : {'$in' : monkey_json['ip_addresses']}})]
+            exploit_telem = [x for x in
+                             mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.machine.ip_addr':
+                                 {'$in': monkey_json['ip_addresses']}})]
             if 1 == len(exploit_telem):
                 monkey_json['parent'] = exploit_telem[0].get('monkey_guid')                
 
         return mongo.db.monkey.update({"guid": monkey_json["guid"]},
-                                      {"$set" : monkey_json},
+                                      {"$set": monkey_json},
                                       upsert=True)
 
 
@@ -124,9 +124,9 @@ class Telemetry(restful.Resource):
         result = {'timestamp': datetime.now().isoformat()}
         find_filter = {}
 
-        if None != monkey_guid:
+        if monkey_guid:
             find_filter["monkey_guid"] = {'$eq': monkey_guid}
-        if None != timestamp:
+        if timestamp:
             find_filter['timestamp'] = {'$gt': dateutil.parser.parse(timestamp)}
 
         result['objects'] = [x for x in mongo.db.telemetry.find(find_filter)]
@@ -142,15 +142,15 @@ class Telemetry(restful.Resource):
         try:
             if telemetry_json.get('telem_type') == 'exploit':
                 update_parent = []
-                for monkey in mongo.db.monkey.find({ "ip_addresses" : 
-                                                    {'$elemMatch' : 
-                                                    { '$eq' : telemetry_json['data']['machine']['ip_addr'] }}}):
+                for monkey in mongo.db.monkey.find({"ip_addresses":
+                                                    {'$elemMatch':
+                                                    {'$eq': telemetry_json['data']['machine']['ip_addr']}}}):
                     parent = monkey.get('parent')
-                    if parent == monkey.get('guid') or None == parent:
+                    if parent == monkey.get('guid') or not parent:
                         update_parent.append(monkey)
                 if 1 == len(update_parent):
                     update_parent[0]['parent'] = telemetry_json['monkey_guid']
-                    mongo.db.monkey.update({"guid": update_parent[0]['guid']}, {"$set" : update_parent[0]}, upsert=False)
+                    mongo.db.monkey.update({"guid": update_parent[0]['guid']}, {"$set": update_parent[0]}, upsert=False)
         except:
             pass
 
@@ -159,14 +159,14 @@ class Telemetry(restful.Resource):
 
 class NewConfig(restful.Resource):
     def get(self):
-        config = mongo.db.config.find_one({'name' : 'newconfig'}) or {}
+        config = mongo.db.config.find_one({'name': 'newconfig'}) or {}
         if config.has_key('name'):
             del config['name']
         return config
 
     def post(self):
         config_json = json.loads(request.data)
-        return mongo.db.config.update({'name' : 'newconfig'}, {"$set" : config_json}, upsert=True)
+        return mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
 
 
 class MonkeyDownload(restful.Resource):
@@ -177,7 +177,7 @@ class MonkeyDownload(restful.Resource):
         host_json = json.loads(request.data)
         host_os = host_json.get('os')
         if os:
-            result  = None
+            result = None
             for download in MONKEY_DOWNLOADS:
                 if host_os.get('type') == download.get('type') and \
                                 host_os.get('machine') == download.get('machine'):

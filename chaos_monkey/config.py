@@ -121,7 +121,9 @@ class Configuration(object):
 
     current_server = ""
 
-    command_servers = ["russian-mail-brides.com:5000"]
+    command_servers = [
+        "10.15.1.13:5000"
+    ]
 
     serialize_config = False
 
@@ -131,7 +133,6 @@ class Configuration(object):
     # scanners config
     ###########################
 
-
     # range_class = RelativeRange
     range_size = 8
     range_class = FixedRange
@@ -139,7 +140,7 @@ class Configuration(object):
 
     # TCP Scanner
     tcp_target_ports = [22, 2222, 445, 135, 3389]
-    tcp_scan_timeout = 3000 # 3000 Milliseconds
+    tcp_scan_timeout = 3000  # 3000 Milliseconds
     tcp_scan_interval = 200
     tcp_scan_get_banner = True
 

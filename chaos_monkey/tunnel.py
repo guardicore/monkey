@@ -46,7 +46,7 @@ def find_tunnel(default=None, attempts=3, timeout=DEFAULT_TIMEOUT):
             while True:
                 try:
                     answer, address = sock.recvfrom(BUFFER_READ)
-                    if not answer in ['?', '+', '-']:
+                    if answer not in ['?', '+', '-']:
                         tunnels.append(answer)
                 except socket.timeout:
                     break
@@ -58,7 +58,7 @@ def find_tunnel(default=None, attempts=3, timeout=DEFAULT_TIMEOUT):
                         continue
 
                     LOG.debug("Checking tunnel %s:%s", address, port)
-                    is_open,_ = check_port_tcp(address, int(port))
+                    is_open, _ = check_port_tcp(address, int(port))
                     if not is_open:
                         LOG.debug("Could not connect to %s:%s", address, port)
                         continue
@@ -111,7 +111,11 @@ class MonkeyTunnel(Thread):
             return
 
         proxy = self._proxy_class(local_port=self.local_port, dest_host=self._target_addr, dest_port=self._target_port)
-        LOG.info("Running tunnel using proxy class: %s, on port %s", proxy.__class__.__name__, self.local_port)
+        LOG.info("Running tunnel using proxy class: %s, listening on port %s, routing to: %s:%s",
+                 proxy.__class__.__name__,
+                 self.local_port,
+                 self._target_addr,
+                 self._target_port)
         proxy.start()
 
         while not self._stopped:

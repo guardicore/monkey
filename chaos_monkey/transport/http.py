@@ -112,10 +112,13 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # just provide a tunnel, transfer the data with no modification
         req = self
         reqbody = None
+        import pdb
+        pdb.set_trace()
         req.path = "https://%s/" % req.path.replace(':443', '')
 
         u = urlsplit(req.path)
         address = (u.hostname, u.port or 443)
+        uri = u
         try:
             conn = socket.create_connection(address)
         except socket.error:
@@ -141,9 +144,8 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         conn.close()
 
     def log_message(self, format, *args):
-        LOG.debug("HTTPConnectProxyHandler: %s - - [%s] %s" % (self.address_string(),
-                          self.log_date_time_string(),
-                          format % args))
+        LOG.debug("HTTPConnectProxyHandler: %s - [%s] %s" %
+                  (self.address_string(), self.log_date_time_string(), format % args))
 
 
 class InternalHTTPServer(BaseHTTPServer.HTTPServer):
@@ -171,6 +173,7 @@ class HTTPServer(threading.Thread):
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
             filename = self._filename
+
             @staticmethod
             def report_download():
                 self.downloads += 1
@@ -192,6 +195,5 @@ class HTTPConnectProxy(TransportProxyBase):
     def run(self):
         httpd = InternalHTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
         httpd.timeout = 10
-
         while not self._stopped:
             httpd.handle_request()

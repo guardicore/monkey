@@ -23,12 +23,15 @@ class ControlClient(object):
 
     @staticmethod
     def wakeup(parent=None, default_tunnel=None):
+        LOG.debug("Trying to wake up with C&C servers list: %r" % WormConfiguration.command_servers)
+        if parent or default_tunnel:
+            LOG.debug("parent: %s, default_tunnel: %s" % (parent, default_tunnel))
+        hostname = gethostname()
+        if not parent:
+            parent = GUID
+
         for server in WormConfiguration.command_servers:
             try:
-                hostname = gethostname()
-                if not parent:
-                    parent = GUID
-
                 WormConfiguration.current_server = server
 
                 monkey = {'guid': GUID,
@@ -40,7 +43,11 @@ class ControlClient(object):
 
                 if ControlClient.proxies:
                     monkey['tunnel'] = ControlClient.proxies.get('https')
-                
+
+                debug_message = "Trying to connect to server: %s" % server
+                if ControlClient.proxies:
+                    debug_message += " through proxies: %s" % ControlClient.proxies
+                LOG.debug(debug_message)
                 reply = requests.post("https://%s/api/monkey" % (server,),
                                       data=json.dumps(monkey),
                                       headers={'content-type': 'application/json'},
@@ -49,17 +56,18 @@ class ControlClient(object):
                 break
 
             except Exception, exc:
-                WormConfiguration.current_server = ''
+                WormConfiguration.current_server = ""
                 LOG.warn("Error connecting to control server %s: %s", server, exc)
 
         if not WormConfiguration.current_server:
             if not ControlClient.proxies:
                 LOG.info("Starting tunnel lookup...")
-                proxy_find =  tunnel.find_tunnel(default=default_tunnel)
+                proxy_find = tunnel.find_tunnel(default=default_tunnel)
                 if proxy_find:
-                    LOG.info("Found tunnel at %s:%s" % proxy_find)
-                    ControlClient.proxies['https'] = 'https://%s:%s' % proxy_find
-                    ControlClient.wakeup(parent)
+                    proxy_address, proxy_port = proxy_find
+                    LOG.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
+                    ControlClient.proxies['https'] = 'https://%s:%s' % (proxy_address, proxy_port)
+                    ControlClient.wakeup(parent=parent)
                 else:
                     LOG.info("No tunnel found")
 
@@ -170,6 +178,7 @@ class ControlClient(object):
                 return None
         else:
             proxy_class = HTTPConnectProxy
-            target_addr, target_port = None, None
+            target_addr, target_port = WormConfiguration.current_server.split(':', 1)
+            target_port = int(target_port)
 
         return tunnel.MonkeyTunnel(proxy_class, target_addr=target_addr, target_port=target_port)
