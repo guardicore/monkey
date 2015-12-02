@@ -40,21 +40,34 @@ How to run:
 
 ---------------- On Linux ----------------:
 1. Create the following directories:
-    mkdir -p /var/monkey_island/bin
+    mkdir -p /var/monkey_island/bin/mongodb
     mkdir -p /var/monkey_island/db
     mkdir -p /var/monkey_island/cc/binaries
-2. put monkey binaries in /var/monkey_island/cc/binaries
+
+2. Install the following packages:
+	python -m pip install flask
+	python -m pip install Flask-Pymongo
+	python -m pip install Flask-Restful
+	python -m pip install python-dateutil
+	
+3. put monkey binaries in /var/monkey_island/cc/binaries
     monkey-linux-64 - monkey binary for linux 64bit
 	monkey-linux-32 - monkey binary for linux 32bit
 	monkey-windows-32.exe - monkey binary for windows 32bit
 	monkey-windows-64.exe - monkey binary for windows 64bi
-3. Download MongoDB and extract it to /var/monkey_island/bin/mongodb
+
+4. Download MongoDB and extract it to /var/monkey_island/bin/mongodb
     for debian64 - https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian71-3.0.7.tgz
     for ubuntu64 14.10 - https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1410-clang-3.0.7.tgz
     find more at - https://www.mongodb.org/downloads#production
-4. install OpenSSL
+	untar.gz with: tar -zxvf filename.tar.gz -C /var/monkey_island/bin/mongodb
+	(make sure the content of the mongo folder is in this directory, meaning this path exists:
+		/var/monkey_island/bin/mongodb/bin)
+
+5. install OpenSSL
     apt-get install openssl
-5. Generate SSL Certificate, Run create_certificate.sh
+
+6. Generate SSL Certificate, Run create_certificate.sh
 
 How to run:
 1. run run.sh
