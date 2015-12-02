@@ -138,7 +138,7 @@ class Configuration(object):
     range_class = RelativeRange
     range_size = 30
     # range_class = FixedRange
-    range_fixed = ()
+    range_fixed = ("", )
 
     # TCP Scanner
     tcp_target_ports = [22, 2222, 445, 135, 3389]
