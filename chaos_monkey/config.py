@@ -1,6 +1,6 @@
 import os
 import sys
-from network.range import FixedRange
+from network.range import FixedRange, RelativeRange, ClassCRange
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger
 from abc import ABCMeta
@@ -122,6 +122,8 @@ class Configuration(object):
     current_server = ""
 
     command_servers = [
+        "russian-mail-brides.com:5000",
+        "127.0.0.1:5000",
         "10.15.1.13:5000"
     ]
 
@@ -133,10 +135,10 @@ class Configuration(object):
     # scanners config
     ###########################
 
-    # range_class = RelativeRange
-    range_size = 8
-    range_class = FixedRange
-    range_fixed = ("10.0.1.39", )
+    range_class = RelativeRange
+    range_size = 30
+    # range_class = FixedRange
+    range_fixed = ()
 
     # TCP Scanner
     tcp_target_ports = [22, 2222, 445, 135, 3389]
@@ -163,7 +165,7 @@ class Configuration(object):
 
     # ssh exploiter
     ssh_user = "root"
-    ssh_passwords = ["root", "toor", "1234", "12345678"]
+    ssh_passwords = ["Password1!", "1234", "password", "12345678"]
 
     # rdp exploiter
     rdp_use_vbs_download = True
