@@ -1,5 +1,6 @@
-How to setup C&C server:
-On Windows:
+How to set C&C server:
+
+---------------- On Windows ----------------:
 1. Install python 2.7
 	https://www.python.org/download/releases/2.7
 2. Download & Run get-pip.py
@@ -18,7 +19,7 @@ On Windows:
 	monkey-linux-32 - monkey binary for linux 32bit
 	monkey-windows-32.exe - monkey binary for windows 32bit
 	monkey-windows-64.exe - monkey binary for windows 64bit
-4. Download MongoDb & Extract to C:\MonkeyIsland\bin\mongodb
+4. Download MongoDB & Extract to C:\MonkeyIsland\bin\mongodb
 	http://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip
 5. Install OpenSSL
 	https://slproweb.com/download/Win64OpenSSL_Light-1_0_2d.exe
@@ -36,3 +37,25 @@ How to run:
 1. start run_mongodb.bat
 2. start run_cc.bat
 3. to clear db, run clear_db.bat
+
+---------------- On Linux ----------------:
+1. Create the following directories:
+    mkdir -p /var/monkey_island/bin
+    mkdir -p /var/monkey_island/db
+    mkdir -p /var/monkey_island/cc/binaries
+2. put monkey binaries in /var/monkey_island/cc/binaries
+    monkey-linux-64 - monkey binary for linux 64bit
+	monkey-linux-32 - monkey binary for linux 32bit
+	monkey-windows-32.exe - monkey binary for windows 32bit
+	monkey-windows-64.exe - monkey binary for windows 64bi
+3. Download MongoDB and extract it to /var/monkey_island/bin/mongodb
+    for debian64 - https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian71-3.0.7.tgz
+    for ubuntu64 14.10 - https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1410-clang-3.0.7.tgz
+    find more at - https://www.mongodb.org/downloads#production
+4. install OpenSSL
+    apt-get install openssl
+5. Generate SSL Certificate, Run create_certificate.sh
+
+How to run:
+1. run run.sh
+2. to clear db, run clear.db.sh

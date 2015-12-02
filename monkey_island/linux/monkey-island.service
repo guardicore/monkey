@@ -1,0 +1,9 @@
+[Unit]
+Description=Monkey Island Service
+
+[Service]
+WorkingDirectory=/var/monkey_island/cc
+ExecStart=/usr/bin/python main.py
+
+[Install]
+WantedBy=multi-user.target
