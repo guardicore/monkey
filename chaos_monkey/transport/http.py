@@ -112,13 +112,10 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # just provide a tunnel, transfer the data with no modification
         req = self
         reqbody = None
-        import pdb
-        pdb.set_trace()
         req.path = "https://%s/" % req.path.replace(':443', '')
 
         u = urlsplit(req.path)
         address = (u.hostname, u.port or 443)
-        uri = u
         try:
             conn = socket.create_connection(address)
         except socket.error:

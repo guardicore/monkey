@@ -9,6 +9,7 @@ class VictimHost(object):
         self.services = {}
         self.monkey_exe = None
         self.default_tunnel = None
+        self.default_server = None
 
     def as_dict(self):
         return self.__dict__
@@ -36,3 +37,6 @@ class VictimHost(object):
 
     def get_credentials(self, username):
         return self.cred.get(username.lower(), None)
+
+    def set_default_server(self, default_server):
+        self.default_server = default_server
