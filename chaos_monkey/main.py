@@ -52,7 +52,6 @@ def main():
     opts, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
     if opts.config:
         config_file = opts.config
-    print "Config file is: %s" % config_file
     if os.path.isfile(config_file):
         # using print because config can also change log locations
         print "Loading config from %s." % config_file
@@ -63,6 +62,8 @@ def main():
                 print "Configuration loaded: %r" % WormConfiguration.as_dict()
         except ValueError as e:
             print "Error loading config, using default: %s" % e
+    else:
+        LOG.warning("Config file: %s wasn't found, using default" % config_file)
 
     try:
         if MONKEY_ARG == monkey_mode:
