@@ -178,7 +178,6 @@ class ControlClient(object):
                 return None
         else:
             proxy_class = HTTPConnectProxy
-            target_addr, target_port = WormConfiguration.current_server.split(':', 1)
-            target_port = int(target_port)
+            target_addr, target_port = None, None
 
         return tunnel.MonkeyTunnel(proxy_class, target_addr=target_addr, target_port=target_port)
