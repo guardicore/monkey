@@ -31,6 +31,7 @@ class ChaosMonkey(object):
         self._dropper_path = None
         self._exploiters = None
         self._fingerprint = None
+        self._default_server = None
 
     def initialize(self):
         LOG.info("Monkey is initializing...")
@@ -41,24 +42,35 @@ class ChaosMonkey(object):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument('-p', '--parent')
         arg_parser.add_argument('-t', '--tunnel')
+        arg_parser.add_argument('-s', '--server')
         opts, self._args = arg_parser.parse_known_args(self._args)
         
         self._parent = opts.parent
         self._default_tunnel = opts.tunnel
+        self._default_server = opts.server
         self._keep_running = True
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
+
+        if self._default_server:
+            if self._default_server not in WormConfiguration.command_servers:
+                LOG.debug("Added default server: %s" % self._default_server)
+                WormConfiguration.command_servers.insert(0, self._default_server)
+            else:
+                LOG.debug("Default server: %s is already in command servers list" % self._default_server)
 
     def start(self):
         LOG.info("Monkey is running...")
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
-
         ControlClient.wakeup(parent=self._parent, default_tunnel=self._default_tunnel)
         monkey_tunnel = ControlClient.create_control_tunnel()
         if monkey_tunnel:
             monkey_tunnel.start()
+
+        self._default_server = WormConfiguration.current_server
+        LOG.debug("default server: %s" % self._default_server)
 
         if WormConfiguration.collect_system_info:
             LOG.debug("Calling system info collection")
@@ -107,6 +119,9 @@ class ChaosMonkey(object):
 
                 if monkey_tunnel:
                     monkey_tunnel.set_tunnel_for_host(machine)
+                if self._default_server:
+                    LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
+                    machine.set_default_server(self._default_server)
 
                 for exploiter in self._exploiters:
                     if not exploiter.is_os_supported(machine):
