@@ -32,6 +32,7 @@ class ChaosMonkey(object):
         self._exploiters = None
         self._fingerprint = None
         self._default_server = None
+        self._depth = 0
 
     def initialize(self):
         LOG.info("Monkey is initializing...")
@@ -43,11 +44,15 @@ class ChaosMonkey(object):
         arg_parser.add_argument('-p', '--parent')
         arg_parser.add_argument('-t', '--tunnel')
         arg_parser.add_argument('-s', '--server')
+        arg_parser.add_argument('-d', '--depth')
         opts, self._args = arg_parser.parse_known_args(self._args)
         
         self._parent = opts.parent
         self._default_tunnel = opts.tunnel
         self._default_server = opts.server
+        if opts.depth:
+            WormConfiguration.depth = opts.depth
+            LOG.debug("Selected depth is: %d" % WormConfiguration.depth)
         self._keep_running = True
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
@@ -77,6 +82,9 @@ class ChaosMonkey(object):
             system_info_collector = SystemInfoCollector()
             system_info = system_info_collector.get_info()
             ControlClient.send_telemetry("system_info_collection", system_info)
+
+        if 0 == WormConfiguration.depth:
+            return
 
         for _ in xrange(WormConfiguration.max_iterations):
             ControlClient.keepalive()
@@ -132,7 +140,7 @@ class ChaosMonkey(object):
                     LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
 
                     try:
-                        if exploiter.exploit_host(machine):
+                        if exploiter.exploit_host(machine, WormConfiguration.depth):
                             successful_exploiter = exploiter
                             break
                         else:

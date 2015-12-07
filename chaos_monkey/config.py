@@ -119,6 +119,8 @@ class Configuration(object):
     # how many victims to exploit before stopping
     victims_max_exploit = 7
 
+    # depth of propagation
+    depth = -1
     current_server = ""
 
     command_servers = [
