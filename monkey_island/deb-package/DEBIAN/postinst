@@ -1,9 +1,16 @@
 #!/bin/bash
 
+MONKEY_FOLDER=/var/monkey_island
 INSTALLATION_FOLDER=/var/monkey_island/installation
 
 # install pip requirements
-pip install -r /var/monkey_island/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
+pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
 
-# remove installation folder
+# remove installation folder and unnecessary files
 rm -rf $INSTALLATION_FOLDER
+rm -f $MONKEY_FOLDER/pip_requirements.txt
+
+mv $MONKEY_FOLDER/ubuntu/* /etc/init/
+
+service monkey-island start
+service monkey-mongo start
