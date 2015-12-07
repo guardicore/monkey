@@ -1,0 +1,15 @@
+#!/bin/bash
+
+INSTALLATION_FOLDER=/var/monkey_island/installation
+
+# install pip requirements
+if [ -r $INSTALLATION_FOLDER/PACKAGE/pip_requirements.txt ]; then
+    sed -i 's^git.*/\(.*\).git^\1^' $INSTALLATION_FOLDER/PACKAGE/pip_requirements.txt # Use only basename for remote git pips
+    pip install -r $INSTALLATION_FOLDER/PACKAGE/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER/installation/PACKAGE
+fi
+
+# remove installation folder
+if [ -r $INSTALLATION_FOLDER ]; then
+    rm -rf $INSTALLATION_FOLDER/PACKAGE
+    rmdir --ignore-fail-on-non-empty $INSTALLATION_FOLDER
+fi
