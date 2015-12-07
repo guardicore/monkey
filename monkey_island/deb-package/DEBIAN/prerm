@@ -1,0 +1,7 @@
+#!/bin/sh
+
+service monkey-island stop || true
+service monkey-mongo stop || true
+
+rm -f /etc/init/monkey-island.conf
+rm -f /etc/init/monkey-mongo.conf
