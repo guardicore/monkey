@@ -3,5 +3,5 @@ Architecture: amd64
 Maintainer: Uri Hershcovits <uri@guardicore.com>
 Homepage: http://www.guardicore.com
 Priority: optional
-Version: 
+Version: VERSION
 Description: Guardicore Chaos Monkey C&C installation package
