@@ -12,5 +12,7 @@ rm -f $MONKEY_FOLDER/pip_requirements.txt
 
 mv $MONKEY_FOLDER/ubuntu/* /etc/init/
 
+./create_certificate.sh
+
 service monkey-island start
 service monkey-mongo start
