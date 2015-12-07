@@ -1,0 +1,8 @@
+Package: gc-monkey-island
+Architecture: amd64
+Maintainer: Uri Hershcovits <uri@guardicore.com>
+Homepage: http://www.guardicore.com
+Depends: mongodb-org
+Priority: optional
+Version: 1
+Description: Guardicore Chaos Monkey C&C installation package
