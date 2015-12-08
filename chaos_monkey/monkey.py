@@ -51,7 +51,7 @@ class ChaosMonkey(object):
         self._default_tunnel = opts.tunnel
         self._default_server = opts.server
         if opts.depth:
-            WormConfiguration.depth = opts.depth
+            WormConfiguration.depth = int(opts.depth)
             LOG.debug("Selected depth is: %d" % WormConfiguration.depth)
         self._keep_running = True
         self._network = NetworkScanner()
