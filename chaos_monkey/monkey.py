@@ -52,7 +52,6 @@ class ChaosMonkey(object):
         self._default_server = opts.server
         if opts.depth:
             WormConfiguration.depth = int(opts.depth)
-            LOG.debug("Selected depth is: %d" % WormConfiguration.depth)
         self._keep_running = True
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
@@ -84,7 +83,10 @@ class ChaosMonkey(object):
             ControlClient.send_telemetry("system_info_collection", system_info)
 
         if 0 == WormConfiguration.depth:
+            LOG.debug("Reached max depth, shutting down")
             return
+        else:
+            LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
         for _ in xrange(WormConfiguration.max_iterations):
             ControlClient.keepalive()

@@ -59,11 +59,12 @@ def main():
             with open(config_file) as config_fo:
                 json_dict = json.load(config_fo)
                 WormConfiguration.from_dict(json_dict)
-                print "Configuration loaded: %r" % WormConfiguration.as_dict()
         except ValueError as e:
             print "Error loading config, using default: %s" % e
     else:
-        LOG.warning("Config file: %s wasn't found, using default" % config_file)
+        print("Config file: %s wasn't found, using default" % config_file)
+
+    print "Loaded Configuration: %r" % WormConfiguration.as_dict()
 
     try:
         if MONKEY_ARG == monkey_mode:
