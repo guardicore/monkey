@@ -1,19 +1,18 @@
-import socket
+from . import InfoCollector
+
 __author__ = 'uri'
 
 
-class LinuxInfoCollector(object):
+class LinuxInfoCollector(InfoCollector):
     """
     System information collecting module for Linux operating systems
     """
 
     def __init__(self):
-        self.info = {}
-
-    def collect(self):
-        self.info['hostname'] = socket.gethostname()
+        super(LinuxInfoCollector, self).__init__()
 
     def get_info(self):
-        self.collect()
+        self.get_hostname()
+        self.get_process_list()
         return self.info
 

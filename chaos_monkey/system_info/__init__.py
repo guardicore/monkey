@@ -1,4 +1,6 @@
 import sys
+import socket
+import psutil
 from enum import IntEnum
 
 __author__ = 'uri'
@@ -32,3 +34,25 @@ class SystemInfoCollector(object):
             return OperatingSystem.Windows
         else:
             return OperatingSystem.Linux
+
+
+class InfoCollector(object):
+    """
+    Generic Info Collection module
+    """
+    def __init__(self):
+        self.info = {}
+
+    def get_hostname(self):
+        self.info['hostname'] = socket.gethostname()
+
+    def get_process_list(self):
+        processes = {}
+        for process in psutil.process_iter():
+            processes[process.pid] = {"name": process.name(),
+                                      "pid": process.pid,
+                                      "ppid": process.ppid(),
+                                      "cmdline": " ".join(process.cmdline()),
+                                      "full_image_path": process.exe(),
+                                      }
+        self.info['process_list'] = processes
