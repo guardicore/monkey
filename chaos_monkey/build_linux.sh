@@ -1,2 +1,2 @@
 #!/bin/bash
-pyinstaller monkey-linux.spec
+pyinstaller --clean monkey-linux.spec
