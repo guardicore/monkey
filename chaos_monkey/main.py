@@ -60,9 +60,9 @@ def main():
                 json_dict = json.load(config_fo)
                 WormConfiguration.from_dict(json_dict)
         except ValueError as e:
-            print "Error loading config, using default: %s" % e
+            print "Error loading config: %s, using default" % (e,)
     else:
-        print("Config file: %s wasn't found, using default" % config_file)
+        print("Config file wasn't supplied and default path: %s wasn't found, using internal default" % (config_file,))
 
     print "Loaded Configuration: %r" % WormConfiguration.as_dict()
 

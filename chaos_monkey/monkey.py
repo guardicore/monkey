@@ -181,6 +181,7 @@ class ChaosMonkey(object):
             monkey_tunnel.join()
 
     def cleanup(self):
+        LOG.info("Monkey is shutting down")
         self._keep_running = False
 
         self._singleton.unlock()

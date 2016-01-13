@@ -52,7 +52,9 @@ class RelativeRange(NetworkRange):
                                          socket.inet_ntoa(struct.pack(">L", self._base_address + self._size)))
 
     def _get_range(self):
-        return range(-self._size, self._size + 1)
+        lower_end = -(self._size / 2)
+        higher_end = lower_end + self._size
+        return range(lower_end, higher_end + 1)
 
 
 class FixedRange(NetworkRange):

@@ -104,12 +104,12 @@ class Configuration(object):
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
     # how long to wait between scan iterations
-    timeout_between_iterations = 300
+    timeout_between_iterations = 10
 
     # how many scan iterations to perform on each run
-    max_iterations = 3
+    max_iterations = 1
 
-    scanner_class = TcpScanner
+    scanner_class = PingScanner
     finger_classes = (SMBFinger, SSHFinger, PingScanner)
     exploiter_classes = (SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, SSHExploiter)
 
@@ -136,10 +136,10 @@ class Configuration(object):
     # scanners config
     ###########################
 
-    range_class = RelativeRange
-    range_size = 30
+    range_class = ClassCRange
+    # range_size = 1
     # range_class = FixedRange
-    range_fixed = ("", )
+    # range_fixed = ("", )
 
     # TCP Scanner
     tcp_target_ports = [22, 2222, 445, 135, 3389]
