@@ -169,7 +169,8 @@ class ChaosMonkey(object):
                 else:
                     self._fail_exploitation_machines.add(machine)
 
-            time.sleep(WormConfiguration.timeout_between_iterations)
+            if machines:
+                time.sleep(WormConfiguration.timeout_between_iterations)
 
         if self._keep_running and WormConfiguration.alive:
             LOG.info("Reached max iterations (%d)", WormConfiguration.max_iterations)
@@ -181,7 +182,7 @@ class ChaosMonkey(object):
             monkey_tunnel.join()
 
     def cleanup(self):
-        LOG.info("Monkey is shutting down")
+        LOG.info("Monkey cleanup started")
         self._keep_running = False
 
         self._singleton.unlock()
@@ -207,3 +208,5 @@ class ChaosMonkey(object):
                     os.remove(sys.executable)
             except Exception, exc:
                 LOG.error("Exception in self delete: %s", exc)
+
+        LOG.info("Monkey is shutting down")
