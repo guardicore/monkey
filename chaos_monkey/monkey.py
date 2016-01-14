@@ -103,8 +103,9 @@ class ChaosMonkey(object):
 
             machines = self._network.get_victim_machines(WormConfiguration.scanner_class,
                                                          max_find=WormConfiguration.victims_max_find)
-
+            is_empty = True
             for machine in machines:
+                is_empty = False
                 for finger in self._fingerprint:
                     LOG.info("Trying to get OS fingerprint from %r with module %s", 
                              machine, finger.__class__.__name__)
@@ -169,7 +170,7 @@ class ChaosMonkey(object):
                 else:
                     self._fail_exploitation_machines.add(machine)
 
-            if machines:
+            if not is_empty:
                 time.sleep(WormConfiguration.timeout_between_iterations)
 
         if self._keep_running and WormConfiguration.alive:

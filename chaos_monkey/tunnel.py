@@ -17,7 +17,7 @@ MCAST_GROUP = '224.1.1.1'
 MCAST_PORT = 5007
 BUFFER_READ = 1024
 DEFAULT_TIMEOUT = 10
-QUIT_TIMEOUT = 1200  # 20 minutes
+QUIT_TIMEOUT = 60 * 10  # 10 minutes
 
 
 def _set_multicast_socket(timeout=DEFAULT_TIMEOUT):
