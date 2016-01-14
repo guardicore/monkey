@@ -15,6 +15,9 @@ EXTERNAL_CONFIG_FILE = os.path.join(os.path.dirname(sys.argv[0]), 'monkey.bin')
 
 
 def _cast_by_example(value, example):
+    """
+    a method that casts a value to the type of the parameter given as example
+    """
     example_type = type(example)
     if example_type is str:
         return str(os.path.expandvars(value))
@@ -42,12 +45,13 @@ class Configuration(object):
         for key, value in data.items():
             if key.startswith('_'):
                 continue
-
+            if key in ["name", "id"]:
+                continue
             try:
                 default_value = getattr(Configuration, key)
             except AttributeError:
                 raise
-            
+
             setattr(self, key, _cast_by_example(value, default_value))
 
     def as_dict(self):
@@ -99,17 +103,17 @@ class Configuration(object):
 
     alive = True
 
-    self_delete_in_cleanup = False
+    self_delete_in_cleanup = True
 
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
     # how long to wait between scan iterations
-    timeout_between_iterations = 10
+    timeout_between_iterations = 100
 
     # how many scan iterations to perform on each run
     max_iterations = 1
 
-    scanner_class = PingScanner
+    scanner_class = TcpScanner
     finger_classes = (SMBFinger, SSHFinger, PingScanner)
     exploiter_classes = (SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, SSHExploiter)
 
@@ -120,7 +124,7 @@ class Configuration(object):
     victims_max_exploit = 7
 
     # depth of propagation
-    depth = -1
+    depth = 2
     current_server = ""
 
     command_servers = [
@@ -136,10 +140,9 @@ class Configuration(object):
     # scanners config
     ###########################
 
-    range_class = ClassCRange
-    # range_size = 1
-    # range_class = FixedRange
-    # range_fixed = ("", )
+    range_class = FixedRange
+    range_size = 1
+    range_fixed = ("", )
 
     # TCP Scanner
     tcp_target_ports = [22, 2222, 445, 135, 3389]

@@ -120,9 +120,12 @@ class ControlClient(object):
 
         try:
             WormConfiguration.from_dict(reply.json().get('config'))
+            LOG.info("New configuration was loaded from server: %r" % (WormConfiguration.as_dict(),))
         except Exception, exc:
-            LOG.warn("Error parsing JSON reply from control server %s (%s): %s",
-                     WormConfiguration.current_server, reply._content, exc)
+            # we don't continue with default conf here because it might be dangerous
+            LOG.error("Error parsing JSON reply from control server %s (%s): %s",
+                      WormConfiguration.current_server, reply._content, exc)
+            raise Exception("Couldn't load from from server's configuration, aborting. %s" % exc)
 
     @staticmethod
     def download_monkey_exe(host):
