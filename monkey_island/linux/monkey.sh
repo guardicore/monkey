@@ -10,5 +10,5 @@ else
 fi
 
 MONKEY_FILE=monkey-linux-$ARCH
-cp -f /var/monkey-island/cc/binaries/$MONKEY_FILE /tmp
+cp -f /var/monkey_island/cc/binaries/$MONKEY_FILE /tmp
 /tmp/$MONKEY_FILE m0nk3y
