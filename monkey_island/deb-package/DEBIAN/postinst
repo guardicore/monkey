@@ -3,7 +3,7 @@
 MONKEY_FOLDER=/var/monkey_island
 INSTALLATION_FOLDER=/var/monkey_island/installation
 
-cp -f ${MONKEY_FOLDER}/linux/monkey.sh /usr/bin/monkey
+cp -f ${MONKEY_FOLDER}/monkey.sh /usr/bin/monkey
 chmod 755 /usr/bin/monkey
 
 # install pip requirements
