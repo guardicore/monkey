@@ -8,4 +8,5 @@
 ###############################################################################
 #!/bin/bash
 
+mkdir -p $TEMP/usr/bin/monkey
 cp -f ./monkey_island/linux/monkey.sh $TEMP/usr/bin/monkey
