@@ -8,4 +8,4 @@
 ###############################################################################
 #!/bin/bash
 
-copy_file ./monkey_island/linux/monkey.sh $TEMP/usr/bin/monkey
+cp -f ./monkey_island/linux/monkey.sh $TEMP/usr/bin/monkey
