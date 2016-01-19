@@ -3,16 +3,18 @@
 MONKEY_FOLDER=/var/monkey_island
 INSTALLATION_FOLDER=/var/monkey_island/installation
 
+chmod 755 /usr/bin/monkey
+
 # install pip requirements
 pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
 
 # remove installation folder and unnecessary files
-rm -rf $INSTALLATION_FOLDER
-rm -f $MONKEY_FOLDER/pip_requirements.txt
+rm -rf ${INSTALLATION_FOLDER}
+rm -f ${MONKEY_FOLDER}/pip_requirements.txt
 
-mv $MONKEY_FOLDER/ubuntu/* /etc/init/
+mv ${MONKEY_FOLDER}/ubuntu/* /etc/init/
 
-/var/monkey_island/create_certificate.sh
+${MONKEY_FOLDER}/create_certificate.sh
 
 service monkey-island start
 service monkey-mongo start
