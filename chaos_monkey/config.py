@@ -128,7 +128,6 @@ class Configuration(object):
     current_server = ""
 
     command_servers = [
-        "russian-mail-brides.com:5000",
         "127.0.0.1:5000"
     ]
 
