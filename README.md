@@ -135,5 +135,6 @@ Building the Monkey from source
 
 License
 =======
+Copyright (c) [2016] [Guardicore Ltd]
 
-
+See the [COPYING](COPYING) file for license rights and limitations (GPLv3).
