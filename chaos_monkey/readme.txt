@@ -52,39 +52,3 @@ Linux (Tested on Ubuntu 12.04):
 	chmod +x build_linux.sh
 	./build_linux.sh
    output is in dist/monkey
-
-How to connect build environment to c&c:
-- will auto compile the source code stored in the c&c and update the c&c binaries accordingly
-Linux (Tested on Ubuntu 12.04):
-	1. Setup c&c according to readme in monkey_island folder
-	2. Install cifs:
-		sudo apt-get install cifs-utils
-	3. Run:
-		mkdir /home/user/Code	
-		sudo mkdir /mnt/sources
-		sudo mkdir /mnt/binaries
-	4. Save username and password for c&c smb:
-		echo username=<username> > /home/user/.smbcreds
-		echo password=<password> >> /home/user/.smbcreds
-		(Change <username> and <password> according to c&c)
-	5. Edit fstab:
-		run: sudo nano /etc/fstab
-		add rows:
-			//monkeycc/sources /mnt/sources cifs iocharset=utf-8,credentials=/home/user/.smbcreds,uid=1000 0 0
-			//monkeycc/binaries /mnt/binaries cifs iocharset=utf-8,credentials=/home/user/.smbcreds,uid=1000 0 0
-	6. Remount:
-		sudo mount -a
-	7. Check if sources exist in /mnt/sources
-		If not, edit hosts file - add a line in /etc/hosts with c&c ip and hostname and remount.
-	8. put build_from_cc.sh in /home/user and run with name of output binary (as appeared on c&c) as parameter,
-		for example: build_from_cc.sh monkey-linux-32
-		use Ctrl+C to manualy check compilation and Ctrl+\ to exit script.
-
-Windows:
-	1. Setup c&c according to readme in monkey_island folder
-	2. Setup net use to c&c server:
-		net use Z:\ \\monkeycc\sources /persistent:yes
-		net use X:\ \\monkeycc\binaries /persistent:yes
-	3. mkdir C:\Code
-	4. Extract build_from_cc.bat to c:\code and run with name of output binary (as appeared on c&c) as parameter,
-		for example: build_from_cc.bat monkey-windows-64.exe
