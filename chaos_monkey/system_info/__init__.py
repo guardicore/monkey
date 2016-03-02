@@ -49,10 +49,22 @@ class InfoCollector(object):
     def get_process_list(self):
         processes = {}
         for process in psutil.process_iter():
-            processes[process.pid] = {"name": process.name(),
+            try:
+                processes[process.pid] = {"name": process.name(),
                                       "pid": process.pid,
                                       "ppid": process.ppid(),
                                       "cmdline": " ".join(process.cmdline()),
                                       "full_image_path": process.exe(),
                                       }
+            except psutil.AccessDenied:
+                #we may be running as non root
+                #and some processes are impossible to acquire in Windows/Linux
+                #in this case we'll just add what we can
+                processes[process.pid] = {"name": "null",
+                                      "pid": process.pid,
+                                      "ppid": process.ppid(),
+                                      "cmdline": "ACCESS DENIED",
+                                      "full_image_path": "null",
+                                      }
+                pass
         self.info['process_list'] = processes
