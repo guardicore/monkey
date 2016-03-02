@@ -68,10 +68,10 @@ def main():
 
     try:
         if MONKEY_ARG == monkey_mode:
-            log_path = WormConfiguration.monkey_log_path
+            log_path = os.path.expandvars(WormConfiguration.monkey_log_path_windows) if sys.platform == "win32" else WormConfiguration.monkey_log_path_linux
             monkey_cls = ChaosMonkey
         elif DROPPER_ARG == monkey_mode:
-            log_path = WormConfiguration.dropper_log_path
+            log_path = os.path.expandvars(WormConfiguration.dropper_log_path_windows) if sys.platform == "win32" else WormConfiguration.dropper_log_path_linux
             monkey_cls = MonkeyDrops
         else:
             return True

@@ -84,8 +84,10 @@ class Configuration(object):
     ###########################
 
     use_file_logging = True
-    dropper_log_path = os.path.expandvars("%temp%\~df1562.tmp") if sys.platform == "win32" else '/tmp/user-1562'
-    monkey_log_path = os.path.expandvars("%temp%\~df1563.tmp") if sys.platform == "win32" else '/tmp/user-1563'
+    dropper_log_path_windows = os.path.expandvars("%temp%\~df1562.tmp")
+    dropper_log_path_linux = '/tmp/user-1562'
+    monkey_log_path_windows = os.path.expandvars("%temp%\~df1563.tmp")
+    monkey_log_path_linux = '/tmp/user-1563'
 
     ###########################
     # dropper config
