@@ -2,7 +2,7 @@
 import platform
 a = Analysis(['main.py'],
              pathex=['.'],
-             hiddenimports=[],
+             hiddenimports=['_cffi_backend'],
              hookspath=None,
              runtime_hooks=None)
 
