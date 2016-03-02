@@ -130,11 +130,11 @@ ssh_passwords | list of strings | list of passwords to use when trying to exploi
 
 Building the Monkey from source
 -------------------------------
-<how to build the monkey>
+If you want to build the monkey from source and not use our provided packages, look at the readme files under [chaos_monkey](chaos_monkey) and [monkey_island](monkey_island). 
 
 
 License
 =======
-Copyright (c) [2016] [Guardicore Ltd]
+Copyright (c) 2016 Guardicore Ltd
 
 See the [LICENSE](LICENSE) file for license rights and limitations (GPLv3).
