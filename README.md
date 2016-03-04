@@ -45,6 +45,8 @@ Both configuration options use a JSON format for specifying options; see "Option
 
 ### Running the C&C Server
 
+Running the C&C Server is as simple as installing our infected monkey debian package on a specific server. The initial infected machine doesn not require a direct link to this server. 
+
 ### Unleashing the Monkey
 
 Download the latest Monkey binary from <> (alternatively, build it by yourself by following the instructions below).
