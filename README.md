@@ -27,8 +27,9 @@ The monkey is the tool which infects other machines and propagates to them, whil
 
 ### Requirements
 
-<Supported OS Versions for monkey>
-<Supported OS Versions for C&C Server>
+
+The C&C Server has been tested on Ubuntu 14.04. 
+The Monkey itself has been tested on Windows XP, 7, 8.1 and 10. The Linux build has been tested on Ubuntu server 14.04 and 15.10.
 
 ### Installation
 
