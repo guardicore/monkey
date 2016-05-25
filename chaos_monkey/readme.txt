@@ -24,14 +24,14 @@ Windows:
 	python -m pip install psutil	
 	python -m pip install PyInstaller
 	type > C:\Python27\Lib\site-packages\zope\__init__.py
-7. Download and extract UPX binary to C:\Code\monkey\chaos_monkey\bin\upx.exe:
+7. Download and extract UPX binary to [source-path]\monkey\chaos_monkey\bin\upx.exe:
 	http://upx.sourceforge.net/download/upx391w.zip
 8. Run [source-path]\monkey\chaos_monkey\build_windows.bat to build, output is in dist\monkey.exe
 
 Linux (Tested on Ubuntu 12.04):
 1. Run:
 	sudo apt-get update
-	apt-get install python-pip python-dev libffi-dev upx
+	sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev
 	sudo pip install enum34
 	sudo pip install impacket
 	sudo pip install PyCrypto --upgrade

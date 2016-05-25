@@ -40,15 +40,17 @@ How to run:
 
 ---------------- On Linux ----------------:
 1. Create the following directories:
+    sudo mkdir /var/monkey_island
+    sudo chmod 777 /var/monkey_island
     mkdir -p /var/monkey_island/bin/mongodb
     mkdir -p /var/monkey_island/db
     mkdir -p /var/monkey_island/cc/binaries
 
 2. Install the following packages:
-	python -m pip install flask
-	python -m pip install Flask-Pymongo
-	python -m pip install Flask-Restful
-	python -m pip install python-dateutil
+	sudo pip install flask
+	sudo pip install Flask-Pymongo
+	sudo pip install Flask-Restful
+	sudo pip install python-dateutil
 	
 3. put monkey binaries in /var/monkey_island/cc/binaries
     monkey-linux-64 - monkey binary for linux 64bit
@@ -65,9 +67,12 @@ How to run:
 		/var/monkey_island/bin/mongodb/bin)
 
 5. install OpenSSL
-    apt-get install openssl
+    sudo apt-get install openssl
 
 6. Generate SSL Certificate, Run create_certificate.sh
+
+7. Copy monkey island server to /var/monkey_island:
+    cp -r [monkey_island_source]/cc /var/monkey_island/
 
 How to run:
 1. run run.sh
