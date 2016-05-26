@@ -20,11 +20,11 @@ DEFAULT_TIMEOUT = 10
 QUIT_TIMEOUT = 60 * 10  # 10 minutes
 
 
-def _set_multicast_socket(timeout=DEFAULT_TIMEOUT):
+def _set_multicast_socket(timeout=DEFAULT_TIMEOUT, adapter=''):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     sock.settimeout(timeout)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(('', MCAST_PORT))
+    sock.bind((adapter, MCAST_PORT))
     sock.setsockopt(socket.IPPROTO_IP,
                     socket.IP_ADD_MEMBERSHIP,
                     struct.pack("4sl", socket.inet_aton(MCAST_GROUP), socket.INADDR_ANY))
@@ -32,43 +32,44 @@ def _set_multicast_socket(timeout=DEFAULT_TIMEOUT):
 
 
 def find_tunnel(default=None, attempts=3, timeout=DEFAULT_TIMEOUT):
-    sock = _set_multicast_socket(timeout)
-
     l_ips = local_ips()
 
-    for attempt in range(0, attempts):
-        try:
-            sock.sendto("?", (MCAST_GROUP, MCAST_PORT))
-            tunnels = []
-            if default:
-                tunnels.append(default)
-            
-            while True:
-                try:
-                    answer, address = sock.recvfrom(BUFFER_READ)
-                    if answer not in ['?', '+', '-']:
-                        tunnels.append(answer)
-                except socket.timeout:
-                    break
+    for adapter in l_ips:
+        for attempt in range(0, attempts):
+            try:
+                LOG.info("Trying to find using adapter %s", adapter)
+                sock = _set_multicast_socket(timeout, adapter)
+                sock.sendto("?", (MCAST_GROUP, MCAST_PORT))
+                tunnels = []
+                if default:
+                    tunnels.append(default)
 
-            for tunnel in tunnels:
-                if tunnel.find(':') != -1:
-                    address, port = tunnel.split(':', 1)
-                    if address in l_ips:
-                        continue
+                while True:
+                    try:
+                        answer, address = sock.recvfrom(BUFFER_READ)
+                        if answer not in ['?', '+', '-']:
+                            tunnels.append(answer)
+                    except socket.timeout:
+                        break
 
-                    LOG.debug("Checking tunnel %s:%s", address, port)
-                    is_open, _ = check_port_tcp(address, int(port))
-                    if not is_open:
-                        LOG.debug("Could not connect to %s:%s", address, port)
-                        continue
+                for tunnel in tunnels:
+                    if tunnel.find(':') != -1:
+                        address, port = tunnel.split(':', 1)
+                        if address in l_ips:
+                            continue
 
-                    sock.sendto("+", (address, MCAST_PORT))
-                    sock.close()
-                    return address, port
-        except Exception, exc:
-            LOG.debug("Caught exception in tunnel lookup: %s", exc)
-            continue
+                        LOG.debug("Checking tunnel %s:%s", address, port)
+                        is_open, _ = check_port_tcp(address, int(port))
+                        if not is_open:
+                            LOG.debug("Could not connect to %s:%s", address, port)
+                            continue
+
+                        sock.sendto("+", (address, MCAST_PORT))
+                        sock.close()
+                        return address, port
+            except Exception, exc:
+                LOG.debug("Caught exception in tunnel lookup: %s", exc)
+                continue
 
     return None
 
