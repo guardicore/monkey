@@ -67,5 +67,9 @@ class FixedRange(NetworkRange):
         return "<FixedRange %s>" % (",".join(self._fixed_addresses))
 
     def _get_range(self):
-        return [struct.unpack(">L", socket.inet_aton(address))[0]
-                for address in self._fixed_addresses]
+        address_range = []
+        for address in self._fixed_addresses:
+            if not address:  # Empty string
+                continue
+            address_range.append(struct.unpack(">L", socket.inet_aton(address))[0])
+        return address_range
