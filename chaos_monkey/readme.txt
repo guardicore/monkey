@@ -31,7 +31,7 @@ Windows:
 Linux (Tested on Ubuntu 12.04):
 1. Run:
 	sudo apt-get update
-	sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev
+	sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev libc++1
 	sudo pip install enum34
 	sudo pip install impacket
 	sudo pip install PyCrypto --upgrade
