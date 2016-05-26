@@ -151,6 +151,18 @@ class Telemetry(restful.Resource):
                 if 1 == len(update_parent):
                     update_parent[0]['parent'] = telemetry_json['monkey_guid']
                     mongo.db.monkey.update({"guid": update_parent[0]['guid']}, {"$set": update_parent[0]}, upsert=False)
+            elif telemetry_json.get('telem_type') == 'tunnel':
+                if telemetry_json['data']:
+                    host = telemetry_json['data'].split(":")[-2].replace("//", "")
+                    tunnel_host = mongo.db.monkey.find_one({"ip_addresses": host})
+                    mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
+                                           {'$set': {'tunnel_guid': tunnel_host.get('guid')}},
+                                           upsert=True)
+                else:
+                    mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
+                                           {'$unset': {'tunnel_guid':''}},
+                                           upsert=True)
+
         except:
             pass
 
