@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monkeys Admin</title>
+    <meta charset="UTF-8">
+
+    <!-- js -->
+    <script type="text/javascript" src="./js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="./js/typeahead.bundle.min.js"></script>
+
+    <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/sb-admin-2/sb-admin-2.js"></script>
+    <script type="text/javascript" src="./js/sb-admin-2/metisMenu.js"></script>
+    <script type="text/javascript" src="./js/jsoneditor.js"></script>
+    <script type="text/javascript" src="js/monkeysb-admin.js"></script>
+ 
+    <script type="text/javascript" src="./js/jquery.dataTables.min.js"></script>
+
+    <!-- css -->
+    <link type="text/css" href="./css/vis.min.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/monkeys-admin.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/typeahead.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/bootstrap.min.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/sb-admin-2/sb-admin-2.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/sb-admin-2/metisMenu.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/jquery.dataTables.min.css" rel="stylesheet"/>
+
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+</head>
+
+<body onload="initAdmin();">
+
+    <div id="wrapper" class="row col-lg-12">
+
+        <!-- Space added so the other sections aren't sticked to the top of the page -->
+        <div class="row col-lg-12">
+            <div class="clearfix"></br></div>
+        </div>
+        <!-- /. -->
+
+        <!-- Main section -->
+        <div class="col-lg-9 col-md-12 col-sm-12">
+            <!-- Jobs section -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#jobs" data-toggle="collapse">Jobs</a>
+                </div>
+                <div id="jobs" class="panel-body panel-collapse collapse in">
+                <table class="table table-bordered table-hover" id="jobs-table">
+                  <thead>
+                    <tr><th>Time</th><th>Status</th><th>Data</th></tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>                    
+                </div>
+            </div>
+            <!-- /.Jobs section -->
+        </div>
+        <!-- /.Main section -->
+
+        <!-- Options section -->
+        <div class="col-lg-3 col-md-6 col-sm-6">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#options" data-toggle="collapse">Options</a>
+                </div>
+                <div id="options" class="panel-body panel-collapse collapse in">
+                    <button id="btnCreateJob" class="btn btn-default" type="button"
+                            onclick="createNewJob()" style="margin-top:-4px">
+                            Create new scenario
+                    </button>
+                    <!-- General options -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a href="#general" data-toggle="collapse">General</a>
+                        </div>
+                    </div>
+                    <!-- /.General options -->
+
+
+                </div>
+            </div>
+        </div>
+        <!-- /.Options section -->
+
+        <!-- Config section -->
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#config" data-toggle="collapse">Config</a>
+                </div>
+                <div id="config" style="overflow: visible" class="panel-body panel-collapse collapse in" aria-expanded="true">
+                    <span class="input-group-btn">
+                        <button id="btnLoadVCenterConfig" class="btn btn-default" type="button"
+                                onclick="loadVcenterConfig()" style="margin-top:-4px">
+                                Reload VCenter Config
+                        </button>
+                        <button id="btnUpdateVCenterConfig" class="btn btn-default" type="button"
+                            onclick="updateVcenterConfig()" style="margin-top:-4px">
+                                Save VCenter Config
+                        </button>
+                    </span>
+                    <div id="vcenter-config">
+                    </div>                    
+                    <!--<span class="input-group-btn">
+                        <button id="btnConfigLoad" style="display: none;" class="btn btn-default" type="button" 
+                            onclick="loadMonkeyConfig()" style="margin-top:-4px">
+                                Load
+                        </button>
+                        <button id="btnConfigUpdate" style="display: none;" class="btn btn-default" type="button" 
+                            onclick="updateMonkeyConfig()" style="margin-top:-4px">
+                                Update
+                        </button>-->
+                    </span>
+                    <div style="display: none;" id="job-config">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.Config section --> 
+
+    </div>
+
+</body>
+</html>
