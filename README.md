@@ -14,7 +14,7 @@ Features include:
   * Predefined passwords
   * Common exploits
 * Multiple propagation protocols:
-  * SSH 
+  * SSH
   * SMB
   * RDP
 * A C&C server with a dedicated UI to visualize the Monkey's progress inside the data center
