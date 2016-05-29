@@ -96,26 +96,6 @@ function initAdmin() {
                         startval: $,
                         });
     
-    
-    jobCfg = new JSONEditor(document.getElementById('job-config'),{
-                            schema: {
-                              type: "object",
-                              title: "Job",
-                              properties: {
-                                vlan: {
-                                  title: "Vlan",
-                                  type: "integer",
-                                },                              
-                              },
-                              options: {
-                                "collapsed": true
-                              },                                           
-                            },
-                            disable_edit_json: false,
-                            });
-    
-    
-
     window.setTimeout(updateJobs, 10000);
     loadVcenterConfig();
     updateJobs();
@@ -141,14 +121,14 @@ function updateJobs() {
 }
 
 function loadVcenterConfig() {
-    $.getJSON('/connector?type=vcenter', function(json) {
+    $.getJSON('/connector?type=VCenterConnector', function(json) {
         vcenterCfg.setValue(json);
     });
 }
 
 function updateVcenterConfig() {
     var vc_config = vcenterCfg.getValue()
-    vc_config["type"] = "vcenter";
+    vc_config["type"] = "VCenterConnector";
 
     $.ajax({
             headers : {
@@ -173,6 +153,30 @@ function updateVcenterConfig() {
 }
 
 function createNewJob() {
+    elem = document.getElementById('job-config');
+    elem.innerHTML = ""
+    jobCfg = new JSONEditor(elem,{
+                            schema: {
+                              type: "object",
+                              title: "Job",
+                              properties: {
+                                    job: {
+                                        title: "Type",
+                                        $ref: "/jobcreate",
+                                    }
+                              },
+                              options: {
+                                "collapsed": false
+                              },
+                            },
+                            ajax: true,
+                            disable_edit_json: false,
+                            disable_collapse: true,
+                            disable_properties: true,
+                            });
+}
+
+function configSched() {
 
 }
 

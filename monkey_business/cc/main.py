@@ -1,4 +1,5 @@
 import os
+import sys
 from flask import Flask, request, abort, send_from_directory
 from flask.ext import restful
 from flask.ext.pymongo import PyMongo
@@ -7,7 +8,8 @@ import bson.json_util
 import json
 from datetime import datetime
 import dateutil.parser
-from connectors.vcenter import VCenterConnector
+from connectors.vcenter import VCenterJob, VCenterConnector
+from connectors.demo import DemoJob, DemoConnector
 
 MONGO_URL = os.environ.get('MONGO_URL')
 if not MONGO_URL:
@@ -16,6 +18,10 @@ if not MONGO_URL:
 app = Flask(__name__)
 app.config['MONGO_URI'] = MONGO_URL
 mongo = PyMongo(app)
+
+available_jobs = [VCenterJob, DemoJob]
+
+active_connectors = {}
 
 class Root(restful.Resource):
     def get(self):
@@ -64,9 +70,9 @@ class Job(restful.Resource):
 class Connector(restful.Resource):
     def get(self, **kw):
         type = request.args.get('type')
-        if (type == 'vcenter'):
+        if (type == 'VCenterConnector'):
             vcenter = VCenterConnector()
-            properties = mongo.db.connector.find_one({"type": 'vcenter'})
+            properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
             if properties:
                 vcenter.load_properties(properties)
             ret = vcenter.get_properties()
@@ -76,16 +82,60 @@ class Connector(restful.Resource):
 
     def post(self, **kw):
         settings_json = json.loads(request.data)
-        if (settings_json.get("type") == 'vcenter'):
+        if (settings_json.get("type") == 'VCenterConnector'):
 
             # preserve password
-            properties = mongo.db.connector.find_one({"type": 'vcenter'})
+            properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
             if properties and (not settings_json.has_key("password") or not settings_json["password"]):
                 settings_json["password"] = properties.get("password")
 
-            return mongo.db.connector.update({"type": 'vcenter'},
+            return mongo.db.connector.update({"type": 'VCenterConnector'},
                                                {"$set": settings_json},
                                                upsert=True)
+
+class JobCreation(restful.Resource):
+    def get(self, **kw):
+        jobtype = request.args.get('type')
+        if not jobtype:
+            res = []
+            update_connectors()
+            for con in available_jobs:
+                if con.connector.__name__ in active_connectors:
+                    res.append({"title": con.__name__, "$ref": "/jobcreate?type=" + con.__name__})
+            return {"oneOf": res}
+
+        job = None
+        for jobclass in available_jobs:
+            if jobclass.__name__ == jobtype:
+                job = jobclass()
+
+        if job and job.connector.__name__ in active_connectors.keys():
+            properties = dict()
+            job_prop = job.get_job_properties()
+
+            for prop in job_prop:
+                properties[prop] = dict({})
+                if type(job_prop[prop][0]) is int:
+                    properties[prop]["type"] = "number"
+                elif type(job_prop[prop][0]) is bool:
+                    properties[prop]["type"] = "boolean"
+                else:
+                    properties[prop]["type"] = "string"
+                if job_prop[prop][1]:
+                    properties[prop]["enum"] = list(active_connectors[job.connector.__name__].__getattribute__(job_prop[prop][1])())
+
+            res = dict({
+                "title": "%s Job" % jobtype,
+                "type": "object",
+                "options": {
+                    "disable_collapse": True,
+                    "disable_properties": True,
+                },
+                "properties": properties
+            })
+            return res
+
+        return {}
 
 
 def normalize_obj(obj):
@@ -113,6 +163,30 @@ def output_json(obj, code, headers=None):
     resp.headers.extend(headers or {})
     return resp
 
+
+def refresh_connector_config(name):
+    properties = mongo.db.connector.find_one({"type": name})
+    if properties:
+        active_connectors[name].load_properties(properties)
+
+
+def update_connectors():
+    for con in available_jobs:
+        connector_name = con.connector.__name__
+        if connector_name not in active_connectors:
+            active_connectors[connector_name] = con.connector()
+
+        if not active_connectors[connector_name].is_connected():
+            refresh_connector_config(connector_name)
+            try:
+                app.logger.info("Trying to activate connector: %s" % connector_name)
+                active_connectors[connector_name].connect()
+            except Exception, e:
+                active_connectors.pop(connector_name)
+                app.logger.info("Error activating connector: %s, reason: %s" % (connector_name, e))
+
+
+
 @app.route('/admin/<path:path>')
 def send_admin(path):
     return send_from_directory('admin/ui', path)
@@ -124,6 +198,7 @@ api.representations = DEFAULT_REPRESENTATIONS
 api.add_resource(Root, '/api')
 api.add_resource(Job, '/job')
 api.add_resource(Connector, '/connector')
+api.add_resource(JobCreation, '/jobcreate')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))

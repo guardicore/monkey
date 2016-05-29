@@ -1,7 +1,7 @@
 
 class NetControllerConnector(object):
     def __init__(self):
-        _properties = {}
+        self._properties = {}
 
     def _load_prop_dict(self, target, prop):
         for property in prop:
@@ -11,6 +11,9 @@ class NetControllerConnector(object):
                 self._load_prop_dict(target[property], prop[property])
             else:
                 target[property] = prop[property]
+
+    def is_connected(self):
+        return False
 
     def connect(self):
         return
@@ -33,3 +36,19 @@ class NetControllerConnector(object):
     def disconnect(self):
         return
 
+class NetControllerJob(object):
+    connector = NetControllerConnector
+
+    def __init__(self):
+        self._properties = {
+            # property: [value, enumerating_function]
+        }
+
+    def get_job_properties(self):
+        return self._properties
+
+    def set_job_properties(self, properties):
+        return {}
+
+    def run(self):
+        raise NotImplementedError()
