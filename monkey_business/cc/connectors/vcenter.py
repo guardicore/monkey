@@ -1,7 +1,6 @@
-from connectors import NetControllerConnector
+from connectors import NetControllerJob, NetControllerConnector
 from pyVmomi import vim
 from pyVim.connect import SmartConnect, Disconnect
-
 
 class VCenterConnector(NetControllerConnector):
     def __init__(self):
@@ -20,6 +19,9 @@ class VCenterConnector(NetControllerConnector):
                 "cluster_name":   "",
                 "resource_pool":   ""
             }
+        }
+        self._job_properties = {
+
         }
 
     def connect(self):
@@ -124,3 +126,13 @@ class VCenterConnector(NetControllerConnector):
                 break
 
         return obj
+
+
+class VCenterJob(NetControllerJob):
+    connector = VCenterConnector
+
+    def __init__(self):
+        self._properties = {
+            "vlan": [0, "get_vlans_list"],
+        }
+

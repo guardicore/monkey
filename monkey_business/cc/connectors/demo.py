@@ -1,4 +1,4 @@
-from connectors import NetControllerConnector
+from connectors import NetControllerJob, NetControllerConnector
 
 demo_state = {
     501: ["Machine A", "Machine B"],
@@ -6,7 +6,6 @@ demo_state = {
     503: ["Machine D",],
     514: ["Machine E", "Machine F"],
 }
-
 
 class DemoConnector(NetControllerConnector):
     def __init__(self):
@@ -34,3 +33,11 @@ class DemoConnector(NetControllerConnector):
         if (demo_state.has_key(vlanid)):
             return demo_state[vlanid]
         return []
+
+class DemoJob(NetControllerJob):
+    connector = DemoConnector
+
+    def __init__(self):
+        self._properties = {
+            "vlan": [0, "get_vlans_list"],
+        }

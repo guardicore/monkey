@@ -160,18 +160,19 @@ function createNewJob() {
                               type: "object",
                               title: "Job",
                               properties: {
-                                vlan: {
-                                    title: "Vlan",
-                                    type: "integer",
-                                    $ref: "/info?type=vlans"
-                                },
+                                    job: {
+                                        title: "Type",
+                                        $ref: "/jobcreate",
+                                    }
                               },
                               options: {
-                                "collapsed": true
+                                "collapsed": false
                               },
                             },
                             ajax: true,
                             disable_edit_json: false,
+                            disable_collapse: true,
+                            disable_properties: true,
                             });
 }
 

@@ -1,4 +1,5 @@
 import os
+import sys
 from flask import Flask, request, abort, send_from_directory
 from flask.ext import restful
 from flask.ext.pymongo import PyMongo
@@ -7,8 +8,8 @@ import bson.json_util
 import json
 from datetime import datetime
 import dateutil.parser
-from connectors.vcenter import VCenterConnector
-from connectors.demo import DemoConnector
+from connectors.vcenter import VCenterJob, VCenterConnector
+from connectors.demo import DemoJob, DemoConnector
 
 MONGO_URL = os.environ.get('MONGO_URL')
 if not MONGO_URL:
@@ -18,7 +19,7 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = MONGO_URL
 mongo = PyMongo(app)
 
-available_connectors=[VCenterConnector, DemoConnector]
+available_jobs = [VCenterJob, DemoJob]
 
 active_connectors = {}
 
@@ -92,15 +93,49 @@ class Connector(restful.Resource):
                                                {"$set": settings_json},
                                                upsert=True)
 
-class Info(restful.Resource):
+class JobCreation(restful.Resource):
     def get(self, **kw):
-        type = request.args.get('type')
-        if type == "vlans":
+        jobtype = request.args.get('type')
+        if not jobtype:
+            res = []
             update_connectors()
-            vlans = set()
-            for con in active_connectors:
-                vlans.update(active_connectors[con].get_vlans_list())
-            return {"enum": list(vlans)}
+            for con in available_jobs:
+                if con.connector.__name__ in active_connectors:
+                    res.append({"title": con.__name__, "$ref": "/jobcreate?type=" + con.__name__})
+            return {"oneOf": res}
+
+        job = None
+        for jobclass in available_jobs:
+            if jobclass.__name__ == jobtype:
+                job = jobclass()
+
+        if job and job.connector.__name__ in active_connectors.keys():
+            properties = dict()
+            job_prop = job.get_job_properties()
+
+            for prop in job_prop:
+                properties[prop] = dict({})
+                if type(job_prop[prop][0]) is int:
+                    properties[prop]["type"] = "number"
+                elif type(job_prop[prop][0]) is bool:
+                    properties[prop]["type"] = "boolean"
+                else:
+                    properties[prop]["type"] = "string"
+                if job_prop[prop][1]:
+                    properties[prop]["enum"] = list(active_connectors[job.connector.__name__].__getattribute__(job_prop[prop][1])())
+
+            res = dict({
+                "title": "%s Job" % jobtype,
+                "type": "object",
+                "options": {
+                    "disable_collapse": True,
+                    "disable_properties": True,
+                },
+                "properties": properties
+            })
+            return res
+
+        return {}
 
 
 def normalize_obj(obj):
@@ -136,18 +171,19 @@ def refresh_connector_config(name):
 
 
 def update_connectors():
-    for con in available_connectors:
-        if con.__name__ not in active_connectors:
-            active_connectors[con.__name__] = con()
+    for con in available_jobs:
+        connector_name = con.connector.__name__
+        if connector_name not in active_connectors:
+            active_connectors[connector_name] = con.connector()
 
-        if not active_connectors[con.__name__ ].is_connected():
-            refresh_connector_config(con.__name__)
+        if not active_connectors[connector_name].is_connected():
+            refresh_connector_config(connector_name)
             try:
-                active_connectors[con.__name__].connect()
-                app.logger.info("Trying to activate connector: %s" % con.__name__)
+                active_connectors[connector_name].connect()
+                app.logger.info("Trying to activate connector: %s" % connector_name)
             except Exception, e:
-                active_connectors.pop(con.__name__)
-                app.logger.info("Error activating connector: %s, reason: %s" % (con.__name__, e))
+                active_connectors.pop(connector_name)
+                app.logger.info("Error activating connector: %s, reason: %s" % (connector_name, e))
 
 
 
@@ -162,7 +198,7 @@ api.representations = DEFAULT_REPRESENTATIONS
 api.add_resource(Root, '/api')
 api.add_resource(Job, '/job')
 api.add_resource(Connector, '/connector')
-api.add_resource(Info, '/info')
+api.add_resource(JobCreation, '/jobcreate')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
