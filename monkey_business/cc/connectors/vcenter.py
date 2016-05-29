@@ -20,21 +20,45 @@ class VCenterConnector(NetControllerConnector):
                 "resource_pool":   ""
             }
         }
-        self._job_properties = {
-
+        self._cache = {
+            "vlans" : []
         }
 
     def connect(self):
-        self._service_instance = SmartConnect(host=self._properties["address"],
-                                              port=self._properties["port"],
-                                              user=self._properties["username"],
-                                              pwd=self._properties["password"])
+        import ssl
+        try:
+            self._service_instance = SmartConnect(host=self._properties["address"],
+                                                  port=self._properties["port"],
+                                                  user=self._properties["username"],
+                                                  pwd=self._properties["password"])
+        except ssl.SSLError:
+            # some organizations use self-signed certificates...
+            gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+            self._service_instance = SmartConnect(host=self._properties["address"],
+                                                  port=self._properties["port"],
+                                                  user=self._properties["username"],
+                                                  pwd=self._properties["password"],
+                                                  sslContext=gcontext)
 
     def is_connected(self):
-        return not self._service_instance == None
+        if (self._service_instance == None):
+            return False
+        try:
+            self._service_instance.serverClock
+        except vim.fault.NotAuthenticated, e:
+            return False
 
     def get_vlans_list(self):
-        return []
+        if not self.is_connected():
+            self.connect()
+        if self._cache and self._cache.has_key("vlans") and self._cache["vlans"]:
+            return self._cache["vlans"]
+        vcontent = self._service_instance.RetrieveContent()  # get updated vsphare state
+        vimtype = [vim.Network]
+        objview = vcontent.viewManager.CreateContainerView(vcontent.rootFolder, vimtype, True)
+        self._cache["vlans"] = [x.name for x in objview.view]
+        objview.Destroy()
+        return self._cache["vlans"]
 
     def get_entities_on_vlan(self, vlanid):
         return []

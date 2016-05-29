@@ -70,7 +70,7 @@ class Job(restful.Resource):
 class Connector(restful.Resource):
     def get(self, **kw):
         type = request.args.get('type')
-        if (type == 'vcenter'):
+        if (type == 'VCenterConnector'):
             vcenter = VCenterConnector()
             properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
             if properties:
@@ -82,7 +82,7 @@ class Connector(restful.Resource):
 
     def post(self, **kw):
         settings_json = json.loads(request.data)
-        if (settings_json.get("type") == 'vcenter'):
+        if (settings_json.get("type") == 'VCenterConnector'):
 
             # preserve password
             properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
@@ -179,8 +179,8 @@ def update_connectors():
         if not active_connectors[connector_name].is_connected():
             refresh_connector_config(connector_name)
             try:
-                active_connectors[connector_name].connect()
                 app.logger.info("Trying to activate connector: %s" % connector_name)
+                active_connectors[connector_name].connect()
             except Exception, e:
                 active_connectors.pop(connector_name)
                 app.logger.info("Error activating connector: %s, reason: %s" % (connector_name, e))

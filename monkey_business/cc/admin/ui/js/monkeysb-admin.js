@@ -121,14 +121,14 @@ function updateJobs() {
 }
 
 function loadVcenterConfig() {
-    $.getJSON('/connector?type=vcenter', function(json) {
+    $.getJSON('/connector?type=VCenterConnector', function(json) {
         vcenterCfg.setValue(json);
     });
 }
 
 function updateVcenterConfig() {
     var vc_config = vcenterCfg.getValue()
-    vc_config["type"] = "vcenter";
+    vc_config["type"] = "VCenterConnector";
 
     $.ajax({
             headers : {
