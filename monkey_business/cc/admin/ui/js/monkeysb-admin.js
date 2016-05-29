@@ -96,26 +96,6 @@ function initAdmin() {
                         startval: $,
                         });
     
-    
-    jobCfg = new JSONEditor(document.getElementById('job-config'),{
-                            schema: {
-                              type: "object",
-                              title: "Job",
-                              properties: {
-                                vlan: {
-                                  title: "Vlan",
-                                  type: "integer",
-                                },                              
-                              },
-                              options: {
-                                "collapsed": true
-                              },                                           
-                            },
-                            disable_edit_json: false,
-                            });
-    
-    
-
     window.setTimeout(updateJobs, 10000);
     loadVcenterConfig();
     updateJobs();
@@ -173,6 +153,29 @@ function updateVcenterConfig() {
 }
 
 function createNewJob() {
+    elem = document.getElementById('job-config');
+    elem.innerHTML = ""
+    jobCfg = new JSONEditor(elem,{
+                            schema: {
+                              type: "object",
+                              title: "Job",
+                              properties: {
+                                vlan: {
+                                    title: "Vlan",
+                                    type: "integer",
+                                    $ref: "/info?type=vlans"
+                                },
+                              },
+                              options: {
+                                "collapsed": true
+                              },
+                            },
+                            ajax: true,
+                            disable_edit_json: false,
+                            });
+}
+
+function configSched() {
 
 }
 

@@ -8,6 +8,7 @@ import json
 from datetime import datetime
 import dateutil.parser
 from connectors.vcenter import VCenterConnector
+from connectors.demo import DemoConnector
 
 MONGO_URL = os.environ.get('MONGO_URL')
 if not MONGO_URL:
@@ -16,6 +17,10 @@ if not MONGO_URL:
 app = Flask(__name__)
 app.config['MONGO_URI'] = MONGO_URL
 mongo = PyMongo(app)
+
+available_connectors=[VCenterConnector, DemoConnector]
+
+active_connectors = {}
 
 class Root(restful.Resource):
     def get(self):
@@ -66,7 +71,7 @@ class Connector(restful.Resource):
         type = request.args.get('type')
         if (type == 'vcenter'):
             vcenter = VCenterConnector()
-            properties = mongo.db.connector.find_one({"type": 'vcenter'})
+            properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
             if properties:
                 vcenter.load_properties(properties)
             ret = vcenter.get_properties()
@@ -79,13 +84,23 @@ class Connector(restful.Resource):
         if (settings_json.get("type") == 'vcenter'):
 
             # preserve password
-            properties = mongo.db.connector.find_one({"type": 'vcenter'})
+            properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
             if properties and (not settings_json.has_key("password") or not settings_json["password"]):
                 settings_json["password"] = properties.get("password")
 
-            return mongo.db.connector.update({"type": 'vcenter'},
+            return mongo.db.connector.update({"type": 'VCenterConnector'},
                                                {"$set": settings_json},
                                                upsert=True)
+
+class Info(restful.Resource):
+    def get(self, **kw):
+        type = request.args.get('type')
+        if type == "vlans":
+            update_connectors()
+            vlans = set()
+            for con in active_connectors:
+                vlans.update(active_connectors[con].get_vlans_list())
+            return {"enum": list(vlans)}
 
 
 def normalize_obj(obj):
@@ -113,6 +128,29 @@ def output_json(obj, code, headers=None):
     resp.headers.extend(headers or {})
     return resp
 
+
+def refresh_connector_config(name):
+    properties = mongo.db.connector.find_one({"type": name})
+    if properties:
+        active_connectors[name].load_properties(properties)
+
+
+def update_connectors():
+    for con in available_connectors:
+        if con.__name__ not in active_connectors:
+            active_connectors[con.__name__] = con()
+
+        if not active_connectors[con.__name__ ].is_connected():
+            refresh_connector_config(con.__name__)
+            try:
+                active_connectors[con.__name__].connect()
+                app.logger.info("Trying to activate connector: %s" % con.__name__)
+            except Exception, e:
+                active_connectors.pop(con.__name__)
+                app.logger.info("Error activating connector: %s, reason: %s" % (con.__name__, e))
+
+
+
 @app.route('/admin/<path:path>')
 def send_admin(path):
     return send_from_directory('admin/ui', path)
@@ -124,6 +162,7 @@ api.representations = DEFAULT_REPRESENTATIONS
 api.add_resource(Root, '/api')
 api.add_resource(Job, '/job')
 api.add_resource(Connector, '/connector')
+api.add_resource(Info, '/info')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
