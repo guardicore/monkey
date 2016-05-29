@@ -23,10 +23,13 @@ class VCenterConnector(NetControllerConnector):
         }
 
     def connect(self):
-        self._service_instance = SmartConnect(host=self._address,
-                                              port=self._port,
-                                              user=self._username,
-                                              pwd=self._password)
+        self._service_instance = SmartConnect(host=self._properties["address"],
+                                              port=self._properties["port"],
+                                              user=self._properties["username"],
+                                              pwd=self._properties["password"])
+
+    def is_connected(self):
+        return not self._service_instance == None
 
     def get_vlans_list(self):
         return []

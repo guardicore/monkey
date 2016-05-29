@@ -12,6 +12,9 @@ class NetControllerConnector(object):
             else:
                 target[property] = prop[property]
 
+    def is_connected(self):
+        return False
+
     def connect(self):
         return
 
