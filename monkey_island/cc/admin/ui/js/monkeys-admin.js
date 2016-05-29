@@ -22,6 +22,9 @@ var edges = [];
 const ICONS_DIR = "./css/img/objects/";
 const ICONS_EXT = ".png";
 
+const EDGE_TYPE_PARENT = "parent";
+const EDGE_TYPE_TUNNEL = "tunnel";
+
 // General options
 // If variable from local storage != null, assign it, otherwise set it's default value.
 
@@ -42,9 +45,11 @@ function initAdmin() {
     nodes = [];
     edges = [];
 
+    createEdges();
+    createTunnels();
     var data = {
         nodes: createNodes(),
-        edges: createEdges()
+        edges: edges
     };
 
     var options = {
@@ -119,7 +124,9 @@ function updateMonkeys() {
 
         if(new_monkeys.length > 0)
         {
-            network.setData({nodes: nodes, edges: createEdges()});
+            createEdges();
+            createTunnels();
+            network.setData({nodes: nodes, edges: edges});
         }
 
         window.setTimeout(updateMonkeys, 10000);
@@ -170,10 +177,10 @@ function createEdges() {
     for (var i = 0; i < monkeys.length; i++) {
         var monkey = monkeys[i];
         if(monkey.parent != monkey.guid) {
-            parent = getMonkeyByGuid(monkey.parent);
+            var parent = getMonkeyByGuid(monkey.parent);
 
-            if(parent && !edgeExists([parent.id, monkey.id])) {
-                edges.push({from: parent.id, to: monkey.id, arrows:'middle'});
+            if(parent && !edgeExists([parent.id, monkey.id, EDGE_TYPE_PARENT])) {
+                edges.push({from: parent.id, to: monkey.id, arrows:'middle', type: EDGE_TYPE_PARENT, color: 'red'});
             }
         }
     }
@@ -181,6 +188,20 @@ function createEdges() {
     return edges;
 }
 
+function createTunnels() {
+    for (var i = 0; i < monkeys.length; i++) {
+        var monkey = monkeys[i];
+        if(monkey.tunnel_guid) {
+            var tunnel = getMonkeyByGuid(monkey.tunnel_guid);
+
+            if(tunnel && !edgeExists([monkey.id, tunnel.id, EDGE_TYPE_TUNNEL])) {
+                edges.push({from: monkey.id, to: tunnel.id, arrows:'middle', type: EDGE_TYPE_TUNNEL, color:'blue'});
+            }
+        }
+    }
+
+    return edges;
+}
 
 /**
  * Builds node description
@@ -510,8 +531,8 @@ function edgeExists(link) {
     for (var i = 0; i < edges.length; i++) {
         var from = edges[i].from;
         var to = edges[i].to;
-        if ((from == link[0] && to == link[1]) ||
-            (from == link[1] && to == link[0])) {
+        var type = edges[i].type;
+        if (from == link[0] && to == link[1] && type == link[2]) {
             return true;
         }
     }
