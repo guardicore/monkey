@@ -65,29 +65,45 @@ class Job(restful.Resource):
 
 class Connector(restful.Resource):
     def get(self, **kw):
-        type = request.args.get('type')
-        if type == 'VCenterConnector':
-            vcenter = VCenterConnector()
-            properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
-            if properties:
-                vcenter.load_properties(properties)
-            ret = vcenter.get_properties()
-            ret["password"] = "" # for better security, don't expose password
-            return ret
-        return {}
+        contype = request.args.get('type')
+
+        # if no type given - return list of types
+        if not contype:
+            conlist = []
+            for jobclass in available_jobs:
+                if jobclass.connector.__name__ not in conlist:
+                    conlist.append(jobclass.connector.__name__)
+            return {"oneOf": conlist}
+
+        con = get_connector_by_name(contype)
+        if not con:
+            return {}
+        properties = mongo.db.connector.find_one({"type": con.__class__.__name__})
+        if properties:
+            con.load_properties(properties)
+        ret = con.get_properties()
+        ret["password"] = "" # for better security, don't expose password
+        return ret
 
     def post(self, **kw):
         settings_json = json.loads(request.data)
-        if settings_json.get("type") == 'VCenterConnector':
+        contype = settings_json.get("type")
 
-            # preserve password
-            properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
-            if properties and (not settings_json.has_key("password") or not settings_json["password"]):
-                settings_json["password"] = properties.get("password")
+        # preserve password if empty given
+        properties = mongo.db.connector.find_one({"type": contype})
+        if properties and (not settings_json.has_key("password") or not settings_json["password"]):
+            settings_json["password"] = properties.get("password")
 
-            return mongo.db.connector.update({"type": 'VCenterConnector'},
-                                               {"$set": settings_json},
-                                               upsert=True)
+        return mongo.db.connector.update({"type": contype},
+                                         {"$set": settings_json},
+                                         upsert=True)
+
+
+def get_connector_by_name(name):
+    for jobclass in available_jobs:
+        if name == jobclass.connector.__name__:
+            return jobclass.connector()
+    return None
 
 
 def get_jobclass_by_name(name):
