@@ -36,8 +36,9 @@ class DemoConnector(NetControllerConnector):
 
 class DemoJob(NetControllerJob):
     connector = DemoConnector
-
-    def __init__(self):
-        self._properties = {
-            "vlan": [0, "get_vlans_list"],
-        }
+    _properties = {
+        "vlan": 0,
+    }
+    _enumerations = {
+        "vlan": "get_vlans_list",
+    }

@@ -1,16 +1,16 @@
+def _load_prop_dict(self, target, prop):
+    for property in prop:
+        if not target.has_key(property):
+            continue
+        if type(prop[property]) is dict:
+            _load_prop_dict(self, target[property], prop[property])
+        else:
+            target[property] = prop[property]
+
 
 class NetControllerConnector(object):
     def __init__(self):
         self._properties = {}
-
-    def _load_prop_dict(self, target, prop):
-        for property in prop:
-            if not target.has_key(property):
-                continue
-            if type(prop[property]) is dict:
-                self._load_prop_dict(target[property], prop[property])
-            else:
-                target[property] = prop[property]
 
     def is_connected(self):
         return False
@@ -22,7 +22,7 @@ class NetControllerConnector(object):
         return self._properties
 
     def load_properties(self, properties):
-        self._load_prop_dict(self._properties, properties)
+        _load_prop_dict(self, self._properties, properties)
 
     def get_vlans_list(self):
         raise NotImplementedError()
@@ -38,17 +38,27 @@ class NetControllerConnector(object):
 
 class NetControllerJob(object):
     connector = NetControllerConnector
+    _properties = {
+        # property: value
+    }
+
+    _enumerations = {
+
+    }
 
     def __init__(self):
-        self._properties = {
-            # property: [value, enumerating_function]
-        }
+        pass
 
     def get_job_properties(self):
         return self._properties
 
-    def set_job_properties(self, properties):
-        return {}
+    def load_job_properties(self, properties):
+        _load_prop_dict(self, self._properties, properties)
+
+    def get_property_function(self, property):
+        if property in self._enumerations.keys():
+            return self._enumerations[property]
+        return None
 
     def run(self):
         raise NotImplementedError()

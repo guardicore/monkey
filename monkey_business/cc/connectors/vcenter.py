@@ -63,7 +63,7 @@ class VCenterConnector(NetControllerConnector):
     def get_entities_on_vlan(self, vlanid):
         return []
 
-    def deploy_monkey(self, vlanid):
+    def deploy_monkey(self, vlanid, vm_name):
         if not self._properties["monkey_template_name"]:
             raise Exception("Monkey template not configured")
 
@@ -72,7 +72,7 @@ class VCenterConnector(NetControllerConnector):
         if not monkey_template:
             raise Exception("Monkey template not found")
 
-        task = self._clone_vm(vcontent, monkey_template)
+        task = self._clone_vm(vcontent, monkey_template, vm_name)
         if not task:
             raise Exception("Error deploying monkey VM")
 
@@ -86,7 +86,7 @@ class VCenterConnector(NetControllerConnector):
         if self._service_instance:
             self.disconnect()
 
-    def _clone_vm(self, vcontent, vm):
+    def _clone_vm(self, vcontent, vm, name):
 
         # get vm target folder
         if self._properties["monkey_vm_info"]["vm_folder"]:
@@ -116,7 +116,7 @@ class VCenterConnector(NetControllerConnector):
         clonespec = vim.vm.CloneSpec()
         clonespec.location = relospec
 
-        task = vm.Clone(folder=destfolder, name=self._properties["monkey_vm_info"]["name"], spec=clonespec)
+        task = vm.Clone(folder=destfolder, name=name, spec=clonespec)
         return self._wait_for_task(task)
 
 
@@ -154,9 +154,11 @@ class VCenterConnector(NetControllerConnector):
 
 class VCenterJob(NetControllerJob):
     connector = VCenterConnector
-
-    def __init__(self):
-        self._properties = {
-            "vlan": [0, "get_vlans_list"],
-        }
+    _properties = {
+        "vlan": 0,
+        "vm_name": "",
+    }
+    _enumerations = {
+        "vlan": "get_vlans_list",
+    }
 

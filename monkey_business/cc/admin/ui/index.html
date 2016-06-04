@@ -48,7 +48,7 @@
                 <div id="jobs" class="panel-body panel-collapse collapse in">
                 <table class="table table-bordered table-hover" id="jobs-table">
                   <thead>
-                    <tr><th>Time</th><th>Status</th><th>Data</th></tr>
+                    <tr><th>Id</th><th>Time</th><th>Type</th><th>Status</th><th>Properties</th></tr>
                   </thead>
                   <tbody>
                   </tbody>
@@ -83,7 +83,17 @@
                             <a href="#newJob" data-toggle="collapse">New Job</a>
                         </div>
                         <div id="newJob" style="overflow: visible" class="panel-body panel-collapse collapse in" aria-expanded="true">
-                            <div id="job-config">
+                            <div id="job-config-section">
+                                <div id="job-config">
+                                </div>
+                                <button id="btnSendJob" class="btn btn-default" type="button"
+                                onclick="sendJob()" style="margin-top:-4px; visibility: hidden">
+                                Update
+                                </button>
+                                <button id="btnDeleteJob" class="btn btn-default" type="button"
+                                onclick="deleteJob()" style="margin-top:-4px; visibility: hidden">
+                                Delete
+                                </button>
                             </div>
                         </div>
                     </div>

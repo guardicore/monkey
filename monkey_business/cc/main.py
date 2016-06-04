@@ -10,13 +10,10 @@ from datetime import datetime
 import dateutil.parser
 from connectors.vcenter import VCenterJob, VCenterConnector
 from connectors.demo import DemoJob, DemoConnector
-
-MONGO_URL = os.environ.get('MONGO_URL')
-if not MONGO_URL:
-    MONGO_URL = "mongodb://localhost:27017/monkeybusiness"
+import tasks_manager
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = MONGO_URL
+app.config.from_object('dbconfig')
 mongo = PyMongo(app)
 
 available_jobs = [VCenterJob, DemoJob]
@@ -35,16 +32,14 @@ class Job(restful.Resource):
     def get(self, **kw):
         id = kw.get('id')
         timestamp = request.args.get('timestamp')
+        result = {}
 
         if (id):
-            return mongo.db.job.find_one_or_404({"id": id})
+            return mongo.db.job.find_one_or_404({"_id": id})
         else:
-            result = {'timestamp': datetime.now().isoformat()}
+            result['timestamp'] = datetime.now().isoformat()
 
-        find_filter = {}
-        if None != timestamp:
-            find_filter['modifytime'] = {'$gt': dateutil.parser.parse(timestamp)}
-        result['objects'] = [x for x in mongo.db.job.find(find_filter)]
+        result['objects'] = [x for x in mongo.db.job.find().sort("creation_time", -1)]
         return result
 
     def post(self, **kw):
@@ -67,10 +62,11 @@ class Job(restful.Resource):
                                    {"$set": job_json},
                                    upsert=True)
 
+
 class Connector(restful.Resource):
     def get(self, **kw):
         type = request.args.get('type')
-        if (type == 'VCenterConnector'):
+        if type == 'VCenterConnector':
             vcenter = VCenterConnector()
             properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
             if properties:
@@ -82,7 +78,7 @@ class Connector(restful.Resource):
 
     def post(self, **kw):
         settings_json = json.loads(request.data)
-        if (settings_json.get("type") == 'VCenterConnector'):
+        if settings_json.get("type") == 'VCenterConnector':
 
             # preserve password
             properties = mongo.db.connector.find_one({"type": 'VCenterConnector'})
@@ -93,10 +89,19 @@ class Connector(restful.Resource):
                                                {"$set": settings_json},
                                                upsert=True)
 
+
+def get_jobclass_by_name(name):
+    for jobclass in available_jobs:
+        if jobclass.__name__ == name:
+            return jobclass()
+
+
 class JobCreation(restful.Resource):
     def get(self, **kw):
         jobtype = request.args.get('type')
-        if not jobtype:
+        action = request.args.get('action')
+        jobid = request.args.get('id')
+        if not (jobtype or jobid):
             res = []
             update_connectors()
             for con in available_jobs:
@@ -105,24 +110,49 @@ class JobCreation(restful.Resource):
             return {"oneOf": res}
 
         job = None
-        for jobclass in available_jobs:
-            if jobclass.__name__ == jobtype:
-                job = jobclass()
+        if not jobid:
+            job = get_jobclass_by_name(jobtype)
+        else:
+            loaded_job = mongo.db.job.find_one({"_id": bson.ObjectId(jobid)})
+            if loaded_job:
+                job = get_jobclass_by_name(loaded_job.get("type"))
+                job.load_job_properties(loaded_job.get("properties"))
+
+        if action == "delete":
+            if loaded_job.get("execution")["state"] == "pending":
+                mongo.db.job.remove({"_id": bson.ObjectId(jobid)})
+                return {'status': 'ok'}
+            else:
+                return {'status': 'bad state'}
 
         if job and job.connector.__name__ in active_connectors.keys():
-            properties = dict()
-            job_prop = job.get_job_properties()
+            properties = {
+                "type": {
+                    "type": "enum",
+                    "enum": [job.__class__.__name__],
+                    "options": {"hidden": True}
+                }
+            }
+            if (jobid):
+                properties["_id"] = {
+                    "type": "enum",
+                    "enum": [jobid],
+                    "name": "ID",
+                }
 
+            job_prop = job.get_job_properties()
             for prop in job_prop:
                 properties[prop] = dict({})
-                if type(job_prop[prop][0]) is int:
+                properties[prop]["default"] = job_prop[prop]
+                if type(job_prop[prop]) is int:
                     properties[prop]["type"] = "number"
-                elif type(job_prop[prop][0]) is bool:
+                elif type(job_prop[prop]) is bool:
                     properties[prop]["type"] = "boolean"
                 else:
                     properties[prop]["type"] = "string"
-                if job_prop[prop][1]:
-                    properties[prop]["enum"] = list(active_connectors[job.connector.__name__].__getattribute__(job_prop[prop][1])())
+                enum = job.get_property_function(prop)
+                if enum:
+                    properties[prop]["enum"] = list(active_connectors[job.connector.__name__].__getattribute__(enum)())
 
             res = dict({
                 "title": "%s Job" % jobtype,
@@ -136,6 +166,45 @@ class JobCreation(restful.Resource):
             return res
 
         return {}
+
+    def post(self, **kw):
+        settings_json = json.loads(request.data)
+        jobtype = settings_json.get("type")
+        jobid = settings_json.get("id")
+        job = None
+        for jobclass in available_jobs:
+            if jobclass.__name__ == jobtype:
+                job = jobclass()
+        if not job:
+            return {'status': 'bad type'}
+
+        # params validation
+        job.load_job_properties(settings_json)
+        parsed_prop = job.get_job_properties()
+        if jobid:
+            res = mongo.db.job.update({"_id": bson.ObjectId(jobid)},
+                                      {"$set": {"properties": parsed_prop}})
+            if res and (res["ok"] == 1):
+                return {'status': 'ok', 'updated': res["nModified"]}
+            else:
+                return {'status': 'failed'}
+
+        else:
+            execution_state = {"taskid": "",
+                               "state" : "pending"}
+            new_job = {
+                "creation_time": datetime.now(),
+                "type": jobtype,
+                "properties": parsed_prop,
+                "execution": execution_state,
+            }
+            jobid = mongo.db.job.insert(new_job)
+            async = tasks_manager.run_task.delay(jobid)
+            execution_state["taskid"] = async.id
+            mongo.db.job.update({"_id": jobid},
+                                {"$set": {"execution": execution_state}})
+
+            return {'status': 'created'}
 
 
 def normalize_obj(obj):
@@ -185,7 +254,9 @@ def update_connectors():
                 active_connectors.pop(connector_name)
                 app.logger.info("Error activating connector: %s, reason: %s" % (connector_name, e))
 
-
+@app.before_first_request
+def init():
+    update_connectors()
 
 @app.route('/admin/<path:path>')
 def send_admin(path):
