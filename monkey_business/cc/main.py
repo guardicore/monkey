@@ -14,6 +14,7 @@ mongo = PyMongo(app)
 
 active_connectors = {}
 
+
 class Root(restful.Resource):
     def get(self):
         return {
@@ -25,7 +26,6 @@ class Root(restful.Resource):
 class Job(restful.Resource):
     def get(self, **kw):
         id = request.args.get('id')
-        timestamp = request.args.get('timestamp')
         action = request.args.get('action')
 
         if action == "log":
@@ -33,7 +33,7 @@ class Job(restful.Resource):
 
         result = {}
 
-        if (id):
+        if id:
             return mongo.db.job.find_one_or_404({"_id": id})
         else:
             result['timestamp'] = datetime.now().isoformat()
@@ -63,35 +63,13 @@ class Job(restful.Resource):
 
 
 class Connector(restful.Resource):
-    def _build_prop_dict(self, properties, job_obj=None):
-        res = dict()
-        for prop in properties:
-            res[prop] = dict({})
-            res[prop]["default"] = properties[prop]
-            if type(properties[prop]) is int:
-                res[prop]["type"] = "number"
-            elif type(properties[prop]) is bool:
-                res[prop]["type"] = "boolean"
-            elif type(properties[prop]) is dict:
-                res[prop]["type"] = "object"
-                res[prop]["properties"] = self._build_prop_dict(properties[prop], job_obj)
-            else:
-                res[prop]["type"] = "string"
-
-            if job_obj:
-                enum = job_obj.get_property_function(prop)
-                if enum:
-                    properties[prop]["enum"] = list(
-                        active_connectors[job_obj.connector_type.__name__].__getattribute__(enum)())
-        return res
-
     def get(self, **kw):
         contype = request.args.get('type')
 
         # if no type given - return list of types
         if not contype:
             conlist = []
-            checked_con = [] # used for easy checking for reoccurring connectors
+            checked_con = []  # used for easy checking for reoccurring connectors
             for jobclass in available_jobs:
                 if jobclass.connector_type.__name__ not in checked_con:
                     checked_con.append(jobclass.connector_type.__name__)
@@ -107,7 +85,7 @@ class Connector(restful.Resource):
         con_prop = con.get_properties()
         con_prop["password"] = "" # for better security, don't expose password
 
-        properties = self._build_prop_dict(con_prop)
+        properties = _build_prop_dict(con_prop)
         properties["type"] = {
                 "type": "enum",
                 "enum": [contype],
@@ -172,33 +150,21 @@ class JobCreation(restful.Resource):
                 return {'status': 'bad state'}
 
         if job and job.connector_type.__name__ in active_connectors.keys():
-            properties = {
-                "type": {
+            job_prop = job.get_job_properties()
+            properties = _build_prop_dict(job_prop, job)
+
+            properties["type"] = {
                     "type": "enum",
                     "enum": [job.__class__.__name__],
                     "options": {"hidden": True}
                 }
-            }
-            if (jobid):
+
+            if jobid:
                 properties["_id"] = {
                     "type": "enum",
                     "enum": [jobid],
                     "name": "ID",
                 }
-
-            job_prop = job.get_job_properties()
-            for prop in job_prop:
-                properties[prop] = dict({})
-                properties[prop]["default"] = job_prop[prop]
-                if type(job_prop[prop]) is int:
-                    properties[prop]["type"] = "number"
-                elif type(job_prop[prop]) is bool:
-                    properties[prop]["type"] = "boolean"
-                else:
-                    properties[prop]["type"] = "string"
-                enum = job.get_property_function(prop)
-                if enum:
-                    properties[prop]["enum"] = list(active_connectors[job.connector_type.__name__].__getattribute__(enum)())
 
             res = dict({
                 "title": "%s Job" % jobtype,
@@ -270,6 +236,29 @@ def normalize_obj(obj):
                 if type(value[i]) is dict:
                     value[i] = normalize_obj(value[i])
     return obj
+
+
+def _build_prop_dict(properties, job_obj=None):
+    res = dict()
+    for prop in properties:
+        res[prop] = dict({})
+        res[prop]["default"] = properties[prop]
+        if type(properties[prop]) is int:
+            res[prop]["type"] = "number"
+        elif type(properties[prop]) is bool:
+            res[prop]["type"] = "boolean"
+        elif type(properties[prop]) is dict:
+            res[prop]["type"] = "object"
+            res[prop]["properties"] = _build_prop_dict(properties[prop], job_obj)
+        else:
+            res[prop]["type"] = "string"
+
+        if job_obj:
+            enum = job_obj.get_property_function(prop)
+            if enum:
+                res[prop]["enum"] = list(
+                    active_connectors[job_obj.connector_type.__name__].__getattribute__(enum)())
+    return res
 
 
 def output_json(obj, code, headers=None):
