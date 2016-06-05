@@ -63,15 +63,39 @@ class Job(restful.Resource):
 
 
 class Connector(restful.Resource):
+    def _build_prop_dict(self, properties, job_obj=None):
+        res = dict()
+        for prop in properties:
+            res[prop] = dict({})
+            res[prop]["default"] = properties[prop]
+            if type(properties[prop]) is int:
+                res[prop]["type"] = "number"
+            elif type(properties[prop]) is bool:
+                res[prop]["type"] = "boolean"
+            elif type(properties[prop]) is dict:
+                res[prop]["type"] = "object"
+                res[prop]["properties"] = self._build_prop_dict(properties[prop], job_obj)
+            else:
+                res[prop]["type"] = "string"
+
+            if job_obj:
+                enum = job_obj.get_property_function(prop)
+                if enum:
+                    properties[prop]["enum"] = list(
+                        active_connectors[job_obj.connector_type.__name__].__getattribute__(enum)())
+        return res
+
     def get(self, **kw):
         contype = request.args.get('type')
 
         # if no type given - return list of types
         if not contype:
             conlist = []
+            checked_con = [] # used for easy checking for reoccurring connectors
             for jobclass in available_jobs:
-                if jobclass.connector_type.__name__ not in conlist:
-                    conlist.append(jobclass.connector_type.__name__)
+                if jobclass.connector_type.__name__ not in checked_con:
+                    checked_con.append(jobclass.connector_type.__name__)
+                    conlist.append({"title": jobclass.connector_type.__name__, "$ref": "/connector?type=" + jobclass.connector_type.__name__})
             return {"oneOf": conlist}
 
         con = get_connector_by_name(contype)
@@ -80,13 +104,33 @@ class Connector(restful.Resource):
         properties = mongo.db.connector.find_one({"type": con.__class__.__name__})
         if properties:
             con.load_properties(properties)
-        ret = con.get_properties()
-        ret["password"] = "" # for better security, don't expose password
-        return ret
+        con_prop = con.get_properties()
+        con_prop["password"] = "" # for better security, don't expose password
+
+        properties = self._build_prop_dict(con_prop)
+        properties["type"] = {
+                "type": "enum",
+                "enum": [contype],
+                "options": {"hidden": True}
+            }
+
+        res = dict({
+            "title": "%s Connector" % contype,
+            "type": "object",
+            "options": {
+                "disable_collapse": True,
+                "disable_properties": True,
+            },
+            "properties": properties
+        })
+        return res
 
     def post(self, **kw):
         settings_json = json.loads(request.data)
         contype = settings_json.get("type")
+
+        if not contype:
+            return {}
 
         # preserve password if empty given
         properties = mongo.db.connector.find_one({"type": contype})
@@ -96,6 +140,7 @@ class Connector(restful.Resource):
         return mongo.db.connector.update({"type": contype},
                                          {"$set": settings_json},
                                          upsert=True)
+
 
 class JobCreation(restful.Resource):
     def get(self, **kw):

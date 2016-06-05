@@ -129,26 +129,19 @@
                 </div>
                 <div id="config" style="overflow: visible" class="panel-body panel-collapse collapse in" aria-expanded="true">
                     <span class="input-group-btn">
-                        <button id="btnLoadVCenterConfig" class="btn btn-default" type="button"
-                                onclick="loadVcenterConfig()" style="margin-top:-4px">
-                                Reload VCenter Config
-                        </button>
-                        <button id="btnUpdateVCenterConfig" class="btn btn-default" type="button"
-                            onclick="updateVcenterConfig()" style="margin-top:-4px">
-                                Save VCenter Config
+                        <button id="btnLoadConnectorsConfig" class="btn btn-default" type="button"
+                                onclick="loadConnectorsConfig()" style="margin-top:-4px">
+                                Change Connectors Config
                         </button>
                     </span>
-                    <div id="vcenter-config">
-                    </div>                    
-                    <!--<span class="input-group-btn">
-                        <button id="btnConfigLoad" style="display: none;" class="btn btn-default" type="button" 
-                            onclick="loadMonkeyConfig()" style="margin-top:-4px">
-                                Load
+                    <div id="connector-config-section">
+                        <div id="connectors-config">
+                        </div>
+                        <button id="btnSaveConnectorConfig" class="btn btn-default" type="button"
+                            onclick="updateConnectorConfig()" style="margin-top:-4px; visibility: hidden"">
+                                Save Conectors Config
                         </button>
-                        <button id="btnConfigUpdate" style="display: none;" class="btn btn-default" type="button" 
-                            onclick="updateMonkeyConfig()" style="margin-top:-4px">
-                                Update
-                        </button>-->
+                    </div>
                     </span>
 
                 </div>

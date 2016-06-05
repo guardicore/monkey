@@ -65,6 +65,8 @@ class NetControllerJob(object):
         if self._logger:
             self._logger.log(text)
 
+    # external API
+
     def get_job_properties(self):
         return self._properties
 
@@ -81,3 +83,9 @@ class NetControllerJob(object):
 
     def get_results(self):
         return []
+
+    def get_state(self):
+        return None
+
+    def stop(self):
+        raise NotImplementedError()
