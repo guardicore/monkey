@@ -1,0 +1,13 @@
+enum34
+impacket
+PyCrypto
+pyasn1
+cffi
+twisted
+rdpy
+requests
+odict
+paramiko
+psutil
+PyInstaller
+ecdsa
