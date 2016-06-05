@@ -1,4 +1,4 @@
-dimport socket
+import socket
 import random
 import struct
 from abc import ABCMeta, abstractmethod
