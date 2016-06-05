@@ -42,3 +42,7 @@ class DemoJob(NetControllerJob):
     _enumerations = {
         "vlan": "get_vlans_list",
     }
+
+    def run(self):
+        import time
+        time.sleep(30)

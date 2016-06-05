@@ -36,6 +36,7 @@ class NetControllerConnector(object):
     def disconnect(self):
         return
 
+
 class NetControllerJob(object):
     connector = NetControllerConnector
     _properties = {
@@ -46,8 +47,9 @@ class NetControllerJob(object):
 
     }
 
-    def __init__(self):
-        pass
+    def __init__(self, existing_connector = None):
+        if existing_connector:
+            self.connector = existing_connector
 
     def get_job_properties(self):
         return self._properties
@@ -62,3 +64,6 @@ class NetControllerJob(object):
 
     def run(self):
         raise NotImplementedError()
+
+    def get_results(self):
+        return []

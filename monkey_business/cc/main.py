@@ -1,5 +1,3 @@
-import os
-import sys
 from flask import Flask, request, abort, send_from_directory
 from flask.ext import restful
 from flask.ext.pymongo import PyMongo
@@ -7,16 +5,12 @@ from flask import make_response
 import bson.json_util
 import json
 from datetime import datetime
-import dateutil.parser
-from connectors.vcenter import VCenterJob, VCenterConnector
-from connectors.demo import DemoJob, DemoConnector
+from common import *
 import tasks_manager
 
 app = Flask(__name__)
 app.config.from_object('dbconfig')
 mongo = PyMongo(app)
-
-available_jobs = [VCenterJob, DemoJob]
 
 active_connectors = {}
 
@@ -98,20 +92,6 @@ class Connector(restful.Resource):
                                          {"$set": settings_json},
                                          upsert=True)
 
-
-def get_connector_by_name(name):
-    for jobclass in available_jobs:
-        if name == jobclass.connector.__name__:
-            return jobclass.connector()
-    return None
-
-
-def get_jobclass_by_name(name):
-    for jobclass in available_jobs:
-        if jobclass.__name__ == name:
-            return jobclass()
-
-
 class JobCreation(restful.Resource):
     def get(self, **kw):
         jobtype = request.args.get('type')
@@ -127,11 +107,11 @@ class JobCreation(restful.Resource):
 
         job = None
         if not jobid:
-            job = get_jobclass_by_name(jobtype)
+            job = get_jobclass_by_name(jobtype)()
         else:
             loaded_job = mongo.db.job.find_one({"_id": bson.ObjectId(jobid)})
             if loaded_job:
-                job = get_jobclass_by_name(loaded_job.get("type"))
+                job = get_jobclass_by_name(loaded_job.get("type"))()
                 job.load_job_properties(loaded_job.get("properties"))
 
         if action == "delete":
@@ -249,12 +229,6 @@ def output_json(obj, code, headers=None):
     return resp
 
 
-def refresh_connector_config(name):
-    properties = mongo.db.connector.find_one({"type": name})
-    if properties:
-        active_connectors[name].load_properties(properties)
-
-
 def update_connectors():
     for con in available_jobs:
         connector_name = con.connector.__name__
@@ -262,7 +236,7 @@ def update_connectors():
             active_connectors[connector_name] = con.connector()
 
         if not active_connectors[connector_name].is_connected():
-            refresh_connector_config(connector_name)
+            refresh_connector_config(mongo, active_connectors[connector_name])
             try:
                 app.logger.info("Trying to activate connector: %s" % connector_name)
                 active_connectors[connector_name].connect()

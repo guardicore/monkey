@@ -162,3 +162,6 @@ class VCenterJob(NetControllerJob):
         "vlan": "get_vlans_list",
     }
 
+    def run(self):
+        pass
+
