@@ -105,8 +105,8 @@ function initAdmin() {
                         disable_properties: true,
                         });
     
-    setInterval(updateJobs, 2000);
-    setInterval(showLog, 2000);
+    setInterval(updateJobs, 5000);
+    setInterval(showLog, 5000);
     loadVcenterConfig();
     updateJobs();
 
