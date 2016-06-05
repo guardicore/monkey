@@ -83,6 +83,23 @@ class VCenterConnector(NetControllerConnector):
 
         return monkey_vm
 
+    def set_network(self, vm_obj, vlan_name):
+        if not self.is_connected():
+            self.connect()
+        vcontent = self._service_instance.RetrieveContent()  # get updated vsphare state
+        dvs_pg = self._get_obj(vcontent, [vim.dvs.DistributedVirtualPortgroup], vlan_name)
+        nic = self._get_vm_nic(vm_obj)
+        virtual_nic_spec = self._create_nic_spec(nic, dvs_pg)
+        dev_changes = [virtual_nic_spec]
+        spec = vim.vm.ConfigSpec()
+        spec.deviceChange = dev_changes
+        task = vm_obj.ReconfigVM_Task(spec=spec)
+        return self._wait_for_task(task)
+
+    def power_on(self, vm_obj):
+        task = vm_obj.PowerOnVM_Task()
+        return self._wait_for_task(task)
+
     def disconnect(self):
         Disconnect(self._service_instance)
         self._service_instance = None
@@ -90,6 +107,36 @@ class VCenterConnector(NetControllerConnector):
     def __del__(self):
         if self._service_instance:
             self.disconnect()
+
+    def _get_vm_nic(self, vm_obj):
+        for dev in vm_obj.config.hardware.device:
+            if isinstance(dev, vim.vm.device.VirtualEthernetCard):
+                return dev
+        return None
+
+    def _create_nic_spec(self, virtual_nic_device, dvs_pg):
+        virtual_nic_spec = vim.vm.device.VirtualDeviceSpec()
+        virtual_nic_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.edit
+        virtual_nic_spec.device = virtual_nic_device
+        virtual_nic_spec.device.key = virtual_nic_device.key
+        virtual_nic_spec.device.macAddress = virtual_nic_device.macAddress
+        virtual_nic_spec.device.wakeOnLanEnabled = virtual_nic_device.wakeOnLanEnabled
+
+        virtual_nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
+        virtual_nic_spec.device.connectable.startConnected = True
+        virtual_nic_spec.device.connectable.connected = True
+        virtual_nic_spec.device.connectable.allowGuestControl = True
+
+        # configure port connection object on the requested dvs port group
+        dvs_port_connection = vim.dvs.PortConnection()
+        dvs_port_connection.portgroupKey = dvs_pg.key
+        dvs_port_connection.switchUuid = dvs_pg.config.distributedVirtualSwitch.uuid
+
+        # assign port to device
+        virtual_nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.DistributedVirtualPortBackingInfo()
+        virtual_nic_spec.device.backing.port = dvs_port_connection
+
+        return virtual_nic_spec
 
     def _clone_vm(self, vcontent, vm, name):
 
@@ -131,11 +178,18 @@ class VCenterConnector(NetControllerConnector):
         task_done = False
         while not task_done:
             if task.info.state == 'success':
-                return task.info.result
+                if task.info.result:
+                    return task.info.result
+                else:
+                    return True
 
             if task.info.state == 'error':
                 self.log("Error waiting for task: %s" % repr(task.info))
                 return None
+        if task.info.state == 'success':
+            return task.info.result
+        return None
+
 
     @staticmethod
     def _get_obj(content, vimtype, name):
@@ -160,6 +214,7 @@ class VCenterConnector(NetControllerConnector):
 
 class VCenterJob(NetControllerJob):
     connector_type = VCenterConnector
+    _vm_obj = None
     _properties = {
         "vlan": "",
         "vm_name": "",
@@ -173,5 +228,18 @@ class VCenterJob(NetControllerJob):
             return False
 
         monkey_vm = self._connector.deploy_monkey(self._properties["vm_name"])
+        if not monkey_vm:
+            return False
+
+        self._vm_obj = monkey_vm
+
+        self.log("Setting vm network")
+        if not self._connector.set_network(monkey_vm, self._properties["vlan"]):
+            return False
+
+        self.log("Powering on vm")
+        if not self._connector.power_on(monkey_vm):
+            return False
+
         return True
 
