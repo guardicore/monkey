@@ -35,9 +35,15 @@ class DemoConnector(NetControllerConnector):
         return []
 
 class DemoJob(NetControllerJob):
-    connector = DemoConnector
+    connector_type = DemoConnector
+    _properties = {
+        "vlan": 0,
+    }
+    _enumerations = {
+        "vlan": "get_vlans_list",
+    }
 
-    def __init__(self):
-        self._properties = {
-            "vlan": [0, "get_vlans_list"],
-        }
+    def run(self):
+        import time
+        self.log("Running demo job...")
+        time.sleep(30)

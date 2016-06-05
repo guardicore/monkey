@@ -63,20 +63,42 @@ class VCenterConnector(NetControllerConnector):
     def get_entities_on_vlan(self, vlanid):
         return []
 
-    def deploy_monkey(self, vlanid):
+    def deploy_monkey(self, vm_name):
         if not self._properties["monkey_template_name"]:
             raise Exception("Monkey template not configured")
+
+        if not self.is_connected():
+            self.connect()
 
         vcontent = self._service_instance.RetrieveContent()  # get updated vsphare state
         monkey_template = self._get_obj(vcontent, [vim.VirtualMachine], self._properties["monkey_template_name"])
         if not monkey_template:
             raise Exception("Monkey template not found")
 
-        task = self._clone_vm(vcontent, monkey_template)
-        if not task:
+        self.log("Cloning vm: (%s -> %s)" % (monkey_template, vm_name))
+        monkey_vm = self._clone_vm(vcontent, monkey_template, vm_name)
+        if not monkey_vm:
             raise Exception("Error deploying monkey VM")
+        self.log("Finished cloning")
 
-        monkey_vm = task.entity
+        return monkey_vm
+
+    def set_network(self, vm_obj, vlan_name):
+        if not self.is_connected():
+            self.connect()
+        vcontent = self._service_instance.RetrieveContent()  # get updated vsphare state
+        dvs_pg = self._get_obj(vcontent, [vim.dvs.DistributedVirtualPortgroup], vlan_name)
+        nic = self._get_vm_nic(vm_obj)
+        virtual_nic_spec = self._create_nic_spec(nic, dvs_pg)
+        dev_changes = [virtual_nic_spec]
+        spec = vim.vm.ConfigSpec()
+        spec.deviceChange = dev_changes
+        task = vm_obj.ReconfigVM_Task(spec=spec)
+        return self._wait_for_task(task)
+
+    def power_on(self, vm_obj):
+        task = vm_obj.PowerOnVM_Task()
+        return self._wait_for_task(task)
 
     def disconnect(self):
         Disconnect(self._service_instance)
@@ -86,7 +108,37 @@ class VCenterConnector(NetControllerConnector):
         if self._service_instance:
             self.disconnect()
 
-    def _clone_vm(self, vcontent, vm):
+    def _get_vm_nic(self, vm_obj):
+        for dev in vm_obj.config.hardware.device:
+            if isinstance(dev, vim.vm.device.VirtualEthernetCard):
+                return dev
+        return None
+
+    def _create_nic_spec(self, virtual_nic_device, dvs_pg):
+        virtual_nic_spec = vim.vm.device.VirtualDeviceSpec()
+        virtual_nic_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.edit
+        virtual_nic_spec.device = virtual_nic_device
+        virtual_nic_spec.device.key = virtual_nic_device.key
+        virtual_nic_spec.device.macAddress = virtual_nic_device.macAddress
+        virtual_nic_spec.device.wakeOnLanEnabled = virtual_nic_device.wakeOnLanEnabled
+
+        virtual_nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
+        virtual_nic_spec.device.connectable.startConnected = True
+        virtual_nic_spec.device.connectable.connected = True
+        virtual_nic_spec.device.connectable.allowGuestControl = True
+
+        # configure port connection object on the requested dvs port group
+        dvs_port_connection = vim.dvs.PortConnection()
+        dvs_port_connection.portgroupKey = dvs_pg.key
+        dvs_port_connection.switchUuid = dvs_pg.config.distributedVirtualSwitch.uuid
+
+        # assign port to device
+        virtual_nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.DistributedVirtualPortBackingInfo()
+        virtual_nic_spec.device.backing.port = dvs_port_connection
+
+        return virtual_nic_spec
+
+    def _clone_vm(self, vcontent, vm, name):
 
         # get vm target folder
         if self._properties["monkey_vm_info"]["vm_folder"]:
@@ -101,7 +153,7 @@ class VCenterConnector(NetControllerConnector):
         else:
             datastore = self._get_obj(vcontent, [vim.Datastore], vm.datastore[0].info.name)
 
-        # get vm target resoucepool
+        # get vm target resource pool
         if self._properties["monkey_vm_info"]["resource_pool"]:
             resource_pool = self._get_obj(vcontent, [vim.ResourcePool], self._properties["monkey_vm_info"]["resource_pool"])
         else:
@@ -116,20 +168,28 @@ class VCenterConnector(NetControllerConnector):
         clonespec = vim.vm.CloneSpec()
         clonespec.location = relospec
 
-        task = vm.Clone(folder=destfolder, name=self._properties["monkey_vm_info"]["name"], spec=clonespec)
+        self.log("Starting clone task with the following info: %s" % repr({"folder": destfolder, "name": name, "clonespec": clonespec}))
+
+        task = vm.Clone(folder=destfolder, name=name, spec=clonespec)
         return self._wait_for_task(task)
 
-
-    @staticmethod
-    def _wait_for_task(task):
+    def _wait_for_task(self, task):
         """ wait for a vCenter task to finish """
         task_done = False
         while not task_done:
             if task.info.state == 'success':
-                return task.info.result
+                if task.info.result:
+                    return task.info.result
+                else:
+                    return True
 
             if task.info.state == 'error':
+                self.log("Error waiting for task: %s" % repr(task.info))
                 return None
+        if task.info.state == 'success':
+            return task.info.result
+        return None
+
 
     @staticmethod
     def _get_obj(content, vimtype, name):
@@ -153,10 +213,33 @@ class VCenterConnector(NetControllerConnector):
 
 
 class VCenterJob(NetControllerJob):
-    connector = VCenterConnector
+    connector_type = VCenterConnector
+    _vm_obj = None
+    _properties = {
+        "vlan": "",
+        "vm_name": "",
+    }
+    _enumerations = {
+        "vlan": "get_vlans_list",
+    }
 
-    def __init__(self):
-        self._properties = {
-            "vlan": [0, "get_vlans_list"],
-        }
+    def run(self):
+        if not self._connector:
+            return False
+
+        monkey_vm = self._connector.deploy_monkey(self._properties["vm_name"])
+        if not monkey_vm:
+            return False
+
+        self._vm_obj = monkey_vm
+
+        self.log("Setting vm network")
+        if not self._connector.set_network(monkey_vm, self._properties["vlan"]):
+            return False
+
+        self.log("Powering on vm")
+        if not self._connector.power_on(monkey_vm):
+            return False
+
+        return True
 

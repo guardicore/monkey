@@ -1,17 +1,7 @@
-/*const jsonFile = "/api/jbos";
-var monkeys = null;
-var generationDate = null;*/
-
 // The JSON must be fully loaded before onload() happens for calling draw() on 'monkeys'
 $.ajaxSetup({
     async: false
 });
-
-// Reading the JSON file containing the monkeys' informations
-/*$.getJSON(jsonFile, function(json) {
-    jobs = json.objects;
-    generationDate = json.timestamp;
-});*/
 
 // Images/icons constants
 const ICONS_DIR = "./css/img/objects/";
@@ -21,16 +11,35 @@ const ICONS_EXT = ".png";
 // If variable from local storage != null, assign it, otherwise set it's default value.
 
 var jobsTable = undefined;
+var logsTable = undefined;
 var vcenterCfg = undefined;
+var jobCfg = undefined;
+var selectedJob = undefined;
 
 JSONEditor.defaults.theme = 'bootstrap3';
-
 
 function initAdmin() {
 
     jobsTable = $("#jobs-table").DataTable({
+        "ordering": true,
+        "order": [[1, "desc"]],
+    });
+    logsTable = $("#logs-table").DataTable({
         "ordering": false,
     });
+    jobsTable.on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+        }
+        else {
+            jobsTable.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+        jobdata = jobsTable.row(this).data();
+        selectedJob = jobdata[0];
+        createNewJob(selectedJob, jobdata[3]);
+        showLog(selectedJob);
+    } );
 
     vcenterCfg = new JSONEditor(document.getElementById('vcenter-config'),{
                         schema: {
@@ -75,7 +84,8 @@ function initAdmin() {
                                   },
                                   datacenter_name: {
                                       title: "Datacenter (opt.)",
-                                      type: "string",                                  },
+                                      type: "string",
+                                  },
                                   cluster_name: {
                                       title: "Cluster (opt.)",
                                       type: "string",
@@ -93,31 +103,45 @@ function initAdmin() {
                         },
                         disable_edit_json: false,
                         disable_properties: true,
-                        startval: $,
                         });
     
-    window.setTimeout(updateJobs, 10000);
+    setInterval(updateJobs, 5000);
+    setInterval(showLog, 5000);
     loadVcenterConfig();
     updateJobs();
 
 }
 
-function updateVCenterConf() {
+function showLog() {
+   logsTable.clear();
 
+    if (!selectedJob) {
+        return;
+    }
+
+    $.getJSON('/job?action=log&id=' + selectedJob, function(json) {
+        var logsList = json.log;
+        for (var i = 0; i < logsList.length; i++) {
+            logsTable.row.add([logsList[i][0], logsList[i][1]]);
+        }
+
+        logsTable.draw();
+
+    });
 }
 
 function updateJobs() {
     $.getJSON('/job', function(json) {
         jobsTable.clear();
-        var jobs = json.objects;
+        var jobsList = json.objects;
 
-        for (var i = 0; i < jobs.length; i++) {
-            jobsTable.row.add([jobs[i].timestamp, jobs[i].status, JSON.stringify(jobs[i].data)]);
+        for (var i = 0; i < jobsList.length; i++) {
+            jobsTable.row.add([jobsList[i].id, jobsList[i].creation_time, jobsList[i].type,jobsList[i].execution.state, JSON.stringify(jobsList[i].properties)]);
         }
 
         jobsTable.draw();
+        //enableJobsSelect();
     });
-
 }
 
 function loadVcenterConfig() {
@@ -152,59 +176,113 @@ function updateVcenterConfig() {
 
 }
 
-function createNewJob() {
+function emptySelection() {
+    showLog();
+    selectedJob = undefined;
+    jobsTable.$('tr.selected').removeClass('selected');
+}
+
+function createNewJob(id, state) {
+    if (!id) {
+        emptySelection();
+    }
+
     elem = document.getElementById('job-config');
     elem.innerHTML = ""
     jobCfg = new JSONEditor(elem,{
-                            schema: {
-                              type: "object",
-                              title: "Job",
-                              properties: {
-                                    job: {
-                                        title: "Type",
-                                        $ref: "/jobcreate",
-                                    }
-                              },
-                              options: {
-                                "collapsed": false
-                              },
-                            },
-                            ajax: true,
-                            disable_edit_json: false,
-                            disable_collapse: true,
-                            disable_properties: true,
-                            });
+                                schema: {
+                                  type: "object",
+                                  title: "Job",
+                                  properties: {
+                                        job: {
+                                            title: "Type",
+                                            $ref: "/jobcreate" + ((id)?"?id="+id:""),
+                                        }
+                                  },
+                                  options: {
+                                    "collapsed": false
+                                  },
+                                },
+                                ajax: true,
+                                disable_edit_json: false,
+                                disable_collapse: true,
+                                disable_properties: true,
+                                no_additional_properties: true
+                                });
+
+    jobCfg.on('ready',function() {
+        if (id && state != "pending") {
+            jobCfg.disable();
+            document.getElementById("btnSendJob").style.visibility = "hidden";
+            document.getElementById("btnDeleteJob").style.visibility = "hidden";
+        }
+        else {
+            jobCfg.enable();
+            document.getElementById("btnSendJob").style.visibility = "visible";
+            if (id) {
+                document.getElementById("btnDeleteJob").style.visibility = "visible";
+            }
+            else {
+                document.getElementById("btnDeleteJob").style.visibility = "hidden";
+            }
+        }
+    });
+}
+
+function sendJob() {
+    var job_config = jobCfg.getValue()
+
+    $.ajax({
+            headers : {
+                'Accept' : 'application/json',
+                'Content-Type' : 'application/json'
+            },
+            url : '/jobcreate',
+            type : 'POST',
+            data : JSON.stringify(job_config.job),
+            success : function(response, textStatus, jqXhr) {
+                console.log("Job successfully updated!");
+                updateJobs();
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+                // log the error to the console
+                console.log("The following error occured: " + textStatus, errorThrown);
+            },
+            complete : function() {
+                console.log("Sending job config...");
+            }
+        });
+}
+
+function deleteJob() {
+    var job_config = jobCfg.getValue();
+    if (job_config.job.id) {
+            $.ajax({
+            headers : {
+                'Accept' : 'application/json',
+                'Content-Type' : 'application/json'
+            },
+            url : '/jobcreate',
+            type : 'GET',
+            data : "action=delete&id=" + job_config.job.id,
+            success : function(response, textStatus, jqXhr) {
+                console.log("Job successfully updated!");
+                updateJobs();
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+                // log the error to the console
+                console.log("The following error occured: " + textStatus, errorThrown);
+            },
+            complete : function() {
+                console.log("Sending job config...");
+            }
+        });
+    }
 }
 
 function configSched() {
 
 }
-
-/**
- * Manage the event when an object is selected
- */
-function onSelect(properties) {
-
-    /*if (properties.nodes.length > 0) {
-        onNodeSelect(properties.nodes);
-    }
-    else
-    {
-        var content = "<b>No selection</b>"
-        $("#selectionInfo").html(content);
-        $('#monkey-config').hide()
-        $('#btnConfigLoad, #btnConfigUpdate').hide();
-        telemTable.clear();
-        telemTable.draw();
-    }*/
-
-    /*if (properties.edges.length > 0) {
-        onEdgeSelect(properties.edges);
-    }*/
-
-}
-
-
 
 /**
  * Clears the value in the local storage
