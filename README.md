@@ -33,6 +33,7 @@ The Monkey itself has been tested on Windows XP, 7, 8.1 and 10. The Linux build 
 
 ### Installation
 
+For off the shelf use, download our pre-compiled binaries from our website, to setup the C&C server follow the instructions in [Monkey Island readme](monkey_island/readme.txt).  If you with to compile the binaries yourself, follow the build instructions in the appropiate [readme](build_env/readme.txt).
 Usage
 -----
 
