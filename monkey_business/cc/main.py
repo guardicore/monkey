@@ -24,8 +24,13 @@ class Root(restful.Resource):
 
 class Job(restful.Resource):
     def get(self, **kw):
-        id = kw.get('id')
+        id = request.args.get('id')
         timestamp = request.args.get('timestamp')
+        action = request.args.get('action')
+
+        if action == "log":
+            return {"log": get_job_log(id)}
+
         result = {}
 
         if (id):
@@ -65,8 +70,8 @@ class Connector(restful.Resource):
         if not contype:
             conlist = []
             for jobclass in available_jobs:
-                if jobclass.connector.__name__ not in conlist:
-                    conlist.append(jobclass.connector.__name__)
+                if jobclass.connector_type.__name__ not in conlist:
+                    conlist.append(jobclass.connector_type.__name__)
             return {"oneOf": conlist}
 
         con = get_connector_by_name(contype)
@@ -101,7 +106,7 @@ class JobCreation(restful.Resource):
             res = []
             update_connectors()
             for con in available_jobs:
-                if con.connector.__name__ in active_connectors:
+                if con.connector_type.__name__ in active_connectors:
                     res.append({"title": con.__name__, "$ref": "/jobcreate?type=" + con.__name__})
             return {"oneOf": res}
 
@@ -121,7 +126,7 @@ class JobCreation(restful.Resource):
             else:
                 return {'status': 'bad state'}
 
-        if job and job.connector.__name__ in active_connectors.keys():
+        if job and job.connector_type.__name__ in active_connectors.keys():
             properties = {
                 "type": {
                     "type": "enum",
@@ -148,7 +153,7 @@ class JobCreation(restful.Resource):
                     properties[prop]["type"] = "string"
                 enum = job.get_property_function(prop)
                 if enum:
-                    properties[prop]["enum"] = list(active_connectors[job.connector.__name__].__getattribute__(enum)())
+                    properties[prop]["enum"] = list(active_connectors[job.connector_type.__name__].__getattribute__(enum)())
 
             res = dict({
                 "title": "%s Job" % jobtype,
@@ -229,11 +234,17 @@ def output_json(obj, code, headers=None):
     return resp
 
 
+def get_job_log(jobid):
+    res = mongo.db.results.find_one({"jobid": bson.ObjectId(jobid)})
+    if res:
+        return res["log"]
+    return []
+
 def update_connectors():
     for con in available_jobs:
-        connector_name = con.connector.__name__
+        connector_name = con.connector_type.__name__
         if connector_name not in active_connectors:
-            active_connectors[connector_name] = con.connector()
+            active_connectors[connector_name] = con.connector_type()
 
         if not active_connectors[connector_name].is_connected():
             refresh_connector_config(mongo, active_connectors[connector_name])

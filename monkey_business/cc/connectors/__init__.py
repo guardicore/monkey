@@ -36,9 +36,17 @@ class NetControllerConnector(object):
     def disconnect(self):
         return
 
+    def log(self, text):
+        pass
+
+    def set_logger(self, logger):
+        self.log = logger
 
 class NetControllerJob(object):
-    connector = NetControllerConnector
+    connector_type = NetControllerConnector
+    _connector = None
+    _logger = None
+
     _properties = {
         # property: value
     }
@@ -47,9 +55,15 @@ class NetControllerJob(object):
 
     }
 
-    def __init__(self, existing_connector = None):
-        if existing_connector:
-            self.connector = existing_connector
+    def __init__(self, existing_connector=None, logger=None):
+        self._connector = existing_connector
+        self._logger = logger
+        if logger:
+            self._connector.set_logger(self.log)
+
+    def log(self, text):
+        if self._logger:
+            self._logger.log(text)
 
     def get_job_properties(self):
         return self._properties

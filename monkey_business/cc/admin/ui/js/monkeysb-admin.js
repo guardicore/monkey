@@ -11,8 +11,10 @@ const ICONS_EXT = ".png";
 // If variable from local storage != null, assign it, otherwise set it's default value.
 
 var jobsTable = undefined;
+var logsTable = undefined;
 var vcenterCfg = undefined;
 var jobCfg = undefined;
+var selectedJob = undefined;
 
 JSONEditor.defaults.theme = 'bootstrap3';
 
@@ -21,6 +23,9 @@ function initAdmin() {
     jobsTable = $("#jobs-table").DataTable({
         "ordering": true,
         "order": [[1, "desc"]],
+    });
+    logsTable = $("#logs-table").DataTable({
+        "ordering": false,
     });
     jobsTable.on( 'click', 'tr', function () {
         if ( $(this).hasClass('selected') ) {
@@ -31,7 +36,9 @@ function initAdmin() {
             $(this).addClass('selected');
         }
         jobdata = jobsTable.row(this).data();
-        createNewJob(jobdata[0], jobdata[3]);
+        selectedJob = jobdata[0];
+        createNewJob(selectedJob, jobdata[3]);
+        showLog(selectedJob);
     } );
 
     vcenterCfg = new JSONEditor(document.getElementById('vcenter-config'),{
@@ -98,10 +105,29 @@ function initAdmin() {
                         disable_properties: true,
                         });
     
-    window.setTimeout(updateJobs, 5000);
+    setInterval(updateJobs, 2000);
+    setInterval(showLog, 2000);
     loadVcenterConfig();
     updateJobs();
 
+}
+
+function showLog() {
+   logsTable.clear();
+
+    if (!selectedJob) {
+        return;
+    }
+
+    $.getJSON('/job?action=log&id=' + selectedJob, function(json) {
+        var logsList = json.log;
+        for (var i = 0; i < logsList.length; i++) {
+            logsTable.row.add([logsList[i][0], logsList[i][1]]);
+        }
+
+        logsTable.draw();
+
+    });
 }
 
 function updateJobs() {
@@ -150,9 +176,15 @@ function updateVcenterConfig() {
 
 }
 
+function emptySelection() {
+    showLog();
+    selectedJob = undefined;
+    jobsTable.$('tr.selected').removeClass('selected');
+}
+
 function createNewJob(id, state) {
     if (!id) {
-        jobsTable.$('tr.selected').removeClass('selected');
+        emptySelection();
     }
 
     elem = document.getElementById('job-config');

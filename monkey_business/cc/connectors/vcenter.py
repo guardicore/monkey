@@ -63,20 +63,25 @@ class VCenterConnector(NetControllerConnector):
     def get_entities_on_vlan(self, vlanid):
         return []
 
-    def deploy_monkey(self, vlanid, vm_name):
+    def deploy_monkey(self, vm_name):
         if not self._properties["monkey_template_name"]:
             raise Exception("Monkey template not configured")
+
+        if not self.is_connected():
+            self.connect()
 
         vcontent = self._service_instance.RetrieveContent()  # get updated vsphare state
         monkey_template = self._get_obj(vcontent, [vim.VirtualMachine], self._properties["monkey_template_name"])
         if not monkey_template:
             raise Exception("Monkey template not found")
 
-        task = self._clone_vm(vcontent, monkey_template, vm_name)
-        if not task:
+        self.log("Cloning vm: (%s -> %s)" % (monkey_template, vm_name))
+        monkey_vm = self._clone_vm(vcontent, monkey_template, vm_name)
+        if not monkey_vm:
             raise Exception("Error deploying monkey VM")
+        self.log("Finished cloning")
 
-        monkey_vm = task.entity
+        return monkey_vm
 
     def disconnect(self):
         Disconnect(self._service_instance)
@@ -101,7 +106,7 @@ class VCenterConnector(NetControllerConnector):
         else:
             datastore = self._get_obj(vcontent, [vim.Datastore], vm.datastore[0].info.name)
 
-        # get vm target resoucepool
+        # get vm target resource pool
         if self._properties["monkey_vm_info"]["resource_pool"]:
             resource_pool = self._get_obj(vcontent, [vim.ResourcePool], self._properties["monkey_vm_info"]["resource_pool"])
         else:
@@ -116,12 +121,12 @@ class VCenterConnector(NetControllerConnector):
         clonespec = vim.vm.CloneSpec()
         clonespec.location = relospec
 
+        self.log("Starting clone task with the following info: %s" % repr({"folder": destfolder, "name": name, "clonespec": clonespec}))
+
         task = vm.Clone(folder=destfolder, name=name, spec=clonespec)
         return self._wait_for_task(task)
 
-
-    @staticmethod
-    def _wait_for_task(task):
+    def _wait_for_task(self, task):
         """ wait for a vCenter task to finish """
         task_done = False
         while not task_done:
@@ -129,6 +134,7 @@ class VCenterConnector(NetControllerConnector):
                 return task.info.result
 
             if task.info.state == 'error':
+                self.log("Error waiting for task: %s" % repr(task.info))
                 return None
 
     @staticmethod
@@ -153,9 +159,9 @@ class VCenterConnector(NetControllerConnector):
 
 
 class VCenterJob(NetControllerJob):
-    connector = VCenterConnector
+    connector_type = VCenterConnector
     _properties = {
-        "vlan": 0,
+        "vlan": "",
         "vm_name": "",
     }
     _enumerations = {
@@ -163,5 +169,9 @@ class VCenterJob(NetControllerJob):
     }
 
     def run(self):
-        pass
+        if not self._connector:
+            return False
+
+        monkey_vm = self._connector.deploy_monkey(self._properties["vm_name"])
+        return True
 

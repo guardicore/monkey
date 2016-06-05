@@ -6,8 +6,8 @@ available_jobs = [VCenterJob, DemoJob]
 
 def get_connector_by_name(name):
     for jobclass in available_jobs:
-        if name == jobclass.connector.__name__:
-            return jobclass.connector()
+        if name == jobclass.connector_type.__name__:
+            return jobclass.connector_type()
     return None
 
 

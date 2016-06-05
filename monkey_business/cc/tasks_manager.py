@@ -23,6 +23,7 @@ fapp.config.from_object('dbconfig')
 celery = make_celery(fapp)
 mongo = PyMongo(fapp)
 
+
 class JobExecution(object):
     _jobinfo = None
     _job = None
@@ -35,9 +36,10 @@ class JobExecution(object):
         self.update_job_state("processing")
 
         job_class = get_jobclass_by_name(self._jobinfo["type"])
-        con = job_class.connector()
+        con = job_class.connector_type()
         refresh_connector_config(self._mongo, con)
-        self._job = job_class(con)
+        self._job = job_class(con, self)
+        self._job.load_job_properties(self._jobinfo["properties"])
 
     def get_job(self):
         return self._job
@@ -56,22 +58,27 @@ class JobExecution(object):
                                       upsert=True)
 
     def log(self, text):
-        self._log.append("[%s] %s" % (datetime.now(), text))
+        self._log.append([datetime.now().isoformat(), text])
         self._mongo.db.results.update({"jobid": self._jobinfo["_id"]},
                                       {"$set": {"log": self._log}},
                                       upsert=True)
 
     def run(self):
         self.log("Starting job")
+        res = False
         try:
-            self._job.run()
+            res = self._job.run()
         except Exception, e:
             self.log("Exception raised while running: %s" % e)
             self.update_job_state("error")
             return False
-        self.log("done job startup")
-        self.update_job_state("running")
-        return True
+        if res:
+            self.log("Done job startup")
+            self.update_job_state("running")
+        else:
+            self.log("Job startup error")
+            self.update_job_state("error")
+        return res
 
     def get_results(self):
         self.log("Trying to get results")
@@ -92,9 +99,15 @@ def run_task(jobid):
     if not job_info:
         return False
 
-    job_exec = JobExecution(mongo, job_info)
+    job_exec = None
+    try:
+        job_exec = JobExecution(mongo, job_info)
+    except Exception, e:
+        print "init JobExecution exception - ", e
+        return False
+
     if not job_exec.get_job():
-        job_exec.update_job_state(job_info, "error")
+        job_exec.update_job_state("error")
         return False
 
     if not job_exec.run():
