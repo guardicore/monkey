@@ -42,8 +42,10 @@ class NetControllerConnector(object):
     def set_logger(self, logger):
         self.log = logger
 
+
 class NetControllerJob(object):
     connector_type = NetControllerConnector
+
     _connector = None
     _logger = None
 

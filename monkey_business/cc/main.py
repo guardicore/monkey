@@ -143,9 +143,12 @@ class JobCreation(restful.Resource):
                 job.load_job_properties(loaded_job.get("properties"))
 
         if action == "delete":
-            if loaded_job.get("execution")["state"] == "pending":
-                mongo.db.job.remove({"_id": bson.ObjectId(jobid)})
-                return {'status': 'ok'}
+            if loaded_job.get("state") == "pending":
+                res = mongo.db.job.remove({"_id": bson.ObjectId(jobid), "state": "pending"})
+                if res["nModified"] == 1:
+                    return {'status': 'ok'}
+                else:
+                    return {'status': 'error deleting'}
             else:
                 return {'status': 'bad state'}
 
@@ -202,19 +205,17 @@ class JobCreation(restful.Resource):
                 return {'status': 'failed'}
 
         else:
-            execution_state = {"taskid": "",
-                               "state" : "pending"}
             new_job = {
                 "creation_time": datetime.now(),
                 "type": jobtype,
                 "properties": parsed_prop,
-                "execution": execution_state,
+                "taskid": "",
+                "state" : "pending",
             }
             jobid = mongo.db.job.insert(new_job)
             async = tasks_manager.run_task.delay(jobid)
-            execution_state["taskid"] = async.id
             mongo.db.job.update({"_id": jobid},
-                                {"$set": {"execution": execution_state}})
+                                {"$set": {"taskid": async.id}})
 
             return {'status': 'created'}
 

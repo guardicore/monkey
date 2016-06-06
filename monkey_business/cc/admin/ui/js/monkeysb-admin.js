@@ -71,7 +71,7 @@ function updateJobs() {
         var jobsList = json.objects;
 
         for (var i = 0; i < jobsList.length; i++) {
-            jobsTable.row.add([jobsList[i].id, jobsList[i].creation_time, jobsList[i].type,jobsList[i].execution.state, JSON.stringify(jobsList[i].properties)]);
+            jobsTable.row.add([jobsList[i].id, jobsList[i].creation_time, jobsList[i].type,jobsList[i].state, JSON.stringify(jobsList[i].properties)]);
         }
 
         jobsTable.draw();
