@@ -12,7 +12,6 @@ class VCenterConnector(NetControllerConnector):
             "password": "",
             "monkey_template_name": "",
             "monkey_vm_info": {
-                "name":   "Monkey Test",
                 "datacenter_name":   "",
                 "vm_folder":   "",
                 "datastore_name":   "",

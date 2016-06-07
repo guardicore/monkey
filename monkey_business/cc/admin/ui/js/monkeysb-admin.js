@@ -12,8 +12,8 @@ const ICONS_EXT = ".png";
 
 var jobsTable = undefined;
 var logsTable = undefined;
-var vcenterCfg = undefined;
 var jobCfg = undefined;
+var conCfg = undefined;
 var selectedJob = undefined;
 
 JSONEditor.defaults.theme = 'bootstrap3';
@@ -41,73 +41,8 @@ function initAdmin() {
         showLog(selectedJob);
     } );
 
-    vcenterCfg = new JSONEditor(document.getElementById('vcenter-config'),{
-                        schema: {
-                          type: "object",
-                          title: "vcenter",
-                          properties: {
-                            address: {
-                              title: "Address",
-                              type: "string",
-                            },
-                            port: {
-                              title: "Port",
-                              type: "integer",
-                            },
-                            username: {
-                              title: "Username",
-                              type: "string",
-                            },
-                            password: {
-                              title: "Password",
-                              type: "string",
-                            },
-                            monkey_template_name: {
-                              title: "Monkey Template Name",
-                              type: "string",
-                            },
-                            monkey_vm_info: {
-                              title: "Monkey Creation VM",
-                              type: "object",
-                              properties: {
-                                  name: {
-                                      title: "Deployment Name",
-                                      type: "string",
-                                  },
-                                  vm_folder: {
-                                      title: "VM Folder (opt.)",
-                                      type: "string",
-                                  },
-                                  resource_pool: {
-                                      title: "Resource Pool (opt.)",
-                                      type: "string",
-                                  },
-                                  datacenter_name: {
-                                      title: "Datacenter (opt.)",
-                                      type: "string",
-                                  },
-                                  cluster_name: {
-                                      title: "Cluster (opt.)",
-                                      type: "string",
-                                  },
-                                  datastore_name: {
-                                      title: "Datastore (opt.)",
-                                      type: "string",
-                                  },
-                              }
-                            }
-                          },
-                          options: {
-                            "collapsed": true
-                          },                                           
-                        },
-                        disable_edit_json: false,
-                        disable_properties: true,
-                        });
-    
     setInterval(updateJobs, 5000);
     setInterval(showLog, 5000);
-    loadVcenterConfig();
     updateJobs();
 
 }
@@ -136,24 +71,43 @@ function updateJobs() {
         var jobsList = json.objects;
 
         for (var i = 0; i < jobsList.length; i++) {
-            jobsTable.row.add([jobsList[i].id, jobsList[i].creation_time, jobsList[i].type,jobsList[i].execution.state, JSON.stringify(jobsList[i].properties)]);
+            jobsTable.row.add([jobsList[i].id, jobsList[i].creation_time, jobsList[i].type,jobsList[i].state, JSON.stringify(jobsList[i].properties)]);
         }
 
         jobsTable.draw();
-        //enableJobsSelect();
     });
 }
 
-function loadVcenterConfig() {
-    $.getJSON('/connector?type=VCenterConnector', function(json) {
-        vcenterCfg.setValue(json);
+function loadConnectorsConfig() {
+    elem = document.getElementById('connectors-config');
+    elem.innerHTML = ""
+    conCfg = new JSONEditor(elem,{
+                                schema: {
+                                  type: "object",
+                                  title: "Connector",
+                                  properties: {
+                                        connector: {
+                                            title: "Type",
+                                            $ref: "/connector",
+                                        }
+                                  },
+                                  options: {
+                                    "collapsed": false
+                                  },
+                                },
+                                ajax: true,
+                                disable_edit_json: false,
+                                disable_collapse: true,
+                                disable_properties: true,
+                                no_additional_properties: true
+                                });
+    conCfg.on('ready',function() {
+        document.getElementById("btnSaveConnectorConfig").style.visibility = "visible";
     });
 }
 
-function updateVcenterConfig() {
-    var vc_config = vcenterCfg.getValue()
-    vc_config["type"] = "VCenterConnector";
-
+function updateConnectorConfig() {
+    var con_config = conCfg.getValue()
     $.ajax({
             headers : {
                 'Accept' : 'application/json',
@@ -161,9 +115,12 @@ function updateVcenterConfig() {
             },
             url : '/connector',
             type : 'POST',
-            data : JSON.stringify(vc_config),
+            data : JSON.stringify(con_config.connector),
             success : function(response, textStatus, jqXhr) {
                 console.log("New vcenter config successfully updated!");
+                document.getElementById("btnSaveConnectorConfig").style.visibility = "hidden";
+                elem = document.getElementById('connectors-config');
+                elem.innerHTML = ""
             },
             error : function(jqXHR, textStatus, errorThrown) {
                 // log the error to the console
