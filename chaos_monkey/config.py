@@ -11,7 +11,7 @@ __author__ = 'itamar'
 
 GUID = str(uuid.getnode())
 
-EXTERNAL_CONFIG_FILE = os.path.join(os.path.dirname(sys.argv[0]), 'monkey.bin')
+EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
 
 def _cast_by_example(value, example):
