@@ -27,8 +27,7 @@ class NetworkScanner(object):
         LOG.info("Found local IP addresses of the machine: %r", self._ip_addresses)
         # for fixed range, only scan once.
         if WormConfiguration.range_class is FixedRange:
-            self._ranges = [WormConfiguration.range_class(ip_address)
-                            for ip_address in WormConfiguration.range_fixed]
+            self._ranges = [WormConfiguration.range_class('0.0.0.0')]
         else:
             self._ranges = [WormConfiguration.range_class(ip_address)
                             for ip_address in self._ip_addresses]
