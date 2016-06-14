@@ -1,6 +1,9 @@
 const jsonFile = "/api/monkey";
+const jsonFileTelemetry = "/api/telemetry";
 var monkeys = null;
+var scannedMachines = [];
 var generationDate = null;
+var temelGenerationDate = null;
 
 // The JSON must be fully loaded before onload() happens for calling draw() on 'monkeys'
 $.ajaxSetup({
@@ -13,6 +16,7 @@ $.getJSON(jsonFile, function(json) {
     generationDate = json.timestamp;
 });
 
+
 // The objects used by vis
 var network = null;
 var nodes = [];
@@ -24,6 +28,7 @@ const ICONS_EXT = ".png";
 
 const EDGE_TYPE_PARENT = "parent";
 const EDGE_TYPE_TUNNEL = "tunnel";
+const EDGE_TYPE_SCAN = "scan";
 
 // General options
 // If variable from local storage != null, assign it, otherwise set it's default value.
@@ -47,6 +52,8 @@ function initAdmin() {
 
     createEdges();
     createTunnels();
+    createScanned();
+
     var data = {
         nodes: createNodes(),
         edges: edges
@@ -118,7 +125,7 @@ function updateMonkeys() {
             else
             {
                 monkeys.push(new_monkeys[i]);
-                nodes.push(createNode(new_monkeys[i]));
+                nodes.push(createMonkeyNode(new_monkeys[i]));
             }
         }
 
@@ -126,9 +133,10 @@ function updateMonkeys() {
         {
             createEdges();
             createTunnels();
+
             network.setData({nodes: nodes, edges: edges});
         }
-
+        createScanned();
         window.setTimeout(updateMonkeys, 10000);
     });    
 }
@@ -140,13 +148,13 @@ function createNodes() {
     for (var i = 0; i < monkeys.length; i++) {
         var monkey = monkeys[i];
 
-        nodes.push(createNode(monkey));
+        nodes.push(createMonkeyNode(monkey));
     }
     return nodes;
 }
 
 
-function createNode(monkey) {
+function createMonkeyNode(monkey) {
     var title = undefined;
     var img = "monkey";
 
@@ -168,6 +176,21 @@ function createNode(monkey) {
             'color': undefined,
             'image': img,
             'title': title,
+            'value': undefined,
+            'mass': 0,
+        };
+}
+
+function createMachineNode(machine) {
+    img = ICONS_DIR + "computer" + ICONS_EXT;
+
+    return {
+            'id': machine.ip_addr,
+            'label': machine.os.version + "\n" + machine.ip_addr,
+            'shape': 'image',
+            'color': undefined,
+            'image': img,
+            'title': undefined,
             'value': undefined,
             'mass': 0,
         };
@@ -201,6 +224,42 @@ function createTunnels() {
     }
 
     return edges;
+}
+
+function createScanned() {
+    //For each existing monkey, gets all the scans performed by it
+    //For each non exploited machine, adds a new node and connects it as a scanned node.
+    for (var i = 0; i < monkeys.length; i++) {
+        var monkey = monkeys[i];
+        //Get scans for each monkey
+        // Reading the JSON file containing the monkeys' informations
+        $.getJSON(jsonFileTelemetry +'?timestamp='+ temelGenerationDate+ "&monkey_guid=" + monkey.guid+"&telem_type=scan", function(json) {
+            temelGenerationDate = json.timestamp;
+            var scans = json.objects;
+            for (var i = 0; i < scans.length; i++) {
+                var scan = scans[i];
+                //Check if we already exploited this machine from another PoV, if so no point in scanning.
+                if (null != getMonkeyByIP(scan.data.machine.ip_addr)) {
+                    //if so, make sure we don't already have such a node
+                    nodes = nodes.filter(function (node) {
+                        return (node.id != ip_addr);
+                    });
+                    continue;
+                }
+                //And check if we've already added this scanned machine
+                var machineNode = getScannedByIP(scan.data.machine.ip_addr)
+                if (null == machineNode) {
+                    machineNode = createMachineNode(scan.data.machine);
+                    scannedMachines.push(machineNode);
+                    nodes.push(machineNode);
+                }
+
+                if(!edgeExists([monkey.id, machineNode.id, EDGE_TYPE_SCAN])) {
+                    edges.push({from: monkey.id, to: machineNode.id, arrows:'middle', type: EDGE_TYPE_SCAN, color: 'red'});
+                }
+            }
+        });
+    }
 }
 
 /**
@@ -484,6 +543,29 @@ function getMonkeyByGuid(guid) {
             return monkeys[i];
         }
     }    
+}
+
+function getMonkeyByIP(ip) {
+        for (var i = 0; i < monkeys.length; i++) {
+            var monkey = monkeys[i];
+            for (var j = 0; j< monkey.ip_addresses; j++) {
+                if (monkeys[i].ip == ip) {
+                    return monkeys[i];
+                }
+            }
+    }
+    return null;
+}
+
+function getScannedByIP(ip)
+{
+        for (var i = 0; i < scannedMachines.length; i++) {
+            var machine = scannedMachines[i];
+            if (machine.id == ip) {
+                return machine
+            }
+    }
+    return null;
 }
 
 function getMonkeyIndex(guid) {
