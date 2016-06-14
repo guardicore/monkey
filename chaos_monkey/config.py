@@ -161,7 +161,7 @@ class Configuration(object):
     skip_exploit_if_file_exist = True
 
     ms08_067_exploit_attempts = 5
-    ms08_067_remote_user_add = "IUSER_SUPPORT"
+    ms08_067_remote_user_add = "Monkey_IUSER_SUPPORT"
     ms08_067_remote_user_pass = "Password1!"
 
     # psexec exploiter
