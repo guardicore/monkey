@@ -69,7 +69,7 @@ How to run:
 5. install OpenSSL
     sudo apt-get install openssl
 
-6. Generate SSL Certificate, Run create_certificate.sh
+6. Generate SSL Certificate, Run create_certificate.sh (located under /linux)
 
 7. Copy monkey island server to /var/monkey_island:
     cp -r [monkey_island_source]/cc /var/monkey_island/

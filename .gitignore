@@ -8,6 +8,7 @@ __pycache__/
 *.iso
 *.msi
 *.exe
+*.bin
 
 # C extensions
 *.so
