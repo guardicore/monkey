@@ -50,7 +50,7 @@ mongo = PyMongo(app)
 
 class Monkey(restful.Resource):
     def get(self, **kw):
-        guid = kw.get('guid')
+        guid = request.args.get('guid')
         timestamp = request.args.get('timestamp')
 
         if guid:
@@ -118,14 +118,19 @@ class Monkey(restful.Resource):
 
 class Telemetry(restful.Resource):
     def get(self, **kw):
-        monkey_guid = kw.get('monkey_guid')
+        monkey_guid = request.args.get('monkey_guid')
+        telem_type = request.args.get('telem_type')
         timestamp = request.args.get('timestamp')
+        if "null" == timestamp: #special case to avoid ugly JS code...
+            timestamp = None
 
         result = {'timestamp': datetime.now().isoformat()}
         find_filter = {}
 
         if monkey_guid:
             find_filter["monkey_guid"] = {'$eq': monkey_guid}
+        if telem_type:
+            find_filter["telem_type"] = {'$eq': telem_type}
         if timestamp:
             find_filter['timestamp'] = {'$gt': dateutil.parser.parse(timestamp)}
 
