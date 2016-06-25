@@ -1,4 +1,4 @@
-Infected Chaos Monkey
+Infection Monkey
 ====================
 
 Datacenter Security Tool
@@ -6,7 +6,7 @@ Datacenter Security Tool
 
 ### http://www.guardicore.com/the-infected-chaos-monkey/
 
-The Infected Chaos Monkey is a security tool which tests your Data Center's ability to withstand perimeter breaches and internal server infection. It uses various methods to propagate through a data center, and reports its success to a centralized C&C server.
+The Infection Monkey is a security tool which tests your Data Center's ability to withstand perimeter breaches and internal server infection. It uses various methods to propagate through a data center, and reports its success to a centralized C&C server.
 
 Features include:
 
@@ -22,7 +22,7 @@ Features include:
 Getting Started
 ---------------
 
-The Infected Chaos Monkey is comprised of two parts: the Monkey and the C&C server.
+The Infection Monkey is comprised of two parts: the Monkey and the C&C server.
 The monkey is the tool which infects other machines and propagates to them, while the C&C server collects all Monkey reports and displays them to the user.
 
 ### Requirements
