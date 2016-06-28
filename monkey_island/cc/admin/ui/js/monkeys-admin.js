@@ -269,6 +269,7 @@ function buildMonkeyDescription(monkey) {
     var html =
         "<label>Name:</label> " + monkey.hostname + "</br>" +
         "<label>Description:</label> " + monkey.description + "</br>" +
+        "<label>Internet Access:</label> " + monkey.internet_access + "</br>" +
         "<label>IP Address:</label></br>"
 
     for (var i = 0; i < monkey.ip_addresses.length; i++) {

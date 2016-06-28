@@ -3,7 +3,7 @@ import logging
 import requests
 import platform
 import monkeyfs
-from network.info import local_ips
+from network.info import local_ips, check_internet_access
 from socket import gethostname
 from config import WormConfiguration, GUID
 from transport.tcp import TcpProxy
@@ -38,6 +38,7 @@ class ControlClient(object):
                           'hostname': hostname,
                           'ip_addresses': local_ips(),
                           'description': " ".join(platform.uname()),
+                          'internet_access': check_internet_access(WormConfiguration.internet_services),
                           'config': WormConfiguration.as_dict(),
                           'parent': parent}
 

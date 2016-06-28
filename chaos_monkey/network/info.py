@@ -1,3 +1,4 @@
+import os
 import sys
 import socket
 import struct
@@ -58,3 +59,10 @@ def get_free_tcp_port(min_range=1000, max_range=65535):
             return port
 
     return None
+
+def check_internet_access(services):
+    ping_str = "-n 1" if sys.platform.startswith("win") else "-c 1"
+    for host in services:
+        if os.system("ping " + ping_str + " " + host) == 0:
+            return True
+    return False

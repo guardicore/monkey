@@ -137,6 +137,8 @@ class Configuration(object):
 
     retry_failed_explotation = True
 
+    internet_services = ["www.guardicore.com", "www.google.com"]
+
     ###########################
     # scanners config
     ###########################
