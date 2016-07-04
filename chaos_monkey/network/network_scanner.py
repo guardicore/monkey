@@ -33,7 +33,7 @@ class NetworkScanner(object):
                             for ip_address in self._ip_addresses]
         LOG.info("Base local networks to scan are: %r", self._ranges)
 
-    def get_victim_machines(self, scan_type, max_find=5):
+    def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
         assert issubclass(scan_type, HostScanner)
 
         scanner = scan_type()
@@ -42,6 +42,10 @@ class NetworkScanner(object):
         for range in self._ranges:
             LOG.debug("Scanning for potential victims in the network %r", range)
             for victim in range:
+                if stop_callback and stop_callback():
+                    LOG.debug("Got stop signal")
+                    break
+
                 # skip self IP address
                 if victim.ip_addr in self._ip_addresses:
                     continue

@@ -108,6 +108,8 @@ function initAdmin() {
         "ordering": false,
     });
 
+    loadNewMonkeysConfig(); 
+
     window.setTimeout(updateMonkeys, 10000);
 
     addEventsListeners();
@@ -134,7 +136,15 @@ function updateMonkeys() {
             createEdges();
             createTunnels();
 
+            // keep old selection
+            var selNode = network.getSelectedNodes();
             network.setData({nodes: nodes, edges: edges});
+            if (selNode.length) {
+                var monkey = getMonkey(selNode[0]);
+                if (monkey) { // The selection might be no longer valid if the monkey was deleted
+                    selectNode(monkey.hostname, false);
+                }
+            }
         }
         createScanned();
         window.setTimeout(updateMonkeys, 10000);
@@ -269,8 +279,16 @@ function buildMonkeyDescription(monkey) {
     var html =
         "<label>Name:</label> " + monkey.hostname + "</br>" +
         "<label>Description:</label> " + monkey.description + "</br>" +
-        "<label>Internet Access:</label> " + monkey.internet_access + "</br>" +
-        "<label>IP Address:</label></br>"
+        "<label>Internet Access:</label> " + monkey.internet_access + "</br>";
+    if (monkey.dead) {
+        html += "<label>State:</label> Dead </br>";
+    }
+    if (!monkey.config.alive) {
+        html += "<label>Note:</label> Marked to be dead</br>";
+    }
+    html +=
+        "<label>Last Seen:</label> " + monkey.keepalive + "</br>" +
+        "<label>IP Address:</label></br>";
 
     for (var i = 0; i < monkey.ip_addresses.length; i++) {
         html += monkey.ip_addresses[i] + "</br>"
@@ -352,7 +370,7 @@ function onSelect(properties) {
         var content = "<b>No selection</b>"
         $("#selectionInfo").html(content);
         $('#monkey-config').hide()
-        $('#btnConfigLoad, #btnConfigUpdate').hide();
+        $('#btnConfigLoad, #btnConfigUpdate, #btnKillMonkey, #btnReviveMonkey').hide();
         telemTable.clear();
         telemTable.draw();
     }
@@ -382,6 +400,17 @@ function onNodeSelect(nodeId) {
     $('#monkey-config').show()
     $('#btnConfigLoad, #btnConfigUpdate').show();
 
+    loadMonkeyConfig();
+
+    if (monkey.config.alive) {
+        $('#btnKillMonkey').show();
+        $('#btnReviveMonkey').hide();
+    }
+    else {
+        $('#btnKillMonkey').hide();
+        $('#btnReviveMonkey').show();
+    }
+
 
     $.getJSON('/api/telemetry/' + monkey.guid, function(json) {
         telemTable.clear();
@@ -394,7 +423,6 @@ function onNodeSelect(nodeId) {
         telemTable.draw();
     });
 
-
     network.selectNodes([nodeId]);
 }
 
@@ -406,6 +434,19 @@ function onEdgeSelect(edge) {
 
 }
 
+function killMonkey() {
+    var curr_config = monkeyCfg.getValue();
+    curr_config.alive = false;
+    monkeyCfg.setValue(curr_config);
+    updateMonkeyConfig();
+}
+
+function reviveMonkey() {
+    var curr_config = monkeyCfg.getValue();
+    curr_config.alive = true;
+    monkeyCfg.setValue(curr_config);
+    updateMonkeyConfig();
+}
 
 function toggleFocusOnNode() {
     if (focusedOnNode) {
@@ -413,7 +454,7 @@ function toggleFocusOnNode() {
         focusedOnNode = false;
     }
     else {
-        selectNode(undefined, zoom=true);
+        selectNode(undefined, true);
     }
 }
 
@@ -460,26 +501,26 @@ function updateNewMonkeysConfig() {
 }
 
 function loadMonkeyConfig() {
-    nodes = network.getSelectedNodes();
+    var node = network.getSelectedNodes();
 
-    if(nodes.length != 1) {
+    if(node.length != 1) {
         return;
     }
 
-    var monkey = getMonkey(nodes[0]);
+    var monkey = getMonkey(node[0]);
 
     monkeyCfg.setValue(monkey.config);
 }
 
 function updateMonkeyConfig() {
-    nodes = network.getSelectedNodes();
-    if(nodes.length != 1) {
+    var node = network.getSelectedNodes();
+    if(node.length != 1) {
         return;
     }
 
-    var monkey = getMonkey(nodes[0]);
+    var monkey = getMonkey(node[0]);
 
-    var curr_config = monkeyCfg.getValue()
+    var curr_config = monkeyCfg.getValue();
 
     $.ajax({
             headers : {
@@ -491,7 +532,8 @@ function updateMonkeyConfig() {
             data : JSON.stringify({config: curr_config}),
             success : function(response, textStatus, jqXhr) {
                 monkey.config = curr_config;
-                console.log("Monkey config successfully updated!");
+                console.log("Monkey config successfully updated! (" + monkey.hostname + ")");
+                selectNode(monkey.hostname, false);
             },
             error : function(jqXHR, textStatus, errorThrown) {
                 // log the error to the console

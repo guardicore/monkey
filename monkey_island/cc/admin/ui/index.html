@@ -123,6 +123,34 @@
                     <div id="selectionInfo">
                         <label>No selection</label>
                     </div>
+                    <hr>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a href="#mconfig" data-toggle="collapse">Monkey Config</a>
+                        </div>
+                        <div id="mconfig" style="overflow: visible" class="panel-body panel-collapse collapse in" aria-expanded="true">
+                            <span class="input-group-btn">
+                                <button id="btnConfigLoad" style="display: none;" class="btn btn-default" type="button"
+                                    onclick="loadMonkeyConfig()" style="margin-top:-4px">
+                                        Refresh
+                                </button>
+                                <button id="btnConfigUpdate" style="display: none;" class="btn btn-default" type="button"
+                                    onclick="updateMonkeyConfig()" style="margin-top:-4px">
+                                        Update
+                                </button>
+                                <button id="btnKillMonkey" style="display: none;" class="btn btn-default" type="button"
+                                    onclick="killMonkey()" style="margin-top:-4px">
+                                        Mark for Kill
+                                </button>
+                                <button id="btnReviveMonkey" style="display: none;" class="btn btn-default" type="button"
+                                    onclick="reviveMonkey()" style="margin-top:-4px">
+                                        Revive Monkey
+                                </button>
+                            </span>
+                            <div style="display: none;" id="monkey-config">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -132,7 +160,7 @@
         <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="#config" data-toggle="collapse">Config</a>
+                    <a href="#config" data-toggle="collapse">General Config</a>
                 </div>
                 <div id="config" style="overflow: visible" class="panel-body panel-collapse collapse in" aria-expanded="true">
                     <span class="input-group-btn">
@@ -146,23 +174,11 @@
                         </button>
                     </span>
                     <div id="new-config">
-                    </div>                    
-                    <span class="input-group-btn">
-                        <button id="btnConfigLoad" style="display: none;" class="btn btn-default" type="button" 
-                            onclick="loadMonkeyConfig()" style="margin-top:-4px">
-                                Load
-                        </button>
-                        <button id="btnConfigUpdate" style="display: none;" class="btn btn-default" type="button" 
-                            onclick="updateMonkeyConfig()" style="margin-top:-4px">
-                                Update
-                        </button>
-                    </span>
-                    <div style="display: none;" id="monkey-config">
                     </div>
                 </div>
             </div>
         </div>
-        <!-- /.Config section --> 
+        <!-- /.Config section -->
 
     </div>
 

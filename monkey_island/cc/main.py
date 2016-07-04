@@ -167,7 +167,15 @@ class Telemetry(restful.Resource):
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
                                            {'$unset': {'tunnel_guid':''}},
                                            upsert=True)
-
+            elif telemetry_json.get('telem_type') == 'state':
+                if telemetry_json['data']['done']:
+                    mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
+                                           {'$set': {'dead': True}},
+                                           upsert=True)
+                else:
+                    mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
+                                           {'$set': {'dead': False}},
+                                           upsert=True)
         except:
             pass
 
