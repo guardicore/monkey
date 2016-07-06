@@ -22,8 +22,12 @@ def _cast_by_example(value, example):
     if example_type is str:
         return str(os.path.expandvars(value))
     elif example_type is tuple and len(example) != 0:
+        if value is None or value == tuple(None):
+            return tuple()
         return tuple([_cast_by_example(x, example[0]) for x in value])
     elif example_type is list and len(example) != 0:
+        if value is None or value == [None]:
+            return []
         return [_cast_by_example(x, example[0]) for x in value]
     elif example_type is type(value):
         return value
@@ -45,7 +49,7 @@ class Configuration(object):
         for key, value in data.items():
             if key.startswith('_'):
                 continue
-            if key in ["name", "id"]:
+            if key in ["name", "id", "current_server"]:
                 continue
             try:
                 default_value = getattr(Configuration, key)
@@ -72,7 +76,7 @@ class Configuration(object):
             if val_type is types.ClassType or val_type is ABCMeta:
                 value = value.__name__
             elif val_type is tuple or val_type is list:
-                if len(value) != 0 and type(value[0]) is types.ClassType or type(value[0]) is ABCMeta:
+                if len(value) != 0 and (type(value[0]) is types.ClassType or type(value[0]) is ABCMeta):
                     value = val_type([x.__name__ for x in value])
 
             result[key] = value
@@ -105,7 +109,7 @@ class Configuration(object):
 
     alive = True
 
-    self_delete_in_cleanup = True
+    self_delete_in_cleanup = False
 
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
@@ -116,8 +120,8 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = (SMBFinger, SSHFinger, PingScanner)
-    exploiter_classes = (SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, SSHExploiter)
+    finger_classes = [SMBFinger, SSHFinger, PingScanner]
+    exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, SSHExploiter]
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 14
@@ -145,7 +149,7 @@ class Configuration(object):
 
     range_class = FixedRange
     range_size = 1
-    range_fixed = ("", )
+    range_fixed = ["", ]
 
     # TCP Scanner
     tcp_target_ports = [22, 2222, 445, 135, 3389]

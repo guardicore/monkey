@@ -49,8 +49,9 @@ mongo = PyMongo(app)
 
 
 class Monkey(restful.Resource):
-    def get(self, **kw):
-        guid = request.args.get('guid')
+    def get(self, guid=None, **kw):
+        if not guid:
+            guid = request.args.get('guid')
         timestamp = request.args.get('timestamp')
 
         if guid:

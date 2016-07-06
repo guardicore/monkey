@@ -187,7 +187,7 @@ function createMonkeyNode(monkey) {
             'image': img,
             'title': title,
             'value': undefined,
-            'mass': 0,
+            'mass': 1,
         };
 }
 
@@ -202,7 +202,7 @@ function createMachineNode(machine) {
             'image': img,
             'title': undefined,
             'value': undefined,
-            'mass': 0,
+            'mass': 1,
         };
 }
 

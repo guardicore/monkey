@@ -120,7 +120,7 @@ class ControlClient(object):
             return
 
         try:
-            WormConfiguration.from_dict(reply.json()["objects"][0].get('config'))
+            WormConfiguration.from_dict(reply.json().get('config'))
             LOG.info("New configuration was loaded from server: %r" % (WormConfiguration.as_dict(),))
         except Exception, exc:
             # we don't continue with default conf here because it might be dangerous
