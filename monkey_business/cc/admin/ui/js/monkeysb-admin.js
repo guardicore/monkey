@@ -71,11 +71,35 @@ function updateJobs() {
         var jobsList = json.objects;
 
         for (var i = 0; i < jobsList.length; i++) {
-            jobsTable.row.add([jobsList[i].id, jobsList[i].creation_time, jobsList[i].type,jobsList[i].state, JSON.stringify(jobsList[i].properties)]);
+            r = jobsTable.row.add([jobsList[i].id, jobsList[i].creation_time, jobsList[i].type,jobsList[i].state, JSON.stringify(jobsList[i].properties)]);
+            $(this).addClass('selected');
+            if (jobsList[i].id == selectedJob) {
+                jobsTable.row(r[0]).nodes().to$().addClass( 'selected' );
+            }
         }
 
         jobsTable.draw();
     });
+}
+
+function stopJob() {
+    $.ajax({
+            headers : {
+                'Accept' : 'application/json',
+            },
+            url : '/job?action=stop&id=' + selectedJob,
+            type : 'GET',
+            success : function(response, textStatus, jqXhr) {
+                console.log("Stopped job");
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+                // log the error to the console
+                console.log("The following error occured: " + textStatus, errorThrown);
+            },
+            complete : function() {
+                console.log("Trying to stop job...");
+            }
+        });
 }
 
 function loadConnectorsConfig() {
@@ -134,8 +158,8 @@ function updateConnectorConfig() {
 }
 
 function emptySelection() {
-    showLog();
     selectedJob = undefined;
+    showLog();
     jobsTable.$('tr.selected').removeClass('selected');
 }
 
@@ -146,6 +170,9 @@ function createNewJob(id, state) {
 
     elem = document.getElementById('job-config');
     elem.innerHTML = ""
+    document.getElementById("btnSendJob").style.visibility = "hidden";
+    document.getElementById("btnDeleteJob").style.visibility = "hidden";
+    document.getElementById("btnStopJob").style.visibility = "hidden";
     jobCfg = new JSONEditor(elem,{
                                 schema: {
                                   type: "object",
@@ -170,17 +197,16 @@ function createNewJob(id, state) {
     jobCfg.on('ready',function() {
         if (id && state != "pending") {
             jobCfg.disable();
-            document.getElementById("btnSendJob").style.visibility = "hidden";
-            document.getElementById("btnDeleteJob").style.visibility = "hidden";
+            if (state == "running") {
+                document.getElementById("btnStopJob").style.visibility = "visible";
+            }
+
         }
         else {
             jobCfg.enable();
             document.getElementById("btnSendJob").style.visibility = "visible";
             if (id) {
                 document.getElementById("btnDeleteJob").style.visibility = "visible";
-            }
-            else {
-                document.getElementById("btnDeleteJob").style.visibility = "hidden";
             }
         }
     });

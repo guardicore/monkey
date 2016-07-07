@@ -59,8 +59,11 @@ class VCenterConnector(NetControllerConnector):
         objview.Destroy()
         return self._cache["vlans"]
 
-    def get_entities_on_vlan(self, vlanid):
-        return []
+    def get_vm(self, vmname):
+        if not self.is_connected():
+            self.connect()
+        vcontent = self._service_instance.RetrieveContent()  # get updated vsphare state
+        return self._get_obj(vcontent, [vim.VirtualMachine], vmname)
 
     def deploy_monkey(self, vm_name):
         if not self._properties["monkey_template_name"]:
@@ -97,6 +100,14 @@ class VCenterConnector(NetControllerConnector):
 
     def power_on(self, vm_obj):
         task = vm_obj.PowerOnVM_Task()
+        return self._wait_for_task(task)
+
+    def power_off(self, vm_obj):
+        task = vm_obj.PowerOffVM_Task()
+        return self._wait_for_task(task)
+
+    def destroy(self, vm_obj):
+        task = vm_obj.Destroy_Task()
         return self._wait_for_task(task)
 
     def disconnect(self):
@@ -242,3 +253,19 @@ class VCenterJob(NetControllerJob):
 
         return True
 
+    def stop(self):
+        if not self._connector:
+            return False
+
+        if not self._vm_obj:
+            self._vm_obj = self._connector.get_vm(self._properties["vm_name"])
+
+        if not self._vm_obj:
+            self.log("Error: Couldn't find VM %s" % self._properties["vm_name"])
+            return False
+
+        self.log("Stopping: %s" % self._properties["vm_name"])
+        self._connector.power_off(self._vm_obj)
+        self._connector.destroy(self._vm_obj)
+
+        return True

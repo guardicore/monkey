@@ -96,12 +96,31 @@ class JobExecution(object):
         self._log_resutls(res)
         return True
 
+    def stop(self):
+        self.log("Trying to stop...")
+        res = None
+
+        try:
+            res = self._job.stop()
+        except Exception, e:
+            self.log("Exception raised while running: %s" % e)
+            self.update_job_state("error")
+            return False
+
+        if res:
+            self.log("Done stop job")
+            self.update_job_state("ended")
+        else:
+            self.log("Job stopping error")
+            self.update_job_state("error")
+
+        return res
+
 
 @celery.task
 def run_task(jobid):
-    print "searching for ", jobid
-    aquire_task = mongo.db.job.update({"_id": jobid, "state": "pending"}, {"$set": {"state": "processing"}})
-    if aquire_task["nModified"] != 1:
+    acquire_task = mongo.db.job.update({"_id": jobid, "state": "pending"}, {"$set": {"state": "processing"}})
+    if acquire_task["nModified"] != 1:
         return False
 
     job_info = mongo.db.job.find_one({"_id": jobid})
@@ -126,6 +145,38 @@ def run_task(jobid):
         return False
 
     return "done task: " + run_task.request.id
+
+
+@celery.task
+def stop_task(jobid):
+    acquire_task = mongo.db.job.update({"_id": jobid, "state": "running"}, {"$set": {"state": "stopping"}})
+    if acquire_task["nModified"] != 1:
+        print "could not acquire lock on job"
+        return False
+
+    job_info = mongo.db.job.find_one({"_id": jobid})
+    if not job_info:
+        print "could not get job info"
+        return False
+
+    job_exec = None
+    try:
+        job_exec = JobExecution(mongo, job_info)
+    except Exception, e:
+        print "init JobExecution exception - ", e
+        return False
+
+    if not job_exec.get_job():
+        job_exec.update_job_state("error")
+        return False
+
+    job_exec.get_results()
+
+    if not job_exec.stop():
+        print "error stopping"
+        return False
+
+    return "done stop_task"
 
 
 @celery.task

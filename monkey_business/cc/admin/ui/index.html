@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Monkeys Admin</title>
+    <title>Monkeys Business</title>
     <meta charset="UTF-8">
 
     <!-- js -->
@@ -93,28 +93,34 @@
                                 Configure Auto Tester
                         </button>
                     </span>
+
+                    <br/>
+
                     <!-- General options -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <a href="#newJob" data-toggle="collapse">New Job</a>
+                            <a href="#newJob" data-toggle="collapse">Job Properties</a>
                         </div>
                         <div id="newJob" style="overflow: visible" class="panel-body panel-collapse collapse in" aria-expanded="true">
                             <div id="job-config-section">
                                 <div id="job-config">
                                 </div>
                                 <button id="btnSendJob" class="btn btn-default" type="button"
-                                onclick="sendJob()" style="margin-top:-4px; visibility: hidden">
-                                Update
+                                    onclick="sendJob()" style="margin-top:-4px; visibility: hidden">
+                                    Update
                                 </button>
                                 <button id="btnDeleteJob" class="btn btn-default" type="button"
-                                onclick="deleteJob()" style="margin-top:-4px; visibility: hidden">
-                                Delete
+                                    onclick="deleteJob()" style="margin-top:-4px; visibility: hidden">
+                                    Delete
+                                </button>
+                                <button id="btnStopJob" class="btn btn-default" type="button"
+                                    onclick="stopJob()" style="margin-top:-4px; visibility: hidden">
+                                    Stop
                                 </button>
                             </div>
                         </div>
                     </div>
                     <!-- /.General options -->
-
 
                 </div>
             </div>

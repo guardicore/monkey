@@ -30,11 +30,18 @@ class Job(restful.Resource):
 
         if action == "log":
             return {"log": get_job_log(id)}
+        elif action == "stop":
+            job = mongo.db.job.find_one_or_404({"_id": bson.ObjectId(id)})
+            if "running" == job.get("state"):
+                tasks_manager.stop_task.delay(bson.ObjectId(id))
+                return {'status': 'ok'}
+            else:
+                return {'status': 'failed'}
 
         result = {}
 
         if id:
-            return mongo.db.job.find_one_or_404({"_id": id})
+            return mongo.db.job.find_one_or_404({"_id": bson.ObjectId(id)})
         else:
             result['timestamp'] = datetime.now().isoformat()
 
@@ -49,7 +56,7 @@ class Job(restful.Resource):
         if job_json.has_key('pk'):
             job = mongo.db.job.find_one_or_404({"pk": job_json["pk"]})
 
-            if "pending" != job.get("status"):
+            if "pending" != job.get("state"):
                 res = {"status": "cannot change job at this state", "res" : 0}
                 return res
             if "delete" == job_json["action"]:
