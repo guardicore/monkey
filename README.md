@@ -33,7 +33,8 @@ The Monkey itself has been tested on Windows XP, 7, 8.1 and 10. The Linux build 
 
 ### Installation
 
-For off the shelf use, download our pre-compiled binaries from our website, to setup the C&C server follow the instructions in [Monkey Island readme](monkey_island/readme.txt).  If you with to compile the binaries yourself, follow the build instructions in the appropiate [readme](build_env/readme.txt).
+For off the shelf use, download our pre-compiled binaries from our website, to setup the C&C server follow the instructions in [Monkey Island readme](monkey_island/readme.txt).  If you with to compile the binaries yourself, follow the build instructions later on in this readme. 
+
 Usage
 -----
 
@@ -97,36 +98,37 @@ Configuration Options
 Key | Type | Description | Possible Values
 --- | ---- | ----------- | ---------------
 singleton_mutex_name | string | string of the mutex name for single instance | example: {2384ec59-0df8-4ab9-918c-843740924a28}
-alive | bool | sets whether or not the monkey is alive. if false will stop scanning and exploiting.
-self_delete_in_cleanup | bool | sets whether or not to self delete the monkey executable when stopped.
-use_file_logging | bool | sets whether or not to use a log file.
+alive | bool | sets whether or not the monkey is alive. if false will stop scanning and exploiting
+self_delete_in_cleanup | bool | sets whether or not to self delete the monkey executable when stopped
+use_file_logging | bool | sets whether or not to use a log file
+monkey_log_path_[windows/linux] | string | file path for monkey logger.
 timeout_between_iterations | int | how long to wait between scan iterations
 max_iterations | int | how many scan iterations to perform on each run
 victims_max_find | int | how many victims to look for in a single scan iteration
 victims_max_exploit | int | how many victims to exploit before stopping
 command_servers | array | addresses of c&c servers to try to connect | example: ["russian-mail-brides.com:5000"]
-serialize_config | bool | sets whether or not to save the monkey to disk when finished (will be loaded in next run), saved next to the monkey exe with the name monkey.bin
+internet_services | array | addresses of internet servers to ping and check if the monkey has internet acccess
 retry_failed_explotation | bool | sets whether or not to retry failed hosts on next scan
 range_class | class name | sets which ip ranges class is used to construct the list of ips to scan | `FixedRange` - scan list is a static ips list, `RelativeRange` - scan list will be constructed according to ip address of the machine and size of the scan, `ClassCRange` - will scan the entire class c the machine is in.
 scanner_class | class name | sets which scan class to use when scanning for hosts to exploit | `TCPScanner` - searches for hosts according to open tcp ports, `PingScanner` - searches for hosts according to ping scan
-finger_classes | tuple of class names | sets which fingerprinting classes to use. | in the list: `SMBFinger` - get host os info by checking smb info, `SSHFinger` - get host os info by checking ssh banner, `PingScanner` - get host os type by checking ping ttl. For example: `(SMBFinger, SSHFinger, PingScanner)`
+finger_classes | tuple of class names | sets which fingerprinting classes to use | in the list: `SMBFinger` - get host os info by checking smb info, `SSHFinger` - get host os info by checking ssh banner, `PingScanner` - get host os type by checking ping ttl. For example: `(SMBFinger, SSHFinger, PingScanner)`
 exploiter_classes | tuple of class names | | `SmbExploiter` - exploit using smb connection, `WmiExploiter` - exploit using wmi connection, `RdpExploiter` - exploit using rdp connection, `Ms08_067_Exploiter` - exploit using ms08_067 smb exploit, `SSHExploiter` - exploit using ssh connection
 range_fixed | tuple of strings | list of ips to scan
-RelativeRange range_size | int | number of hosts to scan in relative range.
-TCPScanner tcp_target_ports | list of int | which ports to scan using tcp scan.
-tcp_scan_timeout | int | timeout for tcp connection in tcp scan (in milliseconds).
-tcp_scan_interval | int | time to wait between ports in the tcp scan (in milliseconds).
+RelativeRange range_size | int | number of hosts to scan in relative range
+tcp_target_ports | list of int | which ports to scan using TCPScanner
+tcp_scan_timeout | int | timeout for tcp connection in tcp scan (in milliseconds)
+tcp_scan_interval | int | time to wait between ports in the tcp scan (in milliseconds)
 tcp_scan_get_banner | bool  | sets whether or not to read a banner from the tcp ports when scanning
-PingScanner ping_scan_timeout | int | timeout for the ping command (in milliseconds).
-SmbExploiter/WmiExploiter/RdpExploiter psexec_user | string | user to use for connection
+ping_scan_timeout | int | timeout for the ping command (in milliseconds) utilised by PingScanner
+psexec_user | string | user to use for connection, utilised by SmbExploiter/WmiExploiter/RdpExploiter
 psexec_passwords | list of strings | list of passwords to use when trying to exploit
-SmbExploiter skip_exploit_if_file_exist | bool | sets whether or not to abort exploit if the monkey already exists in target.
-RdpExploiter rdp_use_vbs_download | bool | sets whether to use vbs payload for rdp exploitation. If false, bits payload is used (will fail if bitsadmin.exe doesn’t exist).
-Ms08_067_Exploiter ms08_067_exploit_attempt | int | number of times to try and exploit using ms08_067 exploit.
+skip_exploit_if_file_exist | bool | sets whether or not to abort exploit if the monkey already exists in target, used by SmbExploiter
+rdp_use_vbs_download | bool | sets whether to use vbs payload for rdp exploitation in RdpExploiter. If false, bits payload is used (will fail if bitsadmin.exe doesn’t exist)
+ms08_067_exploit_attempt | int | number of times to try and exploit using ms08_067 exploit
 ms08_067_remote_user_add | string  | user to add to target when using ms08_067 exploit
 ms08_067_remote_user_pass | string | password of the user the exploit will add
-SSHExploiter ssh_user | string | user to use for ssh connection
-ssh_passwords | list of strings | list of passwords to use when trying to exploit
+ssh_user | string | user to use for ssh connection, used by SSHExploiter
+ssh_passwords | list of strings | list of passwords to use when trying to exploit using SSHExploiter
 
 
 Building the Monkey from source
@@ -147,7 +149,7 @@ Dependency | License |
 ----------------------------|----------------------------
  libffi-dev | https://github.com/atgreen/libffi/blob/master/LICENSE 
  PyCrypto | Public domain 
- upx | Custom license, http://upx.sourceforge.net/upx-license.html, according to it (IANL) we're fine as long as we're not modifying UPX 
+ upx | Custom license, http://upx.sourceforge.net/upx-license.html
  bson | BSD 
  enum34 | BSD 
  pyasn1 | BSD 

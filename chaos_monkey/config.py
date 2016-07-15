@@ -106,11 +106,13 @@ class Configuration(object):
     ###########################
     # monkey config
     ###########################
-
+    #sets whether or not the monkey is alive. if false will stop scanning and exploiting
     alive = True
 
+    #sets whether or not to self delete the monkey executable when stopped
     self_delete_in_cleanup = False
 
+    #string of the mutex name for single instance
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
     # how long to wait between scan iterations
@@ -133,15 +135,20 @@ class Configuration(object):
     depth = 2
     current_server = ""
 
+    #Configuration servers to try to connect to, in this order.
     command_servers = [
         "127.0.0.1:5000"
     ]
 
-    serialize_config = False
-
+    #sets whether or not to retry failed hosts on next scan
     retry_failed_explotation = True
 
+<<<<<<< HEAD
     internet_services = ["monkey.guardicore.com", "www.google.com"]
+=======
+    #addresses of internet servers to ping and check if the monkey has internet acccess.
+    internet_services = ["www.guardicore.com", "www.google.com"]
+>>>>>>> origin/master
 
     ###########################
     # scanners config
