@@ -21,7 +21,8 @@ Windows:
 	python -m pip install requests
 	python -m pip install odict
 	python -m pip install paramiko
-	python -m pip install psutil	
+	python -m pip install psutil
+	python -m pip install netifaces
 	python -m pip install PyInstaller
 	type > C:\Python27\Lib\site-packages\zope\__init__.py
 7. Download and extract UPX binary to [source-path]\monkey\chaos_monkey\bin\upx.exe:

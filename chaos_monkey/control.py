@@ -53,7 +53,8 @@ class ControlClient(object):
                                       data=json.dumps(monkey),
                                       headers={'content-type': 'application/json'},
                                       verify=False,
-                                      proxies=ControlClient.proxies)
+                                      proxies=ControlClient.proxies,
+                                      timeout=20)
                 break
 
             except Exception, exc:

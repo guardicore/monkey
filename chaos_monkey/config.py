@@ -141,11 +141,14 @@ class Configuration(object):
 
     retry_failed_explotation = True
 
-    internet_services = ["www.guardicore.com", "www.google.com"]
+    internet_services = ["monkey.guardicore.com", "www.google.com"]
 
     ###########################
     # scanners config
     ###########################
+
+    # Auto detect and scan local subnets
+    local_network_scan = True
 
     range_class = FixedRange
     range_size = 1

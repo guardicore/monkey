@@ -58,10 +58,16 @@ class RelativeRange(NetworkRange):
 
 
 class FixedRange(NetworkRange):
-    def __init__(self, base_address, shuffle=True):
+    def __init__(self, fixed_addresses=None, shuffle=True):
         base_address = 0
         super(FixedRange, self).__init__(base_address, shuffle=shuffle)
-        self._fixed_addresses = self._config.range_fixed
+        if not fixed_addresses:
+            self._fixed_addresses = self._config.range_fixed
+        else:
+            if type(fixed_addresses) is str:
+                self._fixed_addresses = [fixed_addresses]
+            else:
+                self._fixed_addresses = list(fixed_addresses)
 
     def __repr__(self):
         return "<FixedRange %s>" % (",".join(self._fixed_addresses))
