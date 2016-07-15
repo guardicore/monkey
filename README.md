@@ -33,7 +33,8 @@ The Monkey itself has been tested on Windows XP, 7, 8.1 and 10. The Linux build 
 
 ### Installation
 
-For off the shelf use, download our pre-compiled binaries from our website, to setup the C&C server follow the instructions in [Monkey Island readme](monkey_island/readme.txt).  If you with to compile the binaries yourself, follow the build instructions in the appropiate [readme](chaos_monkey/readme.txt).
+For off the shelf use, download our pre-compiled binaries from our website, to setup the C&C server follow the instructions in [Monkey Island readme](monkey_island/readme.txt).  If you with to compile the binaries yourself, follow the build instructions later on in this readme. 
+
 Usage
 -----
 
@@ -148,7 +149,7 @@ Dependency | License |
 ----------------------------|----------------------------
  libffi-dev | https://github.com/atgreen/libffi/blob/master/LICENSE 
  PyCrypto | Public domain 
- upx | Custom license, http://upx.sourceforge.net/upx-license.html, according to it (IANL) we're fine as long as we're not modifying UPX 
+ upx | Custom license, http://upx.sourceforge.net/upx-license.html
  bson | BSD 
  enum34 | BSD 
  pyasn1 | BSD 
