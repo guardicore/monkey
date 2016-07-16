@@ -30,6 +30,10 @@ const EDGE_TYPE_PARENT = "parent";
 const EDGE_TYPE_TUNNEL = "tunnel";
 const EDGE_TYPE_SCAN = "scan";
 
+const EDGE_COLOR_PARENT = "red";
+const EDGE_COLOR_TUNNEL = "blue";
+const EDGE_COLOR_SCAN = "gray";
+
 // General options
 // If variable from local storage != null, assign it, otherwise set it's default value.
 
@@ -213,7 +217,7 @@ function createEdges() {
             var parent = getMonkeyByGuid(monkey.parent);
 
             if(parent && !edgeExists([parent.id, monkey.id, EDGE_TYPE_PARENT])) {
-                edges.push({from: parent.id, to: monkey.id, arrows:'middle', type: EDGE_TYPE_PARENT, color: 'red'});
+                edges.push({from: parent.id, to: monkey.id, arrows:'middle', type: EDGE_TYPE_PARENT, color: EDGE_COLOR_PARENT});
             }
         }
     }
@@ -228,7 +232,7 @@ function createTunnels() {
             var tunnel = getMonkeyByGuid(monkey.tunnel_guid);
 
             if(tunnel && !edgeExists([monkey.id, tunnel.id, EDGE_TYPE_TUNNEL])) {
-                edges.push({from: monkey.id, to: tunnel.id, arrows:'middle', type: EDGE_TYPE_TUNNEL, color:'blue'});
+                edges.push({from: monkey.id, to: tunnel.id, arrows:'middle', type: EDGE_TYPE_TUNNEL, color: EDGE_COLOR_TUNNEL});
             }
         }
     }
@@ -237,13 +241,14 @@ function createTunnels() {
 }
 
 function createScanned() {
-    //For each existing monkey, gets all the scans performed by it
-    //For each non exploited machine, adds a new node and connects it as a scanned node.
+    var genTime = temelGenerationDate; // save the initial value as it's going to be changed in each json call
+    // For each existing monkey, gets all the scans performed by it
+    // For each non exploited machine, adds a new node and connects it as a scanned node.
     for (var i = 0; i < monkeys.length; i++) {
         var monkey = monkeys[i];
-        //Get scans for each monkey
+        // Get scans for each monkey
         // Reading the JSON file containing the monkeys' informations
-        $.getJSON(jsonFileTelemetry +'?timestamp='+ temelGenerationDate+ "&monkey_guid=" + monkey.guid+"&telem_type=scan", function(json) {
+        $.getJSON(jsonFileTelemetry +'?timestamp='+ genTime + "&monkey_guid=" + monkey.guid+"&telem_type=scan", function(json) {
             temelGenerationDate = json.timestamp;
             var scans = json.objects;
             for (var i = 0; i < scans.length; i++) {
@@ -265,7 +270,7 @@ function createScanned() {
                 }
 
                 if(!edgeExists([monkey.id, machineNode.id, EDGE_TYPE_SCAN])) {
-                    edges.push({from: monkey.id, to: machineNode.id, arrows:'middle', type: EDGE_TYPE_SCAN, color: 'red'});
+                    edges.push({from: monkey.id, to: machineNode.id, arrows:'middle', type: EDGE_TYPE_SCAN, color: EDGE_COLOR_SCAN});
                 }
             }
         });
