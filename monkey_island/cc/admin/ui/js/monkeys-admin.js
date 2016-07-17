@@ -63,6 +63,8 @@ function initAdmin() {
         edges: edges
     };
 
+    $('#infoNumOfMonkeys').html(monkeys.length)
+
     var options = {
     };
 
@@ -132,6 +134,7 @@ function updateMonkeys() {
             {
                 monkeys.push(new_monkeys[i]);
                 nodes.push(createMonkeyNode(new_monkeys[i]));
+                $('#infoNumOfMonkeys').html(monkeys.length)
             }
         }
 
@@ -196,7 +199,18 @@ function createMonkeyNode(monkey) {
 }
 
 function createMachineNode(machine) {
-    img = ICONS_DIR + "computer" + ICONS_EXT;
+    img = "computer";
+
+    if (undefined != machine.os.type) {
+        if (machine.os.type == "linux") {
+            img += "-linux";
+        }
+        else if (machine.os.type == "windows") {
+            img += "-windows";
+        }
+    }
+
+    img = ICONS_DIR + img + ICONS_EXT;
 
     return {
             'id': machine.ip_addr,
