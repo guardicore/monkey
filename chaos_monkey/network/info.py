@@ -3,7 +3,6 @@ import sys
 import socket
 import struct
 import array
-import psutil
 from random import randint
 
 __author__ = 'hoffer'

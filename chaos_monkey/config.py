@@ -104,6 +104,12 @@ class Configuration(object):
     dropper_target_path_linux = '/bin/monkey'
 
     ###########################
+    # Kill file
+    ###########################
+    kill_file_path_windows = os.path.expandvars("%temp%\~df4150.tmp")
+    kill_file_path_linux = '/tmp/user-4150'
+
+    ###########################
     # monkey config
     ###########################
     #sets whether or not the monkey is alive. if false will stop scanning and exploiting
