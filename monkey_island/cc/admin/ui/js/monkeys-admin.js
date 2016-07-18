@@ -21,14 +21,26 @@ $.getJSON(jsonFile, function(json) {
 var network = null;
 var nodes = [];
 var edges = [];
+var numOfParentLinks = 0;
+var numOfTunnelLinks = 0;
+var numOfScanLinks = 0;
+
+var showScannedHosts = true;
 
 // Images/icons constants
 const ICONS_DIR = "./css/img/objects/";
 const ICONS_EXT = ".png";
 
+const HOST_TYPE_MONKEY = "monkey";
+const HOST_TYPE_SCAN = "scanned";
+
 const EDGE_TYPE_PARENT = "parent";
 const EDGE_TYPE_TUNNEL = "tunnel";
 const EDGE_TYPE_SCAN = "scan";
+
+const EDGE_COLOR_PARENT = "red";
+const EDGE_COLOR_TUNNEL = "blue";
+const EDGE_COLOR_SCAN = "gray";
 
 // General options
 // If variable from local storage != null, assign it, otherwise set it's default value.
@@ -59,6 +71,8 @@ function initAdmin() {
         edges: edges
     };
 
+    updateCounters();
+
     var options = {
     };
 
@@ -66,6 +80,9 @@ function initAdmin() {
     var container = document.getElementById("monkeysmap");
 
     network = new vis.Network(container, data, options);
+
+    $("[name='chboxShowScanned']").bootstrapSwitch('onSwitchChange', toggleScannedHosts);
+    $("[name='chboxMonkeyEnabled']").bootstrapSwitch('onSwitchChange', toggleMonkeyEnabled);
 
     prepareSearchEngine();
 
@@ -115,6 +132,55 @@ function initAdmin() {
     addEventsListeners();
 }
 
+function toggleScannedHosts(event, state) {
+    if (event.type != "switchChange") {
+        return;
+    }
+    if (state) {
+        showScannedHosts = true;
+    }
+    else {
+        showScannedHosts = false;
+    }
+    refreshDrawing();
+}
+
+function refreshDrawing() {
+    // function called before first init
+    if (network == null) {
+        return;
+    }
+
+    // keep old selection
+    var selNode = network.getSelectedNodes();
+
+    if (showScannedHosts) {
+        network.setData({nodes: nodes, edges: edges});
+    }
+    else {
+        var selectiveNodes = [];
+        var selectiveEdges = [];
+        for (var i=0; i<nodes.length; i++) {
+            if (nodes[i].type != HOST_TYPE_SCAN) {
+                selectiveNodes.push(nodes[i])
+            }
+        }
+        for (var i=0; i<edges.length; i++) {
+            if (edges[i].type != EDGE_TYPE_SCAN) {
+                selectiveEdges.push(edges[i])
+            }
+        }
+        network.setData({nodes: selectiveNodes, edges: selectiveEdges});
+    }
+
+    if (selNode.length) {
+        var monkey = getMonkey(selNode[0]);
+        if (monkey) { // The selection might be no longer valid if the monkey was deleted
+            selectNode(monkey.hostname, false);
+        }
+    }
+}
+
 function updateMonkeys() {
     $.getJSON(jsonFile + '?timestamp='+ generationDate, function(json) {
         generationDate = json.timestamp;
@@ -128,6 +194,7 @@ function updateMonkeys() {
             {
                 monkeys.push(new_monkeys[i]);
                 nodes.push(createMonkeyNode(new_monkeys[i]));
+                updateCounters();
             }
         }
 
@@ -135,16 +202,7 @@ function updateMonkeys() {
         {
             createEdges();
             createTunnels();
-
-            // keep old selection
-            var selNode = network.getSelectedNodes();
-            network.setData({nodes: nodes, edges: edges});
-            if (selNode.length) {
-                var monkey = getMonkey(selNode[0]);
-                if (monkey) { // The selection might be no longer valid if the monkey was deleted
-                    selectNode(monkey.hostname, false);
-                }
-            }
+            refreshDrawing();
         }
         createScanned();
         window.setTimeout(updateMonkeys, 10000);
@@ -162,7 +220,6 @@ function createNodes() {
     }
     return nodes;
 }
-
 
 function createMonkeyNode(monkey) {
     var title = undefined;
@@ -187,12 +244,24 @@ function createMonkeyNode(monkey) {
             'image': img,
             'title': title,
             'value': undefined,
+            'type' : HOST_TYPE_MONKEY,
             'mass': 1,
         };
 }
 
 function createMachineNode(machine) {
-    img = ICONS_DIR + "computer" + ICONS_EXT;
+    img = "computer";
+
+    if (undefined != machine.os.type) {
+        if (machine.os.type == "linux") {
+            img += "-linux";
+        }
+        else if (machine.os.type == "windows") {
+            img += "-windows";
+        }
+    }
+
+    img = ICONS_DIR + img + ICONS_EXT;
 
     return {
             'id': machine.ip_addr,
@@ -202,6 +271,7 @@ function createMachineNode(machine) {
             'image': img,
             'title': undefined,
             'value': undefined,
+            'type' : HOST_TYPE_SCAN,
             'mass': 1,
         };
 }
@@ -213,7 +283,8 @@ function createEdges() {
             var parent = getMonkeyByGuid(monkey.parent);
 
             if(parent && !edgeExists([parent.id, monkey.id, EDGE_TYPE_PARENT])) {
-                edges.push({from: parent.id, to: monkey.id, arrows:'middle', type: EDGE_TYPE_PARENT, color: 'red'});
+                edges.push({from: parent.id, to: monkey.id, arrows:'middle', type: EDGE_TYPE_PARENT, color: EDGE_COLOR_PARENT});
+                numOfParentLinks++;
             }
         }
     }
@@ -228,7 +299,8 @@ function createTunnels() {
             var tunnel = getMonkeyByGuid(monkey.tunnel_guid);
 
             if(tunnel && !edgeExists([monkey.id, tunnel.id, EDGE_TYPE_TUNNEL])) {
-                edges.push({from: monkey.id, to: tunnel.id, arrows:'middle', type: EDGE_TYPE_TUNNEL, color:'blue'});
+                edges.push({from: monkey.id, to: tunnel.id, arrows:'middle', type: EDGE_TYPE_TUNNEL, color: EDGE_COLOR_TUNNEL});
+                numOfTunnelLinks++;
             }
         }
     }
@@ -237,13 +309,14 @@ function createTunnels() {
 }
 
 function createScanned() {
-    //For each existing monkey, gets all the scans performed by it
-    //For each non exploited machine, adds a new node and connects it as a scanned node.
+    var genTime = temelGenerationDate; // save the initial value as it's going to be changed in each json call
+    // For each existing monkey, gets all the scans performed by it
+    // For each non exploited machine, adds a new node and connects it as a scanned node.
     for (var i = 0; i < monkeys.length; i++) {
         var monkey = monkeys[i];
-        //Get scans for each monkey
+        // Get scans for each monkey
         // Reading the JSON file containing the monkeys' informations
-        $.getJSON(jsonFileTelemetry +'?timestamp='+ temelGenerationDate+ "&monkey_guid=" + monkey.guid+"&telem_type=scan", function(json) {
+        $.getJSON(jsonFileTelemetry +'?timestamp='+ genTime + "&monkey_guid=" + monkey.guid+"&telem_type=scan", function(json) {
             temelGenerationDate = json.timestamp;
             var scans = json.objects;
             for (var i = 0; i < scans.length; i++) {
@@ -265,8 +338,13 @@ function createScanned() {
                 }
 
                 if(!edgeExists([monkey.id, machineNode.id, EDGE_TYPE_SCAN])) {
-                    edges.push({from: monkey.id, to: machineNode.id, arrows:'middle', type: EDGE_TYPE_SCAN, color: 'red'});
+                    edges.push({from: monkey.id, to: machineNode.id, arrows:'middle', type: EDGE_TYPE_SCAN, color: EDGE_COLOR_SCAN});
+                    numOfScanLinks++;
                 }
+            }
+            if (scans.length > 0) {
+                refreshDrawing();
+                updateCounters();
             }
         });
     }
@@ -295,6 +373,13 @@ function buildMonkeyDescription(monkey) {
     }
 
     return html;
+}
+
+function updateCounters() {
+    $('#infoNumOfMonkeys').html(monkeys.length);
+    $('#infoNumOfHosts').html(scannedMachines.length);
+    $('#infoNumOfParents').html(numOfParentLinks);
+    $('#infoNumOfTunnels').html(numOfTunnelLinks);
 }
 
 
@@ -370,7 +455,8 @@ function onSelect(properties) {
         var content = "<b>No selection</b>"
         $("#selectionInfo").html(content);
         $('#monkey-config').hide()
-        $('#btnConfigLoad, #btnConfigUpdate, #btnKillMonkey, #btnReviveMonkey').hide();
+        $('#btnConfigLoad, #btnConfigUpdate').hide();
+        $('#monkey-enabled').hide();
         telemTable.clear();
         telemTable.draw();
     }
@@ -403,14 +489,12 @@ function onNodeSelect(nodeId) {
     loadMonkeyConfig();
 
     if (monkey.config.alive) {
-        $('#btnKillMonkey').show();
-        $('#btnReviveMonkey').hide();
+        $("[name='chboxMonkeyEnabled']").bootstrapSwitch('state', true);
     }
     else {
-        $('#btnKillMonkey').hide();
-        $('#btnReviveMonkey').show();
+        $("[name='chboxMonkeyEnabled']").bootstrapSwitch('state', false);
     }
-
+    $('#monkey-enabled').show();
 
     $.getJSON('/api/telemetry/' + monkey.guid, function(json) {
         telemTable.clear();
@@ -433,6 +517,19 @@ function onEdgeSelect(edge) {
     var edge = getEdge(edge);
 
 }
+
+function toggleMonkeyEnabled(event, state) {
+    if (event.type != "switchChange") {
+        return;
+    }
+    if (state) {
+        reviveMonkey();
+    }
+    else {
+        killMonkey();
+    }
+}
+
 
 function killMonkey() {
     var curr_config = monkeyCfg.getValue();
