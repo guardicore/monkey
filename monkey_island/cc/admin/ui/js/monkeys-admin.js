@@ -21,10 +21,18 @@ $.getJSON(jsonFile, function(json) {
 var network = null;
 var nodes = [];
 var edges = [];
+var numOfParentLinks = 0;
+var numOfTunnelLinks = 0;
+var numOfScanLinks = 0;
+
+var showScannedHosts = true;
 
 // Images/icons constants
 const ICONS_DIR = "./css/img/objects/";
 const ICONS_EXT = ".png";
+
+const HOST_TYPE_MONKEY = "monkey";
+const HOST_TYPE_SCAN = "scanned";
 
 const EDGE_TYPE_PARENT = "parent";
 const EDGE_TYPE_TUNNEL = "tunnel";
@@ -63,7 +71,7 @@ function initAdmin() {
         edges: edges
     };
 
-    $('#infoNumOfMonkeys').html(monkeys.length)
+    updateCounters();
 
     var options = {
     };
@@ -72,6 +80,9 @@ function initAdmin() {
     var container = document.getElementById("monkeysmap");
 
     network = new vis.Network(container, data, options);
+
+    $("[name='chboxShowScanned']").bootstrapSwitch('onSwitchChange', toggleScannedHosts);
+    $("[name='chboxMonkeyEnabled']").bootstrapSwitch('onSwitchChange', toggleMonkeyEnabled);
 
     prepareSearchEngine();
 
@@ -121,6 +132,55 @@ function initAdmin() {
     addEventsListeners();
 }
 
+function toggleScannedHosts(event, state) {
+    if (event.type != "switchChange") {
+        return;
+    }
+    if (state) {
+        showScannedHosts = true;
+    }
+    else {
+        showScannedHosts = false;
+    }
+    refreshDrawing();
+}
+
+function refreshDrawing() {
+    // function called before first init
+    if (network == null) {
+        return;
+    }
+
+    // keep old selection
+    var selNode = network.getSelectedNodes();
+
+    if (showScannedHosts) {
+        network.setData({nodes: nodes, edges: edges});
+    }
+    else {
+        var selectiveNodes = [];
+        var selectiveEdges = [];
+        for (var i=0; i<nodes.length; i++) {
+            if (nodes[i].type != HOST_TYPE_SCAN) {
+                selectiveNodes.push(nodes[i])
+            }
+        }
+        for (var i=0; i<edges.length; i++) {
+            if (edges[i].type != EDGE_TYPE_SCAN) {
+                selectiveEdges.push(edges[i])
+            }
+        }
+        network.setData({nodes: selectiveNodes, edges: selectiveEdges});
+    }
+
+    if (selNode.length) {
+        var monkey = getMonkey(selNode[0]);
+        if (monkey) { // The selection might be no longer valid if the monkey was deleted
+            selectNode(monkey.hostname, false);
+        }
+    }
+}
+
 function updateMonkeys() {
     $.getJSON(jsonFile + '?timestamp='+ generationDate, function(json) {
         generationDate = json.timestamp;
@@ -134,7 +194,7 @@ function updateMonkeys() {
             {
                 monkeys.push(new_monkeys[i]);
                 nodes.push(createMonkeyNode(new_monkeys[i]));
-                $('#infoNumOfMonkeys').html(monkeys.length)
+                updateCounters();
             }
         }
 
@@ -142,16 +202,7 @@ function updateMonkeys() {
         {
             createEdges();
             createTunnels();
-
-            // keep old selection
-            var selNode = network.getSelectedNodes();
-            network.setData({nodes: nodes, edges: edges});
-            if (selNode.length) {
-                var monkey = getMonkey(selNode[0]);
-                if (monkey) { // The selection might be no longer valid if the monkey was deleted
-                    selectNode(monkey.hostname, false);
-                }
-            }
+            refreshDrawing();
         }
         createScanned();
         window.setTimeout(updateMonkeys, 10000);
@@ -169,7 +220,6 @@ function createNodes() {
     }
     return nodes;
 }
-
 
 function createMonkeyNode(monkey) {
     var title = undefined;
@@ -194,6 +244,7 @@ function createMonkeyNode(monkey) {
             'image': img,
             'title': title,
             'value': undefined,
+            'type' : HOST_TYPE_MONKEY,
             'mass': 1,
         };
 }
@@ -220,6 +271,7 @@ function createMachineNode(machine) {
             'image': img,
             'title': undefined,
             'value': undefined,
+            'type' : HOST_TYPE_SCAN,
             'mass': 1,
         };
 }
@@ -232,6 +284,7 @@ function createEdges() {
 
             if(parent && !edgeExists([parent.id, monkey.id, EDGE_TYPE_PARENT])) {
                 edges.push({from: parent.id, to: monkey.id, arrows:'middle', type: EDGE_TYPE_PARENT, color: EDGE_COLOR_PARENT});
+                numOfParentLinks++;
             }
         }
     }
@@ -247,6 +300,7 @@ function createTunnels() {
 
             if(tunnel && !edgeExists([monkey.id, tunnel.id, EDGE_TYPE_TUNNEL])) {
                 edges.push({from: monkey.id, to: tunnel.id, arrows:'middle', type: EDGE_TYPE_TUNNEL, color: EDGE_COLOR_TUNNEL});
+                numOfTunnelLinks++;
             }
         }
     }
@@ -285,7 +339,12 @@ function createScanned() {
 
                 if(!edgeExists([monkey.id, machineNode.id, EDGE_TYPE_SCAN])) {
                     edges.push({from: monkey.id, to: machineNode.id, arrows:'middle', type: EDGE_TYPE_SCAN, color: EDGE_COLOR_SCAN});
+                    numOfScanLinks++;
                 }
+            }
+            if (scans.length > 0) {
+                refreshDrawing();
+                updateCounters();
             }
         });
     }
@@ -314,6 +373,13 @@ function buildMonkeyDescription(monkey) {
     }
 
     return html;
+}
+
+function updateCounters() {
+    $('#infoNumOfMonkeys').html(monkeys.length);
+    $('#infoNumOfHosts').html(scannedMachines.length);
+    $('#infoNumOfParents').html(numOfParentLinks);
+    $('#infoNumOfTunnels').html(numOfTunnelLinks);
 }
 
 
@@ -389,7 +455,8 @@ function onSelect(properties) {
         var content = "<b>No selection</b>"
         $("#selectionInfo").html(content);
         $('#monkey-config').hide()
-        $('#btnConfigLoad, #btnConfigUpdate, #btnKillMonkey, #btnReviveMonkey').hide();
+        $('#btnConfigLoad, #btnConfigUpdate').hide();
+        $('#monkey-enabled').hide();
         telemTable.clear();
         telemTable.draw();
     }
@@ -422,14 +489,12 @@ function onNodeSelect(nodeId) {
     loadMonkeyConfig();
 
     if (monkey.config.alive) {
-        $('#btnKillMonkey').show();
-        $('#btnReviveMonkey').hide();
+        $("[name='chboxMonkeyEnabled']").bootstrapSwitch('state', true);
     }
     else {
-        $('#btnKillMonkey').hide();
-        $('#btnReviveMonkey').show();
+        $("[name='chboxMonkeyEnabled']").bootstrapSwitch('state', false);
     }
-
+    $('#monkey-enabled').show();
 
     $.getJSON('/api/telemetry/' + monkey.guid, function(json) {
         telemTable.clear();
@@ -452,6 +517,19 @@ function onEdgeSelect(edge) {
     var edge = getEdge(edge);
 
 }
+
+function toggleMonkeyEnabled(event, state) {
+    if (event.type != "switchChange") {
+        return;
+    }
+    if (state) {
+        reviveMonkey();
+    }
+    else {
+        killMonkey();
+    }
+}
+
 
 function killMonkey() {
     var curr_config = monkeyCfg.getValue();

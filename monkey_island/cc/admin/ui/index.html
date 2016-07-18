@@ -10,6 +10,7 @@
     <script type="text/javascript" src="./js/typeahead.bundle.min.js"></script>
 
     <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/bootstrap-switch.min.js"></script>
     <script type="text/javascript" src="./js/sb-admin-2/sb-admin-2.js"></script>
     <script type="text/javascript" src="./js/sb-admin-2/metisMenu.js"></script>
     <script type="text/javascript" src="./js/jsoneditor.js"></script>
@@ -23,6 +24,7 @@
     <link type="text/css" href="./css/typeahead.css" rel="stylesheet"/>
     <!-- <link type="text/css" href="./css/font-awesome.min.css" rel="stylesheet"/> -->
     <link type="text/css" href="./css/bootstrap.min.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/bootstrap-switch.min.css" rel="stylesheet"/>
     <link type="text/css" href="./css/sb-admin-2/sb-admin-2.css" rel="stylesheet"/>
     <link type="text/css" href="./css/sb-admin-2/metisMenu.css" rel="stylesheet"/>
     <link type="text/css" href="./css/jquery.dataTables.min.css" rel="stylesheet"/>
@@ -79,7 +81,12 @@
                 </div>
                 <div id="info" class="panel-body panel-collapse collapse in">
                     <div>
-                            Num of Monkeys: <label id="infoNumOfMonkeys">0</label>
+                        Num of Monkeys: <label id="infoNumOfMonkeys">0</label> (<label id="infoNumOfParents">0</label> by exploiting)<br/>
+                        Num of Hosts Detected: <label id="infoNumOfHosts">0</label><br/>
+                        Num of Tunnels Used: <label id="infoNumOfTunnels">0</label><br/>
+                    </div>
+                    <div>
+                        Display Scanned Hosts: <input type="checkbox" data-size="mini" name="chboxShowScanned" checked>
                     </div>
                 </div>
             </div>
@@ -92,7 +99,7 @@
         <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="#details" data-toggle="collapse">Details</a>
+                    <a href="#details" data-toggle="collapse">Monkey Details</a>
                 </div>
                 <div id="details" class="panel-body panel-collapse collapse in">
                     <div id="search" class="input-group custom-search-form">
@@ -116,24 +123,21 @@
                             <a href="#mconfig" data-toggle="collapse">Monkey Config</a>
                         </div>
                         <div id="mconfig" style="overflow: visible" class="panel-body panel-collapse collapse in" aria-expanded="true">
-                            <span class="input-group-btn">
-                                <button id="btnConfigLoad" style="display: none;" class="btn btn-default" type="button"
-                                    onclick="loadMonkeyConfig()" style="margin-top:-4px">
-                                        Refresh
-                                </button>
-                                <button id="btnConfigUpdate" style="display: none;" class="btn btn-default" type="button"
-                                    onclick="updateMonkeyConfig()" style="margin-top:-4px">
-                                        Update
-                                </button>
-                                <button id="btnKillMonkey" style="display: none;" class="btn btn-default" type="button"
-                                    onclick="killMonkey()" style="margin-top:-4px">
-                                        Mark for Kill
-                                </button>
-                                <button id="btnReviveMonkey" style="display: none;" class="btn btn-default" type="button"
-                                    onclick="reviveMonkey()" style="margin-top:-4px">
-                                        Revive Monkey
-                                </button>
-                            </span>
+                            <div style="display: none;" id="monkey-enabled">
+                                Allow running: <input type="checkbox" data-size="mini" name="chboxMonkeyEnabled" checked>
+                            </div><br/>
+                            <div>
+                                <span class="input-group-btn">
+                                    <button id="btnConfigLoad" style="display: none;" class="btn btn-default" type="button"
+                                        onclick="loadMonkeyConfig()" style="margin-top:-4px">
+                                            Refresh
+                                    </button>
+                                    <button id="btnConfigUpdate" style="display: none;" class="btn btn-default" type="button"
+                                        onclick="updateMonkeyConfig()" style="margin-top:-4px">
+                                            Update
+                                    </button>
+                                </span>
+                            </div>
                             <div style="display: none;" id="monkey-config">
                             </div>
                         </div>
