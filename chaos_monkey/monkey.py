@@ -93,6 +93,7 @@ class ChaosMonkey(object):
 
         if 0 == WormConfiguration.depth:
             LOG.debug("Reached max depth, shutting down")
+            ControlClient.send_telemetry("trace", "Reached max depth, shutting down")
             return
         else:
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
