@@ -27,22 +27,21 @@ The monkey is the tool which infects other machines and propagates to them, whil
 
 ### Requirements
 
-
 The C&C Server has been tested on Ubuntu 14.04. 
 The Monkey itself has been tested on Windows XP, 7, 8.1 and 10. The Linux build has been tested on Ubuntu server 14.04 and 15.10.
 
 ### Installation
 
-For off the shelf use, download our pre-compiled binaries from our website, to setup the C&C server follow the instructions in [Monkey Island readme](monkey_island/readme.txt).  If you with to compile the binaries yourself, follow the build instructions later on in this readme. 
-
-Usage
------
-
-### Configuring the Monkey
+For off the shelf use, download our pre-compiled binaries from our website, to setup the C&C server follow the instructions in [Monkey Island readme](monkey_island/readme.txt).  If you with to compile the binaries yourself, follow the build instructions later on in this readme.
+ 
+### Initial configuration.
+Whether by downloading or building from source, the Infection Monkey is basically 4 executable files for different platforms and a default configuration file.
 
 Monkey configuration is stored in two places:
 1. By default, the monkey uses a local configuration file (usually, config.bin). This configuration file must include the address of the Monkey's C&C server.
 2. After successfully connecting to the C&C server, the monkey downloads a new configuration from the server and discards the local configuration. It is possible to change the default configuration from the C&C server's UI.
+
+In both cases the command server hostname should be modified to point at your local instance of the Monkey Island (note this doesn't require connectivity right off the bat). In addition, to improve the Monkey's chances of spreading, you can pre-seed it with credentials and usernames commonly used.
 
 Both configuration options use a JSON format for specifying options; see "Options" below for details.
 
@@ -52,16 +51,13 @@ Running the C&C Server is as simple as installing our infected monkey debian pac
 
 ### Unleashing the Monkey
 
-Download the latest Monkey binary from <> (alternatively, build it by yourself by following the instructions below).
-The download includes executables for various operating systems, and a default configuration file (config.bin).
-You can edit the configuration file according the the options detailed below; the default configuration assumes <WHAT?>.
-
-Once downloaded, run the monkey using ```./monkey-linux-64 m0nk3y -c config.bin```
+Once configured, run the monkey using ```./monkey-linux-64 m0nk3y -c config.bin``` (Windows is identical). This can be done at multiple points in the network at once. 
 
 Command line options include:
 * `-c`, `--config`: set configuration file. JSON file with configuration values, will override compiled configuration.
 * `-p`, `--parent`: set monkey’s parent uuid, allows better recognition of exploited monkeys in c&c
 * `-t`, `--tunnel`: ip:port, set default tunnel for monkey when connecting to c&c.
+* '-d', '--depth' : sets the monkeys current operation depth.
 
 
 Monkey Modus Operandi
