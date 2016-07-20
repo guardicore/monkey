@@ -1,4 +1,5 @@
 # -*- mode: python -*-
+import os
 import platform
 a = Analysis(['main.py'],
              pathex=['.'],
@@ -12,7 +13,7 @@ if platform.system().find("Windows")>= 0:
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
-          a.binaries,
+          a.binaries + [('msvcr100.dll', os.environ['WINDIR'] + '\system32\msvcr100.dll', 'BINARY')],
           a.zipfiles,
           a.datas,
           name='monkey.exe',

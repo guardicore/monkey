@@ -5,8 +5,11 @@ Windows:
 	https://www.python.org/download/releases/2.7
 2. install pywin32-219.win32-py2.7.exe
 	http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/
-3. install VCForPython27.msi
+3. a. install VCForPython27.msi
 	http://www.microsoft.com/en-us/download/details.aspx?id=44266
+   b. if not installed, install Microsoft Visual C++ 2010 SP1 Redistributable Package
+    32bit: http://www.microsoft.com/en-us/download/details.aspx?id=8328
+    64bit: http://www.microsoft.com/en-us/download/details.aspx?id=13523
 4. Download & Run get-pip.py
 	https://bootstrap.pypa.io/get-pip.py
 5. Run:

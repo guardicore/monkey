@@ -26,7 +26,7 @@ MONKEY_DOWNLOADS = [
     {
         'type': 'windows',
         'machine': 'x86',
-        'filename': 'monkey-linux-32.exe',
+        'filename': 'monkey-windows-32.exe',
     },
     {
         'type': 'windows',
@@ -202,7 +202,7 @@ class MonkeyDownload(restful.Resource):
     def post(self):
         host_json = json.loads(request.data)
         host_os = host_json.get('os')
-        if os:
+        if host_os:
             result = None
             for download in MONKEY_DOWNLOADS:
                 if host_os.get('type') == download.get('type') and \

@@ -309,45 +309,44 @@ function createTunnels() {
 }
 
 function createScanned() {
-    var genTime = temelGenerationDate; // save the initial value as it's going to be changed in each json call
-    // For each existing monkey, gets all the scans performed by it
+    // Gets all the scans performed by monkeys
     // For each non exploited machine, adds a new node and connects it as a scanned node.
-    for (var i = 0; i < monkeys.length; i++) {
-        var monkey = monkeys[i];
-        // Get scans for each monkey
-        // Reading the JSON file containing the monkeys' informations
-        $.getJSON(jsonFileTelemetry +'?timestamp='+ genTime + "&monkey_guid=" + monkey.guid+"&telem_type=scan", function(json) {
-            temelGenerationDate = json.timestamp;
-            var scans = json.objects;
-            for (var i = 0; i < scans.length; i++) {
-                var scan = scans[i];
-                //Check if we already exploited this machine from another PoV, if so no point in scanning.
-                if (null != getMonkeyByIP(scan.data.machine.ip_addr)) {
-                    //if so, make sure we don't already have such a node
-                    nodes = nodes.filter(function (node) {
-                        return (node.id != ip_addr);
-                    });
-                    continue;
-                }
-                //And check if we've already added this scanned machine
-                var machineNode = getScannedByIP(scan.data.machine.ip_addr)
-                if (null == machineNode) {
-                    machineNode = createMachineNode(scan.data.machine);
-                    scannedMachines.push(machineNode);
-                    nodes.push(machineNode);
-                }
 
-                if(!edgeExists([monkey.id, machineNode.id, EDGE_TYPE_SCAN])) {
-                    edges.push({from: monkey.id, to: machineNode.id, arrows:'middle', type: EDGE_TYPE_SCAN, color: EDGE_COLOR_SCAN});
-                    numOfScanLinks++;
-                }
+    // Reading the JSON file containing the monkeys' informations
+    $.getJSON(jsonFileTelemetry +'?timestamp='+ temelGenerationDate + "&telem_type=scan", function(json) {
+        temelGenerationDate = json.timestamp;
+        var scans = json.objects;
+        for (var i = 0; i < scans.length; i++) {
+            var scan = scans[i];
+            var monkey = getMonkeyByGuid(scan.monkey_guid);
+
+            //Check if we already exploited this machine from another PoV, if so no point in scanning.
+            if (null != getMonkeyByIP(scan.data.machine.ip_addr)) {
+                //if so, make sure we don't already have such a node
+                nodes = nodes.filter(function (node) {
+                    return (node.id != ip_addr);
+                });
+                continue;
             }
-            if (scans.length > 0) {
-                refreshDrawing();
-                updateCounters();
+
+            //And check if we've already added this scanned machine
+            var machineNode = getScannedByIP(scan.data.machine.ip_addr)
+            if (null == machineNode) {
+                machineNode = createMachineNode(scan.data.machine);
+                scannedMachines.push(machineNode);
+                nodes.push(machineNode);
             }
-        });
-    }
+
+            if(!edgeExists([monkey.id, machineNode.id, EDGE_TYPE_SCAN])) {
+                edges.push({from: monkey.id, to: machineNode.id, arrows:'middle', type: EDGE_TYPE_SCAN, color: EDGE_COLOR_SCAN});
+                numOfScanLinks++;
+            }
+        }
+        if (scans.length > 0) {
+            refreshDrawing();
+            updateCounters();
+        }
+    });
 }
 
 /**
@@ -414,7 +413,6 @@ function prepareSearchEngine() {
     });
 }
 
-
 /**
  * Manage the key presses events
  */
@@ -440,7 +438,6 @@ function onDoubleClick(properties) {
     }
     onSelect(properties);
 }
-
 
 /**
  * Manage the event when an object is selected
@@ -482,7 +479,6 @@ function onNodeSelect(nodeId) {
     }
 
     $("#selectionInfo").html(htmlContent);
-
     $('#monkey-config').show()
     $('#btnConfigLoad, #btnConfigUpdate').show();
 
@@ -496,7 +492,7 @@ function onNodeSelect(nodeId) {
     }
     $('#monkey-enabled').show();
 
-    $.getJSON('/api/telemetry/' + monkey.guid, function(json) {
+    $.getJSON('/api/telemetry?monkey_guid=' + monkey.guid, function(json) {
         telemTable.clear();
         var telemetries = json.objects;
 
@@ -665,6 +661,29 @@ function selectNode(hostname, zoom) {
     }
 }
 
+
+function resetDB() {
+    if (confirm('Are you sure you want to empty the database?')) {
+        $.ajax({
+            headers : {
+                'Accept' : 'application/json',
+            },
+            url : '/api?action=reset',
+            type : 'GET',
+            success : function(response, textStatus, jqXhr) {
+                console.log("DB was successfully reset!");
+                location.reload();
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+                // log the error to the console
+                console.log("The following error occured: " + textStatus, errorThrown);
+            },
+            complete : function() {
+                console.log("Trying to reset DB...");
+            }
+        });
+    }
+}
 
 /**
  * Get a monkey from its id
