@@ -57,7 +57,7 @@ Command line options include:
 * `-c`, `--config`: set configuration file. JSON file with configuration values, will override compiled configuration.
 * `-p`, `--parent`: set monkey’s parent uuid, allows better recognition of exploited monkeys in c&c
 * `-t`, `--tunnel`: ip:port, set default tunnel for monkey when connecting to c&c.
-* '-d', '--depth' : sets the monkeys current operation depth.
+* `-d`, `--depth` : sets the monkeys current operation depth.
 
 
 Monkey Modus Operandi
