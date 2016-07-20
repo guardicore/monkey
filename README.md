@@ -48,7 +48,7 @@ Both configuration options use a JSON format for specifying options; see "Option
 
 ### Running the C&C Server
 
-Running the C&C Server is as simple as installing our infected monkey debian package on a specific server. The initial infected machine doesn not require a direct link to this server. 
+Running the C&C Server is as simple as installing our infected monkey debian package on a specific server. The initial infected machine does not require a direct link to this server. 
 
 ### Unleashing the Monkey
 
@@ -62,6 +62,7 @@ Command line options include:
 * `-c`, `--config`: set configuration file. JSON file with configuration values, will override compiled configuration.
 * `-p`, `--parent`: set monkey’s parent uuid, allows better recognition of exploited monkeys in c&c
 * `-t`, `--tunnel`: ip:port, set default tunnel for monkey when connecting to c&c.
+* `-d`, `--depth` : manually sets the current depth of the monkey.
 
 
 Monkey Modus Operandi
