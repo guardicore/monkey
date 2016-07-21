@@ -104,6 +104,12 @@ class Configuration(object):
     dropper_target_path_linux = '/bin/monkey'
 
     ###########################
+    # Kill file
+    ###########################
+    kill_file_path_windows = os.path.expandvars("%temp%\~df4150.tmp")
+    kill_file_path_linux = '/tmp/user-4150'
+
+    ###########################
     # monkey config
     ###########################
     # sets whether or not the monkey is alive. if false will stop scanning and exploiting
@@ -143,7 +149,7 @@ class Configuration(object):
     # sets whether or not to retry failed hosts on next scan
     retry_failed_explotation = True
 
-    # addresses of internet servers to ping and check if the monkey has internet acccess.
+    #addresses of internet servers to ping and check if the monkey has internet acccess.
     internet_services = ["monkey.guardicore.com", "www.google.com"]
 
     ###########################
