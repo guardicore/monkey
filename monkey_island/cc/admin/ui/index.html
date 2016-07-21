@@ -11,6 +11,7 @@
 
     <script type="text/javascript" src="./js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./js/bootstrap-switch.min.js"></script>
+    <script type="text/javascript" src="./js/bootstrap-dialog.min.js"></script>
     <script type="text/javascript" src="./js/sb-admin-2/sb-admin-2.js"></script>
     <script type="text/javascript" src="./js/sb-admin-2/metisMenu.js"></script>
     <script type="text/javascript" src="./js/jsoneditor.js"></script>
@@ -25,6 +26,7 @@
     <!-- <link type="text/css" href="./css/font-awesome.min.css" rel="stylesheet"/> -->
     <link type="text/css" href="./css/bootstrap.min.css" rel="stylesheet"/>
     <link type="text/css" href="./css/bootstrap-switch.min.css" rel="stylesheet"/>
+    <link type="text/css" href="./css/bootstrap-dialog.min.css" rel="stylesheet"/>
     <link type="text/css" href="./css/sb-admin-2/sb-admin-2.css" rel="stylesheet"/>
     <link type="text/css" href="./css/sb-admin-2/metisMenu.css" rel="stylesheet"/>
     <link type="text/css" href="./css/jquery.dataTables.min.css" rel="stylesheet"/>
@@ -59,7 +61,7 @@
                 <div class="panel-heading">
                     <a href="#telemetries" data-toggle="collapse">Telemetries</a>
                 </div>
-                <div id="telemetries" class="panel-body panel-collapse collapse">
+                <div id="telemetries" class="panel-body panel-collapse collapse in">
                 <table class="table table-bordered table-hover" id="telemetris-table">
                   <thead>
                     <tr><th>Time</th><th>Type</th><th>Data</th></tr>
@@ -88,6 +90,21 @@
                     <div>
                         Display Scanned Hosts: <input type="checkbox" data-size="mini" name="chboxShowScanned" checked>
                     </div>
+                    <br />
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a href="#legend" data-toggle="collapse">Map Legend</a>
+                        </div>
+                        <div id="legend" style="overflow: visible" class="panel-body panel-collapse collapse" aria-expanded="true">
+                            <ul>
+                                <li><label style="color: red">red arrow</label> - exploit</li>
+                                <li><label style="color: blue">blue arrow</label> - tunnel</li>
+                                <li><label style="color: gray">gray arrow</label> - scan</li>
+                                <li><label style="color: red">red label</label> - patient zero</li>
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

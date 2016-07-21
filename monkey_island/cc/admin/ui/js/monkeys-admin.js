@@ -74,6 +74,9 @@ function initAdmin() {
     updateCounters();
 
     var options = {
+        layout: {
+            improvedLayout: false
+        }
     };
 
     // Using jQuery to get the element does not work with vis.js library
@@ -127,7 +130,7 @@ function initAdmin() {
 
     loadNewMonkeysConfig(); 
 
-    window.setTimeout(updateMonkeys, 10000);
+    setInterval(updateMonkeys, 10000);
 
     addEventsListeners();
 }
@@ -205,7 +208,6 @@ function updateMonkeys() {
             refreshDrawing();
         }
         createScanned();
-        window.setTimeout(updateMonkeys, 10000);
     });    
 }
 
@@ -223,6 +225,7 @@ function createNodes() {
 
 function createMonkeyNode(monkey) {
     var title = undefined;
+    var font = undefined;
     var img = "monkey";
 
     if (monkey.description) {
@@ -233,12 +236,16 @@ function createMonkeyNode(monkey) {
             img = img + "-windows"
         }
     }
-
     img = ICONS_DIR + img + ICONS_EXT;
+
+    if (monkey.parent == monkey.guid) {
+        font = { color: 'red' };
+    }
 
     return {
             'id': monkey.id,
             'label': monkey.hostname + "\n" + monkey.ip_addresses[0],
+            'font': font,
             'shape': 'image',
             'color': undefined,
             'image': img,
@@ -582,10 +589,18 @@ function updateNewMonkeysConfig() {
             data : JSON.stringify(curr_config),
             success : function(response, textStatus, jqXhr) {
                 console.log("New monkeys config successfully updated!");
+                BootstrapDialog.show({
+                    title: "Update New Monkeys Config",
+                    message: "New monkeys config successfully updated!"
+                });
             },
             error : function(jqXHR, textStatus, errorThrown) {
                 // log the error to the console
                 console.log("The following error occured: " + textStatus, errorThrown);
+                BootstrapDialog.show({
+                    title: "Update New Monkeys Config",
+                    message: "The following error occured: " + textStatus
+                });
             },
             complete : function() {
                 console.log("Sending new monkeys config update...");
@@ -627,10 +642,18 @@ function updateMonkeyConfig() {
                 monkey.config = curr_config;
                 console.log("Monkey config successfully updated! (" + monkey.hostname + ")");
                 selectNode(monkey.hostname, false);
+                BootstrapDialog.show({
+                    title: "Update Monkey Config",
+                    message: "Monkey config successfully updated! (" + monkey.hostname + ")"
+                    });
             },
             error : function(jqXHR, textStatus, errorThrown) {
                 // log the error to the console
                 console.log("The following error occured: " + textStatus, errorThrown);
+                BootstrapDialog.show({
+                    title: "Update Monkey Config",
+                    message: "The following error occured: " + textStatus
+                    });
             },
             complete : function() {
                 console.log("Sending monkey config update...");
@@ -677,6 +700,10 @@ function resetDB() {
             error : function(jqXHR, textStatus, errorThrown) {
                 // log the error to the console
                 console.log("The following error occured: " + textStatus, errorThrown);
+                BootstrapDialog.show({
+                    title: "Reset DB",
+                    message: "The following error occured: " + textStatus
+                });
             },
             complete : function() {
                 console.log("Trying to reset DB...");
