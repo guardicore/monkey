@@ -153,6 +153,10 @@ class MonkeyTunnel(Thread):
 
     def set_tunnel_for_host(self, host):
         assert isinstance(host, VictimHost)
+
+        if not self.local_port:
+            return
+
         ip_match = get_close_matches(host.ip_addr, local_ips()) or self.l_ips
         host.default_tunnel = '%s:%d' % (ip_match[0], self.local_port)
 
