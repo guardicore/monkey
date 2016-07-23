@@ -24,6 +24,7 @@ How to set C&C server:
 5. Install OpenSSL
 	https://slproweb.com/download/Win64OpenSSL_Light-1_0_2d.exe
 6. Generate SSL Certificate, run create_certificate.bat when your current working directory is MonkeyIsland
+7. Copy monkey island server to MonkeyIsland\cc
 
 How to run:
 1. start run_mongodb.bat
