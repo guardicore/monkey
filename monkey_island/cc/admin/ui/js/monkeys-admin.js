@@ -62,12 +62,13 @@ function initAdmin() {
     nodes = [];
     edges = [];
 
+    createNodes();
     createEdges();
     createTunnels();
     createScanned();
 
     var data = {
-        nodes: createNodes(),
+        nodes: nodes,
         edges: edges
     };
 
@@ -76,7 +77,10 @@ function initAdmin() {
     var options = {
         layout: {
             improvedLayout: false
-        }
+        }/*,
+        physics: {
+            enabled: true
+        }*/
     };
 
     // Using jQuery to get the element does not work with vis.js library
@@ -196,7 +200,19 @@ function updateMonkeys() {
             else
             {
                 monkeys.push(new_monkeys[i]);
-                nodes.push(createMonkeyNode(new_monkeys[i]));
+                var exiting_scan = undefined;
+                for (var j=0; j<new_monkeys[i].ip_addresses.length; j++) {
+                    exiting_scan = getScannedByIP(new_monkeys[i].ip_addresses[j]);
+                    if (exiting_scan != undefined) {
+                        break;
+                    }
+                }
+                if (exiting_scan == undefined) {
+                    nodes.push(createMonkeyNode(new_monkeys[i]));
+                }
+                else {
+                    convertScanNodeToMonkey(exiting_scan, new_monkeys[i]);
+                }
                 updateCounters();
             }
         }
@@ -238,8 +254,15 @@ function createMonkeyNode(monkey) {
     }
     img = ICONS_DIR + img + ICONS_EXT;
 
-    if (monkey.parent == monkey.guid) {
+    if (monkey.parent == null) {
         font = { color: 'red' };
+    }
+    else {
+        for (var i=0; i<monkey.parent.length; i++) {
+            if (monkey.parent[i][1] == null) {
+                font = { color: 'red' };
+            }
+        }
     }
 
     return {
@@ -283,15 +306,52 @@ function createMachineNode(machine) {
         };
 }
 
+function convertScanNodeToMonkey(scanned, monkey) {
+    var monNode = createMonkeyNode(monkey);
+    nodes.push(monNode);
+
+    // move edges to new node
+    for (var i = 0; i < edges.length; i++) {
+        if (edges[i].to == scanned.id) {
+            edges[i].to = monNode.id;
+        }
+        if (edges[i].from == scanned.id) {
+            edges[i].from = monNode.id;
+        }
+    }
+    for (var i=0; i<scannedMachines.length; i++) {
+        if (scannedMachines[i].id == scanned.id) {
+            scannedMachines.splice(i, 1);
+            break;
+        }
+    }
+    for (var i=0; i<nodes.length; i++) {
+        if (nodes[i].id == scanned.id) {
+            nodes.splice(i, 1);
+            break;
+        }
+    }
+}
+
 function createEdges() {
     for (var i = 0; i < monkeys.length; i++) {
         var monkey = monkeys[i];
-        if(monkey.parent != monkey.guid) {
-            var parent = getMonkeyByGuid(monkey.parent);
 
-            if(parent && !edgeExists([parent.id, monkey.id, EDGE_TYPE_PARENT])) {
-                edges.push({from: parent.id, to: monkey.id, arrows:'middle', type: EDGE_TYPE_PARENT, color: EDGE_COLOR_PARENT});
-                numOfParentLinks++;
+        if (monkey.parent == null) { continue; };
+
+        for (var j=0; j<monkey.parent.length; j++) {
+            if(monkey.parent[j][0] != monkey.guid) {
+                var parent = getMonkeyByGuid(monkey.parent[j][0]);
+                var exploit = monkey.parent[j][1];
+
+                if(parent && !edgeExists([parent.id, monkey.id, EDGE_TYPE_PARENT])) {
+                    var title = "<center><b>" + exploit + "</b></center>From: " + parent.hostname + "<br/>To: " + monkey.hostname;
+                    edges.push({from: parent.id, to: monkey.id, arrows:'middle', type: EDGE_TYPE_PARENT, title: title, /*label: exploit, font: {color: 'red', size: 10, align: 'top'},*/ color: EDGE_COLOR_PARENT});
+                    if (removeEdge([parent.id, monkey.id, EDGE_TYPE_SCAN])) {
+                        numOfScanLinks--;
+                    }
+                    numOfParentLinks++;
+                }
             }
         }
     }
@@ -327,24 +387,20 @@ function createScanned() {
             var scan = scans[i];
             var monkey = getMonkeyByGuid(scan.monkey_guid);
 
-            //Check if we already exploited this machine from another PoV, if so no point in scanning.
-            if (null != getMonkeyByIP(scan.data.machine.ip_addr)) {
-                //if so, make sure we don't already have such a node
-                nodes = nodes.filter(function (node) {
-                    return (node.id != ip_addr);
-                });
-                continue;
-            }
+            // And check if we've already added this scanned machine
+            var machineNode = getMonkeyByIP(scan.data.machine.ip_addr);
 
-            //And check if we've already added this scanned machine
-            var machineNode = getScannedByIP(scan.data.machine.ip_addr)
             if (null == machineNode) {
-                machineNode = createMachineNode(scan.data.machine);
-                scannedMachines.push(machineNode);
-                nodes.push(machineNode);
+                machineNode = getScannedByIP(scan.data.machine.ip_addr);
+
+                if (null == machineNode) {
+                    machineNode = createMachineNode(scan.data.machine);
+                    scannedMachines.push(machineNode);
+                    nodes.push(machineNode);
+                }
             }
 
-            if(!edgeExists([monkey.id, machineNode.id, EDGE_TYPE_SCAN])) {
+            if(!edgeExists([monkey.id, machineNode.id, EDGE_TYPE_SCAN]) && !edgeExists([monkey.id, machineNode.id, EDGE_TYPE_PARENT])) {
                 edges.push({from: monkey.id, to: machineNode.id, arrows:'middle', type: EDGE_TYPE_SCAN, color: EDGE_COLOR_SCAN});
                 numOfScanLinks++;
             }
@@ -372,10 +428,34 @@ function buildMonkeyDescription(monkey) {
     }
     html +=
         "<label>Last Seen:</label> " + monkey.keepalive + "</br>" +
-        "<label>IP Address:</label></br>";
+        "<label>IP Address:</label><br/>";
 
+    html += "<ul>";
     for (var i = 0; i < monkey.ip_addresses.length; i++) {
-        html += monkey.ip_addresses[i] + "</br>"
+        html += "<li>" + monkey.ip_addresses[i];
+    }
+    html += "</ul>";
+
+
+    if (monkey.parent != null) {
+        html += "<label>Exploited by:</label><br/>"
+        html += "<ul>";
+        for (var i = 0; i < monkey.parent.length; i++) {
+            html += "<li>";
+            if (monkey.parent[i][0] == monkey.guid) {
+                html += "Manual Run<br/>";
+            }
+            else {
+                parent = getMonkeyByGuid(monkey.parent[i][0]);
+                if (!parent) { html += "Unknown Source"; continue; }
+
+                html +=  parent.hostname + " (";
+                if (monkey.parent[i][1] == null) {html += "Unknown"}
+                else {html += monkey.parent[i][1];}
+                html += ")";
+            }
+        }
+        html += "</ul>";
     }
 
     return html;
@@ -386,6 +466,11 @@ function updateCounters() {
     $('#infoNumOfHosts').html(scannedMachines.length);
     $('#infoNumOfParents').html(numOfParentLinks);
     $('#infoNumOfTunnels').html(numOfTunnelLinks);
+    var numOfAlive = monkeys.length;
+    for (var i=0;i<monkeys.length;i++) {
+        if (monkeys[i].dead) {numOfAlive--;}
+    }
+    $('#infoNumOfAlive').html(numOfAlive);
 }
 
 
@@ -451,22 +536,22 @@ function onDoubleClick(properties) {
  */
 function onSelect(properties) {
 
-    if (properties.nodes.length > 0) {
+    if ((properties.nodes.length > 0) && getMonkey(properties.nodes[0])){
         onNodeSelect(properties.nodes);
     }
     else
     {
-        var content = "<b>No selection</b>"
+        var content = "<b>Monkey not selected</b>"
         $("#selectionInfo").html(content);
         $('#monkey-config').hide()
         $('#btnConfigLoad, #btnConfigUpdate').hide();
         $('#monkey-enabled').hide();
         telemTable.clear();
         telemTable.draw();
-    }
 
-    if (properties.edges.length > 0) {
-        onEdgeSelect(properties.edges);
+        if (properties.edges.length > 0) {
+            onEdgeSelect(properties.edges);
+        }
     }
 
 }
@@ -483,32 +568,31 @@ function onNodeSelect(nodeId) {
     if (monkey) {
         htmlContent = buildMonkeyDescription(monkey);
         $("#monkeySearch").val(monkey.hostname);
+        $("#selectionInfo").html(htmlContent);
+        $('#monkey-config').show()
+        $('#btnConfigLoad, #btnConfigUpdate').show();
+
+        loadMonkeyConfig();
+
+        if (monkey.config.alive) {
+            $("[name='chboxMonkeyEnabled']").bootstrapSwitch('state', true, true);
+        }
+        else {
+            $("[name='chboxMonkeyEnabled']").bootstrapSwitch('state', false, true);
+        }
+        $('#monkey-enabled').show();
+
+        $.getJSON('/api/telemetry?monkey_guid=' + monkey.guid, function(json) {
+            telemTable.clear();
+            var telemetries = json.objects;
+
+            for (var i = 0; i < telemetries.length; i++) {
+                telemTable.row.add([telemetries[i].timestamp, telemetries[i].telem_type, JSON.stringify(telemetries[i].data)]);
+            }
+
+            telemTable.draw();
+        });
     }
-
-    $("#selectionInfo").html(htmlContent);
-    $('#monkey-config').show()
-    $('#btnConfigLoad, #btnConfigUpdate').show();
-
-    loadMonkeyConfig();
-
-    if (monkey.config.alive) {
-        $("[name='chboxMonkeyEnabled']").bootstrapSwitch('state', true);
-    }
-    else {
-        $("[name='chboxMonkeyEnabled']").bootstrapSwitch('state', false);
-    }
-    $('#monkey-enabled').show();
-
-    $.getJSON('/api/telemetry?monkey_guid=' + monkey.guid, function(json) {
-        telemTable.clear();
-        var telemetries = json.objects;
-
-        for (var i = 0; i < telemetries.length; i++) {
-            telemTable.row.add([telemetries[i].timestamp, telemetries[i].telem_type, JSON.stringify(telemetries[i].data)]);
-        } 
-
-        telemTable.draw();
-    });
 
     network.selectNodes([nodeId]);
 }
@@ -518,7 +602,32 @@ function onNodeSelect(nodeId) {
  */
 function onEdgeSelect(edge) {
     var edge = getEdge(edge);
+    var monkey = getMonkey(edge.from);
+    if (!monkey) {return;};
 
+    var target = undefined;
+    if (edge.type == 'scan') {
+        target = getScannedByIP(edge.to)
+    }
+    else {
+        target = getMonkey(edge.to)
+    }
+
+    $.getJSON(jsonFileTelemetry + '?monkey_guid=' + monkey.guid, function(json) {
+        telemTable.clear();
+        var telemetries = json.objects;
+
+        for (var i = 0; i < telemetries.length; i++) {
+            var telem = telemetries[i]
+            if (telem.telem_type == 'scan' || telem.telem_type == 'exploit') {
+                if (((edge.type == 'scan') && (telem.data.machine.ip_addr == target.id)) ||
+                    ((edge.type == 'parent') && (0 <= $.inArray(telem.data.machine.ip_addr, target.ip_addresses)))) {
+                    telemTable.row.add([telemetries[i].timestamp, telemetries[i].telem_type, JSON.stringify(telemetries[i].data)]);
+                  }
+                }
+            }
+        telemTable.draw();
+    });
 }
 
 function toggleMonkeyEnabled(event, state) {
@@ -728,24 +837,24 @@ function getMonkeyByGuid(guid) {
         if (monkeys[i].guid == guid) {
             return monkeys[i];
         }
-    }    
+    }
+    return null;
 }
 
 function getMonkeyByIP(ip) {
-        for (var i = 0; i < monkeys.length; i++) {
+    for (var i = 0; i < monkeys.length; i++) {
             var monkey = monkeys[i];
-            for (var j = 0; j< monkey.ip_addresses; j++) {
-                if (monkeys[i].ip == ip) {
-                    return monkeys[i];
+            for (var j = 0; j< monkey.ip_addresses.length; j++) {
+                if (monkey.ip_addresses[j] == ip) {
+                    return monkey;
                 }
             }
     }
     return null;
 }
 
-function getScannedByIP(ip)
-{
-        for (var i = 0; i < scannedMachines.length; i++) {
+function getScannedByIP(ip) {
+    for (var i = 0; i < scannedMachines.length; i++) {
             var machine = scannedMachines[i];
             if (machine.id == ip) {
                 return machine
@@ -801,13 +910,23 @@ function edgeExists(link) {
         var to = edges[i].to;
         var type = edges[i].type;
         if (from == link[0] && to == link[1] && type == link[2]) {
-            return true;
+            return edges[i];
         }
     }
 }
 
-
-
+function removeEdge(link) {
+    for (var i = 0; i < edges.length; i++) {
+        var from = edges[i].from;
+        var to = edges[i].to;
+        var type = edges[i].type;
+        if (from == link[0] && to == link[1] && type == link[2]) {
+            edges.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+}
 
 /**
  * Clears the value in the local storage
