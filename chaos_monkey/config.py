@@ -146,6 +146,9 @@ class Configuration(object):
         "127.0.0.1:5000"
     ]
 
+    # sets whether or not to locally save the running configuration after finishing
+    serialize_config = False
+
     # sets whether or not to retry failed hosts on next scan
     retry_failed_explotation = True
 
