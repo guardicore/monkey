@@ -77,10 +77,7 @@ function initAdmin() {
     var options = {
         layout: {
             improvedLayout: false
-        }/*,
-        physics: {
-            enabled: true
-        }*/
+        }
     };
 
     // Using jQuery to get the element does not work with vis.js library
@@ -213,7 +210,6 @@ function updateMonkeys() {
                 else {
                     convertScanNodeToMonkey(exiting_scan, new_monkeys[i]);
                 }
-                updateCounters();
             }
         }
 
@@ -224,6 +220,7 @@ function updateMonkeys() {
             refreshDrawing();
         }
         createScanned();
+        updateCounters();
     });    
 }
 
@@ -803,8 +800,17 @@ function resetDB() {
             url : '/api?action=reset',
             type : 'GET',
             success : function(response, textStatus, jqXhr) {
-                console.log("DB was successfully reset!");
-                location.reload();
+                console.log(response);
+                if (response.status != 'OK') {
+                    BootstrapDialog.show({
+                        title: "Reset DB",
+                        message: "The following error occured: " + response.reason
+                    });
+                }
+                else {
+                    console.log("DB was successfully reset!");
+                    location.reload();
+                }
             },
             error : function(jqXHR, textStatus, errorThrown) {
                 // log the error to the console

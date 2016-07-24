@@ -223,11 +223,24 @@ class MonkeyDownload(restful.Resource):
 
 
 class Root(restful.Resource):
-    def get(self):
-        return {
-            'status': 'OK',
-            'mongo': str(mongo.db),
-        }
+    def get(self, action=None):
+        if not action:
+            action = request.args.get('action')
+        if not action:
+            return {
+                'status': 'OK',
+                'mongo': str(mongo.db),
+            }
+        elif action=="reset":
+            mongo.db.config.drop()
+            mongo.db.monkey.drop()
+            mongo.db.telemetry.drop()
+            return {
+                'status': 'OK',
+            }
+        else:
+            return {'status': 'BAD',
+                    'reason': 'unknown action'}
 
 
 def normalize_obj(obj):
