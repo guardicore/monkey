@@ -48,6 +48,7 @@ Linux (Tested on Ubuntu 12.04):
 	sudo pip install odict
 	sudo pip install paramiko
 	sudo pip install psutil
+	sudo pip install netifaces
 	sudo pip install https://github.com/pyinstaller/pyinstaller/releases/download/3.0.dev2/PyInstaller-3.0.dev2.tar.gz
 	sudo apt-get install winbind
 2. Put source code in /home/user/Code/monkey/chaos_monkey
