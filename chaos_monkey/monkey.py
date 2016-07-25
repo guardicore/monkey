@@ -162,6 +162,9 @@ class ChaosMonkey(object):
                             break
                         else:
                             LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
+                            ControlClient.send_telemetry('exploit', {'result': False, 'machine': machine.__dict__,
+                                                                     'exploiter': exploiter.__class__.__name__})
+
                     except Exception, exc:
                         LOG.error("Exception while attacking %s using %s: %s",
                                   machine, exploiter.__class__.__name__, exc)
@@ -169,7 +172,7 @@ class ChaosMonkey(object):
 
                 if successful_exploiter:
                     self._exploited_machines.add(machine)
-                    ControlClient.send_telemetry('exploit', {'machine': machine.__dict__,
+                    ControlClient.send_telemetry('exploit', {'result': True, 'machine': machine.__dict__,
                                                              'exploiter': successful_exploiter.__class__.__name__})
 
                     LOG.info("Successfully propagated to %s using %s",

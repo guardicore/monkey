@@ -5,7 +5,7 @@ from flask.ext.pymongo import PyMongo
 from flask import make_response
 import bson.json_util
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import dateutil.parser
 
 MONKEY_DOWNLOADS = [
@@ -50,6 +50,7 @@ mongo = PyMongo(app)
 
 class Monkey(restful.Resource):
     def get(self, guid=None, **kw):
+        update_dead_monkeys()  # refresh monkeys status
         if not guid:
             guid = request.args.get('guid')
         timestamp = request.args.get('timestamp')
@@ -59,7 +60,7 @@ class Monkey(restful.Resource):
         else:
             result = {'timestamp': datetime.now().isoformat()}
             find_filter = {}
-            if None != timestamp:
+            if timestamp is not None:
                 find_filter['modifytime'] = {'$gt': dateutil.parser.parse(timestamp)}
             result['objects'] = [x for x in mongo.db.monkey.find(find_filter)]
             return result
@@ -67,7 +68,7 @@ class Monkey(restful.Resource):
     def patch(self, guid):
         monkey_json = json.loads(request.data)
         update = {"$set": {'modifytime': datetime.now()}}
-        
+
         if monkey_json.has_key('keepalive'):
             update['$set']['keepalive'] = dateutil.parser.parse(monkey_json['keepalive'])
         else:
@@ -76,7 +77,7 @@ class Monkey(restful.Resource):
             update['$set']['config'] = monkey_json['config']
         if monkey_json.has_key('tunnel'):
             update['$set']['tunnel'] = monkey_json['tunnel']
-        
+
         return mongo.db.monkey.update({"guid": guid}, update, upsert=False)
 
     def post(self, **kw):
@@ -88,7 +89,7 @@ class Monkey(restful.Resource):
 
         monkey_json['modifytime'] = datetime.now()
 
-        # if new monkey, change config according to "new monkeys" config.
+        # if new monkey telem, change config according to "new monkeys" config.
         db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
         if not db_monkey:
             new_config = mongo.db.config.find_one({'name': 'newconfig'}) or {}
@@ -99,18 +100,31 @@ class Monkey(restful.Resource):
             if db_config.has_key('current_server'):
                 del db_config['current_server']
             monkey_json.get('config', {}).update(db_config)
-            
-            if not monkey_json.has_key('parent') and db_monkey.get('parent'):
-                monkey_json['parent'] = db_monkey.get('parent')
 
         # try to find new monkey parent
         parent = monkey_json.get('parent')
-        if (not parent  or parent == monkey_json.get('guid')) and monkey_json.has_key('ip_addresses'):
+        parent_to_add = (monkey_json.get('guid'), None)  # default values in case of manual run
+        if parent and parent != monkey_json.get('guid'):  # current parent is known
             exploit_telem = [x for x in
-                             mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.machine.ip_addr':
-                                 {'$in': monkey_json['ip_addresses']}})]
+                             mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
+                                                      'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']},
+                                                      'monkey_guid': {'$eq': parent}})]
             if 1 == len(exploit_telem):
-                monkey_json['parent'] = exploit_telem[0].get('monkey_guid')                
+                parent_to_add = (exploit_telem[0].get('monkey_guid'), exploit_telem[0].get('data').get('exploiter'))
+            else:
+                parent_to_add = (parent, None)
+        elif (not parent or parent == monkey_json.get('guid')) and monkey_json.has_key('ip_addresses'):
+            exploit_telem = [x for x in
+                             mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
+                                                      'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}})]
+
+            if 1 == len(exploit_telem):
+                parent_to_add = (exploit_telem[0].get('monkey_guid'), exploit_telem[0].get('data').get('exploiter'))
+
+        if not db_monkey:
+            monkey_json['parent'] = [parent_to_add]
+        else:
+            monkey_json['parent'] = db_monkey.get('parent') + [parent_to_add]
 
         return mongo.db.monkey.update({"guid": monkey_json["guid"]},
                                       {"$set": monkey_json},
@@ -122,7 +136,7 @@ class Telemetry(restful.Resource):
         monkey_guid = request.args.get('monkey_guid')
         telem_type = request.args.get('telem_type')
         timestamp = request.args.get('timestamp')
-        if "null" == timestamp: #special case to avoid ugly JS code...
+        if "null" == timestamp:  # special case to avoid ugly JS code...
             timestamp = None
 
         result = {'timestamp': datetime.now().isoformat()}
@@ -146,37 +160,26 @@ class Telemetry(restful.Resource):
 
         # update exploited monkeys parent
         try:
-            if telemetry_json.get('telem_type') == 'exploit':
-                update_parent = []
-                for monkey in mongo.db.monkey.find({"ip_addresses":
-                                                    {'$elemMatch':
-                                                    {'$eq': telemetry_json['data']['machine']['ip_addr']}}}):
-                    parent = monkey.get('parent')
-                    if parent == monkey.get('guid') or not parent:
-                        update_parent.append(monkey)
-                if 1 == len(update_parent):
-                    update_parent[0]['parent'] = telemetry_json['monkey_guid']
-                    mongo.db.monkey.update({"guid": update_parent[0]['guid']}, {"$set": update_parent[0]}, upsert=False)
-            elif telemetry_json.get('telem_type') == 'tunnel':
+            if telemetry_json.get('telem_type') == 'tunnel':
                 if telemetry_json['data']:
                     host = telemetry_json['data'].split(":")[-2].replace("//", "")
                     tunnel_host = mongo.db.monkey.find_one({"ip_addresses": host})
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
                                            {'$set': {'tunnel_guid': tunnel_host.get('guid')}},
-                                           upsert=True)
+                                           upsert=False)
                 else:
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$unset': {'tunnel_guid':''}},
-                                           upsert=True)
+                                           {'$unset': {'tunnel_guid': ''}},
+                                           upsert=False)
             elif telemetry_json.get('telem_type') == 'state':
                 if telemetry_json['data']['done']:
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
                                            {'$set': {'dead': True}},
-                                           upsert=True)
+                                           upsert=False)
                 else:
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
                                            {'$set': {'dead': False}},
-                                           upsert=True)
+                                           upsert=False)
         except:
             pass
 
@@ -220,11 +223,24 @@ class MonkeyDownload(restful.Resource):
 
 
 class Root(restful.Resource):
-    def get(self):
-        return {
-            'status': 'OK',
-            'mongo': str(mongo.db),
-        }
+    def get(self, action=None):
+        if not action:
+            action = request.args.get('action')
+        if not action:
+            return {
+                'status': 'OK',
+                'mongo': str(mongo.db),
+            }
+        elif action=="reset":
+            mongo.db.config.drop()
+            mongo.db.monkey.drop()
+            mongo.db.telemetry.drop()
+            return {
+                'status': 'OK',
+            }
+        else:
+            return {'status': 'BAD',
+                    'reason': 'unknown action'}
 
 
 def normalize_obj(obj):
@@ -232,15 +248,15 @@ def normalize_obj(obj):
         obj['id'] = obj['_id']
         del obj['_id']
 
-    for key,value in obj.items():
+    for key, value in obj.items():
         if type(value) is bson.objectid.ObjectId:
             obj[key] = str(value)
         if type(value) is datetime:
-            obj[key] = str(value)            
+            obj[key] = str(value)
         if type(value) is dict:
             obj[key] = normalize_obj(value)
         if type(value) is list:
-            for i in range(0,len(value)):
+            for i in range(0, len(value)):
                 if type(value[i]) is dict:
                     value[i] = normalize_obj(value[i])
     return obj
@@ -253,9 +269,16 @@ def output_json(obj, code, headers=None):
     return resp
 
 
+def update_dead_monkeys():
+    mongo.db.monkey.update(
+        {'keepalive': {'$lte': datetime.now() - timedelta(minutes=10)}, 'dead': {'$ne': True}},
+        {'$set': {'dead': True, 'modifytime': datetime.now()}}, upsert=False)
+
+
 @app.route('/admin/<path:path>')
 def send_admin(path):
     return send_from_directory('admin/ui', path)
+
 
 DEFAULT_REPRESENTATIONS = {'application/json': output_json}
 api = restful.Api(app)

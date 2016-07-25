@@ -83,8 +83,9 @@
                 </div>
                 <div id="info" class="panel-body panel-collapse collapse in">
                     <div>
-                        Num of Monkeys: <label id="infoNumOfMonkeys">0</label> (<label id="infoNumOfParents">0</label> by exploiting)<br/>
-                        Num of Hosts Detected: <label id="infoNumOfHosts">0</label><br/>
+                        Num of Monkeys: <label id="infoNumOfMonkeys">0</label> (<label id="infoNumOfParents">0</label> exploiting were done)<br/>
+                        Monkyes Alive: <label id="infoNumOfAlive">0</label><br/>
+                        Num of Hosts Not Exploited: <label id="infoNumOfHosts">0</label><br/>
                         Num of Tunnels Used: <label id="infoNumOfTunnels">0</label><br/>
                     </div>
                     <div>
@@ -132,7 +133,7 @@
                     </div>
                     <hr>
                     <div id="selectionInfo">
-                        <label>No selection</label>
+                        <label>Monkey not selected</label>
                     </div>
                     <hr>
                     <div class="panel panel-default">
@@ -183,6 +184,24 @@
                     </span>
                     <div id="new-config">
                     </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.Config section -->
+
+        <!-- Config section -->
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="#reset" data-toggle="collapse">Reset Database</a>
+                </div>
+                <div id="reset" style="overflow: visible" class="panel-body panel-collapse collapse" aria-expanded="true">
+                    <span class="input-group-btn">
+                        <button id="btnResetDB" class="btn btn-default" type="button"
+                            onclick="resetDB()" style="margin-top:-4px">
+                                Reset Database
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
