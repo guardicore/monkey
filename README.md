@@ -156,6 +156,8 @@ Dependency | License |
  python-dateutil | Simplified BSD 
  zope | ZPL 2.1 
  Bootstrap | MIT 
+ Bootstrap Switch | Apache 2.0 
+ Bootstrap Dialog | MIT 
  JSON Editor | MIT 
  Datatables | MIT 
  jQuery | MIT 
@@ -172,3 +174,4 @@ Dependency | License |
  rdpy | GPL-3 
  winbind | GPL-3 
  pyinstaller | GPL 
+ Celery | BSD 
