@@ -165,20 +165,20 @@ class Telemetry(restful.Resource):
                     host = telemetry_json['data'].split(":")[-2].replace("//", "")
                     tunnel_host = mongo.db.monkey.find_one({"ip_addresses": host})
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$set': {'tunnel_guid': tunnel_host.get('guid')}},
+                                           {'$set': {'tunnel_guid': tunnel_host.get('guid'), 'modifytime': datetime.now()}},
                                            upsert=False)
                 else:
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$unset': {'tunnel_guid': ''}},
+                                           {'$unset': {'tunnel_guid': ''}, 'modifytime': datetime.now()},
                                            upsert=False)
             elif telemetry_json.get('telem_type') == 'state':
                 if telemetry_json['data']['done']:
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$set': {'dead': True}},
+                                           {'$set': {'dead': True, 'modifytime': datetime.now()}},
                                            upsert=False)
                 else:
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$set': {'dead': False}},
+                                           {'$set': {'dead': False, 'modifytime': datetime.now()}},
                                            upsert=False)
         except:
             pass
@@ -272,7 +272,7 @@ def output_json(obj, code, headers=None):
 def update_dead_monkeys():
     mongo.db.monkey.update(
         {'keepalive': {'$lte': datetime.now() - timedelta(minutes=10)}, 'dead': {'$ne': True}},
-        {'$set': {'dead': True, 'modifytime': datetime.now()}}, upsert=False)
+        {'$set': {'dead': True, 'modifytime': datetime.now()}}, upsert=False, multi=True)
 
 
 @app.route('/admin/<path:path>')
