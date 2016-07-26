@@ -791,6 +791,57 @@ function selectNode(hostname, zoom) {
 }
 
 
+function killAll() {
+    BootstrapDialog.show({
+            title: 'Kill All Monkeys',
+            message: 'This action will mark all existing monkeys to die.<br/>As some of the monkyes might be in the middle of exploitation, new monkeys might still apear, and you will need to perform this kill again.<br/>Perform kill all?',
+            type: BootstrapDialog.TYPE_DANGER,
+            buttons: [{
+                label: 'Kill All',
+                cssClass: 'btn-danger',
+                action: function(dialogItself){
+                            dialogItself.close();
+                            $.ajax({
+                                headers : {
+                                    'Accept' : 'application/json',
+                                },
+                                url : '/api?action=killall',
+                                type : 'GET',
+                                success : function(response, textStatus, jqXhr) {
+                                    console.log(response);
+                                    if (response.status != 'OK') {
+                                        BootstrapDialog.show({
+                                            title: 'Kill All Monkeys',
+                                            message: "The following error occured: " + response.reason
+                                        });
+                                    }
+                                    else {
+                                        console.log("All monkeys marked to die");
+                                        BootstrapDialog.show({
+                                            title: 'Kill All Monkeys',
+                                            message: "All existing monkeys marked to die"
+                                        });
+                                    }
+                                },
+                                error : function(jqXHR, textStatus, errorThrown) {
+                                    console.log("The following error occured: " + textStatus, errorThrown);
+                                    BootstrapDialog.show({
+                                        title: 'Kill All Monkeys',
+                                        message: "The following error occured: " + textStatus
+                                    });
+                                }
+                            });
+                }
+            }, {
+                label: 'Cancel',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+        });
+}
+
+
 function resetDB() {
     if (confirm('Are you sure you want to empty the database?')) {
         $.ajax({

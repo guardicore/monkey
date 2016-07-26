@@ -193,10 +193,14 @@
         <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="#reset" data-toggle="collapse">Reset Database</a>
+                    <a href="#reset" data-toggle="collapse">Stop Test</a>
                 </div>
                 <div id="reset" style="overflow: visible" class="panel-body panel-collapse collapse" aria-expanded="true">
                     <span class="input-group-btn">
+                        <button id="btnKillAll" class="btn btn-default" type="button"
+                            onclick="killAll()" style="margin-top:-4px">
+                                Kill All Monkeys
+                        </button>
                         <button id="btnResetDB" class="btn btn-default" type="button"
                             onclick="resetDB()" style="margin-top:-4px">
                                 Reset Database

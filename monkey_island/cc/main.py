@@ -238,6 +238,11 @@ class Root(restful.Resource):
             return {
                 'status': 'OK',
             }
+        elif action=="killall":
+            mongo.db.monkey.update({}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}}, upsert=False, multi=True)
+            return {
+                'status': 'OK',
+            }
         else:
             return {'status': 'BAD',
                     'reason': 'unknown action'}
