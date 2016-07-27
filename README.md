@@ -51,7 +51,7 @@ Running the C&C Server is as simple as installing our infected monkey debian pac
 
 ### Unleashing the Monkey
 
-Once configured, run the monkey using ```./monkey-linux-64 m0nk3y -c config.bin``` (Windows is identical). This can be done at multiple points in the network at once. 
+Once configured, run the monkey using ```./monkey-linux-64 m0nk3y -c config.bin -s 41.50.73.31:5000``` (Windows is identical). This can be done at multiple points in the network at once. 
 
 Command line options include:
 * `-c`, `--config`: set configuration file. JSON file with configuration values, will override compiled configuration.
