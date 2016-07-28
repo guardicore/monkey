@@ -5,5 +5,7 @@ service monkey-mongo stop || true
 
 rm -f /etc/init/monkey-island.conf
 rm -f /etc/init/monkey-mongo.conf
-rm /lib/systemd/system/monkey-island.service
-rm /lib/systemd/system/monkey-mongo.service
+[ -f "/lib/systemd/system/monkey-island.service" ] && rm -f /lib/systemd/system/monkey-island.service
+[ -f "/lib/systemd/system/monkey-mongo.service" ] && rm -f /lib/systemd/system/monkey-mongo.service
+
+exit 0

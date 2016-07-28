@@ -26,3 +26,5 @@ service monkey-island start
 service monkey-mongo start
 
 echo Monkey Island installation ended
+
+exit 0

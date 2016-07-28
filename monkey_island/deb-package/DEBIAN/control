@@ -3,6 +3,6 @@ Architecture: amd64
 Maintainer: Guardicore
 Homepage: http://www.guardicore.com
 Priority: optional
-Version: VERSION
+Version: 1.0
 Description: Guardicore Infection Monkey Island (C&C) installation package
 Depends: openssl, python-pip
