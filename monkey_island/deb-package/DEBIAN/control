@@ -1,7 +1,8 @@
 Package: gc-monkey-island
 Architecture: amd64
-Maintainer: Uri Hershcovits <uri@guardicore.com>
+Maintainer: Guardicore
 Homepage: http://www.guardicore.com
 Priority: optional
 Version: VERSION
-Description: Guardicore Chaos Monkey C&C installation package
+Description: Guardicore Infection Monkey Island (C&C) installation package
+Depends: openssl, python-pip

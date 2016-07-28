@@ -2,3 +2,5 @@ flask
 Flask-Pymongo
 Flask-Restful
 python-dateutil
+impacket
+pycrypto
