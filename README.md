@@ -1,12 +1,14 @@
 Infection Monkey
 ====================
 
-Data center Security Tool
+### Data center Security Testing Tool
 ------------------------
 
-### http://www.guardicore.com/the-infected-chaos-monkey/
+Welcome to the Infection Monkey! 
 
-The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized C&C server.
+The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized C&C server. To read more about the Monkey, visit https://www.guardicore.com/infectionmonkey/ 
+
+### http://www.guardicore.com/the-infected-chaos-monkey/
 
 Features include:
 
