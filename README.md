@@ -60,7 +60,7 @@ Command line options include:
 * `-d`, `--depth` : sets the Monkey's current operation depth.
 
 
-How to activate the Monley
+How the Monkey works
 ---------------------
 
 1.  Wakeup connection to c&c, sends basic info of the current machine and the configuration the monkey uses to the c&c.
