@@ -296,4 +296,11 @@ api.add_resource(NewConfig, '/api/config/new')
 api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/', '/api/monkey/download/<string:path>')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
+    from tornado.wsgi import WSGIContainer
+    from tornado.httpserver import HTTPServer
+    from tornado.ioloop import IOLoop
+
+    http_server = HTTPServer(WSGIContainer(app), ssl_options={'certfile': 'server.crt', 'keyfile': 'server.key'})
+    http_server.listen(5000)
+    IOLoop.instance().start()
+    #app.run(host='0.0.0.0', debug=False, ssl_context=('server.crt', 'server.key'))

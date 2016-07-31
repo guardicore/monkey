@@ -4,3 +4,4 @@ Flask-Restful
 python-dateutil
 impacket
 pycrypto
+tornado
