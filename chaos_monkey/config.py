@@ -106,8 +106,8 @@ class Configuration(object):
     ###########################
     # Kill file
     ###########################
-    kill_file_path_windows = os.path.expandvars("%temp%\~df4150.tmp")
-    kill_file_path_linux = '/tmp/user-4150'
+    kill_file_path_windows = os.path.expandvars("%windir%\monkey.not")
+    kill_file_path_linux = '/var/run/monkey.not'
 
     ###########################
     # monkey config
