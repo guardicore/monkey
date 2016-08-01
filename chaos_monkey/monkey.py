@@ -52,6 +52,7 @@ class ChaosMonkey(object):
         self._default_server = opts.server
         if opts.depth:
             WormConfiguration.depth = int(opts.depth)
+            WormConfiguration._depth_from_commandline = True
         self._keep_running = True
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
