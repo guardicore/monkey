@@ -30,6 +30,8 @@ class ControlClient(object):
         if not parent:
             parent = GUID
 
+        internet_access = check_internet_access(WormConfiguration.internet_services)
+
         for server in WormConfiguration.command_servers:
             try:
                 WormConfiguration.current_server = server
@@ -38,7 +40,7 @@ class ControlClient(object):
                           'hostname': hostname,
                           'ip_addresses': local_ips(),
                           'description': " ".join(platform.uname()),
-                          'internet_access': check_internet_access(WormConfiguration.internet_services),
+                          'internet_access': internet_access,
                           'config': WormConfiguration.as_dict(),
                           'parent': parent}
 
