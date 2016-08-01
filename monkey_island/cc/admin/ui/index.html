@@ -59,7 +59,7 @@
             <!-- Telemetries section -->
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="#telemetries" data-toggle="collapse">Telemetries</a>
+                    <a href="#telemetries" data-toggle="collapse">Telemetry Feed</a>
                 </div>
                 <div id="telemetries" class="panel-body panel-collapse collapse in">
                 <table class="table table-bordered table-hover" id="telemetris-table">
@@ -193,10 +193,14 @@
         <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <a href="#reset" data-toggle="collapse">Stop Test</a>
+                    <a href="#reset" data-toggle="collapse">Test Management</a>
                 </div>
                 <div id="reset" style="overflow: visible" class="panel-body panel-collapse collapse" aria-expanded="true">
                     <span class="input-group-btn">
+                        <button id="btnRunMonkey" class="btn btn-default" type="button"
+                            onclick="runMonkey()" style="margin-top:-4px">
+                                Run Monkey on Island
+                        </button>
                         <button id="btnKillAll" class="btn btn-default" type="button"
                             onclick="killAll()" style="margin-top:-4px">
                                 Kill All Monkeys
