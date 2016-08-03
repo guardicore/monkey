@@ -13,9 +13,18 @@ pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file:
 rm -rf ${INSTALLATION_FOLDER}
 rm -f ${MONKEY_FOLDER}/pip_requirements.txt
 
-mv ${MONKEY_FOLDER}/ubuntu/* /etc/init/
+cp ${MONKEY_FOLDER}/ubuntu/* /etc/init/
+if [ -d "/etc/systemd/network" ]; then
+    cp ${MONKEY_FOLDER}/ubuntu/systemd/*.service /lib/systemd/system/
+    chmod +x ${MONKEY_FOLDER}/ubuntu/systemd/start_server.sh
+    systemctl daemon-reload
+fi
 
 ${MONKEY_FOLDER}/create_certificate.sh
 
 service monkey-island start
 service monkey-mongo start
+
+echo Monkey Island installation ended
+
+exit 0

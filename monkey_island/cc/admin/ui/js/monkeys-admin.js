@@ -790,6 +790,73 @@ function selectNode(hostname, zoom) {
     }
 }
 
+function showRunMonkeyDialog(addresses) {
+    var selHtml = '<select class="form-control" id="islandInt">';
+    for (var i=0; i<addresses.length; i++) {
+        selHtml += '<option>' + addresses[i] + '</option>';
+    }
+    selHtml += '</select>'
+
+
+    BootstrapDialog.show({
+            title: 'Run Monkey',
+            message: 'This action will run infection monkey on the Island server.<br>Please choose the IP address to be used as the server for the monkeys:' + selHtml,
+            type: BootstrapDialog.TYPE_GENERAL,
+            buttons: [{
+                label: 'Run Monkey',
+                cssClass: 'btn-success',
+                action: function(dialogItself){
+                            dialogItself.close();
+
+                            $.ajax({
+                                    headers : {
+                                        'Accept' : 'application/json',
+                                        'Content-Type' : 'application/json'
+                                    },
+                                    url : '/api/island',
+                                    type : 'POST',
+                                    data : JSON.stringify({"action": "monkey", "island_address": $("#islandInt option:selected").text()}),
+                                    success : function(response, textStatus, jqXhr) {
+                                        if (response.res[0] != true) {
+                                            BootstrapDialog.show({
+                                                title: "Run Monkey",
+                                                type: BootstrapDialog.TYPE_WARNING,
+                                                message: "The following error occured: " + response.res[1]
+                                            });
+                                        }
+                                        else {
+                                            BootstrapDialog.show({
+                                                title: "Run Monkey",
+                                                type: BootstrapDialog.TYPE_SUCCESS,
+                                                message: "Monkey Started!"
+                                            });
+                                        }
+                                    },
+                                    error : function(jqXHR, textStatus, errorThrown) {
+                                        console.log("The following error occured: " + textStatus, errorThrown);
+                                        BootstrapDialog.show({
+                                            title: "Run Monkey",
+                                            type: BootstrapDialog.TYPE_WARNING,
+                                            message: "The following error occured: " + textStatus
+                                        });
+                                    },
+                                });
+                }
+            }, {
+                label: 'Cancel',
+                cssClass: 'btn-general',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+    });
+}
+
+function runMonkey() {
+    $.getJSON("/api/island?type=interfaces", function(json) {
+        showRunMonkeyDialog(json["interfaces"]);
+    });
+}
 
 function killAll() {
     BootstrapDialog.show({
@@ -819,6 +886,7 @@ function killAll() {
                                         console.log("All monkeys marked to die");
                                         BootstrapDialog.show({
                                             title: 'Kill All Monkeys',
+                                            type: BootstrapDialog.TYPE_WARNING,
                                             message: "All existing monkeys marked to die"
                                         });
                                     }
@@ -827,6 +895,7 @@ function killAll() {
                                     console.log("The following error occured: " + textStatus, errorThrown);
                                     BootstrapDialog.show({
                                         title: 'Kill All Monkeys',
+                                        type: BootstrapDialog.TYPE_WARNING,
                                         message: "The following error occured: " + textStatus
                                     });
                                 }
@@ -834,6 +903,7 @@ function killAll() {
                 }
             }, {
                 label: 'Cancel',
+                cssClass: 'btn-general',
                 action: function(dialogItself){
                     dialogItself.close();
                 }

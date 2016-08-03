@@ -22,13 +22,16 @@ class ControlClient(object):
     proxies = {}
 
     @staticmethod
-    def wakeup(parent=None, default_tunnel=None):
+    def wakeup(parent=None, default_tunnel=None, has_internet_access=None):
         LOG.debug("Trying to wake up with C&C servers list: %r" % WormConfiguration.command_servers)
         if parent or default_tunnel:
             LOG.debug("parent: %s, default_tunnel: %s" % (parent, default_tunnel))
         hostname = gethostname()
         if not parent:
             parent = GUID
+
+        if has_internet_access is None:
+            has_internet_access = check_internet_access(WormConfiguration.internet_services)
 
         for server in WormConfiguration.command_servers:
             try:
@@ -38,7 +41,7 @@ class ControlClient(object):
                           'hostname': hostname,
                           'ip_addresses': local_ips(),
                           'description': " ".join(platform.uname()),
-                          'internet_access': check_internet_access(WormConfiguration.internet_services),
+                          'internet_access': has_internet_access,
                           'config': WormConfiguration.as_dict(),
                           'parent': parent}
 
@@ -69,7 +72,7 @@ class ControlClient(object):
                     proxy_address, proxy_port = proxy_find
                     LOG.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
                     ControlClient.proxies['https'] = 'https://%s:%s' % (proxy_address, proxy_port)
-                    ControlClient.wakeup(parent=parent)
+                    ControlClient.wakeup(parent=parent, has_internet_access=has_internet_access)
                 else:
                     LOG.info("No tunnel found")
 

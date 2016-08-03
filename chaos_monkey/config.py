@@ -51,6 +51,8 @@ class Configuration(object):
                 continue
             if key in ["name", "id", "current_server"]:
                 continue
+            if self._depth_from_commandline and key=="depth":
+                continue
             try:
                 default_value = getattr(Configuration, key)
             except AttributeError:
@@ -82,6 +84,8 @@ class Configuration(object):
             result[key] = value
 
         return result
+
+    _depth_from_commandline = False
 
     ###########################
     # logging config

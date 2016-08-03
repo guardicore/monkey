@@ -1,12 +1,21 @@
+from __future__ import print_function # In python 2.7
+
 import os
+import sys
+import array
+import struct
+from shutil import copyfile
 from flask import Flask, request, abort, send_from_directory
 from flask.ext import restful
 from flask.ext.pymongo import PyMongo
 from flask import make_response
+import socket
 import bson.json_util
 import json
 from datetime import datetime, timedelta
 import dateutil.parser
+
+ISLAND_PORT = 5000
 
 MONKEY_DOWNLOADS = [
     {
@@ -186,6 +195,23 @@ class Telemetry(restful.Resource):
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
 
 
+class LocalRun(restful.Resource):
+    def get(self):
+        type = request.args.get('type')
+        if type=="interfaces":
+            return {"interfaces" : local_ips()}
+        else:
+            return {"message": "unknown action"}
+
+    def post(self):
+        action_json = json.loads(request.data)
+        if action_json.has_key("action"):
+            if action_json["action"] == "monkey" and action_json.get("island_address") is not None:
+                return {"res": run_local_monkey(action_json.get("island_address"))}
+
+        return {"res": (False, "Unknown action")}
+
+
 class NewConfig(restful.Resource):
     def get(self):
         config = mongo.db.config.find_one({'name': 'newconfig'}) or {}
@@ -206,12 +232,7 @@ class MonkeyDownload(restful.Resource):
         host_json = json.loads(request.data)
         host_os = host_json.get('os')
         if host_os:
-            result = None
-            for download in MONKEY_DOWNLOADS:
-                if host_os.get('type') == download.get('type') and \
-                                host_os.get('machine') == download.get('machine'):
-                    result = download
-                    break
+            result = get_monkey_executable(host_os.get('type'), host_os.get('machine'))
 
             if result:
                 real_path = os.path.join('binaries', result['filename'])
@@ -280,6 +301,82 @@ def update_dead_monkeys():
         {'$set': {'dead': True, 'modifytime': datetime.now()}}, upsert=False, multi=True)
 
 
+def get_monkey_executable(host_os, machine):
+    for download in MONKEY_DOWNLOADS:
+        if host_os == download.get('type') and machine == download.get('machine'):
+            return download
+    return None
+
+
+def run_local_monkey(island_address):
+    import platform
+    import subprocess
+    import stat
+
+    # get the monkey executable suitable to run on the server
+    result = get_monkey_executable(platform.system().lower(), platform.machine().lower())
+    if not result:
+        return (False, "OS Type not found")
+
+    monkey_path =  os.path.join('binaries', result['filename'])
+    target_path = os.path.join(os.getcwd(), result['filename'])
+
+    # copy the executable to temp path (don't run the monkey from its current location as it may delete itself)
+    try:
+        copyfile(monkey_path, target_path)
+        os.chmod(target_path, stat.S_IRWXU | stat.S_IRWXG)
+    except Exception, exc:
+        return (False, "Copy file failed: %s" % exc)
+
+    # run the monkey
+    try:
+        pid = subprocess.Popen(["%s m0nk3y -s %s:%s" % (target_path, island_address, ISLAND_PORT)], shell=True).pid
+    except Exception, exc:
+        return (False, "popen failed: %s" % exc)
+
+    return (True, "pis: %s" % pid)
+
+
+### Local ips function
+if sys.platform == "win32":
+    def local_ips():
+        local_hostname = socket.gethostname()
+        return socket.gethostbyname_ex(local_hostname)[2]
+
+else:
+    import fcntl
+
+    def local_ips():
+        result = []
+        try:
+            is_64bits = sys.maxsize > 2 ** 32
+            struct_size = 40 if is_64bits else 32
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            max_possible = 8  # initial value
+            while True:
+                bytes = max_possible * struct_size
+                names = array.array('B', '\0' * bytes)
+                outbytes = struct.unpack('iL', fcntl.ioctl(
+                    s.fileno(),
+                    0x8912,  # SIOCGIFCONF
+                    struct.pack('iL', bytes, names.buffer_info()[0])
+                ))[0]
+                if outbytes == bytes:
+                    max_possible *= 2
+                else:
+                    break
+            namestr = names.tostring()
+
+            for i in range(0, outbytes, struct_size):
+                addr = socket.inet_ntoa(namestr[i + 20:i + 24])
+                if not addr.startswith('127'):
+                    result.append(addr)
+                    # name of interface is (namestr[i:i+16].split('\0', 1)[0]
+        finally:
+            return result
+
+### End of local ips function
+
 @app.route('/admin/<path:path>')
 def send_admin(path):
     return send_from_directory('admin/ui', path)
@@ -291,9 +388,17 @@ api.representations = DEFAULT_REPRESENTATIONS
 
 api.add_resource(Root, '/api')
 api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
+api.add_resource(LocalRun, '/api/island', '/api/island/')
 api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry/<string:monkey_guid>')
 api.add_resource(NewConfig, '/api/config/new')
 api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/', '/api/monkey/download/<string:path>')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
+    from tornado.wsgi import WSGIContainer
+    from tornado.httpserver import HTTPServer
+    from tornado.ioloop import IOLoop
+
+    http_server = HTTPServer(WSGIContainer(app), ssl_options={'certfile': 'server.crt', 'keyfile': 'server.key'})
+    http_server.listen(ISLAND_PORT)
+    IOLoop.instance().start()
+    #app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
