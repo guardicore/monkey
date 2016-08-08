@@ -194,7 +194,7 @@ class Configuration(object):
     psexec_passwords = ["Password1!", "1234", "password", "12345678"]
 
     # ssh exploiter
-    ssh_user = "root"
+    ssh_users = ["root"]
     ssh_passwords = ["Password1!", "1234", "password", "12345678"]
 
     # rdp exploiter
