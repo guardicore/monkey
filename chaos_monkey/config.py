@@ -110,8 +110,8 @@ class Configuration(object):
     ###########################
     # Kill file
     ###########################
-    kill_file_path_windows = os.path.expandvars("%temp%\~df4150.tmp")
-    kill_file_path_linux = '/tmp/user-4150'
+    kill_file_path_windows = os.path.expandvars("%windir%\monkey.not")
+    kill_file_path_linux = '/var/run/monkey.not'
 
     ###########################
     # monkey config
@@ -147,7 +147,7 @@ class Configuration(object):
 
     #Configuration servers to try to connect to, in this order.
     command_servers = [
-        "127.0.0.1:5000"
+        "41.50.73.31:5000"
     ]
 
     # sets whether or not to locally save the running configuration after finishing
@@ -194,7 +194,7 @@ class Configuration(object):
     psexec_passwords = ["Password1!", "1234", "password", "12345678"]
 
     # ssh exploiter
-    ssh_user = "root"
+    ssh_users = ["root"]
     ssh_passwords = ["Password1!", "1234", "password", "12345678"]
 
     # rdp exploiter

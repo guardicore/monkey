@@ -66,6 +66,12 @@ def main():
 
     print "Loaded Configuration: %r" % WormConfiguration.as_dict()
 
+    #Make sure we're not in a machine that has the kill file
+    kill_path = WormConfiguration.kill_file_path_windows if sys.platform == "win32" else WormConfiguration.kill_file_path_linux
+    if os.path.exists(kill_path):
+        print "Kill path found, finished run"
+        return True
+
     try:
         if MONKEY_ARG == monkey_mode:
             log_path = os.path.expandvars(WormConfiguration.monkey_log_path_windows) if sys.platform == "win32" else WormConfiguration.monkey_log_path_linux

@@ -1,9 +1,0 @@
-[Unit]
-Description=Monkey Island Mongo Service
-
-[Service]
-WorkingDirectory=/var/monkey_island/
-ExecStart=/var/monkey_island/bin/mongodb/bin/mongod --dbpath db
-
-[Install]
-WantedBy=multi-user.target
