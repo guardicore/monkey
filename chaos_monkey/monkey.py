@@ -80,6 +80,8 @@ class ChaosMonkey(object):
         if monkey_tunnel:
             monkey_tunnel.start()
 
+        last_exploit_time = None
+
         ControlClient.send_telemetry("state", {'done': False})
 
         self._default_server = WormConfiguration.current_server
@@ -173,6 +175,7 @@ class ChaosMonkey(object):
 
                 if successful_exploiter:
                     self._exploited_machines.add(machine)
+                    last_exploit_time = time.time()
                     ControlClient.send_telemetry('exploit', {'result': True, 'machine': machine.__dict__,
                                                              'exploiter': successful_exploiter.__class__.__name__})
 
@@ -196,6 +199,11 @@ class ChaosMonkey(object):
         elif not WormConfiguration.alive:
             LOG.info("Marked not alive from configuration")
 
+        # if host was exploited, before continue to closing the tunnel ensure the exploited host had its chance to
+        # connect to the tunnel
+        if last_exploit_time and (time.time() - last_exploit_time < 60):
+            time.sleep(time.time() - last_exploit_time)
+
         if monkey_tunnel:
             monkey_tunnel.stop()
             monkey_tunnel.join()
@@ -204,14 +212,18 @@ class ChaosMonkey(object):
         LOG.info("Monkey cleanup started")
         self._keep_running = False
 
-        self._singleton.unlock()
+        # Signal the server (before closing the tunnel)
+        ControlClient.send_telemetry("state", {'done': True})
 
+        # Close tunnel
         tunnel_address = ControlClient.proxies.get('https', '').replace('https://', '').split(':')[0]
         if tunnel_address:
             LOG.info("Quitting tunnel %s", tunnel_address)
             tunnel.quit_tunnel(tunnel_address)
 
         firewall.close()
+
+        self._singleton.unlock()
 
         if WormConfiguration.self_delete_in_cleanup and -1 == sys.executable.find('python'):
             try:
@@ -228,5 +240,4 @@ class ChaosMonkey(object):
             except Exception, exc:
                 LOG.error("Exception in self delete: %s", exc)
 
-        ControlClient.send_telemetry("state", {'done': True})
         LOG.info("Monkey is shutting down")
