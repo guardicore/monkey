@@ -42,6 +42,9 @@ const EDGE_COLOR_PARENT = "red";
 const EDGE_COLOR_TUNNEL = "blue";
 const EDGE_COLOR_SCAN = "gray";
 
+const NODE_MANUAL_RUN_COLOR = "red";
+const NODE_ALIVE_STROKECOLOR = "#aeeaae";
+
 // General options
 // If variable from local storage != null, assign it, otherwise set it's default value.
 
@@ -193,6 +196,14 @@ function updateMonkeys() {
             index = getMonkeyIndex(new_monkeys[i].guid);
             if(index != -1) {
                 monkeys[index] = new_monkeys[i];
+                monNode = getNode(monkeys[index].id);
+                if (!monkeys[index].dead) {
+                    monNode.font.strokeWidth = 1;
+                    monNode.font.strokeColor = NODE_ALIVE_STROKECOLOR;
+                }
+                else {
+                    monNode.font.strokeWidth = 0;
+                }
             }
             else
             {
@@ -238,7 +249,7 @@ function createNodes() {
 
 function createMonkeyNode(monkey) {
     var title = undefined;
-    var font = undefined;
+    var font = {};
     var img = "monkey";
 
     if (monkey.description) {
@@ -252,14 +263,18 @@ function createMonkeyNode(monkey) {
     img = ICONS_DIR + img + ICONS_EXT;
 
     if (monkey.parent == null) {
-        font = { color: 'red' };
+        font['color'] =  NODE_MANUAL_RUN_COLOR;
     }
     else {
         for (var i=0; i<monkey.parent.length; i++) {
             if (monkey.parent[i][1] == null) {
-                font = { color: 'red' };
+                font['color'] =  NODE_MANUAL_RUN_COLOR;
             }
         }
+    }
+    if (!monkey.dead) {
+        font['strokeColor'] =  NODE_ALIVE_STROKECOLOR;
+        font['strokeWidth'] =  1;
     }
 
     return {
