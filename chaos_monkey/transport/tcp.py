@@ -1,11 +1,11 @@
 import socket
 import select
 from threading import Thread
-from base import TransportProxyBase
+from base import TransportProxyBase, update_last_serve_time
 from logging import getLogger
 
 READ_BUFFER_SIZE = 8192
-DEFAULT_TIMEOUT = 10
+DEFAULT_TIMEOUT = 30
 
 LOG = getLogger(__name__)
 
@@ -36,6 +36,7 @@ class SocketsPipe(Thread):
                 if data:
                     try:
                         other.sendall(data)
+                        update_last_serve_time()
                     except:
                         break
                     self._keep_connection = True

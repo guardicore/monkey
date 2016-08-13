@@ -1,7 +1,7 @@
 import urllib, BaseHTTPServer, threading, os.path
 import monkeyfs
 from logging import getLogger
-from base import TransportProxyBase
+from base import TransportProxyBase, update_last_serve_time
 from urlparse import urlsplit
 import select
 import socket
@@ -101,7 +101,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 
 class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-    timeout = 2               # timeout with clients, set to None not to make persistent connection
+    timeout = 30              # timeout with clients, set to None not to make persistent connection
     proxy_via = None          # pseudonym of the proxy in Via header, set to None not to modify original Via header
     protocol_version = "HTTP/1.1"    
 
@@ -118,7 +118,8 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         address = (u.hostname, u.port or 443)
         try:
             conn = socket.create_connection(address)
-        except socket.error:
+        except socket.error, e:
+            LOG.debug("HTTPConnectProxyHandler: Got exception while trying to connect to %s: %s" % (repr(address), e))
             self.send_error(504)    # 504 Gateway Timeout
             return
         self.send_response(200, 'Connection Established')
@@ -138,6 +139,7 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 if data:
                     other.sendall(data)
                     keep_connection = True
+                    update_last_serve_time()
         conn.close()
 
     def log_message(self, format, *args):
@@ -191,6 +193,6 @@ class HTTPServer(threading.Thread):
 class HTTPConnectProxy(TransportProxyBase):
     def run(self):
         httpd = InternalHTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
-        httpd.timeout = 10
+        httpd.timeout = 30
         while not self._stopped:
             httpd.handle_request()
