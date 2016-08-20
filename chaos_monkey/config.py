@@ -51,7 +51,7 @@ class Configuration(object):
                 continue
             if key in ["name", "id", "current_server"]:
                 continue
-            if self._depth_from_commandline and key=="depth":
+            if self._depth_from_commandline and key == "depth":
                 continue
             try:
                 default_value = getattr(Configuration, key)
@@ -105,7 +105,7 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path = r"\windows\system32\kernel32.dll" if sys.platform == "win32" else '/bin/sh'
     dropper_target_path = r"C:\Windows\monkey.exe"
-    dropper_target_path_linux = '/bin/monkey'
+    dropper_target_path_linux = '/tmp/monkey'
 
     ###########################
     # Kill file
@@ -145,7 +145,7 @@ class Configuration(object):
     depth = 2
     current_server = ""
 
-    #Configuration servers to try to connect to, in this order.
+    # Configuration servers to try to connect to, in this order.
     command_servers = [
         "41.50.73.31:5000"
     ]
