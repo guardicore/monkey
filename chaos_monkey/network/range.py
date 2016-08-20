@@ -49,7 +49,7 @@ class RelativeRange(NetworkRange):
 
     def __repr__(self):
         return "<RelativeRange %s-%s>" % (socket.inet_ntoa(struct.pack(">L", self._base_address - self._size)),
-                                         socket.inet_ntoa(struct.pack(">L", self._base_address + self._size)))
+                                          socket.inet_ntoa(struct.pack(">L", self._base_address + self._size)))
 
     def _get_range(self):
         lower_end = -(self._size / 2)

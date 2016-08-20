@@ -21,11 +21,11 @@ class TcpScanner(HostScanner, HostFinger):
         count = 0
 
         for target_port in self._config.tcp_target_ports:
-            
-            is_open, banner = check_port_tcp(host.ip_addr, 
-                                            target_port, 
-                                            self._config.tcp_scan_timeout / 1000.0,
-                                            self._config.tcp_scan_get_banner)
+
+            is_open, banner = check_port_tcp(host.ip_addr,
+                                             target_port,
+                                             self._config.tcp_scan_timeout / 1000.0,
+                                             self._config.tcp_scan_get_banner)
 
             if is_open:
                 count += 1

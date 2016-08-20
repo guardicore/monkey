@@ -10,9 +10,11 @@ from random import randint
 if sys.platform == "win32":
     import netifaces
 
+
     def local_ips():
         local_hostname = socket.gethostname()
         return socket.gethostbyname_ex(local_hostname)[2]
+
 
     def get_host_subnets(only_ips=False):
         network_adapters = []
@@ -28,11 +30,11 @@ if sys.platform == "win32":
         return network_adapters
 
 else:
-    import fcntl    
+    import fcntl
+
 
     def get_host_subnets(only_ips=False):
         """Get the list of Linux network adapters."""
-        import fcntl
         max_bytes = 8096
         is_64bits = sys.maxsize > 2 ** 32
         if is_64bits:
@@ -77,12 +79,12 @@ else:
 def get_free_tcp_port(min_range=1000, max_range=65535):
     start_range = min(1, min_range)
     max_range = min(65535, max_range)
-    
+
     in_use = [conn.laddr[1] for conn in psutil.net_connections()]
 
     for i in range(min_range, max_range):
         port = randint(start_range, max_range)
-        
+
         if port not in in_use:
             return port
 
@@ -104,7 +106,7 @@ def get_ips_from_interfaces():
         ipint = ipaddress.ip_interface(u"%s/%s" % interface)
         # limit subnet scans to class C only
         if ipint.network.num_addresses > 255:
-             ipint = ipaddress.ip_interface(u"%s/24" % interface[0])
+            ipint = ipaddress.ip_interface(u"%s/24" % interface[0])
         for addr in ipint.network.hosts():
             if str(addr) == interface[0]:
                 continue

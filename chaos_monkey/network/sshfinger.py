@@ -16,7 +16,8 @@ class SSHFinger(HostFinger):
         self._config = __import__('config').WormConfiguration
         self._banner_regex = re.compile(SSH_REGEX, re.IGNORECASE)
 
-    def _banner_match(self, service, host, banner):
+    @staticmethod
+    def _banner_match(service, host, banner):
         host.services[service]['name'] = 'ssh'
         for dist in LINUX_DIST_SSH:
             if banner.lower().find(dist) != -1:

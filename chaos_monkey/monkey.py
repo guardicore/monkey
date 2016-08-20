@@ -143,7 +143,6 @@ class ChaosMonkey(object):
                         LOG.debug("Skipping %r - exploitation failed before", machine)
                         continue
 
-                successful_exploiter = None
 
                 if monkey_tunnel:
                     monkey_tunnel.set_tunnel_for_host(machine)
@@ -151,6 +150,7 @@ class ChaosMonkey(object):
                     LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
                     machine.set_default_server(self._default_server)
 
+                successful_exploiter = None
                 for exploiter in self._exploiters:
                     if not exploiter.is_os_supported(machine):
                         LOG.info("Skipping exploiter %s host:%r, os is not supported",

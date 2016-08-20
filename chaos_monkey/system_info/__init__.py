@@ -40,6 +40,7 @@ class InfoCollector(object):
     """
     Generic Info Collection module
     """
+
     def __init__(self):
         self.info = {}
 
@@ -51,20 +52,20 @@ class InfoCollector(object):
         for process in psutil.process_iter():
             try:
                 processes[process.pid] = {"name": process.name(),
-                                      "pid": process.pid,
-                                      "ppid": process.ppid(),
-                                      "cmdline": " ".join(process.cmdline()),
-                                      "full_image_path": process.exe(),
-                                      }
+                                          "pid": process.pid,
+                                          "ppid": process.ppid(),
+                                          "cmdline": " ".join(process.cmdline()),
+                                          "full_image_path": process.exe(),
+                                          }
             except psutil.AccessDenied:
-                #we may be running as non root
-                #and some processes are impossible to acquire in Windows/Linux
-                #in this case we'll just add what we can
+                # we may be running as non root
+                # and some processes are impossible to acquire in Windows/Linux
+                # in this case we'll just add what we can
                 processes[process.pid] = {"name": "null",
-                                      "pid": process.pid,
-                                      "ppid": process.ppid(),
-                                      "cmdline": "ACCESS DENIED",
-                                      "full_image_path": "null",
-                                      }
+                                          "pid": process.pid,
+                                          "ppid": process.ppid(),
+                                          "cmdline": "ACCESS DENIED",
+                                          "full_image_path": "null",
+                                          }
                 pass
         self.info['process_list'] = processes

@@ -18,7 +18,7 @@ class Packet(object):
 
     def __init__(self, **kw):
         self.fields = odict(self.__class__.fields)
-        for k,v in kw.items():
+        for k, v in kw.items():
             if callable(v):
                 self.fields[k] = v(self.fields[k])
             else:
@@ -52,43 +52,45 @@ class SMBNego(Packet):
         ("bcc", "\x62\x00"),
         ("data", "")
     ])
-    
+
     def calculate(self):
-        self.fields["bcc"] = struct.pack("<h",len(str(self.fields["data"])))
+        self.fields["bcc"] = struct.pack("<h", len(str(self.fields["data"])))
 
 
 class SMBNegoFingerData(Packet):
     fields = odict([
-        ("separator1","\x02" ),
+        ("separator1", "\x02"),
         ("dialect1", "\x50\x43\x20\x4e\x45\x54\x57\x4f\x52\x4b\x20\x50\x52\x4f\x47\x52\x41\x4d\x20\x31\x2e\x30\x00"),
-        ("separator2","\x02"),
+        ("separator2", "\x02"),
         ("dialect2", "\x4c\x41\x4e\x4d\x41\x4e\x31\x2e\x30\x00"),
-        ("separator3","\x02"),
-        ("dialect3", "\x57\x69\x6e\x64\x6f\x77\x73\x20\x66\x6f\x72\x20\x57\x6f\x72\x6b\x67\x72\x6f\x75\x70\x73\x20\x33\x2e\x31\x61\x00"),
-        ("separator4","\x02"),
+        ("separator3", "\x02"),
+        ("dialect3",
+         "\x57\x69\x6e\x64\x6f\x77\x73\x20\x66\x6f\x72\x20\x57\x6f\x72\x6b\x67\x72\x6f\x75\x70\x73\x20\x33\x2e\x31\x61\x00"),
+        ("separator4", "\x02"),
         ("dialect4", "\x4c\x4d\x31\x2e\x32\x58\x30\x30\x32\x00"),
-        ("separator5","\x02"),
+        ("separator5", "\x02"),
         ("dialect5", "\x4c\x41\x4e\x4d\x41\x4e\x32\x2e\x31\x00"),
-        ("separator6","\x02"),
+        ("separator6", "\x02"),
         ("dialect6", "\x4e\x54\x20\x4c\x4d\x20\x30\x2e\x31\x32\x00"),
-    ])      
+    ])
 
 
 class SMBSessionFingerData(Packet):
     fields = odict([
         ("wordcount", "\x0c"),
         ("AndXCommand", "\xff"),
-        ("reserved","\x00" ),
+        ("reserved", "\x00"),
         ("andxoffset", "\x00\x00"),
-        ("maxbuff","\x04\x11"),
+        ("maxbuff", "\x04\x11"),
         ("maxmpx", "\x32\x00"),
-        ("vcnum","\x00\x00"),
+        ("vcnum", "\x00\x00"),
         ("sessionkey", "\x00\x00\x00\x00"),
-        ("securitybloblength","\x4a\x00"),
-        ("reserved2","\x00\x00\x00\x00"),
+        ("securitybloblength", "\x4a\x00"),
+        ("reserved2", "\x00\x00\x00\x00"),
         ("capabilities", "\xd4\x00\x00\xa0"),
-        ("bcc1",""),
-        ("Data","\x60\x48\x06\x06\x2b\x06\x01\x05\x05\x02\xa0\x3e\x30\x3c\xa0\x0e\x30\x0c\x06\x0a\x2b\x06\x01\x04\x01\x82\x37\x02\x02\x0a\xa2\x2a\x04\x28\x4e\x54\x4c\x4d\x53\x53\x50\x00\x01\x00\x00\x00\x07\x82\x08\xa2\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x01\x28\x0a\x00\x00\x00\x0f\x00\x57\x00\x69\x00\x6e\x00\x64\x00\x6f\x00\x77\x00\x73\x00\x20\x00\x32\x00\x30\x00\x30\x00\x32\x00\x20\x00\x53\x00\x65\x00\x72\x00\x76\x00\x69\x00\x63\x00\x65\x00\x20\x00\x50\x00\x61\x00\x63\x00\x6b\x00\x20\x00\x33\x00\x20\x00\x32\x00\x36\x00\x30\x00\x30\x00\x00\x00\x57\x00\x69\x00\x6e\x00\x64\x00\x6f\x00\x77\x00\x73\x00\x20\x00\x32\x00\x30\x00\x30\x00\x32\x00\x20\x00\x35\x00\x2e\x00\x31\x00\x00\x00\x00\x00"),
+        ("bcc1", ""),
+        ("Data",
+         "\x60\x48\x06\x06\x2b\x06\x01\x05\x05\x02\xa0\x3e\x30\x3c\xa0\x0e\x30\x0c\x06\x0a\x2b\x06\x01\x04\x01\x82\x37\x02\x02\x0a\xa2\x2a\x04\x28\x4e\x54\x4c\x4d\x53\x53\x50\x00\x01\x00\x00\x00\x07\x82\x08\xa2\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x01\x28\x0a\x00\x00\x00\x0f\x00\x57\x00\x69\x00\x6e\x00\x64\x00\x6f\x00\x77\x00\x73\x00\x20\x00\x32\x00\x30\x00\x30\x00\x32\x00\x20\x00\x53\x00\x65\x00\x72\x00\x76\x00\x69\x00\x63\x00\x65\x00\x20\x00\x50\x00\x61\x00\x63\x00\x6b\x00\x20\x00\x33\x00\x20\x00\x32\x00\x36\x00\x30\x00\x30\x00\x00\x00\x57\x00\x69\x00\x6e\x00\x64\x00\x6f\x00\x77\x00\x73\x00\x20\x00\x32\x00\x30\x00\x30\x00\x32\x00\x20\x00\x35\x00\x2e\x00\x31\x00\x00\x00\x00\x00"),
 
     ])
 
@@ -110,36 +112,37 @@ class SMBFinger(HostFinger):
 
             host.services[SMB_SERVICE] = {}
 
-            h = SMBHeader(cmd="\x72",flag1="\x18",flag2="\x53\xc8")
-            n = SMBNego(data = SMBNegoFingerData())
+            h = SMBHeader(cmd="\x72", flag1="\x18", flag2="\x53\xc8")
+            n = SMBNego(data=SMBNegoFingerData())
             n.calculate()
-            
-            Packet = str(h)+str(n)
-            Buffer = struct.pack(">i", len(''.join(Packet)))+Packet
+
+            Packet = str(h) + str(n)
+            Buffer = struct.pack(">i", len(''.join(Packet))) + Packet
             s.send(Buffer)
             data = s.recv(2048)
-            
+
             if data[8:10] == "\x72\x00":
-                Header = SMBHeader(cmd="\x73",flag1="\x18",flag2="\x17\xc8",uid="\x00\x00")
+                Header = SMBHeader(cmd="\x73", flag1="\x18", flag2="\x17\xc8", uid="\x00\x00")
                 Body = SMBSessionFingerData()
                 Body.calculate()
 
-                Packet = str(Header)+str(Body)
-                Buffer = struct.pack(">i", len(''.join(Packet)))+Packet  
+                Packet = str(Header) + str(Body)
+                Buffer = struct.pack(">i", len(''.join(Packet))) + Packet
 
-                s.send(Buffer) 
+                s.send(Buffer)
                 data = s.recv(2048)
 
             if data[8:10] == "\x73\x16":
-                length = struct.unpack('<H',data[43:45])[0]
-                pack = tuple(data[47+length:].split('\x00\x00\x00'))[:2]
-                os_version, service_client = tuple([e.replace('\x00','') for e in data[47+length:].split('\x00\x00\x00')[:2]])
+                length = struct.unpack('<H', data[43:45])[0]
+                pack = tuple(data[47 + length:].split('\x00\x00\x00'))[:2]
+                os_version, service_client = tuple(
+                    [e.replace('\x00', '') for e in data[47 + length:].split('\x00\x00\x00')[:2]])
 
                 if os_version.lower() != 'unix':
                     host.os['type'] = 'windows'
                 else:
                     host.os['type'] = 'linux'
-                
+
                 host.services[SMB_SERVICE]['name'] = service_client
                 if not host.os.has_key('version'):
                     host.os['version'] = os_version

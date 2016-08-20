@@ -19,19 +19,20 @@ LOG = None
 
 LOG_CONFIG = {'version': 1,
               'disable_existing_loggers': False,
-              'formatters': {'standard': {'format': '%(asctime)s [%(process)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s'},
-                            },
+              'formatters': {'standard': {
+                  'format': '%(asctime)s [%(process)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s'},
+                             },
               'handlers': {'console': {'class': 'logging.StreamHandler',
                                        'level': 'DEBUG',
                                        'formatter': 'standard'},
-                            'file': {'class': 'logging.FileHandler',
-                                     'level': 'DEBUG',
-                                     'formatter': 'standard',
-                                     'filename': None}
-                            },
+                           'file': {'class': 'logging.FileHandler',
+                                    'level': 'DEBUG',
+                                    'formatter': 'standard',
+                                    'filename': None}
+                           },
               'root': {'level': 'DEBUG',
                        'handlers': ['console']},
-               }
+              }
 
 
 def main():
@@ -42,7 +43,7 @@ def main():
 
     monkey_mode = sys.argv[1]
 
-    if not monkey_mode in [MONKEY_ARG, DROPPER_ARG]:
+    if not (monkey_mode in [MONKEY_ARG, DROPPER_ARG]):
         return True
 
     config_file = EXTERNAL_CONFIG_FILE
@@ -66,7 +67,7 @@ def main():
 
     print "Loaded Configuration: %r" % WormConfiguration.as_dict()
 
-    #Make sure we're not in a machine that has the kill file
+    # Make sure we're not in a machine that has the kill file
     kill_path = WormConfiguration.kill_file_path_windows if sys.platform == "win32" else WormConfiguration.kill_file_path_linux
     if os.path.exists(kill_path):
         print "Kill path found, finished run"
@@ -74,10 +75,12 @@ def main():
 
     try:
         if MONKEY_ARG == monkey_mode:
-            log_path = os.path.expandvars(WormConfiguration.monkey_log_path_windows) if sys.platform == "win32" else WormConfiguration.monkey_log_path_linux
+            log_path = os.path.expandvars(
+                WormConfiguration.monkey_log_path_windows) if sys.platform == "win32" else WormConfiguration.monkey_log_path_linux
             monkey_cls = ChaosMonkey
         elif DROPPER_ARG == monkey_mode:
-            log_path = os.path.expandvars(WormConfiguration.dropper_log_path_windows) if sys.platform == "win32" else WormConfiguration.dropper_log_path_linux
+            log_path = os.path.expandvars(
+                WormConfiguration.dropper_log_path_windows) if sys.platform == "win32" else WormConfiguration.dropper_log_path_linux
             monkey_cls = MonkeyDrops
         else:
             return True
@@ -109,13 +112,14 @@ def main():
         monkey.start()
 
         if WormConfiguration.serialize_config:
-          with open(config_file, 'w') as config_fo:
-            json_dict = WormConfiguration.as_dict()
-            json.dump(json_dict, config_fo, skipkeys=True, sort_keys=True, indent=4, separators=(',', ': '))
-          
+            with open(config_file, 'w') as config_fo:
+                json_dict = WormConfiguration.as_dict()
+                json.dump(json_dict, config_fo, skipkeys=True, sort_keys=True, indent=4, separators=(',', ': '))
+
         return True
     finally:
         monkey.cleanup()
+
 
 if "__main__" == __name__:
     if not main():

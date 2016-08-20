@@ -15,4 +15,3 @@ class LinuxInfoCollector(InfoCollector):
         self.get_hostname()
         self.get_process_list()
         return self.info
-

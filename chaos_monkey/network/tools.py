@@ -43,7 +43,7 @@ def check_port_udp(ip, port, timeout=DEFAULT_TIMEOUT):
     
     try:
         sock.sendto("-", (ip, port))
-        data, _ =  sock.recvfrom(BANNER_READ)
+        data, _ = sock.recvfrom(BANNER_READ)
         is_open = True
     except:
         pass

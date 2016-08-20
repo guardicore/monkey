@@ -41,9 +41,9 @@ class NetworkScanner(object):
         scanner = scan_type()
         victims_count = 0
 
-        for range in self._ranges:
-            LOG.debug("Scanning for potential victims in the network %r", range)
-            for victim in range:
+        for net_range in self._ranges:
+            LOG.debug("Scanning for potential victims in the network %r", net_range)
+            for victim in net_range:
                 if stop_callback and stop_callback():
                     LOG.debug("Got stop signal")
                     break
