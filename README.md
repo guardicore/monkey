@@ -29,12 +29,13 @@ The monkey is the tool which infects other machines and propagates to them, whil
 
 ### Requirements
 
-The C&C Server has been tested on Ubuntu 14.04. 
+The C&C Server has been tested on Ubuntu 14.04,15.04 and 16.04. 
 The Monkey itself has been tested on Windows XP, 7, 8.1 and 10. The Linux build has been tested on Ubuntu server 14.04 and 15.10.
 
 ### Installation
 
-For off-the-shelf use, download our pre-compiled binaries from our website. To set up the C&C server follow the instructions on [Monkey Island readme](monkey_island/readme.txt).  If you wish to compile the binaries yourself, follow the instructions under Building the Monkey from Source.  
+For off-the-shelf use, download our Debian package from our website and follow the guide [written in our blog](https://www.guardicore.com/2016/07/infection-monkey-loose-2/). 
+ To manually set up and the C&C server follow the instructions on [Monkey Island readme](monkey_island/readme.txt).  If you wish to compile the binaries yourself, follow the instructions under Building the Monkey from Source.  
  
 ### Initial configuration.
 Whether you're downloading or building the Monkey from source, the Infection Monkey is comprised of 4 executable files for different platforms plus a default configuration file.
