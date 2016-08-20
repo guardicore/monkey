@@ -13,7 +13,6 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
-
 def _cast_by_example(value, example):
     """
     a method that casts a value to the type of the parameter given as example
@@ -85,6 +84,7 @@ class Configuration(object):
 
         return result
 
+    # Used to keep track of our depth if manually specified
     _depth_from_commandline = False
 
     ###########################
