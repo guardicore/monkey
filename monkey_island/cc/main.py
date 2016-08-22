@@ -1,4 +1,4 @@
-from __future__ import print_function # In python 2.7
+from __future__ import print_function  # In python 2.7
 
 import os
 import sys
@@ -78,20 +78,20 @@ class Monkey(restful.Resource):
         monkey_json = json.loads(request.data)
         update = {"$set": {'modifytime': datetime.now()}}
 
-        if monkey_json.has_key('keepalive'):
+        if 'keepalive' in monkey_json:
             update['$set']['keepalive'] = dateutil.parser.parse(monkey_json['keepalive'])
         else:
             update['$set']['keepalive'] = datetime.now()
-        if monkey_json.has_key('config'):
+        if 'config' in monkey_json:
             update['$set']['config'] = monkey_json['config']
-        if monkey_json.has_key('tunnel'):
+        if 'tunnel' in monkey_json:
             update['$set']['tunnel'] = monkey_json['tunnel']
 
         return mongo.db.monkey.update({"guid": guid}, update, upsert=False)
 
     def post(self, **kw):
         monkey_json = json.loads(request.data)
-        if monkey_json.has_key('keepalive'):
+        if 'keepalive' in monkey_json:
             monkey_json['keepalive'] = dateutil.parser.parse(monkey_json['keepalive'])
         else:
             monkey_json['keepalive'] = datetime.now()
@@ -106,7 +106,7 @@ class Monkey(restful.Resource):
             monkey_json['config'].update(new_config)
         else:
             db_config = db_monkey.get('config', {})
-            if db_config.has_key('current_server'):
+            if 'current_server' in db_config:
                 del db_config['current_server']
             monkey_json.get('config', {}).update(db_config)
 
@@ -122,7 +122,7 @@ class Monkey(restful.Resource):
                 parent_to_add = (exploit_telem[0].get('monkey_guid'), exploit_telem[0].get('data').get('exploiter'))
             else:
                 parent_to_add = (parent, None)
-        elif (not parent or parent == monkey_json.get('guid')) and monkey_json.has_key('ip_addresses'):
+        elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in  monkey_json:
             exploit_telem = [x for x in
                              mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}})]
@@ -174,7 +174,8 @@ class Telemetry(restful.Resource):
                     host = telemetry_json['data'].split(":")[-2].replace("//", "")
                     tunnel_host = mongo.db.monkey.find_one({"ip_addresses": host})
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$set': {'tunnel_guid': tunnel_host.get('guid'), 'modifytime': datetime.now()}},
+                                           {'$set': {'tunnel_guid': tunnel_host.get('guid'),
+                                                     'modifytime': datetime.now()}},
                                            upsert=False)
                 else:
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
@@ -197,15 +198,15 @@ class Telemetry(restful.Resource):
 
 class LocalRun(restful.Resource):
     def get(self):
-        type = request.args.get('type')
-        if type=="interfaces":
-            return {"interfaces" : local_ips()}
+        req_type = request.args.get('type')
+        if req_type == "interfaces":
+            return {"interfaces": local_ips()}
         else:
             return {"message": "unknown action"}
 
     def post(self):
         action_json = json.loads(request.data)
-        if action_json.has_key("action"):
+        if 'action' in action_json:
             if action_json["action"] == "monkey" and action_json.get("island_address") is not None:
                 return {"res": run_local_monkey(action_json.get("island_address"))}
 
@@ -215,7 +216,7 @@ class LocalRun(restful.Resource):
 class NewConfig(restful.Resource):
     def get(self):
         config = mongo.db.config.find_one({'name': 'newconfig'}) or {}
-        if config.has_key('name'):
+        if 'name' in config:
             del config['name']
         return config
 
@@ -252,15 +253,16 @@ class Root(restful.Resource):
                 'status': 'OK',
                 'mongo': str(mongo.db),
             }
-        elif action=="reset":
+        elif action == "reset":
             mongo.db.config.drop()
             mongo.db.monkey.drop()
             mongo.db.telemetry.drop()
             return {
                 'status': 'OK',
             }
-        elif action=="killall":
-            mongo.db.monkey.update({}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}}, upsert=False, multi=True)
+        elif action == "killall":
+            mongo.db.monkey.update({}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}}, upsert=False,
+                                   multi=True)
             return {
                 'status': 'OK',
             }
@@ -296,7 +298,6 @@ def output_json(obj, code, headers=None):
 
 
 def update_dead_monkeys():
-
     # Update dead monkeys only if no living monkey transmitted keepalive in the last 10 minutes
     if mongo.db.monkey.find_one({'dead': {'$ne': True}, 'keepalive': {'$gte': datetime.now() - timedelta(minutes=10)}}):
         return
@@ -323,7 +324,7 @@ def run_local_monkey(island_address):
     if not result:
         return (False, "OS Type not found")
 
-    monkey_path =  os.path.join('binaries', result['filename'])
+    monkey_path = os.path.join('binaries', result['filename'])
     target_path = os.path.join(os.getcwd(), result['filename'])
 
     # copy the executable to temp path (don't run the monkey from its current location as it may delete itself)
@@ -350,7 +351,6 @@ if sys.platform == "win32":
 
 else:
     import fcntl
-
     def local_ips():
         result = []
         try:
@@ -359,14 +359,14 @@ else:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             max_possible = 8  # initial value
             while True:
-                bytes = max_possible * struct_size
-                names = array.array('B', '\0' * bytes)
+                struct_bytes = max_possible * struct_size
+                names = array.array('B', '\0' * struct_bytes)
                 outbytes = struct.unpack('iL', fcntl.ioctl(
                     s.fileno(),
                     0x8912,  # SIOCGIFCONF
-                    struct.pack('iL', bytes, names.buffer_info()[0])
+                    struct.pack('iL', struct_bytes, names.buffer_info()[0])
                 ))[0]
-                if outbytes == bytes:
+                if outbytes == struct_bytes:
                     max_possible *= 2
                 else:
                     break
@@ -379,6 +379,7 @@ else:
                     # name of interface is (namestr[i:i+16].split('\0', 1)[0]
         finally:
             return result
+
 
 ### End of local ips function
 
@@ -411,4 +412,4 @@ if __name__ == '__main__':
     http_server = HTTPServer(WSGIContainer(app), ssl_options={'certfile': 'server.crt', 'keyfile': 'server.key'})
     http_server.listen(ISLAND_PORT)
     IOLoop.instance().start()
-    #app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
+    # app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
