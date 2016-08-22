@@ -5,7 +5,7 @@ import sys
 import array
 import struct
 from shutil import copyfile
-from flask import Flask, request, abort, send_from_directory
+from flask import Flask, request, abort, send_from_directory, redirect
 from flask.ext import restful
 from flask.ext.pymongo import PyMongo
 from flask import make_response
@@ -385,6 +385,11 @@ else:
 @app.route('/admin/<path:path>')
 def send_admin(path):
     return send_from_directory('admin/ui', path)
+
+
+@app.route("/")
+def send_to_default():
+    return redirect('/admin/index.html')
 
 
 DEFAULT_REPRESENTATIONS = {'application/json': output_json}
