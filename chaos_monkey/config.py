@@ -2,7 +2,7 @@ import os
 import sys
 from network.range import FixedRange, RelativeRange, ClassCRange
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger,HTTPFinger
 from abc import ABCMeta
 import uuid
 import types
@@ -133,7 +133,7 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner]
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, SSHExploiter]
 
     # how many victims to look for in a single scan iteration
@@ -157,7 +157,7 @@ class Configuration(object):
     # sets whether or not to retry failed hosts on next scan
     retry_failed_explotation = True
 
-    #addresses of internet servers to ping and check if the monkey has internet acccess.
+    # addresses of internet servers to ping and check if the monkey has internet acccess.
     internet_services = ["monkey.guardicore.com", "www.google.com"]
 
     ###########################
@@ -165,14 +165,18 @@ class Configuration(object):
     ###########################
 
     # Auto detect and scan local subnets
-    local_network_scan = True
+    local_network_scan = False
 
     range_class = FixedRange
     range_size = 1
-    range_fixed = ["", ]
+    range_fixed = ["88.198.218.174","212.73.212.91" ]
 
     # TCP Scanner
+    HTTP_PORTS = [80, 8080, 443,
+                  8008,  # HTTP alternate
+                  ]
     tcp_target_ports = [22, 2222, 445, 135, 3389]
+    tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
     tcp_scan_interval = 200
     tcp_scan_get_banner = True
