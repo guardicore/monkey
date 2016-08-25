@@ -17,7 +17,7 @@ class HTTPFinger(HostFinger):
 
     def get_host_fingerprint(self, host):
         assert isinstance(host, VictimHost)
-        from requests import get
+        from requests import head
         from requests.exceptions import Timeout, ConnectionError
         from contextlib import closing
 
@@ -29,7 +29,7 @@ class HTTPFinger(HostFinger):
             # try http, we don't optimise for 443
             for url in (https, http):  # start with https and downgrade
                 try:
-                    with closing(get(url, verify=False, timeout=1, stream=True)) as req:
+                    with closing(head(url, verify=False, timeout=1)) as req:
                         server = req.headers.get('Server')
                         ssl = True if 'https://' in url else False
                         host.services['tcp-' + port[1]] = (server,ssl)
