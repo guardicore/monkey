@@ -21,24 +21,24 @@ class HTTPFinger(HostFinger):
     def get_host_fingerprint(self, host):
         assert isinstance(host, VictimHost)
         from requests import get
-        from requests.exceptions import Timeout
+        from requests.exceptions import Timeout,ConnectionError
         from contextlib import closing
 
-        valid_ports = [port for port in self.HTTP if 'tcp-'+port[1] in host.services]
-        for port in valid_ports:
+        for port in self.HTTP:
             # check both http and https
             http = "http://"+host.ip_addr+":"+port[1]
             https = "https://"+host.ip_addr+":"+port[1]
 
             # try http, we don't optimise for 443
-            try:
-                with closing(get(http, timeout=1, stream=True)) as r_http:
-                    server = r_http.headers.get('Server')
-                    host.services['tcp-'+port[1]] = server
-            except Timeout:
-                #try https
-                with closing(get(https, timeout=01, stream=True)) as r_http:
-                    server = r_http.headers.get('Server')
-                    host.services['tcp-'+port[1]] = server
+            for url in (http, https):
+                try:
+                    with closing(get(url, verify=False, timeout=1, stream=True)) as req:
+                        server = req.headers.get('Server')
+                        host.services['tcp-'+port[1]] = server
+                        break # https will be the same on the same port
+                except Timeout:
+                    pass
+                except ConnectionError: # Someone doesn't like us
+                    pass
 
         return True
