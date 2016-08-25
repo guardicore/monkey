@@ -27,11 +27,12 @@ class HTTPFinger(HostFinger):
             https = "https://" + host.ip_addr + ":" + port[1]
 
             # try http, we don't optimise for 443
-            for url in (http, https):
+            for url in (https, http):  # start with https and downgrade
                 try:
                     with closing(get(url, verify=False, timeout=1, stream=True)) as req:
                         server = req.headers.get('Server')
-                        host.services['tcp-' + port[1]] = server
+                        ssl = True if 'https://' in url else False
+                        host.services['tcp-' + port[1]] = (server,ssl)
                         break  # https will be the same on the same port
                 except Timeout:
                     pass
