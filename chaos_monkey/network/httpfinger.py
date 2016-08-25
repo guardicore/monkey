@@ -1,4 +1,5 @@
 from network import HostFinger
+from model.host import VictimHost
 
 
 class HTTPFinger(HostFinger):
