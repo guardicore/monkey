@@ -62,3 +62,8 @@ docs/_build/
 
 # PyBuilder
 target/
+db
+bin
+/monkey_island/cc/server.key
+/monkey_island/cc/server.crt
+/monkey_island/cc/server.csr
