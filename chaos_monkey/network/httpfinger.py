@@ -32,7 +32,9 @@ class HTTPFinger(HostFinger):
                     with closing(head(url, verify=False, timeout=1)) as req:
                         server = req.headers.get('Server')
                         ssl = True if 'https://' in url else False
-                        host.services['tcp-' + port[1]] = (server,ssl)
+                        host.services['tcp-' + port[1]] = {}
+                        host.services['tcp-' + port[1]]['name'] = 'http'
+                        host.services['tcp-' + port[1]]['data'] = (server,ssl)
                         break  # https will be the same on the same port
                 except Timeout:
                     pass
