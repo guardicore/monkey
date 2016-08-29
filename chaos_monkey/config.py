@@ -171,7 +171,7 @@ class Configuration(object):
 
     range_class = FixedRange
     range_size = 1
-    range_fixed = ['10.0.1.160']
+    range_fixed = ['']
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
