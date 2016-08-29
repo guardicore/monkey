@@ -1,7 +1,7 @@
 import os
 import sys
 from network.range import FixedRange, RelativeRange, ClassCRange
-from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter
+from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger,HTTPFinger
 from abc import ABCMeta
 import uuid
@@ -134,7 +134,9 @@ class Configuration(object):
 
     scanner_class = TcpScanner
     finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
-    exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, SSHExploiter]
+    exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, # Windows exploits
+                         SSHExploiter, ShellShockExploiter #Linux
+                        ]
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 14
@@ -165,11 +167,11 @@ class Configuration(object):
     ###########################
 
     # Auto detect and scan local subnets
-    local_network_scan = False
+    local_network_scan = True
 
     range_class = FixedRange
     range_size = 1
-    range_fixed = ["88.198.218.174","212.73.212.91" ]
+    range_fixed = ['']
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,

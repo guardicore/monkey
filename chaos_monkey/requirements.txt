@@ -13,3 +13,4 @@ PyInstaller
 ecdsa
 netifaces
 requests
+grequests
