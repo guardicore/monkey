@@ -135,7 +135,7 @@ class Configuration(object):
     scanner_class = TcpScanner
     finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, # Windows exploits
-                         SSHExploiter, ShellShockExploiter #Linux
+                         SSHExploiter, ShellShockExploiter # Linux
                         ]
 
     # how many victims to look for in a single scan iteration
