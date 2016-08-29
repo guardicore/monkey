@@ -1,6 +1,8 @@
 from network import HostFinger
 from model.host import VictimHost
+import logging
 
+LOG = logging.getLogger(__name__)
 
 class HTTPFinger(HostFinger):
     """
@@ -35,6 +37,7 @@ class HTTPFinger(HostFinger):
                         host.services['tcp-' + port[1]] = {}
                         host.services['tcp-' + port[1]]['name'] = 'http'
                         host.services['tcp-' + port[1]]['data'] = (server,ssl)
+                        LOG.info("Port %d is open on host %s " % (port[0], host))
                         break  # https will be the same on the same port
                 except Timeout:
                     pass
