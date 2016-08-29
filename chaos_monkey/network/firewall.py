@@ -3,6 +3,11 @@ import sys
 import platform
 
 
+def _run_netsh_cmd(command, args):
+    cmd = subprocess.Popen("netsh %s %s" % (command, " ".join(['%s="%s"' % (key, value) for key, value in args.items()
+                                                               if value])), stdout=subprocess.PIPE)
+    return cmd.stdout.read().strip().lower().endswith('ok.')
+
 class FirewallApp(object):
     def is_enabled(self, **kwargs):
         return False
@@ -24,12 +29,6 @@ class FirewallApp(object):
 
     def close(self):
         return
-
-
-def _run_netsh_cmd(command, args):
-    cmd = subprocess.Popen("netsh %s %s" % (command, " ".join(['%s="%s"' % (key, value) for key, value in args.items()
-                                                               if value])), stdout=subprocess.PIPE)
-    return cmd.stdout.read().strip().lower().endswith('ok.')
 
 
 class WinAdvFirewall(FirewallApp):
@@ -93,7 +92,7 @@ class WinAdvFirewall(FirewallApp):
     def close(self):
         try:
             for rule in self._rules.keys():
-                _run_netsh_cmd('advfirewall firewall delete rule', {'name': rule})
+                self.remove_firewall_rule({'name': rule})
         except:
             pass
 

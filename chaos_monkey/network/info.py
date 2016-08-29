@@ -5,6 +5,7 @@ import socket
 import struct
 import psutil
 import ipaddress
+from subprocess import check_output
 from random import randint
 
 if sys.platform == "win32":
@@ -112,3 +113,17 @@ def get_ips_from_interfaces():
                 continue
             res.append(str(addr))
     return res
+
+if sys.platform == "win32":
+    def get_ip_for_connection(target_ip):
+        return None
+else:
+    def get_ip_for_connection(target_ip):
+        try:
+            query_str = 'ip route get %s' % target_ip
+            resp = check_output(query_str.split())
+            substr = resp.split()
+            src = substr[substr.index('src')+1]
+            return src
+        except Exception:
+            return None
