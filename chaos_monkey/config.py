@@ -135,7 +135,7 @@ class Configuration(object):
     scanner_class = TcpScanner
     finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, # Windows exploits
-                         SSHExploiter, ShellShockExploiter #Linux
+                         SSHExploiter #Linux
                         ]
 
     # how many victims to look for in a single scan iteration
@@ -167,11 +167,11 @@ class Configuration(object):
     ###########################
 
     # Auto detect and scan local subnets
-    local_network_scan = True
+    local_network_scan = False
 
     range_class = FixedRange
     range_size = 1
-    range_fixed = ['']
+    range_fixed = ['10.0.1.160']
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
@@ -201,7 +201,7 @@ class Configuration(object):
     psexec_passwords = ["Password1!", "1234", "password", "12345678"]
 
     # ssh exploiter
-    ssh_users = ["root"]
+    ssh_users = ["root",'user']
     ssh_passwords = ["Password1!", "1234", "password", "12345678"]
 
     # rdp exploiter
