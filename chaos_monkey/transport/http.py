@@ -19,7 +19,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return "Microsoft-IIS/7.5."
 
     @staticmethod
-    def report_download():
+    def report_download(dest=None):
         pass
 
     def do_POST(self):
@@ -44,7 +44,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 start_range += chunk
 
             if f.tell() == monkeyfs.getsize(self.filename):
-                self.report_download()
+                self.report_download(self.client_address)
 
             f.close()
 
@@ -147,18 +147,6 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                   (self.address_string(), self.log_date_time_string(), format % args))
 
 
-class InternalHTTPServer(BaseHTTPServer.HTTPServer):
-    def handle_error(self, request, client_address):
-        #ToDo: debug log error
-        # import sys
-        # import traceback
-        # print >>sys.stderr, '-'*40
-        # print >>sys.stderr, 'Exception happened during processing of request from', client_address
-        # traceback.print_exc()
-        # print >>sys.stderr, '-'*40        
-        pass
-
-
 class HTTPServer(threading.Thread):
     def __init__(self, local_ip, local_port, filename, max_downloads=1):
         self._local_ip = local_ip
@@ -174,11 +162,12 @@ class HTTPServer(threading.Thread):
             filename = self._filename
 
             @staticmethod
-            def report_download():
+            def report_download(dest=None):
+                LOG.info('File downloaded from (%s,%s)' % (dest[0],dest[1]))
                 self.downloads += 1
 
-        httpd = InternalHTTPServer((self._local_ip, self._local_port), TempHandler)
-        httpd.timeout = 0.5
+        httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
+        httpd.timeout = 0.5 # this is irrelevant?
         
         while not self._stopped and self.downloads < self.max_downloads:
             httpd.handle_request()
@@ -192,7 +181,7 @@ class HTTPServer(threading.Thread):
 
 class HTTPConnectProxy(TransportProxyBase):
     def run(self):
-        httpd = InternalHTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
+        httpd = BaseHTTPServer.HTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
         httpd.timeout = 30
         while not self._stopped:
             httpd.handle_request()
