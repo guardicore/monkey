@@ -2,7 +2,7 @@ import os
 import sys
 from network.range import FixedRange, RelativeRange, ClassCRange
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger,HTTPFinger
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger
 from abc import ABCMeta
 import uuid
 import types
@@ -135,7 +135,7 @@ class Configuration(object):
     scanner_class = TcpScanner
     finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, # Windows exploits
-                         SSHExploiter, ShellShockExploiter # Linux
+                         SSHExploiter, ShellShockExploiter  # Linux
                         ]
 
     # how many victims to look for in a single scan iteration
