@@ -15,10 +15,12 @@ Features include:
 * Multiple propagation techniques:
   * Predefined passwords
   * Common exploits
-* Multiple propagation protocols:
+* Multiple exploit methods:
   * SSH
   * SMB
   * RDP
+  * WMI
+  * Shellshock
 * A C&C server with a dedicated UI to visualize the Monkey's progress inside the data center
 
 Getting Started
@@ -172,6 +174,7 @@ Dependency | License |
  impacket | Apache Modified 
  Start Bootstrap (UI Theme) | Apache 2.0 
  requests | Apache 2.0 
+ grequests | BSD
  odict | Python Software Foundation License 
  paramiko | LGPL 
  rdpy | GPL-3 
