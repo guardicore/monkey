@@ -44,7 +44,6 @@ def _cast_by_example(value, example):
 
 
 class Configuration(object):
-
     def from_dict(self, data):
         for key, value in data.items():
             if key.startswith('_'):
@@ -134,9 +133,9 @@ class Configuration(object):
 
     scanner_class = TcpScanner
     finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
-    exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter, # Windows exploits
+    exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter  # Linux
-                        ]
+                         ]
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 14
@@ -167,11 +166,11 @@ class Configuration(object):
     ###########################
 
     # Auto detect and scan local subnets
-    local_network_scan = False
+    local_network_scan = True
 
     range_class = FixedRange
     range_size = 1
-    range_fixed = ['']
+    range_fixed = ['',]
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
@@ -201,7 +200,7 @@ class Configuration(object):
     psexec_passwords = ["Password1!", "1234", "password", "12345678"]
 
     # ssh exploiter
-    ssh_users = ["root",'user']
+    ssh_users = ["root", 'user']
     ssh_passwords = ["Password1!", "1234", "password", "12345678"]
 
     # rdp exploiter
@@ -209,5 +208,6 @@ class Configuration(object):
 
     # system info collection
     collect_system_info = True
+
 
 WormConfiguration = Configuration()
