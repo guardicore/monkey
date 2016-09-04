@@ -16,7 +16,7 @@ class VirtualFile(BytesIO):
             name = MONKEYFS_PREFIX + name
         self.name = name
         self._mode = mode
-        if VirtualFile._vfs.has_key(name):
+        if name in VirtualFile._vfs:
             super(VirtualFile, self).__init__(self._vfs[name])
         else:
             super(VirtualFile, self).__init__('')
@@ -31,7 +31,8 @@ class VirtualFile(BytesIO):
 
     @staticmethod
     def isfile(path):
-        return VirtualFile._vfs.has_key(path)
+        return path in VirtualFile._vfs
+
 
 
 def getsize(path):
