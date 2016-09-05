@@ -32,6 +32,17 @@ class VictimHost(object):
     def __repr__(self):
         return "<VictimHost %s>" % (self.ip_addr, )
 
+    def __str__(self):
+        victim = "Victim Host %s: " % self.ip_addr
+        victim += "OS - ["
+        for k, v in self.os.iteritems():
+            victim += "%s-%s " % (k, v)
+        victim += "] Services - ["
+        for k, v in self.services.iteritems():
+            victim += "%s-%s " % (k, v)
+        victim += ']'
+        return victim
+
     def learn_credentials(self, username, password):
         self.cred[username.lower()] = password
 
