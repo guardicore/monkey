@@ -206,6 +206,9 @@ class Configuration(object):
     # rdp exploiter
     rdp_use_vbs_download = True
 
+    # smb/wmi exploiter
+    smb_download_timeout = 300 # timeout in seconds
+
     # system info collection
     collect_system_info = True
 
