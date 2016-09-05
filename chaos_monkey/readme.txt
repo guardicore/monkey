@@ -1,9 +1,11 @@
 How to create a monkey build environment:
 
 Windows:
-1. Install python 2.7
-	https://www.python.org/download/releases/2.7
-2. install pywin32-219.win32-py2.7.exe
+1. Install python 2.7. Preferably you should use ActiveState Python which includes pywin32 built in. 
+	You must use an up to date version, atleast version 2.7.10
+	http://www.activestate.com/activepython/downloads
+	https://www.python.org/downloads/release/python-2712/
+2. install pywin32-219.win32-py2.7.exe at least
 	http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/
 3. a. install VCForPython27.msi
 	http://www.microsoft.com/en-us/download/details.aspx?id=44266
