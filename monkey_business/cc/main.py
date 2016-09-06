@@ -315,4 +315,12 @@ api.add_resource(Connector, '/connector')
 api.add_resource(JobCreation, '/jobcreate')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
+    from tornado.wsgi import WSGIContainer
+    from tornado.httpserver import HTTPServer
+    from tornado.ioloop import IOLoop
+
+    http_server = HTTPServer(WSGIContainer(app), ssl_options={'certfile': 'server.crt', 'keyfile': 'server.key'})
+    http_server.listen(5000)
+    IOLoop.instance().start()
+
+    #app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
