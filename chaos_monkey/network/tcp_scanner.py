@@ -1,4 +1,5 @@
 import time
+from random import shuffle
 from network import HostScanner, HostFinger
 from model.host import VictimHost
 from network.tools import check_port_tcp
@@ -19,8 +20,11 @@ class TcpScanner(HostScanner, HostFinger):
         assert isinstance(host, VictimHost)
 
         count = 0
+        # maybe hide under really bad detection systems
+        target_ports = self._config.tcp_target_ports[:]
+        shuffle(target_ports)
 
-        for target_port in self._config.tcp_target_ports:
+        for target_port in target_ports:
 
             is_open, banner = check_port_tcp(host.ip_addr,
                                              target_port,
