@@ -208,6 +208,8 @@ class Configuration(object):
 
     # smb/wmi exploiter
     smb_download_timeout = 300 # timeout in seconds
+    smb_service_name = "InfectionMonkey"
+
 
     # system info collection
     collect_system_info = True
