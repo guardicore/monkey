@@ -30,9 +30,11 @@ if sys.platform == "win32":
                         network_adapters.append((add["addr"], add["netmask"]))
         return network_adapters
 
-else:
-    import fcntl
+    def get_routes():
+        raise NotImplementedError()
 
+else:
+    from fcntl import ioctl
 
     def get_host_subnets(only_ips=False):
         """Get the list of Linux network adapters."""
@@ -46,7 +48,7 @@ else:
             offset2 = 32
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         names = array.array('B', '\0' * max_bytes)
-        outbytes = struct.unpack('iL', fcntl.ioctl(
+        outbytes = struct.unpack('iL', ioctl(
             sock.fileno(),
             0x8912,
             struct.pack('iL', max_bytes, names.buffer_info()[0])))[0]
@@ -54,13 +56,13 @@ else:
                          for n_cnt in xrange(0, outbytes, offset2)]
         network_adapters = []
         for adapter_name in adapter_names:
-            ip_address = socket.inet_ntoa(fcntl.ioctl(
+            ip_address = socket.inet_ntoa(ioctl(
                 sock.fileno(),
                 0x8915,
                 struct.pack('256s', adapter_name))[20:24])
             if ip_address.startswith('127'):
                 continue
-            subnet_mask = socket.inet_ntoa(fcntl.ioctl(
+            subnet_mask = socket.inet_ntoa(ioctl(
                 sock.fileno(),
                 0x891b,
                 struct.pack('256s', adapter_name))[20:24])
@@ -72,9 +74,55 @@ else:
 
         return network_adapters
 
-
     def local_ips():
         return get_host_subnets(only_ips=True)
+
+    def get_routes():  # based on scapy implementation for route parsing
+        LOOPBACK_NAME = "lo"
+        SIOCGIFADDR = 0x8915  # get PA address
+        SIOCGIFNETMASK = 0x891b  # get network PA mask
+        RTF_UP = 0x0001  # Route usable
+        RTF_REJECT = 0x0200
+
+        try:
+            f = open("/proc/net/route", "r")
+        except IOError:
+            return []
+        routes = []
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        ifreq = ioctl(s, SIOCGIFADDR, struct.pack("16s16x", LOOPBACK_NAME))
+        addrfamily = struct.unpack("h", ifreq[16:18])[0]
+        if addrfamily == socket.AF_INET:
+            ifreq2 = ioctl(s, SIOCGIFNETMASK, struct.pack("16s16x", LOOPBACK_NAME))
+            msk = socket.ntohl(struct.unpack("I", ifreq2[20:24])[0])
+            dst = socket.ntohl(struct.unpack("I", ifreq[20:24])[0]) & msk
+            ifaddr = socket.inet_ntoa(ifreq[20:24])
+            routes.append((dst, msk, "0.0.0.0", LOOPBACK_NAME, ifaddr))
+
+        for l in f.readlines()[1:]:
+            iff, dst, gw, flags, x, x, x, msk, x, x, x = l.split()
+            flags = int(flags, 16)
+            if flags & RTF_UP == 0:
+                continue
+            if flags & RTF_REJECT:
+                continue
+            try:
+                ifreq = ioctl(s, SIOCGIFADDR, struct.pack("16s16x", iff))
+            except IOError:  # interface is present in routing tables but does not have any assigned IP
+                ifaddr = "0.0.0.0"
+            else:
+                addrfamily = struct.unpack("h", ifreq[16:18])[0]
+                if addrfamily == socket.AF_INET:
+                    ifaddr = socket.inet_ntoa(ifreq[20:24])
+                else:
+                    continue
+            routes.append((socket.htonl(long(dst, 16)) & 0xffffffffL,
+                           socket.htonl(long(msk, 16)) & 0xffffffffL,
+                           socket.inet_ntoa(struct.pack("I", long(gw, 16))),
+                           iff, ifaddr))
+
+        f.close()
+        return routes
 
 
 def get_free_tcp_port(min_range=1000, max_range=65535):
