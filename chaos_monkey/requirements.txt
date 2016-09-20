@@ -12,5 +12,4 @@ psutil
 PyInstaller
 ecdsa
 netifaces
-requests
 grequests
