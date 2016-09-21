@@ -12,4 +12,3 @@ psutil
 PyInstaller
 ecdsa
 netifaces
-requests
