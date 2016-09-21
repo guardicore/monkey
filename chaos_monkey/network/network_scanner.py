@@ -52,6 +52,11 @@ class NetworkScanner(object):
                 if victim.ip_addr in self._ip_addresses:
                     continue
 
+                # skip IPs marked as blocked
+                if victim.ip_addr in WormConfiguration.blocked_ips:
+                    LOG.info("Skipping %s due to blacklist" % victim)
+                    continue
+
                 LOG.debug("Scanning %r...", victim)
 
                 # if scanner detect machine is up, add it to victims list

@@ -172,6 +172,8 @@ class Configuration(object):
     range_size = 1
     range_fixed = ['',]
 
+    blocked_ips = ['', ]
+
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
                   8008,  # HTTP alternate
@@ -209,7 +211,6 @@ class Configuration(object):
     # smb/wmi exploiter
     smb_download_timeout = 300 # timeout in seconds
     smb_service_name = "InfectionMonkey"
-
 
     # system info collection
     collect_system_info = True
