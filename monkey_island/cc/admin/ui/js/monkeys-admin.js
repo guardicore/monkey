@@ -659,14 +659,12 @@ function killMonkey() {
     var curr_config = monkeyCfg.getValue();
     curr_config.alive = false;
     monkeyCfg.setValue(curr_config);
-    updateMonkeyConfig();
 }
 
 function reviveMonkey() {
     var curr_config = monkeyCfg.getValue();
     curr_config.alive = true;
     monkeyCfg.setValue(curr_config);
-    updateMonkeyConfig();
 }
 
 function toggleFocusOnNode() {
@@ -694,6 +692,7 @@ function loadNewMonkeysConfig() {
             delete json.id;
             newCfg.setValue(json);
         }
+        newCfg.watch('root', updateNewMonkeysConfig);
     });
 }
 
@@ -738,7 +737,9 @@ function loadMonkeyConfig() {
 
     var monkey = getMonkey(node[0]);
 
+    monkeyCfg.unwatch('root', updateMonkeyConfig);
     monkeyCfg.setValue(monkey.config);
+    monkeyCfg.watch('root', updateMonkeyConfig);
 }
 
 function updateMonkeyConfig() {
