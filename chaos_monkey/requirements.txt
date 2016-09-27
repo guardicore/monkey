@@ -12,3 +12,5 @@ psutil
 PyInstaller
 ecdsa
 netifaces
+mock
+nose

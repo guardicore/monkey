@@ -86,6 +86,8 @@ class Monkey(restful.Resource):
             update['$set']['config'] = monkey_json['config']
         if 'tunnel' in monkey_json:
             update['$set']['tunnel'] = monkey_json['tunnel']
+        if 'config_error' in monkey_json:
+            update['$set']['config_error'] = monkey_json['config_error']
 
         return mongo.db.monkey.update({"guid": guid}, update, upsert=False)
 
