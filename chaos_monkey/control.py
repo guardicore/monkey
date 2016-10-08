@@ -124,13 +124,30 @@ class ControlClient(object):
             return
 
         try:
-            WormConfiguration.from_dict(reply.json().get('config'))
+            unknown_variables = WormConfiguration.from_dict(reply.json().get('config'))
             LOG.info("New configuration was loaded from server: %r" % (WormConfiguration.as_dict(),))
         except Exception, exc:
             # we don't continue with default conf here because it might be dangerous
             LOG.error("Error parsing JSON reply from control server %s (%s): %s",
                       WormConfiguration.current_server, reply._content, exc)
             raise Exception("Couldn't load from from server's configuration, aborting. %s" % exc)
+
+        if unknown_variables:
+            ControlClient.send_config_error()
+
+    @staticmethod
+    def send_config_error():
+        if not WormConfiguration.current_server:
+            return
+        try:
+            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+                                data=json.dumps({'config_error': True}),
+                                headers={'content-type': 'application/json'},
+                                verify=False,
+                                proxies=ControlClient.proxies)
+        except Exception, exc:
+            LOG.warn("Error connecting to control server %s: %s", WormConfiguration.current_server, exc)
+            return {}
 
     @staticmethod
     def check_for_stop():

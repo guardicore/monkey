@@ -45,6 +45,11 @@ def _cast_by_example(value, example):
 
 class Configuration(object):
     def from_dict(self, data):
+        """
+        Get a dict of config variables, set known variables as attributes on self.
+        Return dict of unknown variables encountered.
+        """
+        unknown_variables = {}
         for key, value in data.items():
             if key.startswith('_'):
                 continue
@@ -55,9 +60,11 @@ class Configuration(object):
             try:
                 default_value = getattr(Configuration, key)
             except AttributeError:
-                raise
+                unknown_variables[key] = value
+                continue
 
             setattr(self, key, _cast_by_example(value, default_value))
+        return unknown_variables
 
     def as_dict(self):
         result = {}
