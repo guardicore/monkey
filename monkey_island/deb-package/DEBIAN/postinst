@@ -6,8 +6,12 @@ INSTALLATION_FOLDER=/var/monkey_island/installation
 cp -f ${MONKEY_FOLDER}/monkey.sh /usr/bin/monkey
 chmod 755 /usr/bin/monkey
 
+# Fix dependency bug
+pip uninstall -y bson
+
 # install pip requirements
 pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
+
 
 # remove installation folder and unnecessary files
 rm -rf ${INSTALLATION_FOLDER}
