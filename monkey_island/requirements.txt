@@ -5,7 +5,6 @@ jinja2
 markupsafe
 itsdangerous
 click
-bson
 flask
 Flask-Pymongo
 Flask-Restful
