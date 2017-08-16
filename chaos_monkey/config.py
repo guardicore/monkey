@@ -204,16 +204,12 @@ class Configuration(object):
     ms08_067_remote_user_add = "Monkey_IUSER_SUPPORT"
     ms08_067_remote_user_pass = "Password1!"
 
-    # psexec exploiter
-    psexec_user = "Administrator"
-    psexec_passwords = ["Password1!", "1234", "password", "12345678"]
-
-    # ssh exploiter
-    ssh_users = ["root", 'user']
-    ssh_passwords = ["Password1!", "1234", "password", "12345678"]
-
     # rdp exploiter
     rdp_use_vbs_download = True
+
+    # User and password dictionaries for exploits.
+    exploit_user_list = ['Administrator', 'root', 'user']
+    exploit_password_list = ["Password1!", "1234", "password", "12345678"]
 
     # smb/wmi exploiter
     smb_download_timeout = 300 # timeout in seconds
@@ -222,5 +218,11 @@ class Configuration(object):
     # system info collection
     collect_system_info = True
 
+
+    ###########################
+    # systeminfo config
+    ###########################
+
+    mimikatz_dll_name = "mk.dll"
 
 WormConfiguration = Configuration()

