@@ -116,7 +116,7 @@ class ChaosMonkey(object):
                 if user not in WormConfiguration.exploit_user_list:
                     WormConfiguration.exploit_user_list.append(user)
 
-            for user, creds in additional_creds:
+                creds = additional_creds[user]
                 if creds.has_key('password'):
                     password = creds['password']
                     if password not in WormConfiguration.exploit_password_list:
