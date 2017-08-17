@@ -48,6 +48,9 @@ MONKEY_DOWNLOADS = [
     },
 ]
 
+INITIAL_USERNAMES = ['Administrator', 'root', 'user']
+INITIAL_PASSWORDS = ["Password1!", "1234", "password", "12345678"]
+
 MONGO_URL = os.environ.get('MONGO_URL')
 if not MONGO_URL:
     MONGO_URL = "mongodb://localhost:27017/monkeyisland"
@@ -65,7 +68,12 @@ class Monkey(restful.Resource):
         timestamp = request.args.get('timestamp')
 
         if guid:
-            return mongo.db.monkey.find_one_or_404({"guid": guid})
+            monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
+            monkey_json['config']['exploit_user_list'] = \
+                map(lambda x: x['username'], mongo.db.usernames.find({}, {'_id': 0, 'username': 1}).sort([('count', -1)]))
+            monkey_json['config']['exploit_password_list'] = \
+                map(lambda x: x['password'], mongo.db.passwords.find({}, {'_id': 0, 'password': 1}).sort([('count', -1)]))
+            return monkey_json
         else:
             result = {'timestamp': datetime.now().isoformat()}
             find_filter = {}
@@ -195,6 +203,18 @@ class Telemetry(restful.Resource):
         except:
             pass
 
+        # Update credentials DB
+        try:
+            if (telemetry_json.get('telem_type') == 'system_info_collection') and (telemetry_json['data'].has_key('credentials')):
+                creds = telemetry_json['data']['credentials']
+                for user in creds:
+                    creds_add_username(user)
+
+                    if creds[user].has_key('password'):
+                        creds_add_password(creds[user]['password'])
+        except StandardError as ex:
+            print("Exception caught while updating DB credentials: %s" % str(ex))
+
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
 
 
@@ -259,6 +279,9 @@ class Root(restful.Resource):
             mongo.db.config.drop()
             mongo.db.monkey.drop()
             mongo.db.telemetry.drop()
+            mongo.db.usernames.drop()
+            mongo.db.passwords.drop()
+            init_db()
             return {
                 'status': 'OK',
             }
@@ -347,13 +370,25 @@ def run_local_monkey(island_address):
 
     return (True, "pis: %s" % pid)
 
+def creds_add_username(username):
+    mongo.db.usernames.update(
+        {'username': username},
+        {'$inc': {'count': 1}},
+        upsert=True
+    )
+
+def creds_add_password(password):
+    mongo.db.passwords.update(
+        {'password': password},
+        {'$inc': {'count': 1}},
+        upsert=True
+    )
 
 ### Local ips function
 if sys.platform == "win32":
     def local_ips():
         local_hostname = socket.gethostname()
         return socket.gethostbyname_ex(local_hostname)[2]
-
 else:
     import fcntl
     def local_ips():
@@ -398,6 +433,17 @@ def send_to_default():
     return redirect('/admin/index.html')
 
 
+def init_db():
+    if not "usernames" in mongo.db.collection_names():
+        mongo.db.usernames.create_index([( "username", 1 )], unique= True)
+        for username in INITIAL_USERNAMES:
+            creds_add_username(username)
+
+    if not "passwords" in mongo.db.collection_names():
+        mongo.db.passwords.create_index([( "password", 1 )], unique= True)
+        for password in INITIAL_PASSWORDS:
+            creds_add_password(password)
+
 DEFAULT_REPRESENTATIONS = {'application/json': output_json}
 api = restful.Api(app)
 api.representations = DEFAULT_REPRESENTATIONS
@@ -414,6 +460,8 @@ if __name__ == '__main__':
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
 
+    with app.app_context():
+        init_db()
     http_server = HTTPServer(WSGIContainer(app), ssl_options={'certfile': 'server.crt', 'keyfile': 'server.key'})
     http_server.listen(ISLAND_PORT)
     IOLoop.instance().start()

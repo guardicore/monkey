@@ -208,8 +208,8 @@ class Configuration(object):
     rdp_use_vbs_download = True
 
     # User and password dictionaries for exploits.
-    exploit_user_list = ['Administrator', 'root', 'user']
-    exploit_password_list = ["Password1!", "1234", "password", "12345678"]
+    exploit_user_list = []
+    exploit_password_list = []
 
     # smb/wmi exploiter
     smb_download_timeout = 300 # timeout in seconds
