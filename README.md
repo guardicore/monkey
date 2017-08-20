@@ -150,7 +150,6 @@ Copyright (c) 2016 Guardicore Ltd
 
 See the [LICENSE](LICENSE) file for license rights and limitations (GPLv3).
 
-
 Dependent packages
 ---------------------
 
