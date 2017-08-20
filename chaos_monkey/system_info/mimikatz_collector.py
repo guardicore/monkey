@@ -69,10 +69,14 @@ class MimikatzCollector:
         """
         Logon data structure returned from mimikatz.
         """
+
+        WINDOWS_MAX_USERNAME_PASS_LENGTH = 257
+        LM_NTLM_HASH_LENGTH = 16
+
         _fields_ = \
             [
-                ("username",    ctypes.c_wchar * 257),
-                ("password",    ctypes.c_wchar * 257),
-                ("lm_hash",     ctypes.c_byte * 16),
-                ("ntlm_hash",   ctypes.c_byte * 16)
+                ("username",    ctypes.c_wchar * WINDOWS_MAX_USERNAME_PASS_LENGTH),
+                ("password",    ctypes.c_wchar * WINDOWS_MAX_USERNAME_PASS_LENGTH),
+                ("lm_hash",     ctypes.c_byte * LM_NTLM_HASH_LENGTH),
+                ("ntlm_hash",   ctypes.c_byte * LM_NTLM_HASH_LENGTH)
             ]

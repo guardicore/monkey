@@ -188,4 +188,4 @@ Dependency | License | Notes
  winbind | GPL-3 
  pyinstaller | GPL 
  Celery | BSD 
- mimikatz | CC BY 4.0 | We use an altered version of mimikatz. Original: https://github.com/gentilkiwi/mimikatz
+ mimikatz | CC BY 4.0 | We use an altered version of mimikatz: https://github.com/guardicore/mimikatz
