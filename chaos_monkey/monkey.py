@@ -105,6 +105,9 @@ class ChaosMonkey(object):
             ControlClient.keepalive()
             ControlClient.load_control_config()
 
+            LOG.debug("Users to try: %s" % str(WormConfiguration.exploit_user_list))
+            LOG.debug("Passwords to try: %s" % str(WormConfiguration.exploit_password_list))
+
             self._network.initialize()
 
             self._exploiters = [exploiter() for exploiter in WormConfiguration.exploiter_classes]

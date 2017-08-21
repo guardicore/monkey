@@ -153,8 +153,8 @@ See the [LICENSE](LICENSE) file for license rights and limitations (GPLv3).
 Dependent packages
 ---------------------
 
-Dependency | License |
-----------------------------|----------------------------
+Dependency | License | Notes
+----------------------------|----------------------------|----------------------------
  libffi-dev | https://github.com/atgreen/libffi/blob/master/LICENSE 
  PyCrypto | Public domain 
  upx | Custom license, http://upx.sourceforge.net/upx-license.html
@@ -188,3 +188,4 @@ Dependency | License |
  winbind | GPL-3 
  pyinstaller | GPL 
  Celery | BSD 
+ mimikatz | CC BY 4.0 | We use an altered version of mimikatz made by gentilkiwi: https://github.com/guardicore/mimikatz

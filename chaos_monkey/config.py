@@ -4,6 +4,7 @@ from network.range import FixedRange, RelativeRange, ClassCRange
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger
 from abc import ABCMeta
+from itertools import product
 import uuid
 import types
 
@@ -12,7 +13,6 @@ __author__ = 'itamar'
 GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
-
 
 def _cast_by_example(value, example):
     """
@@ -204,16 +204,16 @@ class Configuration(object):
     ms08_067_remote_user_add = "Monkey_IUSER_SUPPORT"
     ms08_067_remote_user_pass = "Password1!"
 
-    # psexec exploiter
-    psexec_user = "Administrator"
-    psexec_passwords = ["Password1!", "1234", "password", "12345678"]
-
-    # ssh exploiter
-    ssh_users = ["root", 'user']
-    ssh_passwords = ["Password1!", "1234", "password", "12345678"]
-
     # rdp exploiter
     rdp_use_vbs_download = True
+
+    # User and password dictionaries for exploits.
+
+    def get_exploit_user_password_pairs(self):
+        return product(self.exploit_user_list, self.exploit_password_list)
+
+    exploit_user_list = ['Administrator', 'root', 'user']
+    exploit_password_list = ["Password1!", "1234", "password", "12345678"]
 
     # smb/wmi exploiter
     smb_download_timeout = 300 # timeout in seconds
@@ -222,5 +222,11 @@ class Configuration(object):
     # system info collection
     collect_system_info = True
 
+
+    ###########################
+    # systeminfo config
+    ###########################
+
+    mimikatz_dll_name = "mk.dll"
 
 WormConfiguration = Configuration()
