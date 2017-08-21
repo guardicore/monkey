@@ -209,8 +209,7 @@ class Configuration(object):
 
     # User and password dictionaries for exploits.
 
-    @property
-    def exploit_user_password_pairs(self):
+    def get_exploit_user_password_pairs(self):
         return product(self.exploit_user_list, self.exploit_password_list)
 
     exploit_user_list = ['Administrator', 'root', 'user']
