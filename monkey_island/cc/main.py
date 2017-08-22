@@ -11,6 +11,7 @@ from flask.ext.pymongo import PyMongo
 from flask import make_response
 import socket
 import bson.json_util
+from bson import ObjectId
 import json
 from datetime import datetime, timedelta
 import dateutil.parser
@@ -420,6 +421,22 @@ class NetMap(restful.Resource):
             }
 
 
+class Edge(restful.Resource):
+    def get(self):
+        id = request.args.get('id')
+        to = request.args.get('to')
+        if id:
+            edge = mongo.db.edge.find({"_id": ObjectId(id)})[0]
+            return {"edge": edge}
+        if to:
+            edges = mongo.db.edge.find({"to": ObjectId(to)})
+            new_edges = []
+            # TODO: find better solution for this
+            for i in range(edges.count()):
+                new_edges.append(edges[i])
+            return {"edges": new_edges}
+        return {}
+
 def normalize_obj(obj):
     if obj.has_key('_id') and not obj.has_key('id'):
         obj['id'] = obj['_id']
@@ -579,6 +596,7 @@ api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry
 api.add_resource(NewConfig, '/api/config/new', '/api/config/new/')
 api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/', '/api/monkey/download/<string:path>')
 api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
+api.add_resource(Edge, '/api/edge', '/api/edge/')
 
 if __name__ == '__main__':
     from tornado.wsgi import WSGIContainer
