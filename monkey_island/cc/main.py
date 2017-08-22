@@ -189,7 +189,8 @@ class Telemetry(restful.Resource):
                                            upsert=False)
                 else:
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$unset': {'tunnel_guid': ''}, 'modifytime': datetime.now()},
+                                           {'$unset': {'tunnel_guid': ''},
+                                            '$set': {'modifytime': datetime.now()}},
                                            upsert=False)
             elif telemetry_json.get('telem_type') == 'state':
                 if telemetry_json['data']['done']:
@@ -200,7 +201,30 @@ class Telemetry(restful.Resource):
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
                                            {'$set': {'dead': False, 'modifytime': datetime.now()}},
                                            upsert=False)
-        except:
+            elif telemetry_json.get('telem_type') == 'scan':
+                dst_ip = telemetry_json['data']['machine']['ip_addr']
+                src_monkey = mongo.db.monkey.find_one({"guid": telemetry_json['monkey_guid']})
+                dst_monkey = mongo.db.monkey.find_one({"ip_addresses": dst_ip})
+                if dst_monkey:
+                    edge = mongo.db.edges.find_one({"from": src_monkey["_id"], "to": dst_monkey["_id"]})
+
+                    if edge is None:
+                        edge = self.insert_edge(src_monkey["_id"], dst_monkey["_id"])
+
+                else:
+                    dst_node = mongo.db.nodes.find_one({"ip_addresses": dst_ip})
+                    if dst_node is None:
+                        dst_node_insert_result = mongo.db.nodes.insert_one({"ip_addresses": [dst_ip]})
+                        dst_node = mongo.db.nodes.find_one({"_id": dst_node_insert_result.inserted_id})
+
+                    edge = mongo.db.edges.find_one({"from": src_monkey["_id"], "to": dst_node["_id"]})
+
+                    if edge is None:
+                        edge = self.insert_edge(src_monkey["_id"], dst_node["_id"])
+
+                self.add_scan_to_edge(edge, telemetry_json)
+
+        except StandardError as e:
             pass
 
         # Update credentials DB
@@ -216,6 +240,29 @@ class Telemetry(restful.Resource):
             print("Exception caught while updating DB credentials: %s" % str(ex))
 
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
+
+    def add_scan_to_edge(self, edge, telemetry_json):
+        data = telemetry_json['data']['machine']
+        data.pop("ip_addr")
+        new_scan = \
+            {
+                "timestamp": telemetry_json["timestamp"],
+                "data": data,
+                "scanner": telemetry_json['data']['scanner']
+            }
+        mongo.db.edges.update(
+            {"_id": edge["_id"]},
+            {"$push": {"scans": new_scan}}
+        )
+
+    def insert_edge(self, from_id, to_id):
+        edge_insert_result = mongo.db.edges.insert_one(
+            {
+                "from": from_id,
+                "to": to_id,
+                "scans": []
+            })
+        return mongo.db.edges.find_one({"_id": edge_insert_result.inserted_id})
 
 
 class LocalRun(restful.Resource):
@@ -281,6 +328,8 @@ class Root(restful.Resource):
             mongo.db.telemetry.drop()
             mongo.db.usernames.drop()
             mongo.db.passwords.drop()
+            mongo.db.nodes.drop()
+            mongo.db.edges.drop()
             init_db()
             return {
                 'status': 'OK',
