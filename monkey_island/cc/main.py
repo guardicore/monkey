@@ -145,9 +145,23 @@ class Monkey(restful.Resource):
         else:
             monkey_json['parent'] = db_monkey.get('parent') + [parent_to_add]
 
-        return mongo.db.monkey.update({"guid": monkey_json["guid"]},
-                                      {"$set": monkey_json},
-                                      upsert=True)
+        mongo.db.monkey.update({"guid": monkey_json["guid"]},
+                               {"$set": monkey_json},
+                               upsert=True)
+
+        # Merge existing scanned node with new monkey
+
+        new_monkey_id = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})["_id"]
+
+        existing_node = mongo.db.node.find_one({"ip_addresses": {"$in": monkey_json["ip_addresses"]}})
+
+        if existing_node:
+            id = existing_node["_id"]
+            for edge in mongo.db.edge.find({"to": id}):
+                mongo.db.edge.update({"_id": edge["_id"]}, {"$set": {"to": new_monkey_id}})
+            mongo.db.node.remove({"_id": id})
+
+        return {new_monkey_id}
 
 
 class Telemetry(restful.Resource):
@@ -206,18 +220,18 @@ class Telemetry(restful.Resource):
                 src_monkey = mongo.db.monkey.find_one({"guid": telemetry_json['monkey_guid']})
                 dst_monkey = mongo.db.monkey.find_one({"ip_addresses": dst_ip})
                 if dst_monkey:
-                    edge = mongo.db.edges.find_one({"from": src_monkey["_id"], "to": dst_monkey["_id"]})
+                    edge = mongo.db.edge.find_one({"from": src_monkey["_id"], "to": dst_monkey["_id"]})
 
                     if edge is None:
                         edge = self.insert_edge(src_monkey["_id"], dst_monkey["_id"])
 
                 else:
-                    dst_node = mongo.db.nodes.find_one({"ip_addresses": dst_ip})
+                    dst_node = mongo.db.node.find_one({"ip_addresses": dst_ip})
                     if dst_node is None:
-                        dst_node_insert_result = mongo.db.nodes.insert_one({"ip_addresses": [dst_ip]})
-                        dst_node = mongo.db.nodes.find_one({"_id": dst_node_insert_result.inserted_id})
+                        dst_node_insert_result = mongo.db.node.insert_one({"ip_addresses": [dst_ip]})
+                        dst_node = mongo.db.node.find_one({"_id": dst_node_insert_result.inserted_id})
 
-                    edge = mongo.db.edges.find_one({"from": src_monkey["_id"], "to": dst_node["_id"]})
+                    edge = mongo.db.edge.find_one({"from": src_monkey["_id"], "to": dst_node["_id"]})
 
                     if edge is None:
                         edge = self.insert_edge(src_monkey["_id"], dst_node["_id"])
@@ -250,19 +264,19 @@ class Telemetry(restful.Resource):
                 "data": data,
                 "scanner": telemetry_json['data']['scanner']
             }
-        mongo.db.edges.update(
+        mongo.db.edge.update(
             {"_id": edge["_id"]},
             {"$push": {"scans": new_scan}}
         )
 
     def insert_edge(self, from_id, to_id):
-        edge_insert_result = mongo.db.edges.insert_one(
+        edge_insert_result = mongo.db.edge.insert_one(
             {
                 "from": from_id,
                 "to": to_id,
                 "scans": []
             })
-        return mongo.db.edges.find_one({"_id": edge_insert_result.inserted_id})
+        return mongo.db.edge.find_one({"_id": edge_insert_result.inserted_id})
 
 
 class LocalRun(restful.Resource):
@@ -328,8 +342,8 @@ class Root(restful.Resource):
             mongo.db.telemetry.drop()
             mongo.db.usernames.drop()
             mongo.db.passwords.drop()
-            mongo.db.nodes.drop()
-            mongo.db.edges.drop()
+            mongo.db.node.drop()
+            mongo.db.edge.drop()
             init_db()
             return {
                 'status': 'OK',
@@ -343,6 +357,67 @@ class Root(restful.Resource):
         else:
             return {'status': 'BAD',
                     'reason': 'unknown action'}
+
+
+class NetMap(restful.Resource):
+    def get(self, **kw):
+        monkeys = [self.monkey_to_net_node(x) for x in mongo.db.monkey.find({})]
+        nodes = [self.node_to_net_node(x) for x in mongo.db.node.find({})]
+        edges = [self.edge_to_net_edge(x) for x in mongo.db.edge.find({})]
+
+        return \
+            {
+                "nodes": monkeys + nodes,
+                "edges": edges
+            }
+
+    def monkey_to_net_node(self, monkey):
+        os = "unknown"
+        if monkey["description"].lower().find("linux") != -1:
+            os = "linux"
+        elif monkey["description"].lower().find("windows") != -1:
+            os = "windows"
+
+        manual_run = (monkey["parent"][0][1] == None)
+        return \
+            {
+                "id": monkey["_id"],
+                "label": monkey["hostname"] + " : " + monkey["ip_addresses"][0],
+                "group": ("manuallyInfected" if manual_run else "infected"),
+                "os": os,
+                "dead": monkey["dead"],
+            }
+
+    def node_to_net_node(self, node):
+        os_version = "undefined"
+        os_type = "undefined"
+        found = False
+        for edge in mongo.db.edge.find({"to": node["_id"]}):
+            for scan in edge["scans"]:
+                if scan["scanner"] != "TcpScanner":
+                    continue
+                os_type = scan["data"]["os"]["type"]
+                if scan["data"]["os"].has_key("version"):
+                    os_version = scan["data"]["os"]["version"]
+                    found = True
+                    break
+            if found:
+                break
+
+        return \
+            {
+                "id": node["_id"],
+                "label": os_version + " : " + node["ip_addresses"][0],
+                "group": "clean",
+                "os": os_type
+            }
+    def edge_to_net_edge(self, edge):
+        return \
+            {
+                "id": edge["_id"],
+                "from": edge["from"],
+                "to": edge["to"]
+            }
 
 
 def normalize_obj(obj):
@@ -501,8 +576,9 @@ api.add_resource(Root, '/api')
 api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
 api.add_resource(LocalRun, '/api/island', '/api/island/')
 api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry/<string:monkey_guid>')
-api.add_resource(NewConfig, '/api/config/new')
+api.add_resource(NewConfig, '/api/config/new', '/api/config/new/')
 api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/', '/api/monkey/download/<string:path>')
+api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
 
 if __name__ == '__main__':
     from tornado.wsgi import WSGIContainer
