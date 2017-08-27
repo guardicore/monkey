@@ -6,6 +6,7 @@ import shutil
 import pprint
 import logging
 import subprocess
+import argparse
 from ctypes import c_char_p
 from model import MONKEY_CMDLINE
 from config import WormConfiguration
@@ -24,14 +25,27 @@ MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
 class MonkeyDrops(object):
     def __init__(self, args):
-        self._monkey_args = args[1:]
+        arg_parser = argparse.ArgumentParser()
+        arg_parser.add_argument('-p', '--parent')
+        arg_parser.add_argument('-t', '--tunnel')
+        arg_parser.add_argument('-s', '--server')
+        arg_parser.add_argument('-d', '--depth')
+        arg_parser.add_argument('-l', '--location')
+        self.monkey_args = args[1:]
+        self.opts, _ = arg_parser.parse_known_args(args)
+
         self._config = {'source_path': os.path.abspath(sys.argv[0]),
-                        'destination_path': args[0]}
+                        'destination_path': self.opts.location}
 
     def initialize(self):
         LOG.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
 
     def start(self):
+
+        if self._config['destination_path'] is None:
+            # TODO: log or something.
+            return
+
         # we copy/move only in case path is different
         file_moved = (self._config['source_path'].lower() == self._config['destination_path'].lower())
 
@@ -81,8 +95,16 @@ class MonkeyDrops(object):
         monkey_cmdline = MONKEY_CMDLINE % {'monkey_path': self._config['destination_path'],
                                            }
 
-        if 0 != len(self._monkey_args):
-            monkey_cmdline = "%s %s" % (monkey_cmdline, " ".join(self._monkey_args))
+
+        if self.opts.parent:
+            monkey_cmdline += "-p %s" % self.opts.parent
+        if self.opts.tunnel:
+            monkey_cmdline += "-t %s" % self.opts.tunnel
+        if self.opts.server:
+            monkey_cmdline += "-s %s" % self.opts.server
+        if self.opts.depth:
+            monkey_cmdline += "-d %s" % self.opts.depth
+            
         monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=DETACHED_PROCESS)
