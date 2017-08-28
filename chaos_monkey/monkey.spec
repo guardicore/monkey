@@ -3,7 +3,7 @@ import os
 import platform
 a = Analysis(['main.py'],
              pathex=['.'],
-             hiddenimports=['_cffi_backend', 'queue','grequests'],
+             hiddenimports=['_cffi_backend', 'queue'],
              hookspath=None,
              runtime_hooks=None)
 
