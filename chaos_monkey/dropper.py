@@ -8,7 +8,7 @@ import logging
 import subprocess
 import argparse
 from ctypes import c_char_p
-from model import MONKEY_CMDLINE
+from model import MONKEY_CMDLINE, MONKEY_CMDLINE_LINUX
 from config import WormConfiguration
 from system_info import SystemInfoCollector, OperatingSystem
 
@@ -96,7 +96,7 @@ class MonkeyDrops(object):
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             monkey_cmdline = MONKEY_CMDLINE % {'monkey_path': self._config['destination_path']}
         else:
-            monkey_cmdline = MONKEY_CMDLINE % {'monkey_path': self._config['destination_path']}
+            monkey_cmdline = MONKEY_CMDLINE_LINUX % {'monkey_path': self._config['destination_path']}
 
 
         if self.opts.parent:
