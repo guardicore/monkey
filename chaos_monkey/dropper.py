@@ -10,6 +10,7 @@ import argparse
 from ctypes import c_char_p
 from model import MONKEY_CMDLINE
 from config import WormConfiguration
+from system_info import SystemInfoCollector, OperatingSystem
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -92,19 +93,21 @@ class MonkeyDrops(object):
                 except:
                     LOG.warn("Cannot set reference date to destination file")
 
-        monkey_cmdline = MONKEY_CMDLINE % {'monkey_path': self._config['destination_path'],
-                                           }
+        if OperatingSystem.Windows == SystemInfoCollector.get_os():
+            monkey_cmdline = MONKEY_CMDLINE % {'monkey_path': self._config['destination_path']}
+        else:
+            monkey_cmdline = MONKEY_CMDLINE % {'monkey_path': self._config['destination_path']}
 
 
         if self.opts.parent:
-            monkey_cmdline += "-p %s" % self.opts.parent
+            monkey_cmdline += " -p %s" % self.opts.parent
         if self.opts.tunnel:
-            monkey_cmdline += "-t %s" % self.opts.tunnel
+            monkey_cmdline += " -t %s" % self.opts.tunnel
         if self.opts.server:
-            monkey_cmdline += "-s %s" % self.opts.server
+            monkey_cmdline += " -s %s" % self.opts.server
         if self.opts.depth:
-            monkey_cmdline += "-d %s" % self.opts.depth
-            
+            monkey_cmdline += " -d %s" % self.opts.depth
+
         monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=DETACHED_PROCESS)

