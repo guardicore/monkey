@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from flask import request
+from flask import request, make_response, jsonify
 import flask_restful
 
 from cc.database import mongo
 
-from cc.utils import init_collections
+from cc.utils import init_collections, local_ip_addresses
 
 __author__ = 'Barak'
 
@@ -14,11 +14,10 @@ class Root(flask_restful.Resource):
     def get(self, action=None):
         if not action:
             action = request.args.get('action')
+
         if not action:
-            return {
-                'status': 'OK',
-                'mongo': str(mongo.db),
-            }
+            return jsonify(ip=local_ip_addresses()[0], mongo=str(mongo.db))
+
         elif action == "reset":
             mongo.db.config.drop()
             mongo.db.monkey.drop()
@@ -28,15 +27,10 @@ class Root(flask_restful.Resource):
             mongo.db.node.drop()
             mongo.db.edge.drop()
             init_collections()
-            return {
-                'status': 'OK',
-            }
+            return jsonify(status='OK')
         elif action == "killall":
             mongo.db.monkey.update({}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}}, upsert=False,
                                    multi=True)
-            return {
-                'status': 'OK',
-            }
+            return 200
         else:
-            return {'status': 'BAD',
-                    'reason': 'unknown action'}
+            return make_response(400, {'error': 'unknown action'})

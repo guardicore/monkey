@@ -8,7 +8,7 @@ if BASE_PATH not in sys.path:
     sys.path.insert(0, BASE_PATH)
 
 from cc.app import init_app
-from cc.utils import init_collections
+from cc.utils import init_collections, local_ip_addresses
 
 ISLAND_PORT = 5000
 DEFAULT_MONGO_URL = "mongodb://localhost:27017/monkeyisland"
@@ -29,5 +29,6 @@ if __name__ == '__main__':
                              ssl_options={'certfile': os.environ.get('SERVER_CRT', 'server.crt'),
                                           'keyfile': os.environ.get('SERVER_KEY', 'server.key')})
     http_server.listen(ISLAND_PORT)
+    print('Monkey Island C&C Server is running on https://{}:{}'.format(local_ip_addresses()[0], ISLAND_PORT))
     IOLoop.instance().start()
     # app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))

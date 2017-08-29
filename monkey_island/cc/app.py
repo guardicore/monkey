@@ -8,7 +8,7 @@ from cc.database import mongo
 from cc.resources.monkey import Monkey
 from cc.resources.local_run import LocalRun
 from cc.resources.telemetry import Telemetry
-from cc.resources.new_config import NewConfig
+from cc.resources.monkey_configuration import MonkeyConfiguration
 from cc.resources.monkey_download import MonkeyDownload
 from cc.resources.netmap import NetMap
 from cc.resources.edge import Edge
@@ -17,12 +17,13 @@ from cc.resources.root import Root
 __author__ = 'Barak'
 
 
-def send_admin(path):
-    return send_from_directory('admin/ui', path)
+def serve_static_file(path):
+    print 'requested', path
+    return send_from_directory('ui/dist', path)
 
 
-def send_to_default():
-    return redirect('/admin/index.html')
+def serve_home():
+    return serve_static_file('index.html')
 
 
 def normalize_obj(obj):
@@ -44,30 +45,22 @@ def normalize_obj(obj):
     return obj
 
 
-def output_json(obj, code, headers=None):
-    obj = normalize_obj(obj)
-    resp = make_response(bson.json_util.dumps(obj), code)
-    resp.headers.extend(headers or {})
-    return resp
-
-
 def init_app(mongo_url):
     app = Flask(__name__)
 
     api = flask_restful.Api(app)
-    api.representations = {'application/json': output_json}
 
     app.config['MONGO_URI'] = mongo_url
     mongo.init_app(app)
 
-    app.add_url_rule('/', 'send_to_default', send_to_default)
-    app.add_url_rule('/admin/<path:path>', 'send_admin', send_admin)
+    app.add_url_rule('/', 'serve_home', serve_home)
+    app.add_url_rule('/<path:path>', 'serve_static_file', serve_static_file)
 
     api.add_resource(Root, '/api')
     api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
     api.add_resource(LocalRun, '/api/island', '/api/island/')
     api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry/<string:monkey_guid>')
-    api.add_resource(NewConfig, '/api/config/new', '/api/config/new/')
+    api.add_resource(MonkeyConfiguration, '/api/configuration', '/api/configuration/')
     api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/',
                           '/api/monkey/download/<string:path>')
     api.add_resource(NetMap, '/api/netmap', '/api/netmap/')

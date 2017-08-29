@@ -4,6 +4,8 @@ import sys
 import array
 
 import struct
+from netifaces import interfaces, ifaddresses, AF_INET
+
 from cc.database import mongo
 
 __author__ = 'Barak'
@@ -75,3 +77,11 @@ else:
         finally:
             return result
 # End of local ips function
+
+
+def local_ip_addresses():
+    ip_list = []
+    for interface in interfaces():
+        addresses = ifaddresses(interface).get(AF_INET, [])
+        ip_list.extend([link['addr'] for link in addresses if link['addr'] != '127.0.0.1'])
+    return ip_list
