@@ -16,7 +16,7 @@ class Root(flask_restful.Resource):
             action = request.args.get('action')
 
         if not action:
-            return jsonify(ip=local_ip_addresses()[0], mongo=str(mongo.db))
+            return jsonify(ips=local_ip_addresses(), mongo=str(mongo.db))
 
         elif action == "reset":
             mongo.db.config.drop()

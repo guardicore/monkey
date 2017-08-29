@@ -22,3 +22,8 @@ class Edge(flask_restful.Resource):
                 new_edges.append(edges[i])
             return {"edges": new_edges}
         return {}
+
+
+class Node(flask_restful.Resource):
+    def get(self):
+        pass

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-import bson
+from bson.json_util import dumps
 from flask import Flask, send_from_directory, redirect, make_response
 import flask_restful
 
@@ -11,7 +11,8 @@ from cc.resources.telemetry import Telemetry
 from cc.resources.monkey_configuration import MonkeyConfiguration
 from cc.resources.monkey_download import MonkeyDownload
 from cc.resources.netmap import NetMap
-from cc.resources.edge import Edge
+from cc.resources.edge import Edge, Node
+
 from cc.resources.root import Root
 
 __author__ = 'Barak'
@@ -19,6 +20,8 @@ __author__ = 'Barak'
 
 def serve_static_file(path):
     print 'requested', path
+    if path.startswith('api/'):
+        return make_response(404)
     return send_from_directory('ui/dist', path)
 
 
@@ -45,10 +48,18 @@ def normalize_obj(obj):
     return obj
 
 
+def output_json(obj, code, headers=None):
+    obj = normalize_obj(obj)
+    resp = make_response(dumps(obj), code)
+    resp.headers.extend(headers or {})
+    return resp
+
+
 def init_app(mongo_url):
     app = Flask(__name__)
 
     api = flask_restful.Api(app)
+    api.representations = {'application/json': output_json}
 
     app.config['MONGO_URI'] = mongo_url
     mongo.init_app(app)
@@ -64,6 +75,7 @@ def init_app(mongo_url):
     api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/',
                           '/api/monkey/download/<string:path>')
     api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
-    api.add_resource(Edge, '/api/edge', '/api/edge/')
+    api.add_resource(Edge, '/api/netmap/edge', '/api/netmap/edge/')
+    api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
 
     return app
