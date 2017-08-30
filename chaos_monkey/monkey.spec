@@ -7,6 +7,10 @@ a = Analysis(['main.py'],
              hookspath=None,
              runtime_hooks=None)
 
+             
+a.binaries  += [('sc_monkey_runner32.so', '.\\bin\\sc_monkey_runner32.so', 'BINARY')]
+a.binaries  += [('sc_monkey_runner64.so', '.\\bin\\sc_monkey_runner64.so', 'BINARY')]
+
 if platform.system().find("Windows")>= 0:
     a.datas = [i for i in a.datas if i[0].find('Include') < 0]
     if platform.architecture()[0] == "32bit":

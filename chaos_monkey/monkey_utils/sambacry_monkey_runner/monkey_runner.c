@@ -6,16 +6,31 @@
 
 #include "monkey_runner.h"
 
+#if __x86_64__
+	#define ARC_IS_64
+#endif
+
+#if _____LP64_____
+	#define ARC_IS_64
+#endif
+
 #define LINE_MAX_LENGTH (2048)
 #define MAX_PARAMETERS (30)
 
 int samba_init_module(void)
 {
-	const char RUNNER_FILENAME[] = "monkey_runner.so";
+#if ARC_IS_64
+	const char RUNNER_FILENAME[] = "monkey_runner64.so";
+	const char MONKEY_NAME[] = "monkey64";
+	const char MONKEY_COPY_NAME[] = "monkey64_2";
+#else
+	const char RUNNER_FILENAME[] = "monkey_runner32.so";
+	const char MONKEY_NAME[] = "monkey32";
+	const char MONKEY_COPY_NAME[] = "monkey32_2";
+#endif
+
 	const char COMMANDLINE_FILENAME[] = "monkey_commandline.txt";
 	const char ACCESS_MODE_STRING[] = "0777";
-	const char MONKEY_NAME[] = "monkey";
-	const char MONKEY_COPY_NAME[] = "monkey2";
 	const char RUN_MONKEY_CMD[] = "sudo ./";
 	
 	int found = 0;
