@@ -63,7 +63,7 @@ class Telemetry(flask_restful.Resource):
                     mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
                                            {'$set': {'dead': False, 'modifytime': datetime.now()}},
                                            upsert=False)
-            elif telemetry_json.get('telem_type') == 'scan':
+            elif telemetry_json.get('telem_type') in ['scan', 'exploit']:
                 dst_ip = telemetry_json['data']['machine']['ip_addr']
                 src_monkey = mongo.db.monkey.find_one({"guid": telemetry_json['monkey_guid']})
                 dst_monkey = mongo.db.monkey.find_one({"ip_addresses": dst_ip})
@@ -84,7 +84,10 @@ class Telemetry(flask_restful.Resource):
                     if edge is None:
                         edge = self.insert_edge(src_monkey["_id"], dst_node["_id"])
 
-                self.add_scan_to_edge(edge, telemetry_json)
+                if telemetry_json.get('telem_type') == 'scan':
+                    self.add_scan_to_edge(edge, telemetry_json)
+                else:
+                    self.add_exploit_to_edge(edge, telemetry_json)
 
         except StandardError as e:
             pass
@@ -117,11 +120,26 @@ class Telemetry(flask_restful.Resource):
             {"$push": {"scans": new_scan}}
         )
 
+    def add_exploit_to_edge(self, edge, telemetry_json):
+        data = telemetry_json['data']
+        data["machine"].pop("ip_addr")
+        new_exploit = \
+            {
+                "timestamp": telemetry_json["timestamp"],
+                "data": data,
+                "exploiter": telemetry_json['data']['exploiter']
+            }
+        mongo.db.edge.update(
+            {"_id": edge["_id"]},
+            {"$push": {"exploits": new_exploit}}
+        )
+
     def insert_edge(self, from_id, to_id):
         edge_insert_result = mongo.db.edge.insert_one(
             {
                 "from": from_id,
                 "to": to_id,
-                "scans": []
+                "scans": [],
+                "exploits": []
             })
         return mongo.db.edge.find_one({"_id": edge_insert_result.inserted_id})

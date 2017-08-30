@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import bson
 from bson.json_util import dumps
 from flask import Flask, send_from_directory, redirect, make_response
 import flask_restful
@@ -11,12 +11,14 @@ from cc.resources.telemetry import Telemetry
 from cc.resources.monkey_configuration import MonkeyConfiguration
 from cc.resources.monkey_download import MonkeyDownload
 from cc.resources.netmap import NetMap
-from cc.resources.edge import Edge, Node
+from cc.resources.edge import Edge
+from cc.resources.node import Node
 
 from cc.resources.root import Root
 
 __author__ = 'Barak'
 
+# TODO: separate logic from resources
 
 def serve_static_file(path):
     print 'requested', path
@@ -30,7 +32,7 @@ def serve_home():
 
 
 def normalize_obj(obj):
-    if obj.has_key('_id') and not obj.has_key('id'):
+    if '_id' in obj and not 'id' in obj:
         obj['id'] = obj['_id']
         del obj['_id']
 

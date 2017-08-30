@@ -121,4 +121,4 @@ class Monkey(flask_restful.Resource):
                 mongo.db.edge.update({"_id": edge["_id"]}, {"$set": {"to": new_monkey_id}})
             mongo.db.node.remove({"_id": id})
 
-        return {new_monkey_id}
+        return {"id": new_monkey_id}
