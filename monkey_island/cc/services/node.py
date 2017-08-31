@@ -77,8 +77,12 @@ class NodeService:
 
     @staticmethod
     def get_monkey_manual_run(monkey):
-        # TODO: find better implementation
-        return monkey["parent"][0][1] == None
+        for p in monkey["parent"]:
+            if p[0] != monkey["guid"]:
+                return False
+
+        return True
+
 
     @staticmethod
     def get_monkey_label(monkey):

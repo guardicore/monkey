@@ -13,6 +13,6 @@ class Node(flask_restful.Resource):
     def get(self):
         node_id = request.args.get('id')
         if node_id:
-            return NodeService.get_displayed_node_by_id(request.args.get('node_id'))
+            return NodeService.get_displayed_node_by_id(node_id)
 
         return {}
