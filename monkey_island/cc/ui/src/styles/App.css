@@ -141,6 +141,16 @@ body {
 }
 
 /*
+ * Run Monkey Page
+ */
+
+.inline-select {
+  display: inline-block !important;
+  width: 130px !important;
+  margin-left: 1em;
+}
+
+/*
  * Map Preview Pane
  */
 

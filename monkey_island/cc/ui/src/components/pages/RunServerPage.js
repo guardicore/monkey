@@ -11,7 +11,7 @@ class RunServerPageComponent extends React.Component {
   componentDidMount() {
     fetch('/api')
       .then(res => res.json())
-      .then(res => this.setState({ip: res.ips.join(', ')}));
+      .then(res => this.setState({ip: res['ip_addresses'][0]}));
   }
 
   render() {

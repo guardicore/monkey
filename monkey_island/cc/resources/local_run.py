@@ -3,7 +3,7 @@ import os
 from shutil import copyfile
 
 import sys
-from flask import request
+from flask import request, jsonify, make_response
 import flask_restful
 
 from cc.resources.monkey_download import get_monkey_executable
@@ -47,16 +47,14 @@ def run_local_monkey(island_address):
 
 class LocalRun(flask_restful.Resource):
     def get(self):
-        req_type = request.args.get('type')
-        if req_type == "interfaces":
-            return {"interfaces": local_ips()}
-        else:
-            return {"message": "unknown action"}
+        # TODO implement is_running from db monkeys collection
+        return jsonify(is_running=False)
 
     def post(self):
-        action_json = json.loads(request.data)
-        if 'action' in action_json:
-            if action_json["action"] == "monkey" and action_json.get("island_address") is not None:
-                return {"res": run_local_monkey(action_json.get("island_address"))}
+        body = json.loads(request.data)
+        if body.get('action') == 'run' and body.get('ip') is not None:
+            local_run = run_local_monkey(island_address=body.get('ip'))
+            return jsonify(is_running=local_run[0])
 
-        return {"res": (False, "Unknown action")}
+        # default action
+        return make_response({'error': 'Invalid action'}, 500)

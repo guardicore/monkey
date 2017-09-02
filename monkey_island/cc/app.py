@@ -71,7 +71,7 @@ def init_app(mongo_url):
 
     api.add_resource(Root, '/api')
     api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
-    api.add_resource(LocalRun, '/api/island', '/api/island/')
+    api.add_resource(LocalRun, '/api/local-monkey', '/api/local-monkey/')
     api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry/<string:monkey_guid>')
     api.add_resource(MonkeyConfiguration, '/api/configuration', '/api/configuration/')
     api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/',

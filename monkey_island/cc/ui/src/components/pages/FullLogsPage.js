@@ -29,7 +29,7 @@ const RowRenderer = React.createClass({
   //
   // render() {
   //   return (
-  //     <div style={{height: this.height}} onClick={this.onClick()}>
+  //     <div style={{height: this.height}} onClick={this.onClick}>
   //       <Icon name="expand" className="pull-right"/>
   //       <Row style={{minHeight: '100px'}} ref={ node => this.row = node } {...this.props}/>
   //     </div>
