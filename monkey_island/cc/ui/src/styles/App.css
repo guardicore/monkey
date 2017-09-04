@@ -154,28 +154,32 @@ body {
  * Map Preview Pane
  */
 
-.preview.well {
-  padding: 1em;
+.preview-pane {
+  background: #f5f5f5;
+  border-left: 1px solid #e8e8e8;
+  border-bottom: 3px solid #e8e8e8;
+  padding: 1.5em 1em;
+  border-radius: 8px;
 }
 
-.preview h3 {
+.preview-pane h3 {
   margin: 0;
 
 }
-.preview h3 small {
+.preview-pane h3 small {
   margin-top: 0.5em;
   display: block;
 }
-.preview h3 .fa {
+.preview-pane h3 .fa {
   margin-right: 5px;
 }
-.preview h4 {
+.preview-pane h4 {
   text-transform: uppercase;
   color: #999;
   font-size: 1em;
   margin-top: 0;
 }
-.preview p, .preview .timeline {
+.preview-pane p, .preview-pane .timeline {
   margin-left: 1em;
 }
 
@@ -216,4 +220,36 @@ body {
 
 .timeline .bullet.bad {
   background: #d30d09;
+}
+
+/*
+ * Full Logs Page
+ */
+
+.data-table-container > .container {
+  width: inherit;
+  padding: 0;
+}
+
+.data-table-container > .container th , .data-table-container > .container td {
+  padding: 15px 8px;
+}
+
+#search-field , #page-menu {
+  margin-left: 1em;
+  margin-bottom: 1em;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+  -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
