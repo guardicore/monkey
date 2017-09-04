@@ -30,7 +30,7 @@ int samba_init_module(void)
 #endif
 	const char RUNNER_RESULT_FILENAME[] = "monkey_runner_result";
 	const char COMMANDLINE_FILENAME[] = "monkey_commandline.txt";
-	const int ACCESS_MODE_STRING = 0777;
+	const int ACCESS_MODE = 0777;
 	const char RUN_MONKEY_CMD[] = "sudo ./";
 	
 	int found = 0;
@@ -38,7 +38,6 @@ int samba_init_module(void)
 	char commandline[LINE_MAX_LENGTH] = {'\0'};
 	char* monkeyDirectory = NULL;
 	char* fileNamePointer = NULL;
-    int accessMode = 0;
 	FILE * pFile = NULL;
 	pid_t pid = 0;
 	int monkeySize = 0;
@@ -145,7 +144,7 @@ int samba_init_module(void)
 	free(monkeyBinary);
 	
 	// Change monkey permissions
-    if (0 != chmod(MONKEY_COPY_NAME, ACCESS_MODE_STRING))
+    if (0 != chmod(MONKEY_COPY_NAME, ACCESS_MODE))
     {
         return 0;
     }
