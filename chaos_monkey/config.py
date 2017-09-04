@@ -223,7 +223,7 @@ class Configuration(object):
     # Timeout (in seconds) for sambacry's trigger to yield results.
     sambacry_trigger_timeout = 5
     # Folder paths to guess share lies inside.
-    sambacry_folder_paths_to_guess = ['', '/mnt', '/tmp', '/storage', '/export', '/share', '/shares', '/home']
+    sambacry_folder_paths_to_guess = ['/', '/mnt', '/tmp', '/storage', '/export', '/share', '/shares', '/home']
     # Shares to not check if they're writable.
     sambacry_shares_not_to_check = ["IPC$", "print$"]
     # Name of file which contains the monkey's commandline
