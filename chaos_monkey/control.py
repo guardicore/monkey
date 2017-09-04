@@ -174,22 +174,22 @@ class ControlClient(object):
         if is_windows:
             os = "windows"
             if is_32bit:
-                arc = "x86"
+                arch = "x86"
             else:
-                arc = "amd64"
+                arch = "amd64"
         else:
             os = "linux"
             if is_32bit:
-                arc = "i686"
+                arch = "i686"
             else:
-                arc = "x86_64"
+                arch = "x86_64"
 
         return \
             {
                 "os":
                     {
                         "type": os,
-                        "machine": arc
+                        "machine": arch
                     }
             }
 

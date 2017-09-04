@@ -8,6 +8,8 @@ import logging
 import subprocess
 import argparse
 from ctypes import c_char_p
+
+from exploit.tools import build_monkey_commandline_explicitly
 from model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
 from config import WormConfiguration
 from system_info import SystemInfoCollector, OperatingSystem
@@ -44,7 +46,7 @@ class MonkeyDrops(object):
     def start(self):
 
         if self._config['destination_path'] is None:
-            # TODO: log or something.
+            LOG.error("No destination path specified")
             return
 
         # we copy/move only in case path is different
@@ -93,23 +95,18 @@ class MonkeyDrops(object):
                 except:
                     LOG.warn("Cannot set reference date to destination file")
 
-        monkey_options = ""
-        if self.opts.parent:
-            monkey_options += " -p %s" % self.opts.parent
-        if self.opts.tunnel:
-            monkey_options += " -t %s" % self.opts.tunnel
-        if self.opts.server:
-            monkey_options += " -s %s" % self.opts.server
-        if self.opts.depth:
-            monkey_options += " -d %s" % self.opts.depth
+        monkey_options = build_monkey_commandline_explicitly(
+            self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._config['destination_path']} + monkey_options
         else:
             dest_path = self._config['destination_path']
-            monkey_cmdline = MONKEY_CMDLINE_LINUX % {'monkey_filename': dest_path.split("/")[-1]} + monkey_options
+            # In linux we have a more complex commandline. There's a general outer one, and the inner one which actually
+            # runs the monkey
+            inner_monkey_cmdline = MONKEY_CMDLINE_LINUX % {'monkey_filename': dest_path.split("/")[-1]} + monkey_options
             monkey_cmdline = GENERAL_CMDLINE_LINUX % {'monkey_directory': dest_path[0:dest_path.rfind("/")],
-                                                      'monkey_commandline': monkey_cmdline}
+                                                      'monkey_commandline': inner_monkey_cmdline}
 
         monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
                                           stdin=None, stdout=None, stderr=None,
