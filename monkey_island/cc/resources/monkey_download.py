@@ -20,7 +20,7 @@ MONKEY_DOWNLOADS = [
     },
     {
         'type': 'linux',
-        'filename': 'monkey-linux-32',
+        'filename': 'monkey-linux-64',
     },
     {
         'type': 'windows',

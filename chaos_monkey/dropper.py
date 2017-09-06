@@ -6,9 +6,13 @@ import shutil
 import pprint
 import logging
 import subprocess
+import argparse
 from ctypes import c_char_p
-from model import MONKEY_CMDLINE
+
+from exploit.tools import build_monkey_commandline_explicitly
+from model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
 from config import WormConfiguration
+from system_info import SystemInfoCollector, OperatingSystem
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -24,14 +28,27 @@ MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
 class MonkeyDrops(object):
     def __init__(self, args):
-        self._monkey_args = args[1:]
+        arg_parser = argparse.ArgumentParser()
+        arg_parser.add_argument('-p', '--parent')
+        arg_parser.add_argument('-t', '--tunnel')
+        arg_parser.add_argument('-s', '--server')
+        arg_parser.add_argument('-d', '--depth')
+        arg_parser.add_argument('-l', '--location')
+        self.monkey_args = args[1:]
+        self.opts, _ = arg_parser.parse_known_args(args)
+
         self._config = {'source_path': os.path.abspath(sys.argv[0]),
-                        'destination_path': args[0]}
+                        'destination_path': self.opts.location}
 
     def initialize(self):
         LOG.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
 
     def start(self):
+
+        if self._config['destination_path'] is None:
+            LOG.error("No destination path specified")
+            return
+
         # we copy/move only in case path is different
         file_moved = (self._config['source_path'].lower() == self._config['destination_path'].lower())
 
@@ -78,11 +95,19 @@ class MonkeyDrops(object):
                 except:
                     LOG.warn("Cannot set reference date to destination file")
 
-        monkey_cmdline = MONKEY_CMDLINE % {'monkey_path': self._config['destination_path'],
-                                           }
+        monkey_options = build_monkey_commandline_explicitly(
+            self.opts.parent, self.opts.tunnel, self.opts.server, int(self.opts.depth))
 
-        if 0 != len(self._monkey_args):
-            monkey_cmdline = "%s %s" % (monkey_cmdline, " ".join(self._monkey_args))
+        if OperatingSystem.Windows == SystemInfoCollector.get_os():
+            monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._config['destination_path']} + monkey_options
+        else:
+            dest_path = self._config['destination_path']
+            # In linux we have a more complex commandline. There's a general outer one, and the inner one which actually
+            # runs the monkey
+            inner_monkey_cmdline = MONKEY_CMDLINE_LINUX % {'monkey_filename': dest_path.split("/")[-1]} + monkey_options
+            monkey_cmdline = GENERAL_CMDLINE_LINUX % {'monkey_directory': dest_path[0:dest_path.rfind("/")],
+                                                      'monkey_commandline': inner_monkey_cmdline}
+
         monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=DETACHED_PROCESS)
