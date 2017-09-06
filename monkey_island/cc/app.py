@@ -18,8 +18,6 @@ from cc.resources.root import Root
 
 __author__ = 'Barak'
 
-# TODO: separate logic from resources
-
 def serve_static_file(path):
     print 'requested', path
     if path.startswith('api/'):
@@ -28,6 +26,7 @@ def serve_static_file(path):
 
 
 def serve_home():
+    # TODO: remove this or merge with frontend.
     return serve_static_file('index.html')
 
 
@@ -75,7 +74,7 @@ def init_app(mongo_url):
     api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry/<string:monkey_guid>')
     api.add_resource(MonkeyConfiguration, '/api/configuration', '/api/configuration/')
     api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/',
-                          '/api/monkey/download/<string:path>')
+                     '/api/monkey/download/<string:path>')
     api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
     api.add_resource(Edge, '/api/netmap/edge', '/api/netmap/edge/')
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')

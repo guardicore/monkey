@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timedelta
 
-import dateutil
+import dateutil.parser
 from flask import request
 import flask_restful
 
@@ -116,9 +116,9 @@ class Monkey(flask_restful.Resource):
         existing_node = mongo.db.node.find_one({"ip_addresses": {"$in": monkey_json["ip_addresses"]}})
 
         if existing_node:
-            id = existing_node["_id"]
-            for edge in mongo.db.edge.find({"to": id}):
+            node_id = existing_node["_id"]
+            for edge in mongo.db.edge.find({"to": node_id}):
                 mongo.db.edge.update({"_id": edge["_id"]}, {"$set": {"to": new_monkey_id}})
-            mongo.db.node.remove({"_id": id})
+            mongo.db.node.remove({"_id": node_id})
 
         return {"id": new_monkey_id}

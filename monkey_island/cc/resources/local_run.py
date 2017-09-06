@@ -7,8 +7,8 @@ from flask import request, jsonify, make_response
 import flask_restful
 
 from cc.resources.monkey_download import get_monkey_executable
-
-from cc.utils import local_ips
+from cc.island_config import ISLAND_PORT
+from cc.services.node import NodeService
 
 __author__ = 'Barak'
 
@@ -21,7 +21,7 @@ def run_local_monkey(island_address):
     # get the monkey executable suitable to run on the server
     result = get_monkey_executable(platform.system().lower(), platform.machine().lower())
     if not result:
-        return (False, "OS Type not found")
+        return False, "OS Type not found"
 
     monkey_path = os.path.join('binaries', result['filename'])
     target_path = os.path.join(os.getcwd(), result['filename'])
@@ -30,8 +30,8 @@ def run_local_monkey(island_address):
     try:
         copyfile(monkey_path, target_path)
         os.chmod(target_path, stat.S_IRWXU | stat.S_IRWXG)
-    except Exception, exc:
-        return (False, "Copy file failed: %s" % exc)
+    except Exception as exc:
+        return False, "Copy file failed: %s" % exc
 
     # run the monkey
     try:
@@ -39,16 +39,15 @@ def run_local_monkey(island_address):
         if sys.platform == "win32":
             args = "".join(args)
         pid = subprocess.Popen(args, shell=True).pid
-    except Exception, exc:
-        return (False, "popen failed: %s" % exc)
+    except Exception as exc:
+        return False, "popen failed: %s" % exc
 
-    return (True, "pis: %s" % pid)
+    return True, "pis: %s" % pid
 
 
 class LocalRun(flask_restful.Resource):
     def get(self):
-        # TODO implement is_running from db monkeys collection
-        return jsonify(is_running=False)
+        return jsonify(is_running=(NodeService.get_monkey_island_monkey() is not None))
 
     def post(self):
         body = json.loads(request.data)
