@@ -1,4 +1,4 @@
 @title C^&C Server
 @cd cc
-@main.py
+@..\bin\Python27\python main.py
 @pause
