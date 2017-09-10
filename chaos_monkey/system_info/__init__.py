@@ -2,6 +2,7 @@ import sys
 import socket
 import psutil
 from enum import IntEnum
+from network.info import get_host_subnets, local_ips
 
 __author__ = 'uri'
 
@@ -69,3 +70,6 @@ class InfoCollector(object):
                                           }
                 pass
         self.info['process_list'] = processes
+
+    def get_network_info(self):
+        self.info['network'] = {'subnets': get_host_subnets(), 'local_ips': local_ips()}
