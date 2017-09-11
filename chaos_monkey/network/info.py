@@ -11,6 +11,11 @@ from random import randint
 
 
 def get_host_subnets():
+    """
+    Returns a list of subnets visible to host (omitting loopback and auto conf networks)
+    Each subnet item contains the host IP in that network + the subnet.
+    :return: List of dict, keys are "addr" and "subnet"
+    """
     ipv4_nets = [netifaces.ifaddresses(interface)[netifaces.AF_INET]
                  for interface in netifaces.interfaces()
                  if netifaces.AF_INET in netifaces.ifaddresses(interface)
@@ -111,6 +116,11 @@ def get_free_tcp_port(min_range=1000, max_range=65535):
 
 
 def check_internet_access(services):
+    """
+    Checks if any of the services are accessible, over ICMP
+    :param services: List of IPs/hostnames
+    :return: boolean depending on internet access
+    """
     ping_str = "-n 1" if sys.platform.startswith("win") else "-c 1"
     for host in services:
         if os.system("ping " + ping_str + " " + host) == 0:
@@ -119,6 +129,11 @@ def check_internet_access(services):
 
 
 def get_ips_from_interfaces():
+    """
+    Returns a list of IPs accessible in the host in each network interface, in the subnet.
+    Limits to a single class C if the network is larger
+    :return: List of IPs, marked as strings.
+    """
     res = []
     ifs = get_host_subnets()
     for net_interface in ifs:
