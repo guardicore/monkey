@@ -9,6 +9,24 @@ import netifaces
 from subprocess import check_output
 from random import randint
 
+
+def get_host_subnets():
+    ipv4_nets = [netifaces.ifaddresses(interface)[netifaces.AF_INET]
+                 for interface in netifaces.interfaces()
+                 if netifaces.AF_INET in netifaces.ifaddresses(interface)
+                 ]
+    # flatten
+    ipv4_nets = itertools.chain.from_iterable(ipv4_nets)
+    # remove loopback
+    ipv4_nets = [network for network in ipv4_nets if network['addr'] != '127.0.0.1']
+    # remove auto conf
+    ipv4_nets = [network for network in ipv4_nets if not network['addr'].startswith('169.254')]
+    for network in ipv4_nets:
+        if 'broadcast' in network:
+            network.pop('broadcast')
+    return ipv4_nets
+
+
 if sys.platform == "win32":
 
     def local_ips():
@@ -16,39 +34,11 @@ if sys.platform == "win32":
         return socket.gethostbyname_ex(local_hostname)[2]
 
 
-    def get_host_subnets():
-        ipv4_nets = [netifaces.ifaddresses(interface)[netifaces.AF_INET]
-                     for interface in netifaces.interfaces()
-                     if netifaces.AF_INET in netifaces.ifaddresses(interface)
-                     ]
-        # flatten
-        ipv4_nets = itertools.chain.from_iterable(ipv4_nets)
-        # remove loopback
-        ipv4_nets = [network for network in ipv4_nets if network['addr'] != '127.0.0.1']
-        # remove auto conf
-        ipv4_nets = [network for network in ipv4_nets if not network['addr'].startswith('169.254')]
-        return ipv4_nets
-
-
     def get_routes():
         raise NotImplementedError()
 
 else:
     from fcntl import ioctl
-
-
-    def get_host_subnets():
-        ipv4_nets = [netifaces.ifaddresses(interface)[netifaces.AF_INET]
-                     for interface in netifaces.interfaces()
-                     if netifaces.AF_INET in netifaces.ifaddresses(interface)
-                     ]
-        # flatten
-        ipv4_nets = list(itertools.chain.from_iterable(ipv4_nets))
-        # remove loopback
-        ipv4_nets = [network for network in ipv4_nets if network['addr'] != '127.0.0.1']
-        # remove auto conf
-        ipv4_nets = [network for network in ipv4_nets if not network['addr'].startswith('169.254')]
-        return ipv4_nets
 
 
     def local_ips():
