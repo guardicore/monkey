@@ -46,7 +46,11 @@ class InfoCollector(object):
         self.info = {}
 
     def get_hostname(self):
-        self.info['hostname'] = socket.gethostname()
+        """
+        Adds the computer hostname to the system information.
+        :return:
+        """
+        self.info['hostname'] = socket.getfqdn()
 
     def get_process_list(self):
         processes = {}
@@ -72,4 +76,9 @@ class InfoCollector(object):
         self.info['process_list'] = processes
 
     def get_network_info(self):
-        self.info['network'] = {'subnets': get_host_subnets(), 'local_ips': local_ips()}
+        """
+        Adds network information from the host to the system information.
+        Currently returns a list of networks accessible from host, containing host ip and the subnet range.
+        :return: None
+        """
+        self.info['network_info'] = {'networks': get_host_subnets()}
