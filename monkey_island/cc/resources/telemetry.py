@@ -61,11 +61,12 @@ class Telemetry(flask_restful.Resource):
 
     def process_tunnel_telemetry(self, telemetry_json):
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])["_id"]
-        NodeService.unset_all_monkey_tunnels(monkey_id)
         if telemetry_json['data']:
             host = telemetry_json['data'].split(":")[-2].replace("//", "")
             tunnel_host_id = NodeService.get_monkey_by_ip(host)["_id"]
             NodeService.set_monkey_tunnel(monkey_id, tunnel_host_id)
+        else:
+            NodeService.unset_all_monkey_tunnels(monkey_id)
 
     def process_state_telemetry(self, telemetry_json):
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])

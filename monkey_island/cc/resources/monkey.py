@@ -6,8 +6,11 @@ from flask import request
 import flask_restful
 
 from cc.database import mongo
+from cc.services.node import NodeService
 
 __author__ = 'Barak'
+
+# TODO: separate logic from interface
 
 
 def update_dead_monkeys():
@@ -45,19 +48,22 @@ class Monkey(flask_restful.Resource):
     def patch(self, guid):
         monkey_json = json.loads(request.data)
         update = {"$set": {'modifytime': datetime.now()}}
-
+        monkey = NodeService.get_monkey_by_guid(guid)
         if 'keepalive' in monkey_json:
             update['$set']['keepalive'] = dateutil.parser.parse(monkey_json['keepalive'])
         else:
             update['$set']['keepalive'] = datetime.now()
         if 'config' in monkey_json:
             update['$set']['config'] = monkey_json['config']
-        if 'tunnel' in monkey_json:
-            update['$set']['tunnel'] = monkey_json['tunnel']
         if 'config_error' in monkey_json:
             update['$set']['config_error'] = monkey_json['config_error']
 
-        return mongo.db.monkey.update({"guid": guid}, update, upsert=False)
+        if 'tunnel' in monkey_json:
+            host = monkey_json['tunnel'].split(":")[-2].replace("//", "")
+            tunnel_host_id = NodeService.get_monkey_by_ip(host)["_id"]
+            NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_id)
+
+        return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
     def post(self, **kw):
         monkey_json = json.loads(request.data)
@@ -105,6 +111,12 @@ class Monkey(flask_restful.Resource):
         else:
             monkey_json['parent'] = db_monkey.get('parent') + [parent_to_add]
 
+        tunnel_host_id = None
+        if 'tunnel' in monkey_json:
+            host = monkey_json['tunnel'].split(":")[-2].replace("//", "")
+            tunnel_host_id = NodeService.get_monkey_by_ip(host)["_id"]
+            monkey_json.pop('tunnel')
+
         mongo.db.monkey.update({"guid": monkey_json["guid"]},
                                {"$set": monkey_json},
                                upsert=True)
@@ -112,6 +124,9 @@ class Monkey(flask_restful.Resource):
         # Merge existing scanned node with new monkey
 
         new_monkey_id = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})["_id"]
+
+        if tunnel_host_id is not None:
+            NodeService.set_monkey_tunnel(new_monkey_id, tunnel_host_id)
 
         existing_node = mongo.db.node.find_one({"ip_addresses": {"$in": monkey_json["ip_addresses"]}})
 

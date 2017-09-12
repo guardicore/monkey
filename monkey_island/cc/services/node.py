@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from bson import ObjectId
 
 from cc.database import mongo
@@ -121,6 +121,11 @@ class NodeService:
 
     @staticmethod
     def unset_all_monkey_tunnels(monkey_id):
+        mongo.db.monkey.update(
+            {"_id": monkey_id},
+            {'$unset': {'tunnel': ''}},
+            upsert=False)
+
         mongo.db.edge.update(
             {"from": monkey_id, 'tunnel': True},
             {'$set': {'tunnel': False}},
@@ -128,6 +133,11 @@ class NodeService:
 
     @staticmethod
     def set_monkey_tunnel(monkey_id, tunnel_host_id):
+        NodeService.unset_all_monkey_tunnels(monkey_id)
+        mongo.db.monkey.update(
+            {"_id": monkey_id},
+            {'$set': {'tunnel': tunnel_host_id}},
+            upsert=False)
         tunnel_edge = EdgeService.get_or_create_edge(monkey_id, tunnel_host_id)
         mongo.db.edge.update({"_id": tunnel_edge["_id"]},
                              {'$set': {'tunnel': True}},

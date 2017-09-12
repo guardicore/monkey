@@ -115,7 +115,8 @@ class EdgeService:
     def get_monkey_island_pseudo_edges():
         edges = []
         monkey_ids = [x["_id"] for x in mongo.db.monkey.find({}) if "tunnel" not in x]
-        # TODO: find solution for these ids.
+        # We're using fake ids because the frontend graph module requires unique ids.
+        # Collision with real id is improbable.
         count = 0
         for monkey_id in monkey_ids:
             count += 1
