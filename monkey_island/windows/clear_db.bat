@@ -2,4 +2,3 @@
 @pause
 @rmdir /s /q db
 @mkdir db
-@pause
