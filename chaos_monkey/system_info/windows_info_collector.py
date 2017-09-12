@@ -14,6 +14,7 @@ class WindowsInfoCollector(InfoCollector):
     def get_info(self):
         self.get_hostname()
         self.get_process_list()
+        self.get_network_info()
         mimikatz_collector = MimikatzCollector()
         self.info["credentials"] = mimikatz_collector.get_logon_info()
         return self.info

@@ -14,4 +14,5 @@ class LinuxInfoCollector(InfoCollector):
     def get_info(self):
         self.get_hostname()
         self.get_process_list()
+        self.get_network_info()
         return self.info
