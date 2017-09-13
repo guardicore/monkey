@@ -9,12 +9,7 @@ if BASE_PATH not in sys.path:
 
 from cc.app import init_app
 from cc.utils import init_collections, local_ip_addresses
-from cc.island_config import DEFAULT_MONGO_URL, ISLAND_PORT
-
-# TODO: remove this, and get from global config`
-INITIAL_USERNAMES = ['Administrator', 'root', 'user']
-INITIAL_PASSWORDS = ["Password1!", "1234", "password", "12345678"]
-
+from cc.island_config import DEFAULT_MONGO_URL, ISLAND_PORT, INITIAL_USERNAMES, INITIAL_PASSWORDS
 
 if __name__ == '__main__':
     from tornado.wsgi import WSGIContainer
