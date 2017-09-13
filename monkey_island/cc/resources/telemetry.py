@@ -47,8 +47,10 @@ class Telemetry(flask_restful.Resource):
                 self.process_tunnel_telemetry(telemetry_json)
             elif telemetry_json.get('telem_type') == 'state':
                 self.process_state_telemetry(telemetry_json)
-            elif telemetry_json.get('telem_type') in ['scan', 'exploit']:
-                self.process_scan_exploit_telemetry(telemetry_json)
+            elif telemetry_json.get('telem_type') == 'exploit':
+                self.process_exploit_telemetry(telemetry_json)
+            elif telemetry_json.get('telem_type') == 'scan':
+                self.process_scan_telemetry(telemetry_json)
             elif telemetry_json.get('telem_type') == 'system_info_collection':
                 self.process_system_info_telemetry(telemetry_json)
             NodeService.update_monkey_modify_time(monkey["_id"])
@@ -57,6 +59,15 @@ class Telemetry(flask_restful.Resource):
             traceback.print_exc()
 
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
+
+    def get_edge_by_scan_or_exploit_telemetry(self, telemetry_json):
+        dst_ip = telemetry_json['data']['machine']['ip_addr']
+        src_monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
+        dst_node = NodeService.get_monkey_by_ip(dst_ip)
+        if dst_node is None:
+            dst_node = NodeService.get_or_create_node(dst_ip)
+
+        return EdgeService.get_or_create_edge(src_monkey["_id"], dst_node["_id"])
 
     def process_tunnel_telemetry(self, telemetry_json):
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])["_id"]
@@ -74,29 +85,25 @@ class Telemetry(flask_restful.Resource):
         else:
             NodeService.set_monkey_dead(monkey, False)
 
-    def process_scan_exploit_telemetry(self, telemetry_json):
-        dst_ip = telemetry_json['data']['machine']['ip_addr']
-        src_monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
-        dst_node = NodeService.get_monkey_by_ip(dst_ip)
-        if dst_node is None:
-            dst_node = NodeService.get_or_create_node(dst_ip)
+    def process_exploit_telemetry(self, telemetry_json):
+        edge = self.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
+        data = telemetry_json['data']
+        data["machine"].pop("ip_addr")
+        new_exploit = \
+            {
+                "timestamp": telemetry_json["timestamp"],
+                "data": data,
+                "exploiter": telemetry_json['data']['exploiter']
+            }
+        mongo.db.edge.update(
+            {"_id": edge["_id"]},
+            {"$push": {"exploits": new_exploit}}
+        )
+        if data['result']:
+            EdgeService.set_edge_exploited(edge)
 
-        edge = EdgeService.get_or_create_edge(src_monkey["_id"], dst_node["_id"])
-
-        if telemetry_json.get('telem_type') == 'scan':
-            self.add_scan_to_edge(edge, telemetry_json)
-        else:
-            self.add_exploit_to_edge(edge, telemetry_json)
-
-    def process_system_info_telemetry(self, telemetry_json):
-        if 'credentials' in telemetry_json['data']:
-            creds = telemetry_json['data']['credentials']
-            for user in creds:
-                ConfigService.creds_add_username(user)
-                if 'password' in creds[user]:
-                    ConfigService.creds_add_password(creds[user]['password'])
-
-    def add_scan_to_edge(self, edge, telemetry_json):
+    def process_scan_telemetry(self, telemetry_json):
+        edge = self.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
         data = telemetry_json['data']['machine']
         data.pop("ip_addr")
         new_scan = \
@@ -123,17 +130,12 @@ class Telemetry(flask_restful.Resource):
                                          {"$set": {"os.version": scan_os["version"]}},
                                          upsert=False)
 
-    def add_exploit_to_edge(self, edge, telemetry_json):
-        data = telemetry_json['data']
-        data["machine"].pop("ip_addr")
-        new_exploit = \
-            {
-                "timestamp": telemetry_json["timestamp"],
-                "data": data,
-                "exploiter": telemetry_json['data']['exploiter']
-            }
-        mongo.db.edge.update(
-            {"_id": edge["_id"]},
-            {"$push": {"exploits": new_exploit}}
-        )
+    def process_system_info_telemetry(self, telemetry_json):
+        if 'credentials' in telemetry_json['data']:
+            creds = telemetry_json['data']['credentials']
+            for user in creds:
+                ConfigService.creds_add_username(user)
+                if 'password' in creds[user]:
+                    ConfigService.creds_add_password(creds[user]['password'])
+
 

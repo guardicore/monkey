@@ -1,6 +1,7 @@
 from bson import ObjectId
 
 from cc.database import mongo
+import cc.services.node
 
 __author__ = "itay.mizeretz"
 
@@ -99,7 +100,8 @@ class EdgeService:
                 "to": to_id,
                 "scans": [],
                 "exploits": [],
-                "tunnel": False
+                "tunnel": False,
+                "exploited": False
             })
         return mongo.db.edge.find_one({"_id": edge_insert_result.inserted_id})
 
@@ -112,6 +114,16 @@ class EdgeService:
         return tunnel_edge
 
     @staticmethod
+    def generate_pseudo_edge(edge_id, edge_from, edge_to):
+        return \
+            {
+                "id": edge_id,
+                "from": edge_from,
+                "to": edge_to,
+                "group": "island"
+            }
+
+    @staticmethod
     def get_monkey_island_pseudo_edges():
         edges = []
         monkey_ids = [x["_id"] for x in mongo.db.monkey.find({}) if "tunnel" not in x]
@@ -120,13 +132,26 @@ class EdgeService:
         count = 0
         for monkey_id in monkey_ids:
             count += 1
-            edges.append(
-                {
-                    "id": ObjectId(hex(count)[2:].zfill(24)),
-                    "from": monkey_id,
-                    "to": ObjectId("000000000000000000000000")
-                }
-            )
+            edges.append(EdgeService.generate_pseudo_edge(
+                ObjectId(hex(count)[2:].zfill(24)), monkey_id, ObjectId("000000000000000000000000")))
+
+        return edges
+
+    @staticmethod
+    def get_infected_monkey_island_pseudo_edges():
+        monkey = cc.services.node.NodeService.get_monkey_island_monkey()
+        existing_ids = [x["_id"] for x in mongo.db.edge.find({"to": monkey["_id"]})]
+        monkey_ids = [x["_id"] for x in mongo.db.monkey.find({})
+                      if ("tunnel" not in x) and (x["_id"] not in existing_ids)]
+        edges = []
+
+        # We're using fake ids because the frontend graph module requires unique ids.
+        # Collision with real id is improbable.
+        count = 0
+        for monkey_id in monkey_ids:
+            count += 1
+            edges.append(EdgeService.generate_pseudo_edge(
+                ObjectId(hex(count)[2:].zfill(24)), monkey_id, monkey["_id"]))
 
         return edges
 
@@ -134,3 +159,33 @@ class EdgeService:
     def services_to_displayed_services(services):
         # TODO: Consider returning extended information on services.
         return [x + ": " + services[x]["name"] for x in services]
+
+    @staticmethod
+    def edge_to_net_edge(edge):
+        return \
+            {
+                "id": edge["_id"],
+                "from": edge["from"],
+                "to": edge["to"],
+                "group": EdgeService.get_edge_group(edge)
+            }
+
+    @staticmethod
+    def get_edge_group(edge):
+        if edge["exploited"]:
+            return "exploited"
+        if edge["tunnel"]:
+            return "tunnel"
+        if (len(edge["scans"]) > 0) or (len(edge["exploits"]) > 0):
+            return "scan"
+        return "empty"
+
+    @staticmethod
+    def set_edge_exploited(edge):
+        mongo.db.edge.update(
+            {"_id": edge["_id"]},
+            {"$set": {"exploited": True}}
+        )
+
+        cc.services.node.NodeService.set_node_exploited(edge["to"])
+

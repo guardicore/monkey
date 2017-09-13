@@ -89,7 +89,11 @@ class NodeService:
 
     @staticmethod
     def get_monkey_label(monkey):
-        return monkey["hostname"] + " : " + monkey["ip_addresses"][0]
+        label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]
+        ip_addresses = local_ip_addresses()
+        if len(set(monkey["ip_addresses"]).intersection(ip_addresses)) > 0:
+            label = "MonkeyIsland - " + label
+        return label
 
     @staticmethod
     def get_monkey_group(monkey):
@@ -97,6 +101,13 @@ class NodeService:
             return "islandInfected"
 
         return "manuallyInfected" if NodeService.get_monkey_manual_run(monkey) else "infected"
+
+    @staticmethod
+    def get_node_group(node):
+        if node["exploited"]:
+            return "exploited"
+        else:
+            return "clean"
 
     @staticmethod
     def monkey_to_net_node(monkey):
@@ -115,7 +126,7 @@ class NodeService:
             {
                 "id": node["_id"],
                 "label": NodeService.get_node_label(node),
-                "group": "clean",
+                "group": NodeService.get_node_group(node),
                 "os": node["os"]["type"]
             }
 
@@ -148,6 +159,7 @@ class NodeService:
         new_node_insert_result = mongo.db.node.insert_one(
             {
                 "ip_addresses": [ip_address],
+                "exploited": False,
                 "os":
                     {
                         "type": "unknown",
@@ -218,3 +230,10 @@ class NodeService:
         island_node = NodeService.get_monkey_island_pseudo_net_node()
         island_node["ip_addresses"] = local_ip_addresses()
         return island_node
+
+    @staticmethod
+    def set_node_exploited(node_id):
+        mongo.db.node.update(
+            {"_id": node_id},
+            {"$set": {"exploited": True}}
+        )

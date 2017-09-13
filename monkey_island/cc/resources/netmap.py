@@ -11,12 +11,14 @@ class NetMap(flask_restful.Resource):
     def get(self, **kw):
         monkeys = [NodeService.monkey_to_net_node(x) for x in mongo.db.monkey.find({})]
         nodes = [NodeService.node_to_net_node(x) for x in mongo.db.node.find({})]
-        edges = [self.edge_to_net_edge(x) for x in mongo.db.edge.find({})]
-        monkey_island = []
+        edges = [EdgeService.edge_to_net_edge(x) for x in mongo.db.edge.find({})]
+
         if NodeService.get_monkey_island_monkey() is None:
             monkey_island = [NodeService.get_monkey_island_pseudo_net_node()]
-            # TODO: implement when monkey exists on island
             edges += EdgeService.get_monkey_island_pseudo_edges()
+        else:
+            monkey_island = []
+            edges += EdgeService.get_infected_monkey_island_pseudo_edges()
 
         return \
             {
@@ -24,10 +26,4 @@ class NetMap(flask_restful.Resource):
                 "edges": edges
             }
 
-    def edge_to_net_edge(self, edge):
-        return \
-            {
-                "id": edge["_id"],
-                "from": edge["from"],
-                "to": edge["to"]
-            }
+
