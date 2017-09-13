@@ -5,7 +5,7 @@ import flask_restful
 
 from cc.database import mongo
 
-from cc.utils import init_collections, local_ip_addresses
+from cc.utils import local_ip_addresses
 
 __author__ = 'Barak'
 
@@ -22,11 +22,8 @@ class Root(flask_restful.Resource):
             mongo.db.config.drop()
             mongo.db.monkey.drop()
             mongo.db.telemetry.drop()
-            mongo.db.usernames.drop()
-            mongo.db.passwords.drop()
             mongo.db.node.drop()
             mongo.db.edge.drop()
-            init_collections()
             return jsonify(status='OK')
         elif action == "killall":
             mongo.db.monkey.update({}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}}, upsert=False,

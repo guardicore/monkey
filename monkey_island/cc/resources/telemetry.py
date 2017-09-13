@@ -1,13 +1,15 @@
 import json
 from datetime import datetime
+import traceback
 
 import dateutil
 from flask import request
 import flask_restful
 
 from cc.database import mongo
-
-from cc.utils import creds_add_username, creds_add_password
+from cc.services.edge import EdgeService
+from cc.services.node import NodeService
+from cc.services.config import ConfigService
 
 __author__ = 'Barak'
 
@@ -38,75 +40,70 @@ class Telemetry(flask_restful.Resource):
         telemetry_json['timestamp'] = datetime.now()
 
         telem_id = mongo.db.telemetry.insert(telemetry_json)
+        monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
 
-        # update exploited monkeys parent
         try:
             if telemetry_json.get('telem_type') == 'tunnel':
-                if telemetry_json['data']:
-                    host = telemetry_json['data'].split(":")[-2].replace("//", "")
-                    tunnel_host = mongo.db.monkey.find_one({"ip_addresses": host})
-                    mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$set': {'tunnel_guid': tunnel_host.get('guid'),
-                                                     'modifytime': datetime.now()}},
-                                           upsert=False)
-                else:
-                    mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$unset': {'tunnel_guid': ''},
-                                            '$set': {'modifytime': datetime.now()}},
-                                           upsert=False)
+                self.process_tunnel_telemetry(telemetry_json)
             elif telemetry_json.get('telem_type') == 'state':
-                if telemetry_json['data']['done']:
-                    mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$set': {'dead': True, 'modifytime': datetime.now()}},
-                                           upsert=False)
-                else:
-                    mongo.db.monkey.update({"guid": telemetry_json['monkey_guid']},
-                                           {'$set': {'dead': False, 'modifytime': datetime.now()}},
-                                           upsert=False)
-            elif telemetry_json.get('telem_type') in ['scan', 'exploit']:
-                dst_ip = telemetry_json['data']['machine']['ip_addr']
-                src_monkey = mongo.db.monkey.find_one({"guid": telemetry_json['monkey_guid']})
-                dst_monkey = mongo.db.monkey.find_one({"ip_addresses": dst_ip})
-                if dst_monkey:
-                    edge = mongo.db.edge.find_one({"from": src_monkey["_id"], "to": dst_monkey["_id"]})
-
-                    if edge is None:
-                        edge = self.insert_edge(src_monkey["_id"], dst_monkey["_id"])
-
-                else:
-                    dst_node = mongo.db.node.find_one({"ip_addresses": dst_ip})
-                    if dst_node is None:
-                        dst_node_insert_result = mongo.db.node.insert_one({"ip_addresses": [dst_ip]})
-                        dst_node = mongo.db.node.find_one({"_id": dst_node_insert_result.inserted_id})
-
-                    edge = mongo.db.edge.find_one({"from": src_monkey["_id"], "to": dst_node["_id"]})
-
-                    if edge is None:
-                        edge = self.insert_edge(src_monkey["_id"], dst_node["_id"])
-
-                if telemetry_json.get('telem_type') == 'scan':
-                    self.add_scan_to_edge(edge, telemetry_json)
-                else:
-                    self.add_exploit_to_edge(edge, telemetry_json)
-
-        except StandardError as e:
-            pass
-
-        # Update credentials DB
-        try:
-            if (telemetry_json.get('telem_type') == 'system_info_collection') and (telemetry_json['data'].has_key('credentials')):
-                creds = telemetry_json['data']['credentials']
-                for user in creds:
-                    creds_add_username(user)
-
-                    if creds[user].has_key('password'):
-                        creds_add_password(creds[user]['password'])
+                self.process_state_telemetry(telemetry_json)
+            elif telemetry_json.get('telem_type') == 'exploit':
+                self.process_exploit_telemetry(telemetry_json)
+            elif telemetry_json.get('telem_type') == 'scan':
+                self.process_scan_telemetry(telemetry_json)
+            elif telemetry_json.get('telem_type') == 'system_info_collection':
+                self.process_system_info_telemetry(telemetry_json)
+            NodeService.update_monkey_modify_time(monkey["_id"])
         except StandardError as ex:
-            print("Exception caught while updating DB credentials: %s" % str(ex))
+            print("Exception caught while processing telemetry: %s" % str(ex))
+            traceback.print_exc()
 
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
 
-    def add_scan_to_edge(self, edge, telemetry_json):
+    def get_edge_by_scan_or_exploit_telemetry(self, telemetry_json):
+        dst_ip = telemetry_json['data']['machine']['ip_addr']
+        src_monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
+        dst_node = NodeService.get_monkey_by_ip(dst_ip)
+        if dst_node is None:
+            dst_node = NodeService.get_or_create_node(dst_ip)
+
+        return EdgeService.get_or_create_edge(src_monkey["_id"], dst_node["_id"])
+
+    def process_tunnel_telemetry(self, telemetry_json):
+        monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])["_id"]
+        if telemetry_json['data']['proxy'] is not None:
+            host = telemetry_json['data']['proxy'].split(":")[-2].replace("//", "")
+            tunnel_host_id = NodeService.get_monkey_by_ip(host)["_id"]
+            NodeService.set_monkey_tunnel(monkey_id, tunnel_host_id)
+        else:
+            NodeService.unset_all_monkey_tunnels(monkey_id)
+
+    def process_state_telemetry(self, telemetry_json):
+        monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
+        if telemetry_json['data']['done']:
+            NodeService.set_monkey_dead(monkey, True)
+        else:
+            NodeService.set_monkey_dead(monkey, False)
+
+    def process_exploit_telemetry(self, telemetry_json):
+        edge = self.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
+        data = telemetry_json['data']
+        data["machine"].pop("ip_addr")
+        new_exploit = \
+            {
+                "timestamp": telemetry_json["timestamp"],
+                "data": data,
+                "exploiter": telemetry_json['data']['exploiter']
+            }
+        mongo.db.edge.update(
+            {"_id": edge["_id"]},
+            {"$push": {"exploits": new_exploit}}
+        )
+        if data['result']:
+            EdgeService.set_edge_exploited(edge)
+
+    def process_scan_telemetry(self, telemetry_json):
+        edge = self.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
         data = telemetry_json['data']['machine']
         data.pop("ip_addr")
         new_scan = \
@@ -120,26 +117,25 @@ class Telemetry(flask_restful.Resource):
             {"$push": {"scans": new_scan}}
         )
 
-    def add_exploit_to_edge(self, edge, telemetry_json):
-        data = telemetry_json['data']
-        data["machine"].pop("ip_addr")
-        new_exploit = \
-            {
-                "timestamp": telemetry_json["timestamp"],
-                "data": data,
-                "exploiter": telemetry_json['data']['exploiter']
-            }
-        mongo.db.edge.update(
-            {"_id": edge["_id"]},
-            {"$push": {"exploits": new_exploit}}
-        )
+        node = mongo.db.node.find_one({"_id": edge["to"]})
+        if node is not None:
+            if new_scan["scanner"] == "TcpScanner":
+                scan_os = new_scan["data"]["os"]
+                if "type" in scan_os:
+                    mongo.db.node.update({"_id": node["_id"]},
+                                         {"$set": {"os.type": scan_os["type"]}},
+                                         upsert=False)
+                if "version" in scan_os:
+                    mongo.db.node.update({"_id": node["_id"]},
+                                         {"$set": {"os.version": scan_os["version"]}},
+                                         upsert=False)
 
-    def insert_edge(self, from_id, to_id):
-        edge_insert_result = mongo.db.edge.insert_one(
-            {
-                "from": from_id,
-                "to": to_id,
-                "scans": [],
-                "exploits": []
-            })
-        return mongo.db.edge.find_one({"_id": edge_insert_result.inserted_id})
+    def process_system_info_telemetry(self, telemetry_json):
+        if 'credentials' in telemetry_json['data']:
+            creds = telemetry_json['data']['credentials']
+            for user in creds:
+                ConfigService.creds_add_username(user)
+                if 'password' in creds[user]:
+                    ConfigService.creds_add_password(creds[user]['password'])
+
+

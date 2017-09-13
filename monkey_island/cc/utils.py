@@ -11,36 +11,6 @@ from cc.database import mongo
 __author__ = 'Barak'
 
 
-# data structures
-
-def creds_add_username(username):
-    mongo.db.usernames.update(
-        {'username': username},
-        {'$inc': {'count': 1}},
-        upsert=True
-    )
-
-
-def creds_add_password(password):
-    mongo.db.passwords.update(
-        {'password': password},
-        {'$inc': {'count': 1}},
-        upsert=True
-    )
-
-
-def init_collections(usernames, passwords):
-    if "usernames" not in mongo.db.collection_names():
-        mongo.db.usernames.create_index([("username", 1)], unique=True)
-        for username in usernames:
-            creds_add_username(username)
-
-    if "passwords" not in mongo.db.collection_names():
-        mongo.db.passwords.create_index([("password", 1)], unique=True)
-        for password in passwords:
-            creds_add_password(password)
-
-
 # Local ips function
 if sys.platform == "win32":
     def local_ips():

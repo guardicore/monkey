@@ -1,11 +1,15 @@
 from bson import ObjectId
 
 from cc.database import mongo
+import cc.services.node
 
 __author__ = "itay.mizeretz"
 
 
 class EdgeService:
+    def __init__(self):
+        pass
+
     @staticmethod
     def get_displayed_edge_by_id(edge_id):
         edge = mongo.db.edge.find({"_id": ObjectId(edge_id)})[0]
@@ -26,11 +30,10 @@ class EdgeService:
         os = {}
         exploits = []
         if len(edge["scans"]) > 0:
-            services = edge["scans"][-1]["data"]["services"]
+            services = EdgeService.services_to_displayed_services(edge["scans"][-1]["data"]["services"])
             os = edge["scans"][-1]["data"]["os"]
 
         for exploit in edge["exploits"]:
-
             new_exploit = EdgeService.exploit_to_displayed_exploit(exploit)
 
             if (len(exploits) > 0) and (exploits[-1]["exploiter"] == exploit["exploiter"]):
@@ -66,22 +69,15 @@ class EdgeService:
     def exploit_to_displayed_exploit(exploit):
         user = ""
         password = ""
-        result = False
 
-        # TODO: implement for other exploiters
-
-        if exploit["exploiter"] == "RdpExploiter":
-            # TODO: check if there could be multiple creds
-            result = exploit["data"]["result"]
-            user = exploit["data"]["machine"]["creds"].keys()[0]
-            password = exploit["data"]["machine"]["creds"][user]
-
-        elif exploit["exploiter"] == "SmbExploiter":
-            result = exploit["data"]["result"]
-            if result:
-                user = exploit["data"]["machine"]["cred"].keys()[0]
-                password = exploit["data"]["machine"]["cred"][user]
-            else:
+        # TODO: The format that's used today to get the credentials is bad. Change it from monkey side and adapt.
+        result = exploit["data"]["result"]
+        if result:
+            if "creds" in exploit["data"]["machine"]:
+                user = exploit["data"]["machine"]["creds"].keys()[0]
+                password = exploit["data"]["machine"]["creds"][user]
+        else:
+            if ("user" in exploit["data"]) and ("password" in exploit["data"]):
                 user = exploit["data"]["user"]
                 password = exploit["data"]["password"]
 
@@ -92,3 +88,101 @@ class EdgeService:
                 "password": password,
                 "result": result,
             }
+
+    @staticmethod
+    def insert_edge(from_id, to_id):
+        edge_insert_result = mongo.db.edge.insert_one(
+            {
+                "from": from_id,
+                "to": to_id,
+                "scans": [],
+                "exploits": [],
+                "tunnel": False,
+                "exploited": False
+            })
+        return mongo.db.edge.find_one({"_id": edge_insert_result.inserted_id})
+
+    @staticmethod
+    def get_or_create_edge(edge_from, edge_to):
+        tunnel_edge = mongo.db.edge.find_one({"from": edge_from, "to": edge_to})
+        if tunnel_edge is None:
+            tunnel_edge = EdgeService.insert_edge(edge_from, edge_to)
+
+        return tunnel_edge
+
+    @staticmethod
+    def generate_pseudo_edge(edge_id, edge_from, edge_to):
+        return \
+            {
+                "id": edge_id,
+                "from": edge_from,
+                "to": edge_to,
+                "group": "island"
+            }
+
+    @staticmethod
+    def get_monkey_island_pseudo_edges():
+        edges = []
+        monkey_ids = [x["_id"] for x in mongo.db.monkey.find({}) if "tunnel" not in x]
+        # We're using fake ids because the frontend graph module requires unique ids.
+        # Collision with real id is improbable.
+        count = 0
+        for monkey_id in monkey_ids:
+            count += 1
+            edges.append(EdgeService.generate_pseudo_edge(
+                ObjectId(hex(count)[2:].zfill(24)), monkey_id, ObjectId("000000000000000000000000")))
+
+        return edges
+
+    @staticmethod
+    def get_infected_monkey_island_pseudo_edges():
+        monkey = cc.services.node.NodeService.get_monkey_island_monkey()
+        existing_ids = [x["_id"] for x in mongo.db.edge.find({"to": monkey["_id"]})]
+        monkey_ids = [x["_id"] for x in mongo.db.monkey.find({})
+                      if ("tunnel" not in x) and (x["_id"] not in existing_ids)]
+        edges = []
+
+        # We're using fake ids because the frontend graph module requires unique ids.
+        # Collision with real id is improbable.
+        count = 0
+        for monkey_id in monkey_ids:
+            count += 1
+            edges.append(EdgeService.generate_pseudo_edge(
+                ObjectId(hex(count)[2:].zfill(24)), monkey_id, monkey["_id"]))
+
+        return edges
+
+    @staticmethod
+    def services_to_displayed_services(services):
+        # TODO: Consider returning extended information on services.
+        return [x + ": " + services[x]["name"] for x in services]
+
+    @staticmethod
+    def edge_to_net_edge(edge):
+        return \
+            {
+                "id": edge["_id"],
+                "from": edge["from"],
+                "to": edge["to"],
+                "group": EdgeService.get_edge_group(edge)
+            }
+
+    @staticmethod
+    def get_edge_group(edge):
+        if edge["exploited"]:
+            return "exploited"
+        if edge["tunnel"]:
+            return "tunnel"
+        if (len(edge["scans"]) > 0) or (len(edge["exploits"]) > 0):
+            return "scan"
+        return "empty"
+
+    @staticmethod
+    def set_edge_exploited(edge):
+        mongo.db.edge.update(
+            {"_id": edge["_id"]},
+            {"$set": {"exploited": True}}
+        )
+
+        cc.services.node.NodeService.set_node_exploited(edge["to"])
+
