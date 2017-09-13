@@ -625,8 +625,8 @@ SCHEMA = {
                         "local_network_scan": {
                             "title": "Local network scan",
                             "type": "boolean",
-                            "default": False,
-                            "description": "Determines whether monkey should also scan its own IPs"
+                            "default": True,
+                            "description": "Determines whether monkey should scan its subnets additionally"
                         },
                         "network_range": {
                             "title": "Network range",
@@ -640,12 +640,12 @@ SCHEMA = {
                                         "FixedRange",
                                         "RelativeRange",
                                         "ClassCRange"
-                                      ],
-                                      "enumNames": [
+                                    ],
+                                    "enumNames": [
                                         "FixedRange",
                                         "RelativeRange",
                                         "ClassCRange"
-                                      ],
+                                    ],
                                     "description": "Determines which class to use to determine scan range"
                                 },
                                 "range_size": {
