@@ -13,7 +13,7 @@ class NodeService:
 
     @staticmethod
     def get_displayed_node_by_id(node_id):
-        if ObjectId(node_id) == ObjectId("000000000000000000000000"):
+        if ObjectId(node_id) == NodeService.get_monkey_island_pseudo_id():
             return NodeService.get_monkey_island_node()
 
         edges = EdgeService.get_displayed_edges_by_to(node_id)
@@ -31,8 +31,7 @@ class NodeService:
             # node is infected
             new_node = NodeService.monkey_to_net_node(monkey)
             for key in monkey:
-                # TODO: do something with tunnel
-                if key not in ["_id", "modifytime", "parent", "tunnel", "dead"]:
+                if key not in ["_id", "modifytime", "parent", "dead", "config"]:
                     new_node[key] = monkey[key]
 
         else:
@@ -52,8 +51,6 @@ class NodeService:
         new_node["accessible_from_nodes"] = accessible_from_nodes
         if len(edges) > 0:
             new_node["services"] = edges[-1]["services"]
-
-        # TODO: add exploited by
 
         return new_node
 
@@ -217,10 +214,14 @@ class NodeService:
         return None
 
     @staticmethod
+    def get_monkey_island_pseudo_id():
+        return ObjectId("000000000000000000000000")
+
+    @staticmethod
     def get_monkey_island_pseudo_net_node():
         return\
             {
-                "id": ObjectId("000000000000000000000000"),
+                "id": NodeService.get_monkey_island_pseudo_id(),
                 "label": "MonkeyIsland",
                 "group": "islandClean",
             }
