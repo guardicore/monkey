@@ -70,17 +70,14 @@ class EdgeService:
         user = ""
         password = ""
 
-        # TODO: implement for other exploiters
         # TODO: The format that's used today to get the credentials is bad. Change it from monkey side and adapt.
         result = exploit["data"]["result"]
-        if exploit["exploiter"] == "RdpExploiter":
-            user = exploit["data"]["machine"]["creds"].keys()[0]
-            password = exploit["data"]["machine"]["creds"][user]
-        elif exploit["exploiter"] == "SmbExploiter":
-            if result:
-                user = exploit["data"]["machine"]["cred"].keys()[0]
-                password = exploit["data"]["machine"]["cred"][user]
-            else:
+        if result:
+            if "creds" in exploit["data"]["machine"]:
+                user = exploit["data"]["machine"]["creds"].keys()[0]
+                password = exploit["data"]["machine"]["creds"][user]
+        else:
+            if ("user" in exploit["data"]) and ("password" in exploit["data"]):
                 user = exploit["data"]["user"]
                 password = exploit["data"]["password"]
 
