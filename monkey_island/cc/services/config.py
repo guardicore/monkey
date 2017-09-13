@@ -396,41 +396,41 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description": "Determines whether the monkey should skip the exploit if the monkey's file is already on the remote machine"
+                        }
+                    }
+                },
+                "credentials": {
+                    "title": "Credentials",
+                    "type": "object",
+                    "properties": {
+                        "exploit_user_list": {
+                            "title": "Exploit user list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Administrator",
+                                "root",
+                                "user"
+                            ],
+                            "description": "List of usernames to use on exploits using credentials"
                         },
-                        "credentials": {
-                            "title": "Credentials",
-                            "type": "object",
-                            "properties": {
-                                "exploit_user_list": {
-                                    "title": "Exploit user list",
-                                    "type": "array",
-                                    "uniqueItems": True,
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "default": [
-                                        "Administrator",
-                                        "root",
-                                        "user"
-                                    ],
-                                    "description": "List of usernames to use on exploits using credentials"
-                                },
-                                "exploit_password_list": {
-                                    "title": "Exploit password list",
-                                    "type": "array",
-                                    "uniqueItems": True,
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "default": [
-                                        "Password1!",
-                                        "1234",
-                                        "password",
-                                        "12345678"
-                                    ],
-                                    "description": "List of password to use on exploits using credentials"
-                                }
-                            }
+                        "exploit_password_list": {
+                            "title": "Exploit password list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Password1!",
+                                "1234",
+                                "password",
+                                "12345678"
+                            ],
+                            "description": "List of password to use on exploits using credentials"
                         }
                     }
                 },
@@ -670,80 +670,74 @@ SCHEMA = {
                         }
                     }
                 },
-                "scanners": {
-                    "title": "Scanners",
+                "tcp_scanner": {
+                    "title": "TCP scanner",
                     "type": "object",
                     "properties": {
-                        "tcp_scanner": {
-                            "title": "TCP scanner",
-                            "type": "object",
-                            "properties": {
-                                "HTTP_PORTS": {
-                                    "title": "HTTP ports",
-                                    "type": "array",
-                                    "uniqueItems": True,
-                                    "items": {
-                                        "type": "integer"
-                                    },
-                                    "default": [
-                                        80,
-                                        8080,
-                                        443,
-                                        8008
-                                    ],
-                                    "description": "List of ports the monkey will check if are being used for HTTP"
-                                },
-                                "tcp_target_ports": {
-                                    "title": "TCP target ports",
-                                    "type": "array",
-                                    "uniqueItems": True,
-                                    "items": {
-                                        "type": "integer"
-                                    },
-                                    "default": [
-                                        22,
-                                        2222,
-                                        445,
-                                        135,
-                                        3389,
-                                        80,
-                                        8080,
-                                        443,
-                                        8008
-                                    ],
-                                    "description": "List of TCP ports the monkey will check whether they're open"
-                                },
-                                "tcp_scan_interval": {
-                                    "title": "TCP scan interval",
-                                    "type": "integer",
-                                    "default": 200,
-                                    "description": "Time to sleep (in milliseconds) between scans"
-                                },
-                                "tcp_scan_timeout": {
-                                    "title": "TCP scan timeout",
-                                    "type": "integer",
-                                    "default": 3000,
-                                    "description": "Maximum time (in milliseconds) to wait for TCP response"
-                                },
-                                "tcp_scan_get_banner": {
-                                    "title": "TCP scan - get banner",
-                                    "type": "boolean",
-                                    "default": True,
-                                    "description": "Determines whether the TCP scan should try to get the banner"
-                                }
-                            }
+                        "HTTP_PORTS": {
+                            "title": "HTTP ports",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "integer"
+                            },
+                            "default": [
+                                80,
+                                8080,
+                                443,
+                                8008
+                            ],
+                            "description": "List of ports the monkey will check if are being used for HTTP"
                         },
-                        "ping_scanner": {
-                            "title": "Ping scanner",
-                            "type": "object",
-                            "properties": {
-                                "ping_scan_timeout": {
-                                    "title": "Ping scan timeout",
-                                    "type": "integer",
-                                    "default": 1000,
-                                    "description": "Maximum time (in milliseconds) to wait for ping response"
-                                }
-                            }
+                        "tcp_target_ports": {
+                            "title": "TCP target ports",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "integer"
+                            },
+                            "default": [
+                                22,
+                                2222,
+                                445,
+                                135,
+                                3389,
+                                80,
+                                8080,
+                                443,
+                                8008
+                            ],
+                            "description": "List of TCP ports the monkey will check whether they're open"
+                        },
+                        "tcp_scan_interval": {
+                            "title": "TCP scan interval",
+                            "type": "integer",
+                            "default": 200,
+                            "description": "Time to sleep (in milliseconds) between scans"
+                        },
+                        "tcp_scan_timeout": {
+                            "title": "TCP scan timeout",
+                            "type": "integer",
+                            "default": 3000,
+                            "description": "Maximum time (in milliseconds) to wait for TCP response"
+                        },
+                        "tcp_scan_get_banner": {
+                            "title": "TCP scan - get banner",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether the TCP scan should try to get the banner"
+                        }
+                    }
+                },
+                "ping_scanner": {
+                    "title": "Ping scanner",
+                    "type": "object",
+                    "properties": {
+                        "ping_scan_timeout": {
+                            "title": "Ping scan timeout",
+                            "type": "integer",
+                            "default": 1000,
+                            "description": "Maximum time (in milliseconds) to wait for ping response"
                         }
                     }
                 }
