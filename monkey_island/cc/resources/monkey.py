@@ -33,10 +33,6 @@ class Monkey(flask_restful.Resource):
 
         if guid:
             monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
-            monkey_json['config']['exploit_user_list'] = \
-                map(lambda x: x['username'], mongo.db.usernames.find({}, {'_id': 0, 'username': 1}).sort([('count', -1)]))
-            monkey_json['config']['exploit_password_list'] = \
-                map(lambda x: x['password'], mongo.db.passwords.find({}, {'_id': 0, 'password': 1}).sort([('count', -1)]))
             return monkey_json
         else:
             result = {'timestamp': datetime.now().isoformat()}

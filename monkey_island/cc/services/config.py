@@ -749,6 +749,7 @@ SCHEMA = {
     }
 }
 
+
 class ConfigService:
     def __init__(self):
         pass
@@ -774,6 +775,22 @@ class ConfigService:
     @staticmethod
     def get_config_schema():
         return SCHEMA
+
+    @staticmethod
+    def creds_add_username(username):
+        mongo.db.config.update(
+            {'name': 'newconfig'},
+            {'$addToSet': {'exploits.credentials.exploit_user_list': username}},
+            upsert=False
+        )
+
+    @staticmethod
+    def creds_add_password(password):
+        mongo.db.config.update(
+            {'name': 'newconfig'},
+            {'$addToSet': {'exploits.credentials.exploit_password_list': password}},
+            upsert=False
+        )
 
     @staticmethod
     def update_config():

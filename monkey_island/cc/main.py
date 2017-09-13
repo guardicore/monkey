@@ -8,8 +8,8 @@ if BASE_PATH not in sys.path:
     sys.path.insert(0, BASE_PATH)
 
 from cc.app import init_app
-from cc.utils import init_collections, local_ip_addresses
-from cc.island_config import DEFAULT_MONGO_URL, ISLAND_PORT, INITIAL_USERNAMES, INITIAL_PASSWORDS
+from cc.utils import local_ip_addresses
+from cc.island_config import DEFAULT_MONGO_URL, ISLAND_PORT
 
 if __name__ == '__main__':
     from tornado.wsgi import WSGIContainer
@@ -17,8 +17,6 @@ if __name__ == '__main__':
     from tornado.ioloop import IOLoop
 
     app = init_app(os.environ.get('MONGO_URL', DEFAULT_MONGO_URL))
-    with app.app_context():
-        init_collections(INITIAL_USERNAMES, INITIAL_PASSWORDS)
     http_server = HTTPServer(WSGIContainer(app),
                              ssl_options={'certfile': os.environ.get('SERVER_CRT', 'server.crt'),
                                           'keyfile': os.environ.get('SERVER_KEY', 'server.key')})

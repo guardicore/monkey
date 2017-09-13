@@ -9,8 +9,7 @@ import flask_restful
 from cc.database import mongo
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
-
-from cc.utils import creds_add_username, creds_add_password
+from cc.services.config import ConfigService
 
 __author__ = 'Barak'
 
@@ -93,10 +92,9 @@ class Telemetry(flask_restful.Resource):
         if 'credentials' in telemetry_json['data']:
             creds = telemetry_json['data']['credentials']
             for user in creds:
-                creds_add_username(user)
-
+                ConfigService.creds_add_username(user)
                 if 'password' in creds[user]:
-                    creds_add_password(creds[user]['password'])
+                    ConfigService.creds_add_password(creds[user]['password'])
 
     def add_scan_to_edge(self, edge, telemetry_json):
         data = telemetry_json['data']['machine']
@@ -124,9 +122,6 @@ class Telemetry(flask_restful.Resource):
                     mongo.db.node.update({"_id": node["_id"]},
                                          {"$set": {"os.version": scan_os["version"]}},
                                          upsert=False)
-
-
-
 
     def add_exploit_to_edge(self, edge, telemetry_json):
         data = telemetry_json['data']
