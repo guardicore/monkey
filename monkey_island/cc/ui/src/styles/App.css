@@ -141,6 +141,18 @@ body {
 }
 
 /*
+ * Configuration Page
+ */
+
+.rjsf .form-group .form-group {
+  margin-left: 2em;
+}
+
+.rjsf #root__title {
+  display: none;
+}
+
+/*
  * Run Monkey Page
  */
 
