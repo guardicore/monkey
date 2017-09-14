@@ -7,10 +7,10 @@ const renderJson = (val, row) => <JSONTree data={val} level={1} theme="eighties"
 const renderTime = (val, row) => val.split('.')[0];
 
 const columns = [
-  { title: 'Type', prop: 'telem_type'  },
-  { title: 'Monkey ID', prop: 'monkey_guid' },
   { title: 'Time', prop: 'timestamp', render: renderTime},
-  { title: 'More Info', prop: 'data', render: renderJson, width: '40%' }
+  { title: 'Monkey', prop: 'monkey' },
+  { title: 'Type', prop: 'telem_type'  },
+  { title: 'Details', prop: 'data', render: renderJson, width: '40%' }
 ];
 
 class FullLogsPageComponent extends React.Component {
@@ -30,7 +30,7 @@ class FullLogsPageComponent extends React.Component {
   render() {
     return (
       <Col xs={12}>
-        <h1 className="page-title">Full Logs</h1>
+        <h1 className="page-title">Monkey Telemetry</h1>
         <div className="data-table-container">
           <DataTable
             keys="name"

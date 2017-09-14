@@ -32,7 +32,7 @@ class Telemetry(flask_restful.Resource):
         if timestamp:
             find_filter['timestamp'] = {'$gt': dateutil.parser.parse(timestamp)}
 
-        result['objects'] = [x for x in mongo.db.telemetry.find(find_filter)]
+        result['objects'] = self.telemetry_to_displayed_telemetry(mongo.db.telemetry.find(find_filter))
         return result
 
     def post(self):
@@ -59,6 +59,23 @@ class Telemetry(flask_restful.Resource):
             traceback.print_exc()
 
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
+
+    def telemetry_to_displayed_telemetry(self, telemetry):
+        monkey_guid_dict = {}
+        monkeys = mongo.db.monkey.find({})
+        for monkey in monkeys:
+            monkey_guid_dict[monkey["guid"]] = NodeService.get_monkey_label(monkey)
+
+        objects = []
+        for x in telemetry:
+            telem_monkey_guid = x.pop("monkey_guid")
+            monkey_label = monkey_guid_dict.get(telem_monkey_guid)
+            if monkey_label is None:
+                monkey_label = telem_monkey_guid
+            x["monkey"] = monkey_label
+            objects.append(x)
+
+        return objects
 
     def get_edge_by_scan_or_exploit_telemetry(self, telemetry_json):
         dst_ip = telemetry_json['data']['machine']['ip_addr']
