@@ -338,12 +338,6 @@ SCHEMA = {
             "title": "C&C",
             "type": "object",
             "properties": {
-                "general": {
-                    "title": "General",
-                    "type": "object",
-                    "properties": {
-                    }
-                },
                 "servers": {
                     "title": "Servers",
                     "type": "object",
