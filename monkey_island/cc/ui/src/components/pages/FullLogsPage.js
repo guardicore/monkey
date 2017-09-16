@@ -3,13 +3,13 @@ import {Col} from 'react-bootstrap';
 import JSONTree from 'react-json-tree'
 import {DataTable} from 'react-data-components';
 
-const renderJson = (val, row) => <JSONTree data={val} level={1} theme="eighties" invertTheme={true} />;
-const renderTime = (val, row) => val.split('.')[0];
+const renderJson = (val) => <JSONTree data={val} level={1} theme="eighties" invertTheme={true} />;
+const renderTime = (val) => val.split('.')[0];
 
 const columns = [
-  { title: 'Type', prop: 'telem_type'  },
-  { title: 'Monkey ID', prop: 'monkey_guid' },
   { title: 'Time', prop: 'timestamp', render: renderTime},
+  { title: 'Monkey ID', prop: 'monkey_guid' },
+  { title: 'Type', prop: 'telem_type'  },
   { title: 'More Info', prop: 'data', render: renderJson, width: '40%' }
 ];
 

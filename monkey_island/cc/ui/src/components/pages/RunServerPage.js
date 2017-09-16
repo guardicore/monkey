@@ -21,7 +21,10 @@ class RunServerPageComponent extends React.Component {
         <div style={{'fontSize': '1.5em'}}>
           <p>Your Monkey Island server is up and running on <b>{this.state.ip}</b> &#x1F44F; &#x1F44F;</p>
           <p>
-            Now <Link to="/configure">configure the monkey</Link> (or just stick with the default configuration) and <Link to="/run-monkey">run the monkey</Link>.
+            Go ahead and <Link to="/run-monkey">run the monkey</Link>.
+          </p>
+          <p style={{'marginTop': '30px'}}>
+            <i>(You can make further adjustments by <Link to="/configure">configuring the monkey</Link>)</i>
           </p>
         </div>
       </Col>

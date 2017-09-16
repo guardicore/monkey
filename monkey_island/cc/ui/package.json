@@ -70,8 +70,6 @@
     "react-bootstrap": "^0.31.2",
     "react-copy-to-clipboard": "^5.0.0",
     "react-data-components": "^1.1.1",
-    "react-data-grid": "^2.0.58",
-    "react-data-grid-addons": "^2.0.58",
     "react-dom": "^15.6.1",
     "react-fa": "^4.2.0",
     "react-graph-vis": "^0.1.3",

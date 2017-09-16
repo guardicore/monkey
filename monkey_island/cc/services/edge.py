@@ -169,11 +169,11 @@ class EdgeService:
 
     @staticmethod
     def get_edge_group(edge):
-        if edge["exploited"]:
+        if edge.get("exploited"):
             return "exploited"
-        if edge["tunnel"]:
+        if edge.get("tunnel"):
             return "tunnel"
-        if (len(edge["scans"]) > 0) or (len(edge["exploits"]) > 0):
+        if (len(edge.get("scans", [])) > 0) or (len(edge.get("exploits", [])) > 0):
             return "scan"
         return "empty"
 

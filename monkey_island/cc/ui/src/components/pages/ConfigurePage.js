@@ -1,6 +1,6 @@
 import React from 'react';
 import Form from 'react-jsonschema-form';
-import {Col} from 'react-bootstrap';
+import {Col, Nav, NavItem} from 'react-bootstrap';
 
 class ConfigurePageComponent extends React.Component {
   constructor(props) {
@@ -47,9 +47,9 @@ class ConfigurePageComponent extends React.Component {
       });
   };
 
-  setSelectedSection = (event) => {
+  setSelectedSection = (key) => {
     this.setState({
-      selectedSection: event.target.value
+      selectedSection: key
     });
   };
 
@@ -57,23 +57,25 @@ class ConfigurePageComponent extends React.Component {
     return (
       <Col xs={8}>
         <h1 className="page-title">Monkey Configuration</h1>
-        <div className="alert alert-info">
-          <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-          This configuration will only apply on new infections.
-        </div>
 
-        <select value={this.state.selectedSection} onChange={this.setSelectedSection}
-                className="form-control input-lg" style={{'margin-bottom': '1em'}}>
+        <Nav bsStyle="tabs" justified
+             activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
+             style={{'marginBottom': '2em'}}>
           {this.state.sections.map(section =>
-            <option value={section.key}>{section.title}</option>
+            <NavItem key={section.key} eventKey={section.key}>{section.title}</NavItem>
           )}
-        </select>
+        </Nav>
 
         { this.state.selectedSection ?
           <Form schema={this.state.schema.properties[this.state.selectedSection]}
                 formData={this.state.configuration}
                 onSubmit={this.onSubmit}/>
           : ''}
+
+        <div className="alert alert-info">
+          <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+          This configuration will only apply to new infections.
+        </div>
 
         { this.state.saved ?
           <p>Configuration saved successfully.</p>

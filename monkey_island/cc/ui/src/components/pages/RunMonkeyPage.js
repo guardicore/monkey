@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Col, Well} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {Icon} from 'react-fa';
+import {Link} from "react-router-dom";
 
 class RunMonkeyPageComponent extends React.Component {
   constructor(props) {
@@ -9,7 +10,8 @@ class RunMonkeyPageComponent extends React.Component {
     this.state = {
       ips: [],
       selectedIp: '0.0.0.0',
-      isRunning: true
+      isRunningOnIsland: false,
+      isRunningLocally: false
     };
   }
 
@@ -17,14 +19,13 @@ class RunMonkeyPageComponent extends React.Component {
     fetch('/api')
       .then(res => res.json())
       .then(res => this.setState({
-        ips: res['ip_addresses'],
-        selectedIp: res['ip_addresses'][0]
+        ips: res['ip_addresses']
       }));
 
     fetch('/api/local-monkey')
       .then(res => res.json())
       .then(res => this.setState({
-        isRunning: res['is_running']
+        isRunningOnIsland: res['is_running']
       }));
   }
 
@@ -37,50 +38,64 @@ class RunMonkeyPageComponent extends React.Component {
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({action: 'run', ip: this.state.selectedIp})
+        body: JSON.stringify({action: 'run'})
       })
       .then(res => res.json())
       .then(res => {
         this.setState({
-          isRunning: res['is_running']
+          isRunningOnIsland: res['is_running']
         });
       });
-  };
-
-  setSelectedIp = (event) => {
-    this.setState({selectedIp: event.target.value});
   };
 
   render() {
     return (
       <Col xs={8}>
         <h1 className="page-title">Run the Monkey</h1>
-        <p>
-          Select one of the server's IP addresses:
-          <select value={this.state.selectedIp} onChange={this.setSelectedIp}
-                  className="form-control inline-select">
-            {this.state.ips.map(ip =>
-              <option value={ip}>{ip}</option>
-            )}
-          </select>
-          <br/>That address will be used as the monkey's C&C address.
+        <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
+          You can run the monkey on the C&C server, on your local machine and basically everywhere.
+          The more the merrier &#x1F604;
         </p>
-        <p>Run this snippet on a host for manually infecting it with a Monkey:</p>
-        <Well>
-          <CopyToClipboard text={this.generateCmd(this.state.selectedIp)} className="pull-right">
-            <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
-              <Icon name="clipboard"/>
-            </Button>
-          </CopyToClipboard>
-          <code>{this.generateCmd(this.state.selectedIp)}</code>
-        </Well>
-        <p>
-          Or simply click here to <a onClick={this.runLocalMonkey}
-                                     className="btn btn-default btn-sm"
-                                     style={{'marginLeft': '0.2em'}}>Run on <b>{this.state.selectedIp}</b></a>
-          { this.state.isRunning ?
-            <i className="text-success" style={{'marginLeft': '5px'}}>Running...</i>
-            : ''}
+        <p style={{'marginBottom': '2em'}}>
+          <button onClick={this.runLocalMonkey}
+                  className="btn btn-default"
+                  disabled={this.state.isRunningOnIsland}>
+            Run on C&C Server
+            { !this.state.isRunningOnIsland ?
+              <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
+              : ''}
+          </button>
+          <a href="/download-monkey"
+             className="btn btn-default"
+             disabled={this.state.isRunningLocally}
+             style={{'margin-left': '1em'}}>
+            Download and run locally
+            { !this.state.isRunningLocally ?
+              <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
+              : ''}
+          </a>
+        </p>
+        <div className="run-monkey-snippets" style={{'marginBottom': '3em'}}>
+          <p>
+            Run one of those snippets on a host for infecting it with a Monkey:
+            <br/>
+            <span className="text-muted">(The IP address is used as the monkey's C&C address)</span>
+          </p>
+          <Well className="well-sm">
+            {this.state.ips.map(ip =>
+              <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
+                <CopyToClipboard text={this.generateCmd(ip)} className="pull-right btn-sm">
+                  <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
+                    <Icon name="clipboard"/>
+                  </Button>
+                </CopyToClipboard>
+                <code>{this.generateCmd(ip)}</code>
+              </div>
+            )}
+          </Well>
+        </div>
+        <p style={{'fontSize': '1.2em'}}>
+          Go ahead and monitor the ongoing infection in the <Link to="/infection/map">Infection Map</Link> view.
         </p>
       </Col>
     );

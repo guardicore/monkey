@@ -1,8 +1,9 @@
 import React from 'react';
 import {Col} from 'react-bootstrap';
 import Graph from 'react-graph-vis';
-import {Icon} from 'react-fa'
-
+import PreviewPane from 'components/preview-pane/PreviewPane';
+import {Link} from 'react-router-dom';
+import {Icon} from 'react-fa';
 
 let options = {
   layout: {
@@ -44,7 +45,9 @@ class MapPageComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      graph: {nodes: [], edges: []}
+      graph: {nodes: [], edges: []},
+      selected: null,
+      selectedType: null
     };
   }
 
@@ -60,13 +63,19 @@ class MapPageComponent extends React.Component {
 
   selectionChanged(event) {
     if (event.nodes.length === 1) {
-      console.log('selected node:', event.nodes[0]);
+      console.log('selected node:', event.nodes[0]); // eslint-disable-line no-console
+      fetch('/api/netmap/node?id='+event.nodes[0])
+        .then(res => res.json())
+        .then(res => this.setState({selected: res, selectedType: 'node'}));
     }
     else if (event.edges.length === 1) {
-      console.log('selected edge:', event.edges[0]);
+      fetch('/api/netmap/edge?id='+event.edges[0])
+        .then(res => res.json())
+        .then(res => this.setState({selected: res.edge, selectedType: 'edge'}));
     }
     else {
-      console.log('no preview.');
+      console.log('selection cleared.'); // eslint-disable-line no-console
+      this.setState({selected: null, selectedType: null});
     }
   }
 
@@ -77,44 +86,21 @@ class MapPageComponent extends React.Component {
           <h1 className="page-title">Infection Map</h1>
         </Col>
         <Col xs={8}>
-          <div className="pull-left">
-            <input placeholder="Search" />
-          </div>
           <Graph graph={this.state.graph} options={options} events={this.events}/>
         </Col>
         <Col xs={4}>
-          <div className="panel panel-default preview">
-            <div className="panel-heading">
-              <h3>
-                <Icon name="fire"/>
-                vm4
-                <small>Infected Asset</small>
-              </h3>
-            </div>
+          <input className="form-control input-block"
+                 placeholder="Find on map"
+                 style={{'marginBottom': '1em'}}/>
 
-            <div className="panel-body">
-              <h4>Machine Info</h4>
-              <p>...</p>
+          <PreviewPane item={this.state.selected} type={this.state.selectedType} />
 
-              <h4 style={{'marginTop': '2em'}}>Exploit Method</h4>
-              <p>...</p>
-
-              <h4 style={{'marginTop': '2em'}}>Timeline</h4>
-              <ul className="timeline">
-                <li>
-                  <div className="bullet"></div>
-                  failed attempt1
-                </li>
-                <li>
-                  <div className="bullet"></div>
-                  failed attempt2
-                </li>
-                <li>
-                  <div className="bullet bad"></div>
-                  Infection!
-                </li>
-              </ul>
-            </div>
+          <div>
+            <Link to="/infection/logs" className="btn btn-default btn-block" style={{'marginBottom': '0.5em'}}>Monkey Telemetry</Link>
+            <button onClick={this.killAllMonkeys} className="btn btn-danger btn-block">
+              <Icon name="stop-circle" style={{'marginRight': '0.5em'}}></Icon>
+              Kill All Monkeys
+            </button>
           </div>
         </Col>
       </div>

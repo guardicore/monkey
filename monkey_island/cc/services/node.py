@@ -101,10 +101,7 @@ class NodeService:
 
     @staticmethod
     def get_node_group(node):
-        if node["exploited"]:
-            return "exploited"
-        else:
-            return "clean"
+        return "exploited" if node.get("exploited") else "clean"
 
     @staticmethod
     def monkey_to_net_node(monkey):
