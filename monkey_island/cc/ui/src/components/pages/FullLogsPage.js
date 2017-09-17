@@ -8,15 +8,9 @@ const renderTime = (val) => val.split('.')[0];
 
 const columns = [
   { title: 'Time', prop: 'timestamp', render: renderTime},
-<<<<<<< HEAD
-  { title: 'Monkey ID', prop: 'monkey_guid' },
-  { title: 'Type', prop: 'telem_type'  },
-  { title: 'More Info', prop: 'data', render: renderJson, width: '40%' }
-=======
-  { title: 'Monkey', prop: 'monkey' },
-  { title: 'Type', prop: 'telem_type'  },
+  { title: 'Monkey', prop: 'monkey'},
+  { title: 'Type', prop: 'telem_type'},
   { title: 'Details', prop: 'data', render: renderJson, width: '40%' }
->>>>>>> e37a0a98630fdd673166aa7d149031db577946cd
 ];
 
 class FullLogsPageComponent extends React.Component {

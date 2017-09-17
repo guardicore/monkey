@@ -8,6 +8,8 @@ import ConfigurePage from 'components/pages/ConfigurePage';
 import RunMonkeyPage from 'components/pages/RunMonkeyPage';
 import MapPage from 'components/pages/MapPage';
 import FullLogsPage from 'components/pages/FullLogsPage';
+import StartOverPage from 'components/pages/StartOverPage';
+import ReportPage from 'components/pages/ReportPage';
 
 require('normalize.css/normalize.css');
 require('react-data-components/css/table-twbs.css');
@@ -82,7 +84,8 @@ class AppComponent extends React.Component {
               <Route path="/run-monkey" component={RunMonkeyPage}/>
               <Route path="/infection/map" component={MapPage}/>
               <Route path="/infection/logs" component={FullLogsPage}/>
-              {/*<Route path="/report" component={ReportPage}/>*/}
+              <Route path="/start-over" component={StartOverPage}/>
+              <Route path="/report" component={ReportPage}/>
             </Col>
           </Row>
         </Grid>
