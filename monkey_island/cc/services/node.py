@@ -51,6 +51,8 @@ class NodeService:
         new_node["accessible_from_nodes"] = accessible_from_nodes
         if len(edges) > 0:
             new_node["services"] = edges[-1]["services"]
+        else:
+            new_node["services"] = []
 
         return new_node
 

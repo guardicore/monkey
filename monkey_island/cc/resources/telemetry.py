@@ -122,7 +122,7 @@ class Telemetry(flask_restful.Resource):
     def process_scan_telemetry(self, telemetry_json):
         edge = self.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
         data = telemetry_json['data']['machine']
-        data.pop("ip_addr")
+        ip_address = data.pop("ip_addr")
         new_scan = \
             {
                 "timestamp": telemetry_json["timestamp"],
@@ -131,7 +131,8 @@ class Telemetry(flask_restful.Resource):
             }
         mongo.db.edge.update(
             {"_id": edge["_id"]},
-            {"$push": {"scans": new_scan}}
+            {"$push": {"scans": new_scan},
+             "$set": {"ip_address": ip_address}}
         )
 
         node = mongo.db.node.find_one({"_id": edge["to"]})

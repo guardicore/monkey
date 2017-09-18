@@ -60,6 +60,7 @@ class EdgeService:
                 "id": edge["_id"],
                 "from": edge["from"],
                 "to": edge["to"],
+                "ip_address": edge["ip_address"],
                 "services": services,
                 "os": os,
                 "exploits": exploits
