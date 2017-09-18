@@ -21,7 +21,7 @@ class PreviewPaneComponent extends React.Component {
           </tr>
           <tr>
             <th>Accessible From</th>
-            <td>{asset.accessible_from_nodes.map(val => <div key={val.id}>{val.id}</div>)}</td>
+            <td>{asset.accessible_from_nodes.map(val => <div key={val}>{val}</div>)}</td>
           </tr>
           </tbody>
         </table>
@@ -41,7 +41,7 @@ class PreviewPaneComponent extends React.Component {
           { asset.exploits.map(exploit =>
             <li key={exploit.start_timestamp}>
               <div className={'bullet ' + (exploit.result ? 'bad' : '')}></div>
-              <div>{exploit.start_timestamp}</div>
+              <div>{new Date(exploit.start_timestamp).toLocaleString()}</div>
               <div>{exploit.origin}</div>
               <div>{exploit.exploiter}</div>
             </li>

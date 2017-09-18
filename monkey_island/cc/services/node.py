@@ -40,7 +40,7 @@ class NodeService:
             new_node["ip_addresses"] = node["ip_addresses"]
 
         for edge in edges:
-            accessible_from_nodes.append({"id": edge["from"]})
+            accessible_from_nodes.append(NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"])))
             for exploit in edge["exploits"]:
                 exploit["origin"] = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
                 exploits.append(exploit)
