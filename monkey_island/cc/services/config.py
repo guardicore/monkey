@@ -97,6 +97,64 @@ SCHEMA = {
         }
     },
     "properties": {
+        "basic": {
+            "title": "Basic",
+            "type": "object",
+            "properties": {
+                "network": {
+                    "title": "Network",
+                    "type": "object",
+                    "properties": {
+                        "blocked_ips": {
+                            "title": "Blocked IPs",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description": "List of IPs to not scan"
+                        }
+                    }
+                },
+                "credentials": {
+                    "title": "Credentials",
+                    "type": "object",
+                    "properties": {
+                        "exploit_user_list": {
+                            "title": "Exploit user list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Administrator",
+                                "root",
+                                "user"
+                            ],
+                            "description": "List of usernames to use on exploits using credentials"
+                        },
+                        "exploit_password_list": {
+                            "title": "Exploit password list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                                "Password1!",
+                                "1234",
+                                "password",
+                                "12345678"
+                            ],
+                            "description": "List of password to use on exploits using credentials"
+                        }
+                    }
+                }
+            }
+        },
         "monkey": {
             "title": "Monkey",
             "type": "object",
@@ -393,41 +451,6 @@ SCHEMA = {
                         }
                     }
                 },
-                "credentials": {
-                    "title": "Credentials",
-                    "type": "object",
-                    "properties": {
-                        "exploit_user_list": {
-                            "title": "Exploit user list",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": [
-                                "Administrator",
-                                "root",
-                                "user"
-                            ],
-                            "description": "List of usernames to use on exploits using credentials"
-                        },
-                        "exploit_password_list": {
-                            "title": "Exploit password list",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": [
-                                "Password1!",
-                                "1234",
-                                "password",
-                                "12345678"
-                            ],
-                            "description": "List of password to use on exploits using credentials"
-                        }
-                    }
-                },
                 "ms08_067": {
                     "title": "MS08_067",
                     "type": "object",
@@ -605,17 +628,6 @@ SCHEMA = {
                     "title": "General",
                     "type": "object",
                     "properties": {
-                        "blocked_ips": {
-                            "title": "Blocked IPs",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": [
-                            ],
-                            "description": "List of IPs to not scan"
-                        },
                         "local_network_scan": {
                             "title": "Local network scan",
                             "type": "boolean",

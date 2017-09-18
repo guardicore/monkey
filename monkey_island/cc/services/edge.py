@@ -55,16 +55,13 @@ class EdgeService:
                 exploit_container["result"] = True
             exploit_container["end_timestamp"] = new_exploit["timestamp"]
 
-        return \
-            {
-                "id": edge["_id"],
-                "from": edge["from"],
-                "to": edge["to"],
-                "ip_address": edge["ip_address"],
-                "services": services,
-                "os": os,
-                "exploits": exploits
-            }
+        displayed_edge = EdgeService.edge_to_net_edge(edge)
+        displayed_edge["ip_address"] = edge["ip_address"]
+        displayed_edge["services"] = services
+        displayed_edge["os"] = os
+        displayed_edge["exploits"] = exploits
+        displayed_edge["_label"] = EdgeService.get_edge_label(displayed_edge)
+        return displayed_edge
 
     @staticmethod
     def exploit_to_displayed_exploit(exploit):
@@ -113,13 +110,15 @@ class EdgeService:
 
     @staticmethod
     def generate_pseudo_edge(edge_id, edge_from, edge_to):
-        return \
+        edge = \
             {
                 "id": edge_id,
                 "from": edge_from,
                 "to": edge_to,
                 "group": "island"
             }
+        edge["_label"] = EdgeService.get_edge_label(edge)
+        return edge
 
     @staticmethod
     def get_monkey_island_pseudo_edges():
@@ -184,6 +183,22 @@ class EdgeService:
             {"_id": edge["_id"]},
             {"$set": {"exploited": True}}
         )
-
         cc.services.node.NodeService.set_node_exploited(edge["to"])
+
+    @staticmethod
+    def get_edge_label(edge):
+        NodeService = cc.services.node.NodeService
+        from_label = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
+        to_id = NodeService.get_monkey_by_id(edge["to"])
+        if to_id is None:
+            to_label = NodeService.get_node_label(NodeService.get_node_by_id(edge["to"]))
+        else:
+            to_label = NodeService.get_monkey_label(to_id)
+
+        RIGHT_ARROW = unichr(8594)
+        return "%s %s %s" % (
+            from_label,
+            RIGHT_ARROW,
+            to_label)
+
 

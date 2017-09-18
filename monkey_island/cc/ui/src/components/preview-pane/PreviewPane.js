@@ -30,6 +30,8 @@ class PreviewPaneComponent extends React.Component {
   }
 
   infectedAssetInfo(asset) {
+    // TODO: Have exploit info expandable (show detailed attempts)
+    // TODO: consider showing scans with exploits on same timeline
     return (
       <div>
         {this.assetInfo(asset)}
@@ -50,17 +52,54 @@ class PreviewPaneComponent extends React.Component {
   }
 
   infectionInfo(edge) {
-    return (
-      <div>
-
-      </div>
-    );
+    return this.scanInfo(edge);
   }
 
   scanInfo(edge) {
     return (
       <div>
+        <table className="table table-condensed">
+          <tbody>
+          <tr>
+            <th>Operating System</th>
+            <td>{edge.os.type}</td>
+          </tr>
+          <tr>
+            <th>IP Address</th>
+            <td>{edge.ip_address}</td>
+          </tr>
+          <tr>
+            <th>Services</th>
+            <td>{edge.services.map(val => <div key={val}>{val}</div>)}</td>
+          </tr>
+          </tbody>
+        </table>
+        <h4 style={{'marginTop': '2em'}}>Timeline</h4>
+        <ul className="timeline">
+          { edge.exploits.map(exploit =>
+            <li key={exploit.start_timestamp}>
+              <div className={'bullet ' + (exploit.result ? 'bad' : '')}></div>
+              <div>{exploit.start_timestamp}</div>
+              <div>{exploit.origin}</div>
+              <div>{exploit.exploiter}</div>
+            </li>
+          )}
+        </ul>
+      </div>
+    );
+  }
 
+  islandEdgeInfo() {
+    return (
+      <div>
+        <table className="table table-condensed">
+          <tbody>
+          <tr>
+            <th>Communicates directly with island</th>
+            <td>True</td>
+          </tr>
+          </tbody>
+        </table>
       </div>
     );
   }
@@ -71,13 +110,28 @@ class PreviewPaneComponent extends React.Component {
       case 'edge':
         info = this.props.item.exploits.length ?
           this.infectionInfo(this.props.item) : this.scanInfo(this.props.item);
+        break;
       case 'node':
         info = this.props.item.exploits.some(exploit => exploit.result) ?
           this.infectedAssetInfo(this.props.item) : this.assetInfo(this.props.item);
+        break;
+      case 'island_edge':
+      info = this.islandEdgeInfo();
+      break;
     }
+
+    let label = '';
+    if (!this.props.item) {
+      label = '';
+    } else if (this.props.item.hasOwnProperty('label')) {
+      label = this.props.item['label'];
+    } else if (this.props.item.hasOwnProperty('_label')) {
+      label = this.props.item['_label'];
+    }
+
     return (
       <div className="preview-pane">
-        { !this.props.item ?
+        { !info ?
           <span>
             <Icon name="hand-o-left" style={{'marginRight': '0.5em'}}></Icon>
             Select an item on the map for a preview
@@ -85,7 +139,7 @@ class PreviewPaneComponent extends React.Component {
         :
           <div>
             <h3>
-              <b>{this.props.item.label}</b>
+              {label}
             </h3>
 
             <hr/>

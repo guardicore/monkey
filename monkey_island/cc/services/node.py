@@ -85,7 +85,6 @@ class NodeService:
 
         return True
 
-
     @staticmethod
     def get_monkey_label(monkey):
         label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]

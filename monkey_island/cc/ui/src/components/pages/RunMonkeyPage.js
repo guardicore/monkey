@@ -30,8 +30,16 @@ class RunMonkeyPageComponent extends React.Component {
     this.props.onStatusChange();
   }
 
-  generateCmd(ip) {
-    return `curl http://${ip}:5000/get-monkey | sh`;
+  generateLinuxCmd(ip, is32Bit) {
+    let bitText = is32Bit ? '32' : '64';
+    return `curl http://${ip}:5000/api/monkey/download/monkey-linux-${bitText} | sh`;
+  }
+
+  generateWindowsCmd(ip, is32Bit) {
+    let bitText = is32Bit ? '32' : '64';
+    return `
+    PowerShell (New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/monkey-windows-${bitText}.exe','monkey.exe');
+    Start-Process -FilePath 'monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`;
   }
 
   runLocalMonkey = () => {
@@ -49,6 +57,27 @@ class RunMonkeyPageComponent extends React.Component {
         this.props.onStatusChange();
       });
   };
+
+  generateCmdDiv(ip, isLinux, is32Bit) {
+    let cmdText = "";
+    if (isLinux) {
+      cmdText = this.generateLinuxCmd(ip, is32Bit);
+    } else {
+      cmdText = this.generateWindowsCmd(ip, is32Bit);
+    }
+    return (
+      <Well className="well-sm" style={{'margin': '0.5em'}}>
+        <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
+          <CopyToClipboard text={cmdText} className="pull-right btn-sm">
+            <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
+              <Icon name="clipboard"/>
+            </Button>
+          </CopyToClipboard>
+          <code>{cmdText}</code>
+        </div>
+      </Well>
+    )
+  }
 
   render() {
     return (
@@ -83,18 +112,18 @@ class RunMonkeyPageComponent extends React.Component {
             <br/>
             <span className="text-muted">(The IP address is used as the monkey's C&C address)</span>
           </p>
-          <Well className="well-sm">
+
             {this.state.ips.map(ip =>
-              <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
-                <CopyToClipboard text={this.generateCmd(ip)} className="pull-right btn-sm">
-                  <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
-                    <Icon name="clipboard"/>
-                  </Button>
-                </CopyToClipboard>
-                <code>{this.generateCmd(ip)}</code>
-              </div>
+
+            [
+              this.generateCmdDiv(ip, true, true),
+              this.generateCmdDiv(ip, true, false),
+              this.generateCmdDiv(ip, false, true),
+              this.generateCmdDiv(ip, false, false)
+            ]
+
             )}
-          </Well>
+
         </div>
         <p style={{'fontSize': '1.2em'}}>
           Go ahead and monitor the ongoing infection in the <Link to="/infection/map">Infection Map</Link> view.

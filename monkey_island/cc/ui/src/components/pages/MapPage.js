@@ -93,13 +93,12 @@ class MapPageComponent extends React.Component {
         .then(res => this.setState({selected: res, selectedType: 'node'}));
     }
     else if (event.edges.length === 1) {
-      let edgeGroup = this.state.graph.edges.filter(
+      let displayedEdge = this.state.graph.edges.find(
         function(edge) {
           return edge['id'] === event.edges[0];
-        })[0]['group'];
-      if (edgeGroup == 'island') {
-        console.log('selection cleared.'); // eslint-disable-line no-console
-        this.setState({selected: null, selectedType: null});
+        });
+      if (displayedEdge['group'] == 'island') {
+        this.setState({selected: displayedEdge, selectedType: 'island_edge'});
       } else {
         fetch('/api/netmap/edge?id='+event.edges[0])
           .then(res => res.json())
