@@ -7,7 +7,7 @@ import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
 import RunMonkeyPage from 'components/pages/RunMonkeyPage';
 import MapPage from 'components/pages/MapPage';
-import FullLogsPage from 'components/pages/FullLogsPage';
+import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
 import ReportPage from 'components/pages/ReportPage';
 
@@ -90,7 +90,7 @@ class AppComponent extends React.Component {
               <hr/>
               <ul>
                 <li><NavLink to="/configure">Configuration</NavLink></li>
-                <li><NavLink to="/infection/logs">Monkey Telemetry</NavLink></li>
+                <li><NavLink to="/infection/telemetry">Monkey Telemetry</NavLink></li>
               </ul>
 
               <hr/>
@@ -107,7 +107,7 @@ class AppComponent extends React.Component {
               <Route path="/configure" render={(props) => ( <ConfigurePage onStatusChange={this.updateStatus} /> )} />
               <Route path="/run-monkey" render={(props) => ( <RunMonkeyPage onStatusChange={this.updateStatus} /> )} />
               <Route path="/infection/map" render={(props) => ( <MapPage onStatusChange={this.updateStatus} /> )} />
-              <Route path="/infection/logs" render={(props) => ( <FullLogsPage onStatusChange={this.updateStatus} /> )} />
+              <Route path="/infection/telemetry" render={(props) => ( <TelemetryPage onStatusChange={this.updateStatus} /> )} />
               <Route path="/start-over" render={(props) => ( <StartOverPage onStatusChange={this.updateStatus} /> )} />
               <Route path="/report" render={(props) => ( <ReportPage onStatusChange={this.updateStatus} /> )} />
             </Col>

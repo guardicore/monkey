@@ -13,7 +13,7 @@ const columns = [
   { title: 'Details', prop: 'data', render: renderJson, width: '40%' }
 ];
 
-class FullLogsPageComponent extends React.Component {
+class TelemetryPageComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -46,4 +46,4 @@ class FullLogsPageComponent extends React.Component {
   }
 }
 
-export default FullLogsPageComponent;
+export default TelemetryPageComponent;

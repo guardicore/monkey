@@ -126,7 +126,7 @@ class MapPageComponent extends React.Component {
                  style={{'marginBottom': '1em'}}/>
 
           <div style={{'overflow': 'auto', 'marginBottom': '1em'}}>
-            <Link to="/infection/logs" className="btn btn-default pull-left" style={{'width': '48%'}}>Monkey Telemetry</Link>
+            <Link to="/infection/telemetry" className="btn btn-default pull-left" style={{'width': '48%'}}>Monkey Telemetry</Link>
             <button onClick={this.killAllMonkeys} className="btn btn-danger pull-right" style={{'width': '48%'}}>
               <Icon name="stop-circle" style={{'marginRight': '0.5em'}}></Icon>
               Kill All Monkeys

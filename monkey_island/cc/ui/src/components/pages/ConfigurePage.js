@@ -26,7 +26,7 @@ class ConfigurePageComponent extends React.Component {
           .map(key => {
             return {key: key, title: res.schema.properties[key].title}
           }),
-        selectedSection: 'monkey'
+        selectedSection: 'basic'
       }));
   }
 
