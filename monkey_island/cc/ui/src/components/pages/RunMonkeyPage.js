@@ -27,6 +27,7 @@ class RunMonkeyPageComponent extends React.Component {
       .then(res => this.setState({
         isRunningOnIsland: res['is_running']
       }));
+    this.props.onStatusChange();
   }
 
   generateCmd(ip) {
@@ -45,6 +46,7 @@ class RunMonkeyPageComponent extends React.Component {
         this.setState({
           isRunningOnIsland: res['is_running']
         });
+        this.props.onStatusChange();
       });
   };
 

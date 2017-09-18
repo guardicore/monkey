@@ -55,10 +55,34 @@ class MapPageComponent extends React.Component {
     select: event => this.selectionChanged(event)
   };
 
+  edgeGroupToColor(group) {
+    switch (group) {
+      case 'exploited':
+        return '#c00';
+        break;
+      case 'tunnel':
+        return '#aaa';
+        break;
+      case 'scan':
+        return '#f90';
+        break;
+      case 'island':
+        return '#aaa';
+        break;
+    }
+    return 'black';
+  }
+
   componentDidMount() {
     fetch('/api/netmap')
       .then(res => res.json())
-      .then(res => this.setState({graph: res}));
+      .then(res => {
+        res.edges.forEach(edge => {
+          edge.color = this.edgeGroupToColor(edge.group);
+        });
+        this.setState({graph: res});
+        this.props.onStatusChange();
+      });
   }
 
   selectionChanged(event) {
@@ -93,15 +117,15 @@ class MapPageComponent extends React.Component {
                  placeholder="Find on map"
                  style={{'marginBottom': '1em'}}/>
 
-          <PreviewPane item={this.state.selected} type={this.state.selectedType} />
-
-          <div>
-            <Link to="/infection/logs" className="btn btn-default btn-block" style={{'marginBottom': '0.5em'}}>Monkey Telemetry</Link>
-            <button onClick={this.killAllMonkeys} className="btn btn-danger btn-block">
+          <div style={{'overflow': 'auto', 'marginBottom': '1em'}}>
+            <Link to="/infection/logs" className="btn btn-default pull-left" style={{'width': '48%'}}>Monkey Telemetry</Link>
+            <button onClick={this.killAllMonkeys} className="btn btn-danger pull-right" style={{'width': '48%'}}>
               <Icon name="stop-circle" style={{'marginRight': '0.5em'}}></Icon>
               Kill All Monkeys
             </button>
           </div>
+
+          <PreviewPane item={this.state.selected} type={this.state.selectedType} />
         </Col>
       </div>
     );

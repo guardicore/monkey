@@ -44,6 +44,7 @@ class ConfigurePageComponent extends React.Component {
           schema: res.schema,
           configuration: res.configuration
         });
+        this.props.onStatusChange();
       });
   };
 

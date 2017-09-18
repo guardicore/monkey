@@ -19,6 +19,22 @@ let logoImage = require('../images/monkey-logo.png');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
 
 class AppComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      completedSteps: {
+        run_server: true,
+        run_monkey: false,
+        infection_done: false
+      }
+    };
+  }
+  updateStatus = () => {
+    fetch('/api')
+      .then(res => res.json())
+      .then(res => this.setState({completedSteps: res['completed_steps']}));
+  }
+
   render() {
     return (
       <Router>
@@ -34,19 +50,27 @@ class AppComponent extends React.Component {
                   <NavLink to="/" exact={true}>
                     <span className="number">1.</span>
                     Run C&C Server
-                    <Icon name="check" className="pull-right checkmark text-success"/>
+                    { this.state.completedSteps.run_server ?
+                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      : ''}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/run-monkey">
                     <span className="number">2.</span>
                     Run Monkey
+                    { this.state.completedSteps.run_monkey ?
+                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      : ''}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/infection/map">
                     <span className="number">3.</span>
                     Infection Map
+                    { this.state.completedSteps.infection_done ?
+                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      : ''}
                   </NavLink>
                 </li>
                 <li>
@@ -70,7 +94,7 @@ class AppComponent extends React.Component {
               </ul>
 
               <hr/>
-              <div className="guardicore-link">
+              <div className="guardicore-link text-center">
                 <span>Powered by</span>
                 <a href="http://www.guardicore.com" target="_blank">
                   <img src={guardicoreLogoImage} alt="GuardiCore"/>
@@ -79,13 +103,13 @@ class AppComponent extends React.Component {
 
             </Col>
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className="main">
-              <Route exact path="/" component={RunServerPage}/>
-              <Route path="/configure" component={ConfigurePage}/>
-              <Route path="/run-monkey" component={RunMonkeyPage}/>
-              <Route path="/infection/map" component={MapPage}/>
-              <Route path="/infection/logs" component={FullLogsPage}/>
-              <Route path="/start-over" component={StartOverPage}/>
-              <Route path="/report" component={ReportPage}/>
+              <Route exact path="/" render={(props) => ( <RunServerPage onStatusChange={this.updateStatus} /> )} />
+              <Route path="/configure" render={(props) => ( <ConfigurePage onStatusChange={this.updateStatus} /> )} />
+              <Route path="/run-monkey" render={(props) => ( <RunMonkeyPage onStatusChange={this.updateStatus} /> )} />
+              <Route path="/infection/map" render={(props) => ( <MapPage onStatusChange={this.updateStatus} /> )} />
+              <Route path="/infection/logs" render={(props) => ( <FullLogsPage onStatusChange={this.updateStatus} /> )} />
+              <Route path="/start-over" render={(props) => ( <StartOverPage onStatusChange={this.updateStatus} /> )} />
+              <Route path="/report" render={(props) => ( <ReportPage onStatusChange={this.updateStatus} /> )} />
             </Col>
           </Row>
         </Grid>
