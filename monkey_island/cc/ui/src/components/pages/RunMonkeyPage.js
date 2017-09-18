@@ -37,9 +37,7 @@ class RunMonkeyPageComponent extends React.Component {
 
   generateWindowsCmd(ip, is32Bit) {
     let bitText = is32Bit ? '32' : '64';
-    return `
-    PowerShell (New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/monkey-windows-${bitText}.exe','monkey.exe');
-    Start-Process -FilePath 'monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`;
+    return `powershell [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}; (New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/monkey-windows-${bitText}.exe','.\\monkey.exe'); ;Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`;
   }
 
   runLocalMonkey = () => {
