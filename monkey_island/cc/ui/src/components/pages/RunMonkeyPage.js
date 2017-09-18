@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col, Well} from 'react-bootstrap';
+import {Button, Col, Well, Nav, NavItem} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {Icon} from 'react-fa';
 import {Link} from "react-router-dom";
@@ -11,7 +11,8 @@ class RunMonkeyPageComponent extends React.Component {
       ips: [],
       selectedIp: '0.0.0.0',
       isRunningOnIsland: false,
-      isRunningLocally: false
+      isRunningLocally: false,
+      selectedSection: "windows-32"
     };
   }
 
@@ -56,7 +57,9 @@ class RunMonkeyPageComponent extends React.Component {
       });
   };
 
-  generateCmdDiv(ip, isLinux, is32Bit) {
+  generateCmdDiv(ip) {
+    let isLinux = (this.state.selectedSection.split('-')[0] === "linux");
+    let is32Bit = (this.state.selectedSection.split('-')[1] === "32");
     let cmdText = "";
     if (isLinux) {
       cmdText = this.generateLinuxCmd(ip, is32Bit);
@@ -76,6 +79,12 @@ class RunMonkeyPageComponent extends React.Component {
       </Well>
     )
   }
+
+  setSelectedSection = (key) => {
+    this.setState({
+      selectedSection: key
+    });
+  };
 
   render() {
     return (
@@ -110,18 +119,15 @@ class RunMonkeyPageComponent extends React.Component {
             <br/>
             <span className="text-muted">(The IP address is used as the monkey's C&C address)</span>
           </p>
-
-            {this.state.ips.map(ip =>
-
-            [
-              this.generateCmdDiv(ip, true, true),
-              this.generateCmdDiv(ip, true, false),
-              this.generateCmdDiv(ip, false, true),
-              this.generateCmdDiv(ip, false, false)
-            ]
-
-            )}
-
+          <Nav pills justified
+               activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
+               style={{'marginBottom': '2em'}}>
+            <NavItem key='windows-32' eventKey='windows-32'>Windows (32 bit)</NavItem>
+            <NavItem key='windows-64' eventKey='windows-64'>Windows (64 bit)</NavItem>
+            <NavItem key='linux-32' eventKey='linux-32'>Linux (32 bit)</NavItem>
+            <NavItem key='linux-64' eventKey='linux-64'>Linux (64 bit)</NavItem>
+          </Nav>
+            {this.state.ips.map(ip => this.generateCmdDiv(ip))}
         </div>
         <p style={{'fontSize': '1.2em'}}>
           Go ahead and monitor the ongoing infection in the <Link to="/infection/map">Infection Map</Link> view.
