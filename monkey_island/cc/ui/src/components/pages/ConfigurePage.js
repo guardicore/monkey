@@ -55,6 +55,8 @@ class ConfigurePageComponent extends React.Component {
   };
 
   render() {
+    let displayedSchema = this.state.schema["properties"][this.state.selectedSection];
+    displayedSchema["definitions"] = this.state.schema["definitions"];
     return (
       <Col xs={8}>
         <h1 className="page-title">Monkey Configuration</h1>
@@ -68,7 +70,7 @@ class ConfigurePageComponent extends React.Component {
         </Nav>
 
         { this.state.selectedSection ?
-          <Form schema={this.state.schema.properties[this.state.selectedSection]}
+          <Form schema={displayedSchema}
                 formData={this.state.configuration}
                 onSubmit={this.onSubmit}/>
           : ''}
