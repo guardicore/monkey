@@ -2,6 +2,7 @@ import sys
 import socket
 import psutil
 from enum import IntEnum
+from network.info import get_host_subnets, local_ips
 
 __author__ = 'uri'
 
@@ -45,9 +46,19 @@ class InfoCollector(object):
         self.info = {}
 
     def get_hostname(self):
-        self.info['hostname'] = socket.gethostname()
+        """
+        Adds the fully qualified computer hostname to the system information.
+        :return: Nothing
+        """
+        self.info['hostname'] = socket.getfqdn()
 
     def get_process_list(self):
+        """
+        Adds process information from the host to the system information.
+        Currently lists process name, ID, parent ID, command line
+        and the full image path of each process.
+        :return: Nothing
+        """
         processes = {}
         for process in psutil.process_iter():
             try:
@@ -69,3 +80,12 @@ class InfoCollector(object):
                                           }
                 pass
         self.info['process_list'] = processes
+
+    def get_network_info(self):
+        """
+        Adds network information from the host to the system information.
+        Currently updates with a list of networks accessible from host,
+        containing host ip and the subnet range.
+        :return: None
+        """
+        self.info['network_info'] = {'networks': get_host_subnets()}

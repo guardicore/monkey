@@ -1,4 +1,4 @@
 @title C^&C Server
-@cd cc
-@main.py
-@pause
+@pushd cc
+@..\bin\Python27\python main.py
+@popd
