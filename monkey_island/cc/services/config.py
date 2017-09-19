@@ -672,7 +672,6 @@ SCHEMA = {
                                         "type": "string"
                                     },
                                     "default": [
-                                        "172.16.0.67"
                                     ],
                                     "description": "List of IPs to include when using FixedRange"
                                 }
