@@ -4,6 +4,7 @@ from flask import request, make_response, jsonify
 import flask_restful
 
 from cc.database import mongo
+from cc.services.config import ConfigService
 
 from cc.utils import local_ip_addresses
 
@@ -24,6 +25,7 @@ class Root(flask_restful.Resource):
             mongo.db.telemetry.drop()
             mongo.db.node.drop()
             mongo.db.edge.drop()
+            ConfigService.init_config()
             return jsonify(status='OK')
         elif action == "killall":
             mongo.db.monkey.update({}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}}, upsert=False,

@@ -15,7 +15,6 @@ class MonkeyConfiguration(flask_restful.Resource):
 
     def post(self):
         config_json = json.loads(request.data)
-
-        mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
-        return jsonify(schema=ConfigService.get_config_schema(), configuration=ConfigService.get_config())
+        ConfigService.update_config(config_json)
+        return self.get()
 

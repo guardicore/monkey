@@ -12,7 +12,7 @@ class ConfigurePageComponent extends React.Component {
       configuration: {},
       saved: false,
       sections: [],
-      selectedSection: ''
+      selectedSection: 'basic'
     };
   }
 
@@ -55,8 +55,13 @@ class ConfigurePageComponent extends React.Component {
   };
 
   render() {
-    let displayedSchema = this.state.schema["properties"][this.state.selectedSection];
-    displayedSchema["definitions"] = this.state.schema["definitions"];
+    let displayedSchema = {};
+
+    if (this.state.schema.hasOwnProperty('properties')) {
+      displayedSchema = this.state.schema["properties"][this.state.selectedSection];
+      displayedSchema["definitions"] = this.state.schema["definitions"];
+    }
+
     return (
       <Col xs={8}>
         <h1 className="page-title">Monkey Configuration</h1>

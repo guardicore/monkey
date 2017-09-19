@@ -1,4 +1,8 @@
 from cc.database import mongo
+from jsonschema import Draft4Validator, validators
+
+from cc.island_config import ISLAND_PORT
+from cc.utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
 
@@ -799,5 +803,51 @@ class ConfigService:
         )
 
     @staticmethod
-    def update_config():
-        pass
+    def update_config(config_json):
+        mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
+
+    @staticmethod
+    def get_default_config():
+        defaultValidatingDraft4Validator = ConfigService._extend_config_with_default(Draft4Validator)
+        config = {}
+        defaultValidatingDraft4Validator(SCHEMA).validate(config)
+        return config
+
+    @staticmethod
+    def init_config():
+        if ConfigService.get_config() != {}:
+            return
+        config = ConfigService.get_default_config()
+        ConfigService.set_server_ips_in_config(config)
+        ConfigService.update_config(config)
+
+    @staticmethod
+    def set_server_ips_in_config(config):
+        ips = local_ip_addresses()
+        config["cnc"]["servers"]["command_servers"] = ["%s:%d" % (ip, ISLAND_PORT) for ip in ips]
+        config["cnc"]["servers"]["current_server"] = "%s:%d" % (ips[0], ISLAND_PORT)
+
+    @staticmethod
+    def _extend_config_with_default(validator_class):
+        validate_properties = validator_class.VALIDATORS["properties"]
+
+        def set_defaults(validator, properties, instance, schema):
+            # Do it only for root.
+            if instance != {}:
+                return
+            for property, subschema in properties.iteritems():
+                main_dict = {}
+                for property2, subschema2 in subschema["properties"].iteritems():
+                    sub_dict = {}
+                    for property3, subschema3 in subschema2["properties"].iteritems():
+                        if "default" in subschema3:
+                            sub_dict[property3] = subschema3["default"]
+                    main_dict[property2] = sub_dict
+                instance.setdefault(property, main_dict)
+
+            for error in validate_properties(validator, properties, instance, schema):
+                yield error
+
+        return validators.extend(
+            validator_class, {"properties": set_defaults},
+        )

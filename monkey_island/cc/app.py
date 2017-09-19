@@ -15,6 +15,7 @@ from cc.resources.edge import Edge
 from cc.resources.node import Node
 
 from cc.resources.root import Root
+from cc.services.config import ConfigService
 
 __author__ = 'Barak'
 
@@ -64,6 +65,9 @@ def init_app(mongo_url):
 
     app.config['MONGO_URI'] = mongo_url
     mongo.init_app(app)
+
+    with app.app_context():
+        ConfigService.init_config()
 
     app.add_url_rule('/', 'serve_home', serve_home)
     app.add_url_rule('/<path:path>', 'serve_static_file', serve_static_file)
