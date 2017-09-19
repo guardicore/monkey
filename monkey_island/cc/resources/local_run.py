@@ -9,11 +9,12 @@ import flask_restful
 from cc.resources.monkey_download import get_monkey_executable
 from cc.island_config import ISLAND_PORT
 from cc.services.node import NodeService
+from cc.utils import local_ip_addresses
 
 __author__ = 'Barak'
 
 
-def run_local_monkey(island_address):
+def run_local_monkey():
     import platform
     import subprocess
     import stat
@@ -35,7 +36,7 @@ def run_local_monkey(island_address):
 
     # run the monkey
     try:
-        args = ["%s m0nk3y -s %s:%s" % (target_path, island_address, ISLAND_PORT)]
+        args = ["%s m0nk3y -s %s:%s" % (target_path, local_ip_addresses()[0], ISLAND_PORT)]
         if sys.platform == "win32":
             args = "".join(args)
         pid = subprocess.Popen(args, shell=True).pid
@@ -51,8 +52,8 @@ class LocalRun(flask_restful.Resource):
 
     def post(self):
         body = json.loads(request.data)
-        if body.get('action') == 'run' and body.get('ip') is not None:
-            local_run = run_local_monkey(island_address=body.get('ip'))
+        if body.get('action') == 'run':
+            local_run = run_local_monkey()
             return jsonify(is_running=local_run[0])
 
         # default action

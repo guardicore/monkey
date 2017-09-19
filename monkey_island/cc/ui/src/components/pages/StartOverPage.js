@@ -5,6 +5,10 @@ import {Link} from 'react-router-dom';
 class StartOverPageComponent extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      cleaned: false
+    };
   }
 
   render() {
@@ -22,6 +26,12 @@ class StartOverPageComponent extends React.Component {
           <p>
             <a onClick={this.cleanup} className="btn btn-danger btn-lg">Reset Environment</a>
           </p>
+          { this.state.cleaned ?
+            <div className="alert alert-info">
+              <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+              Environment was reset successfully
+            </div>
+            : ''}
           <p>
             * BTW you can just continue and <Link to="/run-monkey">run more monkeys</Link> as you wish,
             and see the results on the <Link to="/infection/map">Infection Map</Link> without deleting anything.
@@ -29,6 +39,25 @@ class StartOverPageComponent extends React.Component {
         </div>
       </Col>
     );
+  }
+
+  cleanup() {
+    // TODO: fix
+    /*
+    this.setState({
+      cleaned: false
+    });
+    */
+    fetch('/api?action=reset')
+      .then(res => res.json())
+      .then(res => {
+        if (res["status"] == "OK") {
+          // TODO: fix this
+          this.setState({
+              cleaned: true
+            });
+        }
+      });
   }
 }
 
