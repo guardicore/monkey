@@ -6,6 +6,9 @@ class ConfigurePageComponent extends React.Component {
   constructor(props) {
     super(props);
 
+    this.currentSection = 'basic';
+    this.currentFormData = {};
+
     // set schema from server
     this.state = {
       schema: {},
@@ -31,11 +34,18 @@ class ConfigurePageComponent extends React.Component {
   }
 
   onSubmit = ({formData}) => {
+    this.currentFormData = formData;
+    let newConfig = this.state.configuration;
+    if (this.currentFormData != {}) {
+      newConfig[this.currentSection] = this.currentFormData;
+      this.currentFormData = {};
+    }
+    this.setState({configuration: newConfig});
     fetch('/api/configuration',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(formData)
+        body: JSON.stringify(this.state.configuration)
       })
       .then(res => res.json())
       .then(res => {
@@ -48,9 +58,21 @@ class ConfigurePageComponent extends React.Component {
       });
   };
 
+  onChange = ({formData}) => {
+    this.currentFormData = formData;
+  };
+
+  // TODO: remove code duplication
   setSelectedSection = (key) => {
+    let newConfig = this.state.configuration;
+    if (Object.keys(this.currentFormData).length > 0) {
+      newConfig[this.currentSection] = this.currentFormData;
+      this.currentFormData = {};
+    }
+    this.currentSection = key;
     this.setState({
-      selectedSection: key
+      selectedSection: key,
+      configuration: newConfig
     });
   };
 
@@ -76,8 +98,9 @@ class ConfigurePageComponent extends React.Component {
 
         { this.state.selectedSection ?
           <Form schema={displayedSchema}
-                formData={this.state.configuration}
-                onSubmit={this.onSubmit}/>
+                formData={this.state.configuration[this.state.selectedSection]}
+                onSubmit={this.onSubmit}
+                onChange={this.onChange} />
           : ''}
 
         <div className="alert alert-info">
