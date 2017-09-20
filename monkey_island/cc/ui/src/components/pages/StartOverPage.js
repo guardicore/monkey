@@ -41,18 +41,14 @@ class StartOverPageComponent extends React.Component {
     );
   }
 
-  cleanup() {
-    // TODO: fix
-    /*
+  cleanup = () => {
     this.setState({
       cleaned: false
     });
-    */
     fetch('/api?action=reset')
       .then(res => res.json())
       .then(res => {
         if (res["status"] == "OK") {
-          // TODO: fix this
           this.setState({
               cleaned: true
             });

@@ -28,6 +28,13 @@ class RunMonkeyPageComponent extends React.Component {
       .then(res => this.setState({
         isRunningOnIsland: res['is_running']
       }));
+
+    fetch('/api/client-monkey')
+      .then(res => res.json())
+      .then(res => this.setState({
+        isRunningLocally: res['is_running']
+      }));
+
     this.props.onStatusChange();
   }
 
@@ -99,16 +106,16 @@ class RunMonkeyPageComponent extends React.Component {
                   className="btn btn-default"
                   disabled={this.state.isRunningOnIsland}>
             Run on C&C Server
-            { !this.state.isRunningOnIsland ?
+            { this.state.isRunningOnIsland ?
               <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
               : ''}
           </button>
           <a href="/download-monkey"
              className="btn btn-default"
              disabled={this.state.isRunningLocally}
-             style={{'margin-left': '1em'}}>
+             style={{'marginLeft': '1em'}}>
             Download and run locally
-            { !this.state.isRunningLocally ?
+            { this.state.isRunningLocally ?
               <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
               : ''}
           </a>

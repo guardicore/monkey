@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from bson import ObjectId
 
 from cc.database import mongo
@@ -236,3 +236,22 @@ class NodeService:
             {"_id": node_id},
             {"$set": {"exploited": True}}
         )
+
+    @staticmethod
+    def update_dead_monkeys():
+        # Update dead monkeys only if no living monkey transmitted keepalive in the last 10 minutes
+        if mongo.db.monkey.find_one(
+                {'dead': {'$ne': True}, 'keepalive': {'$gte': datetime.now() - timedelta(minutes=10)}}):
+            return
+
+        mongo.db.monkey.update(
+            {'keepalive': {'$lte': datetime.now() - timedelta(minutes=10)}, 'dead': {'$ne': True}},
+            {'$set': {'dead': True, 'modifytime': datetime.now()}}, upsert=False, multi=True)
+
+    @staticmethod
+    def is_any_monkey_alive():
+        return mongo.db.monkey.find_one({'dead': False}) is not None
+
+    @staticmethod
+    def is_any_monkey_exists():
+        return mongo.db.monkey.find_one({}) is not None

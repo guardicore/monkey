@@ -5,6 +5,7 @@ import flask_restful
 
 from cc.database import mongo
 from cc.services.config import ConfigService
+from cc.services.node import NodeService
 
 from cc.utils import local_ip_addresses
 
@@ -30,10 +31,11 @@ class Root(flask_restful.Resource):
         elif action == "killall":
             mongo.db.monkey.update({}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}}, upsert=False,
                                    multi=True)
-            return 200
+            return jsonify(status='OK')
         else:
             return make_response(400, {'error': 'unknown action'})
 
     def get_completed_steps(self):
-        # TODO implement
-        return dict(run_server=True, run_monkey=False, infection_done=False)
+        is_any_exists = NodeService.is_any_monkey_exists()
+        is_any_alive = NodeService.is_any_monkey_alive()
+        return dict(run_server=True, run_monkey=is_any_exists, infection_done=(is_any_exists and not is_any_alive))

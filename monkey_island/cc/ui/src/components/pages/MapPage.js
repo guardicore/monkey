@@ -47,7 +47,8 @@ class MapPageComponent extends React.Component {
     this.state = {
       graph: {nodes: [], edges: []},
       selected: null,
-      selectedType: null
+      selectedType: null,
+      killPressed: false
     };
   }
 
@@ -111,6 +112,12 @@ class MapPageComponent extends React.Component {
     }
   }
 
+  killAllMonkeys = () => {
+    fetch('/api?action=killall')
+      .then(res => res.json())
+      .then(res => this.setState({killPressed: (res.status=="OK")}));
+  }
+
   render() {
     return (
       <div>
@@ -132,6 +139,12 @@ class MapPageComponent extends React.Component {
               Kill All Monkeys
             </button>
           </div>
+          {this.state.killPressed ?
+            <div className="alert alert-info">
+              <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+              Kill command sent to all monkeys
+            </div>
+            : ''}
 
           <PreviewPane item={this.state.selected} type={this.state.selectedType} />
         </Col>

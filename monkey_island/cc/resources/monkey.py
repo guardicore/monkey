@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import dateutil.parser
 from flask import request
@@ -14,19 +14,9 @@ __author__ = 'Barak'
 # TODO: separate logic from interface
 
 
-def update_dead_monkeys():
-    # Update dead monkeys only if no living monkey transmitted keepalive in the last 10 minutes
-    if mongo.db.monkey.find_one({'dead': {'$ne': True}, 'keepalive': {'$gte': datetime.now() - timedelta(minutes=10)}}):
-        return
-
-    mongo.db.monkey.update(
-        {'keepalive': {'$lte': datetime.now() - timedelta(minutes=10)}, 'dead': {'$ne': True}},
-        {'$set': {'dead': True, 'modifytime': datetime.now()}}, upsert=False, multi=True)
-
-
 class Monkey(flask_restful.Resource):
     def get(self, guid=None, **kw):
-        update_dead_monkeys()  # refresh monkeys status
+        NodeService.update_dead_monkeys()  # refresh monkeys status
         if not guid:
             guid = request.args.get('guid')
         timestamp = request.args.get('timestamp')

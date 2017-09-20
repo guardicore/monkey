@@ -5,6 +5,7 @@ from flask import Flask, send_from_directory, redirect, make_response
 import flask_restful
 
 from cc.database import mongo
+from cc.resources.client_run import ClientRun
 from cc.resources.monkey import Monkey
 from cc.resources.local_run import LocalRun
 from cc.resources.telemetry import Telemetry
@@ -75,6 +76,7 @@ def init_app(mongo_url):
     api.add_resource(Root, '/api')
     api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
     api.add_resource(LocalRun, '/api/local-monkey', '/api/local-monkey/')
+    api.add_resource(ClientRun, '/api/client-monkey', '/api/client-monkey/')
     api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry/<string:monkey_guid>')
     api.add_resource(MonkeyConfiguration, '/api/configuration', '/api/configuration/')
     api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/',

@@ -48,7 +48,14 @@ def run_local_monkey():
 
 class LocalRun(flask_restful.Resource):
     def get(self):
-        return jsonify(is_running=(NodeService.get_monkey_island_monkey() is not None))
+        NodeService.update_dead_monkeys()
+        island_monkey = NodeService.get_monkey_island_monkey()
+        if island_monkey is not None:
+            is_monkey_running = not island_monkey["dead"]
+        else:
+            is_monkey_running = False
+
+        return jsonify(is_running=is_monkey_running)
 
     def post(self):
         body = json.loads(request.data)
