@@ -637,45 +637,45 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description": "Determines whether monkey should scan its subnets additionally"
+                        }
+                    }
+                },
+                "network_range": {
+                    "title": "Network range",
+                    "type": "object",
+                    "properties": {
+                        "range_class": {
+                            "title": "Range class",
+                            "type": "string",
+                            "default": "FixedRange",
+                            "enum": [
+                                "FixedRange",
+                                "RelativeRange",
+                                "ClassCRange"
+                            ],
+                            "enumNames": [
+                                "FixedRange",
+                                "RelativeRange",
+                                "ClassCRange"
+                            ],
+                            "description": "Determines which class to use to determine scan range"
                         },
-                        "network_range": {
-                            "title": "Network range",
-                            "type": "object",
-                            "properties": {
-                                "range_class": {
-                                    "title": "Range class",
-                                    "type": "string",
-                                    "default": "FixedRange",
-                                    "enum": [
-                                        "FixedRange",
-                                        "RelativeRange",
-                                        "ClassCRange"
-                                    ],
-                                    "enumNames": [
-                                        "FixedRange",
-                                        "RelativeRange",
-                                        "ClassCRange"
-                                    ],
-                                    "description": "Determines which class to use to determine scan range"
-                                },
-                                "range_size": {
-                                    "title": "Relative range size",
-                                    "type": "integer",
-                                    "default": 1,
-                                    "description": "Determines the size of the RelativeRange - amount of IPs to include"
-                                },
-                                "range_fixed": {
-                                    "title": "Fixed range IP list",
-                                    "type": "array",
-                                    "uniqueItems": True,
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "default": [
-                                    ],
-                                    "description": "List of IPs to include when using FixedRange"
-                                }
-                            }
+                        "range_size": {
+                            "title": "Relative range size",
+                            "type": "integer",
+                            "default": 1,
+                            "description": "Determines the size of the RelativeRange - amount of IPs to include"
+                        },
+                        "range_fixed": {
+                            "title": "Fixed range IP list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description": "List of IPs to include when using FixedRange"
                         }
                     }
                 },
