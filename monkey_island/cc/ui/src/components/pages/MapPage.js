@@ -75,6 +75,15 @@ class MapPageComponent extends React.Component {
   }
 
   componentDidMount() {
+    this.updateMapFromServer();
+    this.interval = setInterval(this.updateMapFromServer, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  updateMapFromServer = () => {
     fetch('/api/netmap')
       .then(res => res.json())
       .then(res => {
@@ -84,7 +93,7 @@ class MapPageComponent extends React.Component {
         this.setState({graph: res});
         this.props.onStatusChange();
       });
-  }
+  };
 
   selectionChanged(event) {
     if (event.nodes.length === 1) {
@@ -110,13 +119,13 @@ class MapPageComponent extends React.Component {
       console.log('selection cleared.'); // eslint-disable-line no-console
       this.setState({selected: null, selectedType: null});
     }
-  }
+  };
 
   killAllMonkeys = () => {
     fetch('/api?action=killall')
       .then(res => res.json())
-      .then(res => this.setState({killPressed: (res.status=="OK")}));
-  }
+      .then(res => this.setState({killPressed: (res.status==="OK")}));
+  };
 
   render() {
     return (
@@ -135,7 +144,7 @@ class MapPageComponent extends React.Component {
           <div style={{'overflow': 'auto', 'marginBottom': '1em'}}>
             <Link to="/infection/telemetry" className="btn btn-default pull-left" style={{'width': '48%'}}>Monkey Telemetry</Link>
             <button onClick={this.killAllMonkeys} className="btn btn-danger pull-right" style={{'width': '48%'}}>
-              <Icon name="stop-circle" style={{'marginRight': '0.5em'}}></Icon>
+              <Icon name="stop-circle" style={{'marginRight': '0.5em'}} />
               Kill All Monkeys
             </button>
           </div>
