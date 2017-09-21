@@ -30,8 +30,6 @@ class PreviewPaneComponent extends React.Component {
   }
 
   infectedAssetInfo(asset) {
-    // TODO: Have exploit info expandable (show detailed attempts)
-    // TODO: consider showing scans with exploits on same timeline
     return (
       <div>
         {this.assetInfo(asset)}

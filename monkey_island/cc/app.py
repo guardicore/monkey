@@ -3,6 +3,7 @@ import bson
 from bson.json_util import dumps
 from flask import Flask, send_from_directory, redirect, make_response
 import flask_restful
+from werkzeug.exceptions import NotFound
 
 from cc.database import mongo
 from cc.resources.client_run import ClientRun
@@ -20,15 +21,14 @@ from cc.services.config import ConfigService
 
 __author__ = 'Barak'
 
-def serve_static_file(path):
-    print 'requested', path
-    if path.startswith('api/'):
-        return make_response(404)
-    return send_from_directory('ui/dist', path)
+
+def serve_static_file(static_path):
+    if static_path.startswith('api/'):
+        raise NotFound()
+    return send_from_directory('ui/dist', static_path)
 
 
 def serve_home():
-    # TODO: remove this or merge with frontend.
     return serve_static_file('index.html')
 
 
@@ -71,7 +71,7 @@ def init_app(mongo_url):
         ConfigService.init_config()
 
     app.add_url_rule('/', 'serve_home', serve_home)
-    app.add_url_rule('/<path:path>', 'serve_static_file', serve_static_file)
+    app.add_url_rule('/<path:static_path>', 'serve_static_file', serve_static_file)
 
     api.add_resource(Root, '/api')
     api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')

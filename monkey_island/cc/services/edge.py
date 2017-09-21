@@ -18,11 +18,7 @@ class EdgeService:
     @staticmethod
     def get_displayed_edges_by_to(to):
         edges = mongo.db.edge.find({"to": ObjectId(to)})
-        new_edges = []
-        # TODO: find better solution for this
-        for i in range(edges.count()):
-            new_edges.append(EdgeService.edge_to_displayed_edge(edges[i]))
-        return new_edges
+        return [EdgeService.edge_to_displayed_edge(edge) for edge in edges]
 
     @staticmethod
     def edge_to_displayed_edge(edge):
@@ -154,7 +150,6 @@ class EdgeService:
 
     @staticmethod
     def services_to_displayed_services(services):
-        # TODO: Consider returning extended information on services.
         return [x + ": " + services[x]["name"] for x in services]
 
     @staticmethod

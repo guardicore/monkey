@@ -35,12 +35,7 @@ class ConfigurePageComponent extends React.Component {
 
   onSubmit = ({formData}) => {
     this.currentFormData = formData;
-    let newConfig = this.state.configuration;
-    if (this.currentFormData != {}) {
-      newConfig[this.currentSection] = this.currentFormData;
-      this.currentFormData = {};
-    }
-    this.setState({configuration: newConfig});
+    this.updateConfigSection();
     fetch('/api/configuration',
       {
         method: 'POST',
@@ -62,17 +57,20 @@ class ConfigurePageComponent extends React.Component {
     this.currentFormData = formData;
   };
 
-  // TODO: remove code duplication
-  setSelectedSection = (key) => {
+  updateConfigSection = () => {
     let newConfig = this.state.configuration;
     if (Object.keys(this.currentFormData).length > 0) {
       newConfig[this.currentSection] = this.currentFormData;
       this.currentFormData = {};
     }
+    this.setState({configuration: newConfig});
+  };
+  
+  setSelectedSection = (key) => {
+    this.updateConfigSection();
     this.currentSection = key;
     this.setState({
-      selectedSection: key,
-      configuration: newConfig
+      selectedSection: key
     });
   };
 

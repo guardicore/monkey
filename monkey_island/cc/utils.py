@@ -18,6 +18,7 @@ if sys.platform == "win32":
         return socket.gethostbyname_ex(local_hostname)[2]
 else:
     import fcntl
+
     def local_ips():
         result = []
         try:
