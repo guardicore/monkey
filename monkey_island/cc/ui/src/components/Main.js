@@ -29,10 +29,32 @@ class AppComponent extends React.Component {
       }
     };
   }
+
   updateStatus = () => {
     fetch('/api')
       .then(res => res.json())
-      .then(res => this.setState({completedSteps: res['completed_steps']}));
+      .then(res => {
+        // This check is used to prevent unnecessary re-rendering
+        let isChanged = false;
+        for (let step in this.state.completedSteps) {
+          if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
+            isChanged = true;
+            break;
+          }
+        }
+        if (isChanged) {
+          this.setState({completedSteps: res['completed_steps']});
+        }
+      });
+  };
+
+  componentDidMount() {
+    this.updateStatus();
+    this.interval = setInterval(this.updateStatus, 2000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   render() {
