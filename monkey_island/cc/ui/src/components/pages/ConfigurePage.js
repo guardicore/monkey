@@ -107,7 +107,10 @@ class ConfigurePageComponent extends React.Component {
         </div>
 
         { this.state.saved ?
-          <p>Configuration saved successfully.</p>
+          <div className="alert alert-info">
+            <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+            Configuration saved successfully.
+          </div>
           : ''}
       </Col>
     );
