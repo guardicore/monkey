@@ -15,6 +15,9 @@ class MonkeyConfiguration(flask_restful.Resource):
 
     def post(self):
         config_json = json.loads(request.data)
-        ConfigService.update_config(config_json)
+        if config_json.has_key('reset'):
+            ConfigService.reset_config()
+        else:
+            ConfigService.update_config(config_json)
         return self.get()
 

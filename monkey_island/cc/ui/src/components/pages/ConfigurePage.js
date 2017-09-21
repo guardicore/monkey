@@ -14,6 +14,7 @@ class ConfigurePageComponent extends React.Component {
       schema: {},
       configuration: {},
       saved: false,
+      reset: false,
       sections: [],
       selectedSection: 'basic'
     };
@@ -46,6 +47,7 @@ class ConfigurePageComponent extends React.Component {
       .then(res => {
         this.setState({
           saved: true,
+          reset: false,
           schema: res.schema,
           configuration: res.configuration
         });
@@ -65,7 +67,7 @@ class ConfigurePageComponent extends React.Component {
     }
     this.setState({configuration: newConfig});
   };
-  
+
   setSelectedSection = (key) => {
     this.updateConfigSection();
     this.currentSection = key;
@@ -74,9 +76,27 @@ class ConfigurePageComponent extends React.Component {
     });
   };
 
+  resetConfig = () => {
+    fetch('/api/configuration',
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({'reset': true})
+      })
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          reset: true,
+          saved: false,
+          schema: res.schema,
+          configuration: res.configuration
+        });
+        this.props.onStatusChange();
+      });
+  };
+
   render() {
     let displayedSchema = {};
-
     if (this.state.schema.hasOwnProperty('properties')) {
       displayedSchema = this.state.schema["properties"][this.state.selectedSection];
       displayedSchema["definitions"] = this.state.schema["definitions"];
@@ -100,12 +120,18 @@ class ConfigurePageComponent extends React.Component {
                 onSubmit={this.onSubmit}
                 onChange={this.onChange} />
           : ''}
-
+        <a onClick={this.resetConfig} className="btn btn-danger btn-lg">Reset to defaults</a>
         <div className="alert alert-info">
           <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
           This configuration will only apply to new infections.
         </div>
 
+        { this.state.reset ?
+          <div className="alert alert-info">
+            <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+            Configuration reset successfully.
+          </div>
+          : ''}
         { this.state.saved ?
           <div className="alert alert-info">
             <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>

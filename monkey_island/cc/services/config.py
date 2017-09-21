@@ -816,6 +816,10 @@ class ConfigService:
     def init_config():
         if ConfigService.get_config() != {}:
             return
+        ConfigService.reset_config()
+
+    @staticmethod
+    def reset_config():
         config = ConfigService.get_default_config()
         ConfigService.set_server_ips_in_config(config)
         ConfigService.update_config(config)
