@@ -5,13 +5,14 @@ import {Icon} from 'react-fa';
 import {Link} from "react-router-dom";
 
 class RunMonkeyPageComponent extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
       ips: [],
       selectedIp: '0.0.0.0',
-      isRunningOnIsland: false,
-      isRunningLocally: false,
+      runningOnIslandState: "not_running",
+      runningOnClientState: "not_running",
       selectedSection: "windows-32"
     };
   }
@@ -25,15 +26,23 @@ class RunMonkeyPageComponent extends React.Component {
 
     fetch('/api/local-monkey')
       .then(res => res.json())
-      .then(res => this.setState({
-        isRunningOnIsland: res['is_running']
-      }));
+      .then(res =>{
+        if (res['is_running']) {
+          this.setState({runningOnIslandState: "running"});
+        } else {
+          this.setState({runningOnIslandState: "not_running"});
+        }
+      });
 
     fetch('/api/client-monkey')
       .then(res => res.json())
-      .then(res => this.setState({
-        isRunningLocally: res['is_running']
-      }));
+      .then(res => {
+        if (res['is_running']) {
+          this.setState({runningOnClientState: "running"});
+        } else {
+          this.setState({runningOnClientState: "not_running"});
+        }
+      });
 
     this.props.onStatusChange();
   }
@@ -57,9 +66,16 @@ class RunMonkeyPageComponent extends React.Component {
       })
       .then(res => res.json())
       .then(res => {
-        this.setState({
-          isRunningOnIsland: res['is_running']
-        });
+        if (res['is_running']) {
+          this.setState({
+            runningOnIslandState: "installing"
+          });
+        } else {
+          this.setState({
+            runningOnIslandState: "not_running"
+          });
+        }
+
         this.props.onStatusChange();
       });
   };
@@ -93,6 +109,16 @@ class RunMonkeyPageComponent extends React.Component {
     });
   };
 
+  renderIconByState(state) {
+    if (state === "running") {
+      return <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
+    } else if (state == "installing") {
+      return <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/>
+    } else {
+      return '';
+    }
+  }
+
   render() {
     return (
       <Col xs={8}>
@@ -104,20 +130,16 @@ class RunMonkeyPageComponent extends React.Component {
         <p style={{'marginBottom': '2em'}}>
           <button onClick={this.runLocalMonkey}
                   className="btn btn-default"
-                  disabled={this.state.isRunningOnIsland}>
+                  disabled={this.state.runningOnIslandState !== "not_running"}>
             Run on C&C Server
-            { this.state.isRunningOnIsland ?
-              <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
-              : ''}
+            { this.renderIconByState(this.state.runningOnIslandState) }
           </button>
           <a href="/download-monkey"
              className="btn btn-default"
-             disabled={this.state.isRunningLocally}
+             disabled={this.state.runningOnClientState !== "not_running"}
              style={{'marginLeft': '1em'}}>
             Download and run locally
-            { this.state.isRunningLocally ?
-              <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
-              : ''}
+            { this.renderIconByState(this.state.runningOnClientState) }
           </a>
         </p>
         <div className="run-monkey-snippets" style={{'marginBottom': '3em'}}>
