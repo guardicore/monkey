@@ -5,14 +5,19 @@ import PreviewPane from 'components/preview-pane/PreviewPane';
 import {Link} from 'react-router-dom';
 import {Icon} from 'react-fa';
 
-let groupsToGroupsOptions = (groupNames) => {
+let groupNames = ['clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
+  'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_windows', 'island_monkey_windows_running',
+  'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',
+  'monkey_linux_running', 'monkey_windows', 'monkey_windows_running'];
+
+let getGroupsOptions = () => {
   let groupOptions = {};
   for (let groupName of groupNames) {
     groupOptions[groupName] =
       {
         shape: 'image',
         size: 50,
-        image: '../images/nodes/' + groupName + '.png'
+        image: require('../../images/nodes/' + groupName + '.png')
       };
   }
   return groupOptions;
@@ -24,13 +29,10 @@ let options = {
   },
   edges: {
     smooth: {
-      type: "curvedCW"
+      type: 'curvedCW'
     }
   },
-  groups: groupsToGroupsOptions(['clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
-    'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_windows', 'island_monkey_windows_running',
-    'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',
-    'monkey_linux_running', 'monkey_windows', 'monkey_windows_running'])
+  groups: getGroupsOptions()
 };
 
 class MapPageComponent extends React.Component {
