@@ -78,6 +78,10 @@ class NodeService:
         return os
 
     @staticmethod
+    def get_node_os(node):
+        return node["os"]["type"]
+
+    @staticmethod
     def get_monkey_manual_run(monkey):
         for p in monkey["parent"]:
             if p[0] != monkey["guid"]:
@@ -96,13 +100,19 @@ class NodeService:
     @staticmethod
     def get_monkey_group(monkey):
         if len(set(monkey["ip_addresses"]).intersection(local_ip_addresses())) != 0:
-            return "islandInfected"
+            monkey_type = "island_monkey"
+        else:
+            monkey_type = "manual" if NodeService.get_monkey_manual_run(monkey) else "monkey"
 
-        return "manuallyInfected" if NodeService.get_monkey_manual_run(monkey) else "infected"
+        monkey_os = NodeService.get_monkey_os(monkey)
+        monkey_running = "" if monkey["dead"] else "_running"
+        return "%s_%s%s" % (monkey_type, monkey_os, monkey_running)
 
     @staticmethod
     def get_node_group(node):
-        return "exploited" if node.get("exploited") else "clean"
+        node_type = "exploited" if node.get("exploited") else "clean"
+        node_os = NodeService.get_node_os(node)
+        return "%s_%s" % (node_type, node_os)
 
     @staticmethod
     def monkey_to_net_node(monkey):
@@ -122,7 +132,7 @@ class NodeService:
                 "id": node["_id"],
                 "label": NodeService.get_node_label(node),
                 "group": NodeService.get_node_group(node),
-                "os": node["os"]["type"]
+                "os": NodeService.get_node_os(node)
             }
 
     @staticmethod
@@ -221,7 +231,7 @@ class NodeService:
             {
                 "id": NodeService.get_monkey_island_pseudo_id(),
                 "label": "MonkeyIsland",
-                "group": "islandClean",
+                "group": "island",
             }
 
     @staticmethod

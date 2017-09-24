@@ -5,40 +5,27 @@ import PreviewPane from 'components/preview-pane/PreviewPane';
 import {Link} from 'react-router-dom';
 import {Icon} from 'react-fa';
 
+let groupsToGroupsOptions = (groupNames) => {
+  let groupOptions = {};
+  for (let groupName of groupNames) {
+    groupOptions[groupName] =
+      {
+        shape: 'image',
+        size: 50,
+        image: '../images/nodes/' + groupName + '.png'
+      };
+  }
+  return groupOptions;
+};
+
 let options = {
   layout: {
     improvedLayout: false
   },
-  groups: {
-    manuallyInfected: {
-      shape: 'icon',
-      icon: {
-        face: 'FontAwesome',
-        code: '\uf120',
-        size: 50,
-        color: '#8f5a0b'
-      }
-    },
-    infected: {
-      shape: 'icon',
-      icon: {
-        face: 'FontAwesome',
-        code: '\uf06d',
-        size: 50,
-        color: '#d30d09'
-      }
-    },
-    clean: {
-      shape: 'icon',
-      icon: {
-        face: 'FontAwesome',
-        code: '\uf108',
-        size: 50,
-        color: '#999'
-      }
-    }
-  }
-
+  groups: groupsToGroupsOptions(['clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
+    'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_windows', 'island_monkey_windows_running',
+    'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',
+    'monkey_linux_running', 'monkey_windows', 'monkey_windows_running'])
 };
 
 class MapPageComponent extends React.Component {
