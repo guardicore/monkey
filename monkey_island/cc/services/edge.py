@@ -150,7 +150,7 @@ class EdgeService:
 
     @staticmethod
     def services_to_displayed_services(services):
-        return [x + ": " + services[x]["name"] for x in services]
+        return [x + ": " + (services[x]['name'] if services[x].has_key('name') else 'unknown') for x in services]
 
     @staticmethod
     def edge_to_net_edge(edge):
