@@ -98,8 +98,8 @@ class ConfigurePageComponent extends React.Component {
   render() {
     let displayedSchema = {};
     if (this.state.schema.hasOwnProperty('properties')) {
-      displayedSchema = this.state.schema["properties"][this.state.selectedSection];
-      displayedSchema["definitions"] = this.state.schema["definitions"];
+      displayedSchema = this.state.schema['properties'][this.state.selectedSection];
+      displayedSchema['definitions'] = this.state.schema['definitions'];
     }
 
     return (

@@ -54,16 +54,12 @@ class MapPageComponent extends React.Component {
     switch (group) {
       case 'exploited':
         return '#c00';
-        break;
       case 'tunnel':
         return '#aaa';
-        break;
       case 'scan':
         return '#f90';
-        break;
       case 'island':
         return '#aaa';
-        break;
     }
     return 'black';
   }
@@ -113,12 +109,12 @@ class MapPageComponent extends React.Component {
       console.log('selection cleared.'); // eslint-disable-line no-console
       this.setState({selected: null, selectedType: null});
     }
-  };
+  }
 
   killAllMonkeys = () => {
     fetch('/api?action=killall')
       .then(res => res.json())
-      .then(res => this.setState({killPressed: (res.status==="OK")}));
+      .then(res => this.setState({killPressed: (res.status === 'OK')}));
   };
 
   render() {

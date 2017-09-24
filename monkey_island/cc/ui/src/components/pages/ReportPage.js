@@ -1,6 +1,5 @@
 import React from 'react';
 import {Col} from 'react-bootstrap';
-import {Link} from 'react-router-dom';
 
 class ReportPageComponent extends React.Component {
   constructor(props) {

@@ -48,7 +48,7 @@ class StartOverPageComponent extends React.Component {
     fetch('/api?action=reset')
       .then(res => res.json())
       .then(res => {
-        if (res["status"] == "OK") {
+        if (res['status'] === 'OK') {
           this.setState({
               cleaned: true
             });

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Icon} from "react-fa";
+import {Icon} from 'react-fa';
 
 class PreviewPaneComponent extends React.Component {
 
@@ -58,6 +58,10 @@ class PreviewPaneComponent extends React.Component {
   }
 
   exploitsTimeline(asset) {
+    if (asset.exploits.length === 0) {
+      return (<div />);
+    }
+
     return (
       <div>
         <h4 style={{'marginTop': '2em'}}>Timeline</h4>

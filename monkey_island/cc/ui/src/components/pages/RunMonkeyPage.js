@@ -2,7 +2,7 @@ import React from 'react';
 import {Button, Col, Well, Nav, NavItem} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {Icon} from 'react-fa';
-import {Link} from "react-router-dom";
+import {Link} from 'react-router-dom';
 
 class RunMonkeyPageComponent extends React.Component {
 
@@ -11,9 +11,9 @@ class RunMonkeyPageComponent extends React.Component {
     this.state = {
       ips: [],
       selectedIp: '0.0.0.0',
-      runningOnIslandState: "not_running",
-      runningOnClientState: "not_running",
-      selectedSection: "windows-32"
+      runningOnIslandState: 'not_running',
+      runningOnClientState: 'not_running',
+      selectedSection: 'windows-32'
     };
   }
 
@@ -28,9 +28,9 @@ class RunMonkeyPageComponent extends React.Component {
       .then(res => res.json())
       .then(res =>{
         if (res['is_running']) {
-          this.setState({runningOnIslandState: "running"});
+          this.setState({runningOnIslandState: 'running'});
         } else {
-          this.setState({runningOnIslandState: "not_running"});
+          this.setState({runningOnIslandState: 'not_running'});
         }
       });
 
@@ -38,9 +38,9 @@ class RunMonkeyPageComponent extends React.Component {
       .then(res => res.json())
       .then(res => {
         if (res['is_running']) {
-          this.setState({runningOnClientState: "running"});
+          this.setState({runningOnClientState: 'running'});
         } else {
-          this.setState({runningOnClientState: "not_running"});
+          this.setState({runningOnClientState: 'not_running'});
         }
       });
 
@@ -68,11 +68,11 @@ class RunMonkeyPageComponent extends React.Component {
       .then(res => {
         if (res['is_running']) {
           this.setState({
-            runningOnIslandState: "installing"
+            runningOnIslandState: 'installing'
           });
         } else {
           this.setState({
-            runningOnIslandState: "not_running"
+            runningOnIslandState: 'not_running'
           });
         }
 
@@ -81,9 +81,9 @@ class RunMonkeyPageComponent extends React.Component {
   };
 
   generateCmdDiv(ip) {
-    let isLinux = (this.state.selectedSection.split('-')[0] === "linux");
-    let is32Bit = (this.state.selectedSection.split('-')[1] === "32");
-    let cmdText = "";
+    let isLinux = (this.state.selectedSection.split('-')[0] === 'linux');
+    let is32Bit = (this.state.selectedSection.split('-')[1] === '32');
+    let cmdText = '';
     if (isLinux) {
       cmdText = this.generateLinuxCmd(ip, is32Bit);
     } else {
@@ -110,9 +110,9 @@ class RunMonkeyPageComponent extends React.Component {
   };
 
   renderIconByState(state) {
-    if (state === "running") {
+    if (state === 'running') {
       return <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
-    } else if (state == "installing") {
+    } else if (state == 'installing') {
       return <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/>
     } else {
       return '';
@@ -130,13 +130,13 @@ class RunMonkeyPageComponent extends React.Component {
         <p style={{'marginBottom': '2em'}}>
           <button onClick={this.runLocalMonkey}
                   className="btn btn-default"
-                  disabled={this.state.runningOnIslandState !== "not_running"}>
+                  disabled={this.state.runningOnIslandState !== 'not_running'}>
             Run on C&C Server
             { this.renderIconByState(this.state.runningOnIslandState) }
           </button>
-          <a href="/download-monkey"
+          <a
              className="btn btn-default"
-             disabled={this.state.runningOnClientState !== "not_running"}
+             disabled={this.state.runningOnClientState !== 'not_running'}
              style={{'marginLeft': '1em'}}>
             Download and run locally
             { this.renderIconByState(this.state.runningOnClientState) }
