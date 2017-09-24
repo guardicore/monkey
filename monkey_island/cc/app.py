@@ -25,7 +25,11 @@ __author__ = 'Barak'
 def serve_static_file(static_path):
     if static_path.startswith('api/'):
         raise NotFound()
-    return send_from_directory('ui/dist', static_path)
+    try:
+        return send_from_directory('ui/dist', static_path)
+    except NotFound:
+        # Because react uses various urls for same index page, this is probably the user's intention.
+        serve_home()
 
 
 def serve_home():
