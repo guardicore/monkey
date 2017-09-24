@@ -86,6 +86,7 @@ class PreviewPaneComponent extends React.Component {
             {this.accessibleRow(asset)}
           </tbody>
         </table>
+        {this.exploitsTimeline(asset)}
       </div>
     );
   }
