@@ -22,6 +22,11 @@ let options = {
   layout: {
     improvedLayout: false
   },
+  edges: {
+    smooth: {
+      type: "curvedCW"
+    }
+  },
   groups: groupsToGroupsOptions(['clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
     'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_windows', 'island_monkey_windows_running',
     'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',

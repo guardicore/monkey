@@ -133,7 +133,7 @@ class EdgeService:
     @staticmethod
     def get_infected_monkey_island_pseudo_edges():
         monkey = cc.services.node.NodeService.get_monkey_island_monkey()
-        existing_ids = [x["_id"] for x in mongo.db.edge.find({"to": monkey["_id"]})]
+        existing_ids = [x["from"] for x in mongo.db.edge.find({"to": monkey["_id"]})]
         monkey_ids = [x["_id"] for x in mongo.db.monkey.find({})
                       if ("tunnel" not in x) and (x["_id"] not in existing_ids)]
         edges = []
