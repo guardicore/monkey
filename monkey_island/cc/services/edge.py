@@ -135,7 +135,7 @@ class EdgeService:
         monkey = cc.services.node.NodeService.get_monkey_island_monkey()
         existing_ids = [x["from"] for x in mongo.db.edge.find({"to": monkey["_id"]})]
         monkey_ids = [x["_id"] for x in mongo.db.monkey.find({})
-                      if ("tunnel" not in x) and (x["_id"] not in existing_ids)]
+                      if ("tunnel" not in x) and (x["_id"] not in existing_ids) and (x["_id"] != monkey["_id"])]
         edges = []
 
         # We're using fake ids because the frontend graph module requires unique ids.
