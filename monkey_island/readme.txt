@@ -25,10 +25,14 @@ How to set C&C server:
 	monkey-linux-32 - monkey binary for linux 32bit
 	monkey-windows-32.exe - monkey binary for windows 32bit
 	monkey-windows-64.exe - monkey binary for windows 64bit
+8. Install npm
+	8.1. Download and install from: https://www.npmjs.com/get-npm
+9. Build Monkey Island frontend
+	9.1. cd to 'monkey_island\cc\ui'
+	9.2. run 'npm run dist'
 
 How to run:
 1. start monkey_island\windows\run_server.bat (when your current working directory is monkey_island)
-2. to clear db, run clear_db.bat
 
 ---------------- On Linux ----------------:
 1. Create the following directories:
@@ -68,4 +72,3 @@ How to run:
 
 How to run:
 1. run run.sh
-2. to clear db, run clear.db.sh
