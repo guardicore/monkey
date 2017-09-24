@@ -1,35 +1,34 @@
 How to set C&C server:
 
 ---------------- On Windows ----------------:
-1. Install python 2.7
-	https://www.python.org/download/releases/2.7
-2. Download & Run get-pip.py
-	https://bootstrap.pypa.io/get-pip.py
-3. Run:
-	setx path "%path%;C:\Python27\;C:\Python27\Scripts"
-	python -m pip install flask
-	python -m pip install Flask-Pymongo
-	python -m pip install Flask-Restful
-	python -m pip install python-dateutil
-	mkdir MonkeyIsland\bin
-	mkdir MonkeyIsland\db
-	mkdir MonkeyIsland\cc\binaries
-4. Put monkey binaries in MonkeyIsland\cc\binaries:
+1. Create bin folder
+	1.1. create folder "bin" under monkey_island
+2. Place portable version of Python 2.7
+	2.1. Download and install from: https://www.python.org/download/releases/2.7/
+	2.2. Download & Run get-pip.py from: https://bootstrap.pypa.io/get-pip.py
+	2.3. Install required python libraries using "python -m pip install -r monkey_island\requirements.txt"
+	2.4. Copy Contents from Installation path (Usually C:\Python27) to monkey_island\bin\Python27
+	2.5. Copy Python27.dll from System32 folder (Usually C:\Windows\System32) to monkey_island\bin\Python27
+	2.6. (Optional) You may uninstall Python27 if you like.
+3. Place portable version of mongodb
+	3.1. Download from: http://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip
+	3.2. Extract contents from bin folder to monkey_island\bin\mongodb.
+4. Place portable version of OpenSSL
+	4.1. Download from: http://downloads.sourceforge.net/gnuwin32/openssl-0.9.8h-1-bin.zip
+	4.2. Extract content from bin folder to monkey_island\bin\openssl
+5. Download and install Microsoft Visual C++ Redisutable for Visual Studio 2017
+	5.1. Download and install from: https://go.microsoft.com/fwlink/?LinkId=746572
+6. Generate SSL Certificate
+	6.1. run create_certificate.bat when your current working directory is monkey_island
+7. Put chaos monkey binaries in monkey_island\cc\binaries (create folder if it doesn't exist):
 	monkey-linux-64 - monkey binary for linux 64bit
 	monkey-linux-32 - monkey binary for linux 32bit
 	monkey-windows-32.exe - monkey binary for windows 32bit
 	monkey-windows-64.exe - monkey binary for windows 64bit
-4. Download MongoDB & Extract to MonkeyIsland\bin\mongodb
-	http://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip
-5. Install OpenSSL
-	https://slproweb.com/download/Win64OpenSSL_Light-1_0_2d.exe
-6. Generate SSL Certificate, run create_certificate.bat when your current working directory is MonkeyIsland
-7. Copy monkey island server to MonkeyIsland\cc
 
 How to run:
-1. start run_mongodb.bat
-2. start run_cc.bat
-3. to clear db, run clear_db.bat
+1. start monkey_island\windows\run_server.bat (when your current working directory is monkey_island)
+2. to clear db, run clear_db.bat
 
 ---------------- On Linux ----------------:
 1. Create the following directories:
