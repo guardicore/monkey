@@ -9,7 +9,7 @@ from model.host import VictimHost
 from network import HostFinger
 
 ES_PORT = 9200
-ES_SERVICE = 'elastic-seach-3306'
+ES_SERVICE = 'elastic-search-3306'
 ES_HTTP_TIMEOUT = 5
 LOG = logging.getLogger(__name__)
 __author__ = 'danielg'
