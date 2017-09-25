@@ -1,19 +1,21 @@
 import os
 import sys
-from network.range import FixedRange, RelativeRange, ClassCRange
-from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter,\
-    SambaCryExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger
+import types
+import uuid
 from abc import ABCMeta
 from itertools import product
-import uuid
-import types
+
+from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
+    SambaCryExploiter
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, ElasticFinger
+from network.range import FixedRange
 
 __author__ = 'itamar'
 
 GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
+
 
 def _cast_by_example(value, example):
     """
@@ -142,7 +144,8 @@ class Configuration(object):
     scanner_class = TcpScanner
     finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter,  # Windows exploits
-                         SSHExploiter, ShellShockExploiter, SambaCryExploiter  # Linux
+                         SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
+                         ElasticFinger,
                          ]
 
     # how many victims to look for in a single scan iteration
@@ -178,7 +181,7 @@ class Configuration(object):
 
     range_class = FixedRange
     range_size = 1
-    range_fixed = ['',]
+    range_fixed = ['', ]
 
     blocked_ips = ['', ]
 
@@ -186,7 +189,15 @@ class Configuration(object):
     HTTP_PORTS = [80, 8080, 443,
                   8008,  # HTTP alternate
                   ]
-    tcp_target_ports = [22, 2222, 445, 135, 3389]
+    tcp_target_ports = [22,
+                        445,
+                        135,
+                        3389,
+                        80,
+                        8080,
+                        443,
+                        8008,
+                        9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
     tcp_scan_interval = 200
@@ -211,13 +222,17 @@ class Configuration(object):
     # User and password dictionaries for exploits.
 
     def get_exploit_user_password_pairs(self):
+        """
+        Returns all combinations of the configurations users and passwords
+        :return:
+        """
         return product(self.exploit_user_list, self.exploit_password_list)
 
     exploit_user_list = ['Administrator', 'root', 'user']
     exploit_password_list = ["Password1!", "1234", "password", "12345678"]
 
     # smb/wmi exploiter
-    smb_download_timeout = 300 # timeout in seconds
+    smb_download_timeout = 300  # timeout in seconds
     smb_service_name = "InfectionMonkey"
 
     # Timeout (in seconds) for sambacry's trigger to yield results.
@@ -243,7 +258,6 @@ class Configuration(object):
     # Monkey copy filename on share (64 bit)
     sambacry_monkey_copy_filename_64 = "monkey64_2"
 
-
     # system info collection
     collect_system_info = True
 
@@ -252,5 +266,6 @@ class Configuration(object):
     ###########################
 
     mimikatz_dll_name = "mk.dll"
+
 
 WormConfiguration = Configuration()
