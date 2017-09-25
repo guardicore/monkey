@@ -1,19 +1,21 @@
 import os
 import sys
-from network.range import FixedRange, RelativeRange, ClassCRange
-from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter,\
-    SambaCryExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger
+import types
+import uuid
 from abc import ABCMeta
 from itertools import product
-import uuid
-import types
+
+from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
+    SambaCryExploiter
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger
+from network.range import FixedRange
 
 __author__ = 'itamar'
 
 GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
+
 
 def _cast_by_example(value, example):
     """
@@ -178,7 +180,7 @@ class Configuration(object):
 
     range_class = FixedRange
     range_size = 1
-    range_fixed = ['',]
+    range_fixed = ['10.0.1.63', ]
 
     blocked_ips = ['', ]
 
@@ -186,7 +188,7 @@ class Configuration(object):
     HTTP_PORTS = [80, 8080, 443,
                   8008,  # HTTP alternate
                   ]
-    tcp_target_ports = [22, 2222, 445, 135, 3389]
+    tcp_target_ports = [22, 2222, 445, 135, 3389, 3306, ]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
     tcp_scan_interval = 200
@@ -217,7 +219,7 @@ class Configuration(object):
     exploit_password_list = ["Password1!", "1234", "password", "12345678"]
 
     # smb/wmi exploiter
-    smb_download_timeout = 300 # timeout in seconds
+    smb_download_timeout = 300  # timeout in seconds
     smb_service_name = "InfectionMonkey"
 
     # Timeout (in seconds) for sambacry's trigger to yield results.
@@ -243,7 +245,6 @@ class Configuration(object):
     # Monkey copy filename on share (64 bit)
     sambacry_monkey_copy_filename_64 = "monkey64_2"
 
-
     # system info collection
     collect_system_info = True
 
@@ -252,5 +253,6 @@ class Configuration(object):
     ###########################
 
     mimikatz_dll_name = "mk.dll"
+
 
 WormConfiguration = Configuration()

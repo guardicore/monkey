@@ -32,8 +32,7 @@ def struct_unpack_tracker_string(data, index):
     """
     ascii_len = data[index:].find('\0')
     fmt = "%ds" % ascii_len
-    unpacked = struct.unpack_from(fmt, data, index)
-    return unpacked, struct.calcsize(fmt)
+    return struct_unpack_tracker(data,index,fmt)
 
 
 def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):

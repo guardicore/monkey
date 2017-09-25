@@ -1,8 +1,9 @@
-import socket
 import logging
+import socket
+
+from model.host import VictimHost
 from network import HostFinger
 from .tools import struct_unpack_tracker, struct_unpack_tracker_string
-from model.host import VictimHost
 
 MYSQL_PORT = 3306
 SQL_SERVICE = 'mysqld-3306'
@@ -15,6 +16,9 @@ class MySQLFinger(HostFinger):
         Fingerprints mysql databases, only on port 3306
     """
 
+    SOCKET_TIMEOUT = 0.5
+    HEADER_SIZE = 4  # in bytes
+
     def __init__(self):
         self._config = __import__('config').WormConfiguration
 
@@ -26,15 +30,15 @@ class MySQLFinger(HostFinger):
         """
         assert isinstance(host, VictimHost)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(0.5)
+        s.settimeout(self.SOCKET_TIMEOUT)
 
         try:
             s.connect((host.ip_addr, MYSQL_PORT))
-            header = s.recv(4)  # max header size?
+            header = s.recv(self.HEADER_SIZE)  # max header size?
 
-            tmp, curpos = struct_unpack_tracker(header, 0, "I")
-            tmp = tmp[0]
-            response_length = tmp & 0xff
+            response, curpos = struct_unpack_tracker(header, 0, "I")
+            response = response[0]
+            response_length = response & 0xff  # first byte is significant
             data = s.recv(response_length)
             # now we can start parsing
             protocol, curpos = struct_unpack_tracker(data, 0, "B")
@@ -47,6 +51,7 @@ class MySQLFinger(HostFinger):
 
             version, curpos = struct_unpack_tracker_string(data, curpos)  # special coded to solve string parsing
             version = version[0]
+            host.services[SQL_SERVICE] = {}
             host.services[SQL_SERVICE]['version'] = version
             version = version.split('-')[0].split('.')
             host.services[SQL_SERVICE]['major_version'] = version[0]
@@ -54,6 +59,8 @@ class MySQLFinger(HostFinger):
             host.services[SQL_SERVICE]['build_version'] = version[2]
             thread_id, curpos = struct_unpack_tracker(data, curpos, "<I")  # ignore thread id
 
+            # protocol parsing taken from
+            # https://nmap.org/nsedoc/scripts/mysql-info.html
             if protocol == 10:
                 # new protocol
                 self._parse_protocol_10(curpos, data, host)
