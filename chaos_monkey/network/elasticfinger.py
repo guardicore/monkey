@@ -9,7 +9,7 @@ from model.host import VictimHost
 from network import HostFinger
 
 ES_PORT = 9200
-ES_SERVICE = 'elastic-search-3306'
+ES_SERVICE = 'elastic-search-9200'
 ES_HTTP_TIMEOUT = 5
 LOG = logging.getLogger(__name__)
 __author__ = 'danielg'
@@ -17,7 +17,7 @@ __author__ = 'danielg'
 
 class ElasticFinger(HostFinger):
     """
-        Fingerprints elastic search clusters, only on port 3306
+        Fingerprints elastic search clusters, only on port 9200
     """
 
     def __init__(self):
@@ -35,7 +35,6 @@ class ElasticFinger(HostFinger):
             with closing(requests.get(url, timeout=ES_HTTP_TIMEOUT)) as req:
                 data = json.loads(req.text)
                 host.services[ES_SERVICE] = {}
-                host.services[ES_SERVICE]['name'] = 'ElasticSearch'
                 host.services[ES_SERVICE]['cluster_name'] = data['cluster_name']
                 host.services[ES_SERVICE]['name'] = data['name']
                 host.services[ES_SERVICE]['version'] = data['version']['number']
