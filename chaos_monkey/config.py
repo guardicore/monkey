@@ -142,10 +142,9 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, ElasticFinger, ]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
-                         ElasticFinger,
                          ]
 
     # how many victims to look for in a single scan iteration
