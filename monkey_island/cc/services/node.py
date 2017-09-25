@@ -31,7 +31,7 @@ class NodeService:
             # node is infected
             new_node = NodeService.monkey_to_net_node(monkey)
             for key in monkey:
-                if key not in ["_id", "modifytime", "parent", "dead", "config"]:
+                if key not in ["_id", "modifytime", "parent", "dead"]:
                     new_node[key] = monkey[key]
 
         else:

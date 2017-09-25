@@ -1,5 +1,6 @@
 import React from 'react';
 import {Icon} from 'react-fa';
+import Toggle from 'react-toggle';
 
 class PreviewPaneComponent extends React.Component {
 
@@ -57,6 +58,29 @@ class PreviewPaneComponent extends React.Component {
     );
   }
 
+  forceKill(event, asset) {
+    let newConfig = asset.config;
+    newConfig['alive'] = !event.target.checked;
+    fetch('/api/monkey/' + asset.guid,
+      {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({config: newConfig})
+      });
+  }
+
+  forceKillRow(asset) {
+    return (
+      <tr>
+        <th>Force Kill</th>
+        <td>
+          <Toggle id={asset.id} checked={!asset.config.alive} icons={false}
+                        onChange={(e) => this.forceKill(e, asset)} />
+        </td>
+      </tr>
+    );
+  }
+
   exploitsTimeline(asset) {
     if (asset.exploits.length === 0) {
       return (<div />);
@@ -106,6 +130,7 @@ class PreviewPaneComponent extends React.Component {
             {this.ipsRow(asset)}
             {this.servicesRow(asset)}
             {this.accessibleRow(asset)}
+            {this.forceKillRow(asset)}
           </tbody>
         </table>
         {this.exploitsTimeline(asset)}
