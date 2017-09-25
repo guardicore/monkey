@@ -180,7 +180,7 @@ class Configuration(object):
 
     range_class = FixedRange
     range_size = 1
-    range_fixed = ['10.0.1.63', ]
+    range_fixed = ['', ]
 
     blocked_ips = ['', ]
 
