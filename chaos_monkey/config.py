@@ -189,6 +189,7 @@ class Configuration(object):
                   8008,  # HTTP alternate
                   ]
     tcp_target_ports = [22,
+                        2222,
                         445,
                         135,
                         3389,

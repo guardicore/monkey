@@ -9,15 +9,15 @@ from model.host import VictimHost
 from network import HostFinger
 
 ES_PORT = 9200
-ES_SERVICE = 'es-3306'
-
+ES_SERVICE = 'elastic-seach-3306'
+ES_HTTP_TIMEOUT = 5
 LOG = logging.getLogger(__name__)
 __author__ = 'danielg'
 
 
 class ElasticFinger(HostFinger):
     """
-        Fingerprints mysql databases, only on port 3306
+        Fingerprints elastic search clusters, only on port 3306
     """
 
     def __init__(self):
@@ -32,11 +32,12 @@ class ElasticFinger(HostFinger):
         assert isinstance(host, VictimHost)
         try:
             url = 'http://%s:%s/' % (host.ip_addr, ES_PORT)
-            with closing(requests.get(url, timeout=1)) as req:
+            with closing(requests.get(url, timeout=ES_HTTP_TIMEOUT)) as req:
                 data = json.loads(req.text)
                 host.services[ES_SERVICE] = {}
                 host.services[ES_SERVICE]['name'] = 'ElasticSearch'
-                host.services[ES_SERVICE]['cluster_name'] = data['name']
+                host.services[ES_SERVICE]['cluster_name'] = data['cluster_name']
+                host.services[ES_SERVICE]['name'] = data['name']
                 host.services[ES_SERVICE]['version'] = data['version']['number']
                 return True
         except Timeout:
