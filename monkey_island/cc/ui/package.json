@@ -74,7 +74,7 @@
     "react-fa": "^4.2.0",
     "react-graph-vis": "^0.1.3",
     "react-json-tree": "^0.10.9",
-    "react-jsonschema-form": "^0.49.0",
+    "react-jsonschema-form": "^0.50.1",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "react-toggle": "^4.0.1",
