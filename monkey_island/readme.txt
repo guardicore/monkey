@@ -42,11 +42,8 @@ How to run:
     mkdir -p /var/monkey_island/db
     mkdir -p /var/monkey_island/cc/binaries
 
-2. Install the following packages:
-	sudo pip install flask
-	sudo pip install Flask-Pymongo
-	sudo pip install Flask-Restful
-	sudo pip install python-dateutil
+2. Install the packages from monkey_island/requirements.txt:
+	sudo python -m pip install -r /var/monkey_island/requirements.txt
 	
 3. put monkey binaries in /var/monkey_island/cc/binaries
     monkey-linux-64 - monkey binary for linux 64bit
@@ -70,5 +67,12 @@ How to run:
 7. Copy monkey island server to /var/monkey_island:
     cp -r [monkey_island_source]/cc /var/monkey_island/
 
+8. Install npm
+	8.1. Download and install from: https://www.npmjs.com/get-npm
+	
+9. Build Monkey Island frontend
+	9.1. cd to 'monkey_island/cc/ui'
+	9.2. run 'npm run dist'
+	
 How to run:
 1. run run.sh
