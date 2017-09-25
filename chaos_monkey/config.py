@@ -7,7 +7,7 @@ from itertools import product
 
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
     SambaCryExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, ElasticFinger
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
 from network.range import FixedRange
 
 __author__ = 'itamar'
@@ -142,7 +142,7 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, ElasticFinger, ]
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
                          ]
@@ -197,6 +197,7 @@ class Configuration(object):
                         8080,
                         443,
                         8008,
+                        3306,
                         9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds

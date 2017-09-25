@@ -1,11 +1,38 @@
 import socket
 import select
 import logging
+import struct
 
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
 
 LOG = logging.getLogger(__name__)
+
+
+def struct_unpack_tracker(data, index, fmt):
+    """
+    Unpacks a struct from the specified index according to specified format.
+    Returns the data and the next index
+    :param data:  Buffer
+    :param index: Position index
+    :param fmt: Struct format
+    :return: (Data, new index)
+    """
+    unpacked = struct.unpack_from(fmt, data, index)
+    return unpacked, struct.calcsize(fmt)
+
+
+def struct_unpack_tracker_string(data, index):
+    """
+    Unpacks a null terminated string from the specified index
+    Returns the data and the next index
+    :param data:  Buffer
+    :param index: Position index
+    :return: (Data, new index)
+    """
+    ascii_len = data[index:].find('\0')
+    fmt = "%ds" % ascii_len
+    return struct_unpack_tracker(data,index,fmt)
 
 
 def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
