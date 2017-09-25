@@ -23,5 +23,6 @@ from tcp_scanner import TcpScanner
 from smbfinger import SMBFinger
 from sshfinger import SSHFinger
 from httpfinger import HTTPFinger
+from mysqlfinger import MySQLFinger
 from info import local_ips
 from info import get_free_tcp_port

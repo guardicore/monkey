@@ -3,7 +3,7 @@ import sys
 from network.range import FixedRange, RelativeRange, ClassCRange
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter,\
     SambaCryExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger
 from abc import ABCMeta
 from itertools import product
 import uuid
@@ -140,7 +140,7 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter  # Linux
                          ]
