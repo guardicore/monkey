@@ -7,7 +7,7 @@ from itertools import product
 
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
     SambaCryExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
 from network.range import FixedRange
 
 __author__ = 'itamar'
@@ -142,9 +142,9 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger]
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter,  # Windows exploits
-                         SSHExploiter, ShellShockExploiter, SambaCryExploiter  # Linux
+                         SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
                          ]
 
     # how many victims to look for in a single scan iteration
@@ -188,7 +188,17 @@ class Configuration(object):
     HTTP_PORTS = [80, 8080, 443,
                   8008,  # HTTP alternate
                   ]
-    tcp_target_ports = [22, 2222, 445, 135, 3389, 3306, ]
+    tcp_target_ports = [22,
+                        2222,
+                        445,
+                        135,
+                        3389,
+                        80,
+                        8080,
+                        443,
+                        8008,
+                        3306,
+                        9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
     tcp_scan_interval = 200
@@ -213,6 +223,10 @@ class Configuration(object):
     # User and password dictionaries for exploits.
 
     def get_exploit_user_password_pairs(self):
+        """
+        Returns all combinations of the configurations users and passwords
+        :return:
+        """
         return product(self.exploit_user_list, self.exploit_password_list)
 
     exploit_user_list = ['Administrator', 'root', 'user']
