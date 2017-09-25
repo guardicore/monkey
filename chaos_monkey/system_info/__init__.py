@@ -78,7 +78,19 @@ class InfoCollector(object):
                                           "cmdline": "ACCESS DENIED",
                                           "full_image_path": "null",
                                           }
-                pass
+                continue
+            except WindowsError:
+                # we may be running as non root
+                # and some processes are impossible to acquire in Windows/Linux
+                # in this case we'll just add what we can
+                processes[process.pid] = {"name": "null",
+                                          "pid": process.pid,
+                                          "ppid": process.ppid(),
+                                          "cmdline": "ACCESS DENIED",
+                                          "full_image_path": "null",
+                                          }
+                continue
+
         self.info['process_list'] = processes
 
     def get_network_info(self):
