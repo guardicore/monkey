@@ -1,8 +1,10 @@
-import sys
 import socket
+import sys
+
 import psutil
 from enum import IntEnum
-from network.info import get_host_subnets, local_ips
+
+from network.info import get_host_subnets
 
 __author__ = 'uri'
 
@@ -68,7 +70,7 @@ class InfoCollector(object):
                                           "cmdline": " ".join(process.cmdline()),
                                           "full_image_path": process.exe(),
                                           }
-            except psutil.AccessDenied:
+            except (psutil.AccessDenied, WindowsError):
                 # we may be running as non root
                 # and some processes are impossible to acquire in Windows/Linux
                 # in this case we'll just add what we can
@@ -78,7 +80,8 @@ class InfoCollector(object):
                                           "cmdline": "ACCESS DENIED",
                                           "full_image_path": "null",
                                           }
-                pass
+                continue
+
         self.info['process_list'] = processes
 
     def get_network_info(self):
