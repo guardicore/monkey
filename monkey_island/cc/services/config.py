@@ -837,13 +837,19 @@ class ConfigService:
             upsert=False
         )
 
+        mongo.db.monkey.update(
+            {},
+            {'$addToSet': {'config.' + item_key.split('.')[-1]: item_value}},
+            multi=True
+        )
+
     @staticmethod
     def creds_add_username(username):
-        ConfigService.add_item_to_config_set('exploits.credentials.exploit_user_list', username)
+        ConfigService.add_item_to_config_set('basic.credentials.exploit_user_list', username)
 
     @staticmethod
     def creds_add_password(password):
-        ConfigService.add_item_to_config_set('exploits.credentials.exploit_password_list', password)
+        ConfigService.add_item_to_config_set('basic.credentials.exploit_password_list', password)
 
     @staticmethod
     def creds_add_lm_hash(lm_hash):
