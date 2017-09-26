@@ -86,7 +86,7 @@ class ChaosMonkey(object):
 
         self._default_server = WormConfiguration.current_server
         LOG.debug("default server: %s" % self._default_server)
-        ControlClient.send_telemetry("tunnel", ControlClient.proxies.get('https'))
+        ControlClient.send_telemetry("tunnel", {'proxy': ControlClient.proxies.get('https')})
 
         if WormConfiguration.collect_system_info:
             LOG.debug("Calling system info collection")

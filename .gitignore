@@ -67,3 +67,4 @@ bin
 /monkey_island/cc/server.key
 /monkey_island/cc/server.crt
 /monkey_island/cc/server.csr
+monkey_island/cc/ui/node_modules/
