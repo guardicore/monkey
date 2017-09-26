@@ -96,6 +96,20 @@ SCHEMA = {
                     "HTTPFinger"
                   ],
                   "title": "HTTPFinger"
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "MySQLFinger"
+                  ],
+                  "title": "MySQLFinger"
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "ElasticFinger"
+                  ],
+                  "title": "ElasticFinger"
                 }
             ]
         }
@@ -286,7 +300,9 @@ SCHEMA = {
                                 "SMBFinger",
                                 "SSHFinger",
                                 "PingScanner",
-                                "HTTPFinger"
+                                "HTTPFinger",
+                                "MySQLFinger",
+                                "ElasticFinger"
                             ],
                             "description": "Determines which classes to use for fingerprinting"
                         },
@@ -714,7 +730,9 @@ SCHEMA = {
                                 80,
                                 8080,
                                 443,
-                                8008
+                                8008,
+                                3306,
+                                9200
                             ],
                             "description": "List of TCP ports the monkey will check whether they're open"
                         },
