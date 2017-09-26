@@ -229,8 +229,24 @@ class Configuration(object):
         """
         return product(self.exploit_user_list, self.exploit_password_list)
 
+    def get_exploit_user_password_or_hash_product(self):
+        """
+        Returns all combinations of the configurations users and passwords or lm/ntlm hashes
+        :return:
+        """
+        cred_list = []
+        for cred in product(self.exploit_user_list, self.exploit_password_list, [''], ['']):
+            cred_list.append(cred)
+        for cred in product(self.exploit_user_list, [''], [''], self.exploit_ntlm_hash_list):
+            cred_list.append(cred)
+        for cred in product(self.exploit_user_list, [''], self.exploit_lm_hash_list, ['']):
+            cred_list.append(cred)
+        return cred_list
+
     exploit_user_list = ['Administrator', 'root', 'user']
     exploit_password_list = ["Password1!", "1234", "password", "12345678"]
+    exploit_lm_hash_list = []
+    exploit_ntlm_hash_list = []
 
     # smb/wmi exploiter
     smb_download_timeout = 300  # timeout in seconds
