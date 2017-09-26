@@ -1,0 +1,15 @@
+from flask import request
+import flask_restful
+
+from cc.services.node import NodeService
+
+__author__ = 'Barak'
+
+
+class Node(flask_restful.Resource):
+    def get(self):
+        node_id = request.args.get('id')
+        if node_id:
+            return NodeService.get_displayed_node_by_id(node_id)
+
+        return {}

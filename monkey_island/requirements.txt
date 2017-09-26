@@ -8,3 +8,5 @@ click
 flask
 Flask-Pymongo
 Flask-Restful
+jsonschema
+netifaces
