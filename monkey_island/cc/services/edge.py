@@ -184,11 +184,14 @@ class EdgeService:
     def get_edge_label(edge):
         NodeService = cc.services.node.NodeService
         from_label = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
-        to_id = NodeService.get_monkey_by_id(edge["to"])
-        if to_id is None:
-            to_label = NodeService.get_node_label(NodeService.get_node_by_id(edge["to"]))
+        if edge["to"] == ObjectId("000000000000000000000000"):
+            to_label = 'MonkeyIsland'
         else:
-            to_label = NodeService.get_monkey_label(to_id)
+            to_id = NodeService.get_monkey_by_id(edge["to"])
+            if to_id is None:
+                to_label = NodeService.get_node_label(NodeService.get_node_by_id(edge["to"]))
+            else:
+                to_label = NodeService.get_monkey_label(to_id)
 
         RIGHT_ARROW = u"\u2192"
         return "%s %s %s" % (from_label, RIGHT_ARROW, to_label)
