@@ -29,7 +29,7 @@ def serve_static_file(static_path):
         return send_from_directory('ui/dist', static_path)
     except NotFound:
         # Because react uses various urls for same index page, this is probably the user's intention.
-        serve_home()
+        return serve_home()
 
 
 def serve_home():
