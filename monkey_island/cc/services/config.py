@@ -62,7 +62,14 @@ SCHEMA = {
                     "SambaCryExploiter"
                   ],
                   "title": "SambaCryExploiter"
-                }
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "ElasticGroovyExploiter"
+                  ],
+                  "title": "ElasticGroovyExploiter"
+                },
             ]
         },
         "finger_classes": {
@@ -320,7 +327,8 @@ SCHEMA = {
                                 "Ms08_067_Exploiter",
                                 "SSHExploiter",
                                 "ShellShockExploiter",
-                                "SambaCryExploiter"
+                                "SambaCryExploiter",
+                                "ElasticGroovyExploiter"
                             ],
                             "description": "Determines which classes to use for exploiting"
                         }
