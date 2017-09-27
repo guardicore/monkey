@@ -83,11 +83,15 @@ class MonkeyDrops(object):
                 return False
 
         if WormConfiguration.dropper_set_date:
+            if sys.platform == 'win32':
+                dropper_date_reference_path = os.path.expandvars(WormConfiguration.dropper_date_reference_path_windows)
+            else:
+                dropper_date_reference_path = WormConfiguration.dropper_date_reference_path_linux
             try:
-                ref_stat = os.stat(WormConfiguration.dropper_date_reference_path)
+                ref_stat = os.stat(dropper_date_reference_path)
             except:
                 LOG.warn("Cannot set reference date using '%s', file not found",
-                         WormConfiguration.dropper_date_reference_path)
+                         dropper_date_reference_path)
             else:
                 try:
                     os.utime(self._config['destination_path'],
