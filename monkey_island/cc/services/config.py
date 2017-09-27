@@ -62,7 +62,14 @@ SCHEMA = {
                     "SambaCryExploiter"
                   ],
                   "title": "SambaCryExploiter"
-                }
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "ElasticGroovyExploiter"
+                  ],
+                  "title": "ElasticGroovyExploiter"
+                },
             ]
         },
         "finger_classes": {
@@ -320,7 +327,8 @@ SCHEMA = {
                                 "Ms08_067_Exploiter",
                                 "SSHExploiter",
                                 "ShellShockExploiter",
-                                "SambaCryExploiter"
+                                "SambaCryExploiter",
+                                "ElasticGroovyExploiter"
                             ],
                             "description": "Determines which classes to use for exploiting"
                         }
@@ -333,7 +341,7 @@ SCHEMA = {
                         "kill_file_path_windows": {
                             "title": "Kill file path on Windows",
                             "type": "string",
-                            "default": "C:\\Windows\\monkey.not",
+                            "default": "%windir%\\monkey.not",
                             "description": "Path of file which kills monkey if it exists (on Windows)"
                         },
                         "kill_file_path_linux": {
@@ -354,11 +362,17 @@ SCHEMA = {
                             "default": True,
                             "description": "Determines whether the dropper should set the monkey's file date to be the same as another file"
                         },
-                        "dropper_date_reference_path": {
-                            "title": "Droper date reference path",
+                        "dropper_date_reference_path_windows": {
+                            "title": "Dropper date reference path (Windows)",
                             "type": "string",
-                            "default": "\\windows\\system32\\kernel32.dll",
-                            "description": "Determines which file the dropper should copy the date from if it's configured to do so (use fullpath)"
+                            "default": "%windir%\\system32\\kernel32.dll",
+                            "description": "Determines which file the dropper should copy the date from if it's configured to do so on Windows (use fullpath)"
+                        },
+                        "dropper_date_reference_path_linux": {
+                            "title": "Dropper date reference path (Linux)",
+                            "type": "string",
+                            "default": "/bin/sh",
+                            "description": "Determines which file the dropper should copy the date from if it's configured to do so on Linux (use fullpath)"
                         },
                         "dropper_target_path_linux": {
                             "title": "Dropper target path on Linux",
@@ -393,7 +407,7 @@ SCHEMA = {
                         "dropper_log_path_windows": {
                             "title": "Dropper log file path on Windows",
                             "type": "string",
-                            "default": "C:\\Users\\user\\AppData\\Local\\Temp\\~df1562.tmp",
+                            "default": "%temp%\\~df1562.tmp",
                             "description": "The fullpath of the dropper log file on Windows"
                         },
                         "monkey_log_path_linux": {
@@ -405,7 +419,7 @@ SCHEMA = {
                         "monkey_log_path_windows": {
                             "title": "Monkey log file path on Windows",
                             "type": "string",
-                            "default": "C:\\Users\\user\\AppData\\Local\\Temp\\~df1563.tmp",
+                            "default": "%temp%\\~df1563.tmp",
                             "description": "The fullpath of the monkey log file on Windows"
                         }
                     }

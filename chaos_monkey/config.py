@@ -6,7 +6,7 @@ from abc import ABCMeta
 from itertools import product
 
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
-    SambaCryExploiter
+    SambaCryExploiter, ElasticGroovyExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
 from network.range import FixedRange
 
@@ -102,9 +102,9 @@ class Configuration(object):
     ###########################
 
     use_file_logging = True
-    dropper_log_path_windows = os.path.expandvars("%temp%\~df1562.tmp")
+    dropper_log_path_windows = '%temp%\\~df1562.tmp'
     dropper_log_path_linux = '/tmp/user-1562'
-    monkey_log_path_windows = os.path.expandvars("%temp%\~df1563.tmp")
+    monkey_log_path_windows = '%temp%\\~df1563.tmp'
     monkey_log_path_linux = '/tmp/user-1563'
 
     ###########################
@@ -113,14 +113,15 @@ class Configuration(object):
 
     dropper_try_move_first = sys.argv[0].endswith(".exe")
     dropper_set_date = True
-    dropper_date_reference_path = r"\windows\system32\kernel32.dll" if sys.platform == "win32" else '/bin/sh'
+    dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
+    dropper_date_reference_path_linux = '/bin/sh'
     dropper_target_path = r"C:\Windows\monkey.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
     ###########################
     # Kill file
     ###########################
-    kill_file_path_windows = os.path.expandvars("%windir%\monkey.not")
+    kill_file_path_windows = '%windir%\\monkey.not'
     kill_file_path_linux = '/var/run/monkey.not'
 
     ###########################
@@ -145,6 +146,7 @@ class Configuration(object):
     finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
+                         ElasticGroovyExploiter,  # multi
                          ]
 
     # how many victims to look for in a single scan iteration
