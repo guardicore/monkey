@@ -32,6 +32,12 @@ let options = {
       type: 'curvedCW'
     }
   },
+  physics: {
+    solver: 'forceAtlas2Based',
+    forceAtlas2Based: {
+      gravitationalConstant: -370
+    }
+  },
   groups: getGroupsOptions()
 };
 
