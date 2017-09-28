@@ -423,6 +423,32 @@ SCHEMA = {
                             "description": "The fullpath of the monkey log file on Windows"
                         }
                     }
+                },
+                "exploits": {
+                    "title": "Exploits",
+                    "type": "object",
+                    "properties": {
+                        "exploit_lm_hash_list": {
+                            "title": "Exploit LM hash list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [],
+                            "description": "List of LM hashes to use on exploits using credentials"
+                        },
+                        "exploit_ntlm_hash_list": {
+                            "title": "Exploit NTLM hash list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [],
+                            "description": "List of NTLM hashes to use on exploits using credentials"
+                        }
+                    }
                 }
             }
         },
@@ -818,20 +844,34 @@ class ConfigService:
         return SCHEMA
 
     @staticmethod
-    def creds_add_username(username):
+    def add_item_to_config_set(item_key, item_value):
         mongo.db.config.update(
             {'name': 'newconfig'},
-            {'$addToSet': {'exploits.credentials.exploit_user_list': username}},
+            {'$addToSet': {item_key: item_value}},
             upsert=False
         )
 
+        mongo.db.monkey.update(
+            {},
+            {'$addToSet': {'config.' + item_key.split('.')[-1]: item_value}},
+            multi=True
+        )
+
+    @staticmethod
+    def creds_add_username(username):
+        ConfigService.add_item_to_config_set('basic.credentials.exploit_user_list', username)
+
     @staticmethod
     def creds_add_password(password):
-        mongo.db.config.update(
-            {'name': 'newconfig'},
-            {'$addToSet': {'exploits.credentials.exploit_password_list': password}},
-            upsert=False
-        )
+        ConfigService.add_item_to_config_set('basic.credentials.exploit_password_list', password)
+
+    @staticmethod
+    def creds_add_lm_hash(lm_hash):
+        ConfigService.add_item_to_config_set('internal.exploits.exploit_lm_hash_list', lm_hash)
+
+    @staticmethod
+    def creds_add_ntlm_hash(ntlm_hash):
+        ConfigService.add_item_to_config_set('internal.exploits.exploit_ntlm_hash_list', ntlm_hash)
 
     @staticmethod
     def update_config(config_json):
