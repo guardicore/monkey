@@ -480,7 +480,7 @@ SCHEMA = {
                         "skip_exploit_if_file_exist": {
                             "title": "Skip exploit if file exists",
                             "type": "boolean",
-                            "default": True,
+                            "default": False,
                             "description": "Determines whether the monkey should skip the exploit if the monkey's file is already on the remote machine"
                         }
                     }
