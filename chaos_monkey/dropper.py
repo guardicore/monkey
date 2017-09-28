@@ -19,6 +19,12 @@ if "win32" == sys.platform:
 else:
     DETACHED_PROCESS = 0
 
+# Linux doesn't have WindowsError
+try:
+    WindowsError
+except NameError:
+    WindowsError = None
+
 __author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)
@@ -62,7 +68,7 @@ class MonkeyDrops(object):
                           self._config['source_path'], self._config['destination_path'])
 
                 file_moved = True
-            except (WindowsError, IOError, OSError), exc:
+            except (WindowsError, IOError, OSError) as exc:
                 LOG.debug("Error moving source file '%s' into '%s': %s",
                           self._config['source_path'], self._config['destination_path'],
                           exc)
@@ -75,7 +81,7 @@ class MonkeyDrops(object):
 
                 LOG.info("Copied source file '%s' into '%s'",
                           self._config['source_path'], self._config['destination_path'])
-            except (WindowsError, IOError, OSError), exc:
+            except (WindowsError, IOError, OSError) as exc:
                 LOG.error("Error copying source file '%s' into '%s': %s",
                           self._config['source_path'], self._config['destination_path'],
                           exc)
@@ -131,7 +137,7 @@ class MonkeyDrops(object):
             # try removing the file first
             try:
                 os.remove(self._config['source_path'])
-            except Exception, exc:
+            except Exception as exc:
                 LOG.debug("Error removing source file '%s': %s", self._config['source_path'], exc)
 
                 # mark the file for removal on next boot
