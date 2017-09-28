@@ -171,9 +171,11 @@ class ChaosMonkey(object):
                             ControlClient.send_telemetry('exploit', {'result': False, 'machine': machine.__dict__,
                                                                      'exploiter': exploiter.__class__.__name__})
 
-                    except Exception, exc:
+                    except Exception as exc:
                         LOG.error("Exception while attacking %s using %s: %s",
                                   machine, exploiter.__class__.__name__, exc)
+                        ControlClient.send_telemetry('exploit', {'result': False, 'machine': machine.__dict__,
+                                                                 'exploiter': exploiter.__class__.__name__})
                         continue
 
                 if successful_exploiter:
