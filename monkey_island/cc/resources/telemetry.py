@@ -155,5 +155,9 @@ class Telemetry(flask_restful.Resource):
                 ConfigService.creds_add_username(user)
                 if 'password' in creds[user]:
                     ConfigService.creds_add_password(creds[user]['password'])
+                if 'lm_hash' in creds[user]:
+                    ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
+                if 'ntlm_hash' in creds[user]:
+                    ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
 
 
