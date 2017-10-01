@@ -1,10 +1,14 @@
-import urllib, BaseHTTPServer, threading, os.path
-import monkeyfs
-from logging import getLogger
-from base import TransportProxyBase, update_last_serve_time
-from urlparse import urlsplit
+import BaseHTTPServer
+import os.path
 import select
 import socket
+import threading
+import urllib
+from logging import getLogger
+from urlparse import urlsplit
+
+import monkeyfs
+from base import TransportProxyBase, update_last_serve_time
 
 __author__ = 'hoffer'
 
@@ -24,7 +28,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_POST(self):
         self.send_error(501, "Unsupported method (POST)")
-        return 
+        return
 
     def do_GET(self):
         """Serve a GET request."""
@@ -55,9 +59,9 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             f.close()
 
     def send_head(self):
-        if self.path != '/'+urllib.quote(os.path.basename(self.filename)):
-            self.send_error (500, "")
-            return        
+        if self.path != '/' + urllib.quote(os.path.basename(self.filename)):
+            self.send_error(500, "")
+            return None, 0, 0
         f = None
         try:
             f = monkeyfs.open(self.filename, 'rb')
@@ -67,7 +71,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         size = monkeyfs.getsize(self.filename)
         start_range = 0
         end_range = size
-        
+
         if "Range" in self.headers:
             s, e = self.headers['range'][6:].split('-', 1)
             sl = len(s)
@@ -80,7 +84,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 ei = int(e)
                 if ei < size:
                     start_range = size - ei
-            
+
             if start_range == 0 and end_range - start_range >= size:
                 self.send_response(200)
             else:
@@ -88,7 +92,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             self.send_response(200)
 
-        self.send_header("Content-type", "application/octet-stream")                    
+        self.send_header("Content-type", "application/octet-stream")
         self.send_header("Content-Range", 'bytes ' + str(start_range) + '-' + str(end_range - 1) + '/' + str(size))
         self.send_header("Content-Length", min(end_range - start_range, size))
         self.end_headers()
@@ -101,9 +105,9 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 
 class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-    timeout = 30              # timeout with clients, set to None not to make persistent connection
-    proxy_via = None          # pseudonym of the proxy in Via header, set to None not to modify original Via header
-    protocol_version = "HTTP/1.1"    
+    timeout = 30  # timeout with clients, set to None not to make persistent connection
+    proxy_via = None  # pseudonym of the proxy in Via header, set to None not to modify original Via header
+    protocol_version = "HTTP/1.1"
 
     def version_string(self):
         return ""
@@ -120,7 +124,7 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             conn = socket.create_connection(address)
         except socket.error, e:
             LOG.debug("HTTPConnectProxyHandler: Got exception while trying to connect to %s: %s" % (repr(address), e))
-            self.send_error(504)    # 504 Gateway Timeout
+            self.send_error(504)  # 504 Gateway Timeout
             return
         self.send_response(200, 'Connection Established')
         self.send_header('Connection', 'close')
@@ -163,12 +167,12 @@ class HTTPServer(threading.Thread):
 
             @staticmethod
             def report_download(dest=None):
-                LOG.info('File downloaded from (%s,%s)' % (dest[0],dest[1]))
+                LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
                 self.downloads += 1
 
         httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
-        httpd.timeout = 0.5 # this is irrelevant?
-        
+        httpd.timeout = 0.5  # this is irrelevant?
+
         while not self._stopped and self.downloads < self.max_downloads:
             httpd.handle_request()
 
