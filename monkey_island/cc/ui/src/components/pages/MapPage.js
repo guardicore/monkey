@@ -28,6 +28,7 @@ let options = {
     improvedLayout: false
   },
   edges: {
+    width: 2,
     smooth: {
       type: 'curvedCW'
     }
@@ -61,7 +62,7 @@ class MapPageComponent extends React.Component {
       case 'exploited':
         return '#c00';
       case 'tunnel':
-        return '#aaa';
+        return '#0058aa';
       case 'scan':
         return '#f90';
       case 'island':
