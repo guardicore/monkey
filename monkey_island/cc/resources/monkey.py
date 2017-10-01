@@ -46,9 +46,8 @@ class Monkey(flask_restful.Resource):
             update['$set']['config_error'] = monkey_json['config_error']
 
         if 'tunnel' in monkey_json:
-            host = monkey_json['tunnel'].split(":")[-2].replace("//", "")
-            tunnel_host_id = NodeService.get_monkey_by_ip(host)["_id"]
-            NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_id)
+            tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
+            NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
 
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
@@ -98,10 +97,9 @@ class Monkey(flask_restful.Resource):
         else:
             monkey_json['parent'] = db_monkey.get('parent') + [parent_to_add]
 
-        tunnel_host_id = None
+        tunnel_host_ip = None
         if 'tunnel' in monkey_json:
-            host = monkey_json['tunnel'].split(":")[-2].replace("//", "")
-            tunnel_host_id = NodeService.get_monkey_by_ip(host)["_id"]
+            tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             monkey_json.pop('tunnel')
 
         mongo.db.monkey.update({"guid": monkey_json["guid"]},
@@ -112,8 +110,8 @@ class Monkey(flask_restful.Resource):
 
         new_monkey_id = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})["_id"]
 
-        if tunnel_host_id is not None:
-            NodeService.set_monkey_tunnel(new_monkey_id, tunnel_host_id)
+        if tunnel_host_ip is not None:
+            NodeService.set_monkey_tunnel(new_monkey_id, tunnel_host_ip)
 
         existing_node = mongo.db.node.find_one({"ip_addresses": {"$in": monkey_json["ip_addresses"]}})
 
