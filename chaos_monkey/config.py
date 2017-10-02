@@ -111,7 +111,7 @@ class Configuration(object):
     # dropper config
     ###########################
 
-    dropper_try_move_first = sys.argv[0].endswith(".exe")
+    dropper_try_move_first = True
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = '/bin/sh'
@@ -260,22 +260,6 @@ class Configuration(object):
     sambacry_folder_paths_to_guess = ['/', '/mnt', '/tmp', '/storage', '/export', '/share', '/shares', '/home']
     # Shares to not check if they're writable.
     sambacry_shares_not_to_check = ["IPC$", "print$"]
-    # Name of file which contains the monkey's commandline
-    sambacry_commandline_filename = "monkey_commandline.txt"
-    # Name of file which contains the runner's result
-    sambacry_runner_result_filename = "monkey_runner_result"
-    # SambaCry runner filename (32 bit)
-    sambacry_runner_filename_32 = "sc_monkey_runner32.so"
-    # SambaCry runner filename (64 bit)
-    sambacry_runner_filename_64 = "sc_monkey_runner64.so"
-    # Monkey filename on share (32 bit)
-    sambacry_monkey_filename_32 = "monkey32"
-    # Monkey filename on share (64 bit)
-    sambacry_monkey_filename_64 = "monkey64"
-    # Monkey copy filename on share (32 bit)
-    sambacry_monkey_copy_filename_32 = "monkey32_2"
-    # Monkey copy filename on share (64 bit)
-    sambacry_monkey_copy_filename_64 = "monkey64_2"
 
     # system info collection
     collect_system_info = True

@@ -587,46 +587,6 @@ SCHEMA = {
                                 "IPC$", "print$"
                             ],
                             "description": "These shares won't be checked when exploiting with SambaCry"
-                        },
-                        "sambacry_commandline_filename": {
-                            "title": "SambaCry commandline filename",
-                            "type": "string",
-                            "default": "monkey_commandline.txt",
-                        },
-                        "sambacry_runner_result_filename": {
-                            "title": "SambaCry runner result filename",
-                            "type": "string",
-                            "default": "monkey_runner_result",
-                        },
-                        "sambacry_runner_filename_32": {
-                            "title": "SambaCry runner filename (32 bit)",
-                            "type": "string",
-                            "default": "sc_monkey_runner32.so",
-                        },
-                        "sambacry_runner_filename_64": {
-                            "title": "SambaCry runner filename (64 bit)",
-                            "type": "string",
-                            "default": "sc_monkey_runner64.so",
-                        },
-                        "sambacry_monkey_filename_32": {
-                            "title": "SambaCry monkey filename (32 bit)",
-                            "type": "string",
-                            "default": "monkey32",
-                        },
-                        "sambacry_monkey_filename_64": {
-                            "title": "SambaCry monkey filename (64 bit)",
-                            "type": "string",
-                            "default": "monkey64",
-                        },
-                        "sambacry_monkey_copy_filename_32": {
-                            "title": "SambaCry monkey copy filename (32 bit)",
-                            "type": "string",
-                            "default": "monkey32_2",
-                        },
-                        "sambacry_monkey_copy_filename_64": {
-                            "title": "SambaCry monkey copy filename (64 bit)",
-                            "type": "string",
-                            "default": "monkey64_2",
                         }
                     }
                 },
