@@ -10,6 +10,8 @@ let groupNames = ['clean_linux', 'clean_windows', 'exploited_linux', 'exploited_
   'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',
   'monkey_linux_running', 'monkey_windows', 'monkey_windows_running'];
 
+let legend = require('../../images/map-legend.png');
+
 let getGroupsOptions = () => {
   let groupOptions = {};
   for (let groupName of groupNames) {
@@ -129,6 +131,9 @@ class MapPageComponent extends React.Component {
       <div>
         <Col xs={12}>
           <h1 className="page-title">Infection Map</h1>
+        </Col>
+        <Col xs={12}>
+          <img src={legend}/>
         </Col>
         <Col xs={8}>
           <Graph graph={this.state.graph} options={options} events={this.events}/>
