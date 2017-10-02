@@ -51,7 +51,7 @@ class MimikatzCollector:
 
                 if 0 == len(password):
                     has_password = False
-                elif (username[-1] == '$') and (hostname.lower() == username[0:-1]):
+                elif (username[-1] == '$') and (hostname.lower() == username[0:-1].lower()):
                     # Don't save the password of the host domain user (HOSTNAME$)
                     has_password = False
                 else:
