@@ -1,14 +1,15 @@
+import logging
 import socket
 import struct
-import logging
-from threading import Thread
-from network.info import local_ips, get_free_tcp_port
-from network.firewall import app as firewall
-from transport.base import get_last_serve_time
-from difflib import get_close_matches
-from network.tools import check_port_tcp
-from model import VictimHost
 import time
+from difflib import get_close_matches
+from threading import Thread
+
+from model import VictimHost
+from network.firewall import app as firewall
+from network.info import local_ips, get_free_tcp_port
+from network.tools import check_port_tcp
+from transport.base import get_last_serve_time
 
 __author__ = 'hoffer'
 
@@ -48,7 +49,7 @@ def _check_tunnel(address, port, existing_sock=None):
 
     try:
         sock.sendto("+", (address, MCAST_PORT))
-    except Exception, exc:
+    except Exception as exc:
         LOG.debug("Caught exception in tunnel registration: %s", exc)
 
     if not existing_sock:
@@ -91,7 +92,7 @@ def find_tunnel(default=None, attempts=3, timeout=DEFAULT_TIMEOUT):
                             sock.close()
                             return address, port
 
-            except Exception, exc:
+            except Exception as exc:
                 LOG.debug("Caught exception in tunnel lookup: %s", exc)
                 continue
 
@@ -103,8 +104,8 @@ def quit_tunnel(address, timeout=DEFAULT_TIMEOUT):
         sock = _set_multicast_socket(timeout)
         sock.sendto("-", (address, MCAST_PORT))
         sock.close()
-        LOG.debug("Success quitting tunnel")        
-    except Exception, exc:
+        LOG.debug("Success quitting tunnel")
+    except Exception as exc:
         LOG.debug("Exception quitting tunnel: %s", exc)
         return
 
@@ -157,9 +158,9 @@ class MonkeyTunnel(Thread):
                         LOG.debug("Tunnel control: Added %s to watchlist", address[0])
                         self._clients.append(address[0])
                 elif '-' == search:
-                        LOG.debug("Tunnel control: Removed %s from watchlist", address[0])
-                        self._clients = [client for client in self._clients if client != address[0]]
-            
+                    LOG.debug("Tunnel control: Removed %s from watchlist", address[0])
+                    self._clients = [client for client in self._clients if client != address[0]]
+
             except socket.timeout:
                 continue
 

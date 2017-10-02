@@ -213,7 +213,7 @@ class Configuration(object):
     # exploiters config
     ###########################
 
-    skip_exploit_if_file_exist = True
+    skip_exploit_if_file_exist = False
 
     ms08_067_exploit_attempts = 5
     ms08_067_remote_user_add = "Monkey_IUSER_SUPPORT"

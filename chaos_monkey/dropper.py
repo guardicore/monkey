@@ -1,23 +1,29 @@
+import argparse
+import ctypes
+import logging
 import os
+import pprint
+import shutil
+import subprocess
 import sys
 import time
-import ctypes
-import shutil
-import pprint
-import logging
-import subprocess
-import argparse
 from ctypes import c_char_p
 
+from config import WormConfiguration
 from exploit.tools import build_monkey_commandline_explicitly
 from model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
-from config import WormConfiguration
 from system_info import SystemInfoCollector, OperatingSystem
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
 else:
     DETACHED_PROCESS = 0
+
+# Linux doesn't have WindowsError
+try:
+    WindowsError
+except NameError:
+    WindowsError = None
 
 __author__ = 'itamar'
 
@@ -59,10 +65,10 @@ class MonkeyDrops(object):
                             self._config['destination_path'])
 
                 LOG.info("Moved source file '%s' into '%s'",
-                          self._config['source_path'], self._config['destination_path'])
+                         self._config['source_path'], self._config['destination_path'])
 
                 file_moved = True
-            except (WindowsError, IOError, OSError), exc:
+            except (WindowsError, IOError, OSError) as exc:
                 LOG.debug("Error moving source file '%s' into '%s': %s",
                           self._config['source_path'], self._config['destination_path'],
                           exc)
@@ -74,8 +80,8 @@ class MonkeyDrops(object):
                             self._config['destination_path'])
 
                 LOG.info("Copied source file '%s' into '%s'",
-                          self._config['source_path'], self._config['destination_path'])
-            except (WindowsError, IOError, OSError), exc:
+                         self._config['source_path'], self._config['destination_path'])
+            except (WindowsError, IOError, OSError) as exc:
                 LOG.error("Error copying source file '%s' into '%s': %s",
                           self._config['source_path'], self._config['destination_path'],
                           exc)
@@ -89,7 +95,7 @@ class MonkeyDrops(object):
                 dropper_date_reference_path = WormConfiguration.dropper_date_reference_path_linux
             try:
                 ref_stat = os.stat(dropper_date_reference_path)
-            except:
+            except OSError as exc:
                 LOG.warn("Cannot set reference date using '%s', file not found",
                          dropper_date_reference_path)
             else:
@@ -131,13 +137,13 @@ class MonkeyDrops(object):
             # try removing the file first
             try:
                 os.remove(self._config['source_path'])
-            except Exception, exc:
+            except Exception as exc:
                 LOG.debug("Error removing source file '%s': %s", self._config['source_path'], exc)
 
                 # mark the file for removal on next boot
                 dropper_source_path_ctypes = c_char_p(self._config['source_path'])
-                if 0 == ctypes.windll.kernel32.MoveFileExA( dropper_source_path_ctypes, None,
-                                                            MOVEFILE_DELAY_UNTIL_REBOOT):
+                if 0 == ctypes.windll.kernel32.MoveFileExA(dropper_source_path_ctypes, None,
+                                                           MOVEFILE_DELAY_UNTIL_REBOOT):
                     LOG.debug("Error marking source file '%s' for deletion on next boot (error %d)",
                               self._config['source_path'], ctypes.windll.kernel32.GetLastError())
                 else:

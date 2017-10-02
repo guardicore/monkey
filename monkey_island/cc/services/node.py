@@ -148,7 +148,8 @@ class NodeService:
             upsert=False)
 
     @staticmethod
-    def set_monkey_tunnel(monkey_id, tunnel_host_id):
+    def set_monkey_tunnel(monkey_id, tunnel_host_ip):
+        tunnel_host_id = NodeService.get_monkey_by_ip(tunnel_host_ip)["_id"]
         NodeService.unset_all_monkey_tunnels(monkey_id)
         mongo.db.monkey.update(
             {"_id": monkey_id},
@@ -156,7 +157,7 @@ class NodeService:
             upsert=False)
         tunnel_edge = EdgeService.get_or_create_edge(monkey_id, tunnel_host_id)
         mongo.db.edge.update({"_id": tunnel_edge["_id"]},
-                             {'$set': {'tunnel': True}},
+                             {'$set': {'tunnel': True, 'ip_address': tunnel_host_ip}},
                              upsert=False)
 
     @staticmethod

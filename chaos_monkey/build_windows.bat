@@ -1,1 +1,1 @@
-c:\python27\Scripts\pyinstaller -F --log-level=DEBUG --clean --upx-dir=.\bin monkey.spec
+pyinstaller -F --log-level=DEBUG --clean --upx-dir=.\bin monkey.spec

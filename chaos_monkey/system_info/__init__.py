@@ -6,6 +6,12 @@ from enum import IntEnum
 
 from network.info import get_host_subnets
 
+# Linux doesn't have WindowsError
+try:
+    WindowsError
+except NameError:
+    WindowsError = None
+
 __author__ = 'uri'
 
 
