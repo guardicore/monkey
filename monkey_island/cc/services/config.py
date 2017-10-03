@@ -277,6 +277,12 @@ SCHEMA = {
                             "type": "string",
                             "default": "{2384ec59-0df8-4ab9-918c-843740924a28}",
                             "description": "The name of the mutex used to determine whether the monkey is already running"
+                        },
+                        "keep_tunnel_open_time": {
+                            "title": "Keep tunnel open time",
+                            "type": "integer",
+                            "default": 60,
+                            "description": "Time to keep tunnel open before going down since last exploit (in seconds)"
                         }
                     }
                 },

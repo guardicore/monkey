@@ -173,6 +173,8 @@ class Configuration(object):
     # addresses of internet servers to ping and check if the monkey has internet acccess.
     internet_services = ["monkey.guardicore.com", "www.google.com"]
 
+    keep_tunnel_open_time = 60
+
     ###########################
     # scanners config
     ###########################
