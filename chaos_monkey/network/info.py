@@ -48,7 +48,7 @@ else:
 
     def local_ips():
         ipv4_nets = get_host_subnets()
-        valid_ips = [network['addr'] for network in ipv4_nets]
+        valid_ips = [network['addr'].encode('utf-8').strip() for network in ipv4_nets]
         return valid_ips
 
 
