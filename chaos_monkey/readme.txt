@@ -18,11 +18,7 @@ Windows:
 	Install the python packages listed in requirements.txt. Using pip install -r requirements.txt
 7. Download and extract UPX binary to [source-path]\monkey\chaos_monkey\bin\upx.exe:
 	http://upx.sourceforge.net/download/upx391w.zip
-8. (Optional) For some exploits to work better, install 'dnet' python library. You'll need to compile it for your OS
-    or use a precompiled setup that can be found at:
-    32bit: https://github.com/Kondziowy/scapy_win64/raw/master/win32/dnet-1.12.win32-py2.7.exe
-    64bit: https://github.com/Kondziowy/scapy_win64/raw/master/win64/dnet-1.12.win-amd64-py2.7.exe
-9. Run [source-path]\monkey\chaos_monkey\build_windows.bat to build, output is in dist\monkey.exe
+8. Run [source-path]\monkey\chaos_monkey\build_windows.bat to build, output is in dist\monkey.exe
 
 Linux (Tested on Ubuntu 12.04):
 1. Run:
