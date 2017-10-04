@@ -109,7 +109,6 @@ class ConfigurePageComponent extends React.Component {
     return (
       <Col xs={8}>
         <h1 className="page-title">Monkey Configuration</h1>
-
         <Nav bsStyle="tabs" justified
              activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
              style={{'marginBottom': '2em'}}>
@@ -126,7 +125,11 @@ class ConfigurePageComponent extends React.Component {
             <div>
               <div className="alert alert-info">
                 <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                This configuration will only apply to new infections.
+                Changing the configuration will only apply to new infections.
+              </div>
+              <div className="alert alert-warning">
+                <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+                Changing config values with the &#9888; mark may result in the monkey propagating too far or using dangerous exploits.
               </div>
               <div className="text-center">
                 <button type="submit" className="btn btn-success btn-lg" style={{margin: '5px'}}>

@@ -6,6 +6,8 @@ from cc.utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
 
+WARNING_SIGN = u" \u26A0"
+
 SCHEMA = {
     "title": "Monkey",
     "type": "object",
@@ -189,7 +191,7 @@ SCHEMA = {
                             "description": "Determines whether monkey should scan its subnets additionally"
                         },
                         "depth": {
-                            "title": "Depth",
+                            "title": "Depth" + WARNING_SIGN,
                             "type": "integer",
                             "default": 2,
                             "description": "Amount of hops allowed for the monkey to spread"
@@ -294,7 +296,7 @@ SCHEMA = {
                             "description": "Determines after how many discovered machines should the monkey stop scanning"
                         },
                         "victims_max_exploit": {
-                            "title": "Max victims to exploit",
+                            "title": "Max victims to exploit" + WARNING_SIGN,
                             "type": "integer",
                             "default": 7,
                             "description": "Determines after how many infected machines should the monkey stop infecting"
@@ -371,7 +373,7 @@ SCHEMA = {
                             "description": "Determines which classes to use for fingerprinting"
                         },
                         "exploiter_classes": {
-                            "title": "Exploiter classes",
+                            "title": "Exploiter classes" + WARNING_SIGN,
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
