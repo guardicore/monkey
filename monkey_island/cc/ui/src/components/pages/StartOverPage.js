@@ -27,8 +27,8 @@ class StartOverPageComponent extends React.Component {
             <a onClick={this.cleanup} className="btn btn-danger btn-lg">Reset Environment</a>
           </p>
           { this.state.cleaned ?
-            <div className="alert alert-info">
-              <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+            <div className="alert alert-success">
+              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
               Environment was reset successfully
             </div>
             : ''}

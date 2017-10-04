@@ -122,26 +122,37 @@ class ConfigurePageComponent extends React.Component {
           <Form schema={displayedSchema}
                 formData={this.state.configuration[this.state.selectedSection]}
                 onSubmit={this.onSubmit}
-                onChange={this.onChange} />
+                onChange={this.onChange}>
+            <div>
+              <div className="alert alert-info">
+                <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+                This configuration will only apply to new infections.
+              </div>
+              <div className="text-center">
+                <button type="submit" className="btn btn-success btn-lg" style={{margin: '5px'}}>
+                  Submit
+                </button>
+                <button type="button" onClick={this.resetConfig} className="btn btn-danger btn-lg" style={{margin: '5px'}}>
+                  Reset to defaults
+                </button>
+              </div>
+              { this.state.reset ?
+                <div className="alert alert-success">
+                  <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+                  Configuration reset successfully.
+                </div>
+                : ''}
+              { this.state.saved ?
+                <div className="alert alert-success">
+                  <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+                  Configuration saved successfully.
+                </div>
+                : ''}
+            </div>
+          </Form>
           : ''}
-        <a onClick={this.resetConfig} className="btn btn-danger btn-lg">Reset to defaults</a>
-        <div className="alert alert-info">
-          <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-          This configuration will only apply to new infections.
-        </div>
 
-        { this.state.reset ?
-          <div className="alert alert-info">
-            <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-            Configuration reset successfully.
-          </div>
-          : ''}
-        { this.state.saved ?
-          <div className="alert alert-info">
-            <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-            Configuration saved successfully.
-          </div>
-          : ''}
+
       </Col>
     );
   }
