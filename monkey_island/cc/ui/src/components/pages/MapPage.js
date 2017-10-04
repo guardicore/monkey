@@ -5,7 +5,7 @@ import PreviewPane from 'components/preview-pane/PreviewPane';
 import {Link} from 'react-router-dom';
 import {Icon} from 'react-fa';
 
-let groupNames = ['clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
+let groupNames = ['clean_unknown', 'clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
   'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_windows', 'island_monkey_windows_running',
   'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',
   'monkey_linux_running', 'monkey_windows', 'monkey_windows_running'];
@@ -59,7 +59,7 @@ class MapPageComponent extends React.Component {
     select: event => this.selectionChanged(event)
   };
 
-  edgeGroupToColor(group) {
+  static edgeGroupToColor(group) {
     switch (group) {
       case 'exploited':
         return '#c00';
@@ -87,7 +87,7 @@ class MapPageComponent extends React.Component {
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
-          edge.color = this.edgeGroupToColor(edge.group);
+          edge.color = MapPageComponent.edgeGroupToColor(edge.group);
         });
         this.setState({graph: res});
         this.props.onStatusChange();
@@ -106,7 +106,7 @@ class MapPageComponent extends React.Component {
         function(edge) {
           return edge['id'] === event.edges[0];
         });
-      if (displayedEdge['group'] == 'island') {
+      if (displayedEdge['group'] === 'island') {
         this.setState({selected: displayedEdge, selectedType: 'island_edge'});
       } else {
         fetch('/api/netmap/edge?id='+event.edges[0])
