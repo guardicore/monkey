@@ -33,14 +33,14 @@ SCHEMA = {
                   "enum": [
                     "RdpExploiter"
                   ],
-                  "title": "RdpExploiter"
+                  "title": "RdpExploiter (UNSAFE)"
                 },
                 {
                   "type": "string",
                   "enum": [
                     "Ms08_067_Exploiter"
                   ],
-                  "title": "Ms08_067_Exploiter"
+                  "title": "Ms08-067 Exploiter (UNSAFE)"
                 },
                 {
                   "type": "string",
@@ -380,8 +380,6 @@ SCHEMA = {
                             "default": [
                                 "SmbExploiter",
                                 "WmiExploiter",
-                                "RdpExploiter",
-                                "Ms08_067_Exploiter",
                                 "SSHExploiter",
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
