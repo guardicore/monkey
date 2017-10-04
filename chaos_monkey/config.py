@@ -150,7 +150,7 @@ class Configuration(object):
                          ]
 
     # how many victims to look for in a single scan iteration
-    victims_max_find = 14
+    victims_max_find = 30
 
     # how many victims to exploit before stopping
     victims_max_exploit = 7

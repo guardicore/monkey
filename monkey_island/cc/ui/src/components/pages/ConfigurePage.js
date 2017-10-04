@@ -8,6 +8,7 @@ class ConfigurePageComponent extends React.Component {
 
     this.currentSection = 'basic';
     this.currentFormData = {};
+    this.sectionsOrder = ['basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
 
     // set schema from server
     this.state = {
@@ -23,15 +24,18 @@ class ConfigurePageComponent extends React.Component {
   componentDidMount() {
     fetch('/api/configuration')
       .then(res => res.json())
-      .then(res => this.setState({
-        schema: res.schema,
-        configuration: res.configuration,
-        sections: Object.keys(res.schema.properties)
-          .map(key => {
-            return {key: key, title: res.schema.properties[key].title}
-          }),
-        selectedSection: 'basic'
-      }));
+      .then(res => {
+        let sections = [];
+        for (let sectionKey of this.sectionsOrder) {
+          sections.push({key: sectionKey, title: res.schema.properties[sectionKey].title});
+        }
+        this.setState({
+          schema: res.schema,
+          configuration: res.configuration,
+          sections: sections,
+          selectedSection: 'basic'
+        })
+      });
   }
 
   onSubmit = ({formData}) => {

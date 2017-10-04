@@ -126,23 +126,6 @@ SCHEMA = {
             "title": "Basic",
             "type": "object",
             "properties": {
-                "network": {
-                    "title": "Network",
-                    "type": "object",
-                    "properties": {
-                        "blocked_ips": {
-                            "title": "Blocked IPs",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": [
-                            ],
-                            "description": "List of IPs to not scan"
-                        }
-                    }
-                },
                 "credentials": {
                     "title": "Credentials",
                     "type": "object",
@@ -180,6 +163,80 @@ SCHEMA = {
                 }
             }
         },
+        "basic_network": {
+            "title": "Basic - Network",
+            "type": "object",
+            "properties": {
+                "general": {
+                    "title": "General",
+                    "type": "object",
+                    "properties": {
+                        "blocked_ips": {
+                            "title": "Blocked IPs",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description": "List of IPs to not scan"
+                        },
+                        "local_network_scan": {
+                            "title": "Local network scan",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether monkey should scan its subnets additionally"
+                        },
+                        "depth": {
+                            "title": "Depth",
+                            "type": "integer",
+                            "default": 2,
+                            "description": "Amount of hops allowed for the monkey to spread"
+                        }
+                    }
+                },
+                "network_range": {
+                    "title": "Network range",
+                    "type": "object",
+                    "properties": {
+                        "range_class": {
+                            "title": "Range class",
+                            "type": "string",
+                            "default": "FixedRange",
+                            "enum": [
+                                "FixedRange",
+                                "RelativeRange",
+                                "ClassCRange"
+                            ],
+                            "enumNames": [
+                                "FixedRange",
+                                "RelativeRange",
+                                "ClassCRange"
+                            ],
+                            "description": "Determines which class to use to determine scan range"
+                        },
+                        "range_size": {
+                            "title": "Relative range size",
+                            "type": "integer",
+                            "default": 1,
+                            "description": "Determines the size of the RelativeRange - amount of IPs to include"
+                        },
+                        "range_fixed": {
+                            "title": "Fixed range IP list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description": "List of IPs to include when using FixedRange"
+                        }
+                    }
+                }
+            }
+        },
         "monkey": {
             "title": "Monkey",
             "type": "object",
@@ -193,12 +250,6 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description": "Is the monkey alive"
-                        },
-                        "depth": {
-                            "title": "Depth",
-                            "type": "integer",
-                            "default": 2,
-                            "description": "Amount of hops allowed from this monkey to spread"
                         }
                     }
                 },
@@ -239,7 +290,7 @@ SCHEMA = {
                         "victims_max_find": {
                             "title": "Max victims to find",
                             "type": "integer",
-                            "default": 14,
+                            "default": 30,
                             "description": "Determines after how many discovered machines should the monkey stop scanning"
                         },
                         "victims_max_exploit": {
@@ -277,6 +328,12 @@ SCHEMA = {
                             "type": "string",
                             "default": "{2384ec59-0df8-4ab9-918c-843740924a28}",
                             "description": "The name of the mutex used to determine whether the monkey is already running"
+                        },
+                        "collect_system_info": {
+                            "title": "Collect system info",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether to collect system info"
                         }
                     }
                 },
@@ -449,6 +506,18 @@ SCHEMA = {
                             "description": "List of NTLM hashes to use on exploits using credentials"
                         }
                     }
+                },
+                "mimikatz": {
+                    "title": "Mimikatz",
+                    "type": "object",
+                    "properties": {
+                        "mimikatz_dll_name": {
+                            "title": "Mimikatz DLL name",
+                            "type": "string",
+                            "default": "mk.dll",
+                            "description": "Name of Mimikatz DLL (should be the same as in the monkey's pyinstaller spec file)"
+                        }
+                    }
                 }
             }
         },
@@ -610,91 +679,10 @@ SCHEMA = {
                 }
             }
         },
-        "system_info": {
-            "title": "System info",
-            "type": "object",
-            "properties": {
-                "general": {
-                    "title": "General",
-                    "type": "object",
-                    "properties": {
-                        "collect_system_info": {
-                            "title": "Collect system info",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether to collect system info"
-                        }
-                    }
-                },
-                "mimikatz": {
-                    "title": "Mimikatz",
-                    "type": "object",
-                    "properties": {
-                        "mimikatz_dll_name": {
-                            "title": "Mimikatz DLL name",
-                            "type": "string",
-                            "default": "mk.dll",
-                            "description": "Name of Mimikatz DLL (should be the same as in the monkey's pyinstaller spec file)"
-                        }
-                    }
-                }
-            }
-        },
         "network": {
             "title": "Network",
             "type": "object",
             "properties": {
-                "general": {
-                    "title": "General",
-                    "type": "object",
-                    "properties": {
-                        "local_network_scan": {
-                            "title": "Local network scan",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether monkey should scan its subnets additionally"
-                        }
-                    }
-                },
-                "network_range": {
-                    "title": "Network range",
-                    "type": "object",
-                    "properties": {
-                        "range_class": {
-                            "title": "Range class",
-                            "type": "string",
-                            "default": "FixedRange",
-                            "enum": [
-                                "FixedRange",
-                                "RelativeRange",
-                                "ClassCRange"
-                            ],
-                            "enumNames": [
-                                "FixedRange",
-                                "RelativeRange",
-                                "ClassCRange"
-                            ],
-                            "description": "Determines which class to use to determine scan range"
-                        },
-                        "range_size": {
-                            "title": "Relative range size",
-                            "type": "integer",
-                            "default": 1,
-                            "description": "Determines the size of the RelativeRange - amount of IPs to include"
-                        },
-                        "range_fixed": {
-                            "title": "Fixed range IP list",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": [
-                            ],
-                            "description": "List of IPs to include when using FixedRange"
-                        }
-                    }
-                },
                 "tcp_scanner": {
                     "title": "TCP scanner",
                     "type": "object",
