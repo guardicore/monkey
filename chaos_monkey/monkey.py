@@ -81,8 +81,6 @@ class ChaosMonkey(object):
         if monkey_tunnel:
             monkey_tunnel.start()
 
-        last_exploit_time = None
-
         ControlClient.send_telemetry("state", {'done': False})
 
         self._default_server = WormConfiguration.current_server
@@ -180,7 +178,6 @@ class ChaosMonkey(object):
 
                 if successful_exploiter:
                     self._exploited_machines.add(machine)
-                    last_exploit_time = time.time()
                     ControlClient.send_telemetry('exploit', {'result': True, 'machine': machine.__dict__,
                                                              'exploiter': successful_exploiter.__class__.__name__})
 
@@ -208,8 +205,8 @@ class ChaosMonkey(object):
 
         # if host was exploited, before continue to closing the tunnel ensure the exploited host had its chance to
         # connect to the tunnel
-        if last_exploit_time and (time.time() - last_exploit_time < WormConfiguration.keep_tunnel_open_time):
-            time_to_sleep = WormConfiguration.keep_tunnel_open_time - (time.time() - last_exploit_time)
+        if len(self._exploited_machines) > 0:
+            time_to_sleep = WormConfiguration.keep_tunnel_open_time
             LOG.info("Sleeping %d seconds for exploited machines to connect to tunnel", time_to_sleep)
             time.sleep(time_to_sleep)
 

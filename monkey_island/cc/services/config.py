@@ -282,7 +282,7 @@ SCHEMA = {
                             "title": "Keep tunnel open time",
                             "type": "integer",
                             "default": 60,
-                            "description": "Time to keep tunnel open before going down since last exploit (in seconds)"
+                            "description": "Time to keep tunnel open before going down after last exploit (in seconds)"
                         }
                     }
                 },
