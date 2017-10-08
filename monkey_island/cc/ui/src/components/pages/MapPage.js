@@ -38,10 +38,11 @@ let options = {
     }
   },
   physics: {
-    solver: 'forceAtlas2Based',
-    forceAtlas2Based: {
-      gravitationalConstant: -370
-    }
+    barnesHut: {
+      gravitationalConstant: -120000,
+      avoidOverlap: 0.5
+    },
+    minVelocity: 0.75
   },
   groups: getGroupsOptions()
 };
