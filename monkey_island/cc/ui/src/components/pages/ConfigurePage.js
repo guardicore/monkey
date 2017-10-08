@@ -116,7 +116,15 @@ class ConfigurePageComponent extends React.Component {
             <NavItem key={section.key} eventKey={section.key}>{section.title}</NavItem>
           )}
         </Nav>
-
+        {
+          this.state.selectedSection === 'basic_network' ?
+            <div className="alert alert-info">
+              <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+              The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey will scan machines
+              according to its range class.
+            </div>
+            : <div />
+        }
         { this.state.selectedSection ?
           <Form schema={displayedSchema}
                 formData={this.state.configuration[this.state.selectedSection]}
