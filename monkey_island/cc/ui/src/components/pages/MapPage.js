@@ -1,9 +1,9 @@
 import React from 'react';
 import {Col} from 'react-bootstrap';
-import Graph from 'react-graph-vis';
-import PreviewPane from 'components/preview-pane/PreviewPane';
 import {Link} from 'react-router-dom';
 import {Icon} from 'react-fa';
+import PreviewPane from 'components/preview-pane/PreviewPane';
+import {ReactiveGraph} from '../reactive-graph/ReactiveGraph';
 
 let groupNames = ['clean_unknown', 'clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
   'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_windows', 'island_monkey_windows_running',
@@ -26,6 +26,7 @@ let getGroupsOptions = () => {
 };
 
 let options = {
+  autoResize: true,
   layout: {
     improvedLayout: false
   },
@@ -97,19 +98,19 @@ class MapPageComponent extends React.Component {
   selectionChanged(event) {
     if (event.nodes.length === 1) {
       console.log('selected node:', event.nodes[0]); // eslint-disable-line no-console
-      fetch('/api/netmap/node?id='+event.nodes[0])
+      fetch('/api/netmap/node?id=' + event.nodes[0])
         .then(res => res.json())
         .then(res => this.setState({selected: res, selectedType: 'node'}));
     }
     else if (event.edges.length === 1) {
       let displayedEdge = this.state.graph.edges.find(
-        function(edge) {
+        function (edge) {
           return edge['id'] === event.edges[0];
         });
       if (displayedEdge['group'] === 'island') {
         this.setState({selected: displayedEdge, selectedType: 'island_edge'});
       } else {
-        fetch('/api/netmap/edge?id='+event.edges[0])
+        fetch('/api/netmap/edge?id=' + event.edges[0])
           .then(res => res.json())
           .then(res => this.setState({selected: res.edge, selectedType: 'edge'}));
       }
@@ -136,7 +137,9 @@ class MapPageComponent extends React.Component {
           <img src={legend}/>
         </Col>
         <Col xs={8}>
-          <Graph graph={this.state.graph} options={options} events={this.events}/>
+          <div style={{height: '80vh'}}>
+            <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
+          </div>
         </Col>
         <Col xs={4}>
           <input className="form-control input-block"
@@ -144,9 +147,10 @@ class MapPageComponent extends React.Component {
                  style={{'marginBottom': '1em'}}/>
 
           <div style={{'overflow': 'auto', 'marginBottom': '1em'}}>
-            <Link to="/infection/telemetry" className="btn btn-default pull-left" style={{'width': '48%'}}>Monkey Telemetry</Link>
+            <Link to="/infection/telemetry" className="btn btn-default pull-left" style={{'width': '48%'}}>Monkey
+              Telemetry</Link>
             <button onClick={this.killAllMonkeys} className="btn btn-danger pull-right" style={{'width': '48%'}}>
-              <Icon name="stop-circle" style={{'marginRight': '0.5em'}} />
+              <Icon name="stop-circle" style={{'marginRight': '0.5em'}}/>
               Kill All Monkeys
             </button>
           </div>
@@ -157,7 +161,7 @@ class MapPageComponent extends React.Component {
             </div>
             : ''}
 
-          <PreviewPane item={this.state.selected} type={this.state.selectedType} />
+          <PreviewPane item={this.state.selected} type={this.state.selectedType}/>
         </Col>
       </div>
     );
