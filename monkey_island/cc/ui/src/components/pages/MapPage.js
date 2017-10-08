@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import {Icon} from 'react-fa';
 import PreviewPane from 'components/preview-pane/PreviewPane';
 import {ReactiveGraph} from '../reactive-graph/ReactiveGraph';
+import {ModalContainer, ModalDialog} from 'react-modal-dialog';
 
 let groupNames = ['clean_unknown', 'clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
   'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_windows', 'island_monkey_windows_running',
@@ -52,7 +53,8 @@ class MapPageComponent extends React.Component {
       graph: {nodes: [], edges: []},
       selected: null,
       selectedType: null,
-      killPressed: false
+      killPressed: false,
+      showKillDialog: false
     };
   }
 
@@ -127,9 +129,38 @@ class MapPageComponent extends React.Component {
       .then(res => this.setState({killPressed: (res.status === 'OK')}));
   };
 
+  renderKillDialogModal = () => {
+    if (!this.state.showKillDialog) {
+      return <div />
+    }
+
+    return (
+      <ModalContainer onClose={() => this.setState({showKillDialog: false})}>
+        <ModalDialog onClose={() => this.setState({showKillDialog: false})}>
+          <h1>Kill all monkeys</h1>
+          <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
+            Are you sure you want to kill all monkeys?
+          </p>
+          <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
+                  onClick={() => {
+                    this.killAllMonkeys();
+                    this.setState({showKillDialog: false});
+                  }}>
+            Kill all monkeys
+          </button>
+          <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
+                  onClick={() => this.setState({showKillDialog: false})}>
+            Cancel
+          </button>
+        </ModalDialog>
+      </ModalContainer>
+    )
+  };
+
   render() {
     return (
       <div>
+        {this.renderKillDialogModal()}
         <Col xs={12}>
           <h1 className="page-title">Infection Map</h1>
         </Col>
@@ -149,7 +180,7 @@ class MapPageComponent extends React.Component {
           <div style={{'overflow': 'auto', 'marginBottom': '1em'}}>
             <Link to="/infection/telemetry" className="btn btn-default pull-left" style={{'width': '48%'}}>Monkey
               Telemetry</Link>
-            <button onClick={this.killAllMonkeys} className="btn btn-danger pull-right" style={{'width': '48%'}}>
+            <button onClick={() => this.setState({showKillDialog: true})} className="btn btn-danger pull-right" style={{'width': '48%'}}>
               <Icon name="stop-circle" style={{'marginRight': '0.5em'}}/>
               Kill All Monkeys
             </button>
