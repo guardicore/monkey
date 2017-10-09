@@ -1,17 +1,18 @@
-import sys
-import os
-import time
-import logging
-import tunnel
 import argparse
+import logging
+import os
 import subprocess
-from system_singleton import SystemSingleton
-from network.firewall import app as firewall
-from control import ControlClient
+import sys
+import time
+
+import tunnel
 from config import WormConfiguration
-from network.network_scanner import NetworkScanner
+from control import ControlClient
 from model import DELAY_DELETE_CMD
+from network.firewall import app as firewall
+from network.network_scanner import NetworkScanner
 from system_info import SystemInfoCollector
+from system_singleton import SystemSingleton
 
 __author__ = 'itamar'
 
@@ -80,8 +81,6 @@ class ChaosMonkey(object):
         if monkey_tunnel:
             monkey_tunnel.start()
 
-        last_exploit_time = None
-
         ControlClient.send_telemetry("state", {'done': False})
 
         self._default_server = WormConfiguration.current_server
@@ -101,7 +100,7 @@ class ChaosMonkey(object):
         else:
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
-        for _ in xrange(WormConfiguration.max_iterations):
+        for iteration_index in xrange(WormConfiguration.max_iterations):
             ControlClient.keepalive()
             ControlClient.load_control_config()
 
@@ -146,7 +145,6 @@ class ChaosMonkey(object):
                         LOG.debug("Skipping %r - exploitation failed before", machine)
                         continue
 
-
                 if monkey_tunnel:
                     monkey_tunnel.set_tunnel_for_host(machine)
                 if self._default_server:
@@ -172,15 +170,14 @@ class ChaosMonkey(object):
                                                                      'exploiter': exploiter.__class__.__name__})
 
                     except Exception as exc:
-                        LOG.error("Exception while attacking %s using %s: %s",
-                                  machine, exploiter.__class__.__name__, exc)
+                        LOG.exception("Exception while attacking %s using %s: %s",
+                                      machine, exploiter.__class__.__name__, exc)
                         ControlClient.send_telemetry('exploit', {'result': False, 'machine': machine.__dict__,
                                                                  'exploiter': exploiter.__class__.__name__})
                         continue
 
                 if successful_exploiter:
                     self._exploited_machines.add(machine)
-                    last_exploit_time = time.time()
                     ControlClient.send_telemetry('exploit', {'result': True, 'machine': machine.__dict__,
                                                              'exploiter': successful_exploiter.__class__.__name__})
 
@@ -196,8 +193,10 @@ class ChaosMonkey(object):
                 else:
                     self._fail_exploitation_machines.add(machine)
 
-            if not is_empty:
-                time.sleep(WormConfiguration.timeout_between_iterations)
+            if (not is_empty) and (WormConfiguration.max_iterations > iteration_index + 1):
+                time_to_sleep = WormConfiguration.timeout_between_iterations
+                LOG.info("Sleeping %d seconds before next life cycle iteration", time_to_sleep)
+                time.sleep(time_to_sleep)
 
         if self._keep_running and WormConfiguration.alive:
             LOG.info("Reached max iterations (%d)", WormConfiguration.max_iterations)
@@ -206,8 +205,10 @@ class ChaosMonkey(object):
 
         # if host was exploited, before continue to closing the tunnel ensure the exploited host had its chance to
         # connect to the tunnel
-        if last_exploit_time and (time.time() - last_exploit_time < 60):
-            time.sleep(time.time() - last_exploit_time)
+        if len(self._exploited_machines) > 0:
+            time_to_sleep = WormConfiguration.keep_tunnel_open_time
+            LOG.info("Sleeping %d seconds for exploited machines to connect to tunnel", time_to_sleep)
+            time.sleep(time_to_sleep)
 
         if monkey_tunnel:
             monkey_tunnel.stop()
@@ -242,7 +243,7 @@ class ChaosMonkey(object):
                                      close_fds=True, startupinfo=startupinfo)
                 else:
                     os.remove(sys.executable)
-            except Exception, exc:
+            except Exception as exc:
                 LOG.error("Exception in self delete: %s", exc)
 
         LOG.info("Monkey is shutting down")

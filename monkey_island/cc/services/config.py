@@ -350,6 +350,12 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description": "Determines whether to collect system info"
+                        },
+                        "keep_tunnel_open_time": {
+                            "title": "Keep tunnel open time",
+                            "type": "integer",
+                            "default": 60,
+                            "description": "Time to keep tunnel open before going down after last exploit (in seconds)"
                         }
                     }
                 },

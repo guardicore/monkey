@@ -29,6 +29,8 @@ def get_host_subnets():
     for network in ipv4_nets:
         if 'broadcast' in network:
             network.pop('broadcast')
+        for attr in network:
+            network[attr] = network[attr].encode('utf-8').strip()
     return ipv4_nets
 
 
@@ -47,8 +49,7 @@ else:
 
 
     def local_ips():
-        ipv4_nets = get_host_subnets()
-        valid_ips = [network['addr'] for network in ipv4_nets]
+        valid_ips = [network['addr'] for network in get_host_subnets()]
         return valid_ips
 
 
