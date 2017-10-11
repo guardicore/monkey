@@ -4,7 +4,6 @@ __author__ = 'itamar'
 class VictimHost(object):
     def __init__(self, ip_addr):
         self.ip_addr = ip_addr
-        self.cred = {}
         self.os = {}
         self.services = {}
         self.monkey_exe = None
@@ -30,7 +29,7 @@ class VictimHost(object):
         return self.ip_addr.__cmp__(other.ip_addr)
 
     def __repr__(self):
-        return "<VictimHost %s>" % (self.ip_addr, )
+        return "<VictimHost %s>" % self.ip_addr
 
     def __str__(self):
         victim = "Victim Host %s: " % self.ip_addr
@@ -42,12 +41,6 @@ class VictimHost(object):
             victim += "%s-%s " % (k, v)
         victim += ']'
         return victim
-
-    def learn_credentials(self, username, password):
-        self.cred[username.lower()] = password
-
-    def get_credentials(self, username):
-        return self.cred.get(username.lower(), None)
 
     def set_default_server(self, default_server):
         self.default_server = default_server
