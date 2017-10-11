@@ -277,6 +277,12 @@ SCHEMA = {
                             "type": "string",
                             "default": "{2384ec59-0df8-4ab9-918c-843740924a28}",
                             "description": "The name of the mutex used to determine whether the monkey is already running"
+                        },
+                        "keep_tunnel_open_time": {
+                            "title": "Keep tunnel open time",
+                            "type": "integer",
+                            "default": 60,
+                            "description": "Time to keep tunnel open before going down after last exploit (in seconds)"
                         }
                     }
                 },
@@ -423,6 +429,32 @@ SCHEMA = {
                             "description": "The fullpath of the monkey log file on Windows"
                         }
                     }
+                },
+                "exploits": {
+                    "title": "Exploits",
+                    "type": "object",
+                    "properties": {
+                        "exploit_lm_hash_list": {
+                            "title": "Exploit LM hash list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [],
+                            "description": "List of LM hashes to use on exploits using credentials"
+                        },
+                        "exploit_ntlm_hash_list": {
+                            "title": "Exploit NTLM hash list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [],
+                            "description": "List of NTLM hashes to use on exploits using credentials"
+                        }
+                    }
                 }
             }
         },
@@ -480,7 +512,7 @@ SCHEMA = {
                         "skip_exploit_if_file_exist": {
                             "title": "Skip exploit if file exists",
                             "type": "boolean",
-                            "default": True,
+                            "default": False,
                             "description": "Determines whether the monkey should skip the exploit if the monkey's file is already on the remote machine"
                         }
                     }
@@ -561,46 +593,6 @@ SCHEMA = {
                                 "IPC$", "print$"
                             ],
                             "description": "These shares won't be checked when exploiting with SambaCry"
-                        },
-                        "sambacry_commandline_filename": {
-                            "title": "SambaCry commandline filename",
-                            "type": "string",
-                            "default": "monkey_commandline.txt",
-                        },
-                        "sambacry_runner_result_filename": {
-                            "title": "SambaCry runner result filename",
-                            "type": "string",
-                            "default": "monkey_runner_result",
-                        },
-                        "sambacry_runner_filename_32": {
-                            "title": "SambaCry runner filename (32 bit)",
-                            "type": "string",
-                            "default": "sc_monkey_runner32.so",
-                        },
-                        "sambacry_runner_filename_64": {
-                            "title": "SambaCry runner filename (64 bit)",
-                            "type": "string",
-                            "default": "sc_monkey_runner64.so",
-                        },
-                        "sambacry_monkey_filename_32": {
-                            "title": "SambaCry monkey filename (32 bit)",
-                            "type": "string",
-                            "default": "monkey32",
-                        },
-                        "sambacry_monkey_filename_64": {
-                            "title": "SambaCry monkey filename (64 bit)",
-                            "type": "string",
-                            "default": "monkey64",
-                        },
-                        "sambacry_monkey_copy_filename_32": {
-                            "title": "SambaCry monkey copy filename (32 bit)",
-                            "type": "string",
-                            "default": "monkey32_2",
-                        },
-                        "sambacry_monkey_copy_filename_64": {
-                            "title": "SambaCry monkey copy filename (64 bit)",
-                            "type": "string",
-                            "default": "monkey64_2",
                         }
                     }
                 },
@@ -818,20 +810,34 @@ class ConfigService:
         return SCHEMA
 
     @staticmethod
-    def creds_add_username(username):
+    def add_item_to_config_set(item_key, item_value):
         mongo.db.config.update(
             {'name': 'newconfig'},
-            {'$addToSet': {'exploits.credentials.exploit_user_list': username}},
+            {'$addToSet': {item_key: item_value}},
             upsert=False
         )
 
+        mongo.db.monkey.update(
+            {},
+            {'$addToSet': {'config.' + item_key.split('.')[-1]: item_value}},
+            multi=True
+        )
+
+    @staticmethod
+    def creds_add_username(username):
+        ConfigService.add_item_to_config_set('basic.credentials.exploit_user_list', username)
+
     @staticmethod
     def creds_add_password(password):
-        mongo.db.config.update(
-            {'name': 'newconfig'},
-            {'$addToSet': {'exploits.credentials.exploit_password_list': password}},
-            upsert=False
-        )
+        ConfigService.add_item_to_config_set('basic.credentials.exploit_password_list', password)
+
+    @staticmethod
+    def creds_add_lm_hash(lm_hash):
+        ConfigService.add_item_to_config_set('internal.exploits.exploit_lm_hash_list', lm_hash)
+
+    @staticmethod
+    def creds_add_ntlm_hash(ntlm_hash):
+        ConfigService.add_item_to_config_set('internal.exploits.exploit_ntlm_hash_list', ntlm_hash)
 
     @staticmethod
     def update_config(config_json):

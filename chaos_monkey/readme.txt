@@ -1,39 +1,58 @@
-How to create a monkey build environment:
+How to build a monkey binary from scratch.
 
-Windows:
+The monkey is composed of three seperate parts.
+* The Infection Monkey itself - PyInstaller compressed python archives
+* Sambacry binaries - Two linux binaries, 32/64 bit.
+* Mimikatz binaries - Two windows binaries, 32/64 bit.
+
+--- Windows ---
+
 1. Install python 2.7. Preferably you should use ActiveState Python which includes pywin32 built in. 
-	You must use an up to date version, atleast version 2.7.10
-	http://www.activestate.com/activepython/downloads
-	https://www.python.org/downloads/release/python-2712/
-2. install pywin32-219.win32-py2.7.exe at least
-	http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/
+    You must use an up to date version, at least version 2.7.10
+    http://www.activestate.com/activepython/downloads
+    https://www.python.org/downloads/release/python-2712/
+    If not using ActiveState, install pywin32, minimum build 219
+    http://sourceforge.net/projects/pywin32/files/pywin32
 3. a. install VCForPython27.msi
-	http://www.microsoft.com/en-us/download/details.aspx?id=44266
+    https://aka.ms/vcpython27
    b. if not installed, install Microsoft Visual C++ 2010 SP1 Redistributable Package
     32bit: http://www.microsoft.com/en-us/download/details.aspx?id=8328
     64bit: http://www.microsoft.com/en-us/download/details.aspx?id=13523
-4. Download & Run get-pip.py
-	https://bootstrap.pypa.io/get-pip.py
-5. Run:
-	Install the python packages listed in requirements.txt. Using pip install -r requirements.txt
-7. Download and extract UPX binary to [source-path]\monkey\chaos_monkey\bin\upx.exe:
-	http://upx.sourceforge.net/download/upx391w.zip
-8. (Optional) For some exploits to work better, install 'dnet' python library. You'll need to compile it for your OS
-    or use a precompiled setup that can be found at:
-    32bit: https://github.com/Kondziowy/scapy_win64/raw/master/win32/dnet-1.12.win32-py2.7.exe
-    64bit: https://github.com/Kondziowy/scapy_win64/raw/master/win64/dnet-1.12.win-amd64-py2.7.exe
-9. Run [source-path]\monkey\chaos_monkey\build_windows.bat to build, output is in dist\monkey.exe
+4. Download the dependent python packages using 
+    pip install -r requirements.txt
+5. Download and extract UPX binary to [source-path]\monkey\chaos_monkey\bin\upx.exe:
+    https://github.com/upx/upx/releases/download/v3.94/upx394w.zip
+6. To build the final exe:
+    1 cd [code location]/chaos_monkey
+    build_windows.bat 
+    output is in dist\monkey.exe
 
-Linux (Tested on Ubuntu 12.04):
+--- Linux ---
+
+Tested on Ubuntu 16.04 and 17.04.
+
 1. Run:
-	sudo apt-get update
-	sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev libc++1
-	Install the python packages listed in requirements.txt.
-		Using pip install -r requirements.txt
-	sudo apt-get install winbind
-2. Put source code in /home/user/Code/monkey/chaos_monkey
+    sudo apt-get update
+    sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev libc++1
+    Install the python packages listed in requirements.txt.
+        Using pip install -r requirements.txt
+    sudo apt-get install winbind dnet-common
+2. Put source code in Code/monkey/chaos_monkey
 3. To build, run in terminal:
-	cd /home/user/Code/monkey/chaos_monkey
-	chmod +x build_linux.sh
-	./build_linux.sh
+    cd [code location]/chaos_monkey
+    chmod +x build_linux.sh
+    ./build_linux.sh
    output is in dist/monkey
+
+-- Sambacry --
+
+Sambacry requires two standalone binaries to execute remotely.
+Compiling them requires gcc 
+cd [code location]/chaos_monkey/monkey_utils/sambacry_monkey_runner
+./build.sh
+
+-- Mimikatz --
+
+Mimikatz is required for the Monkey to be able to steal credentials on Windows. It's possible to either compile from sources (requires Visual Studio 2013 and up) or download the binaries from 
+https://github.com/guardicore/mimikatz/releases/tag/1.0.0
+Download both 32 and 64 bit DLLs and place them under [code location]\chaos_monkey\bin

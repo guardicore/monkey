@@ -22,7 +22,7 @@ class EdgeService:
 
     @staticmethod
     def edge_to_displayed_edge(edge):
-        services = {}
+        services = []
         os = {}
         exploits = []
         if len(edge["scans"]) > 0:
@@ -52,6 +52,7 @@ class EdgeService:
             exploit_container["end_timestamp"] = new_exploit["timestamp"]
 
         displayed_edge = EdgeService.edge_to_net_edge(edge)
+
         displayed_edge["ip_address"] = edge["ip_address"]
         displayed_edge["services"] = services
         displayed_edge["os"] = os

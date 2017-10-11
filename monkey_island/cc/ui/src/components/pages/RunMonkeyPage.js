@@ -134,13 +134,18 @@ class RunMonkeyPageComponent extends React.Component {
             Run on C&C Server
             { this.renderIconByState(this.state.runningOnIslandState) }
           </button>
-          <a
-             className="btn btn-default"
-             disabled={this.state.runningOnClientState !== 'not_running'}
-             style={{'marginLeft': '1em'}}>
-            Download and run locally
-            { this.renderIconByState(this.state.runningOnClientState) }
-          </a>
+          {
+            // TODO: implement button functionality
+            /*
+            <button
+               className="btn btn-default"
+               disabled={this.state.runningOnClientState !== 'not_running'}
+               style={{'marginLeft': '1em'}}>
+              Download and run locally
+              { this.renderIconByState(this.state.runningOnClientState) }
+            </button>
+            */
+          }
         </p>
         <div className="run-monkey-snippets" style={{'marginBottom': '3em'}}>
           <p>
