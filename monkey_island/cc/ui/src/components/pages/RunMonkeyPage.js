@@ -112,7 +112,7 @@ class RunMonkeyPageComponent extends React.Component {
   renderIconByState(state) {
     if (state === 'running') {
       return <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
-    } else if (state == 'installing') {
+    } else if (state === 'installing') {
       return <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/>
     } else {
       return '';
