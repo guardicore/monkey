@@ -16,7 +16,7 @@ class RunServerPageComponent extends React.Component {
 
   render() {
     return (
-      <Col xs={8}>
+      <Col xs={12}>
         <h1 className="page-title">Monkey Island C&C Server</h1>
         <div style={{'fontSize': '1.5em'}}>
           <p>Your Monkey Island server is up and running on <b>{this.state.ip}</b> &#x1F44F; &#x1F44F;</p>

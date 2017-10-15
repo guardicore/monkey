@@ -90,7 +90,7 @@ class RunMonkeyPageComponent extends React.Component {
       cmdText = this.generateWindowsCmd(ip, is32Bit);
     }
     return (
-      <Well className="well-sm" style={{'margin': '0.5em'}}>
+      <Well key={'cmdDiv'+ip} className="well-sm" style={{'margin': '0.5em'}}>
         <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
           <CopyToClipboard text={cmdText} className="pull-right btn-sm">
             <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
@@ -121,7 +121,7 @@ class RunMonkeyPageComponent extends React.Component {
 
   render() {
     return (
-      <Col xs={8}>
+      <Col xs={12}>
         <h1 className="page-title">Run the Monkey</h1>
         <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
           You can run the monkey on the C&C server, on your local machine and basically everywhere.
@@ -153,7 +153,7 @@ class RunMonkeyPageComponent extends React.Component {
             <br/>
             <span className="text-muted">(The IP address is used as the monkey's C&C address)</span>
           </p>
-          <Nav pills justified
+          <Nav bsStyle="pills" justified
                activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
                style={{'marginBottom': '2em'}}>
             <NavItem key='windows-32' eventKey='windows-32'>Windows (32 bit)</NavItem>
