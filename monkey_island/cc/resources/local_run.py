@@ -61,7 +61,7 @@ class LocalRun(flask_restful.Resource):
         body = json.loads(request.data)
         if body.get('action') == 'run':
             local_run = run_local_monkey()
-            return jsonify(is_running=local_run[0])
+            return jsonify(is_running=local_run[0], error_text=local_run[1])
 
         # default action
         return make_response({'error': 'Invalid action'}, 500)

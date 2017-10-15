@@ -10,11 +10,13 @@ import MapPage from 'components/pages/MapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
 import ReportPage from 'components/pages/ReportPage';
+import ReadMePage from 'components/pages/ReadMePage';
 
 require('normalize.css/normalize.css');
 require('react-data-components/css/table-twbs.css');
 require('styles/App.css')
 require('react-toggle/style.css');
+require('github-markdown-css/github-markdown.css');
 
 let logoImage = require('../images/monkey-logo.png');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
@@ -114,6 +116,7 @@ class AppComponent extends React.Component {
               <ul>
                 <li><NavLink to="/configure">Configuration</NavLink></li>
                 <li><NavLink to="/infection/telemetry">Monkey Telemetry</NavLink></li>
+                <li><NavLink to="/readme">Read Me</NavLink></li>
               </ul>
 
               <hr/>
@@ -133,6 +136,7 @@ class AppComponent extends React.Component {
               <Route path="/infection/telemetry" render={(props) => ( <TelemetryPage onStatusChange={this.updateStatus} /> )} />
               <Route path="/start-over" render={(props) => ( <StartOverPage onStatusChange={this.updateStatus} /> )} />
               <Route path="/report" render={(props) => ( <ReportPage onStatusChange={this.updateStatus} /> )} />
+              <Route path="/readme" render={(props) => ( <ReadMePage onStatusChange={this.updateStatus} /> )} />
             </Col>
           </Row>
         </Grid>
