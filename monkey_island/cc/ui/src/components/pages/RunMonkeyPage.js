@@ -121,7 +121,7 @@ class RunMonkeyPageComponent extends React.Component {
 
   render() {
     return (
-      <Col xs={8}>
+      <Col xs={12}>
         <h1 className="page-title">Run the Monkey</h1>
         <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
           You can run the monkey on the C&C server, on your local machine and basically everywhere.

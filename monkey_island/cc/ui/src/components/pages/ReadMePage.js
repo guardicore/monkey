@@ -12,7 +12,7 @@ class ReadMePageComponent extends React.Component {
   render() {
 
     return (
-      <Col xs={8}>
+      <Col xs={12}>
         <h1 className="page-title">Read Me</h1>
         <div dangerouslySetInnerHTML={{__html: marked(markdown)}} className="markdown-body">
         </div>
