@@ -34,12 +34,13 @@ class VictimHost(object):
     def __str__(self):
         victim = "Victim Host %s: " % self.ip_addr
         victim += "OS - ["
-        for k, v in self.os.iteritems():
+        for k, v in self.os.items():
             victim += "%s-%s " % (k, v)
         victim += "] Services - ["
-        for k, v in self.services.iteritems():
+        for k, v in self.services.items():
             victim += "%s-%s " % (k, v)
         victim += ']'
+        victim += "target monkey: %s" % self.monkey_exe
         return victim
 
     def set_default_server(self, default_server):
