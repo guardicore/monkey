@@ -1,15 +1,15 @@
 import json
-from datetime import datetime
 import traceback
+from datetime import datetime
 
 import dateutil
-from flask import request
 import flask_restful
+from flask import request
 
 from cc.database import mongo
+from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
-from cc.services.config import ConfigService
 
 __author__ = 'Barak'
 
@@ -103,19 +103,16 @@ class Telemetry(flask_restful.Resource):
 
     def process_exploit_telemetry(self, telemetry_json):
         edge = self.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
-        data = telemetry_json['data']
-        data["machine"].pop("ip_addr")
-        new_exploit = \
-            {
-                "timestamp": telemetry_json["timestamp"],
-                "data": data,
-                "exploiter": telemetry_json['data']['exploiter']
-            }
+        new_exploit = telemetry_json['data']
+
+        new_exploit.pop('machine')
+        new_exploit['timestamp'] = telemetry_json['timestamp']
+
         mongo.db.edge.update(
-            {"_id": edge["_id"]},
-            {"$push": {"exploits": new_exploit}}
+            {'_id': edge['_id']},
+            {'$push': {'exploits': new_exploit}}
         )
-        if data['result']:
+        if new_exploit['result']:
             EdgeService.set_edge_exploited(edge)
 
     def process_scan_telemetry(self, telemetry_json):
@@ -158,5 +155,3 @@ class Telemetry(flask_restful.Resource):
                     ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
                 if 'ntlm_hash' in creds[user]:
                     ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
-
-
