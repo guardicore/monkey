@@ -8,7 +8,7 @@ class PreviewPaneComponent extends React.Component {
     return (
       <tr>
         <th>Operating System</th>
-        <td>{asset.os}</td>
+        <td>{asset.os.charAt(0).toUpperCase() + asset.os.slice(1)}</td>
       </tr>
     );
   }
@@ -40,11 +40,11 @@ class PreviewPaneComponent extends React.Component {
     );
   }
 
-  aliveRow(asset) {
+  statusRow(asset) {
     return (
       <tr>
-        <th>Alive</th>
-        <td>{(!asset.dead).toString()}</td>
+        <th>Status</th>
+        <td>{(asset.dead) ? 'Dead' : 'Alive'}</td>
       </tr>
     );
   }
@@ -65,7 +65,7 @@ class PreviewPaneComponent extends React.Component {
       <tr>
         <th>Force Kill</th>
         <td>
-          <Toggle id={asset.id} checked={!asset.config.alive} icons={false}
+          <Toggle id={asset.id} checked={!asset.config.alive} icons={false} disabled={asset.dead}
                         onChange={(e) => this.forceKill(e, asset)} />
         </td>
       </tr>
@@ -115,8 +115,8 @@ class PreviewPaneComponent extends React.Component {
       <div>
         <table className="table table-condensed">
           <tbody>
-            {this.aliveRow(asset)}
             {this.osRow(asset)}
+            {this.statusRow(asset)}
             {this.ipsRow(asset)}
             {this.servicesRow(asset)}
             {this.accessibleRow(asset)}
