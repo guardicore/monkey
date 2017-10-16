@@ -34,7 +34,7 @@ class ReadMePageComponent extends React.Component {
   render() {
 
     return (
-      <Col xs={12}>
+      <Col xs={12} lg={8}>
         <h1 className="page-title">Read Me</h1>
         <Nav bsStyle="tabs" justified
              activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}

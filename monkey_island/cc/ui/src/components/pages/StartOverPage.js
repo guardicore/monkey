@@ -64,7 +64,7 @@ class StartOverPageComponent extends React.Component {
 
   render() {
     return (
-      <Col xs={12}>
+      <Col xs={12} lg={8}>
         {this.renderCleanDialogModal()}
         <h1 className="page-title">Start Over</h1>
         <div style={{'fontSize': '1.2em'}}>

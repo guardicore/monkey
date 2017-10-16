@@ -162,7 +162,7 @@ class MapPageComponent extends React.Component {
     return (
       <div>
         {this.renderKillDialogModal()}
-        <Col xs={12}>
+        <Col xs={12} lg={8}>
           <h1 className="page-title">Infection Map</h1>
         </Col>
         <Col xs={12}>

@@ -107,7 +107,7 @@ class ConfigurePageComponent extends React.Component {
     }
 
     return (
-      <Col xs={12}>
+      <Col xs={12} lg={8}>
         <h1 className="page-title">Monkey Configuration</h1>
         <Nav bsStyle="tabs" justified
              activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
