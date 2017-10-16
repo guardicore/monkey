@@ -270,6 +270,10 @@ body {
   background: #d30d09;
 }
 
+.map-legend {
+  font-size: 18px;
+}
+
 /*
  * Full Logs Page
  */

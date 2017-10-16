@@ -165,10 +165,17 @@ class MapPageComponent extends React.Component {
         <Col xs={12} lg={8}>
           <h1 className="page-title">Infection Map</h1>
         </Col>
-        <Col xs={12}>
-          <img src={legend}/>
-        </Col>
         <Col xs={8}>
+          <div className="map-legend">
+            <b>Legend: </b>
+            <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}} /></span>
+            <b style={{color: '#aeaeae'}}>|</b>
+            <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}} /></span>
+            <b style={{color: '#aeaeae'}}>|</b>
+            <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}} /></span>
+            <b style={{color: '#aeaeae'}}>|</b>
+            <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}} /></span>
+          </div>
           <div style={{height: '80vh'}}>
             <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
           </div>
