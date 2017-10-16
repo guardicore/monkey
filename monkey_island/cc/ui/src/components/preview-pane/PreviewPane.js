@@ -40,15 +40,6 @@ class PreviewPaneComponent extends React.Component {
     );
   }
 
-  descriptionRow(asset) {
-    return (
-      <tr>
-        <th>Description</th>
-        <td>{asset.description}</td>
-      </tr>
-    );
-  }
-
   aliveRow(asset) {
     return (
       <tr>
@@ -124,7 +115,6 @@ class PreviewPaneComponent extends React.Component {
       <div>
         <table className="table table-condensed">
           <tbody>
-            {this.descriptionRow(asset)}
             {this.aliveRow(asset)}
             {this.osRow(asset)}
             {this.ipsRow(asset)}
