@@ -174,6 +174,13 @@ class MapPageComponent extends React.Component {
             <b style={{color: '#aeaeae'}}>|</b>
             <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}} /></span>
           </div>
+          <div className="telemetry-console">
+            <div>
+              <span className="date">2017-10-16 16:00:05</span>
+              <span className="source"> monkey-elastic</span>
+              <span className="event"> bla bla</span>
+            </div>
+          </div>
           <div style={{height: '80vh'}}>
             <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
           </div>
