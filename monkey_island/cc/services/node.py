@@ -62,9 +62,9 @@ class NodeService:
 
     @staticmethod
     def _cmp_exploits_by_timestamp(exploit_1, exploit_2):
-        if exploit_1["start_timestamp"] == exploit_2["start_timestamp"]:
+        if exploit_1["timestamp"] == exploit_2["timestamp"]:
             return 0
-        if exploit_1["start_timestamp"] > exploit_2["start_timestamp"]:
+        if exploit_1["timestamp"] > exploit_2["timestamp"]:
             return 1
         return -1
 

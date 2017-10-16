@@ -91,9 +91,9 @@ class PreviewPaneComponent extends React.Component {
         <h4 style={{'marginTop': '2em'}}>Timeline</h4>
         <ul className="timeline">
           { asset.exploits.map(exploit =>
-            <li key={exploit.start_timestamp}>
+            <li key={exploit.timestamp}>
               <div className={'bullet ' + (exploit.result ? 'bad' : '')} />
-              <div>{new Date(exploit.start_timestamp).toLocaleString()}</div>
+              <div>{new Date(exploit.timestamp).toLocaleString()}</div>
               <div>{exploit.origin}</div>
               <div>{exploit.exploiter}</div>
             </li>
@@ -157,17 +157,23 @@ class PreviewPaneComponent extends React.Component {
           </tr>
           </tbody>
         </table>
-        <h4 style={{'marginTop': '2em'}}>Timeline</h4>
-        <ul className="timeline">
-          { edge.exploits.map(exploit =>
-            <li key={exploit.start_timestamp}>
-              <div className={'bullet ' + (exploit.result ? 'bad' : '')} />
-              <div>{exploit.start_timestamp}</div>
-              <div>{exploit.origin}</div>
-              <div>{exploit.exploiter}</div>
-            </li>
-          )}
-        </ul>
+        {
+          (edge.exploits.length === 0) ?
+            '' :
+            <div>
+              <h4 style={{'marginTop': '2em'}}>Timeline</h4>
+              <ul className="timeline">
+                { edge.exploits.map(exploit =>
+                  <li key={exploit.timestamp}>
+                    <div className={'bullet ' + (exploit.result ? 'bad' : '')} />
+                    <div>{new Date(exploit.timestamp).toLocaleString()}</div>
+                    <div>{exploit.origin}</div>
+                    <div>{exploit.exploiter}</div>
+                  </li>
+                )}
+              </ul>
+            </div>
+        }
       </div>
     );
   }
