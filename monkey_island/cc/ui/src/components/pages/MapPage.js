@@ -98,7 +98,6 @@ class MapPageComponent extends React.Component {
 
   selectionChanged(event) {
     if (event.nodes.length === 1) {
-      console.log('selected node:', event.nodes[0]); // eslint-disable-line no-console
       fetch('/api/netmap/node?id=' + event.nodes[0])
         .then(res => res.json())
         .then(res => this.setState({selected: res, selectedType: 'node'}));
@@ -117,7 +116,6 @@ class MapPageComponent extends React.Component {
       }
     }
     else {
-      console.log('selection cleared.'); // eslint-disable-line no-console
       this.setState({selected: null, selectedType: null});
     }
   }

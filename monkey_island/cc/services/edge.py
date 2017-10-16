@@ -24,65 +24,19 @@ class EdgeService:
     def edge_to_displayed_edge(edge):
         services = []
         os = {}
-        exploits = []
+
         if len(edge["scans"]) > 0:
             services = EdgeService.services_to_displayed_services(edge["scans"][-1]["data"]["services"])
             os = edge["scans"][-1]["data"]["os"]
-
-        for exploit in edge["exploits"]:
-            new_exploit = EdgeService.exploit_to_displayed_exploit(exploit)
-
-            if (len(exploits) > 0) and (exploits[-1]["exploiter"] == exploit["exploiter"]):
-                exploit_container = exploits[-1]
-            else:
-                exploit_container =\
-                    {
-                        "exploiter": exploit["exploiter"],
-                        "start_timestamp": exploit["timestamp"],
-                        "end_timestamp": exploit["timestamp"],
-                        "result": False,
-                        "attempts": []
-                    }
-
-                exploits.append(exploit_container)
-
-            exploit_container["attempts"].append(new_exploit)
-            if new_exploit["result"]:
-                exploit_container["result"] = True
-            exploit_container["end_timestamp"] = new_exploit["timestamp"]
 
         displayed_edge = EdgeService.edge_to_net_edge(edge)
 
         displayed_edge["ip_address"] = edge["ip_address"]
         displayed_edge["services"] = services
         displayed_edge["os"] = os
-        displayed_edge["exploits"] = exploits
+        displayed_edge["exploits"] = edge['exploits']
         displayed_edge["_label"] = EdgeService.get_edge_label(displayed_edge)
         return displayed_edge
-
-    @staticmethod
-    def exploit_to_displayed_exploit(exploit):
-        user = ""
-        password = ""
-
-        # TODO: The format that's used today to get the credentials is bad. Change it from monkey side and adapt.
-        result = exploit["data"]["result"]
-        if result:
-            if "creds" in exploit["data"]["machine"]:
-                user = exploit["data"]["machine"]["creds"].keys()[0]
-                password = exploit["data"]["machine"]["creds"][user]
-        else:
-            if ("user" in exploit["data"]) and ("password" in exploit["data"]):
-                user = exploit["data"]["user"]
-                password = exploit["data"]["password"]
-
-        return \
-            {
-                "timestamp": exploit["timestamp"],
-                "user": user,
-                "password": password,
-                "result": result,
-            }
 
     @staticmethod
     def insert_edge(from_id, to_id):

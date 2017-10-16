@@ -109,7 +109,7 @@ class ChaosMonkey(object):
 
             self._network.initialize()
 
-            self._exploiters = [exploiter() for exploiter in WormConfiguration.exploiter_classes]
+            self._exploiters = WormConfiguration.exploiter_classes
 
             self._fingerprint = [fingerprint() for fingerprint in WormConfiguration.finger_classes]
 
@@ -152,34 +152,31 @@ class ChaosMonkey(object):
                     machine.set_default_server(self._default_server)
 
                 successful_exploiter = None
-                for exploiter in self._exploiters:
-                    if not exploiter.is_os_supported(machine):
+                for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
+                    if not exploiter.is_os_supported():
                         LOG.info("Skipping exploiter %s host:%r, os is not supported",
                                  exploiter.__class__.__name__, machine)
                         continue
 
                     LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
 
+                    result = False
                     try:
-                        if exploiter.exploit_host(machine, WormConfiguration.depth):
+                        result = exploiter.exploit_host()
+                        if result:
                             successful_exploiter = exploiter
                             break
                         else:
                             LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
-                            ControlClient.send_telemetry('exploit', {'result': False, 'machine': machine.__dict__,
-                                                                     'exploiter': exploiter.__class__.__name__})
 
                     except Exception as exc:
                         LOG.exception("Exception while attacking %s using %s: %s",
                                       machine, exploiter.__class__.__name__, exc)
-                        ControlClient.send_telemetry('exploit', {'result': False, 'machine': machine.__dict__,
-                                                                 'exploiter': exploiter.__class__.__name__})
-                        continue
+                    finally:
+                        exploiter.send_exploit_telemetry(result)
 
                 if successful_exploiter:
                     self._exploited_machines.add(machine)
-                    ControlClient.send_telemetry('exploit', {'result': True, 'machine': machine.__dict__,
-                                                             'exploiter': successful_exploiter.__class__.__name__})
 
                     LOG.info("Successfully propagated to %s using %s",
                              machine, successful_exploiter.__class__.__name__)
