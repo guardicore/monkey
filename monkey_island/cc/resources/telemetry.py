@@ -43,16 +43,7 @@ class Telemetry(flask_restful.Resource):
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
 
         try:
-            if telemetry_json.get('telem_type') == 'tunnel':
-                self.process_tunnel_telemetry(telemetry_json)
-            elif telemetry_json.get('telem_type') == 'state':
-                self.process_state_telemetry(telemetry_json)
-            elif telemetry_json.get('telem_type') == 'exploit':
-                self.process_exploit_telemetry(telemetry_json)
-            elif telemetry_json.get('telem_type') == 'scan':
-                self.process_scan_telemetry(telemetry_json)
-            elif telemetry_json.get('telem_type') == 'system_info_collection':
-                self.process_system_info_telemetry(telemetry_json)
+            TELEM_PROCESS_DICT[telemetry_json.get('telem_type')](telemetry_json)
             NodeService.update_monkey_modify_time(monkey["_id"])
         except StandardError as ex:
             print("Exception caught while processing telemetry: %s" % str(ex))
@@ -60,7 +51,8 @@ class Telemetry(flask_restful.Resource):
 
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
 
-    def telemetry_to_displayed_telemetry(self, telemetry):
+    @staticmethod
+    def telemetry_to_displayed_telemetry(telemetry):
         monkey_guid_dict = {}
         monkeys = mongo.db.monkey.find({})
         for monkey in monkeys:
@@ -77,7 +69,8 @@ class Telemetry(flask_restful.Resource):
 
         return objects
 
-    def get_edge_by_scan_or_exploit_telemetry(self, telemetry_json):
+    @staticmethod
+    def get_edge_by_scan_or_exploit_telemetry(telemetry_json):
         dst_ip = telemetry_json['data']['machine']['ip_addr']
         src_monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
         dst_node = NodeService.get_monkey_by_ip(dst_ip)
@@ -86,7 +79,8 @@ class Telemetry(flask_restful.Resource):
 
         return EdgeService.get_or_create_edge(src_monkey["_id"], dst_node["_id"])
 
-    def process_tunnel_telemetry(self, telemetry_json):
+    @staticmethod
+    def process_tunnel_telemetry(telemetry_json):
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])["_id"]
         if telemetry_json['data']['proxy'] is not None:
             tunnel_host_ip = telemetry_json['data']['proxy'].split(":")[-2].replace("//", "")
@@ -94,15 +88,17 @@ class Telemetry(flask_restful.Resource):
         else:
             NodeService.unset_all_monkey_tunnels(monkey_id)
 
-    def process_state_telemetry(self, telemetry_json):
+    @staticmethod
+    def process_state_telemetry(telemetry_json):
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
         if telemetry_json['data']['done']:
             NodeService.set_monkey_dead(monkey, True)
         else:
             NodeService.set_monkey_dead(monkey, False)
 
-    def process_exploit_telemetry(self, telemetry_json):
-        edge = self.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
+    @staticmethod
+    def process_exploit_telemetry(telemetry_json):
+        edge = Telemetry.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
         new_exploit = telemetry_json['data']
 
         new_exploit.pop('machine')
@@ -115,8 +111,9 @@ class Telemetry(flask_restful.Resource):
         if new_exploit['result']:
             EdgeService.set_edge_exploited(edge)
 
-    def process_scan_telemetry(self, telemetry_json):
-        edge = self.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
+    @staticmethod
+    def process_scan_telemetry(telemetry_json):
+        edge = Telemetry.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
         data = telemetry_json['data']['machine']
         ip_address = data.pop("ip_addr")
         new_scan = \
@@ -144,7 +141,8 @@ class Telemetry(flask_restful.Resource):
                                          {"$set": {"os.version": scan_os["version"]}},
                                          upsert=False)
 
-    def process_system_info_telemetry(self, telemetry_json):
+    @staticmethod
+    def process_system_info_telemetry(telemetry_json):
         if 'credentials' in telemetry_json['data']:
             creds = telemetry_json['data']['credentials']
             for user in creds:
@@ -155,3 +153,13 @@ class Telemetry(flask_restful.Resource):
                     ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
                 if 'ntlm_hash' in creds[user]:
                     ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
+
+
+TELEM_PROCESS_DICT = \
+    {
+        'tunnel': Telemetry.process_tunnel_telemetry,
+        'state': Telemetry.process_state_telemetry,
+        'exploit': Telemetry.process_exploit_telemetry,
+        'scan': Telemetry.process_scan_telemetry,
+        'system_info_collection': Telemetry.process_system_info_telemetry,
+    }
