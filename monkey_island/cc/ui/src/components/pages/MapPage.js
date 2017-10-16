@@ -11,8 +11,6 @@ let groupNames = ['clean_unknown', 'clean_linux', 'clean_windows', 'exploited_li
   'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',
   'monkey_linux_running', 'monkey_windows', 'monkey_windows_running'];
 
-let legend = require('../../images/map-legend.png');
-
 let getGroupsOptions = () => {
   let groupOptions = {};
   for (let groupName of groupNames) {
