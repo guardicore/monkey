@@ -165,11 +165,11 @@ class MapPageComponent extends React.Component {
           <div className="map-legend">
             <b>Legend: </b>
             <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}} /></span>
-            <b style={{color: '#aeaeae'}}>|</b>
+            <b style={{color: '#aeaeae'}}> | </b>
             <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}} /></span>
-            <b style={{color: '#aeaeae'}}>|</b>
+            <b style={{color: '#aeaeae'}}> | </b>
             <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}} /></span>
-            <b style={{color: '#aeaeae'}}>|</b>
+            <b style={{color: '#aeaeae'}}> | </b>
             <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}} /></span>
           </div>
           <div className="telemetry-console">
