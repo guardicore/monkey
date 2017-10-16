@@ -106,7 +106,7 @@ class AppComponent extends React.Component {
                 </li>
                 <li>
                   <NavLink to="/start-over">
-                    <span className="number">5.</span>
+                    <span className="number"><i className="fa fa-undo" style={{'marginLeft': '-1px'}}/></span>
                     Start Over
                   </NavLink>
                 </li>
