@@ -173,7 +173,7 @@ class RunMonkeyPageComponent extends React.Component {
         <Collapse in={this.state.showManual}>
           <div style={{'marginBottom': '2em'}}>
             <p style={{'fontSize': '1.2em'}}>
-              Choose the operating system you want to run the monkey on
+              Choose the operating system where you want to run the monkey
               {this.state.ips.length > 1 ? ', and the interface to communicate with.' : '.'}
             </p>
             <Nav bsStyle="pills" justified activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
