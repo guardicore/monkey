@@ -137,7 +137,7 @@ class RunMonkeyPageComponent extends React.Component {
     return (
       <Col xs={12} lg={8}>
         <h1 className="page-title">Run the Monkey</h1>
-        <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
+        <p style={{'marginBottom': '2em', 'fontSize': '1.2em'}}>
           Go ahead and run the monkey!
         </p>
         <p>
@@ -170,9 +170,9 @@ class RunMonkeyPageComponent extends React.Component {
           </button>
         </p>
         <Collapse in={this.state.showManual}>
-          <div>
-            <p>
-              Choose the operating system you want to run the monkey on, and the interface to communicate with
+          <div style={{'marginBottom': '2em'}}>
+            <p style={{'fontSize': '1.2em'}}>
+              Choose the operating system you want to run the monkey on, and the interface to communicate with.
             </p>
             <Nav bsStyle="pills" justified activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
               <NavItem key='windows-32' eventKey='windows-32'>Windows (32 bit)</NavItem>
@@ -184,8 +184,8 @@ class RunMonkeyPageComponent extends React.Component {
                  style={{'marginBottom': '2em'}}>
               {this.state.ips.map(ip => <NavItem key={ip} eventKey={ip}>{ip}</NavItem>)}
             </Nav>
-            <p>
-              Copy the following command to your machine and run it as Administrator/root
+            <p style={{'fontSize': '1.2em'}}>
+              Copy the following command to your machine and run it as Administrator/root.
             </p>
             {this.generateCmdDiv()}
           </div>
