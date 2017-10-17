@@ -1,28 +1,9 @@
 import React from 'react';
-import {Col, Nav, NavItem} from 'react-bootstrap';
-var marked = require('marked');
+import {Col} from 'react-bootstrap';
 
-var aboutDoc = require('raw!../../readme/About.md');
-var usageDoc = require('raw!../../readme/Usage.md');
-var howItWorksDoc = require('raw!../../readme/HowItWorks.md');
-var licenseDoc = require('raw!../../readme/License.md');
-
-class ReadMePageComponent extends React.Component {
+class LicensePageComponent extends React.Component {
   constructor(props) {
     super(props);
-
-    this.sectionKeys = ['about', 'howItWorks', 'usage', 'license'];
-    this.sections =
-      {
-        about: {title: 'About', data: aboutDoc},
-        usage: {title: 'Usage', data: usageDoc},
-        howItWorks: {title: 'How It Works', data: howItWorksDoc},
-        license: {title: 'License', data: licenseDoc}
-      };
-
-    this.state = {
-      selectedSection: this.sectionKeys[0]
-    }
   }
 
   setSelectedSection = (key) => {
@@ -32,22 +13,21 @@ class ReadMePageComponent extends React.Component {
   };
 
   render() {
-
     return (
       <Col xs={12} lg={8}>
-        <h1 className="page-title">Read Me</h1>
-        <Nav bsStyle="tabs" justified
-             activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
-             style={{'marginBottom': '2em'}}>
-          {this.sectionKeys.map(section =>
-            <NavItem key={section} eventKey={section}>{this.sections[section].title}</NavItem>
-          )}
-        </Nav>
-        <div dangerouslySetInnerHTML={{__html: marked(this.sections[this.state.selectedSection].data)}} className="markdown-body">
+        <h1 className="page-title">License</h1>
+        <div style={{'fontSize': '1.2em'}}>
+          <p>
+            Copyright <i className="glyphicon glyphicon-copyright-mark" /> 2017 Guardicore Ltd.
+            Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPLv3</a>.
+          </p>
+          <p>
+            The source code is available on <a href="https://github.com/guardicore/monkey" target="_blank">GitHub</a>
+          </p>
         </div>
       </Col>
     );
   }
 }
 
-export default ReadMePageComponent;
+export default LicensePageComponent;

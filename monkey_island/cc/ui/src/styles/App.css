@@ -341,6 +341,11 @@ body {
   width: 100px;
 }
 
+.license-link a:link, .license-link a:visited {
+  color: #797979 !important;
+  font-size: 0.9em;
+}
+
 .data-table-container .pagination {
   margin: 0 !important;
 }

@@ -10,7 +10,7 @@ class ReportPageComponent extends React.Component {
     return (
       <Col xs={12} lg={8}>
         <h1 className="page-title">Penetration Test Report</h1>
-        <div style={{'fontSize': '1.5em'}}>
+        <div style={{'fontSize': '1.2em'}}>
           <p>
             Under construction
           </p>

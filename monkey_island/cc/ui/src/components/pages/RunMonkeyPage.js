@@ -139,6 +139,7 @@ class RunMonkeyPageComponent extends React.Component {
         <h1 className="page-title">Run the Monkey</h1>
         <p style={{'marginBottom': '2em', 'fontSize': '1.2em'}}>
           Go ahead and run the monkey!
+          <i> (Or make further adjustments by <Link to="/configure">configuring the monkey</Link>)</i>
         </p>
         <p>
           <button onClick={this.runLocalMonkey}
