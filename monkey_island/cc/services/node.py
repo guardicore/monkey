@@ -209,8 +209,14 @@ class NodeService:
 
     @staticmethod
     def set_monkey_dead(monkey, is_dead):
+        props_to_set = {'dead': is_dead}
+
+        # Cancel the force kill once monkey died
+        if is_dead:
+            props_to_set['config.alive'] = True
+
         mongo.db.monkey.update({"guid": monkey['guid']},
-                               {'$set': {'dead': is_dead}},
+                               {'$set': props_to_set},
                                upsert=False)
 
     @staticmethod
@@ -255,9 +261,10 @@ class NodeService:
                 {'dead': {'$ne': True}, 'keepalive': {'$gte': datetime.now() - timedelta(minutes=10)}}):
             return
 
+        # config.alive is changed to true to cancel the force kill of dead monkeys
         mongo.db.monkey.update(
             {'keepalive': {'$lte': datetime.now() - timedelta(minutes=10)}, 'dead': {'$ne': True}},
-            {'$set': {'dead': True, 'modifytime': datetime.now()}}, upsert=False, multi=True)
+            {'$set': {'dead': True, 'config.alive': True, 'modifytime': datetime.now()}}, upsert=False, multi=True)
 
     @staticmethod
     def is_any_monkey_alive():
