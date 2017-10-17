@@ -208,27 +208,16 @@ SCHEMA = {
                             "default": "FixedRange",
                             "enum": [
                                 "FixedRange",
-                                "RelativeRange",
                                 "ClassCRange"
                             ],
                             "enumNames": [
                                 "Fixed Range",
-                                "Relative Range",
                                 "Class C Range"
                             ],
                             "description":
                                 "Determines which class to use to determine scan range."
                                 " Fixed Range will scan only specific IPs listed under Fixed range IP list."
-                                " Relative Range will scan the <Relative range size> closest ips to the machine's IP."
                                 " Class C Range will scan machines in the Class C network the monkey's on."
-                        },
-                        "range_size": {
-                            "title": "Relative range size",
-                            "type": "integer",
-                            "default": 1,
-                            "description":
-                                "Determines the size of the RelativeRange - amount of IPs to scan"
-                                " (Only relevant for Relative Range)"
                         },
                         "range_fixed": {
                             "title": "Fixed range IP list",
