@@ -191,10 +191,13 @@ SCHEMA = {
                             "description": "Determines whether the monkey should scan its subnets additionally"
                         },
                         "depth": {
-                            "title": "Depth" + WARNING_SIGN,
+                            "title": "Distance from island",
                             "type": "integer",
                             "default": 2,
-                            "description": "Amount of hops allowed for the monkey to spread"
+                            "description":
+                                "Amount of hops allowed for the monkey to spread from the island. "
+                                + WARNING_SIGN
+                                + " Note that setting this value too high may result in the monkey propagating too far"
                         }
                     }
                 },
@@ -293,12 +296,14 @@ SCHEMA = {
                             "description": "Determines the maximum number of machines the monkey is allowed to scan"
                         },
                         "victims_max_exploit": {
-                            "title": "Max victims to exploit" + WARNING_SIGN,
+                            "title": "Max victims to exploit",
                             "type": "integer",
                             "default": 7,
                             "description":
                                 "Determines the maximum number of machines the monkey"
-                                " is allowed to successfully exploit"
+                                " is allowed to successfully exploit. " + WARNING_SIGN
+                                + " Note that setting this value too high may result in the monkey propagating to "
+                                  "a high number of machines"
                         },
                         "timeout_between_iterations": {
                             "title": "Wait time between iterations",
@@ -576,7 +581,7 @@ SCHEMA = {
                     "type": "object",
                     "properties": {
                         "exploiter_classes": {
-                            "title": "Exploits" + WARNING_SIGN,
+                            "title": "Exploits",
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
@@ -590,7 +595,9 @@ SCHEMA = {
                                 "SambaCryExploiter",
                                 "ElasticGroovyExploiter"
                             ],
-                            "description": "Determines which exploits to use"
+                            "description":
+                                "Determines which exploits to use. " + WARNING_SIGN
+                                + " Note that using unsafe exploits may cause crashes of the exploited machine/service"
                         },
                         "skip_exploit_if_file_exist": {
                             "title": "Skip exploit if file exists",
