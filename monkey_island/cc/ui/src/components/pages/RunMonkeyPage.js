@@ -139,7 +139,7 @@ class RunMonkeyPageComponent extends React.Component {
         <h1 className="page-title">2. Run the Monkey</h1>
         <p style={{'marginBottom': '2em', 'fontSize': '1.2em'}}>
           Go ahead and run the monkey!
-          <i> (Or make further adjustments by <Link to="/configure">configuring the monkey</Link>)</i>
+          <i> (Or <Link to="/configure">configure the monkey</Link> to fine tune its behavior)</i>
         </p>
         <p>
           <button onClick={this.runLocalMonkey}
@@ -173,7 +173,8 @@ class RunMonkeyPageComponent extends React.Component {
         <Collapse in={this.state.showManual}>
           <div style={{'marginBottom': '2em'}}>
             <p style={{'fontSize': '1.2em'}}>
-              Choose the operating system you want to run the monkey on, and the interface to communicate with.
+              Choose the operating system you want to run the monkey on
+              {this.state.ips.length > 1 ? ', and the interface to communicate with.' : '.'}
             </p>
             <Nav bsStyle="pills" justified activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
               <NavItem key='windows-32' eventKey='windows-32'>Windows (32 bit)</NavItem>
@@ -181,12 +182,15 @@ class RunMonkeyPageComponent extends React.Component {
               <NavItem key='linux-32' eventKey='linux-32'>Linux (32 bit)</NavItem>
               <NavItem key='linux-64' eventKey='linux-64'>Linux (64 bit)</NavItem>
             </Nav>
-            <Nav bsStyle="pills" justified activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
-                 style={{'marginBottom': '2em'}}>
-              {this.state.ips.map(ip => <NavItem key={ip} eventKey={ip}>{ip}</NavItem>)}
-            </Nav>
+            {this.state.ips.length > 1 ?
+              <Nav bsStyle="pills" justified activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
+                   style={{'marginBottom': '2em'}}>
+                {this.state.ips.map(ip => <NavItem key={ip} eventKey={ip}>{ip}</NavItem>)}
+              </Nav>
+              : <div style={{'marginBottom': '2em'}} />
+            }
             <p style={{'fontSize': '1.2em'}}>
-              Copy the following command to your machine and run it as Administrator/root.
+              Copy the following command to your machine and run it with Administrator or root privileges.
             </p>
             {this.generateCmdDiv()}
           </div>

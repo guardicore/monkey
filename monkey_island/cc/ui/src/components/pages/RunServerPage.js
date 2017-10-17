@@ -15,9 +15,11 @@ class RunServerPageComponent extends React.Component {
           <p style={{'marginTop': '30px'}}>Congrats! You have successfully set up the Monkey Island server. &#x1F44F; &#x1F44F;</p>
           <p>
             The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter
-            breaches and internal server infection.
-            The Monkey uses various methods to self propagate across a data
-            center and reports success to a centralized C&C server.
+            breaches and internal server infections.
+            The Monkey uses various methods to propagate across a data
+            center and reports to this Command and Control (C&C) server.
+          </p>
+          <p>
             To read more about the Monkey, visit <a href="http://infectionmonkey.com" target="_blank">infectionmonkey.com</a>
           </p>
           <p>

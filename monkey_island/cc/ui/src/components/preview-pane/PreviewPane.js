@@ -223,7 +223,7 @@ class PreviewPaneComponent extends React.Component {
         { !info ?
           <span>
             <Icon name="hand-o-left" style={{'marginRight': '0.5em'}} />
-            Select an item on the map for a preview
+            Select an item on the map for a detailed look
           </span>
         :
           <div>
