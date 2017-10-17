@@ -5,13 +5,6 @@ import {Link} from 'react-router-dom';
 class RunServerPageComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {ip: '0.0.0.0'};
-  }
-
-  componentDidMount() {
-    fetch('/api')
-      .then(res => res.json())
-      .then(res => this.setState({ip: res['ip_addresses'][0]}));
   }
 
   render() {
