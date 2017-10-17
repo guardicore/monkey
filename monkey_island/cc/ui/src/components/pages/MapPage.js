@@ -134,21 +134,23 @@ class MapPageComponent extends React.Component {
     return (
       <ModalContainer onClose={() => this.setState({showKillDialog: false})}>
         <ModalDialog onClose={() => this.setState({showKillDialog: false})}>
-          <h1>Kill all monkeys</h1>
+          <h2>Are you sure you want to kill all monkeys?</h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
-            Are you sure you want to kill all monkeys?
+            This might take a few moments...
           </p>
-          <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
-                  onClick={() => {
-                    this.killAllMonkeys();
-                    this.setState({showKillDialog: false});
-                  }}>
-            Kill all monkeys
-          </button>
-          <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
-                  onClick={() => this.setState({showKillDialog: false})}>
-            Cancel
-          </button>
+          <div className="text-center">
+            <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
+                    onClick={() => {
+                      this.killAllMonkeys();
+                      this.setState({showKillDialog: false});
+                    }}>
+              Kill all monkeys
+            </button>
+            <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
+                    onClick={() => this.setState({showKillDialog: false})}>
+              Cancel
+            </button>
+          </div>
         </ModalDialog>
       </ModalContainer>
     )

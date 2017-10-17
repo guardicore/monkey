@@ -33,7 +33,7 @@ class StartOverPageComponent extends React.Component {
     return (
       <ModalContainer onClose={() => this.setState({showCleanDialog: false})}>
         <ModalDialog onClose={() => this.setState({showCleanDialog: false})}>
-          <h1>Reset environment</h1>
+          <h2>Reset environment</h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
             Are you sure you want to reset the environment?
           </p>
@@ -46,17 +46,19 @@ class StartOverPageComponent extends React.Component {
               :
               <div />
           }
-          <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
-                  onClick={() => {
-                    this.cleanup();
-                    this.setState({showCleanDialog: false});
-                  }}>
-            Reset environment
-          </button>
-          <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
-                  onClick={() => this.setState({showCleanDialog: false})}>
-            Cancel
-          </button>
+          <div className="text-center">
+            <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
+                    onClick={() => {
+                      this.cleanup();
+                      this.setState({showCleanDialog: false});
+                    }}>
+              Reset environment
+            </button>
+            <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
+                    onClick={() => this.setState({showCleanDialog: false})}>
+              Cancel
+            </button>
+          </div>
         </ModalDialog>
       </ModalContainer>
     )
