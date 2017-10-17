@@ -1,6 +1,6 @@
 How to build a monkey binary from scratch.
 
-The monkey is composed of three seperate parts.
+The monkey is composed of three separate parts.
 * The Infection Monkey itself - PyInstaller compressed python archives
 * Sambacry binaries - Two linux binaries, 32/64 bit.
 * Mimikatz binaries - Two windows binaries, 32/64 bit.
@@ -9,8 +9,7 @@ The monkey is composed of three seperate parts.
 
 1. Install python 2.7. Preferably you should use ActiveState Python which includes pywin32 built in. 
     You must use an up to date version, at least version 2.7.10
-    http://www.activestate.com/activepython/downloads
-    https://www.python.org/downloads/release/python-2712/
+    https://www.python.org/download/releases/2.7/
     If not using ActiveState, install pywin32, minimum build 219
     http://sourceforge.net/projects/pywin32/files/pywin32
 3. a. install VCForPython27.msi
@@ -23,9 +22,9 @@ The monkey is composed of three seperate parts.
 5. Download and extract UPX binary to [source-path]\monkey\chaos_monkey\bin\upx.exe:
     https://github.com/upx/upx/releases/download/v3.94/upx394w.zip
 6. To build the final exe:
-    1 cd [code location]/chaos_monkey
+    cd [code location]/chaos_monkey
     build_windows.bat 
-    output is in dist\monkey.exe
+    output is placed under dist\monkey.exe
 
 --- Linux ---
 
@@ -34,20 +33,19 @@ Tested on Ubuntu 16.04 and 17.04.
 1. Run:
     sudo apt-get update
     sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev libc++1
-    Install the python packages listed in requirements.txt.
-        Using pip install -r requirements.txt
-    sudo apt-get install winbind dnet-common
-2. Put source code in Code/monkey/chaos_monkey
+    Install the python packages listed in requirements.txt using pip
+        pip install -r requirements.txt
+2. Place the source code in code/monkey/chaos_monkey
 3. To build, run in terminal:
     cd [code location]/chaos_monkey
     chmod +x build_linux.sh
     ./build_linux.sh
-   output is in dist/monkey
+   output is placed under dist/monkey
 
 -- Sambacry --
 
 Sambacry requires two standalone binaries to execute remotely.
-Compiling them requires gcc 
+Compiling them requires gcc.
 cd [code location]/chaos_monkey/monkey_utils/sambacry_monkey_runner
 ./build.sh
 
