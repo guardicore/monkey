@@ -9,7 +9,7 @@ How to set C&C server:
 	2.4. Copy Python27.dll from System32 folder (Usually C:\Windows\System32 or C:\Python27) to monkey_island\bin\Python27
 	2.5. (Optional) You may uninstall Python27 if you like.
 3. Place portable version of mongodb
-	3.1. Download from: http://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip
+	3.1. Download from: https://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip
 	3.2. Extract contents from bin folder to monkey_island\bin\mongodb.
 4. Place portable version of OpenSSL
 	4.1. Download from: https://indy.fulgan.com/SSL/openssl-1.0.2l-i386-win32.zip
@@ -52,8 +52,8 @@ How to run:
 	monkey-windows-64.exe - monkey binary for windows 64bi
 
 4. Download MongoDB and extract it to /var/monkey_island/bin/mongodb
-    for debian64 - http://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian81-latest.tgz
-    for ubuntu64 16.10 - http://downloads.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-latest.tgz
+    for debian64 - https://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian81-latest.tgz
+    for ubuntu64 16.10 - https://downloads.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-latest.tgz
     find more at - https://www.mongodb.org/downloads#production
 	untar.gz with: tar -zxvf filename.tar.gz -C /var/monkey_island/bin/mongodb
 	(make sure the content of the mongo folder is in this directory, meaning this path exists:
