@@ -136,7 +136,7 @@ class RunMonkeyPageComponent extends React.Component {
   render() {
     return (
       <Col xs={12} lg={8}>
-        <h1 className="page-title">Run the Monkey</h1>
+        <h1 className="page-title">2. Run the Monkey</h1>
         <p style={{'marginBottom': '2em', 'fontSize': '1.2em'}}>
           Go ahead and run the monkey!
           <i> (Or make further adjustments by <Link to="/configure">configuring the monkey</Link>)</i>

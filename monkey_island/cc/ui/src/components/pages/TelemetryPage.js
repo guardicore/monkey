@@ -30,7 +30,7 @@ class TelemetryPageComponent extends React.Component {
   render() {
     return (
       <Col xs={12} lg={8}>
-        <h1 className="page-title">Monkey Telemetry</h1>
+        <h1 className="page-title">Log</h1>
         <div className="data-table-container">
           <DataTable
             keys="name"

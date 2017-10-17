@@ -101,7 +101,7 @@ class AppComponent extends React.Component {
                 <li>
                   <NavLink to="/report">
                     <span className="number">4.</span>
-                    Pen. Test Report
+                    Security Report
                   </NavLink>
                 </li>
                 <li>
@@ -115,7 +115,7 @@ class AppComponent extends React.Component {
               <hr/>
               <ul>
                 <li><NavLink to="/configure">Configuration</NavLink></li>
-                <li><NavLink to="/infection/telemetry">Monkey Telemetry</NavLink></li>
+                <li><NavLink to="/infection/telemetry">Log</NavLink></li>
               </ul>
 
               <hr/>
