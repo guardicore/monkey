@@ -71,11 +71,8 @@ class StartOverPageComponent extends React.Component {
         <h1 className="page-title">Start Over</h1>
         <div style={{'fontSize': '1.2em'}}>
           <p>
-            In order to reset the entire environment, all monkeys will be ordered to kill themselves
-            and the database will be cleaned up.
-          </p>
-          <p>
-            After that you could go back to the <Link to="/run-monkey">Run Monkey</Link> page to start new infections.
+            If you are finished and want to start over with a fresh configuration, erase the logs and clear the map
+            you can go ahead and
           </p>
           <p style={{margin: '20px'}}>
             <button className="btn btn-danger btn-lg center-block"
@@ -83,11 +80,12 @@ class StartOverPageComponent extends React.Component {
                       this.setState({showCleanDialog: true});
                       this.updateMonkeysRunning();}
                     }>
-              Reset Environment
+              Reset the Environment
             </button>
           </p>
           <div className="alert alert-info">
             <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+            You don't have to reset the environment to keep running monkeys.
             You can continue and <Link to="/run-monkey">Run More Monkeys</Link> as you wish,
             and see the results on the <Link to="/infection/map">Infection Map</Link> without deleting anything.
           </div>
