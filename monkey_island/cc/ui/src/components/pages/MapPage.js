@@ -11,8 +11,6 @@ let groupNames = ['clean_unknown', 'clean_linux', 'clean_windows', 'exploited_li
   'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',
   'monkey_linux_running', 'monkey_windows', 'monkey_windows_running'];
 
-let legend = require('../../images/map-legend.png');
-
 let getGroupsOptions = () => {
   let groupOptions = {};
   for (let groupName of groupNames) {
@@ -136,21 +134,23 @@ class MapPageComponent extends React.Component {
     return (
       <ModalContainer onClose={() => this.setState({showKillDialog: false})}>
         <ModalDialog onClose={() => this.setState({showKillDialog: false})}>
-          <h1>Kill all monkeys</h1>
+          <h2>Are you sure you want to kill all monkeys?</h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
-            Are you sure you want to kill all monkeys?
+            This might take a few moments...
           </p>
-          <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
-                  onClick={() => {
-                    this.killAllMonkeys();
-                    this.setState({showKillDialog: false});
-                  }}>
-            Kill all monkeys
-          </button>
-          <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
-                  onClick={() => this.setState({showKillDialog: false})}>
-            Cancel
-          </button>
+          <div className="text-center">
+            <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
+                    onClick={() => {
+                      this.killAllMonkeys();
+                      this.setState({showKillDialog: false});
+                    }}>
+              Kill all monkeys
+            </button>
+            <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
+                    onClick={() => this.setState({showKillDialog: false})}>
+              Cancel
+            </button>
+          </div>
         </ModalDialog>
       </ModalContainer>
     )
@@ -160,13 +160,31 @@ class MapPageComponent extends React.Component {
     return (
       <div>
         {this.renderKillDialogModal()}
-        <Col xs={12}>
-          <h1 className="page-title">Infection Map</h1>
-        </Col>
-        <Col xs={12}>
-          <img src={legend}/>
+        <Col xs={12} lg={8}>
+          <h1 className="page-title">3. Infection Map</h1>
         </Col>
         <Col xs={8}>
+          <div className="map-legend">
+            <b>Legend: </b>
+            <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}} /></span>
+            <b style={{color: '#aeaeae'}}> | </b>
+            <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}} /></span>
+            <b style={{color: '#aeaeae'}}> | </b>
+            <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}} /></span>
+            <b style={{color: '#aeaeae'}}> | </b>
+            <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}} /></span>
+          </div>
+          {
+            /*
+            <div className="telemetry-console">
+              <div>
+                <span className="date">2017-10-16 16:00:05</span>
+                <span className="source"> monkey-elastic</span>
+                <span className="event"> bla bla</span>
+              </div>
+            </div>
+            */
+          }
           <div style={{height: '80vh'}}>
             <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
           </div>

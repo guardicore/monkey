@@ -17,7 +17,8 @@ class ConfigurePageComponent extends React.Component {
       saved: false,
       reset: false,
       sections: [],
-      selectedSection: 'basic'
+      selectedSection: 'basic',
+      allMonkeysAreDead: true
     };
   }
 
@@ -36,6 +37,7 @@ class ConfigurePageComponent extends React.Component {
           selectedSection: 'basic'
         })
       });
+    this.updateMonkeysRunning();
   }
 
   onSubmit = ({formData}) => {
@@ -99,6 +101,17 @@ class ConfigurePageComponent extends React.Component {
       });
   };
 
+  updateMonkeysRunning = () => {
+    fetch('/api')
+      .then(res => res.json())
+      .then(res => {
+        // This check is used to prevent unnecessary re-rendering
+        this.setState({
+          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done'])
+        });
+      });
+  };
+
   render() {
     let displayedSchema = {};
     if (this.state.schema.hasOwnProperty('properties')) {
@@ -107,7 +120,7 @@ class ConfigurePageComponent extends React.Component {
     }
 
     return (
-      <Col xs={12}>
+      <Col xs={12} lg={8}>
         <h1 className="page-title">Monkey Configuration</h1>
         <Nav bsStyle="tabs" justified
              activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
@@ -120,7 +133,7 @@ class ConfigurePageComponent extends React.Component {
           this.state.selectedSection === 'basic_network' ?
             <div className="alert alert-info">
               <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-              The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey will scan machines
+              The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey scans machines
               according to its range class.
             </div>
             : <div />
@@ -131,14 +144,14 @@ class ConfigurePageComponent extends React.Component {
                 onSubmit={this.onSubmit}
                 onChange={this.onChange}>
             <div>
-              <div className="alert alert-info">
-                <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                Changing the configuration will only apply to new infections.
-              </div>
-              <div className="alert alert-warning">
-                <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-                Changing config values with the &#9888; mark may result in the monkey propagating too far or using dangerous exploits.
-              </div>
+              { this.state.allMonkeysAreDead ?
+                '' :
+                <div className="alert alert-warning">
+                  <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+                  Some monkeys are currently running. Note that changing the configuration will only apply to new
+                  infections.
+                </div>
+              }
               <div className="text-center">
                 <button type="submit" className="btn btn-success btn-lg" style={{margin: '5px'}}>
                   Submit

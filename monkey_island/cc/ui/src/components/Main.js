@@ -10,7 +10,7 @@ import MapPage from 'components/pages/MapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
 import ReportPage from 'components/pages/ReportPage';
-import ReadMePage from 'components/pages/ReadMePage';
+import LicensePage from 'components/pages/LicensePage';
 
 require('normalize.css/normalize.css');
 require('react-data-components/css/table-twbs.css');
@@ -101,12 +101,12 @@ class AppComponent extends React.Component {
                 <li>
                   <NavLink to="/report">
                     <span className="number">4.</span>
-                    Pen. Test Report
+                    Security Report
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/start-over">
-                    <span className="number">5.</span>
+                    <span className="number"><i className="fa fa-undo" style={{'marginLeft': '-1px'}}/></span>
                     Start Over
                   </NavLink>
                 </li>
@@ -115,18 +115,19 @@ class AppComponent extends React.Component {
               <hr/>
               <ul>
                 <li><NavLink to="/configure">Configuration</NavLink></li>
-                <li><NavLink to="/infection/telemetry">Monkey Telemetry</NavLink></li>
-                <li><NavLink to="/readme">Read Me</NavLink></li>
+                <li><NavLink to="/infection/telemetry">Log</NavLink></li>
               </ul>
 
               <hr/>
-              <div className="guardicore-link text-center">
+              <div className="guardicore-link text-center" style={{'marginBottom': '0.5em'}}>
                 <span>Powered by</span>
                 <a href="http://www.guardicore.com" target="_blank">
                   <img src={guardicoreLogoImage} alt="GuardiCore"/>
                 </a>
               </div>
-
+              <div className="license-link text-center">
+                <NavLink to="/license">License</NavLink>
+              </div>
             </Col>
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className="main">
               <Route exact path="/" render={(props) => ( <RunServerPage onStatusChange={this.updateStatus} /> )} />
@@ -136,7 +137,7 @@ class AppComponent extends React.Component {
               <Route path="/infection/telemetry" render={(props) => ( <TelemetryPage onStatusChange={this.updateStatus} /> )} />
               <Route path="/start-over" render={(props) => ( <StartOverPage onStatusChange={this.updateStatus} /> )} />
               <Route path="/report" render={(props) => ( <ReportPage onStatusChange={this.updateStatus} /> )} />
-              <Route path="/readme" render={(props) => ( <ReadMePage onStatusChange={this.updateStatus} /> )} />
+              <Route path="/license" render={(props) => ( <LicensePage onStatusChange={this.updateStatus} /> )} />
             </Col>
           </Row>
         </Grid>

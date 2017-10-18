@@ -1,14 +1,23 @@
 import React from 'react';
 import {Icon} from 'react-fa';
 import Toggle from 'react-toggle';
+import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 class PreviewPaneComponent extends React.Component {
+
+  generateToolTip(text) {
+    return (
+      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip">{text}</Tooltip>}>
+        <a><i className="glyphicon glyphicon-info-sign"/></a>
+      </OverlayTrigger>
+    );
+  }
 
   osRow(asset) {
     return (
       <tr>
         <th>Operating System</th>
-        <td>{asset.os}</td>
+        <td>{asset.os.charAt(0).toUpperCase() + asset.os.slice(1)}</td>
       </tr>
     );
   }
@@ -34,26 +43,20 @@ class PreviewPaneComponent extends React.Component {
   accessibleRow(asset) {
     return (
       <tr>
-        <th>Accessible From</th>
+        <th>
+          Accessible From&nbsp;
+          {this.generateToolTip('List of machine which can access this one using a network protocol')}
+        </th>
         <td>{asset.accessible_from_nodes.map(val => <div key={val}>{val}</div>)}</td>
       </tr>
     );
   }
 
-  descriptionRow(asset) {
+  statusRow(asset) {
     return (
       <tr>
-        <th>Description</th>
-        <td>{asset.description}</td>
-      </tr>
-    );
-  }
-
-  aliveRow(asset) {
-    return (
-      <tr>
-        <th>Alive</th>
-        <td>{(!asset.dead).toString()}</td>
+        <th>Status</th>
+        <td>{(asset.dead) ? 'Dead' : 'Alive'}</td>
       </tr>
     );
   }
@@ -72,10 +75,14 @@ class PreviewPaneComponent extends React.Component {
   forceKillRow(asset) {
     return (
       <tr>
-        <th>Force Kill</th>
+        <th>
+          Force Kill&nbsp;
+          {this.generateToolTip('If this is on, monkey will die next time it communicates')}
+        </th>
         <td>
-          <Toggle id={asset.id} checked={!asset.config.alive} icons={false}
-                        onChange={(e) => this.forceKill(e, asset)} />
+          <Toggle id={asset.id} checked={!asset.config.alive} icons={false} disabled={asset.dead}
+                  onChange={(e) => this.forceKill(e, asset)} />
+
         </td>
       </tr>
     );
@@ -88,7 +95,10 @@ class PreviewPaneComponent extends React.Component {
 
     return (
       <div>
-        <h4 style={{'marginTop': '2em'}}>Timeline</h4>
+        <h4 style={{'marginTop': '2em'}}>
+          Exploit Timeline&nbsp;
+          {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
+        </h4>
         <ul className="timeline">
           { asset.exploits.map(exploit =>
             <li key={exploit.timestamp}>
@@ -124,9 +134,8 @@ class PreviewPaneComponent extends React.Component {
       <div>
         <table className="table table-condensed">
           <tbody>
-            {this.descriptionRow(asset)}
-            {this.aliveRow(asset)}
             {this.osRow(asset)}
+            {this.statusRow(asset)}
             {this.ipsRow(asset)}
             {this.servicesRow(asset)}
             {this.accessibleRow(asset)}
@@ -214,7 +223,7 @@ class PreviewPaneComponent extends React.Component {
         { !info ?
           <span>
             <Icon name="hand-o-left" style={{'marginRight': '0.5em'}} />
-            Select an item on the map for a preview
+            Select an item on the map for a detailed look
           </span>
         :
           <div>
