@@ -43,8 +43,12 @@ class Telemetry(flask_restful.Resource):
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
 
         try:
-            TELEM_PROCESS_DICT[telemetry_json.get('telem_type')](telemetry_json)
             NodeService.update_monkey_modify_time(monkey["_id"])
+            telem_type = telemetry_json.get('telem_type')
+            if telem_type in TELEM_PROCESS_DICT:
+                TELEM_PROCESS_DICT[telem_type](telemetry_json)
+            else:
+                print('Got unknown type of telemetry: %s' % telem_type)
         except StandardError as ex:
             print("Exception caught while processing telemetry: %s" % str(ex))
             traceback.print_exc()
@@ -154,6 +158,10 @@ class Telemetry(flask_restful.Resource):
                 if 'ntlm_hash' in creds[user]:
                     ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
 
+    @staticmethod
+    def process_trace_telemetry(telemetry_json):
+        # Nothing to do
+        return
 
 TELEM_PROCESS_DICT = \
     {
@@ -162,4 +170,5 @@ TELEM_PROCESS_DICT = \
         'exploit': Telemetry.process_exploit_telemetry,
         'scan': Telemetry.process_scan_telemetry,
         'system_info_collection': Telemetry.process_system_info_telemetry,
+        'trace': Telemetry.process_trace_telemetry
     }
