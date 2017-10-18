@@ -6,6 +6,8 @@ from cc.utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
 
+WARNING_SIGN = u" \u26A0"
+
 SCHEMA = {
     "title": "Monkey",
     "type": "object",
@@ -19,56 +21,56 @@ SCHEMA = {
                   "enum": [
                     "SmbExploiter"
                   ],
-                  "title": "SmbExploiter"
+                  "title": "SMB Exploiter"
                 },
                 {
                   "type": "string",
                   "enum": [
                     "WmiExploiter"
                   ],
-                  "title": "WmiExploiter"
+                  "title": "WMI Exploiter"
                 },
                 {
                   "type": "string",
                   "enum": [
                     "RdpExploiter"
                   ],
-                  "title": "RdpExploiter"
+                  "title": "RDP Exploiter (UNSAFE)"
                 },
                 {
                   "type": "string",
                   "enum": [
                     "Ms08_067_Exploiter"
                   ],
-                  "title": "Ms08_067_Exploiter"
+                  "title": "MS08-067 Exploiter (UNSAFE)"
                 },
                 {
                   "type": "string",
                   "enum": [
                     "SSHExploiter"
                   ],
-                  "title": "SSHExploiter"
+                  "title": "SSH Exploiter"
                 },
                 {
                   "type": "string",
                   "enum": [
                     "ShellShockExploiter"
                   ],
-                  "title": "ShellShockExploiter"
+                  "title": "ShellShock Exploiter"
                 },
                 {
                   "type": "string",
                   "enum": [
                     "SambaCryExploiter"
                   ],
-                  "title": "SambaCryExploiter"
+                  "title": "SambaCry Exploiter"
                 },
                 {
                   "type": "string",
                   "enum": [
                     "ElasticGroovyExploiter"
                   ],
-                  "title": "ElasticGroovyExploiter"
+                  "title": "ElasticGroovy Exploiter"
                 },
             ]
         },
@@ -123,26 +125,9 @@ SCHEMA = {
     },
     "properties": {
         "basic": {
-            "title": "Basic",
+            "title": "Basic - Credentials",
             "type": "object",
             "properties": {
-                "network": {
-                    "title": "Network",
-                    "type": "object",
-                    "properties": {
-                        "blocked_ips": {
-                            "title": "Blocked IPs",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": [
-                            ],
-                            "description": "List of IPs to not scan"
-                        }
-                    }
-                },
                 "credentials": {
                     "title": "Credentials",
                     "type": "object",
@@ -180,6 +165,88 @@ SCHEMA = {
                 }
             }
         },
+        "basic_network": {
+            "title": "Basic - Network",
+            "type": "object",
+            "properties": {
+                "general": {
+                    "title": "General",
+                    "type": "object",
+                    "properties": {
+                        "blocked_ips": {
+                            "title": "Blocked IPs",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description": "List of IPs to not scan"
+                        },
+                        "local_network_scan": {
+                            "title": "Local network scan",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether the monkey should scan its subnets additionally"
+                        },
+                        "depth": {
+                            "title": "Depth" + WARNING_SIGN,
+                            "type": "integer",
+                            "default": 2,
+                            "description": "Amount of hops allowed for the monkey to spread"
+                        }
+                    }
+                },
+                "network_range": {
+                    "title": "Network range",
+                    "type": "object",
+                    "properties": {
+                        "range_class": {
+                            "title": "Range class",
+                            "type": "string",
+                            "default": "FixedRange",
+                            "enum": [
+                                "FixedRange",
+                                "RelativeRange",
+                                "ClassCRange"
+                            ],
+                            "enumNames": [
+                                "Fixed Range",
+                                "Relative Range",
+                                "Class C Range"
+                            ],
+                            "description":
+                                "Determines which class to use to determine scan range."
+                                " Fixed Range will scan only specific IPs listed under Fixed range IP list."
+                                " Relative Range will scan the <Relative range size> closest ips to the machine's IP."
+                                " Class C Range will scan machines in the Class C network the monkey's on."
+                        },
+                        "range_size": {
+                            "title": "Relative range size",
+                            "type": "integer",
+                            "default": 1,
+                            "description":
+                                "Determines the size of the RelativeRange - amount of IPs to scan"
+                                " (Only relevant for Relative Range)"
+                        },
+                        "range_fixed": {
+                            "title": "Fixed range IP list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description":
+                                "List of IPs to include when using FixedRange"
+                                " (Only relevant for Fixed Range)"
+                        }
+                    }
+                }
+            }
+        },
         "monkey": {
             "title": "Monkey",
             "type": "object",
@@ -193,12 +260,6 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description": "Is the monkey alive"
-                        },
-                        "depth": {
-                            "title": "Depth",
-                            "type": "integer",
-                            "default": 2,
-                            "description": "Amount of hops allowed from this monkey to spread"
                         }
                     }
                 },
@@ -239,26 +300,31 @@ SCHEMA = {
                         "victims_max_find": {
                             "title": "Max victims to find",
                             "type": "integer",
-                            "default": 14,
-                            "description": "Determines after how many discovered machines should the monkey stop scanning"
+                            "default": 30,
+                            "description": "Determines the maximum number of machines the monkey is allowed to scan"
                         },
                         "victims_max_exploit": {
-                            "title": "Max victims to exploit",
+                            "title": "Max victims to exploit" + WARNING_SIGN,
                             "type": "integer",
                             "default": 7,
-                            "description": "Determines after how many infected machines should the monkey stop infecting"
+                            "description":
+                                "Determines the maximum number of machines the monkey"
+                                " is allowed to successfully exploit"
                         },
                         "timeout_between_iterations": {
                             "title": "Wait time between iterations",
                             "type": "integer",
                             "default": 100,
-                            "description": "Determines for how long (in seconds) should the monkey wait between iterations"
+                            "description":
+                                "Determines for how long (in seconds) should the monkey wait between iterations"
                         },
                         "retry_failed_explotation": {
                             "title": "Retry failed exploitation",
                             "type": "boolean",
                             "default": True,
-                            "description": "Determines whether the monkey should retry exploiting machines it didn't successfuly exploit on previous iterations"
+                            "description":
+                                "Determines whether the monkey should retry exploiting machines"
+                                " it didn't successfuly exploit on previous iterations"
                         }
                     }
                 }
@@ -276,13 +342,20 @@ SCHEMA = {
                             "title": "Singleton mutex name",
                             "type": "string",
                             "default": "{2384ec59-0df8-4ab9-918c-843740924a28}",
-                            "description": "The name of the mutex used to determine whether the monkey is already running"
+                            "description":
+                                "The name of the mutex used to determine whether the monkey is already running"
+                        },
+                        "collect_system_info": {
+                            "title": "Collect system info",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether to collect system info"
                         },
                         "keep_tunnel_open_time": {
                             "title": "Keep tunnel open time",
                             "type": "integer",
                             "default": 60,
-                            "description": "Time to keep tunnel open before going down since last exploit (in seconds)"
+                            "description": "Time to keep tunnel open before going down after last exploit (in seconds)"
                         }
                     }
                 },
@@ -318,25 +391,6 @@ SCHEMA = {
                                 "ElasticFinger"
                             ],
                             "description": "Determines which classes to use for fingerprinting"
-                        },
-                        "exploiter_classes": {
-                            "title": "Exploiter classes",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "$ref": "#/definitions/exploiter_classes"
-                            },
-                            "default": [
-                                "SmbExploiter",
-                                "WmiExploiter",
-                                "RdpExploiter",
-                                "Ms08_067_Exploiter",
-                                "SSHExploiter",
-                                "ShellShockExploiter",
-                                "SambaCryExploiter",
-                                "ElasticGroovyExploiter"
-                            ],
-                            "description": "Determines which classes to use for exploiting"
                         }
                     }
                 },
@@ -366,19 +420,25 @@ SCHEMA = {
                             "title": "Dropper sets date",
                             "type": "boolean",
                             "default": True,
-                            "description": "Determines whether the dropper should set the monkey's file date to be the same as another file"
+                            "description":
+                                "Determines whether the dropper should set the monkey's file date to be the same as"
+                                " another file"
                         },
                         "dropper_date_reference_path_windows": {
                             "title": "Dropper date reference path (Windows)",
                             "type": "string",
                             "default": "%windir%\\system32\\kernel32.dll",
-                            "description": "Determines which file the dropper should copy the date from if it's configured to do so on Windows (use fullpath)"
+                            "description":
+                                "Determines which file the dropper should copy the date from if it's configured to do"
+                                " so on Windows (use fullpath)"
                         },
                         "dropper_date_reference_path_linux": {
                             "title": "Dropper date reference path (Linux)",
                             "type": "string",
                             "default": "/bin/sh",
-                            "description": "Determines which file the dropper should copy the date from if it's configured to do so on Linux (use fullpath)"
+                            "description":
+                                "Determines which file the dropper should copy the date from if it's configured to do"
+                                " so on Linux (use fullpath)"
                         },
                         "dropper_target_path_linux": {
                             "title": "Dropper target path on Linux",
@@ -396,7 +456,9 @@ SCHEMA = {
                             "title": "Try to move first",
                             "type": "boolean",
                             "default": True,
-                            "description": "Determines whether the dropper should try to move itself instead of copying itself to target path"
+                            "description":
+                                "Determines whether the dropper should try to move itsel instead of copying itself"
+                                " to target path"
                         }
                     }
                 },
@@ -455,6 +517,19 @@ SCHEMA = {
                             "description": "List of NTLM hashes to use on exploits using credentials"
                         }
                     }
+                },
+                "mimikatz": {
+                    "title": "Mimikatz",
+                    "type": "object",
+                    "properties": {
+                        "mimikatz_dll_name": {
+                            "title": "Mimikatz DLL name",
+                            "type": "string",
+                            "default": "mk.dll",
+                            "description":
+                                "Name of Mimikatz DLL (should be the same as in the monkey's pyinstaller spec file)"
+                        }
+                    }
                 }
             }
         },
@@ -489,7 +564,9 @@ SCHEMA = {
                                 "monkey.guardicore.com",
                                 "www.google.com"
                             ],
-                            "description": "List of internet services to try and communicate with to determine internet connectivity (use either ip or domain)"
+                            "description":
+                                "List of internet services to try and communicate with to determine internet"
+                                " connectivity (use either ip or domain)"
                         },
                         "current_server": {
                             "title": "Current server",
@@ -509,11 +586,29 @@ SCHEMA = {
                     "title": "General",
                     "type": "object",
                     "properties": {
+                        "exploiter_classes": {
+                            "title": "Exploits" + WARNING_SIGN,
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "$ref": "#/definitions/exploiter_classes"
+                            },
+                            "default": [
+                                "SmbExploiter",
+                                "WmiExploiter",
+                                "SSHExploiter",
+                                "ShellShockExploiter",
+                                "SambaCryExploiter",
+                                "ElasticGroovyExploiter"
+                            ],
+                            "description": "Determines which exploits to use"
+                        },
                         "skip_exploit_if_file_exist": {
                             "title": "Skip exploit if file exists",
                             "type": "boolean",
                             "default": False,
-                            "description": "Determines whether the monkey should skip the exploit if the monkey's file is already on the remote machine"
+                            "description": "Determines whether the monkey should skip the exploit if the monkey's file"
+                                           " is already on the remote machine"
                         }
                     }
                 },
@@ -549,7 +644,8 @@ SCHEMA = {
                             "title": "Use VBS download",
                             "type": "boolean",
                             "default": True,
-                            "description": "Determines whether to use VBS or BITS to download monkey to remote machine (true=VBS, false=BITS)"
+                            "description": "Determines whether to use VBS or BITS to download monkey to remote machine"
+                                           " (true=VBS, false=BITS)"
                         }
                     }
                 },
@@ -604,7 +700,8 @@ SCHEMA = {
                             "title": "SMB download timeout",
                             "type": "integer",
                             "default": 300,
-                            "description": "Timeout (in seconds) for SMB download operation (used in various exploits using SMB)"
+                            "description":
+                                "Timeout (in seconds) for SMB download operation (used in various exploits using SMB)"
                         },
                         "smb_service_name": {
                             "title": "SMB service name",
@@ -616,91 +713,10 @@ SCHEMA = {
                 }
             }
         },
-        "system_info": {
-            "title": "System info",
-            "type": "object",
-            "properties": {
-                "general": {
-                    "title": "General",
-                    "type": "object",
-                    "properties": {
-                        "collect_system_info": {
-                            "title": "Collect system info",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether to collect system info"
-                        }
-                    }
-                },
-                "mimikatz": {
-                    "title": "Mimikatz",
-                    "type": "object",
-                    "properties": {
-                        "mimikatz_dll_name": {
-                            "title": "Mimikatz DLL name",
-                            "type": "string",
-                            "default": "mk.dll",
-                            "description": "Name of Mimikatz DLL (should be the same as in the monkey's pyinstaller spec file)"
-                        }
-                    }
-                }
-            }
-        },
         "network": {
             "title": "Network",
             "type": "object",
             "properties": {
-                "general": {
-                    "title": "General",
-                    "type": "object",
-                    "properties": {
-                        "local_network_scan": {
-                            "title": "Local network scan",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether monkey should scan its subnets additionally"
-                        }
-                    }
-                },
-                "network_range": {
-                    "title": "Network range",
-                    "type": "object",
-                    "properties": {
-                        "range_class": {
-                            "title": "Range class",
-                            "type": "string",
-                            "default": "FixedRange",
-                            "enum": [
-                                "FixedRange",
-                                "RelativeRange",
-                                "ClassCRange"
-                            ],
-                            "enumNames": [
-                                "FixedRange",
-                                "RelativeRange",
-                                "ClassCRange"
-                            ],
-                            "description": "Determines which class to use to determine scan range"
-                        },
-                        "range_size": {
-                            "title": "Relative range size",
-                            "type": "integer",
-                            "default": 1,
-                            "description": "Determines the size of the RelativeRange - amount of IPs to include"
-                        },
-                        "range_fixed": {
-                            "title": "Fixed range IP list",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "type": "string"
-                            },
-                            "default": [
-                            ],
-                            "description": "List of IPs to include when using FixedRange"
-                        }
-                    }
-                },
                 "tcp_scanner": {
                     "title": "TCP scanner",
                     "type": "object",
