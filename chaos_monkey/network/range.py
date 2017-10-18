@@ -45,7 +45,7 @@ class RelativeRange(NetworkRange):
     def __init__(self, base_address, shuffle=True):
         base_address = struct.unpack(">L", socket.inet_aton(base_address))[0]
         super(RelativeRange, self).__init__(base_address, shuffle=shuffle)
-        self._size = self._config.range_size
+        self._size = 1
 
     def __repr__(self):
         return "<RelativeRange %s-%s>" % (socket.inet_ntoa(struct.pack(">L", self._base_address - self._size)),

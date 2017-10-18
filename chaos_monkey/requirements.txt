@@ -8,7 +8,7 @@ rdpy
 requests
 odict
 paramiko
-psutil
+psutil==3.4.2
 PyInstaller
 ecdsa
 netifaces

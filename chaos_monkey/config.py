@@ -1,11 +1,14 @@
 import os
 import sys
-from network.range import FixedRange, RelativeRange, ClassCRange
-from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger
-from abc import ABCMeta
-import uuid
 import types
+import uuid
+from abc import ABCMeta
+from itertools import product
+
+from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
+    SambaCryExploiter, ElasticGroovyExploiter
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
+from network.range import FixedRange
 
 __author__ = 'itamar'
 
@@ -99,25 +102,26 @@ class Configuration(object):
     ###########################
 
     use_file_logging = True
-    dropper_log_path_windows = os.path.expandvars("%temp%\~df1562.tmp")
+    dropper_log_path_windows = '%temp%\\~df1562.tmp'
     dropper_log_path_linux = '/tmp/user-1562'
-    monkey_log_path_windows = os.path.expandvars("%temp%\~df1563.tmp")
+    monkey_log_path_windows = '%temp%\\~df1563.tmp'
     monkey_log_path_linux = '/tmp/user-1563'
 
     ###########################
     # dropper config
     ###########################
 
-    dropper_try_move_first = sys.argv[0].endswith(".exe")
+    dropper_try_move_first = True
     dropper_set_date = True
-    dropper_date_reference_path = r"\windows\system32\kernel32.dll" if sys.platform == "win32" else '/bin/sh'
+    dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
+    dropper_date_reference_path_linux = '/bin/sh'
     dropper_target_path = r"C:\Windows\monkey.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
     ###########################
     # Kill file
     ###########################
-    kill_file_path_windows = os.path.expandvars("%windir%\monkey.not")
+    kill_file_path_windows = '%windir%\\monkey.not'
     kill_file_path_linux = '/var/run/monkey.not'
 
     ###########################
@@ -139,13 +143,14 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger]
-    exploiter_classes = [SmbExploiter, WmiExploiter, RdpExploiter, Ms08_067_Exploiter,  # Windows exploits
-                         SSHExploiter, ShellShockExploiter  # Linux
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger]
+    exploiter_classes = [SmbExploiter, WmiExploiter,  # Windows exploits
+                         SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
+                         ElasticGroovyExploiter,  # multi
                          ]
 
     # how many victims to look for in a single scan iteration
-    victims_max_find = 14
+    victims_max_find = 30
 
     # how many victims to exploit before stopping
     victims_max_exploit = 7
@@ -168,6 +173,8 @@ class Configuration(object):
     # addresses of internet servers to ping and check if the monkey has internet acccess.
     internet_services = ["monkey.guardicore.com", "www.google.com"]
 
+    keep_tunnel_open_time = 60
+
     ###########################
     # scanners config
     ###########################
@@ -176,8 +183,7 @@ class Configuration(object):
     local_network_scan = True
 
     range_class = FixedRange
-    range_size = 1
-    range_fixed = ['',]
+    range_fixed = ['', ]
 
     blocked_ips = ['', ]
 
@@ -185,7 +191,17 @@ class Configuration(object):
     HTTP_PORTS = [80, 8080, 443,
                   8008,  # HTTP alternate
                   ]
-    tcp_target_ports = [22, 2222, 445, 135, 3389]
+    tcp_target_ports = [22,
+                        2222,
+                        445,
+                        135,
+                        3389,
+                        80,
+                        8080,
+                        443,
+                        8008,
+                        3306,
+                        9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
     tcp_scan_interval = 200
@@ -198,29 +214,62 @@ class Configuration(object):
     # exploiters config
     ###########################
 
-    skip_exploit_if_file_exist = True
+    skip_exploit_if_file_exist = False
 
     ms08_067_exploit_attempts = 5
     ms08_067_remote_user_add = "Monkey_IUSER_SUPPORT"
     ms08_067_remote_user_pass = "Password1!"
 
-    # psexec exploiter
-    psexec_user = "Administrator"
-    psexec_passwords = ["Password1!", "1234", "password", "12345678"]
-
-    # ssh exploiter
-    ssh_users = ["root", 'user']
-    ssh_passwords = ["Password1!", "1234", "password", "12345678"]
-
     # rdp exploiter
     rdp_use_vbs_download = True
 
+    # User and password dictionaries for exploits.
+
+    def get_exploit_user_password_pairs(self):
+        """
+        Returns all combinations of the configurations users and passwords
+        :return:
+        """
+        return product(self.exploit_user_list, self.exploit_password_list)
+
+    def get_exploit_user_password_or_hash_product(self):
+        """
+        Returns all combinations of the configurations users and passwords or lm/ntlm hashes
+        :return:
+        """
+        cred_list = []
+        for cred in product(self.exploit_user_list, self.exploit_password_list, [''], ['']):
+            cred_list.append(cred)
+        for cred in product(self.exploit_user_list, [''], [''], self.exploit_ntlm_hash_list):
+            cred_list.append(cred)
+        for cred in product(self.exploit_user_list, [''], self.exploit_lm_hash_list, ['']):
+            cred_list.append(cred)
+        return cred_list
+
+    exploit_user_list = ['Administrator', 'root', 'user']
+    exploit_password_list = ["Password1!", "1234", "password", "12345678"]
+    exploit_lm_hash_list = []
+    exploit_ntlm_hash_list = []
+
     # smb/wmi exploiter
-    smb_download_timeout = 300 # timeout in seconds
+    smb_download_timeout = 300  # timeout in seconds
     smb_service_name = "InfectionMonkey"
+
+    # Timeout (in seconds) for sambacry's trigger to yield results.
+    sambacry_trigger_timeout = 5
+    # Folder paths to guess share lies inside.
+    sambacry_folder_paths_to_guess = ['/', '/mnt', '/tmp', '/storage', '/export', '/share', '/shares', '/home']
+    # Shares to not check if they're writable.
+    sambacry_shares_not_to_check = ["IPC$", "print$"]
 
     # system info collection
     collect_system_info = True
+
+    ###########################
+    # systeminfo config
+    ###########################
+
+    mimikatz_dll_name = "mk.dll"
 
 
 WormConfiguration = Configuration()
