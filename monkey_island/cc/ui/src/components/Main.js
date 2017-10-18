@@ -14,9 +14,8 @@ import LicensePage from 'components/pages/LicensePage';
 
 require('normalize.css/normalize.css');
 require('react-data-components/css/table-twbs.css');
-require('styles/App.css')
+require('styles/App.css');
 require('react-toggle/style.css');
-require('github-markdown-css/github-markdown.css');
 
 let logoImage = require('../images/monkey-logo.png');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');

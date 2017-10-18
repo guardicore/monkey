@@ -201,7 +201,7 @@ class PreviewPaneComponent extends React.Component {
         info = this.scanInfo(this.props.item);
         break;
       case 'node':
-        info = this.props.item.group.includes('monkey') ?
+        info = this.props.item.group.includes('monkey', 'manual') ?
           this.infectedAssetInfo(this.props.item) : this.assetInfo(this.props.item);
         break;
       case 'island_edge':
