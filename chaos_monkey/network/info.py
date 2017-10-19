@@ -138,7 +138,7 @@ def get_ips_from_interfaces():
     res = []
     ifs = get_host_subnets()
     for net_interface in ifs:
-        host_addr = ipaddress.ip_address(net_interface['addr'])
+        host_addr = ipaddress.ip_address(u"%s" % net_interface['addr'])
         ip_interface = ipaddress.ip_interface(u"%s/%s" % (net_interface['addr'], net_interface['netmask']))
         # limit subnet scans to class C only
         if ip_interface.network.num_addresses > 255:
