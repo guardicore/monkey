@@ -22,6 +22,8 @@ if [ -d "/etc/systemd/network" ]; then
     cp ${MONKEY_FOLDER}/ubuntu/systemd/*.service /lib/systemd/system/
     chmod +x ${MONKEY_FOLDER}/ubuntu/systemd/start_server.sh
     systemctl daemon-reload
+    systemctl enable monkey-mongo
+    systemctl enable monkey-island
 fi
 
 ${MONKEY_FOLDER}/create_certificate.sh
