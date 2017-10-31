@@ -114,6 +114,7 @@ class ConfigurePageComponent extends React.Component {
   };
 
   exportConfig = () => {
+    this.updateConfigSection();
     fileDownload(JSON.stringify(this.state.configuration, null, 2), 'monkey.conf');
   };
 
