@@ -1,6 +1,7 @@
 import React from 'react';
 import Form from 'react-jsonschema-form';
 import {Col, Nav, NavItem} from 'react-bootstrap';
+import fileDownload from 'js-file-download';
 
 class ConfigurePageComponent extends React.Component {
   constructor(props) {
@@ -14,8 +15,7 @@ class ConfigurePageComponent extends React.Component {
     this.state = {
       schema: {},
       configuration: {},
-      saved: false,
-      reset: false,
+      lastAction: 'none',
       sections: [],
       selectedSection: 'basic',
       allMonkeysAreDead: true
@@ -52,8 +52,7 @@ class ConfigurePageComponent extends React.Component {
       .then(res => res.json())
       .then(res => {
         this.setState({
-          saved: true,
-          reset: false,
+          lastAction: 'saved',
           schema: res.schema,
           configuration: res.configuration
         });
@@ -92,13 +91,38 @@ class ConfigurePageComponent extends React.Component {
       .then(res => res.json())
       .then(res => {
         this.setState({
-          reset: true,
-          saved: false,
+          lastAction: 'reset',
           schema: res.schema,
           configuration: res.configuration
         });
         this.props.onStatusChange();
       });
+  };
+
+  onReadFile = (event) => {
+    try {
+      this.setState({
+        configuration: JSON.parse(event.target.result),
+        selectedSection: 'basic',
+        lastAction: 'import_success'
+      });
+      this.currentSection = 'basic';
+      this.currentFormData = {};
+    } catch(SyntaxError) {
+      this.setState({lastAction: 'import_failure'});
+    }
+  };
+
+  exportConfig = () => {
+    this.updateConfigSection();
+    fileDownload(JSON.stringify(this.state.configuration, null, 2), 'monkey.conf');
+  };
+
+  importConfig = (event) => {
+    let reader = new FileReader();
+    reader.onload = this.onReadFile;
+    reader.readAsText(event.target.files[0]);
+    event.target.value = null;
   };
 
   updateMonkeysRunning = () => {
@@ -160,22 +184,45 @@ class ConfigurePageComponent extends React.Component {
                   Reset to defaults
                 </button>
               </div>
-              { this.state.reset ?
-                <div className="alert alert-success">
-                  <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
-                  Configuration reset successfully.
-                </div>
-                : ''}
-              { this.state.saved ?
-                <div className="alert alert-success">
-                  <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
-                  Configuration saved successfully.
-                </div>
-                : ''}
             </div>
           </Form>
           : ''}
-
+        <div className="text-center">
+          <button onClick={() => document.getElementById('uploadInputInternal').click()}
+                  className="btn btn-info btn-lg" style={{margin: '5px'}}>
+            Import Config
+          </button>
+          <input id="uploadInputInternal" type="file" accept=".conf" onChange={this.importConfig} style={{display: 'none'}} />
+          <button type="button" onClick={this.exportConfig} className="btn btn-info btn-lg" style={{margin: '5px'}}>
+            Export config
+          </button>
+        </div>
+        <div>
+          { this.state.lastAction === 'reset' ?
+            <div className="alert alert-success">
+              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+              Configuration reset successfully.
+            </div>
+            : ''}
+          { this.state.lastAction === 'saved' ?
+            <div className="alert alert-success">
+              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+              Configuration saved successfully.
+            </div>
+            : ''}
+          { this.state.lastAction === 'import_failure' ?
+            <div className="alert alert-danger">
+              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
+              Failed importing configuration. Invalid config file.
+            </div>
+            : ''}
+          { this.state.lastAction === 'import_success' ?
+            <div className="alert alert-success">
+              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+              Configuration imported successfully.
+            </div>
+            : ''}
+        </div>
 
       </Col>
     );

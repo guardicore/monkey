@@ -64,6 +64,7 @@
     "bootstrap": "^3.3.7",
     "core-js": "^2.5.1",
     "fetch": "^1.1.0",
+    "js-file-download": "^0.4.1",
     "normalize.css": "^4.0.0",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
