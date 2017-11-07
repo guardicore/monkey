@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col, Well, Nav, NavItem} from 'react-bootstrap';
+import {Button, Col, Well, Nav, NavItem, Collapse} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {Icon} from 'react-fa';
 import {Link} from 'react-router-dom';
@@ -10,10 +10,11 @@ class RunMonkeyPageComponent extends React.Component {
     super(props);
     this.state = {
       ips: [],
-      selectedIp: '0.0.0.0',
       runningOnIslandState: 'not_running',
       runningOnClientState: 'not_running',
-      selectedSection: 'windows-32'
+      selectedIp: '0.0.0.0',
+      selectedOs: 'windows-32',
+      showManual: false
     };
   }
 
@@ -21,7 +22,8 @@ class RunMonkeyPageComponent extends React.Component {
     fetch('/api')
       .then(res => res.json())
       .then(res => this.setState({
-        ips: res['ip_addresses']
+        ips: res['ip_addresses'],
+        selectedIp: res['ip_addresses'][0]
       }));
 
     fetch('/api/local-monkey')
@@ -80,17 +82,17 @@ class RunMonkeyPageComponent extends React.Component {
       });
   };
 
-  generateCmdDiv(ip) {
-    let isLinux = (this.state.selectedSection.split('-')[0] === 'linux');
-    let is32Bit = (this.state.selectedSection.split('-')[1] === '32');
+  generateCmdDiv() {
+    let isLinux = (this.state.selectedOs.split('-')[0] === 'linux');
+    let is32Bit = (this.state.selectedOs.split('-')[1] === '32');
     let cmdText = '';
     if (isLinux) {
-      cmdText = this.generateLinuxCmd(ip, is32Bit);
+      cmdText = this.generateLinuxCmd(this.state.selectedIp, is32Bit);
     } else {
-      cmdText = this.generateWindowsCmd(ip, is32Bit);
+      cmdText = this.generateWindowsCmd(this.state.selectedIp, is32Bit);
     }
     return (
-      <Well className="well-sm" style={{'margin': '0.5em'}}>
+      <Well key={'cmdDiv'+this.state.selectedIp} className="well-sm" style={{'margin': '0.5em'}}>
         <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
           <CopyToClipboard text={cmdText} className="pull-right btn-sm">
             <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
@@ -103,9 +105,15 @@ class RunMonkeyPageComponent extends React.Component {
     )
   }
 
-  setSelectedSection = (key) => {
+  setSelectedOs = (key) => {
     this.setState({
-      selectedSection: key
+      selectedOs: key
+    });
+  };
+
+  setSelectedIp = (key) => {
+    this.setState({
+      selectedIp: key
     });
   };
 
@@ -119,18 +127,25 @@ class RunMonkeyPageComponent extends React.Component {
     }
   }
 
+  toggleManual = () => {
+    this.setState({
+      showManual: !this.state.showManual
+    });
+  };
+
   render() {
     return (
-      <Col xs={8}>
-        <h1 className="page-title">Run the Monkey</h1>
-        <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
-          You can run the monkey on the C&C server, on your local machine and basically everywhere.
-          The more the merrier &#x1F604;
+      <Col xs={12} lg={8}>
+        <h1 className="page-title">2. Run the Monkey</h1>
+        <p style={{'marginBottom': '2em', 'fontSize': '1.2em'}}>
+          Go ahead and run the monkey!
+          <i> (Or <Link to="/configure">configure the monkey</Link> to fine tune its behavior)</i>
         </p>
-        <p style={{'marginBottom': '2em'}}>
+        <p>
           <button onClick={this.runLocalMonkey}
-                  className="btn btn-default"
-                  disabled={this.state.runningOnIslandState !== 'not_running'}>
+                  className="btn btn-default btn-lg center-block"
+                  disabled={this.state.runningOnIslandState !== 'not_running'}
+                  >
             Run on C&C Server
             { this.renderIconByState(this.state.runningOnIslandState) }
           </button>
@@ -147,22 +162,40 @@ class RunMonkeyPageComponent extends React.Component {
             */
           }
         </p>
-        <div className="run-monkey-snippets" style={{'marginBottom': '3em'}}>
-          <p>
-            Run one of those snippets on a host for infecting it with a Monkey:
-            <br/>
-            <span className="text-muted">(The IP address is used as the monkey's C&C address)</span>
-          </p>
-          <Nav pills justified
-               activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
-               style={{'marginBottom': '2em'}}>
-            <NavItem key='windows-32' eventKey='windows-32'>Windows (32 bit)</NavItem>
-            <NavItem key='windows-64' eventKey='windows-64'>Windows (64 bit)</NavItem>
-            <NavItem key='linux-32' eventKey='linux-32'>Linux (32 bit)</NavItem>
-            <NavItem key='linux-64' eventKey='linux-64'>Linux (64 bit)</NavItem>
-          </Nav>
-            {this.state.ips.map(ip => this.generateCmdDiv(ip))}
-        </div>
+        <p className="text-center">
+          OR
+        </p>
+        <p style={{'marginBottom': '2em'}}>
+          <button onClick={this.toggleManual} className={'btn btn-default btn-lg center-block' + (this.state.showManual ? ' active' : '')}>
+            Run on machine of your choice
+          </button>
+        </p>
+        <Collapse in={this.state.showManual}>
+          <div style={{'marginBottom': '2em'}}>
+            <p style={{'fontSize': '1.2em'}}>
+              Choose the operating system where you want to run the monkey
+              {this.state.ips.length > 1 ? ', and the interface to communicate with.' : '.'}
+            </p>
+            <Nav bsStyle="pills" justified activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
+              <NavItem key='windows-32' eventKey='windows-32'>Windows (32 bit)</NavItem>
+              <NavItem key='windows-64' eventKey='windows-64'>Windows (64 bit)</NavItem>
+              <NavItem key='linux-32' eventKey='linux-32'>Linux (32 bit)</NavItem>
+              <NavItem key='linux-64' eventKey='linux-64'>Linux (64 bit)</NavItem>
+            </Nav>
+            {this.state.ips.length > 1 ?
+              <Nav bsStyle="pills" justified activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
+                   style={{'marginBottom': '2em'}}>
+                {this.state.ips.map(ip => <NavItem key={ip} eventKey={ip}>{ip}</NavItem>)}
+              </Nav>
+              : <div style={{'marginBottom': '2em'}} />
+            }
+            <p style={{'fontSize': '1.2em'}}>
+              Copy the following command to your machine and run it with Administrator or root privileges.
+            </p>
+            {this.generateCmdDiv()}
+          </div>
+        </Collapse>
+
         <p style={{'fontSize': '1.2em'}}>
           Go ahead and monitor the ongoing infection in the <Link to="/infection/map">Infection Map</Link> view.
         </p>

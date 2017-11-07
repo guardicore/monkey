@@ -191,10 +191,13 @@ SCHEMA = {
                             "description": "Determines whether the monkey should scan its subnets additionally"
                         },
                         "depth": {
-                            "title": "Depth" + WARNING_SIGN,
+                            "title": "Distance from island",
                             "type": "integer",
                             "default": 2,
-                            "description": "Amount of hops allowed for the monkey to spread"
+                            "description":
+                                "Amount of hops allowed for the monkey to spread from the island. "
+                                + WARNING_SIGN
+                                + " Note that setting this value too high may result in the monkey propagating too far"
                         }
                     }
                 },
@@ -208,27 +211,16 @@ SCHEMA = {
                             "default": "FixedRange",
                             "enum": [
                                 "FixedRange",
-                                "RelativeRange",
                                 "ClassCRange"
                             ],
                             "enumNames": [
                                 "Fixed Range",
-                                "Relative Range",
                                 "Class C Range"
                             ],
                             "description":
                                 "Determines which class to use to determine scan range."
                                 " Fixed Range will scan only specific IPs listed under Fixed range IP list."
-                                " Relative Range will scan the <Relative range size> closest ips to the machine's IP."
                                 " Class C Range will scan machines in the Class C network the monkey's on."
-                        },
-                        "range_size": {
-                            "title": "Relative range size",
-                            "type": "integer",
-                            "default": 1,
-                            "description":
-                                "Determines the size of the RelativeRange - amount of IPs to scan"
-                                " (Only relevant for Relative Range)"
                         },
                         "range_fixed": {
                             "title": "Fixed range IP list",
@@ -304,12 +296,14 @@ SCHEMA = {
                             "description": "Determines the maximum number of machines the monkey is allowed to scan"
                         },
                         "victims_max_exploit": {
-                            "title": "Max victims to exploit" + WARNING_SIGN,
+                            "title": "Max victims to exploit",
                             "type": "integer",
                             "default": 7,
                             "description":
                                 "Determines the maximum number of machines the monkey"
-                                " is allowed to successfully exploit"
+                                " is allowed to successfully exploit. " + WARNING_SIGN
+                                + " Note that setting this value too high may result in the monkey propagating to "
+                                  "a high number of machines"
                         },
                         "timeout_between_iterations": {
                             "title": "Wait time between iterations",
@@ -587,7 +581,7 @@ SCHEMA = {
                     "type": "object",
                     "properties": {
                         "exploiter_classes": {
-                            "title": "Exploits" + WARNING_SIGN,
+                            "title": "Exploits",
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
@@ -601,7 +595,9 @@ SCHEMA = {
                                 "SambaCryExploiter",
                                 "ElasticGroovyExploiter"
                             ],
-                            "description": "Determines which exploits to use"
+                            "description":
+                                "Determines which exploits to use. " + WARNING_SIGN
+                                + " Note that using unsafe exploits may cause crashes of the exploited machine/service"
                         },
                         "skip_exploit_if_file_exist": {
                             "title": "Skip exploit if file exists",

@@ -1,5 +1,6 @@
 [Unit]
 Description=Monkey Island Service
+Wants=monkey-mongo.service
 After=network.target
 
 [Service]

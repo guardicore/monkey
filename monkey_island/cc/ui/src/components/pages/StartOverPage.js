@@ -33,7 +33,7 @@ class StartOverPageComponent extends React.Component {
     return (
       <ModalContainer onClose={() => this.setState({showCleanDialog: false})}>
         <ModalDialog onClose={() => this.setState({showCleanDialog: false})}>
-          <h1>Reset environment</h1>
+          <h2>Reset environment</h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
             Are you sure you want to reset the environment?
           </p>
@@ -46,17 +46,19 @@ class StartOverPageComponent extends React.Component {
               :
               <div />
           }
-          <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
-                  onClick={() => {
-                    this.cleanup();
-                    this.setState({showCleanDialog: false});
-                  }}>
-            Reset environment
-          </button>
-          <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
-                  onClick={() => this.setState({showCleanDialog: false})}>
-            Cancel
-          </button>
+          <div className="text-center">
+            <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
+                    onClick={() => {
+                      this.cleanup();
+                      this.setState({showCleanDialog: false});
+                    }}>
+              Reset environment
+            </button>
+            <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
+                    onClick={() => this.setState({showCleanDialog: false})}>
+              Cancel
+            </button>
+          </div>
         </ModalDialog>
       </ModalContainer>
     )
@@ -64,16 +66,13 @@ class StartOverPageComponent extends React.Component {
 
   render() {
     return (
-      <Col xs={8}>
+      <Col xs={12} lg={8}>
         {this.renderCleanDialogModal()}
         <h1 className="page-title">Start Over</h1>
         <div style={{'fontSize': '1.2em'}}>
           <p>
-            In order to reset the entire environment, all monkeys will be ordered to kill themselves
-            and the database will be cleaned up.
-          </p>
-          <p>
-            After that you could go back to the <Link to="/run-monkey">Run Monkey</Link> page to start new infections.
+            If you are finished and want to start over with a fresh configuration, erase the logs and clear the map
+            you can go ahead and
           </p>
           <p style={{margin: '20px'}}>
             <button className="btn btn-danger btn-lg center-block"
@@ -81,11 +80,12 @@ class StartOverPageComponent extends React.Component {
                       this.setState({showCleanDialog: true});
                       this.updateMonkeysRunning();}
                     }>
-              Reset Environment
+              Reset the Environment
             </button>
           </p>
           <div className="alert alert-info">
             <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+            You don't have to reset the environment to keep running monkeys.
             You can continue and <Link to="/run-monkey">Run More Monkeys</Link> as you wish,
             and see the results on the <Link to="/infection/map">Infection Map</Link> without deleting anything.
           </div>

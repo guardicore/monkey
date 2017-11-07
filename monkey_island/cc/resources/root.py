@@ -29,7 +29,7 @@ class Root(flask_restful.Resource):
             ConfigService.init_config()
             return jsonify(status='OK')
         elif action == "killall":
-            mongo.db.monkey.update({}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}}, upsert=False,
+            mongo.db.monkey.update({'dead': False}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}}, upsert=False,
                                    multi=True)
             return jsonify(status='OK')
         else:

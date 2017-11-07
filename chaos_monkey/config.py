@@ -183,7 +183,6 @@ class Configuration(object):
     local_network_scan = True
 
     range_class = FixedRange
-    range_size = 1
     range_fixed = ['', ]
 
     blocked_ips = ['', ]

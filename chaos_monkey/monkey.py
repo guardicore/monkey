@@ -160,20 +160,20 @@ class ChaosMonkey(object):
 
                     LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
 
+                    result = False
                     try:
-                        if exploiter.exploit_host():
+                        result = exploiter.exploit_host()
+                        if result:
                             successful_exploiter = exploiter
-                            exploiter.send_exploit_telemetry(True)
                             break
                         else:
                             LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
-                            exploiter.send_exploit_telemetry(False)
 
                     except Exception as exc:
                         LOG.exception("Exception while attacking %s using %s: %s",
                                       machine, exploiter.__class__.__name__, exc)
-                        exploiter.send_exploit_telemetry(False)
-                        continue
+                    finally:
+                        exploiter.send_exploit_telemetry(result)
 
                 if successful_exploiter:
                     self._exploited_machines.add(machine)

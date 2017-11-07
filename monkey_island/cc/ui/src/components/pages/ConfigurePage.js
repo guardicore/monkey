@@ -1,6 +1,7 @@
 import React from 'react';
 import Form from 'react-jsonschema-form';
 import {Col, Nav, NavItem} from 'react-bootstrap';
+import fileDownload from 'js-file-download';
 
 class ConfigurePageComponent extends React.Component {
   constructor(props) {
@@ -14,10 +15,10 @@ class ConfigurePageComponent extends React.Component {
     this.state = {
       schema: {},
       configuration: {},
-      saved: false,
-      reset: false,
+      lastAction: 'none',
       sections: [],
-      selectedSection: 'basic'
+      selectedSection: 'basic',
+      allMonkeysAreDead: true
     };
   }
 
@@ -36,6 +37,7 @@ class ConfigurePageComponent extends React.Component {
           selectedSection: 'basic'
         })
       });
+    this.updateMonkeysRunning();
   }
 
   onSubmit = ({formData}) => {
@@ -50,8 +52,7 @@ class ConfigurePageComponent extends React.Component {
       .then(res => res.json())
       .then(res => {
         this.setState({
-          saved: true,
-          reset: false,
+          lastAction: 'saved',
           schema: res.schema,
           configuration: res.configuration
         });
@@ -90,12 +91,48 @@ class ConfigurePageComponent extends React.Component {
       .then(res => res.json())
       .then(res => {
         this.setState({
-          reset: true,
-          saved: false,
+          lastAction: 'reset',
           schema: res.schema,
           configuration: res.configuration
         });
         this.props.onStatusChange();
+      });
+  };
+
+  onReadFile = (event) => {
+    try {
+      this.setState({
+        configuration: JSON.parse(event.target.result),
+        selectedSection: 'basic',
+        lastAction: 'import_success'
+      });
+      this.currentSection = 'basic';
+      this.currentFormData = {};
+    } catch(SyntaxError) {
+      this.setState({lastAction: 'import_failure'});
+    }
+  };
+
+  exportConfig = () => {
+    this.updateConfigSection();
+    fileDownload(JSON.stringify(this.state.configuration, null, 2), 'monkey.conf');
+  };
+
+  importConfig = (event) => {
+    let reader = new FileReader();
+    reader.onload = this.onReadFile;
+    reader.readAsText(event.target.files[0]);
+    event.target.value = null;
+  };
+
+  updateMonkeysRunning = () => {
+    fetch('/api')
+      .then(res => res.json())
+      .then(res => {
+        // This check is used to prevent unnecessary re-rendering
+        this.setState({
+          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done'])
+        });
       });
   };
 
@@ -107,7 +144,7 @@ class ConfigurePageComponent extends React.Component {
     }
 
     return (
-      <Col xs={8}>
+      <Col xs={12} lg={8}>
         <h1 className="page-title">Monkey Configuration</h1>
         <Nav bsStyle="tabs" justified
              activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
@@ -120,7 +157,7 @@ class ConfigurePageComponent extends React.Component {
           this.state.selectedSection === 'basic_network' ?
             <div className="alert alert-info">
               <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-              The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey will scan machines
+              The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey scans machines
               according to its range class.
             </div>
             : <div />
@@ -131,14 +168,14 @@ class ConfigurePageComponent extends React.Component {
                 onSubmit={this.onSubmit}
                 onChange={this.onChange}>
             <div>
-              <div className="alert alert-info">
-                <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                Changing the configuration will only apply to new infections.
-              </div>
-              <div className="alert alert-warning">
-                <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-                Changing config values with the &#9888; mark may result in the monkey propagating too far or using dangerous exploits.
-              </div>
+              { this.state.allMonkeysAreDead ?
+                '' :
+                <div className="alert alert-warning">
+                  <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+                  Some monkeys are currently running. Note that changing the configuration will only apply to new
+                  infections.
+                </div>
+              }
               <div className="text-center">
                 <button type="submit" className="btn btn-success btn-lg" style={{margin: '5px'}}>
                   Submit
@@ -147,22 +184,45 @@ class ConfigurePageComponent extends React.Component {
                   Reset to defaults
                 </button>
               </div>
-              { this.state.reset ?
-                <div className="alert alert-success">
-                  <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
-                  Configuration reset successfully.
-                </div>
-                : ''}
-              { this.state.saved ?
-                <div className="alert alert-success">
-                  <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
-                  Configuration saved successfully.
-                </div>
-                : ''}
             </div>
           </Form>
           : ''}
-
+        <div className="text-center">
+          <button onClick={() => document.getElementById('uploadInputInternal').click()}
+                  className="btn btn-info btn-lg" style={{margin: '5px'}}>
+            Import Config
+          </button>
+          <input id="uploadInputInternal" type="file" accept=".conf" onChange={this.importConfig} style={{display: 'none'}} />
+          <button type="button" onClick={this.exportConfig} className="btn btn-info btn-lg" style={{margin: '5px'}}>
+            Export config
+          </button>
+        </div>
+        <div>
+          { this.state.lastAction === 'reset' ?
+            <div className="alert alert-success">
+              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+              Configuration reset successfully.
+            </div>
+            : ''}
+          { this.state.lastAction === 'saved' ?
+            <div className="alert alert-success">
+              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+              Configuration saved successfully.
+            </div>
+            : ''}
+          { this.state.lastAction === 'import_failure' ?
+            <div className="alert alert-danger">
+              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
+              Failed importing configuration. Invalid config file.
+            </div>
+            : ''}
+          { this.state.lastAction === 'import_success' ?
+            <div className="alert alert-success">
+              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+              Configuration imported successfully.
+            </div>
+            : ''}
+        </div>
 
       </Col>
     );
