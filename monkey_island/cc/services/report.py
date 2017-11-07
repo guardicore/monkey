@@ -1,4 +1,5 @@
 from cc.database import mongo
+from cc.services.node import NodeService
 
 __author__ = "itay.mizeretz"
 
@@ -25,6 +26,12 @@ class ReportService:
         return [exploit for exploit in exploit_types if ReportService.did_exploit_type_succeed(exploit)]
 
     @staticmethod
+    def get_tunnels():
+        return [
+            (NodeService.get_monkey_label_by_id(tunnel['_id']), NodeService.get_monkey_label_by_id(tunnel['tunnel']))
+            for tunnel in mongo.db.monkey.find({'tunnel': {'$exists': True}}, {'tunnel': 1})]
+
+    @staticmethod
     def get_report():
         return \
             {
@@ -32,6 +39,7 @@ class ReportService:
                 'last_monkey_dead_time': ReportService.get_last_monkey_dead_time(),
                 'breach_count': ReportService.get_breach_count(),
                 'successful_exploit_types': ReportService.get_successful_exploit_types(),
+                'tunnels': ReportService.get_tunnels()
             }
 
     @staticmethod

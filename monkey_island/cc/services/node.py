@@ -90,6 +90,10 @@ class NodeService:
         return True
 
     @staticmethod
+    def get_monkey_label_by_id(monkey_id):
+        return NodeService.get_monkey_label(NodeService.get_monkey_by_id(monkey_id))
+
+    @staticmethod
     def get_monkey_label(monkey):
         label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]
         ip_addresses = local_ip_addresses()
