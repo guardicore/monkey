@@ -32,6 +32,40 @@ class ReportService:
             for tunnel in mongo.db.monkey.find({'tunnel': {'$exists': True}}, {'tunnel': 1})]
 
     @staticmethod
+    def get_scanned():
+        nodes =\
+            [NodeService.get_displayed_node_by_id(node['_id']) for node in mongo.db.node.find({}, {'_id': 1})]\
+            + [NodeService.get_displayed_node_by_id(monkey['_id']) for monkey in mongo.db.monkey.find({}, {'_id': 1})]
+        nodes = [
+            {
+                'label': node['label'],
+                'ip_addresses': node['ip_addresses'],
+                'accessible_from_nodes': node['accessible_from_nodes'],
+                'services': node['services']
+            }
+            for node in nodes]
+
+        return nodes
+
+    @staticmethod
+    def get_exploited():
+        exploited =\
+            [NodeService.get_displayed_node_by_id(monkey['_id']) for monkey in mongo.db.monkey.find({}, {'_id': 1})
+             if not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey['_id']))]\
+            + [NodeService.get_displayed_node_by_id(node['_id'])
+               for node in mongo.db.node.find({'exploited': True}, {'_id': 1})]
+
+        exploited = [
+            {
+                'label': monkey['label'],
+                'ip_addresses': monkey['ip_addresses'],
+                'exploits': [exploit['exploiter'] for exploit in monkey['exploits'] if exploit['result']]
+            }
+            for monkey in exploited]
+
+        return exploited
+
+    @staticmethod
     def get_report():
         return \
             {
@@ -39,7 +73,9 @@ class ReportService:
                 'last_monkey_dead_time': ReportService.get_last_monkey_dead_time(),
                 'breach_count': ReportService.get_breach_count(),
                 'successful_exploit_types': ReportService.get_successful_exploit_types(),
-                'tunnels': ReportService.get_tunnels()
+                'tunnels': ReportService.get_tunnels(),
+                'scanned': ReportService.get_scanned(),
+                'exploited': ReportService.get_exploited()
             }
 
     @staticmethod
