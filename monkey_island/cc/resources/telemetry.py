@@ -118,11 +118,10 @@ class Telemetry(flask_restful.Resource):
         for attempt in telemetry_json['data']['attempts']:
             if attempt['result']:
                 attempt.pop('result')
-                user = attempt.pop('user')
                 for field in ['password', 'lm_hash', 'ntlm_hash']:
                     if len(attempt[field]) == 0:
                         attempt.pop(field)
-                NodeService.add_credentials_to_node(edge['to'], user, attempt)
+                NodeService.add_credentials_to_node(edge['to'], attempt)
 
     @staticmethod
     def process_scan_telemetry(telemetry_json):
@@ -160,8 +159,9 @@ class Telemetry(flask_restful.Resource):
             creds = telemetry_json['data']['credentials']
             for user in creds:
                 ConfigService.creds_add_username(user)
+                creds[user]['user'] = user
                 NodeService.add_credentials_to_monkey(
-                    NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])['_id'], user, creds[user])
+                    NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])['_id'], creds[user])
                 if 'password' in creds[user]:
                     ConfigService.creds_add_password(creds[user]['password'])
                 if 'lm_hash' in creds[user]:

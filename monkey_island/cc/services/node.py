@@ -170,7 +170,7 @@ class NodeService:
             {
                 "ip_addresses": [ip_address],
                 "exploited": False,
-                "creds": {},
+                "creds": [],
                 "os":
                     {
                         "type": "unknown",
@@ -280,15 +280,15 @@ class NodeService:
         return mongo.db.monkey.find_one({}) is not None
 
     @staticmethod
-    def add_credentials_to_monkey(monkey_id, user, creds):
+    def add_credentials_to_monkey(monkey_id, creds):
         mongo.db.monkey.update(
             {'_id': monkey_id},
-            {'$set': {'creds.' + user: creds}}
+            {'$push': {'creds': creds}}
         )
 
     @staticmethod
-    def add_credentials_to_node(node_id, user, creds):
+    def add_credentials_to_node(node_id, creds):
         mongo.db.node.update(
             {'_id': node_id},
-            {'$set': {'creds.' + user: creds}}
+            {'$push': {'creds': creds}}
         )
