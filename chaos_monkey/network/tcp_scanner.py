@@ -1,8 +1,9 @@
 import time
 from random import shuffle
-from network import HostScanner, HostFinger
+
 from model.host import VictimHost
-from network.tools import check_port_tcp
+from network import HostScanner, HostFinger
+from network.tools import check_tcp_port
 
 __author__ = 'itamar'
 
@@ -26,7 +27,7 @@ class TcpScanner(HostScanner, HostFinger):
 
         for target_port in target_ports:
 
-            is_open, banner = check_port_tcp(host.ip_addr,
+            is_open, banner = check_tcp_port(host.ip_addr,
                                              target_port,
                                              self._config.tcp_scan_timeout / 1000.0,
                                              self._config.tcp_scan_get_banner)
