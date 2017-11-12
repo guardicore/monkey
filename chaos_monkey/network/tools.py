@@ -117,13 +117,21 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                 good_ports.append((port, sock))
 
         if len(good_ports) != 0:
-            time.sleep(timeout)
             read_sockets, write_sockets, _ = \
                 select.select(
                     [s[1] for s in good_ports],
                     [s[1] for s in good_ports],
                     [s[1] for s in good_ports],
-                    0)  # no timeout because we've already slept
+                    timeout)  # wait max timeout
+            if len(write_sockets) != len(good_ports):
+                time.sleep(timeout)
+                read_sockets, write_sockets, _ = \
+                    select.select(
+                        [s[1] for s in good_ports],
+                        [s[1] for s in good_ports],
+                        [s[1] for s in good_ports],
+                        0)  # no timeout because we've already slept
+
             connected_ports_sockets = [x for x in good_ports if x[1] in write_sockets]
             LOG.debug(
                 "On host %s discovered the following ports %s" %
