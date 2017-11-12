@@ -1,4 +1,5 @@
 from cc.database import mongo
+from cc.services.config import ConfigService
 from cc.services.node import NodeService
 
 __author__ = "itay.mizeretz"
@@ -48,6 +49,17 @@ class ReportService:
         return nodes
 
     @staticmethod
+    def get_reused_passwords():
+        password_dict = {}
+        password_list = ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'])
+        for password in password_list:
+            machines_with_password = [NodeService.get_monkey_label_by_id(node['_id']) for node in mongo.db.monkey.find({'creds.password': password}, {'_id': 1})]
+            if len(machines_with_password) >= 2:
+                password_dict[password] = machines_with_password
+
+        return password_dict
+
+    @staticmethod
     def get_exploited():
         exploited =\
             [NodeService.get_displayed_node_by_id(monkey['_id']) for monkey in mongo.db.monkey.find({}, {'_id': 1})
@@ -75,7 +87,8 @@ class ReportService:
                 'successful_exploit_types': ReportService.get_successful_exploit_types(),
                 'tunnels': ReportService.get_tunnels(),
                 'scanned': ReportService.get_scanned(),
-                'exploited': ReportService.get_exploited()
+                'exploited': ReportService.get_exploited(),
+                'reused_passwords': ReportService.get_reused_passwords()
             }
 
     @staticmethod
