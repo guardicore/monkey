@@ -807,6 +807,14 @@ class ConfigService:
         return config
 
     @staticmethod
+    def get_config_value(config_key_as_arr):
+        config_key = reduce(lambda x, y: x+'.'+y, config_key_as_arr)
+        config = mongo.db.config.find_one({'name': 'newconfig'}, {config_key: 1})
+        for config_key_part in config_key_as_arr:
+            config = config[config_key_part]
+        return config
+
+    @staticmethod
     def get_flat_config():
         config_json = ConfigService.get_config()
         flat_config_json = {}
