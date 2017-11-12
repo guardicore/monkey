@@ -46,11 +46,20 @@ body {
 
   ul {
     list-style: none;
-    padding-left: 0;
+    padding-left: 0px;
+  }
+
+  ul.report {
+    list-style: disc;
+    padding-left: 40px;
   }
 
   li {
     overflow: auto;
+  }
+
+  li.report {
+    overflow: visible;
   }
 
   li .number {

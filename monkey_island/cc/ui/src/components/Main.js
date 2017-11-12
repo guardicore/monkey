@@ -16,6 +16,7 @@ require('normalize.css/normalize.css');
 require('react-data-components/css/table-twbs.css');
 require('styles/App.css');
 require('react-toggle/style.css');
+require('react-table/react-table.css');
 
 let logoImage = require('../images/monkey-logo.png');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
