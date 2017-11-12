@@ -54,6 +54,7 @@ class Monkey(flask_restful.Resource):
     def post(self, **kw):
         monkey_json = json.loads(request.data)
         monkey_json['creds'] = []
+        monkey_json['dead'] = False
         if 'keepalive' in monkey_json:
             monkey_json['keepalive'] = dateutil.parser.parse(monkey_json['keepalive'])
         else:
