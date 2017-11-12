@@ -5,6 +5,7 @@ import struct
 import time
 
 DEFAULT_TIMEOUT = 10
+SLEEP_BETWEEN_POLL = 0.5
 BANNER_READ = 1024
 
 LOG = logging.getLogger(__name__)
@@ -100,39 +101,44 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
     Checks whether any of the given ports are open on a target IP.
     :param ip:  IP of host to attack
     :param ports: List of ports to attack. Must not be empty.
-    :param timeout: Amount of time to wait for connection
+    :param timeout: Amount of time to wait for connection.
     :param get_banner: T/F if to get first packets from server
     :return: list of open ports. If get_banner=True, then a matching list of banners.
     """
     sockets = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for _ in range(len(ports))]
     [s.setblocking(0) for s in sockets]
-    good_ports = []
+    port_attempts = []
     try:
         for sock, port in zip(sockets, ports):
             LOG.debug("Connecting to port %d" % port)
             err = sock.connect_ex((ip, port))
             if err == 0:
-                good_ports.append((port, sock))
+                port_attempts.append((port, sock))
             if err == 10035:  # WSAEWOULDBLOCK is valid, see https://msdn.microsoft.com/en-us/library/windows/desktop/ms740668%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
-                good_ports.append((port, sock))
-
-        if len(good_ports) != 0:
-            read_sockets, write_sockets, _ = \
-                select.select(
-                    [s[1] for s in good_ports],
-                    [s[1] for s in good_ports],
-                    [s[1] for s in good_ports],
-                    timeout)  # wait max timeout
-            if len(write_sockets) != len(good_ports):
-                time.sleep(timeout)
-                read_sockets, write_sockets, _ = \
+                port_attempts.append((port, sock))
+        if len(port_attempts) != 0:
+            num_replies = 0
+            timeout = int(round(timeout))  # clamp to integer, to avoid checking input
+            time_left = timeout
+            write_sockets = []
+            read_sockets = []
+            while num_replies != len(port_attempts):
+                # bad ports show up as err_sockets
+                read_sockets, write_sockets, err_sockets = \
                     select.select(
-                        [s[1] for s in good_ports],
-                        [s[1] for s in good_ports],
-                        [s[1] for s in good_ports],
-                        0)  # no timeout because we've already slept
+                        [s[1] for s in port_attempts],
+                        [s[1] for s in port_attempts],
+                        [s[1] for s in port_attempts],
+                        time_left)
+                # any read_socket is automatically a writesocket
+                num_replies = len(write_sockets) + len(err_sockets)
+                if num_replies == len(port_attempts) or time_left == 0:
+                    break
+                else:
+                    time_left -= SLEEP_BETWEEN_POLL
+                    time.sleep(SLEEP_BETWEEN_POLL)
 
-            connected_ports_sockets = [x for x in good_ports if x[1] in write_sockets]
+            connected_ports_sockets = [x for x in port_attempts if x[1] in write_sockets]
             LOG.debug(
                 "On host %s discovered the following ports %s" %
                 (str(ip), ",".join([str(x) for x in connected_ports_sockets])))
@@ -143,7 +149,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                            for port, sock in connected_ports_sockets]
                 pass
             # try to cleanup
-            [s[1].close() for s in good_ports]
+            [s[1].close() for s in port_attempts]
             return [port for port, sock in connected_ports_sockets], banners
         else:
             return [], []
