@@ -160,8 +160,6 @@ class Telemetry(flask_restful.Resource):
             for user in creds:
                 ConfigService.creds_add_username(user)
                 creds[user]['user'] = user
-                NodeService.add_credentials_to_monkey(
-                    NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])['_id'], creds[user])
                 if 'password' in creds[user]:
                     ConfigService.creds_add_password(creds[user]['password'])
                 if 'lm_hash' in creds[user]:
