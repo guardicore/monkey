@@ -6,7 +6,7 @@ class ScannedBreachedChartComponent extends React.Component {
     super();
 
     this.state = {
-      expandedSector: null,
+      expandedSector: null
     };
 
     this.handleMouseEnterOnSector = this.handleMouseEnterOnSector.bind(this);
