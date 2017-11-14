@@ -2,24 +2,42 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import BreachedServers from 'components/report-components/BreachedServers';
 import ScannedServers from 'components/report-components/ScannedServers';
-
-const list_item = {
-  label: 'machine 1',
-  ip_addresses: ['1.2.3.4', '5.6.7.8'],
-  accessible_from_nodes: ['machine 2', 'machine 3'],
-  services: ['tcp-80', 'tcp-443']
-};
+import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
+import {options, edgeGroupToColor} from 'components/map/MapOptions';
 
 class ReportPageComponent extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      report: {}
+      report: {},
+      graph: {nodes: [], edges: []}
     };
   }
 
   componentDidMount() {
+    this.getReportFromServer();
+    this.updateMapFromServer();
+    this.interval = setInterval(this.updateMapFromServer, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  updateMapFromServer = () => {
+    fetch('/api/netmap')
+      .then(res => res.json())
+      .then(res => {
+        res.edges.forEach(edge => {
+          edge.color = edgeGroupToColor(edge.group);
+        });
+        this.setState({graph: res});
+        this.props.onStatusChange();
+      });
+  };
+
+  getReportFromServer() {
     fetch('/api/report')
       .then(res => res.json())
       .then(res => {
@@ -31,7 +49,7 @@ class ReportPageComponent extends React.Component {
 
   render() {
     if (Object.keys(this.state.report).length === 0) {
-      return (<div></div>);
+      return (<div />);
     }
     return (
       <Col xs={12} lg={8}>
@@ -47,10 +65,9 @@ class ReportPageComponent extends React.Component {
             </p>
             <p>
               From the attacker's point of view, the network looks like this:
-              {/* TODO: Add map */}
             </p>
-            <div>
-              <h3>* Imagine Map here :) *</h3>
+            <div style={{height: '80vh'}}>
+              <ReactiveGraph graph={this.state.graph} options={options} />
             </div>
             <div>
               {/* TODO: Replace 3 with data */}
@@ -85,11 +102,11 @@ class ReportPageComponent extends React.Component {
             <div>
               Detailed recommendations in the next part of the <a href="#recommendations">report</a>.
               <h4>Breached Servers</h4>
-              <BreachedServers data={this.state.report.exploited}></BreachedServers>
+              <BreachedServers data={this.state.report.exploited} />
             </div>
             <div>
               <h4>Scanned Servers</h4>
-              <ScannedServers data={this.state.report.scanned}></ScannedServers>
+              <ScannedServers data={this.state.report.scanned} />
               {/* TODO: Add table of scanned servers */}
             </div>
           </div>
