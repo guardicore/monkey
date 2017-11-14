@@ -9,9 +9,14 @@ let renderArray = function(val) {
 };
 
 const columns = [
-  { Header: 'Machine', accessor: 'label'},
-  { Header: 'IP Addresses', id: 'ip_addresses', accessor: x => renderArray(x.ip_addresses)},
-  { Header: 'Exploits', id: 'exploits', accessor: x => renderArray(x.exploits)}
+  {
+    Header: 'Breached Servers',
+    columns: [
+      {Header: 'Machine', accessor: 'label'},
+      {Header: 'IP Addresses', id: 'ip_addresses', accessor: x => renderArray(x.ip_addresses)},
+      {Header: 'Exploits', id: 'exploits', accessor: x => renderArray(x.exploits)}
+      ]
+  }
 ];
 
 const pageSize = 10;

@@ -5,6 +5,7 @@ import ScannedServers from 'components/report-components/ScannedServers';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {options, edgeGroupToColor} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/StolenPasswords';
+import ScannedBreachedChart from 'components/report-components/ScannedBreachedChart';
 
 class ReportPageComponent extends React.Component {
   constructor(props) {
@@ -102,31 +103,37 @@ class ReportPageComponent extends React.Component {
                 A full report of the Monkeys activities follows.
               </p>
             </div>
-            <div id="network_overview">
+            <div id="glance">
               <h1>
-                Network Overview
+                At a Glance
               </h1>
-              <p>
-                {/* TODO: Replace 6,2 with data */}
-                During the current run, the Monkey discovered <span className="label label-info">6</span> machines and successfully breached <span className="label label-warning">2</span> of them.
-                In addition, it attempted to exploit the rest, any security software installed in the network should have picked up the attack attempts and logged them.
-              </p>
               <div>
-                Detailed recommendations in the next part of the <a href="#recommendations">report</a>.
-                <h4>Breached Servers</h4>
+                <Col lg={10}>
+                  <p>
+                    {/* TODO: Replace 6,2 with data */}
+                    During the current run, the Monkey discovered <span className="label label-info">6</span> machines and successfully breached <span className="label label-warning">2</span> of them.
+                    <br />
+                    In addition, it attempted to exploit the rest, any security software installed in the network should have picked up the attack attempts and logged them.
+                    <br />
+                    Detailed recommendations in the <a href="#recommendations">next part of the report</a>.
+                  </p>
+                </Col>
+                <Col lg={2}>
+                  <div style={{marginBottom: '20px'}}>
+                    <ScannedBreachedChart />
+                  </div>
+                </Col>
+              </div>
+              <div style={{marginBottom: '20px'}}>
                 <BreachedServers data={this.state.report.exploited} />
               </div>
-              <div>
-                <h4>Scanned Servers</h4>
+              <div style={{marginBottom: '20px'}}>
                 <ScannedServers data={this.state.report.scanned} />
                 {/* TODO: Add table of scanned servers */}
               </div>
-            </div>
-            <div id="passwords">
-              <h1>
-                Stolen Credentials
-              </h1>
-              <StolenPasswords data={this.stolen_passwords} />
+              <div>
+                <StolenPasswords data={this.stolen_passwords} />
+              </div>
             </div>
             <div id="recommendations">
               <h1>

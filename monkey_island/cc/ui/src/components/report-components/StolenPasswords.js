@@ -2,10 +2,15 @@ import React from 'react';
 import ReactTable from 'react-table'
 
 const columns = [
-  { Header: 'Username', accessor: 'username'},
-  { Header: 'Password/Hash', accessor: 'password'},
-  { Header: 'Type', accessor: 'type'},
-  { Header: 'Origin', accessor: 'origin'}
+  {
+    Header: 'Stolen Credentials',
+    columns: [
+      { Header: 'Username', accessor: 'username'},
+      { Header: 'Password/Hash', accessor: 'password'},
+      { Header: 'Type', accessor: 'type'},
+      { Header: 'Origin', accessor: 'origin'}
+    ]
+  }
 ];
 
 const pageSize = 10;
