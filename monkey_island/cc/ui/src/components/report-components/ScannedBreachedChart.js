@@ -18,8 +18,8 @@ class ScannedBreachedChartComponent extends React.Component {
 
   render() {
     const data = [
-      {label: 'Scanned', value: 4, color: '#f0ad4e'},
-      {label: 'Exploited', value: 2, color: '#d9534f'}
+      {label: 'Scanned', value: this.props.scanned - this.props.exploited, color: '#f0ad4e'},
+      {label: 'Exploited', value: this.props.exploited, color: '#d9534f'}
     ];
 
     return (
