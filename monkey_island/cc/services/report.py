@@ -25,7 +25,7 @@ class ReportService:
         delta = ReportService.get_last_monkey_dead_time() - ReportService.get_first_monkey_time()
         st = ""
         if delta.days > 0:
-            st += "%d days," % delta.days
+            st += "%d days, " % delta.days
         total = delta.seconds
         seconds = total % 60
         total = (total - seconds) / 60
@@ -33,7 +33,7 @@ class ReportService:
         total = (total - minutes) / 60
         hours = total
         if hours > 0:
-            st += "%d hours," % hours
+            st += "%d hours, " % hours
 
         st += "%d minutes and %d seconds" % (minutes, seconds)
         return st
