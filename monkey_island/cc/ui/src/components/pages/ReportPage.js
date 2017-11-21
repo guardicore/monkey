@@ -27,56 +27,14 @@ class ReportPageComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    this.stolen_passwords =
-      [
-        {username: 'admin', password: 'secretpassword', type: 'password', origin: 'Monkey-SMB'},
-        {username: 'user', password: 'my_password', type: 'password', origin: 'Monkey-SMB2'},
-        {username: 'dan', password: '066DDFD4EF0E9CD7C256FE77191EF43C', type: 'NTLM', origin: 'Monkey-RDP'},
-        {username: 'joe', password: 'FDA95FBECA288D44AAD3B435B51404EE', type: 'LM', origin: 'Monkey-RDP'}
-      ];
     this.state = {
-      report: {
-        overview:
-          {
-            monkey_start_time: '01/02/2017 21:45',
-            monkey_duration: '23:12 minutes',
-            issues: [false, true, true, true, false, true],
-            warnings: [true, true]
-          },
-        glance:
-          {
-            scanned:
-              [{"services": ["tcp-22: ssh", "elastic-search-9200: Lorelei Travis"], "ip_addresses": ["11.0.0.13"], "accessible_from_nodes": ["webServer-shellshock0"], "label": "Ubuntu-4ubuntu2.1"}, {"services": [], "ip_addresses": ["10.0.3.23"], "accessible_from_nodes": [], "label": "ubuntu"}, {"services": ["tcp-22: ssh", "tcp-80: http"], "ip_addresses": ["10.0.3.68", "11.0.0.41"], "accessible_from_nodes": ["Monkey-MSSQL1", "ubuntu"], "label": "webServer-shellshock0"}, {"services": ["tcp-445: Windows Server 2012 R2 Standard 6.3"], "ip_addresses": ["12.0.0.90", "11.0.0.90"], "accessible_from_nodes": ["webServer-shellshock0"], "label": "Monkey-MSSQL1"}],
-            exploited:
-              [{"ip_addresses": ["10.0.3.68", "11.0.0.41"], "exploits": ["ShellShockExploiter", "ShellShockExploiter"], "label": "webServer-shellshock0"}, {"ip_addresses": ["12.0.0.90", "11.0.0.90"], "exploits": ["SmbExploiter", "SmbExploiter"], "label": "Monkey-MSSQL1"}],
-            stolen_creds: this.stolen_passwords
-          },
-        recommendations:
-          {
-            issues:
-              [
-                {type: 'smb_password', machine: 'Monkey-SMB', ip_addresses: ['192.168.0.1', '10.0.0.18'], username: 'Administrator'},
-                {type: 'smb_pth', machine: 'Monkey-SMB2', ip_addresses: ['192.168.0.1', '10.0.0.18'], username: 'Administrator'},
-                {type: 'wmi_password', machine: 'Monkey-WMI', ip_addresses: ['192.168.0.1', '10.0.0.18'], username: 'Administrator'},
-                {type: 'wmi_pth', machine: 'Monkey-WMI2', ip_addresses: ['192.168.0.1', '10.0.0.18'], username: 'Administrator'},
-                {type: 'ssh', machine: 'Monkey-SMB', ip_addresses: ['192.168.0.1', '10.0.0.18'], username: 'Administrator'},
-                {type: 'rdp', machine: 'Monkey-SMB', ip_addresses: ['192.168.0.1', '10.0.0.18'], username: 'Administrator'},
-                {type: 'sambacry', machine: 'Monkey-SMB', ip_addresses: ['192.168.0.1', '10.0.0.18'], username: 'Administrator'},
-                {type: 'elastic', machine: 'Monkey-SMB', ip_addresses: ['192.168.0.1', '10.0.0.18']},
-                {type: 'shellshock', machine: 'Monkey-SMB', ip_addresses: ['192.168.0.1', '10.0.0.18'], port: 8080, paths: ['/cgi/backserver.cgi', '/cgi/login.cgi']},
-                {type: 'conficker', machine: 'Monkey-SMB', ip_addresses: ['192.168.0.1', '10.0.0.18']},
-                {type: 'cross_segment', machine: 'Monkey-SMB', network: '192.168.0.0/24', server_network: '172.168.0.0/24'},
-                {type: 'tunnel', origin: 'Monkey-SSH', dest: 'Monkey-SambaCry'}
-              ]
-          }
-      },
+      report: {},
       graph: {nodes: [], edges: []}
     };
   }
 
   componentDidMount() {
-    // TODO: uncomment
-    //this.getReportFromServer();
+    this.getReportFromServer();
     this.updateMapFromServer();
     this.interval = setInterval(this.updateMapFromServer, 1000);
   }
@@ -342,8 +300,7 @@ class ReportPageComponent extends React.Component {
 
   render() {
     let content;
-    // TODO: remove 0==1
-    if (0==1 || Object.keys(this.state.report).length === 0) {
+    if (Object.keys(this.state.report).length === 0) {
       content = (<h1>Generating Report...</h1>);
     } else {
       content =
