@@ -80,23 +80,23 @@ class ReportPageComponent extends React.Component {
               </div>
               <div>
                 {/* TODO: Replace 3 with data */}
-                During this simulated attack the Monkey uncovered <span className="label label-warning">6 issues</span>, detailed below. The security issues uncovered included:
+                During this simulated attack the Monkey uncovered <span className="label label-warning">6 issues</span>, detailed below. The security issues uncovered include:
                 <ul className="report">
                   {/* TODO: Replace lis with data */}
-                  <li className="report">Weak user/passwords combinations.</li>
-                  <li className="report">Stolen passwords/hashes used to exploit other machines.</li>
-                  <li className="report">Elastic Search servers not patched for CVE-2015-1427 bug.</li>
-                  <li className="report">Samba servers not patched for ‘SambaCry’ bug.</li>
-                  <li className="report">Machines not patched for the ‘Shellshock’ bug.</li>
-                  <li className="report">Machines not patched for the ‘Conficker’ bug.</li>
+                  <li className="report">Users with weak passwords.</li>
+                  <li className="report">Stolen passwords/hashes were used to exploit other machines.</li>
+                  <li className="report">Elastic Search servers not patched for <a href="https://www.cvedetails.com/cve/cve-2015-1427" className="report">CVE-2015-1427</a>.</li>
+                  <li className="report">Samba servers not patched for ‘SambaCry’ (<a href="https://www.samba.org/samba/security/CVE-2017-7494.html" className="report">CVE-2017-7494</a>).</li>
+                  <li className="report">Machines not patched for the ‘Shellshock’ (<a href="https://www.cvedetails.com/cve/CVE-2014-6271" className="report">CVE-2014-6271</a>).</li>
+                  <li className="report">Machines not patched for the ‘Conficker’ (<a href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067" className="report">MS08-067</a>).</li>
                 </ul>
               </div>
               <div>
                 In addition, the monkey uncovered the following possible set of issues:
                 <ul className="report">
                   {/* TODO: Replace lis with data */}
-                  <li className="report">Machines freely accessed the Monkey Island despite being on different networks.</li>
-                  <li className="report">Machines are not locked down at port level, tunnels between network segments were setup successfully.</li>
+                  <li className="report">Possible cross segment traffic. Infected machines could communicate with the Monkey Island despite crossing segment boundaries using unused ports.</li>
+                  <li className="report">Lack of port level segmentation, machines successfully tunneled monkey activity using unused ports.</li>
                 </ul>
               </div>
               <p>
@@ -111,9 +111,9 @@ class ReportPageComponent extends React.Component {
                 <Col lg={10}>
                   <p>
                     {/* TODO: Replace 6,2 with data */}
-                    During the current run, the Monkey discovered <span className="label label-info">6</span> machines and successfully breached <span className="label label-warning">2</span> of them.
+                    The Monkey discovered <span className="label label-info">6</span> machines and successfully breached <span className="label label-warning">2</span> of them.
                     <br />
-                    In addition, it attempted to exploit the rest, any security software installed in the network should have picked up the attack attempts and logged them.
+                    In addition, while attempting to exploit additional hosts , security software installed in the network should have picked up the attack attempts and logged them.
                     <br />
                     Detailed recommendations in the <a href="#recommendations">next part of the report</a>.
                   </p>
@@ -142,7 +142,7 @@ class ReportPageComponent extends React.Component {
               <div>
                 <div>
                   <h4><b><i>Issue #1</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-SMB</span> with the following IP addresses <span className="label label-info">192.168.0.1</span> <span className="label label-info">10.0.0.18</span> was vulnerable to a <span className="label label-danger">SMB</span> attack.
                     <br />
                     The attack succeeded by authenticating over SMB protocol with user <span className="label label-success">Administrator</span> and its password.
@@ -151,11 +151,11 @@ class ReportPageComponent extends React.Component {
                     <ul className="report">
                       <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #2</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-SMB2</span> with the following IP address <span className="label label-info">192.168.0.2</span> was vulnerable to a <span className="label label-danger">SMB</span> attack.
                     <br />
                     The attack succeeded by using a pass-the-hash attack over SMB protocol with user <span className="label label-success">temp</span>.
@@ -164,11 +164,11 @@ class ReportPageComponent extends React.Component {
                     <ul className="report">
                       <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #3</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-WMI</span> with the following IP address <span className="label label-info">192.168.0.3</span> was vulnerable to a <span className="label label-danger">WMI</span> attack.
                     <br />
                     The attack succeeded by authenticating over WMI protocol with user <span className="label label-success">Administrator</span> and its password.
@@ -177,11 +177,11 @@ class ReportPageComponent extends React.Component {
                     <ul className="report">
                       <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #4</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-WMI2</span> with the following IP address <span className="label label-info">192.168.0.4</span> was vulnerable to a <span className="label label-danger">WMI</span> attack.
                     <br />
                     The attack succeeded by using a pass-the-hash attack over WMI protocol with user <span className="label label-success">Administrator</span>.
@@ -190,11 +190,11 @@ class ReportPageComponent extends React.Component {
                     <ul className="report">
                       <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #5</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-SSH</span> with the following IP address <span className="label label-info">192.168.0.5</span> was vulnerable to a <span className="label label-danger">SSH</span> attack.
                     <br />
                     The attack succeeded by authenticating over SSH protocol with user <span className="label label-success">user</span> and its password.
@@ -203,11 +203,11 @@ class ReportPageComponent extends React.Component {
                     <ul className="report">
                       <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #6</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-RDP</span> with the following IP address <span className="label label-info">192.168.0.6</span> was vulnerable to a <span className="label label-danger">RDP</span> attack.
                     <br />
                     The attack succeeded by authenticating over RDP protocol with user <span className="label label-success">Administrator</span> and its password.
@@ -216,11 +216,11 @@ class ReportPageComponent extends React.Component {
                     <ul className="report">
                       <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #7</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-SambaCry</span> with the following IP address <span className="label label-info">192.168.0.7</span> was vulnerable to a <span className="label label-danger">SambaCry</span> attack.
                     <br />
                     The attack succeeded by authenticating over SMB protocol with user <span className="label label-success">user</span> and its password, and by using the SambaCry vulnerability.
@@ -230,24 +230,24 @@ class ReportPageComponent extends React.Component {
                       <li className="report">Update your Samba server to 4.4.14 and up, 4.5.10 and up, or 4.6.4 and up.</li>
                       <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #8</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-Elastic</span> with the following IP address <span className="label label-info">192.168.0.8</span> was vulnerable to an <span className="label label-danger">Elastic Groovy</span> attack.
                     <br />
-                    The attack succeeded because the Elastic Search server was not parched against the CVE-2015-1427 bug.
+                    The attack succeeded because the Elastic Search server was not parched against CVE-2015-1427.
                     <br />
                     In order to protect the machine, the following steps should be performed:
                     <ul className="report">
                       <li className="report">Update your Elastic Search server to version 1.4.3 and up.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #9</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-Shellshock</span> with the following IP address <span className="label label-info">192.168.0.9</span> was vulnerable to a <span className="label label-danger">ShellShock</span> attack.
                     <br />
                     The attack succeeded because the HTTP server running on port <span className="label label-info">8080</span> was vulnerable to a shell injection attack on the paths: <span className="label label-warning">/cgi/backserver.cgi</span> <span className="label label-warning">/cgi/login.cgi</span>.
@@ -256,11 +256,11 @@ class ReportPageComponent extends React.Component {
                     <ul className="report">
                       <li className="report">Update your Bash to a ShellShock-patched version.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #10</i></b></h4>
-                  <p>
+                  <div>
                     The machine <span className="label label-primary">Monkey-Conficker</span> with the following IP address <span className="label label-info">192.168.0.10</span> was vulnerable to a <span className="label label-danger">Conficker</span> attack.
                     <br />
                     The attack succeeded because the target machine uses an outdated and unpatched operating system vulnerable to Conficker.
@@ -269,40 +269,40 @@ class ReportPageComponent extends React.Component {
                     <ul className="report">
                       <li className="report">Install the latest Windows updates or upgrade to a newer operating system.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #11</i></b></h4>
-                  <p>
+                  <div>
                     The network can probably be segmented. A monkey instance on <span className="label label-primary">Monkey-SMB</span> in the <span className="label label-info">192.168.0.0/24</span> network could directly access the Monkey Island C&C server in the <span className="label label-info">172.168.0.0/24</span> network.
                     <br />
                     In order to protect the network, the following steps should be performed:
                     <ul className="report">
                       <li className="report">Segment your network. Make sure machines can't access machines from other segments.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #12</i></b></h4>
-                  <p>
+                  <div>
                     The network can probably be segmented. A monkey instance on <span className="label label-primary">Monkey-SSH</span> in the <span className="label label-info">192.168.0.0/24</span> network could directly access the Monkey Island C&C server in the <span className="label label-info">172.168.0.0/24</span> network.
                     <br />
                     In order to protect the network, the following steps should be performed:
                     <ul className="report">
                       <li className="report">Segment your network. Make sure machines can't access machines from other segments.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
                 <div>
                   <h4><b><i>Issue #13</i></b></h4>
-                  <p>
+                  <div>
                     Machines are not locked down at port level. Network tunnel was set up from <span className="label label-primary">Monkey-SSH</span> to <span className="label label-primary">Monkey-SambaCry</span>.
                     <br />
                     In order to protect the machine, the following steps should be performed:
                     <ul className="report">
                       <li className="report">Use micro-segmentation policies to disable communication other than the required.</li>
                     </ul>
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>

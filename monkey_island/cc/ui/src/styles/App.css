@@ -75,6 +75,12 @@ body {
     padding: 0.5em 1em;
     margin: 0.1em 0;
   }
+
+  li a.report {
+    display: inline;
+    padding: 0em;
+  }
+
   li a:hover {
     color: #000;
     background: #e9e9e9;
