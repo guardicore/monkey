@@ -1,5 +1,6 @@
 from cc.database import mongo
 from cc.services.config import ConfigService
+from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 
 __author__ = "itay.mizeretz"
@@ -39,9 +40,13 @@ class ReportService:
             + [NodeService.get_displayed_node_by_id(monkey['_id']) for monkey in mongo.db.monkey.find({}, {'_id': 1})]
         nodes = [
             {
-                'label': node['label'],
+                'label':
+                    node['hostname'] if 'hostname' in node else NodeService.get_node_by_id(node['id'])['os']['version'],
                 'ip_addresses': node['ip_addresses'],
-                'accessible_from_nodes': node['accessible_from_nodes'],
+                'accessible_from_nodes':
+                    (x['hostname'] for x in
+                     (NodeService.get_displayed_node_by_id(edge['from'])
+                      for edge in EdgeService.get_displayed_edges_by_to(node['id']))),
                 'services': node['services']
             }
             for node in nodes]
@@ -53,7 +58,11 @@ class ReportService:
         password_dict = {}
         password_list = ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'])
         for password in password_list:
-            machines_with_password = [NodeService.get_monkey_label_by_id(node['_id']) for node in mongo.db.monkey.find({'creds.password': password}, {'_id': 1})]
+            machines_with_password =\
+                [
+                    NodeService.get_monkey_label_by_id(node['_id'])
+                    for node in mongo.db.monkey.find({'creds.password': password}, {'_id': 1})
+                ]
             if len(machines_with_password) >= 2:
                 password_dict[password] = machines_with_password
 
@@ -69,7 +78,7 @@ class ReportService:
 
         exploited = [
             {
-                'label': monkey['label'],
+                'label': monkey['hostname'] if 'hostname' in monkey else monkey['os']['version'],
                 'ip_addresses': monkey['ip_addresses'],
                 'exploits': [exploit['exploiter'] for exploit in monkey['exploits'] if exploit['result']]
             }
