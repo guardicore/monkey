@@ -1,3 +1,5 @@
+import datetime
+
 from cc.database import mongo
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
@@ -17,6 +19,24 @@ class ReportService:
     @staticmethod
     def get_last_monkey_dead_time():
         return mongo.db.telemetry.find({}, {'timestamp': 1}).sort([('$natural', -1)]).limit(1)[0]['timestamp']
+
+    @staticmethod
+    def get_monkey_duration():
+        delta = ReportService.get_last_monkey_dead_time() - ReportService.get_first_monkey_time()
+        st = ""
+        if delta.days > 0:
+            st += "%d days," % delta.days
+        total = delta.seconds
+        seconds = total % 60
+        total = (total - seconds) / 60
+        minutes = total % 60
+        total = (total - minutes) / 60
+        hours = total
+        if hours > 0:
+            st += "%d hours," % hours
+
+        st += "%d minutes and %d seconds" % (minutes, seconds)
+        return st
 
     @staticmethod
     def get_breach_count():
@@ -87,44 +107,45 @@ class ReportService:
         return exploited
 
     @staticmethod
+    def get_stolen_creds():
+        PASS_TYPE_DICT = {'password': 'Password', 'lm_hash': 'LM', 'ntlm_hash': 'NTLM'}
+        creds = []
+        for telem in mongo.db.telemetry.find(
+            {'telem_type': 'system_info_collection', 'data.credentials': {'$exists': True}},
+            {'data.credentials': 1, 'monkey_guid': 1}
+        ):
+            monkey_creds = telem['data']['credentials']
+            if len(monkey_creds) == 0:
+                continue
+            origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+            for user in monkey_creds:
+                for pass_type in monkey_creds[user]:
+                    creds.append(
+                        {
+                            'username': user,
+                            'password': monkey_creds[user][pass_type],
+                            'type': PASS_TYPE_DICT[pass_type],
+                            'origin': origin
+                        }
+                    )
+        return creds
+
+    @staticmethod
     def get_report():
         return \
             {
                 'overview':
                     {
-                        'monkey_start_time': '01/02/2017 21:45',
-                        'monkey_duration': '23:12 minutes',
+                        'monkey_start_time': ReportService.get_first_monkey_time().strftime("%d/%m/%Y %H:%M:%S"),
+                        'monkey_duration': ReportService.get_monkey_duration(),
                         'issues': [False, True, True, True, False, True],
                         'warnings': [True, True]
                     },
                 'glance':
                     {
-                        'scanned':
-                            [{"services": ["tcp-22: ssh", "elastic-search-9200: Lorelei Travis"],
-                              "ip_addresses": ["11.0.0.13"], "accessible_from_nodes": ["webServer-shellshock0"],
-                              "label": "Ubuntu-4ubuntu2.1"},
-                             {"services": [], "ip_addresses": ["10.0.3.23"], "accessible_from_nodes": [],
-                              "label": "ubuntu"},
-                             {"services": ["tcp-22: ssh", "tcp-80: http"], "ip_addresses": ["10.0.3.68", "11.0.0.41"],
-                              "accessible_from_nodes": ["Monkey-MSSQL1", "ubuntu"], "label": "webServer-shellshock0"},
-                             {"services": ["tcp-445: Windows Server 2012 R2 Standard 6.3"],
-                              "ip_addresses": ["12.0.0.90", "11.0.0.90"],
-                              "accessible_from_nodes": ["webServer-shellshock0"], "label": "Monkey-MSSQL1"}],
-                        'exploited':
-                            [{"ip_addresses": ["10.0.3.68", "11.0.0.41"],
-                              "exploits": ["ShellShockExploiter", "ShellShockExploiter"],
-                              "label": "webServer-shellshock0"},
-                             {"ip_addresses": ["12.0.0.90", "11.0.0.90"], "exploits": ["SmbExploiter", "SmbExploiter"],
-                              "label": "Monkey-MSSQL1"}],
-                        'stolen_creds':
-                            [
-                                {'username': 'admin', 'password': 'secretpassword', 'type': 'password', 'origin': 'Monkey-SMB'},
-                                {'username': 'user', 'password': 'my_password', 'type': 'password', 'origin': 'Monkey-SMB2'},
-                                {'username': 'dan', 'password': '066DDFD4EF0E9CD7C256FE77191EF43C', 'type': 'NTLM',
-                                 'origin': 'Monkey-RDP'},
-                                {'username': 'joe', 'password': 'FDA95FBECA288D44AAD3B435B51404EE', 'type': 'LM',
-                                 'origin': 'Monkey-RDP'}
-                            ]
+                        'scanned': ReportService.get_scanned(),
+                        'exploited': ReportService.get_exploited(),
+                        'stolen_creds': ReportService.get_stolen_creds()
                     },
                 'recommendations':
                     {
@@ -158,13 +179,9 @@ class ReportService:
         """
         return \
             {
-                'first_monkey_time': ReportService.get_first_monkey_time(),
-                'last_monkey_dead_time': ReportService.get_last_monkey_dead_time(),
                 'breach_count': ReportService.get_breach_count(),
                 'successful_exploit_types': ReportService.get_successful_exploit_types(),
                 'tunnels': ReportService.get_tunnels(),
-                'scanned': ReportService.get_scanned(),
-                'exploited': ReportService.get_exploited(),
                 'reused_passwords': ReportService.get_reused_passwords()
             }
         """
