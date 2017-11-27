@@ -208,8 +208,12 @@ class ReportService:
 
     @staticmethod
     def get_exploits():
-        return [ReportService.process_exploit(exploit) for
-                exploit in mongo.db.telemetry.find({'telem_type': 'exploit', 'data.result': True})]
+        exploits = []
+        for exploit in mongo.db.telemetry.find({'telem_type': 'exploit', 'data.result': True}):
+            new_exploit = ReportService.process_exploit(exploit)
+            if new_exploit not in exploits:
+                exploits.append(new_exploit)
+        return exploits
 
     @staticmethod
     def get_monkey_subnets(monkey_guid):
