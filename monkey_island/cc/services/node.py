@@ -292,3 +292,21 @@ class NodeService:
             {'_id': node_id},
             {'$push': {'creds': creds}}
         )
+
+    @staticmethod
+    def get_node_or_monkey_by_ip(ip_address):
+        node = NodeService.get_node_by_ip(ip_address)
+        if node is not None:
+            return node
+        return NodeService.get_monkey_by_ip(ip_address)
+
+    @staticmethod
+    def get_node_or_monkey_by_id(node_id):
+        node = NodeService.get_node_by_id(node_id)
+        if node is not None:
+            return node
+        return NodeService.get_monkey_by_id(node_id)
+
+    @staticmethod
+    def get_node_hostname(node):
+        return node['hostname'] if 'hostname' in node else node['os']['version']

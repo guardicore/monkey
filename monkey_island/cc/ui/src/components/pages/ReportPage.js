@@ -65,8 +65,8 @@ class ReportPageComponent extends React.Component {
       });
   }
 
-  generateIpListBadges(ip_addresses) {
-    return ip_addresses.map(ip_address => <span className="label label-info" style={{margin: '2px'}}>{ip_address}</span>);
+  generateInfoBadges(data_array) {
+    return data_array.map(badge_data => <span className="label label-info" style={{margin: '2px'}}>{badge_data}</span>);
   }
 
   generateShellshockPathListBadges(paths) {
@@ -76,7 +76,7 @@ class ReportPageComponent extends React.Component {
   generateSmbPasswordIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to a <span className="label label-danger">SMB</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">SMB</span> attack.
         <br />
         The attack succeeded by authenticating over SMB protocol with user <span className="label label-success">{issue.username}</span> and its password.
         <br />
@@ -91,7 +91,7 @@ class ReportPageComponent extends React.Component {
   generateSmbPthIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to a <span className="label label-danger">SMB</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">SMB</span> attack.
         <br />
         The attack succeeded by using a pass-the-hash attack over SMB protocol with user <span className="label label-success">{issue.username}</span>.
         <br />
@@ -106,7 +106,7 @@ class ReportPageComponent extends React.Component {
   generateWmiPasswordIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to a <span className="label label-danger">WMI</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">WMI</span> attack.
         <br />
         The attack succeeded by authenticating over WMI protocol with user <span className="label label-success">{issue.username}</span> and its password.
         <br />
@@ -121,7 +121,7 @@ class ReportPageComponent extends React.Component {
   generateWmiPthIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to a <span className="label label-danger">WMI</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">WMI</span> attack.
         <br />
         The attack succeeded by using a pass-the-hash attack over WMI protocol with user <span className="label label-success">{issue.username}</span>.
         <br />
@@ -136,7 +136,7 @@ class ReportPageComponent extends React.Component {
   generateSshIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to a <span className="label label-danger">SSH</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">SSH</span> attack.
         <br />
         The attack succeeded by authenticating over SSH protocol with user <span className="label label-success">{issue.username}</span> and its password.
         <br />
@@ -151,7 +151,7 @@ class ReportPageComponent extends React.Component {
   generateRdpIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to a <span className="label label-danger">RDP</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">RDP</span> attack.
         <br />
         The attack succeeded by authenticating over RDP protocol with user <span className="label label-success">{issue.username}</span> and its password.
         <br />
@@ -166,7 +166,7 @@ class ReportPageComponent extends React.Component {
   generateSambaCryIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to a <span className="label label-danger">SambaCry</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">SambaCry</span> attack.
         <br />
         The attack succeeded by authenticating over SMB protocol with user <span className="label label-success">{issue.username}</span> and its password, and by using the SambaCry vulnerability.
         <br />
@@ -182,7 +182,7 @@ class ReportPageComponent extends React.Component {
   generateElasticIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to an <span className="label label-danger">Elastic Groovy</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to an <span className="label label-danger">Elastic Groovy</span> attack.
         <br />
         The attack succeeded because the Elastic Search server was not parched against CVE-2015-1427.
         <br />
@@ -197,7 +197,7 @@ class ReportPageComponent extends React.Component {
   generateShellshockIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to a <span className="label label-danger">ShellShock</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">ShellShock</span> attack.
         <br />
         The attack succeeded because the HTTP server running on port <span className="label label-info">{issue.port}</span> was vulnerable to a shell injection attack on the paths: {this.generateShellshockPathListBadges(issue.paths)}.
         <br />
@@ -212,7 +212,7 @@ class ReportPageComponent extends React.Component {
   generateConfickerIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP addresses {this.generateIpListBadges(issue.ip_addresses)} was vulnerable to a <span className="label label-danger">Conficker</span> attack.
+        The machine <span className="label label-primary">{issue.machine}</span> with the following address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">Conficker</span> attack.
         <br />
         The attack succeeded because the target machine uses an outdated and unpatched operating system vulnerable to Conficker.
         <br />
@@ -227,7 +227,7 @@ class ReportPageComponent extends React.Component {
   generateCrossSegmentIssue(issue) {
     return (
       <div>
-        The network can probably be segmented. A monkey instance on <span className="label label-primary">{issue.machine}</span> in the <span className="label label-info">{issue.network}</span> network could directly access the Monkey Island C&C server in the <span className="label label-info">{issue.server_network}</span> network.
+        The network can probably be segmented. A monkey instance on <span className="label label-primary">{issue.machine}</span> in the networks {this.generateInfoBadges(issue.networks)} could directly access the Monkey Island C&C server in the networks {this.generateInfoBadges(issue.server_networks)}.
         <br />
         In order to protect the network, the following steps should be performed:
         <ul className="report">
