@@ -88,7 +88,7 @@ class ReportService:
 
     @staticmethod
     def get_stolen_creds():
-        PASS_TYPE_DICT = {'password': 'Password', 'lm_hash': 'LM', 'ntlm_hash': 'NTLM'}
+        PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM', 'ntlm_hash': 'NTLM'}
         creds = []
         for telem in mongo.db.telemetry.find(
                 {'telem_type': 'system_info_collection', 'data.credentials': {'$exists': True}},
@@ -103,7 +103,6 @@ class ReportService:
                     creds.append(
                         {
                             'username': user,
-                            'password': monkey_creds[user][pass_type],
                             'type': PASS_TYPE_DICT[pass_type],
                             'origin': origin
                         }

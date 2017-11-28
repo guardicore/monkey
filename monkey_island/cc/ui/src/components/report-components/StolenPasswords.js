@@ -6,7 +6,6 @@ const columns = [
     Header: 'Stolen Credentials',
     columns: [
       { Header: 'Username', accessor: 'username'},
-      { Header: 'Password/Hash', accessor: 'password'},
       { Header: 'Type', accessor: 'type'},
       { Header: 'Origin', accessor: 'origin'}
     ]
