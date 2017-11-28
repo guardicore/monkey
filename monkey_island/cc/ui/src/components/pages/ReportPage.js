@@ -3,10 +3,10 @@ import {Col} from 'react-bootstrap';
 import BreachedServers from 'components/report-components/BreachedServers';
 import ScannedServers from 'components/report-components/ScannedServers';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {options, edgeGroupToColor} from 'components/map/MapOptions';
+import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/StolenPasswords';
 import ScannedBreachedChart from 'components/report-components/ScannedBreachedChart';
-import CollapsibleWellComponent from "../report-components/CollapsibleWell";
+import CollapsibleWellComponent from 'components/report-components/CollapsibleWell';
 
 class ReportPageComponent extends React.Component {
 
@@ -338,13 +338,16 @@ class ReportPageComponent extends React.Component {
     } else {
       content =
         (
-          <div>
+          <div className="report-page">
             <div id="overview">
               <h1>
-                Overview
+                Executive Summary
               </h1>
               <p>
-                The first monkey run was started on <span className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span className="label label-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished propagation attempts.
+                The first monkey run was started on <span
+                className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span
+                className="label label-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished
+                propagation attempts.
               </p>
               <p>
                 A full report of the Monkeys activities follows.
@@ -358,14 +361,31 @@ class ReportPageComponent extends React.Component {
                 <h3>
                   Immediate Threats
                 </h3>
-                During this simulated attack the Monkey uncovered <span className="label label-warning">{this.state.report.overview.issues.filter(function(x){return x===true;}).length} issues</span>, detailed below. The security issues uncovered include:
-                <ul className="report">
-                  {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ? <li className="report">Users with weak passwords.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?<li className="report">Stolen passwords/hashes were used to exploit other machines.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.ELASTIC] ? <li className="report">Elastic Search servers not patched for <a href="https://www.cvedetails.com/cve/cve-2015-1427" className="report">CVE-2015-1427</a>.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.SAMBACRY] ? <li className="report">Samba servers not patched for ‘SambaCry’ (<a href="https://www.samba.org/samba/security/CVE-2017-7494.html" className="report">CVE-2017-7494</a>).</li> : null}
-                  {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ? <li className="report">Machines not patched for the ‘Shellshock’ (<a href="https://www.cvedetails.com/cve/CVE-2014-6271" className="report">CVE-2014-6271</a>).</li> : null}
-                  {this.state.report.overview.issues[this.Issue.CONFICKER] ? <li className="report">Machines not patched for the ‘Conficker’ (<a href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067" className="report">MS08-067</a>).</li> : null}
+                During this simulated attack the Monkey uncovered <span
+                className="label label-warning">{this.state.report.overview.issues.filter(function (x) {
+                return x === true;
+              }).length} issues</span>, detailed below. The security issues uncovered include:
+                <ul>
+                  {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
+                    <li>Users with weak passwords.</li> : null}
+                  {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
+                    <li>Stolen passwords/hashes were used to exploit other machines.</li> : null}
+                  {this.state.report.overview.issues[this.Issue.ELASTIC] ?
+                    <li>Elastic Search servers not patched for <a
+                      href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
+                    </li> : null}
+                  {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
+                    <li>Samba servers not patched for ‘SambaCry’ (<a
+                      href="https://www.samba.org/samba/security/CVE-2017-7494.html"
+                    >CVE-2017-7494</a>).</li> : null}
+                  {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ?
+                    <li>Machines not patched for the ‘Shellshock’ (<a
+                      href="https://www.cvedetails.com/cve/CVE-2014-6271">CVE-2014-6271</a>).
+                    </li> : null}
+                  {this.state.report.overview.issues[this.Issue.CONFICKER] ?
+                    <li>Machines not patched for the ‘Conficker’ (<a
+                      href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
+                    >MS08-067</a>).</li> : null}
                 </ul>
               </div>
               <div>
@@ -373,9 +393,13 @@ class ReportPageComponent extends React.Component {
                   Security Issues
                 </h3>
                 The monkey uncovered the following possible set of issues:
-                <ul className="report">
-                  {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ? <li className="report">Possible cross segment traffic. Infected machines could communicate with the Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
-                  {this.state.report.overview.warnings[this.Warning.TUNNEL] ? <li className="report">Lack of Micro-segmentation, machines successfully tunneled monkey activity using unused ports.</li> : null}
+                <ul>
+                  {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
+                    <li>Possible cross segment traffic. Infected machines could communicate with the
+                      Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
+                  {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
+                    <li>Lack of Micro-segmentation, machines successfully tunneled monkey activity
+                      using unused ports.</li> : null}
                 </ul>
               </div>
             </div>
@@ -394,33 +418,38 @@ class ReportPageComponent extends React.Component {
               <div>
                 <Col lg={10}>
                   <p>
-                    The Monkey discovered <span className="label label-info">{this.state.report.glance.scanned.length}</span> machines and successfully breached <span className="label label-warning">{this.state.report.glance.exploited.length}</span> of them.
-                    <br />
-                    In addition, while attempting to exploit additional hosts , security software installed in the network should have picked up the attack attempts and logged them.
-                    <br />
+                    The Monkey discovered <span
+                    className="label label-info">{this.state.report.glance.scanned.length}</span> machines and
+                    successfully breached <span
+                    className="label label-warning">{this.state.report.glance.exploited.length}</span> of them.
+                    <br/>
+                    In addition, while attempting to exploit additional hosts , security software installed in the
+                    network should have picked up the attack attempts and logged them.
+                    <br/>
                     Detailed recommendations in the <a href="#recommendations">next part of the report</a>.
                   </p>
                 </Col>
                 <Col lg={2}>
                   <div style={{marginBottom: '20px'}}>
-                    <ScannedBreachedChart scanned={this.state.report.glance.scanned.length} exploited={this.state.report.glance.exploited.length} />
+                    <ScannedBreachedChart scanned={this.state.report.glance.scanned.length}
+                                          exploited={this.state.report.glance.exploited.length}/>
                   </div>
                 </Col>
               </div>
               <p>
                 From the attacker's point of view, the network looks like this:
               </p>
-              <div style={{height: '80vh'}}>
-                <ReactiveGraph graph={this.state.graph} options={options} />
+              <div style={{position: 'relative', height: '80vh'}}>
+                <ReactiveGraph graph={this.state.graph} options={options}/>
               </div>
               <div style={{marginBottom: '20px'}}>
-                <BreachedServers data={this.state.report.glance.exploited} />
+                <BreachedServers data={this.state.report.glance.exploited}/>
               </div>
               <div style={{marginBottom: '20px'}}>
-                <ScannedServers data={this.state.report.glance.scanned} />
+                <ScannedServers data={this.state.report.glance.scanned}/>
               </div>
               <div>
-                <StolenPasswords data={this.state.report.glance.stolen_creds} />
+                <StolenPasswords data={this.state.report.glance.stolen_creds}/>
               </div>
             </div>
           </div>

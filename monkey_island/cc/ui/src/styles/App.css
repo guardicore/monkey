@@ -49,17 +49,8 @@ body {
     padding-left: 0px;
   }
 
-  ul.report {
-    list-style: disc;
-    padding-left: 40px;
-  }
-
   li {
     overflow: auto;
-  }
-
-  li.report {
-    overflow: visible;
   }
 
   li .number {
@@ -74,11 +65,6 @@ body {
     display: block;
     padding: 0.5em 1em;
     margin: 0.1em 0;
-  }
-
-  li a.report {
-    display: inline;
-    padding: 0em;
   }
 
   li a:hover {
@@ -376,5 +362,54 @@ body {
 @media (max-width: 767px) {
   .markdown-body {
     padding: 15px;
+  }
+}
+
+
+/* Report page */
+
+.report-page {
+  font-size: 1.2em;
+  border: 1px solid #fff;
+  padding: 2em;
+  -webkit-box-shadow: 1px 1px 7px -1px #ccc;
+  box-shadow: 1px 1px 7px -1px #ccc;
+}
+
+.report-page h1 {
+  margin-top: 30px;
+}
+
+.report-page h3 {
+  margin-top: 20px;
+}
+
+.report-page h4 {
+  margin-top: 20px;
+}
+
+.report-page ul {
+  list-style: disc;
+  padding-left: 40px;
+}
+
+.report-page li {
+  overflow: visible;
+}
+
+.report-page li a {
+  display: inline;
+  padding: 0em;
+}
+
+/* Print report styling */
+
+@media print {
+  .sidebar {
+    display: none;
+  }
+
+  .pie-chart {
+    width: 100px;
   }
 }
