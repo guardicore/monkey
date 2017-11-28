@@ -342,7 +342,7 @@ class ReportPageComponent extends React.Component {
                 The monkey uncovered the following possible set of issues:
                 <ul className="report">
                   {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ? <li className="report">Possible cross segment traffic. Infected machines could communicate with the Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
-                  {this.state.report.overview.warnings[this.Warning.TUNNEL] ? <li className="report">Lack of port level segmentation, machines successfully tunneled monkey activity using unused ports.</li> : null}
+                  {this.state.report.overview.warnings[this.Warning.TUNNEL] ? <li className="report">Lack of Micro-segmentation, machines successfully tunneled monkey activity using unused ports.</li> : null}
                 </ul>
               </div>
             </div>
