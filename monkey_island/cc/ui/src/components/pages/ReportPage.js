@@ -76,7 +76,7 @@ class ReportPageComponent extends React.Component {
 
   generateSmbPasswordIssue(issue) {
     return (
-      <div>
+      <li>
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -87,13 +87,13 @@ class ReportPageComponent extends React.Component {
           The attack succeeded by authenticating over SMB protocol with user <span
           className="label label-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateSmbPthIssue(issue) {
     return (
-      <div>
+      <li>
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -104,13 +104,13 @@ class ReportPageComponent extends React.Component {
           The attack succeeded by using a pass-the-hash attack over SMB protocol with user <span
           className="label label-success">{issue.username}</span>.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateWmiPasswordIssue(issue) {
     return (
-      <div>
+      <li>
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -121,13 +121,13 @@ class ReportPageComponent extends React.Component {
           The attack succeeded by authenticating over WMI protocol with user <span
           className="label label-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateWmiPthIssue(issue) {
     return (
-      <div>
+      <li>
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -138,13 +138,13 @@ class ReportPageComponent extends React.Component {
           The attack succeeded by using a pass-the-hash attack over WMI protocol with user <span
           className="label label-success">{issue.username}</span>.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateSshIssue(issue) {
     return (
-      <div>
+      <li>
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -155,13 +155,13 @@ class ReportPageComponent extends React.Component {
           The attack succeeded by authenticating over SSH protocol with user <span
           className="label label-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateRdpIssue(issue) {
     return (
-      <div>
+      <li>
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -172,13 +172,13 @@ class ReportPageComponent extends React.Component {
           The attack succeeded by authenticating over RDP protocol with user <span
           className="label label-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateSambaCryIssue(issue) {
     return (
-      <div>
+      <li>
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <br/>
@@ -192,13 +192,13 @@ class ReportPageComponent extends React.Component {
           className="label label-success">{issue.username}</span> and its password, and by using the SambaCry
           vulnerability.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateElasticIssue(issue) {
     return (
-      <div>
+      <li>
         Update your Elastic Search server to version 1.4.3 and up.
         <CollapsibleWellComponent>
           The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
@@ -207,13 +207,13 @@ class ReportPageComponent extends React.Component {
           <br/>
           The attack succeeded because the Elastic Search server was not parched against CVE-2015-1427.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateShellshockIssue(issue) {
     return (
-      <div>
+      <li>
         Update your Bash to a ShellShock-patched version.
         <CollapsibleWellComponent>
           The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
@@ -224,13 +224,13 @@ class ReportPageComponent extends React.Component {
           className="label label-info">{issue.port}</span> was vulnerable to a shell injection attack on the
           paths: {this.generateShellshockPathListBadges(issue.paths)}.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateConfickerIssue(issue) {
     return (
-      <div>
+      <li>
         Install the latest Windows updates or upgrade to a newer operating system.
         <CollapsibleWellComponent>
           The machine <span className="label label-primary">{issue.machine}</span> with the following address <span
@@ -240,13 +240,13 @@ class ReportPageComponent extends React.Component {
           The attack succeeded because the target machine uses an outdated and unpatched operating system vulnerable to
           Conficker.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateCrossSegmentIssue(issue) {
     return (
-      <div>
+      <li>
         Segment your network. Make sure machines can't access machines from other segments.
         <CollapsibleWellComponent>
           The network can probably be segmented. A monkey instance on <span
@@ -255,24 +255,24 @@ class ReportPageComponent extends React.Component {
           could directly access the Monkey Island C&C server in the
           networks {this.generateInfoBadges(issue.server_networks)}.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
   generateTunnelIssue(issue) {
     return (
-      <div>
+      <li>
         Use micro-segmentation policies to disable communication other than the required.
         <CollapsibleWellComponent>
           Machines are not locked down at port level. Network tunnel was set up from <span
           className="label label-primary">{issue.machine}</span> to <span
           className="label label-primary">{issue.dest}</span>.
         </CollapsibleWellComponent>
-      </div>
+      </li>
     );
   }
 
-  generateIssue = (issue, index) => {
+  generateIssue = (issue) => {
     let data;
     switch (issue.type) {
       case 'smb_password':
@@ -312,23 +312,22 @@ class ReportPageComponent extends React.Component {
         data = this.generateTunnelIssue(issue);
         break;
     }
-    return (
-      <div>
-        <h5><b><i>Recommendation #{index + 1}</i></b></h5>
-        {data}
-      </div>
-    );
+    return data;
   };
 
   generateIssues = (issues) => {
     let issuesDivArray = [];
     for (var machine of Object.keys(issues)) {
       issuesDivArray.push(
-        <h4><b>{machine}</b></h4>
+        <li>
+          <h4><b>{machine}</b></h4>
+          <ol>
+            {issues[machine].map(this.generateIssue)}
+          </ol>
+        </li>
       );
-      issuesDivArray.push(issues[machine].map(this.generateIssue));
     }
-    return issuesDivArray;
+    return <ul>{issuesDivArray}</ul>;
   };
 
   render() {
