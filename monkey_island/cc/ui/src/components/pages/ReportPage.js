@@ -6,6 +6,7 @@ import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {options, edgeGroupToColor} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/StolenPasswords';
 import ScannedBreachedChart from 'components/report-components/ScannedBreachedChart';
+import CollapsableWellComponent from "../report-components/CollapsibleWell";
 
 class ReportPageComponent extends React.Component {
 
@@ -70,20 +71,22 @@ class ReportPageComponent extends React.Component {
   }
 
   generateShellshockPathListBadges(paths) {
-    return paths.map(path =>  <span className="label label-warning" style={{margin: '2px'}}>{path}</span>);
+    return paths.map(path => <span className="label label-warning" style={{margin: '2px'}}>{path}</span>);
   }
 
   generateSmbPasswordIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">SMB</span> attack.
-        <br />
-        The attack succeeded by authenticating over SMB protocol with user <span className="label label-success">{issue.username}</span> and its password.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
-        </ul>
+        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        that is not shared with other computers on the network.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          className="label label-danger">SMB</span> attack.
+          <br/>
+          The attack succeeded by authenticating over SMB protocol with user <span
+          className="label label-success">{issue.username}</span> and its password.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -91,14 +94,16 @@ class ReportPageComponent extends React.Component {
   generateSmbPthIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">SMB</span> attack.
-        <br />
-        The attack succeeded by using a pass-the-hash attack over SMB protocol with user <span className="label label-success">{issue.username}</span>.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
-        </ul>
+        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        that is not shared with other computers on the network.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          className="label label-danger">SMB</span> attack.
+          <br/>
+          The attack succeeded by using a pass-the-hash attack over SMB protocol with user <span
+          className="label label-success">{issue.username}</span>.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -106,14 +111,16 @@ class ReportPageComponent extends React.Component {
   generateWmiPasswordIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">WMI</span> attack.
-        <br />
-        The attack succeeded by authenticating over WMI protocol with user <span className="label label-success">{issue.username}</span> and its password.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
-        </ul>
+        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        that is not shared with other computers on the network.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          className="label label-danger">WMI</span> attack.
+          <br/>
+          The attack succeeded by authenticating over WMI protocol with user <span
+          className="label label-success">{issue.username}</span> and its password.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -121,14 +128,16 @@ class ReportPageComponent extends React.Component {
   generateWmiPthIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">WMI</span> attack.
-        <br />
-        The attack succeeded by using a pass-the-hash attack over WMI protocol with user <span className="label label-success">{issue.username}</span>.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
-        </ul>
+        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        that is not shared with other computers on the network.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          className="label label-danger">WMI</span> attack.
+          <br/>
+          The attack succeeded by using a pass-the-hash attack over WMI protocol with user <span
+          className="label label-success">{issue.username}</span>.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -136,14 +145,16 @@ class ReportPageComponent extends React.Component {
   generateSshIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">SSH</span> attack.
-        <br />
-        The attack succeeded by authenticating over SSH protocol with user <span className="label label-success">{issue.username}</span> and its password.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
-        </ul>
+        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        that is not shared with other computers on the network.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          className="label label-danger">SSH</span> attack.
+          <br/>
+          The attack succeeded by authenticating over SSH protocol with user <span
+          className="label label-success">{issue.username}</span> and its password.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -151,14 +162,16 @@ class ReportPageComponent extends React.Component {
   generateRdpIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">RDP</span> attack.
-        <br />
-        The attack succeeded by authenticating over RDP protocol with user <span className="label label-success">{issue.username}</span> and its password.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
-        </ul>
+        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        that is not shared with other computers on the network.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          className="label label-danger">RDP</span> attack.
+          <br/>
+          The attack succeeded by authenticating over RDP protocol with user <span
+          className="label label-success">{issue.username}</span> and its password.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -166,15 +179,19 @@ class ReportPageComponent extends React.Component {
   generateSambaCryIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">SambaCry</span> attack.
-        <br />
-        The attack succeeded by authenticating over SMB protocol with user <span className="label label-success">{issue.username}</span> and its password, and by using the SambaCry vulnerability.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Update your Samba server to 4.4.14 and up, 4.5.10 and up, or 4.6.4 and up.</li>
-          <li className="report">Use a complex one-use password that is not shared with other computers on the network.</li>
-        </ul>
+        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        that is not shared with other computers on the network.
+        <br/>
+        Update your Samba server to 4.4.14 and up, 4.5.10 and up, or 4.6.4 and up.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          className="label label-danger">SambaCry</span> attack.
+          <br/>
+          The attack succeeded by authenticating over SMB protocol with user <span
+          className="label label-success">{issue.username}</span> and its password, and by using the SambaCry
+          vulnerability.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -182,14 +199,14 @@ class ReportPageComponent extends React.Component {
   generateElasticIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to an <span className="label label-danger">Elastic Groovy</span> attack.
-        <br />
-        The attack succeeded because the Elastic Search server was not parched against CVE-2015-1427.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Update your Elastic Search server to version 1.4.3 and up.</li>
-        </ul>
+        Update your Elastic Search server to version 1.4.3 and up.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to an <span
+          className="label label-danger">Elastic Groovy</span> attack.
+          <br/>
+          The attack succeeded because the Elastic Search server was not parched against CVE-2015-1427.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -197,14 +214,16 @@ class ReportPageComponent extends React.Component {
   generateShellshockIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">ShellShock</span> attack.
-        <br />
-        The attack succeeded because the HTTP server running on port <span className="label label-info">{issue.port}</span> was vulnerable to a shell injection attack on the paths: {this.generateShellshockPathListBadges(issue.paths)}.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Update your Bash to a ShellShock-patched version.</li>
-        </ul>
+        Update your Bash to a ShellShock-patched version.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          className="label label-danger">ShellShock</span> attack.
+          <br/>
+          The attack succeeded because the HTTP server running on port <span
+          className="label label-info">{issue.port}</span> was vulnerable to a shell injection attack on the
+          paths: {this.generateShellshockPathListBadges(issue.paths)}.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -212,14 +231,15 @@ class ReportPageComponent extends React.Component {
   generateConfickerIssue(issue) {
     return (
       <div>
-        The machine <span className="label label-primary">{issue.machine}</span> with the following address <span className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span className="label label-danger">Conficker</span> attack.
-        <br />
-        The attack succeeded because the target machine uses an outdated and unpatched operating system vulnerable to Conficker.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Install the latest Windows updates or upgrade to a newer operating system.</li>
-        </ul>
+        Install the latest Windows updates or upgrade to a newer operating system.
+        <CollapsableWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> with the following address <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          className="label label-danger">Conficker</span> attack.
+          <br/>
+          The attack succeeded because the target machine uses an outdated and unpatched operating system vulnerable to
+          Conficker.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -227,12 +247,14 @@ class ReportPageComponent extends React.Component {
   generateCrossSegmentIssue(issue) {
     return (
       <div>
-        The network can probably be segmented. A monkey instance on <span className="label label-primary">{issue.machine}</span> in the networks {this.generateInfoBadges(issue.networks)} could directly access the Monkey Island C&C server in the networks {this.generateInfoBadges(issue.server_networks)}.
-        <br />
-        In order to protect the network, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Segment your network. Make sure machines can't access machines from other segments.</li>
-        </ul>
+        Segment your network. Make sure machines can't access machines from other segments.
+        <CollapsableWellComponent>
+          The network can probably be segmented. A monkey instance on <span
+          className="label label-primary">{issue.machine}</span> in the
+          networks {this.generateInfoBadges(issue.networks)}
+          could directly access the Monkey Island C&C server in the
+          networks {this.generateInfoBadges(issue.server_networks)}.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -240,12 +262,12 @@ class ReportPageComponent extends React.Component {
   generateTunnelIssue(issue) {
     return (
       <div>
-        Machines are not locked down at port level. Network tunnel was set up from <span className="label label-primary">{issue.machine}</span> to <span className="label label-primary">{issue.dest}</span>.
-        <br />
-        In order to protect the machine, the following steps should be performed:
-        <ul className="report">
-          <li className="report">Use micro-segmentation policies to disable communication other than the required.</li>
-        </ul>
+        Use micro-segmentation policies to disable communication other than the required.
+        <CollapsableWellComponent>
+          Machines are not locked down at port level. Network tunnel was set up from <span
+          className="label label-primary">{issue.machine}</span> to <span
+          className="label label-primary">{issue.dest}</span>.
+        </CollapsableWellComponent>
       </div>
     );
   }
@@ -292,10 +314,21 @@ class ReportPageComponent extends React.Component {
     }
     return (
       <div>
-        <h4><b><i>Issue #{index+1}</i></b></h4>
+        <h5><b><i>Recommendation #{index + 1}</i></b></h5>
         {data}
       </div>
     );
+  };
+
+  generateIssues = (issues) => {
+    let issuesDivArray = [];
+    for (var machine of Object.keys(issues)) {
+      issuesDivArray.push(
+        <h4><b>{machine}</b></h4>
+      );
+      issuesDivArray.push(issues[machine].map(this.generateIssue));
+    }
+    return issuesDivArray;
   };
 
   render() {
@@ -350,9 +383,9 @@ class ReportPageComponent extends React.Component {
               <h1>
                 Recommendations
               </h1>
-                <div>
-                  {this.state.report.recommendations.issues.map(this.generateIssue)}
-                </div>
+              <div>
+                {this.generateIssues(this.state.report.recommendations.issues)}
+              </div>
             </div>
             <div id="glance">
               <h1>

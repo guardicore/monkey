@@ -252,8 +252,13 @@ class ReportService:
     @staticmethod
     def get_issues():
         issues = ReportService.get_exploits() + ReportService.get_tunnels() + ReportService.get_cross_segment_issues()
-        issues.sort(lambda x, y: 1 if x['machine'] > y['machine'] else -1 if x['machine'] < y['machine'] else 0)
-        return issues
+        issues_dict = {}
+        for issue in issues:
+            machine = issue['machine']
+            if machine not in issues_dict:
+                issues_dict[machine] = []
+            issues_dict[machine].append(issue)
+        return issues_dict
 
     @staticmethod
     def get_report():
