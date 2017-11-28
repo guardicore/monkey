@@ -5,8 +5,8 @@ import ScannedServers from 'components/report-components/ScannedServers';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/StolenPasswords';
-import ScannedBreachedChart from 'components/report-components/ScannedBreachedChart';
 import CollapsibleWellComponent from 'components/report-components/CollapsibleWell';
+import {Line} from 'rc-progress';
 
 class ReportPageComponent extends React.Component {
 
@@ -336,6 +336,9 @@ class ReportPageComponent extends React.Component {
     if (Object.keys(this.state.report).length === 0) {
       content = (<h1>Generating Report...</h1>);
     } else {
+      let exploitPercentage =
+        (100 * this.state.report.glance.exploited.length) / this.state.report.glance.scanned.length;
+
       content =
         (
           <div className="report-page">
@@ -416,25 +419,22 @@ class ReportPageComponent extends React.Component {
                 The Network from the Monkey's Eyes
               </h1>
               <div>
-                <Col lg={10}>
-                  <p>
-                    The Monkey discovered <span
-                    className="label label-info">{this.state.report.glance.scanned.length}</span> machines and
-                    successfully breached <span
-                    className="label label-warning">{this.state.report.glance.exploited.length}</span> of them.
-                    <br/>
-                    In addition, while attempting to exploit additional hosts , security software installed in the
-                    network should have picked up the attack attempts and logged them.
-                    <br/>
-                    Detailed recommendations in the <a href="#recommendations">next part of the report</a>.
-                  </p>
-                </Col>
-                <Col lg={2}>
-                  <div style={{marginBottom: '20px'}}>
-                    <ScannedBreachedChart scanned={this.state.report.glance.scanned.length}
-                                          exploited={this.state.report.glance.exploited.length}/>
-                  </div>
-                </Col>
+                <p>
+                  The Monkey discovered <span
+                  className="label label-warning">{this.state.report.glance.scanned.length}</span> machines and
+                  successfully breached <span
+                  className="label label-danger">{this.state.report.glance.exploited.length}</span> of them.
+                  <br/>
+                  In addition, while attempting to exploit additional hosts , security software installed in the
+                  network should have picked up the attack attempts and logged them.
+                  <br/>
+                  Detailed recommendations in the <a href="#recommendations">next part of the report</a>.
+                </p>
+                <div className="center-block text-center" style={{margin: '10px'}}>
+                  <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4" trailWidth="4"
+                        strokeColor="#d9534f" trailColor="#f0ad4e"/>
+                  <b>{Math.round(exploitPercentage)}% of machines exploited</b>
+                </div>
               </div>
               <p>
                 From the attacker's point of view, the network looks like this:
