@@ -10,18 +10,28 @@ class CollapsibleWellComponent extends React.Component {
   }
 
   render() {
+    let well =
+      (
+        <Well style={{margin: '10px'}}>
+          {this.props.children}
+        </Well>
+      );
+
     return (
       <div>
-        <a onClick={() => this.setState({ open: !this.state.open })}>
-          Read More...
-        </a>
-        <Collapse in={this.state.open}>
-          <div>
-            <Well style={{margin: '10px'}}>
-              {this.props.children}
-            </Well>
-          </div>
-        </Collapse>
+        <div className="no-print">
+          <a onClick={() => this.setState({open: !this.state.open})}>
+            Read More...
+          </a>
+          <Collapse in={this.state.open}>
+            <div>
+              {well}
+            </div>
+          </Collapse>
+        </div>
+        <div className="force-print" style={{display: 'none'}}>
+          {well}
+        </div>
       </div>
     );
   }

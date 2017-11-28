@@ -1,5 +1,5 @@
 import React from 'react';
-import {Col} from 'react-bootstrap';
+import {Button, Col} from 'react-bootstrap';
 import BreachedServers from 'components/report-components/BreachedServers';
 import ScannedServers from 'components/report-components/ScannedServers';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
@@ -343,8 +343,11 @@ class ReportPageComponent extends React.Component {
         (
           <div className="report-page">
             <div id="overview">
+              <div className="text-center no-print">
+                <Button bsSize="large" onClick={() => {print();}}><i className="glyphicon glyphicon-print"/> Print Report</Button>
+              </div>
               <h1>
-                Executive Summary
+                Overview
               </h1>
               <p>
                 The first monkey run was started on <span
@@ -430,10 +433,11 @@ class ReportPageComponent extends React.Component {
                   <br/>
                   Detailed recommendations in the <a href="#recommendations">next part of the report</a>.
                 </p>
-                <div className="center-block text-center" style={{margin: '10px'}}>
-                  <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4" trailWidth="4"
+                <div className="text-center" style={{margin: '10px'}}>
+                  <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4"
+                        trailWidth="4"
                         strokeColor="#d9534f" trailColor="#f0ad4e"/>
-                  <b>{Math.round(exploitPercentage)}% of machines exploited</b>
+                  <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
                 </div>
               </div>
               <p>

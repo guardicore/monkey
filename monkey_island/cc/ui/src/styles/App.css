@@ -409,6 +409,14 @@ body {
     display: none;
   }
 
+  .no-print {
+    display: none;
+  }
+
+  .force-print {
+    display: block !important;
+  }
+
   .pie-chart {
     width: 100px;
   }
