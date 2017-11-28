@@ -80,7 +80,7 @@ class ReportService:
             {
                 'label': NodeService.get_node_hostname(NodeService.get_node_or_monkey_by_id(monkey['id'])),
                 'ip_addresses': monkey['ip_addresses'],
-                'exploits': [exploit['exploiter'] for exploit in monkey['exploits'] if exploit['result']]
+                'exploits': list(set([exploit['exploiter'] for exploit in monkey['exploits'] if exploit['result']]))
             }
             for monkey in exploited]
 
