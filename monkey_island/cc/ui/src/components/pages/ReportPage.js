@@ -311,16 +311,21 @@ class ReportPageComponent extends React.Component {
                 Overview
               </h1>
               <p>
-                The monkey run was started on <span className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span className="label label-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished propagation attempts.
+                The first monkey run was started on <span className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span className="label label-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished propagation attempts.
               </p>
               <p>
-                From the attacker's point of view, the network looks like this:
+                A full report of the Monkeys activities follows.
               </p>
-              <div style={{height: '80vh'}}>
-                <ReactiveGraph graph={this.state.graph} options={options} />
-              </div>
+            </div>
+            <div id="findings">
+              <h1>
+                Security Findings
+              </h1>
               <div>
-                During this simulated attack the Monkey uncovered <span className="label label-warning">{this.state.report.overview.issues.filter(function(x){return x===true;}).length}</span>, detailed below. The security issues uncovered include:
+                <h3>
+                  Immediate Threats
+                </h3>
+                During this simulated attack the Monkey uncovered <span className="label label-warning">{this.state.report.overview.issues.filter(function(x){return x===true;}).length} issues</span>, detailed below. The security issues uncovered include:
                 <ul className="report">
                   {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ? <li className="report">Users with weak passwords.</li> : null}
                   {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?<li className="report">Stolen passwords/hashes were used to exploit other machines.</li> : null}
@@ -331,19 +336,27 @@ class ReportPageComponent extends React.Component {
                 </ul>
               </div>
               <div>
-                In addition, the monkey uncovered the following possible set of issues:
+                <h3>
+                  Security Issues
+                </h3>
+                The monkey uncovered the following possible set of issues:
                 <ul className="report">
                   {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ? <li className="report">Possible cross segment traffic. Infected machines could communicate with the Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ? <li className="report">Lack of port level segmentation, machines successfully tunneled monkey activity using unused ports.</li> : null}
                 </ul>
               </div>
-              <p>
-                A full report of the Monkeys activities follows.
-              </p>
+            </div>
+            <div id="recommendations">
+              <h1>
+                Recommendations
+              </h1>
+                <div>
+                  {this.state.report.recommendations.issues.map(this.generateIssue)}
+                </div>
             </div>
             <div id="glance">
               <h1>
-                At a Glance
+                The Network from the Monkey's Eyes
               </h1>
               <div>
                 <Col lg={10}>
@@ -361,6 +374,12 @@ class ReportPageComponent extends React.Component {
                   </div>
                 </Col>
               </div>
+              <p>
+                From the attacker's point of view, the network looks like this:
+              </p>
+              <div style={{height: '80vh'}}>
+                <ReactiveGraph graph={this.state.graph} options={options} />
+              </div>
               <div style={{marginBottom: '20px'}}>
                 <BreachedServers data={this.state.report.glance.exploited} />
               </div>
@@ -370,14 +389,6 @@ class ReportPageComponent extends React.Component {
               <div>
                 <StolenPasswords data={this.state.report.glance.stolen_creds} />
               </div>
-            </div>
-            <div id="recommendations">
-              <h1>
-                Recommendations
-              </h1>
-                <div>
-                  {this.state.report.recommendations.issues.map(this.generateIssue)}
-                </div>
             </div>
           </div>
         );
