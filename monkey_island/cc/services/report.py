@@ -43,7 +43,7 @@ class ReportService:
         return [
             {
                 'type': 'tunnel',
-                'origin': NodeService.get_node_hostname(NodeService.get_node_or_monkey_by_id(tunnel['_id'])),
+                'machine': NodeService.get_node_hostname(NodeService.get_node_or_monkey_by_id(tunnel['_id'])),
                 'dest': NodeService.get_node_hostname(NodeService.get_node_or_monkey_by_id(tunnel['tunnel']))
             }
             for tunnel in mongo.db.monkey.find({'tunnel': {'$exists': True}}, {'tunnel': 1})]
@@ -251,7 +251,9 @@ class ReportService:
 
     @staticmethod
     def get_issues():
-        return ReportService.get_exploits() + ReportService.get_tunnels() + ReportService.get_cross_segment_issues()
+        issues = ReportService.get_exploits() + ReportService.get_tunnels() + ReportService.get_cross_segment_issues()
+        issues.sort(lambda x, y: 1 if x['machine'] > y['machine'] else -1 if x['machine'] < y['machine'] else 0)
+        return issues
 
     @staticmethod
     def get_report():

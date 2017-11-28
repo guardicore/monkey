@@ -240,7 +240,7 @@ class ReportPageComponent extends React.Component {
   generateTunnelIssue(issue) {
     return (
       <div>
-        Machines are not locked down at port level. Network tunnel was set up from <span className="label label-primary">{issue.origin}</span> to <span className="label label-primary">{issue.dest}</span>.
+        Machines are not locked down at port level. Network tunnel was set up from <span className="label label-primary">{issue.machine}</span> to <span className="label label-primary">{issue.dest}</span>.
         <br />
         In order to protect the machine, the following steps should be performed:
         <ul className="report">
