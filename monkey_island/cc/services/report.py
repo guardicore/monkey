@@ -1,6 +1,7 @@
 import ipaddress
 
 from cc.database import mongo
+from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 from cc.utils import local_ip_addresses, get_subnets
@@ -261,11 +262,56 @@ class ReportService:
         return issues_dict
 
     @staticmethod
+    def get_manual_monkeys():
+        return [monkey['hostname'] for monkey in mongo.db.monkey.find({}, {'hostname': 1, 'parent': 1, 'guid': 1}) if
+                NodeService.get_monkey_manual_run(monkey)]
+
+    @staticmethod
+    def get_config_users():
+        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_user_list'])
+
+    @staticmethod
+    def get_config_passwords():
+        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'])
+
+    @staticmethod
+    def get_config_exploits():
+        exploit_display_dict = \
+            {
+                'SmbExploiter': 'SMB Exploiter',
+                'WmiExploiter': 'WMI Exploiter',
+                'SSHExploiter': 'SSH Exploiter',
+                'RdpExploiter': 'RDP Exploiter',
+                'SambaCryExploiter': 'SambaCry Exploiter',
+                'ElasticGroovyExploiter': 'Elastic Groovy Exploiter',
+                'Ms08_067_Exploiter': 'Conficker Exploiter',
+                'ShellShockExploiter': 'ShellShock Exploiter',
+            }
+        return [exploit_display_dict[exploit] for exploit in
+                ConfigService.get_config_value(['exploits', 'general', 'exploiter_classes'])]
+
+    @staticmethod
+    def get_config_ips():
+        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class']) != 'FixedRange':
+            return []
+        return ConfigService.get_config_value(['basic_network', 'network_range', 'range_fixed'])
+
+    @staticmethod
+    def get_config_scan():
+        return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'])
+
+    @staticmethod
     def get_report():
         return \
             {
                 'overview':
                     {
+                        'manual_monkeys': ReportService.get_manual_monkeys(),
+                        'config_users': ReportService.get_config_users(),
+                        'config_passwords': ReportService.get_config_passwords(),
+                        'config_exploits': ReportService.get_config_exploits(),
+                        'config_ips': ReportService.get_config_ips(),
+                        'config_scan': ReportService.get_config_scan(),
                         'monkey_start_time': ReportService.get_first_monkey_time().strftime("%d/%m/%Y %H:%M:%S"),
                         'monkey_duration': ReportService.get_monkey_duration(),
                         'issues': [False, True, True, True, False, True],

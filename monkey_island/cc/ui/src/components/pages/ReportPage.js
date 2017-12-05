@@ -337,127 +337,210 @@ class ReportPageComponent extends React.Component {
     } else {
       let exploitPercentage =
         (100 * this.state.report.glance.exploited.length) / this.state.report.glance.scanned.length;
-
       content =
         (
-          <div className="report-page">
-            <div id="overview">
-              <div className="text-center no-print">
-                <Button bsSize="large" onClick={() => {print();}}><i className="glyphicon glyphicon-print"/> Print Report</Button>
-              </div>
-              <h1>
-                Overview
-              </h1>
-              <p>
-                The first monkey run was started on <span
-                className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span
-                className="label label-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished
-                propagation attempts.
-              </p>
-              <p>
-                A full report of the Monkeys activities follows.
-              </p>
+          <div>
+            <div className="text-center no-print" style={{marginBottom: '20px'}}>
+              <Button bsSize="large" onClick={() => {
+                print();
+              }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
             </div>
-            <div id="findings">
-              <h1>
-                Security Findings
-              </h1>
-              <div>
-                <h3>
-                  Immediate Threats
-                </h3>
-                During this simulated attack the Monkey uncovered <span
-                className="label label-warning">{this.state.report.overview.issues.filter(function (x) {
-                return x === true;
-              }).length} issues</span>, detailed below. The security issues uncovered include:
-                <ul>
-                  {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
-                    <li>Users with weak passwords.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
-                    <li>Stolen passwords/hashes were used to exploit other machines.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.ELASTIC] ?
-                    <li>Elastic Search servers not patched for <a
-                      href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
-                    </li> : null}
-                  {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
-                    <li>Samba servers not patched for ‘SambaCry’ (<a
-                      href="https://www.samba.org/samba/security/CVE-2017-7494.html"
-                    >CVE-2017-7494</a>).</li> : null}
-                  {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ?
-                    <li>Machines not patched for the ‘Shellshock’ (<a
-                      href="https://www.cvedetails.com/cve/CVE-2014-6271">CVE-2014-6271</a>).
-                    </li> : null}
-                  {this.state.report.overview.issues[this.Issue.CONFICKER] ?
-                    <li>Machines not patched for the ‘Conficker’ (<a
-                      href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
-                    >MS08-067</a>).</li> : null}
-                </ul>
-              </div>
-              <div>
-                <h3>
-                  Security Issues
-                </h3>
-                The monkey uncovered the following possible set of issues:
-                <ul>
-                  {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
-                    <li>Possible cross segment traffic. Infected machines could communicate with the
-                      Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
-                  {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                    <li>Lack of Micro-segmentation, machines successfully tunneled monkey activity
-                      using unused ports.</li> : null}
-                </ul>
-              </div>
-            </div>
-            <div id="recommendations">
-              <h1>
-                Recommendations
-              </h1>
-              <div>
-                {this.generateIssues(this.state.report.recommendations.issues)}
-              </div>
-            </div>
-            <div id="glance">
-              <h1>
-                The Network from the Monkey's Eyes
-              </h1>
-              <div>
-                <p>
-                  The Monkey discovered <span
-                  className="label label-warning">{this.state.report.glance.scanned.length}</span> machines and
-                  successfully breached <span
-                  className="label label-danger">{this.state.report.glance.exploited.length}</span> of them.
-                  <br/>
-                  In addition, while attempting to exploit additional hosts , security software installed in the
-                  network should have picked up the attack attempts and logged them.
-                  <br/>
-                  Detailed recommendations in the <a href="#recommendations">next part of the report</a>.
+            <div className="report-page">
+              <div id="overview">
+                <h1>
+                  Overview
+                </h1>
+                {
+                  this.state.report.glance.exploited.length > 0 ?
+                    (<p className="alert alert-danger">
+                      <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
+                      Critical security issues found by Infection Monkey!
+                    </p>) :
+                    (<p className="alert alert-success">
+                      <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+                      Infection Monkey did not find any critical security issues.
+                    </p>)
+                }
+                <p className="alert alert-info">
+                  <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+                  To improve the monkey's success rate, try adding users and passwords, and enabling the "Local
+                  network scan" config value under "Basic - Network"
                 </p>
-                <div className="text-center" style={{margin: '10px'}}>
-                  <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4"
-                        trailWidth="4"
-                        strokeColor="#d9534f" trailColor="#f0ad4e"/>
-                  <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
+                <p>
+                  The first monkey run was started on <span
+                  className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span
+                  className="label label-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished
+                  propagation attempts.
+                </p>
+                <p>
+                  The monkey started propagating from the following machines where it was manually installed:
+                  <ul>
+                    {this.state.report.overview.manual_monkeys.map(x => <li>{x}</li>)}
+                  </ul>
+                </p>
+                <p>
+                  The monkeys were run with the following configuration:
+                </p>
+                {
+                  this.state.report.overview.config_users.length > 0 ?
+                    <p>
+                      Users to try:
+                      <ul>
+                        {this.state.report.overview.config_users.map(x => <li>{x}</li>)}
+                      </ul>
+                      Passwords to try:
+                      <ul>
+                        {this.state.report.overview.config_passwords.map(x => <li>{x.substr(0, 3) + '******'}</li>)}
+                      </ul>
+                    </p>
+                    :
+                    <p>
+                      No Users and Passwords were provided for the monkey.
+                    </p>
+                }
+                {
+                  this.state.report.overview.config_exploits.length > 0 ?
+                    <p>
+                      Use the following exploit methods:
+                      <ul>
+                        {this.state.report.overview.config_exploits.map(x => <li>{x}</li>)}
+                      </ul>
+                    </p>
+                    :
+                    <p>
+                      Don't use any exploit.
+                    </p>
+                }
+                {
+                  this.state.report.overview.config_ips.length > 0 ?
+                    <p>
+                      Scan the following IPs:
+                      <ul>
+                        {this.state.report.overview.config_ips.map(x => <li>{x}</li>)}
+                      </ul>
+                    </p>
+                    :
+                    ''
+                }
+                {
+                  this.state.report.overview.config_scan ?
+                    ''
+                    :
+                    <p>
+                      Monkeys were configured to not scan local network
+                    </p>
+                }
+                <p>
+                  A full report of the Monkeys activities follows.
+                </p>
+              </div>
+              <div id="findings">
+                <h1>
+                  Security Findings
+                </h1>
+                <div>
+                  <h3>
+                    Immediate Threats
+                  </h3>
+                  During this simulated attack the Monkey uncovered <span
+                  className="label label-warning">{this.state.report.overview.issues.filter(function (x) {
+                  return x === true;
+                }).length} issues</span>, detailed below. The security issues uncovered include:
+                  <ul>
+                    {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
+                      <li>Users with weak passwords.</li> : null}
+                    {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
+                      <li>Stolen passwords/hashes were used to exploit other machines.</li> : null}
+                    {this.state.report.overview.issues[this.Issue.ELASTIC] ?
+                      <li>Elastic Search servers not patched for <a
+                        href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
+                      </li> : null}
+                    {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
+                      <li>Samba servers not patched for ‘SambaCry’ (<a
+                        href="https://www.samba.org/samba/security/CVE-2017-7494.html"
+                      >CVE-2017-7494</a>).</li> : null}
+                    {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ?
+                      <li>Machines not patched for the ‘Shellshock’ (<a
+                        href="https://www.cvedetails.com/cve/CVE-2014-6271">CVE-2014-6271</a>).
+                      </li> : null}
+                    {this.state.report.overview.issues[this.Issue.CONFICKER] ?
+                      <li>Machines not patched for the ‘Conficker’ (<a
+                        href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
+                      >MS08-067</a>).</li> : null}
+                  </ul>
+                </div>
+                <div>
+                  <h3>
+                    Security Issues
+                  </h3>
+                  The monkey uncovered the following possible set of issues:
+                  <ul>
+                    {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
+                      <li>Possible cross segment traffic. Infected machines could communicate with the
+                        Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
+                    {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
+                      <li>Lack of Micro-segmentation, machines successfully tunneled monkey activity
+                        using unused ports.</li> : null}
+                  </ul>
                 </div>
               </div>
-              <p>
-                From the attacker's point of view, the network looks like this:
-              </p>
-              <div style={{position: 'relative', height: '80vh'}}>
-                <ReactiveGraph graph={this.state.graph} options={options}/>
+              <div id="recommendations">
+                <h1>
+                  Recommendations
+                </h1>
+                <div>
+                  {this.generateIssues(this.state.report.recommendations.issues)}
+                </div>
               </div>
-              <div style={{marginBottom: '20px'}}>
-                <BreachedServers data={this.state.report.glance.exploited}/>
+              <div id="glance">
+                <h1>
+                  The Network from the Monkey's Eyes
+                </h1>
+                <div>
+                  <p>
+                    The Monkey discovered <span
+                    className="label label-warning">{this.state.report.glance.scanned.length}</span> machines and
+                    successfully breached <span
+                    className="label label-danger">{this.state.report.glance.exploited.length}</span> of them.
+                    <br/>
+                    In addition, while attempting to exploit additional hosts , security software installed in the
+                    network should have picked up the attack attempts and logged them.
+                    <br/>
+                    Detailed recommendations in the <a href="#recommendations">next part of the report</a>.
+                  </p>
+                  <div className="text-center" style={{margin: '10px'}}>
+                    <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4"
+                          trailWidth="4"
+                          strokeColor="#d9534f" trailColor="#f0ad4e"/>
+                    <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
+                  </div>
+                </div>
+                <p>
+                  From the attacker's point of view, the network looks like this:
+                </p>
+                <div style={{position: 'relative', height: '80vh'}}>
+                  <ReactiveGraph graph={this.state.graph} options={options}/>
+                </div>
+                <div style={{marginBottom: '20px'}}>
+                  <BreachedServers data={this.state.report.glance.exploited}/>
+                </div>
+                <div style={{marginBottom: '20px'}}>
+                  <ScannedServers data={this.state.report.glance.scanned}/>
+                </div>
+                <div>
+                  <StolenPasswords data={this.state.report.glance.stolen_creds}/>
+                </div>
               </div>
-              <div style={{marginBottom: '20px'}}>
-                <ScannedServers data={this.state.report.glance.scanned}/>
-              </div>
-              <div>
-                <StolenPasswords data={this.state.report.glance.stolen_creds}/>
-              </div>
+            </div>
+            <div className="text-center no-print" style={{marginTop: '20px'}}>
+              <Button bsSize="large" onClick={() => {
+                print();
+              }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
             </div>
           </div>
         );
     }
+
     return (
       <Col xs={12} lg={8}>
         <h1 className="page-title">4. Security Report</h1>
