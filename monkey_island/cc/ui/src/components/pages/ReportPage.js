@@ -30,15 +30,28 @@ class ReportPageComponent extends React.Component {
     super(props);
     this.state = {
       report: {},
-      graph: {nodes: [], edges: []}
+      graph: {nodes: [], edges: []},
+      allMonkeysAreDead: false
     };
   }
 
   componentDidMount() {
     this.getReportFromServer();
     this.updateMapFromServer();
+    this.updateMonkeysRunning();
     this.interval = setInterval(this.updateMapFromServer, 1000);
   }
+
+  updateMonkeysRunning = () => {
+    fetch('/api')
+      .then(res => res.json())
+      .then(res => {
+        // This check is used to prevent unnecessary re-rendering
+        this.setState({
+          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done'])
+        });
+      });
+  };
 
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -361,8 +374,18 @@ class ReportPageComponent extends React.Component {
                       Infection Monkey did not find any critical security issues.
                     </p>)
                 }
+                {
+                  this.state.allMonkeysAreDead ?
+                    ''
+                    :
+                    (<p className="alert alert-warning">
+                      <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+                      Some monkeys are still running. To get the best report it's best to wait for all of them to finish
+                      running.
+                    </p>)
+                }
                 <p className="alert alert-info">
-                  <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+                  <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
                   To improve the monkey's success rate, try adding users and passwords, and enabling the "Local
                   network scan" config value under "Basic - Network"
                 </p>
