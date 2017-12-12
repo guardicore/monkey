@@ -282,11 +282,11 @@ class ReportService:
 
     @staticmethod
     def get_config_users():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_user_list'])
+        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_user_list'], True)
 
     @staticmethod
     def get_config_passwords():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'])
+        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'], True)
 
     @staticmethod
     def get_config_exploits():
@@ -294,7 +294,7 @@ class ReportService:
         default_exploits = ConfigService.get_default_config()
         for namespace in exploits_config_value:
             default_exploits = default_exploits[namespace]
-        exploits = ConfigService.get_config_value(exploits_config_value)
+        exploits = ConfigService.get_config_value(exploits_config_value, True)
 
         if exploits == default_exploits:
             return ['default']
@@ -304,13 +304,13 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class']) != 'FixedRange':
+        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class'], True) != 'FixedRange':
             return []
-        return ConfigService.get_config_value(['basic_network', 'network_range', 'range_fixed'])
+        return ConfigService.get_config_value(['basic_network', 'network_range', 'range_fixed'], True)
 
     @staticmethod
     def get_config_scan():
-        return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'])
+        return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True)
 
     @staticmethod
     def get_report():
