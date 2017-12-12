@@ -276,6 +276,15 @@ class ReportService:
 
     @staticmethod
     def get_config_exploits():
+        exploits_config_value = ['exploits', 'general', 'exploiter_classes']
+        default_exploits = ConfigService.get_default_config()
+        for namespace in exploits_config_value:
+            default_exploits = default_exploits[namespace]
+        exploits = ConfigService.get_config_value(exploits_config_value)
+
+        if exploits == default_exploits:
+            return ['default']
+
         exploit_display_dict = \
             {
                 'SmbExploiter': 'SMB Exploiter',
@@ -288,7 +297,7 @@ class ReportService:
                 'ShellShockExploiter': 'ShellShock Exploiter',
             }
         return [exploit_display_dict[exploit] for exploit in
-                ConfigService.get_config_value(['exploits', 'general', 'exploiter_classes'])]
+                exploits]
 
     @staticmethod
     def get_config_ips():

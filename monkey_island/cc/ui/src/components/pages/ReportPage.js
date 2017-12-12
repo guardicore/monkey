@@ -330,7 +330,7 @@ class ReportPageComponent extends React.Component {
 
   generateIssues = (issues) => {
     let issuesDivArray = [];
-    for (var machine of Object.keys(issues)) {
+    for (let machine of Object.keys(issues)) {
       issuesDivArray.push(
         <li>
           <h4><b>{machine}</b></h4>
@@ -342,6 +342,17 @@ class ReportPageComponent extends React.Component {
     }
     return <ul>{issuesDivArray}</ul>;
   };
+
+  didMonkeyFindIssues = () => {
+    for (let issue of Object.keys(this.state.report.overview.issues)) {
+      if (this.state.report.overview.issues[issue]) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+
 
   render() {
     let content;
@@ -384,11 +395,16 @@ class ReportPageComponent extends React.Component {
                       running.
                     </p>)
                 }
-                <p className="alert alert-info">
-                  <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                  To improve the monkey's detection rates, try adding users and passwords and enable the "Local network
-                  scan" config value under <b>Basic - Network</b>.
-                </p>
+                {
+                  this.didMonkeyFindIssues() ?
+                    ''
+                    :
+                    <p className="alert alert-info">
+                      <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+                      To improve the monkey's detection rates, try adding users and passwords and enable the "Local network
+                      scan" config value under <b>Basic - Network</b>.
+                    </p>
+                }
                 <p>
                   The first monkey run was started on <span
                   className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span
@@ -423,12 +439,17 @@ class ReportPageComponent extends React.Component {
                 }
                 {
                   this.state.report.overview.config_exploits.length > 0 ?
-                    <p>
-                      Used the following exploit methods:
-                      <ul>
-                        {this.state.report.overview.config_exploits.map(x => <li>{x}</li>)}
-                      </ul>
-                    </p>
+                    (
+                      this.state.report.overview.config_exploits[0] === 'default' ?
+                        ''
+                        :
+                        <p>
+                          Used the following exploit methods:
+                          <ul>
+                            {this.state.report.overview.config_exploits.map(x => <li>{x}</li>)}
+                          </ul>
+                        </p>
+                    )
                     :
                     <p>
                       Don't use any exploit.
