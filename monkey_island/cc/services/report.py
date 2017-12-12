@@ -76,17 +76,16 @@ class ReportService:
     @staticmethod
     def get_scanned():
         nodes = \
-            [NodeService.get_displayed_node_by_id(node['_id']) for node in mongo.db.node.find({}, {'_id': 1})] \
-            + [NodeService.get_displayed_node_by_id(monkey['_id']) for monkey in mongo.db.monkey.find({}, {'_id': 1})]
+            [NodeService.get_displayed_node_by_id(node['_id'], True) for node in mongo.db.node.find({}, {'_id': 1})] \
+            + [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in mongo.db.monkey.find({}, {'_id': 1})]
         nodes = [
             {
-                'label':
-                    node['hostname'] if 'hostname' in node else NodeService.get_node_by_id(node['id'])['os']['version'],
+                'label': node['label'],
                 'ip_addresses': node['ip_addresses'],
                 'accessible_from_nodes':
                     (x['hostname'] for x in
-                     (NodeService.get_displayed_node_by_id(edge['from'])
-                      for edge in EdgeService.get_displayed_edges_by_to(node['id']))),
+                     (NodeService.get_displayed_node_by_id(edge['from'], True)
+                      for edge in EdgeService.get_displayed_edges_by_to(node['id'], True))),
                 'services': node['services']
             }
             for node in nodes]
@@ -96,14 +95,14 @@ class ReportService:
     @staticmethod
     def get_exploited():
         exploited = \
-            [NodeService.get_displayed_node_by_id(monkey['_id']) for monkey in mongo.db.monkey.find({}, {'_id': 1})
+            [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in mongo.db.monkey.find({}, {'_id': 1})
              if not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey['_id']))] \
-            + [NodeService.get_displayed_node_by_id(node['_id'])
+            + [NodeService.get_displayed_node_by_id(node['_id'], True)
                for node in mongo.db.node.find({'exploited': True}, {'_id': 1})]
 
         exploited = [
             {
-                'label': NodeService.get_node_hostname(NodeService.get_node_or_monkey_by_id(monkey['id'])),
+                'label': monkey['label'],
                 'ip_addresses': monkey['ip_addresses'],
                 'exploits': list(set(
                     [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in monkey['exploits'] if
