@@ -31,25 +31,27 @@ class ReportPageComponent extends React.Component {
     this.state = {
       report: {},
       graph: {nodes: [], edges: []},
-      allMonkeysAreDead: false
+      allMonkeysAreDead: false,
+      runStarted: true
     };
   }
 
   componentDidMount() {
-    this.getReportFromServer();
+    this.updateMonkeysRunning().then(res => this.getReportFromServer(res));
     this.updateMapFromServer();
-    this.updateMonkeysRunning();
     this.interval = setInterval(this.updateMapFromServer, 1000);
   }
 
   updateMonkeysRunning = () => {
-    fetch('/api')
+    return fetch('/api')
       .then(res => res.json())
       .then(res => {
         // This check is used to prevent unnecessary re-rendering
         this.setState({
-          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done'])
+          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']),
+          runStarted: res['completed_steps']['run_monkey']
         });
+        return res;
       });
   };
 
@@ -69,14 +71,16 @@ class ReportPageComponent extends React.Component {
       });
   };
 
-  getReportFromServer() {
-    fetch('/api/report')
-      .then(res => res.json())
-      .then(res => {
-        this.setState({
-          report: res
+  getReportFromServer(res) {
+    if (res['completed_steps']['run_monkey']) {
+      fetch('/api/report')
+        .then(res => res.json())
+        .then(res => {
+          this.setState({
+            report: res
+          });
         });
-      });
+    }
   }
 
   generateInfoBadges(data_array) {
@@ -353,11 +357,18 @@ class ReportPageComponent extends React.Component {
   };
 
 
-
   render() {
     let content;
     if (Object.keys(this.state.report).length === 0) {
-      content = (<h1>Generating Report...</h1>);
+      if (this.state.runStarted) {
+        content = (<h1>Generating Report...</h1>);
+      } else {
+        content =
+          <p className="alert alert-warning">
+            <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+            You have to run a monkey before generating a report!
+          </p>;
+      }
     } else {
       let exploitPercentage =
         (100 * this.state.report.glance.exploited.length) / this.state.report.glance.scanned.length;
