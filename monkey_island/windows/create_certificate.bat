@@ -1,6 +1,6 @@
 @echo off
 
-SET OPENSSL_CONF=bin\openssl\openssl.cfg
+SET OPENSSL_CONF=windows\openssl.cfg
 
 IF [%1] == [] (
 	set dir=%cd%\
