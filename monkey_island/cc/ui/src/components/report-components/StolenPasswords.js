@@ -7,7 +7,7 @@ const columns = [
     columns: [
       { Header: 'Username', accessor: 'username'},
       { Header: 'Type', accessor: 'type'},
-      { Header: 'Origin', accessor: 'origin'}
+      { Header: 'Stolen From', accessor: 'origin'}
     ]
   }
 ];

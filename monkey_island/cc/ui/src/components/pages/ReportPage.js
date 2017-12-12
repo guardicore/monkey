@@ -367,11 +367,11 @@ class ReportPageComponent extends React.Component {
                   this.state.report.glance.exploited.length > 0 ?
                     (<p className="alert alert-danger">
                       <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
-                      Critical security issues found by Infection Monkey!
+                      Critical security issues were detected!
                     </p>) :
                     (<p className="alert alert-success">
                       <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
-                      Infection Monkey did not find any critical security issues.
+                      No critical security issues were detected.
                     </p>)
                 }
                 {
@@ -386,8 +386,8 @@ class ReportPageComponent extends React.Component {
                 }
                 <p className="alert alert-info">
                   <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                  To improve the monkey's success rate, try adding users and passwords, and enabling the "Local
-                  network scan" config value under "Basic - Network"
+                  To improve the monkey's detection rates, try adding users and passwords and enable the "Local network
+                  scan" config value under <b>Basic - Network</b>.
                 </p>
                 <p>
                   The first monkey run was started on <span
@@ -424,7 +424,7 @@ class ReportPageComponent extends React.Component {
                 {
                   this.state.report.overview.config_exploits.length > 0 ?
                     <p>
-                      Use the following exploit methods:
+                      Used the following exploit methods:
                       <ul>
                         {this.state.report.overview.config_exploits.map(x => <li>{x}</li>)}
                       </ul>
@@ -450,7 +450,7 @@ class ReportPageComponent extends React.Component {
                     ''
                     :
                     <p>
-                      Monkeys were configured to not scan local network
+                      Monkeys were configured to avoid scanning of the local network.
                     </p>
                 }
                 <p>
@@ -468,12 +468,12 @@ class ReportPageComponent extends React.Component {
                   During this simulated attack the Monkey uncovered <span
                   className="label label-warning">{this.state.report.overview.issues.filter(function (x) {
                   return x === true;
-                }).length} issues</span>, detailed below. The security issues uncovered include:
+                }).length} issues</span>:
                   <ul>
                     {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
                       <li>Users with weak passwords.</li> : null}
                     {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
-                      <li>Stolen passwords/hashes were used to exploit other machines.</li> : null}
+                      <li>Stolen credentials were used to exploit other machines.</li> : null}
                     {this.state.report.overview.issues[this.Issue.ELASTIC] ?
                       <li>Elastic Search servers not patched for <a
                         href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
