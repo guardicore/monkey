@@ -13,6 +13,18 @@ class ReportService:
     def __init__(self):
         pass
 
+    EXPLOIT_DISPLAY_DICT = \
+        {
+            'SmbExploiter': 'SMB Exploiter',
+            'WmiExploiter': 'WMI Exploiter',
+            'SSHExploiter': 'SSH Exploiter',
+            'RdpExploiter': 'RDP Exploiter',
+            'SambaCryExploiter': 'SambaCry Exploiter',
+            'ElasticGroovyExploiter': 'Elastic Groovy Exploiter',
+            'Ms08_067_Exploiter': 'Conficker Exploiter',
+            'ShellShockExploiter': 'ShellShock Exploiter',
+        }
+
     @staticmethod
     def get_first_monkey_time():
         return mongo.db.telemetry.find({}, {'timestamp': 1}).sort([('$natural', 1)]).limit(1)[0]['timestamp']
@@ -81,7 +93,9 @@ class ReportService:
             {
                 'label': NodeService.get_node_hostname(NodeService.get_node_or_monkey_by_id(monkey['id'])),
                 'ip_addresses': monkey['ip_addresses'],
-                'exploits': list(set([exploit['exploiter'] for exploit in monkey['exploits'] if exploit['result']]))
+                'exploits': list(set(
+                    [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in monkey['exploits'] if
+                     exploit['result']]))
             }
             for monkey in exploited]
 
@@ -285,18 +299,7 @@ class ReportService:
         if exploits == default_exploits:
             return ['default']
 
-        exploit_display_dict = \
-            {
-                'SmbExploiter': 'SMB Exploiter',
-                'WmiExploiter': 'WMI Exploiter',
-                'SSHExploiter': 'SSH Exploiter',
-                'RdpExploiter': 'RDP Exploiter',
-                'SambaCryExploiter': 'SambaCry Exploiter',
-                'ElasticGroovyExploiter': 'Elastic Groovy Exploiter',
-                'Ms08_067_Exploiter': 'Conficker Exploiter',
-                'ShellShockExploiter': 'ShellShock Exploiter',
-            }
-        return [exploit_display_dict[exploit] for exploit in
+        return [ReportService.EXPLOIT_DISPLAY_DICT[exploit] for exploit in
                 exploits]
 
     @staticmethod
