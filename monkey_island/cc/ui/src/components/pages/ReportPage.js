@@ -585,8 +585,6 @@ class ReportPageComponent extends React.Component {
                     <br/>
                     In addition, while attempting to exploit additional hosts , security software installed in the
                     network should have picked up the attack attempts and logged them.
-                    <br/>
-                    Detailed recommendations in the <a href="#recommendations">next part of the report</a>.
                   </p>
                   <div className="text-center" style={{margin: '10px'}}>
                     <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4"
