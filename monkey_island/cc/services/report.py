@@ -25,6 +25,18 @@ class ReportService:
             'ShellShockExploiter': 'ShellShock Exploiter',
         }
 
+    class ISSUES_DICT:
+        WEAK_PASSWORD = 0
+        STOLEN_CREDS = 1
+        ELASTIC = 2
+        SAMBACRY = 3
+        SHELLSHOCK = 4
+        CONFICKER = 5
+
+    class WARNINGS_DICT:
+        CROSS_SEGMENT = 0
+        TUNNEL = 1
+
     @staticmethod
     def get_first_monkey_time():
         return mongo.db.telemetry.find({}, {'timestamp': 1}).sort([('$natural', 1)]).limit(1)[0]['timestamp']
@@ -139,6 +151,7 @@ class ReportService:
                 processed_exploit['username'] = attempt['user']
                 if len(attempt['password']) > 0:
                     processed_exploit['type'] = 'password'
+                    processed_exploit['password'] = attempt['password']
                 else:
                     processed_exploit['type'] = 'hash'
                 return processed_exploit
@@ -232,9 +245,9 @@ class ReportService:
     @staticmethod
     def get_monkey_subnets(monkey_guid):
         network_info = mongo.db.telemetry.find_one(
-                    {'telem_type': 'system_info_collection', 'monkey_guid': monkey_guid},
-                    {'data.network_info.networks': 1}
-                )
+            {'telem_type': 'system_info_collection', 'monkey_guid': monkey_guid},
+            {'data.network_info.networks': 1}
+        )
         if network_info is None:
             return []
 
@@ -316,21 +329,60 @@ class ReportService:
         return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True)
 
     @staticmethod
+    def get_issues_overview(issues, config_users, config_passwords):
+        issues_byte_array = [False] * 6
+
+        for machine in issues:
+            for issue in issues[machine]:
+                if issue['type'] == 'elastic':
+                    issues_byte_array[ReportService.ISSUES_DICT.ELASTIC] = True
+                elif issue['type'] == 'sambacry':
+                    issues_byte_array[ReportService.ISSUES_DICT.SAMBACRY] = True
+                elif issue['type'] == 'shellshock':
+                    issues_byte_array[ReportService.ISSUES_DICT.SHELLSHOCK] = True
+                elif issue['type'] == 'conficker':
+                    issues_byte_array[ReportService.ISSUES_DICT.CONFICKER] = True
+                elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
+                                issue['username'] in config_users:
+                    issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD] = True
+                elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
+                    issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS] = True
+
+        return issues_byte_array
+
+    @staticmethod
+    def get_warnings_overview(issues):
+        warnings_byte_array = [False] * 2
+
+        for machine in issues:
+            for issue in issues[machine]:
+                if issue['type'] == 'cross_segment':
+                    warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT] = True
+                elif issue['type'] == 'tunnel':
+                    warnings_byte_array[ReportService.WARNINGS_DICT.TUNNEL] = True
+
+        return warnings_byte_array
+
+    @staticmethod
     def get_report():
+        issues = ReportService.get_issues()
+        config_users = ReportService.get_config_users()
+        config_passwords = ReportService.get_config_passwords()
+
         return \
             {
                 'overview':
                     {
                         'manual_monkeys': ReportService.get_manual_monkeys(),
-                        'config_users': ReportService.get_config_users(),
-                        'config_passwords': ReportService.get_config_passwords(),
+                        'config_users': config_users,
+                        'config_passwords': config_passwords,
                         'config_exploits': ReportService.get_config_exploits(),
                         'config_ips': ReportService.get_config_ips(),
                         'config_scan': ReportService.get_config_scan(),
                         'monkey_start_time': ReportService.get_first_monkey_time().strftime("%d/%m/%Y %H:%M:%S"),
                         'monkey_duration': ReportService.get_monkey_duration(),
-                        'issues': [False, True, True, True, False, True],
-                        'warnings': [True, True]
+                        'issues': ReportService.get_issues_overview(issues, config_users, config_passwords),
+                        'warnings': ReportService.get_warnings_overview(issues)
                     },
                 'glance':
                     {
@@ -340,7 +392,7 @@ class ReportService:
                     },
                 'recommendations':
                     {
-                        'issues': ReportService.get_issues()
+                        'issues': issues
                     }
             }
 

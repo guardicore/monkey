@@ -498,46 +498,70 @@ class ReportPageComponent extends React.Component {
                   <h3>
                     Immediate Threats
                   </h3>
-                  During this simulated attack the Monkey uncovered <span
-                  className="label label-warning">{this.state.report.overview.issues.filter(function (x) {
-                  return x === true;
-                }).length} issues</span>:
-                  <ul>
-                    {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
-                      <li>Users with weak passwords.</li> : null}
-                    {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
-                      <li>Stolen credentials were used to exploit other machines.</li> : null}
-                    {this.state.report.overview.issues[this.Issue.ELASTIC] ?
-                      <li>Elastic Search servers not patched for <a
-                        href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
-                      </li> : null}
-                    {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
-                      <li>Samba servers not patched for ‘SambaCry’ (<a
-                        href="https://www.samba.org/samba/security/CVE-2017-7494.html"
-                      >CVE-2017-7494</a>).</li> : null}
-                    {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ?
-                      <li>Machines not patched for the ‘Shellshock’ (<a
-                        href="https://www.cvedetails.com/cve/CVE-2014-6271">CVE-2014-6271</a>).
-                      </li> : null}
-                    {this.state.report.overview.issues[this.Issue.CONFICKER] ?
-                      <li>Machines not patched for the ‘Conficker’ (<a
-                        href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
-                      >MS08-067</a>).</li> : null}
-                  </ul>
+                  {
+                    this.state.report.overview.issues.filter(function (x) {
+                      return x === true;
+                    }).length > 0 ?
+                      <div>
+                        During this simulated attack the Monkey uncovered <span
+                        className="label label-warning">
+                    {this.state.report.overview.issues.filter(function (x) {
+                      return x === true;
+                    }).length} issues</span>:
+                        <ul>
+                          {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
+                            <li>Users with passwords supplied in config.</li> : null}
+                          {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
+                            <li>Stolen credentials were used to exploit other machines.</li> : null}
+                          {this.state.report.overview.issues[this.Issue.ELASTIC] ?
+                            <li>Elastic Search servers not patched for <a
+                              href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
+                            </li> : null}
+                          {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
+                            <li>Samba servers not patched for ‘SambaCry’ (<a
+                              href="https://www.samba.org/samba/security/CVE-2017-7494.html"
+                            >CVE-2017-7494</a>).</li> : null}
+                          {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ?
+                            <li>Machines not patched for the ‘Shellshock’ (<a
+                              href="https://www.cvedetails.com/cve/CVE-2014-6271">CVE-2014-6271</a>).
+                            </li> : null}
+                          {this.state.report.overview.issues[this.Issue.CONFICKER] ?
+                            <li>Machines not patched for the ‘Conficker’ (<a
+                              href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
+                            >MS08-067</a>).</li> : null}
+                        </ul>
+                      </div>
+                      :
+                      <div>
+                        During this simulated attack the Monkey uncovered <span
+                        className="label label-success">0 issues</span>.
+                      </div>
+                  }
                 </div>
                 <div>
                   <h3>
                     Security Issues
                   </h3>
-                  The monkey uncovered the following possible set of issues:
-                  <ul>
-                    {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
-                      <li>Possible cross segment traffic. Infected machines could communicate with the
-                        Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
-                    {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                      <li>Lack of Micro-segmentation, machines successfully tunneled monkey activity
-                        using unused ports.</li> : null}
-                  </ul>
+                  {
+                    this.state.report.overview.warnings.filter(function (x) {
+                      return x === true;
+                    }).length > 0 ?
+                      <div>
+                        The monkey uncovered the following possible set of issues:
+                        <ul>
+                          {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
+                            <li>Possible cross segment traffic. Infected machines could communicate with the
+                              Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
+                          {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
+                            <li>Lack of Micro-segmentation, machines successfully tunneled monkey activity
+                              using unused ports.</li> : null}
+                        </ul>
+                      </div>
+                      :
+                      <div>
+                        The monkey did not find any issues.
+                      </div>
+                  }
                 </div>
               </div>
               <div id="recommendations">
