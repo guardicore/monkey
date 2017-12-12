@@ -396,12 +396,13 @@ class ReportPageComponent extends React.Component {
                     </p>)
                 }
                 {
-                  this.didMonkeyFindIssues() ?
+                  this.state.report.glance.exploited.length > 0 ?
                     ''
                     :
                     <p className="alert alert-info">
                       <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                      To improve the monkey's detection rates, try adding users and passwords and enable the "Local network
+                      To improve the monkey's detection rates, try adding users and passwords and enable the "Local
+                      network
                       scan" config value under <b>Basic - Network</b>.
                     </p>
                 }
