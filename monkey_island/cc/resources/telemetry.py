@@ -39,7 +39,6 @@ class Telemetry(flask_restful.Resource):
         telemetry_json = json.loads(request.data)
         telemetry_json['timestamp'] = datetime.now()
 
-        telem_id = mongo.db.telemetry.insert(telemetry_json)
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
 
         try:
@@ -53,6 +52,7 @@ class Telemetry(flask_restful.Resource):
             print("Exception caught while processing telemetry: %s" % str(ex))
             traceback.print_exc()
 
+        telem_id = mongo.db.telemetry.insert(telemetry_json)
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
 
     @staticmethod
@@ -70,6 +70,11 @@ class Telemetry(flask_restful.Resource):
                 monkey_label = telem_monkey_guid
             x["monkey"] = monkey_label
             objects.append(x)
+            if x['telem_type'] == 'system_info_collection' and 'credentials' in x['data']:
+                for user in x['data']['credentials']:
+                    if -1 != user.find(','):
+                        new_user = user.replace(',', '.')
+                        x['data']['credentials'][new_user] = x['data']['credentials'].pop(user)
 
         return objects
 
@@ -159,7 +164,6 @@ class Telemetry(flask_restful.Resource):
             creds = telemetry_json['data']['credentials']
             for user in creds:
                 ConfigService.creds_add_username(user)
-                creds[user]['user'] = user
                 if 'password' in creds[user]:
                     ConfigService.creds_add_password(creds[user]['password'])
                 if 'lm_hash' in creds[user]:
@@ -167,10 +171,16 @@ class Telemetry(flask_restful.Resource):
                 if 'ntlm_hash' in creds[user]:
                     ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
 
+            for user in creds:
+                if -1 != user.find('.'):
+                    new_user = user.replace('.', ',')
+                    creds[new_user] = creds.pop(user)
+
     @staticmethod
     def process_trace_telemetry(telemetry_json):
         # Nothing to do
         return
+
 
 TELEM_PROCESS_DICT = \
     {

@@ -117,7 +117,7 @@ class ReportService:
                 for pass_type in monkey_creds[user]:
                     creds.append(
                         {
-                            'username': user,
+                            'username': user.replace(',', '.'),
                             'type': PASS_TYPE_DICT[pass_type],
                             'origin': origin
                         }
@@ -231,14 +231,17 @@ class ReportService:
 
     @staticmethod
     def get_monkey_subnets(monkey_guid):
+        network_info = mongo.db.telemetry.find_one(
+                    {'telem_type': 'system_info_collection', 'monkey_guid': monkey_guid},
+                    {'data.network_info.networks': 1}
+                )
+        if network_info is None:
+            return []
+
         return \
             [
                 ipaddress.ip_interface(unicode(network['addr'] + '/' + network['netmask'])).network
-                for network in
-                mongo.db.telemetry.find_one(
-                    {'telem_type': 'system_info_collection', 'monkey_guid': monkey_guid},
-                    {'data.network_info.networks': 1}
-                )['data']['network_info']['networks']
+                for network in network_info['data']['network_info']['networks']
             ]
 
     @staticmethod
