@@ -553,7 +553,7 @@ class ReportPageComponent extends React.Component {
                             <li>Possible cross segment traffic. Infected machines could communicate with the
                               Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
                           {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                            <li>Lack of Micro-segmentation, machines successfully tunneled monkey activity
+                            <li>Lack of machine hardening, machines successfully tunneled monkey traffic
                               using unused ports.</li> : null}
                         </ul>
                       </div>
