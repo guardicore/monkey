@@ -486,9 +486,6 @@ class ReportPageComponent extends React.Component {
                       Monkeys were configured to avoid scanning of the local network.
                     </p>
                 }
-                <p>
-                  A full report of the Monkeys activities follows.
-                </p>
               </div>
               <div id="findings">
                 <h1>
