@@ -582,10 +582,16 @@ class ReportPageComponent extends React.Component {
                     className="label label-warning">{this.state.report.glance.scanned.length}</span> machines and
                     successfully breached <span
                     className="label label-danger">{this.state.report.glance.exploited.length}</span> of them.
-                    <br/>
-                    In addition, while attempting to exploit additional hosts , security software installed in the
-                    network should have picked up the attack attempts and logged them.
                   </p>
+                  {
+                    this.state.report.glance.exploited.length > 0 ?
+                      <p>
+                        In addition, while attempting to exploit additional hosts , security software installed in the
+                        network should have picked up the attack attempts and logged them.
+                      </p>
+                      :
+                      ''
+                  }
                   <div className="text-center" style={{margin: '10px'}}>
                     <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4"
                           trailWidth="4"
