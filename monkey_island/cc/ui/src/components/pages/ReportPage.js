@@ -8,6 +8,8 @@ import StolenPasswords from 'components/report-components/StolenPasswords';
 import CollapsibleWellComponent from 'components/report-components/CollapsibleWell';
 import {Line} from 'rc-progress';
 
+let guardicoreLogoImage = require('../../images/guardicore-logo.png');
+
 class ReportPageComponent extends React.Component {
 
   Issue =
@@ -621,6 +623,12 @@ class ReportPageComponent extends React.Component {
                 <div>
                   <StolenPasswords data={this.state.report.glance.stolen_creds}/>
                 </div>
+              </div>
+              <div className="text-center" style={{marginTop: '20px'}}>
+                For questions, suggestions or any other feedback
+                contact: <a href="mailto://labs@guardicore.com" className="no-print">labs@guardicore.com</a>
+                <div className="force-print" style={{display: 'none'}}>labs@guardicore.com</div>
+                <img src={guardicoreLogoImage} alt="GuardiCore" className="center-block" style={{height: '50px'}} />
               </div>
             </div>
             <div className="text-center no-print" style={{marginTop: '20px'}}>
