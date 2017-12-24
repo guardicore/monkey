@@ -363,12 +363,26 @@ class ReportService:
         return warnings_byte_array
 
     @staticmethod
+    def is_report_generated():
+        generated_report = mongo.db.report.find_one({'name': 'generated_report'})
+        if generated_report is None:
+            return False
+        return generated_report['value']
+
+    @staticmethod
+    def set_report_generated():
+        mongo.db.report.update(
+            {'name': 'generated_report'},
+            {'$set': {'value': True}},
+            upsert=True)
+
+    @staticmethod
     def get_report():
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
 
-        return \
+        report = \
             {
                 'overview':
                     {
@@ -394,6 +408,12 @@ class ReportService:
                         'issues': issues
                     }
             }
+
+        finished_run = NodeService.is_monkey_finished_running()
+        if finished_run:
+            ReportService.set_report_generated()
+
+        return report
 
     @staticmethod
     def did_exploit_type_succeed(exploit_type):

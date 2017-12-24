@@ -28,7 +28,8 @@ class AppComponent extends React.Component {
       completedSteps: {
         run_server: true,
         run_monkey: false,
-        infection_done: false
+        infection_done: false,
+        report_done: false
       }
     };
   }
@@ -102,6 +103,9 @@ class AppComponent extends React.Component {
                   <NavLink to="/report">
                     <span className="number">4.</span>
                     Security Report
+                    { this.state.completedSteps.report_done ?
+                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      : ''}
                   </NavLink>
                 </li>
                 <li>

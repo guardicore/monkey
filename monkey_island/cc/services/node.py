@@ -282,6 +282,10 @@ class NodeService:
         return mongo.db.monkey.find_one({}) is not None
 
     @staticmethod
+    def is_monkey_finished_running():
+        return NodeService.is_any_monkey_exists() and not NodeService.is_any_monkey_alive()
+
+    @staticmethod
     def add_credentials_to_monkey(monkey_id, creds):
         mongo.db.monkey.update(
             {'_id': monkey_id},
