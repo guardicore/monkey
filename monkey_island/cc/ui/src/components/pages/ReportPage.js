@@ -99,8 +99,8 @@ class ReportPageComponent extends React.Component {
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">SMB</span> attack.
           <br/>
           The attack succeeded by authenticating over SMB protocol with user <span
@@ -116,8 +116,8 @@ class ReportPageComponent extends React.Component {
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">SMB</span> attack.
           <br/>
           The attack succeeded by using a pass-the-hash attack over SMB protocol with user <span
@@ -133,8 +133,8 @@ class ReportPageComponent extends React.Component {
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">WMI</span> attack.
           <br/>
           The attack succeeded by authenticating over WMI protocol with user <span
@@ -150,8 +150,8 @@ class ReportPageComponent extends React.Component {
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">WMI</span> attack.
           <br/>
           The attack succeeded by using a pass-the-hash attack over WMI protocol with user <span
@@ -167,8 +167,8 @@ class ReportPageComponent extends React.Component {
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">SSH</span> attack.
           <br/>
           The attack succeeded by authenticating over SSH protocol with user <span
@@ -184,8 +184,8 @@ class ReportPageComponent extends React.Component {
         Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">RDP</span> attack.
           <br/>
           The attack succeeded by authenticating over RDP protocol with user <span
@@ -203,8 +203,8 @@ class ReportPageComponent extends React.Component {
         <br/>
         Update your Samba server to 4.4.14 and up, 4.5.10 and up, or 4.6.4 and up.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">SambaCry</span> attack.
           <br/>
           The attack succeeded by authenticating over SMB protocol with user <span
@@ -220,11 +220,11 @@ class ReportPageComponent extends React.Component {
       <li>
         Update your Elastic Search server to version 1.4.3 and up.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to an <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to an <span
           className="label label-danger">Elastic Groovy</span> attack.
           <br/>
-          The attack succeeded because the Elastic Search server was not parched against CVE-2015-1427.
+          The attack succeeded because the Elastic Search server is not patched against CVE-2015-1427.
         </CollapsibleWellComponent>
       </li>
     );
@@ -235,12 +235,12 @@ class ReportPageComponent extends React.Component {
       <li>
         Update your Bash to a ShellShock-patched version.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following IP address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">ShellShock</span> attack.
           <br/>
-          The attack succeeded because the HTTP server running on port <span
-          className="label label-info">{issue.port}</span> was vulnerable to a shell injection attack on the
+          The attack succeeded because the HTTP server running on TCP port <span
+          className="label label-info">{issue.port}</span> is vulnerable to a shell injection attack on the
           paths: {this.generateShellshockPathListBadges(issue.paths)}.
         </CollapsibleWellComponent>
       </li>
@@ -252,8 +252,8 @@ class ReportPageComponent extends React.Component {
       <li>
         Install the latest Windows updates or upgrade to a newer operating system.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> with the following address <span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span> was vulnerable to a <span
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">Conficker</span> attack.
           <br/>
           The attack succeeded because the target machine uses an outdated and unpatched operating system vulnerable to
@@ -266,7 +266,7 @@ class ReportPageComponent extends React.Component {
   generateCrossSegmentIssue(issue) {
     return (
       <li>
-        Segment your network. Make sure machines can't access machines from other segments.
+        Segment your network and make sure there is no communication between machines from different segments.
         <CollapsibleWellComponent>
           The network can probably be segmented. A monkey instance on <span
           className="label label-primary">{issue.machine}</span> in the
@@ -437,18 +437,19 @@ class ReportPageComponent extends React.Component {
                 {
                   this.state.report.overview.config_users.length > 0 ?
                     <p>
-                      Users to try:
+                      Usernames used for brute-forcing:
                       <ul>
                         {this.state.report.overview.config_users.map(x => <li>{x}</li>)}
                       </ul>
-                      Passwords to try:
+                      Passwords used for brute-forcing:
                       <ul>
                         {this.state.report.overview.config_passwords.map(x => <li>{x.substr(0, 3) + '******'}</li>)}
                       </ul>
                     </p>
                     :
                     <p>
-                      No Users and Passwords were provided for the monkey.
+                      Brute forcing uses stolen credentials only. No credentials were supplied during Monkey’s
+                      configuration.
                     </p>
                 }
                 {
@@ -458,7 +459,7 @@ class ReportPageComponent extends React.Component {
                         ''
                         :
                         <p>
-                          Used the following exploit methods:
+                          The Monkey uses the following exploit methods:
                           <ul>
                             {this.state.report.overview.config_exploits.map(x => <li>{x}</li>)}
                           </ul>
@@ -466,13 +467,13 @@ class ReportPageComponent extends React.Component {
                     )
                     :
                     <p>
-                      Don't use any exploit.
+                      No exploits are used by the Monkey.
                     </p>
                 }
                 {
                   this.state.report.overview.config_ips.length > 0 ?
                     <p>
-                      Scan the following IPs:
+                      The Monkey scans the following IPs:
                       <ul>
                         {this.state.report.overview.config_ips.map(x => <li>{x}</li>)}
                       </ul>
@@ -485,7 +486,7 @@ class ReportPageComponent extends React.Component {
                     ''
                     :
                     <p>
-                      Monkeys were configured to avoid scanning of the local network.
+                      Note: Monkeys were configured to avoid scanning of the local network.
                     </p>
                 }
               </div>
@@ -508,26 +509,27 @@ class ReportPageComponent extends React.Component {
                       return x === true;
                     }).length} issues</span>:
                         <ul>
-                          {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
-                            <li>Users with passwords supplied in config.</li> : null}
                           {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
-                            <li>Stolen credentials were used to exploit other machines.</li> : null}
+                            <li>Stolen credentials are used to exploit other machines.</li> : null}
                           {this.state.report.overview.issues[this.Issue.ELASTIC] ?
-                            <li>Elastic Search servers not patched for <a
+                            <li>Elasticsearch servers are vulnerable to <a
                               href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
                             </li> : null}
                           {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
-                            <li>Samba servers not patched for ‘SambaCry’ (<a
+                            <li>Samba servers are vulnerable to ‘SambaCry’ (<a
                               href="https://www.samba.org/samba/security/CVE-2017-7494.html"
                             >CVE-2017-7494</a>).</li> : null}
                           {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ?
-                            <li>Machines not patched for the ‘Shellshock’ (<a
+                            <li>Machines are vulnerable to ‘Shellshock’ (<a
                               href="https://www.cvedetails.com/cve/CVE-2014-6271">CVE-2014-6271</a>).
                             </li> : null}
                           {this.state.report.overview.issues[this.Issue.CONFICKER] ?
-                            <li>Machines not patched for the ‘Conficker’ (<a
+                            <li>Machines are vulnerable to ‘Conficker’ (<a
                               href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
                             >MS08-067</a>).</li> : null}
+                          {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
+                            <li>Machines are accessible using passwords supplied by the user during the Monkey’s
+                              configuration.</li> : null}
                         </ul>
                       </div>
                       :
@@ -539,26 +541,25 @@ class ReportPageComponent extends React.Component {
                 </div>
                 <div>
                   <h3>
-                    Security Issues
+                    Potential Security Issues
                   </h3>
                   {
                     this.state.report.overview.warnings.filter(function (x) {
                       return x === true;
                     }).length > 0 ?
                       <div>
-                        The monkey uncovered the following possible set of issues:
+                        The Monkey uncovered the following possible set of issues:
                         <ul>
                           {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
-                            <li>Possible cross segment traffic. Infected machines could communicate with the
-                              Monkey Island despite crossing segment boundaries using unused ports.</li> : null}
+                            <li>Weak segmentation - Machines from different segments are able to
+                              communicate.</li> : null}
                           {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                            <li>Lack of machine hardening, machines successfully tunneled monkey traffic
-                              using unused ports.</li> : null}
+                            <li>Lack of machine hardening, machines successfully tunneled monkey traffic using unused ports.</li> : null}
                         </ul>
                       </div>
                       :
                       <div>
-                        The monkey did not find any issues.
+                        The Monkey did not find any issues.
                       </div>
                   }
                 </div>
@@ -585,7 +586,7 @@ class ReportPageComponent extends React.Component {
                   {
                     this.state.report.glance.exploited.length > 0 ?
                       <p>
-                        In addition, while attempting to exploit additional hosts , security software installed in the
+                        In addition, while attempting to exploit additional hosts, security software installed in the
                         network should have picked up the attack attempts and logged them.
                       </p>
                       :
@@ -603,13 +604,13 @@ class ReportPageComponent extends React.Component {
                 </p>
                 <div className="map-legend">
                   <b>Legend: </b>
-                  <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}} /></span>
+                  <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}}/></span>
                   <b style={{color: '#aeaeae'}}> | </b>
-                  <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}} /></span>
+                  <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}}/></span>
                   <b style={{color: '#aeaeae'}}> | </b>
-                  <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}} /></span>
+                  <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span>
                   <b style={{color: '#aeaeae'}}> | </b>
-                  <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}} /></span>
+                  <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}}/></span>
                 </div>
                 <div style={{position: 'relative', height: '80vh'}}>
                   <ReactiveGraph graph={this.state.graph} options={options}/>
@@ -628,7 +629,7 @@ class ReportPageComponent extends React.Component {
                 For questions, suggestions or any other feedback
                 contact: <a href="mailto://labs@guardicore.com" className="no-print">labs@guardicore.com</a>
                 <div className="force-print" style={{display: 'none'}}>labs@guardicore.com</div>
-                <img src={guardicoreLogoImage} alt="GuardiCore" className="center-block" style={{height: '50px'}} />
+                <img src={guardicoreLogoImage} alt="GuardiCore" className="center-block" style={{height: '50px'}}/>
               </div>
             </div>
             <div className="text-center no-print" style={{marginTop: '20px'}}>
