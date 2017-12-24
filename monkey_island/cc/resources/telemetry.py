@@ -1,5 +1,6 @@
 import json
 import traceback
+import copy
 from datetime import datetime
 
 import dateutil
@@ -108,7 +109,7 @@ class Telemetry(flask_restful.Resource):
     @staticmethod
     def process_exploit_telemetry(telemetry_json):
         edge = Telemetry.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
-        new_exploit = telemetry_json['data']
+        new_exploit = copy.deepcopy(telemetry_json['data'])
 
         new_exploit.pop('machine')
         new_exploit['timestamp'] = telemetry_json['timestamp']
@@ -131,7 +132,7 @@ class Telemetry(flask_restful.Resource):
     @staticmethod
     def process_scan_telemetry(telemetry_json):
         edge = Telemetry.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
-        data = telemetry_json['data']['machine']
+        data = copy.deepcopy(telemetry_json['data']['machine'])
         ip_address = data.pop("ip_addr")
         new_scan = \
             {
