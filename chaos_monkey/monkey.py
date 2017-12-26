@@ -4,6 +4,8 @@ import os
 import subprocess
 import sys
 import time
+from functools import partial
+from multiprocessing.dummy import Pool as ThreadPool
 
 import tunnel
 from config import WormConfiguration
@@ -148,35 +150,13 @@ class ChaosMonkey(object):
                     LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
                     machine.set_default_server(self._default_server)
 
-                successful_exploiter = None
-                for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
-                    if not exploiter.is_os_supported():
-                        LOG.info("Skipping exploiter %s host:%r, os is not supported",
-                                 exploiter.__class__.__name__, machine)
-                        continue
+                successful_exploiter = self.exploit_host(machine)
 
-                    LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
-
-                    result = False
-                    try:
-                        result = exploiter.exploit_host()
-                        if result:
-                            successful_exploiter = exploiter
-                            break
-                        else:
-                            LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
-
-                    except Exception as exc:
-                        LOG.exception("Exception while attacking %s using %s: %s",
-                                      machine, exploiter.__class__.__name__, exc)
-                    finally:
-                        exploiter.send_exploit_telemetry(result)
-
-                if successful_exploiter:
+                if len(successful_exploiter) != 0:
                     self._exploited_machines.add(machine)
 
                     LOG.info("Successfully propagated to %s using %s",
-                             machine, successful_exploiter.__class__.__name__)
+                             machine, [x.__class__.__name__ for x in successful_exploiter])
 
                     # check if max-exploitation limit is reached
                     if WormConfiguration.victims_max_exploit <= len(self._exploited_machines):
@@ -241,3 +221,51 @@ class ChaosMonkey(object):
                 LOG.error("Exception in self delete: %s", exc)
 
         LOG.info("Monkey is shutting down")
+
+    @classmethod
+    def exploit_host(cls, machine):
+        """
+        :param machine: VictimHost post fingerprinting
+        :return: List of successful exploiters
+        """
+        exploiters = [exploiter(machine) for exploiter in WormConfiguration.exploiter_classes]
+        pool = ThreadPool(len(exploiters) / 3)  # random picked number
+        # recheck before starting attack run
+        if ControlClient.check_for_stop():
+            return None
+
+        results = pool.map(partial(cls.exploit_host_with_exploiter, machine=machine),
+                           exploiters)
+        successful_exploiters = [x[1] for x in zip(results, exploiters) if x[0]]
+        # multiple may have succeeded.. problem
+        return successful_exploiters
+
+    @staticmethod
+    def exploit_host_with_exploiter(exploiter, machine):
+        """
+        Attempts to exploit a specific victim with the given exploiter
+        :param machine:  VictimHost post fingerprinting
+        :param exploiter:  specific instance of HostExploiter
+        :return: T/F
+        """
+        if not exploiter.is_os_supported():
+            LOG.info("Skipping exploiter %s host:%r, os is not supported",
+                     exploiter.__class__.__name__, machine)
+            return False
+
+        LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
+
+        result = False
+        try:
+            result = exploiter.exploit_host()
+            if result:
+                return result
+            else:
+                LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
+
+        except Exception as exc:
+            LOG.exception("Exception while attacking %s using %s: %s",
+                          machine, exploiter.__class__.__name__, exc)
+        finally:
+            exploiter.send_exploit_telemetry(result)
+        return result
