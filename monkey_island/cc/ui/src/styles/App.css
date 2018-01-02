@@ -420,4 +420,67 @@ body {
   .pie-chart {
     width: 100px;
   }
+
+  .label {
+    padding: 2px 6px;
+    border: 1px solid #000;
+    color: #fff !important;
+    display: inline !important;
+    font-size: 75% !important;
+    font-weight: bold !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: .25em !important;
+  }
+
+  .alert {
+    padding: 15px !important;
+    margin-bottom: 20px !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+  }
+
+  .alert-danger {
+    color:#a94442 !important;
+    background-color:#f2dede !important;
+    border-color:#ebccd1 !important;
+  }
+
+  .alert-success {
+    color:#3c763d !important;
+    background-color:#dff0d8 !important;
+    border-color:#d6e9c6 !important;
+  }
+
+  .alert-info {
+    color:#31708f !important;
+    background-color:#d9edf7 !important;
+    border-color:#bce8f1 !important;
+  }
+
+  .label-default {
+    background-color: #777 !important;
+  }
+
+  .label-primary {
+    background-color: #337ab7 !important;
+  }
+
+  .label-success {
+    background-color: #5cb85c !important;
+  }
+
+  .label-info {
+    background-color: #5bc0de !important;
+  }
+
+  .label-warning {
+    background-color: #f0ad4e !important;
+  }
+
+  .label-danger {
+    background-color: #d9534f !important;
+  }
 }
