@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd /var/monkey_island/cc
-python main.py
+/var/monkey_island/bin/python/python main.py

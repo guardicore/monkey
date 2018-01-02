@@ -2,16 +2,18 @@
 
 MONKEY_FOLDER=/var/monkey_island
 INSTALLATION_FOLDER=/var/monkey_island/installation
+PYTHON_FOLDER=/var/monkey_island/bin/python
 
 cp -f ${MONKEY_FOLDER}/monkey.sh /usr/bin/monkey
 chmod 755 /usr/bin/monkey
 
-# Fix dependency bug
-pip uninstall -y bson
+# Prepare python virtualenv
+pip install virtualenv --no-index --find-links file://$INSTALLATION_FOLDER
+mkdir ${MONKEY_FOLDER}/bin
+virtualenv ${PYTHON_FOLDER}
 
 # install pip requirements
-pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
-
+${PYTHON_FOLDER}/bin/python/python -m pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
 
 # remove installation folder and unnecessary files
 rm -rf ${INSTALLATION_FOLDER}
