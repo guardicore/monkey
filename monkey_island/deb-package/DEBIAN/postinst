@@ -9,7 +9,6 @@ chmod 755 /usr/bin/monkey
 
 # Prepare python virtualenv
 pip install virtualenv --no-index --find-links file://$INSTALLATION_FOLDER
-mkdir ${MONKEY_FOLDER}/bin
 virtualenv ${PYTHON_FOLDER}
 
 # install pip requirements
