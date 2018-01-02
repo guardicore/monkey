@@ -9,6 +9,7 @@ import CollapsibleWellComponent from 'components/report-components/CollapsibleWe
 import {Line} from 'rc-progress';
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
+let monkeyLogoImage = require('../../images/monkey-icon.svg');
 
 class ReportPageComponent extends React.Component {
 
@@ -349,16 +350,6 @@ class ReportPageComponent extends React.Component {
     return <ul>{issuesDivArray}</ul>;
   };
 
-  didMonkeyFindIssues = () => {
-    for (let issue of Object.keys(this.state.report.overview.issues)) {
-      if (this.state.report.overview.issues[issue]) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-
   render() {
     let content;
     if (Object.keys(this.state.report).length === 0) {
@@ -383,6 +374,12 @@ class ReportPageComponent extends React.Component {
               }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
             </div>
             <div className="report-page">
+              <h1 className="text-center">
+                Infection Monkey Report
+              </h1>
+              <div className="center-block text-center">
+                <img src={monkeyLogoImage} style={{width: '150px'}}/>
+              </div>
               <div id="overview">
                 <h1>
                   Overview
@@ -507,7 +504,7 @@ class ReportPageComponent extends React.Component {
                         className="label label-warning">
                     {this.state.report.overview.issues.filter(function (x) {
                       return x === true;
-                    }).length} issues</span>:
+                    }).length} threats</span>:
                         <ul>
                           {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
                             <li>Stolen credentials are used to exploit other machines.</li> : null}
@@ -535,7 +532,7 @@ class ReportPageComponent extends React.Component {
                       :
                       <div>
                         During this simulated attack the Monkey uncovered <span
-                        className="label label-success">0 issues</span>.
+                        className="label label-success">0 threats</span>.
                       </div>
                   }
                 </div>
@@ -583,15 +580,6 @@ class ReportPageComponent extends React.Component {
                     successfully breached <span
                     className="label label-danger">{this.state.report.glance.exploited.length}</span> of them.
                   </p>
-                  {
-                    this.state.report.glance.exploited.length > 0 ?
-                      <p>
-                        In addition, while attempting to exploit additional hosts, security software installed in the
-                        network should have picked up the attack attempts and logged them.
-                      </p>
-                      :
-                      ''
-                  }
                   <div className="text-center" style={{margin: '10px'}}>
                     <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4"
                           trailWidth="4"
@@ -643,7 +631,7 @@ class ReportPageComponent extends React.Component {
 
     return (
       <Col xs={12} lg={8}>
-        <h1 className="page-title">4. Security Report</h1>
+        <h1 className="page-title no-print">4. Security Report</h1>
         <div style={{'fontSize': '1.2em'}}>
           {content}
         </div>
