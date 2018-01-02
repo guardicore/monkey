@@ -13,7 +13,7 @@ mkdir ${MONKEY_FOLDER}/bin
 virtualenv ${PYTHON_FOLDER}
 
 # install pip requirements
-${PYTHON_FOLDER}/bin/python/python -m pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
+${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
 
 # remove installation folder and unnecessary files
 rm -rf ${INSTALLATION_FOLDER}
