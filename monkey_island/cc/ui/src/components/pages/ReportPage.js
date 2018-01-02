@@ -45,6 +45,36 @@ class ReportPageComponent extends React.Component {
     this.interval = setInterval(this.updateMapFromServer, 1000);
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  render() {
+    let content;
+    if (Object.keys(this.state.report).length === 0) {
+      if (this.state.runStarted) {
+        content = (<h1>Generating Report...</h1>);
+      } else {
+        content =
+          <p className="alert alert-warning">
+            <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+            You have to run a monkey before generating a report!
+          </p>;
+      }
+    } else {
+      content = this.generateReportContent();
+    }
+
+    return (
+      <Col xs={12} lg={8}>
+        <h1 className="page-title no-print">4. Security Report</h1>
+        <div style={{'fontSize': '1.2em'}}>
+          {content}
+        </div>
+      </Col>
+    );
+  }
+
   updateMonkeysRunning = () => {
     return fetch('/api')
       .then(res => res.json())
@@ -57,10 +87,6 @@ class ReportPageComponent extends React.Component {
         return res;
       });
   };
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
 
   updateMapFromServer = () => {
     fetch('/api/netmap')
@@ -84,6 +110,311 @@ class ReportPageComponent extends React.Component {
           });
         });
     }
+  }
+
+  generateReportContent() {
+    return (
+      <div>
+        <div className="text-center no-print" style={{marginBottom: '20px'}}>
+          <Button bsSize="large" onClick={() => {
+            print();
+          }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
+        </div>
+        <div className="report-page">
+          {this.generateReportHeader()}
+          {this.generateReportOverviewSection()}
+          {this.generateReportFindingsSection()}
+          {this.generateReportRecommendationsSection()}
+          {this.generateReportGlanceSection()}
+          {this.generateReportFooter()}
+        </div>
+        <div className="text-center no-print" style={{marginTop: '20px'}}>
+          <Button bsSize="large" onClick={() => {
+            print();
+          }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
+        </div>
+      </div>
+    );
+  }
+
+  generateReportHeader() {
+    return (
+      <div id="header">
+        <h1 className="text-center">
+          Infection Monkey Report
+        </h1>
+        <div className="center-block text-center">
+          <img src={monkeyLogoImage} style={{width: '150px'}}/>
+        </div>
+      </div>
+    );
+  }
+
+  generateReportOverviewSection() {
+    return (
+      <div id="overview">
+        <h1>
+          Overview
+        </h1>
+        {
+          this.state.report.glance.exploited.length > 0 ?
+            (<p className="alert alert-danger">
+              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
+              Critical security issues were detected!
+            </p>) :
+            (<p className="alert alert-success">
+              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+              No critical security issues were detected.
+            </p>)
+        }
+        {
+          this.state.allMonkeysAreDead ?
+            ''
+            :
+            (<p className="alert alert-warning">
+              <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+              Some monkeys are still running. To get the best report it's best to wait for all of them to finish
+              running.
+            </p>)
+        }
+        {
+          this.state.report.glance.exploited.length > 0 ?
+            ''
+            :
+            <p className="alert alert-info">
+              <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+              To improve the monkey's detection rates, try adding users and passwords and enable the "Local
+              network
+              scan" config value under <b>Basic - Network</b>.
+            </p>
+        }
+        <p>
+          The first monkey run was started on <span
+          className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span
+          className="label label-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished
+          propagation attempts.
+        </p>
+        <p>
+          The monkey started propagating from the following machines where it was manually installed:
+          <ul>
+            {this.state.report.overview.manual_monkeys.map(x => <li>{x}</li>)}
+          </ul>
+        </p>
+        <p>
+          The monkeys were run with the following configuration:
+        </p>
+        {
+          this.state.report.overview.config_users.length > 0 ?
+            <p>
+              Usernames used for brute-forcing:
+              <ul>
+                {this.state.report.overview.config_users.map(x => <li>{x}</li>)}
+              </ul>
+              Passwords used for brute-forcing:
+              <ul>
+                {this.state.report.overview.config_passwords.map(x => <li>{x.substr(0, 3) + '******'}</li>)}
+              </ul>
+            </p>
+            :
+            <p>
+              Brute forcing uses stolen credentials only. No credentials were supplied during Monkey’s
+              configuration.
+            </p>
+        }
+        {
+          this.state.report.overview.config_exploits.length > 0 ?
+            (
+              this.state.report.overview.config_exploits[0] === 'default' ?
+                ''
+                :
+                <p>
+                  The Monkey uses the following exploit methods:
+                  <ul>
+                    {this.state.report.overview.config_exploits.map(x => <li>{x}</li>)}
+                  </ul>
+                </p>
+            )
+            :
+            <p>
+              No exploits are used by the Monkey.
+            </p>
+        }
+        {
+          this.state.report.overview.config_ips.length > 0 ?
+            <p>
+              The Monkey scans the following IPs:
+              <ul>
+                {this.state.report.overview.config_ips.map(x => <li>{x}</li>)}
+              </ul>
+            </p>
+            :
+            ''
+        }
+        {
+          this.state.report.overview.config_scan ?
+            ''
+            :
+            <p>
+              Note: Monkeys were configured to avoid scanning of the local network.
+            </p>
+        }
+      </div>
+    );
+  }
+
+  generateReportFindingsSection() {
+    return (
+      <div id="findings">
+        <h1>
+          Security Findings
+        </h1>
+        <div>
+          <h3>
+            Immediate Threats
+          </h3>
+          {
+            this.state.report.overview.issues.filter(function (x) {
+              return x === true;
+            }).length > 0 ?
+              <div>
+                During this simulated attack the Monkey uncovered <span
+                className="label label-warning">
+                    {this.state.report.overview.issues.filter(function (x) {
+                      return x === true;
+                    }).length} threats</span>:
+                <ul>
+                  {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
+                    <li>Stolen credentials are used to exploit other machines.</li> : null}
+                  {this.state.report.overview.issues[this.Issue.ELASTIC] ?
+                    <li>Elasticsearch servers are vulnerable to <a
+                      href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
+                    </li> : null}
+                  {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
+                    <li>Samba servers are vulnerable to ‘SambaCry’ (<a
+                      href="https://www.samba.org/samba/security/CVE-2017-7494.html"
+                    >CVE-2017-7494</a>).</li> : null}
+                  {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ?
+                    <li>Machines are vulnerable to ‘Shellshock’ (<a
+                      href="https://www.cvedetails.com/cve/CVE-2014-6271">CVE-2014-6271</a>).
+                    </li> : null}
+                  {this.state.report.overview.issues[this.Issue.CONFICKER] ?
+                    <li>Machines are vulnerable to ‘Conficker’ (<a
+                      href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
+                    >MS08-067</a>).</li> : null}
+                  {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
+                    <li>Machines are accessible using passwords supplied by the user during the Monkey’s
+                      configuration.</li> : null}
+                </ul>
+              </div>
+              :
+              <div>
+                During this simulated attack the Monkey uncovered <span
+                className="label label-success">0 threats</span>.
+              </div>
+          }
+        </div>
+        <div>
+          <h3>
+            Potential Security Issues
+          </h3>
+          {
+            this.state.report.overview.warnings.filter(function (x) {
+              return x === true;
+            }).length > 0 ?
+              <div>
+                The Monkey uncovered the following possible set of issues:
+                <ul>
+                  {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
+                    <li>Weak segmentation - Machines from different segments are able to
+                      communicate.</li> : null}
+                  {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
+                    <li>Lack of machine hardening, machines successfully tunneled monkey traffic using unused
+                      ports.</li> : null}
+                </ul>
+              </div>
+              :
+              <div>
+                The Monkey did not find any issues.
+              </div>
+          }
+        </div>
+      </div>
+    );
+  }
+
+  generateReportRecommendationsSection() {
+    return (
+      <div id="recommendations">
+        <h1>
+          Recommendations
+        </h1>
+        <div>
+          {this.generateIssues(this.state.report.recommendations.issues)}
+        </div>
+      </div>
+    );
+  }
+
+  generateReportGlanceSection() {
+    let exploitPercentage =
+      (100 * this.state.report.glance.exploited.length) / this.state.report.glance.scanned.length;
+    return (
+      <div id="glance">
+        <h1>
+          The Network from the Monkey's Eyes
+        </h1>
+        <div>
+          <p>
+            The Monkey discovered <span
+            className="label label-warning">{this.state.report.glance.scanned.length}</span> machines and
+            successfully breached <span
+            className="label label-danger">{this.state.report.glance.exploited.length}</span> of them.
+          </p>
+          <div className="text-center" style={{margin: '10px'}}>
+            <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4"
+                  trailWidth="4"
+                  strokeColor="#d9534f" trailColor="#f0ad4e"/>
+            <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
+          </div>
+        </div>
+        <p>
+          From the attacker's point of view, the network looks like this:
+        </p>
+        <div className="map-legend">
+          <b>Legend: </b>
+          <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}}/></span>
+          <b style={{color: '#aeaeae'}}> | </b>
+          <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}}/></span>
+          <b style={{color: '#aeaeae'}}> | </b>
+          <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span>
+          <b style={{color: '#aeaeae'}}> | </b>
+          <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}}/></span>
+        </div>
+        <div style={{position: 'relative', height: '80vh'}}>
+          <ReactiveGraph graph={this.state.graph} options={options}/>
+        </div>
+        <div style={{marginBottom: '20px'}}>
+          <BreachedServers data={this.state.report.glance.exploited}/>
+        </div>
+        <div style={{marginBottom: '20px'}}>
+          <ScannedServers data={this.state.report.glance.scanned}/>
+        </div>
+        <div>
+          <StolenPasswords data={this.state.report.glance.stolen_creds}/>
+        </div>
+      </div>
+    );
+  }
+
+  generateReportFooter() {
+    return (
+      <div id="footer" className="text-center" style={{marginTop: '20px'}}>
+        For questions, suggestions or any other feedback
+        contact: <a href="mailto://labs@guardicore.com" className="no-print">labs@guardicore.com</a>
+        <div className="force-print" style={{display: 'none'}}>labs@guardicore.com</div>
+        <img src={guardicoreLogoImage} alt="GuardiCore" className="center-block" style={{height: '50px'}}/>
+      </div>
+    );
   }
 
   generateInfoBadges(data_array) {
@@ -349,295 +680,6 @@ class ReportPageComponent extends React.Component {
     }
     return <ul>{issuesDivArray}</ul>;
   };
-
-  render() {
-    let content;
-    if (Object.keys(this.state.report).length === 0) {
-      if (this.state.runStarted) {
-        content = (<h1>Generating Report...</h1>);
-      } else {
-        content =
-          <p className="alert alert-warning">
-            <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-            You have to run a monkey before generating a report!
-          </p>;
-      }
-    } else {
-      let exploitPercentage =
-        (100 * this.state.report.glance.exploited.length) / this.state.report.glance.scanned.length;
-      content =
-        (
-          <div>
-            <div className="text-center no-print" style={{marginBottom: '20px'}}>
-              <Button bsSize="large" onClick={() => {
-                print();
-              }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
-            </div>
-            <div className="report-page">
-              <h1 className="text-center">
-                Infection Monkey Report
-              </h1>
-              <div className="center-block text-center">
-                <img src={monkeyLogoImage} style={{width: '150px'}}/>
-              </div>
-              <div id="overview">
-                <h1>
-                  Overview
-                </h1>
-                {
-                  this.state.report.glance.exploited.length > 0 ?
-                    (<p className="alert alert-danger">
-                      <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
-                      Critical security issues were detected!
-                    </p>) :
-                    (<p className="alert alert-success">
-                      <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
-                      No critical security issues were detected.
-                    </p>)
-                }
-                {
-                  this.state.allMonkeysAreDead ?
-                    ''
-                    :
-                    (<p className="alert alert-warning">
-                      <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-                      Some monkeys are still running. To get the best report it's best to wait for all of them to finish
-                      running.
-                    </p>)
-                }
-                {
-                  this.state.report.glance.exploited.length > 0 ?
-                    ''
-                    :
-                    <p className="alert alert-info">
-                      <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                      To improve the monkey's detection rates, try adding users and passwords and enable the "Local
-                      network
-                      scan" config value under <b>Basic - Network</b>.
-                    </p>
-                }
-                <p>
-                  The first monkey run was started on <span
-                  className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span
-                  className="label label-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished
-                  propagation attempts.
-                </p>
-                <p>
-                  The monkey started propagating from the following machines where it was manually installed:
-                  <ul>
-                    {this.state.report.overview.manual_monkeys.map(x => <li>{x}</li>)}
-                  </ul>
-                </p>
-                <p>
-                  The monkeys were run with the following configuration:
-                </p>
-                {
-                  this.state.report.overview.config_users.length > 0 ?
-                    <p>
-                      Usernames used for brute-forcing:
-                      <ul>
-                        {this.state.report.overview.config_users.map(x => <li>{x}</li>)}
-                      </ul>
-                      Passwords used for brute-forcing:
-                      <ul>
-                        {this.state.report.overview.config_passwords.map(x => <li>{x.substr(0, 3) + '******'}</li>)}
-                      </ul>
-                    </p>
-                    :
-                    <p>
-                      Brute forcing uses stolen credentials only. No credentials were supplied during Monkey’s
-                      configuration.
-                    </p>
-                }
-                {
-                  this.state.report.overview.config_exploits.length > 0 ?
-                    (
-                      this.state.report.overview.config_exploits[0] === 'default' ?
-                        ''
-                        :
-                        <p>
-                          The Monkey uses the following exploit methods:
-                          <ul>
-                            {this.state.report.overview.config_exploits.map(x => <li>{x}</li>)}
-                          </ul>
-                        </p>
-                    )
-                    :
-                    <p>
-                      No exploits are used by the Monkey.
-                    </p>
-                }
-                {
-                  this.state.report.overview.config_ips.length > 0 ?
-                    <p>
-                      The Monkey scans the following IPs:
-                      <ul>
-                        {this.state.report.overview.config_ips.map(x => <li>{x}</li>)}
-                      </ul>
-                    </p>
-                    :
-                    ''
-                }
-                {
-                  this.state.report.overview.config_scan ?
-                    ''
-                    :
-                    <p>
-                      Note: Monkeys were configured to avoid scanning of the local network.
-                    </p>
-                }
-              </div>
-              <div id="findings">
-                <h1>
-                  Security Findings
-                </h1>
-                <div>
-                  <h3>
-                    Immediate Threats
-                  </h3>
-                  {
-                    this.state.report.overview.issues.filter(function (x) {
-                      return x === true;
-                    }).length > 0 ?
-                      <div>
-                        During this simulated attack the Monkey uncovered <span
-                        className="label label-warning">
-                    {this.state.report.overview.issues.filter(function (x) {
-                      return x === true;
-                    }).length} threats</span>:
-                        <ul>
-                          {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
-                            <li>Stolen credentials are used to exploit other machines.</li> : null}
-                          {this.state.report.overview.issues[this.Issue.ELASTIC] ?
-                            <li>Elasticsearch servers are vulnerable to <a
-                              href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
-                            </li> : null}
-                          {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
-                            <li>Samba servers are vulnerable to ‘SambaCry’ (<a
-                              href="https://www.samba.org/samba/security/CVE-2017-7494.html"
-                            >CVE-2017-7494</a>).</li> : null}
-                          {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ?
-                            <li>Machines are vulnerable to ‘Shellshock’ (<a
-                              href="https://www.cvedetails.com/cve/CVE-2014-6271">CVE-2014-6271</a>).
-                            </li> : null}
-                          {this.state.report.overview.issues[this.Issue.CONFICKER] ?
-                            <li>Machines are vulnerable to ‘Conficker’ (<a
-                              href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
-                            >MS08-067</a>).</li> : null}
-                          {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
-                            <li>Machines are accessible using passwords supplied by the user during the Monkey’s
-                              configuration.</li> : null}
-                        </ul>
-                      </div>
-                      :
-                      <div>
-                        During this simulated attack the Monkey uncovered <span
-                        className="label label-success">0 threats</span>.
-                      </div>
-                  }
-                </div>
-                <div>
-                  <h3>
-                    Potential Security Issues
-                  </h3>
-                  {
-                    this.state.report.overview.warnings.filter(function (x) {
-                      return x === true;
-                    }).length > 0 ?
-                      <div>
-                        The Monkey uncovered the following possible set of issues:
-                        <ul>
-                          {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
-                            <li>Weak segmentation - Machines from different segments are able to
-                              communicate.</li> : null}
-                          {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                            <li>Lack of machine hardening, machines successfully tunneled monkey traffic using unused ports.</li> : null}
-                        </ul>
-                      </div>
-                      :
-                      <div>
-                        The Monkey did not find any issues.
-                      </div>
-                  }
-                </div>
-              </div>
-              <div id="recommendations">
-                <h1>
-                  Recommendations
-                </h1>
-                <div>
-                  {this.generateIssues(this.state.report.recommendations.issues)}
-                </div>
-              </div>
-              <div id="glance">
-                <h1>
-                  The Network from the Monkey's Eyes
-                </h1>
-                <div>
-                  <p>
-                    The Monkey discovered <span
-                    className="label label-warning">{this.state.report.glance.scanned.length}</span> machines and
-                    successfully breached <span
-                    className="label label-danger">{this.state.report.glance.exploited.length}</span> of them.
-                  </p>
-                  <div className="text-center" style={{margin: '10px'}}>
-                    <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4"
-                          trailWidth="4"
-                          strokeColor="#d9534f" trailColor="#f0ad4e"/>
-                    <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
-                  </div>
-                </div>
-                <p>
-                  From the attacker's point of view, the network looks like this:
-                </p>
-                <div className="map-legend">
-                  <b>Legend: </b>
-                  <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}}/></span>
-                  <b style={{color: '#aeaeae'}}> | </b>
-                  <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}}/></span>
-                  <b style={{color: '#aeaeae'}}> | </b>
-                  <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span>
-                  <b style={{color: '#aeaeae'}}> | </b>
-                  <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}}/></span>
-                </div>
-                <div style={{position: 'relative', height: '80vh'}}>
-                  <ReactiveGraph graph={this.state.graph} options={options}/>
-                </div>
-                <div style={{marginBottom: '20px'}}>
-                  <BreachedServers data={this.state.report.glance.exploited}/>
-                </div>
-                <div style={{marginBottom: '20px'}}>
-                  <ScannedServers data={this.state.report.glance.scanned}/>
-                </div>
-                <div>
-                  <StolenPasswords data={this.state.report.glance.stolen_creds}/>
-                </div>
-              </div>
-              <div className="text-center" style={{marginTop: '20px'}}>
-                For questions, suggestions or any other feedback
-                contact: <a href="mailto://labs@guardicore.com" className="no-print">labs@guardicore.com</a>
-                <div className="force-print" style={{display: 'none'}}>labs@guardicore.com</div>
-                <img src={guardicoreLogoImage} alt="GuardiCore" className="center-block" style={{height: '50px'}}/>
-              </div>
-            </div>
-            <div className="text-center no-print" style={{marginTop: '20px'}}>
-              <Button bsSize="large" onClick={() => {
-                print();
-              }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
-            </div>
-          </div>
-        );
-    }
-
-    return (
-      <Col xs={12} lg={8}>
-        <h1 className="page-title no-print">4. Security Report</h1>
-        <div style={{'fontSize': '1.2em'}}>
-          {content}
-        </div>
-      </Col>
-    );
-  }
 }
 
 export default ReportPageComponent;
