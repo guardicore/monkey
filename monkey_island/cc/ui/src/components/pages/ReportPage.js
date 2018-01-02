@@ -140,12 +140,18 @@ class ReportPageComponent extends React.Component {
   generateReportHeader() {
     return (
       <div id="header">
+        <div>
+          <img src={monkeyLogoImage}
+               style={{
+                 width: '100px',
+                 position: 'absolute',
+                 marginLeft: '-30px',
+                 marginTop: '-60px',
+               }}/>
+        </div>
         <h1 className="text-center">
           Infection Monkey Report
         </h1>
-        <div className="center-block text-center">
-          <img src={monkeyLogoImage} style={{width: '150px'}}/>
-        </div>
       </div>
     );
   }
