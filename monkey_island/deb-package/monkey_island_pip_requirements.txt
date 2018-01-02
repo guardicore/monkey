@@ -10,3 +10,4 @@ Flask-Pymongo
 Flask-Restful
 jsonschema
 netifaces
+virtualenv
