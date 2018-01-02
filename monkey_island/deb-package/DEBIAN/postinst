@@ -8,8 +8,8 @@ cp -f ${MONKEY_FOLDER}/monkey.sh /usr/bin/monkey
 chmod 755 /usr/bin/monkey
 
 # Prepare python virtualenv
-pip install virtualenv --no-index --find-links file://$INSTALLATION_FOLDER
-virtualenv ${PYTHON_FOLDER}
+pip2 install virtualenv --no-index --find-links file://$INSTALLATION_FOLDER
+virtualenv -p python2.7 ${PYTHON_FOLDER}
 
 # install pip requirements
 ${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
