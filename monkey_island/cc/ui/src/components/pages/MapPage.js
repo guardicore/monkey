@@ -53,7 +53,9 @@ class MapPageComponent extends React.Component {
       selected: null,
       selectedType: null,
       killPressed: false,
-      showKillDialog: false
+      showKillDialog: false,
+      telemetry: [],
+      telemetryLastTimestamp: null
     };
   }
 
@@ -77,12 +79,17 @@ class MapPageComponent extends React.Component {
 
   componentDidMount() {
     this.updateMapFromServer();
-    this.interval = setInterval(this.updateMapFromServer, 1000);
+    this.interval = setInterval(this.timedEvents, 1000);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  timedEvents = () => {
+    this.updateMapFromServer();
+    this.updateTelemetryFromServer();
+  };
 
   updateMapFromServer = () => {
     fetch('/api/netmap')
@@ -92,6 +99,21 @@ class MapPageComponent extends React.Component {
           edge.color = MapPageComponent.edgeGroupToColor(edge.group);
         });
         this.setState({graph: res});
+        this.props.onStatusChange();
+      });
+  };
+
+  updateTelemetryFromServer = () => {
+    fetch('/api/telemetry-feed?timestamp='+this.state.telemetryLastTimestamp)
+      .then(res => res.json())
+      .then(res => {
+        let newTelem = this.state.telemetry.concat(res['telemetries']);
+
+        this.setState(
+          {
+            telemetry: newTelem,
+            telemetryLastTimestamp: res['timestamp']
+          });
         this.props.onStatusChange();
       });
   };
@@ -156,6 +178,26 @@ class MapPageComponent extends React.Component {
     )
   };
 
+  renderTelemetryEntry(telemetry) {
+    return (
+      <div key={telemetry.id}>
+        <span className="date">{telemetry.timestamp}</span>
+        <span className="source"> {telemetry.hostname}:</span>
+        <span className="event"> {telemetry.brief}</span>
+      </div>
+    );
+  }
+
+  renderTelemetryConsole() {
+    return (
+      <div className="telemetry-console">
+        {
+          this.state.telemetry.map(this.renderTelemetryEntry)
+        }
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -174,17 +216,7 @@ class MapPageComponent extends React.Component {
             <b style={{color: '#aeaeae'}}> | </b>
             <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}} /></span>
           </div>
-          {
-            /*
-            <div className="telemetry-console">
-              <div>
-                <span className="date">2017-10-16 16:00:05</span>
-                <span className="source"> monkey-elastic</span>
-                <span className="event"> bla bla</span>
-              </div>
-            </div>
-            */
-          }
+          { this.renderTelemetryConsole() }
           <div style={{height: '80vh'}}>
             <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
           </div>
