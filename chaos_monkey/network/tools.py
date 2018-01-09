@@ -132,7 +132,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                         time_left)
                 # any read_socket is automatically a writesocket
                 num_replies = len(write_sockets) + len(err_sockets)
-                if num_replies == len(port_attempts) or time_left == 0:
+                if num_replies == len(port_attempts) or time_left <= 0:
                     break
                 else:
                     time_left -= SLEEP_BETWEEN_POLL

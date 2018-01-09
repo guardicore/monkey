@@ -28,13 +28,12 @@ class TcpScanner(HostScanner, HostFinger):
         shuffle(target_ports)
 
         ports, banners = check_tcp_ports(host.ip_addr, target_ports, self._config.tcp_scan_timeout / 1000.0)
-        if len(ports) != 0:
-            for target_port, banner in zip(ports, banners):
-                service = 'tcp-' + str(target_port)
-                host.services[service] = {}
-                if banner:
-                    host.services[service]['banner'] = banner
-                if only_one_port:
-                    break
+        for target_port, banner in zip(ports, banners):
+            service = 'tcp-' + str(target_port)
+            host.services[service] = {}
+            if banner:
+                host.services[service]['banner'] = banner
+            if only_one_port:
+                break
 
         return len(ports) != 0
