@@ -14,9 +14,9 @@ class TelemetryFeed(flask_restful.Resource):
     def get(self, **kw):
         timestamp = request.args.get('timestamp')
         if "null" == timestamp or timestamp is None:  # special case to avoid ugly JS code...
-            timestamp = datetime(2010,1,1).isoformat()
-
-        telemetries = mongo.db.telemetry.find({'timestamp': {'$gt': dateutil.parser.parse(timestamp)}})
+            telemetries = mongo.db.telemetry.find({})
+        else:
+            telemetries = mongo.db.telemetry.find({'timestamp': {'$gt': dateutil.parser.parse(timestamp)}})
 
         return \
             {
