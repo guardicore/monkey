@@ -7,8 +7,6 @@ import struct
 import ipaddress
 from netifaces import interfaces, ifaddresses, AF_INET
 
-from cc.database import mongo
-
 __author__ = 'Barak'
 
 

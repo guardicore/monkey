@@ -1,4 +1,5 @@
 import ipaddress
+from enum import Enum
 
 from cc.database import mongo
 from cc.services.config import ConfigService
@@ -25,7 +26,7 @@ class ReportService:
             'ShellShockExploiter': 'ShellShock Exploiter',
         }
 
-    class ISSUES_DICT:
+    class ISSUES_DICT(Enum):
         WEAK_PASSWORD = 0
         STOLEN_CREDS = 1
         ELASTIC = 2
@@ -33,7 +34,7 @@ class ReportService:
         SHELLSHOCK = 4
         CONFICKER = 5
 
-    class WARNINGS_DICT:
+    class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
         TUNNEL = 1
 
@@ -49,18 +50,15 @@ class ReportService:
     def get_monkey_duration():
         delta = ReportService.get_last_monkey_dead_time() - ReportService.get_first_monkey_time()
         st = ""
+        hours, rem = divmod(delta.seconds, 60 * 60)
+        minutes, seconds = divmod(rem, 60)
+
         if delta.days > 0:
             st += "%d days, " % delta.days
-        total = delta.seconds
-        seconds = total % 60
-        total = (total - seconds) / 60
-        minutes = total % 60
-        total = (total - minutes) / 60
-        hours = total
         if hours > 0:
             st += "%d hours, " % hours
-
         st += "%d minutes and %d seconds" % (minutes, seconds)
+
         return st
 
     @staticmethod
@@ -77,7 +75,8 @@ class ReportService:
     def get_scanned():
         nodes = \
             [NodeService.get_displayed_node_by_id(node['_id'], True) for node in mongo.db.node.find({}, {'_id': 1})] \
-            + [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in mongo.db.monkey.find({}, {'_id': 1})]
+            + [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
+               mongo.db.monkey.find({}, {'_id': 1})]
         nodes = [
             {
                 'label': node['label'],
@@ -95,7 +94,8 @@ class ReportService:
     @staticmethod
     def get_exploited():
         exploited = \
-            [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in mongo.db.monkey.find({}, {'_id': 1})
+            [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
+             mongo.db.monkey.find({}, {'_id': 1})
              if not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey['_id']))] \
             + [NodeService.get_displayed_node_by_id(node['_id'], True)
                for node in mongo.db.node.find({'exploited': True}, {'_id': 1})]
@@ -215,22 +215,18 @@ class ReportService:
     @staticmethod
     def process_exploit(exploit):
         exploiter_type = exploit['data']['exploiter']
-        if exploiter_type == 'SmbExploiter':
-            return ReportService.process_smb_exploit(exploit)
-        if exploiter_type == 'WmiExploiter':
-            return ReportService.process_wmi_exploit(exploit)
-        if exploiter_type == 'SSHExploiter':
-            return ReportService.process_ssh_exploit(exploit)
-        if exploiter_type == 'RdpExploiter':
-            return ReportService.process_rdp_exploit(exploit)
-        if exploiter_type == 'SambaCryExploiter':
-            return ReportService.process_sambacry_exploit(exploit)
-        if exploiter_type == 'ElasticGroovyExploiter':
-            return ReportService.process_elastic_exploit(exploit)
-        if exploiter_type == 'Ms08_067_Exploiter':
-            return ReportService.process_conficker_exploit(exploit)
-        if exploiter_type == 'ShellShockExploiter':
-            return ReportService.process_shellshock_exploit(exploit)
+        EXPLOIT_PROCESS_FUNCTION_DICT = {
+            'SmbExploiter': ReportService.process_smb_exploit,
+            'WmiExploiter': ReportService.process_wmi_exploit,
+            'SSHExploiter': ReportService.process_ssh_exploit,
+            'RdpExploiter': ReportService.process_rdp_exploit,
+            'SambaCryExploiter': ReportService.process_sambacry_exploit,
+            'ElasticGroovyExploiter': ReportService.process_elastic_exploit,
+            'Ms08_067_Exploiter': ReportService.process_conficker_exploit,
+            'ShellShockExploiter': ReportService.process_shellshock_exploit,
+        }
+
+        return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
 
     @staticmethod
     def get_exploits():
@@ -334,18 +330,18 @@ class ReportService:
         for machine in issues:
             for issue in issues[machine]:
                 if issue['type'] == 'elastic':
-                    issues_byte_array[ReportService.ISSUES_DICT.ELASTIC] = True
+                    issues_byte_array[ReportService.ISSUES_DICT.ELASTIC.value] = True
                 elif issue['type'] == 'sambacry':
-                    issues_byte_array[ReportService.ISSUES_DICT.SAMBACRY] = True
+                    issues_byte_array[ReportService.ISSUES_DICT.SAMBACRY.value] = True
                 elif issue['type'] == 'shellshock':
-                    issues_byte_array[ReportService.ISSUES_DICT.SHELLSHOCK] = True
+                    issues_byte_array[ReportService.ISSUES_DICT.SHELLSHOCK.value] = True
                 elif issue['type'] == 'conficker':
-                    issues_byte_array[ReportService.ISSUES_DICT.CONFICKER] = True
+                    issues_byte_array[ReportService.ISSUES_DICT.CONFICKER.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
-                                issue['username'] in config_users:
-                    issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD] = True
+                        issue['username'] in config_users:
+                    issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
                 elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
-                    issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS] = True
+                    issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS.value] = True
 
         return issues_byte_array
 
@@ -356,9 +352,9 @@ class ReportService:
         for machine in issues:
             for issue in issues[machine]:
                 if issue['type'] == 'cross_segment':
-                    warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT] = True
+                    warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
                 elif issue['type'] == 'tunnel':
-                    warnings_byte_array[ReportService.WARNINGS_DICT.TUNNEL] = True
+                    warnings_byte_array[ReportService.WARNINGS_DICT.TUNNEL.value] = True
 
         return warnings_byte_array
 
