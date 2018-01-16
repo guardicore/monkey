@@ -1,3 +1,4 @@
+import logging
 import socket
 import sys
 
@@ -5,6 +6,8 @@ import psutil
 from enum import IntEnum
 
 from network.info import get_host_subnets
+
+LOG = logging.getLogger(__name__)
 
 # Linux doesn't have WindowsError
 try:
@@ -56,8 +59,9 @@ class InfoCollector(object):
     def get_hostname(self):
         """
         Adds the fully qualified computer hostname to the system information.
-        :return: Nothing
+        :return: None. Updates class information
         """
+        LOG.debug("Reading hostname")
         self.info['hostname'] = socket.getfqdn()
 
     def get_process_list(self):
@@ -65,8 +69,9 @@ class InfoCollector(object):
         Adds process information from the host to the system information.
         Currently lists process name, ID, parent ID, command line
         and the full image path of each process.
-        :return: Nothing
+        :return: None. Updates class information
         """
+        LOG.debug("Reading process list")
         processes = {}
         for process in psutil.process_iter():
             try:
@@ -95,6 +100,7 @@ class InfoCollector(object):
         Adds network information from the host to the system information.
         Currently updates with a list of networks accessible from host,
         containing host ip and the subnet range.
-        :return: None
+        :return: None. Updates class information
         """
+        LOG.debug("Reading subnets")
         self.info['network_info'] = {'networks': get_host_subnets()}

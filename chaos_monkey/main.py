@@ -1,14 +1,17 @@
-import os
-import sys
-import logging
-import traceback
-import logging.config
-from config import WormConfiguration, EXTERNAL_CONFIG_FILE
-from model import MONKEY_ARG, DROPPER_ARG
-from dropper import MonkeyDrops
-from monkey import ChaosMonkey
+from __future__ import print_function
+
 import argparse
 import json
+import logging
+import logging.config
+import os
+import sys
+import traceback
+
+from config import WormConfiguration, EXTERNAL_CONFIG_FILE
+from dropper import MonkeyDrops
+from model import MONKEY_ARG, DROPPER_ARG
+from monkey import ChaosMonkey
 
 if __name__ == "__main__":
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -55,22 +58,22 @@ def main():
         config_file = opts.config
     if os.path.isfile(config_file):
         # using print because config can also change log locations
-        print "Loading config from %s." % config_file
+        print("Loading config from %s." % config_file)
         try:
             with open(config_file) as config_fo:
                 json_dict = json.load(config_fo)
                 WormConfiguration.from_dict(json_dict)
         except ValueError as e:
-            print "Error loading config: %s, using default" % (e,)
+            print("Error loading config: %s, using default" % (e,))
     else:
         print("Config file wasn't supplied and default path: %s wasn't found, using internal default" % (config_file,))
 
-    print "Loaded Configuration: %r" % WormConfiguration.as_dict()
+    print("Loaded Configuration: %r" % WormConfiguration.as_dict())
 
     # Make sure we're not in a machine that has the kill file
     kill_path = os.path.expandvars(WormConfiguration.kill_file_path_windows) if sys.platform == "win32" else WormConfiguration.kill_file_path_linux
     if os.path.exists(kill_path):
-        print "Kill path found, finished run"
+        print("Kill path found, finished run")
         return True
 
     try:

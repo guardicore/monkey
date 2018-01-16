@@ -277,13 +277,14 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: 130px;
   background: rgba(0,0,0,0.7);
   border-radius: 5px;
   border: 3px solid #aaa;
   padding: 0.5em;
   color: white;
   font-family: Consolas, "Courier New", monospace;
+  overflow: auto;
 }
 
 .telemetry-console .date {

@@ -17,6 +17,7 @@ from cc.resources.edge import Edge
 from cc.resources.node import Node
 from cc.resources.report import Report
 from cc.resources.root import Root
+from cc.resources.telemetry_feed import TelemetryFeed
 from cc.services.config import ConfigService
 
 __author__ = 'Barak'
@@ -89,5 +90,6 @@ def init_app(mongo_url):
     api.add_resource(Edge, '/api/netmap/edge', '/api/netmap/edge/')
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
     api.add_resource(Report, '/api/report', '/api/report/')
+    api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
 
     return app

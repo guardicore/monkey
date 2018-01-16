@@ -1,5 +1,5 @@
-import ctypes
 import binascii
+import ctypes
 import logging
 import socket
 
@@ -8,13 +8,14 @@ __author__ = 'itay.mizeretz'
 LOG = logging.getLogger(__name__)
 
 
-class MimikatzCollector:
+class MimikatzCollector(object):
     """
     Password collection module for Windows using Mimikatz.
     """
 
     def __init__(self):
         try:
+
             self._isInit = False
             self._config = __import__('config').WormConfiguration
             self._dll = ctypes.WinDLL(self._config.mimikatz_dll_name)
@@ -31,9 +32,9 @@ class MimikatzCollector:
         Gets the logon info from mimikatz.
         Returns a dictionary of users with their known credentials.
         """
-
         if not self._isInit:
             return {}
+        LOG.debug("Running mimikatz collector")
 
         try:
             entry_count = self._collect()

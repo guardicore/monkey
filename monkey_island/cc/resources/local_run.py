@@ -36,7 +36,7 @@ def run_local_monkey():
 
     # run the monkey
     try:
-        args = ["%s m0nk3y -s %s:%s" % (target_path, local_ip_addresses()[0], ISLAND_PORT)]
+        args = ['"%s" m0nk3y -s %s:%s' % (target_path, local_ip_addresses()[0], ISLAND_PORT)]
         if sys.platform == "win32":
             args = "".join(args)
         pid = subprocess.Popen(args, shell=True).pid
