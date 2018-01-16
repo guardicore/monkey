@@ -334,8 +334,7 @@ class ReportPageComponent extends React.Component {
                     <li>Weak segmentation - Machines from different segments are able to
                       communicate.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                    <li>Lack of machine hardening, machines successfully tunneled monkey traffic using unused
-                      ports.</li> : null}
+                    <li>Weak segmentation - machines were able to communicate over unused ports.</li> : null}
                 </ul>
               </div>
               :
@@ -441,7 +440,7 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">SMB</span> attack.
           <br/>
-          The attack succeeded by authenticating over SMB protocol with user <span
+          The Monkey authenticated over the SMB protocol with user <span
           className="label label-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
       </li>
@@ -458,7 +457,7 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">SMB</span> attack.
           <br/>
-          The attack succeeded by using a pass-the-hash attack over SMB protocol with user <span
+          The Monkey used a pass-the-hash attack over SMB protocol with user <span
           className="label label-success">{issue.username}</span>.
         </CollapsibleWellComponent>
       </li>
@@ -475,7 +474,7 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">WMI</span> attack.
           <br/>
-          The attack succeeded by authenticating over WMI protocol with user <span
+          The Monkey authenticated over the WMI protocol with user <span
           className="label label-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
       </li>
@@ -492,7 +491,7 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">WMI</span> attack.
           <br/>
-          The attack succeeded by using a pass-the-hash attack over WMI protocol with user <span
+          The Monkey used a pass-the-hash attack over WMI protocol with user <span
           className="label label-success">{issue.username}</span>.
         </CollapsibleWellComponent>
       </li>
@@ -509,7 +508,7 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">SSH</span> attack.
           <br/>
-          The attack succeeded by authenticating over SSH protocol with user <span
+          The Monkey authenticated over the SSH protocol with user <span
           className="label label-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
       </li>
@@ -526,7 +525,7 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">RDP</span> attack.
           <br/>
-          The attack succeeded by authenticating over RDP protocol with user <span
+          The Monkey authenticated over the RDP protocol with user <span
           className="label label-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
       </li>
@@ -545,8 +544,8 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">SambaCry</span> attack.
           <br/>
-          The attack succeeded by authenticating over SMB protocol with user <span
-          className="label label-success">{issue.username}</span> and its password, and by using the SambaCry
+          The Monkey authenticated over the SMB protocol with user <span
+          className="label label-success">{issue.username}</span> and its password, and used the SambaCry
           vulnerability.
         </CollapsibleWellComponent>
       </li>
@@ -562,7 +561,7 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to an <span
           className="label label-danger">Elastic Groovy</span> attack.
           <br/>
-          The attack succeeded because the Elastic Search server is not patched against CVE-2015-1427.
+          The attack was made possible because the Elastic Search server was not patched against CVE-2015-1427.
         </CollapsibleWellComponent>
       </li>
     );
@@ -577,8 +576,8 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">ShellShock</span> attack.
           <br/>
-          The attack succeeded because the HTTP server running on TCP port <span
-          className="label label-info">{issue.port}</span> is vulnerable to a shell injection attack on the
+          The attack was made possible because the HTTP server running on TCP port <span
+          className="label label-info">{issue.port}</span> was vulnerable to a shell injection attack on the
           paths: {this.generateShellshockPathListBadges(issue.paths)}.
         </CollapsibleWellComponent>
       </li>
@@ -594,8 +593,8 @@ class ReportPageComponent extends React.Component {
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
           className="label label-danger">Conficker</span> attack.
           <br/>
-          The attack succeeded because the target machine uses an outdated and unpatched operating system vulnerable to
-          Conficker.
+          The attack was made possible because the target machine used an outdated and unpatched operating system
+          vulnerable to Conficker.
         </CollapsibleWellComponent>
       </li>
     );
