@@ -16,8 +16,10 @@ require('normalize.css/normalize.css');
 require('react-data-components/css/table-twbs.css');
 require('styles/App.css');
 require('react-toggle/style.css');
+require('react-table/react-table.css');
 
-let logoImage = require('../images/monkey-logo.png');
+let logoImage = require('../images/monkey-icon.svg');
+let infectionMonkeyImage = require('../images/infection-monkey.svg');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
 
 class AppComponent extends React.Component {
@@ -27,7 +29,8 @@ class AppComponent extends React.Component {
       completedSteps: {
         run_server: true,
         run_monkey: false,
-        infection_done: false
+        infection_done: false,
+        report_done: false
       }
     };
   }
@@ -66,7 +69,8 @@ class AppComponent extends React.Component {
           <Row>
             <Col sm={3} md={2} className="sidebar">
               <div className="header">
-                <img src={logoImage} alt="Infection Monkey"/>
+                <img src={logoImage} style={{width: '10vw'}}/>
+                <img src={infectionMonkeyImage} style={{width: '15vw'}} alt="Infection Monkey"/>
               </div>
 
               <ul className="navigation">
@@ -101,6 +105,9 @@ class AppComponent extends React.Component {
                   <NavLink to="/report">
                     <span className="number">4.</span>
                     Security Report
+                    { this.state.completedSteps.report_done ?
+                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      : ''}
                   </NavLink>
                 </li>
                 <li>

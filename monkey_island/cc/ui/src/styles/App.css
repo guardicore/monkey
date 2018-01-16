@@ -46,7 +46,7 @@ body {
 
   ul {
     list-style: none;
-    padding-left: 0;
+    padding-left: 0px;
   }
 
   li {
@@ -66,6 +66,7 @@ body {
     padding: 0.5em 1em;
     margin: 0.1em 0;
   }
+
   li a:hover {
     color: #000;
     background: #e9e9e9;
@@ -362,5 +363,125 @@ body {
 @media (max-width: 767px) {
   .markdown-body {
     padding: 15px;
+  }
+}
+
+
+/* Report page */
+
+.report-page {
+  font-size: 1.2em;
+  border: 1px solid #fff;
+  padding: 2em;
+  -webkit-box-shadow: 1px 1px 7px -1px #ccc;
+  box-shadow: 1px 1px 7px -1px #ccc;
+}
+
+.report-page h1 {
+  margin-top: 30px;
+}
+
+.report-page h3 {
+  margin-top: 20px;
+}
+
+.report-page h4 {
+  margin-top: 20px;
+}
+
+.report-page ul {
+  list-style: disc;
+  padding-left: 40px;
+}
+
+.report-page li {
+  overflow: visible;
+}
+
+.report-page li a {
+  display: inline;
+  padding: 0em;
+}
+
+/* Print report styling */
+
+@media print {
+  .sidebar {
+    display: none;
+  }
+
+  .no-print {
+    display: none;
+  }
+
+  .force-print {
+    display: block !important;
+  }
+
+  .pie-chart {
+    width: 100px;
+  }
+
+  .label {
+    padding: 2px 6px;
+    border: 1px solid #000;
+    color: #fff !important;
+    display: inline !important;
+    font-size: 75% !important;
+    font-weight: bold !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: .25em !important;
+  }
+
+  .alert {
+    padding: 15px !important;
+    margin-bottom: 20px !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+  }
+
+  .alert-danger {
+    color:#a94442 !important;
+    background-color:#f2dede !important;
+    border-color:#ebccd1 !important;
+  }
+
+  .alert-success {
+    color:#3c763d !important;
+    background-color:#dff0d8 !important;
+    border-color:#d6e9c6 !important;
+  }
+
+  .alert-info {
+    color:#31708f !important;
+    background-color:#d9edf7 !important;
+    border-color:#bce8f1 !important;
+  }
+
+  .label-default {
+    background-color: #777 !important;
+  }
+
+  .label-primary {
+    background-color: #337ab7 !important;
+  }
+
+  .label-success {
+    background-color: #5cb85c !important;
+  }
+
+  .label-info {
+    background-color: #5bc0de !important;
+  }
+
+  .label-warning {
+    background-color: #f0ad4e !important;
+  }
+
+  .label-danger {
+    background-color: #d9534f !important;
   }
 }

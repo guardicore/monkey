@@ -53,6 +53,7 @@ class Monkey(flask_restful.Resource):
 
     def post(self, **kw):
         monkey_json = json.loads(request.data)
+        monkey_json['creds'] = []
         monkey_json['dead'] = False
         if 'keepalive' in monkey_json:
             monkey_json['keepalive'] = dateutil.parser.parse(monkey_json['keepalive'])
@@ -60,6 +61,8 @@ class Monkey(flask_restful.Resource):
             monkey_json['keepalive'] = datetime.now()
 
         monkey_json['modifytime'] = datetime.now()
+
+        ConfigService.save_initial_config_if_needed()
 
         # if new monkey telem, change config according to "new monkeys" config.
         db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
@@ -120,6 +123,8 @@ class Monkey(flask_restful.Resource):
             node_id = existing_node["_id"]
             for edge in mongo.db.edge.find({"to": node_id}):
                 mongo.db.edge.update({"_id": edge["_id"]}, {"$set": {"to": new_monkey_id}})
+            for creds in existing_node['creds']:
+                NodeService.add_credentials_to_monkey(new_monkey_id, creds)
             mongo.db.node.remove({"_id": node_id})
 
         return {"id": new_monkey_id}

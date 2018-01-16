@@ -10,3 +10,5 @@ Flask-Pymongo
 Flask-Restful
 jsonschema
 netifaces
+ipaddress
+enum34

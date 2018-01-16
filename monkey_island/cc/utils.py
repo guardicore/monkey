@@ -4,9 +4,8 @@ import sys
 import array
 
 import struct
+import ipaddress
 from netifaces import interfaces, ifaddresses, AF_INET
-
-from cc.database import mongo
 
 __author__ = 'Barak'
 
@@ -56,3 +55,11 @@ def local_ip_addresses():
         addresses = ifaddresses(interface).get(AF_INET, [])
         ip_list.extend([link['addr'] for link in addresses if link['addr'] != '127.0.0.1'])
     return ip_list
+
+
+def get_subnets():
+    subnets = []
+    for interface in interfaces():
+        addresses = ifaddresses(interface).get(AF_INET, [])
+        subnets.extend([ipaddress.ip_interface(link['addr'] + '/' + link['netmask']).network for link in addresses if link['addr'] != '127.0.0.1'])
+    return subnets

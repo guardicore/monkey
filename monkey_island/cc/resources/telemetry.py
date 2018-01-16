@@ -1,5 +1,6 @@
 import json
 import traceback
+import copy
 from datetime import datetime
 
 import dateutil
@@ -39,7 +40,6 @@ class Telemetry(flask_restful.Resource):
         telemetry_json = json.loads(request.data)
         telemetry_json['timestamp'] = datetime.now()
 
-        telem_id = mongo.db.telemetry.insert(telemetry_json)
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
 
         try:
@@ -53,6 +53,7 @@ class Telemetry(flask_restful.Resource):
             print("Exception caught while processing telemetry: %s" % str(ex))
             traceback.print_exc()
 
+        telem_id = mongo.db.telemetry.insert(telemetry_json)
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
 
     @staticmethod
@@ -70,6 +71,11 @@ class Telemetry(flask_restful.Resource):
                 monkey_label = telem_monkey_guid
             x["monkey"] = monkey_label
             objects.append(x)
+            if x['telem_type'] == 'system_info_collection' and 'credentials' in x['data']:
+                for user in x['data']['credentials']:
+                    if -1 != user.find(','):
+                        new_user = user.replace(',', '.')
+                        x['data']['credentials'][new_user] = x['data']['credentials'].pop(user)
 
         return objects
 
@@ -103,7 +109,7 @@ class Telemetry(flask_restful.Resource):
     @staticmethod
     def process_exploit_telemetry(telemetry_json):
         edge = Telemetry.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
-        new_exploit = telemetry_json['data']
+        new_exploit = copy.deepcopy(telemetry_json['data'])
 
         new_exploit.pop('machine')
         new_exploit['timestamp'] = telemetry_json['timestamp']
@@ -115,10 +121,16 @@ class Telemetry(flask_restful.Resource):
         if new_exploit['result']:
             EdgeService.set_edge_exploited(edge)
 
+        for attempt in telemetry_json['data']['attempts']:
+            if attempt['result']:
+                attempt.pop('result')
+                [attempt.pop(field) for field in ['password', 'lm_hash', 'ntlm_hash'] if len(attempt[field]) == 0]
+                NodeService.add_credentials_to_node(edge['to'], attempt)
+
     @staticmethod
     def process_scan_telemetry(telemetry_json):
         edge = Telemetry.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
-        data = telemetry_json['data']['machine']
+        data = copy.deepcopy(telemetry_json['data']['machine'])
         ip_address = data.pop("ip_addr")
         new_scan = \
             {
@@ -158,10 +170,16 @@ class Telemetry(flask_restful.Resource):
                 if 'ntlm_hash' in creds[user]:
                     ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
 
+            for user in creds:
+                if -1 != user.find('.'):
+                    new_user = user.replace('.', ',')
+                    creds[new_user] = creds.pop(user)
+
     @staticmethod
     def process_trace_telemetry(telemetry_json):
         # Nothing to do
         return
+
 
 TELEM_PROCESS_DICT = \
     {

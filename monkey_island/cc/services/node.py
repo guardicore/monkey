@@ -12,11 +12,11 @@ class NodeService:
         pass
 
     @staticmethod
-    def get_displayed_node_by_id(node_id):
+    def get_displayed_node_by_id(node_id, for_report=False):
         if ObjectId(node_id) == NodeService.get_monkey_island_pseudo_id():
             return NodeService.get_monkey_island_node()
 
-        edges = EdgeService.get_displayed_edges_by_to(node_id)
+        edges = EdgeService.get_displayed_edges_by_to(node_id, for_report)
         accessible_from_nodes = []
         exploits = []
 
@@ -29,14 +29,14 @@ class NodeService:
                 return new_node
 
             # node is infected
-            new_node = NodeService.monkey_to_net_node(monkey)
+            new_node = NodeService.monkey_to_net_node(monkey, for_report)
             for key in monkey:
                 if key not in ['_id', 'modifytime', 'parent', 'dead', 'description']:
                     new_node[key] = monkey[key]
 
         else:
             # node is uninfected
-            new_node = NodeService.node_to_net_node(node)
+            new_node = NodeService.node_to_net_node(node, for_report)
             new_node["ip_addresses"] = node["ip_addresses"]
 
         for edge in edges:
@@ -90,6 +90,10 @@ class NodeService:
         return True
 
     @staticmethod
+    def get_monkey_label_by_id(monkey_id):
+        return NodeService.get_monkey_label(NodeService.get_monkey_by_id(monkey_id))
+
+    @staticmethod
     def get_monkey_label(monkey):
         label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]
         ip_addresses = local_ip_addresses()
@@ -115,22 +119,24 @@ class NodeService:
         return "%s_%s" % (node_type, node_os)
 
     @staticmethod
-    def monkey_to_net_node(monkey):
+    def monkey_to_net_node(monkey, for_report=False):
+        label = monkey['hostname'] if for_report else NodeService.get_monkey_label(monkey)
         return \
             {
                 "id": monkey["_id"],
-                "label": NodeService.get_monkey_label(monkey),
+                "label": label,
                 "group": NodeService.get_monkey_group(monkey),
                 "os": NodeService.get_monkey_os(monkey),
                 "dead": monkey["dead"],
             }
 
     @staticmethod
-    def node_to_net_node(node):
+    def node_to_net_node(node, for_report=False):
+        label = node['os']['version'] if for_report else NodeService.get_node_label(node)
         return \
             {
                 "id": node["_id"],
-                "label": NodeService.get_node_label(node),
+                "label": label,
                 "group": NodeService.get_node_group(node),
                 "os": NodeService.get_node_os(node)
             }
@@ -166,6 +172,7 @@ class NodeService:
             {
                 "ip_addresses": [ip_address],
                 "exploited": False,
+                "creds": [],
                 "os":
                     {
                         "type": "unknown",
@@ -273,3 +280,39 @@ class NodeService:
     @staticmethod
     def is_any_monkey_exists():
         return mongo.db.monkey.find_one({}) is not None
+
+    @staticmethod
+    def is_monkey_finished_running():
+        return NodeService.is_any_monkey_exists() and not NodeService.is_any_monkey_alive()
+
+    @staticmethod
+    def add_credentials_to_monkey(monkey_id, creds):
+        mongo.db.monkey.update(
+            {'_id': monkey_id},
+            {'$push': {'creds': creds}}
+        )
+
+    @staticmethod
+    def add_credentials_to_node(node_id, creds):
+        mongo.db.node.update(
+            {'_id': node_id},
+            {'$push': {'creds': creds}}
+        )
+
+    @staticmethod
+    def get_node_or_monkey_by_ip(ip_address):
+        node = NodeService.get_node_by_ip(ip_address)
+        if node is not None:
+            return node
+        return NodeService.get_monkey_by_ip(ip_address)
+
+    @staticmethod
+    def get_node_or_monkey_by_id(node_id):
+        node = NodeService.get_node_by_id(node_id)
+        if node is not None:
+            return node
+        return NodeService.get_monkey_by_id(node_id)
+
+    @staticmethod
+    def get_node_hostname(node):
+        return node['hostname'] if 'hostname' in node else node['os']['version']

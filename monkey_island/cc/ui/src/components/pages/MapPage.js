@@ -2,48 +2,10 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {Icon} from 'react-fa';
-import PreviewPane from 'components/preview-pane/PreviewPane';
-import {ReactiveGraph} from '../reactive-graph/ReactiveGraph';
+import PreviewPane from 'components/map/preview-pane/PreviewPane';
+import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {ModalContainer, ModalDialog} from 'react-modal-dialog';
-
-let groupNames = ['clean_unknown', 'clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
-  'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_windows', 'island_monkey_windows_running',
-  'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',
-  'monkey_linux_running', 'monkey_windows', 'monkey_windows_running'];
-
-let getGroupsOptions = () => {
-  let groupOptions = {};
-  for (let groupName of groupNames) {
-    groupOptions[groupName] =
-      {
-        shape: 'image',
-        size: 50,
-        image: require('../../images/nodes/' + groupName + '.png')
-      };
-  }
-  return groupOptions;
-};
-
-let options = {
-  autoResize: true,
-  layout: {
-    improvedLayout: false
-  },
-  edges: {
-    width: 2,
-    smooth: {
-      type: 'curvedCW'
-    }
-  },
-  physics: {
-    barnesHut: {
-      gravitationalConstant: -120000,
-      avoidOverlap: 0.5
-    },
-    minVelocity: 0.75
-  },
-  groups: getGroupsOptions()
-};
+import {options, edgeGroupToColor} from 'components/map/MapOptions';
 
 class MapPageComponent extends React.Component {
   constructor(props) {
@@ -62,20 +24,6 @@ class MapPageComponent extends React.Component {
   events = {
     select: event => this.selectionChanged(event)
   };
-
-  static edgeGroupToColor(group) {
-    switch (group) {
-      case 'exploited':
-        return '#c00';
-      case 'tunnel':
-        return '#0058aa';
-      case 'scan':
-        return '#f90';
-      case 'island':
-        return '#aaa';
-    }
-    return 'black';
-  }
 
   componentDidMount() {
     this.updateMapFromServer();
@@ -96,7 +44,7 @@ class MapPageComponent extends React.Component {
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
-          edge.color = MapPageComponent.edgeGroupToColor(edge.group);
+          edge.color = edgeGroupToColor(edge.group);
         });
         this.setState({graph: res});
         this.props.onStatusChange();

@@ -11,22 +11,22 @@ class EdgeService:
         pass
 
     @staticmethod
-    def get_displayed_edge_by_id(edge_id):
+    def get_displayed_edge_by_id(edge_id, for_report=False):
         edge = mongo.db.edge.find({"_id": ObjectId(edge_id)})[0]
-        return EdgeService.edge_to_displayed_edge(edge)
+        return EdgeService.edge_to_displayed_edge(edge, for_report)
 
     @staticmethod
-    def get_displayed_edges_by_to(to):
+    def get_displayed_edges_by_to(to, for_report=False):
         edges = mongo.db.edge.find({"to": ObjectId(to)})
-        return [EdgeService.edge_to_displayed_edge(edge) for edge in edges]
+        return [EdgeService.edge_to_displayed_edge(edge, for_report) for edge in edges]
 
     @staticmethod
-    def edge_to_displayed_edge(edge):
+    def edge_to_displayed_edge(edge, for_report=False):
         services = []
         os = {}
 
         if len(edge["scans"]) > 0:
-            services = EdgeService.services_to_displayed_services(edge["scans"][-1]["data"]["services"])
+            services = EdgeService.services_to_displayed_services(edge["scans"][-1]["data"]["services"], for_report)
             os = edge["scans"][-1]["data"]["os"]
 
         displayed_edge = EdgeService.edge_to_net_edge(edge)
@@ -104,8 +104,11 @@ class EdgeService:
         return edges
 
     @staticmethod
-    def services_to_displayed_services(services):
-        return [x + ": " + (services[x]['name'] if services[x].has_key('name') else 'unknown') for x in services]
+    def services_to_displayed_services(services, for_report=False):
+        if for_report:
+            return [x for x in services]
+        else:
+            return [x + ": " + (services[x]['name'] if 'name' in services[x] else 'unknown') for x in services]
 
     @staticmethod
     def edge_to_net_edge(edge):
