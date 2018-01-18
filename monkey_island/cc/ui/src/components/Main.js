@@ -69,7 +69,7 @@ class AppComponent extends React.Component {
           <Row>
             <Col sm={3} md={2} className="sidebar">
               <div className="header">
-                <img src={logoImage} style={{width: '10vw'}}/>
+                <img src={logoImage} style={{width: '5vw', margin: '15px'}}/>
                 <img src={infectionMonkeyImage} style={{width: '15vw'}} alt="Infection Monkey"/>
               </div>
 

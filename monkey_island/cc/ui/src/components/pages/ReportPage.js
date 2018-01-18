@@ -122,6 +122,7 @@ class ReportPageComponent extends React.Component {
         </div>
         <div className="report-page">
           {this.generateReportHeader()}
+          <hr/>
           {this.generateReportOverviewSection()}
           {this.generateReportFindingsSection()}
           {this.generateReportRecommendationsSection()}
@@ -139,19 +140,20 @@ class ReportPageComponent extends React.Component {
 
   generateReportHeader() {
     return (
-      <div id="header">
-        <div>
+      <div id="header" className="row justify-content-between">
+        <Col xs={8}>
+          <div>
+            <h2 style={{marginTop: '0px', marginBottom: '5px', color: '#666666'}}>Security Report</h2>
+            <h2 style={{marginTop: '0px', marginBottom: '0px', color: '#ffcc00'}}>Infection <b>Monkey</b></h2>
+          </div>
+        </Col>
+        <Col xs={4}>
           <img src={monkeyLogoImage}
                style={{
-                 width: '100px',
-                 position: 'absolute',
-                 marginLeft: '-30px',
-                 marginTop: '-60px',
+                 float: 'right',
+                 width: '80px'
                }}/>
-        </div>
-        <h1 className="text-center">
-          Infection Monkey Report
-        </h1>
+        </Col>
       </div>
     );
   }
