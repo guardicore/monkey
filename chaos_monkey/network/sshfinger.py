@@ -1,8 +1,7 @@
 import re
-
-from model.host import VictimHost
 from network import HostFinger
-from network.tools import check_tcp_port
+from network.tools import check_port_tcp
+from model.host import VictimHost
 
 SSH_PORT = 22
 SSH_SERVICE_DEFAULT = 'tcp-22'
@@ -39,7 +38,7 @@ class SSHFinger(HostFinger):
                 self._banner_match(name, host, banner)
                 return
 
-        is_open, banner = check_tcp_port(host.ip_addr, SSH_PORT, TIMEOUT, True)
+        is_open, banner = check_port_tcp(host.ip_addr, SSH_PORT, TIMEOUT, True)
 
         if is_open:
             host.services[SSH_SERVICE_DEFAULT] = {}

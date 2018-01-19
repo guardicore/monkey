@@ -8,7 +8,7 @@ from threading import Thread
 from model import VictimHost
 from network.firewall import app as firewall
 from network.info import local_ips, get_free_tcp_port
-from network.tools import check_tcp_port
+from network.tools import check_port_tcp
 from transport.base import get_last_serve_time
 
 __author__ = 'hoffer'
@@ -40,7 +40,7 @@ def _check_tunnel(address, port, existing_sock=None):
         sock = existing_sock
 
     LOG.debug("Checking tunnel %s:%s", address, port)
-    is_open, _ = check_tcp_port(address, int(port))
+    is_open, _ = check_port_tcp(address, int(port))
     if not is_open:
         LOG.debug("Could not connect to %s:%s", address, port)
         if not existing_sock:
