@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Alegreya');
 
 /* Base Application Styles */
+
 body {
   color: #fff;
   background: #222;
@@ -23,7 +24,7 @@ body {
     left: 0;
     z-index: 1000;
     display: block;
-    padding: 1em;
+    padding: 0px !important;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
     background-color: #f5f5f5;
@@ -34,6 +35,8 @@ body {
     text-align: center;
     font-weight: bold;
     font-size: 1.2em;
+    background-color: #ffcc00;
+    padding: 15px;
   }
 
   .header img {
@@ -42,6 +45,7 @@ body {
 
   .navigation {
     margin-top: 1em;
+    padding: 15px;
   }
 
   ul {
@@ -54,14 +58,12 @@ body {
   }
 
   li .number {
-    color: #666;
     display: inline-block;
     width: 1.1em;
   }
 
   li a {
-    /*color: #d30d09;*/
-    color: #666;
+    color: #333333;
     display: block;
     padding: 0.5em 1em;
     margin: 0.1em 0;
@@ -73,12 +75,12 @@ body {
     text-decoration: none;
   }
   li a.active {
-    background: #fff;
+    background: #333333;
     text-decoration: none;
-    color: #d30d09;
+    color: #ffcc00;
   }
   li a.active:hover {
-    color: #d30d09;
+    color: #ffcc00;
   }
   li a.disabled {
     color: #666;
@@ -93,6 +95,7 @@ body {
   li .checkmark {
     font-size: 1.3em;
     margin-right: -10px;
+    color: #ffcc00;
   }
 
   hr {
@@ -123,9 +126,9 @@ body {
   margin-top: 0;
   margin-bottom: 1em;
   padding-bottom: 0.5em;
-  border-bottom: 2px dotted #d30d09;
+  border-bottom: 2px dotted #ffcc00;
   font-size: 2.5em;
-  color: #d30d09;
+  color: #ffcc00;
   font-family: 'Alegreya', serif;
 }
 

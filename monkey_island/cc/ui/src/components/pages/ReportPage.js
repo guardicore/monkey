@@ -122,6 +122,7 @@ class ReportPageComponent extends React.Component {
         </div>
         <div className="report-page">
           {this.generateReportHeader()}
+          <hr/>
           {this.generateReportOverviewSection()}
           {this.generateReportFindingsSection()}
           {this.generateReportRecommendationsSection()}
@@ -139,19 +140,20 @@ class ReportPageComponent extends React.Component {
 
   generateReportHeader() {
     return (
-      <div id="header">
-        <div>
+      <div id="header" className="row justify-content-between">
+        <Col xs={8}>
+          <div>
+            <h1 style={{marginTop: '0px', marginBottom: '5px', color: '#666666', fontFamily: 'Alegreya'}}>Security Report</h1>
+            <h1 style={{marginTop: '0px', marginBottom: '0px', color: '#ffcc00', fontFamily: 'Alegreya'}}>Infection <b>Monkey</b></h1>
+          </div>
+        </Col>
+        <Col xs={4}>
           <img src={monkeyLogoImage}
                style={{
-                 width: '100px',
-                 position: 'absolute',
-                 marginLeft: '-30px',
-                 marginTop: '-60px',
+                 float: 'right',
+                 width: '80px'
                }}/>
-        </div>
-        <h1 className="text-center">
-          Infection Monkey Report
-        </h1>
+        </Col>
       </div>
     );
   }
@@ -159,9 +161,9 @@ class ReportPageComponent extends React.Component {
   generateReportOverviewSection() {
     return (
       <div id="overview">
-        <h1>
+        <h2>
           Overview
-        </h1>
+        </h2>
         {
           this.state.report.glance.exploited.length > 0 ?
             (<p className="alert alert-danger">
@@ -271,9 +273,9 @@ class ReportPageComponent extends React.Component {
   generateReportFindingsSection() {
     return (
       <div id="findings">
-        <h1>
+        <h3>
           Security Findings
-        </h1>
+        </h3>
         <div>
           <h3>
             Immediate Threats
@@ -350,9 +352,9 @@ class ReportPageComponent extends React.Component {
   generateReportRecommendationsSection() {
     return (
       <div id="recommendations">
-        <h1>
+        <h3>
           Recommendations
-        </h1>
+        </h3>
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
         </div>
@@ -365,9 +367,9 @@ class ReportPageComponent extends React.Component {
       (100 * this.state.report.glance.exploited.length) / this.state.report.glance.scanned.length;
     return (
       <div id="glance">
-        <h1>
+        <h3>
           The Network from the Monkey's Eyes
-        </h1>
+        </h3>
         <div>
           <p>
             The Monkey discovered <span
