@@ -3,6 +3,7 @@ from datetime import datetime
 import dateutil
 import flask_restful
 from flask import request
+import flask_pymongo
 
 from cc.database import mongo
 from cc.services.node import NodeService
@@ -16,7 +17,8 @@ class TelemetryFeed(flask_restful.Resource):
         if "null" == timestamp or timestamp is None:  # special case to avoid ugly JS code...
             telemetries = mongo.db.telemetry.find({})
         else:
-            telemetries = mongo.db.telemetry.find({'timestamp': {'$gt': dateutil.parser.parse(timestamp)}})
+            telemetries = mongo.db.telemetry.find({'timestamp': {'$gt': dateutil.parser.parse(timestamp)}})\
+                .sort([('timestamp', flask_pymongo.ASCENDING)])
 
         return \
             {
