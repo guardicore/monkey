@@ -18,7 +18,8 @@ class TelemetryFeed(flask_restful.Resource):
             telemetries = mongo.db.telemetry.find({})
         else:
             telemetries = mongo.db.telemetry.find({'timestamp': {'$gt': dateutil.parser.parse(timestamp)}})\
-                .sort([('timestamp', flask_pymongo.ASCENDING)])
+
+        telemetries = telemetries.sort([('timestamp', flask_pymongo.ASCENDING)])
 
         return \
             {
