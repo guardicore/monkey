@@ -123,9 +123,11 @@ class Telemetry(flask_restful.Resource):
 
         for attempt in telemetry_json['data']['attempts']:
             if attempt['result']:
-                attempt.pop('result')
-                [attempt.pop(field) for field in ['password', 'lm_hash', 'ntlm_hash'] if len(attempt[field]) == 0]
-                NodeService.add_credentials_to_node(edge['to'], attempt)
+                found_creds = {'user': attempt['user']}
+                for field in ['password', 'lm_hash', 'ntlm_hash']:
+                    if len(attempt[field]) != 0:
+                        found_creds[field] = attempt[field]
+                NodeService.add_credentials_to_node(edge['to'], found_creds)
 
     @staticmethod
     def process_scan_telemetry(telemetry_json):
