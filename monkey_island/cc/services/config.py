@@ -800,15 +800,23 @@ class ConfigService:
         pass
 
     @staticmethod
-    def get_config():
-        config = mongo.db.config.find_one({'name': 'newconfig'}) or {}
+    def get_config(is_initial_config=False):
+        config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}) or {}
         for field in ('name', '_id'):
             config.pop(field, None)
         return config
 
     @staticmethod
-    def get_flat_config():
-        config_json = ConfigService.get_config()
+    def get_config_value(config_key_as_arr, is_initial_config=False):
+        config_key = reduce(lambda x, y: x+'.'+y, config_key_as_arr)
+        config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}, {config_key: 1})
+        for config_key_part in config_key_as_arr:
+            config = config[config_key_part]
+        return config
+
+    @staticmethod
+    def get_flat_config(is_initial_config=False):
+        config_json = ConfigService.get_config(is_initial_config)
         flat_config_json = {}
         for i in config_json:
             for j in config_json[i]:
@@ -879,6 +887,16 @@ class ConfigService:
         ips = local_ip_addresses()
         config["cnc"]["servers"]["command_servers"] = ["%s:%d" % (ip, ISLAND_PORT) for ip in ips]
         config["cnc"]["servers"]["current_server"] = "%s:%d" % (ips[0], ISLAND_PORT)
+
+    @staticmethod
+    def save_initial_config_if_needed():
+        if mongo.db.config.find_one({'name': 'initial'}) is not None:
+            return
+
+        initial_config = mongo.db.config.find_one({'name': 'newconfig'})
+        initial_config['name'] = 'initial'
+        initial_config.pop('_id')
+        mongo.db.config.insert(initial_config)
 
     @staticmethod
     def _extend_config_with_default(validator_class):
