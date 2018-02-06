@@ -28,7 +28,8 @@ class TcpScanner(HostScanner, HostFinger):
         target_ports = self._config.tcp_target_ports[:]
         shuffle(target_ports)
 
-        ports, banners = check_tcp_ports(host.ip_addr, target_ports, self._config.tcp_scan_timeout / 1000.0)
+        ports, banners = check_tcp_ports(host.ip_addr, target_ports, self._config.tcp_scan_timeout / 1000.0,
+                                         self._config.tcp_scan_get_banner)
         for target_port, banner in izip_longest(ports, banners, fillvalue=None):
             service = 'tcp-' + str(target_port)
             host.services[service] = {}
