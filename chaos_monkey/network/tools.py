@@ -1,6 +1,6 @@
-import socket
-import select
 import logging
+import select
+import socket
 import struct
 
 DEFAULT_TIMEOUT = 10
@@ -32,10 +32,10 @@ def struct_unpack_tracker_string(data, index):
     """
     ascii_len = data[index:].find('\0')
     fmt = "%ds" % ascii_len
-    return struct_unpack_tracker(data,index,fmt)
+    return struct_unpack_tracker(data, index, fmt)
 
 
-def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
+def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(timeout)
 
@@ -43,7 +43,7 @@ def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
         sock.connect((ip, port))
     except socket.timeout:
         return False, None
-    except socket.error, exc:
+    except socket.error as exc:
         LOG.debug("Check port: %s:%s, Exception: %s", ip, port, exc)
         return False, None
 
@@ -56,23 +56,23 @@ def check_port_tcp(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
                 banner = sock.recv(BANNER_READ)
     except:
         pass
-    
+
     sock.close()
     return True, banner
 
 
-def check_port_udp(ip, port, timeout=DEFAULT_TIMEOUT):
+def check_udp_port(ip, port, timeout=DEFAULT_TIMEOUT):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(timeout)
-    
+
     data = None
     is_open = False
-    
+
     try:
         sock.sendto("-", (ip, port))
         data, _ = sock.recvfrom(BANNER_READ)
         is_open = True
-    except:
+    except socket.error:
         pass
     sock.close()
 
