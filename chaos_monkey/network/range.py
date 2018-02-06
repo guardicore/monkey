@@ -1,7 +1,8 @@
-import socket
 import random
+import socket
 import struct
 from abc import ABCMeta, abstractmethod
+
 from model.host import VictimHost
 
 __author__ = 'itamar'
@@ -77,5 +78,5 @@ class FixedRange(NetworkRange):
         for address in self._fixed_addresses:
             if not address:  # Empty string
                 continue
-            address_range.append(struct.unpack(">L", socket.inet_aton(address))[0])
+            address_range.append(struct.unpack(">L", socket.inet_aton(address.strip()))[0])
         return address_range
