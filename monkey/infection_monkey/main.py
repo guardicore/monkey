@@ -21,7 +21,7 @@ LOG = None
 LOG_CONFIG = {'version': 1,
               'disable_existing_loggers': False,
               'formatters': {'standard': {
-                  'format': '%(asctime)s [%(process)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s'},
+                  'format': '%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s'},
                              },
               'handlers': {'console': {'class': 'logging.StreamHandler',
                                        'level': 'DEBUG',
