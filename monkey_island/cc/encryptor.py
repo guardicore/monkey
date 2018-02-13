@@ -46,3 +46,6 @@ class Encryptor:
         cipher_iv = enc_message[0:AES.block_size]
         cipher = AES.new(self._cipher_key, AES.MODE_CBC, cipher_iv)
         return self._unpad(cipher.decrypt(enc_message[AES.block_size:]))
+
+
+encryptor = Encryptor()
