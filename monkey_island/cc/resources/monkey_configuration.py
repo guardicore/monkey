@@ -18,6 +18,6 @@ class MonkeyConfiguration(flask_restful.Resource):
         if config_json.has_key('reset'):
             ConfigService.reset_config()
         else:
-            ConfigService.update_config(config_json)
+            ConfigService.update_config(config_json, should_encrypt=True)
         return self.get()
 

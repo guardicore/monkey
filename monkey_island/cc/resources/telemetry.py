@@ -11,6 +11,7 @@ from cc.database import mongo
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
+from cc.encryptor import encryptor
 
 __author__ = 'Barak'
 
@@ -121,6 +122,8 @@ class Telemetry(flask_restful.Resource):
         if new_exploit['result']:
             EdgeService.set_edge_exploited(edge)
 
+        Telemetry.encrypt_exploit_creds(telemetry_json)
+
         for attempt in telemetry_json['data']['attempts']:
             if attempt['result']:
                 found_creds = {'user': attempt['user']}
@@ -163,24 +166,48 @@ class Telemetry(flask_restful.Resource):
     def process_system_info_telemetry(telemetry_json):
         if 'credentials' in telemetry_json['data']:
             creds = telemetry_json['data']['credentials']
-            for user in creds:
-                ConfigService.creds_add_username(user)
-                if 'password' in creds[user]:
-                    ConfigService.creds_add_password(creds[user]['password'])
-                if 'lm_hash' in creds[user]:
-                    ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
-                if 'ntlm_hash' in creds[user]:
-                    ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
-
-            for user in creds:
-                if -1 != user.find('.'):
-                    new_user = user.replace('.', ',')
-                    creds[new_user] = creds.pop(user)
+            Telemetry.encrypt_system_info_creds(creds)
+            Telemetry.add_system_info_creds_to_config(creds)
+            Telemetry.replace_user_dot_with_comma(creds)
 
     @staticmethod
     def process_trace_telemetry(telemetry_json):
         # Nothing to do
         return
+
+    @staticmethod
+    def replace_user_dot_with_comma(creds):
+        for user in creds:
+            if -1 != user.find('.'):
+                new_user = user.replace('.', ',')
+                creds[new_user] = creds.pop(user)
+
+    @staticmethod
+    def encrypt_system_info_creds(creds):
+        for user in creds:
+            for field in ['password', 'lm_hash', 'ntlm_hash']:
+                if field in creds[user]:
+                    creds[user][field] = encryptor.enc(creds[user][field])
+
+    @staticmethod
+    def add_system_info_creds_to_config(creds):
+        for user in creds:
+            ConfigService.creds_add_username(user)
+            if 'password' in creds[user]:
+                ConfigService.creds_add_password(creds[user]['password'])
+            if 'lm_hash' in creds[user]:
+                ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
+            if 'ntlm_hash' in creds[user]:
+                ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
+
+    @staticmethod
+    def encrypt_exploit_creds(telemetry_json):
+        attempts = telemetry_json['data']['attempts']
+        for i in range(len(attempts)):
+            for field in ['password', 'lm_hash', 'ntlm_hash']:
+                credential = attempts[i][field]
+                if len(credential) > 0:
+                    attempts[i][field] = encryptor.enc(credential)
 
 
 TELEM_PROCESS_DICT = \
