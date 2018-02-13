@@ -12,4 +12,5 @@ jsonschema
 netifaces
 ipaddress
 enum34
+PyCrypto
 virtualenv
