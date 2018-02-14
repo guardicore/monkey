@@ -2,6 +2,7 @@ import React from 'react';
 import {Icon} from 'react-fa';
 import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
+import download from 'downloadjs'
 
 class PreviewPaneComponent extends React.Component {
 
@@ -88,6 +89,34 @@ class PreviewPaneComponent extends React.Component {
     );
   }
 
+  downloadLog(asset) {
+
+    fetch('/api/log?id=' + asset.id)
+      .then(res => res.json())
+      .then(res => {
+        let timestamp = res['timestamp'];
+        timestamp = timestamp.substr(0, timestamp.indexOf('.'));
+        let filename = res['monkey_label'].split(':').join('-') + ' - ' + timestamp + '.log';
+        download(atob(res['log']), filename, 'text/plain');
+      });
+
+  }
+
+  downloadLogRow(asset) {
+    return (
+      <tr>
+        <th>
+          Download Log
+        </th>
+        <td>
+          <a type="button" className="btn btn-primary"
+             disabled={!asset.has_log}
+             onClick={() => this.downloadLog(asset)}>Download</a>
+        </td>
+      </tr>
+    );
+  }
+
   exploitsTimeline(asset) {
     if (asset.exploits.length === 0) {
       return (<div />);
@@ -140,6 +169,7 @@ class PreviewPaneComponent extends React.Component {
             {this.servicesRow(asset)}
             {this.accessibleRow(asset)}
             {this.forceKillRow(asset)}
+            {this.downloadLogRow(asset)}
           </tbody>
         </table>
         {this.exploitsTimeline(asset)}
