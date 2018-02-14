@@ -1,22 +1,24 @@
 from datetime import datetime
+
 import bson
-from bson.json_util import dumps
-from flask import Flask, send_from_directory, redirect, make_response
 import flask_restful
+from bson.json_util import dumps
+from flask import Flask, send_from_directory, make_response
 from werkzeug.exceptions import NotFound
 
 from cc.database import mongo
 from cc.resources.client_run import ClientRun
-from cc.resources.monkey import Monkey
+from cc.resources.edge import Edge
 from cc.resources.local_run import LocalRun
-from cc.resources.telemetry import Telemetry
+from cc.resources.log import Log
+from cc.resources.monkey import Monkey
 from cc.resources.monkey_configuration import MonkeyConfiguration
 from cc.resources.monkey_download import MonkeyDownload
 from cc.resources.netmap import NetMap
-from cc.resources.edge import Edge
 from cc.resources.node import Node
 from cc.resources.report import Report
 from cc.resources.root import Root
+from cc.resources.telemetry import Telemetry
 from cc.resources.telemetry_feed import TelemetryFeed
 from cc.services.config import ConfigService
 
@@ -91,5 +93,6 @@ def init_app(mongo_url):
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
     api.add_resource(Report, '/api/report', '/api/report/')
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
+    api.add_resource(Log, '/api/log', '/api/log/')
 
     return app

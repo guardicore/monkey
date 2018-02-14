@@ -1,3 +1,4 @@
+import base64
 import json
 import logging
 import platform
@@ -103,6 +104,21 @@ class ControlClient(object):
         try:
             telemetry = {'monkey_guid': GUID, 'telem_type': telem_type, 'data': data}
             reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
+                                  data=json.dumps(telemetry),
+                                  headers={'content-type': 'application/json'},
+                                  verify=False,
+                                  proxies=ControlClient.proxies)
+        except Exception as exc:
+            LOG.warn("Error connecting to control server %s: %s",
+                     WormConfiguration.current_server, exc)
+
+    @staticmethod
+    def send_log(log):
+        if not WormConfiguration.current_server:
+            return
+        try:
+            telemetry = {'monkey_guid': GUID, 'log': base64.b64encode(log)}
+            reply = requests.post("https://%s/api/log" % (WormConfiguration.current_server,),
                                   data=json.dumps(telemetry),
                                   headers={'content-type': 'application/json'},
                                   verify=False,

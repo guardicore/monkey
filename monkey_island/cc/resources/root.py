@@ -33,7 +33,8 @@ class Root(flask_restful.Resource):
 
     @staticmethod
     def reset_db():
-        [mongo.db[x].drop() for x in ['config', 'monkey', 'telemetry', 'node', 'edge', 'report']]
+        [mongo.db[x].drop() for x in
+         ['config', 'monkey', 'telemetry', 'node', 'edge', 'report', 'log', 'fs.chunks', 'fs.files']]
         ConfigService.init_config()
         return jsonify(status='OK')
 
