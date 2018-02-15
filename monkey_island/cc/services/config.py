@@ -528,7 +528,7 @@ SCHEMA = {
             }
         },
         "cnc": {
-            "title": "C&C",
+            "title": "Command and Control",
             "type": "object",
             "properties": {
                 "servers": {

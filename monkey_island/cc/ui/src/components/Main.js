@@ -77,7 +77,7 @@ class AppComponent extends React.Component {
                 <li>
                   <NavLink to="/" exact={true}>
                     <span className="number">1.</span>
-                    Run C&C Server
+                    Run Monkey Island Server
                     { this.state.completedSteps.run_server ?
                       <Icon name="check" className="pull-right checkmark text-success"/>
                       : ''}

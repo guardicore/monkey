@@ -1,4 +1,4 @@
-How to set C&C server:
+How to set up the Monkey Island server:
 
 ---------------- On Windows ----------------:
 1. Create folder "bin" under monkey_island
