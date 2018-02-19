@@ -483,6 +483,12 @@ SCHEMA = {
                             "type": "string",
                             "default": "%temp%\\~df1563.tmp",
                             "description": "The fullpath of the monkey log file on Windows"
+                        },
+                        "send_log_to_server": {
+                            "title": "Send log to server",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether the monkey sends its log to the Monkey Island server"
                         }
                     }
                 },

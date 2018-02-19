@@ -227,7 +227,8 @@ class ChaosMonkey(object):
 
         firewall.close()
 
-        self.send_log()
+        if WormConfiguration.send_log_to_server:
+            self.send_log()
 
         self._singleton.unlock()
 
