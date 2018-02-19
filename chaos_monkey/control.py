@@ -1,4 +1,3 @@
-import base64
 import json
 import logging
 import platform
@@ -117,7 +116,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return
         try:
-            telemetry = {'monkey_guid': GUID, 'log': base64.b64encode(log)}
+            telemetry = {'monkey_guid': GUID, 'log': json.dumps(log)}
             reply = requests.post("https://%s/api/log" % (WormConfiguration.current_server,),
                                   data=json.dumps(telemetry),
                                   headers={'content-type': 'application/json'},

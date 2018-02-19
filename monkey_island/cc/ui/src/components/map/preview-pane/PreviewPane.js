@@ -82,22 +82,34 @@ class PreviewPaneComponent extends React.Component {
         </th>
         <td>
           <Toggle id={asset.id} checked={!asset.config.alive} icons={false} disabled={asset.dead}
-                  onChange={(e) => this.forceKill(e, asset)} />
+                  onChange={(e) => this.forceKill(e, asset)}/>
 
         </td>
       </tr>
     );
   }
 
-  downloadLog(asset) {
+  unescapeLog(st) {
+    return st.substr(1, st.length - 2) // remove quotation marks on beginning and end of string.
+        .replace(/\\n/g, "\n")
+        .replace(/\\r/g, "\r")
+        .replace(/\\t/g, "\t")
+        .replace(/\\b/g, "\b")
+        .replace(/\\f/g, "\f")
+        .replace(/\\"/g, '\"')
+        .replace(/\\'/g, "\'")
+        .replace(/\\&/g, "\&");
+  }
 
+  downloadLog(asset) {
     fetch('/api/log?id=' + asset.id)
       .then(res => res.json())
       .then(res => {
         let timestamp = res['timestamp'];
         timestamp = timestamp.substr(0, timestamp.indexOf('.'));
         let filename = res['monkey_label'].split(':').join('-') + ' - ' + timestamp + '.log';
-        download(atob(res['log']), filename, 'text/plain');
+        let logContent = this.unescapeLog(res['log']);
+        download(logContent, filename, 'text/plain');
       });
 
   }
@@ -119,7 +131,7 @@ class PreviewPaneComponent extends React.Component {
 
   exploitsTimeline(asset) {
     if (asset.exploits.length === 0) {
-      return (<div />);
+      return (<div/>);
     }
 
     return (
@@ -129,9 +141,9 @@ class PreviewPaneComponent extends React.Component {
           {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
         </h4>
         <ul className="timeline">
-          { asset.exploits.map(exploit =>
+          {asset.exploits.map(exploit =>
             <li key={exploit.timestamp}>
-              <div className={'bullet ' + (exploit.result ? 'bad' : '')} />
+              <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
               <div>{new Date(exploit.timestamp).toLocaleString()}</div>
               <div>{exploit.origin}</div>
               <div>{exploit.exploiter}</div>
@@ -147,10 +159,10 @@ class PreviewPaneComponent extends React.Component {
       <div>
         <table className="table table-condensed">
           <tbody>
-            {this.osRow(asset)}
-            {this.ipsRow(asset)}
-            {this.servicesRow(asset)}
-            {this.accessibleRow(asset)}
+          {this.osRow(asset)}
+          {this.ipsRow(asset)}
+          {this.servicesRow(asset)}
+          {this.accessibleRow(asset)}
           </tbody>
         </table>
         {this.exploitsTimeline(asset)}
@@ -163,13 +175,13 @@ class PreviewPaneComponent extends React.Component {
       <div>
         <table className="table table-condensed">
           <tbody>
-            {this.osRow(asset)}
-            {this.statusRow(asset)}
-            {this.ipsRow(asset)}
-            {this.servicesRow(asset)}
-            {this.accessibleRow(asset)}
-            {this.forceKillRow(asset)}
-            {this.downloadLogRow(asset)}
+          {this.osRow(asset)}
+          {this.statusRow(asset)}
+          {this.ipsRow(asset)}
+          {this.servicesRow(asset)}
+          {this.accessibleRow(asset)}
+          {this.forceKillRow(asset)}
+          {this.downloadLogRow(asset)}
           </tbody>
         </table>
         {this.exploitsTimeline(asset)}
@@ -202,9 +214,9 @@ class PreviewPaneComponent extends React.Component {
             <div>
               <h4 style={{'marginTop': '2em'}}>Timeline</h4>
               <ul className="timeline">
-                { edge.exploits.map(exploit =>
+                {edge.exploits.map(exploit =>
                   <li key={exploit.timestamp}>
-                    <div className={'bullet ' + (exploit.result ? 'bad' : '')} />
+                    <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
                     <div>{new Date(exploit.timestamp).toLocaleString()}</div>
                     <div>{exploit.origin}</div>
                     <div>{exploit.exploiter}</div>
@@ -235,8 +247,8 @@ class PreviewPaneComponent extends React.Component {
           this.infectedAssetInfo(this.props.item) : this.assetInfo(this.props.item);
         break;
       case 'island_edge':
-      info = this.islandEdgeInfo();
-      break;
+        info = this.islandEdgeInfo();
+        break;
     }
 
     let label = '';
@@ -250,12 +262,12 @@ class PreviewPaneComponent extends React.Component {
 
     return (
       <div className="preview-pane">
-        { !info ?
+        {!info ?
           <span>
-            <Icon name="hand-o-left" style={{'marginRight': '0.5em'}} />
+            <Icon name="hand-o-left" style={{'marginRight': '0.5em'}}/>
             Select an item on the map for a detailed look
           </span>
-        :
+          :
           <div>
             <h3>
               {label}
