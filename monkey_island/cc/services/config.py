@@ -223,7 +223,7 @@ SCHEMA = {
                                 " Class C Range will scan machines in the Class C network the monkey's on."
                         },
                         "range_fixed": {
-                            "title": "Fixed range IP list",
+                            "title": "Fixed range IP/subnet list",
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
@@ -232,8 +232,9 @@ SCHEMA = {
                             "default": [
                             ],
                             "description":
-                                "List of IPs to include when using FixedRange"
-                                " (Only relevant for Fixed Range)"
+                                "List of IPs/subnets to include when using FixedRange"
+                                " (Only relevant for Fixed Range)."
+                                " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
                         }
                     }
                 }
