@@ -235,6 +235,28 @@ SCHEMA = {
                                 "List of IPs/subnets to include when using FixedRange"
                                 " (Only relevant for Fixed Range)."
                                 " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
+                        },
+                        "inaccessible_subnet_groups": {
+                            "title": "Inaccessible IP/subnet groups",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "array",
+                                "title": "Subnet group",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "minItems": 2,
+                                "uniqueItems": True,
+                                "description": "List of IPs/subnets."
+                                               " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\","
+                                               " \"192.168.0.5/24\""
+                            },
+                            "default": [
+                            ],
+                            "description":
+                                "List of IP/subnet groups. Each group should consist of subnets that aren't supposed"
+                                " to be accessible to one another."
                         }
                     }
                 }

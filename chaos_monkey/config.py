@@ -184,6 +184,7 @@ class Configuration(object):
 
     range_class = FixedRange
     range_fixed = ['', ]
+    inaccessible_subnet_groups = []
 
     blocked_ips = ['', ]
 
