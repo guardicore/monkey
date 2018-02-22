@@ -18,7 +18,7 @@ How to set up the Monkey Island server:
 	5.1. Download and install from: https://go.microsoft.com/fwlink/?LinkId=746572
 6. Generate SSL Certificate
 	6.1. run create_certificate.bat when your current working directory is monkey_island
-7. Create the monkey_island\cc\binaries folder and put chaos monkey binaries inside
+7. Create the monkey_island\cc\binaries folder and put Infection Monkey binaries inside
 	monkey-linux-64 - monkey binary for linux 64bit
 	monkey-linux-32 - monkey binary for linux 32bit
 	monkey-windows-32.exe - monkey binary for windows 32bit
