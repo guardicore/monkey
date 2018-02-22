@@ -9,7 +9,7 @@ from werkzeug.exceptions import NotFound
 
 from cc.auth import init_jwt
 from cc.database import mongo
-from cc.island_config import AUTH_EXPIRATION_TIME
+from cc.environment.environment import env
 from cc.resources.client_run import ClientRun
 from cc.resources.edge import Edge
 from cc.resources.local_run import LocalRun
@@ -77,7 +77,7 @@ def init_app(mongo_url):
 
     app.config['SECRET_KEY'] = os.urandom(32)
     app.config['JWT_AUTH_URL_RULE'] = '/api/auth'
-    app.config['JWT_EXPIRATION_DELTA'] = AUTH_EXPIRATION_TIME
+    app.config['JWT_EXPIRATION_DELTA'] = env.get_auth_expiration_time()
 
     init_jwt(app)
     mongo.init_app(app)

@@ -1,7 +1,8 @@
 import decode from 'jwt-decode';
+import {SERVER_CONFIG} from '../server_config/ServerConfig';
 
 export default class AuthService {
-  AUTH_ENABLED = true;
+  AUTH_ENABLED = SERVER_CONFIG.isAuthEnabled();
 
   login = (username, password) => {
     if (this.AUTH_ENABLED) {
@@ -95,6 +96,5 @@ export default class AuthService {
   _getToken() {
     return localStorage.getItem('jwt')
   }
-
 
 }
