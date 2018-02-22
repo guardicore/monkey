@@ -2,12 +2,17 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 
+import AuthService from '../../services/AuthService'
+
 class RunServerPageComponent extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render() {
+    // TODO: something real
+    let auth = new AuthService();
+    auth.login('monkey', 'infectio1n');
     return (
       <Col xs={12} lg={8}>
         <h1 className="page-title">1. Monkey Island C&C Server</h1>

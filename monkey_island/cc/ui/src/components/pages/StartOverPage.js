@@ -2,8 +2,9 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {ModalContainer, ModalDialog} from 'react-modal-dialog';
+import AuthComponent from '../AuthComponent';
 
-class StartOverPageComponent extends React.Component {
+class StartOverPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
 
@@ -15,7 +16,7 @@ class StartOverPageComponent extends React.Component {
   }
 
   updateMonkeysRunning = () => {
-    fetch('/api')
+    this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
         // This check is used to prevent unnecessary re-rendering
@@ -104,7 +105,7 @@ class StartOverPageComponent extends React.Component {
     this.setState({
       cleaned: false
     });
-    fetch('/api?action=reset')
+    this.authFetch('/api?action=reset')
       .then(res => res.json())
       .then(res => {
         if (res['status'] === 'OK') {
