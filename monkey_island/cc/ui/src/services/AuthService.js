@@ -7,7 +7,7 @@ export default class AuthService {
     if (this.AUTH_ENABLED) {
       return this._login(username, password);
     } else {
-      return {};
+      return {result: true};
     }
   };
 
@@ -28,7 +28,14 @@ export default class AuthService {
       })
     }).then(response => response.json())
       .then(res => {
-        this._setToken(res['access_token']);
+        if (res.hasOwnProperty('access_token')) {
+          this._setToken(res['access_token']);
+          return {result: true};
+        } else {
+          this._removeToken();
+          return {result: false};
+        }
+
       })
   };
 
@@ -45,21 +52,26 @@ export default class AuthService {
     return fetch(url, {
       headers,
       ...options
+    }).then(res => {
+      if (res.status === 401) {
+        this._removeToken();
+      }
+      return res;
     });
-
   };
 
   loggedIn() {
     if (!this.AUTH_ENABLED) {
       return true;
     }
+
     const token = this._getToken();
-    return (token && !this._isTokenExpired(token));
+    return ((token !== null) && !this._isTokenExpired(token));
   }
 
   logout() {
     if (this.AUTH_ENABLED) {
-      localStorage.removeItem('jwt');
+      this._removeToken();
     }
   }
 
@@ -74,6 +86,10 @@ export default class AuthService {
 
   _setToken(idToken) {
     localStorage.setItem('jwt', idToken);
+  }
+
+  _removeToken() {
+    localStorage.removeItem('jwt');
   }
 
   _getToken() {
