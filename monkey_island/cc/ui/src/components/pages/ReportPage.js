@@ -610,7 +610,7 @@ class ReportPageComponent extends React.Component {
           The network can probably be segmented. A monkey instance on <span
           className="label label-primary">{issue.machine}</span> in the
           networks {this.generateInfoBadges(issue.networks)}
-          could directly access the Monkey Island C&C server in the
+          could directly access the Monkey Island server in the
           networks {this.generateInfoBadges(issue.server_networks)}.
         </CollapsibleWellComponent>
       </li>

@@ -33,6 +33,6 @@ if __name__ == '__main__':
                                  ssl_options={'certfile': os.environ.get('SERVER_CRT', 'server.crt'),
                                               'keyfile': os.environ.get('SERVER_KEY', 'server.key')})
         http_server.listen(ISLAND_PORT)
-        print('Monkey Island C&C Server is running on https://{}:{}'.format(local_ip_addresses()[0], ISLAND_PORT))
+        print('Monkey Island Server is running on https://{}:{}'.format(local_ip_addresses()[0], ISLAND_PORT))
         IOLoop.instance().start()
 
