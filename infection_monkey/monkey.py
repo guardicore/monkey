@@ -19,7 +19,7 @@ __author__ = 'itamar'
 LOG = logging.getLogger(__name__)
 
 
-class ChaosMonkey(object):
+class InfectionMonkey(object):
     def __init__(self, args):
         self._keep_running = False
         self._exploited_machines = set()
