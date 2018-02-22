@@ -26,21 +26,23 @@ let guardicoreLogoImage = require('../images/guardicore-logo.png');
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
-    this.authFetch('/api')
-      .then(res => res.json())
-      .then(res => {
-        // This check is used to prevent unnecessary re-rendering
-        let isChanged = false;
-        for (let step in this.state.completedSteps) {
-          if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
-            isChanged = true;
-            break;
+    if (this.auth.loggedIn()){
+      this.authFetch('/api')
+        .then(res => res.json())
+        .then(res => {
+          // This check is used to prevent unnecessary re-rendering
+          let isChanged = false;
+          for (let step in this.state.completedSteps) {
+            if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
+              isChanged = true;
+              break;
+            }
           }
-        }
-        if (isChanged) {
-          this.setState({completedSteps: res['completed_steps']});
-        }
-      });
+          if (isChanged) {
+            this.setState({completedSteps: res['completed_steps']});
+          }
+        });
+    }
   };
 
   renderRoute = (route_path, page_component, is_exact_path = false) => {
