@@ -1,10 +1,11 @@
-import os
-import sys
-import subprocess
 import logging
-from . import HostScanner, HostFinger
-from model.host import VictimHost
+import os
 import re
+import subprocess
+import sys
+
+from model.host import VictimHost
+from . import HostScanner, HostFinger
 
 __author__ = 'itamar'
 
@@ -62,7 +63,7 @@ class PingScanner(HostScanner, HostFinger):
                 elif WINDOWS_TTL == ttl:
                     host.os['type'] = 'windows'
                 return True
-            except Exception, exc:
+            except Exception as exc:
                 LOG.debug("Error parsing ping fingerprint: %s", exc)
 
         return False
