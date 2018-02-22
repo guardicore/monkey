@@ -528,7 +528,7 @@ SCHEMA = {
             }
         },
         "cnc": {
-            "title": "Command and Control",
+            "title": "Monkey Island",
             "type": "object",
             "properties": {
                 "servers": {

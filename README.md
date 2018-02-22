@@ -12,7 +12,7 @@ The Infection Monkey is an open source security tool for testing a data center's
 
 The Infection Monkey is comprised of two parts:
 * Monkey - A tool which infects other machines and propagates to them
-* Monkey Island - A C&C server with a dedicated UI to visualize the Infection Monkey's progress inside the data center
+* Monkey Island - A dedicated server to control and visualize the Infection Monkey's progress inside the data center
 
 To read more about the Monkey, visit http://infectionmonkey.com 
 
