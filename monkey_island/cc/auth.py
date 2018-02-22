@@ -1,7 +1,7 @@
 from functools import wraps
 
-import flask_jwt
-from flask_jwt import JWT
+from flask import current_app, abort
+from flask_jwt import JWT, _jwt_required, JWTError
 from werkzeug.security import safe_str_cmp
 
 from cc.island_config import AUTH_ENABLED
@@ -43,12 +43,16 @@ def init_jwt(app):
 
 
 def jwt_required(realm=None):
-    if AUTH_ENABLED:
-        return flask_jwt.jwt_required(realm)
-    else:
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                return fn(*args, **kwargs)
-            return decorator
-        return wrapper
+    def wrapper(fn):
+        @wraps(fn)
+        def decorator(*args, **kwargs):
+            if AUTH_ENABLED:
+                try:
+                    _jwt_required(realm or current_app.config['JWT_DEFAULT_REALM'])
+                except JWTError:
+                    abort(401)
+            return fn(*args, **kwargs)
+
+        return decorator
+
+    return wrapper
