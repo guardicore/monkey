@@ -40,7 +40,7 @@ export default class AuthService {
       })
   };
 
-  _authFetch = (url, options) => {
+  _authFetch = (url, options = {}) => {
     const headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -50,15 +50,21 @@ export default class AuthService {
       headers['Authorization'] = 'JWT ' + this._getToken();
     }
 
-    return fetch(url, {
-      headers,
-      ...options
-    }).then(res => {
-      if (res.status === 401) {
-        this._removeToken();
+    if (options.hasOwnProperty('headers')) {
+      for (let header in headers) {
+        options['headers'][header] = headers[header];
       }
-      return res;
-    });
+    } else {
+      options['headers'] = headers;
+    }
+
+    return fetch(url, options)
+      .then(res => {
+        if (res.status === 401) {
+          this._removeToken();
+        }
+        return res;
+      });
   };
 
   loggedIn() {
