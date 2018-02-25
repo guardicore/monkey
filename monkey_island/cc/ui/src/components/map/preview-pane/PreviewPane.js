@@ -2,8 +2,9 @@ import React from 'react';
 import {Icon} from 'react-fa';
 import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
+import AuthComponent from '../../AuthComponent';
 
-class PreviewPaneComponent extends React.Component {
+class PreviewPaneComponent extends AuthComponent {
 
   generateToolTip(text) {
     return (
@@ -64,7 +65,7 @@ class PreviewPaneComponent extends React.Component {
   forceKill(event, asset) {
     let newConfig = asset.config;
     newConfig['alive'] = !event.target.checked;
-    fetch('/api/monkey/' + asset.guid,
+    this.authFetch('/api/monkey/' + asset.guid,
       {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json'},

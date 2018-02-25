@@ -1,5 +1,5 @@
 import React from 'react';
-import {NavLink, Route, BrowserRouter as Router} from 'react-router-dom';
+import {BrowserRouter as Router, NavLink, Redirect, Route} from 'react-router-dom';
 import {Col, Grid, Row} from 'react-bootstrap';
 import {Icon} from 'react-fa';
 
@@ -11,6 +11,8 @@ import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
 import ReportPage from 'components/pages/ReportPage';
 import LicensePage from 'components/pages/LicensePage';
+import AuthComponent from 'components/AuthComponent';
+import LoginPageComponent from 'components/pages/LoginPage';
 
 require('normalize.css/normalize.css');
 require('react-data-components/css/table-twbs.css');
@@ -22,7 +24,43 @@ let logoImage = require('../images/monkey-icon.svg');
 let infectionMonkeyImage = require('../images/infection-monkey.svg');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
 
-class AppComponent extends React.Component {
+class AppComponent extends AuthComponent {
+  updateStatus = () => {
+    if (this.auth.loggedIn()){
+      this.authFetch('/api')
+        .then(res => res.json())
+        .then(res => {
+          // This check is used to prevent unnecessary re-rendering
+          let isChanged = false;
+          for (let step in this.state.completedSteps) {
+            if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
+              isChanged = true;
+              break;
+            }
+          }
+          if (isChanged) {
+            this.setState({completedSteps: res['completed_steps']});
+          }
+        });
+    }
+  };
+
+  renderRoute = (route_path, page_component, is_exact_path = false) => {
+    let render_func = (props) => {
+      if (this.auth.loggedIn()) {
+        return page_component;
+      } else {
+        return <Redirect to={{pathname: '/login'}}/>;
+      }
+    };
+
+    if (is_exact_path) {
+      return <Route exact path={route_path} render={render_func}/>;
+    } else {
+      return <Route path={route_path} render={render_func}/>;
+    }
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -34,24 +72,6 @@ class AppComponent extends React.Component {
       }
     };
   }
-
-  updateStatus = () => {
-    fetch('/api')
-      .then(res => res.json())
-      .then(res => {
-        // This check is used to prevent unnecessary re-rendering
-        let isChanged = false;
-        for (let step in this.state.completedSteps) {
-          if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
-            isChanged = true;
-            break;
-          }
-        }
-        if (isChanged) {
-          this.setState({completedSteps: res['completed_steps']});
-        }
-      });
-  };
 
   componentDidMount() {
     this.updateStatus();
@@ -78,7 +98,7 @@ class AppComponent extends React.Component {
                   <NavLink to="/" exact={true}>
                     <span className="number">1.</span>
                     Run C&C Server
-                    { this.state.completedSteps.run_server ?
+                    {this.state.completedSteps.run_server ?
                       <Icon name="check" className="pull-right checkmark text-success"/>
                       : ''}
                   </NavLink>
@@ -87,7 +107,7 @@ class AppComponent extends React.Component {
                   <NavLink to="/run-monkey">
                     <span className="number">2.</span>
                     Run Monkey
-                    { this.state.completedSteps.run_monkey ?
+                    {this.state.completedSteps.run_monkey ?
                       <Icon name="check" className="pull-right checkmark text-success"/>
                       : ''}
                   </NavLink>
@@ -96,7 +116,7 @@ class AppComponent extends React.Component {
                   <NavLink to="/infection/map">
                     <span className="number">3.</span>
                     Infection Map
-                    { this.state.completedSteps.infection_done ?
+                    {this.state.completedSteps.infection_done ?
                       <Icon name="check" className="pull-right checkmark text-success"/>
                       : ''}
                   </NavLink>
@@ -105,7 +125,7 @@ class AppComponent extends React.Component {
                   <NavLink to="/report">
                     <span className="number">4.</span>
                     Security Report
-                    { this.state.completedSteps.report_done ?
+                    {this.state.completedSteps.report_done ?
                       <Icon name="check" className="pull-right checkmark text-success"/>
                       : ''}
                   </NavLink>
@@ -136,14 +156,15 @@ class AppComponent extends React.Component {
               </div>
             </Col>
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className="main">
-              <Route exact path="/" render={(props) => ( <RunServerPage onStatusChange={this.updateStatus} /> )} />
-              <Route path="/configure" render={(props) => ( <ConfigurePage onStatusChange={this.updateStatus} /> )} />
-              <Route path="/run-monkey" render={(props) => ( <RunMonkeyPage onStatusChange={this.updateStatus} /> )} />
-              <Route path="/infection/map" render={(props) => ( <MapPage onStatusChange={this.updateStatus} /> )} />
-              <Route path="/infection/telemetry" render={(props) => ( <TelemetryPage onStatusChange={this.updateStatus} /> )} />
-              <Route path="/start-over" render={(props) => ( <StartOverPage onStatusChange={this.updateStatus} /> )} />
-              <Route path="/report" render={(props) => ( <ReportPage onStatusChange={this.updateStatus} /> )} />
-              <Route path="/license" render={(props) => ( <LicensePage onStatusChange={this.updateStatus} /> )} />
+              <Route path='/login' render={(props) => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
+              {this.renderRoute('/', <RunServerPage onStatusChange={this.updateStatus}/>, true)}
+              {this.renderRoute('/configure', <ConfigurePage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/run-monkey', <RunMonkeyPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/report', <ReportPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>
         </Grid>
