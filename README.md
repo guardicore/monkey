@@ -8,7 +8,9 @@ Welcome to the Infection Monkey!
 
 The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island server.
 
-![Infection Monkey map](.github/map-full.png)
+<img src=".github/map-full.png" >
+
+<img src=".github/Security-overview.png" width="800" height="500">
 
 The Infection Monkey is comprised of two parts:
 * Monkey - A tool which infects other machines and propagates to them
