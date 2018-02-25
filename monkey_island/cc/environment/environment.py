@@ -15,4 +15,9 @@ def load_env_from_file():
     return config_json['server_config']
 
 
-env = ENV_DICT[load_env_from_file()]()
+try:
+    __env_type = load_env_from_file()
+    env = ENV_DICT[__env_type]()
+except Exception:
+    print('Failed initializing environment: %s' % __env_type)
+    raise
