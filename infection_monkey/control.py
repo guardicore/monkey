@@ -25,7 +25,7 @@ class ControlClient(object):
 
     @staticmethod
     def wakeup(parent=None, default_tunnel=None, has_internet_access=None):
-        LOG.debug("Trying to wake up with C&C servers list: %r" % WormConfiguration.command_servers)
+        LOG.debug("Trying to wake up with Monkey Island servers list: %r" % WormConfiguration.command_servers)
         if parent or default_tunnel:
             LOG.debug("parent: %s, default_tunnel: %s" % (parent, default_tunnel))
         hostname = gethostname()

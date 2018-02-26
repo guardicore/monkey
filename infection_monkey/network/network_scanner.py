@@ -1,9 +1,10 @@
-import time
 import logging
-from . import HostScanner
+import time
+
 from config import WormConfiguration
 from info import local_ips, get_ips_from_interfaces
 from range import *
+from . import HostScanner
 
 __author__ = 'itamar'
 
@@ -18,6 +19,12 @@ class NetworkScanner(object):
         self._ranges = None
 
     def initialize(self):
+        """
+        Set up scanning based on configuration
+        FixedRange -> Reads from range_fixed field in configuration
+        otherwise, takes a range from every IP address the current host has.
+        :return:
+        """
         # get local ip addresses
         self._ip_addresses = local_ips()
 
@@ -27,7 +34,7 @@ class NetworkScanner(object):
         LOG.info("Found local IP addresses of the machine: %r", self._ip_addresses)
         # for fixed range, only scan once.
         if WormConfiguration.range_class is FixedRange:
-            self._ranges = [WormConfiguration.range_class(None)]
+            self._ranges = [WormConfiguration.range_class(fixed_addresses=WormConfiguration.range_fixed)]
         else:
             self._ranges = [WormConfiguration.range_class(ip_address)
                             for ip_address in self._ip_addresses]
