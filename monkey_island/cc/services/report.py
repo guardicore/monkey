@@ -315,7 +315,7 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        return ConfigService.get_config_value(['basic_network', 'network_range', 'range_fixed'], True)
+        return ConfigService.get_config_value(['basic_network', 'general', 'subnet_scan_list'], True)
 
     @staticmethod
     def get_config_scan():
