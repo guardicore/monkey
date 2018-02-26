@@ -1,7 +1,7 @@
 from cc.database import mongo
 from jsonschema import Draft4Validator, validators
 
-from cc.island_config import ISLAND_PORT
+from cc.environment.environment import env
 from cc.utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
@@ -205,25 +205,8 @@ SCHEMA = {
                     "title": "Network range",
                     "type": "object",
                     "properties": {
-                        "range_class": {
-                            "title": "Range class",
-                            "type": "string",
-                            "default": "FixedRange",
-                            "enum": [
-                                "FixedRange",
-                                "ClassCRange"
-                            ],
-                            "enumNames": [
-                                "Fixed Range",
-                                "Class C Range"
-                            ],
-                            "description":
-                                "Determines which class to use to determine scan range."
-                                " Fixed Range will scan only specific IPs listed under Fixed range IP list."
-                                " Class C Range will scan machines in the Class C network the monkey's on."
-                        },
                         "range_fixed": {
-                            "title": "Fixed range IP/subnet list",
+                            "title": "Scan IP/subnet list",
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
@@ -232,8 +215,7 @@ SCHEMA = {
                             "default": [
                             ],
                             "description":
-                                "List of IPs/subnets to include when using FixedRange"
-                                " (Only relevant for Fixed Range)."
+                                "List of IPs/subnets the monkey should scan."
                                 " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
                         },
                         "inaccessible_subnet_groups": {
@@ -551,7 +533,7 @@ SCHEMA = {
             }
         },
         "cnc": {
-            "title": "C&C",
+            "title": "Monkey Island",
             "type": "object",
             "properties": {
                 "servers": {
@@ -908,8 +890,8 @@ class ConfigService:
     @staticmethod
     def set_server_ips_in_config(config):
         ips = local_ip_addresses()
-        config["cnc"]["servers"]["command_servers"] = ["%s:%d" % (ip, ISLAND_PORT) for ip in ips]
-        config["cnc"]["servers"]["current_server"] = "%s:%d" % (ips[0], ISLAND_PORT)
+        config["cnc"]["servers"]["command_servers"] = ["%s:%d" % (ip, env.get_island_port()) for ip in ips]
+        config["cnc"]["servers"]["current_server"] = "%s:%d" % (ips[0], env.get_island_port())
 
     @staticmethod
     def save_initial_config_if_needed():

@@ -315,8 +315,6 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class'], True) != 'FixedRange':
-            return []
         return ConfigService.get_config_value(['basic_network', 'network_range', 'range_fixed'], True)
 
     @staticmethod

@@ -7,6 +7,7 @@ import dateutil
 import flask_restful
 from flask import request
 
+from cc.auth import jwt_required
 from cc.database import mongo
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
@@ -16,6 +17,7 @@ __author__ = 'Barak'
 
 
 class Telemetry(flask_restful.Resource):
+    @jwt_required()
     def get(self, **kw):
         monkey_guid = request.args.get('monkey_guid')
         telem_type = request.args.get('telem_type')
@@ -36,6 +38,7 @@ class Telemetry(flask_restful.Resource):
         result['objects'] = self.telemetry_to_displayed_telemetry(mongo.db.telemetry.find(find_filter))
         return result
 
+    # Used by monkey. can't secure.
     def post(self):
         telemetry_json = json.loads(request.data)
         telemetry_json['timestamp'] = datetime.now()
