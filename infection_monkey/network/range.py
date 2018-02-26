@@ -30,6 +30,10 @@ class NetworkRange(object):
             yield VictimHost(self._number_to_ip(self._base_address + x))
 
     @abstractmethod
+    def is_in_range(self, ip_address):
+        raise NotImplementedError()
+
+    @abstractmethod
     def _get_range(self):
         raise NotImplementedError()
 
@@ -51,35 +55,6 @@ class NetworkRange(object):
     @staticmethod
     def _number_to_ip(num):
         return socket.inet_ntoa(struct.pack(">L", num))
-
-
-class ClassCRange(NetworkRange):
-    def __init__(self, base_address, shuffle=True):
-        base_address = struct.unpack(">L", socket.inet_aton(base_address))[0] & 0xFFFFFF00
-        super(ClassCRange, self).__init__(base_address, shuffle=shuffle)
-
-    def __repr__(self):
-        return "<ClassCRange %s-%s>" % (self._number_to_ip(self._base_address + 1),
-                                        self._number_to_ip(self._base_address + 254))
-
-    def _get_range(self):
-        return range(1, 254)
-
-
-class RelativeRange(NetworkRange):
-    def __init__(self, base_address, shuffle=True):
-        base_address = struct.unpack(">L", socket.inet_aton(base_address))[0]
-        super(RelativeRange, self).__init__(base_address, shuffle=shuffle)
-        self._size = 1
-
-    def __repr__(self):
-        return "<RelativeRange %s-%s>" % (self._number_to_ip(self._base_address - self._size),
-                                          self._number_to_ip(self._base_address + self._size))
-
-    def _get_range(self):
-        lower_end = -(self._size / 2)
-        higher_end = lower_end + self._size
-        return range(lower_end, higher_end + 1)
 
 
 class CidrRange(NetworkRange):
