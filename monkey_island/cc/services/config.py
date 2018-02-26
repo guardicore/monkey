@@ -211,7 +211,13 @@ SCHEMA = {
                             "description":
                                 "List of IPs/subnets the monkey should scan."
                                 " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
-                        },
+                        }
+                    }
+                },
+                "network_analysis": {
+                    "title": "Network Analysis",
+                    "type": "object",
+                    "properties": {
                         "inaccessible_subnet_groups": {
                             "title": "Inaccessible IP/subnet groups",
                             "type": "array",
@@ -232,7 +238,8 @@ SCHEMA = {
                             ],
                             "description":
                                 "List of IP/subnet groups. Each group should consist of subnets that aren't supposed"
-                                " to be accessible to one another."
+                                " to be accessible to one another. If the monkey is in one subnet it'll scan the other"
+                                " subnets in the same group."
                         }
                     }
                 }
