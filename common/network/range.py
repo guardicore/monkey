@@ -5,18 +5,14 @@ from abc import ABCMeta, abstractmethod
 
 import ipaddress
 
-from model.host import VictimHost
-
 __author__ = 'itamar'
 
 
 class NetworkRange(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, base_address, shuffle=True):
-        self._base_address = base_address
+    def __init__(self, shuffle=True):
         self._shuffle = shuffle
-        self._config = __import__('config').WormConfiguration
 
     def get_range(self):
         return [x for x in self._get_range() if (x & 0xFF != 0)]  # remove broadcast ips
@@ -27,7 +23,7 @@ class NetworkRange(object):
             random.shuffle(base_range)
 
         for x in base_range:
-            yield VictimHost(self._number_to_ip(self._base_address + x))
+            yield self._number_to_ip(x)
 
     @abstractmethod
     def is_in_range(self, ip_address):
@@ -59,13 +55,12 @@ class NetworkRange(object):
 
 class CidrRange(NetworkRange):
     def __init__(self, cidr_range, shuffle=True):
-        base_address = 0
-        super(CidrRange, self).__init__(base_address, shuffle=shuffle)
+        super(CidrRange, self).__init__(shuffle=shuffle)
         self._cidr_range = cidr_range.strip()
         self._ip_network = ipaddress.ip_network(unicode(self._cidr_range), strict=False)
 
     def __repr__(self):
-        return "<CidrRange %s>" % (self._cidr_range, )
+        return "<CidrRange %s>" % (self._cidr_range,)
 
     def is_in_range(self, ip_address):
         return ipaddress.ip_address(ip_address) in self._ip_network
@@ -76,8 +71,7 @@ class CidrRange(NetworkRange):
 
 class IpRange(NetworkRange):
     def __init__(self, ip_range=None, lower_end_ip=None, higher_end_ip=None, shuffle=True):
-        base_address = 0
-        super(IpRange, self).__init__(base_address, shuffle=shuffle)
+        super(IpRange, self).__init__(shuffle=shuffle)
         if ip_range is not None:
             addresses = ip_range.split('-')
             if len(addresses) != 2:
@@ -106,8 +100,7 @@ class IpRange(NetworkRange):
 
 class SingleIpRange(NetworkRange):
     def __init__(self, ip_address, shuffle=True):
-        base_address = 0
-        super(SingleIpRange, self).__init__(base_address, shuffle=shuffle)
+        super(SingleIpRange, self).__init__(shuffle=shuffle)
         self._ip_address = ip_address
 
     def __repr__(self):
@@ -118,4 +111,3 @@ class SingleIpRange(NetworkRange):
 
     def _get_range(self):
         return [SingleIpRange._ip_to_number(self._ip_address)]
-

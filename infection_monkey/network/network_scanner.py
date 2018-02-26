@@ -3,7 +3,8 @@ import time
 
 from config import WormConfiguration
 from info import local_ips, get_interfaces_ranges
-from range import *
+from common.network.range import *
+from model import VictimHost
 from . import HostScanner
 
 __author__ = 'itamar'
@@ -55,7 +56,8 @@ class NetworkScanner(object):
 
         for net_range in self._ranges:
             LOG.debug("Scanning for potential victims in the network %r", net_range)
-            for victim in net_range:
+            for ip_addr in net_range:
+                victim = VictimHost(ip_addr)
                 if stop_callback and stop_callback():
                     LOG.debug("Got stop signal")
                     break
