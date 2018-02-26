@@ -8,7 +8,6 @@ from itertools import product
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
     SambaCryExploiter, ElasticGroovyExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
-from network.range import FixedRange
 
 __author__ = 'itamar'
 
@@ -182,7 +181,6 @@ class Configuration(object):
     # Auto detect and scan local subnets
     local_network_scan = True
 
-    range_class = FixedRange
     range_fixed = ['', ]
 
     blocked_ips = ['', ]
