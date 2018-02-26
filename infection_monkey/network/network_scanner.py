@@ -35,7 +35,17 @@ class NetworkScanner(object):
         self._ranges = [NetworkRange.get_range_obj(address_str=x) for x in WormConfiguration.subnet_scan_list]
         if WormConfiguration.local_network_scan:
             self._ranges += get_interfaces_ranges()
+        self._ranges += self._get_inaccessible_subnets_ips()
         LOG.info("Base local networks to scan are: %r", self._ranges)
+
+    def _get_inaccessible_subnets_ips(self):
+        subnets_to_scan = []
+        for subnet_group in WormConfiguration.inaccessible_subnet_groups:
+            for subnet_str in subnet_group:
+                if NetworkScanner._is_any_ip_in_subnet([unicode(x) for x in self._ip_addresses], subnet_str):
+                    subnets_to_scan += [NetworkRange.get_range_obj(x) for x in subnet_group if x != subnet_str]
+                    break
+        return subnets_to_scan
 
     def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
         assert issubclass(scan_type, HostScanner)
@@ -74,3 +84,10 @@ class NetworkScanner(object):
 
                 if SCAN_DELAY:
                     time.sleep(SCAN_DELAY)
+
+    @staticmethod
+    def _is_any_ip_in_subnet(ip_addresses, subnet_str):
+        for ip_address in ip_addresses:
+            if NetworkRange.get_range_obj(subnet_str).is_in_range(ip_address):
+                return True
+        return False
