@@ -30,6 +30,10 @@ class NetworkRange(object):
             yield VictimHost(self._number_to_ip(self._base_address + x))
 
     @abstractmethod
+    def is_in_range(self, ip_address):
+        raise NotImplementedError()
+
+    @abstractmethod
     def _get_range(self):
         raise NotImplementedError()
 
