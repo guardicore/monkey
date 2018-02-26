@@ -8,7 +8,7 @@ import itertools
 import netifaces
 from subprocess import check_output
 from random import randint
-from range import CidrRange
+from common.network.range import CidrRange
 
 
 def get_host_subnets():
