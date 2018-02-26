@@ -198,14 +198,8 @@ SCHEMA = {
                                 "Amount of hops allowed for the monkey to spread from the island. "
                                 + WARNING_SIGN
                                 + " Note that setting this value too high may result in the monkey propagating too far"
-                        }
-                    }
-                },
-                "network_range": {
-                    "title": "Network range",
-                    "type": "object",
-                    "properties": {
-                        "range_fixed": {
+                        },
+                        "subnet_scan_list": {
                             "title": "Scan IP/subnet list",
                             "type": "array",
                             "uniqueItems": True,

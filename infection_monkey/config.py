@@ -181,7 +181,7 @@ class Configuration(object):
     # Auto detect and scan local subnets
     local_network_scan = True
 
-    range_fixed = ['', ]
+    subnet_scan_list = ['', ]
 
     blocked_ips = ['', ]
 
