@@ -2,8 +2,9 @@ import React from 'react';
 import Form from 'react-jsonschema-form';
 import {Col, Nav, NavItem} from 'react-bootstrap';
 import fileDownload from 'js-file-download';
+import AuthComponent from '../AuthComponent';
 
-class ConfigurePageComponent extends React.Component {
+class ConfigurePageComponent extends AuthComponent {
   constructor(props) {
     super(props);
 
@@ -23,7 +24,7 @@ class ConfigurePageComponent extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/api/configuration')
+    this.authFetch('/api/configuration')
       .then(res => res.json())
       .then(res => {
         let sections = [];
@@ -43,7 +44,7 @@ class ConfigurePageComponent extends React.Component {
   onSubmit = ({formData}) => {
     this.currentFormData = formData;
     this.updateConfigSection();
-    fetch('/api/configuration',
+    this.authFetch('/api/configuration',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -82,7 +83,7 @@ class ConfigurePageComponent extends React.Component {
   };
 
   resetConfig = () => {
-    fetch('/api/configuration',
+    this.authFetch('/api/configuration',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -126,7 +127,7 @@ class ConfigurePageComponent extends React.Component {
   };
 
   updateMonkeysRunning = () => {
-    fetch('/api')
+    this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
         // This check is used to prevent unnecessary re-rendering

@@ -47,9 +47,12 @@ def get_monkey_executable(host_os, machine):
 
 
 class MonkeyDownload(flask_restful.Resource):
+
+    # Used by monkey. can't secure.
     def get(self, path):
         return send_from_directory('binaries', path)
 
+    # Used by monkey. can't secure.
     def post(self):
         host_json = json.loads(request.data)
         host_os = host_json.get('os')

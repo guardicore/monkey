@@ -2,6 +2,7 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import JSONTree from 'react-json-tree'
 import {DataTable} from 'react-data-components';
+import AuthComponent from '../AuthComponent';
 
 const renderJson = (val) => <JSONTree data={val} level={1} theme="eighties" invertTheme={true} />;
 const renderTime = (val) => val.split('.')[0];
@@ -13,7 +14,7 @@ const columns = [
   { title: 'Details', prop: 'data', render: renderJson, width: '40%' }
 ];
 
-class TelemetryPageComponent extends React.Component {
+class TelemetryPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,7 +23,7 @@ class TelemetryPageComponent extends React.Component {
   }
 
   componentDidMount = () => {
-    fetch('/api/telemetry')
+    this.authFetch('/api/telemetry')
       .then(res => res.json())
       .then(res => this.setState({data: res.objects}));
   };
