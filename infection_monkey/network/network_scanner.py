@@ -45,7 +45,8 @@ class NetworkScanner(object):
 
         for net_range in self._ranges:
             LOG.debug("Scanning for potential victims in the network %r", net_range)
-            for victim in net_range:
+            for ip_addr in net_range:
+                victim = VictimHost(ip_addr)
                 if stop_callback and stop_callback():
                     LOG.debug("Got stop signal")
                     break
