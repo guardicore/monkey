@@ -1,9 +1,9 @@
 import logging
 import time
 
+from common.network.range import *
 from config import WormConfiguration
 from info import local_ips, get_interfaces_ranges
-from common.network.range import *
 from model import VictimHost
 from . import HostScanner
 
@@ -44,8 +44,16 @@ class NetworkScanner(object):
         for subnet_group in WormConfiguration.inaccessible_subnet_groups:
             for subnet_str in subnet_group:
                 if NetworkScanner._is_any_ip_in_subnet([unicode(x) for x in self._ip_addresses], subnet_str):
-                    subnets_to_scan += [NetworkRange.get_range_obj(x) for x in subnet_group if x != subnet_str]
+                    # If machine has IPs from 2 different subnets in the same group, there's no point checking the other
+                    # subnet.
+                    for other_subnet_str in subnet_group:
+                        if other_subnet_str == subnet_str:
+                            continue
+                        if not NetworkScanner._is_any_ip_in_subnet([unicode(x) for x in self._ip_addresses],
+                                                                   other_subnet_str):
+                            subnets_to_scan.append(NetworkRange.get_range_obj(other_subnet_str))
                     break
+
         return subnets_to_scan
 
     def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
