@@ -1,3 +1,5 @@
+import itertools
+
 import ipaddress
 from enum import Enum
 
@@ -6,6 +8,7 @@ from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 from cc.utils import local_ip_addresses, get_subnets
+from common.network.range import NetworkRange
 
 __author__ = "itay.mizeretz"
 
@@ -33,6 +36,7 @@ class ReportService:
         SAMBACRY = 3
         SHELLSHOCK = 4
         CONFICKER = 5
+        CROSS_SEGMENT = 6
 
     class WARNINGS_DICT(Enum):
         ISLAND_CROSS_SEGMENT = 0
@@ -276,6 +280,74 @@ class ReportService:
         return issues
 
     @staticmethod
+    def get_cross_segment_ip(ip_addresses, source_subnet, target_subnet):
+        for ip_address in ip_addresses:
+            if target_subnet.is_in_range(ip_address):
+                return None
+        for ip_address in ip_addresses:
+            if source_subnet.is_in_range(ip_address):
+                return ip_address
+        return None
+
+    @staticmethod
+    def get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet):
+        if source_subnet == target_subnet:
+            return []
+        source_subnet_range = NetworkRange.get_range_obj(source_subnet)
+        target_subnet_range = NetworkRange.get_range_obj(target_subnet)
+
+        cross_segment_issues = []
+
+        for scan in scans:
+            target_ip = scan['data']['machine']['ip_addr']
+            if target_subnet_range.is_in_range(unicode(target_ip)):
+                monkey = NodeService.get_monkey_by_guid(scan['monkey_guid'])
+                cross_segment_ip = ReportService.get_cross_segment_ip(monkey['ip_addresses'], source_subnet_range,
+                                                                      target_subnet_range)
+                if cross_segment_ip is not None:
+                    cross_segment_issues.append(
+                        {
+                            'source': cross_segment_ip,
+                            'target': target_ip,
+                            'services': scan['data']['machine']['services']
+                        })
+
+        return cross_segment_issues
+
+    @staticmethod
+    def get_cross_segment_issues_per_subnet_group(scans, subnet_group):
+        cross_segment_issues = []
+
+        for subnet_pair in itertools.product(subnet_group, subnet_group):
+            source_subnet = subnet_pair[0]
+            target_subnet = subnet_pair[1]
+            pair_issues = ReportService.get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet)
+            if len(pair_issues) != 0:
+                cross_segment_issues.append(
+                    {
+                        'source_subnet': source_subnet,
+                        'target_subnet': target_subnet,
+                        'issues': pair_issues
+                    })
+
+        return cross_segment_issues
+
+    @staticmethod
+    def get_cross_segement_issues():
+        scans = mongo.db.telemetry.find({'telem_type': 'scan'},
+                                        {'monkey_guid': 1, 'data.machine.ip_addr': 1, 'data.machine.services': 1})
+
+        cross_segment_issues = []
+
+        subnet_groups = ConfigService.get_config_value(
+            ['basic_network', 'network_analysis', 'inaccessible_subnet_groups'])
+
+        for subnet_group in subnet_groups:
+            cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(scans, subnet_group)
+
+        return cross_segment_issues
+
+    @staticmethod
     def get_issues():
         issues = ReportService.get_exploits() + ReportService.get_tunnels() \
                  + ReportService.get_island_cross_segment_issues()
@@ -323,8 +395,8 @@ class ReportService:
         return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True)
 
     @staticmethod
-    def get_issues_overview(issues, config_users, config_passwords):
-        issues_byte_array = [False] * 6
+    def get_issues_overview(issues, cross_segment_issues, config_users, config_passwords):
+        issues_byte_array = [False] * 7
 
         for machine in issues:
             for issue in issues[machine]:
@@ -341,6 +413,9 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
                 elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS.value] = True
+
+        if len(cross_segment_issues) != 0:
+            issues_byte_array[ReportService.ISSUES_DICT.CROSS_SEGMENT.value] = True
 
         return issues_byte_array
 
@@ -376,6 +451,7 @@ class ReportService:
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
+        cross_segment_issues = ReportService.get_cross_segement_issues()
 
         report = \
             {
@@ -389,14 +465,15 @@ class ReportService:
                         'config_scan': ReportService.get_config_scan(),
                         'monkey_start_time': ReportService.get_first_monkey_time().strftime("%d/%m/%Y %H:%M:%S"),
                         'monkey_duration': ReportService.get_monkey_duration(),
-                        'issues': ReportService.get_issues_overview(issues, config_users, config_passwords),
+                        'issues': ReportService.get_issues_overview(issues, cross_segment_issues, config_users, config_passwords),
                         'warnings': ReportService.get_warnings_overview(issues)
                     },
                 'glance':
                     {
                         'scanned': ReportService.get_scanned(),
                         'exploited': ReportService.get_exploited(),
-                        'stolen_creds': ReportService.get_stolen_creds()
+                        'stolen_creds': ReportService.get_stolen_creds(),
+                        'cross_segment_issues': cross_segment_issues
                     },
                 'recommendations':
                     {
