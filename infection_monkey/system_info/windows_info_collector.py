@@ -20,9 +20,9 @@ WMI_CLASSES = set(["Win32_OperatingSystem",
                    "Win32_LoggedOnUser",
                    "Win32_UserProfile",
                    "win32_UserAccount",
-                   #"Win32_Process",
-                   #"Win32_Product",
-                   #"Win32_Service"
+                   "Win32_Product",
+                   "Win32_Process",
+                   "Win32_Service"
                    ])
 
 def fix_obj_for_mongo(o):
@@ -39,40 +39,40 @@ def fix_obj_for_mongo(o):
         # mongo dosn't like unprintable chars, so we use repr :/
         return repr(o)
         
-    
+    elif hasattr(o, "__class__") and o.__class__ == wmi._wmi_object:
+        return fix_wmi_obj_for_mongo(o)
         
     else: 
         return repr(o)
 
-"""
 def fix_wmi_obj_for_mongo(o):
-        for item in wmi_class:
-            row = {}
-        
-            for prop in item.properties:
-                try:
-                    value = getattr(item, prop)
-                except wmi.x_wmi:
-                    continue
+    row = {}
 
-                row[prop] = value
+    for prop in o.properties:
+        try:
+            value = getattr(o, prop)
+        except wmi.x_wmi:
+            continue
 
-            for method_name in item.methods:
-                if not method_name.startswith("GetOwner"):
-                    continue
+        row[prop] = fix_obj_for_mongo(value)
 
-                method = getattr(item, method_name)
+    for method_name in o.methods:
+        if not method_name.startswith("GetOwner"):
+            continue
 
-                try:
-                    row[method_name[3:]] = method()
-                    
-                except wmi.x_wmi:
-                    #LOG.error("Error running wmi method '%s'" % (method_name, ))
-                    #LOG.error(traceback.format_exc())
-                    continue
+        method = getattr(o, method_name)
 
-            result.append(row)
-"""
+        try:
+            value = method()
+            value = fix_obj_for_mongo(value)
+            row[method_name[3:]] = value
+            
+        except wmi.x_wmi:
+            #LOG.error("Error running wmi method '%s'" % (method_name, ))
+            #LOG.error(traceback.format_exc())
+            continue
+
+    return row
 
 class WindowsInfoCollector(InfoCollector):
     """
@@ -111,7 +111,7 @@ class WindowsInfoCollector(InfoCollector):
         
     def get_wmi_info(self):
         for wmi_class_name in WMI_CLASSES:
-            self.info[wmi_class_name] = fix_obj_for_mongo(self.get_wmi_class(wmi_class_name))
+            self.info[wmi_class_name] = self.get_wmi_class(wmi_class_name)
 
     def get_wmi_class(self, class_name):
         if not self.wmi:
@@ -124,12 +124,7 @@ class WindowsInfoCollector(InfoCollector):
             #LOG.error(traceback.format_exc())
             return
 
-        print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print type(wmi_class)
-        print "@" * 20
-        os._exit(1)
-            
-        return wmi_class
+        return fix_obj_for_mongo(wmi_class)
 
     def get_reg_key(self, subkey_path, store=_winreg.HKEY_LOCAL_MACHINE):
         key = _winreg.ConnectRegistry(None, store)
