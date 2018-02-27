@@ -26,7 +26,7 @@ class ReportPageComponent extends AuthComponent {
 
   Warning =
     {
-      CROSS_SEGMENT: 0,
+      ISLAND_CROSS_SEGMENT: 0,
       TUNNEL: 1
     };
 
@@ -333,7 +333,7 @@ class ReportPageComponent extends AuthComponent {
               <div>
                 The Monkey uncovered the following possible set of issues:
                 <ul>
-                  {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
+                  {this.state.report.overview.warnings[this.Warning.ISLAND_CROSS_SEGMENT] ?
                     <li>Weak segmentation - Machines from different segments are able to
                       communicate.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
@@ -664,7 +664,7 @@ class ReportPageComponent extends AuthComponent {
       case 'conficker':
         data = this.generateConfickerIssue(issue);
         break;
-      case 'cross_segment':
+      case 'island_cross_segment':
         data = this.generateCrossSegmentIssue(issue);
         break;
       case 'tunnel':

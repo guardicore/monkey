@@ -35,7 +35,7 @@ class ReportService:
         CONFICKER = 5
 
     class WARNINGS_DICT(Enum):
-        CROSS_SEGMENT = 0
+        ISLAND_CROSS_SEGMENT = 0
         TUNNEL = 1
 
     @staticmethod
@@ -253,7 +253,7 @@ class ReportService:
             ]
 
     @staticmethod
-    def get_cross_segment_issues():
+    def get_island_cross_segment_issues():
         issues = []
         island_ips = local_ip_addresses()
         for monkey in mongo.db.monkey.find({'tunnel': {'$exists': False}}, {'tunnel': 1, 'guid': 1, 'hostname': 1}):
@@ -268,7 +268,7 @@ class ReportService:
                     break
             if not found_good_ip:
                 issues.append(
-                    {'type': 'cross_segment', 'machine': monkey['hostname'],
+                    {'type': 'island_cross_segment', 'machine': monkey['hostname'],
                      'networks': [str(subnet) for subnet in monkey_subnets],
                      'server_networks': [str(subnet) for subnet in get_subnets()]}
                 )
@@ -277,7 +277,8 @@ class ReportService:
 
     @staticmethod
     def get_issues():
-        issues = ReportService.get_exploits() + ReportService.get_tunnels() + ReportService.get_cross_segment_issues()
+        issues = ReportService.get_exploits() + ReportService.get_tunnels() \
+                 + ReportService.get_island_cross_segment_issues()
         issues_dict = {}
         for issue in issues:
             machine = issue['machine']
@@ -349,8 +350,8 @@ class ReportService:
 
         for machine in issues:
             for issue in issues[machine]:
-                if issue['type'] == 'cross_segment':
-                    warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
+                if issue['type'] == 'island_cross_segment':
+                    warnings_byte_array[ReportService.WARNINGS_DICT.ISLAND_CROSS_SEGMENT.value] = True
                 elif issue['type'] == 'tunnel':
                     warnings_byte_array[ReportService.WARNINGS_DICT.TUNNEL.value] = True
 
