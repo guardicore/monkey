@@ -1,12 +1,14 @@
 from flask import request
 import flask_restful
 
+from cc.auth import jwt_required
 from cc.services.node import NodeService
 
 __author__ = 'Barak'
 
 
 class Node(flask_restful.Resource):
+    @jwt_required()
     def get(self):
         node_id = request.args.get('id')
         if node_id:
