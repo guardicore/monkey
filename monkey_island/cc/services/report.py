@@ -307,6 +307,7 @@ class ReportService:
                     cross_segment_issues.append(
                         {
                             'source': cross_segment_ip,
+                            'hostname': monkey['hostname'],
                             'target': target_ip,
                             'services': scan['data']['machine']['services']
                         })
