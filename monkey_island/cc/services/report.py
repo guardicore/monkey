@@ -36,10 +36,9 @@ class ReportService:
         SAMBACRY = 3
         SHELLSHOCK = 4
         CONFICKER = 5
-        CROSS_SEGMENT = 6
 
     class WARNINGS_DICT(Enum):
-        ISLAND_CROSS_SEGMENT = 0
+        CROSS_SEGMENT = 0
         TUNNEL = 1
 
     @staticmethod
@@ -395,8 +394,8 @@ class ReportService:
         return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True)
 
     @staticmethod
-    def get_issues_overview(issues, cross_segment_issues, config_users, config_passwords):
-        issues_byte_array = [False] * 7
+    def get_issues_overview(issues, config_users, config_passwords):
+        issues_byte_array = [False] * 6
 
         for machine in issues:
             for issue in issues[machine]:
@@ -414,21 +413,21 @@ class ReportService:
                 elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS.value] = True
 
-        if len(cross_segment_issues) != 0:
-            issues_byte_array[ReportService.ISSUES_DICT.CROSS_SEGMENT.value] = True
-
         return issues_byte_array
 
     @staticmethod
-    def get_warnings_overview(issues):
+    def get_warnings_overview(issues, cross_segment_issues):
         warnings_byte_array = [False] * 2
 
         for machine in issues:
             for issue in issues[machine]:
                 if issue['type'] == 'island_cross_segment':
-                    warnings_byte_array[ReportService.WARNINGS_DICT.ISLAND_CROSS_SEGMENT.value] = True
+                    warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
                 elif issue['type'] == 'tunnel':
                     warnings_byte_array[ReportService.WARNINGS_DICT.TUNNEL.value] = True
+
+        if len(cross_segment_issues) != 0:
+            warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
 
         return warnings_byte_array
 
@@ -465,15 +464,15 @@ class ReportService:
                         'config_scan': ReportService.get_config_scan(),
                         'monkey_start_time': ReportService.get_first_monkey_time().strftime("%d/%m/%Y %H:%M:%S"),
                         'monkey_duration': ReportService.get_monkey_duration(),
-                        'issues': ReportService.get_issues_overview(issues, cross_segment_issues, config_users, config_passwords),
-                        'warnings': ReportService.get_warnings_overview(issues)
+                        'issues': ReportService.get_issues_overview(issues, config_users, config_passwords),
+                        'warnings': ReportService.get_warnings_overview(issues, cross_segment_issues),
+                        'cross_segment_issues': cross_segment_issues
                     },
                 'glance':
                     {
                         'scanned': ReportService.get_scanned(),
                         'exploited': ReportService.get_exploited(),
-                        'stolen_creds': ReportService.get_stolen_creds(),
-                        'cross_segment_issues': cross_segment_issues
+                        'stolen_creds': ReportService.get_stolen_creds()
                     },
                 'recommendations':
                     {
