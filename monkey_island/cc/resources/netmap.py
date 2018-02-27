@@ -1,5 +1,6 @@
 import flask_restful
 
+from cc.auth import jwt_required
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 from cc.database import mongo
@@ -8,6 +9,7 @@ __author__ = 'Barak'
 
 
 class NetMap(flask_restful.Resource):
+    @jwt_required()
     def get(self, **kw):
         monkeys = [NodeService.monkey_to_net_node(x) for x in mongo.db.monkey.find({})]
         nodes = [NodeService.node_to_net_node(x) for x in mongo.db.node.find({})]

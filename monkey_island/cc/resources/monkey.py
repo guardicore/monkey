@@ -15,23 +15,20 @@ __author__ = 'Barak'
 
 
 class Monkey(flask_restful.Resource):
+
+    # Used by monkey. can't secure.
     def get(self, guid=None, **kw):
         NodeService.update_dead_monkeys()  # refresh monkeys status
         if not guid:
             guid = request.args.get('guid')
-        timestamp = request.args.get('timestamp')
 
         if guid:
             monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
             return monkey_json
-        else:
-            result = {'timestamp': datetime.now().isoformat()}
-            find_filter = {}
-            if timestamp is not None:
-                find_filter['modifytime'] = {'$gt': dateutil.parser.parse(timestamp)}
-            result['objects'] = [x for x in mongo.db.monkey.find(find_filter)]
-            return result
 
+        return {}
+
+    # Used by monkey. can't secure.
     def patch(self, guid):
         monkey_json = json.loads(request.data)
         update = {"$set": {'modifytime': datetime.now()}}
@@ -51,6 +48,7 @@ class Monkey(flask_restful.Resource):
 
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
+    # Used by monkey. can't secure.
     def post(self, **kw):
         monkey_json = json.loads(request.data)
         monkey_json['creds'] = []

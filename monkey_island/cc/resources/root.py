@@ -3,6 +3,7 @@ from datetime import datetime
 import flask_restful
 from flask import request, make_response, jsonify
 
+from cc.auth import jwt_required
 from cc.database import mongo
 from cc.services.config import ConfigService
 from cc.services.node import NodeService
@@ -13,6 +14,8 @@ __author__ = 'Barak'
 
 
 class Root(flask_restful.Resource):
+
+    @jwt_required()
     def get(self, action=None):
         if not action:
             action = request.args.get('action')

@@ -4,6 +4,7 @@ import flask_restful
 from bson import ObjectId
 from flask import request
 
+from cc.auth import jwt_required
 from cc.database import mongo
 from cc.services.log import LogService
 from cc.services.node import NodeService
@@ -12,6 +13,7 @@ __author__ = "itay.mizeretz"
 
 
 class Log(flask_restful.Resource):
+    @jwt_required()
     def get(self):
         monkey_id = request.args.get('id')
         exists_monkey_id = request.args.get('exists')
@@ -20,6 +22,7 @@ class Log(flask_restful.Resource):
         else:
             return LogService.log_exists(ObjectId(exists_monkey_id))
 
+    # Used by monkey. can't secure.
     def post(self):
         telemetry_json = json.loads(request.data)
 

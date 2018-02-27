@@ -11,7 +11,7 @@ import traceback
 from config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from dropper import MonkeyDrops
 from model import MONKEY_ARG, DROPPER_ARG
-from monkey import ChaosMonkey
+from monkey import InfectionMonkey
 import utils
 
 if __name__ == "__main__":
@@ -80,7 +80,7 @@ def main():
     try:
         if MONKEY_ARG == monkey_mode:
             log_path = utils.get_monkey_log_path()
-            monkey_cls = ChaosMonkey
+            monkey_cls = InfectionMonkey
         elif DROPPER_ARG == monkey_mode:
             log_path = utils.get_dropper_log_path()
             monkey_cls = MonkeyDrops

@@ -6,8 +6,9 @@ import PreviewPane from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {ModalContainer, ModalDialog} from 'react-modal-dialog';
 import {options, edgeGroupToColor} from 'components/map/MapOptions';
+import AuthComponent from '../AuthComponent';
 
-class MapPageComponent extends React.Component {
+class MapPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,7 +41,7 @@ class MapPageComponent extends React.Component {
   };
 
   updateMapFromServer = () => {
-    fetch('/api/netmap')
+    this.authFetch('/api/netmap')
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
@@ -52,7 +53,7 @@ class MapPageComponent extends React.Component {
   };
 
   updateTelemetryFromServer = () => {
-    fetch('/api/telemetry-feed?timestamp='+this.state.telemetryLastTimestamp)
+    this.authFetch('/api/telemetry-feed?timestamp='+this.state.telemetryLastTimestamp)
       .then(res => res.json())
       .then(res => {
         let newTelem = this.state.telemetry.concat(res['telemetries']);
@@ -68,7 +69,7 @@ class MapPageComponent extends React.Component {
 
   selectionChanged(event) {
     if (event.nodes.length === 1) {
-      fetch('/api/netmap/node?id=' + event.nodes[0])
+      this.authFetch('/api/netmap/node?id=' + event.nodes[0])
         .then(res => res.json())
         .then(res => this.setState({selected: res, selectedType: 'node'}));
     }
@@ -80,7 +81,7 @@ class MapPageComponent extends React.Component {
       if (displayedEdge['group'] === 'island') {
         this.setState({selected: displayedEdge, selectedType: 'island_edge'});
       } else {
-        fetch('/api/netmap/edge?id=' + event.edges[0])
+        this.authFetch('/api/netmap/edge?id=' + event.edges[0])
           .then(res => res.json())
           .then(res => this.setState({selected: res.edge, selectedType: 'edge'}));
       }
@@ -91,7 +92,7 @@ class MapPageComponent extends React.Component {
   }
 
   killAllMonkeys = () => {
-    fetch('/api?action=killall')
+    this.authFetch('/api?action=killall')
       .then(res => res.json())
       .then(res => this.setState({killPressed: (res.status === 'OK')}));
   };

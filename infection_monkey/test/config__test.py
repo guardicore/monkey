@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# NOTE: Launch all tests with `nosetests` command from chaos_monkey dir.
+# NOTE: Launch all tests with `nosetests` command from infection_monkey dir.
 
 import json
 import unittest
