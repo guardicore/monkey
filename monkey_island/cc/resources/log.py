@@ -24,7 +24,7 @@ class Log(flask_restful.Resource):
         telemetry_json = json.loads(request.data)
 
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])['_id']
-        # This is base64 so no data will be lost. this'll take 2 time less space.
+        # This shouldn't contain any unicode characters. this'll take 2 time less space.
         log_data = str(telemetry_json['log'])
         log_id = LogService.add_log(monkey_id, log_data)
 

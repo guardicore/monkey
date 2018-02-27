@@ -6,7 +6,7 @@ from bson.json_util import dumps
 from flask import Flask, send_from_directory, make_response
 from werkzeug.exceptions import NotFound
 
-from cc.database import mongo
+from cc.database import mongo, database
 from cc.resources.client_run import ClientRun
 from cc.resources.edge import Edge
 from cc.resources.local_run import LocalRun
@@ -75,6 +75,7 @@ def init_app(mongo_url):
     mongo.init_app(app)
 
     with app.app_context():
+        database.init()
         ConfigService.init_config()
 
     app.add_url_rule('/', 'serve_home', serve_home)
