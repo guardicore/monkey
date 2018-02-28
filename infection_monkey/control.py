@@ -67,11 +67,9 @@ class ControlClient(object):
                 if ControlClient.proxies:
                     debug_message += " through proxies: %s" % ControlClient.proxies
                 LOG.debug(debug_message)
-                # TODO: use different api call to check connectivity.
-                requests.get("https://%s/api/monkey" % (server,),
+                requests.get("https://%s/api?action=is-up" % (server,),
                              verify=False,
                              proxies=ControlClient.proxies)
-
                 break
 
             except Exception as exc:
