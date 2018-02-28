@@ -116,9 +116,13 @@ class Configuration(object):
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = '/bin/sh'
     dropper_target_path = r"C:\Windows\monkey.exe"
-    # TODO: move and rename
-    dropper_upgrade_win_64_temp_path = r"C:\Windows\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
+
+    ###########################
+    # Windows upgrader config
+    ###########################
+
+    windows_upgrader_temp_path = r"C:\Windows\monkey64.exe"
 
     ###########################
     # Kill file

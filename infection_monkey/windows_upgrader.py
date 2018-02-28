@@ -1,7 +1,10 @@
+import logging
 import os
 import struct
 import subprocess
 import sys
+
+import time
 
 import monkeyfs
 from config import WormConfiguration
@@ -10,6 +13,8 @@ from exploit.tools import build_monkey_commandline_explicitly
 from model import DROPPER_CMDLINE_WINDOWS
 
 __author__ = 'itay.mizeretz'
+
+LOG = logging.getLogger(__name__)
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -40,7 +45,7 @@ class WindowsUpgrader(object):
         monkey_64_path = ControlClient.download_monkey_exe_by_os(True, False)
         with monkeyfs.open(monkey_64_path, "rb") as downloaded_monkey_file:
             monkey_bin = downloaded_monkey_file.read()
-        with open(WormConfiguration.dropper_upgrade_win_64_temp_path, 'wb') as written_monkey_file:
+        with open(WormConfiguration.windows_upgrader_temp_path, 'wb') as written_monkey_file:
             written_monkey_file.write(monkey_bin)
 
         depth = int(opts.depth) if opts.depth is not None else None
@@ -48,9 +53,15 @@ class WindowsUpgrader(object):
             opts.parent, opts.tunnel, opts.server, depth, WormConfiguration.dropper_target_path)
 
         monkey_cmdline = DROPPER_CMDLINE_WINDOWS % {
-            'dropper_path': WormConfiguration.dropper_upgrade_win_64_temp_path} + monkey_options
+            'dropper_path': WormConfiguration.windows_upgrader_temp_path} + monkey_options
 
-        print monkey_cmdline
         monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=DETACHED_PROCESS)
+
+        LOG.info("Executed 64bit monkey process (PID=%d) with command line: %s",
+                 monkey_process.pid, monkey_cmdline)
+
+        time.sleep(3)
+        if monkey_process.poll() is not None:
+            LOG.warn("Seems like monkey died too soon")

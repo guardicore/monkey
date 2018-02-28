@@ -75,6 +75,7 @@ class InfectionMonkey(object):
         ControlClient.find_server(default_tunnel=self._default_tunnel)
 
         if WindowsUpgrader.should_upgrade():
+            LOG.info("32bit monkey running on 64bit Windows. Upgrading.")
             WindowsUpgrader.upgrade(self._opts)
             return
 
