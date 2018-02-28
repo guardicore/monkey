@@ -36,6 +36,7 @@ class InfectionMonkey(object):
         self._default_server = None
         self._depth = 0
         self._opts = None
+        self._upgrading_to_64 = False
 
     def initialize(self):
         LOG.info("Monkey is initializing...")
@@ -75,6 +76,7 @@ class InfectionMonkey(object):
         ControlClient.find_server(default_tunnel=self._default_tunnel)
 
         if WindowsUpgrader.should_upgrade():
+            self._upgrading_to_64 = True
             LOG.info("32bit monkey running on 64bit Windows. Upgrading.")
             WindowsUpgrader.upgrade(self._opts)
             return
@@ -225,7 +227,8 @@ class InfectionMonkey(object):
         self._keep_running = False
 
         # Signal the server (before closing the tunnel)
-        ControlClient.send_telemetry("state", {'done': True})
+        if not self._upgrading_to_64:
+            ControlClient.send_telemetry("state", {'done': True})
 
         # Close tunnel
         tunnel_address = ControlClient.proxies.get('https', '').replace('https://', '').split(':')[0]
@@ -235,11 +238,11 @@ class InfectionMonkey(object):
 
         firewall.close()
 
-        if not WindowsUpgrader.should_upgrade():
+        if not self._upgrading_to_64:
             self._singleton.unlock()
 
         if WormConfiguration.self_delete_in_cleanup \
-                and -1 == sys.executable.find('python') and not WindowsUpgrader.should_upgrade():
+                and -1 == sys.executable.find('python') and not self._upgrading_to_64:
             try:
                 if "win32" == sys.platform:
                     from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
