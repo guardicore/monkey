@@ -68,15 +68,16 @@ class InfectionMonkey(object):
                 LOG.debug("Default server: %s is already in command servers list" % self._default_server)
 
     def start(self):
-        if WindowsUpgrader.should_upgrade():
-            WindowsUpgrader.upgrade(self._opts)
-            return
-
         LOG.info("Monkey is running...")
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
         ControlClient.find_server(default_tunnel=self._default_tunnel)
+
+        if WindowsUpgrader.should_upgrade():
+            WindowsUpgrader.upgrade(self._opts)
+            return
+
         ControlClient.wakeup(parent=self._parent)
         ControlClient.load_control_config()
 
