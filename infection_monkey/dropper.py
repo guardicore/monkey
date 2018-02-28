@@ -58,6 +58,9 @@ class MonkeyDrops(object):
         # we copy/move only in case path is different
         file_moved = (self._config['source_path'].lower() == self._config['destination_path'].lower())
 
+        if not file_moved and os.path.exists(self._config['destination_path']):
+            os.remove(self._config['destination_path'])
+
         # first try to move the file
         if not file_moved and WormConfiguration.dropper_try_move_first:
             try:
@@ -105,8 +108,9 @@ class MonkeyDrops(object):
                 except:
                     LOG.warn("Cannot set reference date to destination file")
 
+        depth = int(self.opts.depth) if self.opts.depth is not None else None
         monkey_options = build_monkey_commandline_explicitly(
-            self.opts.parent, self.opts.tunnel, self.opts.server, int(self.opts.depth))
+            self.opts.parent, self.opts.tunnel, self.opts.server, depth)
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._config['destination_path']} + monkey_options
