@@ -76,7 +76,8 @@ class InfectionMonkey(object):
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
-        ControlClient.wakeup(parent=self._parent, default_tunnel=self._default_tunnel)
+        ControlClient.find_server(default_tunnel=self._default_tunnel)
+        ControlClient.wakeup(parent=self._parent)
         ControlClient.load_control_config()
 
         if not WormConfiguration.alive:
