@@ -77,6 +77,7 @@ class InfectionMonkey(object):
 
         if WindowsUpgrader.should_upgrade():
             self._upgrading_to_64 = True
+            self._singleton.unlock()
             LOG.info("32bit monkey running on 64bit Windows. Upgrading.")
             WindowsUpgrader.upgrade(self._opts)
             return
