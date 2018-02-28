@@ -3,8 +3,9 @@ import {Button, Col, Well, Nav, NavItem, Collapse} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {Icon} from 'react-fa';
 import {Link} from 'react-router-dom';
+import AuthComponent from '../AuthComponent';
 
-class RunMonkeyPageComponent extends React.Component {
+class RunMonkeyPageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
@@ -19,14 +20,14 @@ class RunMonkeyPageComponent extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/api')
+    this.authFetch('/api')
       .then(res => res.json())
       .then(res => this.setState({
         ips: res['ip_addresses'],
         selectedIp: res['ip_addresses'][0]
       }));
 
-    fetch('/api/local-monkey')
+    this.authFetch('/api/local-monkey')
       .then(res => res.json())
       .then(res =>{
         if (res['is_running']) {
@@ -36,7 +37,7 @@ class RunMonkeyPageComponent extends React.Component {
         }
       });
 
-    fetch('/api/client-monkey')
+    this.authFetch('/api/client-monkey')
       .then(res => res.json())
       .then(res => {
         if (res['is_running']) {
@@ -60,7 +61,7 @@ class RunMonkeyPageComponent extends React.Component {
   }
 
   runLocalMonkey = () => {
-    fetch('/api/local-monkey',
+    this.authFetch('/api/local-monkey',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},

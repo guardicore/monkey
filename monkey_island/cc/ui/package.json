@@ -65,6 +65,8 @@
     "core-js": "^2.5.1",
     "fetch": "^1.1.0",
     "js-file-download": "^0.4.1",
+    "json-loader": "^0.5.7",
+    "jwt-decode": "^2.2.0",
     "normalize.css": "^4.0.0",
     "prop-types": "^15.5.10",
     "rc-progress": "^2.2.5",

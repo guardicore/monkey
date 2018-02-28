@@ -7,11 +7,12 @@ import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/StolenPasswords';
 import CollapsibleWellComponent from 'components/report-components/CollapsibleWell';
 import {Line} from 'rc-progress';
+import AuthComponent from '../AuthComponent';
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 let monkeyLogoImage = require('../../images/monkey-icon.svg');
 
-class ReportPageComponent extends React.Component {
+class ReportPageComponent extends AuthComponent {
 
   Issue =
     {
@@ -76,7 +77,7 @@ class ReportPageComponent extends React.Component {
   }
 
   updateMonkeysRunning = () => {
-    return fetch('/api')
+    return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
         // This check is used to prevent unnecessary re-rendering
@@ -89,7 +90,7 @@ class ReportPageComponent extends React.Component {
   };
 
   updateMapFromServer = () => {
-    fetch('/api/netmap')
+    this.authFetch('/api/netmap')
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
@@ -102,7 +103,7 @@ class ReportPageComponent extends React.Component {
 
   getReportFromServer(res) {
     if (res['completed_steps']['run_monkey']) {
-      fetch('/api/report')
+      this.authFetch('/api/report')
         .then(res => res.json())
         .then(res => {
           this.setState({
