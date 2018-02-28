@@ -13,6 +13,7 @@ from network.firewall import app as firewall
 from network.network_scanner import NetworkScanner
 from system_info import SystemInfoCollector
 from system_singleton import SystemSingleton
+from windows_upgrader import WindowsUpgrader
 
 __author__ = 'itamar'
 
@@ -34,6 +35,7 @@ class InfectionMonkey(object):
         self._fingerprint = None
         self._default_server = None
         self._depth = 0
+        self._opts = None
 
     def initialize(self):
         LOG.info("Monkey is initializing...")
@@ -46,13 +48,13 @@ class InfectionMonkey(object):
         arg_parser.add_argument('-t', '--tunnel')
         arg_parser.add_argument('-s', '--server')
         arg_parser.add_argument('-d', '--depth')
-        opts, self._args = arg_parser.parse_known_args(self._args)
+        self._opts, self._args = arg_parser.parse_known_args(self._args)
 
-        self._parent = opts.parent
-        self._default_tunnel = opts.tunnel
-        self._default_server = opts.server
-        if opts.depth:
-            WormConfiguration.depth = int(opts.depth)
+        self._parent = self._opts.parent
+        self._default_tunnel = self._opts.tunnel
+        self._default_server = self._opts.server
+        if self._opts.depth:
+            WormConfiguration.depth = int(self._opts.depth)
             WormConfiguration._depth_from_commandline = True
         self._keep_running = True
         self._network = NetworkScanner()
@@ -66,6 +68,10 @@ class InfectionMonkey(object):
                 LOG.debug("Default server: %s is already in command servers list" % self._default_server)
 
     def start(self):
+        if WindowsUpgrader.should_upgrade():
+            WindowsUpgrader.upgrade(self._opts)
+            return
+
         LOG.info("Monkey is running...")
 
         if firewall.is_enabled():
@@ -226,9 +232,11 @@ class InfectionMonkey(object):
 
         firewall.close()
 
-        self._singleton.unlock()
+        if not WindowsUpgrader.should_upgrade():
+            self._singleton.unlock()
 
-        if WormConfiguration.self_delete_in_cleanup and -1 == sys.executable.find('python'):
+        if WormConfiguration.self_delete_in_cleanup \
+                and -1 == sys.executable.find('python') and not WindowsUpgrader.should_upgrade():
             try:
                 if "win32" == sys.platform:
                     from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE

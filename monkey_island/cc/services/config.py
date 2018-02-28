@@ -446,6 +446,13 @@ SCHEMA = {
                             "default": "C:\\Windows\\monkey.exe",
                             "description": "Determines where should the dropper place the monkey on a Windows machine"
                         },
+                        "dropper_upgrade_win_64_temp_path": {
+                            "title": "Temporary upgrade path for 64bit monkey on Windows",
+                            "type": "string",
+                            "default": "C:\\Windows\\monkey64.exe",
+                            "description": "Determines where should the dropper place the 64 bit monkey while"
+                                           " upgrading on a Windows machine"
+                        },
                         "dropper_try_move_first": {
                             "title": "Try to move first",
                             "type": "boolean",
