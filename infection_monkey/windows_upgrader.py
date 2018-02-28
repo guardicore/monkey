@@ -1,5 +1,6 @@
 import os
 import struct
+import subprocess
 import sys
 
 import monkeyfs
@@ -42,12 +43,14 @@ class WindowsUpgrader(object):
         with open(WormConfiguration.dropper_upgrade_win_64_temp_path, 'wb') as written_monkey_file:
             written_monkey_file.write(monkey_bin)
 
+        depth = int(opts.depth) if opts.depth is not None else None
         monkey_options = build_monkey_commandline_explicitly(
-            opts.parent, opts.tunnel, opts.server, int(opts.depth))
+            opts.parent, opts.tunnel, opts.server, depth, WormConfiguration.dropper_target_path)
 
         monkey_cmdline = DROPPER_CMDLINE_WINDOWS % {
-            'monkey_path': WormConfiguration.dropper_target_path} + monkey_options
-        monkey_process = os.subprocess.Popen(monkey_cmdline, shell=True,
-                                             stdin=None, stdout=None, stderr=None,
-                                             close_fds=True, creationflags=DETACHED_PROCESS)
+            'dropper_path': WormConfiguration.dropper_upgrade_win_64_temp_path} + monkey_options
 
+        print monkey_cmdline
+        monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
+                                          stdin=None, stdout=None, stderr=None,
+                                          close_fds=True, creationflags=DETACHED_PROCESS)
