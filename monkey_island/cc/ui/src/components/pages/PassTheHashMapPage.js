@@ -2,6 +2,27 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import AuthComponent from '../AuthComponent';
+import Graph from 'react-graph-vis';
+
+const options = {
+  autoResize: true,
+  layout: {
+    improvedLayout: false
+  },
+  edges: {
+    width: 2,
+    smooth: {
+      type: 'curvedCW'
+    }
+  },
+  physics: {
+    barnesHut: {
+      gravitationalConstant: -120000,
+      avoidOverlap: 0.5
+    },
+    minVelocity: 0.75
+  }
+};
 
 class PassTheHashMapPageComponent extends AuthComponent {
   constructor(props) {
@@ -43,11 +64,11 @@ class PassTheHashMapPageComponent extends AuthComponent {
     return (
       <div>
         <Col xs={12} lg={8}>
-          <h1 className="page-title">3. Pass The Hash Map</h1>
+          <h1 className="page-title">Pass The Hash Map</h1>
         </Col>
         <Col xs={12}>
-          <div style={{height: '80vh'}}>
-            <ReactiveGraph graph={this.state.graph} />
+          <div>
+            <Graph graph={this.state.graph} options={options} />
           </div>
         </Col>
       </div>
