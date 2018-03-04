@@ -1,15 +1,15 @@
 import os
+import struct
 import sys
 import types
 import uuid
 from abc import ABCMeta
 from itertools import product
 
-from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
+from exploit import WmiExploiter, SmbExploiter, SSHExploiter, ShellShockExploiter, \
     SambaCryExploiter, ElasticGroovyExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
 from network.range import FixedRange
-from windows_upgrader import WindowsUpgrader
 
 __author__ = 'itamar'
 
@@ -120,8 +120,12 @@ class Configuration(object):
     dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
+    @staticmethod
+    def is_64_bit_python():
+        return struct.calcsize("P") == 8
+
     def get_dropper_target_path_win(self):
-        return self.dropper_target_path_win_64 if WindowsUpgrader.is_64bit_python() else self.dropper_target_path_win_32
+        return self.dropper_target_path_win_64 if self.is_64_bit_python() else self.dropper_target_path_win_32
 
     ###########################
     # Kill file
