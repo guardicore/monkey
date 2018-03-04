@@ -9,6 +9,7 @@ from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter
     SambaCryExploiter, ElasticGroovyExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
 from network.range import FixedRange
+from windows_upgrader import WindowsUpgrader
 
 __author__ = 'itamar'
 
@@ -115,14 +116,12 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = '/bin/sh'
-    dropper_target_path = r"C:\Windows\monkey.exe"
+    dropper_target_path_win_32 = r"C:\Windows\monkey32.exe"
+    dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
-    ###########################
-    # Windows upgrader config
-    ###########################
-
-    windows_upgrader_temp_path = r"C:\Windows\monkey64.exe"
+    def get_dropper_target_path_win(self):
+        return self.dropper_target_path_win_64 if WindowsUpgrader.is_64bit_python() else self.dropper_target_path_win_32
 
     ###########################
     # Kill file
