@@ -167,10 +167,10 @@ class Machine(object):
         return GUIDs
 
     def GetLocalAdmins(self):
-        return self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).keys()
+        return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).keys())
 
     def GetLocalAdminNames(self):
-        return self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).values()
+        return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).values())
         
     def GetLocalAdminSecrets(self):
         admin_names = self.GetLocalAdminNames()
