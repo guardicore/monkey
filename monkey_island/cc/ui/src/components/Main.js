@@ -7,6 +7,7 @@ import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
 import RunMonkeyPage from 'components/pages/RunMonkeyPage';
 import MapPage from 'components/pages/MapPage';
+import PassTheHashMapPage from 'components/pages/PassTheHashMapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
 import ReportPage from 'components/pages/ReportPage';
@@ -162,6 +163,7 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/run-monkey', <RunMonkeyPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/pth', <PassTheHashMapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/report', <ReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
