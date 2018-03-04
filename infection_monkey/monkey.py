@@ -243,7 +243,7 @@ class InfectionMonkey(object):
             self._singleton.unlock()
 
         if WormConfiguration.self_delete_in_cleanup \
-                and -1 == sys.executable.find('python') and not self._upgrading_to_64:
+                and -1 == sys.executable.find('python'):
             try:
                 if "win32" == sys.platform:
                     from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE

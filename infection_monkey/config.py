@@ -120,13 +120,6 @@ class Configuration(object):
     dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
-    @staticmethod
-    def is_64_bit_python():
-        return struct.calcsize("P") == 8
-
-    def get_dropper_target_path_win(self):
-        return self.dropper_target_path_win_64 if self.is_64_bit_python() else self.dropper_target_path_win_32
-
     ###########################
     # Kill file
     ###########################
