@@ -16,8 +16,8 @@ class PthMap(flask_restful.Resource):
 
         return \
             {
-                "nodes": [{"id": x} for x in graph.vertices],
-                "edges": [{"id": str(s) + str(t), "from": s, "to": t} for s, t in graph.edges]
+                "nodes": [{"id": x, "label": Machine(x).GetIp()} for x in graph.vertices],
+                "edges": [{"id": str(s) + str(t), "from": s, "to": t, "label": label} for s, t, label in graph.edges]
             }
 
 DsRole_RoleStandaloneWorkstation = 0
@@ -100,6 +100,9 @@ class Machine(object):
             return roles.pop()
 
         return None
+    
+    def IsDomainController(self):
+        return self.GetDomainRole() in (DsRole_RolePrimaryDomainController, DsRole_RoleBackupDomainController)
 
     def GetSidByUsername(self, username):
         cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid, "data.Win32_UserAccount.Name":"u'%s'" % (username,)})
@@ -133,6 +136,22 @@ class Machine(object):
         if len(names) == 1:
             return names.pop()
         
+        if not self.IsDomainController():
+            for dc in self.GetDomainControllers():
+                username = dc.GetUsernameBySid(sid)
+
+                if username != None:
+                    return username
+        
+        return None
+        
+    def GetUsernameBySecret(self, secret):
+        sam = self.GetSam()
+        
+        for user, user_secret in sam.iteritems():
+            if secret == user_secret:
+                return user
+
         return None
 
     def GetGroupSidByGroupName(self, group_name):
@@ -174,12 +193,10 @@ class Machine(object):
         GUIDs = set()
 
         for doc in cur:
-            for comp in doc["data"]["Win32_ComputerSystem"]:
-                if ((comp["DomainRole"] != DsRole_RolePrimaryDomainController) and
-                    (comp["DomainRole"] != DsRole_RoleBackupDomainController)):
-                    continue
+            if not Machine(doc["monkey_guid"]).IsDomainController():
+                continue
 
-                GUIDs.add(doc["monkey_guid"])
+            GUIDs.add(doc["monkey_guid"])
         
         return GUIDs
 
@@ -189,19 +206,28 @@ class Machine(object):
     def GetLocalAdminNames(self):
         return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).values())
         
-    def GetLocalAdminSecrets(self):
-        admin_names = self.GetLocalAdminNames()
+    def GetSam(self):
         sam_users = str(self.GetMimikatzOutput()).split("\nSAMKey :")[1].split("\n\n")[1:]
         
-        admin_secrets = set()
+        sam = {}
         
         for sam_user_txt in sam_users:
             sam_user = dict([map(str.strip, line.split(":")) for line in filter(lambda l: l.count(":") == 1, sam_user_txt.splitlines())])
-            
-            if sam_user["User"] not in admin_names:
+            sam[sam_user["User"]] = sam_user["NTLM"].replace("[hashed secret]", "").strip()
+        
+        return sam
+                
+    def GetLocalAdminSecrets(self):
+        admin_names = self.GetLocalAdminNames()
+        sam = self.GetSam()
+        
+        admin_secrets = set()
+        
+        for user, secret in sam.iteritems():
+            if user not in admin_names:
                 continue
             
-            admin_secrets.add(sam_user["NTLM"].replace("[hashed secret]", "").strip())
+            admin_secrets.add(secret)
         
         return admin_secrets
     
@@ -225,15 +251,19 @@ class Machine(object):
                 secrets.add(secret)
 
         return secrets
-
-    def GetDomainAdminsOfMachine(self):
+    
+    def GetDomainControllers(self):
         domain_name = self.GetDomainName()
         DCs = self.GetDomainControllersMonkeyGuidByDomainName(domain_name)
+        return map(Machine, DCs)
+
+    def GetDomainAdminsOfMachine(self):
+        DCs = self.GetDomainControllers()
         
         domain_admins = set()
         
-        for dc_monkey_guid in DCs:
-            domain_admins |= Machine(dc_monkey_guid).GetLocalAdmins()
+        for dc in DCs:
+            domain_admins |= dc.GetLocalAdmins()
         
         return domain_admins
 
@@ -270,7 +300,7 @@ class PassTheHashMap(object):
         self.vertices = self.GetAllMachines()
         self.edges = set()
         
-        #self.GenerateEdgesBySid()      # Useful for non-cached domain users
+        self.GenerateEdgesBySid()      # Useful for non-cached domain users
         self.GenerateEdgesBySamHash()  # This will add edges based only on password hash without caring about username
         
     def GetAllMachines(self):
@@ -282,6 +312,31 @@ class PassTheHashMap(object):
             GUIDs.add(doc["monkey_guid"])
 
         return GUIDs
+        
+    def ReprSidList(self, sid_list, attacker, victim):
+        label = set()
+        
+        for sid in sid_list:
+            username = Machine(victim).GetUsernameBySid(sid)
+            
+            #if not username:
+            #    username = Machine(attacker).GetUsernameBySid(sid)
+            
+            if username:
+                label.add(username)
+        
+        return ",\n".join(label)
+
+    def ReprSecretList(self, secret_list, victim):
+        label = set()
+        
+        for secret in secret_list:
+            username = Machine(victim).GetUsernameBySecret(secret)
+            
+            if username:
+                label.add(username)
+        
+        return ",\n".join(label)
 
     def GenerateEdgesBySid(self):
         for attacker in self.vertices:
@@ -294,7 +349,8 @@ class PassTheHashMap(object):
                 admins = Machine(victim).GetAdmins()
                 
                 if len(cached & admins) > 0:
-                    self.edges.add((attacker, victim))
+                    label = self.ReprSidList(cached & admins, attacker, victim)
+                    self.edges.add((attacker, victim, label))
 
     def GenerateEdgesBySamHash(self):
         for attacker in self.vertices:
@@ -307,7 +363,8 @@ class PassTheHashMap(object):
                 admins = Machine(victim).GetLocalAdminSecrets()
                 
                 if len(cached & admins) > 0:
-                    self.edges.add((attacker, victim))
+                    label = self.ReprSecretList(cached & admins, victim)
+                    self.edges.add((attacker, victim, label))
 
     def GenerateEdgesByUsername(self):
         for attacker in self.vertices:
