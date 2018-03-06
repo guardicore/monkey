@@ -38,15 +38,16 @@ class Machine(object):
     def GetMimikatzOutput(self):
         cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
         
-        output = set()
+        output = None
         
         for doc in cur:
-            output.add(doc["data"]["mimikatz"])
+            if not output:
+                output = doc
+            
+            if doc["timestamp"] > output["timestamp"]:
+                output = doc
 
-        if len(output) == 1:
-            return output.pop()
-
-        return None
+        return output["data"]["mimikatz"]
     
     def GetHostName(self):
         cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
@@ -146,7 +147,7 @@ class Machine(object):
         return None
         
     def GetUsernameBySecret(self, secret):
-        sam = self.GetSam()
+        sam = self.GetLocalSecrets()
         
         for user, user_secret in sam.iteritems():
             if secret == user_secret:
@@ -207,19 +208,58 @@ class Machine(object):
         return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).values())
         
     def GetSam(self):
-        sam_users = str(self.GetMimikatzOutput()).split("\nSAMKey :")[1].split("\n\n")[1:]
-        
+        if not self.GetMimikatzOutput():
+            return {}
+    
+        mimikatz = self.GetMimikatzOutput()
+
+        if mimikatz.count("\n42.") != 2:
+            return {}
+
+        sam_users = mimikatz.split("\n42.")[1].split("\nSAMKey :")[1].split("\n\n")[1:]
+
         sam = {}
         
         for sam_user_txt in sam_users:
-            sam_user = dict([map(str.strip, line.split(":")) for line in filter(lambda l: l.count(":") == 1, sam_user_txt.splitlines())])
+            sam_user = dict([map(unicode.strip, line.split(":")) for line in filter(lambda l: l.count(":") == 1, sam_user_txt.splitlines())])
             sam[sam_user["User"]] = sam_user["NTLM"].replace("[hashed secret]", "").strip()
         
         return sam
-                
+    
+    def GetNtds(self):
+        if not self.GetMimikatzOutput():
+            return {}
+    
+        mimikatz = self.GetMimikatzOutput()
+
+        if mimikatz.count("\n42.") != 2:
+            return {}
+    
+        ntds_users = mimikatz.split("\n42.")[2].split("\nRID  :")[1:]
+        ntds = {}
+        
+        for ntds_user_txt in ntds_users:
+            user = ntds_user_txt.split("User :")[1].splitlines()[0].replace("User :", "").strip()
+            ntlm = ntds_user_txt.split("* Primary\n    NTLM :")[1].splitlines()[0].replace("NTLM :", "").strip()
+            ntlm = ntlm.replace("[hashed secret]", "").strip()
+            
+            if ntlm:
+                ntds[user] = ntlm
+
+        return ntds
+    
+    def GetLocalSecrets(self):
+        sam = self.GetSam()
+        ntds = self.GetNtds()
+        
+        secrets = sam.copy()
+        secrets.update(ntds)
+        
+        return secrets
+
     def GetLocalAdminSecrets(self):
         admin_names = self.GetLocalAdminNames()
-        sam = self.GetSam()
+        sam = self.GetLocalSecrets()
         
         admin_secrets = set()
         
@@ -228,7 +268,7 @@ class Machine(object):
                 continue
             
             admin_secrets.add(secret)
-        
+
         return admin_secrets
     
     def GetCachedSecrets(self):
