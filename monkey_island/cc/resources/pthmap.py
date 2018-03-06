@@ -289,12 +289,12 @@ class Machine(object):
     def GetCachedUsernames(self):
         doc = self.latest_system_info
         
-        SIDs = set()
+        names = set()
         
         for username in doc["data"]["credentials"]:
-            SIDs.add(username)
+            names.add(username)
         
-        return SIDs
+        return names
 
 class PassTheHashMap(object):
     def __init__(self):
@@ -384,31 +384,49 @@ class PassTheHashMap(object):
         print map(lambda x: Machine(x).GetIp(), self.vertices)
         print map(lambda x: (Machine(x[0]).GetIp(), Machine(x[1]).GetIp()), self.edges)
     
-    def GetAllSidsStat(self):
+    def GetSecretBySid(self, sid):
+        for m in self.vertices:
+            for user, user_secret in m.GetLocalSecrets():
+                if m.GetSidByUsername(user) == sid:
+                    return user_secret
+        
+        return None
+    
+    def GetAllSids(self):
         SIDs = {}
         
         for m in self.vertices:
             for sid in m.GetLocalAdmins():
                 if sid not in SIDs.keys():
-                    SIDs[sid] = 0
+                    SIDs[sid] = {}
+                    SIDs[sid]["admin_count"] = 0
+                    SIDs[sid]["cache_count"] = self.GetSecretCacheCount(self.GetSecretBySid(sid))
                 
-                SIDs[sid] += 1
+                SIDs[sid]["admin_count"] += 1
         
         return SIDs
+    
+    def GetSecretCacheCount(self, secret):
+        count = 0
+        
+        for m in self.vertices:
+            if secret in m.GetCachedSecrets():
+                count += 1
+        
+        return count
 
-    def GetAllSecretStat(self):
+    def GetAllSecrets(self):
         secrets = {}
         
         for m in self.vertices:
             for secret in m.GetLocalAdminSecrets():
                 if secret not in secrets.keys():
-                    secrets[secret] = 0
-                
-                secrets[secret] += 1
+                    secrets[secret] = {}
+                    secrets[secret]["cache_count"] = GetSecretCacheCount(secret)
         
         return secrets
     
-    def SidToUsername(self, sid):
+    def GetUsernameBySid(self, sid):
         for m in self.vertices:
             username = m.GetUsernameBySid(sid)
             
@@ -417,10 +435,61 @@ class PassTheHashMap(object):
         
         return None
     
-    def SecretToSids(self, secret):
+    def GetSidsBySecret(self, secret):
         SIDs = set()
         
         for m in self.vertices:
             SIDs.add(m.GetSidBySecret(secret))
         
         return SIDs
+    
+    def GetAllDomainControllers(self):
+        DCs = set()
+        
+        for m in self.vertices:
+            if m.IsDomainController():
+                DCs.add(m)
+
+    def GetSidsByUsername(self, username):
+        doc = self.latest_system_info
+
+        SIDs = set()
+        
+        for m in self.vertices:
+            sid = m.GetSidByUsername(username)
+            if sid:
+                SIDs.add(sid)
+        
+        return SIDs
+    
+    def GetVictimsBySid(self, sid):
+        machines = set()
+
+        for m in self.vertices:
+            if sid in m.GetAdmins():
+                machines.add(m)
+
+        return machines
+
+    def GetVictimsBySecret(self, secret):
+        machines = set()
+
+        SIDs = self.GetSidsBySecret(secret)
+
+        for m in self.vertices:
+            if len(SIDs & m.GetAdmins()) > 0:
+                machines.add(m)
+
+        return machines
+
+    def GetAttackersBySecret(self, secret):
+        machines = set()
+        
+        for m in self.vertices:
+            if secret in m.GetCachedSecrets():
+                machines.add(m)
+
+        return machines
+    
+    def GetAttackersByVictim(self, victim):
+        assert False, "TODO, get information from the graph"
