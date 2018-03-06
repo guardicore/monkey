@@ -559,6 +559,16 @@ def main():
     for m, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
         print """<tr><td>{ip}</td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=n.GetHostName(), domain=m.GetDomainName(), count=count)
     print """</talbe>"""
+    
+    print "<h2>Domain Controllers</h2>"
+    print "<h3>List of domain controllers (we count them as critical points, so they are listed here)</h3>"
+    DCs = pth.GetAllDomainControllers()
+    
+    print """<talbe>"""
+    print """<tr><th>DC Ip</th><th>DC Hostname</th><th>Domain Name</th></tr>"""
+    for m in DCs:
+        print """<tr><td>{ip}</td><td>{hostname}</td><td>{domain}</td>""".format(ip=m.GetIp(), hostname=n.GetHostName(), domain=m.GetDomainName())
+    print """</talbe>"""
 
 if __name__ == "__main__":
     main()
