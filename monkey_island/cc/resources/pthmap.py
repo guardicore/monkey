@@ -167,6 +167,16 @@ class Machine(object):
 
     def GetLocalAdmins(self):
         return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).keys())
+    
+    def GetLocalSids(self):
+        doc = self.latest_system_info
+        
+        SIDs = set()
+    
+        for user in doc["data"]["Win32_UserAccount"]:
+            SIDs.add(eval(user["SID"]))
+        
+        return SIDs
 
     def GetLocalAdminNames(self):
         return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).values())
@@ -392,19 +402,22 @@ class PassTheHashMap(object):
         
         return None
     
-    def GetAllSids(self):
-        SIDs = {}
+    def GetAttackableMachineCountBySid(self, sid):
+        count = 0
         
         for m in self.vertices:
-            for sid in m.GetLocalAdmins():
-                if sid not in SIDs.keys():
-                    SIDs[sid] = {}
-                    SIDs[sid]["admin_count"] = 0
-                    SIDs[sid]["cache_count"] = self.GetSecretCacheCount(self.GetSecretBySid(sid))
-                
-                SIDs[sid]["admin_count"] += 1
+            if sid in m.GetLocalAdmins():
+                count += 1
+
+        return count
+
+    def GetAttackableMachineCountByMachine(self, attacker):
+        count = 0
         
-        return SIDs
+        for secret in attack.GetCachedSecrets():
+            count += len(m.GetVictimsBySecret(secret))
+
+        return count
     
     def GetSecretCacheCount(self, secret):
         count = 0
@@ -415,14 +428,22 @@ class PassTheHashMap(object):
         
         return count
 
+    def GetAllSids(self):
+        SIDs = set()
+        
+        for m in self.vertices:
+            SIDs |= m.GetLocalSids()
+        
+        return SIDs
+
     def GetAllSecrets(self):
-        secrets = {}
+        secrets = set()
         
         for m in self.vertices:
             for secret in m.GetLocalAdminSecrets():
-                if secret not in secrets.keys():
-                    secrets[secret] = {}
-                    secrets[secret]["cache_count"] = GetSecretCacheCount(secret)
+                secret.add(secret)
+                #secrets[secret]["cache_count"] = self.GetSecretCacheCount(secret)
+                #secrets[secret]["sid_count"] = len(self.GetSidsBySecret(secret))
         
         return secrets
     
@@ -493,3 +514,51 @@ class PassTheHashMap(object):
     
     def GetAttackersByVictim(self, victim):
         assert False, "TODO, get information from the graph"
+
+def main():
+    pth = PassTheHashMap()
+
+    print "<h1>Pass The Hash Report</h1>"
+    
+    print "<h2>Duplicated Passwords</h2>"
+    print "<h3>How many users share each secret?</h3>"
+    dups = dict(map(lambda x: (x, len(self.GetSidsBySecret(x))), pth.GetAllSecrets()))
+    
+    print """<talbe>"""
+    print """<tr><th>Secret</th><th>User Count</th></tr>"""
+    for secret, count in sorted(dups.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        print """<tr><td>{secret}</td><td>{count}</td>""".format(secret=secret, count=count)
+    print """</talbe>"""
+    
+    print "<h2>Cached Passwords</h2>"
+    print "<h3>On how many machines each secret is cached?</h3>"
+    cache_counts = dict(map(lambda x: (x, self.GetSecretCacheCount(x)), pth.GetAllSecrets()))
+    
+    print """<talbe>"""
+    print """<tr><th>Secret</th><th>Machine Count</th></tr>"""
+    for secret, count in sorted(cache_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        print """<tr><td>{secret}</td><td>{count}</td>""".format(secret=secret, count=count)
+    print """</talbe>"""
+    
+    print "<h2>User's Creds</h2>"
+    print "<h3>To how many machines each user is able to connect with admin rights?</h3>"
+    attackable_counts = dict(map(lambda x: (x, self.GetAttackableMachineCountBySid(x)), pth.GetAllSids()))
+    
+    print """<talbe>"""
+    print """<tr><th>SID</th><th>Username</th><th>Machine Count</th></tr>"""
+    for sid, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        print """<tr><td>{sid}</td><td>{username}</td><td>{count}</td>""".format(sid=sid, username=pth.GetUsernameBySid(sid), count=count)
+    print """</talbe>"""
+    
+    print "<h2>Machine's Creds</h2>"
+    print "<h3>To how many machines each machine is able to directly connect with admin rights?</h3>"
+    attackable_counts = dict(map(lambda m: (m, pth.GetAttackableMachineCountByMachine(m)), pth.vertices))
+    
+    print """<talbe>"""
+    print """<tr><th>Attacker Ip</th><th>Attacker Hostname</th><th>Domain Name</th><th>Victim Machine Count</th></tr>"""
+    for m, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        print """<tr><td>{ip}</td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=n.GetHostName(), domain=m.GetDomainName(), count=count)
+    print """</talbe>"""
+
+if __name__ == "__main__":
+    main()
