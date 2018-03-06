@@ -34,71 +34,49 @@ def myntlm(x):
 class Machine(object):
     def __init__(self, monkey_guid):
         self.monkey_guid = str(monkey_guid)
+        
+        self.latest_system_info = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid}).sort([("timestamp", 1)]).limit(1)
+        
+        if self.latest_system_info.count() > 0:
+            self.latest_system_info = self.latest_system_info[0]
     
     def GetMimikatzOutput(self):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
+        doc = self.latest_system_info
         
-        output = None
+        if not doc:
+            return None
         
-        for doc in cur:
-            if not output:
-                output = doc
-            
-            if doc["timestamp"] > output["timestamp"]:
-                output = doc
-
-        return output["data"]["mimikatz"]
+        return doc["data"]["mimikatz"]
     
     def GetHostName(self):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
-        
-        names = set()
+        doc = self.latest_system_info
 
-        for doc in cur:
-            for comp in doc["data"]["Win32_ComputerSystem"]:
-                names.add(eval(comp["Name"]))
-
-        if len(names) == 1:
-            return names.pop()
+        for comp in doc["data"]["Win32_ComputerSystem"]:
+            return eval(comp["Name"])
 
         return None
 
     def GetIp(self):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
+        doc = self.latest_system_info
         
-        names = set()
-
-        for doc in cur:
-            for addr in doc["data"]["network_info"]["networks"]:
-                return str(addr["addr"])
+        for addr in doc["data"]["network_info"]["networks"]:
+            return str(addr["addr"])
 
         return None
 
     def GetDomainName(self):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
+        doc = self.latest_system_info
         
-        names = set()
-
-        for doc in cur:
-            for comp in doc["data"]["Win32_ComputerSystem"]:
-                names.add(eval(comp["Domain"]))
-
-        if len(names) == 1:
-            return names.pop()
+        for comp in doc["data"]["Win32_ComputerSystem"]:
+            return eval(comp["Domain"])
 
         return None
         
     def GetDomainRole(self):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
+        doc = self.latest_system_info
         
-        roles = set()
-
-        for doc in cur:
-            for comp in doc["data"]["Win32_ComputerSystem"]:
-                roles.add(comp["DomainRole"])
-
-        if len(roles) == 1:
-            return roles.pop()
+        for comp in doc["data"]["Win32_ComputerSystem"]:
+            return comp["DomainRole"]
 
         return None
     
@@ -106,36 +84,24 @@ class Machine(object):
         return self.GetDomainRole() in (DsRole_RolePrimaryDomainController, DsRole_RoleBackupDomainController)
 
     def GetSidByUsername(self, username):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid, "data.Win32_UserAccount.Name":"u'%s'" % (username,)})
-        
-        SIDs = set()
+        doc = self.latest_system_info
 
-        for doc in cur:
-            for user in doc["data"]["Win32_UserAccount"]:
-                if eval(user["Name"]) != username:
-                    continue
+        for user in doc["data"]["Win32_UserAccount"]:
+            if eval(user["Name"]) != username:
+                continue
 
-                SIDs.add(eval(user["SID"]))
-        
-        if len(SIDs) == 1:
-            return SIDs.pop()
+            return eval(user["SID"])
         
         return None
 
     def GetUsernameBySid(self, sid):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid, "data.Win32_UserAccount.SID":"u'%s'" % (sid,)})
-        
-        names = set()
+        doc = self.latest_system_info
 
-        for doc in cur:
-            for user in doc["data"]["Win32_UserAccount"]:
-                if eval(user["SID"]) != sid:
-                    continue
+        for user in doc["data"]["Win32_UserAccount"]:
+            if eval(user["SID"]) != sid:
+                continue
 
-                names.add(eval(user["Name"]))
-        
-        if len(names) == 1:
-            return names.pop()
+            return eval(user["Name"])
         
         if not self.IsDomainController():
             for dc in self.GetDomainControllers():
@@ -155,36 +121,34 @@ class Machine(object):
 
         return None
 
+    def GetSidBySecret(self, secret):
+        username = self.GetUsernameBySecret(secret)
+        return self.GetSidByUsername(username)
+
     def GetGroupSidByGroupName(self, group_name):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid, "data.Win32_Group.Name":"u'%s'" % (group_name,)})
-        SIDs = set()
+        doc = self.latest_system_info
 
-        for doc in cur:
-            for group in doc["data"]["Win32_Group"]:
-                if eval(group["Name"]) != group_name:
-                    continue
+        for group in doc["data"]["Win32_Group"]:
+            if eval(group["Name"]) != group_name:
+                continue
 
-                SIDs.add(eval(group["SID"]))
-        
-        if len(SIDs) == 1:
-            return SIDs.pop()
+            return eval(group["SID"])
         
         return None
 
     def GetUsersByGroupSid(self, sid):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid, "data.Win32_GroupUser.GroupComponent.SID":"u'%s'" % (sid,)})
+        doc = self.latest_system_info
 
         users = dict()
 
-        for doc in cur:
-            for group_user in doc["data"]["Win32_GroupUser"]:
-                if eval(group_user["GroupComponent"]["SID"]) != sid:
-                    continue
-                
-                if "PartComponent" not in group_user.keys():
-                    continue
+        for group_user in doc["data"]["Win32_GroupUser"]:
+            if eval(group_user["GroupComponent"]["SID"]) != sid:
+                continue
+            
+            if "PartComponent" not in group_user.keys():
+                continue
 
-                users[eval(group_user["PartComponent"]["SID"])] = eval(group_user["PartComponent"]["Name"])
+            users[eval(group_user["PartComponent"]["SID"])] = eval(group_user["PartComponent"]["Name"])
         
         return users
 
@@ -272,23 +236,22 @@ class Machine(object):
         return admin_secrets
     
     def GetCachedSecrets(self):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
+        doc = self.latest_system_info
         
         secrets = set()
         
-        for doc in cur:
-            for username in doc["data"]["credentials"]:
-                user = doc["data"]["credentials"][username]
-                
-                if "password" in user.keys():
-                    ntlm = myntlm(str(user["password"]))
-                elif "ntlm_hash" in user.keys():
-                    ntlm = str(user["ntlm_hash"])
-                else:
-                    continue
+        for username in doc["data"]["credentials"]:
+            user = doc["data"]["credentials"][username]
+            
+            if "password" in user.keys():
+                ntlm = myntlm(str(user["password"]))
+            elif "ntlm_hash" in user.keys():
+                ntlm = str(user["ntlm_hash"])
+            else:
+                continue
 
-                secret = hashlib.md5(ntlm.decode("hex")).hexdigest()
-                secrets.add(secret)
+            secret = hashlib.md5(ntlm.decode("hex")).hexdigest()
+            secrets.add(secret)
 
         return secrets
     
@@ -314,24 +277,22 @@ class Machine(object):
         return set(map(lambda x: self.GetUsernameBySid(x), self.GetAdmins()))
 
     def GetCachedSids(self):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
+        doc = self.latest_system_info
         
         SIDs = set()
         
-        for doc in cur:
-            for username in doc["data"]["credentials"]:
-                SIDs.add(self.GetSidByUsername(username))
+        for username in doc["data"]["credentials"]:
+            SIDs.add(self.GetSidByUsername(username))
         
         return SIDs
 
     def GetCachedUsernames(self):
-        cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid})
+        doc = self.latest_system_info
         
         SIDs = set()
         
-        for doc in cur:
-            for username in doc["data"]["credentials"]:
-                SIDs.add(username)
+        for username in doc["data"]["credentials"]:
+            SIDs.add(username)
         
         return SIDs
 
@@ -422,3 +383,44 @@ class PassTheHashMap(object):
     def Print(self):
         print map(lambda x: Machine(x).GetIp(), self.vertices)
         print map(lambda x: (Machine(x[0]).GetIp(), Machine(x[1]).GetIp()), self.edges)
+    
+    def GetAllSidsStat(self):
+        SIDs = {}
+        
+        for m in self.vertices:
+            for sid in m.GetLocalAdmins():
+                if sid not in SIDs.keys():
+                    SIDs[sid] = 0
+                
+                SIDs[sid] += 1
+        
+        return SIDs
+
+    def GetAllSecretStat(self):
+        secrets = {}
+        
+        for m in self.vertices:
+            for secret in m.GetLocalAdminSecrets():
+                if secret not in secrets.keys():
+                    secrets[secret] = 0
+                
+                secrets[secret] += 1
+        
+        return secrets
+    
+    def SidToUsername(self, sid):
+        for m in self.vertices:
+            username = m.GetUsernameBySid(sid)
+            
+            if username:
+                return username
+        
+        return None
+    
+    def SecretToSids(self, secret):
+        SIDs = set()
+        
+        for m in self.vertices:
+            SIDs.add(m.GetSidBySecret(secret))
+        
+        return SIDs
