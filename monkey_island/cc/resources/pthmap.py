@@ -415,7 +415,7 @@ class PassTheHashMap(object):
         count = 0
         
         for secret in attack.GetCachedSecrets():
-            count += len(m.GetVictimsBySecret(secret))
+            count += len(m.GetAttackableMachinesBySecret(secret))
 
         return count
     
@@ -427,6 +427,14 @@ class PassTheHashMap(object):
                 count += 1
         
         return count
+    
+    def GetAllUsernames(self):
+        names = set()
+        
+        for sid in self.GetAllSids():
+            names.add(self.GetUsernameBySid(sid))
+        
+        return names
 
     def GetAllSids(self):
         SIDs = set()
@@ -483,7 +491,7 @@ class PassTheHashMap(object):
         
         return SIDs
     
-    def GetVictimsBySid(self, sid):
+    def GetAttackableMachinesBySid(self, sid):
         machines = set()
 
         for m in self.vertices:
@@ -492,7 +500,7 @@ class PassTheHashMap(object):
 
         return machines
 
-    def GetVictimsBySecret(self, secret):
+    def GetAttackableMachinesBySecret(self, secret):
         machines = set()
 
         SIDs = self.GetSidsBySecret(secret)
@@ -557,7 +565,7 @@ def main():
     print """<talbe>"""
     print """<tr><th>Attacker Ip</th><th>Attacker Hostname</th><th>Domain Name</th><th>Victim Machine Count</th></tr>"""
     for m, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
-        print """<tr><td>{ip}</td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=n.GetHostName(), domain=m.GetDomainName(), count=count)
+        print """<tr><td>{ip}</td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
     print """</talbe>"""
     
     print "<h2>Domain Controllers</h2>"
@@ -567,8 +575,76 @@ def main():
     print """<talbe>"""
     print """<tr><th>DC Ip</th><th>DC Hostname</th><th>Domain Name</th></tr>"""
     for m in DCs:
-        print """<tr><td>{ip}</td><td>{hostname}</td><td>{domain}</td>""".format(ip=m.GetIp(), hostname=n.GetHostName(), domain=m.GetDomainName())
+        print """<tr><td><a href="#{ip}">{ip}</a></td><td><a href="#{ip}">{hostname}</a></td><td>{domain}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName())
     print """</talbe>"""
+    
+    print "<hr />"
+    
+    for m in pth.vertices:
+        print """<a name="{ip}"><h2>Machine '{ip}'</h2></a>
+                 <h3>Hostname '{hostname}'</h3>""".format{ip=m.GetIp(), hostname=m.GetHostName()}
+     
+        print """<h3>Cached SIDs</h3>"""
+        print """<ul>"""
+        for sid in m.GetCachedSids():
+            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
+        print """</ul>"""
+        
+        print """<h3>Possible Attackers</h3>"""
+        print """<h4>TODO. see graph.</h4>""" # pth.GetAttackersByVictim(m)
+        
+        print """<h3>Admins</h3>"""
+        print """<ul>"""
+        for sid in m.GetAdmins():
+            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
+        print """</ul>"""
 
+    print "<hr />"
+    
+    for username in pth.GetAllUsernames():
+        print """<a name="{username}"><h2>User '{username}'</h2></a>""".format(username=username)
+        
+        print """<h3>Matching SIDs</h3>"""
+        print """<ul>"""
+        for sid in pth.GetSidsByUsername(username)
+            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
+        print """</ul>"""
+
+    print "<hr />"
+    
+    for sid in pth.GetAllSids():
+        print """<a name="{sid}"><h2>SID '{sid}'</h2></a>
+                <a href="#{username}"><h3>Username: '{username}'</h3></a>
+                <a href="#{secret}"><h3>Secret: '{secret}'</h3></a>
+              """.format(username=pth.GetUsernameBySid(sid), sid=sid, secret=pth.GetSecretBySid(sid))
+        
+        print """<h3>Attackable Machines</h3>"""
+        print """<ul>"""
+        for m in pth.GetAttackableMachinesBySid(sid)
+            print """<li><a href="#{ip}">{ip} ({hostname})</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
+        print """</ul>"""
+
+    for secret in pth.GetAllSecrets():
+        print """<a name="{secret}"><h2>Secret '{secret}'</h2></a>""".format(secret=secret)
+        
+        print """<h3>SIDs that use that secret</h3>"""
+        print """<ul>"""
+        for sid in pth.GetSidsBySecret(secret):
+            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
+        print """</ul>"""
+        
+        print """<h3>Attackable Machines with that secret</h3>"""
+        print """<ul>"""
+        for m in pth.GetAttackableMachinesBySecret(secret):
+            print """<li><a href="#{ip}">{hostname}</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
+        print """</ul>"""
+        
+        print """<h3>Machines that have this secret cached and can use it to attack other machines</h3>"""
+        print """<ul>"""
+        for m in pth.GetAttackersBySecret(secret):
+            print """<li><a href="#{ip}">{hostname}</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
+        print """</ul>"""
+        
+    
 if __name__ == "__main__":
     main()
