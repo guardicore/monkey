@@ -591,7 +591,7 @@ def main():
     print """<table>"""
     print """<tr><th>SID</th><th>Username</th><th>Machine Count</th></tr>"""
     for sid, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
-        print """<tr><td><a href="#{sid}">{sid}</a></td><td><a href="#{username}">{username}</a></td><td>{count}</td>""".format(sid=sid, username=pth.GetUsernameBySid(sid), count=count)
+        print """<tr><td><a href="#{sid}">{sid}</a></td><td>{username}</td><td>{count}</td>""".format(sid=sid, username=pth.GetUsernameBySid(sid), count=count)
     print """</table>"""
     
     print "<h2>Machine's Creds</h2>"
@@ -667,8 +667,8 @@ def main():
     
     for sid in pth.GetAllSids():
         print """<a name="{sid}"><h2>SID '{sid}'</h2></a>
-                <a href="#{username}"><h3>Username: '{username}'</h3></a>
-                <a href="#{secret}"><h3>Secret: '{secret}'</h3></a>
+                <h3>Username: '<a href="#{username}">{username}</a>'</h3>
+                <h3>Secret: '<a href="#{secret}">{secret}</a>'</h3>
               """.format(username=pth.GetUsernameBySid(sid), sid=sid, secret=pth.GetSecretBySid(sid))
         
         print """<h3>Attackable Machines</h3>"""
