@@ -9,8 +9,12 @@ import hashlib
 import binascii
 from pymongo import MongoClient
 
-class PthMap(flask_restful.Resource):
-    @jwt_required()
+class mongo(object):
+    db = MongoClient().monkeyisland
+
+#class PthMap(flask_restful.Resource):
+class PthMap(object):
+#    @jwt_required()
     def get(self, **kw):
         graph = PassTheHashMap()
 
@@ -310,6 +314,7 @@ class PassTheHashMap(object):
     def __init__(self):
         self.vertices = self.GetAllMachines()
         self.edges = set()
+        self.machines = map(Machine, self.vertices)
         
         self.GenerateEdgesBySid()      # Useful for non-cached domain users
         self.GenerateEdgesBySamHash()  # This will add edges based only on password hash without caring about username
@@ -395,34 +400,29 @@ class PassTheHashMap(object):
         print map(lambda x: (Machine(x[0]).GetIp(), Machine(x[1]).GetIp()), self.edges)
     
     def GetSecretBySid(self, sid):
-        for m in self.vertices:
-            for user, user_secret in m.GetLocalSecrets():
+        for m in self.machines:
+            for user, user_secret in m.GetLocalSecrets().iteritems():
                 if m.GetSidByUsername(user) == sid:
                     return user_secret
         
         return None
     
-    def GetAttackableMachineCountBySid(self, sid):
+    def GetVictimCountBySid(self, sid):
         count = 0
         
-        for m in self.vertices:
+        for m in self.machines:
             if sid in m.GetLocalAdmins():
                 count += 1
 
         return count
 
-    def GetAttackableMachineCountByMachine(self, attacker):
-        count = 0
-        
-        for secret in attack.GetCachedSecrets():
-            count += len(m.GetAttackableMachinesBySecret(secret))
-
-        return count
+    def GetVictimCountByMachine(self, attacker):
+        return len(self.GetVictimsByAttacker(attacker))
     
     def GetSecretCacheCount(self, secret):
         count = 0
         
-        for m in self.vertices:
+        for m in self.machines:
             if secret in m.GetCachedSecrets():
                 count += 1
         
@@ -439,7 +439,7 @@ class PassTheHashMap(object):
     def GetAllSids(self):
         SIDs = set()
         
-        for m in self.vertices:
+        for m in self.machines:
             SIDs |= m.GetLocalSids()
         
         return SIDs
@@ -447,16 +447,14 @@ class PassTheHashMap(object):
     def GetAllSecrets(self):
         secrets = set()
         
-        for m in self.vertices:
+        for m in self.machines:
             for secret in m.GetLocalAdminSecrets():
-                secret.add(secret)
-                #secrets[secret]["cache_count"] = self.GetSecretCacheCount(secret)
-                #secrets[secret]["sid_count"] = len(self.GetSidsBySecret(secret))
+                secrets.add(secret)
         
         return secrets
     
     def GetUsernameBySid(self, sid):
-        for m in self.vertices:
+        for m in self.machines:
             username = m.GetUsernameBySid(sid)
             
             if username:
@@ -467,7 +465,7 @@ class PassTheHashMap(object):
     def GetSidsBySecret(self, secret):
         SIDs = set()
         
-        for m in self.vertices:
+        for m in self.machines:
             SIDs.add(m.GetSidBySecret(secret))
         
         return SIDs
@@ -475,37 +473,37 @@ class PassTheHashMap(object):
     def GetAllDomainControllers(self):
         DCs = set()
         
-        for m in self.vertices:
+        for m in self.machines:
             if m.IsDomainController():
                 DCs.add(m)
+        
+        return DCs
 
     def GetSidsByUsername(self, username):
-        doc = self.latest_system_info
-
         SIDs = set()
         
-        for m in self.vertices:
+        for m in self.machines:
             sid = m.GetSidByUsername(username)
             if sid:
                 SIDs.add(sid)
         
         return SIDs
     
-    def GetAttackableMachinesBySid(self, sid):
+    def GetVictimsBySid(self, sid):
         machines = set()
 
-        for m in self.vertices:
+        for m in self.machines:
             if sid in m.GetAdmins():
                 machines.add(m)
 
         return machines
 
-    def GetAttackableMachinesBySecret(self, secret):
+    def GetVictimsBySecret(self, secret):
         machines = set()
 
         SIDs = self.GetSidsBySecret(secret)
 
-        for m in self.vertices:
+        for m in self.machines:
             if len(SIDs & m.GetAdmins()) > 0:
                 machines.add(m)
 
@@ -514,7 +512,7 @@ class PassTheHashMap(object):
     def GetAttackersBySecret(self, secret):
         machines = set()
         
-        for m in self.vertices:
+        for m in self.machines:
             if secret in m.GetCachedSecrets():
                 machines.add(m)
 
@@ -523,11 +521,20 @@ class PassTheHashMap(object):
     def GetAttackersByVictim(self, victim):
         attackers = set()
     
-        for atck, vic in self.edge:
+        for atck, vic, _ in self.edges:
             if vic == victim:
                 attackers.add(atck)
         
         return attackers
+
+    def GetVictimsByAttacker(self, attacker):
+        victims = set()
+    
+        for atck, vic, _ in self.edges:
+            if atck == attacker:
+                victims.add(vic)
+        
+        return victims
 
 def main():
     pth = PassTheHashMap()
@@ -536,7 +543,7 @@ def main():
     
     print "<h2>Duplicated Passwords</h2>"
     print "<h3>How many users share each secret?</h3>"
-    dups = dict(map(lambda x: (x, len(self.GetSidsBySecret(x))), pth.GetAllSecrets()))
+    dups = dict(map(lambda x: (x, len(pth.GetSidsBySecret(x))), pth.GetAllSecrets()))
     
     print """<talbe>"""
     print """<tr><th>Secret</th><th>User Count</th></tr>"""
@@ -546,7 +553,7 @@ def main():
     
     print "<h2>Cached Passwords</h2>"
     print "<h3>On how many machines each secret is cached?</h3>"
-    cache_counts = dict(map(lambda x: (x, self.GetSecretCacheCount(x)), pth.GetAllSecrets()))
+    cache_counts = dict(map(lambda x: (x, pth.GetSecretCacheCount(x)), pth.GetAllSecrets()))
     
     print """<talbe>"""
     print """<tr><th>Secret</th><th>Machine Count</th></tr>"""
@@ -556,7 +563,7 @@ def main():
     
     print "<h2>User's Creds</h2>"
     print "<h3>To how many machines each user is able to connect with admin rights?</h3>"
-    attackable_counts = dict(map(lambda x: (x, self.GetAttackableMachineCountBySid(x)), pth.GetAllSids()))
+    attackable_counts = dict(map(lambda x: (x, pth.GetVictimCountBySid(x)), pth.GetAllSids()))
     
     print """<talbe>"""
     print """<tr><th>SID</th><th>Username</th><th>Machine Count</th></tr>"""
@@ -566,7 +573,7 @@ def main():
     
     print "<h2>Machine's Creds</h2>"
     print "<h3>To how many machines each machine is able to directly connect with admin rights?</h3>"
-    attackable_counts = dict(map(lambda m: (m, pth.GetAttackableMachineCountByMachine(m)), pth.vertices))
+    attackable_counts = dict(map(lambda m: (m, pth.GetVictimCountByMachine(m)), pth.machines))
     
     print """<talbe>"""
     print """<tr><th>Attacker Ip</th><th>Attacker Hostname</th><th>Domain Name</th><th>Victim Machine Count</th></tr>"""
@@ -586,9 +593,9 @@ def main():
     
     print "<hr />"
     
-    for m in pth.vertices:
+    for m in pth.machines:
         print """<a name="{ip}"><h2>Machine '{ip}'</h2></a>
-                 <h3>Hostname '{hostname}'</h3>""".format{ip=m.GetIp(), hostname=m.GetHostName()}
+                 <h3>Hostname '{hostname}'</h3>""".format(ip=m.GetIp(), hostname=m.GetHostName())
      
         print """<h3>Cached SIDs</h3>"""
         print """<h4>SIDs cached on this machine</h4>"""
@@ -619,7 +626,7 @@ def main():
         
         print """<h3>Matching SIDs</h3>"""
         print """<ul>"""
-        for sid in pth.GetSidsByUsername(username)
+        for sid in pth.GetSidsByUsername(username):
             print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
         print """</ul>"""
 
@@ -633,7 +640,7 @@ def main():
         
         print """<h3>Attackable Machines</h3>"""
         print """<ul>"""
-        for m in pth.GetAttackableMachinesBySid(sid)
+        for m in pth.GetVictimsBySid(sid):
             print """<li><a href="#{ip}">{ip} ({hostname})</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
         print """</ul>"""
 
@@ -648,7 +655,7 @@ def main():
         
         print """<h3>Attackable Machines with that secret</h3>"""
         print """<ul>"""
-        for m in pth.GetAttackableMachinesBySecret(secret):
+        for m in pth.GetVictimsBySecret(secret):
             print """<li><a href="#{ip}">{hostname}</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
         print """</ul>"""
         
