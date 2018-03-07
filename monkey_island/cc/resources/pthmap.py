@@ -545,51 +545,51 @@ def main():
     print "<h3>How many users share each secret?</h3>"
     dups = dict(map(lambda x: (x, len(pth.GetSidsBySecret(x))), pth.GetAllSecrets()))
     
-    print """<talbe>"""
+    print """<table>"""
     print """<tr><th>Secret</th><th>User Count</th></tr>"""
     for secret, count in sorted(dups.iteritems(), key=lambda (k,v): (v,k), reverse=True):
-        print """<tr><td>{secret}</td><td>{count}</td>""".format(secret=secret, count=count)
-    print """</talbe>"""
+        print """<tr><td><a href="#{secret}">{secret}</a></td><td>{count}</td>""".format(secret=secret, count=count)
+    print """</table>"""
     
     print "<h2>Cached Passwords</h2>"
     print "<h3>On how many machines each secret is cached?</h3>"
     cache_counts = dict(map(lambda x: (x, pth.GetSecretCacheCount(x)), pth.GetAllSecrets()))
     
-    print """<talbe>"""
+    print """<table>"""
     print """<tr><th>Secret</th><th>Machine Count</th></tr>"""
     for secret, count in sorted(cache_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
-        print """<tr><td>{secret}</td><td>{count}</td>""".format(secret=secret, count=count)
-    print """</talbe>"""
+        print """<tr><td><a href="#{secret}">{secret}</a></td><td>{count}</td>""".format(secret=secret, count=count)
+    print """</table>"""
     
     print "<h2>User's Creds</h2>"
     print "<h3>To how many machines each user is able to connect with admin rights?</h3>"
     attackable_counts = dict(map(lambda x: (x, pth.GetVictimCountBySid(x)), pth.GetAllSids()))
     
-    print """<talbe>"""
+    print """<table>"""
     print """<tr><th>SID</th><th>Username</th><th>Machine Count</th></tr>"""
     for sid, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
-        print """<tr><td>{sid}</td><td>{username}</td><td>{count}</td>""".format(sid=sid, username=pth.GetUsernameBySid(sid), count=count)
-    print """</talbe>"""
+        print """<tr><td><a href="#{sid}">{sid}</a></td><td><a href="#{username}">{username}</a></td><td>{count}</td>""".format(sid=sid, username=pth.GetUsernameBySid(sid), count=count)
+    print """</table>"""
     
     print "<h2>Machine's Creds</h2>"
     print "<h3>To how many machines each machine is able to directly connect with admin rights?</h3>"
     attackable_counts = dict(map(lambda m: (m, pth.GetVictimCountByMachine(m)), pth.machines))
     
-    print """<talbe>"""
+    print """<table>"""
     print """<tr><th>Attacker Ip</th><th>Attacker Hostname</th><th>Domain Name</th><th>Victim Machine Count</th></tr>"""
     for m, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
-        print """<tr><td>{ip}</td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
-    print """</talbe>"""
+        print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
+    print """</table>"""
     
     print "<h2>Domain Controllers</h2>"
     print "<h3>List of domain controllers (we count them as critical points, so they are listed here)</h3>"
     DCs = pth.GetAllDomainControllers()
     
-    print """<talbe>"""
+    print """<table>"""
     print """<tr><th>DC Ip</th><th>DC Hostname</th><th>Domain Name</th></tr>"""
     for m in DCs:
         print """<tr><td><a href="#{ip}">{ip}</a></td><td><a href="#{ip}">{hostname}</a></td><td>{domain}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName())
-    print """</talbe>"""
+    print """</table>"""
     
     print "<hr />"
     
