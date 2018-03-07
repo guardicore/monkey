@@ -408,13 +408,7 @@ class PassTheHashMap(object):
         return None
     
     def GetVictimCountBySid(self, sid):
-        count = 0
-        
-        for m in self.machines:
-            if sid in m.GetLocalAdmins():
-                count += 1
-
-        return count
+        return len(self.GetVictimsBySid(sid))
 
     def GetVictimCountByMachine(self, attacker):
         return len(self.GetVictimsByAttacker(attacker))
@@ -538,6 +532,32 @@ class PassTheHashMap(object):
                 victims.add(vic)
         
         return victims
+    
+    def GetInPathCountByVictim(self, victim, already_processed=None):
+        if type(victim) != unicode:
+            victim = victim.monkey_guid
+    
+        if not already_processed:
+            already_processed = set([victim])
+
+        count = 0
+        
+        for atck, vic, _ in self.edges:
+            if atck == vic:
+                continue
+
+            if vic != victim:
+                continue
+            
+            if atck in already_processed:
+                continue
+            
+            count += 1
+            
+            already_processed.add(atck)
+            count += self.GetInPathCountByVictim(atck, already_processed)
+
+        return count
 
 def main():
     pth = PassTheHashMap()
@@ -586,12 +606,22 @@ def main():
     
     print "<h2>Domain Controllers</h2>"
     print "<h3>List of domain controllers (we count them as critical points, so they are listed here)</h3>"
-    DCs = pth.GetAllDomainControllers()
+    DCs = dict(map(lambda m: (m, pth.GetInPathCountByVictim(m)), pth.GetAllDomainControllers()))
     
     print """<table>"""
-    print """<tr><th>DC Ip</th><th>DC Hostname</th><th>Domain Name</th></tr>"""
-    for m in DCs:
-        print """<tr><td><a href="#{ip}">{ip}</a></td><td><a href="#{ip}">{hostname}</a></td><td>{domain}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName())
+    print """<tr><th>DC Ip</th><th>DC Hostname</th><th>Domain Name</th><th>In-Path Count</th></tr>"""
+    for m, path_count in sorted(DCs.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        print """<tr><td><a href="#{ip}">{ip}</a></td><td><a href="#{ip}">{hostname}</a></td><td>{domain}</td><td>{path_count}</td></tr>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), path_count=path_count)
+    print """</table>"""
+    
+    print "<h2>Most Vulnerable Machines</h2>"
+    print "<h3>List all machines in the network sorted by the potincial to attack them</h3>"
+    all_machines = dict(map(lambda m: (m, pth.GetInPathCountByVictim(m)), pth.machines))
+    
+    print """<table>"""
+    print """<tr><th>Ip</th><th>Hostname</th><th>Domain Name</th><th>In-Path Count</th></tr>"""
+    for m, path_count in sorted(all_machines.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        print """<tr><td><a href="#{ip}">{ip}</a></td><td><a href="#{ip}">{hostname}</a></td><td>{domain}</td><td>{path_count}</td></tr>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), path_count=path_count)
     print """</table>"""
     
     print "<hr />"
