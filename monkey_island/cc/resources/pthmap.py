@@ -1,9 +1,9 @@
-import flask_restful
-
-from cc.auth import jwt_required
-from cc.services.edge import EdgeService
-from cc.services.node import NodeService
-from cc.database import mongo
+#import flask_restful
+#
+#from cc.auth import jwt_required
+#from cc.services.edge import EdgeService
+#from cc.services.node import NodeService
+#from cc.database import mongo
 
 import hashlib
 import binascii
@@ -521,7 +521,13 @@ class PassTheHashMap(object):
         return machines
     
     def GetAttackersByVictim(self, victim):
-        assert False, "TODO, get information from the graph"
+        attackers = set()
+    
+        for atck, vic in self.edge:
+            if vic == victim:
+                attackers.add(atck)
+        
+        return attackers
 
 def main():
     pth = PassTheHashMap()
@@ -585,15 +591,22 @@ def main():
                  <h3>Hostname '{hostname}'</h3>""".format{ip=m.GetIp(), hostname=m.GetHostName()}
      
         print """<h3>Cached SIDs</h3>"""
+        print """<h4>SIDs cached on this machine</h4>"""
         print """<ul>"""
         for sid in m.GetCachedSids():
             print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
         print """</ul>"""
         
         print """<h3>Possible Attackers</h3>"""
-        print """<h4>TODO. see graph.</h4>""" # pth.GetAttackersByVictim(m)
+        print """<h4>Machines that can attack this machine</h4>"""
+        print """<ul>"""
+        for attacker in pth.GetAttackersByVictim(m):
+            print """<li><a href="#{ip}">{ip} ({hostname})</a></li>""".format(ip=attacker.GetIp(), hostname=attacker.GetHostName())
+        print """</ul>"""
+            
         
         print """<h3>Admins</h3>"""
+        print """<h4>Users that have admin rights on this machine</h4>"""
         print """<ul>"""
         for sid in m.GetAdmins():
             print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
