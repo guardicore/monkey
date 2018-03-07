@@ -116,18 +116,20 @@ class Machine(object):
         
         return None
         
-    def GetUsernameBySecret(self, secret):
+    def GetUsernamesBySecret(self, secret):
         sam = self.GetLocalSecrets()
         
-        for user, user_secret in sam.iteritems():
+        names = set()
+        
+        for username, user_secret in sam.iteritems():
             if secret == user_secret:
-                return user
+                names.add(username)
 
-        return None
+        return names
 
-    def GetSidBySecret(self, secret):
-        username = self.GetUsernameBySecret(secret)
-        return self.GetSidByUsername(username)
+    def GetSidsBySecret(self, secret):
+        usernames = self.GetUsernamesBySecret(secret)
+        return set(map(self.GetSidByUsername, usernames))
 
     def GetGroupSidByGroupName(self, group_name):
         doc = self.latest_system_info
@@ -234,25 +236,31 @@ class Machine(object):
         secrets.update(ntds)
         
         return secrets
-
+        
     def GetLocalAdminSecrets(self):
+        return set(self.GetLocalAdminCreds().values())
+
+    def GetLocalAdminCreds(self):
         admin_names = self.GetLocalAdminNames()
         sam = self.GetLocalSecrets()
         
-        admin_secrets = set()
+        admin_creds = dict()
         
-        for user, secret in sam.iteritems():
-            if user not in admin_names:
+        for username, secret in sam.iteritems():
+            if username not in admin_names:
                 continue
             
-            admin_secrets.add(secret)
+            admin_creds[username] = secret
 
-        return admin_secrets
+        return admin_creds
     
     def GetCachedSecrets(self):
+        return set(self.GetCachedCreds().values())
+
+    def GetCachedCreds(self):
         doc = self.latest_system_info
         
-        secrets = set()
+        creds = dict()
         
         for username in doc["data"]["credentials"]:
             user = doc["data"]["credentials"][username]
@@ -265,9 +273,10 @@ class Machine(object):
                 continue
 
             secret = hashlib.md5(ntlm.decode("hex")).hexdigest()
-            secrets.add(secret)
+            
+            creds[username] = secret
 
-        return secrets
+        return creds
     
     def GetDomainControllers(self):
         domain_name = self.GetDomainName()
@@ -347,10 +356,7 @@ class PassTheHashMap(object):
         label = set()
         
         for secret in secret_list:
-            username = Machine(victim).GetUsernameBySecret(secret)
-            
-            if username:
-                label.add(username)
+            label |= Machine(victim).GetUsernamesBySecret(secret)
         
         return ",\n".join(label)
 
@@ -370,16 +376,16 @@ class PassTheHashMap(object):
 
     def GenerateEdgesBySamHash(self):
         for attacker in self.vertices:
-            cached = Machine(attacker).GetCachedSecrets()
+            cached_creds = set(Machine(attacker).GetCachedCreds().items())
 
             for victim in self.vertices:
                 if attacker == victim:
                     continue
 
-                admins = Machine(victim).GetLocalAdminSecrets()
+                admin_creds = set(Machine(victim).GetLocalAdminCreds().items())
                 
-                if len(cached & admins) > 0:
-                    label = self.ReprSecretList(cached & admins, victim)
+                if len(cached_creds & admin_creds) > 0:
+                    label = self.ReprSecretList(set(dict(cached_creds & admin_creds).values()), victim)
                     self.edges.add((attacker, victim, label))
 
     def GenerateEdgesByUsername(self):
@@ -413,14 +419,8 @@ class PassTheHashMap(object):
     def GetVictimCountByMachine(self, attacker):
         return len(self.GetVictimsByAttacker(attacker))
     
-    def GetSecretCacheCount(self, secret):
-        count = 0
-        
-        for m in self.machines:
-            if secret in m.GetCachedSecrets():
-                count += 1
-        
-        return count
+    def GetAttackCountBySecret(self, secret):
+        return len(self.GetAttackersBySecret(secret))
     
     def GetAllUsernames(self):
         names = set()
@@ -460,10 +460,7 @@ class PassTheHashMap(object):
         SIDs = set()
         
         for m in self.machines:
-            sid = m.GetSidBySecret(secret)
-            
-            if sid:
-                SIDs.add(sid)
+            SIDs |= m.GetSidsBySecret(secret)
         
         return SIDs
     
@@ -575,8 +572,8 @@ def main():
     print """</table>"""
     
     print "<h2>Cached Passwords</h2>"
-    print "<h3>On how many machines each secret is cached?</h3>"
-    cache_counts = dict(map(lambda x: (x, pth.GetSecretCacheCount(x)), pth.GetAllSecrets()))
+    print "<h3>On how many machines each secret is cached (possible attacker count)?</h3>"
+    cache_counts = dict(map(lambda x: (x, pth.GetAttackCountBySecret(x)), pth.GetAllSecrets()))
     
     print """<table>"""
     print """<tr><th>Secret</th><th>Machine Count</th></tr>"""
