@@ -466,7 +466,10 @@ class PassTheHashMap(object):
         SIDs = set()
         
         for m in self.machines:
-            SIDs.add(m.GetSidBySecret(secret))
+            sid = m.GetSidBySecret(secret)
+            
+            if sid:
+                SIDs.add(sid)
         
         return SIDs
     
@@ -650,7 +653,7 @@ def main():
         print """<h3>SIDs that use that secret</h3>"""
         print """<ul>"""
         for sid in pth.GetSidsBySecret(secret):
-            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
+            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=pth.GetUsernameBySid(sid), sid=sid)
         print """</ul>"""
         
         print """<h3>Attackable Machines with that secret</h3>"""
