@@ -1,5 +1,5 @@
 import copy
-
+import functools
 from jsonschema import Draft4Validator, validators
 
 from cc.database import mongo
@@ -813,6 +813,12 @@ class ConfigService:
 
     @staticmethod
     def get_config(is_initial_config=False, should_decrypt=True):
+        """
+        Gets the entire global config.
+        :param is_initial_config: If True, the initial config will be returned instead of the current config.
+        :param should_decrypt: If True, all config values which are set as encrypted will be decrypted.
+        :return: The entire global config.
+        """
         config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}) or {}
         for field in ('name', '_id'):
             config.pop(field, None)
@@ -822,7 +828,15 @@ class ConfigService:
 
     @staticmethod
     def get_config_value(config_key_as_arr, is_initial_config=False, should_decrypt=True):
-        config_key = reduce(lambda x, y: x + '.' + y, config_key_as_arr)
+        """
+        Get a specific config value.
+        :param config_key_as_arr: The config key as an array. e.g. ['basic', 'credentials', 'exploit_password_list'].
+        :param is_initial_config: If True, returns the value of the initial config instead of the current config.
+        :param should_decrypt: If True, the value of the config key will be decrypted
+                               (if it's in the list of encrypted config values).
+        :return: The value of the requested config key.
+        """
+        config_key = functools.reduce(lambda x, y: x + '.' + y, config_key_as_arr)
         config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}, {config_key: 1})
         for config_key_part in config_key_as_arr:
             config = config[config_key_part]
@@ -890,10 +904,10 @@ class ConfigService:
             ConfigService.default_config = config
 
     @staticmethod
-    def get_default_config(should_decrypt=True):
+    def get_default_config(should_encrypt=False):
         ConfigService.init_default_config()
         config = copy.deepcopy(ConfigService.default_config)
-        if not should_decrypt:
+        if should_encrypt:
             ConfigService.encrypt_config(config)
         return config
 
@@ -905,7 +919,7 @@ class ConfigService:
 
     @staticmethod
     def reset_config():
-        config = ConfigService.get_default_config(should_decrypt=False)
+        config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
         ConfigService.update_config(config, should_encrypt=False)
 
@@ -952,14 +966,14 @@ class ConfigService:
 
     @staticmethod
     def decrypt_config(config):
-        ConfigService._encrypt_config(config, True)
+        ConfigService._encrypt_or_decrypt_config(config, True)
 
     @staticmethod
     def encrypt_config(config):
-        ConfigService._encrypt_config(config, False)
+        ConfigService._encrypt_or_decrypt_config(config, False)
 
     @staticmethod
-    def _encrypt_config(config, is_decrypt=False):
+    def _encrypt_or_decrypt_config(config, is_decrypt=False):
         for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS:
             config_arr = config
             for config_key_part in config_arr_as_array:

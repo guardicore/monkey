@@ -65,7 +65,7 @@ class Monkey(flask_restful.Resource):
         # if new monkey telem, change config according to "new monkeys" config.
         db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
         if not db_monkey:
-            new_config = ConfigService.get_flat_config()
+            new_config = ConfigService.get_flat_config(False, True)
             monkey_json['config'] = monkey_json.get('config', {})
             monkey_json['config'].update(new_config)
         else:
