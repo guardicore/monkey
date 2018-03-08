@@ -293,19 +293,19 @@ class ReportService:
 
     @staticmethod
     def get_config_users():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_user_list'], True)
+        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_user_list'], True, True)
 
     @staticmethod
     def get_config_passwords():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'], True)
+        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'], True, True)
 
     @staticmethod
     def get_config_exploits():
         exploits_config_value = ['exploits', 'general', 'exploiter_classes']
-        default_exploits = ConfigService.get_default_config()
+        default_exploits = ConfigService.get_default_config(False)
         for namespace in exploits_config_value:
             default_exploits = default_exploits[namespace]
-        exploits = ConfigService.get_config_value(exploits_config_value, True)
+        exploits = ConfigService.get_config_value(exploits_config_value, True, True)
 
         if exploits == default_exploits:
             return ['default']
@@ -315,13 +315,13 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class'], True) != 'FixedRange':
+        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class'], True, True) != 'FixedRange':
             return []
-        return ConfigService.get_config_value(['basic_network', 'network_range', 'range_fixed'], True)
+        return ConfigService.get_config_value(['basic_network', 'network_range', 'range_fixed'], True, True)
 
     @staticmethod
     def get_config_scan():
-        return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True)
+        return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True, True)
 
     @staticmethod
     def get_issues_overview(issues, config_users, config_passwords):
