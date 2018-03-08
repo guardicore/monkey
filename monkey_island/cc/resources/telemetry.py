@@ -113,6 +113,8 @@ class Telemetry(flask_restful.Resource):
     @staticmethod
     def process_exploit_telemetry(telemetry_json):
         edge = Telemetry.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
+        Telemetry.encrypt_exploit_creds(telemetry_json)
+
         new_exploit = copy.deepcopy(telemetry_json['data'])
 
         new_exploit.pop('machine')
@@ -124,8 +126,6 @@ class Telemetry(flask_restful.Resource):
         )
         if new_exploit['result']:
             EdgeService.set_edge_exploited(edge)
-
-        Telemetry.encrypt_exploit_creds(telemetry_json)
 
         for attempt in telemetry_json['data']['attempts']:
             if attempt['result']:
