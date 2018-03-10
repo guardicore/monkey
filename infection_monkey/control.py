@@ -25,7 +25,7 @@ class ControlClient(object):
 
     @staticmethod
     def wakeup(parent=None, default_tunnel=None, has_internet_access=None):
-        LOG.debug("Trying to wake up with C&C servers list: %r" % WormConfiguration.command_servers)
+        LOG.debug("Trying to wake up with Monkey Island servers list: %r" % WormConfiguration.command_servers)
         if parent or default_tunnel:
             LOG.debug("parent: %s, default_tunnel: %s" % (parent, default_tunnel))
         hostname = gethostname()
@@ -103,6 +103,21 @@ class ControlClient(object):
         try:
             telemetry = {'monkey_guid': GUID, 'telem_type': telem_type, 'data': data}
             reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
+                                  data=json.dumps(telemetry),
+                                  headers={'content-type': 'application/json'},
+                                  verify=False,
+                                  proxies=ControlClient.proxies)
+        except Exception as exc:
+            LOG.warn("Error connecting to control server %s: %s",
+                     WormConfiguration.current_server, exc)
+
+    @staticmethod
+    def send_log(log):
+        if not WormConfiguration.current_server:
+            return
+        try:
+            telemetry = {'monkey_guid': GUID, 'log': json.dumps(log)}
+            reply = requests.post("https://%s/api/log" % (WormConfiguration.current_server,),
                                   data=json.dumps(telemetry),
                                   headers={'content-type': 'application/json'},
                                   verify=False,

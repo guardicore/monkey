@@ -6,6 +6,7 @@ import sys
 import time
 
 import tunnel
+import utils
 from config import WormConfiguration
 from control import ControlClient
 from model import DELAY_DELETE_CMD
@@ -19,7 +20,7 @@ __author__ = 'itamar'
 LOG = logging.getLogger(__name__)
 
 
-class ChaosMonkey(object):
+class InfectionMonkey(object):
     def __init__(self, args):
         self._keep_running = False
         self._exploited_machines = set()
@@ -226,6 +227,9 @@ class ChaosMonkey(object):
 
         firewall.close()
 
+        if WormConfiguration.send_log_to_server:
+            self.send_log()
+
         self._singleton.unlock()
 
         if WormConfiguration.self_delete_in_cleanup and -1 == sys.executable.find('python'):
@@ -244,3 +248,13 @@ class ChaosMonkey(object):
                 LOG.error("Exception in self delete: %s", exc)
 
         LOG.info("Monkey is shutting down")
+
+    def send_log(self):
+        monkey_log_path = utils.get_monkey_log_path()
+        if os.path.exists(monkey_log_path):
+            with open(monkey_log_path, 'r') as f:
+                log = f.read()
+        else:
+            log = ''
+
+        ControlClient.send_log(log)

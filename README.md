@@ -6,7 +6,7 @@ Infection Monkey
 
 Welcome to the Infection Monkey! 
 
-The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Command and Control(C&C) server.
+The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island server.
 
 <img src=".github/map-full.png" >
 
@@ -14,7 +14,7 @@ The Infection Monkey is an open source security tool for testing a data center's
 
 The Infection Monkey is comprised of two parts:
 * Monkey - A tool which infects other machines and propagates to them
-* Monkey Island - A C&C server with a dedicated UI to visualize the Chaos Monkey's progress inside the data center
+* Monkey Island - A dedicated server to control and visualize the Infection Monkey's progress inside the data center
 
 To read more about the Monkey, visit http://infectionmonkey.com 
 
@@ -26,7 +26,7 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
 * Multiple propagation techniques:
   * Predefined passwords
   * Common logical exploits
-  * Password stealing using mimikatz
+  * Password stealing using Mimikatz
 * Multiple exploit methods:
   * SSH
   * SMB
@@ -45,7 +45,7 @@ Check out the [Setup](https://github.com/guardicore/monkey/wiki/setup) page in t
 Building the Monkey from source
 -------------------------------
 If you want to build the monkey from source, see [Setup](https://github.com/guardicore/monkey/wiki/setup)
-and follow the instructions at the readme files under [chaos_monkey](chaos_monkey) and [monkey_island](monkey_island). 
+and follow the instructions at the readme files under [infection_monkey](infection_monkey) and [monkey_island](monkey_island). 
 
 
 License

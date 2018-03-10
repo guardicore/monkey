@@ -147,7 +147,7 @@ class RunMonkeyPageComponent extends AuthComponent {
                   className="btn btn-default btn-lg center-block"
                   disabled={this.state.runningOnIslandState !== 'not_running'}
                   >
-            Run on C&C Server
+            Run on Monkey Island Server
             { this.renderIconByState(this.state.runningOnIslandState) }
           </button>
           {
