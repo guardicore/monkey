@@ -405,6 +405,30 @@ class PassTheHashMap(object):
         print map(lambda x: Machine(x).GetIp(), self.vertices)
         print map(lambda x: (Machine(x[0]).GetIp(), Machine(x[1]).GetIp()), self.edges)
     
+    def GetPossibleAttackCountBySid(self, sid):
+        return len(self.GetPossibleAttacksBySid(sid))
+    
+    def GetPossibleAttacksBySid(self, sid):
+        attacks = set()
+    
+        for attacker in self.vertices:
+            cached_creds = set(Machine(attacker).GetCachedCreds().items())
+
+            for victim in self.vertices:
+                if attacker == victim:
+                    continue
+
+                admin_creds = set(Machine(victim).GetLocalAdminCreds().items())
+                
+                if len(cached_creds & admin_creds) > 0:
+                    curr_attacks = dict(cached_creds & admin_creds)
+                    
+                    for username, secret in curr_attacks.iteritems():
+                        if Machine(victim).GetSidByUsername(username) == sid:
+                            attacks.add((attacker, victim))
+        
+        return attacks
+    
     def GetSecretBySid(self, sid):
         for m in self.machines:
             for user, user_secret in m.GetLocalSecrets().iteritems():
@@ -582,12 +606,22 @@ def main():
     print """</table>"""
     
     print "<h2>User's Creds</h2>"
-    print "<h3>To how many machines each user is able to connect with admin rights?</h3>"
+    print "<h3>To how many machines each user is able to connect with admin rights</h3>"
     attackable_counts = dict(map(lambda x: (x, pth.GetVictimCountBySid(x)), pth.GetAllSids()))
     
     print """<table>"""
     print """<tr><th>SID</th><th>Username</th><th>Machine Count</th></tr>"""
     for sid, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        print """<tr><td><a href="#{sid}">{sid}</a></td><td>{username}</td><td>{count}</td>""".format(sid=sid, username=pth.GetUsernameBySid(sid), count=count)
+    print """</table>"""
+    
+    print "<h2>Actual Possible Attacks By SID</h2>"
+    print "<h3>How many attacks possible using each SID (aka len(attacker->victim pairs))</h3>"
+    possible_attacks_by_sid = dict(map(lambda x: (x, pth.GetPossibleAttackCountBySid(x)), pth.GetAllSids()))
+    
+    print """<table>"""
+    print """<tr><th>SID</th><th>Username</th><th>Machine Count</th></tr>"""
+    for sid, count in sorted(possible_attacks_by_sid.iteritems(), key=lambda (k,v): (v,k), reverse=True):
         print """<tr><td><a href="#{sid}">{sid}</a></td><td>{username}</td><td>{count}</td>""".format(sid=sid, username=pth.GetUsernameBySid(sid), count=count)
     print """</table>"""
     
