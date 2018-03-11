@@ -95,6 +95,13 @@ class Machine(object):
                 continue
 
             return eval(user["SID"])
+
+        if not self.IsDomainController():
+            for dc in self.GetDomainControllers():
+                sid = dc.GetSidByUsername(username)
+
+                if sid != None:
+                    return sid
         
         return None
 
@@ -305,7 +312,12 @@ class Machine(object):
         SIDs = set()
         
         for username in doc["data"]["credentials"]:
-            SIDs.add(self.GetSidByUsername(username))
+            sid = self.GetSidByUsername(username)
+            
+            if not sid:
+                sid = "__USERNAME__" + username
+
+            SIDs.add(sid)
         
         return SIDs
 
@@ -665,7 +677,12 @@ def main():
         print """<h4>SIDs cached on this machine</h4>"""
         print """<ul>"""
         for sid in m.GetCachedSids():
-            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
+            if sid.startswith("__USERNAME__"):
+                sids = pth.GetSidsByUsername(sid[len("__USERNAME__"):])
+                if len(sids) == 1:
+                    sid = sids.pop()
+
+            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=pth.GetUsernameBySid(sid), sid=sid)
         print """</ul>"""
         
         print """<h3>Possible Attackers</h3>"""
@@ -691,7 +708,7 @@ def main():
         print """<h3>Matching SIDs</h3>"""
         print """<ul>"""
         for sid in pth.GetSidsByUsername(username):
-            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
+            print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=pth.GetUsernameBySid(sid), sid=sid)
         print """</ul>"""
 
     print "<hr />"
