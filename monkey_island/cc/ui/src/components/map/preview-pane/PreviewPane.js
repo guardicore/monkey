@@ -103,7 +103,7 @@ class PreviewPaneComponent extends AuthComponent {
   }
 
   downloadLog(asset) {
-    fetch('/api/log?id=' + asset.id)
+    this.authFetch('/api/log?id=' + asset.id)
       .then(res => res.json())
       .then(res => {
         let timestamp = res['timestamp'];
