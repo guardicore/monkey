@@ -117,7 +117,8 @@ class InfoCollector(object):
         azure_collector = AzureCollector()
         if 'credentials' not in self.info:
             self.info["credentials"] = {}
-        for cred in azure_collector.extract_stored_credentials():
+        azure_creds = azure_collector.extract_stored_credentials()
+        for cred in azure_creds:
             username = cred[0]
             password = cred[1]
             if username not in self.info["credentials"]:
@@ -125,3 +126,5 @@ class InfoCollector(object):
             # we might be losing passwords in case of multiple reset attempts on same username
             # or in case another collector already filled in a password for this user
             self.info["credentials"][username]['Password'] = password
+        if len(azure_creds) != 0:
+            self.info["Azure"] = True
