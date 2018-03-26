@@ -81,7 +81,7 @@ class ReportService:
             {
                 'type': 'azure_password',
                 'machine': machine,
-                'users': set([instance['username'] for instance in creds if instance['origin']==machine])
+                'users': set([instance['username'] for instance in creds if instance['origin'] == machine])
             }
             for machine in machines]
 
@@ -158,15 +158,15 @@ class ReportService:
         creds = []
         for telem in mongo.db.telemetry.find(
                 {'telem_type': 'system_info_collection', 'data.Azure': {'$exists': True}},
-                {'data.credentials': 1, 'monkey_guid': 1}
+                {'data.Azure': 1, 'monkey_guid': 1}
         ):
-            monkey_creds = telem['data']['credentials']
-            if len(monkey_creds) == 0:
+            azure_users = telem['data']['Azure']['usernames']
+            if len(azure_users) == 0:
                 continue
             origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
-            new_creds = [{'username': user.replace(',', '.'), 'type': 'Clear Password',
-                          'origin': origin} for user in monkey_creds if 'Azure' in user]
-            creds.extend(new_creds)
+            azure_leaked_users = [{'username': user.replace(',', '.'), 'type': 'Clear Password',
+                                   'origin': origin} for user in azure_users]
+            creds.extend(azure_leaked_users)
         return creds
 
     @staticmethod
@@ -349,7 +349,8 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class'], True, True) != 'FixedRange':
+        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class'], True,
+                                          True) != 'FixedRange':
             return []
         return ConfigService.get_config_value(['basic_network', 'network_range', 'range_fixed'], True, True)
 
@@ -359,7 +360,7 @@ class ReportService:
 
     @staticmethod
     def get_issues_overview(issues, config_users, config_passwords):
-        issues_byte_array = [False] * 6
+        issues_byte_array = [False] * len(ReportService.ISSUES_DICT)
 
         for machine in issues:
             for issue in issues[machine]:

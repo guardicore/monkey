@@ -125,8 +125,7 @@ class InfoCollector(object):
                 self.info["credentials"][username] = {}
             # we might be losing passwords in case of multiple reset attempts on same username
             # or in case another collector already filled in a password for this user
-            self.info["credentials"][username]['Password'] = password
-            self.info["credentials"][username]['Azure'] = True
-
+            self.info["credentials"][username]['password'] = password
         if len(azure_creds) != 0:
-            self.info["Azure"] = True
+            self.info["Azure"] = {}
+            self.info["Azure"]['usernames'] = [cred[0] for cred in azure_creds]
