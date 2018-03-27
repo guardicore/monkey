@@ -272,5 +272,7 @@ class Configuration(object):
 
     mimikatz_dll_name = "mk.dll"
 
+    extract_azure_creds = True
+
 
 WormConfiguration = Configuration()

@@ -521,8 +521,8 @@ SCHEMA = {
                         }
                     }
                 },
-                "mimikatz": {
-                    "title": "Mimikatz",
+                "systemInfo": {
+                    "title": "System collection",
                     "type": "object",
                     "properties": {
                         "mimikatz_dll_name": {
@@ -531,6 +531,13 @@ SCHEMA = {
                             "default": "mk.dll",
                             "description":
                                 "Name of Mimikatz DLL (should be the same as in the monkey's pyinstaller spec file)"
+                        },
+                        "extract_azure_creds": {
+                            "title": "Harvest Azure Credentials",
+                            "type": "boolean",
+                            "default": True,
+                            "description":
+                                "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         }
                     }
                 }
