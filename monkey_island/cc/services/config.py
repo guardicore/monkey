@@ -1,4 +1,5 @@
 import copy
+import collections
 import functools
 from jsonschema import Draft4Validator, validators
 
@@ -984,6 +985,19 @@ class ConfigService:
     @staticmethod
     def encrypt_config(config):
         ConfigService._encrypt_or_decrypt_config(config, False)
+
+    @staticmethod
+    def decrypt_flat_config(flat_config):
+        """
+        Same as decrypt_config but for a flat configuration
+        """
+        keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
+        for key in keys:
+            if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], basestring):
+                flat_config[key] = [encryptor.dec(item) for item in flat_config[key]]
+            else:
+                flat_config[key] = encryptor.dec(flat_config[key])
+        return flat_config
 
     @staticmethod
     def _encrypt_or_decrypt_config(config, is_decrypt=False):
