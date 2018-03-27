@@ -30,6 +30,7 @@ class AzureCollector(object):
         :return: List of (user/pass), possibly empty
         """
         results = [self.extractor(filepath) for filepath in self.file_list]
+        results = [x for x in results if x]
         LOG.info("Found %d Azure VM access configuration file", len(results))
         return results
 
