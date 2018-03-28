@@ -315,9 +315,9 @@ class ReportPageComponent extends AuthComponent {
                     <li>Machines are accessible using passwords supplied by the user during the Monkey’s
                       configuration.</li> : null}
                   {this.state.report.overview.issues[this.Issue.AZURE] ?
-                    <li>Machines contained plain text passwords accessible to attackers. For more info see <a
+                    <li>Azure machines expose plaintext passwords. (<a
                       href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
-                    >Harvesting Azure Passwords</a>.</li> : null}
+                    >More info</a>)</li> : null}
 
                 </ul>
               </div>
@@ -596,9 +596,9 @@ class ReportPageComponent extends AuthComponent {
   generateAzureIssue(issue) {
     return (
       <li>
-        Azure VM Access configuration files should be deleted after use to avoid credential leakage.
+        Delete VM Access plugin configuration files.
         <CollapsibleWellComponent>
-          VM Access plugin configuration files were left on the machine. Credentials could be stolen from <span
+          Credentials could be stolen from <span
           className="label label-primary">{issue.machine}</span> for the following users<span
           className="label label-primary">{issue.users}</span>. Read more about the security issue and remediation <a
                       href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
