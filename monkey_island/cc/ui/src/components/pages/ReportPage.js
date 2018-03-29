@@ -599,7 +599,7 @@ class ReportPageComponent extends AuthComponent {
         Delete VM Access plugin configuration files.
         <CollapsibleWellComponent>
           Credentials could be stolen from <span
-          className="label label-primary">{issue.machine}</span> for the following users<span
+          className="label label-primary">{issue.machine}</span> for the following users <span
           className="label label-primary">{issue.users}</span>. Read more about the security issue and remediation <a
                       href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
                     >here</a>.
