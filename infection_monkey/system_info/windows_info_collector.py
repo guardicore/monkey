@@ -131,7 +131,7 @@ class WindowsInfoCollector(InfoCollector):
         key = _winreg.ConnectRegistry(None, store)
         subkey = _winreg.OpenKey(key, subkey_path)
 
-        d = dict([_winreg.EnumValue(subkey, i)[:2] for i in xrange(_winreg.QueryInfoKey(subkey)[0])])
+        d = dict([_winreg.EnumValue(subkey, i)[:2] for i in xrange(_winreg.QueryInfoKey(subkey)[1])])
         d = fix_obj_for_mongo(d)
 
         self.info[subkey_path] = d
