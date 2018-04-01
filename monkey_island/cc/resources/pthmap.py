@@ -1,10 +1,3 @@
-#import flask_restful
-#
-#from cc.auth import jwt_required
-#from cc.services.edge import EdgeService
-#from cc.services.node import NodeService
-#from cc.database import mongo
-
 import hashlib
 import binascii
 from pymongo import MongoClient
@@ -14,7 +7,7 @@ class mongo(object):
 
 #class PthMap(flask_restful.Resource):
 class PthMap(object):
-#    @jwt_required()
+    #@jwt_required()
     def get(self, **kw):
         graph = PassTheHashMap()
 
@@ -24,6 +17,21 @@ class PthMap(object):
                 "edges": [{"id": str(s) + str(t), "from": s, "to": t, "label": label} for s, t, label in graph.edges]
             }
 
+if not __name__ == "__main__":
+    import flask_restful
+    
+    from cc.auth import jwt_required
+    from cc.services.edge import EdgeService
+    from cc.services.node import NodeService
+    from cc.database import mongo
+    
+    PthMapOrig = PthMap
+    
+    class PthMap(flask_restful.Resource):
+        @jwt_required()
+        def get(self, **kw):
+            return PthMapOrig.get(self, **kw)
+    
 DsRole_RoleStandaloneWorkstation = 0
 DsRole_RoleMemberWorkstation = 1
 DsRole_RoleStandaloneServer = 2
