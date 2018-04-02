@@ -12,6 +12,7 @@ from config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from dropper import MonkeyDrops
 from model import MONKEY_ARG, DROPPER_ARG
 from monkey import InfectionMonkey
+import utils
 
 if __name__ == "__main__":
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -78,12 +79,10 @@ def main():
 
     try:
         if MONKEY_ARG == monkey_mode:
-            log_path = os.path.expandvars(
-                WormConfiguration.monkey_log_path_windows) if sys.platform == "win32" else WormConfiguration.monkey_log_path_linux
+            log_path = utils.get_monkey_log_path()
             monkey_cls = InfectionMonkey
         elif DROPPER_ARG == monkey_mode:
-            log_path = os.path.expandvars(
-                WormConfiguration.dropper_log_path_windows) if sys.platform == "win32" else WormConfiguration.dropper_log_path_linux
+            log_path = utils.get_dropper_log_path()
             monkey_cls = MonkeyDrops
         else:
             return True
@@ -91,6 +90,8 @@ def main():
         return True
 
     if WormConfiguration.use_file_logging:
+        if os.path.exists(log_path):
+            os.remove(log_path)
         LOG_CONFIG['handlers']['file']['filename'] = log_path
         LOG_CONFIG['root']['handlers'].append('file')
     else:
@@ -120,6 +121,8 @@ def main():
                 json.dump(json_dict, config_fo, skipkeys=True, sort_keys=True, indent=4, separators=(',', ': '))
 
         return True
+    except Exception:
+        LOG.exception("Exception thrown from monkey's start function")
     finally:
         monkey.cleanup()
 

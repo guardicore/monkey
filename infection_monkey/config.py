@@ -106,6 +106,7 @@ class Configuration(object):
     dropper_log_path_linux = '/tmp/user-1562'
     monkey_log_path_windows = '%temp%\\~df1563.tmp'
     monkey_log_path_linux = '/tmp/user-1563'
+    send_log_to_server = True
 
     ###########################
     # dropper config

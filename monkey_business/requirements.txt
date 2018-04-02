@@ -1,4 +1,0 @@
-pyVmomi
-celery
-celery[mongodb]
-tornado

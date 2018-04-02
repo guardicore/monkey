@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta
+
 from bson import ObjectId
 
+import cc.services.log
 from cc.database import mongo
 from cc.services.edge import EdgeService
 from cc.utils import local_ip_addresses
+
 __author__ = "itay.mizeretz"
 
 
@@ -54,6 +57,7 @@ class NodeService:
         else:
             new_node["services"] = []
 
+        new_node['has_log'] = cc.services.log.LogService.log_exists(ObjectId(node_id))
         return new_node
 
     @staticmethod
@@ -241,7 +245,7 @@ class NodeService:
 
     @staticmethod
     def get_monkey_island_pseudo_net_node():
-        return\
+        return \
             {
                 "id": NodeService.get_monkey_island_pseudo_id(),
                 "label": "MonkeyIsland",

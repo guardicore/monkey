@@ -8,11 +8,12 @@ from flask import Flask, send_from_directory, make_response
 from werkzeug.exceptions import NotFound
 
 from cc.auth import init_jwt
-from cc.database import mongo
+from cc.database import mongo, database
 from cc.environment.environment import env
 from cc.resources.client_run import ClientRun
 from cc.resources.edge import Edge
 from cc.resources.local_run import LocalRun
+from cc.resources.log import Log
 from cc.resources.monkey import Monkey
 from cc.resources.monkey_configuration import MonkeyConfiguration
 from cc.resources.monkey_download import MonkeyDownload
@@ -84,6 +85,7 @@ def init_app(mongo_url):
     mongo.init_app(app)
 
     with app.app_context():
+        database.init()
         ConfigService.init_config()
 
     app.add_url_rule('/', 'serve_home', serve_home)
@@ -102,7 +104,7 @@ def init_app(mongo_url):
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
     api.add_resource(Report, '/api/report', '/api/report/')
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
-    
+    api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(PthMap, '/api/pthmap', '/api/pthmap/')
 
     return app
