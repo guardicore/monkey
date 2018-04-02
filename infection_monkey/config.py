@@ -25,7 +25,7 @@ def _cast_by_example(value, example):
     if example_type is str:
         return os.path.expandvars(value).encode("utf8")
     elif example_type is tuple and len(example) != 0:
-        if value is None or value == tuple(None):
+        if value is None or value == tuple([None]):
             return tuple()
         return tuple([_cast_by_example(x, example[0]) for x in value])
     elif example_type is list and len(example) != 0:
