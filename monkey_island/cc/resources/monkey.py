@@ -24,6 +24,7 @@ class Monkey(flask_restful.Resource):
 
         if guid:
             monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
+            monkey_json['config'] = ConfigService.decrypt_flat_config(monkey_json['config'])
             return monkey_json
 
         return {}
@@ -65,7 +66,8 @@ class Monkey(flask_restful.Resource):
         # if new monkey telem, change config according to "new monkeys" config.
         db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
         if not db_monkey:
-            new_config = ConfigService.get_flat_config(False, True)
+            # we pull it encrypted because we then decrypt it for the monkey in get
+            new_config = ConfigService.get_flat_config(False, False)
             monkey_json['config'] = monkey_json.get('config', {})
             monkey_json['config'].update(new_config)
         else:

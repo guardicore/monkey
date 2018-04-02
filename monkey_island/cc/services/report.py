@@ -33,6 +33,7 @@ class ReportService:
         SAMBACRY = 3
         SHELLSHOCK = 4
         CONFICKER = 5
+        AZURE = 6
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -70,6 +71,19 @@ class ReportService:
                 'dest': NodeService.get_node_hostname(NodeService.get_node_or_monkey_by_id(tunnel['tunnel']))
             }
             for tunnel in mongo.db.monkey.find({'tunnel': {'$exists': True}}, {'tunnel': 1})]
+
+    @staticmethod
+    def get_azure_issues():
+        creds = ReportService.get_azure_creds()
+        machines = set([instance['origin'] for instance in creds])
+
+        return [
+            {
+                'type': 'azure_password',
+                'machine': machine,
+                'users': set([instance['username'] for instance in creds if instance['origin'] == machine])
+            }
+            for machine in machines]
 
     @staticmethod
     def get_scanned():
@@ -133,6 +147,26 @@ class ReportService:
                             'origin': origin
                         }
                     )
+        return creds
+
+    @staticmethod
+    def get_azure_creds():
+        """
+        Recover all credentials marked as being from an Azure machine
+        :return: List of credentials.
+        """
+        creds = []
+        for telem in mongo.db.telemetry.find(
+                {'telem_type': 'system_info_collection', 'data.Azure': {'$exists': True}},
+                {'data.Azure': 1, 'monkey_guid': 1}
+        ):
+            azure_users = telem['data']['Azure']['usernames']
+            if len(azure_users) == 0:
+                continue
+            origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+            azure_leaked_users = [{'username': user.replace(',', '.'), 'type': 'Clear Password',
+                                   'origin': origin} for user in azure_users]
+            creds.extend(azure_leaked_users)
         return creds
 
     @staticmethod
@@ -277,7 +311,7 @@ class ReportService:
 
     @staticmethod
     def get_issues():
-        issues = ReportService.get_exploits() + ReportService.get_tunnels() + ReportService.get_cross_segment_issues()
+        issues = ReportService.get_exploits() + ReportService.get_tunnels() + ReportService.get_cross_segment_issues() + ReportService.get_azure_issues()
         issues_dict = {}
         for issue in issues:
             machine = issue['machine']
@@ -315,7 +349,8 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class'], True, True) != 'FixedRange':
+        if ConfigService.get_config_value(['basic_network', 'network_range', 'range_class'], True,
+                                          True) != 'FixedRange':
             return []
         return ConfigService.get_config_value(['basic_network', 'network_range', 'range_fixed'], True, True)
 
@@ -325,7 +360,7 @@ class ReportService:
 
     @staticmethod
     def get_issues_overview(issues, config_users, config_passwords):
-        issues_byte_array = [False] * 6
+        issues_byte_array = [False] * len(ReportService.ISSUES_DICT)
 
         for machine in issues:
             for issue in issues[machine]:
@@ -337,6 +372,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.SHELLSHOCK.value] = True
                 elif issue['type'] == 'conficker':
                     issues_byte_array[ReportService.ISSUES_DICT.CONFICKER.value] = True
+                elif issue['type'] == 'azure_password':
+                    issues_byte_array[ReportService.ISSUES_DICT.AZURE.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users:
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
@@ -397,7 +434,8 @@ class ReportService:
                     {
                         'scanned': ReportService.get_scanned(),
                         'exploited': ReportService.get_exploited(),
-                        'stolen_creds': ReportService.get_stolen_creds()
+                        'stolen_creds': ReportService.get_stolen_creds(),
+                        'azure_passwords': ReportService.get_azure_creds(),
                     },
                 'recommendations':
                     {
