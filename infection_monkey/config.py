@@ -23,7 +23,7 @@ def _cast_by_example(value, example):
     """
     example_type = type(example)
     if example_type is str:
-        return str(os.path.expandvars(value))
+        return os.path.expandvars(value).encode("utf8")
     elif example_type is tuple and len(example) != 0:
         if value is None or value == tuple([None]):
             return tuple()
