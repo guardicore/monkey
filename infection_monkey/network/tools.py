@@ -106,32 +106,38 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
     """
     sockets = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for _ in range(len(ports))]
     [s.setblocking(0) for s in sockets]
-    good_ports = []
+    possible_ports = []
+    connected_ports_sockets = []
     try:
         LOG.debug("Connecting to the following ports %s" % ",".join((str(x) for x in ports)))
         for sock, port in zip(sockets, ports):
             err = sock.connect_ex((ip, port))
-            if err == 0:
-                good_ports.append((port, sock))
+            if err == 0:  # immediate connect
+                connected_ports_sockets.append((port, sock))
+                possible_ports.append((port, sock))
                 continue
-            if err == 10035:  # WSAEWOULDBLOCK is valid, see https://msdn.microsoft.com/en-us/library/windows/desktop/ms740668%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
-                good_ports.append((port, sock))
+            if err == 10035:  # WSAEWOULDBLOCK is valid, see
+                # https://msdn.microsoft.com/en-us/library/windows/desktop/ms740668%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
+                possible_ports.append((port, sock))
                 continue
             if err == 115:  # EINPROGRESS     115     /* Operation now in progress */
-                good_ports.append((port, sock))
+                possible_ports.append((port, sock))
                 continue
             LOG.warning("Failed to connect to port %s, error code is %d", port, err)
 
-        if len(good_ports) != 0:
+        if len(possible_ports) != 0:
             time.sleep(timeout)
-            # this is possibly connected. meaning after timeout wait, we expect to see a connection up
-            # Possible valid errors codes if we chose to check for actually closed are
-            # ECONNREFUSED (111) or WSAECONNREFUSED (10061) or WSAETIMEDOUT(10060)
-            connected_ports_sockets = [s for s in good_ports if
-                                       s[1].getsockopt(socket.SOL_SOCKET, socket.SO_ERROR) == 0]
+            sock_objects = [s[1] for s in possible_ports]
+            # first filter
+            _, writeable_sockets, _ = select.select(sock_objects, sock_objects, sock_objects, 0)
+            for s in writeable_sockets:
+                try: # actual test
+                    connected_ports_sockets.append((s.getpeername()[1], s))
+                except socket.error:  # bad socket, select didn't filter it properly
+                    pass
             LOG.debug(
                 "On host %s discovered the following ports %s" %
-                (str(ip), ",".join([str(x[0]) for x in connected_ports_sockets])))
+                (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets])))
             banners = []
             if get_banner:
                 readable_sockets, _, _ = select.select([s[1] for s in connected_ports_sockets], [], [], 0)
@@ -140,7 +146,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                            for port, sock in connected_ports_sockets]
                 pass
             # try to cleanup
-            [s[1].close() for s in good_ports]
+            [s[1].close() for s in possible_ports]
             return [port for port, sock in connected_ports_sockets], banners
         else:
             return [], []
