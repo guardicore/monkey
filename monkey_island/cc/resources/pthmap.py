@@ -814,6 +814,8 @@ def main():
     print """<table>"""
     print """<tr><th>Ip</th><th>Hostname</th><th>Domain Name</th><th>In-Path Count</th></tr>"""
     for m, path_count in sorted(all_machines.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        if count <= 0:
+            continue
         print """<tr><td><a href="#{ip}">{ip}</a></td><td><a href="#{ip}">{hostname}</a></td><td>{domain}</td><td>{path_count}</td></tr>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), path_count=path_count)
     print """</table>"""
     
