@@ -95,13 +95,14 @@ class WindowsInfoCollector(InfoCollector):
         self.get_hostname()
         self.get_process_list()
         self.get_network_info()
+        self.get_azure_info()
         
         self.get_wmi_info()
         self.get_reg_key(r"SYSTEM\CurrentControlSet\Control\Lsa")
         self.get_installed_packages()
         
-        mimikatz_collector = MimikatzCollector()
-        self.info["credentials"] = mimikatz_collector.get_logon_info()
+        mimikatz_info = mimikatz_collector.get_logon_info()
+        self.info["credentials"].update(mimikatz_info)
         self.info["mimikatz"] = mimikatz_collector.get_mimikatz_text()
 
         return self.info
