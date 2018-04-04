@@ -101,6 +101,7 @@ class WindowsInfoCollector(InfoCollector):
         self.get_reg_key(r"SYSTEM\CurrentControlSet\Control\Lsa")
         self.get_installed_packages()
         
+        mimikatz_collector = MimikatzCollector()
         mimikatz_info = mimikatz_collector.get_logon_info()
         self.info["credentials"].update(mimikatz_info)
         self.info["mimikatz"] = mimikatz_collector.get_mimikatz_text()
