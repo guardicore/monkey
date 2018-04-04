@@ -43,6 +43,57 @@ def myntlm(x):
     hash = hashlib.new('md4', x.encode('utf-16le')).digest()
     return str(binascii.hexlify(hash))
 
+def cache(foo):
+    def hash(o):
+        if type(o) in (int, float, str, unicode):
+            return o
+
+        elif type(o) in (list, tuple):
+            hashed = tuple([hash(x) for x in o])
+            
+            if "NotHashable" in hashed:
+                return "NotHashable"
+            
+            return hashed
+            
+        elif type(o) == dict:
+            hashed_keys = tuple([hash(k) for k, v in o.iteritems()])
+            hashed_vals = tuple([hash(v) for k, v in o.iteritems()])
+            
+            if "NotHashable" in hashed_keys or "NotHashable" in hashed_vals:
+                return "NotHashable"
+            
+            return tuple(zip(hashed_keys, hashed_vals))
+        
+        elif type(o) == Machine:
+            return o.monkey_guid
+            
+        elif type(o) == PthMap:
+            return "PthMapSingleton"
+            
+        elif type(o) == PassTheHashMap:
+            return "PassTheHashMapSingleton"
+
+        else:
+            return "NotHashable"
+
+    def wrapper(*args, **kwargs):
+        hashed = (hash(args), hash(kwargs))
+        
+        if "NotHashable" in hashed:
+            print foo
+            return foo(*args, **kwargs)
+    
+        if not hasattr(foo, "_mycache_"):
+            foo._mycache_ = dict()
+        
+        if hashed not in foo._mycache_.keys():
+            foo._mycache_[hashed] = foo(*args, **kwargs)
+
+        return foo._mycache_[hashed]
+
+    return wrapper
+
 class Machine(object):
     def __init__(self, monkey_guid):
         self.monkey_guid = str(monkey_guid)
@@ -52,6 +103,7 @@ class Machine(object):
         if self.latest_system_info.count() > 0:
             self.latest_system_info = self.latest_system_info[0]
     
+    @cache
     def GetMimikatzOutput(self):
         doc = self.latest_system_info
         
@@ -60,6 +112,7 @@ class Machine(object):
         
         return doc["data"]["mimikatz"]
     
+    @cache
     def GetHostName(self):
         doc = self.latest_system_info
 
@@ -68,6 +121,7 @@ class Machine(object):
 
         return None
 
+    @cache
     def GetIp(self):
         doc = self.latest_system_info
         
@@ -76,6 +130,7 @@ class Machine(object):
 
         return None
 
+    @cache
     def GetDomainName(self):
         doc = self.latest_system_info
         
@@ -83,7 +138,8 @@ class Machine(object):
             return eval(comp["Domain"])
 
         return None
-        
+    
+    @cache
     def GetDomainRole(self):
         doc = self.latest_system_info
         
@@ -92,9 +148,11 @@ class Machine(object):
 
         return None
     
+    @cache
     def IsDomainController(self):
         return self.GetDomainRole() in (DsRole_RolePrimaryDomainController, DsRole_RoleBackupDomainController)
 
+    @cache
     def GetSidByUsername(self, username):
         doc = self.latest_system_info
 
@@ -113,6 +171,7 @@ class Machine(object):
         
         return None
 
+    @cache
     def GetUsernameBySid(self, sid):
         doc = self.latest_system_info
 
@@ -130,7 +189,8 @@ class Machine(object):
                     return username
         
         return None
-        
+    
+    @cache
     def GetUsernamesBySecret(self, secret):
         sam = self.GetLocalSecrets()
         
@@ -142,10 +202,12 @@ class Machine(object):
 
         return names
 
+    @cache
     def GetSidsBySecret(self, secret):
         usernames = self.GetUsernamesBySecret(secret)
         return set(map(self.GetSidByUsername, usernames))
 
+    @cache
     def GetGroupSidByGroupName(self, group_name):
         doc = self.latest_system_info
 
@@ -157,6 +219,7 @@ class Machine(object):
         
         return None
 
+    @cache
     def GetUsersByGroupSid(self, sid):
         doc = self.latest_system_info
 
@@ -173,6 +236,7 @@ class Machine(object):
         
         return users
 
+    @cache
     def GetDomainControllersMonkeyGuidByDomainName(self, domain_name):
         cur = mongo.db.telemetry.find({"telem_type":"system_info_collection", "data.Win32_ComputerSystem.Domain":"u'%s'" % (domain_name,)})
         
@@ -186,9 +250,11 @@ class Machine(object):
         
         return GUIDs
 
+    @cache
     def GetLocalAdmins(self):
         return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).keys())
     
+    @cache
     def GetLocalSids(self):
         doc = self.latest_system_info
         
@@ -199,9 +265,11 @@ class Machine(object):
         
         return SIDs
 
+    @cache
     def GetLocalAdminNames(self):
         return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).values())
-        
+
+    @cache
     def GetSam(self):
         if not self.GetMimikatzOutput():
             return {}
@@ -211,16 +279,26 @@ class Machine(object):
         if mimikatz.count("\n42.") != 2:
             return {}
 
-        sam_users = mimikatz.split("\n42.")[1].split("\nSAMKey :")[1].split("\n\n")[1:]
+        try:
+            sam_users = mimikatz.split("\n42.")[1].split("\nSAMKey :")[1].split("\n\n")[1:]
 
-        sam = {}
-        
-        for sam_user_txt in sam_users:
-            sam_user = dict([map(unicode.strip, line.split(":")) for line in filter(lambda l: l.count(":") == 1, sam_user_txt.splitlines())])
-            sam[sam_user["User"]] = sam_user["NTLM"].replace("[hashed secret]", "").strip()
-        
-        return sam
-    
+            sam = {}
+            
+            for sam_user_txt in sam_users:
+                sam_user = dict([map(unicode.strip, line.split(":")) for line in filter(lambda l: l.count(":") == 1, sam_user_txt.splitlines())])
+                
+                ntlm = sam_user["NTLM"]
+                if "[hashed secret]" not in ntlm:
+                    continue
+
+                sam[sam_user["User"]] = ntlm.replace("[hashed secret]", "").strip()
+
+            return sam
+
+        except:
+            return {}
+
+    @cache
     def GetNtds(self):
         if not self.GetMimikatzOutput():
             return {}
@@ -243,6 +321,7 @@ class Machine(object):
 
         return ntds
     
+    @cache
     def GetLocalSecrets(self):
         sam = self.GetSam()
         ntds = self.GetNtds()
@@ -251,10 +330,12 @@ class Machine(object):
         secrets.update(ntds)
         
         return secrets
-        
+
+    @cache
     def GetLocalAdminSecrets(self):
         return set(self.GetLocalAdminCreds().values())
 
+    @cache
     def GetLocalAdminCreds(self):
         admin_names = self.GetLocalAdminNames()
         sam = self.GetLocalSecrets()
@@ -269,35 +350,44 @@ class Machine(object):
 
         return admin_creds
     
+    @cache
     def GetCachedSecrets(self):
         return set(self.GetCachedCreds().values())
 
+    @cache
     def GetCachedCreds(self):
         doc = self.latest_system_info
         
         creds = dict()
         
-        for username in doc["data"]["credentials"]:
-            user = doc["data"]["credentials"][username]
-            
-            if "password" in user.keys():
-                ntlm = myntlm(str(user["password"]))
-            elif "ntlm_hash" in user.keys():
-                ntlm = str(user["ntlm_hash"])
-            else:
-                continue
+        if not self.GetMimikatzOutput():
+            return {}
+    
+        mimikatz = self.GetMimikatzOutput()
+        
+        for user in mimikatz.split("\n42.")[0].split("Authentication Id")[1:]:
+            username = None
+            secret = None
 
-            secret = hashlib.md5(ntlm.decode("hex")).hexdigest()
-            
-            creds[username] = secret
+            for line in user.splitlines():
+                if "User Name" in line:
+                    username = line.split(":")[1].strip()
+                
+                if ("NTLM" in line or "Password" in line) and "[hashed secret]" in line:
+                    secret = line.split(":")[1].replace("[hashed secret]", "").strip()
+        
+            if username and secret:
+                creds[username] = secret
 
         return creds
     
+    @cache
     def GetDomainControllers(self):
         domain_name = self.GetDomainName()
         DCs = self.GetDomainControllersMonkeyGuidByDomainName(domain_name)
         return map(Machine, DCs)
 
+    @cache
     def GetDomainAdminsOfMachine(self):
         DCs = self.GetDomainControllers()
         
@@ -308,12 +398,15 @@ class Machine(object):
         
         return domain_admins
 
+    @cache
     def GetAdmins(self):
         return self.GetLocalAdmins() | self.GetDomainAdminsOfMachine()
-        
+
+    @cache
     def GetAdminNames(self):
         return set(map(lambda x: self.GetUsernameBySid(x), self.GetAdmins()))
 
+    @cache
     def GetCachedSids(self):
         doc = self.latest_system_info
         
@@ -329,6 +422,7 @@ class Machine(object):
         
         return SIDs
 
+    @cache
     def GetCachedUsernames(self):
         doc = self.latest_system_info
         
@@ -342,12 +436,14 @@ class Machine(object):
 class PassTheHashMap(object):
     def __init__(self):
         self.vertices = self.GetAllMachines()
+        
         self.edges = set()
         self.machines = map(Machine, self.vertices)
-        
+
         self.GenerateEdgesBySid()      # Useful for non-cached domain users
         self.GenerateEdgesBySamHash()  # This will add edges based only on password hash without caring about username
-        
+
+    @cache
     def GetAllMachines(self):
         cur = mongo.db.telemetry.find({"telem_type":"system_info_collection"})
         
@@ -357,7 +453,8 @@ class PassTheHashMap(object):
             GUIDs.add(doc["monkey_guid"])
 
         return GUIDs
-        
+
+    @cache
     def ReprSidList(self, sid_list, attacker, victim):
         label = set()
         
@@ -372,6 +469,7 @@ class PassTheHashMap(object):
         
         return ",\n".join(label)
 
+    @cache
     def ReprSecretList(self, secret_list, victim):
         label = set()
         
@@ -380,6 +478,7 @@ class PassTheHashMap(object):
         
         return ",\n".join(label)
 
+    @cache
     def GenerateEdgesBySid(self):
         for attacker in self.vertices:
             cached = Machine(attacker).GetCachedSids()
@@ -389,11 +488,12 @@ class PassTheHashMap(object):
                     continue
 
                 admins = Machine(victim).GetAdmins()
-                
+
                 if len(cached & admins) > 0:
                     label = self.ReprSidList(cached & admins, attacker, victim)
                     self.edges.add((attacker, victim, label))
 
+    @cache
     def GenerateEdgesBySamHash(self):
         for attacker in self.vertices:
             cached_creds = set(Machine(attacker).GetCachedCreds().items())
@@ -408,6 +508,7 @@ class PassTheHashMap(object):
                     label = self.ReprSecretList(set(dict(cached_creds & admin_creds).values()), victim)
                     self.edges.add((attacker, victim, label))
 
+    @cache
     def GenerateEdgesByUsername(self):
         for attacker in self.vertices:
             cached = Machine(attacker).GetCachedUsernames()
@@ -421,34 +522,48 @@ class PassTheHashMap(object):
                 if len(cached & admins) > 0:
                     self.edges.add((attacker, victim))
 
+    @cache
     def Print(self):
         print map(lambda x: Machine(x).GetIp(), self.vertices)
         print map(lambda x: (Machine(x[0]).GetIp(), Machine(x[1]).GetIp()), self.edges)
     
+    @cache
     def GetPossibleAttackCountBySid(self, sid):
         return len(self.GetPossibleAttacksBySid(sid))
     
+    @cache
+    def GetPossibleAttacksByAttacker(self, attacker):
+        attacks = set()
+
+        cached_creds = set(Machine(attacker).GetCachedCreds().items())
+        
+        for victim in self.vertices:
+            if attacker == victim:
+                continue
+            
+            admin_creds = set(Machine(victim).GetLocalAdminCreds().items())
+            
+            if len(cached_creds & admin_creds) > 0:
+                curr_attacks = dict(cached_creds & admin_creds)
+                attacks.add((attacker, victim, curr_attacks))
+        
+        return attacks
+
+    @cache
     def GetPossibleAttacksBySid(self, sid):
         attacks = set()
     
         for attacker in self.vertices:
-            cached_creds = set(Machine(attacker).GetCachedCreds().items())
+            tmp = self.GetPossibleAttacksByAttacker(attacker)
 
-            for victim in self.vertices:
-                if attacker == victim:
-                    continue
-
-                admin_creds = set(Machine(victim).GetLocalAdminCreds().items())
-                
-                if len(cached_creds & admin_creds) > 0:
-                    curr_attacks = dict(cached_creds & admin_creds)
-                    
-                    for username, secret in curr_attacks.iteritems():
-                        if Machine(victim).GetSidByUsername(username) == sid:
-                            attacks.add((attacker, victim))
+            for _, victim, curr_attacks in tmp:
+                for username, secret in curr_attacks.iteritems():
+                    if Machine(victim).GetSidByUsername(username) == sid:
+                        attacks.add((attacker, victim))
         
         return attacks
     
+    @cache
     def GetSecretBySid(self, sid):
         for m in self.machines:
             for user, user_secret in m.GetLocalSecrets().iteritems():
@@ -457,15 +572,19 @@ class PassTheHashMap(object):
         
         return None
     
+    @cache
     def GetVictimCountBySid(self, sid):
         return len(self.GetVictimsBySid(sid))
 
+    @cache
     def GetVictimCountByMachine(self, attacker):
         return len(self.GetVictimsByAttacker(attacker))
     
+    @cache
     def GetAttackCountBySecret(self, secret):
         return len(self.GetAttackersBySecret(secret))
     
+    @cache
     def GetAllUsernames(self):
         names = set()
         
@@ -474,6 +593,7 @@ class PassTheHashMap(object):
         
         return names
 
+    @cache
     def GetAllSids(self):
         SIDs = set()
         
@@ -482,6 +602,7 @@ class PassTheHashMap(object):
         
         return SIDs
 
+    @cache
     def GetAllSecrets(self):
         secrets = set()
         
@@ -491,6 +612,7 @@ class PassTheHashMap(object):
         
         return secrets
     
+    @cache
     def GetUsernameBySid(self, sid):
         for m in self.machines:
             username = m.GetUsernameBySid(sid)
@@ -500,6 +622,7 @@ class PassTheHashMap(object):
         
         return None
     
+    @cache
     def GetSidsBySecret(self, secret):
         SIDs = set()
         
@@ -508,6 +631,7 @@ class PassTheHashMap(object):
         
         return SIDs
     
+    @cache
     def GetAllDomainControllers(self):
         DCs = set()
         
@@ -517,6 +641,7 @@ class PassTheHashMap(object):
         
         return DCs
 
+    @cache
     def GetSidsByUsername(self, username):
         SIDs = set()
         
@@ -527,6 +652,7 @@ class PassTheHashMap(object):
         
         return SIDs
     
+    @cache
     def GetVictimsBySid(self, sid):
         machines = set()
 
@@ -536,6 +662,7 @@ class PassTheHashMap(object):
 
         return machines
 
+    @cache
     def GetVictimsBySecret(self, secret):
         machines = set()
 
@@ -547,6 +674,7 @@ class PassTheHashMap(object):
 
         return machines
 
+    @cache
     def GetAttackersBySecret(self, secret):
         machines = set()
         
@@ -556,6 +684,7 @@ class PassTheHashMap(object):
 
         return machines
     
+    @cache
     def GetAttackersByVictim(self, victim):
         attackers = set()
     
@@ -565,6 +694,7 @@ class PassTheHashMap(object):
         
         return attackers
 
+    @cache
     def GetVictimsByAttacker(self, attacker):
         victims = set()
     
@@ -574,6 +704,7 @@ class PassTheHashMap(object):
         
         return victims
     
+    @cache
     def GetInPathCountByVictim(self, victim, already_processed=None):
         if type(victim) != unicode:
             victim = victim.monkey_guid
@@ -607,11 +738,14 @@ def main():
     
     print "<h2>Duplicated Passwords</h2>"
     print "<h3>How many users share each secret?</h3>"
+    
     dups = dict(map(lambda x: (x, len(pth.GetSidsBySecret(x))), pth.GetAllSecrets()))
     
     print """<table>"""
     print """<tr><th>Secret</th><th>User Count</th></tr>"""
     for secret, count in sorted(dups.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        if count <= 1:
+            continue
         print """<tr><td><a href="#{secret}">{secret}</a></td><td>{count}</td>""".format(secret=secret, count=count)
     print """</table>"""
     
@@ -622,6 +756,8 @@ def main():
     print """<table>"""
     print """<tr><th>Secret</th><th>Machine Count</th></tr>"""
     for secret, count in sorted(cache_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        if count <= 0:
+            continue
         print """<tr><td><a href="#{secret}">{secret}</a></td><td>{count}</td>""".format(secret=secret, count=count)
     print """</table>"""
     
@@ -632,6 +768,8 @@ def main():
     print """<table>"""
     print """<tr><th>SID</th><th>Username</th><th>Machine Count</th></tr>"""
     for sid, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        if count <= 1:
+            continue
         print """<tr><td><a href="#{sid}">{sid}</a></td><td>{username}</td><td>{count}</td>""".format(sid=sid, username=pth.GetUsernameBySid(sid), count=count)
     print """</table>"""
     
@@ -642,6 +780,8 @@ def main():
     print """<table>"""
     print """<tr><th>SID</th><th>Username</th><th>Machine Count</th></tr>"""
     for sid, count in sorted(possible_attacks_by_sid.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        if count <= 1:
+            continue
         print """<tr><td><a href="#{sid}">{sid}</a></td><td>{username}</td><td>{count}</td>""".format(sid=sid, username=pth.GetUsernameBySid(sid), count=count)
     print """</table>"""
     
@@ -652,6 +792,8 @@ def main():
     print """<table>"""
     print """<tr><th>Attacker Ip</th><th>Attacker Hostname</th><th>Domain Name</th><th>Victim Machine Count</th></tr>"""
     for m, count in sorted(attackable_counts.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        if count <= 1:
+            continue
         print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
     print """</table>"""
     
@@ -672,6 +814,8 @@ def main():
     print """<table>"""
     print """<tr><th>Ip</th><th>Hostname</th><th>Domain Name</th><th>In-Path Count</th></tr>"""
     for m, path_count in sorted(all_machines.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        if count <= 0:
+            continue
         print """<tr><td><a href="#{ip}">{ip}</a></td><td><a href="#{ip}">{hostname}</a></td><td>{domain}</td><td>{path_count}</td></tr>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), path_count=path_count)
     print """</table>"""
     
