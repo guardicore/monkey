@@ -21,9 +21,10 @@ WMI_CLASSES = set(["Win32_OperatingSystem",
                    "Win32_UserProfile",
                    "Win32_Group",
                    "Win32_GroupUser",
-                   #"Win32_Product",
+                   "Win32_Product",
+                   "Win32_Service",
+                   "Win32_OptionalFeature",
                    #"Win32_Process",
-                   #"Win32_Service"
                    ])
 
 def fix_obj_for_mongo(o):
@@ -131,7 +132,7 @@ class WindowsInfoCollector(InfoCollector):
         key = _winreg.ConnectRegistry(None, store)
         subkey = _winreg.OpenKey(key, subkey_path)
 
-        d = dict([_winreg.EnumValue(subkey, i)[:2] for i in xrange(_winreg.QueryInfoKey(subkey)[1])])
+        d = dict([_winreg.EnumValue(subkey, i)[:2] for i in xrange(_winreg.QueryInfoKey(subkey)[0])])
         d = fix_obj_for_mongo(d)
 
         self.info[subkey_path] = d
