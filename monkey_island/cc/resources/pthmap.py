@@ -173,22 +173,39 @@ class Machine(object):
 
     @cache
     def GetUsernameBySid(self, sid):
+        info = self.GetSidInfo(sid)
+        
+        if not info:
+            return None
+        
+        return info["Domain"] + "\\" + info["Username"]
+    
+    @cache
+    def GetSidInfo(self, sid):
         doc = self.latest_system_info
 
         for user in doc["data"]["Win32_UserAccount"]:
             if eval(user["SID"]) != sid:
                 continue
 
-            return eval(user["Name"])
+            return { "Domain": eval(user["Domain"]),
+                     "Username": eval(user["Name"]),
+                     "Disabled": user["Disabled"] == "true",
+                     "PasswordRequired": user["PasswordRequired"] == "true",
+                     "PasswordExpires": user["PasswordExpires"] == "true", }
         
         if not self.IsDomainController():
             for dc in self.GetDomainControllers():
-                username = dc.GetUsernameBySid(sid)
+                domain = dc.GetSidInfo(sid)
 
-                if username != None:
-                    return username
+                if domain != None:
+                    return domain
         
         return None
+    
+    @cache
+    def GetInstalledServices(self):
+        "IIS-WebServer"
     
     @cache
     def GetUsernamesBySecret(self, secret):
@@ -623,6 +640,16 @@ class PassTheHashMap(object):
         return None
     
     @cache
+    def GetSidInfo(self, sid):
+        for m in self.machines:
+            info = m.GetSidInfo(sid)
+            
+            if info:
+                return info
+        
+        return None
+    
+    @cache
     def GetSidsBySecret(self, secret):
         SIDs = set()
         
@@ -868,8 +895,9 @@ def main():
     for sid in pth.GetAllSids():
         print """<a name="{sid}"><h2>SID '{sid}'</h2></a>
                 <h3>Username: '<a href="#{username}">{username}</a>'</h3>
+                <h3>Domain: {domain}</h3>
                 <h3>Secret: '<a href="#{secret}">{secret}</a>'</h3>
-              """.format(username=pth.GetUsernameBySid(sid), sid=sid, secret=pth.GetSecretBySid(sid))
+              """.format(username=pth.GetUsernameBySid(sid), sid=sid, secret=pth.GetSecretBySid(sid), domain=pth.GetSidInfo(sid)["Domain"])
         
         print """<h3>Attackable Machines</h3>"""
         print """<ul>"""
