@@ -21,7 +21,8 @@ class ReportPageComponent extends AuthComponent {
       ELASTIC: 2,
       SAMBACRY: 3,
       SHELLSHOCK: 4,
-      CONFICKER: 5
+      CONFICKER: 5,
+      AZURE: 6
     };
 
   Warning =
@@ -313,6 +314,11 @@ class ReportPageComponent extends AuthComponent {
                   {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
                     <li>Machines are accessible using passwords supplied by the user during the Monkey’s
                       configuration.</li> : null}
+                  {this.state.report.overview.issues[this.Issue.AZURE] ?
+                    <li>Azure machines expose plaintext passwords. (<a
+                      href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
+                    >More info</a>)</li> : null}
+
                 </ul>
               </div>
               :
@@ -587,6 +593,21 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateAzureIssue(issue) {
+    return (
+      <li>
+        Delete VM Access plugin configuration files.
+        <CollapsibleWellComponent>
+          Credentials could be stolen from <span
+          className="label label-primary">{issue.machine}</span> for the following users <span
+          className="label label-primary">{issue.users}</span>. Read more about the security issue and remediation <a
+                      href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
+                    >here</a>.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
   generateConfickerIssue(issue) {
     return (
       <li>
@@ -631,6 +652,8 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+
+
   generateIssue = (issue) => {
     let data;
     switch (issue.type) {
@@ -669,6 +692,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'tunnel':
         data = this.generateTunnelIssue(issue);
+        break;
+      case 'azure_password':
+        data = this.generateAzureIssue(issue);
         break;
     }
     return data;
