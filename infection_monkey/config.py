@@ -24,9 +24,9 @@ def _cast_by_example(value, example):
     """
     example_type = type(example)
     if example_type is str:
-        return str(os.path.expandvars(value))
+        return os.path.expandvars(value).encode("utf8")
     elif example_type is tuple and len(example) != 0:
-        if value is None or value == tuple(None):
+        if value is None or value == tuple([None]):
             return tuple()
         return tuple([_cast_by_example(x, example[0]) for x in value])
     elif example_type is list and len(example) != 0:
@@ -107,6 +107,7 @@ class Configuration(object):
     dropper_log_path_linux = '/tmp/user-1562'
     monkey_log_path_windows = '%temp%\\~df1563.tmp'
     monkey_log_path_linux = '/tmp/user-1563'
+    send_log_to_server = True
 
     ###########################
     # dropper config
@@ -272,6 +273,8 @@ class Configuration(object):
     ###########################
 
     mimikatz_dll_name = "mk.dll"
+
+    extract_azure_creds = True
 
 
 WormConfiguration = Configuration()

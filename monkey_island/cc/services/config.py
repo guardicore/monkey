@@ -1,6 +1,10 @@
-from cc.database import mongo
+import copy
+import collections
+import functools
 from jsonschema import Draft4Validator, validators
 
+from cc.database import mongo
+from cc.encryptor import encryptor
 from cc.environment.environment import env
 from cc.utils import local_ip_addresses
 
@@ -17,60 +21,60 @@ SCHEMA = {
             "type": "string",
             "anyOf": [
                 {
-                  "type": "string",
-                  "enum": [
-                    "SmbExploiter"
-                  ],
-                  "title": "SMB Exploiter"
+                    "type": "string",
+                    "enum": [
+                        "SmbExploiter"
+                    ],
+                    "title": "SMB Exploiter"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "WmiExploiter"
-                  ],
-                  "title": "WMI Exploiter"
+                    "type": "string",
+                    "enum": [
+                        "WmiExploiter"
+                    ],
+                    "title": "WMI Exploiter"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "RdpExploiter"
-                  ],
-                  "title": "RDP Exploiter (UNSAFE)"
+                    "type": "string",
+                    "enum": [
+                        "RdpExploiter"
+                    ],
+                    "title": "RDP Exploiter (UNSAFE)"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "Ms08_067_Exploiter"
-                  ],
-                  "title": "MS08-067 Exploiter (UNSAFE)"
+                    "type": "string",
+                    "enum": [
+                        "Ms08_067_Exploiter"
+                    ],
+                    "title": "MS08-067 Exploiter (UNSAFE)"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "SSHExploiter"
-                  ],
-                  "title": "SSH Exploiter"
+                    "type": "string",
+                    "enum": [
+                        "SSHExploiter"
+                    ],
+                    "title": "SSH Exploiter"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "ShellShockExploiter"
-                  ],
-                  "title": "ShellShock Exploiter"
+                    "type": "string",
+                    "enum": [
+                        "ShellShockExploiter"
+                    ],
+                    "title": "ShellShock Exploiter"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "SambaCryExploiter"
-                  ],
-                  "title": "SambaCry Exploiter"
+                    "type": "string",
+                    "enum": [
+                        "SambaCryExploiter"
+                    ],
+                    "title": "SambaCry Exploiter"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "ElasticGroovyExploiter"
-                  ],
-                  "title": "ElasticGroovy Exploiter"
+                    "type": "string",
+                    "enum": [
+                        "ElasticGroovyExploiter"
+                    ],
+                    "title": "ElasticGroovy Exploiter"
                 },
             ]
         },
@@ -79,46 +83,46 @@ SCHEMA = {
             "type": "string",
             "anyOf": [
                 {
-                  "type": "string",
-                  "enum": [
-                    "SMBFinger"
-                  ],
-                  "title": "SMBFinger"
+                    "type": "string",
+                    "enum": [
+                        "SMBFinger"
+                    ],
+                    "title": "SMBFinger"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "SSHFinger"
-                  ],
-                  "title": "SSHFinger"
+                    "type": "string",
+                    "enum": [
+                        "SSHFinger"
+                    ],
+                    "title": "SSHFinger"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "PingScanner"
-                  ],
-                  "title": "PingScanner"
+                    "type": "string",
+                    "enum": [
+                        "PingScanner"
+                    ],
+                    "title": "PingScanner"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "HTTPFinger"
-                  ],
-                  "title": "HTTPFinger"
+                    "type": "string",
+                    "enum": [
+                        "HTTPFinger"
+                    ],
+                    "title": "HTTPFinger"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "MySQLFinger"
-                  ],
-                  "title": "MySQLFinger"
+                    "type": "string",
+                    "enum": [
+                        "MySQLFinger"
+                    ],
+                    "title": "MySQLFinger"
                 },
                 {
-                  "type": "string",
-                  "enum": [
-                    "ElasticFinger"
-                  ],
-                  "title": "ElasticFinger"
+                    "type": "string",
+                    "enum": [
+                        "ElasticFinger"
+                    ],
+                    "title": "ElasticFinger"
                 }
             ]
         }
@@ -491,6 +495,12 @@ SCHEMA = {
                             "type": "string",
                             "default": "%temp%\\~df1563.tmp",
                             "description": "The fullpath of the monkey log file on Windows"
+                        },
+                        "send_log_to_server": {
+                            "title": "Send log to server",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether the monkey sends its log to the Monkey Island server"
                         }
                     }
                 },
@@ -520,8 +530,8 @@ SCHEMA = {
                         }
                     }
                 },
-                "mimikatz": {
-                    "title": "Mimikatz",
+                "systemInfo": {
+                    "title": "System collection",
                     "type": "object",
                     "properties": {
                         "mimikatz_dll_name": {
@@ -530,6 +540,13 @@ SCHEMA = {
                             "default": "mk.dll",
                             "description":
                                 "Name of Mimikatz DLL (should be the same as in the monkey's pyinstaller spec file)"
+                        },
+                        "extract_azure_creds": {
+                            "title": "Harvest Azure Credentials",
+                            "type": "boolean",
+                            "default": True,
+                            "description":
+                                "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         }
                     }
                 }
@@ -802,29 +819,56 @@ SCHEMA = {
     }
 }
 
+ENCRYPTED_CONFIG_ARRAYS = \
+    [
+        ['basic', 'credentials', 'exploit_password_list'],
+        ['internal', 'exploits', 'exploit_lm_hash_list'],
+        ['internal', 'exploits', 'exploit_ntlm_hash_list']
+    ]
+
 
 class ConfigService:
+    default_config = None
+
     def __init__(self):
         pass
 
     @staticmethod
-    def get_config(is_initial_config=False):
+    def get_config(is_initial_config=False, should_decrypt=True):
+        """
+        Gets the entire global config.
+        :param is_initial_config: If True, the initial config will be returned instead of the current config.
+        :param should_decrypt: If True, all config values which are set as encrypted will be decrypted.
+        :return: The entire global config.
+        """
         config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}) or {}
         for field in ('name', '_id'):
             config.pop(field, None)
+        if should_decrypt and len(config) > 0:
+            ConfigService.decrypt_config(config)
         return config
 
     @staticmethod
-    def get_config_value(config_key_as_arr, is_initial_config=False):
-        config_key = reduce(lambda x, y: x+'.'+y, config_key_as_arr)
+    def get_config_value(config_key_as_arr, is_initial_config=False, should_decrypt=True):
+        """
+        Get a specific config value.
+        :param config_key_as_arr: The config key as an array. e.g. ['basic', 'credentials', 'exploit_password_list'].
+        :param is_initial_config: If True, returns the value of the initial config instead of the current config.
+        :param should_decrypt: If True, the value of the config key will be decrypted
+                               (if it's in the list of encrypted config values).
+        :return: The value of the requested config key.
+        """
+        config_key = functools.reduce(lambda x, y: x + '.' + y, config_key_as_arr)
         config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}, {config_key: 1})
         for config_key_part in config_key_as_arr:
             config = config[config_key_part]
+        if should_decrypt and (config_key_as_arr in ENCRYPTED_CONFIG_ARRAYS):
+            config = [encryptor.dec(x) for x in config]
         return config
 
     @staticmethod
-    def get_flat_config(is_initial_config=False):
-        config_json = ConfigService.get_config(is_initial_config)
+    def get_flat_config(is_initial_config=False, should_decrypt=True):
+        config_json = ConfigService.get_config(is_initial_config, should_decrypt)
         flat_config_json = {}
         for i in config_json:
             for j in config_json[i]:
@@ -868,27 +912,38 @@ class ConfigService:
         ConfigService.add_item_to_config_set('internal.exploits.exploit_ntlm_hash_list', ntlm_hash)
 
     @staticmethod
-    def update_config(config_json):
+    def update_config(config_json, should_encrypt):
+        if should_encrypt:
+            ConfigService.encrypt_config(config_json)
         mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
 
     @staticmethod
-    def get_default_config():
-        defaultValidatingDraft4Validator = ConfigService._extend_config_with_default(Draft4Validator)
-        config = {}
-        defaultValidatingDraft4Validator(SCHEMA).validate(config)
+    def init_default_config():
+        if ConfigService.default_config is None:
+            defaultValidatingDraft4Validator = ConfigService._extend_config_with_default(Draft4Validator)
+            config = {}
+            defaultValidatingDraft4Validator(SCHEMA).validate(config)
+            ConfigService.default_config = config
+
+    @staticmethod
+    def get_default_config(should_encrypt=False):
+        ConfigService.init_default_config()
+        config = copy.deepcopy(ConfigService.default_config)
+        if should_encrypt:
+            ConfigService.encrypt_config(config)
         return config
 
     @staticmethod
     def init_config():
-        if ConfigService.get_config() != {}:
+        if ConfigService.get_config(should_decrypt=False) != {}:
             return
         ConfigService.reset_config()
 
     @staticmethod
     def reset_config():
-        config = ConfigService.get_default_config()
+        config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
-        ConfigService.update_config(config)
+        ConfigService.update_config(config, should_encrypt=False)
 
     @staticmethod
     def set_server_ips_in_config(config):
@@ -930,3 +985,34 @@ class ConfigService:
         return validators.extend(
             validator_class, {"properties": set_defaults},
         )
+
+    @staticmethod
+    def decrypt_config(config):
+        ConfigService._encrypt_or_decrypt_config(config, True)
+
+    @staticmethod
+    def encrypt_config(config):
+        ConfigService._encrypt_or_decrypt_config(config, False)
+
+    @staticmethod
+    def decrypt_flat_config(flat_config):
+        """
+        Same as decrypt_config but for a flat configuration
+        """
+        keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
+        for key in keys:
+            if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], basestring):
+                flat_config[key] = [encryptor.dec(item) for item in flat_config[key]]
+            else:
+                flat_config[key] = encryptor.dec(flat_config[key])
+        return flat_config
+
+    @staticmethod
+    def _encrypt_or_decrypt_config(config, is_decrypt=False):
+        for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS:
+            config_arr = config
+            for config_key_part in config_arr_as_array:
+                config_arr = config_arr[config_key_part]
+
+            for i in range(len(config_arr)):
+                config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
