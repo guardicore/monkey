@@ -14,3 +14,4 @@ ecdsa
 netifaces
 mock
 nose
+ipaddress

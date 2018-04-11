@@ -15,7 +15,7 @@ class NetworkRange(object):
         self._shuffle = shuffle
 
     def get_range(self):
-        return [x for x in self._get_range() if (x & 0xFF != 0)]  # remove broadcast ips
+        return self._get_range()
 
     def __iter__(self):
         base_range = self.get_range()
@@ -66,7 +66,7 @@ class CidrRange(NetworkRange):
         return ipaddress.ip_address(ip_address) in self._ip_network
 
     def _get_range(self):
-        return [CidrRange._ip_to_number(str(x)) for x in self._ip_network]
+        return [CidrRange._ip_to_number(str(x)) for x in self._ip_network if x != self._ip_network.broadcast_address]
 
 
 class IpRange(NetworkRange):

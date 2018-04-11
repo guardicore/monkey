@@ -3,7 +3,7 @@ import time
 
 from config import WormConfiguration
 from info import local_ips, get_interfaces_ranges
-from common.network.range import *
+from common.network.network_range import *
 from model import VictimHost
 from . import HostScanner
 
