@@ -1,6 +1,4 @@
 import logging
-import os
-import struct
 import subprocess
 import sys
 import shutil
@@ -12,6 +10,7 @@ from config import WormConfiguration
 from control import ControlClient
 from exploit.tools import build_monkey_commandline_explicitly
 from model import MONKEY_CMDLINE_WINDOWS
+from utils import is_windows_os, is_64bit_os, is_64bit_python
 
 __author__ = 'itay.mizeretz'
 
@@ -27,21 +26,9 @@ class WindowsUpgrader(object):
     __UPGRADE_WAIT_TIME__ = 3
 
     @staticmethod
-    def is_64bit_os():
-        return 'PROGRAMFILES(X86)' in os.environ
-
-    @staticmethod
-    def is_64bit_python():
-        return struct.calcsize("P") == 8
-
-    @staticmethod
-    def is_windows_os():
-        return sys.platform.startswith("win")
-
-    @staticmethod
     def should_upgrade():
-        return WindowsUpgrader.is_windows_os() and WindowsUpgrader.is_64bit_os() \
-               and not WindowsUpgrader.is_64bit_python()
+        return is_windows_os() and is_64bit_os() \
+               and not is_64bit_python()
 
     @staticmethod
     def upgrade(opts):
