@@ -48,14 +48,13 @@ class InfectionMonkey(object):
         arg_parser.add_argument('-p', '--parent')
         arg_parser.add_argument('-t', '--tunnel')
         arg_parser.add_argument('-s', '--server')
-        arg_parser.add_argument('-d', '--depth')
+        arg_parser.add_argument('-d', '--depth', type=int)
         self._opts, self._args = arg_parser.parse_known_args(self._args)
 
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
         self._default_server = self._opts.server
         if self._opts.depth:
-            WormConfiguration.depth = int(self._opts.depth)
             WormConfiguration._depth_from_commandline = True
         self._keep_running = True
         self._network = NetworkScanner()
@@ -71,9 +70,9 @@ class InfectionMonkey(object):
     def start(self):
         LOG.info("Monkey is running...")
 
-        if firewall.is_enabled():
-            firewall.add_firewall_rule()
-        ControlClient.find_server(default_tunnel=self._default_tunnel)
+        if not ControlClient.find_server(default_tunnel=self._default_tunnel):
+            LOG.info("Monkey couldn't find server. Going down.")
+            return
 
         if WindowsUpgrader.should_upgrade():
             self._upgrading_to_64 = True
@@ -88,6 +87,9 @@ class InfectionMonkey(object):
         if not WormConfiguration.alive:
             LOG.info("Marked not alive from configuration")
             return
+
+        if firewall.is_enabled():
+            firewall.add_firewall_rule()
 
         monkey_tunnel = ControlClient.create_control_tunnel()
         if monkey_tunnel:
@@ -227,21 +229,27 @@ class InfectionMonkey(object):
         LOG.info("Monkey cleanup started")
         self._keep_running = False
 
-        # Signal the server (before closing the tunnel)
-        if not self._upgrading_to_64:
-            ControlClient.send_telemetry("state", {'done': True})
+        if self._upgrading_to_64:
+            InfectionMonkey.close_tunnel()
+            firewall.close()
+        else:
+            ControlClient.send_telemetry("state", {'done': True})  # Signal the server (before closing the tunnel)
+            InfectionMonkey.close_tunnel()
+            firewall.close()
+            self._singleton.unlock()
 
-        # Close tunnel
+        InfectionMonkey.self_delete()
+        LOG.info("Monkey is shutting down")
+
+    @staticmethod
+    def close_tunnel():
         tunnel_address = ControlClient.proxies.get('https', '').replace('https://', '').split(':')[0]
         if tunnel_address:
             LOG.info("Quitting tunnel %s", tunnel_address)
             tunnel.quit_tunnel(tunnel_address)
 
-        firewall.close()
-
-        if not self._upgrading_to_64:
-            self._singleton.unlock()
-
+    @staticmethod
+    def self_delete():
         if WormConfiguration.self_delete_in_cleanup \
                 and -1 == sys.executable.find('python'):
             try:
@@ -257,5 +265,3 @@ class InfectionMonkey(object):
                     os.remove(sys.executable)
             except Exception as exc:
                 LOG.error("Exception in self delete: %s", exc)
-
-        LOG.info("Monkey is shutting down")

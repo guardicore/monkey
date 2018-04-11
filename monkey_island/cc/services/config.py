@@ -444,13 +444,15 @@ SCHEMA = {
                             "title": "Dropper target path on Windows (32bit)",
                             "type": "string",
                             "default": "C:\\Windows\\monkey32.exe",
-                            "description": "Determines where should the dropper place the monkey on a Windows machine"
+                            "description": "Determines where should the dropper place the monkey on a Windows machine "
+                                           "(32bit)"
                         },
                         "dropper_target_path_win_64": {
                             "title": "Dropper target path on Windows (64bit)",
                             "type": "string",
                             "default": "C:\\Windows\\monkey64.exe",
-                            "description": "Determines where should the dropper place the monkey on a Windows machine"
+                            "description": "Determines where should the dropper place the monkey on a Windows machine "
+                                           "(64 bit)"
                         },
                         "dropper_try_move_first": {
                             "title": "Try to move first",

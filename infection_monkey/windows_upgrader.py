@@ -3,6 +3,7 @@ import os
 import struct
 import subprocess
 import sys
+import shutil
 
 import time
 
@@ -23,9 +24,11 @@ else:
 
 
 class WindowsUpgrader(object):
+    __UPGRADE_WAIT_TIME__ = 3
+
     @staticmethod
     def is_64bit_os():
-        return os.environ.has_key('PROGRAMFILES(X86)')
+        return 'PROGRAMFILES(X86)' in os.environ
 
     @staticmethod
     def is_64bit_python():
@@ -44,13 +47,10 @@ class WindowsUpgrader(object):
     def upgrade(opts):
         monkey_64_path = ControlClient.download_monkey_exe_by_os(True, False)
         with monkeyfs.open(monkey_64_path, "rb") as downloaded_monkey_file:
-            monkey_bin = downloaded_monkey_file.read()
-        with open(WormConfiguration.dropper_target_path_win_64, 'wb') as written_monkey_file:
-            written_monkey_file.write(monkey_bin)
+            with open(WormConfiguration.dropper_target_path_win_64, 'wb') as written_monkey_file:
+                shutil.copyfileobj(downloaded_monkey_file, written_monkey_file)
 
-        depth = int(opts.depth) if opts.depth is not None else None
-        monkey_options = build_monkey_commandline_explicitly(
-            opts.parent, opts.tunnel, opts.server, depth)
+        monkey_options = build_monkey_commandline_explicitly(opts.parent, opts.tunnel, opts.server, opts.depth)
 
         monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {
             'monkey_path': WormConfiguration.dropper_target_path_win_64} + monkey_options
@@ -62,6 +62,6 @@ class WindowsUpgrader(object):
         LOG.info("Executed 64bit monkey process (PID=%d) with command line: %s",
                  monkey_process.pid, monkey_cmdline)
 
-        time.sleep(3)
+        time.sleep(WindowsUpgrader.__UPGRADE_WAIT_TIME__)
         if monkey_process.poll() is not None:
-            LOG.warn("Seems like monkey died too soon")
+            LOG.error("Seems like monkey died too soon")

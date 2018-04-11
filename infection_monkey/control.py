@@ -4,6 +4,7 @@ import platform
 from socket import gethostname
 
 import requests
+from requests.exceptions import ConnectionError
 
 import monkeyfs
 import tunnel
@@ -59,9 +60,11 @@ class ControlClient(object):
         if default_tunnel:
             LOG.debug("default_tunnel: %s" % (default_tunnel,))
 
+        current_server = ""
+
         for server in WormConfiguration.command_servers:
             try:
-                WormConfiguration.current_server = server
+                current_server = server
 
                 debug_message = "Trying to connect to server: %s" % server
                 if ControlClient.proxies:
@@ -70,23 +73,29 @@ class ControlClient(object):
                 requests.get("https://%s/api?action=is-up" % (server,),
                              verify=False,
                              proxies=ControlClient.proxies)
+                WormConfiguration.current_server = current_server
                 break
 
-            except Exception as exc:
-                WormConfiguration.current_server = ""
+            except ConnectionError as exc:
+                current_server = ""
                 LOG.warn("Error connecting to control server %s: %s", server, exc)
 
-        if not WormConfiguration.current_server:
-            if not ControlClient.proxies:
+        if current_server:
+            return True
+        else:
+            if ControlClient.proxies:
+                return False
+            else:
                 LOG.info("Starting tunnel lookup...")
                 proxy_find = tunnel.find_tunnel(default=default_tunnel)
                 if proxy_find:
                     proxy_address, proxy_port = proxy_find
                     LOG.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
                     ControlClient.proxies['https'] = 'https://%s:%s' % (proxy_address, proxy_port)
-                    ControlClient.find_server()
+                    return ControlClient.find_server()
                 else:
                     LOG.info("No tunnel found")
+                    return False
 
     @staticmethod
     def keepalive():
