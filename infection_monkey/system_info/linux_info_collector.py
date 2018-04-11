@@ -25,4 +25,5 @@ class LinuxInfoCollector(InfoCollector):
         self.get_hostname()
         self.get_process_list()
         self.get_network_info()
+        self.get_azure_info()
         return self.info

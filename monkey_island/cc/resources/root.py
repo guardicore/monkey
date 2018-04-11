@@ -36,7 +36,8 @@ class Root(flask_restful.Resource):
 
     @staticmethod
     def reset_db():
-        [mongo.db[x].drop() for x in ['config', 'monkey', 'telemetry', 'node', 'edge', 'report']]
+        # We can't drop system collections.
+        [mongo.db[x].drop() for x in mongo.db.collection_names() if not x.startswith('system.')]
         ConfigService.init_config()
         return jsonify(status='OK')
 
