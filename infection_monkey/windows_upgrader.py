@@ -10,7 +10,7 @@ from config import WormConfiguration
 from control import ControlClient
 from exploit.tools import build_monkey_commandline_explicitly
 from model import MONKEY_CMDLINE_WINDOWS
-from utils import is_windows_os, is_64bit_os, is_64bit_python
+from utils import is_windows_os, is_64bit_windows_os, is_64bit_python
 
 __author__ = 'itay.mizeretz'
 
@@ -27,7 +27,7 @@ class WindowsUpgrader(object):
 
     @staticmethod
     def should_upgrade():
-        return is_windows_os() and is_64bit_os() \
+        return is_windows_os() and is_64bit_windows_os() \
                and not is_64bit_python()
 
     @staticmethod

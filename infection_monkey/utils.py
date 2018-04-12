@@ -15,7 +15,11 @@ def get_dropper_log_path():
         else WormConfiguration.dropper_log_path_linux
 
 
-def is_64bit_os():
+def is_64bit_windows_os():
+    '''
+    Checks for 64 bit Windows OS using environment variables.
+    :return:
+    '''
     return 'PROGRAMFILES(X86)' in os.environ
 
 
