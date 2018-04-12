@@ -15,9 +15,17 @@ class NetworkRange(object):
         self._shuffle = shuffle
 
     def get_range(self):
+        """
+        :return: Returns a sequence of IPs in an internal format (might be numbers)
+        """
         return self._get_range()
 
     def __iter__(self):
+        """
+        Iterator of ip addresses (strings) from the current range.
+        Use get_range if you want it in one go.
+        :return:
+        """
         base_range = self.get_range()
         if self._shuffle:
             random.shuffle(base_range)
@@ -86,7 +94,8 @@ class IpRange(NetworkRange):
         self._lower_end_ip_num = self._ip_to_number(self._lower_end_ip)
         self._higher_end_ip_num = self._ip_to_number(self._higher_end_ip)
         if self._higher_end_ip_num < self._lower_end_ip_num:
-            raise ValueError('Higher end IP %s is smaller than lower end IP %s' % (self._lower_end_ip,self._higher_end_ip))
+            raise ValueError(
+                'Higher end IP %s is smaller than lower end IP %s' % (self._lower_end_ip, self._higher_end_ip))
 
     def __repr__(self):
         return "<IpRange %s-%s>" % (self._lower_end_ip, self._higher_end_ip)
