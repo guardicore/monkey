@@ -202,32 +202,9 @@ SCHEMA = {
                                 "Amount of hops allowed for the monkey to spread from the island. "
                                 + WARNING_SIGN
                                 + " Note that setting this value too high may result in the monkey propagating too far"
-                        }
-                    }
-                },
-                "network_range": {
-                    "title": "Network range",
-                    "type": "object",
-                    "properties": {
-                        "range_class": {
-                            "title": "Range class",
-                            "type": "string",
-                            "default": "FixedRange",
-                            "enum": [
-                                "FixedRange",
-                                "ClassCRange"
-                            ],
-                            "enumNames": [
-                                "Fixed Range",
-                                "Class C Range"
-                            ],
-                            "description":
-                                "Determines which class to use to determine scan range."
-                                " Fixed Range will scan only specific IPs listed under Fixed range IP list."
-                                " Class C Range will scan machines in the Class C network the monkey's on."
                         },
-                        "range_fixed": {
-                            "title": "Fixed range IP list",
+                        "subnet_scan_list": {
+                            "title": "Scan IP/subnet list",
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
@@ -236,8 +213,8 @@ SCHEMA = {
                             "default": [
                             ],
                             "description":
-                                "List of IPs to include when using FixedRange"
-                                " (Only relevant for Fixed Range)"
+                                "List of IPs/subnets the monkey should scan."
+                                " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
                         }
                     }
                 }
