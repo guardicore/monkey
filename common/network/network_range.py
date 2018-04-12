@@ -75,24 +75,24 @@ class IpRange(NetworkRange):
         if ip_range is not None:
             addresses = ip_range.split('-')
             if len(addresses) != 2:
-                raise ValueError('Illegal IP range format: %s' % ip_range)
+                raise ValueError('Illegal IP range format: %s. Format is 192.168.0.5-192.168.0.20' % ip_range)
             self._lower_end_ip, self._higher_end_ip = [x.strip() for x in addresses]
-            if self._higher_end_ip < self._lower_end_ip:
-                raise ValueError('Higher end IP is smaller than lower end IP: %s' % ip_range)
         elif (lower_end_ip is not None) and (higher_end_ip is not None):
-            self._lower_end_ip = lower_end_ip
-            self._higher_end_ip = higher_end_ip
+            self._lower_end_ip = lower_end_ip.strip()
+            self._higher_end_ip = higher_end_ip.strip()
         else:
             raise ValueError('Illegal IP range: %s' % ip_range)
 
-        self._lower_end_ip_num = IpRange._ip_to_number(self._lower_end_ip)
-        self._higher_end_ip_num = IpRange._ip_to_number(self._higher_end_ip)
+        self._lower_end_ip_num = self._ip_to_number(self._lower_end_ip)
+        self._higher_end_ip_num = self._ip_to_number(self._higher_end_ip)
+        if self._higher_end_ip_num < self._lower_end_ip_num:
+            raise ValueError('Higher end IP %s is smaller than lower end IP %s' % (self._lower_end_ip,self._higher_end_ip))
 
     def __repr__(self):
         return "<IpRange %s-%s>" % (self._lower_end_ip, self._higher_end_ip)
 
     def is_in_range(self, ip_address):
-        return self._lower_end_ip_num <= IpRange._ip_to_number(ip_address) <= self._higher_end_ip_num
+        return self._lower_end_ip_num <= self._ip_to_number(ip_address) <= self._higher_end_ip_num
 
     def _get_range(self):
         return range(self._lower_end_ip_num, self._higher_end_ip_num + 1)
