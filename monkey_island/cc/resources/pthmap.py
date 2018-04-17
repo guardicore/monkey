@@ -818,6 +818,14 @@ class PassTheHashMap(object):
 
         return machines
 
+    def GetThreateningUsersByVictim(victim):
+        threatening_users = set()
+        
+        for attacker in pth.GetAttackersByVictim(victim):
+            threatening_users |= (attacker.GetCachedSids() & victim.GetAdmins())
+
+        return threatening_users
+        
 def main():
     pth = PassTheHashMap()
 
@@ -836,10 +844,31 @@ def main():
         print """<tr><td><a href="#{secret}">{secret}</a></td><td>{count}</td>""".format(secret=secret, count=count)
         print """<td><ul>"""
         for sid in pth.GetSidsBySecret(secret):
-            print """<li>{username}"""
             print """<li><a href="#{sid}">{username}</a></li>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
         print """</ul></td></tr>"""
     print """</table>"""
+    
+    
+    
+    print "<h2>Strong Users That Threat Critical Servers</h2>"
+    print "<h3>Administrators of critical servers that we could find thier secret cached somewhere</h3>"
+    
+    threatening = dict(map(lambda x: (x, len(pth.GetThreateningUsersByVictim(x))), pth.GetCritialServers()))
+    
+    print """<table>"""
+    print """<tr><th>Critical Server</th><th>Hostname</th><th>Domain</th><th>Threatening User Count</th><th>Threatening Users</th></tr>"""
+    for m, count in sorted(threatening.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        if count <= 0:
+            continue
+        print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
+        print """<td><ul>"""
+        
+        for sid in pth.GetThreateningUsersByVictim(m):
+            print """<li><a href="#{sid}">{username}</a></li>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
+
+        print """</ul></td></tr>"""
+    print """</table>"""
+   
     
     print "<h2>Cached Passwords</h2>"
     print "<h3>On how many machines each secret is cached (possible attacker count)?</h3>"
