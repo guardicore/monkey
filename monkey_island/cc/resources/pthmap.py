@@ -826,7 +826,7 @@ class PassTheHashMap(object):
 
     @cache
     def GetNonCritialServers(self):
-        return self.machines - self.GetCritialServers()
+        return set(self.machines) - self.GetCritialServers()
         
     @cache
     def GetThreateningUsersByVictim(self, victim):
