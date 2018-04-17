@@ -776,13 +776,16 @@ class PassTheHashMap(object):
 
     @cache
     def GetVictimsByAttacker(self, attacker):
+        if type(victim) != unicode:
+            victim = victim.monkey_guid
+
         victims = set()
     
         for atck, vic, _ in self.edges:
             if atck == attacker:
                 victims.add(vic)
         
-        return victims
+        return set(map(Machine, victims))
     
     @cache
     def GetInPathCountByVictim(self, victim, already_processed=None):
