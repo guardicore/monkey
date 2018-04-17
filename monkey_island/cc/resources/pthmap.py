@@ -763,13 +763,16 @@ class PassTheHashMap(object):
     
     @cache
     def GetAttackersByVictim(self, victim):
-        attackers = set()
+        if type(victim) != unicode:
+            victim = victim.monkey_guid
     
+        attackers = set()
+
         for atck, vic, _ in self.edges:
             if vic == victim:
                 attackers.add(atck)
         
-        return attackers
+        return set(map(Machine, attackers))
 
     @cache
     def GetVictimsByAttacker(self, attacker):
