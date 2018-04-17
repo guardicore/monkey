@@ -48,7 +48,7 @@ def cache(foo):
         if type(o) in (int, float, str, unicode):
             return o
 
-        elif type(o) in (list, tuple):
+        elif type(o) in (list, tuple, set):
             hashed = tuple([hash(x) for x in o])
             
             if "NotHashable" in hashed:
@@ -75,13 +75,13 @@ def cache(foo):
             return "PassTheHashMapSingleton"
 
         else:
+            assert False, "%s of type %s is not hashable" % (repr(o), type(o))
             return "NotHashable"
 
     def wrapper(*args, **kwargs):
         hashed = (hash(args), hash(kwargs))
         
         if "NotHashable" in hashed:
-            print foo
             return foo(*args, **kwargs)
     
         if not hasattr(foo, "_mycache_"):
@@ -818,10 +818,10 @@ class PassTheHashMap(object):
 
         return machines
 
-    def GetThreateningUsersByVictim(victim):
+    def GetThreateningUsersByVictim(self, victim):
         threatening_users = set()
         
-        for attacker in pth.GetAttackersByVictim(victim):
+        for attacker in self.GetAttackersByVictim(victim):
             threatening_users |= (attacker.GetCachedSids() & victim.GetAdmins())
 
         return threatening_users
