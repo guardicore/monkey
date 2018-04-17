@@ -776,8 +776,8 @@ class PassTheHashMap(object):
 
     @cache
     def GetVictimsByAttacker(self, attacker):
-        if type(victim) != unicode:
-            victim = victim.monkey_guid
+        if type(attacker) != unicode:
+            attacker = attacker.monkey_guid
 
         victims = set()
     
