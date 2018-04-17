@@ -204,9 +204,14 @@ class Machine(object):
         return None
     
     @cache
-    def GetInstalledServices(self):
+    def GetCriticalServicesInstalled(self):
         def IsNameOfCriticalService(name):
-            services = ("iis", "exchange", "active directory", "domain controller", "mssql")
+            services = ("W3svc", "MSExchangeServiceHost", "MSSQLServer")
+            services = map(string.lower, services)
+            
+            if not name:
+                return False
+            
             name = name.lower()
             
             for ser in services:
@@ -217,6 +222,9 @@ class Machine(object):
     
         doc = self.latest_system_info
         found = []
+        
+        if self.IsDomainController():
+            found.append("Domain Controller")
 
         for product in doc["data"]["Win32_Product"]:
             service_name = eval(product["Name"])
@@ -787,6 +795,16 @@ class PassTheHashMap(object):
 
         return count
 
+    @cache
+    def GetCritialServers(self):
+        machines = set()
+        
+        for m in self.machines:
+            if m.IsCriticalServer():
+                machines.add(m)
+
+        return machines
+
 def main():
     pth = PassTheHashMap()
 
@@ -875,6 +893,16 @@ def main():
         print """<tr><td><a href="#{ip}">{ip}</a></td><td><a href="#{ip}">{hostname}</a></td><td>{domain}</td><td>{path_count}</td></tr>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), path_count=path_count)
     print """</table>"""
     
+    print "<h2>Critical Servers</h2>"
+    print "<h3>List of all machines identified as critical servers</h3>"
+    critical_servers = pth.GetCritialServers()
+    
+    print """<table>"""
+    print """<tr><th>Ip</th><th>Hostname</th><th>Domain Name</th></tr>"""
+    for m in critical_servers:
+        print """<tr><td><a href="#{ip}">{ip}</a></td><td><a href="#{ip}">{hostname}</a></td><td>{domain}</td></tr>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName())
+    print """</table>"""
+    
     print "<hr />"
     
     for m in pth.machines:
@@ -911,7 +939,7 @@ def main():
         print """<h3>Installed Critical Services</h3>"""
         print """<h4>List of crtical services found installed on machine</h4>"""
         print """<ul>"""
-        for service_name in m.GetInstalledServices():
+        for service_name in m.GetCriticalServicesInstalled():
             print """<li>{service_name}</li>""".format(service_name=service_name)
         print """</ul>"""
         
