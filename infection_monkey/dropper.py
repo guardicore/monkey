@@ -133,22 +133,25 @@ class MonkeyDrops(object):
             LOG.warn("Seems like monkey died too soon")
 
     def cleanup(self):
-        if (self._config['source_path'].lower() != self._config['destination_path'].lower()) and \
-                os.path.exists(self._config['source_path']) and \
-                WormConfiguration.dropper_try_move_first:
+        try:
+            if (self._config['source_path'].lower() != self._config['destination_path'].lower()) and \
+                    os.path.exists(self._config['source_path']) and \
+                    WormConfiguration.dropper_try_move_first:
 
-            # try removing the file first
-            try:
-                os.remove(self._config['source_path'])
-            except Exception as exc:
-                LOG.debug("Error removing source file '%s': %s", self._config['source_path'], exc)
+                # try removing the file first
+                try:
+                    os.remove(self._config['source_path'])
+                except Exception as exc:
+                    LOG.debug("Error removing source file '%s': %s", self._config['source_path'], exc)
 
-                # mark the file for removal on next boot
-                dropper_source_path_ctypes = c_char_p(self._config['source_path'])
-                if 0 == ctypes.windll.kernel32.MoveFileExA(dropper_source_path_ctypes, None,
-                                                           MOVEFILE_DELAY_UNTIL_REBOOT):
-                    LOG.debug("Error marking source file '%s' for deletion on next boot (error %d)",
-                              self._config['source_path'], ctypes.windll.kernel32.GetLastError())
-                else:
-                    LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
-                              self._config['source_path'])
+                    # mark the file for removal on next boot
+                    dropper_source_path_ctypes = c_char_p(self._config['source_path'])
+                    if 0 == ctypes.windll.kernel32.MoveFileExA(dropper_source_path_ctypes, None,
+                                                               MOVEFILE_DELAY_UNTIL_REBOOT):
+                        LOG.debug("Error marking source file '%s' for deletion on next boot (error %d)",
+                                  self._config['source_path'], ctypes.windll.kernel32.GetLastError())
+                    else:
+                        LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
+                                  self._config['source_path'])
+        except AttributeError:
+            LOG.error("Invalid configuration options. Failing")
