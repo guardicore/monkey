@@ -310,7 +310,16 @@ class Machine(object):
 
     @cache
     def GetLocalAdmins(self):
-        return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).keys())
+        admins = self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators"))
+        
+        #debug = self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Users"))
+        #admins.update(debug)
+        
+        return admins
+        
+    @cache
+    def GetLocalAdminSids(self):
+        return set(self.GetLocalAdmins().keys())
     
     @cache
     def GetLocalSids(self):
@@ -325,7 +334,7 @@ class Machine(object):
 
     @cache
     def GetLocalAdminNames(self):
-        return set(self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators")).values())
+        return set(self.GetLocalAdmins().values())
 
     @cache
     def GetSam(self):
@@ -452,13 +461,13 @@ class Machine(object):
         domain_admins = set()
         
         for dc in DCs:
-            domain_admins |= dc.GetLocalAdmins()
+            domain_admins |= dc.GetLocalAdminSids()
         
         return domain_admins
 
     @cache
     def GetAdmins(self):
-        return self.GetLocalAdmins() | self.GetDomainAdminsOfMachine()
+        return self.GetLocalAdminSids() | self.GetDomainAdminsOfMachine()
 
     @cache
     def GetAdminNames(self):
@@ -820,11 +829,16 @@ def main():
     dups = dict(map(lambda x: (x, len(pth.GetSidsBySecret(x))), pth.GetAllSecrets()))
     
     print """<table>"""
-    print """<tr><th>Secret</th><th>User Count</th></tr>"""
+    print """<tr><th>Secret</th><th>User Count</th><th>Users That Share This Password</th></tr>"""
     for secret, count in sorted(dups.iteritems(), key=lambda (k,v): (v,k), reverse=True):
         if count <= 1:
             continue
         print """<tr><td><a href="#{secret}">{secret}</a></td><td>{count}</td>""".format(secret=secret, count=count)
+        print """<td><ul>"""
+        for sid in pth.GetSidsBySecret(secret):
+            print """<li>{username}"""
+            print """<li><a href="#{sid}">{username}</a></li>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
+        print """</ul></td></tr>"""
     print """</table>"""
     
     print "<h2>Cached Passwords</h2>"
