@@ -211,7 +211,7 @@ class Telemetry(flask_restful.Resource):
             for field in ['password', 'lm_hash', 'ntlm_hash']:
                 credential = attempts[i][field]
                 if len(credential) > 0:
-                    attempts[i][field] = encryptor.enc(credential)
+                    attempts[i][field] = encryptor.enc(credential.encode('utf-8'))
 
 
 TELEM_PROCESS_DICT = \
