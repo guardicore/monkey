@@ -53,7 +53,7 @@ class MonkeyDrops(object):
 
         if self._config['destination_path'] is None:
             LOG.error("No destination path specified")
-            return
+            return False
 
         # we copy/move only in case path is different
         file_moved = os.path.samefile(self._config['source_path'], self._config['destination_path'])
