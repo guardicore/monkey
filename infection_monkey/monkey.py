@@ -14,6 +14,7 @@ from network.firewall import app as firewall
 from network.network_scanner import NetworkScanner
 from system_info import SystemInfoCollector
 from system_singleton import SystemSingleton
+from windows_upgrader import WindowsUpgrader
 
 __author__ = 'itamar'
 
@@ -35,6 +36,8 @@ class InfectionMonkey(object):
         self._fingerprint = None
         self._default_server = None
         self._depth = 0
+        self._opts = None
+        self._upgrading_to_64 = False
 
     def initialize(self):
         LOG.info("Monkey is initializing...")
@@ -46,14 +49,13 @@ class InfectionMonkey(object):
         arg_parser.add_argument('-p', '--parent')
         arg_parser.add_argument('-t', '--tunnel')
         arg_parser.add_argument('-s', '--server')
-        arg_parser.add_argument('-d', '--depth')
-        opts, self._args = arg_parser.parse_known_args(self._args)
+        arg_parser.add_argument('-d', '--depth', type=int)
+        self._opts, self._args = arg_parser.parse_known_args(self._args)
 
-        self._parent = opts.parent
-        self._default_tunnel = opts.tunnel
-        self._default_server = opts.server
-        if opts.depth:
-            WormConfiguration.depth = int(opts.depth)
+        self._parent = self._opts.parent
+        self._default_tunnel = self._opts.tunnel
+        self._default_server = self._opts.server
+        if self._opts.depth:
             WormConfiguration._depth_from_commandline = True
         self._keep_running = True
         self._network = NetworkScanner()
@@ -69,14 +71,26 @@ class InfectionMonkey(object):
     def start(self):
         LOG.info("Monkey is running...")
 
-        if firewall.is_enabled():
-            firewall.add_firewall_rule()
-        ControlClient.wakeup(parent=self._parent, default_tunnel=self._default_tunnel)
+        if not ControlClient.find_server(default_tunnel=self._default_tunnel):
+            LOG.info("Monkey couldn't find server. Going down.")
+            return
+
+        if WindowsUpgrader.should_upgrade():
+            self._upgrading_to_64 = True
+            self._singleton.unlock()
+            LOG.info("32bit monkey running on 64bit Windows. Upgrading.")
+            WindowsUpgrader.upgrade(self._opts)
+            return
+
+        ControlClient.wakeup(parent=self._parent)
         ControlClient.load_control_config()
 
         if not WormConfiguration.alive:
             LOG.info("Marked not alive from configuration")
             return
+
+        if firewall.is_enabled():
+            firewall.add_firewall_rule()
 
         monkey_tunnel = ControlClient.create_control_tunnel()
         if monkey_tunnel:
@@ -216,23 +230,31 @@ class InfectionMonkey(object):
         LOG.info("Monkey cleanup started")
         self._keep_running = False
 
-        # Signal the server (before closing the tunnel)
-        ControlClient.send_telemetry("state", {'done': True})
+        if self._upgrading_to_64:
+            InfectionMonkey.close_tunnel()
+            firewall.close()
+        else:
+            ControlClient.send_telemetry("state", {'done': True})  # Signal the server (before closing the tunnel)
+            InfectionMonkey.close_tunnel()
+            firewall.close()
+            if WormConfiguration.send_log_to_server:
+                self.send_log()
+            self._singleton.unlock()
 
-        # Close tunnel
+        InfectionMonkey.self_delete()
+        LOG.info("Monkey is shutting down")
+
+    @staticmethod
+    def close_tunnel():
         tunnel_address = ControlClient.proxies.get('https', '').replace('https://', '').split(':')[0]
         if tunnel_address:
             LOG.info("Quitting tunnel %s", tunnel_address)
             tunnel.quit_tunnel(tunnel_address)
 
-        firewall.close()
-
-        if WormConfiguration.send_log_to_server:
-            self.send_log()
-
-        self._singleton.unlock()
-
-        if WormConfiguration.self_delete_in_cleanup and -1 == sys.executable.find('python'):
+    @staticmethod
+    def self_delete():
+        if WormConfiguration.self_delete_in_cleanup \
+                and -1 == sys.executable.find('python'):
             try:
                 if "win32" == sys.platform:
                     from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
@@ -246,8 +268,6 @@ class InfectionMonkey(object):
                     os.remove(sys.executable)
             except Exception as exc:
                 LOG.error("Exception in self delete: %s", exc)
-
-        LOG.info("Monkey is shutting down")
 
     def send_log(self):
         monkey_log_path = utils.get_monkey_log_path()

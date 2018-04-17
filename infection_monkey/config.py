@@ -1,4 +1,5 @@
 import os
+import struct
 import sys
 import types
 import uuid
@@ -8,7 +9,6 @@ from itertools import product
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
     SambaCryExploiter, ElasticGroovyExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
-from network.range import FixedRange
 
 __author__ = 'itamar'
 
@@ -116,7 +116,8 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = '/bin/sh'
-    dropper_target_path = r"C:\Windows\monkey.exe"
+    dropper_target_path_win_32 = r"C:\Windows\monkey32.exe"
+    dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
     ###########################
@@ -183,8 +184,7 @@ class Configuration(object):
     # Auto detect and scan local subnets
     local_network_scan = True
 
-    range_class = FixedRange
-    range_fixed = ['', ]
+    subnet_scan_list = ['', ]
 
     blocked_ips = ['', ]
 

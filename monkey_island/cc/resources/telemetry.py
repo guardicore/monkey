@@ -190,7 +190,8 @@ class Telemetry(flask_restful.Resource):
         for user in creds:
             for field in ['password', 'lm_hash', 'ntlm_hash']:
                 if field in creds[user]:
-                    creds[user][field] = encryptor.enc(creds[user][field])
+                    # this encoding is because we might run into passwords which are not pure ASCII
+                    creds[user][field] = encryptor.enc(creds[user][field].encode('utf-8'))
 
     @staticmethod
     def add_system_info_creds_to_config(creds):
@@ -210,7 +211,7 @@ class Telemetry(flask_restful.Resource):
             for field in ['password', 'lm_hash', 'ntlm_hash']:
                 credential = attempts[i][field]
                 if len(credential) > 0:
-                    attempts[i][field] = encryptor.enc(credential)
+                    attempts[i][field] = encryptor.enc(credential.encode('utf-8'))
 
 
 TELEM_PROCESS_DICT = \

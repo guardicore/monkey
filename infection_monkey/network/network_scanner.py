@@ -2,8 +2,9 @@ import logging
 import time
 
 from config import WormConfiguration
-from info import local_ips, get_ips_from_interfaces
-from range import *
+from info import local_ips, get_interfaces_ranges
+from common.network.network_range import *
+from model import VictimHost
 from . import HostScanner
 
 __author__ = 'itamar'
@@ -20,9 +21,8 @@ class NetworkScanner(object):
 
     def initialize(self):
         """
-        Set up scanning based on configuration
-        FixedRange -> Reads from range_fixed field in configuration
-        otherwise, takes a range from every IP address the current host has.
+        Set up scanning.
+        based on configuration: scans local network and/or scans fixed list of IPs/subnets.
         :return:
         """
         # get local ip addresses
@@ -33,13 +33,9 @@ class NetworkScanner(object):
 
         LOG.info("Found local IP addresses of the machine: %r", self._ip_addresses)
         # for fixed range, only scan once.
-        if WormConfiguration.range_class is FixedRange:
-            self._ranges = [WormConfiguration.range_class(fixed_addresses=WormConfiguration.range_fixed)]
-        else:
-            self._ranges = [WormConfiguration.range_class(ip_address)
-                            for ip_address in self._ip_addresses]
+        self._ranges = [NetworkRange.get_range_obj(address_str=x) for x in WormConfiguration.subnet_scan_list]
         if WormConfiguration.local_network_scan:
-            self._ranges += [FixedRange([ip_address for ip_address in get_ips_from_interfaces()])]
+            self._ranges += get_interfaces_ranges()
         LOG.info("Base local networks to scan are: %r", self._ranges)
 
     def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
@@ -50,7 +46,8 @@ class NetworkScanner(object):
 
         for net_range in self._ranges:
             LOG.debug("Scanning for potential victims in the network %r", net_range)
-            for victim in net_range:
+            for ip_addr in net_range:
+                victim = VictimHost(ip_addr)
                 if stop_callback and stop_callback():
                     LOG.debug("Got stop signal")
                     break
