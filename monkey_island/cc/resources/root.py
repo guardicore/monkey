@@ -15,7 +15,6 @@ __author__ = 'Barak'
 
 class Root(flask_restful.Resource):
 
-    @jwt_required()
     def get(self, action=None):
         if not action:
             action = request.args.get('action')
@@ -26,15 +25,19 @@ class Root(flask_restful.Resource):
             return Root.reset_db()
         elif action == "killall":
             return Root.kill_all()
+        elif action == "is-up":
+            return {'is-up': True}
         else:
             return make_response(400, {'error': 'unknown action'})
 
     @staticmethod
+    @jwt_required()
     def get_server_info():
         return jsonify(ip_addresses=local_ip_addresses(), mongo=str(mongo.db),
                        completed_steps=Root.get_completed_steps())
 
     @staticmethod
+    @jwt_required()
     def reset_db():
         # We can't drop system collections.
         [mongo.db[x].drop() for x in mongo.db.collection_names() if not x.startswith('system.')]
@@ -42,6 +45,7 @@ class Root(flask_restful.Resource):
         return jsonify(status='OK')
 
     @staticmethod
+    @jwt_required()
     def kill_all():
         mongo.db.monkey.update({'dead': False}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}},
                                upsert=False,
@@ -49,6 +53,7 @@ class Root(flask_restful.Resource):
         return jsonify(status='OK')
 
     @staticmethod
+    @jwt_required()
     def get_completed_steps():
         is_any_exists = NodeService.is_any_monkey_exists()
         infection_done = NodeService.is_monkey_finished_running()

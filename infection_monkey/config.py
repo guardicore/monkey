@@ -1,4 +1,5 @@
 import os
+import struct
 import sys
 import types
 import uuid
@@ -115,7 +116,8 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = '/bin/sh'
-    dropper_target_path = r"C:\Windows\monkey.exe"
+    dropper_target_path_win_32 = r"C:\Windows\monkey32.exe"
+    dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
     ###########################
