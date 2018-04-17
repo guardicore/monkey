@@ -205,8 +205,37 @@ class Machine(object):
     
     @cache
     def GetInstalledServices(self):
-        "IIS-WebServer"
+        def IsNameOfCriticalService(name):
+            services = ("iis", "exchange", "active directory", "domain controller", "mssql")
+            name = name.lower()
+            
+            for ser in services:
+                if ser in name:
+                    return True
+            
+            return False
     
+        doc = self.latest_system_info
+        found = []
+
+        for product in doc["data"]["Win32_Product"]:
+            service_name = eval(product["Name"])
+            
+            if not IsNameOfCriticalService(service_name):
+                continue
+            
+            found.append(service_name)
+
+        for service in doc["data"]["Win32_Service"]:
+            service_name = eval(service["Name"])
+            
+            if not IsNameOfCriticalService(service_name):
+                continue
+            
+            found.append(service_name)
+        
+        return found
+
     @cache
     def GetUsernamesBySecret(self, secret):
         sam = self.GetLocalSecrets()
@@ -878,6 +907,15 @@ def main():
         for sid in m.GetAdmins():
             print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=m.GetUsernameBySid(sid), sid=sid)
         print """</ul>"""
+        
+        print """<h3>Installed Critical Services</h3>"""
+        print """<h4>List of crtical services found installed on machine</h4>"""
+        print """<ul>"""
+        for service_name in m.GetInstalledServices():
+            print """<li>{service_name}</li>""".format(service_name=service_name)
+        print """</ul>"""
+        
+        
 
     print "<hr />"
     
