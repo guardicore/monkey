@@ -96,7 +96,7 @@ class AzureCollector(object):
         except IOError:
             LOG.warning("Failed to parse VM Access plugin file. Could not open file")
             return None
-        except (KeyError, ValueError):
+        except (KeyError, ValueError, IndexError):
             LOG.warning("Failed to parse VM Access plugin file. Invalid format")
             return None
         except subprocess.CalledProcessError:
