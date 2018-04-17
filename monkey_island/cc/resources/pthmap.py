@@ -245,6 +245,10 @@ class Machine(object):
         return found
 
     @cache
+    def IsCriticalServer(self):
+        return len(self.GetCriticalServicesInstalled()) > 0
+
+    @cache
     def GetUsernamesBySecret(self, secret):
         sam = self.GetLocalSecrets()
         
