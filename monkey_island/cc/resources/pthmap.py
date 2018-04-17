@@ -207,7 +207,7 @@ class Machine(object):
     def GetCriticalServicesInstalled(self):
         def IsNameOfCriticalService(name):
             services = ("W3svc", "MSExchangeServiceHost", "MSSQLServer")
-            services = map(string.lower, services)
+            services = map(str.lower, services)
             
             if not name:
                 return False
