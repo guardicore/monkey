@@ -98,7 +98,7 @@ class Machine(object):
     def __init__(self, monkey_guid):
         self.monkey_guid = str(monkey_guid)
         
-        self.latest_system_info = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid}).sort([("timestamp", 1)]).limit(1)
+        self.latest_system_info = mongo.db.telemetry.find({"telem_type":"system_info_collection", "monkey_guid": self.monkey_guid}).sort([("timestamp", -1)]).limit(1)
         
         if self.latest_system_info.count() > 0:
             self.latest_system_info = self.latest_system_info[0]
@@ -282,7 +282,7 @@ class Machine(object):
         doc = self.latest_system_info
 
         users = dict()
-
+        
         for group_user in doc["data"]["Win32_GroupUser"]:
             if eval(group_user["GroupComponent"]["SID"]) != sid:
                 continue
