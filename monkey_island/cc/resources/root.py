@@ -57,5 +57,8 @@ class Root(flask_restful.Resource):
     def get_completed_steps():
         is_any_exists = NodeService.is_any_monkey_exists()
         infection_done = NodeService.is_monkey_finished_running()
-        report_done = ReportService.is_report_generated()
+        if not infection_done:
+            report_done = False
+        else:
+            report_done = ReportService.is_report_generated()
         return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done, report_done=report_done)
