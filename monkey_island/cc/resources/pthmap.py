@@ -852,11 +852,11 @@ def main():
     dups = dict(map(lambda x: (x, len(pth.GetSidsBySecret(x))), pth.GetAllSecrets()))
     
     print """<table>"""
-    print """<tr><th>Secret</th><th>User Count</th><th>Users That Share This Password</th></tr>"""
+    print """<tr><th>User Count</th><th>Users That Share This Password</th></tr>"""
     for secret, count in sorted(dups.iteritems(), key=lambda (k,v): (v,k), reverse=True):
         if count <= 1:
             continue
-        print """<tr><td><a href="#{secret}">{secret}</a></td><td>{count}</td>""".format(secret=secret, count=count)
+        print """<tr><td>{count}</td>""".format(secret=secret, count=count)
         print """<td><ul>"""
         for sid in pth.GetSidsBySecret(secret):
             print """<li><a href="#{sid}">{username}</a></li>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
