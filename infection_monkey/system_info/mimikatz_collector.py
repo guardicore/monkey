@@ -24,7 +24,7 @@ class MimikatzCollector(object):
             self._collect = collect_proto(("collect", self._dll))
             self._get = get_proto(("get", self._dll))
             self._isInit = True
-        except StandardError:
+        except Exception:
             LOG.exception("Error initializing mimikatz collector")
 
     def get_logon_info(self):
@@ -71,7 +71,7 @@ class MimikatzCollector(object):
                     logon_data_dictionary[username]["ntlm_hash"] = ntlm_hash
 
             return logon_data_dictionary
-        except StandardError:
+        except Exception:
             LOG.exception("Error getting logon info")
             return {}
 

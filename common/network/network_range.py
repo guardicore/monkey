@@ -7,6 +7,11 @@ import ipaddress
 
 __author__ = 'itamar'
 
+try:
+    unicode        # Python 2
+except NameError:
+    unicode = str  # Python 3
+
 
 class NetworkRange(object):
     __metaclass__ = ABCMeta

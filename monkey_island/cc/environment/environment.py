@@ -1,6 +1,8 @@
+from __future__ import print_function
+from __future__ import absolute_import
 import json
-import standard
-import aws
+from . import standard
+from . import aws
 
 ENV_DICT = {
     'standard': standard.StandardEnvironment,

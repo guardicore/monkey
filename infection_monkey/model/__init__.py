@@ -1,4 +1,5 @@
-from host import VictimHost
+from __future__ import absolute_import
+from .host import VictimHost
 
 __author__ = 'itamar'
 

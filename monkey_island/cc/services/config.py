@@ -10,6 +10,12 @@ from cc.utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
 
+try:
+    basestring        # Python 2
+except NameError:
+    basestring = str  # Python 3
+
+
 WARNING_SIGN = u" \u26A0"
 
 SCHEMA = {
