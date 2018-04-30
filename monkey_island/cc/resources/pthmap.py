@@ -173,7 +173,7 @@ class Machine(object):
             if eval(user["Name"]) != username:
                 continue
                 
-            if eval(user["SIDType"]) != SidTypeUser:
+            if user["SIDType"] != SidTypeUser:
                 continue
 
             return eval(user["SID"])
@@ -204,7 +204,7 @@ class Machine(object):
             if eval(user["SID"]) != sid:
                 continue
                 
-            if eval(user["SIDType"]) != SidTypeUser:
+            if user["SIDType"] != SidTypeUser:
                 continue
 
             return { "Domain": eval(user["Domain"]),
@@ -296,7 +296,7 @@ class Machine(object):
             if eval(group["Name"]) != group_name:
                 continue
 
-            if eval(group["SIDType"]) != SidTypeGroup:
+            if group["SIDType"] != SidTypeGroup:
                 continue
 
             return eval(group["SID"])
@@ -313,13 +313,13 @@ class Machine(object):
             if eval(group_user["GroupComponent"]["SID"]) != sid:
                 continue
 
-            if eval(group_user["GroupComponent"]["SIDType"]) != SidTypeGroup:
+            if group_user["GroupComponent"]["SIDType"] != SidTypeGroup:
                 continue
             
             if "PartComponent" not in group_user.keys():
                 continue
 
-            if eval(group_user["PartComponent"]["SIDType"]) != SidTypeUser:
+            if group_user["PartComponent"]["SIDType"] != SidTypeUser:
                 continue
 
             users[eval(group_user["PartComponent"]["SID"])] = eval(group_user["PartComponent"]["Name"])
@@ -360,7 +360,7 @@ class Machine(object):
         SIDs = set()
     
         for user in doc["data"]["Win32_UserAccount"]:
-            if eval(user["SIDType"]) != SidTypeUser:
+            if user["SIDType"] != SidTypeUser:
                 continue
         
             SIDs.add(eval(user["SID"]))
