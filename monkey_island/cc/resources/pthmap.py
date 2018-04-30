@@ -48,6 +48,9 @@ def cache(foo):
         if type(o) in (int, float, str, unicode):
             return o
 
+        elif type(o) in (type(None),):
+            return "___None___"
+            
         elif type(o) in (list, tuple, set):
             hashed = tuple([hash(x) for x in o])
             
@@ -465,7 +468,7 @@ class Machine(object):
         domain_admins = set()
         
         for dc in DCs:
-            domain_admins |= dc.GetUsersByGroupSid(self.GetGroupSidByGroupName("Domain Admins"))
+            domain_admins |= set(dc.GetUsersByGroupSid(self.GetGroupSidByGroupName("Domain Admins")).keys())
         
         return domain_admins
 
@@ -899,7 +902,7 @@ def main():
         
         print """<td><ul>"""
         
-        for sid in pth.GetThreateningUsersByVictim(m):
+        for sid in pth.GetSharedAdmins(m):
             print """<li><a href="#{sid}">{username}</a></li>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
 
         print """</ul></td></tr>"""
