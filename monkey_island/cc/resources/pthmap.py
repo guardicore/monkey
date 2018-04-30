@@ -875,12 +875,14 @@ def main():
     for m, count in sorted(threatening.iteritems(), key=lambda (k,v): (v,k), reverse=True):
         if count <= 0:
             continue
-        print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
+        print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
         
         print """<td><ul>"""
         for service_name in m.GetCriticalServicesInstalled():
             print """<li>{service_name}</li>""".format(service_name=service_name)
         print """</ul></td>"""
+        
+        print """<td>{count}</td>""".format(count=count)
         
         print """<td><ul>"""
         
@@ -901,12 +903,14 @@ def main():
     for m, count in sorted(threatening.iteritems(), key=lambda (k,v): (v,k), reverse=True):
         if count <= 0:
             continue
-        print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
+        print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
         
         print """<td><ul>"""
         for service_name in m.GetCriticalServicesInstalled():
             print """<li>{service_name}</li>""".format(service_name=service_name)
         print """</ul></td>"""
+        
+        print """<td>{count}</td>""".format(count=count)
         
         print """<td><ul>"""
         
