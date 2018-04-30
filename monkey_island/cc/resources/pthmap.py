@@ -465,7 +465,7 @@ class Machine(object):
         domain_admins = set()
         
         for dc in DCs:
-            domain_admins |= dc.GetLocalAdminSids()
+            domain_admins |= dc.GetUsersByGroupSid(self.GetGroupSidByGroupName("Domain Admins"))
         
         return domain_admins
 
@@ -851,6 +851,7 @@ class PassTheHashMap(object):
 
             shared_admins |= (m.GetLocalAdminSids() & other.GetLocalAdminSids())
         
+        shared_admins -= m.GetDomainAdminsOfMachine()
         return shared_admins
 
 def main():
