@@ -214,9 +214,10 @@ class Machine(object):
             
             name = name.lower()
             
-            for ser in services:
-                if ser in name:
-                    return True
+            return name in services
+            #for ser in services:
+            #    if ser in name:
+            #        return True
             
             return False
     
@@ -238,6 +239,9 @@ class Machine(object):
             service_name = eval(service["Name"])
             
             if not IsNameOfCriticalService(service_name):
+                continue
+                
+            if eval(service["State"]) != "Running":
                 continue
             
             found.append(service_name)
