@@ -206,7 +206,7 @@ class Machine(object):
     @cache
     def GetCriticalServicesInstalled(self):
         def IsNameOfCriticalService(name):
-            services = ("W3svc", "MSExchangeServiceHost", "MSSQLServer")
+            services = ("W3svc", "MSExchangeServiceHost", "MSSQLServer", "dns")
             services = map(str.lower, services)
             
             if not name:
@@ -899,7 +899,7 @@ def main():
 
         print """</ul></td></tr>"""
     print """</table>"""
-   
+
     
     print "<h2>Cached Passwords</h2>"
     print "<h3>On how many machines each secret is cached (possible attacker count)?</h3>"
