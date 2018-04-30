@@ -845,7 +845,7 @@ class PassTheHashMap(object):
     def GetSharedAdmins(self, m):
         shared_admins = set()
         
-        for other in pth.machines:
+        for other in self.machines:
             if m == other:
                 continue
 
@@ -883,7 +883,7 @@ def main():
     
     print """<table>"""
     print """<tr><th>Ip</th><th>Hostname</th><th>Domain</th><th>Critical Services Installed</th><th>Shared User Count</th><th>Shared Users</th></tr>"""
-    for secret, count in sorted(dups.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+    for m, count in sorted(dups.iteritems(), key=lambda (k,v): (v,k), reverse=True):
         if count <= 0:
             continue
 
