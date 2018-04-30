@@ -867,11 +867,17 @@ def main():
     threatening = dict(map(lambda x: (x, len(pth.GetThreateningUsersByVictim(x))), pth.GetCritialServers()))
     
     print """<table>"""
-    print """<tr><th>Critical Server</th><th>Hostname</th><th>Domain</th><th>Threatening User Count</th><th>Threatening Users</th></tr>"""
+    print """<tr><th>Critical Server</th><th>Hostname</th><th>Domain</th><th>Critical Services Installed</th><th>Threatening User Count</th><th>Threatening Users</th></tr>"""
     for m, count in sorted(threatening.iteritems(), key=lambda (k,v): (v,k), reverse=True):
         if count <= 0:
             continue
         print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
+        
+        print """<td><ul>"""
+        for service_name in m.GetCriticalServicesInstalled():
+            print """<li>{service_name}</li>""".format(service_name=service_name)
+        print """</ul></td>"""
+        
         print """<td><ul>"""
         
         for sid in pth.GetThreateningUsersByVictim(m):
@@ -887,11 +893,17 @@ def main():
     threatening = dict(map(lambda x: (x, len(pth.GetThreateningUsersByVictim(x))), pth.GetNonCritialServers()))
     
     print """<table>"""
-    print """<tr><th>Critical Server</th><th>Hostname</th><th>Domain</th><th>Threatening User Count</th><th>Threatening Users</th></tr>"""
+    print """<tr><th>Critical Server</th><th>Hostname</th><th>Domain</th><th>Critical Services Installed</th><th>Threatening User Count</th><th>Threatening Users</th></tr>"""
     for m, count in sorted(threatening.iteritems(), key=lambda (k,v): (v,k), reverse=True):
         if count <= 0:
             continue
         print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td><td>{count}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
+        
+        print """<td><ul>"""
+        for service_name in m.GetCriticalServicesInstalled():
+            print """<li>{service_name}</li>""".format(service_name=service_name)
+        print """</ul></td>"""
+        
         print """<td><ul>"""
         
         for sid in pth.GetThreateningUsersByVictim(m):
