@@ -841,6 +841,18 @@ class PassTheHashMap(object):
 
         return threatening_users
         
+    @cache
+    def GetSharedAdmins(self, m):
+        shared_admins = set()
+        
+        for other in pth.machines:
+            if m == other:
+                continue
+
+            shared_admins |= (m.GetLocalAdminSids() & other.GetLocalAdminSids())
+        
+        return shared_admins
+
 def main():
     pth = PassTheHashMap()
 
@@ -863,8 +875,35 @@ def main():
         print """</ul></td></tr>"""
     print """</table>"""
     
+
+    print "<h2>Local Admin Uniqueness</h2>"
+    print "<h3>We argue that each machine should have it's own distinct set of local admins</h3>"
     
+    dups = dict(map(lambda x: (x, len(pth.GetSharedAdmins(x))), pth.machines))
     
+    print """<table>"""
+    print """<tr><th>Ip</th><th>Hostname</th><th>Domain</th><th>Critical Services Installed</th><th>Shared User Count</th><th>Shared Users</th></tr>"""
+    for secret, count in sorted(dups.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        if count <= 0:
+            continue
+
+        print """<tr><td><a href="#{ip}">{ip}</a></td><td>{hostname}</td><td>{domain}</td>""".format(ip=m.GetIp(), hostname=m.GetHostName(), domain=m.GetDomainName(), count=count)
+        
+        print """<td><ul>"""
+        for service_name in m.GetCriticalServicesInstalled():
+            print """<li>{service_name}</li>""".format(service_name=service_name)
+        print """</ul></td>"""
+        
+        print """<td>{count}</td>""".format(count=count)
+        
+        print """<td><ul>"""
+        
+        for sid in pth.GetThreateningUsersByVictim(m):
+            print """<li><a href="#{sid}">{username}</a></li>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
+
+        print """</ul></td></tr>"""
+    print """</table>"""
+        
     print "<h2>Strong Users That Threat Critical Servers</h2>"
     print "<h3>Administrators of critical servers that we could find thier secret cached somewhere</h3>"
     
