@@ -8,7 +8,7 @@ import itertools
 import netifaces
 from subprocess import check_output
 from random import randint
-from common.network.range import CidrRange
+from common.network.network_range import CidrRange
 
 
 def get_host_subnets():
@@ -143,10 +143,7 @@ def get_interfaces_ranges():
         netmask_str = net_interface['netmask']
         ip_interface = ipaddress.ip_interface(u"%s/%s" % (address_str, netmask_str))
         # limit subnet scans to class C only
-        if ip_interface.network.num_addresses > 255:
-            res.append(CidrRange(cidr_range="%s/24" % (address_str, )))
-        else:
-            res.append(CidrRange(cidr_range="%s/%s" % (address_str, netmask_str)))
+        res.append(CidrRange(cidr_range="%s/%s" % (address_str, netmask_str)))
     return res
 
 

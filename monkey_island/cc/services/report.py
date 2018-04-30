@@ -8,7 +8,7 @@ from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 from cc.utils import local_ip_addresses, get_subnets
-from common.network.range import NetworkRange
+from common.network.network_range import NetworkRange
 
 __author__ = "itay.mizeretz"
 
@@ -36,6 +36,7 @@ class ReportService:
         SAMBACRY = 3
         SHELLSHOCK = 4
         CONFICKER = 5
+        AZURE = 6
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -73,6 +74,19 @@ class ReportService:
                 'dest': NodeService.get_node_hostname(NodeService.get_node_or_monkey_by_id(tunnel['tunnel']))
             }
             for tunnel in mongo.db.monkey.find({'tunnel': {'$exists': True}}, {'tunnel': 1})]
+
+    @staticmethod
+    def get_azure_issues():
+        creds = ReportService.get_azure_creds()
+        machines = set([instance['origin'] for instance in creds])
+
+        return [
+            {
+                'type': 'azure_password',
+                'machine': machine,
+                'users': set([instance['username'] for instance in creds if instance['origin'] == machine])
+            }
+            for machine in machines]
 
     @staticmethod
     def get_scanned():
@@ -136,6 +150,26 @@ class ReportService:
                             'origin': origin
                         }
                     )
+        return creds
+
+    @staticmethod
+    def get_azure_creds():
+        """
+        Recover all credentials marked as being from an Azure machine
+        :return: List of credentials.
+        """
+        creds = []
+        for telem in mongo.db.telemetry.find(
+                {'telem_type': 'system_info_collection', 'data.Azure': {'$exists': True}},
+                {'data.Azure': 1, 'monkey_guid': 1}
+        ):
+            azure_users = telem['data']['Azure']['usernames']
+            if len(azure_users) == 0:
+                continue
+            origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+            azure_leaked_users = [{'username': user.replace(',', '.'), 'type': 'Clear Password',
+                                   'origin': origin} for user in azure_users]
+            creds.extend(azure_leaked_users)
         return creds
 
     @staticmethod
@@ -350,7 +384,7 @@ class ReportService:
     @staticmethod
     def get_issues():
         issues = ReportService.get_exploits() + ReportService.get_tunnels() \
-                 + ReportService.get_island_cross_segment_issues()
+                 + ReportService.get_island_cross_segment_issues() + ReportService.get_azure_issues()
         issues_dict = {}
         for issue in issues:
             machine = issue['machine']
@@ -366,19 +400,19 @@ class ReportService:
 
     @staticmethod
     def get_config_users():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_user_list'], True)
+        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_user_list'], True, True)
 
     @staticmethod
     def get_config_passwords():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'], True)
+        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'], True, True)
 
     @staticmethod
     def get_config_exploits():
         exploits_config_value = ['exploits', 'general', 'exploiter_classes']
-        default_exploits = ConfigService.get_default_config()
+        default_exploits = ConfigService.get_default_config(False)
         for namespace in exploits_config_value:
             default_exploits = default_exploits[namespace]
-        exploits = ConfigService.get_config_value(exploits_config_value, True)
+        exploits = ConfigService.get_config_value(exploits_config_value, True, True)
 
         if exploits == default_exploits:
             return ['default']
@@ -388,15 +422,15 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        return ConfigService.get_config_value(['basic_network', 'general', 'subnet_scan_list'], True)
+        return ConfigService.get_config_value(['basic_network', 'general', 'subnet_scan_list'], True, True)
 
     @staticmethod
     def get_config_scan():
-        return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True)
+        return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True, True)
 
     @staticmethod
     def get_issues_overview(issues, config_users, config_passwords):
-        issues_byte_array = [False] * 6
+        issues_byte_array = [False] * len(ReportService.ISSUES_DICT)
 
         for machine in issues:
             for issue in issues[machine]:
@@ -408,6 +442,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.SHELLSHOCK.value] = True
                 elif issue['type'] == 'conficker':
                     issues_byte_array[ReportService.ISSUES_DICT.CONFICKER.value] = True
+                elif issue['type'] == 'azure_password':
+                    issues_byte_array[ReportService.ISSUES_DICT.AZURE.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users:
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
@@ -473,7 +509,8 @@ class ReportService:
                     {
                         'scanned': ReportService.get_scanned(),
                         'exploited': ReportService.get_exploited(),
-                        'stolen_creds': ReportService.get_stolen_creds()
+                        'stolen_creds': ReportService.get_stolen_creds(),
+                        'azure_passwords': ReportService.get_azure_creds(),
                     },
                 'recommendations':
                     {

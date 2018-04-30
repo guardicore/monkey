@@ -4,6 +4,7 @@ import platform
 from socket import gethostname
 
 import requests
+from requests.exceptions import ConnectionError
 
 import monkeyfs
 import tunnel
@@ -24,10 +25,10 @@ class ControlClient(object):
     proxies = {}
 
     @staticmethod
-    def wakeup(parent=None, default_tunnel=None, has_internet_access=None):
-        LOG.debug("Trying to wake up with Monkey Island servers list: %r" % WormConfiguration.command_servers)
-        if parent or default_tunnel:
-            LOG.debug("parent: %s, default_tunnel: %s" % (parent, default_tunnel))
+    def wakeup(parent=None, has_internet_access=None):
+        if parent:
+            LOG.debug("parent: %s" % (parent,))
+
         hostname = gethostname()
         if not parent:
             parent = GUID
@@ -35,48 +36,66 @@ class ControlClient(object):
         if has_internet_access is None:
             has_internet_access = check_internet_access(WormConfiguration.internet_services)
 
+        monkey = {'guid': GUID,
+                  'hostname': hostname,
+                  'ip_addresses': local_ips(),
+                  'description': " ".join(platform.uname()),
+                  'internet_access': has_internet_access,
+                  'config': WormConfiguration.as_dict(),
+                  'parent': parent}
+
+        if ControlClient.proxies:
+            monkey['tunnel'] = ControlClient.proxies.get('https')
+
+        requests.post("https://%s/api/monkey" % (WormConfiguration.current_server,),
+                      data=json.dumps(monkey),
+                      headers={'content-type': 'application/json'},
+                      verify=False,
+                      proxies=ControlClient.proxies,
+                      timeout=20)
+
+    @staticmethod
+    def find_server(default_tunnel=None):
+        LOG.debug("Trying to wake up with Monkey Island servers list: %r" % WormConfiguration.command_servers)
+        if default_tunnel:
+            LOG.debug("default_tunnel: %s" % (default_tunnel,))
+
+        current_server = ""
+
         for server in WormConfiguration.command_servers:
             try:
-                WormConfiguration.current_server = server
-
-                monkey = {'guid': GUID,
-                          'hostname': hostname,
-                          'ip_addresses': local_ips(),
-                          'description': " ".join(platform.uname()),
-                          'internet_access': has_internet_access,
-                          'config': WormConfiguration.as_dict(),
-                          'parent': parent}
-
-                if ControlClient.proxies:
-                    monkey['tunnel'] = ControlClient.proxies.get('https')
+                current_server = server
 
                 debug_message = "Trying to connect to server: %s" % server
                 if ControlClient.proxies:
                     debug_message += " through proxies: %s" % ControlClient.proxies
                 LOG.debug(debug_message)
-                reply = requests.post("https://%s/api/monkey" % (server,),
-                                      data=json.dumps(monkey),
-                                      headers={'content-type': 'application/json'},
-                                      verify=False,
-                                      proxies=ControlClient.proxies,
-                                      timeout=20)
+                requests.get("https://%s/api?action=is-up" % (server,),
+                             verify=False,
+                             proxies=ControlClient.proxies)
+                WormConfiguration.current_server = current_server
                 break
 
-            except Exception as exc:
-                WormConfiguration.current_server = ""
+            except ConnectionError as exc:
+                current_server = ""
                 LOG.warn("Error connecting to control server %s: %s", server, exc)
 
-        if not WormConfiguration.current_server:
-            if not ControlClient.proxies:
+        if current_server:
+            return True
+        else:
+            if ControlClient.proxies:
+                return False
+            else:
                 LOG.info("Starting tunnel lookup...")
                 proxy_find = tunnel.find_tunnel(default=default_tunnel)
                 if proxy_find:
                     proxy_address, proxy_port = proxy_find
                     LOG.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
                     ControlClient.proxies['https'] = 'https://%s:%s' % (proxy_address, proxy_port)
-                    ControlClient.wakeup(parent=parent, has_internet_access=has_internet_access)
+                    return ControlClient.find_server()
                 else:
                     LOG.info("No tunnel found")
+                    return False
 
     @staticmethod
     def keepalive():
@@ -103,6 +122,21 @@ class ControlClient(object):
         try:
             telemetry = {'monkey_guid': GUID, 'telem_type': telem_type, 'data': data}
             reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
+                                  data=json.dumps(telemetry),
+                                  headers={'content-type': 'application/json'},
+                                  verify=False,
+                                  proxies=ControlClient.proxies)
+        except Exception as exc:
+            LOG.warn("Error connecting to control server %s: %s",
+                     WormConfiguration.current_server, exc)
+
+    @staticmethod
+    def send_log(log):
+        if not WormConfiguration.current_server:
+            return
+        try:
+            telemetry = {'monkey_guid': GUID, 'log': json.dumps(log)}
+            reply = requests.post("https://%s/api/log" % (WormConfiguration.current_server,),
                                   data=json.dumps(telemetry),
                                   headers={'content-type': 'application/json'},
                                   verify=False,
@@ -234,7 +268,6 @@ class ControlClient(object):
                                   data=json.dumps(host_dict),
                                   headers={'content-type': 'application/json'},
                                   verify=False, proxies=ControlClient.proxies)
-
             if 200 == reply.status_code:
                 result_json = reply.json()
                 filename = result_json.get('filename')

@@ -1,9 +1,9 @@
 import logging
 import time
 
-from common.network.range import *
 from config import WormConfiguration
 from info import local_ips, get_interfaces_ranges
+from common.network.network_range import *
 from model import VictimHost
 from . import HostScanner
 

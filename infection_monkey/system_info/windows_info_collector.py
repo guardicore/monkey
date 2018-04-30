@@ -27,6 +27,8 @@ class WindowsInfoCollector(InfoCollector):
         self.get_hostname()
         self.get_process_list()
         self.get_network_info()
+        self.get_azure_info()
         mimikatz_collector = MimikatzCollector()
-        self.info["credentials"] = mimikatz_collector.get_logon_info()
+        mimikatz_info = mimikatz_collector.get_logon_info()
+        self.info["credentials"].update(mimikatz_info)
         return self.info
