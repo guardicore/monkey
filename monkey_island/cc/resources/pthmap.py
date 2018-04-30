@@ -39,6 +39,16 @@ DsRole_RoleMemberServer = 3
 DsRole_RoleBackupDomainController = 4
 DsRole_RolePrimaryDomainController = 5
 
+SidTypeUser = 1
+SidTypeGroup = 2
+SidTypeDomain = 3
+SidTypeAlias = 4
+SidTypeWellKnownGroup = 5
+SidTypeDeletedAccount = 6
+SidTypeInvalid = 7
+SidTypeUnknown = 8
+SidTypeComputer = 9
+
 def myntlm(x):
     hash = hashlib.new('md4', x.encode('utf-16le')).digest()
     return str(binascii.hexlify(hash))
@@ -162,6 +172,9 @@ class Machine(object):
         for user in doc["data"]["Win32_UserAccount"]:
             if eval(user["Name"]) != username:
                 continue
+                
+            if eval(user["SIDType"]) != SidTypeUser:
+                continue
 
             return eval(user["SID"])
 
@@ -189,6 +202,9 @@ class Machine(object):
 
         for user in doc["data"]["Win32_UserAccount"]:
             if eval(user["SID"]) != sid:
+                continue
+                
+            if eval(user["SIDType"]) != SidTypeUser:
                 continue
 
             return { "Domain": eval(user["Domain"]),
@@ -280,6 +296,9 @@ class Machine(object):
             if eval(group["Name"]) != group_name:
                 continue
 
+            if eval(group["SIDType"]) != SidTypeGroup:
+                continue
+
             return eval(group["SID"])
         
         return None
@@ -293,8 +312,14 @@ class Machine(object):
         for group_user in doc["data"]["Win32_GroupUser"]:
             if eval(group_user["GroupComponent"]["SID"]) != sid:
                 continue
+
+            if eval(group_user["GroupComponent"]["SIDType"]) != SidTypeGroup:
+                continue
             
             if "PartComponent" not in group_user.keys():
+                continue
+
+            if eval(group_user["PartComponent"]["SIDType"]) != SidTypeUser:
                 continue
 
             users[eval(group_user["PartComponent"]["SID"])] = eval(group_user["PartComponent"]["Name"])
@@ -335,6 +360,9 @@ class Machine(object):
         SIDs = set()
     
         for user in doc["data"]["Win32_UserAccount"]:
+            if eval(user["SIDType"]) != SidTypeUser:
+                continue
+        
             SIDs.add(eval(user["SID"]))
         
         return SIDs
