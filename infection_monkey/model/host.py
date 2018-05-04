@@ -29,7 +29,7 @@ class VictimHost(object):
         return self.ip_addr.__cmp__(other.ip_addr)
 
     def __repr__(self):
-        return "<VictimHost %s>" % self.ip_addr
+        return "VictimHost({0!r})".format(self.ip_addr)
 
     def __str__(self):
         victim = "Victim Host %s: " % self.ip_addr

@@ -2,7 +2,7 @@
 
 Thanks for your interest in making the Monkey -- and therefore, your network -- a better place!
 
-Are you about to report a bug? Sorry to hear it. Here's our [Issue tracker].
+Are you about to report a bug? Sorry to hear it. Here's our [Issue tracker](https://github.com/guardicore/monkey/issues).
 Please try to be as specific as you can about your problem; try to include steps
 to reproduce. While we'll try to help anyway, focusing us will help us help you faster.
 
