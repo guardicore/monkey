@@ -35,11 +35,11 @@ class NetworkRange(object):
 
     @abstractmethod
     def is_in_range(self, ip_address):
-        raise NotImplementedError()
+        pass
 
     @abstractmethod
     def _get_range(self):
-        raise NotImplementedError()
+        pass
 
     @staticmethod
     def get_range_obj(address_str):
@@ -63,12 +63,12 @@ class NetworkRange(object):
 
 class CidrRange(NetworkRange):
     def __init__(self, cidr_range, shuffle=True):
-        super(CidrRange, self).__init__(shuffle=shuffle)
+        super().__init__(shuffle=shuffle)
         self._cidr_range = cidr_range.strip()
         self._ip_network = ipaddress.ip_network(unicode(self._cidr_range), strict=False)
 
     def __repr__(self):
-        return "<CidrRange %s>" % (self._cidr_range,)
+        return "CidrRange({0!r}, shuffle={1!r})".format(self._cidr_range, self.shuffle)
 
     def is_in_range(self, ip_address):
         return ipaddress.ip_address(ip_address) in self._ip_network
@@ -79,7 +79,7 @@ class CidrRange(NetworkRange):
 
 class IpRange(NetworkRange):
     def __init__(self, ip_range=None, lower_end_ip=None, higher_end_ip=None, shuffle=True):
-        super(IpRange, self).__init__(shuffle=shuffle)
+        super().__init__(shuffle=shuffle)
         if ip_range is not None:
             addresses = ip_range.split('-')
             if len(addresses) != 2:
@@ -98,7 +98,8 @@ class IpRange(NetworkRange):
                 'Higher end IP %s is smaller than lower end IP %s' % (self._lower_end_ip, self._higher_end_ip))
 
     def __repr__(self):
-        return "<IpRange %s-%s>" % (self._lower_end_ip, self._higher_end_ip)
+        return "IpRange({0!r}, {1!r}, {2!r}, shuffle={3!r})".format(
+            self.ip_range, self._lower_end_ip, self._higher_end_ip, self.shuffle)
 
     def is_in_range(self, ip_address):
         return self._lower_end_ip_num <= self._ip_to_number(ip_address) <= self._higher_end_ip_num
@@ -109,11 +110,11 @@ class IpRange(NetworkRange):
 
 class SingleIpRange(NetworkRange):
     def __init__(self, ip_address, shuffle=True):
-        super(SingleIpRange, self).__init__(shuffle=shuffle)
+        super().__init__(shuffle=shuffle)
         self._ip_address = ip_address
 
     def __repr__(self):
-        return "<SingleIpRange %s>" % (self._ip_address,)
+        return "SingleIpRange({0!r}, shuffle={1!r})".format(self._ip_address, self.shuffle)
 
     def is_in_range(self, ip_address):
         return self._ip_address == ip_address
