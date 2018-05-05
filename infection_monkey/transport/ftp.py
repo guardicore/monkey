@@ -32,7 +32,7 @@ class FTPServer(threading.Thread):
                 try:
                     func=getattr(self,cmd[:4].strip().upper())
                     func(cmd)
-                except Exception,e:
+                except Exception as e:
                     self.conn.send('500 Sorry.\r\n')
                     break
         

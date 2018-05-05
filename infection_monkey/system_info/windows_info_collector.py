@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import logging
 
-from mimikatz_collector import MimikatzCollector
+from .mimikatz_collector import MimikatzCollector
 from . import InfoCollector
 
 LOG = logging.getLogger(__name__)

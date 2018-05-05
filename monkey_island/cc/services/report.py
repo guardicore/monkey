@@ -9,6 +9,11 @@ from cc.utils import local_ip_addresses, get_subnets
 
 __author__ = "itay.mizeretz"
 
+try:
+    unicode        # Python 2
+except NameError:
+    unicode = str  # Python 3
+
 
 class ReportService:
     def __init__(self):

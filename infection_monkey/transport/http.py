@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import BaseHTTPServer
 import os.path
 import select
@@ -8,7 +9,7 @@ from logging import getLogger
 from urlparse import urlsplit
 
 import monkeyfs
-from base import TransportProxyBase, update_last_serve_time
+from .base import TransportProxyBase, update_last_serve_time
 
 __author__ = 'hoffer'
 
@@ -122,7 +123,7 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         address = (u.hostname, u.port or 443)
         try:
             conn = socket.create_connection(address)
-        except socket.error, e:
+        except socket.error as e:
             LOG.debug("HTTPConnectProxyHandler: Got exception while trying to connect to %s: %s" % (repr(address), e))
             self.send_error(504)  # 504 Gateway Timeout
             return

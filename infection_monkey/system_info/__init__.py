@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import logging
 import socket
 import sys
@@ -6,7 +7,7 @@ import psutil
 from enum import IntEnum
 
 from network.info import get_host_subnets
-from azure_cred_collector import AzureCollector
+from .azure_cred_collector import AzureCollector
 
 LOG = logging.getLogger(__name__)
 
@@ -32,10 +33,10 @@ class SystemInfoCollector(object):
     def __init__(self):
         self.os = SystemInfoCollector.get_os()
         if OperatingSystem.Windows == self.os:
-            from windows_info_collector import WindowsInfoCollector
+            from .windows_info_collector import WindowsInfoCollector
             self.collector = WindowsInfoCollector()
         else:
-            from linux_info_collector import LinuxInfoCollector
+            from .linux_info_collector import LinuxInfoCollector
             self.collector = LinuxInfoCollector()
 
     def get_info(self):

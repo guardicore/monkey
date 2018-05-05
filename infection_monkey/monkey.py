@@ -18,6 +18,11 @@ from windows_upgrader import WindowsUpgrader
 
 __author__ = 'itamar'
 
+try:
+    xrange          # Python 2
+except NameError:
+    xrange = range  # Python 3
+
 LOG = logging.getLogger(__name__)
 
 

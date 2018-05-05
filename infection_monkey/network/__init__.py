@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from abc import ABCMeta, abstractmethod
 
 __author__ = 'itamar'
@@ -18,12 +19,12 @@ class HostFinger(object):
     def get_host_fingerprint(self, host):
         raise NotImplementedError()
 
-from ping_scanner import PingScanner
-from tcp_scanner import TcpScanner
-from smbfinger import SMBFinger
-from sshfinger import SSHFinger
-from httpfinger import HTTPFinger
-from elasticfinger import ElasticFinger
-from mysqlfinger import MySQLFinger
-from info import local_ips
-from info import get_free_tcp_port
+from .ping_scanner import PingScanner
+from .tcp_scanner import TcpScanner
+from .smbfinger import SMBFinger
+from .sshfinger import SSHFinger
+from .httpfinger import HTTPFinger
+from .elasticfinger import ElasticFinger
+from .mysqlfinger import MySQLFinger
+from .info import local_ips
+from .info import get_free_tcp_port

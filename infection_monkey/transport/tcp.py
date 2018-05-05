@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 import socket
 import select
 from threading import Thread
-from base import TransportProxyBase, update_last_serve_time
+from .base import TransportProxyBase, update_last_serve_time
 from logging import getLogger
 
 READ_BUFFER_SIZE = 8192
@@ -63,7 +64,7 @@ class TcpProxy(TransportProxyBase):
             try:
                 dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 dest.connect((self.dest_host, self.dest_port))
-            except socket.error, ex:
+            except socket.error as ex:
                 source.close()
                 dest.close()
                 continue
