@@ -39,7 +39,7 @@ class VictimHost(object):
         victim += "] Services - ["
         for k, v in self.services.items():
             victim += "%s-%s " % (k, v)
-        victim += ']'
+        victim += '] '
         victim += "target monkey: %s" % self.monkey_exe
         return victim
 
