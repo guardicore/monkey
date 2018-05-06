@@ -1,5 +1,6 @@
 import json
 import traceback
+import logging
 import copy
 from datetime import datetime
 
@@ -15,6 +16,8 @@ from cc.services.node import NodeService
 from cc.encryptor import encryptor
 
 __author__ = 'Barak'
+
+LOG = logging.getLogger(__name__)
 
 
 class Telemetry(flask_restful.Resource):
@@ -167,11 +170,16 @@ class Telemetry(flask_restful.Resource):
 
     @staticmethod
     def process_system_info_telemetry(telemetry_json):
+        LOG.debug("Processing system info telemtery for encryption...")
+    
         if 'credentials' in telemetry_json['data']:
+            LOG.debug("Encrypting telemetry credentials...")
             creds = telemetry_json['data']['credentials']
             Telemetry.encrypt_system_info_creds(creds)
             Telemetry.add_system_info_creds_to_config(creds)
             Telemetry.replace_user_dot_with_comma(creds)
+            
+            LOG.debug("Done enrypting")
 
     @staticmethod
     def process_trace_telemetry(telemetry_json):
