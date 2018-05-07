@@ -2,6 +2,7 @@ import copy
 import collections
 import functools
 from jsonschema import Draft4Validator, validators
+from six import string_types
 
 from cc.database import mongo
 from cc.encryptor import encryptor
@@ -978,7 +979,7 @@ class ConfigService:
         """
         keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
         for key in keys:
-            if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], basestring):
+            if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], string_types):
                 flat_config[key] = [encryptor.dec(item) for item in flat_config[key]]
             else:
                 flat_config[key] = encryptor.dec(flat_config[key])
