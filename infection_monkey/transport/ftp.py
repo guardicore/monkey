@@ -32,12 +32,12 @@ class FTPServer(threading.Thread):
                 try:
                     func=getattr(self,cmd[:4].strip().upper())
                     func(cmd)
-                except Exception,e:
+                except Exception as e:
                     self.conn.send('500 Sorry.\r\n')
                     break
         
         self.conn.close()
-        self.sock.close()                    
+        self.sock.close()
 
     def SYST(self,cmd):
         self.conn.send('215 UNIX Type: L8\r\n')
