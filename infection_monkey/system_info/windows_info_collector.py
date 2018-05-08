@@ -28,6 +28,11 @@ WMI_CLASSES = set(["Win32_OperatingSystem",
                    #"Win32_Process",
                    ])
 
+# These wmi queries are able to return data about all the users & machines in the domain.
+# For these queries to work, the monkey shohuld be run on a domain machine and
+#
+#     monkey should run as *** SYSTEM *** !!!
+#
 WMI_LDAP_CLASSES = {"ds_user": ("DS_sAMAccountName", "DS_userPrincipalName",
                                 "DS_sAMAccountType", "ADSIPath", "DS_userAccountControl",
                                 "DS_objectSid", "DS_objectClass", "DS_memberOf",
