@@ -53,7 +53,7 @@ class Telemetry(flask_restful.Resource):
                 TELEM_PROCESS_DICT[telem_type](telemetry_json)
             else:
                 print('Got unknown type of telemetry: %s' % telem_type)
-        except StandardError as ex:
+        except Exception as ex:
             print("Exception caught while processing telemetry: %s" % str(ex))
             traceback.print_exc()
 
