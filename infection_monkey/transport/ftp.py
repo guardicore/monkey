@@ -83,7 +83,7 @@ class FTPServer(threading.Thread):
     def PASV(self,cmd):
         self.pasv_mode = True
         self.servsock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.servsock.bind((local_ip,0))
+        self.servsock.bind((self.local_ip,0))
         self.servsock.listen(1)
         ip, port = self.servsock.getsockname()
         self.conn.send('227 Entering Passive Mode (%s,%u,%u).\r\n' %
