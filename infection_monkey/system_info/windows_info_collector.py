@@ -165,7 +165,7 @@ class WindowsInfoCollector(InfoCollector):
         for wmi_class_name, props in WMI_LDAP_CLASSES.iteritems():
             self.info[wmi_class_name] = self.get_wmi_class(wmi_class_name, "//./root/directory/ldap", props)
 
-    def get_wmi_class(self, class_name, moniker="//./root/civ2", properties=None):
+    def get_wmi_class(self, class_name, moniker="//./root/cimv2", properties=None):
         _wmi = wmi.WMI(moniker=moniker) 
 
         try:
