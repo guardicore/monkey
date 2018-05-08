@@ -45,7 +45,7 @@ WMI_LDAP_CLASSES = {"ds_user": ("DS_sAMAccountName", "DS_userPrincipalName",
                                  "DS_name", "DS_memberOf", "DS_member", "DS_instanceType",
                                  "DS_cn", "DS_description", "DS_distinguishedName", "ADSIPath"),
                                  
-                    "ds_copmuter": ("DS_dNSHostName", "ADSIPath", "DS_accountExpires",
+                    "ds_computer": ("DS_dNSHostName", "ADSIPath", "DS_accountExpires",
                                     "DS_adminDisplayName", "DS_badPasswordTime",
                                     "DS_badPwdCount", "DS_cn", "DS_distinguishedName",
                                     "DS_instanceType", "DS_lastLogoff", "DS_lastLogon",
