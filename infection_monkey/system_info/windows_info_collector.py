@@ -100,7 +100,13 @@ def fix_wmi_obj_for_mongo(o):
         try:
             value = getattr(o, prop)
         except wmi.x_wmi:
-            continue
+            # This happens in Win32_GroupUser when the user is a domain user.
+            # For some reason, the wmi query for PartComponent fails. This table
+            # is actually contains references to Win32_UserAccount and Win32_Group.
+            # so instead of reading the content to the Win32_UserAccount, we store
+            # only the id of the row in that table, and get all the other information
+            # from that table while analyzing the data.
+            value = o.properties[prop].value
 
         row[prop] = fix_obj_for_mongo(value)
 
