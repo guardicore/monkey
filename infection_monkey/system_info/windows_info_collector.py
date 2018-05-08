@@ -5,6 +5,7 @@ import traceback
 import sys
 sys.coinit_flags = 0 # needed for proper destruction of the wmi python module
 import wmi
+import win32com
 import _winreg
 
 from mimikatz_collector import MimikatzCollector
@@ -27,6 +28,30 @@ WMI_CLASSES = set(["Win32_OperatingSystem",
                    #"Win32_Process",
                    ])
 
+WMI_LDAP_CLASSES = {"ds_user": ("DS_sAMAccountName", "DS_userPrincipalName",
+                                "DS_sAMAccountType", "ADSIPath", "DS_userAccountControl",
+                                "DS_objectSid", "DS_objectClass", "DS_memberOf",
+                                "DS_primaryGroupID", "DS_pwdLastSet", "DS_badPasswordTime",
+                                "DS_badPwdCount", "DS_lastLogon", "DS_lastLogonTimestamp",
+                                "DS_lastLogoff", "DS_logonCount", "DS_accountExpires"),
+                                
+                    "ds_group": ("DS_whenChanged", "DS_whenCreated", "DS_sAMAccountName",
+                                 "DS_sAMAccountType", "DS_objectSid", "DS_objectClass",
+                                 "DS_name", "DS_memberOf", "DS_member", "DS_instanceType",
+                                 "DS_cn", "DS_description", "DS_distinguishedName", "ADSIPath"),
+                                 
+                    "ds_copmuter": ("DS_dNSHostName", "ADSIPath", "DS_accountExpires",
+                                    "DS_adminDisplayName", "DS_badPasswordTime",
+                                    "DS_badPwdCount", "DS_cn", "DS_distinguishedName",
+                                    "DS_instanceType", "DS_lastLogoff", "DS_lastLogon",
+                                    "DS_lastLogonTimestamp", "DS_logonCount", "DS_objectClass",
+                                    "DS_objectSid", "DS_operatingSystem", "DS_operatingSystemVersion",
+                                    "DS_primaryGroupID", "DS_pwdLastSet", "DS_sAMAccountName",
+                                    "DS_sAMAccountType", "DS_servicePrincipalName", "DS_userAccountControl",
+                                    "DS_whenChanged", "DS_whenCreated"),
+                    }
+
+
 def fix_obj_for_mongo(o):
     if type(o) == dict:
         return dict([(k, fix_obj_for_mongo(v)) for k, v in o.iteritems()])
@@ -43,7 +68,23 @@ def fix_obj_for_mongo(o):
         
     elif hasattr(o, "__class__") and o.__class__ == wmi._wmi_object:
         return fix_wmi_obj_for_mongo(o)
+    
+    elif hasattr(o, "__class__") and o.__class__ == win32com.client.CDispatch:
+        try:
+            # objectSid property of ds_user is problematic and need thie special treatment.
+            # ISWbemObjectEx interface. Class Uint8Array ?
+            if str(o._oleobj_.GetTypeInfo().GetTypeAttr().iid) == "{269AD56A-8A67-4129-BC8C-0506DCFE9880}":
+                return o.Value
+        except:
+            pass
         
+        try:
+            return o.GetObjectText_()
+        except:
+            pass
+        
+        return repr(o)
+
     else: 
         return repr(o)
 
@@ -83,7 +124,6 @@ class WindowsInfoCollector(InfoCollector):
 
     def __init__(self):
         super(WindowsInfoCollector, self).__init__()
-        self.wmi = None
 
     def get_info(self):
         """
@@ -117,12 +157,18 @@ class WindowsInfoCollector(InfoCollector):
         for wmi_class_name in WMI_CLASSES:
             self.info[wmi_class_name] = self.get_wmi_class(wmi_class_name)
 
-    def get_wmi_class(self, class_name):
-        if not self.wmi:
-            self.wmi = wmi.WMI()
+        for wmi_class_name, props in WMI_LDAP_CLASSES.iteritems():
+            self.info[wmi_class_name] = self.get_wmi_class(wmi_class_name, "//./root/directory/ldap", props)
+
+    def get_wmi_class(self, class_name, moniker="//./root/civ2", properties=None):
+        _wmi = wmi.WMI(moniker=moniker) 
 
         try:
-            wmi_class = getattr(self.wmi, class_name)()
+            if not properties:
+                wmi_class = getattr(_wmi, class_name)()
+            else:
+                wmi_class = getattr(_wmi, class_name)(properties)
+
         except wmi.x_wmi:
             #LOG.error("Error getting wmi class '%s'" % (class_name, ))
             #LOG.error(traceback.format_exc())
