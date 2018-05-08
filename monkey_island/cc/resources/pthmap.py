@@ -166,7 +166,7 @@ class Machine(object):
         return self.GetDomainRole() in (DsRole_RolePrimaryDomainController, DsRole_RoleBackupDomainController)
 
     @cache
-    def GetSidByUsername(self, username):
+    def GetSidByUsername(self, username, domain=None):
         doc = self.latest_system_info
 
         for user in doc["data"]["Win32_UserAccount"]:
@@ -174,6 +174,9 @@ class Machine(object):
                 continue
                 
             if user["SIDType"] != SidTypeUser:
+                continue
+            
+            if domain and user["Domain"] != domain:
                 continue
 
             return eval(user["SID"])
@@ -319,10 +322,26 @@ class Machine(object):
             if "PartComponent" not in group_user.keys():
                 continue
 
-            if group_user["PartComponent"]["SIDType"] != SidTypeUser:
-                continue
+            if type(group_user["PartComponent"]) in (str, unicode):
+                # PartComponent is an id to Win32_UserAccount table
+                
+                wmi_id = group_user["PartComponent"]
+                
+                if "cimv2:Win32_UserAccount" not in wmi_id:
+                    continue
+                
+                # u'\\\\WIN-BFA01FFQFLS\\root\\cimv2:Win32_UserAccount.Domain="MYDOMAIN",Name="WIN-BFA01FFQFLS$"'
+                username = wmi_id.split('cimv2:Win32_UserAccount.Domain="')[1].split('",Name="')[0]
+                domain = wmi_id.split('cimv2:Win32_UserAccount.Domain="')[1].split('",Name="')[1][:-1]
+                
+                sid = self.GetSidByUsername(username, domain)
+                users[sid] = username
+                
+            else:
+                if group_user["PartComponent"]["SIDType"] != SidTypeUser:
+                    continue
 
-            users[eval(group_user["PartComponent"]["SID"])] = eval(group_user["PartComponent"]["Name"])
+                users[eval(group_user["PartComponent"]["SID"])] = eval(group_user["PartComponent"]["Name"])
         
         return users
 
