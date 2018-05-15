@@ -62,8 +62,8 @@ def cache(foo):
         elif type(o) == Machine:
             return o.monkey_guid
             
-        elif type(o) == PthMap:
-            return "PthMapSingleton"
+#        elif type(o) == PthMap:
+#            return "PthMapSingleton"
             
         elif type(o) == PassTheHashReport:
             return "PassTheHashReportSingleton"
