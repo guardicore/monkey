@@ -59,7 +59,7 @@ def myntlm(x):
 def cache(foo):
     def hash(o):
         if type(o) in (int, float, str, unicode):
-            return o
+            return repr(o)
 
         elif type(o) in (type(None),):
             return "___None___"
@@ -605,7 +605,7 @@ class PassTheHashMap(object):
     @cache
     def GenerateEdgesBySid(self):
         for attacker in self.vertices:
-            cached = Machine(attacker).GetCachedSids()
+            cached = self.GetCachedSids(Machine(attacker))
 
             for victim in self.vertices:
                 if attacker == victim:
@@ -886,11 +886,30 @@ class PassTheHashMap(object):
         return set(self.machines) - self.GetCritialServers()
         
     @cache
+    def GetCachedSids(self, m):
+        sids = set()
+        tmp = m.GetCachedSids()
+
+        for sid in tmp:
+            if sid.startswith("__USERNAME__"):
+                
+                s = self.GetSidsByUsername(sid[len("__USERNAME__"):])
+                if len(s) == 1:
+                    sids.add(s.pop())
+                else:
+                    sids.add(sid)
+
+            else:
+                sids.add(sid)
+        
+        return sids
+        
+    @cache
     def GetThreateningUsersByVictim(self, victim):
         threatening_users = set()
         
         for attacker in self.GetAttackersByVictim(victim):
-            threatening_users |= (attacker.GetCachedSids() & victim.GetAdmins())
+            threatening_users |= (self.GetCachedSids(attacker) & victim.GetAdmins())
 
         return threatening_users
         
@@ -1099,12 +1118,7 @@ def main():
         print """<h3>Cached SIDs</h3>"""
         print """<h4>SIDs cached on this machine</h4>"""
         print """<ul>"""
-        for sid in m.GetCachedSids():
-            if sid.startswith("__USERNAME__"):
-                sids = pth.GetSidsByUsername(sid[len("__USERNAME__"):])
-                if len(sids) == 1:
-                    sid = sids.pop()
-
+        for sid in pth.GetCachedSids(m):
             print """<li><a href="#{sid}">{username} ({sid})</a></li>""".format(username=pth.GetUsernameBySid(sid), sid=sid)
         print """</ul>"""
         
