@@ -1,37 +1,14 @@
 import hashlib
 import binascii
 import copy
-from pymongo import MongoClient
 
-class mongo(object):
-    db = MongoClient().monkeyisland
+if __name__ == "__main__":
+    from pymongo import MongoClient
 
-#class PthMap(flask_restful.Resource):
-class PthMap(object):
-    #@jwt_required()
-    def get(self, **kw):
-        graph = PassTheHashMap()
-
-        return \
-            {
-                "nodes": [{"id": x, "label": Machine(x).GetIp()} for x in graph.vertices],
-                "edges": [{"id": str(s) + str(t), "from": s, "to": t, "label": label} for s, t, label in graph.edges]
-            }
-
-if not __name__ == "__main__":
-    import flask_restful
-    
-    from cc.auth import jwt_required
-    from cc.services.edge import EdgeService
-    from cc.services.node import NodeService
+    class mongo(object):
+        db = MongoClient().monkeyisland
+else:
     from cc.database import mongo
-    
-    PthMapOrig = PthMap
-    
-    class PthMap(flask_restful.Resource):
-        @jwt_required()
-        def get(self, **kw):
-            return PthMapOrig.get(self, **kw)
     
 DsRole_RoleStandaloneWorkstation = 0
 DsRole_RoleMemberWorkstation = 1
@@ -88,8 +65,8 @@ def cache(foo):
         elif type(o) == PthMap:
             return "PthMapSingleton"
             
-        elif type(o) == PassTheHashMap:
-            return "PassTheHashMapSingleton"
+        elif type(o) == PassTheHashReport:
+            return "PassTheHashReportSingleton"
 
         else:
             assert False, "%s of type %s is not hashable" % (repr(o), type(o))
@@ -564,7 +541,7 @@ class Machine(object):
         
         return names
 
-class PassTheHashMap(object):
+class PassTheHashReport(object):
     def __init__(self):
         self.vertices = self.GetAllMachines()
         
@@ -944,7 +921,7 @@ class PassTheHashMap(object):
         return shared_admins
 
 def main():
-    pth = PassTheHashMap()
+    pth = PassTheHashReport()
 
     print """<style>table, td {border: ridge;} .hidden * {color:white; border:white;}</style>"""
     print "<h1>Pass The Hash Report</h1>"
