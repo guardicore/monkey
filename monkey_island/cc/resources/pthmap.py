@@ -832,6 +832,16 @@ class PassTheHashMap(object):
         return set(map(Machine, attackers))
 
     @cache
+    def GetAttackersBySid(self, sid):
+        machines = set()
+        
+        for m in self.machines:
+            if sid in self.GetCachedSids(m):
+                machines.add(m)
+
+        return machines
+
+    @cache
     def GetVictimsByAttacker(self, attacker):
         if type(attacker) != unicode:
             attacker = attacker.monkey_guid
@@ -1166,9 +1176,15 @@ def main():
                 <h3>Secret: '<a href="#{secret}">{secret}</a>'</h3>
               """.format(username=pth.GetUsernameBySid(sid), sid=sid, secret=pth.GetSecretBySid(sid), domain=pth.GetSidInfo(sid)["Domain"])
         
-        print """<h3>Attackable Machines</h3>"""
+        print """<h3>Possible Victims Machines</h3>"""
         print """<ul>"""
         for m in pth.GetVictimsBySid(sid):
+            print """<li><a href="#{ip}">{ip} ({hostname})</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
+        print """</ul>"""
+        
+        print """<h3>Possible Attackers Machines</h3>"""
+        print """<ul>"""
+        for m in pth.GetAttackersBySid(sid):
             print """<li><a href="#{ip}">{ip} ({hostname})</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
         print """</ul>"""
 
