@@ -946,7 +946,7 @@ class PassTheHashMap(object):
 def main():
     pth = PassTheHashMap()
 
-    print """<style>table, td {border: ridge;}</style>"""
+    print """<style>table, td {border: ridge;} .hidden * {color:white; border:white;}</style>"""
     print "<h1>Pass The Hash Report</h1>"
     
     print "<h2>Duplicated Passwords</h2>"
@@ -1058,6 +1058,7 @@ def main():
         print """</ul></td></tr>"""
     print """</table>"""
 
+    print """<div class="hidden">"""
     
     print "<h2>Cached Passwords</h2>"
     print "<h3>On how many machines each secret is cached (possible attacker count)?</h3>"
@@ -1229,6 +1230,6 @@ def main():
             print """<li><a href="#{ip}">{hostname}</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
         print """</ul>"""
         
-    
+    print """</div>"""
 if __name__ == "__main__":
     main()
