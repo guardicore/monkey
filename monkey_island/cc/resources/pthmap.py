@@ -49,6 +49,9 @@ SidTypeInvalid = 7
 SidTypeUnknown = 8
 SidTypeComputer = 9
 
+def is_group_sid_type(type):
+    return type in (SidTypeGroup, SidTypeAlias, SidTypeWellKnownGroup)
+
 def myntlm(x):
     hash = hashlib.new('md4', x.encode('utf-16le')).digest()
     return str(binascii.hexlify(hash))
@@ -298,8 +301,8 @@ class Machine(object):
         for group in doc["data"]["Win32_Group"]:
             if eval(group["Name"]) != group_name:
                 continue
-
-            if group["SIDType"] != SidTypeGroup:
+            
+            if not is_group_sid_type(group["SIDType"]):
                 continue
 
             return eval(group["SID"])
@@ -316,7 +319,7 @@ class Machine(object):
             if eval(group_user["GroupComponent"]["SID"]) != sid:
                 continue
 
-            if group_user["GroupComponent"]["SIDType"] != SidTypeGroup:
+            if not is_group_sid_type(group_user["GroupComponent"]["SIDType"]):
                 continue
             
             if "PartComponent" not in group_user.keys():
