@@ -1,5 +1,6 @@
 import hashlib
 import binascii
+import copy
 from pymongo import MongoClient
 
 class mongo(object):
@@ -106,7 +107,7 @@ def cache(foo):
         if hashed not in foo._mycache_.keys():
             foo._mycache_[hashed] = foo(*args, **kwargs)
 
-        return foo._mycache_[hashed]
+        return copy.deepcopy(foo._mycache_[hashed])
 
     return wrapper
 
