@@ -120,6 +120,12 @@ class Machine(object):
         if self.latest_system_info.count() > 0:
             self.latest_system_info = self.latest_system_info[0]
     
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.monkey_guid == other.monkey_guid
+        else:
+            return False
+    
     @cache
     def GetMimikatzOutput(self):
         doc = self.latest_system_info
@@ -940,6 +946,7 @@ class PassTheHashMap(object):
 def main():
     pth = PassTheHashMap()
 
+    print """<style>table, td {border: ridge;}</style>"""
     print "<h1>Pass The Hash Report</h1>"
     
     print "<h2>Duplicated Passwords</h2>"
@@ -1010,7 +1017,13 @@ def main():
         print """<td><ul>"""
         
         for sid in pth.GetThreateningUsersByVictim(m):
-            print """<li><a href="#{sid}">{username}</a></li>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
+            print """<li><a href="#{sid}">{username}</a> attackers:<ul>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
+            
+            for mm in pth.GetAttackersBySid(sid):
+                if m == mm:
+                    continue
+                print """<li><a href="#{ip}">{ip}</a></li>""".format(ip=mm.GetIp())
+            print """</ul></li>"""
 
         print """</ul></td></tr>"""
     print """</table>"""
@@ -1034,7 +1047,13 @@ def main():
         print """<td><ul>"""
         
         for sid in pth.GetThreateningUsersByVictim(m):
-            print """<li><a href="#{sid}">{username}</a></li>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
+            print """<li><a href="#{sid}">{username}</a> attackers:<ul>""".format(sid=sid, username=pth.GetUsernameBySid(sid))
+            
+            for mm in pth.GetAttackersBySid(sid):
+                if m == mm:
+                    continue
+                print """<li><a href="#{ip}">{ip}</a></li>""".format(ip=mm.GetIp())
+            print """</ul></li>"""
 
         print """</ul></td></tr>"""
     print """</table>"""
@@ -1177,13 +1196,13 @@ def main():
                 <h3>Secret: '<a href="#{secret}">{secret}</a>'</h3>
               """.format(username=pth.GetUsernameBySid(sid), sid=sid, secret=pth.GetSecretBySid(sid), domain=pth.GetSidInfo(sid)["Domain"])
         
-        print """<h3>Possible Victims Machines</h3>"""
+        print """<h3>Machines the sid is local admin on</h3>"""
         print """<ul>"""
         for m in pth.GetVictimsBySid(sid):
             print """<li><a href="#{ip}">{ip} ({hostname})</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
         print """</ul>"""
         
-        print """<h3>Possible Attackers Machines</h3>"""
+        print """<h3>Machines the sid is in thier cache</h3>"""
         print """<ul>"""
         for m in pth.GetAttackersBySid(sid):
             print """<li><a href="#{ip}">{ip} ({hostname})</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
