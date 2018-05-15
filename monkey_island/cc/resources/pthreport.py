@@ -542,14 +542,21 @@ class Machine(object):
         return names
 
 class PassTheHashReport(object):
+    #_instance = None
+    #def __new__(class_, *args, **kwargs):
+    #    if not class_._instance:
+    #        class_._instance = object.__new__(class_, *args, **kwargs)
+    #
+    #    return class_._instance
+
     def __init__(self):
         self.vertices = self.GetAllMachines()
         
-        self.edges = set()
         self.machines = map(Machine, self.vertices)
 
-        self.GenerateEdgesBySid()      # Useful for non-cached domain users
-        self.GenerateEdgesBySamHash()  # This will add edges based only on password hash without caring about username
+        self.edges = set()
+        self.edges |= self.GetEdgesBySid()      # Useful for non-cached domain users
+        self.edges |= self.GetEdgesBySamHash()  # This will add edges based only on password hash without caring about username
 
     @cache
     def GetAllMachines(self):
@@ -587,7 +594,9 @@ class PassTheHashReport(object):
         return ",\n".join(label)
 
     @cache
-    def GenerateEdgesBySid(self):
+    def GetEdgesBySid(self):
+        edges = set()
+        
         for attacker in self.vertices:
             cached = self.GetCachedSids(Machine(attacker))
 
@@ -599,10 +608,14 @@ class PassTheHashReport(object):
 
                 if len(cached & admins) > 0:
                     label = self.ReprSidList(cached & admins, attacker, victim)
-                    self.edges.add((attacker, victim, label))
+                    edges.add((attacker, victim, label))
+
+        return edges
 
     @cache
-    def GenerateEdgesBySamHash(self):
+    def GetEdgesBySamHash(self):
+        edges = set()
+    
         for attacker in self.vertices:
             cached_creds = set(Machine(attacker).GetCachedCreds().items())
 
@@ -614,10 +627,14 @@ class PassTheHashReport(object):
                 
                 if len(cached_creds & admin_creds) > 0:
                     label = self.ReprSecretList(set(dict(cached_creds & admin_creds).values()), victim)
-                    self.edges.add((attacker, victim, label))
+                    edges.add((attacker, victim, label))
+        
+        return edges
 
     @cache
-    def GenerateEdgesByUsername(self):
+    def GetEdgesByUsername(self):
+        edges = set()
+        
         for attacker in self.vertices:
             cached = Machine(attacker).GetCachedUsernames()
 
@@ -628,7 +645,9 @@ class PassTheHashReport(object):
                 admins = Machine(victim).GetAdminNames()
                 
                 if len(cached & admins) > 0:
-                    self.edges.add((attacker, victim))
+                    edges.add((attacker, victim))
+        
+        return edges
 
     @cache
     def Print(self):
