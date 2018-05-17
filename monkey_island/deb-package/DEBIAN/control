@@ -5,4 +5,4 @@ Homepage: http://www.guardicore.com
 Priority: optional
 Version: 1.0
 Description: Guardicore Infection Monkey Island installation package
-Depends: openssl, python-pip
+Depends: openssl, python-pip, python-dev
