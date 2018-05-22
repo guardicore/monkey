@@ -1,6 +1,8 @@
 import ipaddress
 from enum import Enum
 
+from six import text_type
+
 from cc.database import mongo
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
@@ -282,7 +284,7 @@ class ReportService:
 
         return \
             [
-                ipaddress.ip_interface(unicode(network['addr'] + '/' + network['netmask'])).network
+                ipaddress.ip_interface(text_type(network['addr'] + '/' + network['netmask'])).network
                 for network in network_info['data']['network_info']['networks']
             ]
 
@@ -295,7 +297,7 @@ class ReportService:
             monkey_subnets = ReportService.get_monkey_subnets(monkey['guid'])
             for subnet in monkey_subnets:
                 for ip in island_ips:
-                    if ipaddress.ip_address(unicode(ip)) in subnet:
+                    if ipaddress.ip_address(text_type(ip)) in subnet:
                         found_good_ip = True
                         break
                 if found_good_ip:
