@@ -80,5 +80,6 @@ class SSHCollector(object):
                                 pass
                     except OSError:
                         pass
-        usr_info = [info for info in usr_info if not info['private_key'] and not info['known_hosts'] and not info['public_key']]
+        usr_info = [info for info in usr_info if info['private_key'] or info['known_hosts']
+                    or info['public_key']]
         return usr_info
