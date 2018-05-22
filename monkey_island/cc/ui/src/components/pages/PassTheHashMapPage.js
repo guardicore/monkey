@@ -29,6 +29,7 @@ class PassTheHashMapPageComponent extends AuthComponent {
     super(props);
     this.state = {
       graph: {nodes: [], edges: []},
+      report: "",
       selected: null,
       selectedType: null,
       killPressed: false,
@@ -58,6 +59,12 @@ class PassTheHashMapPageComponent extends AuthComponent {
         this.setState({graph: res});
         this.props.onStatusChange();
       });
+    this.authFetch('/api/pthreport')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({report: res.html});
+        this.props.onStatusChange();
+      });
   };
 
   render() {
@@ -70,6 +77,7 @@ class PassTheHashMapPageComponent extends AuthComponent {
           <div>
             <Graph graph={this.state.graph} options={options} />
           </div>
+          <div dangerouslySetInnerHTML={{__html: this.state.report}}></div>
         </Col>
       </div>
     );
