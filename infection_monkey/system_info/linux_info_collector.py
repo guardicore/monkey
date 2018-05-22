@@ -27,6 +27,6 @@ class LinuxInfoCollector(InfoCollector):
         self.get_process_list()
         self.get_network_info()
         self.get_azure_info()
-        self.info['ssh_info'].update(SSHCollector.get_info())
+        self.info['ssh_info'] = SSHCollector.get_info()
         return self.info
 
