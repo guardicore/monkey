@@ -11,7 +11,7 @@ import traceback
 from config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from dropper import MonkeyDrops
 from model import MONKEY_ARG, DROPPER_ARG
-from monkey import InfectionMonkey
+from infection_monkey.monkey import InfectionMonkey
 import utils
 
 if __name__ == "__main__":

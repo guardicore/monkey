@@ -24,8 +24,8 @@ def run_local_monkey():
     if not result:
         return False, "OS Type not found"
 
-    monkey_path = os.path.join('binaries', result['filename'])
-    target_path = os.path.join(os.getcwd(), result['filename'])
+    monkey_path = os.path.join(os.getcwd(), 'monkey_island', 'cc', 'binaries', result['filename'])
+    target_path = os.path.join(os.getcwd(), 'monkey_island', result['filename'])
 
     # copy the executable to temp path (don't run the monkey from its current location as it may delete itself)
     try:

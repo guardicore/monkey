@@ -4,7 +4,7 @@ from datetime import datetime
 import bson
 import flask_restful
 from bson.json_util import dumps
-from flask import Flask, send_from_directory, make_response
+from flask import Flask, send_from_directory, make_response, Response
 from werkzeug.exceptions import NotFound
 
 from cc.auth import init_jwt
@@ -28,18 +28,23 @@ from cc.services.config import ConfigService
 __author__ = 'Barak'
 
 
+HOME_FILE = 'index.html'
+
+
 def serve_static_file(static_path):
     if static_path.startswith('api/'):
         raise NotFound()
     try:
-        return send_from_directory('ui/dist', static_path)
+        return send_from_directory(os.path.join(os.getcwd(), 'monkey_island/cc/ui/dist'), static_path)
     except NotFound:
         # Because react uses various urls for same index page, this is probably the user's intention.
+        if static_path == HOME_FILE:
+            flask_restful.abort(Response("Server cwd isn't right, should be monkey\\monkey.", 500))
         return serve_home()
 
 
 def serve_home():
-    return serve_static_file('index.html')
+    return serve_static_file(HOME_FILE)
 
 
 def normalize_obj(obj):
