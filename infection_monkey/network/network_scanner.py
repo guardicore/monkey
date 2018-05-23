@@ -40,6 +40,12 @@ class NetworkScanner(object):
         LOG.info("Base local networks to scan are: %r", self._ranges)
 
     def _get_inaccessible_subnets_ips(self):
+        """
+        For each of the machine's IPs, checks if it's in one of the subnet groups specified in the
+        'inaccessible_subnet_groups' config value. If so, all other subnets in the same group shouldn't be accessible.
+        All these subnets are returned.
+        :return: A list of subnets that shouldn't be accessible from the machine the monkey is running on.
+        """
         subnets_to_scan = []
         for subnet_group in WormConfiguration.inaccessible_subnet_groups:
             for subnet_str in subnet_group:

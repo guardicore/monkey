@@ -313,7 +313,14 @@ class ReportService:
         return issues
 
     @staticmethod
-    def get_cross_segment_ip(ip_addresses, source_subnet, target_subnet):
+    def get_ip_in_src_and_not_in_dst(ip_addresses, source_subnet, target_subnet):
+        """
+        Finds an IP address in ip_addresses which is in source_subnet but not in target_subnet.
+        :param ip_addresses:    List of IP addresses to test.
+        :param source_subnet:   Subnet to want an IP to not be in.
+        :param target_subnet:   Subnet we want an IP to be in.
+        :return:
+        """
         for ip_address in ip_addresses:
             if target_subnet.is_in_range(ip_address):
                 return None
@@ -324,6 +331,13 @@ class ReportService:
 
     @staticmethod
     def get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet):
+        """
+        Gets list of cross segment issues from source_subnet to target_subnet.
+        :param scans:           List of all scan telemetry entries. Must have monkey_guid, ip_addr and services.
+        :param source_subnet:   The subnet which shouldn't be able to access target_subnet.
+        :param target_subnet:   The subnet which shouldn't be accessible from source_subnet.
+        :return:
+        """
         if source_subnet == target_subnet:
             return []
         source_subnet_range = NetworkRange.get_range_obj(source_subnet)
@@ -335,8 +349,10 @@ class ReportService:
             target_ip = scan['data']['machine']['ip_addr']
             if target_subnet_range.is_in_range(unicode(target_ip)):
                 monkey = NodeService.get_monkey_by_guid(scan['monkey_guid'])
-                cross_segment_ip = ReportService.get_cross_segment_ip(monkey['ip_addresses'], source_subnet_range,
-                                                                      target_subnet_range)
+                cross_segment_ip = ReportService.get_ip_in_src_and_not_in_dst(monkey['ip_addresses'],
+                                                                              source_subnet_range,
+                                                                              target_subnet_range)
+
                 if cross_segment_ip is not None:
                     cross_segment_issues.append(
                         {
@@ -350,6 +366,12 @@ class ReportService:
 
     @staticmethod
     def get_cross_segment_issues_per_subnet_group(scans, subnet_group):
+        """
+        Gets list of cross segment issues within given subnet_group.
+        :param scans:           List of all scan telemetry entries. Must have monkey_guid, ip_addr and services.
+        :param subnet_group:    List of subnets which shouldn't be accessible from each other.
+        :return:                Cross segment issues regarding the subnets in the group.
+        """
         cross_segment_issues = []
 
         for subnet_pair in itertools.product(subnet_group, subnet_group):
