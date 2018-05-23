@@ -241,9 +241,14 @@ SCHEMA = {
                             "default": [
                             ],
                             "description":
-                                "List of IP/subnet groups. Each group should consist of subnets that aren't supposed"
-                                " to be accessible to one another. If the monkey is in one subnet it'll scan the other"
-                                " subnets in the same group."
+                                "You can use this feature to test for network segmentation, by proving lists of"
+                                " IP/subnet groups that should not be accessible to each other. Each input group"
+                                " consists of subnets that should not be accessible to each other. If the Monkey"
+                                " is inside of one of the subnets it will attempt to connect to machines in the"
+                                " other subnet."
+                                " Example, by providing input 192.168.1.0/24, 192.168.2.0/24, 192.168.3.1-192.168.3.10,"
+                                " a Monkey with the IP address 192.168.2.5 will try to access machines inside"
+                                " 192.168.1.0/24 or 192.168.3.1-192.168.3.10."
                         }
                     }
                 }

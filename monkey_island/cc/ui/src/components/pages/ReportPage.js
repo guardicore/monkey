@@ -456,10 +456,15 @@ class ReportPageComponent extends AuthComponent {
         <CollapsibleWellComponent>
           <ul>
             {crossSegmentIssue['issues'].map(x =>
-              <li>
-                {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
-                + ' using the services: ' + Object.keys(x['services']).join(', ')}
-              </li>
+              x['is_self'] ?
+                <li>
+                  {'Machine ' + x['hostname'] + ' has both ips: ' + x['source'] + ' and ' + x['target']}
+                </li>
+                :
+                <li>
+                  {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
+                  + ' using the services: ' + Object.keys(x['services']).join(', ')}
+                </li>
             )}
           </ul>
         </CollapsibleWellComponent>

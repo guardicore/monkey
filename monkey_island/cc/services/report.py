@@ -1,4 +1,5 @@
 import itertools
+import functools
 
 import ipaddress
 from enum import Enum
@@ -330,10 +331,51 @@ class ReportService:
         return None
 
     @staticmethod
+    def get_cross_segment_issues_of_single_machine(source_subnet_range, target_subnet_range):
+        """
+        Gets list of cross segment issues of a single machine. Meaning a machine has an interface for each of the
+        subnets.
+        :param source_subnet_range:   The subnet range which shouldn't be able to access target_subnet.
+        :param target_subnet_range:   The subnet range which shouldn't be accessible from source_subnet.
+        :return:
+        """
+        cross_segment_issues = []
+
+        for monkey in mongo.db.monkey.find({}, {'ip_addresses': 1, 'hostname': 1}):
+            ip_in_src = None
+            ip_in_dst = None
+            for ip_addr in monkey['ip_addresses']:
+                if source_subnet_range.is_in_range(unicode(ip_addr)):
+                    ip_in_src = ip_addr
+                    break
+
+            # No point searching the dst subnet if there are no IPs in src subnet.
+            if not ip_in_src:
+                continue
+
+            for ip_addr in monkey['ip_addresses']:
+                if target_subnet_range.is_in_range(unicode(ip_addr)):
+                    ip_in_dst = ip_addr
+                    break
+
+            if ip_in_dst:
+                cross_segment_issues.append(
+                    {
+                        'source': ip_in_src,
+                        'hostname': monkey['hostname'],
+                        'target': ip_in_dst,
+                        'services': None,
+                        'is_self': True
+                    })
+
+        return cross_segment_issues
+
+    @staticmethod
     def get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet):
         """
         Gets list of cross segment issues from source_subnet to target_subnet.
         :param scans:           List of all scan telemetry entries. Must have monkey_guid, ip_addr and services.
+                                This should be a PyMongo cursor object.
         :param source_subnet:   The subnet which shouldn't be able to access target_subnet.
         :param target_subnet:   The subnet which shouldn't be accessible from source_subnet.
         :return:
@@ -345,6 +387,7 @@ class ReportService:
 
         cross_segment_issues = []
 
+        scans.rewind()  # If we iterated over scans already we need to rewind.
         for scan in scans:
             target_ip = scan['data']['machine']['ip_addr']
             if target_subnet_range.is_in_range(unicode(target_ip)):
@@ -359,16 +402,19 @@ class ReportService:
                             'source': cross_segment_ip,
                             'hostname': monkey['hostname'],
                             'target': target_ip,
-                            'services': scan['data']['machine']['services']
+                            'services': scan['data']['machine']['services'],
+                            'is_self': False
                         })
 
-        return cross_segment_issues
+        return cross_segment_issues + ReportService.get_cross_segment_issues_of_single_machine(
+            source_subnet_range, target_subnet_range)
 
     @staticmethod
     def get_cross_segment_issues_per_subnet_group(scans, subnet_group):
         """
         Gets list of cross segment issues within given subnet_group.
         :param scans:           List of all scan telemetry entries. Must have monkey_guid, ip_addr and services.
+                                This should be a PyMongo cursor object.
         :param subnet_group:    List of subnets which shouldn't be accessible from each other.
         :return:                Cross segment issues regarding the subnets in the group.
         """
@@ -405,8 +451,15 @@ class ReportService:
 
     @staticmethod
     def get_issues():
-        issues = ReportService.get_exploits() + ReportService.get_tunnels() \
-                 + ReportService.get_island_cross_segment_issues() + ReportService.get_azure_issues()
+        ISSUE_GENERATORS = [
+            ReportService.get_exploits,
+            ReportService.get_tunnels,
+            ReportService.get_island_cross_segment_issues,
+            ReportService.get_azure_issues
+        ]
+
+        issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
+
         issues_dict = {}
         for issue in issues:
             machine = issue['machine']
