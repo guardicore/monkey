@@ -1,4 +1,4 @@
 @title C^&C Server
-@pushd cc
-@..\bin\Python27\python main.py
+@pushd ..
+@monkey_island\bin\Python27\python monkey_island\cc\main.py
 @popd

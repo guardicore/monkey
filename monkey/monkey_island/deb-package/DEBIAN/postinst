@@ -1,33 +1,30 @@
 #!/bin/bash
 
-MONKEY_FOLDER=/var/monkey_island
-INSTALLATION_FOLDER=/var/monkey_island/installation
-PYTHON_FOLDER=/var/monkey_island/bin/python
-
-cp -f ${MONKEY_FOLDER}/monkey.sh /usr/bin/monkey
-chmod 755 /usr/bin/monkey
+MONKEY_FOLDER=/var/monkey
+INSTALLATION_FOLDER=/var/monkey/installation
+PYTHON_FOLDER=/var/monkey/monkey_island/bin/python
 
 # Prepare python virtualenv
 pip2 install virtualenv --no-index --find-links file://$INSTALLATION_FOLDER
 virtualenv -p python2.7 ${PYTHON_FOLDER}
 
 # install pip requirements
-${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
+${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/monkey_island/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
 
 # remove installation folder and unnecessary files
 rm -rf ${INSTALLATION_FOLDER}
-rm -f ${MONKEY_FOLDER}/pip_requirements.txt
+rm -f ${MONKEY_FOLDER}/monkey_island/pip_requirements.txt
 
-cp ${MONKEY_FOLDER}/ubuntu/* /etc/init/
+cp ${MONKEY_FOLDER}/monkey_island/ubuntu/* /etc/init/
 if [ -d "/etc/systemd/network" ]; then
-    cp ${MONKEY_FOLDER}/ubuntu/systemd/*.service /lib/systemd/system/
-    chmod +x ${MONKEY_FOLDER}/ubuntu/systemd/start_server.sh
+    cp ${MONKEY_FOLDER}/monkey_island/ubuntu/systemd/*.service /lib/systemd/system/
+    chmod +x ${MONKEY_FOLDER}/monkey_island/ubuntu/systemd/start_server.sh
     systemctl daemon-reload
     systemctl enable monkey-mongo
     systemctl enable monkey-island
 fi
 
-${MONKEY_FOLDER}/create_certificate.sh
+${MONKEY_FOLDER}/monkey_island/create_certificate.sh
 
 service monkey-island start
 service monkey-mongo start
