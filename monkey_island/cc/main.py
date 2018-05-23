@@ -27,11 +27,11 @@ if __name__ == '__main__':
 
     app = init_app(mongo_url)
     if env.is_debug():
-        app.run(host='0.0.0.0', debug=True, ssl_context=('server.crt', 'server.key'))
+        app.run(host='0.0.0.0', debug=True, ssl_context=('monkey_island/cc/server.crt', 'monkey_island/cc/server.key'))
     else:
         http_server = HTTPServer(WSGIContainer(app),
-                                 ssl_options={'certfile': os.environ.get('SERVER_CRT', 'server.crt'),
-                                              'keyfile': os.environ.get('SERVER_KEY', 'server.key')})
+                                 ssl_options={'certfile': os.environ.get('SERVER_CRT', 'monkey_island/cc/server.crt'),
+                                              'keyfile': os.environ.get('SERVER_KEY', 'monkey_island/cc/server.key')})
         http_server.listen(env.get_island_port())
         print('Monkey Island Server is running on https://{}:{}'.format(local_ip_addresses()[0], env.get_island_port()))
         IOLoop.instance().start()

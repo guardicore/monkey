@@ -9,7 +9,7 @@ ENV_DICT = {
 
 
 def load_env_from_file():
-    with open('server_config.json', 'r') as f:
+    with open('monkey_island/cc/server_config.json', 'r') as f:
         config_content = f.read()
     config_json = json.loads(config_content)
     return config_json['server_config']
