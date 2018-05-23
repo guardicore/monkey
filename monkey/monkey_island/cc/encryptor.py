@@ -9,7 +9,7 @@ __author__ = "itay.mizeretz"
 
 class Encryptor:
     _BLOCK_SIZE = 32
-    _DB_PASSWORD_FILENAME = "mongo_key.bin"
+    _DB_PASSWORD_FILENAME = "monkey_island/cc/mongo_key.bin"
 
     def __init__(self):
         self._load_key()
