@@ -1,6 +1,5 @@
 import logging
 import pwd
-import sys
 import os
 import glob
 
@@ -36,13 +35,13 @@ class SSHCollector(object):
         possibly hashed)
         """
         return {'name': name, 'home_dir': home_dir, 'public_key': None,
-                      'private_key': None, 'known_hosts': None}
+                'private_key': None, 'known_hosts': None}
 
     @staticmethod
     def get_home_dirs():
-        root_dir = SSHCollector.get_ssh_struct('root', '/')
-        home_dirs = [SSHCollector.get_ssh_struct(x.pw_name,x.pw_dir) for x in pwd.getpwall()
-                      if x.pw_dir.startswith('/home')]
+        root_dir = SSHCollector.get_ssh_struct('root', '')
+        home_dirs = [SSHCollector.get_ssh_struct(x.pw_name, x.pw_dir) for x in pwd.getpwall()
+                     if x.pw_dir.startswith('/home')]
         home_dirs.append(root_dir)
         return home_dirs
 
@@ -54,14 +53,16 @@ class SSHCollector(object):
                 if os.path.isdir(path + directory):
                     try:
                         current_path = path + directory
-                        # searching for public key
-                        if glob.glob(current_path+'*.pub'):
-                            public = (glob.glob(current_path+'*.pub')[0])
+                        # Searching for public key
+                        if glob.glob(os.path.join(current_path, '*.pub')):
+                            # Getting first file in current path with .pub extension(public key)
+                            public = (glob.glob(os.path.join(current_path, '*.pub'))[0])
                             LOG.info("Found public key in %s" % public)
                             try:
                                 with open(public) as f:
                                     info['public_key'] = f.read()
-                                private = public.rsplit('.', 1)[0]
+                                # By default private key has the same name as public, only without .pub
+                                private = os.path.splitext(public)[0]
                                 if os.path.exists(private):
                                     try:
                                         with open(private) as f:
@@ -69,11 +70,13 @@ class SSHCollector(object):
                                             LOG.info("Found private key in %s" % private)
                                     except (IOError, OSError):
                                         pass
-                                if os.path.exists(current_path + '/known_hosts'):
+                                # By default known hosts file is called 'known_hosts'
+                                known_hosts = os.path.join(current_path, 'known_hosts')
+                                if os.path.exists(known_hosts):
                                     try:
-                                        with open(current_path + '/known_hosts') as f:
+                                        with open(known_hosts) as f:
                                             info['known_hosts'] = f.read()
-                                            LOG.info("Found known_hosts in %s" % current_path+'/known_hosts')
+                                            LOG.info("Found known_hosts in %s" % known_hosts)
                                     except (IOError, OSError):
                                         pass
                             except (IOError, OSError):

@@ -1,6 +1,7 @@
 import copy
 import collections
 import functools
+import json
 from jsonschema import Draft4Validator, validators
 
 from cc.database import mongo
@@ -504,6 +505,13 @@ SCHEMA = {
                             },
                             "default": [],
                             "description": "List of NTLM hashes to use on exploits using credentials"
+                        },
+                        "exploit_ssh_keys": {
+                            "title": "SSH key pairs list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "default": [],
+                            "description": "List of SSH key pairs to use, when trying to ssh into servers"
                         }
                     }
                 },
@@ -800,7 +808,8 @@ ENCRYPTED_CONFIG_ARRAYS = \
     [
         ['basic', 'credentials', 'exploit_password_list'],
         ['internal', 'exploits', 'exploit_lm_hash_list'],
-        ['internal', 'exploits', 'exploit_ntlm_hash_list']
+        ['internal', 'exploits', 'exploit_ntlm_hash_list'],
+        ['internal', 'exploits', 'exploit_ssh_keys']
     ]
 
 
@@ -887,6 +896,11 @@ class ConfigService:
     @staticmethod
     def creds_add_ntlm_hash(ntlm_hash):
         ConfigService.add_item_to_config_set('internal.exploits.exploit_ntlm_hash_list', ntlm_hash)
+
+    @staticmethod
+    def ssh_add_keys(public_key, private_key):
+        ConfigService.add_item_to_config_set('internal.exploits.exploit_ssh_keys',
+                                             {"public_key": public_key, "private_key": private_key})
 
     @staticmethod
     def update_config(config_json, should_encrypt):
@@ -979,7 +993,11 @@ class ConfigService:
         keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
         for key in keys:
             if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], basestring):
-                flat_config[key] = [encryptor.dec(item) for item in flat_config[key]]
+                # Check if we are decrypting ssh key pair
+                if flat_config[key] and isinstance(flat_config[key][0], dict) and 'public_key' in flat_config[key][0]:
+                    flat_config[key] = [ConfigService.decrypt_ssh_key_pair(item) for item in flat_config[key]]
+                else:
+                    flat_config[key] = [encryptor.dec(item) for item in flat_config[key]]
             else:
                 flat_config[key] = encryptor.dec(flat_config[key])
         return flat_config
@@ -992,4 +1010,19 @@ class ConfigService:
                 config_arr = config_arr[config_key_part]
 
             for i in range(len(config_arr)):
-                config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
+                # Check if array of shh key pairs and then decrypt
+                if isinstance(config_arr[i], dict) and 'public_key' in config_arr[i]:
+                    config_arr[i] = ConfigService.decrypt_ssh_key_pair(config_arr[i]) if is_decrypt else \
+                                    ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
+                else:
+                    config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
+
+    @staticmethod
+    def decrypt_ssh_key_pair(pair, encrypt=False):
+        if encrypt:
+            pair['public_key'] = encryptor.enc(pair['public_key'])
+            pair['private_key'] = encryptor.enc(pair['private_key'])
+        else:
+            pair['public_key'] = encryptor.dec(pair['public_key'])
+            pair['private_key'] = encryptor.dec(pair['private_key'])
+        return pair

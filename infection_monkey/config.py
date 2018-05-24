@@ -251,6 +251,7 @@ class Configuration(object):
     exploit_password_list = ["Password1!", "1234", "password", "12345678"]
     exploit_lm_hash_list = []
     exploit_ntlm_hash_list = []
+    exploit_ssh_keys = []
 
     # smb/wmi exploiter
     smb_download_timeout = 300  # timeout in seconds
