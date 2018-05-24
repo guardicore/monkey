@@ -1,7 +1,6 @@
 import copy
 import collections
 import functools
-import json
 from jsonschema import Draft4Validator, validators
 
 from cc.database import mongo
