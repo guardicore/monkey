@@ -897,9 +897,17 @@ class ConfigService:
         ConfigService.add_item_to_config_set('internal.exploits.exploit_ntlm_hash_list', ntlm_hash)
 
     @staticmethod
-    def ssh_add_keys(public_key, private_key):
-        ConfigService.add_item_to_config_set('internal.exploits.exploit_ssh_keys',
-                                             {"public_key": public_key, "private_key": private_key})
+    def ssh_add_keys(public_key, private_key, user, ip):
+        if not ConfigService.ssh_key_exists(ConfigService.get_config_value(['internal'], False, False)
+                                            ['exploits']['exploit_ssh_keys'],
+                                            user, ip):
+            ConfigService.add_item_to_config_set('internal.exploits.exploit_ssh_keys',
+                                             {"public_key": public_key, "private_key": private_key,
+                                              "user": user, "ip": ip})
+
+    @staticmethod
+    def ssh_key_exists(keys, user, ip):
+        return [key for key in keys if key['user'] == user and key['ip'] == ip]
 
     @staticmethod
     def update_config(config_json, should_encrypt):

@@ -150,6 +150,27 @@ class ReportService:
         return creds
 
     @staticmethod
+    def get_ssh_keys():
+        """
+        Return private ssh keys found as credentials
+        :return: List of credentials
+        """
+        creds = []
+        for telem in mongo.db.telemetry.find(
+                {'telem_type': 'system_info_collection', 'data.ssh_info': {'$exists': True}},
+                {'data.ssh_info': 1, 'monkey_guid': 1}
+        ):
+            origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+            if telem['data']['ssh_info']:
+                # Pick out all ssh keys not yet included in creds
+                ssh_keys = [{'username': key_pair['name'], 'type': 'Clear SSH private key',
+                             'origin': origin} for key_pair in telem['data']['ssh_info']
+                            if key_pair['private_key'] and {'username': key_pair['name'], 'type': 'Clear SSH private key',
+                            'origin': origin} not in creds]
+                creds.extend(ssh_keys)
+        return creds
+
+    @staticmethod
     def get_azure_creds():
         """
         Recover all credentials marked as being from an Azure machine
@@ -433,6 +454,7 @@ class ReportService:
                         'exploited': ReportService.get_exploited(),
                         'stolen_creds': ReportService.get_stolen_creds(),
                         'azure_passwords': ReportService.get_azure_creds(),
+                        'ssh_keys': ReportService.get_ssh_keys()
                     },
                 'recommendations':
                     {

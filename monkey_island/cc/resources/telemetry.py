@@ -170,12 +170,19 @@ class Telemetry(flask_restful.Resource):
         if 'ssh_info' in telemetry_json['data']:
             ssh_info = telemetry_json['data']['ssh_info']
             Telemetry.encrypt_system_info_creds({}, ssh_info)
+            if telemetry_json['data']['network_info']['networks']:
+                Telemetry.add_ip_to_ssh_keys(telemetry_json['data']['network_info']['networks'][0], ssh_info)
             Telemetry.add_system_info_creds_to_config({}, ssh_info)
         if 'credentials' in telemetry_json['data']:
             creds = telemetry_json['data']['credentials']
             Telemetry.encrypt_system_info_creds(creds)
             Telemetry.add_system_info_creds_to_config(creds)
             Telemetry.replace_user_dot_with_comma(creds)
+
+    @staticmethod
+    def add_ip_to_ssh_keys(ip, ssh_info):
+        for key in ssh_info:
+            key['ip'] = ip['addr']
 
     @staticmethod
     def process_trace_telemetry(telemetry_json):
@@ -217,7 +224,8 @@ class Telemetry(flask_restful.Resource):
                 ConfigService.creds_add_username(user['name'])
                 # Public key is useless without private key
                 if user['public_key'] and user['private_key']:
-                    ConfigService.ssh_add_keys(user['public_key'], user['private_key'])
+                    ConfigService.ssh_add_keys(user['public_key'], user['private_key'],
+                                               user['name'], user['ip'])
 
 
 

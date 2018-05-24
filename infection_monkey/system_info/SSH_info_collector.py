@@ -60,14 +60,19 @@ class SSHCollector(object):
                             LOG.info("Found public key in %s" % public)
                             try:
                                 with open(public) as f:
-                                    info['public_key'] = f.read()
+                                        info['public_key'] = f.read()
                                 # By default private key has the same name as public, only without .pub
                                 private = os.path.splitext(public)[0]
                                 if os.path.exists(private):
                                     try:
                                         with open(private) as f:
-                                            info['private_key'] = f.read()
-                                            LOG.info("Found private key in %s" % private)
+                                            # no use from ssh key if it's encrypted
+                                            private_key = f.read()
+                                            if private_key.find('ENCRYPTED') == -1:
+                                                info['private_key'] = private_key
+                                                LOG.info("Found private key in %s" % private)
+                                            else:
+                                                continue
                                     except (IOError, OSError):
                                         pass
                                 # By default known hosts file is called 'known_hosts'
@@ -79,6 +84,9 @@ class SSHCollector(object):
                                             LOG.info("Found known_hosts in %s" % known_hosts)
                                     except (IOError, OSError):
                                         pass
+                                # If private key found don't search more
+                                if info['private_key']:
+                                    break
                             except (IOError, OSError):
                                 pass
                     except OSError:
