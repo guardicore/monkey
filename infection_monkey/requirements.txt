@@ -13,6 +13,4 @@ PyInstaller
 six
 ecdsa
 netifaces
-mock
-nose
 ipaddress
