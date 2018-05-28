@@ -22,7 +22,8 @@ class ReportPageComponent extends AuthComponent {
       SAMBACRY: 3,
       SHELLSHOCK: 4,
       CONFICKER: 5,
-      AZURE: 6
+      AZURE: 6,
+      STOLEN_SSH_KEYS: 7
     };
 
   Warning =
@@ -293,6 +294,8 @@ class ReportPageComponent extends AuthComponent {
                       return x === true;
                     }).length} threats</span>:
                 <ul>
+                  {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] ?
+                    <li>Stolen SSH keys are used to exploit other machines.</li> : null }
                   {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
                     <li>Stolen credentials are used to exploit other machines.</li> : null}
                   {this.state.report.overview.issues[this.Issue.ELASTIC] ?
@@ -524,6 +527,22 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateSshKeysIssue(issue) {
+    return (
+        <li>
+          Protect <span className="label label-success">{issue.ssh_key}</span> private key with a pass phrase.
+          <CollapsibleWellComponent>
+            The machine <span className="label label-primary">{issue.machine}</span> (<span
+            className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+            className="label label-danger">SSH</span> attack.
+            <br/>
+            The Monkey authenticated over the SSH protocol with private key <span
+            className="label label-success">{issue.ssh_key}</span>.
+          </CollapsibleWellComponent>
+        </li>
+      );
+  }
+
   generateRdpIssue(issue) {
     return (
       <li>
@@ -671,6 +690,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'ssh':
         data = this.generateSshIssue(issue);
+        break;
+      case 'ssh_key':
+        data = this.generateSshKeysIssue(issue);
         break;
       case 'rdp':
         data = this.generateRdpIssue(issue);

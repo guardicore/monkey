@@ -34,6 +34,7 @@ class ReportService:
         SHELLSHOCK = 4
         CONFICKER = 5
         AZURE = 6
+        STOLEN_SSH_KEYS = 7
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -203,9 +204,12 @@ class ReportService:
         for attempt in exploit['data']['attempts']:
             if attempt['result']:
                 processed_exploit['username'] = attempt['user']
-                if len(attempt['password']) > 0:
+                if attempt['password']:
                     processed_exploit['type'] = 'password'
                     processed_exploit['password'] = attempt['password']
+                elif attempt['ssh_key']:
+                    processed_exploit['type'] = 'ssh_key'
+                    processed_exploit['ssh_key'] = attempt['ssh_key']
                 else:
                     processed_exploit['type'] = 'hash'
                 return processed_exploit
@@ -231,8 +235,12 @@ class ReportService:
     @staticmethod
     def process_ssh_exploit(exploit):
         processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        processed_exploit['type'] = 'ssh'
-        return processed_exploit
+        # Check if it's ssh key or ssh login credentials exploit
+        if processed_exploit['type'] == 'ssh_key':
+            return processed_exploit
+        else:
+            processed_exploit['type'] = 'ssh'
+            return processed_exploit
 
     @staticmethod
     def process_rdp_exploit(exploit):
@@ -332,7 +340,8 @@ class ReportService:
 
     @staticmethod
     def get_issues():
-        issues = ReportService.get_exploits() + ReportService.get_tunnels() + ReportService.get_cross_segment_issues() + ReportService.get_azure_issues()
+        issues = ReportService.get_exploits() + ReportService.get_tunnels() +\
+                 ReportService.get_cross_segment_issues() + ReportService.get_azure_issues()
         issues_dict = {}
         for issue in issues:
             machine = issue['machine']
@@ -392,6 +401,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.CONFICKER.value] = True
                 elif issue['type'] == 'azure_password':
                     issues_byte_array[ReportService.ISSUES_DICT.AZURE.value] = True
+                elif issue['type'] == 'ssh_key':
+                    issues_byte_array[ReportService.ISSUES_DICT.STOLEN_SSH_KEYS.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users:
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True

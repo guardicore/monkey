@@ -130,7 +130,7 @@ class Telemetry(flask_restful.Resource):
         for attempt in telemetry_json['data']['attempts']:
             if attempt['result']:
                 found_creds = {'user': attempt['user']}
-                for field in ['password', 'lm_hash', 'ntlm_hash']:
+                for field in ['password', 'lm_hash', 'ntlm_hash', 'ssh_key']:
                     if len(attempt[field]) != 0:
                         found_creds[field] = attempt[field]
                 NodeService.add_credentials_to_node(edge['to'], found_creds)
@@ -169,10 +169,10 @@ class Telemetry(flask_restful.Resource):
     def process_system_info_telemetry(telemetry_json):
         if 'ssh_info' in telemetry_json['data']:
             ssh_info = telemetry_json['data']['ssh_info']
-            Telemetry.encrypt_system_info_creds({}, ssh_info)
+            Telemetry.encrypt_system_info_ssh_keys(ssh_info)
             if telemetry_json['data']['network_info']['networks']:
                 Telemetry.add_ip_to_ssh_keys(telemetry_json['data']['network_info']['networks'][0], ssh_info)
-            Telemetry.add_system_info_creds_to_config({}, ssh_info)
+            Telemetry.add_system_info_ssh_keys_to_config(ssh_info)
         if 'credentials' in telemetry_json['data']:
             creds = telemetry_json['data']['credentials']
             Telemetry.encrypt_system_info_creds(creds)
@@ -197,20 +197,22 @@ class Telemetry(flask_restful.Resource):
                 creds[new_user] = creds.pop(user)
 
     @staticmethod
-    def encrypt_system_info_creds(creds, ssh_info=None):
+    def encrypt_system_info_creds(creds):
         for user in creds:
             for field in ['password', 'lm_hash', 'ntlm_hash']:
                 if field in creds[user]:
                     # this encoding is because we might run into passwords which are not pure ASCII
                     creds[user][field] = encryptor.enc(creds[user][field].encode('utf-8'))
-        if ssh_info:
-            for idx, user in enumerate(ssh_info):
-                for field in ['public_key', 'private_key', 'known_hosts']:
-                    if ssh_info[idx][field]:
-                        ssh_info[idx][field] = encryptor.enc(ssh_info[idx][field].encode('utf-8'))
 
     @staticmethod
-    def add_system_info_creds_to_config(creds, ssh_info=None):
+    def encrypt_system_info_ssh_keys(ssh_info):
+        for idx, user in enumerate(ssh_info):
+            for field in ['public_key', 'private_key', 'known_hosts']:
+                if ssh_info[idx][field]:
+                    ssh_info[idx][field] = encryptor.enc(ssh_info[idx][field].encode('utf-8'))
+
+    @staticmethod
+    def add_system_info_creds_to_config(creds):
         for user in creds:
             ConfigService.creds_add_username(user)
             if 'password' in creds[user]:
@@ -219,15 +221,15 @@ class Telemetry(flask_restful.Resource):
                 ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
             if 'ntlm_hash' in creds[user]:
                 ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
-        if ssh_info:
-            for user in ssh_info:
-                ConfigService.creds_add_username(user['name'])
-                # Public key is useless without private key
-                if user['public_key'] and user['private_key']:
-                    ConfigService.ssh_add_keys(user['public_key'], user['private_key'],
-                                               user['name'], user['ip'])
 
-
+    @staticmethod
+    def add_system_info_ssh_keys_to_config(ssh_info):
+        for user in ssh_info:
+            ConfigService.creds_add_username(user['name'])
+            # Public key is useless without private key
+            if user['public_key'] and user['private_key']:
+                ConfigService.ssh_add_keys(user['public_key'], user['private_key'],
+                                           user['name'], user['ip'])
 
     @staticmethod
     def encrypt_exploit_creds(telemetry_json):
