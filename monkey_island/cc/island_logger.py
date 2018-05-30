@@ -3,6 +3,9 @@ import json
 import logging.config
 
 
+__author__ = 'Maor.Rayzin'
+
+
 def json_setup_logging(default_path='logging.json', default_level=logging.INFO, env_key='LOG_CFG'):
     """
     Setup the logging configuration

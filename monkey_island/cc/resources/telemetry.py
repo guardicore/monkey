@@ -1,4 +1,5 @@
 import json
+import logging
 import traceback
 import copy
 from datetime import datetime
@@ -15,6 +16,9 @@ from cc.services.node import NodeService
 from cc.encryptor import encryptor
 
 __author__ = 'Barak'
+
+
+logger = logging.getLogger(__name__)
 
 
 class Telemetry(flask_restful.Resource):
@@ -52,10 +56,9 @@ class Telemetry(flask_restful.Resource):
             if telem_type in TELEM_PROCESS_DICT:
                 TELEM_PROCESS_DICT[telem_type](telemetry_json)
             else:
-                print('Got unknown type of telemetry: %s' % telem_type)
+                logger.info('Got unknown type of telemetry: %s' % telem_type)
         except Exception as ex:
-            print("Exception caught while processing telemetry: %s" % str(ex))
-            traceback.print_exc()
+            logger.error("Exception caught while processing telemetry", exc_info=True)
 
         telem_id = mongo.db.telemetry.insert(telemetry_json)
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
