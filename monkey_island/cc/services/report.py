@@ -1,4 +1,5 @@
 import ipaddress
+import logging
 from enum import Enum
 
 from cc.database import mongo
@@ -8,6 +9,9 @@ from cc.services.node import NodeService
 from cc.utils import local_ip_addresses, get_subnets
 
 __author__ = "itay.mizeretz"
+
+
+logger = logging.getLogger(__name__)
 
 
 class ReportService:
@@ -77,6 +81,8 @@ class ReportService:
         creds = ReportService.get_azure_creds()
         machines = set([instance['origin'] for instance in creds])
 
+        logger.info('Azure issues generated for reporting')
+
         return [
             {
                 'type': 'azure_password',
@@ -103,6 +109,8 @@ class ReportService:
             }
             for node in nodes]
 
+        logger.info('Scanned nodes generated for reporting')
+
         return nodes
 
     @staticmethod
@@ -123,6 +131,8 @@ class ReportService:
                      exploit['result']]))
             }
             for monkey in exploited]
+
+        logger.info('Exploited nodes generated for reporting')
 
         return exploited
 
@@ -147,6 +157,7 @@ class ReportService:
                             'origin': origin
                         }
                     )
+        logger.info('Stolen creds generated for reporting')
         return creds
 
     @staticmethod
@@ -167,6 +178,8 @@ class ReportService:
             azure_leaked_users = [{'username': user.replace(',', '.'), 'type': 'Clear Password',
                                    'origin': origin} for user in azure_users]
             creds.extend(azure_leaked_users)
+
+        logger.info('Azure machines creds generated for reporting')
         return creds
 
     @staticmethod
@@ -318,6 +331,7 @@ class ReportService:
             if machine not in issues_dict:
                 issues_dict[machine] = []
             issues_dict[machine].append(issue)
+        logger.info('Issues generated for reporting')
         return issues_dict
 
     @staticmethod
@@ -405,6 +419,7 @@ class ReportService:
             {'name': 'generated_report'},
             {'$set': {'value': True}},
             upsert=True)
+        logger.info("Report marked as generated.")
 
     @staticmethod
     def get_report():

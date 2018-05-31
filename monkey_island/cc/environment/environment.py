@@ -22,6 +22,7 @@ def load_env_from_file():
 try:
     __env_type = load_env_from_file()
     env = ENV_DICT[__env_type]()
+    logger.info('Monkey\'s env is: {0}'.format(env))
 except Exception:
     logger.error('Failed initializing environment', exc_info=True)
     raise
