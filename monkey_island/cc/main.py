@@ -9,20 +9,21 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_PATH not in sys.path:
     sys.path.insert(0, BASE_PATH)
 
+from cc.island_logger import json_setup_logging
+# This is here in order to catch EVERYTHING, some functions are being called on imports the log init needs to be on top.
+json_setup_logging(default_path='island_logger_default_config.json', default_level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 from cc.app import init_app
 from cc.utils import local_ip_addresses
 from cc.environment.environment import env
 from cc.database import is_db_server_up
-from cc.island_logger import json_setup_logging
 
 
 def main():
     from tornado.wsgi import WSGIContainer
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
-
-    json_setup_logging(default_path='island_logger_default_config.json', default_level=logging.DEBUG)
-    logger = logging.getLogger(__name__)
 
     mongo_url = os.environ.get('MONGO_URL', env.get_mongo_url())
 

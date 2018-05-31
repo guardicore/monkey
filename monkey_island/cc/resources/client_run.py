@@ -20,7 +20,7 @@ class ClientRun(flask_restful.Resource):
         if monkey is not None:
             is_monkey_running = not monkey["dead"]
         else:
-            logger.info("")
+            logger.info("Monkey is not running")
             is_monkey_running = False
 
         return jsonify(is_running=is_monkey_running)
