@@ -171,6 +171,7 @@ class Telemetry(flask_restful.Resource):
             ssh_info = telemetry_json['data']['ssh_info']
             Telemetry.encrypt_system_info_ssh_keys(ssh_info)
             if telemetry_json['data']['network_info']['networks']:
+                # We use user_name@machine_ip as the name of the ssh key stolen, thats why we need ip from telemetry
                 Telemetry.add_ip_to_ssh_keys(telemetry_json['data']['network_info']['networks'][0], ssh_info)
             Telemetry.add_system_info_ssh_keys_to_config(ssh_info)
         if 'credentials' in telemetry_json['data']:

@@ -404,7 +404,7 @@ class ReportService:
                 elif issue['type'] == 'ssh_key':
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_SSH_KEYS.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
-                        issue['username'] in config_users:
+                        issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
                 elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS.value] = True
