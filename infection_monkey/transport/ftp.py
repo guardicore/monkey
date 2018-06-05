@@ -32,12 +32,12 @@ class FTPServer(threading.Thread):
                 try:
                     func=getattr(self,cmd[:4].strip().upper())
                     func(cmd)
-                except Exception,e:
+                except Exception as e:
                     self.conn.send('500 Sorry.\r\n')
                     break
         
         self.conn.close()
-        self.sock.close()                    
+        self.sock.close()
 
     def SYST(self,cmd):
         self.conn.send('215 UNIX Type: L8\r\n')
@@ -83,7 +83,7 @@ class FTPServer(threading.Thread):
     def PASV(self,cmd):
         self.pasv_mode = True
         self.servsock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.servsock.bind((local_ip,0))
+        self.servsock.bind((self.local_ip,0))
         self.servsock.listen(1)
         ip, port = self.servsock.getsockname()
         self.conn.send('227 Entering Passive Mode (%s,%u,%u).\r\n' %

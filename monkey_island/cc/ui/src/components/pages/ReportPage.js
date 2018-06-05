@@ -346,7 +346,7 @@ class ReportPageComponent extends AuthComponent {
                     <li>Weak segmentation - Machines from different segments are able to
                       communicate.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                    <li>Weak segmentation - machines were able to communicate over unused ports.</li> : null}
+                    <li>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
                 </ul>
               </div>
               :

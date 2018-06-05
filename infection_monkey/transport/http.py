@@ -122,7 +122,7 @@ class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         address = (u.hostname, u.port or 443)
         try:
             conn = socket.create_connection(address)
-        except socket.error, e:
+        except socket.error as e:
             LOG.debug("HTTPConnectProxyHandler: Got exception while trying to connect to %s: %s" % (repr(address), e))
             self.send_error(504)  # 504 Gateway Timeout
             return

@@ -20,7 +20,7 @@ The following is a *short* list of recommendations. PRs that don't match these c
 * **Don't** leave your pull request description blank.
 * **Do** license your code as GPLv3.
 
-
+Also, please submit PRs to the develop branch.
 
 ## Issues
 * **Do** write a detailed description of your bug and use a descriptive title.

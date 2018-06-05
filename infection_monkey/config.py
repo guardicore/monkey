@@ -40,7 +40,7 @@ def _cast_by_example(value, example):
         return int(value)
     elif example_type is float:
         return float(value)
-    elif example_type is types.ClassType or example_type is ABCMeta:
+    elif example_type in (type, ABCMeta):
         return globals()[value]
     else:
         return None
@@ -84,10 +84,10 @@ class Configuration(object):
             if val_type is types.FunctionType or val_type is types.MethodType:
                 continue
 
-            if val_type is types.ClassType or val_type is ABCMeta:
+            if val_type in (type, ABCMeta):
                 value = value.__name__
             elif val_type is tuple or val_type is list:
-                if len(value) != 0 and (type(value[0]) is types.ClassType or type(value[0]) is ABCMeta):
+                if len(value) != 0 and type(value[0]) in (type, ABCMeta):
                     value = val_type([x.__name__ for x in value])
 
             result[key] = value
