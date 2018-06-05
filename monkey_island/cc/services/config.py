@@ -1,6 +1,7 @@
 import copy
 import collections
 import functools
+import logging
 from jsonschema import Draft4Validator, validators
 from six import string_types
 
@@ -10,6 +11,8 @@ from cc.environment.environment import env
 from cc.utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
+
+logger = logging.getLogger(__name__)
 
 WARNING_SIGN = u" \u26A0"
 
@@ -894,6 +897,7 @@ class ConfigService:
         if should_encrypt:
             ConfigService.encrypt_config(config_json)
         mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
+        logger.info('monkey config was updated')
 
     @staticmethod
     def init_default_config():
@@ -909,6 +913,7 @@ class ConfigService:
         config = copy.deepcopy(ConfigService.default_config)
         if should_encrypt:
             ConfigService.encrypt_config(config)
+        logger.info("Default config was called")
         return config
 
     @staticmethod
@@ -922,6 +927,7 @@ class ConfigService:
         config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
         ConfigService.update_config(config, should_encrypt=False)
+        logger.info('Monkey config reset was called')
 
     @staticmethod
     def set_server_ips_in_config(config):
@@ -938,6 +944,7 @@ class ConfigService:
         initial_config['name'] = 'initial'
         initial_config.pop('_id')
         mongo.db.config.insert(initial_config)
+        logger.info('Monkey config was inserted to mongo and saved')
 
     @staticmethod
     def _extend_config_with_default(validator_class):
