@@ -1,6 +1,7 @@
 import logging
 
 from . import InfoCollector
+from SSH_info_collector import SSHCollector
 
 __author__ = 'uri'
 
@@ -26,4 +27,6 @@ class LinuxInfoCollector(InfoCollector):
         self.get_process_list()
         self.get_network_info()
         self.get_azure_info()
+        self.info['ssh_info'] = SSHCollector.get_info()
         return self.info
+

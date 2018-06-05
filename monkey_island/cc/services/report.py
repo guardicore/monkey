@@ -40,6 +40,7 @@ class ReportService:
         SHELLSHOCK = 4
         CONFICKER = 5
         AZURE = 6
+        STOLEN_SSH_KEYS = 7
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -163,6 +164,27 @@ class ReportService:
         return creds
 
     @staticmethod
+    def get_ssh_keys():
+        """
+        Return private ssh keys found as credentials
+        :return: List of credentials
+        """
+        creds = []
+        for telem in mongo.db.telemetry.find(
+                {'telem_type': 'system_info_collection', 'data.ssh_info': {'$exists': True}},
+                {'data.ssh_info': 1, 'monkey_guid': 1}
+        ):
+            origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+            if telem['data']['ssh_info']:
+                # Pick out all ssh keys not yet included in creds
+                ssh_keys = [{'username': key_pair['name'], 'type': 'Clear SSH private key',
+                             'origin': origin} for key_pair in telem['data']['ssh_info']
+                            if key_pair['private_key'] and {'username': key_pair['name'], 'type': 'Clear SSH private key',
+                            'origin': origin} not in creds]
+                creds.extend(ssh_keys)
+        return creds
+
+    @staticmethod
     def get_azure_creds():
         """
         Recover all credentials marked as being from an Azure machine
@@ -197,9 +219,12 @@ class ReportService:
         for attempt in exploit['data']['attempts']:
             if attempt['result']:
                 processed_exploit['username'] = attempt['user']
-                if len(attempt['password']) > 0:
+                if attempt['password']:
                     processed_exploit['type'] = 'password'
                     processed_exploit['password'] = attempt['password']
+                elif attempt['ssh_key']:
+                    processed_exploit['type'] = 'ssh_key'
+                    processed_exploit['ssh_key'] = attempt['ssh_key']
                 else:
                     processed_exploit['type'] = 'hash'
                 return processed_exploit
@@ -225,8 +250,12 @@ class ReportService:
     @staticmethod
     def process_ssh_exploit(exploit):
         processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        processed_exploit['type'] = 'ssh'
-        return processed_exploit
+        # Check if it's ssh key or ssh login credentials exploit
+        if processed_exploit['type'] == 'ssh_key':
+            return processed_exploit
+        else:
+            processed_exploit['type'] = 'ssh'
+            return processed_exploit
 
     @staticmethod
     def process_rdp_exploit(exploit):
@@ -326,7 +355,8 @@ class ReportService:
 
     @staticmethod
     def get_issues():
-        issues = ReportService.get_exploits() + ReportService.get_tunnels() + ReportService.get_cross_segment_issues() + ReportService.get_azure_issues()
+        issues = ReportService.get_exploits() + ReportService.get_tunnels() +\
+                 ReportService.get_cross_segment_issues() + ReportService.get_azure_issues()
         issues_dict = {}
         for issue in issues:
             machine = issue['machine']
@@ -387,8 +417,10 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.CONFICKER.value] = True
                 elif issue['type'] == 'azure_password':
                     issues_byte_array[ReportService.ISSUES_DICT.AZURE.value] = True
+                elif issue['type'] == 'ssh_key':
+                    issues_byte_array[ReportService.ISSUES_DICT.STOLEN_SSH_KEYS.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
-                        issue['username'] in config_users:
+                        issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
                 elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS.value] = True
@@ -450,6 +482,7 @@ class ReportService:
                         'exploited': ReportService.get_exploited(),
                         'stolen_creds': ReportService.get_stolen_creds(),
                         'azure_passwords': ReportService.get_azure_creds(),
+                        'ssh_keys': ReportService.get_ssh_keys()
                     },
                 'recommendations':
                     {
