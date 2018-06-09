@@ -4,6 +4,7 @@ import socket
 from model.host import VictimHost
 from network import HostFinger
 
+__author__ = 'Maor Rayzin'
 
 LOG = logging.getLogger(__name__)
 
@@ -21,11 +22,12 @@ class MSSQLFingerprint(HostFinger):
 
     def get_host_fingerprint(self, host):
         """Gets Microsoft SQL Server instance information by querying the SQL Browser service.
-            Args:
-                host (str): Hostname or IP address of the SQL Server to query for information.
+            :arg:
+                host (VictimHost): The MS-SSQL Server to query for information.
 
-            Returns:
+            :returns:
                 Discovered server information written to the Host info struct.
+                True if success, False otherwise.
         """
 
         assert isinstance(host, VictimHost)
@@ -33,7 +35,7 @@ class MSSQLFingerprint(HostFinger):
         # Create a UDP socket and sets a timeout
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(self.TIMEOUT)
-        server_address = (str(host), self.SQL_BROWSER_DEFAULT_PORT)
+        server_address = (str(host.ip_addr), self.SQL_BROWSER_DEFAULT_PORT)
 
         # The message is a CLNT_UCAST_EX packet to get all instances
         # https://msdn.microsoft.com/en-us/library/cc219745.aspx
@@ -43,7 +45,6 @@ class MSSQLFingerprint(HostFinger):
         message = message.encode()
 
         # send data and receive response
-        results = []
         try:
             LOG.info('Sending message to requested host: {0}, {1}'.format(host, message))
             sock.sendto(message, server_address)
@@ -51,7 +52,7 @@ class MSSQLFingerprint(HostFinger):
         except socket.timeout:
             LOG.error('Socket timeout reached, maybe browser service on host: {0} doesnt exist'.format(host))
             sock.close()
-            return results
+            return False
 
         host.services[self.SERVICE_NAME] = {}
 
@@ -59,10 +60,13 @@ class MSSQLFingerprint(HostFinger):
         for server in data[3:].decode().split(';;'):
             instance_info = server.split(';')
             if len(instance_info) > 1:
+                host.services[self.SERVICE_NAME][instance_info[1]] = {}
                 for i in range(1, len(instance_info), 2):
-                    host.services[self.SERVICE_NAME][instance_info[i - 1]] = instance_info[i]
+                    # Each instance's info is nested under its own name, if there are multiple instances
+                    # each will appear under its own name
+                    host.services[self.SERVICE_NAME][instance_info[1]][instance_info[i - 1]] = instance_info[i]
 
         # Close the socket
         sock.close()
 
-        return results
+        return True
