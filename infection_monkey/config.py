@@ -234,6 +234,12 @@ class Configuration(object):
         """
         return product(self.exploit_user_list, self.exploit_password_list)
 
+    def get_exploit_user_ssh_key_pairs(self):
+        """
+        :return: All combinations of the configurations users and ssh pairs
+        """
+        return product(self.exploit_user_list, self.exploit_ssh_keys)
+
     def get_exploit_user_password_or_hash_product(self):
         """
         Returns all combinations of the configurations users and passwords or lm/ntlm hashes
@@ -252,6 +258,7 @@ class Configuration(object):
     exploit_password_list = ["Password1!", "1234", "password", "12345678"]
     exploit_lm_hash_list = []
     exploit_ntlm_hash_list = []
+    exploit_ssh_keys = []
 
     # smb/wmi exploiter
     smb_download_timeout = 300  # timeout in seconds

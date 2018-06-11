@@ -1,9 +1,12 @@
+import logging
 from flask import request, jsonify
 import flask_restful
 
 from cc.services.node import NodeService
 
 __author__ = 'itay.mizeretz'
+
+logger = logging.getLogger(__name__)
 
 
 class ClientRun(flask_restful.Resource):
@@ -17,6 +20,7 @@ class ClientRun(flask_restful.Resource):
         if monkey is not None:
             is_monkey_running = not monkey["dead"]
         else:
+            logger.info("Monkey is not running")
             is_monkey_running = False
 
         return jsonify(is_running=is_monkey_running)
