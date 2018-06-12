@@ -9,13 +9,13 @@ __author__ = 'Maor Rayzin'
 LOG = logging.getLogger(__name__)
 
 
-class MSSQLFingerprint(HostFinger):
+class MSSQLFinger(HostFinger):
 
     # Class related consts
     SQL_BROWSER_DEFAULT_PORT = 1434
     BUFFER_SIZE = 4096
     TIMEOUT = 5
-    SERVICE_NAME = 'mssql'
+    SERVICE_NAME = 'MSSQL'
 
     def __init__(self):
         self._config = __import__('config').WormConfiguration
