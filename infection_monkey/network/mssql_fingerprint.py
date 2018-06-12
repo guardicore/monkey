@@ -50,15 +50,17 @@ class MSSQLFinger(HostFinger):
             sock.sendto(message, server_address)
             data, server = sock.recvfrom(self.BUFFER_SIZE)
         except socket.timeout:
-            LOG.error('Socket timeout reached, maybe browser service on host: {0} doesnt exist'.format(host))
+            LOG.info('Socket timeout reached, maybe browser service on host: {0} doesnt exist'.format(host))
             sock.close()
             return False
 
         host.services[self.SERVICE_NAME] = {}
 
         # Loop through the server data
-        for server in data[3:].decode().split(';;'):
-            instance_info = server.split(';')
+        instances_list = data[3:].decode().split(';;')
+        LOG.info('{0} MSSQL instances found'.format(len(instances_list)))
+        for instance in instances_list:
+            instance_info = instance.split(';')
             if len(instance_info) > 1:
                 host.services[self.SERVICE_NAME][instance_info[1]] = {}
                 for i in range(1, len(instance_info), 2):

@@ -146,7 +146,7 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger]
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger, MSSQLFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
                          ElasticGroovyExploiter,  # multi
