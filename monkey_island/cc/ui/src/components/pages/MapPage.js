@@ -45,7 +45,7 @@ class MapPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
-          edge.color = edgeGroupToColor(edge.group);
+          edge.color = {'color': edgeGroupToColor(edge.group)};
         });
         this.setState({graph: res});
         this.props.onStatusChange();
