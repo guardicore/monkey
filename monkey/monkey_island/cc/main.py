@@ -14,7 +14,8 @@ from cc.utils import local_ip_addresses
 from cc.environment.environment import env
 from cc.database import is_db_server_up
 
-if __name__ == '__main__':
+
+def main():
     from tornado.wsgi import WSGIContainer
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
@@ -36,3 +37,6 @@ if __name__ == '__main__':
         print('Monkey Island Server is running on https://{}:{}'.format(local_ip_addresses()[0], env.get_island_port()))
         IOLoop.instance().start()
 
+
+if __name__ == '__main__':
+    main()
