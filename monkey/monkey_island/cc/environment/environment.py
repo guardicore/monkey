@@ -1,6 +1,10 @@
 import json
+import logging
 import standard
 import aws
+
+logger = logging.getLogger(__name__)
+
 
 ENV_DICT = {
     'standard': standard.StandardEnvironment,
@@ -18,6 +22,7 @@ def load_env_from_file():
 try:
     __env_type = load_env_from_file()
     env = ENV_DICT[__env_type]()
+    logger.info('Monkey\'s env is: {0}'.format(env.__class__.__name__))
 except Exception:
-    print('Failed initializing environment: %s' % __env_type)
+    logger.error('Failed initializing environment', exc_info=True)
     raise
