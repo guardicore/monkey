@@ -4,18 +4,18 @@ import os
 import subprocess
 import sys
 import time
-
-import tunnel
-import utils
-from config import WormConfiguration
-from control import ControlClient
-from model import DELAY_DELETE_CMD
-from network.firewall import app as firewall
-from network.network_scanner import NetworkScanner
 from six.moves import xrange
-from system_info import SystemInfoCollector
-from system_singleton import SystemSingleton
-from windows_upgrader import WindowsUpgrader
+
+import infection_monkey.tunnel as tunnel
+import infection_monkey.utils as utils
+from infection_monkey.config import WormConfiguration
+from infection_monkey.control import ControlClient
+from infection_monkey.model import DELAY_DELETE_CMD
+from infection_monkey.network.firewall import app as firewall
+from infection_monkey.network.network_scanner import NetworkScanner
+from infection_monkey.system_info import SystemInfoCollector
+from infection_monkey.system_singleton import SystemSingleton
+from infection_monkey.windows_upgrader import WindowsUpgrader
 
 __author__ = 'itamar'
 

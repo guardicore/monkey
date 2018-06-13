@@ -1,8 +1,9 @@
 import socket
 import select
 from threading import Thread
-from base import TransportProxyBase, update_last_serve_time
 from logging import getLogger
+
+from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 
 READ_BUFFER_SIZE = 8192
 DEFAULT_TIMEOUT = 30

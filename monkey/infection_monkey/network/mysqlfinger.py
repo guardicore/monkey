@@ -1,9 +1,10 @@
 import logging
 import socket
 
-from model.host import VictimHost
-from network import HostFinger
-from .tools import struct_unpack_tracker, struct_unpack_tracker_string
+import infection_monkey.config
+from infection_monkey.model.host import VictimHost
+from infection_monkey.network import HostFinger
+from infection_monkey.network.tools import struct_unpack_tracker, struct_unpack_tracker_string
 
 MYSQL_PORT = 3306
 SQL_SERVICE = 'mysqld-3306'
@@ -20,7 +21,7 @@ class MySQLFinger(HostFinger):
     HEADER_SIZE = 4  # in bytes
 
     def __init__(self):
-        self._config = __import__('config').WormConfiguration
+        self._config = infection_monkey.config.WormConfiguration
 
     def get_host_fingerprint(self, host):
         """

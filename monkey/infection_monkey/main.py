@@ -8,14 +8,11 @@ import os
 import sys
 import traceback
 
-from config import WormConfiguration, EXTERNAL_CONFIG_FILE
-from dropper import MonkeyDrops
-from model import MONKEY_ARG, DROPPER_ARG
+import infection_monkey.utils as utils
+from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
+from infection_monkey.dropper import MonkeyDrops
+from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
 from infection_monkey.monkey import InfectionMonkey
-import utils
-
-if __name__ == "__main__":
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 __author__ = 'itamar'
 

@@ -6,9 +6,9 @@ import unittest
 
 from mock import Mock, patch
 
-import control
+import infection_monkey.control as control
 
-from config import GUID
+from infection_monkey.config import GUID
 
 
 class ReportConfigErrorTestCase(unittest.TestCase):

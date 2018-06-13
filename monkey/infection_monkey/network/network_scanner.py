@@ -1,11 +1,11 @@
 import logging
 import time
 
-from config import WormConfiguration
-from info import local_ips, get_interfaces_ranges
 from common.network.network_range import *
-from model import VictimHost
-from . import HostScanner
+from infection_monkey.config import WormConfiguration
+from infection_monkey.network.info import local_ips, get_interfaces_ranges
+from infection_monkey.model import VictimHost
+from infection_monkey.network import HostScanner
 
 __author__ = 'itamar'
 

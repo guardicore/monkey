@@ -6,12 +6,12 @@ from socket import gethostname
 import requests
 from requests.exceptions import ConnectionError
 
-import monkeyfs
-import tunnel
-from config import WormConfiguration, GUID
-from network.info import local_ips, check_internet_access
-from transport.http import HTTPConnectProxy
-from transport.tcp import TcpProxy
+import infection_monkey.monkeyfs as monkeyfs
+import infection_monkey.tunnel as tunnel
+from infection_monkey.config import WormConfiguration, GUID
+from infection_monkey.network.info import local_ips, check_internet_access
+from infection_monkey.transport.http import HTTPConnectProxy
+from infection_monkey.transport.tcp import TcpProxy
 
 __author__ = 'hoffer'
 

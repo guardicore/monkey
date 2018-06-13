@@ -9,10 +9,10 @@ import sys
 import time
 from ctypes import c_char_p
 
-from config import WormConfiguration
-from exploit.tools import build_monkey_commandline_explicitly
-from model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
-from system_info import SystemInfoCollector, OperatingSystem
+from infection_monkey.config import WormConfiguration
+from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
+from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
+from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS

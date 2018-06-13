@@ -1,8 +1,9 @@
 import re
 
-from model.host import VictimHost
-from network import HostFinger
-from network.tools import check_tcp_port
+import infection_monkey.config
+from infection_monkey.model.host import VictimHost
+from infection_monkey.network import HostFinger
+from infection_monkey.network.tools import check_tcp_port
 
 SSH_PORT = 22
 SSH_SERVICE_DEFAULT = 'tcp-22'
@@ -14,7 +15,7 @@ LINUX_DIST_SSH = ['ubuntu', 'debian']
 
 class SSHFinger(HostFinger):
     def __init__(self):
-        self._config = __import__('config').WormConfiguration
+        self._config = infection_monkey.config.WormConfiguration
         self._banner_regex = re.compile(SSH_REGEX, re.IGNORECASE)
 
     @staticmethod

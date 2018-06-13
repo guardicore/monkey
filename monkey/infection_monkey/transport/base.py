@@ -3,6 +3,7 @@ from threading import Thread
 
 g_last_served = None
 
+
 class TransportProxyBase(Thread):
     def __init__(self, local_port, dest_host=None, dest_port=None, local_host=''):
         global g_last_served

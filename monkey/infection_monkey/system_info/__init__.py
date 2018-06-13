@@ -5,8 +5,8 @@ import sys
 import psutil
 from enum import IntEnum
 
-from network.info import get_host_subnets
-from azure_cred_collector import AzureCollector
+from infection_monkey.network.info import get_host_subnets
+from infection_monkey.system_info.azure_cred_collector import AzureCollector
 
 LOG = logging.getLogger(__name__)
 
@@ -112,7 +112,7 @@ class InfoCollector(object):
         Updates the credentials structure, creating it if neccesary (compat with mimikatz)
         :return: None. Updates class information
         """
-        from config import WormConfiguration
+        from infection_monkey.config import WormConfiguration
         if not WormConfiguration.extract_azure_creds:
             return
         LOG.debug("Harvesting creds if on an Azure machine")

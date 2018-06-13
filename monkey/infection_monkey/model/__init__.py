@@ -1,4 +1,4 @@
-from host import VictimHost
+from infection_monkey.model.host import VictimHost
 
 __author__ = 'itamar'
 

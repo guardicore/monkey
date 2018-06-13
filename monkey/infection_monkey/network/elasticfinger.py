@@ -5,8 +5,9 @@ from contextlib import closing
 import requests
 from requests.exceptions import Timeout, ConnectionError
 
-from model.host import VictimHost
-from network import HostFinger
+import infection_monkey.config
+from infection_monkey.model.host import VictimHost
+from infection_monkey.network import HostFinger
 
 ES_PORT = 9200
 ES_SERVICE = 'elastic-search-9200'
@@ -21,7 +22,7 @@ class ElasticFinger(HostFinger):
     """
 
     def __init__(self):
-        self._config = __import__('config').WormConfiguration
+        self._config = infection_monkey.config.WormConfiguration
 
     def get_host_fingerprint(self, host):
         """

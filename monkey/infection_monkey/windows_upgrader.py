@@ -5,12 +5,12 @@ import shutil
 
 import time
 
-import monkeyfs
-from config import WormConfiguration
-from control import ControlClient
-from exploit.tools import build_monkey_commandline_explicitly
-from model import MONKEY_CMDLINE_WINDOWS
-from utils import is_windows_os, is_64bit_windows_os, is_64bit_python
+import infection_monkey.monkeyfs as monkeyfs
+from infection_monkey.config import WormConfiguration
+from infection_monkey.control import ControlClient
+from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
+from infection_monkey.model import MONKEY_CMDLINE_WINDOWS
+from infection_monkey.utils import is_windows_os, is_64bit_windows_os, is_64bit_python
 
 __author__ = 'itay.mizeretz'
 

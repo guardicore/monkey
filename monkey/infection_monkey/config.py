@@ -6,9 +6,10 @@ import uuid
 from abc import ABCMeta
 from itertools import product
 
-from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
-    SambaCryExploiter, ElasticGroovyExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
+from infection_monkey.exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, \
+    ShellShockExploiter, SambaCryExploiter, ElasticGroovyExploiter
+from infection_monkey.network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, \
+    ElasticFinger
 
 __author__ = 'itamar'
 

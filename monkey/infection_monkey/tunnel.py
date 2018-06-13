@@ -5,11 +5,11 @@ import time
 from difflib import get_close_matches
 from threading import Thread
 
-from model import VictimHost
-from network.firewall import app as firewall
-from network.info import local_ips, get_free_tcp_port
-from network.tools import check_tcp_port
-from transport.base import get_last_serve_time
+from infection_monkey.model import VictimHost
+from infection_monkey.network.firewall import app as firewall
+from infection_monkey.network.info import local_ips, get_free_tcp_port
+from infection_monkey.network.tools import check_tcp_port
+from infection_monkey.transport.base import get_last_serve_time
 
 __author__ = 'hoffer'
 

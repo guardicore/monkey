@@ -3,7 +3,7 @@ import logging
 import sys
 from abc import ABCMeta, abstractmethod
 
-from config import WormConfiguration
+from infection_monkey.config import WormConfiguration
 
 __author__ = 'itamar'
 

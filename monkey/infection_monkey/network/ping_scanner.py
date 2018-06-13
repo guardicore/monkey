@@ -4,8 +4,9 @@ import re
 import subprocess
 import sys
 
-from model.host import VictimHost
-from . import HostScanner, HostFinger
+import infection_monkey.config
+from infection_monkey.model.host import VictimHost
+from infection_monkey.network import HostScanner, HostFinger
 
 __author__ = 'itamar'
 
@@ -20,7 +21,7 @@ LOG = logging.getLogger(__name__)
 
 class PingScanner(HostScanner, HostFinger):
     def __init__(self):
-        self._config = __import__('config').WormConfiguration
+        self._config = infection_monkey.config.WormConfiguration
         self._devnull = open(os.devnull, "w")
         self._ttl_regex = re.compile(TTL_REGEX_STR, re.IGNORECASE)
 

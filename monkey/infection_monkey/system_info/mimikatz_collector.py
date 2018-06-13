@@ -3,6 +3,8 @@ import ctypes
 import logging
 import socket
 
+import infection_monkey.config
+
 __author__ = 'itay.mizeretz'
 
 LOG = logging.getLogger(__name__)
@@ -17,7 +19,7 @@ class MimikatzCollector(object):
         try:
 
             self._isInit = False
-            self._config = __import__('config').WormConfiguration
+            self._config = infection_monkey.config.WormConfiguration
             self._dll = ctypes.WinDLL(self._config.mimikatz_dll_name)
             collect_proto = ctypes.WINFUNCTYPE(ctypes.c_int)
             get_proto = ctypes.WINFUNCTYPE(MimikatzCollector.LogonData)

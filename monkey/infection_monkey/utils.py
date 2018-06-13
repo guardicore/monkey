@@ -2,7 +2,7 @@ import os
 import sys
 import struct
 
-from config import WormConfiguration
+from infection_monkey.config import WormConfiguration
 
 
 def get_monkey_log_path():

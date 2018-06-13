@@ -1,8 +1,9 @@
 from itertools import izip_longest
 from random import shuffle
 
-from network import HostScanner, HostFinger
-from network.tools import check_tcp_ports
+import infection_monkey.config
+from infection_monkey.network import HostScanner, HostFinger
+from infection_monkey.network.tools import check_tcp_ports
 
 __author__ = 'itamar'
 
@@ -11,7 +12,7 @@ BANNER_READ = 1024
 
 class TcpScanner(HostScanner, HostFinger):
     def __init__(self):
-        self._config = __import__('config').WormConfiguration
+        self._config = infection_monkey.config.WormConfiguration
 
     def is_host_alive(self, host):
         return self.get_host_fingerprint(host, True)

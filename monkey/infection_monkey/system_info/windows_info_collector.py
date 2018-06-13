@@ -1,7 +1,7 @@
 import logging
 
-from mimikatz_collector import MimikatzCollector
-from . import InfoCollector
+from infection_monkey.system_info.mimikatz_collector import MimikatzCollector
+from infection_monkey.system_info import InfoCollector
 
 LOG = logging.getLogger(__name__)
 

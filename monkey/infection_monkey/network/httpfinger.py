@@ -1,8 +1,10 @@
-from network import HostFinger
-from model.host import VictimHost
+import infection_monkey.config
+from infection_monkey.network import HostFinger
+from infection_monkey.model.host import VictimHost
 import logging
 
 LOG = logging.getLogger(__name__)
+
 
 class HTTPFinger(HostFinger):
     """
@@ -10,7 +12,7 @@ class HTTPFinger(HostFinger):
     """
 
     def __init__(self):
-        self._config = __import__('config').WormConfiguration
+        self._config = infection_monkey.config.WormConfiguration
         self.HTTP = [(port, str(port)) for port in self._config.HTTP_PORTS]
 
     @staticmethod
