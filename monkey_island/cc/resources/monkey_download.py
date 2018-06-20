@@ -23,6 +23,11 @@ MONKEY_DOWNLOADS = [
     },
     {
         'type': 'linux',
+        'machine': 'i386',
+        'filename': 'monkey-linux-32',
+    },
+    {
+        'type': 'linux',
         'filename': 'monkey-linux-64',
     },
     {
@@ -34,6 +39,16 @@ MONKEY_DOWNLOADS = [
         'type': 'windows',
         'machine': 'amd64',
         'filename': 'monkey-windows-64.exe',
+    },
+    {
+        'type': 'windows',
+        'machine': '64',
+        'filename': 'monkey-windows-64.exe',
+    },
+    {
+        'type': 'windows',
+        'machine': '32',
+        'filename': 'monkey-windows-32.exe',
     },
     {
         'type': 'windows',
