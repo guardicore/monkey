@@ -64,7 +64,6 @@ class Root(flask_restful.Resource):
         infection_done = NodeService.is_monkey_finished_running()
         if not infection_done:
             report_done = False
-            logger.info('Report generation cannot be completed, infection is not done.')
         else:
             report_done = ReportService.is_report_generated()
         return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done, report_done=report_done)

@@ -131,6 +131,14 @@ SCHEMA = {
                 {
                     "type": "string",
                     "enum": [
+                        "MSSQLFinger"
+                    ],
+                    "title": "MSSQLFinger"
+                },
+
+                {
+                    "type": "string",
+                    "enum": [
                         "ElasticFinger"
                     ],
                     "title": "ElasticFinger"
@@ -374,6 +382,7 @@ SCHEMA = {
                                 "PingScanner",
                                 "HTTPFinger",
                                 "MySQLFinger",
+                                "MSSQLFinger",
                                 "ElasticFinger"
                             ],
                             "description": "Determines which classes to use for fingerprinting"
