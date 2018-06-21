@@ -184,9 +184,9 @@ class Configuration(object):
     # Auto detect and scan local subnets
     local_network_scan = True
 
-    subnet_scan_list = ['', ]
+    subnet_scan_list = []
 
-    blocked_ips = ['', ]
+    blocked_ips = []
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
