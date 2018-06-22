@@ -8,7 +8,8 @@ from itertools import product
 
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
     SambaCryExploiter, ElasticGroovyExploiter, Struts2Exploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger, \
+    MSSQLFinger
 
 __author__ = 'itamar'
 
@@ -145,7 +146,7 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger]
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger, MSSQLFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
                          ElasticGroovyExploiter, Struts2Exploiter  # multi
@@ -184,9 +185,9 @@ class Configuration(object):
     # Auto detect and scan local subnets
     local_network_scan = True
 
-    subnet_scan_list = ['', ]
+    subnet_scan_list = []
 
-    blocked_ips = ['', ]
+    blocked_ips = []
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
