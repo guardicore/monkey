@@ -7,7 +7,7 @@ from abc import ABCMeta
 from itertools import product
 
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
-    SambaCryExploiter, ElasticGroovyExploiter
+    SambaCryExploiter, ElasticGroovyExploiter, Struts2Exploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger, \
     MSSQLFinger
 
@@ -149,7 +149,7 @@ class Configuration(object):
     finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger, MSSQLFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
-                         ElasticGroovyExploiter,  # multi
+                         ElasticGroovyExploiter, Struts2Exploiter  # multi
                          ]
 
     # how many victims to look for in a single scan iteration

@@ -23,7 +23,8 @@ class ReportPageComponent extends AuthComponent {
       SHELLSHOCK: 4,
       CONFICKER: 5,
       AZURE: 6,
-      STOLEN_SSH_KEYS: 7
+      STOLEN_SSH_KEYS: 7,
+      STRUTS2: 8
     };
 
   Warning =
@@ -321,7 +322,10 @@ class ReportPageComponent extends AuthComponent {
                     <li>Azure machines expose plaintext passwords. (<a
                       href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
                     >More info</a>)</li> : null}
-
+                  {this.state.report.overview.issues[this.Issue.STRUTS2] ?
+                    <li>Struts2 servers are vulnerable to remote code execution. (<a
+                      href="https://cwiki.apache.org/confluence/display/WW/S2-045">
+                      CVE-2017-5638</a>)</li> : null }
                 </ul>
               </div>
               :
@@ -671,6 +675,24 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateStruts2Issue(issue) {
+    return (
+      <li>
+        Upgrade Struts2 to version 2.3.32 or 2.5.10.1 or any later versions.
+        <CollapsibleWellComponent>
+          Struts2 server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">remote code execution</span> attack.
+          <br/>
+          The attack was made possible because the server is using an old version of Jakarta based file upload
+          Multipart parser. For possible work-arounds and more info read <a
+                      href="https://cwiki.apache.org/confluence/display/WW/S2-045"
+                    >here</a>.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
 
 
   generateIssue = (issue) => {
@@ -717,6 +739,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'azure_password':
         data = this.generateAzureIssue(issue);
+        break;
+      case 'struts2':
+        data = this.generateStruts2Issue(issue);
         break;
     }
     return data;

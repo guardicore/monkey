@@ -80,6 +80,13 @@ SCHEMA = {
                     ],
                     "title": "ElasticGroovy Exploiter"
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "Struts2Exploiter"
+                    ],
+                    "title": "Struts2 Exploiter"
+                }
             ]
         },
         "finger_classes": {
@@ -618,7 +625,8 @@ SCHEMA = {
                                 "SSHExploiter",
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
-                                "ElasticGroovyExploiter"
+                                "ElasticGroovyExploiter",
+                                "Struts2Exploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
