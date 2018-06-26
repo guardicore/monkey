@@ -38,6 +38,13 @@ SCHEMA = {
                     ],
                     "title": "WMI Exploiter"
                 },
+{
+                    "type": "string",
+                    "enum": [
+                        "MSSQLExploiter"
+                    ],
+                    "title": "MSSQL Exploiter"
+                },
                 {
                     "type": "string",
                     "enum": [
@@ -615,6 +622,7 @@ SCHEMA = {
                             "default": [
                                 "SmbExploiter",
                                 "WmiExploiter",
+                                "MSSQLExploiter",
                                 "SSHExploiter",
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",

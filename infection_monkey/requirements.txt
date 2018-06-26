@@ -14,3 +14,5 @@ six
 ecdsa
 netifaces
 ipaddress
+pymssql
+pyftpdlib
