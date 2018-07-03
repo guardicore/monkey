@@ -24,7 +24,7 @@ CHMOD_MONKEY = "chmod +x %(monkey_path)s"
 RUN_MONKEY = " %(monkey_path)s %(monkey_type)s %(parameters)s"
 # Commands used to check for architecture and if machine is exploitable
 CHECK_COMMAND = "echo %s" % ID_STRING
-# Architecture commands
+# Architecture checking commands
 ARCH_WINDOWS = "wmic os get osarchitecture"
 ARCH_LINUX = "lscpu"
 
