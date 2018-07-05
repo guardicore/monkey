@@ -86,6 +86,13 @@ SCHEMA = {
                         "Struts2Exploiter"
                     ],
                     "title": "Struts2 Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "WebLogicExploiter"
+                    ],
+                    "title": "Oracle Web Logic Exploiter"
                 }
             ]
         },
@@ -626,7 +633,8 @@ SCHEMA = {
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
                                 "ElasticGroovyExploiter",
-                                "Struts2Exploiter"
+                                "Struts2Exploiter",
+                                "WebLogicExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
