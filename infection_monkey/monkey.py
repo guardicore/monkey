@@ -12,6 +12,7 @@ from control import ControlClient
 from model import DELAY_DELETE_CMD
 from network.firewall import app as firewall
 from network.network_scanner import NetworkScanner
+from six.moves import xrange
 from system_info import SystemInfoCollector
 from system_singleton import SystemSingleton
 from windows_upgrader import WindowsUpgrader

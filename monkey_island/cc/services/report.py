@@ -1,5 +1,8 @@
 import ipaddress
+import logging
 from enum import Enum
+
+from six import text_type
 
 from cc.database import mongo
 from cc.services.config import ConfigService
@@ -8,6 +11,9 @@ from cc.services.node import NodeService
 from cc.utils import local_ip_addresses, get_subnets
 
 __author__ = "itay.mizeretz"
+
+
+logger = logging.getLogger(__name__)
 
 
 class ReportService:
@@ -24,6 +30,7 @@ class ReportService:
             'ElasticGroovyExploiter': 'Elastic Groovy Exploiter',
             'Ms08_067_Exploiter': 'Conficker Exploiter',
             'ShellShockExploiter': 'ShellShock Exploiter',
+            'Struts2Exploiter': 'Struts2 Exploiter'
         }
 
     class ISSUES_DICT(Enum):
@@ -34,6 +41,8 @@ class ReportService:
         SHELLSHOCK = 4
         CONFICKER = 5
         AZURE = 6
+        STOLEN_SSH_KEYS = 7
+        STRUTS2 = 8
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -77,6 +86,8 @@ class ReportService:
         creds = ReportService.get_azure_creds()
         machines = set([instance['origin'] for instance in creds])
 
+        logger.info('Azure issues generated for reporting')
+
         return [
             {
                 'type': 'azure_password',
@@ -103,6 +114,8 @@ class ReportService:
             }
             for node in nodes]
 
+        logger.info('Scanned nodes generated for reporting')
+
         return nodes
 
     @staticmethod
@@ -123,6 +136,8 @@ class ReportService:
                      exploit['result']]))
             }
             for monkey in exploited]
+
+        logger.info('Exploited nodes generated for reporting')
 
         return exploited
 
@@ -147,6 +162,28 @@ class ReportService:
                             'origin': origin
                         }
                     )
+        logger.info('Stolen creds generated for reporting')
+        return creds
+
+    @staticmethod
+    def get_ssh_keys():
+        """
+        Return private ssh keys found as credentials
+        :return: List of credentials
+        """
+        creds = []
+        for telem in mongo.db.telemetry.find(
+                {'telem_type': 'system_info_collection', 'data.ssh_info': {'$exists': True}},
+                {'data.ssh_info': 1, 'monkey_guid': 1}
+        ):
+            origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+            if telem['data']['ssh_info']:
+                # Pick out all ssh keys not yet included in creds
+                ssh_keys = [{'username': key_pair['name'], 'type': 'Clear SSH private key',
+                             'origin': origin} for key_pair in telem['data']['ssh_info']
+                            if key_pair['private_key'] and {'username': key_pair['name'], 'type': 'Clear SSH private key',
+                            'origin': origin} not in creds]
+                creds.extend(ssh_keys)
         return creds
 
     @staticmethod
@@ -167,6 +204,8 @@ class ReportService:
             azure_leaked_users = [{'username': user.replace(',', '.'), 'type': 'Clear Password',
                                    'origin': origin} for user in azure_users]
             creds.extend(azure_leaked_users)
+
+        logger.info('Azure machines creds generated for reporting')
         return creds
 
     @staticmethod
@@ -182,9 +221,12 @@ class ReportService:
         for attempt in exploit['data']['attempts']:
             if attempt['result']:
                 processed_exploit['username'] = attempt['user']
-                if len(attempt['password']) > 0:
+                if attempt['password']:
                     processed_exploit['type'] = 'password'
                     processed_exploit['password'] = attempt['password']
+                elif attempt['ssh_key']:
+                    processed_exploit['type'] = 'ssh_key'
+                    processed_exploit['ssh_key'] = attempt['ssh_key']
                 else:
                     processed_exploit['type'] = 'hash'
                 return processed_exploit
@@ -210,8 +252,12 @@ class ReportService:
     @staticmethod
     def process_ssh_exploit(exploit):
         processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        processed_exploit['type'] = 'ssh'
-        return processed_exploit
+        # Check if it's ssh key or ssh login credentials exploit
+        if processed_exploit['type'] == 'ssh_key':
+            return processed_exploit
+        else:
+            processed_exploit['type'] = 'ssh'
+            return processed_exploit
 
     @staticmethod
     def process_rdp_exploit(exploit):
@@ -247,6 +293,12 @@ class ReportService:
         return processed_exploit
 
     @staticmethod
+    def process_struts2_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'struts2'
+        return processed_exploit
+
+    @staticmethod
     def process_exploit(exploit):
         exploiter_type = exploit['data']['exploiter']
         EXPLOIT_PROCESS_FUNCTION_DICT = {
@@ -258,6 +310,7 @@ class ReportService:
             'ElasticGroovyExploiter': ReportService.process_elastic_exploit,
             'Ms08_067_Exploiter': ReportService.process_conficker_exploit,
             'ShellShockExploiter': ReportService.process_shellshock_exploit,
+            'Struts2Exploiter': ReportService.process_struts2_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
@@ -282,7 +335,7 @@ class ReportService:
 
         return \
             [
-                ipaddress.ip_interface(unicode(network['addr'] + '/' + network['netmask'])).network
+                ipaddress.ip_interface(text_type(network['addr'] + '/' + network['netmask'])).network
                 for network in network_info['data']['network_info']['networks']
             ]
 
@@ -295,7 +348,7 @@ class ReportService:
             monkey_subnets = ReportService.get_monkey_subnets(monkey['guid'])
             for subnet in monkey_subnets:
                 for ip in island_ips:
-                    if ipaddress.ip_address(unicode(ip)) in subnet:
+                    if ipaddress.ip_address(text_type(ip)) in subnet:
                         found_good_ip = True
                         break
                 if found_good_ip:
@@ -311,13 +364,15 @@ class ReportService:
 
     @staticmethod
     def get_issues():
-        issues = ReportService.get_exploits() + ReportService.get_tunnels() + ReportService.get_cross_segment_issues() + ReportService.get_azure_issues()
+        issues = ReportService.get_exploits() + ReportService.get_tunnels() +\
+                 ReportService.get_cross_segment_issues() + ReportService.get_azure_issues()
         issues_dict = {}
         for issue in issues:
             machine = issue['machine']
             if machine not in issues_dict:
                 issues_dict[machine] = []
             issues_dict[machine].append(issue)
+        logger.info('Issues generated for reporting')
         return issues_dict
 
     @staticmethod
@@ -371,8 +426,12 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.CONFICKER.value] = True
                 elif issue['type'] == 'azure_password':
                     issues_byte_array[ReportService.ISSUES_DICT.AZURE.value] = True
+                elif issue['type'] == 'ssh_key':
+                    issues_byte_array[ReportService.ISSUES_DICT.STOLEN_SSH_KEYS.value] = True
+                elif issue['type'] == 'struts2':
+                    issues_byte_array[ReportService.ISSUES_DICT.STRUTS2.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
-                        issue['username'] in config_users:
+                        issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
                 elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS.value] = True
@@ -405,6 +464,7 @@ class ReportService:
             {'name': 'generated_report'},
             {'$set': {'value': True}},
             upsert=True)
+        logger.info("Report marked as generated.")
 
     @staticmethod
     def get_report():
@@ -433,6 +493,7 @@ class ReportService:
                         'exploited': ReportService.get_exploited(),
                         'stolen_creds': ReportService.get_stolen_creds(),
                         'azure_passwords': ReportService.get_azure_creds(),
+                        'ssh_keys': ReportService.get_ssh_keys()
                     },
                 'recommendations':
                     {

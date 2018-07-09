@@ -17,7 +17,7 @@ class MonkeyConfiguration(flask_restful.Resource):
     @jwt_required()
     def post(self):
         config_json = json.loads(request.data)
-        if config_json.has_key('reset'):
+        if 'reset' in config_json:
             ConfigService.reset_config()
         else:
             ConfigService.update_config(config_json, should_encrypt=True)
