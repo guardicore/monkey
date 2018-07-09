@@ -575,7 +575,7 @@ SCHEMA = {
                                 "type": "string"
                             },
                             "default": [
-                                "41.50.73.31:5000"
+                                "192.0.2.0:5000"
                             ],
                             "description": "List of command servers to try and communicate with (format is <ip>:<port>)"
                         },
@@ -597,7 +597,7 @@ SCHEMA = {
                         "current_server": {
                             "title": "Current server",
                             "type": "string",
-                            "default": "41.50.73.31:5000",
+                            "default": "192.0.2.0:5000",
                             "description": "The current command server the monkey is communicating with"
                         }
                     }
