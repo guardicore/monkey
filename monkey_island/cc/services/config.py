@@ -769,7 +769,8 @@ SCHEMA = {
                                 80,
                                 8080,
                                 443,
-                                8008
+                                8008,
+                                7001
                             ],
                             "description": "List of ports the monkey will check if are being used for HTTP"
                         },
@@ -791,7 +792,8 @@ SCHEMA = {
                                 443,
                                 8008,
                                 3306,
-                                9200
+                                9200,
+                                7001
                             ],
                             "description": "List of TCP ports the monkey will check whether they're open"
                         },
