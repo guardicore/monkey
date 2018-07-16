@@ -328,9 +328,7 @@ class ReportPageComponent extends AuthComponent {
                       href="https://cwiki.apache.org/confluence/display/WW/S2-045">
                       CVE-2017-5638</a>)</li> : null }
                   {this.state.report.overview.issues[this.Issue.MSSQL] ?
-                    <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command. (<a
-                      href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017">
-                      More Info.</a>)</li> : null }
+                    <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li> : null }
                 </ul>
               </div>
               :
@@ -705,10 +703,10 @@ class ReportPageComponent extends AuthComponent {
         <CollapsibleWellComponent>
           The machine <span className="label label-primary">{issue.machine}</span> (<span
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">Conficker</span> attack.
+          className="label label-danger">MSSQL exploit attack</span> attack.
           <br/>
           The attack was made possible because the target machine used an outdated MSSQL server configuration allowing
-          the usage of the xp_cmdshell command.
+          the usage of the xp_cmdshell command. To learn more about how to disable this feature, read <a href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017"> Microsoft's documentation. </a>
         </CollapsibleWellComponent>
       </li>
     );
