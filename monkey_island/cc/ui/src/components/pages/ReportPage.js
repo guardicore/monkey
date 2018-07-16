@@ -703,10 +703,12 @@ class ReportPageComponent extends AuthComponent {
         <CollapsibleWellComponent>
           The machine <span className="label label-primary">{issue.machine}</span> (<span
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">MSSQL exploit attack</span> attack.
+          className="label label-danger">MSSQL exploit attack</span>.
           <br/>
           The attack was made possible because the target machine used an outdated MSSQL server configuration allowing
-          the usage of the xp_cmdshell command. To learn more about how to disable this feature, read <a href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017"> Microsoft's documentation. </a>
+          the usage of the xp_cmdshell command. To learn more about how to disable this feature, read <a
+           href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017">
+            Microsoft's documentation. </a>
         </CollapsibleWellComponent>
       </li>
     );
