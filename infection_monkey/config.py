@@ -164,7 +164,7 @@ class Configuration(object):
 
     # Configuration servers to try to connect to, in this order.
     command_servers = [
-        "41.50.73.31:5000"
+        "192.0.2.0:5000"
     ]
 
     # sets whether or not to locally save the running configuration after finishing
