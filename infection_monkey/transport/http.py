@@ -6,6 +6,7 @@ import threading
 import urllib
 from logging import getLogger
 from urlparse import urlsplit
+from threading import Lock
 
 import monkeyfs
 from base import TransportProxyBase, update_last_serve_time
@@ -182,6 +183,36 @@ class HTTPServer(threading.Thread):
         self._stopped = True
         self.join(timeout)
 
+class LockedHTTPServer(threading.Thread):
+    def __init__(self, local_ip, local_port, filename, lock, max_downloads=1):
+        self._local_ip = local_ip
+        self._local_port = local_port
+        self._filename = filename
+        self.max_downloads = max_downloads
+        self.downloads = 0
+        self._stopped = False
+        self.lock = lock
+        threading.Thread.__init__(self)
+
+    def run(self):
+        class TempHandler(FileServHTTPRequestHandler):
+            filename = self._filename
+
+            @staticmethod
+            def report_download(dest=None):
+                LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
+                self.downloads += 1
+
+        httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
+        self.lock.release()
+        while not self._stopped and self.downloads < self.max_downloads:
+            httpd.handle_request()
+
+        self._stopped = True
+
+    def stop(self, timeout=60):
+        self._stopped = True
+        self.join(timeout)
 
 class HTTPConnectProxy(TransportProxyBase):
     def run(self):
