@@ -1,1 +1,0 @@
-dir c:\>c:\tmp\dir.txt
