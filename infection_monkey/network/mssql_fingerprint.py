@@ -29,7 +29,6 @@ class MSSQLFinger(HostFinger):
                 Discovered server information written to the Host info struct.
                 True if success, False otherwise.
         """
-        return False
         assert isinstance(host, VictimHost)
 
         # Create a UDP socket and sets a timeout
