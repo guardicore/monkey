@@ -56,7 +56,10 @@ class MonkeyDrops(object):
             return False
 
         # we copy/move only in case path is different
-        file_moved = os.path.samefile(self._config['source_path'], self._config['destination_path'])
+        try:
+            file_moved = os.stat(self._config['source_path']) == os.stat(self._config['destination_path'])
+        except OSError:
+            file_moved = False
 
         if not file_moved and os.path.exists(self._config['destination_path']):
             os.remove(self._config['destination_path'])
