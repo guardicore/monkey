@@ -8,6 +8,7 @@ import StolenPasswords from 'components/report-components/StolenPasswords';
 import CollapsibleWellComponent from 'components/report-components/CollapsibleWell';
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
+import PassTheHashMapPageComponent from "./PassTheHashMapPage";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 let monkeyLogoImage = require('../../images/monkey-icon.svg');
@@ -129,6 +130,7 @@ class ReportPageComponent extends AuthComponent {
           {this.generateReportFindingsSection()}
           {this.generateReportRecommendationsSection()}
           {this.generateReportGlanceSection()}
+          {this.generateReportPthSection()}
           {this.generateReportFooter()}
         </div>
         <div className="text-center no-print" style={{marginTop: '20px'}}>
@@ -416,6 +418,50 @@ class ReportPageComponent extends AuthComponent {
         <div>
           <StolenPasswords data={this.state.report.glance.stolen_creds}/>
         </div>
+      </div>
+    );
+  }
+
+  generateReportPthSection() {
+    // TODO: remove this and use updateMapFromSerever to get actual map data.
+    const my_map = {
+      nodes: [
+        {id: '1', label: 'MYPC-1', group: 'normal', users: ['MYPC-2\\user1', 'Dom\\user2'], ips: ['192.168.0.1'], services: ["DC", "SQL"], 'hostname': 'aaa1'},
+        {id: 2, label: 'MYPC-2', group: 'critical', users: ['MYPC-2\\user1', 'Dom\\user2'], ips: ['192.168.0.1'], services: ["DC", "SQL"], 'hostname': 'aaa2'},
+        {id: 3, label: 'MYPC-3', group: 'normal', users: ['MYPC-3\\user1', 'Dom\\user3'], ips: ['192.168.0.2'], services: ["DC", "SQL"], 'hostname': 'aaa3'},
+        {id: 4, label: 'MYPC-4', group: 'critical', users: ['MYPC-4\\user1', 'Dom\\user4'], ips: ['192.168.0.3', '192.168.0.4'], services: ["DC", "SQL"], 'hostname': 'aaa4'},
+        {id: 5, label: 'MYPC-5', group: 'normal', users: ['MYPC-5\\user1', 'Dom\\user5'], ips: ['192.168.0.1'], services: [], 'hostname': 'aaa5'},
+        {id: 6, label: 'MYPC-6', group: 'critical', users: ['MYPC-6\\user1', 'Dom\\user6'], ips: ['192.168.0.1'], services: ["DC"], 'hostname': 'aaa6'},
+        {id: 7, label: 'MYPC-7', group: 'critical', users: ['MYPC-7\\user1', 'Dom\\user7'], ips: ['192.168.0.1'], services: ["DC", "SQL"], 'hostname': 'aaa7'}
+      ],
+      edges: [
+        {id: 10, from: '1', to: 2, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla0'},
+        {id: 11, from: '1', to: 3, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla1'},
+        {id: 12, from: '1', to: 4, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla2'},
+        {id: 13, from: 5, to: 6, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla3'},
+        {id: 14, from: 6, to: 7, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla4'},
+        {id: 15, from: 6, to: 5, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla5'},
+      ]
+
+    };
+    return (
+      <div id="pth">
+        <h3>
+          Pass The Hash !!!!!TODO: change this!!!!!!!!
+        </h3>
+        <div style={{position: 'relative', height: '100vh'}}>
+          <PassTheHashMapPageComponent graph={my_map} />
+        </div>
+        <div>
+          TODO: put relevant tables and stuff here...
+        </div>
+        <div>
+          TODO: put relevant tables and stuff here...
+        </div>
+        <div>
+          TODO: put relevant tables and stuff here...
+        </div>
+        <br />
       </div>
     );
   }

@@ -1,4 +1,4 @@
-let groupNames = ['clean_unknown', 'clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
+const groupNames = ['clean_unknown', 'clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
   'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_windows', 'island_monkey_windows_running',
   'manual_linux', 'manual_linux_running', 'manual_windows', 'manual_windows_running', 'monkey_linux',
   'monkey_linux_running', 'monkey_windows', 'monkey_windows_running'];
@@ -16,7 +16,22 @@ let getGroupsOptions = () => {
   return groupOptions;
 };
 
-export const options = {
+const groupNamesPth = ['normal', 'critical'];
+
+let getGroupsOptionsPth = () => {
+  let groupOptions = {};
+  for (let groupName of groupNamesPth) {
+    groupOptions[groupName] =
+      {
+        shape: 'image',
+        size: 50,
+        image: require('../../images/nodes/pth/' + groupName + '.png')
+      };
+  }
+  return groupOptions;
+};
+
+export const basic_options = {
   autoResize: true,
   layout: {
     improvedLayout: false
@@ -33,9 +48,21 @@ export const options = {
       avoidOverlap: 0.5
     },
     minVelocity: 0.75
-  },
-  groups: getGroupsOptions()
+  }
 };
+
+export const options = (() => {
+  let opts = JSON.parse(JSON.stringify(basic_options)); /* Deep copy */
+  opts.groups = getGroupsOptions();
+  return opts;
+})();
+
+export const optionsPth = (() => {
+  let opts = JSON.parse(JSON.stringify(basic_options)); /* Deep copy */
+  opts.groups = getGroupsOptionsPth();
+  opts.physics.barnesHut.gravitationalConstant = -20000;
+  return opts;
+})();
 
 export function edgeGroupToColor(group) {
   switch (group) {
