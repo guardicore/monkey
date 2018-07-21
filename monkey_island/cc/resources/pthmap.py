@@ -1,13 +1,10 @@
-import hashlib
-import binascii
 import copy
 import flask_restful
-from pthreport import PassTheHashReport, Machine
+
 
 from cc.auth import jwt_required
-from cc.services.edge import EdgeService
-from cc.services.node import NodeService
-from cc.database import mongo
+from cc.services.pth_report_utils import PassTheHashReport, Machine
+
 
 class PthMap(flask_restful.Resource):
     @jwt_required()

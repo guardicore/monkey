@@ -15,18 +15,9 @@ LOG = logging.getLogger(__name__)
 
 __author__ = 'uri'
 
-WMI_CLASSES = set(["Win32_OperatingSystem",
-                   "Win32_ComputerSystem",
-                   "Win32_LoggedOnUser",
-                   "Win32_UserAccount",
-                   "Win32_UserProfile",
-                   "Win32_Group",
-                   "Win32_GroupUser",
-                   "Win32_Product",
-                   "Win32_Service",
-                   "Win32_OptionalFeature",
-                   #"Win32_Process",
-                   ])
+WMI_CLASSES = {"Win32_OperatingSystem", "Win32_ComputerSystem", "Win32_LoggedOnUser", "Win32_UserAccount",
+               "Win32_UserProfile", "Win32_Group", "Win32_GroupUser", "Win32_Product", "Win32_Service",
+               "Win32_OptionalFeature"}
 
 # These wmi queries are able to return data about all the users & machines in the domain.
 # For these queries to work, the monkey shohuld be run on a domain machine and
