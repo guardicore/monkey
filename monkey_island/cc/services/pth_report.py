@@ -1,4 +1,4 @@
-from cc.services.pth_report_utils import PassTheHashReport
+from cc.services.pth_report_utils import PassTheHashReport, Machine
 
 
 class PTHReportService(object):
@@ -107,6 +107,14 @@ class PTHReportService(object):
         return strong_users_non_crit_list
 
     @staticmethod
+    def generate_map_nodes(pth):
+        return [{"id": x, "label": Machine(x).GetIp()} for x in pth.vertices]
+
+    @staticmethod
+    def generate_map_edges(pth):
+        return [{"id": str(s) + str(t), "from": s, "to": t, "label": label} for s, t, label in pth.edges]
+
+    @staticmethod
     def get_report():
         pth = PassTheHashReport()
 
@@ -121,7 +129,8 @@ class PTHReportService(object):
                     },
                 'map':
                     {
-
+                        'nodes': PTHReportService.generate_map_nodes(pth),
+                        'edges': PTHReportService.generate_map_edges(pth)
                     }
             }
         return report
