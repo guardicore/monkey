@@ -7,11 +7,11 @@ let renderArray = function(val) {
 
 const columns = [
   {
-    Header: 'Scanned Servers',
+    Header: 'Powerful Users',
     columns: [
-      { Header: 'Machine', accessor: 'label'},
-      { Header: 'IP Addresses', id: 'ip_addresses', accessor: x => renderArray(x.ip_addresses)},
-      { Header: 'Accessible From', id: 'accessible_from_nodes', accessor: x => renderArray(x.accessible_from_nodes)},
+      { Header: 'Username', accessor: 'username'},
+      { Header: 'Domain', accessor: 'domain'},
+      { Header: 'Machines', id: 'machines', accessor: x => renderArray(x.machines)},
       { Header: 'Services', id: 'services', accessor: x => renderArray(x.services)}
     ]
   }
@@ -19,7 +19,7 @@ const columns = [
 
 const pageSize = 10;
 
-class ScannedServersComponent extends React.Component {
+class StrongUsersComponent extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -40,4 +40,4 @@ class ScannedServersComponent extends React.Component {
   }
 }
 
-export default ScannedServersComponent;
+export default StrongUsersComponent;

@@ -7,8 +7,11 @@ import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/StolenPasswords';
 import CollapsibleWellComponent from 'components/report-components/CollapsibleWell';
 import {Line} from 'rc-progress';
-import AuthComponent from '../AuthComponent';
+import AuthComponent from 'components/AuthComponent';
 import PassTheHashMapPageComponent from "./PassTheHashMapPage";
+import SharedCreds from "components/report-components/SharedCreds";
+import StrongUsers from "components/report-components/StrongUsers";
+import SharedAdmins from "components/report-components/SharedAdmins";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 let monkeyLogoImage = require('../../images/monkey-icon.svg');
@@ -130,7 +133,6 @@ class ReportPageComponent extends AuthComponent {
           {this.generateReportFindingsSection()}
           {this.generateReportRecommendationsSection()}
           {this.generateReportGlanceSection()}
-          {this.generateReportPthSection()}
           {this.generateReportFooter()}
         </div>
         <div className="text-center no-print" style={{marginTop: '20px'}}>
@@ -415,14 +417,40 @@ class ReportPageComponent extends AuthComponent {
         <div style={{marginBottom: '20px'}}>
           <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
-        <div>
+        {this.generateReportPthMap()}
+        <div style={{marginBottom: '20px'}}>
           <StolenPasswords data={this.state.report.glance.stolen_creds}/>
+        </div>
+        <div style={{marginBottom: '20px'}}>
+          { /* TODO: use dynamic data */}
+          <SharedCreds data = {[{cred_group: ['MyDomain\\user1', 'user2', 'user3']}, {cred_group: ['user2', 'user4']}]} />
+        </div>
+        <div style={{marginBottom: '20px'}}>
+          { /* TODO: use dynamic data */}
+          <SharedAdmins data = {[
+            {
+              username: 'SharedLocalAdmin',
+              domain: 'MyDomain',
+              machines: ['hello : 1.2.3.4']
+            }
+          ]} />
+        </div>
+        <div>
+          { /* TODO: use dynamic data */}
+          <StrongUsers data = {[
+            {
+              username: 'SharedLocalAdmin',
+              domain: 'MyDomain',
+              machines: ['hello : 1.2.3.4'],
+              services: ['DC', 'DNS']
+            }
+          ]} />
         </div>
       </div>
     );
   }
 
-  generateReportPthSection() {
+  generateReportPthMap() {
     // TODO: remove this and use updateMapFromSerever to get actual map data.
     const my_map = {
       nodes: [
@@ -447,19 +475,10 @@ class ReportPageComponent extends AuthComponent {
     return (
       <div id="pth">
         <h3>
-          Pass The Hash !!!!!TODO: change this!!!!!!!!
+          Credential Map
         </h3>
         <div style={{position: 'relative', height: '100vh'}}>
           <PassTheHashMapPageComponent graph={my_map} />
-        </div>
-        <div>
-          TODO: put relevant tables and stuff here...
-        </div>
-        <div>
-          TODO: put relevant tables and stuff here...
-        </div>
-        <div>
-          TODO: put relevant tables and stuff here...
         </div>
         <br />
       </div>
