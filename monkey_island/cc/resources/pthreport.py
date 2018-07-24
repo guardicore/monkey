@@ -6,7 +6,7 @@ from cc.services.pth_report import PTHReportService
 __author__ = "itay.mizeretz"
 
 
-class Report(flask_restful.Resource):
+class PTHReport(flask_restful.Resource):
 
     @jwt_required()
     def get(self):
