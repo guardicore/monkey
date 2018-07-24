@@ -1,83 +1,57 @@
 import React from 'react';
-import {Col} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import AuthComponent from '../AuthComponent';
-import Graph from 'react-graph-vis';
-
-const options = {
-  autoResize: true,
-  layout: {
-    improvedLayout: false
-  },
-  edges: {
-    width: 2,
-    smooth: {
-      type: 'curvedCW'
-    }
-  },
-  physics: {
-    barnesHut: {
-      gravitationalConstant: -120000,
-      avoidOverlap: 0.5
-    },
-    minVelocity: 0.75
-  }
-};
+import {optionsPth, edgeGroupToColorPth, options} from '../map/MapOptions';
+import PreviewPane from "../map/preview-pane/PreviewPane";
+import {Col} from "react-bootstrap";
+import {Link} from 'react-router-dom';
+import {Icon} from 'react-fa';
+import PthPreviewPaneComponent from "../map/preview-pane/PthPreviewPane";
 
 class PassTheHashMapPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
-      graph: {nodes: [], edges: []},
-      report: "",
+      graph: props.graph,
       selected: null,
-      selectedType: null,
-      killPressed: false,
-      showKillDialog: false,
-      telemetry: [],
-      telemetryLastTimestamp: null
+      selectedType: null
     };
   }
 
-  componentDidMount() {
-    this.updateMapFromServer();
-    this.interval = setInterval(this.timedEvents, 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  timedEvents = () => {
-    this.updateMapFromServer();
+  events = {
+    select: event => this.selectionChanged(event)
   };
 
-  updateMapFromServer = () => {
-    this.authFetch('/api/pthmap')
-      .then(res => res.json())
-      .then(res => {
-        this.setState({graph: res});
-        this.props.onStatusChange();
-      });
-    this.authFetch('/api/pthreport')
-      .then(res => res.json())
-      .then(res => {
-        this.setState({report: res.html});
-        this.props.onStatusChange();
-      });
-  };
+  selectionChanged(event) {
+    if (event.nodes.length === 1) {
+      let displayedNode = this.state.graph.nodes.find(
+        function (node) {
+          return node['id'] === event.nodes[0];
+        });
+      this.setState({selected: displayedNode, selectedType: 'node'})
+    }
+    else if (event.edges.length === 1) {
+      let displayedEdge = this.state.graph.edges.find(
+        function (edge) {
+          return edge['id'] === event.edges[0];
+        });
+        this.setState({selected: displayedEdge, selectedType: 'edge'});
+    }
+    else {
+      this.setState({selected: null, selectedType: null});
+    }
+  }
 
   render() {
     return (
       <div>
-        <Col xs={12} lg={8}>
-          <h1 className="page-title">Pass The Hash Map</h1>
+        <Col xs={12}>
+          <div style={{height: '70vh'}}>
+            <ReactiveGraph graph={this.state.graph} options={optionsPth} events={this.events}/>
+          </div>
         </Col>
         <Col xs={12}>
-          <div>
-            <Graph graph={this.state.graph} options={options} />
-          </div>
-          <div dangerouslySetInnerHTML={{__html: this.state.report}}></div>
+          <PthPreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
         </Col>
       </div>
     );

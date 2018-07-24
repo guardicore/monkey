@@ -2,7 +2,7 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {Icon} from 'react-fa';
-import PreviewPane from 'components/map/preview-pane/PreviewPane';
+import InfMapPreviewPaneComponent from 'components/map/preview-pane/InfMapPreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {ModalContainer, ModalDialog} from 'react-modal-dialog';
 import {options, edgeGroupToColor} from 'components/map/MapOptions';
@@ -190,7 +190,7 @@ class MapPageComponent extends AuthComponent {
             </div>
             : ''}
 
-          <PreviewPane item={this.state.selected} type={this.state.selectedType}/>
+          <InfMapPreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
         </Col>
       </div>
     );
