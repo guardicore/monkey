@@ -12,6 +12,7 @@ from mimikatz_collector import MimikatzCollector
 from . import InfoCollector
 
 LOG = logging.getLogger(__name__)
+LOG.info('started windows info collector')
 
 __author__ = 'uri'
 
@@ -138,16 +139,17 @@ class WindowsInfoCollector(InfoCollector):
         self.get_hostname()
         self.get_process_list()
         self.get_network_info()
-        self.get_azure_info()
+        #self.get_azure_info()
         
-        self.get_wmi_info()
-        self.get_reg_key(r"SYSTEM\CurrentControlSet\Control\Lsa")
+        #self.get_wmi_info()
+        #self.get_reg_key(r"SYSTEM\CurrentControlSet\Control\Lsa")
         self.get_installed_packages()
         
         mimikatz_collector = MimikatzCollector()
         mimikatz_info = mimikatz_collector.get_logon_info()
-        self.info["credentials"].update(mimikatz_info)
-        self.info["mimikatz"] = mimikatz_collector.get_mimikatz_text()
+        if mimikatz_info:
+            self.info["credentials"].update(mimikatz_info)
+            self.info["mimikatz"] = mimikatz_collector.get_mimikatz_text()
 
         return self.info
 

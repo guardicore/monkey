@@ -115,14 +115,14 @@ class Machine(object):
         if not doc:
             return None
 
-        return doc["data"]["mimikatz"]
+        return doc.get("data").get("mimikatz")
 
     @cache
     def GetHostName(self):
         doc = self.latest_system_info
 
-        for comp in doc["data"]["Win32_ComputerSystem"]:
-            return eval(comp["Name"])
+        for comp in doc.get("data").get("Win32_ComputerSystem", {}):
+            return eval(comp.get("Name"))
 
         return None
 
@@ -130,7 +130,7 @@ class Machine(object):
     def GetIp(self):
         doc = self.latest_system_info
 
-        for addr in doc["data"]["network_info"]["networks"]:
+        for addr in doc.get("data").get("network_info", {}).get("networks", {}):
             return str(addr["addr"])
 
         return None
@@ -139,14 +139,14 @@ class Machine(object):
     def get_monkey_id(self):
         doc = self.monkey_info
 
-        return str(doc['_id'])
+        return str(doc.get('_id'))
 
     @cache
     def GetDomainName(self):
         doc = self.latest_system_info
 
-        for comp in doc["data"]["Win32_ComputerSystem"]:
-            return eval(comp["Domain"])
+        for comp in doc.get("data").get("Win32_ComputerSystem", {}):
+            return eval(comp.get("Domain"))
 
         return None
 
@@ -154,8 +154,8 @@ class Machine(object):
     def GetDomainRole(self):
         doc = self.latest_system_info
 
-        for comp in doc["data"]["Win32_ComputerSystem"]:
-            return comp["DomainRole"]
+        for comp in doc.get("data").get("Win32_ComputerSystem", {}):
+            return comp.get("DomainRole")
 
         return None
 
@@ -167,17 +167,17 @@ class Machine(object):
     def GetSidByUsername(self, username, domain=None):
         doc = self.latest_system_info
 
-        for user in doc["data"]["Win32_UserAccount"]:
-            if eval(user["Name"]) != username:
+        for user in doc.get("data").get("Win32_UserAccount", {}):
+            if eval(user.get("Name")) != username:
                 continue
 
-            if user["SIDType"] != SidTypeUser:
+            if user.get("SIDType") != SidTypeUser:
                 continue
 
-            if domain and user["Domain"] != domain:
+            if domain and user.get("Domain") != domain:
                 continue
 
-            return eval(user["SID"])
+            return eval(user.get("SID"))
 
         if not self.IsDomainController():
             for dc in self.GetDomainControllers():
@@ -195,24 +195,24 @@ class Machine(object):
         if not info:
             return None
 
-        return info["Domain"] + "\\" + info["Username"]
+        return str(info.get("Domain")) + "\\" + str(info.get("Username"))
 
     @cache
     def GetSidInfo(self, sid):
         doc = self.latest_system_info
 
-        for user in doc["data"]["Win32_UserAccount"]:
-            if eval(user["SID"]) != sid:
+        for user in doc.get("data").get("Win32_UserAccount",{}):
+            if eval(user.get("SID")) != sid:
                 continue
 
-            if user["SIDType"] != SidTypeUser:
+            if user.get("SIDType") != SidTypeUser:
                 continue
 
-            return {"Domain": eval(user["Domain"]),
-                    "Username": eval(user["Name"]),
-                    "Disabled": user["Disabled"] == "true",
-                    "PasswordRequired": user["PasswordRequired"] == "true",
-                    "PasswordExpires": user["PasswordExpires"] == "true", }
+            return {"Domain": eval(user.get("Domain")),
+                    "Username": eval(user.get("Name")),
+                    "Disabled": user.get("Disabled") == "true",
+                    "PasswordRequired": user.get("PasswordRequired") == "true",
+                    "PasswordExpires": user.get("PasswordExpires") == "true", }
 
         if not self.IsDomainController():
             for dc in self.GetDomainControllers():
@@ -247,21 +247,21 @@ class Machine(object):
         if self.IsDomainController():
             found.append("Domain Controller")
 
-        for product in doc["data"]["Win32_Product"]:
-            service_name = eval(product["Name"])
+        for product in doc.get("data").get("Win32_Product", {}):
+            service_name = eval(product.get("Name"))
 
             if not IsNameOfCriticalService(service_name):
                 continue
 
             found.append(service_name)
 
-        for service in doc["data"]["Win32_Service"]:
-            service_name = eval(service["Name"])
+        for service in doc.get("data").get("Win32_Service", {}):
+            service_name = eval(service.get("Name"))
 
             if not IsNameOfCriticalService(service_name):
                 continue
 
-            if eval(service["State"]) != "Running":
+            if eval(service.get("State")) != "Running":
                 continue
 
             found.append(service_name)
@@ -293,14 +293,14 @@ class Machine(object):
     def GetGroupSidByGroupName(self, group_name):
         doc = self.latest_system_info
 
-        for group in doc["data"]["Win32_Group"]:
-            if eval(group["Name"]) != group_name:
+        for group in doc.get('data').get("Win32_Group", {}):
+            if eval(group.get("Name")) != group_name:
                 continue
 
-            if not is_group_sid_type(group["SIDType"]):
+            if not is_group_sid_type(group.get("SIDType")):
                 continue
 
-            return eval(group["SID"])
+            return eval(group.get("SID"))
 
         return None
 
@@ -310,20 +310,20 @@ class Machine(object):
 
         users = dict()
 
-        for group_user in doc["data"]["Win32_GroupUser"]:
-            if eval(group_user["GroupComponent"]["SID"]) != sid:
+        for group_user in doc.get('data').get("Win32_GroupUser", {}):
+            if eval(group_user.get("GroupComponent", {}).get("SID")) != sid:
                 continue
 
-            if not is_group_sid_type(group_user["GroupComponent"]["SIDType"]):
+            if not is_group_sid_type(group_user.get("GroupComponent", {}).get("SIDType")):
                 continue
 
             if "PartComponent" not in group_user.keys():
                 continue
 
-            if type(group_user["PartComponent"]) in (str, unicode):
+            if type(group_user.get("PartComponent")) in (str, unicode):
                 # PartComponent is an id to Win32_UserAccount table
 
-                wmi_id = group_user["PartComponent"]
+                wmi_id = group_user.get("PartComponent")
 
                 if "cimv2:Win32_UserAccount" not in wmi_id:
                     continue
@@ -336,10 +336,11 @@ class Machine(object):
                 users[sid] = username
 
             else:
-                if group_user["PartComponent"]["SIDType"] != SidTypeUser:
+                if group_user.get("PartComponent", {}).get("SIDType") != SidTypeUser:
                     continue
 
-                users[eval(group_user["PartComponent"]["SID"])] = eval(group_user["PartComponent"]["Name"])
+                users[eval(group_user.get("PartComponent", {}).get("SID"))] = eval(group_user.get("PartComponent")
+                                                                                   .get("Name"))
 
         return users
 
@@ -351,10 +352,10 @@ class Machine(object):
         GUIDs = set()
 
         for doc in cur:
-            if not Machine(doc["monkey_guid"]).IsDomainController():
+            if not Machine(doc.get("monkey_guid")).IsDomainController():
                 continue
 
-            GUIDs.add(doc["monkey_guid"])
+            GUIDs.add(doc.get("monkey_guid"))
 
         return GUIDs
 
@@ -377,11 +378,11 @@ class Machine(object):
 
         SIDs = set()
 
-        for user in doc["data"]["Win32_UserAccount"]:
-            if user["SIDType"] != SidTypeUser:
+        for user in doc.get('data').get("Win32_UserAccount", {}):
+            if user.get("SIDType") != SidTypeUser:
                 continue
 
-            SIDs.add(eval(user["SID"]))
+            SIDs.add(eval(user.get("SID")))
 
         return SIDs
 
@@ -408,11 +409,11 @@ class Machine(object):
                 sam_user = dict([map(unicode.strip, line.split(":")) for line in
                                  filter(lambda l: l.count(":") == 1, sam_user_txt.splitlines())])
 
-                ntlm = sam_user["NTLM"]
+                ntlm = sam_user.get("NTLM")
                 if "[hashed secret]" not in ntlm:
                     continue
 
-                sam[sam_user["User"]] = ntlm.replace("[hashed secret]", "").strip()
+                sam[sam_user.get("User")] = ntlm.replace("[hashed secret]", "").strip()
 
             return sam
 
@@ -533,7 +534,7 @@ class Machine(object):
 
         SIDs = set()
 
-        for username in doc["data"]["credentials"]:
+        for username in doc.get('data').get("credentials", {}):
             sid = self.GetSidByUsername(username)
 
             if not sid:
@@ -549,7 +550,7 @@ class Machine(object):
 
         names = set()
 
-        for username in doc["data"]["credentials"]:
+        for username in doc.get('data').get("credentials", {}):
             names.add(username)
 
         return names
@@ -576,7 +577,7 @@ class PassTheHashReport(object):
         GUIDs = set()
 
         for doc in cur:
-            GUIDs.add(doc["monkey_guid"])
+            GUIDs.add(doc.get("monkey_guid"))
 
         return GUIDs
 

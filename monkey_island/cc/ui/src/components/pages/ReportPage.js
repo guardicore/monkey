@@ -41,6 +41,8 @@ class ReportPageComponent extends AuthComponent {
     super(props);
     this.state = {
       report: {},
+      pthreport: {},
+      pthmap: {},
       graph: {nodes: [], edges: []},
       allMonkeysAreDead: false,
       runStarted: true
@@ -49,6 +51,7 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.updateMonkeysRunning().then(res => this.getReportFromServer(res));
+    this.getPTHReportFromServer();
     this.updateMapFromServer();
     this.interval = setInterval(this.updateMapFromServer, 1000);
   }
@@ -107,6 +110,17 @@ class ReportPageComponent extends AuthComponent {
         this.props.onStatusChange();
       });
   };
+
+  getPTHReportFromServer(res) {
+    this.authFetch('/api/pthreport')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          pthreport: res.report_info,
+          pthmap: res.map
+        });
+      });
+  }
 
   getReportFromServer(res) {
     if (res['completed_steps']['run_monkey']) {
@@ -432,29 +446,13 @@ class ReportPageComponent extends AuthComponent {
           <StolenPasswords data={this.state.report.glance.stolen_creds}/>
         </div>
         <div style={{marginBottom: '20px'}}>
-          { /* TODO: use dynamic data */}
-          <SharedCreds data = {[{cred_group: ['MyDomain\\user1', 'user2', 'user3']}, {cred_group: ['user2', 'user4']}]} />
+          <SharedCreds data = {this.state.pthreport.same_password} />
         </div>
         <div style={{marginBottom: '20px'}}>
-          { /* TODO: use dynamic data */}
-          <SharedAdmins data = {[
-            {
-              username: 'SharedLocalAdmin',
-              domain: 'MyDomain',
-              machines: ['hello : 1.2.3.4']
-            }
-          ]} />
+          <SharedAdmins data = {this.state.pthreport.local_admin_shared} />
         </div>
         <div>
-          { /* TODO: use dynamic data */}
-          <StrongUsers data = {[
-            {
-              username: 'SharedLocalAdmin',
-              domain: 'MyDomain',
-              machines: ['hello : 1.2.3.4'],
-              services: ['DC', 'DNS']
-            }
-          ]} />
+          <StrongUsers data = {this.state.pthreport.strong_users_on_crit_services} />
         </div>
       </div>
     );
@@ -488,7 +486,7 @@ class ReportPageComponent extends AuthComponent {
           Credential Map
         </h3>
         <div style={{position: 'relative', height: '100vh'}}>
-          <PassTheHashMapPageComponent graph={my_map} />
+          <PassTheHashMapPageComponent graph={this.state.pthmap} />
         </div>
         <br />
       </div>

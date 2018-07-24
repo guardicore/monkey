@@ -112,7 +112,7 @@ class PTHReportService(object):
         for node_id in pth.vertices:
             machine = Machine(node_id)
             node = {
-                "id": machine.get_monkey_id,
+                "id": str(machine.get_monkey_id()),
                 "label": '{0} : {1}'.format(machine.GetHostName(), machine.GetIp()),
                 'group': 'critical' if machine.IsCriticalServer() else 'normal',
                 'users': list(machine.GetCachedUsernames()),
