@@ -108,11 +108,21 @@ class PTHReportService(object):
 
     @staticmethod
     def generate_map_nodes(pth):
-        return [{"id": x, "label": Machine(x).GetIp()} for x in pth.vertices]
+        nodes_list = []
+        for node_id in pth.vertices:
+            machine = Machine(node_id)
+            node = {
+                "id": machine.get_monkey_id,
+                "label": '{0} : {1}'.format(machine.GetHostName(), machine.GetIp()),
+                'group': 'critical' if machine.IsCriticalServer() else 'normal',
+                'users': list(machine.GetCachedUsernames()),
+                'ips': machine.GetIp(),
+                'services': machine.GetCriticalServicesInstalled(),
+                'hostname': machine.GetHostName()
+            }
+            nodes_list.append(node)
 
-    @staticmethod
-    def generate_map_edges(pth):
-        return [{"id": str(s) + str(t), "from": s, "to": t, "label": label} for s, t, label in pth.edges]
+        return nodes_list
 
     @staticmethod
     def get_report():
@@ -130,7 +140,7 @@ class PTHReportService(object):
                 'map':
                     {
                         'nodes': PTHReportService.generate_map_nodes(pth),
-                        'edges': PTHReportService.generate_map_edges(pth)
+                        'edges': pth.edges
                     }
             }
         return report

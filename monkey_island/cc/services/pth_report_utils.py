@@ -1,8 +1,10 @@
 import hashlib
 import binascii
 import copy
+import uuid
 
 from cc.database import mongo
+from cc.services.node import NodeService
 
 DsRole_RoleStandaloneWorkstation = 0
 DsRole_RoleMemberWorkstation = 1
@@ -98,6 +100,8 @@ class Machine(object):
         if self.latest_system_info.count() > 0:
             self.latest_system_info = self.latest_system_info[0]
 
+        self.monkey_info = NodeService.get_monkey_by_guid(self.monkey_guid)
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.monkey_guid == other.monkey_guid
@@ -130,6 +134,12 @@ class Machine(object):
             return str(addr["addr"])
 
         return None
+
+    @cache
+    def get_monkey_id(self):
+        doc = self.monkey_info
+
+        return str(doc['_id'])
 
     @cache
     def GetDomainName(self):
@@ -556,10 +566,8 @@ class PassTheHashReport(object):
         self.vertices = self.GetAllMachines()
 
         self.machines = map(Machine, self.vertices)
-
-        self.edges = set()
-        self.edges |= self.GetEdgesBySid()  # Useful for non-cached domain users
-        self.edges |= self.GetEdgesBySamHash()  # This will add edges based only on password hash without caring about username
+        self.edges = self.get_edges_by_sid()  # Useful for non-cached domain users
+        #self.edges |= self.GetEdgesBySamHash()  # This will add edges based only on password hash without caring about username
 
     @cache
     def GetAllMachines(self):
@@ -574,7 +582,7 @@ class PassTheHashReport(object):
 
     @cache
     def ReprSidList(self, sid_list, attacker, victim):
-        label = set()
+        users_list = []
 
         for sid in sid_list:
             username = Machine(victim).GetUsernameBySid(sid)
@@ -583,22 +591,33 @@ class PassTheHashReport(object):
             #    username = Machine(attacker).GetUsernameBySid(sid)
 
             if username:
-                label.add(username)
+                users_list.append(username)
 
-        return ",\n".join(label)
+        return users_list
 
     @cache
     def ReprSecretList(self, secret_list, victim):
-        label = set()
+        relevant_users_list = []
 
         for secret in secret_list:
-            label |= Machine(victim).GetUsernamesBySecret(secret)
+            relevant_users_list.append(Machine(victim).GetUsernamesBySecret(secret))
 
-        return ",\n".join(label)
+        return relevant_users_list
+
+    @staticmethod
+    def __get_edge_label(attacker, victim):
+        attacker_monkey = NodeService.get_monkey_by_guid(attacker)
+        victim_monkey = NodeService.get_monkey_by_guid(victim)
+
+        attacker_label = NodeService.get_node_label(attacker_monkey)
+        victim_label = NodeService.get_node_label(victim_monkey)
+
+        RIGHT_ARROW = u"\u2192"
+        return "%s %s %s" % (attacker_label, RIGHT_ARROW, victim_label)
 
     @cache
-    def GetEdgesBySid(self):
-        edges = set()
+    def get_edges_by_sid(self):
+        edges_list = []
 
         for attacker in self.vertices:
             cached = self.GetCachedSids(Machine(attacker))
@@ -610,10 +629,17 @@ class PassTheHashReport(object):
                 admins = Machine(victim).GetAdmins()
 
                 if len(cached & admins) > 0:
-                    label = self.ReprSidList(cached & admins, attacker, victim)
-                    edges.add((attacker, victim, label))
+                    relevant_users_list = self.ReprSidList(cached & admins, attacker, victim)
+                    edges_list.append(
+                        {
+                            'from': attacker,
+                            'to': victim,
+                            'users': relevant_users_list,
+                            '_label': PassTheHashReport.__get_edge_label(attacker, victim),
+                            'id': uuid.uuid4()
+                        })
 
-        return edges
+        return edges_list
 
     @cache
     def GetEdgesBySamHash(self):
