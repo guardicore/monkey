@@ -1,4 +1,5 @@
 import os
+import struct
 import sys
 import types
 import uuid
@@ -6,9 +7,9 @@ from abc import ABCMeta
 from itertools import product
 
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
-    SambaCryExploiter, ElasticGroovyExploiter
-from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger
-from network.range import FixedRange
+    SambaCryExploiter, ElasticGroovyExploiter, Struts2Exploiter
+from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger, \
+    MSSQLFinger
 
 __author__ = 'itamar'
 
@@ -40,7 +41,7 @@ def _cast_by_example(value, example):
         return int(value)
     elif example_type is float:
         return float(value)
-    elif example_type is types.ClassType or example_type is ABCMeta:
+    elif example_type in (type, ABCMeta):
         return globals()[value]
     else:
         return None
@@ -84,10 +85,10 @@ class Configuration(object):
             if val_type is types.FunctionType or val_type is types.MethodType:
                 continue
 
-            if val_type is types.ClassType or val_type is ABCMeta:
+            if val_type in (type, ABCMeta):
                 value = value.__name__
             elif val_type is tuple or val_type is list:
-                if len(value) != 0 and (type(value[0]) is types.ClassType or type(value[0]) is ABCMeta):
+                if len(value) != 0 and type(value[0]) in (type, ABCMeta):
                     value = val_type([x.__name__ for x in value])
 
             result[key] = value
@@ -116,7 +117,8 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = '/bin/sh'
-    dropper_target_path = r"C:\Windows\monkey.exe"
+    dropper_target_path_win_32 = r"C:\Windows\monkey32.exe"
+    dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
     ###########################
@@ -144,10 +146,10 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger]
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger, MSSQLFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
-                         ElasticGroovyExploiter,  # multi
+                         ElasticGroovyExploiter, Struts2Exploiter  # multi
                          ]
 
     # how many victims to look for in a single scan iteration
@@ -162,7 +164,7 @@ class Configuration(object):
 
     # Configuration servers to try to connect to, in this order.
     command_servers = [
-        "41.50.73.31:5000"
+        "192.0.2.0:5000"
     ]
 
     # sets whether or not to locally save the running configuration after finishing
@@ -183,10 +185,9 @@ class Configuration(object):
     # Auto detect and scan local subnets
     local_network_scan = True
 
-    range_class = FixedRange
-    range_fixed = ['', ]
+    subnet_scan_list = []
 
-    blocked_ips = ['', ]
+    blocked_ips = []
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
@@ -233,6 +234,12 @@ class Configuration(object):
         """
         return product(self.exploit_user_list, self.exploit_password_list)
 
+    def get_exploit_user_ssh_key_pairs(self):
+        """
+        :return: All combinations of the configurations users and ssh pairs
+        """
+        return product(self.exploit_user_list, self.exploit_ssh_keys)
+
     def get_exploit_user_password_or_hash_product(self):
         """
         Returns all combinations of the configurations users and passwords or lm/ntlm hashes
@@ -251,6 +258,7 @@ class Configuration(object):
     exploit_password_list = ["Password1!", "1234", "password", "12345678"]
     exploit_lm_hash_list = []
     exploit_ntlm_hash_list = []
+    exploit_ssh_keys = []
 
     # smb/wmi exploiter
     smb_download_timeout = 300  # timeout in seconds

@@ -9,6 +9,7 @@ import sys
 import time
 from ctypes import c_char_p
 
+import filecmp
 from config import WormConfiguration
 from exploit.tools import build_monkey_commandline_explicitly
 from model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
@@ -38,7 +39,7 @@ class MonkeyDrops(object):
         arg_parser.add_argument('-p', '--parent')
         arg_parser.add_argument('-t', '--tunnel')
         arg_parser.add_argument('-s', '--server')
-        arg_parser.add_argument('-d', '--depth')
+        arg_parser.add_argument('-d', '--depth', type=int)
         arg_parser.add_argument('-l', '--location')
         self.monkey_args = args[1:]
         self.opts, _ = arg_parser.parse_known_args(args)
@@ -53,10 +54,16 @@ class MonkeyDrops(object):
 
         if self._config['destination_path'] is None:
             LOG.error("No destination path specified")
-            return
+            return False
 
         # we copy/move only in case path is different
-        file_moved = (self._config['source_path'].lower() == self._config['destination_path'].lower())
+        try:
+            file_moved = filecmp.cmp(self._config['source_path'], self._config['destination_path'])
+        except OSError:
+            file_moved = False
+
+        if not file_moved and os.path.exists(self._config['destination_path']):
+            os.remove(self._config['destination_path'])
 
         # first try to move the file
         if not file_moved and WormConfiguration.dropper_try_move_first:
@@ -105,8 +112,8 @@ class MonkeyDrops(object):
                 except:
                     LOG.warn("Cannot set reference date to destination file")
 
-        monkey_options = build_monkey_commandline_explicitly(
-            self.opts.parent, self.opts.tunnel, self.opts.server, int(self.opts.depth))
+        monkey_options =\
+            build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._config['destination_path']} + monkey_options
@@ -130,22 +137,25 @@ class MonkeyDrops(object):
             LOG.warn("Seems like monkey died too soon")
 
     def cleanup(self):
-        if (self._config['source_path'].lower() != self._config['destination_path'].lower()) and \
-                os.path.exists(self._config['source_path']) and \
-                WormConfiguration.dropper_try_move_first:
+        try:
+            if (self._config['source_path'].lower() != self._config['destination_path'].lower()) and \
+                    os.path.exists(self._config['source_path']) and \
+                    WormConfiguration.dropper_try_move_first:
 
-            # try removing the file first
-            try:
-                os.remove(self._config['source_path'])
-            except Exception as exc:
-                LOG.debug("Error removing source file '%s': %s", self._config['source_path'], exc)
+                # try removing the file first
+                try:
+                    os.remove(self._config['source_path'])
+                except Exception as exc:
+                    LOG.debug("Error removing source file '%s': %s", self._config['source_path'], exc)
 
-                # mark the file for removal on next boot
-                dropper_source_path_ctypes = c_char_p(self._config['source_path'])
-                if 0 == ctypes.windll.kernel32.MoveFileExA(dropper_source_path_ctypes, None,
-                                                           MOVEFILE_DELAY_UNTIL_REBOOT):
-                    LOG.debug("Error marking source file '%s' for deletion on next boot (error %d)",
-                              self._config['source_path'], ctypes.windll.kernel32.GetLastError())
-                else:
-                    LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
-                              self._config['source_path'])
+                    # mark the file for removal on next boot
+                    dropper_source_path_ctypes = c_char_p(self._config['source_path'])
+                    if 0 == ctypes.windll.kernel32.MoveFileExA(dropper_source_path_ctypes, None,
+                                                               MOVEFILE_DELAY_UNTIL_REBOOT):
+                        LOG.debug("Error marking source file '%s' for deletion on next boot (error %d)",
+                                  self._config['source_path'], ctypes.windll.kernel32.GetLastError())
+                    else:
+                        LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
+                                  self._config['source_path'])
+        except AttributeError:
+            LOG.error("Invalid configuration options. Failing")

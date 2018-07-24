@@ -8,6 +8,12 @@ import itertools
 import netifaces
 from subprocess import check_output
 from random import randint
+from common.network.network_range import CidrRange
+
+try:
+    long        # Python 2
+except NameError:
+    long = int  # Python 3
 
 
 def get_host_subnets():
@@ -92,8 +98,8 @@ else:
                     ifaddr = socket.inet_ntoa(ifreq[20:24])
                 else:
                     continue
-            routes.append((socket.htonl(long(dst, 16)) & 0xffffffffL,
-                           socket.htonl(long(msk, 16)) & 0xffffffffL,
+            routes.append((socket.htonl(long(dst, 16)) & 0xffffffff,
+                           socket.htonl(long(msk, 16)) & 0xffffffff,
                            socket.inet_ntoa(struct.pack("I", long(gw, 16))),
                            iff, ifaddr))
 
@@ -129,7 +135,7 @@ def check_internet_access(services):
     return False
 
 
-def get_ips_from_interfaces():
+def get_interfaces_ranges():
     """
     Returns a list of IPs accessible in the host in each network interface, in the subnet.
     Limits to a single class C if the network is larger
@@ -138,15 +144,11 @@ def get_ips_from_interfaces():
     res = []
     ifs = get_host_subnets()
     for net_interface in ifs:
-        address_str = unicode(net_interface['addr'])
-        netmask_str = unicode(net_interface['netmask'])
-        host_address = ipaddress.ip_address(address_str)
+        address_str = net_interface['addr']
+        netmask_str = net_interface['netmask']
         ip_interface = ipaddress.ip_interface(u"%s/%s" % (address_str, netmask_str))
         # limit subnet scans to class C only
-        if ip_interface.network.num_addresses > 255:
-            ip_interface = ipaddress.ip_interface(u"%s/24" % address_str)
-        addrs = [str(addr) for addr in ip_interface.network.hosts() if addr != host_address]
-        res.extend(addrs)
+        res.append(CidrRange(cidr_range="%s/%s" % (address_str, netmask_str)))
     return res
 
 
