@@ -25,7 +25,8 @@ class ReportPageComponent extends AuthComponent {
       AZURE: 6,
       STOLEN_SSH_KEYS: 7,
       STRUTS2: 8,
-      WEBLOGIC: 9
+      WEBLOGIC: 9,
+      HADOOP: 10
     };
 
   Warning =
@@ -331,6 +332,8 @@ class ReportPageComponent extends AuthComponent {
                     <li>Oracle WebLogic servers are vulnerable to remote code execution. (<a
                       href="https://nvd.nist.gov/vuln/detail/CVE-2017-10271">
                       CVE-2017-10271</a>)</li> : null }
+                  {this.state.report.overview.issues[this.Issue.WEBLOGIC] ?
+                    <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                 </ul>
               </div>
               :
@@ -716,6 +719,22 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateHadoopIssue(issue) {
+    return (
+      <li>
+        Run Hadoop in secure mode(<a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
+        add Kerberos authentication</a>).
+        <CollapsibleWellComponent>
+          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">remote code execution</span> attack.
+          <br/>
+          The attack was made possible due to default Hadoop/Yarn configuration being insecure.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
 
 
   generateIssue = (issue) => {
@@ -768,6 +787,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'weblogic':
         data = this.generateWebLogicIssue(issue);
+        break;
+      case 'hadoop':
+        data = this.generateHadoopIssue(issue);
         break;
     }
     return data;
