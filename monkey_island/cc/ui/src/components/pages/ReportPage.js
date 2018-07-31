@@ -332,7 +332,7 @@ class ReportPageComponent extends AuthComponent {
                     <li>Oracle WebLogic servers are vulnerable to remote code execution. (<a
                       href="https://nvd.nist.gov/vuln/detail/CVE-2017-10271">
                       CVE-2017-10271</a>)</li> : null }
-                  {this.state.report.overview.issues[this.Issue.WEBLOGIC] ?
+                  {this.state.report.overview.issues[this.Issue.HADOOP] ?
                     <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                 </ul>
               </div>
@@ -722,7 +722,7 @@ class ReportPageComponent extends AuthComponent {
   generateHadoopIssue(issue) {
     return (
       <li>
-        Run Hadoop in secure mode(<a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
+        Run Hadoop in secure mode(<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
         add Kerberos authentication</a>).
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
