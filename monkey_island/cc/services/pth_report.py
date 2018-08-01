@@ -18,7 +18,8 @@ class PTHReportService(object):
                 continue
             for sid in pth.GetSidsBySecret(secret):
                 usernames_per_sid_list.append(pth.GetUsernameBySid(sid))
-            usernames_lists.append(usernames_per_sid_list)
+
+            usernames_lists.append({'cred_group': usernames_per_sid_list})
 
         return usernames_lists
 
@@ -99,7 +100,7 @@ class PTHReportService(object):
                 'ip': m.GetIp(),
                 'hostname': m.GetHostName(),
                 'domain': m.GetDomainName(),
-                'services_names': m.GetNonCritialServers(),
+                'services_names': [],
                 'user_count': count,
                 'threatening_users': threatening_users_attackers_dict
             }
@@ -107,16 +108,41 @@ class PTHReportService(object):
         return strong_users_non_crit_list
 
     @staticmethod
+    def get_duplicated_passwords_issues(pth, password_groups):
+        issues = []
+        issues_dict = {}
+        for group in password_groups:
+            for username in group['cred_group']:
+                sid = list(pth.GetSidsByUsername(username.split('\\')[1]))
+                machine_info = pth.GetSidInfo(sid[0])
+                issues.append(
+                    {
+                        'type': 'shared_password',
+                        'machine': machine_info.get('hostname').split('.')[0],
+                        'shared_with': [x for x in group['cred_group'] if x != username],
+                        'username': username
+                    }
+                )
+
+        for issue in issues:
+            machine = issue['machine']
+            if machine not in issues_dict:
+                issues_dict[machine] = []
+            issues_dict[machine].append(issue)
+
+        return issues_dict
+
+    @staticmethod
     def generate_map_nodes(pth):
         nodes_list = []
         for node_id in pth.vertices:
             machine = Machine(node_id)
             node = {
-                "id": str(machine.get_monkey_id()),
+                "id": str(node_id),
                 "label": '{0} : {1}'.format(machine.GetHostName(), machine.GetIp()),
                 'group': 'critical' if machine.IsCriticalServer() else 'normal',
                 'users': list(machine.GetCachedUsernames()),
-                'ips': machine.GetIp(),
+                'ips': [machine.GetIp()],
                 'services': machine.GetCriticalServicesInstalled(),
                 'hostname': machine.GetHostName()
             }
@@ -127,17 +153,23 @@ class PTHReportService(object):
     @staticmethod
     def get_report():
         pth = PassTheHashReport()
+        same_password = PTHReportService.get_duplicated_password_nodes(pth)
+        local_admin_shared = PTHReportService.get_shared_local_admins_nodes(pth)
+        strong_users_on_crit_services = PTHReportService.get_strong_users_on_crit_services(pth)
+        strong_users_on_non_crit_services = PTHReportService.get_strong_users_on_non_crit_services(pth)
+        issues = PTHReportService.get_duplicated_passwords_issues(pth, same_password)
 
         report = \
             {
                 'report_info':
                     {
-                        'same_password': PTHReportService.get_duplicated_password_nodes(pth),
-                        'local_admin_shared': PTHReportService.get_shared_local_admins_nodes(pth),
-                        'strong_users_on_crit_services': PTHReportService.get_strong_users_on_crit_services(pth),
-                        'strong_users_on_non_crit_services': PTHReportService.get_strong_users_on_non_crit_services(pth)
+                        'same_password': same_password,
+                        'local_admin_shared': local_admin_shared,
+                        'strong_users_on_crit_services': strong_users_on_crit_services,
+                        'strong_users_on_non_crit_services': strong_users_on_non_crit_services,
+                        'pth_issues': issues
                     },
-                'map':
+                'pthmap':
                     {
                         'nodes': PTHReportService.generate_map_nodes(pth),
                         'edges': pth.edges
@@ -318,4 +350,3 @@ class PTHReportService(object):
         #     for m in pth.GetAttackersBySecret(secret):
         #         print """<li><a href="#{ip}">{hostname}</a></li>""".format(ip=m.GetIp(), hostname=m.GetHostName())
         #     print """</ul>"""
-

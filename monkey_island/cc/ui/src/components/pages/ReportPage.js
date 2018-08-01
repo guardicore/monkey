@@ -47,6 +47,7 @@ class ReportPageComponent extends AuthComponent {
       allMonkeysAreDead: false,
       runStarted: true
     };
+    this.getPth
   }
 
   componentDidMount() {
@@ -117,7 +118,7 @@ class ReportPageComponent extends AuthComponent {
       .then(res => {
         this.setState({
           pthreport: res.report_info,
-          pthmap: res.map
+          pthmap: res.pthmap
         });
       });
   }
@@ -389,6 +390,7 @@ class ReportPageComponent extends AuthComponent {
         </h3>
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
+          {this.generateIssues(this.state.pthreport.pth_issues)}
         </div>
       </div>
     );
@@ -399,6 +401,7 @@ class ReportPageComponent extends AuthComponent {
       (100 * this.state.report.glance.exploited.length) / this.state.report.glance.scanned.length;
     return (
       <div id="glance">
+
         <h3>
           The Network from the Monkey's Eyes
         </h3>
@@ -452,7 +455,15 @@ class ReportPageComponent extends AuthComponent {
           <SharedAdmins data = {this.state.pthreport.local_admin_shared} />
         </div>
         <div>
-          <StrongUsers data = {this.state.pthreport.strong_users_on_crit_services} />
+          { /* TODO: use dynamic data */}
+          <StrongUsers data = {[
+            {
+              username: 'SharedLocalAdmin',
+              domain: 'MyDomain',
+              machines: ['hello : 1.2.3.4'],
+              services: ['DC', 'DNS']
+            }
+          ]} />
         </div>
       </div>
     );
@@ -728,6 +739,18 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateSharedCredsIssue(issue) {
+    return (
+    <li>
+        Some users are sharing passwords, this should be fixed by changing passwords.
+        <CollapsibleWellComponent>
+          The user <span className="label label-primary">{issue.username}</span> is sharing access password with:
+           {this.generateInfoBadges(issue.shared_with)}.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
   generateTunnelIssue(issue) {
     return (
       <li>
@@ -799,6 +822,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'cross_segment':
         data = this.generateCrossSegmentIssue(issue);
+        break;
+      case 'shared_password':
+        data = this.generateSharedCredsIssue(issue);
         break;
       case 'tunnel':
         data = this.generateTunnelIssue(issue);

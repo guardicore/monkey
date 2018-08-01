@@ -212,7 +212,8 @@ class Machine(object):
                     "Username": eval(user.get("Name")),
                     "Disabled": user.get("Disabled") == "true",
                     "PasswordRequired": user.get("PasswordRequired") == "true",
-                    "PasswordExpires": user.get("PasswordExpires") == "true", }
+                    "PasswordExpires": user.get("PasswordExpires") == "true",
+                    'hostname': doc.get('data').get('hostname'), }
 
         if not self.IsDomainController():
             for dc in self.GetDomainControllers():
@@ -555,6 +556,7 @@ class Machine(object):
 
         return names
 
+
 class PassTheHashReport(object):
     # _instance = None
     # def __new__(class_, *args, **kwargs):
@@ -570,7 +572,7 @@ class PassTheHashReport(object):
         self.edges = self.get_edges_by_sid()  # Useful for non-cached domain users
         #self.edges |= self.GetEdgesBySamHash()  # This will add edges based only on password hash without caring about username
 
-    @cache
+
     def GetAllMachines(self):
         cur = mongo.db.telemetry.find({"telem_type": "system_info_collection"})
 
@@ -610,13 +612,12 @@ class PassTheHashReport(object):
         attacker_monkey = NodeService.get_monkey_by_guid(attacker)
         victim_monkey = NodeService.get_monkey_by_guid(victim)
 
-        attacker_label = NodeService.get_node_label(attacker_monkey)
-        victim_label = NodeService.get_node_label(victim_monkey)
+        attacker_label = NodeService.get_monkey_label(attacker_monkey)
+        victim_label = NodeService.get_monkey_label(victim_monkey)
 
         RIGHT_ARROW = u"\u2192"
         return "%s %s %s" % (attacker_label, RIGHT_ARROW, victim_label)
 
-    @cache
     def get_edges_by_sid(self):
         edges_list = []
 
@@ -637,7 +638,7 @@ class PassTheHashReport(object):
                             'to': victim,
                             'users': relevant_users_list,
                             '_label': PassTheHashReport.__get_edge_label(attacker, victim),
-                            'id': uuid.uuid4()
+                            'id': str(uuid.uuid4())
                         })
 
         return edges_list
@@ -858,9 +859,9 @@ class PassTheHashReport(object):
 
         attackers = set()
 
-        for atck, vic, _ in self.edges:
-            if vic == victim:
-                attackers.add(atck)
+        for edge in self.edges:
+            if edge.get('to', None) == victim:
+                attackers.add(edge.get('from', None))
 
         return set(map(Machine, attackers))
 
