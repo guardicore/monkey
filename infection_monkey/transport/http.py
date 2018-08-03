@@ -210,7 +210,7 @@ class LockedHTTPServer(threading.Thread):
 
         self._stopped = True
 
-    def stop(self, timeout=60):
+    def stop(self, timeout=5):
         self._stopped = True
         self.join(timeout)
 
