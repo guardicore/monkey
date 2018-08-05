@@ -1,6 +1,5 @@
 import os
 import logging
-import traceback
 
 import sys
 sys.coinit_flags = 0 # needed for proper destruction of the wmi python module
@@ -143,7 +142,7 @@ class WindowsInfoCollector(InfoCollector):
         
         self.get_wmi_info()
         LOG.debug('finished get_wmi_info')
-        #self.get_reg_key(r"SYSTEM\CurrentControlSet\Control\Lsa")
+        self.get_reg_key(r"SYSTEM\CurrentControlSet\Control\Lsa")
         self.get_installed_packages()
         
         mimikatz_collector = MimikatzCollector()
