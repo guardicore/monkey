@@ -3,11 +3,18 @@ from cc.services.pth_report_utils import PassTheHashReport, Machine
 
 class PTHReportService(object):
 
+    """
+
+    """
+
     def __init__(self):
         pass
 
     @staticmethod
     def get_duplicated_password_nodes(pth):
+        """
+
+        """
 
         usernames_lists = []
         usernames_per_sid_list = []
@@ -110,7 +117,6 @@ class PTHReportService(object):
     @staticmethod
     def get_duplicated_passwords_issues(pth, password_groups):
         issues = []
-        issues_dict = {}
         for group in password_groups:
             for username in group['cred_group']:
                 sid = list(pth.GetSidsByUsername(username.split('\\')[1]))
@@ -124,13 +130,38 @@ class PTHReportService(object):
                     }
                 )
 
-        for issue in issues:
-            machine = issue['machine']
-            if machine not in issues_dict:
-                issues_dict[machine] = []
-            issues_dict[machine].append(issue)
+        return issues
 
-        return issues_dict
+    @staticmethod
+    def get_shared_local_admins_issues(shared_admins_machines):
+        issues = []
+        for machine in shared_admins_machines:
+            issues.append(
+                {
+                    'type': 'shared_admins',
+                    'machine': machine.get('hostname'),
+                    'shared_accounts': machine.get('admins_accounts'),
+                    'ip': machine.get('ip'),
+                }
+            )
+
+        return issues
+
+    @staticmethod
+    def strong_users_on_crit_issues(strong_users):
+        issues = []
+        for machine in strong_users:
+            issues.append(
+                {
+                    'type': 'strong_users_on_crit',
+                    'machine': machine.get('hostname'),
+                    'services': machine.get('services_names'),
+                    'ip': machine.get('ip'),
+                    'threatening_users': machine.get('threatening_users')
+                }
+            )
+
+        return issues
 
     @staticmethod
     def generate_map_nodes(pth):
@@ -151,13 +182,32 @@ class PTHReportService(object):
         return nodes_list
 
     @staticmethod
+    def get_issues_list(issues):
+        issues_dict = {}
+
+        for issue in issues:
+            machine = issue['machine']
+            if machine not in issues_dict:
+                issues_dict[machine] = []
+            issues_dict[machine].append(issue)
+
+        return issues_dict
+
+    @staticmethod
     def get_report():
+
+        issues = []
         pth = PassTheHashReport()
+
         same_password = PTHReportService.get_duplicated_password_nodes(pth)
         local_admin_shared = PTHReportService.get_shared_local_admins_nodes(pth)
         strong_users_on_crit_services = PTHReportService.get_strong_users_on_crit_services(pth)
         strong_users_on_non_crit_services = PTHReportService.get_strong_users_on_non_crit_services(pth)
-        issues = PTHReportService.get_duplicated_passwords_issues(pth, same_password)
+
+        issues += PTHReportService.get_duplicated_passwords_issues(pth, same_password)
+        issues += PTHReportService.get_shared_local_admins_issues(local_admin_shared)
+        issues += PTHReportService.strong_users_on_crit_issues(strong_users_on_crit_services)
+        formated_issues = PTHReportService.get_issues_list(issues)
 
         report = \
             {
@@ -167,7 +217,7 @@ class PTHReportService(object):
                         'local_admin_shared': local_admin_shared,
                         'strong_users_on_crit_services': strong_users_on_crit_services,
                         'strong_users_on_non_crit_services': strong_users_on_non_crit_services,
-                        'pth_issues': issues
+                        'pth_issues': formated_issues
                     },
                 'pthmap':
                     {

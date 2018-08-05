@@ -751,6 +751,32 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateSharedLocalAdminsIssue(issue) {
+    return (
+    <li>
+        This machine shares a local admin account with another machine
+        <CollapsibleWellComponent>
+          Here is a list showing users that are acting as admins on this machine and others:
+          {this.generateInfoBadges(issue.shared_accounts)}
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateStrongUsersOnCritIssue(issue) {
+    return (
+    <li>
+        This critical machine is open to attacks via strong users with access to it.
+        <CollapsibleWellComponent>
+          The services: {this.generateInfoBadges(issue.services)} have been found on the machine
+          thus classifying it as a critical machine.
+          These users has access to it:
+           {this.generateInfoBadges(issue.threatening_users)}.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
   generateTunnelIssue(issue) {
     return (
       <li>
@@ -825,6 +851,12 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'shared_password':
         data = this.generateSharedCredsIssue(issue);
+        break;
+      case 'shared_admins':
+        data = this.generateSharedLocalAdminsIssue(issue);
+        break;
+      case 'strong_users_on_crit':
+        data = this.generateStrongUsersOnCritIssue(issue);
         break;
       case 'tunnel':
         data = this.generateTunnelIssue(issue);
