@@ -7,9 +7,9 @@ from abc import ABCMeta
 from itertools import product
 
 from infection_monkey.exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, \
-    SambaCryExploiter, ElasticGroovyExploiter, Struts2Exploiter
+    SambaCryExploiter, ElasticGroovyExploiter, Struts2Exploiter, ShellShockExploiter
 from infection_monkey.network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, \
-    ElasticFinger
+    ElasticFinger, MSSQLFinger
 
 __author__ = 'itamar'
 
