@@ -9,6 +9,7 @@ import sys
 import time
 from ctypes import c_char_p
 
+import filecmp
 from infection_monkey.config import WormConfiguration
 from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
 from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
@@ -56,7 +57,10 @@ class MonkeyDrops(object):
             return False
 
         # we copy/move only in case path is different
-        file_moved = os.path.samefile(self._config['source_path'], self._config['destination_path'])
+        try:
+            file_moved = filecmp.cmp(self._config['source_path'], self._config['destination_path'])
+        except OSError:
+            file_moved = False
 
         if not file_moved and os.path.exists(self._config['destination_path']):
             os.remove(self._config['destination_path'])

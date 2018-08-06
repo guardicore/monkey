@@ -7,7 +7,7 @@ from abc import ABCMeta
 from itertools import product
 
 from infection_monkey.exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, \
-    ShellShockExploiter, SambaCryExploiter, ElasticGroovyExploiter
+    SambaCryExploiter, ElasticGroovyExploiter, Struts2Exploiter
 from infection_monkey.network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, \
     ElasticFinger
 
@@ -146,10 +146,10 @@ class Configuration(object):
     max_iterations = 1
 
     scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger]
+    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger, MSSQLFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
-                         ElasticGroovyExploiter,  # multi
+                         ElasticGroovyExploiter, Struts2Exploiter  # multi
                          ]
 
     # how many victims to look for in a single scan iteration
@@ -164,7 +164,7 @@ class Configuration(object):
 
     # Configuration servers to try to connect to, in this order.
     command_servers = [
-        "41.50.73.31:5000"
+        "192.0.2.0:5000"
     ]
 
     # sets whether or not to locally save the running configuration after finishing
@@ -185,9 +185,9 @@ class Configuration(object):
     # Auto detect and scan local subnets
     local_network_scan = True
 
-    subnet_scan_list = ['', ]
+    subnet_scan_list = []
 
-    blocked_ips = ['', ]
+    blocked_ips = []
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,

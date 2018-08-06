@@ -80,6 +80,13 @@ SCHEMA = {
                     ],
                     "title": "ElasticGroovy Exploiter"
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "Struts2Exploiter"
+                    ],
+                    "title": "Struts2 Exploiter"
+                }
             ]
         },
         "finger_classes": {
@@ -121,6 +128,14 @@ SCHEMA = {
                     ],
                     "title": "MySQLFinger"
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "MSSQLFinger"
+                    ],
+                    "title": "MSSQLFinger"
+                },
+
                 {
                     "type": "string",
                     "enum": [
@@ -367,6 +382,7 @@ SCHEMA = {
                                 "PingScanner",
                                 "HTTPFinger",
                                 "MySQLFinger",
+                                "MSSQLFinger",
                                 "ElasticFinger"
                             ],
                             "description": "Determines which classes to use for fingerprinting"
@@ -559,7 +575,7 @@ SCHEMA = {
                                 "type": "string"
                             },
                             "default": [
-                                "41.50.73.31:5000"
+                                "192.0.2.0:5000"
                             ],
                             "description": "List of command servers to try and communicate with (format is <ip>:<port>)"
                         },
@@ -581,7 +597,7 @@ SCHEMA = {
                         "current_server": {
                             "title": "Current server",
                             "type": "string",
-                            "default": "41.50.73.31:5000",
+                            "default": "192.0.2.0:5000",
                             "description": "The current command server the monkey is communicating with"
                         }
                     }
@@ -609,7 +625,8 @@ SCHEMA = {
                                 "SSHExploiter",
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
-                                "ElasticGroovyExploiter"
+                                "ElasticGroovyExploiter",
+                                "Struts2Exploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN

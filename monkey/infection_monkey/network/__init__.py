@@ -18,7 +18,6 @@ class HostFinger(object):
     def get_host_fingerprint(self, host):
         raise NotImplementedError()
 
-
 from infection_monkey.network.ping_scanner import PingScanner
 from infection_monkey.network.tcp_scanner import TcpScanner
 from infection_monkey.network.smbfinger import SMBFinger
@@ -27,3 +26,4 @@ from infection_monkey.network.httpfinger import HTTPFinger
 from infection_monkey.network.elasticfinger import ElasticFinger
 from infection_monkey.network.mysqlfinger import MySQLFinger
 from infection_monkey.network.info import local_ips, get_free_tcp_port
+from infection_monkey.network.mssql_fingerprint import MSSQLFinger
