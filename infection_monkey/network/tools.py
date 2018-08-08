@@ -154,3 +154,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
     except socket.error as exc:
         LOG.warning("Exception when checking ports on host %s, Exception: %s", str(ip), exc)
         return [], []
+
+
+def tcp_port_to_service(port):
+    return 'tcp-' + str(port)

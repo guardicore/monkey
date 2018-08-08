@@ -183,7 +183,14 @@ class HTTPServer(threading.Thread):
         self._stopped = True
         self.join(timeout)
 
+
 class LockedHTTPServer(threading.Thread):
+    """
+    Same as HTTPServer used for file downloads just with locks to avoid racing conditions.
+    """
+    # Seconds to wait until server stops
+    STOP_TIMEOUT = 5
+
     def __init__(self, local_ip, local_port, filename, lock, max_downloads=1):
         self._local_ip = local_ip
         self._local_port = local_port
@@ -210,9 +217,10 @@ class LockedHTTPServer(threading.Thread):
 
         self._stopped = True
 
-    def stop(self, timeout=5):
+    def stop(self, timeout=STOP_TIMEOUT):
         self._stopped = True
         self.join(timeout)
+
 
 class HTTPConnectProxy(TransportProxyBase):
     def run(self):
