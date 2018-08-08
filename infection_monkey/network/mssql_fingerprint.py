@@ -53,6 +53,15 @@ class MSSQLFinger(HostFinger):
             LOG.info('Socket timeout reached, maybe browser service on host: {0} doesnt exist'.format(host))
             sock.close()
             return False
+        except socket.error as e:
+            if e.errno == socket.errno.ECONNRESET:
+                LOG.info('Connection was forcibly closed by the remote host. The host: {0} is rejecting the packet.'
+                         .format(host))
+            else:
+                LOG.error('An unknown socket error occurred while trying the mssql fingerprint, closing socket.',
+                          exc_info=True)
+            sock.close()
+            return False
 
         host.services[self.SERVICE_NAME] = {}
 
