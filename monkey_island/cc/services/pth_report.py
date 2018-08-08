@@ -118,17 +118,16 @@ class PTHReportService(object):
     def get_duplicated_passwords_issues(pth, password_groups):
         issues = []
         for group in password_groups:
-            for username in group['cred_group']:
-                sid = list(pth.GetSidsByUsername(username.split('\\')[1]))
-                machine_info = pth.GetSidInfo(sid[0])
-                issues.append(
-                    {
-                        'type': 'shared_password',
-                        'machine': machine_info.get('hostname').split('.')[0],
-                        'shared_with': [x for x in group['cred_group'] if x != username],
-                        'username': username
-                    }
-                )
+            username = group['cred_group'][0]
+            sid = list(pth.GetSidsByUsername(username.split('\\')[1]))
+            machine_info = pth.GetSidInfo(sid[0])
+            issues.append(
+                {
+                    'type': 'shared_passwords',
+                    'machine': machine_info.get('hostname').split('.')[0],
+                    'shared_with': group['cred_group']
+                }
+            )
 
         return issues
 
@@ -207,7 +206,7 @@ class PTHReportService(object):
         issues += PTHReportService.get_duplicated_passwords_issues(pth, same_password)
         issues += PTHReportService.get_shared_local_admins_issues(local_admin_shared)
         issues += PTHReportService.strong_users_on_crit_issues(strong_users_on_crit_services)
-        formated_issues = PTHReportService.get_issues_list(issues)
+        #formated_issues = PTHReportService.get_issues_list(issues)
 
         report = \
             {
@@ -217,7 +216,7 @@ class PTHReportService(object):
                         'local_admin_shared': local_admin_shared,
                         'strong_users_on_crit_services': strong_users_on_crit_services,
                         'strong_users_on_non_crit_services': strong_users_on_non_crit_services,
-                        'pth_issues': formated_issues
+                        'pth_issues': issues
                     },
                 'pthmap':
                     {

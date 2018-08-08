@@ -28,13 +28,16 @@ class ReportPageComponent extends AuthComponent {
       CONFICKER: 5,
       AZURE: 6,
       STOLEN_SSH_KEYS: 7,
-      STRUTS2: 8
+      STRUTS2: 8,
+      PTH_CRIT_SERVICES_ACCESS: 10
     };
 
   Warning =
     {
       CROSS_SEGMENT: 0,
-      TUNNEL: 1
+      TUNNEL: 1,
+      SHARED_LOCAL_ADMIN: 2,
+      SHARED_PASSWORDS: 3
     };
 
   constructor(props) {
@@ -345,6 +348,9 @@ class ReportPageComponent extends AuthComponent {
                     <li>Struts2 servers are vulnerable to remote code execution. (<a
                       href="https://cwiki.apache.org/confluence/display/WW/S2-045">
                       CVE-2017-5638</a>)</li> : null }
+                  {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] ?
+                    <li>Credentials of strong users was found on machines and can give access to critical servers
+                    (DC, MSSQL, etc..)</li>: null }
                 </ul>
               </div>
               :
@@ -370,6 +376,10 @@ class ReportPageComponent extends AuthComponent {
                       communicate.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
                     <li>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
+                  {this.state.report.overview.warnings[this.Warning.SHARED_LOCAL_ADMIN] ?
+                    <li>The monkey has found that some users have administrative rights on several machines.</li> : null}
+                  {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS] ?
+                    <li>The monkey has found that some users are sharing passwords.</li> : null}
                 </ul>
               </div>
               :
@@ -390,7 +400,6 @@ class ReportPageComponent extends AuthComponent {
         </h3>
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
-          {this.generateIssues(this.state.pthreport.pth_issues)}
         </div>
       </div>
     );
@@ -447,9 +456,6 @@ class ReportPageComponent extends AuthComponent {
         {this.generateReportPthMap()}
         <div style={{marginBottom: '20px'}}>
           <StolenPasswords data={this.state.report.glance.stolen_creds}/>
-        </div>
-        <div style={{marginBottom: '20px'}}>
-          <SharedCreds data = {this.state.pthreport.same_password} />
         </div>
         <div style={{marginBottom: '20px'}}>
           <SharedAdmins data = {this.state.pthreport.local_admin_shared} />
@@ -744,7 +750,7 @@ class ReportPageComponent extends AuthComponent {
     <li>
         Some users are sharing passwords, this should be fixed by changing passwords.
         <CollapsibleWellComponent>
-          The user <span className="label label-primary">{issue.username}</span> is sharing access password with:
+          These users are sharing access password:
            {this.generateInfoBadges(issue.shared_with)}.
         </CollapsibleWellComponent>
       </li>
@@ -849,7 +855,7 @@ class ReportPageComponent extends AuthComponent {
       case 'cross_segment':
         data = this.generateCrossSegmentIssue(issue);
         break;
-      case 'shared_password':
+      case 'shared_passwords':
         data = this.generateSharedCredsIssue(issue);
         break;
       case 'shared_admins':

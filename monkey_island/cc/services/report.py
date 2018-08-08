@@ -9,6 +9,7 @@ from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 from cc.utils import local_ip_addresses, get_subnets
+from pth_report import PTHReportService
 
 __author__ = "itay.mizeretz"
 
@@ -43,10 +44,14 @@ class ReportService:
         AZURE = 6
         STOLEN_SSH_KEYS = 7
         STRUTS2 = 8
+        PTH_CRIT_SERVICES_ACCESS = 10
+
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
         TUNNEL = 1
+        SHARED_LOCAL_ADMIN = 2
+        SHARED_PASSWORDS = 3
 
     @staticmethod
     def get_first_monkey_time():
@@ -365,7 +370,8 @@ class ReportService:
     @staticmethod
     def get_issues():
         issues = ReportService.get_exploits() + ReportService.get_tunnels() +\
-                 ReportService.get_cross_segment_issues() + ReportService.get_azure_issues()
+                 ReportService.get_cross_segment_issues() + ReportService.get_azure_issues() + \
+                 PTHReportService.get_report().get('report_info').get('pth_issues', [])
         issues_dict = {}
         for issue in issues:
             machine = issue['machine']
@@ -430,7 +436,9 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_SSH_KEYS.value] = True
                 elif issue['type'] == 'struts2':
                     issues_byte_array[ReportService.ISSUES_DICT.STRUTS2.value] = True
-                elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
+                elif issue['type'] == 'strong_users_on_crit':
+                    issues_byte_array[ReportService.ISSUES_DICT.PTH_CRIT_SERVICES_ACCESS.value] = True
+                elif issue['type'].endswith('_password') and issue.get('password', None) in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
                 elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
@@ -440,7 +448,7 @@ class ReportService:
 
     @staticmethod
     def get_warnings_overview(issues):
-        warnings_byte_array = [False] * 2
+        warnings_byte_array = [False] * len(ReportService.WARNINGS_DICT)
 
         for machine in issues:
             for issue in issues[machine]:
@@ -448,6 +456,10 @@ class ReportService:
                     warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
                 elif issue['type'] == 'tunnel':
                     warnings_byte_array[ReportService.WARNINGS_DICT.TUNNEL.value] = True
+                elif issue['type'] == 'shared_admins':
+                    warnings_byte_array[ReportService.WARNINGS_DICT.SHARED_LOCAL_ADMIN.value] = True
+                elif issue['type'] == 'shared_passwords':
+                    warnings_byte_array[ReportService.WARNINGS_DICT.SHARED_PASSWORDS.value] = True
 
         return warnings_byte_array
 
@@ -471,6 +483,7 @@ class ReportService:
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
+
 
         report = \
             {
