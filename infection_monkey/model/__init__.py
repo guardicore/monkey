@@ -29,7 +29,4 @@ CHECK_COMMAND = "echo %s" % ID_STRING
 ARCH_WINDOWS = "wmic os get osarchitecture"
 ARCH_LINUX = "lscpu"
 
-# Commands used to check if monkeys already exists
-EXISTS = "ls %s"
-
 DOWNLOAD_TIMEOUT = 300
