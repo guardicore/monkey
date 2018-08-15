@@ -30,7 +30,9 @@ class ReportService:
             'ElasticGroovyExploiter': 'Elastic Groovy Exploiter',
             'Ms08_067_Exploiter': 'Conficker Exploiter',
             'ShellShockExploiter': 'ShellShock Exploiter',
-            'Struts2Exploiter': 'Struts2 Exploiter'
+            'Struts2Exploiter': 'Struts2 Exploiter',
+            'WebLogicExploiter': 'Oracle WebLogic Exploiter',
+            'HadoopExploiter': 'Hadoop/Yarn Exploiter'
         }
 
     class ISSUES_DICT(Enum):
@@ -43,6 +45,8 @@ class ReportService:
         AZURE = 6
         STOLEN_SSH_KEYS = 7
         STRUTS2 = 8
+        WEBLOGIC = 9,
+        HADOOP = 10
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -299,6 +303,18 @@ class ReportService:
         return processed_exploit
 
     @staticmethod
+    def process_weblogic_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'weblogic'
+        return processed_exploit
+
+    @staticmethod
+    def process_hadoop_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'hadoop'
+        return processed_exploit
+
+    @staticmethod
     def process_exploit(exploit):
         exploiter_type = exploit['data']['exploiter']
         EXPLOIT_PROCESS_FUNCTION_DICT = {
@@ -310,7 +326,9 @@ class ReportService:
             'ElasticGroovyExploiter': ReportService.process_elastic_exploit,
             'Ms08_067_Exploiter': ReportService.process_conficker_exploit,
             'ShellShockExploiter': ReportService.process_shellshock_exploit,
-            'Struts2Exploiter': ReportService.process_struts2_exploit
+            'Struts2Exploiter': ReportService.process_struts2_exploit,
+            'WebLogicExploiter': ReportService.process_weblogic_exploit,
+            'HadoopExploiter': ReportService.process_hadoop_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
@@ -430,6 +448,10 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_SSH_KEYS.value] = True
                 elif issue['type'] == 'struts2':
                     issues_byte_array[ReportService.ISSUES_DICT.STRUTS2.value] = True
+                elif issue['type'] == 'weblogic':
+                    issues_byte_array[ReportService.ISSUES_DICT.WEBLOGIC.value] = True
+                elif issue['type'] == 'hadoop':
+                    issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True

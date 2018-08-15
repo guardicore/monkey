@@ -86,6 +86,20 @@ SCHEMA = {
                         "Struts2Exploiter"
                     ],
                     "title": "Struts2 Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "WebLogicExploiter"
+                    ],
+                    "title": "Oracle Web Logic Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "HadoopExploiter"
+                    ],
+                    "title": "Hadoop/Yarn Exploiter"
                 }
             ]
         },
@@ -626,7 +640,9 @@ SCHEMA = {
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
                                 "ElasticGroovyExploiter",
-                                "Struts2Exploiter"
+                                "Struts2Exploiter",
+                                "WebLogicExploiter",
+                                "HadoopExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
@@ -761,7 +777,8 @@ SCHEMA = {
                                 80,
                                 8080,
                                 443,
-                                8008
+                                8008,
+                                7001
                             ],
                             "description": "List of ports the monkey will check if are being used for HTTP"
                         },
@@ -783,7 +800,8 @@ SCHEMA = {
                                 443,
                                 8008,
                                 3306,
-                                9200
+                                9200,
+                                7001
                             ],
                             "description": "List of TCP ports the monkey will check whether they're open"
                         },

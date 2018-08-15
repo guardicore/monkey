@@ -24,7 +24,9 @@ class ReportPageComponent extends AuthComponent {
       CONFICKER: 5,
       AZURE: 6,
       STOLEN_SSH_KEYS: 7,
-      STRUTS2: 8
+      STRUTS2: 8,
+      WEBLOGIC: 9,
+      HADOOP: 10
     };
 
   Warning =
@@ -326,6 +328,12 @@ class ReportPageComponent extends AuthComponent {
                     <li>Struts2 servers are vulnerable to remote code execution. (<a
                       href="https://cwiki.apache.org/confluence/display/WW/S2-045">
                       CVE-2017-5638</a>)</li> : null }
+                  {this.state.report.overview.issues[this.Issue.WEBLOGIC] ?
+                    <li>Oracle WebLogic servers are vulnerable to remote code execution. (<a
+                      href="https://nvd.nist.gov/vuln/detail/CVE-2017-10271">
+                      CVE-2017-10271</a>)</li> : null }
+                  {this.state.report.overview.issues[this.Issue.HADOOP] ?
+                    <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                 </ul>
               </div>
               :
@@ -693,6 +701,40 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateWebLogicIssue(issue) {
+    return (
+      <li>
+        Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
+        critical patch updates.</a> Or change server version. Vulnerable versions are
+        10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
+        <CollapsibleWellComponent>
+          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">remote code execution</span> attack.
+          <br/>
+          The attack was made possible due to incorrect permission assignment in Oracle Fusion Middleware
+          (subcomponent: WLS Security).
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateHadoopIssue(issue) {
+    return (
+      <li>
+        Run Hadoop in secure mode(<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
+        add Kerberos authentication</a>).
+        <CollapsibleWellComponent>
+          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">remote code execution</span> attack.
+          <br/>
+          The attack was made possible due to default Hadoop/Yarn configuration being insecure.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
 
 
   generateIssue = (issue) => {
@@ -742,6 +784,12 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'struts2':
         data = this.generateStruts2Issue(issue);
+        break;
+      case 'weblogic':
+        data = this.generateWebLogicIssue(issue);
+        break;
+      case 'hadoop':
+        data = this.generateHadoopIssue(issue);
         break;
     }
     return data;
