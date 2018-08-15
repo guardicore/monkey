@@ -187,6 +187,10 @@ class HTTPServer(threading.Thread):
 class LockedHTTPServer(threading.Thread):
     """
     Same as HTTPServer used for file downloads just with locks to avoid racing conditions.
+    You create a lock instance and pass it to this server's constructor. Then acquire the lock
+    before starting the server and after it. Once the server starts it will release the lock
+    and subsequent code will be able to continue to execute. That way subsequent code will
+    always call already running HTTP server
     """
     # Seconds to wait until server stops
     STOP_TIMEOUT = 5

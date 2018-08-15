@@ -25,7 +25,7 @@ RUN_MONKEY = " %(monkey_path)s %(monkey_type)s %(parameters)s"
 # Commands used to check for architecture and if machine is exploitable
 CHECK_COMMAND = "echo %s" % ID_STRING
 # Architecture checking commands
-ARCH_WINDOWS = "wmic os get osarchitecture"
-ARCH_LINUX = "lscpu"
+GET_ARCH_WINDOWS = "wmic os get osarchitecture"
+GET_ARCH_LINUX = "lscpu"
 
 DOWNLOAD_TIMEOUT = 300
