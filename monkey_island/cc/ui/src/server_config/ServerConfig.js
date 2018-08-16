@@ -1,7 +1,7 @@
 import StandardConfig from './StandardConfig';
 import AwsConfig from './AwsConfig';
 
-const SERVER_CONFIG_JSON = require('json-loader!../../../server_config.json');
+const SERVER_CONFIG_JSON = require('../../../server_config.json');
 
 const CONFIG_DICT =
   {
