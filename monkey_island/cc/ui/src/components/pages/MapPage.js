@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import {Icon} from 'react-fa';
 import PreviewPane from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {ModalContainer, ModalDialog} from 'react-modal-dialog';
+// import {ModalContainer, ModalDialog} from 'react-modal-dialog';
 import {options, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 
@@ -102,6 +102,9 @@ class MapPageComponent extends AuthComponent {
       return <div />
     }
 
+    // TODO: uncomment
+    return <div/>
+/*
     return (
       <ModalContainer onClose={() => this.setState({showKillDialog: false})}>
         <ModalDialog onClose={() => this.setState({showKillDialog: false})}>
@@ -125,6 +128,7 @@ class MapPageComponent extends AuthComponent {
         </ModalDialog>
       </ModalContainer>
     )
+    */
   };
 
   renderTelemetryEntry(telemetry) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Col} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import {ModalContainer, ModalDialog} from 'react-modal-dialog';
+//import {ModalContainer, ModalDialog} from 'react-modal-dialog';
 import AuthComponent from '../AuthComponent';
 
 class StartOverPageComponent extends AuthComponent {
@@ -31,6 +31,9 @@ class StartOverPageComponent extends AuthComponent {
       return <div />
     }
 
+    // TODO: uncomment
+    return <div />
+    /*
     return (
       <ModalContainer onClose={() => this.setState({showCleanDialog: false})}>
         <ModalDialog onClose={() => this.setState({showCleanDialog: false})}>
@@ -63,6 +66,7 @@ class StartOverPageComponent extends AuthComponent {
         </ModalDialog>
       </ModalContainer>
     )
+    */
   };
 
   render() {
