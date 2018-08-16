@@ -10,7 +10,7 @@ let getGroupsOptions = () => {
       {
         shape: 'image',
         size: 50,
-        image: '../' + require('../../images/nodes/' + groupName + '.png')
+        image: require('../../images/nodes/' + groupName + '.png')
       };
   }
 

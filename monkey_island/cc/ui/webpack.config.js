@@ -59,6 +59,9 @@ module.exports = {
       path.resolve(__dirname, 'src/')
     ]
   },
+  output: {
+    publicPath: '/'
+  },
   devServer: {
     proxy: {
       '/api': {
