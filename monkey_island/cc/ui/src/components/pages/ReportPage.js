@@ -421,7 +421,7 @@ class ReportPageComponent extends AuthComponent {
           <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
         <div>
-          <StolenPasswords data={this.state.report.glance.stolen_creds, this.state.report.glance.ssh_keys}/>
+          <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>
       </div>
     );
