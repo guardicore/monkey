@@ -155,6 +155,14 @@ class PreviewPaneComponent extends AuthComponent {
     )
   }
 
+  islandAssetInfo() {
+    return (
+      <div>
+        No info to show
+      </div>
+    );
+  }
+
   assetInfo(asset) {
     return (
       <div>
@@ -244,8 +252,8 @@ class PreviewPaneComponent extends AuthComponent {
         info = this.scanInfo(this.props.item);
         break;
       case 'node':
-        info = this.props.item.group.includes('monkey', 'manual') ?
-          this.infectedAssetInfo(this.props.item) : this.assetInfo(this.props.item);
+        info = this.props.item.group.includes('monkey', 'manual') ? this.infectedAssetInfo(this.props.item) :
+          this.props.item.group !== 'island' ? this.assetInfo(this.props.item) : this.islandAssetInfo();
         break;
       case 'island_edge':
         info = this.islandEdgeInfo();

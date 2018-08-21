@@ -13,6 +13,8 @@ from cc.utils import local_ip_addresses
 
 __author__ = 'Barak'
 
+import logging
+logger = logging.getLogger(__name__)
 
 def run_local_monkey():
     import platform
@@ -32,6 +34,7 @@ def run_local_monkey():
         copyfile(monkey_path, target_path)
         os.chmod(target_path, stat.S_IRWXU | stat.S_IRWXG)
     except Exception as exc:
+        logger.error('Copy file failed', exc_info=True)
         return False, "Copy file failed: %s" % exc
 
     # run the monkey
@@ -41,6 +44,7 @@ def run_local_monkey():
             args = "".join(args)
         pid = subprocess.Popen(args, shell=True).pid
     except Exception as exc:
+        logger.error('popen failed', exc_info=True)
         return False, "popen failed: %s" % exc
 
     return True, "pis: %s" % pid

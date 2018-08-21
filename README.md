@@ -50,6 +50,6 @@ and follow the instructions at the readme files under [infection_monkey](infecti
 
 License
 =======
-Copyright (c) 2017 Guardicore Ltd
+Copyright (c) Guardicore Ltd
 
 See the [LICENSE](LICENSE) file for license rights and limitations (GPLv3).
