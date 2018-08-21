@@ -222,33 +222,24 @@ SCHEMA = {
                     "title": "Network Analysis",
                     "type": "object",
                     "properties": {
-                        "inaccessible_subnet_groups": {
-                            "title": "Inaccessible IP/subnet groups",
+                        "inaccessible_subnets": {
+                            "title": "Network segmentation testing",
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
-                                "type": "array",
-                                "title": "Subnet group",
-                                "items": {
-                                    "type": "string"
-                                },
-                                "minItems": 2,
-                                "uniqueItems": True,
-                                "description": "List of IPs/subnets."
-                                               " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\","
-                                               " \"192.168.0.5/24\""
+                                "type": "string"
                             },
                             "default": [
                             ],
                             "description":
-                                "You can use this feature to test for network segmentation, by proving lists of"
-                                " IP/subnet groups that should not be accessible to each other. Each input group"
-                                " consists of subnets that should not be accessible to each other. If the Monkey"
-                                " is inside of one of the subnets it will attempt to connect to machines in the"
-                                " other subnet."
-                                " Example, by providing input 192.168.1.0/24, 192.168.2.0/24, 192.168.3.1-192.168.3.10,"
-                                " a Monkey with the IP address 192.168.2.5 will try to access machines inside"
-                                " 192.168.1.0/24 or 192.168.3.1-192.168.3.10."
+                                "Test for network segmentation by providing a list of"
+                                " subnets that should NOT be accessible to each other."
+                                " For example, given the following configuration:"
+                                " '10.0.0.0/24, 11.0.0.2/32, 12.2.3.0/24'"
+                                " a Monkey running on 10.0.0.5 will try to access machines in the following"
+                                " subnets: 11.0.0.2/32, 12.2.3.0/24."
+                                " An alert on successful connections will be shown in the report"
+                                " Additional subnet formats include: 13.0.0.1, 13.0.0.1-13.0.0.5"
                         }
                     }
                 }

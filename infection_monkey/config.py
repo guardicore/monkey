@@ -185,7 +185,7 @@ class Configuration(object):
     local_network_scan = True
 
     subnet_scan_list = ['', ]
-    inaccessible_subnet_groups = []
+    inaccessible_subnets = []
 
     blocked_ips = ['', ]
 

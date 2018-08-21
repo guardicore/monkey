@@ -41,18 +41,18 @@ class NetworkScanner(object):
 
     def _get_inaccessible_subnets_ips(self):
         """
-        For each of the machine's IPs, checks if it's in one of the subnet groups specified in the
-        'inaccessible_subnet_groups' config value. If so, all other subnets in the same group shouldn't be accessible.
+        For each of the machine's IPs, checks if it's in one of the subnets specified in the
+        'inaccessible_subnets' config value. If so, all other subnets in the config value shouldn't be accessible.
         All these subnets are returned.
         :return: A list of subnets that shouldn't be accessible from the machine the monkey is running on.
         """
         subnets_to_scan = []
-        for subnet_group in WormConfiguration.inaccessible_subnet_groups:
-            for subnet_str in subnet_group:
+        if len(WormConfiguration.inaccessible_subnets) > 1:
+            for subnet_str in WormConfiguration.inaccessible_subnets:
                 if NetworkScanner._is_any_ip_in_subnet([unicode(x) for x in self._ip_addresses], subnet_str):
                     # If machine has IPs from 2 different subnets in the same group, there's no point checking the other
                     # subnet.
-                    for other_subnet_str in subnet_group:
+                    for other_subnet_str in WormConfiguration.inaccessible_subnets:
                         if other_subnet_str == subnet_str:
                             continue
                         if not NetworkScanner._is_any_ip_in_subnet([unicode(x) for x in self._ip_addresses],

@@ -442,7 +442,7 @@ class ReportService:
         cross_segment_issues = []
 
         subnet_groups = ConfigService.get_config_value(
-            ['basic_network', 'network_analysis', 'inaccessible_subnet_groups'])
+            ['basic_network', 'network_analysis', 'inaccessible_subnets'])
 
         for subnet_group in subnet_groups:
             cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(scans, subnet_group)
