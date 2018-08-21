@@ -488,14 +488,14 @@ class ReportService:
         return cross_segment_issues
 
     @staticmethod
-    def get_cross_segement_issues():
+    def get_cross_segment_issues():
         scans = mongo.db.telemetry.find({'telem_type': 'scan'},
                                         {'monkey_guid': 1, 'data.machine.ip_addr': 1, 'data.machine.services': 1})
 
         cross_segment_issues = []
 
-        subnet_groups = ConfigService.get_config_value(
-            ['basic_network', 'network_analysis', 'inaccessible_subnets'])
+        # For now the feature is limited to 1 group.
+        subnet_groups = [ConfigService.get_config_value(['basic_network', 'network_analysis', 'inaccessible_subnets'])]
 
         for subnet_group in subnet_groups:
             cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(scans, subnet_group)
@@ -504,11 +504,10 @@ class ReportService:
 
     @staticmethod
     def get_issues():
-        issues = ReportService.get_exploits() + ReportService.get_tunnels() +\
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
             ReportService.get_tunnels,
-            ReportService.get_cross_segment_issues,
+            ReportService.get_island_cross_segment_issues,
             ReportService.get_azure_issues
         ]
 
@@ -622,7 +621,7 @@ class ReportService:
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
-        cross_segment_issues = ReportService.get_cross_segement_issues()
+        cross_segment_issues = ReportService.get_cross_segment_issues()
 
         report = \
             {
