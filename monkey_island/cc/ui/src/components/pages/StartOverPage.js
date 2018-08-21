@@ -1,7 +1,6 @@
 import React from 'react';
-import {Col} from 'react-bootstrap';
+import {Col, Modal} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import {ModalContainer, ModalDialog} from 'react-modal-dialog';
 import AuthComponent from '../AuthComponent';
 
 class StartOverPageComponent extends AuthComponent {
@@ -27,14 +26,10 @@ class StartOverPageComponent extends AuthComponent {
   };
 
   renderCleanDialogModal = () => {
-    if (!this.state.showCleanDialog) {
-      return <div />
-    }
-
     return (
-      <ModalContainer onClose={() => this.setState({showCleanDialog: false})}>
-        <ModalDialog onClose={() => this.setState({showCleanDialog: false})}>
-          <h2>Reset environment</h2>
+      <Modal show={this.state.showCleanDialog} onHide={() => this.setState({showCleanDialog: false})}>
+        <Modal.Body>
+          <h2><div className="text-center">Reset environment</div></h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
             Are you sure you want to reset the environment?
           </p>
@@ -60,9 +55,10 @@ class StartOverPageComponent extends AuthComponent {
               Cancel
             </button>
           </div>
-        </ModalDialog>
-      </ModalContainer>
+        </Modal.Body>
+      </Modal>
     )
+
   };
 
   render() {
