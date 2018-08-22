@@ -273,12 +273,11 @@ class Configuration(object):
 
     # system info collection
     collect_system_info = True
+    should_use_mimikatz = True
 
     ###########################
     # systeminfo config
     ###########################
-
-    mimikatz_dll_name = "mk.dll"
 
     extract_azure_creds = True
 

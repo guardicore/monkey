@@ -70,4 +70,8 @@ Sambacry requires two standalone binaries to execute remotely.
 
 Mimikatz is required for the Monkey to be able to steal credentials on Windows. It's possible to either compile from sources (requires Visual Studio 2013 and up) or download the binaries from 
 https://github.com/guardicore/mimikatz/releases/tag/1.0.0
-Download both 32 and 64 bit DLLs and place them under [code location]\infection_monkey\bin
+Download both 32 and 64 bit zipped DLLs and place them under [code location]\infection_monkey\bin
+Alternatively, if you build Mimikatz, put each version in a zip file.
+1. The zip should contain only the Mimikatz DLL named tmpzipfile123456.dll
+2. It should be protected using the password 'VTQpsJPXgZuXhX6x3V84G'.
+3. The zip file should be named mk32.zip/mk64.zip accordingly.
