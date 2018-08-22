@@ -2,7 +2,7 @@ from itertools import izip_longest
 from random import shuffle
 
 from network import HostScanner, HostFinger
-from network.tools import check_tcp_ports
+from network.tools import check_tcp_ports, tcp_port_to_service
 
 __author__ = 'itamar'
 
@@ -31,7 +31,7 @@ class TcpScanner(HostScanner, HostFinger):
         ports, banners = check_tcp_ports(host.ip_addr, target_ports, self._config.tcp_scan_timeout / 1000.0,
                                          self._config.tcp_scan_get_banner)
         for target_port, banner in izip_longest(ports, banners, fillvalue=None):
-            service = 'tcp-' + str(target_port)
+            service = tcp_port_to_service(target_port)
             host.services[service] = {}
             if banner:
                 host.services[service]['banner'] = banner
