@@ -29,6 +29,7 @@ class ReportPageComponent extends AuthComponent {
       AZURE: 6,
       STOLEN_SSH_KEYS: 7,
       STRUTS2: 8,
+      MSSQL_TO_BE: 9,
       PTH_CRIT_SERVICES_ACCESS: 10
     };
 
@@ -55,9 +56,8 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.updateMonkeysRunning().then(res => this.getReportFromServer(res));
-    this.getPTHReportFromServer();
     this.updateMapFromServer();
-    this.interval = setInterval(this.updateMapFromServer, 1000);
+    /*this.interval = setInterval(this.updateMapFromServer, 1000);*/
   }
 
   componentWillUnmount() {
@@ -132,7 +132,9 @@ class ReportPageComponent extends AuthComponent {
         .then(res => res.json())
         .then(res => {
           this.setState({
-            report: res
+            report: res,
+            pthreport: res.pth.info,
+            pthmap: res.pth.map
           });
         });
     }
@@ -450,59 +452,24 @@ class ReportPageComponent extends AuthComponent {
         <div style={{marginBottom: '20px'}}>
           <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
-        <div>
-          <StolenPasswords data={this.state.report.glance.stolen_creds, this.state.report.glance.ssh_keys}/>
-        </div>
         {this.generateReportPthMap()}
         <div style={{marginBottom: '20px'}}>
-          <StolenPasswords data={this.state.report.glance.stolen_creds}/>
-        </div>
-        <div style={{marginBottom: '20px'}}>
-          <SharedAdmins data = {this.state.pthreport.local_admin_shared} />
+          <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>
         <div>
-          { /* TODO: use dynamic data */}
-          <StrongUsers data = {[
-            {
-              username: 'SharedLocalAdmin',
-              domain: 'MyDomain',
-              machines: ['hello : 1.2.3.4'],
-              services: ['DC', 'DNS']
-            }
-          ]} />
+          <StrongUsers data = {this.state.pthreport.strong_users_on_crit_services} />
         </div>
       </div>
     );
   }
 
   generateReportPthMap() {
-    // TODO: remove this and use updateMapFromSerever to get actual map data.
-    const my_map = {
-      nodes: [
-        {id: '1', label: 'MYPC-1', group: 'normal', users: ['MYPC-2\\user1', 'Dom\\user2'], ips: ['192.168.0.1'], services: ["DC", "SQL"], 'hostname': 'aaa1'},
-        {id: 2, label: 'MYPC-2', group: 'critical', users: ['MYPC-2\\user1', 'Dom\\user2'], ips: ['192.168.0.1'], services: ["DC", "SQL"], 'hostname': 'aaa2'},
-        {id: 3, label: 'MYPC-3', group: 'normal', users: ['MYPC-3\\user1', 'Dom\\user3'], ips: ['192.168.0.2'], services: ["DC", "SQL"], 'hostname': 'aaa3'},
-        {id: 4, label: 'MYPC-4', group: 'critical', users: ['MYPC-4\\user1', 'Dom\\user4'], ips: ['192.168.0.3', '192.168.0.4'], services: ["DC", "SQL"], 'hostname': 'aaa4'},
-        {id: 5, label: 'MYPC-5', group: 'normal', users: ['MYPC-5\\user1', 'Dom\\user5'], ips: ['192.168.0.1'], services: [], 'hostname': 'aaa5'},
-        {id: 6, label: 'MYPC-6', group: 'critical', users: ['MYPC-6\\user1', 'Dom\\user6'], ips: ['192.168.0.1'], services: ["DC"], 'hostname': 'aaa6'},
-        {id: 7, label: 'MYPC-7', group: 'critical', users: ['MYPC-7\\user1', 'Dom\\user7'], ips: ['192.168.0.1'], services: ["DC", "SQL"], 'hostname': 'aaa7'}
-      ],
-      edges: [
-        {id: 10, from: '1', to: 2, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla0'},
-        {id: 11, from: '1', to: 3, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla1'},
-        {id: 12, from: '1', to: 4, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla2'},
-        {id: 13, from: 5, to: 6, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla3'},
-        {id: 14, from: 6, to: 7, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla4'},
-        {id: 15, from: 6, to: 5, users: ['MYPC-3\\user1', 'Dom\\user3'], _label: 'bla5'},
-      ]
-
-    };
     return (
       <div id="pth">
         <h3>
           Credential Map
         </h3>
-        <div style={{position: 'relative', height: '100vh'}}>
+        <div>
           <PassTheHashMapPageComponent graph={this.state.pthmap} />
         </div>
         <br />

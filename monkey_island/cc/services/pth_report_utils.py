@@ -99,6 +99,8 @@ class Machine(object):
 
         if self.latest_system_info.count() > 0:
             self.latest_system_info = self.latest_system_info[0]
+        else:
+            self.latest_system_info = None
 
         self.monkey_info = NodeService.get_monkey_by_guid(self.monkey_guid)
 
@@ -163,7 +165,7 @@ class Machine(object):
     def IsDomainController(self):
         return self.GetDomainRole() in (DsRole_RolePrimaryDomainController, DsRole_RoleBackupDomainController)
 
-    @cache
+    #@cache
     def GetSidByUsername(self, username, domain=None):
         doc = self.latest_system_info
 
@@ -227,7 +229,7 @@ class Machine(object):
     @cache
     def GetCriticalServicesInstalled(self):
         def IsNameOfCriticalService(name):
-            services = ("W3svc", "MSExchangeServiceHost", "MSSQLServer", "dns")
+            services = ("W3svc", "MSExchangeServiceHost", "MSSQLServer", "dns", 'MSSQL$SQLEXPRESS')
             services = map(str.lower, services)
 
             if not name:
@@ -290,7 +292,6 @@ class Machine(object):
         usernames = self.GetUsernamesBySecret(secret)
         return set(map(self.GetSidByUsername, usernames))
 
-    @cache
     def GetGroupSidByGroupName(self, group_name):
         doc = self.latest_system_info
 
@@ -305,7 +306,6 @@ class Machine(object):
 
         return None
 
-    @cache
     def GetUsersByGroupSid(self, sid):
         doc = self.latest_system_info
 
@@ -360,7 +360,6 @@ class Machine(object):
 
         return GUIDs
 
-    @cache
     def GetLocalAdmins(self):
         admins = self.GetUsersByGroupSid(self.GetGroupSidByGroupName("Administrators"))
 
@@ -369,7 +368,6 @@ class Machine(object):
 
         return admins
 
-    @cache
     def GetLocalAdminSids(self):
         return set(self.GetLocalAdmins().keys())
 
@@ -510,7 +508,7 @@ class Machine(object):
         DCs = self.GetDomainControllersMonkeyGuidByDomainName(domain_name)
         return map(Machine, DCs)
 
-    @cache
+
     def GetDomainAdminsOfMachine(self):
         DCs = self.GetDomainControllers()
 
@@ -521,15 +519,15 @@ class Machine(object):
 
         return domain_admins
 
-    @cache
+    #@cache
     def GetAdmins(self):
-        return self.GetLocalAdminSids() | self.GetDomainAdminsOfMachine()
+        return self.GetLocalAdminSids() # | self.GetDomainAdminsOfMachine()
 
     @cache
     def GetAdminNames(self):
         return set(map(lambda x: self.GetUsernameBySid(x), self.GetAdmins()))
 
-    @cache
+    #@cache
     def GetCachedSids(self):
         doc = self.latest_system_info
 
@@ -622,16 +620,18 @@ class PassTheHashReport(object):
         edges_list = []
 
         for attacker in self.vertices:
-            cached = self.GetCachedSids(Machine(attacker))
+            cached = list(self.GetCachedSids(Machine(attacker)))
 
             for victim in self.vertices:
                 if attacker == victim:
                     continue
 
-                admins = Machine(victim).GetAdmins()
+                admins = list(Machine(victim).GetAdmins())
 
-                if len(cached & admins) > 0:
-                    relevant_users_list = self.ReprSidList(cached & admins, attacker, victim)
+                cached_admins = [i for i in cached if i in admins]
+
+                if cached_admins:
+                    relevant_users_list = self.ReprSidList(cached_admins, attacker, victim)
                     edges_list.append(
                         {
                             'from': attacker,
@@ -929,7 +929,7 @@ class PassTheHashReport(object):
     def GetNonCritialServers(self):
         return set(self.machines) - self.GetCritialServers()
 
-    @cache
+    #@cache
     def GetCachedSids(self, m):
         sids = set()
         tmp = m.GetCachedSids()
@@ -958,15 +958,17 @@ class PassTheHashReport(object):
 
         return threatening_users
 
-    @cache
     def GetSharedAdmins(self, m):
-        shared_admins = set()
+        shared_admins = []
 
         for other in self.machines:
             if m == other:
                 continue
+            for sid in m.GetLocalAdminSids():
+                if sid in other.GetLocalAdminSids():
+                    shared_admins.append(sid)
 
-            shared_admins |= (m.GetLocalAdminSids() & other.GetLocalAdminSids())
+            #shared_admins |= (m.GetLocalAdminSids() & other.GetLocalAdminSids())
 
-        shared_admins -= m.GetDomainAdminsOfMachine()
+            #shared_admins -= m.GetDomainAdminsOfMachine()
         return shared_admins

@@ -24,7 +24,8 @@ class PTHReportService(object):
             if count <= 1:
                 continue
             for sid in pth.GetSidsBySecret(secret):
-                usernames_per_sid_list.append(pth.GetUsernameBySid(sid))
+                if sid:
+                    usernames_per_sid_list.append(pth.GetUsernameBySid(sid))
 
             usernames_lists.append({'cred_group': usernames_per_sid_list})
 
@@ -56,7 +57,7 @@ class PTHReportService(object):
         return shared_admin_machines
 
     @staticmethod
-    def get_strong_users_on_crit_services(pth):
+    def get_strong_users_on_crit_services_by_machine(pth):
         threatening = dict(map(lambda x: (x, len(pth.GetThreateningUsersByVictim(x))), pth.GetCritialServers()))
         strong_users_crit_list = []
 
@@ -77,12 +78,33 @@ class PTHReportService(object):
                 'ip': m.GetIp(),
                 'hostname': m.GetHostName(),
                 'domain': m.GetDomainName(),
-                'services_names': m.GetCriticalServicesInstalled(),
-                'user_count': count,
+                'services': m.GetCriticalServicesInstalled(),
                 'threatening_users': threatening_users_attackers_dict
             }
             strong_users_crit_list.append(machine)
         return strong_users_crit_list
+
+
+    @staticmethod
+    def get_strong_users_on_crit_services_by_user(pth):
+        critical_servers = pth.GetCritialServers()
+        strong_users_dict = {}
+
+        for server in critical_servers:
+            users = pth.GetThreateningUsersByVictim(server)
+            for sid in users:
+                username = pth.GetUsernameBySid(sid)
+                if username not in strong_users_dict:
+                    strong_users_dict[username] = {
+                        'services_names': [],
+                        'machines': []
+                    }
+                strong_users_dict[username]['username'] = username
+                strong_users_dict[username]['domain'] = server.GetDomainName()
+                strong_users_dict[username]['services_names'] += server.GetCriticalServicesInstalled()
+                strong_users_dict[username]['machines'].append(server.GetHostName())
+
+        return strong_users_dict.values()
 
     @staticmethod
     def get_strong_users_on_non_crit_services(pth):
@@ -117,8 +139,11 @@ class PTHReportService(object):
     @staticmethod
     def get_duplicated_passwords_issues(pth, password_groups):
         issues = []
+        previeous_group = []
         for group in password_groups:
             username = group['cred_group'][0]
+            if username in previeous_group:
+                continue
             sid = list(pth.GetSidsByUsername(username.split('\\')[1]))
             machine_info = pth.GetSidInfo(sid[0])
             issues.append(
@@ -128,6 +153,7 @@ class PTHReportService(object):
                     'shared_with': group['cred_group']
                 }
             )
+            previeous_group += group['cred_group']
 
         return issues
 
@@ -154,19 +180,19 @@ class PTHReportService(object):
                 {
                     'type': 'strong_users_on_crit',
                     'machine': machine.get('hostname'),
-                    'services': machine.get('services_names'),
+                    'services': machine.get('services'),
                     'ip': machine.get('ip'),
-                    'threatening_users': machine.get('threatening_users')
+                    'threatening_users': machine.get('threatening_users').keys()
                 }
             )
 
         return issues
 
     @staticmethod
-    def generate_map_nodes(pth):
-        nodes_list = []
-        for node_id in pth.vertices:
-            machine = Machine(node_id)
+    def get_machine_details(node_id):
+        machine = Machine(node_id)
+        node = {}
+        if machine.latest_system_info:
             node = {
                 "id": str(node_id),
                 "label": '{0} : {1}'.format(machine.GetHostName(), machine.GetIp()),
@@ -176,6 +202,13 @@ class PTHReportService(object):
                 'services': machine.GetCriticalServicesInstalled(),
                 'hostname': machine.GetHostName()
             }
+        return node
+
+    @staticmethod
+    def generate_map_nodes(pth):
+        nodes_list = []
+        for node_id in pth.vertices:
+            node = PTHReportService.get_machine_details(node_id)
             nodes_list.append(node)
 
         return nodes_list
@@ -200,13 +233,13 @@ class PTHReportService(object):
 
         same_password = PTHReportService.get_duplicated_password_nodes(pth)
         local_admin_shared = PTHReportService.get_shared_local_admins_nodes(pth)
-        strong_users_on_crit_services = PTHReportService.get_strong_users_on_crit_services(pth)
+        strong_users_on_crit_services = PTHReportService.get_strong_users_on_crit_services_by_user(pth)
         strong_users_on_non_crit_services = PTHReportService.get_strong_users_on_non_crit_services(pth)
 
         issues += PTHReportService.get_duplicated_passwords_issues(pth, same_password)
         issues += PTHReportService.get_shared_local_admins_issues(local_admin_shared)
-        issues += PTHReportService.strong_users_on_crit_issues(strong_users_on_crit_services)
-        #formated_issues = PTHReportService.get_issues_list(issues)
+        issues += PTHReportService.strong_users_on_crit_issues(
+            PTHReportService.get_strong_users_on_crit_services_by_machine(pth))
 
         report = \
             {

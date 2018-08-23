@@ -50,9 +50,6 @@ class PassTheHashMapPageComponent extends AuthComponent {
             <ReactiveGraph graph={this.state.graph} options={optionsPth} events={this.events}/>
           </div>
         </Col>
-        <Col xs={12}>
-          <PthPreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
-        </Col>
       </div>
     );
   }

@@ -44,8 +44,8 @@ class ReportService:
         AZURE = 6
         STOLEN_SSH_KEYS = 7
         STRUTS2 = 8
+        MSSQL_TO_BE = 9
         PTH_CRIT_SERVICES_ACCESS = 10
-
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -103,25 +103,31 @@ class ReportService:
 
     @staticmethod
     def get_scanned():
+
+        formatted_nodes = []
+
         nodes = \
             [NodeService.get_displayed_node_by_id(node['_id'], True) for node in mongo.db.node.find({}, {'_id': 1})] \
             + [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
                mongo.db.monkey.find({}, {'_id': 1})]
-        nodes = [
-            {
-                'label': node['label'],
-                'ip_addresses': node['ip_addresses'],
-                'accessible_from_nodes':
-                    (x['hostname'] for x in
-                     (NodeService.get_displayed_node_by_id(edge['from'], True)
-                      for edge in EdgeService.get_displayed_edges_by_to(node['id'], True))),
-                'services': node['services']
-            }
-            for node in nodes]
+
+        for node in nodes:
+            pth_services = PTHReportService.get_machine_details(NodeService.get_monkey_by_id(node['id'])
+                                                                .get('guid', None)).get('services', None)
+            formatted_nodes.append(
+                {
+                    'label': node['label'],
+                    'ip_addresses': node['ip_addresses'],
+                    'accessible_from_nodes':
+                        (x['hostname'] for x in
+                         (NodeService.get_displayed_node_by_id(edge['from'], True)
+                          for edge in EdgeService.get_displayed_edges_by_to(node['id'], True))),
+                    'services': node['services'] + pth_services if pth_services else []
+                })
 
         logger.info('Scanned nodes generated for reporting')
 
-        return nodes
+        return formatted_nodes
 
     @staticmethod
     def get_exploited():
@@ -160,13 +166,14 @@ class ReportService:
             origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
             for user in monkey_creds:
                 for pass_type in monkey_creds[user]:
-                    creds.append(
+                    cred_row = \
                         {
                             'username': user.replace(',', '.'),
                             'type': PASS_TYPE_DICT[pass_type],
                             'origin': origin
                         }
-                    )
+                    if cred_row not in creds:
+                        creds.append(cred_row)
         logger.info('Stolen creds generated for reporting')
         return creds
 
@@ -374,7 +381,7 @@ class ReportService:
                  PTHReportService.get_report().get('report_info').get('pth_issues', [])
         issues_dict = {}
         for issue in issues:
-            machine = issue['machine']
+            machine = issue.get('machine', '').upper()
             if machine not in issues_dict:
                 issues_dict[machine] = []
             issues_dict[machine].append(issue)
@@ -483,6 +490,7 @@ class ReportService:
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
+        pth_report = PTHReportService.get_report()
 
 
         report = \
@@ -511,6 +519,11 @@ class ReportService:
                 'recommendations':
                     {
                         'issues': issues
+                    },
+                'pth':
+                    {
+                        'map': pth_report.get('pthmap'),
+                        'info': pth_report.get('report_info')
                     }
             }
 
