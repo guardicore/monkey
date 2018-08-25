@@ -191,7 +191,8 @@ class Configuration(object):
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
-                  8008, 7001  # HTTP alternate
+                  8008, # HTTP alternate
+                  7001  # Oracle Weblogic default server port
                   ]
     tcp_target_ports = [22,
                         2222,
