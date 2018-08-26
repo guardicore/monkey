@@ -160,7 +160,7 @@ class ControlClient(object):
             return
 
         try:
-            unknown_variables = WormConfiguration.from_dict(reply.json().get('config'))
+            unknown_variables = WormConfiguration.from_kv(reply.json().get('config'))
             LOG.info("New configuration was loaded from server: %r" % (WormConfiguration.as_dict(),))
         except Exception as exc:
             # we don't continue with default conf here because it might be dangerous
