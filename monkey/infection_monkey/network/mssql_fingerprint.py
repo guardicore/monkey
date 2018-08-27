@@ -3,6 +3,7 @@ import socket
 
 from infection_monkey.model.host import VictimHost
 from infection_monkey.network import HostFinger
+import infection_monkey.config
 
 __author__ = 'Maor Rayzin'
 
@@ -18,7 +19,7 @@ class MSSQLFinger(HostFinger):
     SERVICE_NAME = 'MSSQL'
 
     def __init__(self):
-        self._config = __import__('config').WormConfiguration
+        self._config = infection_monkey.config.WormConfiguration
 
     def get_host_fingerprint(self, host):
         """Gets Microsoft SQL Server instance information by querying the SQL Browser service.
