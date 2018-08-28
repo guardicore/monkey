@@ -204,6 +204,7 @@ class LockedHTTPServer(threading.Thread):
         self._stopped = False
         self.lock = lock
         threading.Thread.__init__(self)
+        self.daemon = True
 
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
