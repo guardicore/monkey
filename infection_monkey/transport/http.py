@@ -179,7 +179,7 @@ class HTTPServer(threading.Thread):
 
         self._stopped = True
 
-    def stop(self, timeout=5):
+    def stop(self, timeout=60):
         self._stopped = True
         self.join(timeout)
 
