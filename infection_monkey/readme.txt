@@ -75,3 +75,4 @@ Alternatively, if you build Mimikatz, put each version in a zip file.
 1. The zip should contain only the Mimikatz DLL named tmpzipfile123456.dll
 2. It should be protected using the password 'VTQpsJPXgZuXhX6x3V84G'.
 3. The zip file should be named mk32.zip/mk64.zip accordingly.
+4. Zipping with 7zip has been tested. Other zipping software may not work.
