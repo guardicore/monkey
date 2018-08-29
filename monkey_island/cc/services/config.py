@@ -286,6 +286,31 @@ SCHEMA = {
                         }
                     }
                 },
+                "system_info": {
+                    "title": "System info",
+                    "type": "object",
+                    "properties": {
+                        "extract_azure_creds": {
+                            "title": "Harvest Azure Credentials",
+                            "type": "boolean",
+                            "default": True,
+                            "description":
+                                "Determine if the Monkey should try to harvest password credentials from Azure VMs"
+                        },
+                        "collect_system_info": {
+                            "title": "Collect system info",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether to collect system info"
+                        },
+                        "should_use_mimikatz": {
+                            "title": "Should use Mimikatz",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether to use Mimikatz"
+                        },
+                    }
+                },
                 "life_cycle": {
                     "title": "Life cycle",
                     "type": "object",
@@ -345,12 +370,6 @@ SCHEMA = {
                             "default": "{2384ec59-0df8-4ab9-918c-843740924a28}",
                             "description":
                                 "The name of the mutex used to determine whether the monkey is already running"
-                        },
-                        "collect_system_info": {
-                            "title": "Collect system info",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether to collect system info"
                         },
                         "keep_tunnel_open_time": {
                             "title": "Keep tunnel open time",
@@ -541,26 +560,6 @@ SCHEMA = {
                                 "type": "string"
                             },
                             "description": "List of SSH key pairs to use, when trying to ssh into servers"
-                        }
-                    }
-                },
-                "systemInfo": {
-                    "title": "System collection",
-                    "type": "object",
-                    "properties": {
-                        "mimikatz_dll_name": {
-                            "title": "Mimikatz DLL name",
-                            "type": "string",
-                            "default": "mk.dll",
-                            "description":
-                                "Name of Mimikatz DLL (should be the same as in the monkey's pyinstaller spec file)"
-                        },
-                        "extract_azure_creds": {
-                            "title": "Harvest Azure Credentials",
-                            "type": "boolean",
-                            "default": True,
-                            "description":
-                                "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         }
                     }
                 }
