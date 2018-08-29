@@ -1,7 +1,6 @@
 # -*- mode: python -*-
 import os
 import platform
-import zipfile
 
 # Name of zip file in monkey. That's the name of the file in the _MEI folder
 MIMIKATZ_ZIP_NAME = 'tmpzipfile123456.zip'
@@ -25,7 +24,7 @@ a.binaries += [('sc_monkey_runner64.so', '.\\bin\\sc_monkey_runner64.so', 'BINAR
 
 if platform.system().find("Windows") >= 0:
     a.datas = [i for i in a.datas if i[0].find('Include') < 0]
-    a.binaries += [(MIMIKATZ_ZIP_NAME, get_mimikatz_zip_path(), 'BINARY')]
+    a.datas += [(MIMIKATZ_ZIP_NAME, get_mimikatz_zip_path(), 'BINARY')]
 
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
