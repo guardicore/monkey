@@ -1,15 +1,13 @@
 import os
-import struct
+import json
 import sys
 import types
 import uuid
 from abc import ABCMeta
 from itertools import product
+import importlib
 
-from infection_monkey.exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, \
-    SambaCryExploiter, ElasticGroovyExploiter, Struts2Exploiter, ShellShockExploiter
-from infection_monkey.network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, \
-    ElasticFinger, MSSQLFinger
+importlib.import_module('infection_monkey', 'network')
 
 __author__ = 'itamar'
 
@@ -18,57 +16,47 @@ GUID = str(uuid.getnode())
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
 
-def _cast_by_example(value, example):
-    """
-    a method that casts a value to the type of the parameter given as example
-    """
-    example_type = type(example)
-    if example_type is str:
-        return os.path.expandvars(value).encode("utf8")
-    elif example_type is tuple and len(example) != 0:
-        if value is None or value == tuple([None]):
-            return tuple()
-        return tuple([_cast_by_example(x, example[0]) for x in value])
-    elif example_type is list and len(example) != 0:
-        if value is None or value == [None]:
-            return []
-        return [_cast_by_example(x, example[0]) for x in value]
-    elif example_type is type(value):
-        return value
-    elif example_type is bool:
-        return value.lower() == 'true'
-    elif example_type is int:
-        return int(value)
-    elif example_type is float:
-        return float(value)
-    elif example_type in (type, ABCMeta):
-        return globals()[value]
-    else:
-        return None
-
-
 class Configuration(object):
-    def from_dict(self, data):
-        """
-        Get a dict of config variables, set known variables as attributes on self.
-        Return dict of unknown variables encountered.
-        """
-        unknown_variables = {}
-        for key, value in data.items():
+
+    def from_kv(self, formatted_data):
+        # now we won't work at <2.7 for sure
+        network_import = importlib.import_module('infection_monkey.network')
+        exploit_import = importlib.import_module('infection_monkey.exploit')
+
+        unknown_items = []
+        for key, value in formatted_data.items():
             if key.startswith('_'):
                 continue
             if key in ["name", "id", "current_server"]:
                 continue
             if self._depth_from_commandline and key == "depth":
                 continue
-            try:
-                default_value = getattr(Configuration, key)
-            except AttributeError:
-                unknown_variables[key] = value
-                continue
+            # handle in cases
+            if key == 'finger_classes':
+                class_objects = [getattr(network_import, val) for val in value]
+                setattr(self, key, class_objects)
+            elif key == 'scanner_class':
+                scanner_object = getattr(network_import, value)
+                setattr(self, key, scanner_object)
+            elif key == 'exploiter_classes':
+                class_objects = [getattr(exploit_import, val) for val in value]
+                setattr(self, key, class_objects)
+            else:
+                if hasattr(self, key):
+                    setattr(self, key, value)
+                else:
+                    unknown_items.append(key)
+        return unknown_items
 
-            setattr(self, key, _cast_by_example(value, default_value))
-        return unknown_variables
+    def from_json(self, json_data):
+        """
+        Gets a json data object, parses it and applies it to the configuration
+        :param json_data:
+        :return:
+        """
+        formatted_data = json.loads(json_data)
+        result = self.from_kv(formatted_data)
+        return result
 
     def as_dict(self):
         result = {}
@@ -145,12 +133,9 @@ class Configuration(object):
     # how many scan iterations to perform on each run
     max_iterations = 1
 
-    scanner_class = TcpScanner
-    finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger, MSSQLFinger]
-    exploiter_classes = [SmbExploiter, WmiExploiter,  # Windows exploits
-                         SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
-                         ElasticGroovyExploiter, Struts2Exploiter  # multi
-                         ]
+    scanner_class = None
+    finger_classes = []
+    exploiter_classes = []
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 30

@@ -39,7 +39,15 @@ class NetworkScanner(object):
         LOG.info("Base local networks to scan are: %r", self._ranges)
 
     def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
-        assert issubclass(scan_type, HostScanner)
+        """
+        Finds machines according to the ranges specified in the object
+        :param scan_type: A hostscanner class, will be instanced and used to scan for new machines
+        :param max_find: Max number of victims to find regardless of ranges
+        :param stop_callback: A callback to check at any point if we should stop scanning
+        :return: yields a sequence of VictimHost instances
+        """
+        if not scan_type:
+            return
 
         scanner = scan_type()
         victims_count = 0
