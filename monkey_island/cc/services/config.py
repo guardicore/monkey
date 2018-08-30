@@ -93,6 +93,13 @@ SCHEMA = {
                         "WebLogicExploiter"
                     ],
                     "title": "Oracle Web Logic Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "HadoopExploiter"
+                    ],
+                    "title": "Hadoop/Yarn Exploiter"
                 }
             ]
         },
@@ -633,7 +640,8 @@ SCHEMA = {
                                 "SambaCryExploiter",
                                 "ElasticGroovyExploiter",
                                 "Struts2Exploiter",
-                                "WebLogicExploiter"
+                                "WebLogicExploiter",
+                                "HadoopExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
