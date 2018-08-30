@@ -722,7 +722,7 @@ class ReportPageComponent extends AuthComponent {
   generateHadoopIssue(issue) {
     return (
       <li>
-        Run Hadoop in secure mode(<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
+        Run Hadoop in secure mode (<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
         add Kerberos authentication</a>).
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
