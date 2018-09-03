@@ -250,6 +250,31 @@ SCHEMA = {
                                 " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
                         }
                     }
+                },
+                "network_analysis": {
+                    "title": "Network Analysis",
+                    "type": "object",
+                    "properties": {
+                        "inaccessible_subnets": {
+                            "title": "Network segmentation testing",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description":
+                                "Test for network segmentation by providing a list of"
+                                " subnets that should NOT be accessible to each other."
+                                " For example, given the following configuration:"
+                                " '10.0.0.0/24, 11.0.0.2/32, 12.2.3.0/24'"
+                                " a Monkey running on 10.0.0.5 will try to access machines in the following"
+                                " subnets: 11.0.0.2/32, 12.2.3.0/24."
+                                " An alert on successful connections will be shown in the report"
+                                " Additional subnet formats include: 13.0.0.1, 13.0.0.1-13.0.0.5"
+                        }
+                    }
                 }
             }
         },

@@ -367,6 +367,21 @@ class ReportPageComponent extends AuthComponent {
               </div>
           }
         </div>
+        { this.state.report.overview.cross_segment_issues.length > 0 ?
+          <div>
+            <h3>
+              Segmentation Issues
+            </h3>
+            <div>
+              The Monkey uncovered the following set of segmentation issues:
+              <ul>
+                {this.state.report.overview.cross_segment_issues.map(x => this.generateCrossSegmentIssue(x))}
+              </ul>
+            </div>
+          </div>
+          :
+          ''
+        }
       </div>
     );
   }
@@ -448,6 +463,27 @@ class ReportPageComponent extends AuthComponent {
 
   generateInfoBadges(data_array) {
     return data_array.map(badge_data => <span className="label label-info" style={{margin: '2px'}}>{badge_data}</span>);
+  }
+
+  generateCrossSegmentIssue(crossSegmentIssue) {
+    return <li>
+      {'Communication possible from ' + crossSegmentIssue['source_subnet'] + ' to ' + crossSegmentIssue['target_subnet']}
+        <CollapsibleWellComponent>
+          <ul>
+            {crossSegmentIssue['issues'].map(x =>
+              x['is_self'] ?
+                <li>
+                  {'Machine ' + x['hostname'] + ' has both ips: ' + x['source'] + ' and ' + x['target']}
+                </li>
+                :
+                <li>
+                  {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
+                  + ' using the services: ' + Object.keys(x['services']).join(', ')}
+                </li>
+            )}
+          </ul>
+        </CollapsibleWellComponent>
+      </li>;
   }
 
   generateShellshockPathListBadges(paths) {
@@ -655,7 +691,7 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-  generateCrossSegmentIssue(issue) {
+  generateIslandCrossSegmentIssue(issue) {
     return (
       <li>
         Segment your network and make sure there is no communication between machines from different segments.
@@ -773,7 +809,7 @@ class ReportPageComponent extends AuthComponent {
       case 'conficker':
         data = this.generateConfickerIssue(issue);
         break;
-      case 'cross_segment':
+      case 'island_cross_segment':
         data = this.generateCrossSegmentIssue(issue);
         break;
       case 'tunnel':
