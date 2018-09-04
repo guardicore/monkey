@@ -113,11 +113,10 @@ def fix_wmi_obj_for_mongo(o):
             row[method_name[3:]] = value
             
         except wmi.x_wmi:
-            #LOG.error("Error running wmi method '%s'" % (method_name, ))
-            #LOG.error(traceback.format_exc())
             continue
 
     return row
+
 
 class WindowsInfoCollector(InfoCollector):
     """
@@ -126,6 +125,7 @@ class WindowsInfoCollector(InfoCollector):
 
     def __init__(self):
         super(WindowsInfoCollector, self).__init__()
+        self.info['reg'] = {}
 
     def get_info(self):
         """
@@ -162,9 +162,6 @@ class WindowsInfoCollector(InfoCollector):
         for wmi_class_name in WMI_CLASSES:
             self.info[wmi_class_name] = self.get_wmi_class(wmi_class_name)
 
-        # for wmi_class_name, props in WMI_LDAP_CLASSES.iteritems():
-        #     self.info[wmi_class_name] = self.get_wmi_class(wmi_class_name, "//./root/directory/ldap", props)
-
     def get_wmi_class(self, class_name, moniker="//./root/cimv2", properties=None):
         _wmi = wmi.WMI(moniker=moniker) 
 
@@ -175,8 +172,6 @@ class WindowsInfoCollector(InfoCollector):
                 wmi_class = getattr(_wmi, class_name)(properties)
 
         except wmi.x_wmi:
-            #LOG.error("Error getting wmi class '%s'" % (class_name, ))
-            #LOG.error(traceback.format_exc())
             return
 
         return fix_obj_for_mongo(wmi_class)
@@ -188,7 +183,7 @@ class WindowsInfoCollector(InfoCollector):
         d = dict([_winreg.EnumValue(subkey, i)[:2] for i in xrange(_winreg.QueryInfoKey(subkey)[0])])
         d = fix_obj_for_mongo(d)
 
-        self.info[subkey_path] = d
+        self.info['reg'][subkey_path] = d
 
         subkey.Close()
         key.Close()

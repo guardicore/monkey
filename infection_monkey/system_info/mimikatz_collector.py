@@ -21,10 +21,10 @@ class MimikatzCollector(object):
             self._dll = ctypes.WinDLL(self._config.mimikatz_dll_name)
             collect_proto = ctypes.WINFUNCTYPE(ctypes.c_int)
             get_proto = ctypes.WINFUNCTYPE(MimikatzCollector.LogonData)
-            getTextOutput = ctypes.WINFUNCTYPE(ctypes.c_wchar_p)
+            get_text_output_proto = ctypes.WINFUNCTYPE(ctypes.c_wchar_p)
             self._collect = collect_proto(("collect", self._dll))
             self._get = get_proto(("get", self._dll))
-            self._getTextOutput = getTextOutput(("getTextOutput", self._dll))
+            self._get_text_output_proto = get_text_output_proto(("getTextOutput", self._dll))
             self._isInit = True
         except Exception:
             LOG.exception("Error initializing mimikatz collector")
@@ -44,7 +44,7 @@ class MimikatzCollector(object):
             logon_data_dictionary = {}
             hostname = socket.gethostname()
             
-            self.mimikatz_text = self._getTextOutput()
+            self.mimikatz_text = self._get_text_output_proto()
 
             for i in range(entry_count):
                 entry = self._get()

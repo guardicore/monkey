@@ -13,7 +13,6 @@ PyInstaller
 six
 ecdsa
 netifaces
-mock
 nos
 ipaddress
 wmi

@@ -19,8 +19,6 @@ from cc.resources.monkey import Monkey
 from cc.resources.monkey_configuration import MonkeyConfiguration
 from cc.resources.monkey_download import MonkeyDownload
 from cc.resources.netmap import NetMap
-from cc.resources.pthmap import PthMap
-from cc.resources.pthreport import PTHReport
 from cc.resources.node import Node
 from cc.resources.report import Report
 from cc.resources.root import Root
@@ -108,7 +106,5 @@ def init_app(mongo_url):
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')
-    api.add_resource(PthMap, '/api/pthmap', '/api/pthmap/')
-    api.add_resource(PTHReport, '/api/pthreport', '/api/pthreport/')
 
     return app

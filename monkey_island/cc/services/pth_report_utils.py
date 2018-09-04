@@ -329,7 +329,6 @@ class Machine(object):
                 if "cimv2:Win32_UserAccount" not in wmi_id:
                     continue
 
-                # u'\\\\WIN-BFA01FFQFLS\\root\\cimv2:Win32_UserAccount.Domain="MYDOMAIN",Name="WIN-BFA01FFQFLS$"'
                 username = wmi_id.split('cimv2:Win32_UserAccount.Domain="')[1].split('",Name="')[0]
                 domain = wmi_id.split('cimv2:Win32_UserAccount.Domain="')[1].split('",Name="')[1][:-1]
 
@@ -556,12 +555,6 @@ class Machine(object):
 
 
 class PassTheHashReport(object):
-    # _instance = None
-    # def __new__(class_, *args, **kwargs):
-    #    if not class_._instance:
-    #        class_._instance = object.__new__(class_, *args, **kwargs)
-    #
-    #    return class_._instance
 
     def __init__(self):
         self.vertices = self.GetAllMachines()
@@ -582,14 +575,11 @@ class PassTheHashReport(object):
         return GUIDs
 
     @cache
-    def ReprSidList(self, sid_list, attacker, victim):
+    def ReprSidList(self, sid_list, victim):
         users_list = []
 
         for sid in sid_list:
             username = Machine(victim).GetUsernameBySid(sid)
-
-            # if not username:
-            #    username = Machine(attacker).GetUsernameBySid(sid)
 
             if username:
                 users_list.append(username)
@@ -631,7 +621,7 @@ class PassTheHashReport(object):
                 cached_admins = [i for i in cached if i in admins]
 
                 if cached_admins:
-                    relevant_users_list = self.ReprSidList(cached_admins, attacker, victim)
+                    relevant_users_list = self.ReprSidList(cached_admins, victim)
                     edges_list.append(
                         {
                             'from': attacker,
@@ -679,11 +669,6 @@ class PassTheHashReport(object):
                     edges.add((attacker, victim))
 
         return edges
-
-    @cache
-    def Print(self):
-        print map(lambda x: Machine(x).GetIp(), self.vertices)
-        print map(lambda x: (Machine(x[0]).GetIp(), Machine(x[1]).GetIp()), self.edges)
 
     @cache
     def GetPossibleAttackCountBySid(self, sid):
@@ -970,5 +955,6 @@ class PassTheHashReport(object):
 
             #shared_admins |= (m.GetLocalAdminSids() & other.GetLocalAdminSids())
 
-            #shared_admins -= m.GetDomainAdminsOfMachine()
+        shared_admins = [admin for admin in shared_admins if admin not in list(m.GetDomainAdminsOfMachine())]
+
         return shared_admins
