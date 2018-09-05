@@ -1,3 +1,6 @@
+import itertools
+import functools
+
 import ipaddress
 import logging
 from enum import Enum
@@ -10,6 +13,7 @@ from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 from cc.utils import local_ip_addresses, get_subnets
 from pth_report import PTHReportService
+from common.network.network_range import NetworkRange
 
 __author__ = "itay.mizeretz"
 
@@ -31,7 +35,9 @@ class ReportService:
             'ElasticGroovyExploiter': 'Elastic Groovy Exploiter',
             'Ms08_067_Exploiter': 'Conficker Exploiter',
             'ShellShockExploiter': 'ShellShock Exploiter',
-            'Struts2Exploiter': 'Struts2 Exploiter'
+            'Struts2Exploiter': 'Struts2 Exploiter',
+            'WebLogicExploiter': 'Oracle WebLogic Exploiter',
+            'HadoopExploiter': 'Hadoop/Yarn Exploiter'
         }
 
     class ISSUES_DICT(Enum):
@@ -44,8 +50,9 @@ class ReportService:
         AZURE = 6
         STOLEN_SSH_KEYS = 7
         STRUTS2 = 8
-        MSSQL_TO_BE = 9
-        PTH_CRIT_SERVICES_ACCESS = 10
+        WEBLOGIC = 9,
+        HADOOP = 10,
+        PTH_CRIT_SERVICES_ACCESS = 11
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -311,6 +318,18 @@ class ReportService:
         return processed_exploit
 
     @staticmethod
+    def process_weblogic_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'weblogic'
+        return processed_exploit
+
+    @staticmethod
+    def process_hadoop_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'hadoop'
+        return processed_exploit
+
+    @staticmethod
     def process_exploit(exploit):
         exploiter_type = exploit['data']['exploiter']
         EXPLOIT_PROCESS_FUNCTION_DICT = {
@@ -322,7 +341,9 @@ class ReportService:
             'ElasticGroovyExploiter': ReportService.process_elastic_exploit,
             'Ms08_067_Exploiter': ReportService.process_conficker_exploit,
             'ShellShockExploiter': ReportService.process_shellshock_exploit,
-            'Struts2Exploiter': ReportService.process_struts2_exploit
+            'Struts2Exploiter': ReportService.process_struts2_exploit,
+            'WebLogicExploiter': ReportService.process_weblogic_exploit,
+            'HadoopExploiter': ReportService.process_hadoop_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
@@ -352,7 +373,7 @@ class ReportService:
             ]
 
     @staticmethod
-    def get_cross_segment_issues():
+    def get_island_cross_segment_issues():
         issues = []
         island_ips = local_ip_addresses()
         for monkey in mongo.db.monkey.find({'tunnel': {'$exists': False}}, {'tunnel': 1, 'guid': 1, 'hostname': 1}):
@@ -367,7 +388,7 @@ class ReportService:
                     break
             if not found_good_ip:
                 issues.append(
-                    {'type': 'cross_segment', 'machine': monkey['hostname'],
+                    {'type': 'island_cross_segment', 'machine': monkey['hostname'],
                      'networks': [str(subnet) for subnet in monkey_subnets],
                      'server_networks': [str(subnet) for subnet in get_subnets()]}
                 )
@@ -375,10 +396,152 @@ class ReportService:
         return issues
 
     @staticmethod
+    def get_ip_in_src_and_not_in_dst(ip_addresses, source_subnet, target_subnet):
+        """
+        Finds an IP address in ip_addresses which is in source_subnet but not in target_subnet.
+        :param ip_addresses:    List of IP addresses to test.
+        :param source_subnet:   Subnet to want an IP to not be in.
+        :param target_subnet:   Subnet we want an IP to be in.
+        :return:
+        """
+        for ip_address in ip_addresses:
+            if target_subnet.is_in_range(ip_address):
+                return None
+        for ip_address in ip_addresses:
+            if source_subnet.is_in_range(ip_address):
+                return ip_address
+        return None
+
+    @staticmethod
+    def get_cross_segment_issues_of_single_machine(source_subnet_range, target_subnet_range):
+        """
+        Gets list of cross segment issues of a single machine. Meaning a machine has an interface for each of the
+        subnets.
+        :param source_subnet_range:   The subnet range which shouldn't be able to access target_subnet.
+        :param target_subnet_range:   The subnet range which shouldn't be accessible from source_subnet.
+        :return:
+        """
+        cross_segment_issues = []
+
+        for monkey in mongo.db.monkey.find({}, {'ip_addresses': 1, 'hostname': 1}):
+            ip_in_src = None
+            ip_in_dst = None
+            for ip_addr in monkey['ip_addresses']:
+                if source_subnet_range.is_in_range(unicode(ip_addr)):
+                    ip_in_src = ip_addr
+                    break
+
+            # No point searching the dst subnet if there are no IPs in src subnet.
+            if not ip_in_src:
+                continue
+
+            for ip_addr in monkey['ip_addresses']:
+                if target_subnet_range.is_in_range(unicode(ip_addr)):
+                    ip_in_dst = ip_addr
+                    break
+
+            if ip_in_dst:
+                cross_segment_issues.append(
+                    {
+                        'source': ip_in_src,
+                        'hostname': monkey['hostname'],
+                        'target': ip_in_dst,
+                        'services': None,
+                        'is_self': True
+                    })
+
+        return cross_segment_issues
+
+    @staticmethod
+    def get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet):
+        """
+        Gets list of cross segment issues from source_subnet to target_subnet.
+        :param scans:           List of all scan telemetry entries. Must have monkey_guid, ip_addr and services.
+                                This should be a PyMongo cursor object.
+        :param source_subnet:   The subnet which shouldn't be able to access target_subnet.
+        :param target_subnet:   The subnet which shouldn't be accessible from source_subnet.
+        :return:
+        """
+        if source_subnet == target_subnet:
+            return []
+        source_subnet_range = NetworkRange.get_range_obj(source_subnet)
+        target_subnet_range = NetworkRange.get_range_obj(target_subnet)
+
+        cross_segment_issues = []
+
+        scans.rewind()  # If we iterated over scans already we need to rewind.
+        for scan in scans:
+            target_ip = scan['data']['machine']['ip_addr']
+            if target_subnet_range.is_in_range(unicode(target_ip)):
+                monkey = NodeService.get_monkey_by_guid(scan['monkey_guid'])
+                cross_segment_ip = ReportService.get_ip_in_src_and_not_in_dst(monkey['ip_addresses'],
+                                                                              source_subnet_range,
+                                                                              target_subnet_range)
+
+                if cross_segment_ip is not None:
+                    cross_segment_issues.append(
+                        {
+                            'source': cross_segment_ip,
+                            'hostname': monkey['hostname'],
+                            'target': target_ip,
+                            'services': scan['data']['machine']['services'],
+                            'is_self': False
+                        })
+
+        return cross_segment_issues + ReportService.get_cross_segment_issues_of_single_machine(
+            source_subnet_range, target_subnet_range)
+
+    @staticmethod
+    def get_cross_segment_issues_per_subnet_group(scans, subnet_group):
+        """
+        Gets list of cross segment issues within given subnet_group.
+        :param scans:           List of all scan telemetry entries. Must have monkey_guid, ip_addr and services.
+                                This should be a PyMongo cursor object.
+        :param subnet_group:    List of subnets which shouldn't be accessible from each other.
+        :return:                Cross segment issues regarding the subnets in the group.
+        """
+        cross_segment_issues = []
+
+        for subnet_pair in itertools.product(subnet_group, subnet_group):
+            source_subnet = subnet_pair[0]
+            target_subnet = subnet_pair[1]
+            pair_issues = ReportService.get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet)
+            if len(pair_issues) != 0:
+                cross_segment_issues.append(
+                    {
+                        'source_subnet': source_subnet,
+                        'target_subnet': target_subnet,
+                        'issues': pair_issues
+                    })
+
+        return cross_segment_issues
+
+    @staticmethod
+    def get_cross_segment_issues():
+        scans = mongo.db.telemetry.find({'telem_type': 'scan'},
+                                        {'monkey_guid': 1, 'data.machine.ip_addr': 1, 'data.machine.services': 1})
+
+        cross_segment_issues = []
+
+        # For now the feature is limited to 1 group.
+        subnet_groups = [ConfigService.get_config_value(['basic_network', 'network_analysis', 'inaccessible_subnets'])]
+
+        for subnet_group in subnet_groups:
+            cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(scans, subnet_group)
+
+        return cross_segment_issues
+
+    @staticmethod
     def get_issues():
-        issues = ReportService.get_exploits() + ReportService.get_tunnels() +\
-                 ReportService.get_cross_segment_issues() + ReportService.get_azure_issues() + \
-                 PTHReportService.get_report().get('report_info').get('pth_issues', [])
+        ISSUE_GENERATORS = [
+            ReportService.get_exploits,
+            ReportService.get_tunnels,
+            ReportService.get_island_cross_segment_issues,
+            ReportService.get_azure_issues
+        ]
+        #TODO: PTHReportService.get_report().get('report_info').get('pth_issues', [])
+        issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
+
         issues_dict = {}
         for issue in issues:
             machine = issue.get('machine', '').upper()
@@ -443,23 +606,27 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_SSH_KEYS.value] = True
                 elif issue['type'] == 'struts2':
                     issues_byte_array[ReportService.ISSUES_DICT.STRUTS2.value] = True
-                elif issue['type'] == 'strong_users_on_crit':
-                    issues_byte_array[ReportService.ISSUES_DICT.PTH_CRIT_SERVICES_ACCESS.value] = True
-                elif issue['type'].endswith('_password') and issue.get('password', None) in config_passwords and \
+                elif issue['type'] == 'weblogic':
+                    issues_byte_array[ReportService.ISSUES_DICT.WEBLOGIC.value] = True
+                elif issue['type'] == 'hadoop':
+                    issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
+                elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
+                elif issue['type'] == 'strong_users_on_crit':
+                    issues_byte_array[ReportService.ISSUES_DICT.PTH_CRIT_SERVICES_ACCESS.value] = True
                 elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS.value] = True
 
         return issues_byte_array
 
     @staticmethod
-    def get_warnings_overview(issues):
+    def get_warnings_overview(issues, cross_segment_issues):
         warnings_byte_array = [False] * len(ReportService.WARNINGS_DICT)
 
         for machine in issues:
             for issue in issues[machine]:
-                if issue['type'] == 'cross_segment':
+                if issue['type'] == 'island_cross_segment':
                     warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
                 elif issue['type'] == 'tunnel':
                     warnings_byte_array[ReportService.WARNINGS_DICT.TUNNEL.value] = True
@@ -467,6 +634,9 @@ class ReportService:
                     warnings_byte_array[ReportService.WARNINGS_DICT.SHARED_LOCAL_ADMIN.value] = True
                 elif issue['type'] == 'shared_passwords':
                     warnings_byte_array[ReportService.WARNINGS_DICT.SHARED_PASSWORDS.value] = True
+
+        if len(cross_segment_issues) != 0:
+            warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
 
         return warnings_byte_array
 
@@ -490,6 +660,7 @@ class ReportService:
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
+        cross_segment_issues = ReportService.get_cross_segment_issues()
         pth_report = PTHReportService.get_report()
 
 
@@ -506,7 +677,8 @@ class ReportService:
                         'monkey_start_time': ReportService.get_first_monkey_time().strftime("%d/%m/%Y %H:%M:%S"),
                         'monkey_duration': ReportService.get_monkey_duration(),
                         'issues': ReportService.get_issues_overview(issues, config_users, config_passwords),
-                        'warnings': ReportService.get_warnings_overview(issues)
+                        'warnings': ReportService.get_warnings_overview(issues, cross_segment_issues),
+                        'cross_segment_issues': cross_segment_issues
                     },
                 'glance':
                     {

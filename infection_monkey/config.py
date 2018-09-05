@@ -7,7 +7,7 @@ from abc import ABCMeta
 from itertools import product
 
 from exploit import WmiExploiter, Ms08_067_Exploiter, SmbExploiter, RdpExploiter, SSHExploiter, ShellShockExploiter, \
-    SambaCryExploiter, ElasticGroovyExploiter, Struts2Exploiter
+    SambaCryExploiter, ElasticGroovyExploiter, Struts2Exploiter, WebLogicExploiter, HadoopExploiter
 from network import TcpScanner, PingScanner, SMBFinger, SSHFinger, HTTPFinger, MySQLFinger, ElasticFinger, \
     MSSQLFinger
 
@@ -149,7 +149,7 @@ class Configuration(object):
     finger_classes = [SMBFinger, SSHFinger, PingScanner, HTTPFinger, MySQLFinger, ElasticFinger, MSSQLFinger]
     exploiter_classes = [SmbExploiter, WmiExploiter,  # Windows exploits
                          SSHExploiter, ShellShockExploiter, SambaCryExploiter,  # Linux
-                         ElasticGroovyExploiter, Struts2Exploiter  # multi
+                         ElasticGroovyExploiter, Struts2Exploiter, WebLogicExploiter, HadoopExploiter  # multi
                          ]
 
     # how many victims to look for in a single scan iteration
@@ -186,12 +186,14 @@ class Configuration(object):
     local_network_scan = True
 
     subnet_scan_list = []
+    inaccessible_subnets = []
 
     blocked_ips = []
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
-                  8008,  # HTTP alternate
+                  8008, # HTTP alternate
+                  7001  # Oracle Weblogic default server port
                   ]
     tcp_target_ports = [22,
                         2222,
@@ -273,12 +275,11 @@ class Configuration(object):
 
     # system info collection
     collect_system_info = True
+    should_use_mimikatz = True
 
     ###########################
     # systeminfo config
     ###########################
-
-    mimikatz_dll_name = "mk.dll"
 
     extract_azure_creds = True
 

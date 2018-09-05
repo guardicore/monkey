@@ -126,6 +126,7 @@ class WindowsInfoCollector(InfoCollector):
     def __init__(self):
         super(WindowsInfoCollector, self).__init__()
         self.info['reg'] = {}
+        self._config = __import__('config').WormConfiguration
 
     def get_info(self):
         """
