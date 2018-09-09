@@ -40,7 +40,8 @@ def serve_static_file(static_path):
     except NotFound:
         # Because react uses various urls for same index page, this is probably the user's intention.
         if static_path == HOME_FILE:
-            flask_restful.abort(Response("Server cwd isn't right, should be monkey\\monkey.", 500))
+            flask_restful.abort(
+                Response("Page not found. Make sure you ran the npm script and the cwd is monkey\\monkey.", 500))
         return serve_home()
 
 

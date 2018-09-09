@@ -86,6 +86,20 @@ SCHEMA = {
                         "Struts2Exploiter"
                     ],
                     "title": "Struts2 Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "WebLogicExploiter"
+                    ],
+                    "title": "Oracle Web Logic Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "HadoopExploiter"
+                    ],
+                    "title": "Hadoop/Yarn Exploiter"
                 }
             ]
         },
@@ -236,6 +250,31 @@ SCHEMA = {
                                 " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
                         }
                     }
+                },
+                "network_analysis": {
+                    "title": "Network Analysis",
+                    "type": "object",
+                    "properties": {
+                        "inaccessible_subnets": {
+                            "title": "Network segmentation testing",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description":
+                                "Test for network segmentation by providing a list of"
+                                " subnets that should NOT be accessible to each other."
+                                " For example, given the following configuration:"
+                                " '10.0.0.0/24, 11.0.0.2/32, 12.2.3.0/24'"
+                                " a Monkey running on 10.0.0.5 will try to access machines in the following"
+                                " subnets: 11.0.0.2/32, 12.2.3.0/24."
+                                " An alert on successful connections will be shown in the report"
+                                " Additional subnet formats include: 13.0.0.1, 13.0.0.1-13.0.0.5"
+                        }
+                    }
                 }
             }
         },
@@ -277,6 +316,31 @@ SCHEMA = {
                             "default": False,
                             "description": "Should the monkey dump its config on startup"
                         }
+                    }
+                },
+                "system_info": {
+                    "title": "System info",
+                    "type": "object",
+                    "properties": {
+                        "extract_azure_creds": {
+                            "title": "Harvest Azure Credentials",
+                            "type": "boolean",
+                            "default": True,
+                            "description":
+                                "Determine if the Monkey should try to harvest password credentials from Azure VMs"
+                        },
+                        "collect_system_info": {
+                            "title": "Collect system info",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether to collect system info"
+                        },
+                        "should_use_mimikatz": {
+                            "title": "Should use Mimikatz",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether to use Mimikatz"
+                        },
                     }
                 },
                 "life_cycle": {
@@ -338,12 +402,6 @@ SCHEMA = {
                             "default": "{2384ec59-0df8-4ab9-918c-843740924a28}",
                             "description":
                                 "The name of the mutex used to determine whether the monkey is already running"
-                        },
-                        "collect_system_info": {
-                            "title": "Collect system info",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether to collect system info"
                         },
                         "keep_tunnel_open_time": {
                             "title": "Keep tunnel open time",
@@ -536,26 +594,6 @@ SCHEMA = {
                             "description": "List of SSH key pairs to use, when trying to ssh into servers"
                         }
                     }
-                },
-                "systemInfo": {
-                    "title": "System collection",
-                    "type": "object",
-                    "properties": {
-                        "mimikatz_dll_name": {
-                            "title": "Mimikatz DLL name",
-                            "type": "string",
-                            "default": "mk.dll",
-                            "description":
-                                "Name of Mimikatz DLL (should be the same as in the monkey's pyinstaller spec file)"
-                        },
-                        "extract_azure_creds": {
-                            "title": "Harvest Azure Credentials",
-                            "type": "boolean",
-                            "default": True,
-                            "description":
-                                "Determine if the Monkey should try to harvest password credentials from Azure VMs"
-                        }
-                    }
                 }
             }
         },
@@ -626,7 +664,9 @@ SCHEMA = {
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
                                 "ElasticGroovyExploiter",
-                                "Struts2Exploiter"
+                                "Struts2Exploiter",
+                                "WebLogicExploiter",
+                                "HadoopExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
@@ -761,7 +801,8 @@ SCHEMA = {
                                 80,
                                 8080,
                                 443,
-                                8008
+                                8008,
+                                7001
                             ],
                             "description": "List of ports the monkey will check if are being used for HTTP"
                         },
@@ -783,7 +824,8 @@ SCHEMA = {
                                 443,
                                 8008,
                                 3306,
-                                9200
+                                9200,
+                                7001
                             ],
                             "description": "List of TCP ports the monkey will check whether they're open"
                         },

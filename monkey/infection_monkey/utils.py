@@ -29,3 +29,4 @@ def is_64bit_python():
 
 def is_windows_os():
     return sys.platform.startswith("win")
+

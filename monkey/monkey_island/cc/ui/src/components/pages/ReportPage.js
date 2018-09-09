@@ -24,7 +24,9 @@ class ReportPageComponent extends AuthComponent {
       CONFICKER: 5,
       AZURE: 6,
       STOLEN_SSH_KEYS: 7,
-      STRUTS2: 8
+      STRUTS2: 8,
+      WEBLOGIC: 9,
+      HADOOP: 10
     };
 
   Warning =
@@ -326,6 +328,12 @@ class ReportPageComponent extends AuthComponent {
                     <li>Struts2 servers are vulnerable to remote code execution. (<a
                       href="https://cwiki.apache.org/confluence/display/WW/S2-045">
                       CVE-2017-5638</a>)</li> : null }
+                  {this.state.report.overview.issues[this.Issue.WEBLOGIC] ?
+                    <li>Oracle WebLogic servers are vulnerable to remote code execution. (<a
+                      href="https://nvd.nist.gov/vuln/detail/CVE-2017-10271">
+                      CVE-2017-10271</a>)</li> : null }
+                  {this.state.report.overview.issues[this.Issue.HADOOP] ?
+                    <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                 </ul>
               </div>
               :
@@ -359,6 +367,21 @@ class ReportPageComponent extends AuthComponent {
               </div>
           }
         </div>
+        { this.state.report.overview.cross_segment_issues.length > 0 ?
+          <div>
+            <h3>
+              Segmentation Issues
+            </h3>
+            <div>
+              The Monkey uncovered the following set of segmentation issues:
+              <ul>
+                {this.state.report.overview.cross_segment_issues.map(x => this.generateCrossSegmentIssue(x))}
+              </ul>
+            </div>
+          </div>
+          :
+          ''
+        }
       </div>
     );
   }
@@ -421,7 +444,7 @@ class ReportPageComponent extends AuthComponent {
           <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
         <div>
-          <StolenPasswords data={this.state.report.glance.stolen_creds, this.state.report.glance.ssh_keys}/>
+          <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>
       </div>
     );
@@ -440,6 +463,27 @@ class ReportPageComponent extends AuthComponent {
 
   generateInfoBadges(data_array) {
     return data_array.map(badge_data => <span className="label label-info" style={{margin: '2px'}}>{badge_data}</span>);
+  }
+
+  generateCrossSegmentIssue(crossSegmentIssue) {
+    return <li>
+      {'Communication possible from ' + crossSegmentIssue['source_subnet'] + ' to ' + crossSegmentIssue['target_subnet']}
+        <CollapsibleWellComponent>
+          <ul>
+            {crossSegmentIssue['issues'].map(x =>
+              x['is_self'] ?
+                <li>
+                  {'Machine ' + x['hostname'] + ' has both ips: ' + x['source'] + ' and ' + x['target']}
+                </li>
+                :
+                <li>
+                  {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
+                  + ' using the services: ' + Object.keys(x['services']).join(', ')}
+                </li>
+            )}
+          </ul>
+        </CollapsibleWellComponent>
+      </li>;
   }
 
   generateShellshockPathListBadges(paths) {
@@ -647,7 +691,7 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-  generateCrossSegmentIssue(issue) {
+  generateIslandCrossSegmentIssue(issue) {
     return (
       <li>
         Segment your network and make sure there is no communication between machines from different segments.
@@ -693,6 +737,40 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateWebLogicIssue(issue) {
+    return (
+      <li>
+        Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
+        critical patch updates.</a> Or change server version. Vulnerable versions are
+        10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
+        <CollapsibleWellComponent>
+          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">remote code execution</span> attack.
+          <br/>
+          The attack was made possible due to incorrect permission assignment in Oracle Fusion Middleware
+          (subcomponent: WLS Security).
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateHadoopIssue(issue) {
+    return (
+      <li>
+        Run Hadoop in secure mode (<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
+        add Kerberos authentication</a>).
+        <CollapsibleWellComponent>
+          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">remote code execution</span> attack.
+          <br/>
+          The attack was made possible due to default Hadoop/Yarn configuration being insecure.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
 
 
   generateIssue = (issue) => {
@@ -731,8 +809,8 @@ class ReportPageComponent extends AuthComponent {
       case 'conficker':
         data = this.generateConfickerIssue(issue);
         break;
-      case 'cross_segment':
-        data = this.generateCrossSegmentIssue(issue);
+      case 'island_cross_segment':
+        data = this.generateIslandCrossSegmentIssue(issue);
         break;
       case 'tunnel':
         data = this.generateTunnelIssue(issue);
@@ -742,6 +820,12 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'struts2':
         data = this.generateStruts2Issue(issue);
+        break;
+      case 'weblogic':
+        data = this.generateWebLogicIssue(issue);
+        break;
+      case 'hadoop':
+        data = this.generateHadoopIssue(issue);
         break;
     }
     return data;

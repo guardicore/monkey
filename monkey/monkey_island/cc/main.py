@@ -6,6 +6,7 @@ import time
 import logging
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 if BASE_PATH not in sys.path:
     sys.path.insert(0, BASE_PATH)
 

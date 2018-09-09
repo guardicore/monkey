@@ -30,7 +30,6 @@ class MSSQLFinger(HostFinger):
                 Discovered server information written to the Host info struct.
                 True if success, False otherwise.
         """
-
         assert isinstance(host, VictimHost)
 
         # Create a UDP socket and sets a timeout
@@ -52,6 +51,15 @@ class MSSQLFinger(HostFinger):
             data, server = sock.recvfrom(self.BUFFER_SIZE)
         except socket.timeout:
             LOG.info('Socket timeout reached, maybe browser service on host: {0} doesnt exist'.format(host))
+            sock.close()
+            return False
+        except socket.error as e:
+            if e.errno == socket.errno.ECONNRESET:
+                LOG.info('Connection was forcibly closed by the remote host. The host: {0} is rejecting the packet.'
+                         .format(host))
+            else:
+                LOG.error('An unknown socket error occurred while trying the mssql fingerprint, closing socket.',
+                          exc_info=True)
             sock.close()
             return False
 

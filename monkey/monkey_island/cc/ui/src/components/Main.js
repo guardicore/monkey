@@ -14,11 +14,11 @@ import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
 
-require('normalize.css/normalize.css');
-require('react-data-components/css/table-twbs.css');
-require('styles/App.css');
-require('react-toggle/style.css');
-require('react-table/react-table.css');
+import 'normalize.css/normalize.css';
+import 'react-data-components/css/table-twbs.css';
+import 'styles/App.css';
+import 'react-toggle/style.css';
+import 'react-table/react-table.css';
 
 let logoImage = require('../images/monkey-icon.svg');
 let infectionMonkeyImage = require('../images/infection-monkey.svg');

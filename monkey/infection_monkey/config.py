@@ -171,12 +171,14 @@ class Configuration(object):
     local_network_scan = True
 
     subnet_scan_list = []
+    inaccessible_subnets = []
 
     blocked_ips = []
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
-                  8008,  # HTTP alternate
+                  8008, # HTTP alternate
+                  7001  # Oracle Weblogic default server port
                   ]
     tcp_target_ports = [22,
                         2222,
@@ -258,12 +260,11 @@ class Configuration(object):
 
     # system info collection
     collect_system_info = True
+    should_use_mimikatz = True
 
     ###########################
     # systeminfo config
     ###########################
-
-    mimikatz_dll_name = "mk.dll"
 
     extract_azure_creds = True
 
