@@ -143,7 +143,7 @@ class InfectionMonkey(object):
                     finger.get_host_fingerprint(machine)
 
                 ControlClient.send_telemetry('scan', {'machine': machine.as_dict(),
-                                                      'scanner': WormConfiguration.scanner_class.__name__})
+                                                      })
 
                 # skip machines that we've already exploited
                 if machine in self._exploited_machines:
