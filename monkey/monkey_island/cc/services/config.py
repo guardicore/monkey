@@ -27,7 +27,7 @@ ENCRYPTED_CONFIG_ARRAYS = \
 # This should be used for config values of string type
 ENCRYPTED_CONFIG_STRINGS = \
     [
-        
+
     ]
 
 
