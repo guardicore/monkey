@@ -129,8 +129,7 @@ class InfectionMonkey(object):
             if not self._keep_running or not WormConfiguration.alive:
                 break
 
-            machines = self._network.get_victim_machines(WormConfiguration.scanner_class,
-                                                         max_find=WormConfiguration.victims_max_find,
+            machines = self._network.get_victim_machines(max_find=WormConfiguration.victims_max_find,
                                                          stop_callback=ControlClient.check_for_stop)
             is_empty = True
             for machine in machines:
