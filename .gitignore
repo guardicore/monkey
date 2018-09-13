@@ -62,9 +62,9 @@ docs/_build/
 
 # PyBuilder
 target/
-db
 bin
-/monkey_island/cc/server.key
-/monkey_island/cc/server.crt
-/monkey_island/cc/server.csr
-monkey_island/cc/ui/node_modules/
+/monkey/monkey_island/db
+/monkey/monkey_island/cc/server.key
+/monkey/monkey_island/cc/server.crt
+/monkey/monkey_island/cc/server.csr
+/monkey/monkey_island/cc/ui/node_modules/
