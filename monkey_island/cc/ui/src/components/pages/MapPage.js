@@ -1,10 +1,9 @@
 import React from 'react';
-import {Col} from 'react-bootstrap';
+import {Col, Modal} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {Icon} from 'react-fa';
 import PreviewPane from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {ModalContainer, ModalDialog} from 'react-modal-dialog';
 import {options, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 
@@ -45,7 +44,7 @@ class MapPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
-          edge.color = edgeGroupToColor(edge.group);
+          edge.color = {'color': edgeGroupToColor(edge.group)};
         });
         this.setState({graph: res});
         this.props.onStatusChange();
@@ -98,14 +97,10 @@ class MapPageComponent extends AuthComponent {
   };
 
   renderKillDialogModal = () => {
-    if (!this.state.showKillDialog) {
-      return <div />
-    }
-
     return (
-      <ModalContainer onClose={() => this.setState({showKillDialog: false})}>
-        <ModalDialog onClose={() => this.setState({showKillDialog: false})}>
-          <h2>Are you sure you want to kill all monkeys?</h2>
+      <Modal show={this.state.showKillDialog} onHide={() => this.setState({showKillDialog: false})}>
+        <Modal.Body>
+          <h2><div className="text-center">Are you sure you want to kill all monkeys?</div></h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
             This might take a few moments...
           </p>
@@ -122,9 +117,10 @@ class MapPageComponent extends AuthComponent {
               Cancel
             </button>
           </div>
-        </ModalDialog>
-      </ModalContainer>
+        </Modal.Body>
+      </Modal>
     )
+
   };
 
   renderTelemetryEntry(telemetry) {

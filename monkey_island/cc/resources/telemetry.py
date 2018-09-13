@@ -1,4 +1,5 @@
 import json
+import logging
 import traceback
 import copy
 from datetime import datetime
@@ -15,6 +16,9 @@ from cc.services.node import NodeService
 from cc.encryptor import encryptor
 
 __author__ = 'Barak'
+
+
+logger = logging.getLogger(__name__)
 
 
 class Telemetry(flask_restful.Resource):
@@ -52,10 +56,9 @@ class Telemetry(flask_restful.Resource):
             if telem_type in TELEM_PROCESS_DICT:
                 TELEM_PROCESS_DICT[telem_type](telemetry_json)
             else:
-                print('Got unknown type of telemetry: %s' % telem_type)
-        except StandardError as ex:
-            print("Exception caught while processing telemetry: %s" % str(ex))
-            traceback.print_exc()
+                logger.info('Got unknown type of telemetry: %s' % telem_type)
+        except Exception as ex:
+            logger.error("Exception caught while processing telemetry", exc_info=True)
 
         telem_id = mongo.db.telemetry.insert(telemetry_json)
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
@@ -130,7 +133,7 @@ class Telemetry(flask_restful.Resource):
         for attempt in telemetry_json['data']['attempts']:
             if attempt['result']:
                 found_creds = {'user': attempt['user']}
-                for field in ['password', 'lm_hash', 'ntlm_hash']:
+                for field in ['password', 'lm_hash', 'ntlm_hash', 'ssh_key']:
                     if len(attempt[field]) != 0:
                         found_creds[field] = attempt[field]
                 NodeService.add_credentials_to_node(edge['to'], found_creds)
@@ -167,11 +170,23 @@ class Telemetry(flask_restful.Resource):
 
     @staticmethod
     def process_system_info_telemetry(telemetry_json):
+        if 'ssh_info' in telemetry_json['data']:
+            ssh_info = telemetry_json['data']['ssh_info']
+            Telemetry.encrypt_system_info_ssh_keys(ssh_info)
+            if telemetry_json['data']['network_info']['networks']:
+                # We use user_name@machine_ip as the name of the ssh key stolen, thats why we need ip from telemetry
+                Telemetry.add_ip_to_ssh_keys(telemetry_json['data']['network_info']['networks'][0], ssh_info)
+            Telemetry.add_system_info_ssh_keys_to_config(ssh_info)
         if 'credentials' in telemetry_json['data']:
             creds = telemetry_json['data']['credentials']
             Telemetry.encrypt_system_info_creds(creds)
             Telemetry.add_system_info_creds_to_config(creds)
             Telemetry.replace_user_dot_with_comma(creds)
+
+    @staticmethod
+    def add_ip_to_ssh_keys(ip, ssh_info):
+        for key in ssh_info:
+            key['ip'] = ip['addr']
 
     @staticmethod
     def process_trace_telemetry(telemetry_json):
@@ -194,6 +209,13 @@ class Telemetry(flask_restful.Resource):
                     creds[user][field] = encryptor.enc(creds[user][field].encode('utf-8'))
 
     @staticmethod
+    def encrypt_system_info_ssh_keys(ssh_info):
+        for idx, user in enumerate(ssh_info):
+            for field in ['public_key', 'private_key', 'known_hosts']:
+                if ssh_info[idx][field]:
+                    ssh_info[idx][field] = encryptor.enc(ssh_info[idx][field].encode('utf-8'))
+
+    @staticmethod
     def add_system_info_creds_to_config(creds):
         for user in creds:
             ConfigService.creds_add_username(user)
@@ -203,6 +225,15 @@ class Telemetry(flask_restful.Resource):
                 ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
             if 'ntlm_hash' in creds[user]:
                 ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
+
+    @staticmethod
+    def add_system_info_ssh_keys_to_config(ssh_info):
+        for user in ssh_info:
+            ConfigService.creds_add_username(user['name'])
+            # Public key is useless without private key
+            if user['public_key'] and user['private_key']:
+                ConfigService.ssh_add_keys(user['public_key'], user['private_key'],
+                                           user['name'], user['ip'])
 
     @staticmethod
     def encrypt_exploit_creds(telemetry_json):

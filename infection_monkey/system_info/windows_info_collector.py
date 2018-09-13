@@ -15,6 +15,7 @@ class WindowsInfoCollector(InfoCollector):
 
     def __init__(self):
         super(WindowsInfoCollector, self).__init__()
+        self._config = __import__('config').WormConfiguration
 
     def get_info(self):
         """
@@ -28,7 +29,13 @@ class WindowsInfoCollector(InfoCollector):
         self.get_process_list()
         self.get_network_info()
         self.get_azure_info()
-        mimikatz_collector = MimikatzCollector()
-        mimikatz_info = mimikatz_collector.get_logon_info()
-        self.info["credentials"].update(mimikatz_info)
+        self._get_mimikatz_info()
+
         return self.info
+
+    def _get_mimikatz_info(self):
+        if self._config.should_use_mimikatz:
+            LOG.info("Using mimikatz")
+            self.info["credentials"].update(MimikatzCollector().get_logon_info())
+        else:
+            LOG.info("Not using mimikatz")

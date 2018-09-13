@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 import flask_restful
 from flask import request, make_response, jsonify
@@ -11,6 +12,8 @@ from cc.services.report import ReportService
 from cc.utils import local_ip_addresses
 
 __author__ = 'Barak'
+
+logger = logging.getLogger(__name__)
 
 
 class Root(flask_restful.Resource):
@@ -42,6 +45,7 @@ class Root(flask_restful.Resource):
         # We can't drop system collections.
         [mongo.db[x].drop() for x in mongo.db.collection_names() if not x.startswith('system.')]
         ConfigService.init_config()
+        logger.info('DB was reset')
         return jsonify(status='OK')
 
     @staticmethod
@@ -50,6 +54,7 @@ class Root(flask_restful.Resource):
         mongo.db.monkey.update({'dead': False}, {'$set': {'config.alive': False, 'modifytime': datetime.now()}},
                                upsert=False,
                                multi=True)
+        logger.info('Kill all monkeys was called')
         return jsonify(status='OK')
 
     @staticmethod
@@ -57,5 +62,8 @@ class Root(flask_restful.Resource):
     def get_completed_steps():
         is_any_exists = NodeService.is_any_monkey_exists()
         infection_done = NodeService.is_monkey_finished_running()
-        report_done = ReportService.is_report_generated()
+        if not infection_done:
+            report_done = False
+        else:
+            report_done = ReportService.is_report_generated()
         return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done, report_done=report_done)

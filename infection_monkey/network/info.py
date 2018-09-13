@@ -10,6 +10,11 @@ from subprocess import check_output
 from random import randint
 from common.network.network_range import CidrRange
 
+try:
+    long        # Python 2
+except NameError:
+    long = int  # Python 3
+
 
 def get_host_subnets():
     """
@@ -93,8 +98,8 @@ else:
                     ifaddr = socket.inet_ntoa(ifreq[20:24])
                 else:
                     continue
-            routes.append((socket.htonl(long(dst, 16)) & 0xffffffffL,
-                           socket.htonl(long(msk, 16)) & 0xffffffffL,
+            routes.append((socket.htonl(long(dst, 16)) & 0xffffffff,
+                           socket.htonl(long(msk, 16)) & 0xffffffff,
                            socket.inet_ntoa(struct.pack("I", long(gw, 16))),
                            iff, ifaddr))
 

@@ -406,6 +406,10 @@ body {
   padding: 0em;
 }
 
+.modal-dialog {
+  top: 30%;
+}
+
 /* Print report styling */
 
 @media print {

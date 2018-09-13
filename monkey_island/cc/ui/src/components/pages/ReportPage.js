@@ -22,7 +22,11 @@ class ReportPageComponent extends AuthComponent {
       SAMBACRY: 3,
       SHELLSHOCK: 4,
       CONFICKER: 5,
-      AZURE: 6
+      AZURE: 6,
+      STOLEN_SSH_KEYS: 7,
+      STRUTS2: 8,
+      WEBLOGIC: 9,
+      HADOOP: 10
     };
 
   Warning =
@@ -293,6 +297,8 @@ class ReportPageComponent extends AuthComponent {
                       return x === true;
                     }).length} threats</span>:
                 <ul>
+                  {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] ?
+                    <li>Stolen SSH keys are used to exploit other machines.</li> : null }
                   {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
                     <li>Stolen credentials are used to exploit other machines.</li> : null}
                   {this.state.report.overview.issues[this.Issue.ELASTIC] ?
@@ -318,7 +324,16 @@ class ReportPageComponent extends AuthComponent {
                     <li>Azure machines expose plaintext passwords. (<a
                       href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
                     >More info</a>)</li> : null}
-
+                  {this.state.report.overview.issues[this.Issue.STRUTS2] ?
+                    <li>Struts2 servers are vulnerable to remote code execution. (<a
+                      href="https://cwiki.apache.org/confluence/display/WW/S2-045">
+                      CVE-2017-5638</a>)</li> : null }
+                  {this.state.report.overview.issues[this.Issue.WEBLOGIC] ?
+                    <li>Oracle WebLogic servers are vulnerable to remote code execution. (<a
+                      href="https://nvd.nist.gov/vuln/detail/CVE-2017-10271">
+                      CVE-2017-10271</a>)</li> : null }
+                  {this.state.report.overview.issues[this.Issue.HADOOP] ?
+                    <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                 </ul>
               </div>
               :
@@ -343,7 +358,7 @@ class ReportPageComponent extends AuthComponent {
                     <li>Weak segmentation - Machines from different segments are able to
                       communicate.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                    <li>Weak segmentation - machines were able to communicate over unused ports.</li> : null}
+                    <li>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
                 </ul>
               </div>
               :
@@ -352,6 +367,21 @@ class ReportPageComponent extends AuthComponent {
               </div>
           }
         </div>
+        { this.state.report.overview.cross_segment_issues.length > 0 ?
+          <div>
+            <h3>
+              Segmentation Issues
+            </h3>
+            <div>
+              The Monkey uncovered the following set of segmentation issues:
+              <ul>
+                {this.state.report.overview.cross_segment_issues.map(x => this.generateCrossSegmentIssue(x))}
+              </ul>
+            </div>
+          </div>
+          :
+          ''
+        }
       </div>
     );
   }
@@ -414,7 +444,7 @@ class ReportPageComponent extends AuthComponent {
           <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
         <div>
-          <StolenPasswords data={this.state.report.glance.stolen_creds}/>
+          <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>
       </div>
     );
@@ -433,6 +463,27 @@ class ReportPageComponent extends AuthComponent {
 
   generateInfoBadges(data_array) {
     return data_array.map(badge_data => <span className="label label-info" style={{margin: '2px'}}>{badge_data}</span>);
+  }
+
+  generateCrossSegmentIssue(crossSegmentIssue) {
+    return <li>
+      {'Communication possible from ' + crossSegmentIssue['source_subnet'] + ' to ' + crossSegmentIssue['target_subnet']}
+        <CollapsibleWellComponent>
+          <ul>
+            {crossSegmentIssue['issues'].map(x =>
+              x['is_self'] ?
+                <li>
+                  {'Machine ' + x['hostname'] + ' has both ips: ' + x['source'] + ' and ' + x['target']}
+                </li>
+                :
+                <li>
+                  {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
+                  + ' using the services: ' + Object.keys(x['services']).join(', ')}
+                </li>
+            )}
+          </ul>
+        </CollapsibleWellComponent>
+      </li>;
   }
 
   generateShellshockPathListBadges(paths) {
@@ -522,6 +573,22 @@ class ReportPageComponent extends AuthComponent {
         </CollapsibleWellComponent>
       </li>
     );
+  }
+
+  generateSshKeysIssue(issue) {
+    return (
+        <li>
+          Protect <span className="label label-success">{issue.ssh_key}</span> private key with a pass phrase.
+          <CollapsibleWellComponent>
+            The machine <span className="label label-primary">{issue.machine}</span> (<span
+            className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+            className="label label-danger">SSH</span> attack.
+            <br/>
+            The Monkey authenticated over the SSH protocol with private key <span
+            className="label label-success">{issue.ssh_key}</span>.
+          </CollapsibleWellComponent>
+        </li>
+      );
   }
 
   generateRdpIssue(issue) {
@@ -624,7 +691,7 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-  generateCrossSegmentIssue(issue) {
+  generateIslandCrossSegmentIssue(issue) {
     return (
       <li>
         Segment your network and make sure there is no communication between machines from different segments.
@@ -652,6 +719,58 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateStruts2Issue(issue) {
+    return (
+      <li>
+        Upgrade Struts2 to version 2.3.32 or 2.5.10.1 or any later versions.
+        <CollapsibleWellComponent>
+          Struts2 server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">remote code execution</span> attack.
+          <br/>
+          The attack was made possible because the server is using an old version of Jakarta based file upload
+          Multipart parser. For possible work-arounds and more info read <a
+                      href="https://cwiki.apache.org/confluence/display/WW/S2-045"
+                    >here</a>.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateWebLogicIssue(issue) {
+    return (
+      <li>
+        Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
+        critical patch updates.</a> Or change server version. Vulnerable versions are
+        10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
+        <CollapsibleWellComponent>
+          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">remote code execution</span> attack.
+          <br/>
+          The attack was made possible due to incorrect permission assignment in Oracle Fusion Middleware
+          (subcomponent: WLS Security).
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateHadoopIssue(issue) {
+    return (
+      <li>
+        Run Hadoop in secure mode (<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
+        add Kerberos authentication</a>).
+        <CollapsibleWellComponent>
+          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">remote code execution</span> attack.
+          <br/>
+          The attack was made possible due to default Hadoop/Yarn configuration being insecure.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
 
 
   generateIssue = (issue) => {
@@ -672,6 +791,9 @@ class ReportPageComponent extends AuthComponent {
       case 'ssh':
         data = this.generateSshIssue(issue);
         break;
+      case 'ssh_key':
+        data = this.generateSshKeysIssue(issue);
+        break;
       case 'rdp':
         data = this.generateRdpIssue(issue);
         break;
@@ -687,7 +809,7 @@ class ReportPageComponent extends AuthComponent {
       case 'conficker':
         data = this.generateConfickerIssue(issue);
         break;
-      case 'cross_segment':
+      case 'island_cross_segment':
         data = this.generateCrossSegmentIssue(issue);
         break;
       case 'tunnel':
@@ -695,6 +817,15 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'azure_password':
         data = this.generateAzureIssue(issue);
+        break;
+      case 'struts2':
+        data = this.generateStruts2Issue(issue);
+        break;
+      case 'weblogic':
+        data = this.generateWebLogicIssue(issue);
+        break;
+      case 'hadoop':
+        data = this.generateHadoopIssue(issue);
         break;
     }
     return data;

@@ -1,7 +1,9 @@
 import copy
 import collections
 import functools
+import logging
 from jsonschema import Draft4Validator, validators
+from six import string_types
 
 from cc.database import mongo
 from cc.encryptor import encryptor
@@ -9,6 +11,8 @@ from cc.environment.environment import env
 from cc.utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
+
+logger = logging.getLogger(__name__)
 
 WARNING_SIGN = u" \u26A0"
 
@@ -76,6 +80,27 @@ SCHEMA = {
                     ],
                     "title": "ElasticGroovy Exploiter"
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "Struts2Exploiter"
+                    ],
+                    "title": "Struts2 Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "WebLogicExploiter"
+                    ],
+                    "title": "Oracle Web Logic Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "HadoopExploiter"
+                    ],
+                    "title": "Hadoop/Yarn Exploiter"
+                }
             ]
         },
         "finger_classes": {
@@ -117,6 +142,14 @@ SCHEMA = {
                     ],
                     "title": "MySQLFinger"
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "MSSQLFinger"
+                    ],
+                    "title": "MSSQLFinger"
+                },
+
                 {
                     "type": "string",
                     "enum": [
@@ -217,6 +250,31 @@ SCHEMA = {
                                 " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
                         }
                     }
+                },
+                "network_analysis": {
+                    "title": "Network Analysis",
+                    "type": "object",
+                    "properties": {
+                        "inaccessible_subnets": {
+                            "title": "Network segmentation testing",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description":
+                                "Test for network segmentation by providing a list of"
+                                " subnets that should NOT be accessible to each other."
+                                " For example, given the following configuration:"
+                                " '10.0.0.0/24, 11.0.0.2/32, 12.2.3.0/24'"
+                                " a Monkey running on 10.0.0.5 will try to access machines in the following"
+                                " subnets: 11.0.0.2/32, 12.2.3.0/24."
+                                " An alert on successful connections will be shown in the report"
+                                " Additional subnet formats include: 13.0.0.1, 13.0.0.1-13.0.0.5"
+                        }
+                    }
                 }
             }
         },
@@ -258,6 +316,31 @@ SCHEMA = {
                             "default": False,
                             "description": "Should the monkey dump its config on startup"
                         }
+                    }
+                },
+                "system_info": {
+                    "title": "System info",
+                    "type": "object",
+                    "properties": {
+                        "extract_azure_creds": {
+                            "title": "Harvest Azure Credentials",
+                            "type": "boolean",
+                            "default": True,
+                            "description":
+                                "Determine if the Monkey should try to harvest password credentials from Azure VMs"
+                        },
+                        "collect_system_info": {
+                            "title": "Collect system info",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether to collect system info"
+                        },
+                        "should_use_mimikatz": {
+                            "title": "Should use Mimikatz",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether to use Mimikatz"
+                        },
                     }
                 },
                 "life_cycle": {
@@ -320,12 +403,6 @@ SCHEMA = {
                             "description":
                                 "The name of the mutex used to determine whether the monkey is already running"
                         },
-                        "collect_system_info": {
-                            "title": "Collect system info",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether to collect system info"
-                        },
                         "keep_tunnel_open_time": {
                             "title": "Keep tunnel open time",
                             "type": "integer",
@@ -363,6 +440,7 @@ SCHEMA = {
                                 "PingScanner",
                                 "HTTPFinger",
                                 "MySQLFinger",
+                                "MSSQLFinger",
                                 "ElasticFinger"
                             ],
                             "description": "Determines which classes to use for fingerprinting"
@@ -504,26 +582,16 @@ SCHEMA = {
                             },
                             "default": [],
                             "description": "List of NTLM hashes to use on exploits using credentials"
-                        }
-                    }
-                },
-                "systemInfo": {
-                    "title": "System collection",
-                    "type": "object",
-                    "properties": {
-                        "mimikatz_dll_name": {
-                            "title": "Mimikatz DLL name",
-                            "type": "string",
-                            "default": "mk.dll",
-                            "description":
-                                "Name of Mimikatz DLL (should be the same as in the monkey's pyinstaller spec file)"
                         },
-                        "extract_azure_creds": {
-                            "title": "Harvest Azure Credentials",
-                            "type": "boolean",
-                            "default": True,
-                            "description":
-                                "Determine if the Monkey should try to harvest password credentials from Azure VMs"
+                        "exploit_ssh_keys": {
+                            "title": "SSH key pairs list",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "default": [],
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "List of SSH key pairs to use, when trying to ssh into servers"
                         }
                     }
                 }
@@ -545,7 +613,7 @@ SCHEMA = {
                                 "type": "string"
                             },
                             "default": [
-                                "41.50.73.31:5000"
+                                "192.0.2.0:5000"
                             ],
                             "description": "List of command servers to try and communicate with (format is <ip>:<port>)"
                         },
@@ -567,7 +635,7 @@ SCHEMA = {
                         "current_server": {
                             "title": "Current server",
                             "type": "string",
-                            "default": "41.50.73.31:5000",
+                            "default": "192.0.2.0:5000",
                             "description": "The current command server the monkey is communicating with"
                         }
                     }
@@ -595,7 +663,10 @@ SCHEMA = {
                                 "SSHExploiter",
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
-                                "ElasticGroovyExploiter"
+                                "ElasticGroovyExploiter",
+                                "Struts2Exploiter",
+                                "WebLogicExploiter",
+                                "HadoopExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
@@ -730,7 +801,8 @@ SCHEMA = {
                                 80,
                                 8080,
                                 443,
-                                8008
+                                8008,
+                                7001
                             ],
                             "description": "List of ports the monkey will check if are being used for HTTP"
                         },
@@ -752,7 +824,8 @@ SCHEMA = {
                                 443,
                                 8008,
                                 3306,
-                                9200
+                                9200,
+                                7001
                             ],
                             "description": "List of TCP ports the monkey will check whether they're open"
                         },
@@ -800,7 +873,8 @@ ENCRYPTED_CONFIG_ARRAYS = \
     [
         ['basic', 'credentials', 'exploit_password_list'],
         ['internal', 'exploits', 'exploit_lm_hash_list'],
-        ['internal', 'exploits', 'exploit_ntlm_hash_list']
+        ['internal', 'exploits', 'exploit_ntlm_hash_list'],
+        ['internal', 'exploits', 'exploit_ssh_keys']
     ]
 
 
@@ -889,10 +963,23 @@ class ConfigService:
         ConfigService.add_item_to_config_set('internal.exploits.exploit_ntlm_hash_list', ntlm_hash)
 
     @staticmethod
+    def ssh_add_keys(public_key, private_key, user, ip):
+        if not ConfigService.ssh_key_exists(ConfigService.get_config_value(['internal', 'exploits', 'exploit_ssh_keys'],
+                                                                           False, False), user, ip):
+            ConfigService.add_item_to_config_set('internal.exploits.exploit_ssh_keys',
+                                             {"public_key": public_key, "private_key": private_key,
+                                              "user": user, "ip": ip})
+
+    @staticmethod
+    def ssh_key_exists(keys, user, ip):
+        return [key for key in keys if key['user'] == user and key['ip'] == ip]
+
+    @staticmethod
     def update_config(config_json, should_encrypt):
         if should_encrypt:
             ConfigService.encrypt_config(config_json)
         mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
+        logger.info('monkey config was updated')
 
     @staticmethod
     def init_default_config():
@@ -908,6 +995,7 @@ class ConfigService:
         config = copy.deepcopy(ConfigService.default_config)
         if should_encrypt:
             ConfigService.encrypt_config(config)
+        logger.info("Default config was called")
         return config
 
     @staticmethod
@@ -921,6 +1009,7 @@ class ConfigService:
         config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
         ConfigService.update_config(config, should_encrypt=False)
+        logger.info('Monkey config reset was called')
 
     @staticmethod
     def set_server_ips_in_config(config):
@@ -937,6 +1026,7 @@ class ConfigService:
         initial_config['name'] = 'initial'
         initial_config.pop('_id')
         mongo.db.config.insert(initial_config)
+        logger.info('Monkey config was inserted to mongo and saved')
 
     @staticmethod
     def _extend_config_with_default(validator_class):
@@ -978,8 +1068,12 @@ class ConfigService:
         """
         keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
         for key in keys:
-            if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], basestring):
-                flat_config[key] = [encryptor.dec(item) for item in flat_config[key]]
+            if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], string_types):
+                # Check if we are decrypting ssh key pair
+                if flat_config[key] and isinstance(flat_config[key][0], dict) and 'public_key' in flat_config[key][0]:
+                    flat_config[key] = [ConfigService.decrypt_ssh_key_pair(item) for item in flat_config[key]]
+                else:
+                    flat_config[key] = [encryptor.dec(item) for item in flat_config[key]]
             else:
                 flat_config[key] = encryptor.dec(flat_config[key])
         return flat_config
@@ -992,4 +1086,19 @@ class ConfigService:
                 config_arr = config_arr[config_key_part]
 
             for i in range(len(config_arr)):
-                config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
+                # Check if array of shh key pairs and then decrypt
+                if isinstance(config_arr[i], dict) and 'public_key' in config_arr[i]:
+                    config_arr[i] = ConfigService.decrypt_ssh_key_pair(config_arr[i]) if is_decrypt else \
+                                    ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
+                else:
+                    config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
+
+    @staticmethod
+    def decrypt_ssh_key_pair(pair, encrypt=False):
+        if encrypt:
+            pair['public_key'] = encryptor.enc(pair['public_key'])
+            pair['private_key'] = encryptor.enc(pair['private_key'])
+        else:
+            pair['public_key'] = encryptor.dec(pair['public_key'])
+            pair['private_key'] = encryptor.dec(pair['private_key'])
+        return pair

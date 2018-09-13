@@ -14,6 +14,7 @@ from cc.resources.client_run import ClientRun
 from cc.resources.edge import Edge
 from cc.resources.local_run import LocalRun
 from cc.resources.log import Log
+from cc.resources.island_logs import IslandLog
 from cc.resources.monkey import Monkey
 from cc.resources.monkey_configuration import MonkeyConfiguration
 from cc.resources.monkey_download import MonkeyDownload
@@ -104,5 +105,6 @@ def init_app(mongo_url):
     api.add_resource(Report, '/api/report', '/api/report/')
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
     api.add_resource(Log, '/api/log', '/api/log/')
+    api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')
 
     return app

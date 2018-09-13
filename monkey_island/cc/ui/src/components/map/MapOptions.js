@@ -13,6 +13,7 @@ let getGroupsOptions = () => {
         image: require('../../images/nodes/' + groupName + '.png')
       };
   }
+
   return groupOptions;
 };
 
