@@ -84,7 +84,6 @@ class PTHReportService(object):
             strong_users_crit_list.append(machine)
         return strong_users_crit_list
 
-
     @staticmethod
     def get_strong_users_on_crit_services_by_user(pth):
         critical_servers = pth.GetCritialServers()

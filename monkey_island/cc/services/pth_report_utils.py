@@ -24,7 +24,6 @@ SidTypeUnknown = 8
 SidTypeComputer = 9
 
 
-
 def is_group_sid_type(type):
     return type in (SidTypeGroup, SidTypeAlias, SidTypeWellKnownGroup)
 
@@ -506,7 +505,6 @@ class Machine(object):
         domain_name = self.GetDomainName()
         DCs = self.GetDomainControllersMonkeyGuidByDomainName(domain_name)
         return map(Machine, DCs)
-
 
     def GetDomainAdminsOfMachine(self):
         DCs = self.GetDomainControllers()

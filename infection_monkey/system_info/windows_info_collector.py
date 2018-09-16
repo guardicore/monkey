@@ -143,7 +143,7 @@ class WindowsInfoCollector(InfoCollector):
         
         self.get_wmi_info()
         LOG.debug('finished get_wmi_info')
-        self.get_reg_key(r"SYSTEM\CurrentControlSet\Control\Lsa")
+        #self.get_reg_key(r"SYSTEM\CurrentControlSet\Control\Lsa")
         self.get_installed_packages()
         
         mimikatz_collector = MimikatzCollector()
@@ -158,13 +158,13 @@ class WindowsInfoCollector(InfoCollector):
     def get_installed_packages(self):
         self.info["installed_packages"] = os.popen("dism /online /get-packages").read()
         self.info["installed_features"] = os.popen("dism /online /get-features").read()
-        
+
     def get_wmi_info(self):
         for wmi_class_name in WMI_CLASSES:
             self.info[wmi_class_name] = self.get_wmi_class(wmi_class_name)
 
     def get_wmi_class(self, class_name, moniker="//./root/cimv2", properties=None):
-        _wmi = wmi.WMI(moniker=moniker) 
+        _wmi = wmi.WMI(moniker=moniker)
 
         try:
             if not properties:
