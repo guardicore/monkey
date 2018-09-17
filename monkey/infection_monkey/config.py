@@ -171,6 +171,7 @@ class Configuration(object):
     local_network_scan = True
 
     subnet_scan_list = []
+    dynamic_subnet_scan_list = []
     inaccessible_subnets = []
 
     blocked_ips = []

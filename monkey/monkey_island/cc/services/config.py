@@ -408,6 +408,19 @@ SCHEMA = {
                             "type": "integer",
                             "default": 60,
                             "description": "Time to keep tunnel open before going down after last exploit (in seconds)"
+                        },
+                        "dynamic_subnet_scan_list": {
+                            "title": "Scan IP/subnet list (internal use)",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [
+                            ],
+                            "description":
+                                "List of IPs/subnets the monkey should scan."
+                                " This config value is used internally by the monkey and shouldn't be modified manually"
                         }
                     }
                 },

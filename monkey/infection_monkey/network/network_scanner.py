@@ -5,7 +5,7 @@ from common.network.network_range import *
 from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
 from infection_monkey.model import VictimHost
-from infection_monkey.network import HostScanner
+from infection_monkey.control import ControlClient
 
 __author__ = 'itamar'
 
@@ -17,7 +17,6 @@ SCAN_DELAY = 0
 class NetworkScanner(object):
     def __init__(self):
         self._ip_addresses = None
-        self._ranges = None
 
     def initialize(self):
         """
@@ -33,11 +32,6 @@ class NetworkScanner(object):
 
         LOG.info("Found local IP addresses of the machine: %r", self._ip_addresses)
         # for fixed range, only scan once.
-        self._ranges = [NetworkRange.get_range_obj(address_str=x) for x in WormConfiguration.subnet_scan_list]
-        if WormConfiguration.local_network_scan:
-            self._ranges += get_interfaces_ranges()
-        self._ranges += self._get_inaccessible_subnets_ips()
-        LOG.info("Base local networks to scan are: %r", self._ranges)
 
     def _get_inaccessible_subnets_ips(self):
         """
@@ -62,6 +56,33 @@ class NetworkScanner(object):
 
         return subnets_to_scan
 
+    def generate_ranges(self):
+        """
+        Generates network ranges to scan. Re-queries the island's config after iterating over all ranges in local config
+        :return: yields network range
+        """
+        old_range_strs = set()
+        range_strs = set()
+
+        while True:
+            old_range_strs = old_range_strs.union(range_strs)
+            ControlClient.load_control_config()
+            range_strs = set(WormConfiguration.subnet_scan_list + WormConfiguration.dynamic_subnet_scan_list)
+            range_strs = range_strs.difference(old_range_strs)
+
+            if not range_strs:
+                break
+
+            for range_str in range_strs:
+                yield NetworkRange.get_range_obj(address_str=range_str)
+
+        if WormConfiguration.local_network_scan:
+            for net_range in get_interfaces_ranges():
+                yield net_range
+
+        for net_range in self._get_inaccessible_subnets_ips():
+            yield net_range
+
     def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
         """
         Finds machines according to the ranges specified in the object
@@ -76,7 +97,7 @@ class NetworkScanner(object):
         scanner = scan_type()
         victims_count = 0
 
-        for net_range in self._ranges:
+        for net_range in self.generate_ranges():
             LOG.debug("Scanning for potential victims in the network %r", net_range)
             for ip_addr in net_range:
                 victim = VictimHost(ip_addr)
