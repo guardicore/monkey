@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import datetime
 
 import bson
@@ -83,7 +84,7 @@ def init_app(mongo_url):
 
     app.config['MONGO_URI'] = mongo_url
 
-    app.config['SECRET_KEY'] = os.urandom(32)
+    app.config['SECRET_KEY'] = uuid.getnode()
     app.config['JWT_AUTH_URL_RULE'] = '/api/auth'
     app.config['JWT_EXPIRATION_DELTA'] = env.get_auth_expiration_time()
 
