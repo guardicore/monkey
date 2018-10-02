@@ -120,11 +120,27 @@ class SingleIpRange(NetworkRange):
     def __repr__(self):
         return "<SingleIpRange %s>" % (self._ip_address,)
 
+    def __iter__(self):
+        """
+        We have to check if we have an IP to return, because user could have entered invalid
+        domain name and no IP was found
+        :return: IP if there is one
+        """
+        if self.ip_found():
+            yield self._number_to_ip(self.get_range()[0])
+
     def is_in_range(self, ip_address):
         return self._ip_address == ip_address
 
     def _get_range(self):
         return [SingleIpRange._ip_to_number(self._ip_address)]
+
+    def ip_found(self):
+        """
+        Checks if we could translate domain name entered into IP address
+        :return: True if dns found domain name and false otherwise
+        """
+        return hasattr(self, "_ip_address") and self._ip_address
 
     @staticmethod
     def string_to_host(string):
@@ -144,7 +160,7 @@ class SingleIpRange(NetworkRange):
                 domain_name = string
             except socket.error:
                 LOG.error(
-                    "You'r specified host: {} is neither found as domain name nor it's an IP address".format(string))
-                return socket.error
+                    "You'r specified host: {} is not found as a domain name and it's not an IP address".format(string))
+                return None, string
         return ip, domain_name
 

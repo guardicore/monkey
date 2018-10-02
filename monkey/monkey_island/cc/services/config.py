@@ -247,7 +247,7 @@ SCHEMA = {
                             ],
                             "description":
                                 "List of IPs/subnets/URL's the monkey should scan."
-                                " Examples: \"192.168.0.1\", \"mywebsite.com\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
+                                " Examples: \"192.168.0.1\", \"guardicore.com\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
                         }
                     }
                 },
