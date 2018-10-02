@@ -114,6 +114,7 @@ class ReportService:
             {
                 'label': node['label'],
                 'ip_addresses': node['ip_addresses'],
+                'domain_name': node['domain_name'],
                 'accessible_from_nodes':
                     (x['hostname'] for x in
                      (NodeService.get_displayed_node_by_id(edge['from'], True)
@@ -139,6 +140,7 @@ class ReportService:
             {
                 'label': monkey['label'],
                 'ip_addresses': monkey['ip_addresses'],
+                'domain_name': monkey['domain_name'],
                 'exploits': list(set(
                     [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in monkey['exploits'] if
                      exploit['result']]))
