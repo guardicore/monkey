@@ -41,6 +41,7 @@ class NodeService:
             # node is uninfected
             new_node = NodeService.node_to_net_node(node, for_report)
             new_node["ip_addresses"] = node["ip_addresses"]
+            new_node["domain_name"] = node["domain_name"]
 
         for edge in edges:
             accessible_from_nodes.append(NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"])))
@@ -62,7 +63,9 @@ class NodeService:
 
     @staticmethod
     def get_node_label(node):
-        return node["os"]["version"] + " : " + node["ip_addresses"][0]
+        if node["domain_name"]:
+            node["domain_name"] = " ("+node["domain_name"]+")"
+        return node["os"]["version"] + " : " + node["ip_addresses"][0] + node["domain_name"]
 
     @staticmethod
     def _cmp_exploits_by_timestamp(exploit_1, exploit_2):
@@ -132,6 +135,7 @@ class NodeService:
                 "group": NodeService.get_monkey_group(monkey),
                 "os": NodeService.get_monkey_os(monkey),
                 "dead": monkey["dead"],
+                "domain_name": ""
             }
 
     @staticmethod
@@ -171,10 +175,11 @@ class NodeService:
                              upsert=False)
 
     @staticmethod
-    def insert_node(ip_address):
+    def insert_node(ip_address, domain_name=''):
         new_node_insert_result = mongo.db.node.insert_one(
             {
                 "ip_addresses": [ip_address],
+                "domain_name": domain_name,
                 "exploited": False,
                 "creds": [],
                 "os":
@@ -186,10 +191,10 @@ class NodeService:
         return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
 
     @staticmethod
-    def get_or_create_node(ip_address):
+    def get_or_create_node(ip_address, domain_name=''):
         new_node = mongo.db.node.find_one({"ip_addresses": ip_address})
         if new_node is None:
-            new_node = NodeService.insert_node(ip_address)
+            new_node = NodeService.insert_node(ip_address, domain_name)
         return new_node
 
     @staticmethod
@@ -256,6 +261,7 @@ class NodeService:
     def get_monkey_island_node():
         island_node = NodeService.get_monkey_island_pseudo_net_node()
         island_node["ip_addresses"] = local_ip_addresses()
+        island_node["domain_name"] = ""
         return island_node
 
     @staticmethod

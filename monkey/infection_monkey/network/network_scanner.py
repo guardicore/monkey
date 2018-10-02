@@ -5,7 +5,6 @@ from common.network.network_range import *
 from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
 from infection_monkey.model import VictimHost
-from infection_monkey.network import HostScanner
 
 __author__ = 'itamar'
 
@@ -79,7 +78,10 @@ class NetworkScanner(object):
         for net_range in self._ranges:
             LOG.debug("Scanning for potential victims in the network %r", net_range)
             for ip_addr in net_range:
-                victim = VictimHost(ip_addr)
+                if hasattr(net_range, 'domain_name'):
+                    victim = VictimHost(ip_addr, net_range.domain_name)
+                else:
+                    victim = VictimHost(ip_addr)
                 if stop_callback and stop_callback():
                     LOG.debug("Got stop signal")
                     break

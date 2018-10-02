@@ -237,7 +237,7 @@ SCHEMA = {
                                 + " Note that setting this value too high may result in the monkey propagating too far"
                         },
                         "subnet_scan_list": {
-                            "title": "Scan IP/subnet list",
+                            "title": "Scan IP/subnet/URL list",
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
@@ -246,8 +246,8 @@ SCHEMA = {
                             "default": [
                             ],
                             "description":
-                                "List of IPs/subnets the monkey should scan."
-                                " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
+                                "List of IPs/subnets/URL's the monkey should scan."
+                                " Examples: \"192.168.0.1\", \"guardicore.com\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
                         }
                     }
                 },
