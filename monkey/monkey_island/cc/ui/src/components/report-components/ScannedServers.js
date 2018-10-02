@@ -10,7 +10,8 @@ const columns = [
     Header: 'Scanned Servers',
     columns: [
       { Header: 'Machine', accessor: 'label'},
-      { Header: 'IP Addresses', id: 'ip_addresses', accessor: x => renderArray(x.ip_addresses)},
+      { Header: 'IP Addresses', id: 'ip_addresses',
+        accessor: x => renderArray(x.ip_addresses)+(x.domain_name ? " ("+x.domain_name+")" : "")},
       { Header: 'Accessible From', id: 'accessible_from_nodes', accessor: x => renderArray(x.accessible_from_nodes)},
       { Header: 'Services', id: 'services', accessor: x => renderArray(x.services)}
     ]
