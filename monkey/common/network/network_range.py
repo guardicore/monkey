@@ -5,8 +5,12 @@ from abc import ABCMeta, abstractmethod
 
 import ipaddress
 from six import text_type
+import logging
+import re
 
 __author__ = 'itamar'
+
+LOG = logging.getLogger(__name__)
 
 
 class NetworkRange(object):
@@ -111,7 +115,7 @@ class IpRange(NetworkRange):
 class SingleIpRange(NetworkRange):
     def __init__(self, ip_address, shuffle=True):
         super(SingleIpRange, self).__init__(shuffle=shuffle)
-        self._ip_address = ip_address
+        self._ip_address, self.domain_name = self.string_to_host(ip_address)
 
     def __repr__(self):
         return "<SingleIpRange %s>" % (self._ip_address,)
@@ -121,3 +125,26 @@ class SingleIpRange(NetworkRange):
 
     def _get_range(self):
         return [SingleIpRange._ip_to_number(self._ip_address)]
+
+    @staticmethod
+    def string_to_host(string):
+        """
+        Converts the string that user entered in "Scan IP/subnet list" to dict of domain name and ip
+        :param string: String that was entered in "Scan IP/subnet list"
+        :return: A tuple in format (IP, domain_name). Eg. (192.168.55.1, www.google.com)
+        """
+        # The most common use case is to enter ip/range into "Scan IP/subnet list"
+        domain_name = ''
+        ip = string
+
+        # If a string was entered instead of IP we presume that it was domain name and translate it
+        if re.search('[a-zA-Z]', string):
+            try:
+                ip = socket.gethostbyname(string)
+                domain_name = string
+            except socket.error:
+                LOG.error(
+                    "You'r specified host: {} is neither found as domain name nor it's an IP address".format(string))
+                return socket.error
+        return ip, domain_name
+
