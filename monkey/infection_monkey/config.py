@@ -178,8 +178,9 @@ class Configuration(object):
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
-                  8008, # HTTP alternate
-                  7001  # Oracle Weblogic default server port
+                  8008,  # HTTP alternate
+                  7001,  # Oracle Weblogic default server port
+                  10255  # k8s kubelet readonly
                   ]
     tcp_target_ports = [22,
                         2222,
