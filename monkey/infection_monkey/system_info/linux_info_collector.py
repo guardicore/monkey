@@ -2,6 +2,7 @@ import logging
 
 from infection_monkey.system_info import InfoCollector
 from infection_monkey.system_info.SSH_info_collector import SSHCollector
+from infection_monkey.system_info.k8s_info_collector import K8sInfoCollector
 
 __author__ = 'uri'
 
@@ -28,5 +29,6 @@ class LinuxInfoCollector(InfoCollector):
         self.get_network_info()
         self.get_azure_info()
         self.info['ssh_info'] = SSHCollector.get_info()
+        self.info['k8s'] = K8sInfoCollector.get_info()
         return self.info
 
