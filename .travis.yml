@@ -4,14 +4,11 @@ cache: pip
 python:
     - 2.7
     - 3.6
-    #- nightly
-    #- pypy
-    #- pypy3
 matrix:
-    allow_failures:
-        - python: nightly
-        - python: pypy
-        - python: pypy3
+    include:
+        - python: 3.7
+          dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
+          sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 install:
     #- pip install -r requirements.txt
     - pip install flake8  # pytest  # add another testing frameworks later
