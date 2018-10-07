@@ -6,6 +6,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
 from infection_monkey.model import VictimHost
 from infection_monkey.control import ControlClient
+from infection_monkey.network.tools import traceroute
 
 __author__ = 'itamar'
 
@@ -56,7 +57,22 @@ class NetworkScanner(object):
 
         return subnets_to_scan
 
-    def generate_ranges(self):
+    @staticmethod
+    def get_k8s_node_subnet(system_info):
+        """
+        Gets suspected subnet of k8s nodes.
+        :param system_info: system_info returned from system_info_collector.
+        :return: Suspected subnet of k8s nodes or None if machine is not a k8s pod.
+        """
+        if system_info and system_info.get('k8s', {'is_pod': False})['is_pod']:
+            route = traceroute('google.com', 1)
+            if route:
+                # On a k8s pod, first hop out is usually on class C of nodes.
+                return CidrRange(route[0] + '/24')
+
+        return None
+
+    def generate_ranges(self, system_info):
         """
         Generates network ranges to scan. Re-queries the island's config after iterating over all ranges in local config
         :return: yields network range
@@ -80,15 +96,20 @@ class NetworkScanner(object):
             for net_range in get_interfaces_ranges():
                 yield net_range
 
+        k8s_node_subnet = NetworkScanner.get_k8s_node_subnet(system_info)
+        if k8s_node_subnet:
+            yield k8s_node_subnet
+
         for net_range in self._get_inaccessible_subnets_ips():
             yield net_range
 
-    def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
+    def get_victim_machines(self, scan_type, max_find=5, stop_callback=None, system_info=None):
         """
         Finds machines according to the ranges specified in the object
         :param scan_type: A hostscanner class, will be instanced and used to scan for new machines
         :param max_find: Max number of victims to find regardless of ranges
         :param stop_callback: A callback to check at any point if we should stop scanning
+        :param system_info: system_info returned from system_info_collector
         :return: yields a sequence of VictimHost instances
         """
         if not scan_type:
@@ -97,7 +118,7 @@ class NetworkScanner(object):
         scanner = scan_type()
         victims_count = 0
 
-        for net_range in self.generate_ranges():
+        for net_range in self.generate_ranges(system_info):
             LOG.debug("Scanning for potential victims in the network %r", net_range)
             for ip_addr in net_range:
                 victim = VictimHost(ip_addr)

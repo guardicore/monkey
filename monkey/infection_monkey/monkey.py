@@ -103,6 +103,7 @@ class InfectionMonkey(object):
         LOG.debug("default server: %s" % self._default_server)
         ControlClient.send_telemetry("tunnel", {'proxy': ControlClient.proxies.get('https')})
 
+        system_info = {}
         if WormConfiguration.collect_system_info:
             LOG.debug("Calling system info collection")
             system_info_collector = SystemInfoCollector()
@@ -134,7 +135,8 @@ class InfectionMonkey(object):
 
             machines = self._network.get_victim_machines(WormConfiguration.scanner_class,
                                                          max_find=WormConfiguration.victims_max_find,
-                                                         stop_callback=ControlClient.check_for_stop)
+                                                         stop_callback=ControlClient.check_for_stop,
+                                                         system_info=system_info)
             is_empty = True
             for machine in machines:
                 if ControlClient.check_for_stop():
