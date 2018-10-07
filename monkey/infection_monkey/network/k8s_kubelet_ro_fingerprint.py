@@ -38,6 +38,7 @@ class K8sKubeletRoFinger(HostFinger):
                 data = json.loads(req.text)
                 service_name = tcp_port_to_service(K8S_KUBELET_RO_PORT)
                 host.services[service_name] = K8sKubeletRoFinger.parse_kubelet_response(data)
+                host.services[service_name] = 'k8s-kubelet-readonly'
                 return True
         except Timeout:
             LOG.debug("Got timeout while trying to read header information")
@@ -49,7 +50,7 @@ class K8sKubeletRoFinger(HostFinger):
 
     @staticmethod
     def parse_kubelet_response(resp):
-        return [K8sKubeletRoFinger.parse_pod_item(x) for x in resp['items']]
+        return {'pods': [K8sKubeletRoFinger.parse_pod_item(x) for x in resp['items']]}
 
     @staticmethod
     def parse_pod_item(pod):
