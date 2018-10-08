@@ -30,5 +30,5 @@ class K8sInfoCollector:
 
     @staticmethod
     def is_pod():
-        os.path.exists('/var/run/secrets/kubernetes.io')
+        return os.path.exists('/var/run/secrets/kubernetes.io')
 
