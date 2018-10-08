@@ -27,3 +27,4 @@ from infection_monkey.network.elasticfinger import ElasticFinger
 from infection_monkey.network.mysqlfinger import MySQLFinger
 from infection_monkey.network.info import local_ips, get_free_tcp_port
 from infection_monkey.network.mssql_fingerprint import MSSQLFinger
+from infection_monkey.network.k8s_kubelet_ro_fingerprint import K8sKubeletRoFinger
