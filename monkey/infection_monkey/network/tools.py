@@ -1,8 +1,13 @@
 import logging
+import sys
+import subprocess
 import select
 import socket
 import struct
 import time
+
+from six import text_type
+import ipaddress
 
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
@@ -167,3 +172,60 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
 
 def tcp_port_to_service(port):
     return 'tcp-' + str(port)
+
+
+def traceroute(target_ip, ttl):
+    """
+    Traceroute for a specific IP.
+    :param target_ip: Destination
+    :param ttl: Max TTL
+    :return: Sequence of IPs in the way
+    """
+    if sys.platform == "win32":
+        try:
+            # we'll just use tracert because that's always there
+            cli = ["tracert",
+                   "-d",
+                   "-w", "250",
+                   "-h", str(ttl),
+                   target_ip]
+            proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
+            stdout, stderr = proc_obj.communicate()
+            ip_lines = stdout.split('\r\n')[3:-3]
+            trace_list = []
+            for line in ip_lines:
+                tokens = line.split()
+                last_token = tokens[-1]
+                try:
+                    ip_addr = ipaddress.ip_address(text_type(last_token))
+                except ValueError:
+                    ip_addr = ""
+                trace_list.append(ip_addr)
+            return trace_list
+        except:
+            return []
+    else:  # linux based hopefully
+        # implementation note: We're currently going to just use ping.
+        # reason is, implementing a non root requiring user is complicated (see traceroute(8) code)
+        # while this is just ugly
+        # we can't use traceroute because it's not always installed
+        current_ttl = 1
+        trace_list = []
+        while current_ttl <= ttl:
+            try:
+                cli = ["ping",
+                       "-c", "1",
+                       "-w", "1",
+                       "-t", str(current_ttl),
+                       target_ip]
+                proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
+                stdout, stderr = proc_obj.communicate()
+                ip_line = stdout.split('\n')
+                ip_line = ip_line[1]
+                ip = ip_line.split()[1]
+                trace_list.append(ipaddress.ip_address(text_type(ip)))
+            except (IndexError, ValueError):
+                # assume we failed parsing output
+                trace_list.append("")
+            current_ttl += 1
+        return trace_list
