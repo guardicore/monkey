@@ -48,7 +48,7 @@ class ReportPageComponent extends AuthComponent {
   componentDidMount() {
     this.updateMonkeysRunning().then(res => this.getReportFromServer(res));
     this.updateMapFromServer();
-    this.interval = setInterval(this.updateMapFromServer, 1000);
+    this.interval = setInterval(this.updateMapFromServer, 5000);
   }
 
   componentWillUnmount() {
