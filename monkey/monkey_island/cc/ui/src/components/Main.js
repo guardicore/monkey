@@ -75,7 +75,7 @@ class AppComponent extends AuthComponent {
 
   componentDidMount() {
     this.updateStatus();
-    this.interval = setInterval(this.updateStatus, 2000);
+    this.interval = setInterval(this.updateStatus, 5000);
   }
 
   componentWillUnmount() {
