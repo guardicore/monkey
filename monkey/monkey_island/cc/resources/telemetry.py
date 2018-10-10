@@ -168,6 +168,8 @@ class Telemetry(flask_restful.Resource):
                                          {"$set": {"os.version": scan_os["version"]}},
                                          upsert=False)
 
+        Telemetry.process_scan_k8s_kubelet_ro_telemetry(data['services'].get('tcp-10255', None))
+
     @staticmethod
     def process_system_info_telemetry(telemetry_json):
         if 'ssh_info' in telemetry_json['data']:
@@ -243,6 +245,48 @@ class Telemetry(flask_restful.Resource):
                 credential = attempts[i][field]
                 if len(credential) > 0:
                     attempts[i][field] = encryptor.enc(credential.encode('utf-8'))
+
+    @staticmethod
+    def process_scan_k8s_kubelet_ro_telemetry(kubelet_service_info):
+        """
+        Processes k8s kubelet readonly telemetry.
+        Adds info to new/existing nodes and adds new scanning targets.
+        :param kubelet_service_info: the kubelet readonly service info from the scan telemetry
+        :return: None
+        """
+        if not kubelet_service_info:
+            return None
+
+        pods = kubelet_service_info['data'].get('pods', [])
+        for pod in pods:
+            pod_ip = pod.pop('pod_ip')
+            host_ip = pod['host_ip']
+            if pod_ip:
+                pod_node = NodeService.get_or_create_node(pod_ip)
+                if pod['is_host_network']:
+                    mongo.db.node.update(
+                        {'_id': pod_node['_id']},
+                        {'$addToSet': {'k8s_host_pods': pod}}
+                    )
+                else:
+                    mongo.db.node.update(
+                        {'_id': pod_node['_id']},
+                        {'$set': {'k8s_pod': pod}}
+                    )
+                    ConfigService.add_item_to_config_set('internal.general.dynamic_subnet_scan_list', pod_ip)
+
+            if host_ip:
+                host_node = NodeService.get_or_create_node(host_ip)
+                mongo.db.node.update(
+                    {'_id': host_node['_id']},
+                    {'$set': {'k8s_node.name': pod['node_name']}}
+                )
+                if not pod['is_host_network']:
+                    mongo.db.node.update(
+                        {'_id': host_node['_id']},
+                        {'$addToSet': {'k8s_node.pod_ips': pod_ip}}
+                    )
+                    ConfigService.add_item_to_config_set('internal.general.dynamic_subnet_scan_list', host_ip)
 
 
 TELEM_PROCESS_DICT = \

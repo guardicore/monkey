@@ -169,7 +169,7 @@ class Configuration(object):
 
     # Auto detect and scan local subnets
     local_network_scan = True
-
+    k8s_pod_scan = True
     subnet_scan_list = []
     dynamic_subnet_scan_list = []
     inaccessible_subnets = []

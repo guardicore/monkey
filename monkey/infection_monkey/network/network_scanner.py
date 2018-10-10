@@ -61,14 +61,14 @@ class NetworkScanner(object):
     def get_k8s_node_subnet(system_info):
         """
         Gets suspected subnet of k8s nodes.
+        Second hop of traceroute out of a pod is usually in class C with k8s nodes.
         :param system_info: system_info returned from system_info_collector.
         :return: Suspected subnet of k8s nodes or None if machine is not a k8s pod.
         """
         if system_info and system_info.get('k8s', {'is_pod': False})['is_pod']:
-            route = traceroute('google.com', 1)
-            if route:
-                # On a k8s pod, first hop out is usually on class C of nodes.
-                return CidrRange(route[0] + '/24')
+            route = traceroute('google.com', 2)
+            if len(route) >= 2:
+                return CidrRange(str(route[-1]) + '/24')
 
         return None
 
@@ -96,9 +96,10 @@ class NetworkScanner(object):
             for net_range in get_interfaces_ranges():
                 yield net_range
 
-        k8s_node_subnet = NetworkScanner.get_k8s_node_subnet(system_info)
-        if k8s_node_subnet:
-            yield k8s_node_subnet
+        if WormConfiguration.k8s_pod_scan:
+            k8s_node_subnet = NetworkScanner.get_k8s_node_subnet(system_info)
+            if k8s_node_subnet:
+                yield k8s_node_subnet
 
         for net_range in self._get_inaccessible_subnets_ips():
             yield net_range

@@ -233,6 +233,12 @@ SCHEMA = {
                             "default": True,
                             "description": "Determines whether the monkey should scan its subnets additionally"
                         },
+                        "k8s_pod_scan": {
+                            "title": "K8s pod scan",
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Determines whether the monkey should scan detected k8s pods and nodes"
+                        },
                         "depth": {
                             "title": "Distance from island",
                             "type": "integer",

@@ -41,6 +41,9 @@ class NodeService:
             # node is uninfected
             new_node = NodeService.node_to_net_node(node, for_report)
             new_node["ip_addresses"] = node["ip_addresses"]
+            for key in ['k8s_pod', 'k8s_node', 'k8s_host_pods']:
+                if key in node:
+                    new_node[key] = node[key]
 
         for edge in edges:
             accessible_from_nodes.append(NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"])))
@@ -62,7 +65,27 @@ class NodeService:
 
     @staticmethod
     def get_node_label(node):
+        if node.get('k8s_node'):
+            return NodeService.get_node_k8s_node_label(node)
+        if node.get('k8s_pod'):
+            return NodeService.get_node_k8s_pod_label(node)
         return node["os"]["version"] + " : " + node["ip_addresses"][0]
+
+    @staticmethod
+    def get_node_label_for_report(node):
+        if node.get('k8s_node'):
+            return node["k8s_node"]["name"]
+        if node.get('k8s_pod'):
+            return node["k8s_pod"]["name"]
+        return node["os"]["version"]
+
+    @staticmethod
+    def get_node_k8s_pod_label(node):
+        return node["k8s_pod"]["name"] + " : " + node["ip_addresses"][0]
+
+    @staticmethod
+    def get_node_k8s_node_label(node):
+        return node["k8s_node"]["name"] + " : " + node["ip_addresses"][0]
 
     @staticmethod
     def _cmp_exploits_by_timestamp(exploit_1, exploit_2):
@@ -136,7 +159,7 @@ class NodeService:
 
     @staticmethod
     def node_to_net_node(node, for_report=False):
-        label = node['os']['version'] if for_report else NodeService.get_node_label(node)
+        label = NodeService.get_node_label_for_report(node) if for_report else NodeService.get_node_label(node)
         return \
             {
                 "id": node["_id"],
