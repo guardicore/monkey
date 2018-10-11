@@ -96,10 +96,9 @@ class NetworkScanner(object):
             for net_range in get_interfaces_ranges():
                 yield net_range
 
-        if WormConfiguration.k8s_pod_scan:
-            k8s_node_subnet = NetworkScanner.get_k8s_node_subnet(system_info)
-            if k8s_node_subnet:
-                yield k8s_node_subnet
+        k8s_node_subnet = NetworkScanner.get_k8s_node_subnet(system_info)
+        if k8s_node_subnet:
+            yield k8s_node_subnet
 
         for net_range in self._get_inaccessible_subnets_ips():
             yield net_range

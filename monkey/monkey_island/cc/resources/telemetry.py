@@ -12,6 +12,7 @@ from cc.auth import jwt_required
 from cc.database import mongo
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
+from cc.services.k8s import K8sService
 from cc.services.node import NodeService
 from cc.encryptor import encryptor
 
@@ -250,7 +251,6 @@ class Telemetry(flask_restful.Resource):
     def process_scan_k8s_kubelet_ro_telemetry(kubelet_service_info):
         """
         Processes k8s kubelet readonly telemetry.
-        Adds info to new/existing nodes and adds new scanning targets.
         :param kubelet_service_info: the kubelet readonly service info from the scan telemetry
         :return: None
         """
@@ -259,34 +259,7 @@ class Telemetry(flask_restful.Resource):
 
         pods = kubelet_service_info['data'].get('pods', [])
         for pod in pods:
-            pod_ip = pod.pop('pod_ip')
-            host_ip = pod['host_ip']
-            if pod_ip:
-                pod_node = NodeService.get_or_create_node(pod_ip)
-                if pod['is_host_network']:
-                    mongo.db.node.update(
-                        {'_id': pod_node['_id']},
-                        {'$addToSet': {'k8s_host_pods': pod}}
-                    )
-                else:
-                    mongo.db.node.update(
-                        {'_id': pod_node['_id']},
-                        {'$set': {'k8s_pod': pod}}
-                    )
-                    ConfigService.add_item_to_config_set('internal.general.dynamic_subnet_scan_list', pod_ip)
-
-            if host_ip:
-                host_node = NodeService.get_or_create_node(host_ip)
-                mongo.db.node.update(
-                    {'_id': host_node['_id']},
-                    {'$set': {'k8s_node.name': pod['node_name']}}
-                )
-                if not pod['is_host_network']:
-                    mongo.db.node.update(
-                        {'_id': host_node['_id']},
-                        {'$addToSet': {'k8s_node.pod_ips': pod_ip}}
-                    )
-                    ConfigService.add_item_to_config_set('internal.general.dynamic_subnet_scan_list', host_ip)
+            K8sService.handle_new_pod(pod)
 
 
 TELEM_PROCESS_DICT = \
