@@ -46,7 +46,7 @@ class NodeService:
                     new_node[key] = node[key]
 
         for edge in edges:
-            accessible_from_nodes.append(NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"])))
+            accessible_from_nodes.append(NodeService.get_generic_node_label_by_id(edge["from"]))
             for exploit in edge["exploits"]:
                 exploit["origin"] = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
                 exploits.append(exploit)
@@ -64,12 +64,29 @@ class NodeService:
         return new_node
 
     @staticmethod
-    def get_node_label(node):
-        if node.get('k8s_node'):
-            return NodeService.get_node_k8s_node_label(node)
-        if node.get('k8s_pod'):
-            return NodeService.get_node_k8s_pod_label(node)
-        return node["os"]["version"] + " : " + node["ip_addresses"][0]
+    def get_generic_node_label_by_id(node_id, for_report=False):
+        """
+        Gets node label by id. works for both monkey and non-monkey nodes.
+        :param node_id: id of node
+        :param for_report: Whether the label is for the report
+        :return: The node's label
+        """
+        monkey = NodeService.get_monkey_by_id(node_id)
+        if monkey is None:
+            return NodeService.get_node_label(NodeService.get_node_by_id(node_id), for_report)
+        else:
+            return NodeService.get_monkey_label(monkey, for_report)
+
+    @staticmethod
+    def get_node_label(node, for_report=False):
+        if for_report:
+            return NodeService.get_node_label_for_report(node)
+        else:
+            if node.get('k8s_node'):
+                return NodeService.get_node_k8s_node_label(node)
+            if node.get('k8s_pod'):
+                return NodeService.get_node_k8s_pod_label(node)
+            return node["os"]["version"] + " : " + node["ip_addresses"][0]
 
     @staticmethod
     def get_node_label_for_report(node):
@@ -121,12 +138,15 @@ class NodeService:
         return NodeService.get_monkey_label(NodeService.get_monkey_by_id(monkey_id))
 
     @staticmethod
-    def get_monkey_label(monkey):
-        label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]
-        ip_addresses = local_ip_addresses()
-        if len(set(monkey["ip_addresses"]).intersection(ip_addresses)) > 0:
-            label = "MonkeyIsland - " + label
-        return label
+    def get_monkey_label(monkey, for_report=False):
+        if for_report:
+            return monkey['hostname']
+        else:
+            label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]
+            ip_addresses = local_ip_addresses()
+            if len(set(monkey["ip_addresses"]).intersection(ip_addresses)) > 0:
+                label = "MonkeyIsland - " + label
+            return label
 
     @staticmethod
     def get_monkey_group(monkey):
@@ -147,11 +167,10 @@ class NodeService:
 
     @staticmethod
     def monkey_to_net_node(monkey, for_report=False):
-        label = monkey['hostname'] if for_report else NodeService.get_monkey_label(monkey)
         return \
             {
                 "id": monkey["_id"],
-                "label": label,
+                "label": NodeService.get_monkey_label(monkey, for_report),
                 "group": NodeService.get_monkey_group(monkey),
                 "os": NodeService.get_monkey_os(monkey),
                 "dead": monkey["dead"],
@@ -159,11 +178,10 @@ class NodeService:
 
     @staticmethod
     def node_to_net_node(node, for_report=False):
-        label = NodeService.get_node_label_for_report(node) if for_report else NodeService.get_node_label(node)
         return \
             {
                 "id": node["_id"],
-                "label": label,
+                "label": NodeService.get_node_label(node, for_report),
                 "group": NodeService.get_node_group(node),
                 "os": NodeService.get_node_os(node)
             }

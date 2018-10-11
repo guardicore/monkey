@@ -115,9 +115,8 @@ class ReportService:
                 'label': node['label'],
                 'ip_addresses': node['ip_addresses'],
                 'accessible_from_nodes':
-                    (x['hostname'] for x in
-                     (NodeService.get_displayed_node_by_id(edge['from'], True)
-                      for edge in EdgeService.get_displayed_edges_by_to(node['id'], True))),
+                    (NodeService.get_generic_node_label_by_id(edge['from'], True)
+                     for edge in EdgeService.get_displayed_edges_by_to(node['id'], True)),
                 'services': node['services']
             }
             for node in nodes]

@@ -146,7 +146,7 @@ class PreviewPaneComponent extends AuthComponent {
 
   k8sContainerPanel(k8s_pod) {
     return (
-      <PanelGroup accordion>
+      <PanelGroup accordion id={k8s_pod.name + '-container-panel'}>
         <Panel eventKey="container-panel">
           <Panel.Heading>
             <Panel.Title toggle><b>Pod's Containers</b></Panel.Title>
@@ -163,7 +163,7 @@ class PreviewPaneComponent extends AuthComponent {
 
   k8sLabelPanel(k8s_pod) {
     return (
-      <PanelGroup accordion>
+      <PanelGroup accordion id={k8s_pod.name + '-label-panel'}>
         <Panel eventKey="label-panel">
           <Panel.Heading>
             <Panel.Title toggle><b>Pod's Labels</b></Panel.Title>
@@ -209,14 +209,14 @@ class PreviewPaneComponent extends AuthComponent {
 
   k8sPodIpsPanel(pod_ips) {
     return (
-      <PanelGroup accordion>
+      <PanelGroup accordion id={pod_ips.join('-') + '-pod-ips'}>
         <Panel eventKey="container-panel">
           <Panel.Heading>
             <Panel.Title toggle><b>Pods' IPs</b></Panel.Title>
           </Panel.Heading>
           <Panel.Body collapsible>
             <table className="table table-condensed"><tbody>
-            {pod_ips.map(x => <tr><th/><td>{x}</td></tr>)}
+            {pod_ips.map(x => <tr key={x}><th/><td>{x}</td></tr>)}
             </tbody></table>
           </Panel.Body>
         </Panel>
@@ -224,9 +224,10 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-  k8sHostNetworkPodsPanel(k8s_host_pods) {
+  k8sHostNetworkPodsPanel(asset) {
+    let k8s_host_pods = asset.k8s_host_pods;
     return (
-      <PanelGroup accordion>
+      <PanelGroup accordion id={asset.host_ip + "-host-pods"}>
         <Panel eventKey="container-panel">
           <Panel.Heading>
             <Panel.Title toggle><b>Host Network Pods</b></Panel.Title>
@@ -260,7 +261,7 @@ class PreviewPaneComponent extends AuthComponent {
       <tr key="host-network-pods">
         <th/>
         <td>
-          {this.k8sHostNetworkPodsPanel(asset.k8s_host_pods)}
+          {this.k8sHostNetworkPodsPanel(asset)}
         </td>
       </tr>
     ];
@@ -381,7 +382,9 @@ class PreviewPaneComponent extends AuthComponent {
     let info = null;
     switch (this.props.type) {
       case 'edge':
-        info = this.scanInfo(this.props.item);
+        if (this.props.item.group !== 'host') {
+          info = this.scanInfo(this.props.item);
+        }
         break;
       case 'node':
         info = this.props.item.group.includes('monkey', 'manual') ? this.assetInfo(this.props.item, true) :

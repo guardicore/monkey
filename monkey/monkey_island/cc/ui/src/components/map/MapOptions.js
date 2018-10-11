@@ -38,7 +38,7 @@ export const options = {
   groups: getGroupsOptions()
 };
 
-export function edgeGroupToColor(group) {
+function edgeGroupToColorCode(group) {
   switch (group) {
     case 'exploited':
       return '#c00';
@@ -48,6 +48,23 @@ export function edgeGroupToColor(group) {
       return '#f90';
     case 'island':
       return '#aaa';
+    case 'host':
+      return '#000000';
   }
   return 'black';
+}
+
+function edgeGroupToOpacity(group) {
+  if (group === 'host') {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+export function edgeGroupToColor(group) {
+  return {
+    'color': edgeGroupToColorCode(group),
+    'opacity': edgeGroupToOpacity(group)
+  }
 }

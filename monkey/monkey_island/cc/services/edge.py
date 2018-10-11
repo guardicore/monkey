@@ -52,6 +52,22 @@ class EdgeService:
         return mongo.db.edge.find_one({"_id": edge_insert_result.inserted_id})
 
     @staticmethod
+    def insert_host_edge(from_id, to_id, ip_address):
+        """
+        Inserts new host edge
+        :param from_id: node id of 'from' node
+        :param to_id: node id of 'to' node
+        :param ip_address: IP address of 'to' node as seen from 'from' node
+        :return: _id of new edge
+        """
+        new_edge = EdgeService.insert_edge(from_id, to_id)
+        mongo.db.edge.update(
+            {'_id': new_edge['_id']},
+            {'$set': {'type': 'host', 'ip_address': ip_address}}
+        )
+        return new_edge['_id']
+
+    @staticmethod
     def get_or_create_edge(edge_from, edge_to):
         tunnel_edge = mongo.db.edge.find_one({"from": edge_from, "to": edge_to})
         if tunnel_edge is None:
@@ -128,6 +144,8 @@ class EdgeService:
             return "tunnel"
         if (len(edge.get("scans", [])) > 0) or (len(edge.get("exploits", [])) > 0):
             return "scan"
+        if edge.get('type'):
+            return edge['type']
         return "empty"
 
     @staticmethod
@@ -141,15 +159,11 @@ class EdgeService:
     @staticmethod
     def get_edge_label(edge):
         NodeService = cc.services.node.NodeService
-        from_label = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
-        if edge["to"] == ObjectId("000000000000000000000000"):
+        from_label = NodeService.get_generic_node_label_by_id(edge["from"])
+        if edge["to"] == NodeService.get_monkey_island_pseudo_id():
             to_label = 'MonkeyIsland'
         else:
-            to_id = NodeService.get_monkey_by_id(edge["to"])
-            if to_id is None:
-                to_label = NodeService.get_node_label(NodeService.get_node_by_id(edge["to"]))
-            else:
-                to_label = NodeService.get_monkey_label(to_id)
+            to_label = NodeService.get_generic_node_label_by_id(edge["to"])
 
         RIGHT_ARROW = u"\u2192"
         return "%s %s %s" % (from_label, RIGHT_ARROW, to_label)
