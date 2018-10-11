@@ -84,7 +84,7 @@ def init_app(mongo_url):
 
     app.config['MONGO_URI'] = mongo_url
 
-    app.config['SECRET_KEY'] = uuid.getnode()
+    app.config['SECRET_KEY'] = str(uuid.getnode())
     app.config['JWT_AUTH_URL_RULE'] = '/api/auth'
     app.config['JWT_EXPIRATION_DELTA'] = env.get_auth_expiration_time()
 
