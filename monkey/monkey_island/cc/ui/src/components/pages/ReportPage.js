@@ -39,7 +39,8 @@ class ReportPageComponent extends AuthComponent {
       CROSS_SEGMENT: 0,
       TUNNEL: 1,
       SHARED_LOCAL_ADMIN: 2,
-      SHARED_PASSWORDS: 3
+      SHARED_PASSWORDS: 3,
+      SHARED_PASSWORDS_DOMAIN: 4
     };
 
   constructor(props) {
@@ -375,6 +376,8 @@ class ReportPageComponent extends AuthComponent {
                     <li>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_LOCAL_ADMIN] ?
                     <li>The monkey has found that some users have administrative rights on several machines.</li> : null}
+                  {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS_DOMAIN] ?
+                    <li>The monkey has found that some users are sharing passwords on domain accounts.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS] ?
                     <li>The monkey has found that some users are sharing passwords.</li> : null}
                 </ul>
@@ -412,6 +415,12 @@ class ReportPageComponent extends AuthComponent {
         </h3>
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
+        </div>
+        <h3>
+          Domain related recommendations
+        </h3>
+        <div>
+          {this.generateIssues(this.state.report.recommendations.domain_issues)}
         </div>
       </div>
     );
@@ -463,9 +472,6 @@ class ReportPageComponent extends AuthComponent {
         </div>
         {this.generateReportPthMap()}
         <div style={{marginBottom: '20px'}}>
-          <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
-        </div>
-        <div>
           <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>
         <div>
@@ -745,6 +751,18 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateSharedCredsDomainIssue(issue) {
+    return (
+    <li>
+        Some domain users are sharing passwords, this should be fixed by changing passwords.
+        <CollapsibleWellComponent>
+          These users are sharing access password:
+           {this.generateInfoBadges(issue.shared_with)}.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
   generateSharedCredsIssue(issue) {
     return (
     <li>
@@ -760,10 +778,10 @@ class ReportPageComponent extends AuthComponent {
   generateSharedLocalAdminsIssue(issue) {
     return (
     <li>
-        This machine shares a local admin account with another machine
+        Credentials for the user <span className="label label-primary">{issue.username}</span> could be found and the user is an administrator account on more than one machines in the domain.
         <CollapsibleWellComponent>
-          Here is a list showing users that are acting as admins on this machine and others:
-          {this.generateInfoBadges(issue.shared_accounts)}
+          Here is a list of machines which has this account defined as an administrator:
+          {this.generateInfoBadges(issue.shared_machines)}
         </CollapsibleWellComponent>
       </li>
     );
@@ -892,7 +910,10 @@ class ReportPageComponent extends AuthComponent {
       case 'shared_passwords':
         data = this.generateSharedCredsIssue(issue);
         break;
-      case 'shared_admins':
+      case 'shared_passwords_domain':
+        data = this.generateSharedCredsDomainIssue(issue);
+        break;
+      case 'shared_admins_domain':
         data = this.generateSharedLocalAdminsIssue(issue);
         break;
       case 'strong_users_on_crit':

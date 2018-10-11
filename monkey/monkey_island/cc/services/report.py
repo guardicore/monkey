@@ -1,5 +1,6 @@
 import itertools
 import functools
+import pprint
 
 import ipaddress
 import logging
@@ -183,6 +184,10 @@ class ReportService:
                         creds.append(cred_row)
         logger.info('Stolen creds generated for reporting')
         return creds
+
+    @staticmethod
+    def get_pth_shared_passwords():
+        pass
 
     @staticmethod
     def get_ssh_keys():
@@ -532,22 +537,41 @@ class ReportService:
         return cross_segment_issues
 
     @staticmethod
+    def get_domain_issues():
+
+        ISSUE_GENERATORS = [
+            PTHReportService.get_duplicated_passwords_issues,
+            PTHReportService.get_shared_admins_issues,
+        ]
+        issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
+        domain_issues_dict = {}
+        for issue in issues:
+            if not issue.get('is_local', True):
+                machine = issue.get('machine', '').upper()
+                if machine not in domain_issues_dict:
+                    domain_issues_dict[machine] = []
+                domain_issues_dict[machine].append(issue)
+        logger.info('Domain issues generated for reporting')
+        return domain_issues_dict
+
+    @staticmethod
     def get_issues():
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
             ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
-            ReportService.get_azure_issues
+            ReportService.get_azure_issues,
+            PTHReportService.get_duplicated_passwords_issues
         ]
-        #TODO: PTHReportService.get_report().get('report_info').get('pth_issues', [])
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
 
         issues_dict = {}
         for issue in issues:
-            machine = issue.get('machine', '').upper()
-            if machine not in issues_dict:
-                issues_dict[machine] = []
-            issues_dict[machine].append(issue)
+            if issue.get('is_local', True):
+                machine = issue.get('machine', '').upper()
+                if machine not in issues_dict:
+                    issues_dict[machine] = []
+                issues_dict[machine].append(issue)
         logger.info('Issues generated for reporting')
         return issues_dict
 
@@ -657,12 +681,12 @@ class ReportService:
 
     @staticmethod
     def get_report():
+        domain_issues = ReportService.get_domain_issues()
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
         cross_segment_issues = ReportService.get_cross_segment_issues()
         pth_report = PTHReportService.get_report()
-
 
         report = \
             {
@@ -690,7 +714,8 @@ class ReportService:
                     },
                 'recommendations':
                     {
-                        'issues': issues
+                        'issues': issues,
+                        'domain_issues': domain_issues
                     },
                 'pth':
                     {

@@ -1,4 +1,6 @@
 from cc.services.pth_report_utils import PassTheHashReport, Machine
+from cc.database import mongo
+from bson import ObjectId
 
 
 class PTHReportService(object):
@@ -10,29 +12,95 @@ class PTHReportService(object):
     def __init__(self):
         pass
 
-    @staticmethod
-    def get_duplicated_password_nodes(pth):
-        """
-
-        """
-
-        usernames_lists = []
-        usernames_per_sid_list = []
-        dups = dict(map(lambda x: (x, len(pth.GetSidsBySecret(x))), pth.GetAllSecrets()))
-
-        for secret, count in sorted(dups.iteritems(), key=lambda (k, v): (v, k), reverse=True):
-            if count <= 1:
-                continue
-            for sid in pth.GetSidsBySecret(secret):
-                if sid:
-                    usernames_per_sid_list.append(pth.GetUsernameBySid(sid))
-
-            usernames_lists.append({'cred_group': usernames_per_sid_list})
-
-        return usernames_lists
 
     @staticmethod
-    def get_shared_local_admins_nodes(pth):
+    def get_duplicated_passwords_nodes():
+        users_cred_groups = []
+
+        pipeline = [
+            {"$match": {
+                'NTLM_secret': {
+                    "$exists": "true", "$ne": None}
+            }},
+            {
+                "$group": {
+                    "_id": {
+                        "NTLM_secret": "$NTLM_secret"},
+                    "count": {"$sum": 1},
+                    "Docs": {"$push": {'_id': "$_id", 'name': '$name', 'domain_name': '$domain_name',
+                                       'machine_id': '$machine_id'}}
+                }},
+            {'$match': {'count': {'$gt': 1}}}
+        ]
+        docs = mongo.db.groupsandusers.aggregate(pipeline)
+        for doc in docs:
+            users_list = []
+            for user in doc['Docs']:
+                hostname = None
+                if user['machine_id']:
+                    machine = mongo.db.monkey.find_one({'_id': ObjectId(user['machine_id'])}, {'hostname': 1})
+                    if machine.get('hostname'):
+                        hostname = machine['hostname']
+                users_list.append({'username': user['name'], 'domain_name': user['domain_name'],
+                                   'hostname': hostname})
+            users_cred_groups.append({'cred_groups': users_list})
+
+        return users_cred_groups
+
+    @staticmethod
+    def get_duplicated_passwords_issues():
+        # TODO: Fix bug if both local and non local account share the same password
+        user_groups = PTHReportService.get_duplicated_passwords_nodes()
+        issues = []
+        users_gathered = []
+        for group in user_groups:
+            for user_info in group['cred_groups']:
+                users_gathered.append(user_info['username'])
+                issues.append(
+                    {
+                        'type': 'shared_passwords_domain' if user_info['domain_name'] else 'shared_passwords',
+                        'machine': user_info['hostname'] if user_info['hostname'] else user_info['domain_name'],
+                        'shared_with': [i['username'] for i in group['cred_groups']],
+                        'is_local': False if user_info['domain_name'] else True
+                    }
+                )
+                break
+        return issues
+
+    @staticmethod
+    def get_shared_admins_nodes():
+        admins = mongo.db.groupsandusers.find({'type': 1, 'admin_on_machines.1': {'$exists': True}},
+                                              {'admin_on_machines': 1, 'name': 1, 'domain_name': 1})
+        admins_info_list = []
+        for admin in admins:
+            machines = mongo.db.monkey.find({'_id': {'$in': admin['admin_on_machines']}}, {'hostname': 1})
+
+            # appends the host names of the machines this user is admin on.
+            admins_info_list.append({'name': admin['name'],'domain_name': admin['domain_name'],
+                                     'admin_on_machines': [i['hostname'] for i in list(machines)]})
+
+        return admins_info_list
+
+    @staticmethod
+    def get_shared_admins_issues():
+        admins_info = PTHReportService.get_shared_admins_nodes()
+        issues = []
+        for admin in admins_info:
+            issues.append(
+                {
+                    'is_local': False,
+                    'type': 'shared_admins_domain',
+                    'machine': admin['domain_name'],
+                    'username': admin['name'],
+                    'shared_machines': admin['admin_on_machines'],
+                }
+            )
+
+        return issues
+
+
+    @staticmethod
+    def old_get_shared_local_admins_nodes(pth):
         dups = dict(map(lambda x: (x, len(pth.GetSharedAdmins(x))), pth.machines))
         shared_admin_machines = []
         for m, count in sorted(dups.iteritems(), key=lambda (k, v): (v, k), reverse=True):
@@ -135,41 +203,8 @@ class PTHReportService(object):
             strong_users_non_crit_list.append(machine)
         return strong_users_non_crit_list
 
-    @staticmethod
-    def get_duplicated_passwords_issues(pth, password_groups):
-        issues = []
-        previeous_group = []
-        for group in password_groups:
-            username = group['cred_group'][0]
-            if username in previeous_group:
-                continue
-            sid = list(pth.GetSidsByUsername(username.split('\\')[1]))
-            machine_info = pth.GetSidInfo(sid[0])
-            issues.append(
-                {
-                    'type': 'shared_passwords',
-                    'machine': machine_info.get('hostname').split('.')[0],
-                    'shared_with': group['cred_group']
-                }
-            )
-            previeous_group += group['cred_group']
 
-        return issues
 
-    @staticmethod
-    def get_shared_local_admins_issues(shared_admins_machines):
-        issues = []
-        for machine in shared_admins_machines:
-            issues.append(
-                {
-                    'type': 'shared_admins',
-                    'machine': machine.get('hostname'),
-                    'shared_accounts': machine.get('admins_accounts'),
-                    'ip': machine.get('ip'),
-                }
-            )
-
-        return issues
 
     @staticmethod
     def strong_users_on_crit_issues(strong_users):
@@ -227,25 +262,23 @@ class PTHReportService(object):
     @staticmethod
     def get_report():
 
+
+
         issues = []
         pth = PassTheHashReport()
 
-        same_password = PTHReportService.get_duplicated_password_nodes(pth)
-        local_admin_shared = PTHReportService.get_shared_local_admins_nodes(pth)
         strong_users_on_crit_services = PTHReportService.get_strong_users_on_crit_services_by_user(pth)
         strong_users_on_non_crit_services = PTHReportService.get_strong_users_on_non_crit_services(pth)
 
-        issues += PTHReportService.get_duplicated_passwords_issues(pth, same_password)
-        issues += PTHReportService.get_shared_local_admins_issues(local_admin_shared)
-        issues += PTHReportService.strong_users_on_crit_issues(
-            PTHReportService.get_strong_users_on_crit_services_by_machine(pth))
+        issues += PTHReportService.get_duplicated_passwords_issues()
+        # issues += PTHReportService.get_shared_local_admins_issues(local_admin_shared)
+        # issues += PTHReportService.strong_users_on_crit_issues(
+        #     PTHReportService.get_strong_users_on_crit_services_by_machine(pth))
 
         report = \
             {
                 'report_info':
                     {
-                        'same_password': same_password,
-                        'local_admin_shared': local_admin_shared,
                         'strong_users_on_crit_services': strong_users_on_crit_services,
                         'strong_users_on_non_crit_services': strong_users_on_non_crit_services,
                         'pth_issues': issues

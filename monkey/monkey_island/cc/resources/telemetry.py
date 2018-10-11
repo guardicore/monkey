@@ -10,6 +10,7 @@ from flask import request
 
 from cc.auth import jwt_required
 from cc.database import mongo
+from cc.services import user_info, group_info
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
@@ -170,6 +171,8 @@ class Telemetry(flask_restful.Resource):
 
     @staticmethod
     def process_system_info_telemetry(telemetry_json):
+        users_secrets = {}
+        monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
         if 'ssh_info' in telemetry_json['data']:
             ssh_info = telemetry_json['data']['ssh_info']
             Telemetry.encrypt_system_info_ssh_keys(ssh_info)
@@ -182,6 +185,142 @@ class Telemetry(flask_restful.Resource):
             Telemetry.encrypt_system_info_creds(creds)
             Telemetry.add_system_info_creds_to_config(creds)
             Telemetry.replace_user_dot_with_comma(creds)
+        if 'mimikatz' in telemetry_json['data']:
+            users_secrets = user_info.extract_secrets_from_mimikatz(telemetry_json['data'].get('mimikatz', ''))
+        if 'wmi' in telemetry_json['data']:
+            info_for_mongo = {}
+            users_info = telemetry_json['data']['wmi']['Win32_UserAccount']
+            groups_info = telemetry_json['data']['wmi']['Win32_Group']
+            group_user_dict = telemetry_json['data']['wmi']['Win32_GroupUser']
+            Telemetry.add_groups_to_collection(groups_info, info_for_mongo, monkey_id)
+            Telemetry.add_users_to_collection(users_info, info_for_mongo, users_secrets, monkey_id)
+            Telemetry.create_group_user_connection(info_for_mongo, group_user_dict)
+            for entity in info_for_mongo.values():
+                if entity['machine_id']:
+                    mongo.db.groupsandusers.update({'SID': entity['SID'],
+                                                    'machine_id': entity['machine_id']}, entity, upsert=True)
+                else:
+                    if not mongo.db.groupsandusers.find_one({'SID': entity['SID']}):
+                        mongo.db.groupsandusers.insert_one(entity)
+
+            Telemetry.add_admin(info_for_mongo[group_info.ADMINISTRATORS_GROUP_KNOWN_SID], monkey_id)
+            Telemetry.update_admins_retrospective(info_for_mongo)
+            Telemetry.update_critical_services(telemetry_json['data']['wmi']['Win32_Service'],
+                                               telemetry_json['data']['wmi']['Win32_Product'],
+                                               monkey_id)
+
+    @staticmethod
+    def update_critical_services(wmi_services, wmi_products, machine_id):
+        critical_names = ("W3svc", "MSExchangeServiceHost", "MSSQLServer", "dns", 'MSSQL$SQLEXPRESS', 'SQL')
+
+        services_names_list = [str(i['Name'])[2:-1] for i in wmi_services]
+        products_names_list = [str(i['Name'])[2:-2] for i in wmi_products]
+
+        for name in critical_names:
+            if name in services_names_list or name in products_names_list:
+                logger.info('found a critical service')
+                mongo.db.monkey.update({'_id': machine_id}, {'$addToSet': {'critical_services': name}})
+
+    @staticmethod
+    def update_admins_retrospective(info_for_mongo):
+        for profile in info_for_mongo:
+            groups_from_mongo = mongo.db.groupsandusers.find({'SID': {'$in': info_for_mongo[profile]['member_of']}},
+                                                             {'admin_on_machines': 1})
+            for group in groups_from_mongo:
+                if group['admin_on_machines']:
+                    mongo.db.groupsandusers.update_one({'SID': info_for_mongo[profile]['SID']},
+                                                       {'$addToSet': {'admin_on_machines': {
+                                                           '$each': group['admin_on_machines']}}})
+
+    @staticmethod
+    def add_admin(group, machine_id):
+        for sid in group['entities_list']:
+            mongo.db.groupsandusers.update_one({'SID': sid},
+                                               {'$addToSet': {'admin_on_machines': machine_id}})
+            entity_details = mongo.db.groupsandusers.find_one({'SID': sid},
+                                                              {'type': 1, 'entities_list': 1})
+            if entity_details.get('type') == 2:
+                Telemetry.add_admin(entity_details, machine_id)
+
+    @staticmethod
+    def add_groups_to_collection(groups_info, info_for_mongo, monkey_id):
+        for group in groups_info:
+            if not group.get('LocalAccount'):
+                base_entity = Telemetry.build_entity_document(group)
+            else:
+                base_entity = Telemetry.build_entity_document(group, monkey_id)
+            base_entity['entities_list'] = []
+            base_entity['type'] = 2
+            info_for_mongo[base_entity.get('SID')] = base_entity
+
+    @staticmethod
+    def add_users_to_collection(users_info, info_for_mongo, users_secrets, monkey_id):
+        for user in users_info:
+            if not user.get('LocalAccount'):
+                base_entity = Telemetry.build_entity_document(user)
+            else:
+                base_entity = Telemetry.build_entity_document(user, monkey_id)
+            base_entity['NTLM_secret'] = users_secrets.get(base_entity['name'], {}).get('ntlm')
+            base_entity['SAM_secret'] = users_secrets.get(base_entity['name'], {}).get('sam')
+            base_entity['secret_location'] = []
+
+            base_entity['type'] = 1
+            info_for_mongo[base_entity.get('SID')] = base_entity
+
+    @staticmethod
+    def build_entity_document(entity_info, monkey_id=None):
+        general_properties_dict = {
+            'SID': str(entity_info['SID'])[4:-1],
+            'name': str(entity_info['Name'])[2:-1],
+            'machine_id': monkey_id,
+            'member_of': [],
+            'admin_on_machines': []
+        }
+
+        if monkey_id:
+            general_properties_dict['domain_name'] = None
+        else:
+            general_properties_dict['domain_name'] = str(entity_info['Domain'])[2:-1]
+
+        return general_properties_dict
+
+    @staticmethod
+    def create_group_user_connection(info_for_mongo, group_user_list):
+        for group_user_couple in group_user_list:
+            group_part = group_user_couple['GroupComponent']
+            child_part = group_user_couple['PartComponent']
+            group_sid = str(group_part['SID'])[4:-1]
+            groups_entities_list = info_for_mongo[group_sid]['entities_list']
+            child_sid = ''
+
+            if type(child_part) in (unicode, str):
+                child_part = str(child_part)
+                if "cimv2:Win32_UserAccount" in child_part:
+                    # domain user
+                    domain_name = child_part.split('cimv2:Win32_UserAccount.Domain="')[1].split('",Name="')[0]
+                    name = child_part.split('cimv2:Win32_UserAccount.Domain="')[1].split('",Name="')[1][:-2]
+
+                if "cimv2:Win32_Group" in child_part:
+                    # domain group
+                    domain_name = child_part.split('cimv2:Win32_Group.Domain="')[1].split('",Name="')[0]
+                    name = child_part.split('cimv2:Win32_Group.Domain="')[1].split('",Name="')[1][:-2]
+
+                    for entity in info_for_mongo:
+                        if info_for_mongo[entity]['name'] == name and info_for_mongo[entity]['domain'] == domain_name:
+                            child_sid = info_for_mongo[entity]['SID']
+            else:
+                child_sid = str(child_part['SID'])[4:-1]
+
+            if child_sid and child_sid not in groups_entities_list:
+                groups_entities_list.append(child_sid)
+
+            if child_sid: #and info_for_mongo.get(child_sid, {}).get('type') == 1:
+                if child_sid in info_for_mongo:
+                    info_for_mongo[child_sid]['member_of'].append(group_sid)
+
+
+################################################################
+
 
     @staticmethod
     def add_ip_to_ssh_keys(ip, ssh_info):

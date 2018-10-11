@@ -13,7 +13,4 @@ PyInstaller
 six
 ecdsa
 netifaces
-nos
 ipaddress
-wmi
-

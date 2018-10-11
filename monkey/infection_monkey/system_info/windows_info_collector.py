@@ -130,6 +130,7 @@ class WindowsInfoCollector(InfoCollector):
         super(WindowsInfoCollector, self).__init__()
         self._config = infection_monkey.config.WormConfiguration
         self.info['reg'] = {}
+        self.info['wmi'] = {}
 
     def get_info(self):
         """
@@ -164,7 +165,7 @@ class WindowsInfoCollector(InfoCollector):
 
     def get_wmi_info(self):
         for wmi_class_name in WMI_CLASSES:
-            self.info[wmi_class_name] = self.get_wmi_class(wmi_class_name)
+            self.info['wmi'][wmi_class_name] = self.get_wmi_class(wmi_class_name)
 
     def get_wmi_class(self, class_name, moniker="//./root/cimv2", properties=None):
         _wmi = wmi.WMI(moniker=moniker)
