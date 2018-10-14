@@ -118,10 +118,7 @@ class ReportService:
             [NodeService.get_displayed_node_by_id(node['_id'], True) for node in mongo.db.node.find({}, {'_id': 1})] \
             + [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
                mongo.db.monkey.find({}, {'_id': 1})]
-
         for node in nodes:
-            pth_services = PTHReportService.get_machine_details(NodeService.get_monkey_by_id(node['id'])
-                                                                .get('guid', None)).get('services', None)
             formatted_nodes.append(
                 {
                     'label': node['label'],
@@ -130,7 +127,7 @@ class ReportService:
                         (x['hostname'] for x in
                          (NodeService.get_displayed_node_by_id(edge['from'], True)
                           for edge in EdgeService.get_displayed_edges_by_to(node['id'], True))),
-                    'services': node['services'] + pth_services if pth_services else []
+                    'services': node['services']
                 })
 
         logger.info('Scanned nodes generated for reporting')
@@ -561,7 +558,8 @@ class ReportService:
             ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
             ReportService.get_azure_issues,
-            PTHReportService.get_duplicated_passwords_issues
+            PTHReportService.get_duplicated_passwords_issues,
+            PTHReportService.get_strong_users_on_crit_issues
         ]
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
 
@@ -720,7 +718,6 @@ class ReportService:
                 'pth':
                     {
                         'map': pth_report.get('pthmap'),
-                        'info': pth_report.get('report_info')
                     }
             }
 

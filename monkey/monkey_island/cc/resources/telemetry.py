@@ -197,17 +197,27 @@ class Telemetry(flask_restful.Resource):
             Telemetry.create_group_user_connection(info_for_mongo, group_user_dict)
             for entity in info_for_mongo.values():
                 if entity['machine_id']:
+                    # Handling for local entities.
                     mongo.db.groupsandusers.update({'SID': entity['SID'],
                                                     'machine_id': entity['machine_id']}, entity, upsert=True)
                 else:
+                    # Handlings for domain entities.
                     if not mongo.db.groupsandusers.find_one({'SID': entity['SID']}):
                         mongo.db.groupsandusers.insert_one(entity)
+                    else:
+                        # if entity is domain entity, add the monkey id of current machine to secrets_location.
+                        # (found on this machine)
+                        if entity.get('NTLM_secret'):
+                            mongo.db.groupsandusers.update_one({'SID': entity['SID'], 'type': 1},
+                                                               {'$addToSet': {'secret_location': monkey_id}})
 
             Telemetry.add_admin(info_for_mongo[group_info.ADMINISTRATORS_GROUP_KNOWN_SID], monkey_id)
             Telemetry.update_admins_retrospective(info_for_mongo)
             Telemetry.update_critical_services(telemetry_json['data']['wmi']['Win32_Service'],
                                                telemetry_json['data']['wmi']['Win32_Product'],
                                                monkey_id)
+
+
 
     @staticmethod
     def update_critical_services(wmi_services, wmi_products, machine_id):

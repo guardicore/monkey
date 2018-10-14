@@ -604,6 +604,10 @@ class PassTheHashReport(object):
         RIGHT_ARROW = u"\u2192"
         return "%s %s %s" % (attacker_label, RIGHT_ARROW, victim_label)
 
+
+
+
+
     def get_edges_by_sid(self):
         edges_list = []
 

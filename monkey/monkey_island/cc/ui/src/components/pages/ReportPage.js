@@ -411,17 +411,18 @@ class ReportPageComponent extends AuthComponent {
     return (
       <div id="recommendations">
         <h3>
-          Recommendations
-        </h3>
-        <div>
-          {this.generateIssues(this.state.report.recommendations.issues)}
-        </div>
-        <h3>
           Domain related recommendations
         </h3>
         <div>
           {this.generateIssues(this.state.report.recommendations.domain_issues)}
         </div>
+        <h3>
+          Machine related Recommendations
+        </h3>
+        <div>
+          {this.generateIssues(this.state.report.recommendations.issues)}
+        </div>
+
       </div>
     );
   }
@@ -474,9 +475,6 @@ class ReportPageComponent extends AuthComponent {
         <div style={{marginBottom: '20px'}}>
           <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>
-        <div>
-          <StrongUsers data = {this.state.pthreport.strong_users_on_crit_services} />
-        </div>
       </div>
     );
   }
@@ -487,6 +485,9 @@ class ReportPageComponent extends AuthComponent {
         <h3>
           Credential Map
         </h3>
+        <p>
+          This map visualizes possible attack paths through the network using credential compromise. Paths represent lateral movement opportunities by attackers.
+        </p>
         <div>
           <PassTheHashMapPageComponent graph={this.state.pthmap} />
         </div>
