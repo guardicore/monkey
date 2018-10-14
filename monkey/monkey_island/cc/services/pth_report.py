@@ -1,8 +1,6 @@
 import uuid
 from itertools import combinations, product
 
-from cc.services.edge import EdgeService
-from cc.services.pth_report_utils import PassTheHashReport, Machine
 from cc.database import mongo
 from bson import ObjectId
 
