@@ -347,8 +347,7 @@ class ReportPageComponent extends AuthComponent {
                   {this.state.report.overview.issues[this.Issue.HADOOP] ?
                     <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                   {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] ?
-                    <li>Credentials of strong users was found on machines and can give access to critical servers
-                    (DC, MSSQL, etc..)</li>: null }
+                    <li>Mimikatz found login credentials of a user who has admin access to a server defined as critical.</li>: null }
                 </ul>
               </div>
               :
@@ -375,11 +374,9 @@ class ReportPageComponent extends AuthComponent {
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
                     <li>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_LOCAL_ADMIN] ?
-                    <li>The monkey has found that some users have administrative rights on several machines.</li> : null}
-                  {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS_DOMAIN] ?
-                    <li>The monkey has found that some users are sharing passwords on domain accounts.</li> : null}
+                    <li>Shared local administrator account - Different machines have the same account as a local administrator.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS] ?
-                    <li>The monkey has found that some users are sharing passwords.</li> : null}
+                    <li>Multiple users have the same password</li> : null}
                 </ul>
               </div>
               :
@@ -471,9 +468,14 @@ class ReportPageComponent extends AuthComponent {
         <div style={{marginBottom: '20px'}}>
           <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
+        <div style={{position: 'relative', height: '80vh'}}>
         {this.generateReportPthMap()}
+        </div>
         <div style={{marginBottom: '20px'}}>
           <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
+        </div>
+        <div>
+          <StrongUsers data = {this.state.report.pth.strong_users} />
         </div>
       </div>
     );
@@ -488,6 +490,10 @@ class ReportPageComponent extends AuthComponent {
         <p>
           This map visualizes possible attack paths through the network using credential compromise. Paths represent lateral movement opportunities by attackers.
         </p>
+        <div className="map-legend">
+          <b>Legend: </b>
+          <span>Access credentials <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span> <b style={{color: '#aeaeae'}}> | </b>
+        </div>
         <div>
           <PassTheHashMapPageComponent graph={this.state.pthmap} />
         </div>
@@ -779,7 +785,7 @@ class ReportPageComponent extends AuthComponent {
   generateSharedLocalAdminsIssue(issue) {
     return (
     <li>
-        Credentials for the user <span className="label label-primary">{issue.username}</span> could be found and the user is an administrator account on more than one machines in the domain.
+        Make sure the right administrator accounts are managing the right machines, and that there isn’t an unintentional local admin sharing.
         <CollapsibleWellComponent>
           Here is a list of machines which has this account defined as an administrator:
           {this.generateInfoBadges(issue.shared_machines)}

@@ -11,7 +11,6 @@ const columns = [
     Header: 'Powerful Users',
     columns: [
       { Header: 'Username', accessor: 'username'},
-      { Header: 'Domain', accessor: 'domain'},
       { Header: 'Machines', id: 'machines', accessor: x => renderArray(x.machines)},
       { Header: 'Services', id: 'services', accessor: x => renderArray(x.services_names)}
     ]

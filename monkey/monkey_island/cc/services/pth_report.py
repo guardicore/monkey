@@ -7,14 +7,6 @@ from bson import ObjectId
 
 class PTHReportService(object):
 
-    """
-
-    """
-
-    def __init__(self):
-        pass
-
-
     @staticmethod
     def get_duplicated_passwords_nodes():
         users_cred_groups = []
@@ -154,6 +146,34 @@ class PTHReportService(object):
         return issues
 
     @staticmethod
+    def get_strong_users_on_crit_details():
+        table_entries = []
+        user_details = {}
+        crit_machines = PTHReportService.get_strong_users_on_critical_machines_nodes()
+        for machine in crit_machines:
+            for user in crit_machines[machine]['threatening_users']:
+                username = user['name']
+                if username not in user_details:
+                    user_details[username] = {}
+                    user_details[username]['machines'] = []
+                    user_details[username]['services'] = []
+                user_details[username]['machines'].append(machine)
+                user_details[username]['services'] += crit_machines[machine]['critical_services']
+
+        for user in user_details:
+            table_entries.append(
+                {
+                    'username': user,
+                    'machines': user_details[user]['machines'],
+                    'services_names': user_details[user]['services']
+                }
+            )
+
+        return table_entries
+
+
+
+    @staticmethod
     def generate_map_nodes():
 
         nodes_list = []
@@ -188,13 +208,12 @@ class PTHReportService(object):
             for pair in pairs:
                 edges_list.append(
                     {
-                        'from': pair[0],
-                        'to': pair[1],
+                        'from': pair[1],
+                        'to': pair[0],
                         'id': str(uuid.uuid4())
                     }
                 )
         return edges_list
-
 
     @staticmethod
     def generate_edges_tuples(*lists):
@@ -204,7 +223,6 @@ class PTHReportService(object):
                 # Don't output pairs containing duplicated elements
                 if pair[0] != pair[1]:
                     yield pair
-
 
     @staticmethod
     def get_report():
@@ -216,8 +234,10 @@ class PTHReportService(object):
             {
                 'report_info':
                     {
+                        'strong_users_table': PTHReportService.get_strong_users_on_crit_details(),
                         'pth_issues': issues
                     },
+
                 'pthmap':
                     {
                         'nodes': PTHReportService.generate_map_nodes(),

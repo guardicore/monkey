@@ -217,8 +217,6 @@ class Telemetry(flask_restful.Resource):
                                                telemetry_json['data']['wmi']['Win32_Product'],
                                                monkey_id)
 
-
-
     @staticmethod
     def update_critical_services(wmi_services, wmi_products, machine_id):
         critical_names = ("W3svc", "MSExchangeServiceHost", "MSSQLServer", "dns", 'MSSQL$SQLEXPRESS', 'SQL')

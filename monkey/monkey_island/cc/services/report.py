@@ -717,6 +717,7 @@ class ReportService:
                     },
                 'pth':
                     {
+                        'strong_users': pth_report['report_info']['strong_users_table'],
                         'map': pth_report.get('pthmap'),
                     }
             }
