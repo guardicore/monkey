@@ -787,7 +787,8 @@ class ReportPageComponent extends AuthComponent {
     <li>
         Make sure the right administrator accounts are managing the right machines, and that there isn’t an unintentional local admin sharing.
         <CollapsibleWellComponent>
-          Here is a list of machines which has this account defined as an administrator:
+          Here is a list of machines which the account <span
+          className="label label-primary">{issue.username}</span> is defined as an administrator:
           {this.generateInfoBadges(issue.shared_machines)}
         </CollapsibleWellComponent>
       </li>

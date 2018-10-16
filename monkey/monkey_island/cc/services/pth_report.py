@@ -171,8 +171,6 @@ class PTHReportService(object):
 
         return table_entries
 
-
-
     @staticmethod
     def generate_map_nodes():
 
