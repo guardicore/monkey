@@ -684,7 +684,6 @@ class ReportService:
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
         cross_segment_issues = ReportService.get_cross_segment_issues()
-        pth_report = PTHReportService.get_report()
 
         report = \
             {
@@ -717,8 +716,8 @@ class ReportService:
                     },
                 'pth':
                     {
-                        'strong_users': pth_report['report_info']['strong_users_table'],
-                        'map': pth_report.get('pthmap'),
+                        'strong_users': PTHReportService.get_strong_users_on_crit_details(),
+                        'map': PTHReportService.get_pth_map(),
                     }
             }
 

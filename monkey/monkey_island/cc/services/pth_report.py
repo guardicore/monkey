@@ -223,17 +223,21 @@ class PTHReportService(object):
                     yield pair
 
     @staticmethod
+    def get_pth_map():
+        return {
+            'nodes': PTHReportService.generate_map_nodes(),
+            'edges': PTHReportService.generate_edge_nodes()
+            }
+
+    @staticmethod
     def get_report():
 
         PTHReportService.get_strong_users_on_critical_machines_nodes()
-
-        issues = []
         report = \
             {
                 'report_info':
                     {
-                        'strong_users_table': PTHReportService.get_strong_users_on_crit_details(),
-                        'pth_issues': issues
+                        'strong_users_table': PTHReportService.get_strong_users_on_crit_details()
                     },
 
                 'pthmap':
@@ -244,3 +248,4 @@ class PTHReportService(object):
             }
 
         return report
+
