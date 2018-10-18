@@ -41,3 +41,5 @@ def extract_secrets_from_mimikatz(mim_string):
     extract_ntlm_secrets(mim_string, users_dict)
 
     return users_dict
+
+
