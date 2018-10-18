@@ -21,7 +21,7 @@ LOG = logging.getLogger(__name__)
 DOWNLOAD_CHUNK = 1024
 # random number greater than 5,
 # to prevent the monkey from just waiting forever to try and connect to an island before going elsewhere.
-TIMEOUT = 9
+TIMEOUT = 15
 
 
 class ControlClient(object):
