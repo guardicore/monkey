@@ -27,7 +27,7 @@ class MapPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.updateMapFromServer();
-    this.interval = setInterval(this.timedEvents, 1000);
+    this.interval = setInterval(this.timedEvents, 5000);
   }
 
   componentWillUnmount() {

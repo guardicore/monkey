@@ -12,7 +12,7 @@ if BASE_PATH not in sys.path:
 
 from cc.island_logger import json_setup_logging
 # This is here in order to catch EVERYTHING, some functions are being called on imports the log init needs to be on top.
-json_setup_logging(default_path='island_logger_default_config.json', default_level=logging.DEBUG)
+json_setup_logging(default_path='.\\monkey_island\\cc\\island_logger_default_config.json', default_level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 from cc.app import init_app
