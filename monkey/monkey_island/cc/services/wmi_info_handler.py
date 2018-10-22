@@ -25,6 +25,7 @@ class WMIHandler:
 
     def update_critical_services(self, wmi_services, wmi_products, machine_id):
         critical_names = ("W3svc", "MSExchangeServiceHost", "MSSQLServer", "dns", 'MSSQL$SQLEXPRESS', 'SQL')
+        mongo.db.monkey.update({'_id': machine_id}, {'$set': {'critical_services': []}})
 
         services_names_list = [str(i['Name'])[2:-1] for i in wmi_services]
         products_names_list = [str(i['Name'])[2:-2] for i in wmi_products]
