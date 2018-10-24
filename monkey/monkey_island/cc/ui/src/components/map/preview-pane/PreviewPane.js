@@ -1,9 +1,10 @@
 import React from 'react';
 import {Icon} from 'react-fa';
 import Toggle from 'react-toggle';
-import {OverlayTrigger, Panel, PanelGroup, Tooltip} from 'react-bootstrap';
+import {Button, OverlayTrigger, Panel, PanelGroup, Tooltip} from 'react-bootstrap';
 import download from 'downloadjs'
 import AuthComponent from '../../AuthComponent';
+import CollapsedTable from "./CollapsedTable";
 
 class PreviewPaneComponent extends AuthComponent {
 
@@ -215,7 +216,7 @@ class PreviewPaneComponent extends AuthComponent {
             <Panel.Title toggle><b>Pods' IPs</b></Panel.Title>
           </Panel.Heading>
           <Panel.Body collapsible>
-            <table className="table table-condensed"><tbody>
+            <table className="table"><tbody>
             {pod_ips.map(x => <tr key={x}><th/><td>{x}</td></tr>)}
             </tbody></table>
           </Panel.Body>
@@ -252,11 +253,11 @@ class PreviewPaneComponent extends AuthComponent {
         <th>Node Name</th>
         <td>{asset.k8s_node.name}</td>
       </tr>,
+      <tr key="pod-ips-label">
+        Pods' IP Addresses
+      </tr>,
       <tr key="pods-ips">
-        <th/>
-        <td>
           {this.k8sPodIpsPanel(asset.k8s_node.pod_ips)}
-        </td>
       </tr>,
       <tr key="host-network-pods">
         <th/>
@@ -321,11 +322,30 @@ class PreviewPaneComponent extends AuthComponent {
           {this.ipsRow(asset)}
           {this.servicesRow(asset)}
           {this.accessibleRow(asset)}
-          {isK8sNode ? this.k8sNodeRows(asset) : isK8sPod ? this.k8sPodRows(asset) : undefined}
           {isInfected ? this.forceKillRow(asset) : undefined}
           {isInfected ? this.downloadLogRow(asset) : undefined}
           </tbody>
         </table>
+        <table className="table table-condensed">
+          <tbody>
+          {this.osRow(asset)}
+          {isK8sNode ? this.k8sNodeRows(asset) : isK8sPod ? this.k8sPodRows(asset) : undefined}
+          </tbody>
+        </table>
+        <hr/>
+        <h4>
+          <b>Pods' IPs</b>
+        </h4>
+        <div>
+          {isK8sNode ?
+            <CollapsedTable
+              parseItemFunction={x => <tr key={x}><th/><td>{x}</td></tr>}
+              tableItems={asset.k8s_node.pod_ips}
+            />
+            :
+            undefined
+          }
+        </div>
         {this.exploitsTimeline(asset)}
       </div>
     );
