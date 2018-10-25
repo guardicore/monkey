@@ -186,19 +186,11 @@ class Telemetry(flask_restful.Resource):
             Telemetry.add_system_info_creds_to_config(creds)
             Telemetry.replace_user_dot_with_comma(creds)
         if 'mimikatz' in telemetry_json['data']:
-            users_secrets = user_info.extract_secrets_from_mimikatz(telemetry_json['data'].get('mimikatz', ''))
+            users_secrets = user_info.MimikatzSecrets.\
+                extract_secrets_from_mimikatz(telemetry_json['data'].get('mimikatz', ''))
         if 'wmi' in telemetry_json['data']:
             wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
-            wmi_handler.add_groups_to_collection()
-            wmi_handler.add_users_to_collection()
-            wmi_handler.create_group_user_connection()
-            wmi_handler.insert_info_to_mongo()
-
-            wmi_handler.add_admin(wmi_handler.info_for_mongo[wmi_handler.ADMINISTRATORS_GROUP_KNOWN_SID], monkey_id)
-            wmi_handler.update_admins_retrospective()
-            wmi_handler.update_critical_services(telemetry_json['data']['wmi']['Win32_Service'],
-                                                 telemetry_json['data']['wmi']['Win32_Product'],
-                                                 monkey_id)
+            wmi_handler.process_and_handle_wmi_info()
 
     @staticmethod
     def add_ip_to_ssh_keys(ip, ssh_info):

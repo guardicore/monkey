@@ -57,6 +57,7 @@ class MimikatzCollector(object):
         Gets the logon info from mimikatz.
         Returns a dictionary of users with their known credentials.
         """
+        LOG.info('Getting mimikatz logon information')
         if not self._isInit:
             return {}
         LOG.debug("Running mimikatz collector")

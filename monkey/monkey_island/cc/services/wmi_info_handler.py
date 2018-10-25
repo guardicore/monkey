@@ -1,7 +1,9 @@
 from cc.database import mongo
 
+__author__ = 'maor.rayzin'
 
-class WMIHandler:
+
+class WMIHandler(object):
 
     ADMINISTRATORS_GROUP_KNOWN_SID = '1-5-32-544'
 
@@ -13,26 +15,29 @@ class WMIHandler:
         self.users_info = wmi_info['Win32_UserAccount']
         self.groups_info = wmi_info['Win32_Group']
         self.groups_and_users = wmi_info['Win32_GroupUser']
+        self.products = wmi_info['Win32_Service']
+        self.services = wmi_info['Win32_Product']
 
-    def process_and_handle(self):
+    def process_and_handle_wmi_info(self):
 
         self.add_groups_to_collection()
         self.add_users_to_collection()
         self.create_group_user_connection()
+        self.insert_info_to_mongo()
         self.add_admin(self.info_for_mongo[self.ADMINISTRATORS_GROUP_KNOWN_SID], self.monkey_id)
         self.update_admins_retrospective()
-        self.insert_info_to_mongo()
+        self.update_critical_services()
 
-    def update_critical_services(self, wmi_services, wmi_products, machine_id):
+    def update_critical_services(self):
         critical_names = ("W3svc", "MSExchangeServiceHost", "MSSQLServer", "dns", 'MSSQL$SQLEXPRESS', 'SQL')
-        mongo.db.monkey.update({'_id': machine_id}, {'$set': {'critical_services': []}})
+        mongo.db.monkey.update({'_id': self.monkey_id}, {'$set': {'critical_services': []}})
 
-        services_names_list = [str(i['Name'])[2:-1] for i in wmi_services]
-        products_names_list = [str(i['Name'])[2:-2] for i in wmi_products]
+        services_names_list = [str(i['Name'])[2:-1] for i in self.services]
+        products_names_list = [str(i['Name'])[2:-2] for i in self.products]
 
         for name in critical_names:
             if name in services_names_list or name in products_names_list:
-                mongo.db.monkey.update({'_id': machine_id}, {'$addToSet': {'critical_services': name}})
+                mongo.db.monkey.update({'_id': self.monkey_id}, {'$addToSet': {'critical_services': name}})
 
     def build_entity_document(self, entity_info, monkey_id=None):
         general_properties_dict = {

@@ -9,9 +9,7 @@ import CollapsibleWellComponent from 'components/report-components/CollapsibleWe
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
 import PassTheHashMapPageComponent from "./PassTheHashMapPage";
-import SharedCreds from "components/report-components/SharedCreds";
 import StrongUsers from "components/report-components/StrongUsers";
-import SharedAdmins from "components/report-components/SharedAdmins";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 let monkeyLogoImage = require('../../images/monkey-icon.svg');
@@ -47,13 +45,10 @@ class ReportPageComponent extends AuthComponent {
     super(props);
     this.state = {
       report: {},
-      pthreport: {},
-      pthmap: {},
       graph: {nodes: [], edges: []},
       allMonkeysAreDead: false,
       runStarted: true
     };
-    this.getPth
   }
 
   componentDidMount() {
@@ -122,9 +117,7 @@ class ReportPageComponent extends AuthComponent {
         .then(res => res.json())
         .then(res => {
           this.setState({
-            report: res,
-            pthreport: res.pth.info,
-            pthmap: res.pth.map
+            report: res
           });
         });
     }
@@ -475,7 +468,7 @@ class ReportPageComponent extends AuthComponent {
           <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>
         <div>
-          <StrongUsers data = {this.state.report.pth.strong_users} />
+          <StrongUsers data = {this.state.report.glance.strong_users} />
         </div>
       </div>
     );
@@ -495,7 +488,7 @@ class ReportPageComponent extends AuthComponent {
           <span>Access credentials <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span> <b style={{color: '#aeaeae'}}> | </b>
         </div>
         <div>
-          <PassTheHashMapPageComponent graph={this.state.pthmap} />
+          <PassTheHashMapPageComponent graph={this.state.report.glance.pth_map} />
         </div>
         <br />
       </div>
