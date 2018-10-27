@@ -14,11 +14,11 @@ How to set up the Monkey Island server:
 
 	OR
 
-	3.1 If you have an instance of mongodb running on a different host, set the MONGO_URL environment variable:
+	3.1 If you have an instance of mongodb running on a different host, set the MONKEY_MONGO_URL environment variable:
 
 	    example for mongodb running on host with IP address 192.168.10.10:
 
-		set MONGO_URL="mongodb://192.168.10.10:27107/monkeyisland"
+		set MONKEY_MONGO_URL="mongodb://192.168.10.10:27107/monkeyisland"
 
 4. Place portable version of OpenSSL
 	4.1. Download from: https://indy.fulgan.com/SSL/openssl-1.0.2l-i386-win32.zip
@@ -72,11 +72,11 @@ How to run:
 	
 	OR
 
-	4.1 If you have an instance of mongodb running on a different host, set the MONGO_URL environment variable:
+	4.1 If you have an instance of mongodb running on a different host, set the MONKEY_MONGO_URL environment variable:
 
 	    example for mongodb running on host with IP address 192.168.10.10:
 
-		set MONGO_URL="mongodb://192.168.10.10:27107/monkeyisland"
+		set MONKEY_MONGO_URL="mongodb://192.168.10.10:27107/monkeyisland"
 
 5. install OpenSSL
     sudo apt-get install openssl
