@@ -98,7 +98,10 @@ class PTHReportService(object):
 
         # This mongo queries users the best solution to figure out if an array
         # object has at least two objects in it, by making sure any value exists in the array index 1.
-        admins = mongo.db.groupsandusers.find({'type': 1, 'admin_on_machines.1': {'$exists': True}},
+        # Excluding the name Administrator - its spamming the lists and not a surprise the domain Administrator account
+        # is shared.
+        admins = mongo.db.groupsandusers.find({'type': 1, 'name': {'$ne': 'Administrator'},
+                                               'admin_on_machines.1': {'$exists': True}},
                                               {'admin_on_machines': 1, 'name': 1, 'domain_name': 1})
         return [
             {
