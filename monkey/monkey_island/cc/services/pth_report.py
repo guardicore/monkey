@@ -29,10 +29,10 @@ class PTHReportService(object):
         return mongo.db.groupsandusers.aggregate(pipeline)
 
     @staticmethod
-    def __get_admin_on_machines_format(admin_on_machines):
+    def __get_admin_on_machines_format(admin_on_machines, domain_name):
 
         machines = mongo.db.monkey.find({'_id': {'$in': admin_on_machines}}, {'hostname': 1})
-        return [i['hostname'] for i in list(machines)]
+        return [domain_name + '\\' + i['hostname'] for i in list(machines)]
 
     @staticmethod
     def __strong_users_on_crit_query():
@@ -104,7 +104,7 @@ class PTHReportService(object):
             {
                 'name': admin['name'],
                 'domain_name': admin['domain_name'],
-                'admin_on_machines': PTHReportService.__get_admin_on_machines_format(admin['admin_on_machines'])
+                'admin_on_machines': PTHReportService.__get_admin_on_machines_format(admin['admin_on_machines'], admin['domain_name'])
             } for admin in admins
         ]
 
@@ -116,7 +116,7 @@ class PTHReportService(object):
                     'is_local': False,
                     'type': 'shared_admins_domain',
                     'machine': admin['domain_name'],
-                    'username': admin['name'],
+                    'username': admin['domain_name'] + '\\' + admin['name'],
                     'shared_machines': admin['admin_on_machines'],
             }
             for admin in admins_info]
