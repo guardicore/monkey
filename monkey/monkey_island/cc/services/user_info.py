@@ -22,7 +22,7 @@ class MimikatzSecrets(object):
             users_dict[username] = {}
 
             ntlm = sam_user.get("NTLM")
-            if "[hashed secret]" not in ntlm:
+            if not ntlm or "[hashed secret]" not in ntlm:
                 continue
 
             users_dict[username]['SAM'] = ntlm.replace("[hashed secret]", "").strip()

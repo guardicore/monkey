@@ -29,7 +29,7 @@ class WMIHandler(object):
         self.update_critical_services()
 
     def update_critical_services(self):
-        critical_names = ("W3svc", "MSExchangeServiceHost", "MSSQLServer", "dns", 'MSSQL$SQLEXPRESS', 'SQL')
+        critical_names = ("W3svc", "MSExchangeServiceHost", "dns", 'MSSQL$SQLEXPRES')
         mongo.db.monkey.update({'_id': self.monkey_id}, {'$set': {'critical_services': []}})
 
         services_names_list = [str(i['Name'])[2:-1] for i in self.services]

@@ -328,4 +328,4 @@ class NodeService:
 
     @staticmethod
     def get_hostname_by_id(node_id):
-        NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))
+        return NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))

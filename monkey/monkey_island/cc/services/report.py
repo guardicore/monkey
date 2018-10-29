@@ -159,7 +159,7 @@ class ReportService:
     @staticmethod
     def get_stolen_creds():
         PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
-        creds = set()
+        creds = []
         for telem in mongo.db.telemetry.find(
                 {'telem_type': 'system_info_collection', 'data.credentials': {'$exists': True}},
                 {'data.credentials': 1, 'monkey_guid': 1}
@@ -176,9 +176,10 @@ class ReportService:
                             'type': PASS_TYPE_DICT[pass_type],
                             'origin': origin
                         }
-                    creds.add(cred_row)
+                    if cred_row not in creds:
+                        creds.append(cred_row)
         logger.info('Stolen creds generated for reporting')
-        return list(creds)
+        return creds
 
     @staticmethod
     def get_ssh_keys():
@@ -560,7 +561,7 @@ class ReportService:
         issues_dict = {}
         for issue in issues:
             if issue.get('is_local', True):
-                machine = issue.get('machine').upper()
+                machine = issue.get('machine', '').upper()
                 if machine not in issues_dict:
                     issues_dict[machine] = []
                 issues_dict[machine].append(issue)
