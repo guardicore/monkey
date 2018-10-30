@@ -5,6 +5,7 @@ import {Button, OverlayTrigger, Panel, PanelGroup, Tooltip} from 'react-bootstra
 import download from 'downloadjs'
 import AuthComponent from '../../AuthComponent';
 import CollapsedTable from "./CollapsedTable";
+import CollapsedPanelGroup from "./CollapsedPanelGroup";
 
 class PreviewPaneComponent extends AuthComponent {
 
@@ -132,140 +133,93 @@ class PreviewPaneComponent extends AuthComponent {
   }
 
   k8sContainerRow(container) {
-    return [
+    return (
       <tr key={container.name + "-container-name"}>
-        <th>Name</th>
         <td>{container.name}</td>
-      </tr>,
-      <tr key={container.name + "-container-ports"}>
-        <th>Ports</th>
         <td>{container.ports.length > 0 ? container.ports.reduce((total, new_str) => total + ', ' + new_str) : 'None'}</td>
       </tr>
-
-    ];
-  }
-
-  k8sContainerPanel(k8s_pod) {
-    return (
-      <PanelGroup accordion id={k8s_pod.name + '-container-panel'}>
-        <Panel eventKey="container-panel">
-          <Panel.Heading>
-            <Panel.Title toggle><b>Pod's Containers</b></Panel.Title>
-          </Panel.Heading>
-          <Panel.Body collapsible>
-            <table className="table table-condensed"><tbody>
-            {k8s_pod.containers.map(x => this.k8sContainerRow(x))}
-            </tbody></table>
-          </Panel.Body>
-        </Panel>
-      </PanelGroup>
     );
   }
 
-  k8sLabelPanel(k8s_pod) {
+  k8sHostPodPanel(k8s_pod) {
     return (
-      <PanelGroup accordion id={k8s_pod.name + '-label-panel'}>
-        <Panel eventKey="label-panel">
-          <Panel.Heading>
-            <Panel.Title toggle><b>Pod's Labels</b></Panel.Title>
-          </Panel.Heading>
-          <Panel.Body collapsible>
+      <Panel eventKey={'container-panel-' + k8s_pod.name}>
+        <Panel.Heading>
+          <Panel.Title toggle><b>{k8s_pod.name}</b></Panel.Title>
+        </Panel.Heading>
+        <Panel.Body collapsible>
             <table className="table table-condensed"><tbody>
-            {k8s_pod.labels.map(x => <tr key={x.key}><th>{x.key}</th><td>{x.value}</td></tr>)}
+              <tr key="pod-namespace">
+                <th>Pod Namespace</th>
+                <td>{k8s_pod.namespace}</td>
+              </tr>
             </tbody></table>
-          </Panel.Body>
-        </Panel>
-      </PanelGroup>
+          {this.k8sPodInfoImp(k8s_pod)}
+        </Panel.Body>
+      </Panel>
     );
   }
 
-  k8sPodRowsImp(k8s_pod) {
-    return [
-      <tr key="pod-name">
-        <th>Pod Name</th>
-        <td>{k8s_pod.name}</td>
-      </tr>,
-      <tr key="pod-namespace">
-        <th>Pod Namespace</th>
-        <td>{k8s_pod.namespace}</td>
-      </tr>,
-      <tr key="pod-host">
-        <th>Pod's Host</th>
-        <td>{k8s_pod.node_name}</td>
-      </tr>,
-      <tr key="pod-containers">
-        <th/>
-        <td>
-          {this.k8sContainerPanel(k8s_pod)}
-        </td>
-      </tr>,
-      <tr key="pod-label">
-        <th/>
-        <td>
-          {this.k8sLabelPanel(k8s_pod)}
-        </td>
-      </tr>
-    ];
-  }
-
-  k8sPodIpsPanel(pod_ips) {
+  k8sPodInfoImp(k8s_pod) {
     return (
-      <PanelGroup accordion id={pod_ips.join('-') + '-pod-ips'}>
-        <Panel eventKey="container-panel">
-          <Panel.Heading>
-            <Panel.Title toggle><b>Pods' IPs</b></Panel.Title>
-          </Panel.Heading>
-          <Panel.Body collapsible>
-            <table className="table"><tbody>
-            {pod_ips.map(x => <tr key={x}><th/><td>{x}</td></tr>)}
-            </tbody></table>
-          </Panel.Body>
-        </Panel>
-      </PanelGroup>
-    );
-  }
-
-  k8sHostNetworkPodsPanel(asset) {
-    let k8s_host_pods = asset.k8s_host_pods;
-    return (
-      <PanelGroup accordion id={asset.host_ip + "-host-pods"}>
-        <Panel eventKey="container-panel">
-          <Panel.Heading>
-            <Panel.Title toggle><b>Host Network Pods</b></Panel.Title>
-          </Panel.Heading>
-          <Panel.Body collapsible>
-            <table className="table table-condensed"><tbody>
-            {k8s_host_pods.map(x => this.k8sPodRowsImp(x))}
-            </tbody></table>
-          </Panel.Body>
-        </Panel>
-      </PanelGroup>
+      <div key={"k8s-pod-info-" + k8s_pod.name}>
+        <h4>
+          <b>Pods' Containers</b>
+        </h4>
+        <div>
+          <CollapsedTable
+            parseItemFunction={x => this.k8sContainerRow(x)}
+            tableItems={k8s_pod.containers}
+            thead={<thead><tr><th>Container</th><th>Ports</th></tr></thead>}
+          />
+        </div>
+        <h4>
+          <b>Pods' Labels</b>
+        </h4>
+        <div>
+          <CollapsedTable
+            parseItemFunction={x => <tr key={x.key}><td>{x.key}</td><td>{x.value}</td></tr>}
+            tableItems={k8s_pod.labels}
+            thead={<thead><tr><th>Key</th><th>Value</th></tr></thead>}
+          />
+        </div>
+      </div>
     );
   }
 
   k8sNodeRows(asset) {
     return [
-      <tr key="k8s-node">
-        <th>Kubernetes</th>
-        <td>Node</td>
-      </tr>,
-      <tr key="node-name">
-        <th>Node Name</th>
-        <td>{asset.k8s_node.name}</td>
-      </tr>,
-      <tr key="pod-ips-label">
-        Pods' IP Addresses
-      </tr>,
-      <tr key="pods-ips">
-          {this.k8sPodIpsPanel(asset.k8s_node.pod_ips)}
-      </tr>,
-      <tr key="host-network-pods">
-        <th/>
-        <td>
-          {this.k8sHostNetworkPodsPanel(asset)}
-        </td>
-      </tr>
+        <tr key="k8s-node">
+          <th>Kubernetes</th>
+          <td>Node</td>
+        </tr>,
+        <tr key="node-name">
+          <th>Node Name</th>
+          <td>{asset.k8s_node.name}</td>
+        </tr>
     ];
+  }
+
+  k8sNodeInfo(asset) {
+    return (
+      <div key={"k8s-node-info-" + asset.k8s_node.name}>
+        <h4>
+          <b>Pods' IPs</b>
+        </h4>
+        <CollapsedTable
+          parseItemFunction={x => <tr key={x}><td><li>{x}</li></td></tr>}
+          tableItems={asset.k8s_node.pod_ips}
+        />
+        <h4>
+          <b>Host Network Pods</b>
+        </h4>
+        <CollapsedPanelGroup
+          parseItemFunction={x => this.k8sHostPodPanel(x)}
+          panelItems={asset.k8s_host_pods}
+          id={"k8s-node-host-pods-" + asset.k8s_node.name}
+        />
+      </div>
+    );
   }
 
   k8sPodRows(asset) {
@@ -273,8 +227,24 @@ class PreviewPaneComponent extends AuthComponent {
       <tr key="k8s-pod">
         <th>Kubernetes</th>
         <td>Pod</td>
+      </tr>,
+      <tr key="pod-name">
+        <th>Pod Name</th>
+        <td>{asset.k8s_pod.name}</td>
+      </tr>,
+      <tr key="pod-namespace">
+        <th>Pod Namespace</th>
+        <td>{asset.k8s_pod.namespace}</td>
+      </tr>,
+      <tr key="pod-host">
+        <th>Pod's Host</th>
+        <td>{asset.k8s_pod.node_name}</td>
       </tr>
-    ].concat(this.k8sPodRowsImp(asset.k8s_pod));
+    ]
+  }
+
+  k8sPodInfo(asset) {
+    return this.k8sPodInfoImp(asset.k8s_pod);
   }
 
   exploitsTimeline(asset) {
@@ -324,28 +294,10 @@ class PreviewPaneComponent extends AuthComponent {
           {this.accessibleRow(asset)}
           {isInfected ? this.forceKillRow(asset) : undefined}
           {isInfected ? this.downloadLogRow(asset) : undefined}
-          </tbody>
-        </table>
-        <table className="table table-condensed">
-          <tbody>
-          {this.osRow(asset)}
           {isK8sNode ? this.k8sNodeRows(asset) : isK8sPod ? this.k8sPodRows(asset) : undefined}
           </tbody>
         </table>
-        <hr/>
-        <h4>
-          <b>Pods' IPs</b>
-        </h4>
-        <div>
-          {isK8sNode ?
-            <CollapsedTable
-              parseItemFunction={x => <tr key={x}><th/><td>{x}</td></tr>}
-              tableItems={asset.k8s_node.pod_ips}
-            />
-            :
-            undefined
-          }
-        </div>
+        {isK8sNode ? this.k8sNodeInfo(asset) : isK8sPod ? this.k8sPodInfo(asset) : undefined}
         {this.exploitsTimeline(asset)}
       </div>
     );
