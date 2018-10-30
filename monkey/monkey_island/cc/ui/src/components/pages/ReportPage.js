@@ -26,7 +26,8 @@ class ReportPageComponent extends AuthComponent {
       STOLEN_SSH_KEYS: 7,
       STRUTS2: 8,
       WEBLOGIC: 9,
-      HADOOP: 10
+      HADOOP: 10,
+      K8S_KUBELET_RO: 11
     };
 
   Warning =
@@ -334,6 +335,8 @@ class ReportPageComponent extends AuthComponent {
                       CVE-2017-10271</a>)</li> : null }
                   {this.state.report.overview.issues[this.Issue.HADOOP] ?
                     <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
+                  {this.state.report.overview.issues[this.Issue.K8S_KUBELET_RO] ?
+                    <li>Kubernetes nodes provide extensive cluster information via kubelet readonly API.</li> : null }
                 </ul>
               </div>
               :
@@ -771,7 +774,20 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-
+  generateK8sKubeletRoIssue(issue) {
+    return (
+      <li>
+        TODO: Add solution to kubelet RO issue.
+        <CollapsibleWellComponent>
+          Kubelet read-only server at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) prvoides <span
+          className="label label-danger">extensive cluster information</span>.
+          <br/>
+          The attack was made possible due to default kubernetes configuration being insecure.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
 
   generateIssue = (issue) => {
     let data;
@@ -826,6 +842,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'hadoop':
         data = this.generateHadoopIssue(issue);
+        break;
+      case 'k8s_kubelet_ro':
+        data = this.generateK8sKubeletRoIssue(issue);
         break;
     }
     return data;

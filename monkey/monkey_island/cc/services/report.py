@@ -50,7 +50,8 @@ class ReportService:
         STOLEN_SSH_KEYS = 7
         STRUTS2 = 8
         WEBLOGIC = 9,
-        HADOOP = 10
+        HADOOP = 10,
+        K8S_KUBELET_RO = 11
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -103,6 +104,30 @@ class ReportService:
                 'users': set([instance['username'] for instance in creds if instance['origin'] == machine])
             }
             for machine in machines]
+
+    @staticmethod
+    def get_k8s_kubelet_ro_issues():
+        # Set of IP addresses of machines with exposed k8s kubelet ro API.
+        ip_addresses =\
+            {
+                m['data']['machine']['ip_addr'] for m in
+                mongo.db.telemetry.find(
+                    {'data.machine.services.tcp-10255.data.pods': {'$exists': True}},
+                    {'data.machine.ip_addr': 1}
+                )
+            }
+
+        issues = [
+            {
+                'type': 'k8s_kubelet_ro',
+                'machine': NodeService.get_generic_node_label_by_id(
+                    (NodeService.get_node_or_monkey_by_ip(ip_address))['_id'], True),
+                'ip_address': ip_address
+            }
+            for ip_address in ip_addresses]
+
+        logger.info('k8s kubelet ro issues generated for reporting')
+        return issues
 
     @staticmethod
     def get_scanned():
@@ -525,7 +550,8 @@ class ReportService:
             ReportService.get_exploits,
             ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
-            ReportService.get_azure_issues
+            ReportService.get_azure_issues,
+            ReportService.get_k8s_kubelet_ro_issues
         ]
 
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
@@ -598,6 +624,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.WEBLOGIC.value] = True
                 elif issue['type'] == 'hadoop':
                     issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
+                elif issue['type'] == 'k8s_kubelet_ro':
+                    issues_byte_array[ReportService.ISSUES_DICT.K8S_KUBELET_RO.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
