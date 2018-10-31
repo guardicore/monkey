@@ -8,7 +8,12 @@ from cc.services.node import NodeService
 
 __author__ = 'maor.rayzin'
 
+
 class PTHReportService(object):
+    """
+    A static class supplying utils to produce a report based on the PTH related information
+    gathered via mimikatz and wmi.
+    """
 
     @staticmethod
     def __dup_passwords_mongoquery():
