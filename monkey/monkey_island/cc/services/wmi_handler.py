@@ -1,4 +1,5 @@
 from cc.database import mongo
+from cc.services.groups_and_users_consts import USERTYPE
 
 __author__ = 'maor.rayzin'
 
@@ -15,8 +16,8 @@ class WMIHandler(object):
         self.users_info = wmi_info['Win32_UserAccount']
         self.groups_info = wmi_info['Win32_Group']
         self.groups_and_users = wmi_info['Win32_GroupUser']
-        self.products = wmi_info['Win32_Service']
-        self.services = wmi_info['Win32_Product']
+        self.services = wmi_info['Win32_Service']
+        self.products = wmi_info['Win32_Product']
 
     def process_and_handle_wmi_info(self):
 
@@ -128,7 +129,7 @@ class WMIHandler(object):
                     # if entity is domain entity, add the monkey id of current machine to secrets_location.
                     # (found on this machine)
                     if entity.get('NTLM_secret'):
-                        mongo.db.groupsandusers.update_one({'SID': entity['SID'], 'type': 1},
+                        mongo.db.groupsandusers.update_one({'SID': entity['SID'], 'type': USERTYPE},
                                                            {'$addToSet': {'secret_location': self.monkey_id}})
 
     def update_admins_retrospective(self):
@@ -148,7 +149,7 @@ class WMIHandler(object):
             mongo.db.groupsandusers.update_one({'SID': sid},
                                                {'$addToSet': {'admin_on_machines': machine_id}})
             entity_details = mongo.db.groupsandusers.find_one({'SID': sid},
-                                                              {'type': 1, 'entities_list': 1})
+                                                              {'type': USERTYPE, 'entities_list': 1})
             if entity_details.get('type') == 2:
                 self.add_admin(entity_details, machine_id)
 

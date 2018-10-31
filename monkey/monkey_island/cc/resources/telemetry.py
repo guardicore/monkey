@@ -9,12 +9,12 @@ from flask import request
 
 from cc.auth import jwt_required
 from cc.database import mongo
-from cc.services import user_info
+from cc.services import mimikatz_utils
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 from cc.encryptor import encryptor
-from cc.services.wmi_info_handler import WMIHandler
+from cc.services.wmi_handler import WMIHandler
 
 __author__ = 'Barak'
 
@@ -186,7 +186,7 @@ class Telemetry(flask_restful.Resource):
             Telemetry.add_system_info_creds_to_config(creds)
             Telemetry.replace_user_dot_with_comma(creds)
         if 'mimikatz' in telemetry_json['data']:
-            users_secrets = user_info.MimikatzSecrets.\
+            users_secrets = mimikatz_utils.MimikatzSecrets.\
                 extract_secrets_from_mimikatz(telemetry_json['data'].get('mimikatz', ''))
         if 'wmi' in telemetry_json['data']:
             wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)

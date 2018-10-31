@@ -3,6 +3,7 @@ from itertools import product
 from cc.database import mongo
 from bson import ObjectId
 
+from cc.services.groups_and_users_consts import USERTYPE
 from cc.services.node import NodeService
 
 __author__ = 'maor.rayzin'
@@ -11,6 +12,19 @@ class PTHReportService(object):
 
     @staticmethod
     def __dup_passwords_mongoquery():
+        """
+            This function build and query the mongoDB for users found that are using the same passwords, this is done
+            by comparing the NTLM hash found for each user by mimikatz.
+        :return:
+            A list of mongo documents (dicts in python) that look like this:
+            {
+                '_id': The NTLM hash,
+                'count': How many users share it.
+                'Docs': the name, domain name, _Id, and machine_id of the users
+            }
+        """
+
+
         pipeline = [
             {"$match": {
                 'NTLM_secret': {
@@ -30,18 +44,31 @@ class PTHReportService(object):
 
     @staticmethod
     def __get_admin_on_machines_format(admin_on_machines, domain_name):
-
+        """
+        This function finds for each admin user, what machines its admin of and compile them to a list.
+        :param admin_on_machines: A list of "monkey" documents "_id"s
+        :param domain_name: The admin's domain name
+        :return:
+        A list of formatted machines names *domain*\*hostname*, to use in shared admins issues.
+        """
         machines = mongo.db.monkey.find({'_id': {'$in': admin_on_machines}}, {'hostname': 1})
         return [domain_name + '\\' + i['hostname'] for i in list(machines)]
 
     @staticmethod
     def __strong_users_on_crit_query():
+        """
+            This function build and query the mongoDB for users that mimikatz was able to find cached NTLM hash and
+            are administrators on machines with services predefined as important services thus making these machines
+            critical.
+        :return:
+            A list of said users
+        """
         pipeline = [
             {
                 '$unwind': '$admin_on_machines'
             },
             {
-                '$match': {'type': 1, 'domain_name': {'$ne': None}}
+                '$match': {'type': USERTYPE, 'domain_name': {'$ne': None}}
             },
             {
                 '$lookup':
@@ -100,7 +127,7 @@ class PTHReportService(object):
         # object has at least two objects in it, by making sure any value exists in the array index 1.
         # Excluding the name Administrator - its spamming the lists and not a surprise the domain Administrator account
         # is shared.
-        admins = mongo.db.groupsandusers.find({'type': 1, 'name': {'$ne': 'Administrator'},
+        admins = mongo.db.groupsandusers.find({'type': USERTYPE, 'name': {'$ne': 'Administrator'},
                                                'admin_on_machines.1': {'$exists': True}},
                                               {'admin_on_machines': 1, 'name': 1, 'domain_name': 1})
         return [
@@ -200,7 +227,7 @@ class PTHReportService(object):
             {
                 'admin_on_machines': {'$ne': []},
                 'secret_location': {'$ne': []},
-                'type': 1
+                'type': USERTYPE
             },
             {
                 'admin_on_machines': 1, 'secret_location': 1
