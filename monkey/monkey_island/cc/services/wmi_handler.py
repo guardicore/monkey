@@ -1,5 +1,5 @@
 from cc.database import mongo
-from cc.services.groups_and_users_consts import USERTYPE
+from cc.services.groups_and_users_consts import USERTYPE, GROUPTYPE
 
 __author__ = 'maor.rayzin'
 
@@ -66,7 +66,7 @@ class WMIHandler(object):
             base_entity['SAM_secret'] = self.users_secrets.get(base_entity['name'], {}).get('sam')
             base_entity['secret_location'] = []
 
-            base_entity['type'] = 1
+            base_entity['type'] = USERTYPE
             self.info_for_mongo[base_entity.get('SID')] = base_entity
 
     def add_groups_to_collection(self):
@@ -76,7 +76,7 @@ class WMIHandler(object):
             else:
                 base_entity = self.build_entity_document(group, self.monkey_id)
             base_entity['entities_list'] = []
-            base_entity['type'] = 2
+            base_entity['type'] = GROUPTYPE
             self.info_for_mongo[base_entity.get('SID')] = base_entity
 
     def create_group_user_connection(self):
@@ -150,6 +150,6 @@ class WMIHandler(object):
                                                {'$addToSet': {'admin_on_machines': machine_id}})
             entity_details = mongo.db.groupsandusers.find_one({'SID': sid},
                                                               {'type': USERTYPE, 'entities_list': 1})
-            if entity_details.get('type') == 2:
+            if entity_details.get('type') == GROUPTYPE:
                 self.add_admin(entity_details, machine_id)
 
