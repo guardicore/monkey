@@ -143,18 +143,20 @@ class PreviewPaneComponent extends AuthComponent {
 
   k8sHostPodPanel(k8s_pod) {
     return (
-      <Panel eventKey={'container-panel-' + k8s_pod.name}>
+      <Panel key={'container-panel-' + k8s_pod.name} eventKey={'container-panel-' + k8s_pod.name}>
         <Panel.Heading>
           <Panel.Title toggle><b>{k8s_pod.name}</b></Panel.Title>
         </Panel.Heading>
         <Panel.Body collapsible>
+          <div style={{overflow: 'auto'}}>
             <table className="table table-condensed"><tbody>
-              <tr key="pod-namespace">
-                <th>Pod Namespace</th>
-                <td>{k8s_pod.namespace}</td>
-              </tr>
+            <tr key="pod-namespace">
+              <th>Pod Namespace</th>
+              <td>{k8s_pod.namespace}</td>
+            </tr>
             </tbody></table>
-          {this.k8sPodInfoImp(k8s_pod)}
+            {this.k8sPodInfoImp(k8s_pod)}
+          </div>
         </Panel.Body>
       </Panel>
     );
@@ -390,7 +392,9 @@ class PreviewPaneComponent extends AuthComponent {
             </h3>
 
             <hr/>
-            {info}
+            <div style={{overflow: 'auto', maxHeight: '62vh'}}>
+              {info}
+            </div>
           </div>
         }
       </div>
