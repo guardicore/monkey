@@ -18,7 +18,7 @@ class PTHReportService(object):
     @staticmethod
     def __dup_passwords_mongoquery():
         """
-            This function build and query the mongoDB for users found that are using the same passwords, this is done
+            This function builds and queries the mongoDB for users that are using the same passwords. this is done
             by comparing the NTLM hash found for each user by mimikatz.
         :return:
             A list of mongo documents (dicts in python) that look like this:
