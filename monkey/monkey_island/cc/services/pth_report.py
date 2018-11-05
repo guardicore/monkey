@@ -50,7 +50,7 @@ class PTHReportService(object):
     @staticmethod
     def __get_admin_on_machines_format(admin_on_machines, domain_name):
         """
-        This function finds for each admin user, what machines its admin of and compile them to a list.
+        This function finds for each admin user, which machines its an admin of, and compile them to a list.
         :param admin_on_machines: A list of "monkey" documents "_id"s
         :param domain_name: The admin's domain name
         :return:
