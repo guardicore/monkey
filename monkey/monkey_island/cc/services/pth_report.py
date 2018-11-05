@@ -62,7 +62,7 @@ class PTHReportService(object):
     @staticmethod
     def __strong_users_on_crit_query():
         """
-            This function build and query the mongoDB for users that mimikatz was able to find cached NTLM hash and
+            This function build and query the mongoDB for users that mimikatz was able to find cached NTLM hashes and
             are administrators on machines with services predefined as important services thus making these machines
             critical.
         :return:
