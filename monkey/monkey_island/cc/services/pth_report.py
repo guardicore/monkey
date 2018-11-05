@@ -52,7 +52,7 @@ class PTHReportService(object):
         """
         This function finds for each admin user, which machines its an admin of, and compile them to a list.
         :param admin_on_machines: A list of "monkey" documents "_id"s
-        :param domain_name: The admin's domain name
+        :param domain_name: The admins' domain name
         :return:
         A list of formatted machines names *domain*\*hostname*, to use in shared admins issues.
         """
