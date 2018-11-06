@@ -44,8 +44,10 @@ class MimikatzCollector(object):
             self._dll = ctypes.WinDLL(get_binary_file_path(self.MIMIKATZ_DLL_NAME))
             collect_proto = ctypes.WINFUNCTYPE(ctypes.c_int)
             get_proto = ctypes.WINFUNCTYPE(MimikatzCollector.LogonData)
+            get_text_output_proto = ctypes.WINFUNCTYPE(ctypes.c_wchar_p)
             self._collect = collect_proto(("collect", self._dll))
             self._get = get_proto(("get", self._dll))
+            self._get_text_output_proto = get_text_output_proto(("getTextOutput", self._dll))
             self._isInit = True
         except Exception:
             LOG.exception("Error initializing mimikatz collector")
@@ -55,6 +57,7 @@ class MimikatzCollector(object):
         Gets the logon info from mimikatz.
         Returns a dictionary of users with their known credentials.
         """
+        LOG.info('Getting mimikatz logon information')
         if not self._isInit:
             return {}
         LOG.debug("Running mimikatz collector")
@@ -64,6 +67,8 @@ class MimikatzCollector(object):
 
             logon_data_dictionary = {}
             hostname = socket.gethostname()
+            
+            self.mimikatz_text = self._get_text_output_proto()
 
             for i in range(entry_count):
                 entry = self._get()
@@ -97,6 +102,9 @@ class MimikatzCollector(object):
         except Exception:
             LOG.exception("Error getting logon info")
             return {}
+    
+    def get_mimikatz_text(self):
+        return self.mimikatz_text
 
     class LogonData(ctypes.Structure):
         """
