@@ -1,7 +1,7 @@
 How to set up the Monkey Island server:
 
 ---------------- On Windows ----------------:
-0. Exclude the folder you are planning to install monkey on from windows deffender as it will start deleting source files.
+0. Exclude the folder you are planning to install the Monkey in from your AV software, as it might block or delete files from the installation.
 1. Create folder "bin" under monkey_island
 2. Place portable version of Python 2.7
 	2.1. Download and install from: https://www.python.org/download/releases/2.7/
