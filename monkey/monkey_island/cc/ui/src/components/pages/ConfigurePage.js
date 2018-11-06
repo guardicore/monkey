@@ -50,6 +50,13 @@ class ConfigurePageComponent extends AuthComponent {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(this.state.configuration)
       })
+      .then(res => {
+        if (!res.ok)
+        {
+          throw Error()
+        }
+        return res;
+      })
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -58,6 +65,9 @@ class ConfigurePageComponent extends AuthComponent {
           configuration: res.configuration
         });
         this.props.onStatusChange();
+      }).catch(error => {
+        console.log('bad configuration');
+        this.setState({lastAction: 'invalid_configuration'});
       });
   };
 
@@ -215,6 +225,12 @@ class ConfigurePageComponent extends AuthComponent {
             <div className="alert alert-danger">
               <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
               Failed importing configuration. Invalid config file.
+            </div>
+            : ''}
+          { this.state.lastAction === 'invalid_configuration' ?
+            <div className="alert alert-danger">
+              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
+              An invalid configuration file was imported and submitted, probably outdated.
             </div>
             : ''}
           { this.state.lastAction === 'import_success' ?

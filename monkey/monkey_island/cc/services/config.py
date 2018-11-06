@@ -977,9 +977,14 @@ class ConfigService:
     @staticmethod
     def update_config(config_json, should_encrypt):
         if should_encrypt:
-            ConfigService.encrypt_config(config_json)
+            try:
+                ConfigService.encrypt_config(config_json)
+            except KeyError as e:
+                logger.error('Bad configuration file was submitted.')
+                return False
         mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
         logger.info('monkey config was updated')
+        return True
 
     @staticmethod
     def init_default_config():
