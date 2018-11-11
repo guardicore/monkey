@@ -7,6 +7,8 @@ import struct
 import time
 import re
 
+from six.moves import range
+
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
 IP_ADDR_RE = r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
@@ -240,8 +242,8 @@ def _traceroute_linux(target_ip, ttl):
         proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
         stdout, stderr = proc_obj.communicate()
         ips = re.findall(IP_ADDR_RE, stdout)
-        if len(ips) < 2:
-            raise Exception("Unexpected output")
+        if len(ips) < 2:  # Unexpected output. Fail the whole thing since it's not reliable.
+            return []
         elif ips[-1] in trace_list:  # Failed getting this hop
             trace_list.append(None)
         else:
