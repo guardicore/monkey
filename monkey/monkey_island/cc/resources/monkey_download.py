@@ -1,14 +1,13 @@
-import logging
 import json
-
+import logging
 import os
-from flask import request, send_from_directory
+
 import flask_restful
+from flask import request, send_from_directory
 
 __author__ = 'Barak'
 
 logger = logging.getLogger(__name__)
-
 
 MONKEY_DOWNLOADS = [
     {
@@ -81,7 +80,8 @@ class MonkeyDownload(flask_restful.Resource):
             result = get_monkey_executable(host_os.get('type'), host_os.get('machine'))
 
             if result:
-                real_path = os.path.join('binaries', result['filename'])
+                # change resulting from new base path
+                real_path = os.path.join("monkey_island", "cc", 'binaries', result['filename'])
                 if os.path.isfile(real_path):
                     result['size'] = os.path.getsize(real_path)
                     return result

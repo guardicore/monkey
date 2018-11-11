@@ -1,6 +1,7 @@
 How to set up the Monkey Island server:
 
 ---------------- On Windows ----------------:
+0. Exclude the folder you are planning to install the Monkey in from your AV software, as it might block or delete files from the installation.
 1. Create folder "bin" under monkey_island
 2. Place portable version of Python 2.7
 	2.1. Download and install from: https://www.python.org/download/releases/2.7/
@@ -11,8 +12,9 @@ How to set up the Monkey Island server:
 3. Place portable version of mongodb
 	3.1. Download from: https://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip
 	3.2. Extract contents from bin folder to monkey_island\bin\mongodb.
+	3.3. Create monkey_island\db folder.
 4. Place portable version of OpenSSL
-	4.1. Download from: https://indy.fulgan.com/SSL/openssl-1.0.2l-i386-win32.zip
+	4.1. Download from: https://indy.fulgan.com/SSL/Archive/openssl-1.0.2l-i386-win32.zip
 	4.2. Extract content from bin folder to monkey_island\bin\openssl
 5. Download and install Microsoft Visual C++ redistributable for Visual Studio 2017
 	5.1. Download and install from: https://go.microsoft.com/fwlink/?LinkId=746572

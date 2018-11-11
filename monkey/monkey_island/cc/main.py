@@ -1,6 +1,7 @@
 from __future__ import print_function  # In python 2.7
 
 import os
+import os.path
 import sys
 import time
 import logging
@@ -12,7 +13,8 @@ if BASE_PATH not in sys.path:
 
 from cc.island_logger import json_setup_logging
 # This is here in order to catch EVERYTHING, some functions are being called on imports the log init needs to be on top.
-json_setup_logging(default_path='island_logger_default_config.json', default_level=logging.DEBUG)
+json_setup_logging(default_path=os.path.join(BASE_PATH, 'cc', 'island_logger_default_config.json'),
+                   default_level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 from cc.app import init_app

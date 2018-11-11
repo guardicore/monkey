@@ -2,24 +2,24 @@ import React from 'react';
 import ReactTable from 'react-table'
 
 let renderArray = function(val) {
+  console.log(val);
   return <div>{val.map(x => <div>{x}</div>)}</div>;
 };
 
 const columns = [
   {
-    Header: 'Scanned Servers',
+    Header: 'Powerful Users',
     columns: [
-      { Header: 'Machine', accessor: 'label'},
-      { Header: 'IP Addresses', id: 'ip_addresses', accessor: x => renderArray(x.ip_addresses)},
-      { Header: 'Accessible From', id: 'accessible_from_nodes', accessor: x => renderArray(x.accessible_from_nodes)},
-      { Header: 'Services', id: 'services', accessor: x => renderArray(x.services)}
+      { Header: 'Username', accessor: 'username'},
+      { Header: 'Machines', id: 'machines', accessor: x => renderArray(x.machines)},
+      { Header: 'Services', id: 'services', accessor: x => renderArray(x.services_names)}
     ]
   }
 ];
 
 const pageSize = 10;
 
-class ScannedServersComponent extends React.Component {
+class StrongUsersComponent extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -40,4 +40,4 @@ class ScannedServersComponent extends React.Component {
   }
 }
 
-export default ScannedServersComponent;
+export default StrongUsersComponent;

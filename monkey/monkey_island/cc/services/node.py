@@ -138,6 +138,11 @@ class NodeService:
         return NodeService.get_monkey_label(NodeService.get_monkey_by_id(monkey_id))
 
     @staticmethod
+    def get_monkey_critical_services(monkey_id):
+        critical_services = mongo.db.monkey.find_one({'_id': monkey_id}, {'critical_services': 1}).get('critical_services', [])
+        return critical_services
+
+    @staticmethod
     def get_monkey_label(monkey, for_report=False):
         if for_report:
             return monkey['hostname']
@@ -361,3 +366,7 @@ class NodeService:
     @staticmethod
     def get_node_hostname(node):
         return node['hostname'] if 'hostname' in node else node['os']['version']
+
+    @staticmethod
+    def get_hostname_by_id(node_id):
+        return NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))
