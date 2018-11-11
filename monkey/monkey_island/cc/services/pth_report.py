@@ -94,6 +94,10 @@ class PTHReportService(object):
         return mongo.db.groupsandusers.aggregate(pipeline)
 
     @staticmethod
+    def __build_dup_user_label(i):
+        return i['hostname'] + '\\' + i['username'] if i['hostname'] else i['domain_name'] + '\\' + i['username']
+
+    @staticmethod
     def get_duplicated_passwords_nodes():
         users_cred_groups = []
         docs = PTHReportService.__dup_passwords_mongoquery()
@@ -119,8 +123,7 @@ class PTHReportService(object):
                 {
                     'type': 'shared_passwords_domain' if user_info['domain_name'] else 'shared_passwords',
                     'machine': user_info['hostname'] if user_info['hostname'] else user_info['domain_name'],
-                    'shared_with': [i['hostname'] if i['hostname']
-                                    else i['domain_name'] + '\\' + i['username'] for i in group['cred_groups']],
+                    'shared_with': [PTHReportService.__build_dup_user_label(i) for i in group['cred_groups']],
                     'is_local': False if user_info['domain_name'] else True
                 }
             )
