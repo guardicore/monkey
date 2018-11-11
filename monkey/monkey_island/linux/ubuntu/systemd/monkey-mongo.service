@@ -1,0 +1,12 @@
+[Unit]
+Description=Monkey Island Mongo Service
+After=network.target
+
+[Service]
+ExecStart=/var/monkey/monkey_island/bin/mongodb/bin/mongod --quiet --dbpath /var/monkey/monkey_island/db
+KillMode=process
+Restart=always
+ExecStop=/var/monkey/monkey_island/bin/mongodb/bin/mongod --shutdown
+
+[Install]
+WantedBy=multi-user.target
