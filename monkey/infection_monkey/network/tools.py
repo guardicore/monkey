@@ -5,12 +5,11 @@ import select
 import socket
 import struct
 import time
-
-from six import text_type
-import ipaddress
+import re
 
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
+IP_ADDR_RE = r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
 
 LOG = logging.getLogger(__name__)
 SLEEP_BETWEEN_POLL = 0.5
@@ -176,56 +175,82 @@ def tcp_port_to_service(port):
 
 def traceroute(target_ip, ttl):
     """
-    Traceroute for a specific IP.
-    :param target_ip: Destination
+    Traceroute for a specific IP/name.
+    :param target_ip: IP/name of target
     :param ttl: Max TTL
     :return: Sequence of IPs in the way
     """
     if sys.platform == "win32":
-        try:
-            # we'll just use tracert because that's always there
-            cli = ["tracert",
-                   "-d",
-                   "-w", "250",
-                   "-h", str(ttl),
-                   target_ip]
-            proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
-            stdout, stderr = proc_obj.communicate()
-            ip_lines = stdout.split('\r\n')[3:-3]
-            trace_list = []
-            for line in ip_lines:
-                tokens = line.split()
-                last_token = tokens[-1]
-                try:
-                    ip_addr = ipaddress.ip_address(text_type(last_token))
-                except ValueError:
-                    ip_addr = ""
-                trace_list.append(ip_addr)
-            return trace_list
-        except:
-            return []
+        return _traceroute_windows(target_ip, ttl)
     else:  # linux based hopefully
-        # implementation note: We're currently going to just use ping.
-        # reason is, implementing a non root requiring user is complicated (see traceroute(8) code)
-        # while this is just ugly
-        # we can't use traceroute because it's not always installed
-        current_ttl = 1
-        trace_list = []
-        while current_ttl <= ttl:
-            try:
-                cli = ["ping",
-                       "-c", "1",
-                       "-w", "1",
-                       "-t", str(current_ttl),
-                       target_ip]
-                proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
-                stdout, stderr = proc_obj.communicate()
-                ip_line = stdout.split('\n')
-                ip_line = ip_line[1]
-                ip = ip_line.split()[1]
-                trace_list.append(ipaddress.ip_address(text_type(ip)))
-            except (IndexError, ValueError):
-                # assume we failed parsing output
-                trace_list.append("")
-            current_ttl += 1
-        return trace_list
+        return _traceroute_linux(target_ip, ttl)
+
+
+def _traceroute_windows(target_ip, ttl):
+    """
+    Traceroute for a specific IP/name - Windows implementation
+    """
+    # we'll just use tracert because that's always there
+    cli = ["tracert",
+           "-d",
+           "-w", "250",
+           "-h", str(ttl),
+           target_ip]
+    proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
+    stdout, stderr = proc_obj.communicate()
+    ip_lines = stdout.split('\r\n')
+    trace_list = []
+
+    first_line_index = None
+    for i in range(len(ip_lines)):
+        if re.search(r'^\s*1', ip_lines[i]) is not None:
+            first_line_index = i
+            break
+
+    for i in range(first_line_index, first_line_index + ttl):
+        if re.search(r'^\s*' + str(i - first_line_index + 1), ip_lines[i]) is None:  # If trace is finished
+            break
+
+        re_res = re.search(IP_ADDR_RE, ip_lines[i])
+        if re_res is None:
+            ip_addr = None
+        else:
+            ip_addr = re_res.group()
+        trace_list.append(ip_addr)
+
+    return trace_list
+
+
+def _traceroute_linux(target_ip, ttl):
+    """
+    Traceroute for a specific IP/name - Linux implementation
+    """
+    # implementation note: We're currently going to just use ping.
+    # reason is, implementing a non root requiring user is complicated (see traceroute(8) code)
+    # while this is just ugly
+    # we can't use traceroute because it's not always installed
+    current_ttl = 1
+    trace_list = []
+    while current_ttl <= ttl:
+        cli = ["ping",
+               "-c", "1",
+               "-w", "1",
+               "-t", str(current_ttl),
+               target_ip]
+        proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
+        stdout, stderr = proc_obj.communicate()
+        ips = re.findall(IP_ADDR_RE, stdout)
+        if len(ips) < 2:
+            raise Exception("Unexpected output")
+        elif ips[-1] in trace_list:  # Failed getting this hop
+            trace_list.append(None)
+        else:
+            trace_list.append(ips[-1])
+            dest_ip = ips[0]  # first ip is dest ip. must be parsed here since it can change between pings
+
+            if dest_ip == ips[-1]:
+                break
+
+        current_ttl += 1
+
+    return trace_list
