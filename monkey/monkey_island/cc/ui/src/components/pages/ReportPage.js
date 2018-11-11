@@ -478,7 +478,7 @@ class ReportPageComponent extends AuthComponent {
     return (
       <div id="pth">
         <h3>
-          Credential Map
+          Credentials Map
         </h3>
         <p>
           This map visualizes possible attack paths through the network using credential compromise. Paths represent lateral movement opportunities by attackers.
