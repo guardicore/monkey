@@ -30,3 +30,7 @@ def is_64bit_python():
 def is_windows_os():
     return sys.platform.startswith("win")
 
+
+def utf_to_ascii(string):
+    udata = string.decode("utf-8")
+    return udata.encode("ascii", "ignore")
