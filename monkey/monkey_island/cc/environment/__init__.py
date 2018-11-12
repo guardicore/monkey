@@ -1,5 +1,6 @@
 import abc
 from datetime import timedelta
+import os
 
 __author__ = 'itay.mizeretz'
 
@@ -8,7 +9,7 @@ class Environment(object):
     __metaclass__ = abc.ABCMeta
 
     _ISLAND_PORT = 5000
-    _MONGO_URL = "mongodb://localhost:27017/monkeyisland"
+    _MONGO_URL = os.environ.get("MONKEY_MONGO_URL", "mongodb://localhost:27017/monkeyisland")
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(hours=1)
 
