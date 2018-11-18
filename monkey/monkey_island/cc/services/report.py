@@ -50,8 +50,8 @@ class ReportService:
         AZURE = 6
         STOLEN_SSH_KEYS = 7
         STRUTS2 = 8
-        WEBLOGIC = 9,
-        HADOOP = 10,
+        WEBLOGIC = 9
+        HADOOP = 10
         PTH_CRIT_SERVICES_ACCESS = 11
 
     class WARNINGS_DICT(Enum):
