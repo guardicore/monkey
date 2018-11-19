@@ -837,7 +837,7 @@ class ReportPageComponent extends AuthComponent {
     return (
       <li>
         Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
-        critical patch updates.</a> Or change server version. Vulnerable versions are
+        critical patch updates.</a> Or update to the latest version. Vulnerable versions are
         10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
