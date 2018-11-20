@@ -857,7 +857,7 @@ class ReportPageComponent extends AuthComponent {
         Run Hadoop in secure mode (<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
         add Kerberos authentication</a>).
         <CollapsibleWellComponent>
-          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          The Hadoop server at <span className="label label-primary">{issue.machine}</span> (<span
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
           className="label label-danger">remote code execution</span> attack.
           <br/>
