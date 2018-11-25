@@ -479,7 +479,7 @@ class ReportPageComponent extends AuthComponent {
     return (
       <div id="pth">
         <h3>
-          Credential Map
+          Credentials Map
         </h3>
         <p>
           This map visualizes possible attack paths through the network using credential compromise. Paths represent lateral movement opportunities by attackers.
@@ -838,7 +838,7 @@ class ReportPageComponent extends AuthComponent {
     return (
       <li>
         Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
-        critical patch updates.</a> Or change server version. Vulnerable versions are
+        critical patch updates.</a> Or update to the latest version. Vulnerable versions are
         10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
@@ -858,7 +858,7 @@ class ReportPageComponent extends AuthComponent {
         Run Hadoop in secure mode (<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
         add Kerberos authentication</a>).
         <CollapsibleWellComponent>
-          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          The Hadoop server at <span className="label label-primary">{issue.machine}</span> (<span
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
           className="label label-danger">remote code execution</span> attack.
           <br/>
