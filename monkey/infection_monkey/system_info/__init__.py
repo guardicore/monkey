@@ -5,7 +5,9 @@ import sys
 import psutil
 from enum import IntEnum
 
+from common.cloud.aws import Aws
 from infection_monkey.network.info import get_host_subnets
+from infection_monkey.system_info.aws_collector import AwsCollector
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
 
 LOG = logging.getLogger(__name__)
@@ -56,6 +58,13 @@ class InfoCollector(object):
 
     def __init__(self):
         self.info = {}
+
+    def get_info(self):
+        self.get_hostname()
+        self.get_process_list()
+        self.get_network_info()
+        self.get_azure_info()
+        self.get_aws_info()
 
     def get_hostname(self):
         """
@@ -131,3 +140,6 @@ class InfoCollector(object):
         if len(azure_creds) != 0:
             self.info["Azure"] = {}
             self.info["Azure"]['usernames'] = [cred[0] for cred in azure_creds]
+
+    def get_aws_info(self):
+        self.info['aws'] = AwsCollector().get_aws_info()

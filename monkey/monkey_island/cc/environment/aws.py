@@ -1,7 +1,6 @@
-import urllib2
-
 import cc.auth
 from cc.environment import Environment
+from common.cloud.aws import Aws
 
 __author__ = 'itay.mizeretz'
 
@@ -13,7 +12,7 @@ class AwsEnvironment(Environment):
 
     @staticmethod
     def _get_instance_id():
-        return urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id').read()
+        return Aws.get_instance_id()
 
     def is_auth_enabled(self):
         return True
