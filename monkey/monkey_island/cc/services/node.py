@@ -27,23 +27,29 @@ class NodeService:
 
         node = NodeService.get_node_by_id(node_id)
         if node is None:
-            monkey = NodeService.get_monkey_by_id(node_id)
-            if monkey is None:
+            node = NodeService.get_monkey_by_id(node_id)
+            if node is None:
                 return new_node
 
             # node is infected
-            new_node = NodeService.monkey_to_net_node(monkey, for_report)
-            for key in monkey:
+            new_node = NodeService.monkey_to_net_node(node, for_report)
+            for key in node:
                 if key not in ['_id', 'modifytime', 'parent', 'dead', 'description']:
-                    new_node[key] = monkey[key]
+                    new_node[key] = node[key]
 
         else:
             # node is uninfected
             new_node = NodeService.node_to_net_node(node, for_report)
             new_node["ip_addresses"] = node["ip_addresses"]
-            for key in ['k8s_pod', 'k8s_node', 'k8s_host_pods']:
-                if key in node:
-                    new_node[key] = node[key]
+
+        for key in ['k8s_pod', 'k8s_node', 'k8s_host_pods']:
+            if key in node:
+                new_node[key] = node[key]
+
+        if 'k8s_node' in new_node:
+            new_node['k8s_node']['pods'] =\
+                [NodeService.get_generic_node_label_by_id(NodeService.get_node_by_ip(x)['_id'])
+                 for x in new_node['k8s_node'].pop('pod_ips')]
 
         for edge in edges:
             accessible_from_nodes.append(NodeService.get_generic_node_label_by_id(edge["from"]))

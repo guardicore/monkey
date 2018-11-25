@@ -871,7 +871,7 @@ class ReportPageComponent extends AuthComponent {
   generateK8sKubeletRoIssue(issue) {
     return (
       <li>
-        TODO: Add solution to kubelet RO issue.
+        Disable Kubernetes Kubelet's unauthenticated port.
         <CollapsibleWellComponent>
           Kubelet read-only server at <span className="label label-primary">{issue.machine}</span> (<span
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) prvoides <span

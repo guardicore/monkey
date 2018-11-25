@@ -206,11 +206,11 @@ class PreviewPaneComponent extends AuthComponent {
     return (
       <div key={"k8s-node-info-" + asset.k8s_node.name}>
         <h4>
-          <b>Pods' IPs</b>
+          <b>Pods</b>
         </h4>
         <CollapsedTable
           parseItemFunction={x => <tr key={x}><td><li>{x}</li></td></tr>}
-          tableItems={asset.k8s_node.pod_ips}
+          tableItems={asset.k8s_node.pods}
         />
         <h4>
           <b>Host Network Pods</b>
