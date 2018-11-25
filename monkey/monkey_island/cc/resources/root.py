@@ -65,5 +65,7 @@ class Root(flask_restful.Resource):
         if not infection_done:
             report_done = False
         else:
+            if is_any_exists:
+                ReportService.get_report()
             report_done = ReportService.is_report_generated()
         return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done, report_done=report_done)

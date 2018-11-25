@@ -5,6 +5,8 @@ import aws
 
 logger = logging.getLogger(__name__)
 
+AWS = 'aws'
+STANDARD = 'standard'
 
 ENV_DICT = {
     'standard': standard.StandardEnvironment,
