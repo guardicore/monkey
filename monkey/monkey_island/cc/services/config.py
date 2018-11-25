@@ -1097,10 +1097,11 @@ class ConfigService:
     def _encrypt_or_decrypt_config(config, is_decrypt=False):
         for config_arr_as_array in (ENCRYPTED_CONFIG_ARRAYS + ENCRYPTED_CONFIG_STRINGS):
             config_arr = config
-            prev_config_arr = None
+            parent_config_arr = None
 
+            # Because the config isn't flat, this for-loop gets the actual config value out of the config
             for config_key_part in config_arr_as_array:
-                prev_config_arr = config_arr
+                parent_config_arr = config_arr
                 config_arr = config_arr[config_key_part]
 
             if isinstance(config_arr, collections.Sequence) and not isinstance(config_arr, string_types):
@@ -1112,7 +1113,7 @@ class ConfigService:
                     else:
                         config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
             else:
-                prev_config_arr[config_arr_as_array[-1]] =\
+                parent_config_arr[config_arr_as_array[-1]] =\
                     encryptor.dec(config_arr) if is_decrypt else encryptor.enc(config_arr)
 
     @staticmethod
