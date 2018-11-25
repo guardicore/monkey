@@ -8,6 +8,8 @@ from enum import Enum
 from six import text_type
 
 from cc.database import mongo
+from cc.environment.environment import load_env_from_file, AWS
+from cc.resources.aws_exporter import AWSExporter
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
@@ -123,9 +125,9 @@ class ReportService:
                     'label': node['label'],
                     'ip_addresses': node['ip_addresses'],
                     'accessible_from_nodes':
-                        (x['hostname'] for x in
+                        list((x['hostname'] for x in
                          (NodeService.get_displayed_node_by_id(edge['from'], True)
-                          for edge in EdgeService.get_displayed_edges_by_to(node['id'], True))),
+                          for edge in EdgeService.get_displayed_edges_by_to(node['id'], True)))),
                     'services': node['services']
                 })
 
@@ -659,26 +661,19 @@ class ReportService:
 
     @staticmethod
     def is_report_generated():
-        generated_report = mongo.db.report.find_one({'name': 'generated_report'})
+        generated_report = mongo.db.report.find_one({})
         if generated_report is None:
             return False
-        return generated_report['value']
+        return True
 
     @staticmethod
-    def set_report_generated():
-        mongo.db.report.update(
-            {'name': 'generated_report'},
-            {'$set': {'value': True}},
-            upsert=True)
-        logger.info("Report marked as generated.")
-
-    @staticmethod
-    def get_report():
+    def generate_report():
         domain_issues = ReportService.get_domain_issues()
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
         cross_segment_issues = ReportService.get_cross_segment_issues()
+        monkey_latest_modify_time = list(NodeService.get_latest_modified_monkey())[0]['modifytime']
 
         report = \
             {
@@ -710,17 +705,50 @@ class ReportService:
                     {
                         'issues': issues,
                         'domain_issues': domain_issues
+                    },
+                'meta':
+                    {
+                        'latest_monkey_modifytime': monkey_latest_modify_time
                     }
             }
-
-        finished_run = NodeService.is_monkey_finished_running()
-        if finished_run:
-            ReportService.set_report_generated()
+        ReportService.export_to_exporters(report)
+        mongo.db.report.drop()
+        mongo.db.report.insert_one(report)
 
         return report
+
+    @staticmethod
+    def is_latest_report_exists():
+        latest_report_doc = mongo.db.report.find_one({}, {'meta.latest_monkey_modifytime': 1})
+
+        if latest_report_doc:
+            report_latest_modifytime = latest_report_doc['meta']['latest_monkey_modifytime']
+            latest_monkey_modifytime = NodeService.get_latest_modified_monkey()[0]['modifytime']
+            return report_latest_modifytime == latest_monkey_modifytime
+
+        return False
+
+    @staticmethod
+    def get_report():
+        if ReportService.is_latest_report_exists():
+            return mongo.db.report.find_one()
+        return ReportService.generate_report()
 
     @staticmethod
     def did_exploit_type_succeed(exploit_type):
         return mongo.db.edge.count(
             {'exploits': {'$elemMatch': {'exploiter': exploit_type, 'result': True}}},
             limit=1) > 0
+
+    @staticmethod
+    def get_active_exporters():
+        # This function should be in another module in charge of building a list of active exporters
+        exporters_list = []
+        if load_env_from_file() == AWS:
+            exporters_list.append(AWSExporter)
+        return exporters_list
+
+    @staticmethod
+    def export_to_exporters(report):
+        for exporter in ReportService.get_active_exporters():
+            exporter.handle_report(report)
