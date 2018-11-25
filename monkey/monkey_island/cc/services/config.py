@@ -862,7 +862,37 @@ SCHEMA = {
                     }
                 }
             }
-        }
+        },
+        'island_configuration': {
+                'title': 'Island Configuration',
+                'type': 'object',
+                'properties':
+                {
+                        'aws_config':
+                            {
+                                'title': 'AWS Configuration',
+                                'type': 'object',
+                                'properties':
+                                    {
+                                        'iam_role_id':
+                                            {
+                                                'title': 'IAM role ID',
+                                                'type': 'string'
+                                            },
+                                        'aws_access_key':
+                                            {
+                                                'title': 'AWS access key ID',
+                                                'type': 'string'
+                                            },
+                                        'aws_secret_access_key':
+                                            {
+                                                'title': 'AWS Secret Access Key',
+                                                'type': 'string'
+                                            }
+                                    }
+                            }
+                    }
+            }
     },
     "options": {
         "collapsed": True
@@ -874,7 +904,10 @@ ENCRYPTED_CONFIG_ARRAYS = \
         ['basic', 'credentials', 'exploit_password_list'],
         ['internal', 'exploits', 'exploit_lm_hash_list'],
         ['internal', 'exploits', 'exploit_ntlm_hash_list'],
-        ['internal', 'exploits', 'exploit_ssh_keys']
+        ['internal', 'exploits', 'exploit_ssh_keys'],
+        ['island_configuration', 'aws_config', 'iam_role_id'],
+        ['island_configuration', 'aws_config', 'aws_access_key'],
+        ['island_configuration', 'aws_config', 'aws_secret_access_key'],
     ]
 
 
