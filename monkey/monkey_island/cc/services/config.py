@@ -639,6 +639,28 @@ SCHEMA = {
                             "description": "The current command server the monkey is communicating with"
                         }
                     }
+                },
+                'aws_config': {
+                    'title': 'AWS Configuration',
+                    'type': 'object',
+                    'description': 'These credentials will be used in order to export the monkey\'s findings to the AWS Security Hub.',
+                    'properties': {
+                        'iam_role_id': {
+                            'title': 'IAM role ID',
+                            'type': 'string',
+                            'description': ''
+                        },
+                        'aws_access_key_id': {
+                            'title': 'AWS access key ID',
+                            'type': 'string',
+                            'description': 'Your AWS public access key ID, can be found in the IAM user interface in the AWS console.'
+                        },
+                        'aws_secret_access_key': {
+                            'title': 'AWS secret access key',
+                            'type': 'string',
+                            'description': 'Your AWS secret access key id, you can get this after creating a public access key in the console.'
+                        }
+                    }
                 }
             }
         },
@@ -863,36 +885,6 @@ SCHEMA = {
                 }
             }
         },
-        'island_configuration': {
-                'title': 'Island Configuration',
-                'type': 'object',
-                'properties':
-                {
-                        'aws_config':
-                            {
-                                'title': 'AWS Configuration',
-                                'type': 'object',
-                                'properties':
-                                    {
-                                        'iam_role_id':
-                                            {
-                                                'title': 'IAM role ID',
-                                                'type': 'string'
-                                            },
-                                        'aws_access_key':
-                                            {
-                                                'title': 'AWS access key ID',
-                                                'type': 'string'
-                                            },
-                                        'aws_secret_access_key':
-                                            {
-                                                'title': 'AWS Secret Access Key',
-                                                'type': 'string'
-                                            }
-                                    }
-                            }
-                    }
-            }
     },
     "options": {
         "collapsed": True
@@ -906,9 +898,9 @@ ENCRYPTED_CONFIG_ARRAYS = \
         ['internal', 'exploits', 'exploit_lm_hash_list'],
         ['internal', 'exploits', 'exploit_ntlm_hash_list'],
         ['internal', 'exploits', 'exploit_ssh_keys'],
-        ['island_configuration', 'aws_config', 'iam_role_id'],
-        ['island_configuration', 'aws_config', 'aws_access_key'],
-        ['island_configuration', 'aws_config', 'aws_secret_access_key'],
+        # ['cnc', 'aws_config', 'iam_role_id'],
+        # ['cnc', 'aws_config', 'aws_access_key_id'],
+        # ['cnc', 'aws_config', 'aws_secret_access_key'],
     ]
 
 # This should be used for config values of string type
@@ -925,11 +917,12 @@ class ConfigService:
         pass
 
     @staticmethod
-    def get_config(is_initial_config=False, should_decrypt=True):
+    def get_config(is_initial_config=False, should_decrypt=True, is_island=False):
         """
         Gets the entire global config.
         :param is_initial_config: If True, the initial config will be returned instead of the current config.
         :param should_decrypt: If True, all config values which are set as encrypted will be decrypted.
+        :param is_island: If True, will include island specific configuration parameters.
         :return: The entire global config.
         """
         config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}) or {}
@@ -937,6 +930,8 @@ class ConfigService:
             config.pop(field, None)
         if should_decrypt and len(config) > 0:
             ConfigService.decrypt_config(config)
+        if not is_island:
+            config['cnc'].pop('aws_config', None)
         return config
 
     @staticmethod

@@ -4,8 +4,12 @@ from datetime import datetime
 import boto3
 
 from cc.resources.exporter import Exporter
+from cc.services.config import ConfigService
 
 logger = logging.getLogger(__name__)
+
+AWS_CRED_CONFIG_KEYS = [['cnc', 'aws_config', 'aws_access_key_id'],
+                        ['cnc', 'aws_config', 'aws_secret_access_key']]
 
 
 class AWSExporter(Exporter):
@@ -19,11 +23,19 @@ class AWSExporter(Exporter):
             for issue in issues_list[machine]:
                 findings_list.append(AWSExporter._prepare_finding(issue))
 
-        if not AWSExporter._send_findings(findings_list):
+        if not AWSExporter._send_findings(findings_list, AWSExporter._get_aws_keys()):
             logger.error('Exporting findings to aws failed')
             return False
 
         return True
+
+    @staticmethod
+    def _get_aws_keys():
+        creds_dict = {}
+        for key in AWS_CRED_CONFIG_KEYS:
+            creds_dict[key[2]] = ConfigService.get_config_value(key)
+
+        return creds_dict
 
     @staticmethod
     def merge_two_dicts(x, y):
@@ -60,9 +72,11 @@ class AWSExporter(Exporter):
         return AWSExporter.merge_two_dicts(finding, findings_dict[issue['type']](issue))
 
     @staticmethod
-    def _send_findings(findings_list):
+    def _send_findings(findings_list, creds_dict):
 
-        securityhub = boto3.client('securityhub')
+        securityhub = boto3.client('securityhub',
+                                   aws_access_key_id=creds_dict.get('aws_access_key_id', ''),
+                                   aws_secret_access_key=creds_dict.get('aws_secret_access_key', ''))
         import_response = securityhub.batch_import_findings(Findings=findings_list)
         print import_response
         if import_response['ResponseMetadata']['HTTPStatusCode'] == 200:
