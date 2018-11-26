@@ -542,8 +542,11 @@ class ReportService:
         for issue in issues:
             if not issue.get('is_local', True):
                 machine = issue.get('machine').upper()
+                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get('machine'))
                 if machine not in domain_issues_dict:
                     domain_issues_dict[machine] = []
+                if aws_instance_id:
+                    issue['aws_instance_id'] = aws_instance_id
                 domain_issues_dict[machine].append(issue)
         logger.info('Domain issues generated for reporting')
         return domain_issues_dict
