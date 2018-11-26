@@ -4,6 +4,8 @@ LABEL MAINTAINER="theonlydoo <theonlydoo@gmail.com>"
 
 ARG RELEASE=1.6
 
+EXPOSE 5000
+
 WORKDIR /app
 
 ADD https://github.com/guardicore/monkey/releases/download/${RELEASE}/infection_monkey_deb.${RELEASE}.tgz .
