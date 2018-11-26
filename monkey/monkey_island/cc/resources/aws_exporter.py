@@ -93,8 +93,8 @@ class AWSExporter(Exporter):
                     "Normalized": 100
                 },
                 "Resources": [{
-                    "Type": "IpAddress",
-                    "Id": issue['dest']
+                    "Type": "AwsEc2Instance",
+                    "Id": issue['aws_instance_id']
                 }],
                 "RecordState": "ACTIVE",
             }
@@ -118,8 +118,8 @@ class AWSExporter(Exporter):
                     "Normalized": 100
                 },
                 "Resources": [{
-                    "Type": "IpAddress",
-                    "Id": str(issue['ip_address'])
+                    "Type": "AwsEc2Instance",
+                    "Id": issue['aws_instance_id']
                 }],
                 "RecordState": "ACTIVE",
             }
@@ -143,8 +143,8 @@ class AWSExporter(Exporter):
                     "Normalized": 100
                 },
                 "Resources": [{
-                    "Type": "IpAddress",
-                    "Id": issue['ip_address']
+                    "Type": "AwsEc2Instance",
+                    "Id": issue['aws_instance_id']
                 }],
                 "RecordState": "ACTIVE",
             }
@@ -167,8 +167,8 @@ class AWSExporter(Exporter):
                     "Normalized": 100
                 },
                 "Resources": [{
-                    "Type": "IpAddress",
-                    "Id": issue['ip_address']
+                    "Type": "AwsEc2Instance",
+                    "Id": issue['aws_instance_id']
                 }],
                 "RecordState": "ACTIVE",
             }
@@ -191,8 +191,8 @@ class AWSExporter(Exporter):
                     "Normalized": 100
                 },
                 "Resources": [{
-                    "Type": "IpAddress",
-                    "Id": issue['ip_address']
+                    "Type": "AwsEc2Instance",
+                    "Id": issue['aws_instance_id']
                 }],
                 "RecordState": "ACTIVE",
             }
@@ -215,8 +215,8 @@ class AWSExporter(Exporter):
                     "Normalized": 100
                 },
                 "Resources": [{
-                    "Type": "IpAddress",
-                    "Id": issue['networks'][0][:-2]
+                    "Type": "AwsEc2Instance",
+                    "Id": issue['aws_instance_id']
                 }],
                 "RecordState": "ACTIVE",
             }
@@ -243,8 +243,8 @@ class AWSExporter(Exporter):
                     "Normalized": 100
                 },
                 "Resources": [{
-                    "Type": "IpAddress",
-                    "Id": '10.0.0.1'
+                    "Type": "AwsEc2Instance",
+                    "Id": issue['aws_instance_id']
                 }],
                 "RecordState": "ACTIVE",
             }
@@ -267,8 +267,8 @@ class AWSExporter(Exporter):
                     "Normalized": 100
                 },
                 "Resources": [{
-                    "Type": "IpAddress",
-                    "Id": issue['ip_address']
+                    "Type": "AwsEc2Instance",
+                    "Id": issue['aws_instance_id']
                 }],
                 "RecordState": "ACTIVE",
             }
@@ -291,8 +291,8 @@ class AWSExporter(Exporter):
                     "Normalized": 100
                 },
                 "Resources": [{
-                    "Type": "IpAddress",
-                    "Id": issue['ip_address']
+                    "Type": "AwsEc2Instance",
+                    "Id": issue['aws_instance_id']
                 }],
                 "RecordState": "ACTIVE",
             }

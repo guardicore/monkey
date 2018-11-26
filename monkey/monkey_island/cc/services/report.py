@@ -549,6 +549,10 @@ class ReportService:
         return domain_issues_dict
 
     @staticmethod
+    def get_machine_aws_instance_id(hostname):
+        return str(mongo.db.monkey.find({'hostname': hostname}, {'aws_instance_id': 1}))
+
+    @staticmethod
     def get_issues():
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
@@ -564,8 +568,11 @@ class ReportService:
         for issue in issues:
             if issue.get('is_local', True):
                 machine = issue.get('machine').upper()
+                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get('machine'))
                 if machine not in issues_dict:
                     issues_dict[machine] = []
+                if aws_instance_id:
+                    issue['aws_instance_id'] = aws_instance_id
                 issues_dict[machine].append(issue)
         logger.info('Issues generated for reporting')
         return issues_dict
