@@ -12,6 +12,7 @@ RUN tar xvf infection_monkey_deb.${RELEASE}.tgz  \
     && apt-get -yqq update                       \
     && apt-get -yqq upgrade                      \
     && apt-get -yqq install python-pip           \
+                            python-dev           \
                             libssl-dev           \
                             supervisor           \
     && dpkg -i *.deb
