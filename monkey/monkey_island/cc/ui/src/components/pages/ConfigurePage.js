@@ -10,7 +10,7 @@ class ConfigurePageComponent extends AuthComponent {
 
     this.currentSection = 'basic';
     this.currentFormData = {};
-    this.sectionsOrder = ['basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal', 'monkey_island'];
+    this.sectionsOrder = ['basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
 
     // set schema from server
     this.state = {
