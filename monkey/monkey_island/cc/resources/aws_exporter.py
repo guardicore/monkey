@@ -37,7 +37,6 @@ class AWSExporter(Exporter):
 
         return creds_dict
 
-
     @staticmethod
     def merge_two_dicts(x, y):
         z = x.copy()  # start with x's keys and values
