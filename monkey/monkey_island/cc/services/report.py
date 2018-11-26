@@ -553,7 +553,7 @@ class ReportService:
 
     @staticmethod
     def get_machine_aws_instance_id(hostname):
-        return str(mongo.db.monkey.find({'hostname': hostname}, {'aws_instance_id': 1}))
+        return str(list(mongo.db.monkey.find({'hostname': hostname}, {'aws_instance_id': 1}))[0]['aws_instance_id'])
 
     @staticmethod
     def get_issues():
@@ -754,7 +754,7 @@ class ReportService:
     def get_active_exporters():
         # This function should be in another module in charge of building a list of active exporters
         exporters_list = []
-        if load_env_from_file() == AWS:
+        if str(load_env_from_file()) == 'standard':
             exporters_list.append(AWSExporter)
         return exporters_list
 
