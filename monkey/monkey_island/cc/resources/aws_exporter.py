@@ -5,6 +5,7 @@ import boto3
 
 from cc.resources.exporter import Exporter
 from cc.services.config import ConfigService
+from cc.environment.environment import load_server_configuration_from_file
 
 logger = logging.getLogger(__name__)
 
@@ -57,10 +58,12 @@ class AWSExporter(Exporter):
             'shared_passwords': AWSExporter._handle_shared_passwords_issue,
         }
 
+        product_arn = load_server_configuration_from_file()['aws'].get('sec_hub_product_arn', '')
+
         finding = {
             "SchemaVersion": "2018-10-08",
             "Id": uuid.uuid4().hex,
-            "ProductArn": "arn:aws:securityhub:us-west-2:324264561773:product/aws/guardduty",
+            "ProductArn": product_arn,
             "GeneratorId": issue['type'],
             "AwsAccountId": "324264561773",
             "Types": [
