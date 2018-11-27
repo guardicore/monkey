@@ -907,6 +907,7 @@ ENCRYPTED_CONFIG_ARRAYS = \
 ENCRYPTED_CONFIG_STRINGS = \
     [
         ['cnc', 'aws_config', 'aws_access_key_id'],
+        ['cnc', 'aws_config', 'aws_account_id'],
         ['cnc', 'aws_config', 'aws_secret_access_key']
     ]
 
