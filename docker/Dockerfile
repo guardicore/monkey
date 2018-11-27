@@ -3,6 +3,7 @@ FROM debian:jessie-slim
 LABEL MAINTAINER="theonlydoo <theonlydoo@gmail.com>"
 
 ARG RELEASE=1.6
+ARG DEBIAN_FRONTEND=noninteractive
 
 EXPOSE 5000
 
