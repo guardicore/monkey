@@ -648,17 +648,20 @@ SCHEMA = {
                         'aws_account_id': {
                             'title': 'AWS account ID',
                             'type': 'string',
-                            'description': 'Your AWS account ID that is subscribed to security hub feeds'
+                            'description': 'Your AWS account ID that is subscribed to security hub feeds',
+                            'default': " "
                         },
                         'aws_access_key_id': {
                             'title': 'AWS access key ID',
                             'type': 'string',
-                            'description': 'Your AWS public access key ID, can be found in the IAM user interface in the AWS console.'
+                            'description': 'Your AWS public access key ID, can be found in the IAM user interface in the AWS console.',
+                            'default': " "
                         },
                         'aws_secret_access_key': {
                             'title': 'AWS secret access key',
                             'type': 'string',
-                            'description': 'Your AWS secret access key id, you can get this after creating a public access key in the console.'
+                            'description': 'Your AWS secret access key id, you can get this after creating a public access key in the console.',
+                            'default': " "
                         }
                     }
                 }
@@ -897,16 +900,14 @@ ENCRYPTED_CONFIG_ARRAYS = \
         ['basic', 'credentials', 'exploit_password_list'],
         ['internal', 'exploits', 'exploit_lm_hash_list'],
         ['internal', 'exploits', 'exploit_ntlm_hash_list'],
-        ['internal', 'exploits', 'exploit_ssh_keys'],
-        # ['cnc', 'aws_config', 'iam_role_id'],
-        # ['cnc', 'aws_config', 'aws_access_key_id'],
-        # ['cnc', 'aws_config', 'aws_secret_access_key'],
+        ['internal', 'exploits', 'exploit_ssh_keys']
     ]
 
 # This should be used for config values of string type
 ENCRYPTED_CONFIG_STRINGS = \
     [
-        
+        ['cnc', 'aws_config', 'aws_access_key_id'],
+        ['cnc', 'aws_config', 'aws_secret_access_key']
     ]
 
 
@@ -931,7 +932,7 @@ class ConfigService:
         if should_decrypt and len(config) > 0:
             ConfigService.decrypt_config(config)
         if not is_island:
-            config['cnc'].pop('aws_config', None)
+            config.get('cnc', {}).pop('aws_config', None)
         return config
 
     @staticmethod

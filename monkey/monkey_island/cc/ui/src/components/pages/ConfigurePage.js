@@ -24,7 +24,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   componentDidMount() {
-    this.authFetch('/api/configuration')
+    this.authFetch('/api/configuration/island')
       .then(res => res.json())
       .then(res => {
         let sections = [];
