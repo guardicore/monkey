@@ -1,6 +1,6 @@
 import cc.auth
 from cc.environment import Environment
-from common.cloud.aws import Aws
+from common.cloud.aws import AWS
 
 __author__ = 'itay.mizeretz'
 
@@ -12,7 +12,7 @@ class AwsEnvironment(Environment):
 
     @staticmethod
     def _get_instance_id():
-        return Aws.get_instance_id()
+        return AWS.get_instance_id()
 
     def is_auth_enabled(self):
         return True

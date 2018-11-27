@@ -3,7 +3,7 @@ import urllib2
 __author__ = 'itay.mizeretz'
 
 
-class Aws:
+class AWS:
     def __init__(self):
         try:
             self.instance_id = urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id').read()

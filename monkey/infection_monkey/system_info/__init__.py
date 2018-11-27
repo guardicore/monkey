@@ -5,7 +5,6 @@ import sys
 import psutil
 from enum import IntEnum
 
-from common.cloud.aws import Aws
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.system_info.aws_collector import AwsCollector
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
