@@ -18,6 +18,7 @@ from cc.resources.log import Log
 from cc.resources.island_logs import IslandLog
 from cc.resources.monkey import Monkey
 from cc.resources.monkey_configuration import MonkeyConfiguration
+from cc.resources.island_configuration import IslandConfiguration
 from cc.resources.monkey_download import MonkeyDownload
 from cc.resources.netmap import NetMap
 from cc.resources.node import Node
@@ -104,6 +105,7 @@ def init_app(mongo_url):
     api.add_resource(ClientRun, '/api/client-monkey', '/api/client-monkey/')
     api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry/<string:monkey_guid>')
     api.add_resource(MonkeyConfiguration, '/api/configuration', '/api/configuration/')
+    api.add_resource(IslandConfiguration, '/api/configuration/island', '/api/configuration/island/')
     api.add_resource(MonkeyDownload, '/api/monkey/download', '/api/monkey/download/',
                      '/api/monkey/download/<string:path>')
     api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
