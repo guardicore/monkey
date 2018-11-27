@@ -2,6 +2,7 @@ import logging
 import uuid
 from datetime import datetime
 import boto3
+from botocore.exceptions import UnknownServiceError
 
 from cc.resources.exporter import Exporter
 from cc.services.config import ConfigService
@@ -93,17 +94,20 @@ class AWSExporter(Exporter):
 
     @staticmethod
     def _send_findings(findings_list, creds_dict):
-
-        securityhub = boto3.client('securityhub',
-                                   aws_access_key_id=creds_dict.get('aws_access_key_id', ''),
-                                   aws_secret_access_key=creds_dict.get('aws_secret_access_key', ''))
         try:
+            securityhub = boto3.client('securityhub',
+                                       aws_access_key_id=creds_dict.get('aws_access_key_id', ''),
+                                       aws_secret_access_key=creds_dict.get('aws_secret_access_key', ''))
+
             import_response = securityhub.batch_import_findings(Findings=findings_list)
             print import_response
             if import_response['ResponseMetadata']['HTTPStatusCode'] == 200:
                 return True
             else:
                 return False
+        except UnknownServiceError as e:
+            logger.warning('AWS exporter called but AWS-CLI not installed')
+            return False
         except Exception as e:
             logger.error('AWS security hub findings failed to send.')
             return False
