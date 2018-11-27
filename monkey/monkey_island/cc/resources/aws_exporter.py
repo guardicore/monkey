@@ -77,11 +77,15 @@ class AWSExporter(Exporter):
         securityhub = boto3.client('securityhub',
                                    aws_access_key_id=creds_dict.get('aws_access_key_id', ''),
                                    aws_secret_access_key=creds_dict.get('aws_secret_access_key', ''))
-        import_response = securityhub.batch_import_findings(Findings=findings_list)
-        print import_response
-        if import_response['ResponseMetadata']['HTTPStatusCode'] == 200:
-            return True
-        else:
+        try:
+            import_response = securityhub.batch_import_findings(Findings=findings_list)
+            print import_response
+            if import_response['ResponseMetadata']['HTTPStatusCode'] == 200:
+                return True
+            else:
+                return False
+        except Exception as e:
+            logger.error('AWS security hub findings failed to send.')
             return False
 
     @staticmethod
