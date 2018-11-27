@@ -754,7 +754,7 @@ class ReportService:
     def get_active_exporters():
         # This function should be in another module in charge of building a list of active exporters
         exporters_list = []
-        if str(load_env_from_file()) == 'standard':
+        if str(load_env_from_file()) == AWS:
             exporters_list.append(AWSExporter)
         return exporters_list
 
