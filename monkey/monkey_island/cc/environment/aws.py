@@ -14,6 +14,10 @@ class AwsEnvironment(Environment):
     def _get_instance_id():
         return AWS.get_instance_id()
 
+    @staticmethod
+    def _get_region():
+        return urllib2.urlopen('http://169.254.169.254/latest/meta-data/placement/availability-zone').read()[:-1]
+
     def is_auth_enabled(self):
         return True
 

@@ -1,3 +1,6 @@
 {
-  "server_config": "standard"
+  "server_config": "standard",
+  "aws": {
+    "sec_hub_product_arn": "arn:aws:securityhub:us-west-2:324264561773:product/aws/guardduty"
+  }
 }
