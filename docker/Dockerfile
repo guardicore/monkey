@@ -1,4 +1,4 @@
-FROM debian:jessie-slim
+FROM debian:stretch-slim
 
 LABEL MAINTAINER="theonlydoo <theonlydoo@gmail.com>"
 
