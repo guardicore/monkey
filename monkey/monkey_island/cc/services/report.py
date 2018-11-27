@@ -424,7 +424,7 @@ class ReportService:
             ip_in_src = None
             ip_in_dst = None
             for ip_addr in monkey['ip_addresses']:
-                if source_subnet_range.is_in_range(unicode(ip_addr)):
+                if source_subnet_range.is_in_range(text_type(ip_addr)):
                     ip_in_src = ip_addr
                     break
 
@@ -433,7 +433,7 @@ class ReportService:
                 continue
 
             for ip_addr in monkey['ip_addresses']:
-                if target_subnet_range.is_in_range(unicode(ip_addr)):
+                if target_subnet_range.is_in_range(text_type(ip_addr)):
                     ip_in_dst = ip_addr
                     break
 
@@ -469,7 +469,7 @@ class ReportService:
         scans.rewind()  # If we iterated over scans already we need to rewind.
         for scan in scans:
             target_ip = scan['data']['machine']['ip_addr']
-            if target_subnet_range.is_in_range(unicode(target_ip)):
+            if target_subnet_range.is_in_range(text_type(target_ip)):
                 monkey = NodeService.get_monkey_by_guid(scan['monkey_guid'])
                 cross_segment_ip = ReportService.get_ip_in_src_and_not_in_dst(monkey['ip_addresses'],
                                                                               source_subnet_range,
