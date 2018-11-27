@@ -18,7 +18,8 @@ RUN tar xvf infection_monkey_deb.${RELEASE}.tgz  \
                             python-dev           \
                             libssl-dev           \
                             supervisor           \
-    && dpkg -i *.deb
+    && dpkg -i *.deb                             \
+    && rm -f *.deb *.tgz
 
 COPY stack.conf /etc/supervisor/conf.d/stack.conf
 
