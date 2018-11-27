@@ -21,6 +21,9 @@ class AWSExporter(Exporter):
 
         findings_list = []
         issues_list = report_json['recommendations']['issues']
+        if not issues_list:
+            logger.info('No issues were found by the monkey, no need to send anything')
+            return True
         for machine in issues_list:
             for issue in issues_list[machine]:
                 findings_list.append(AWSExporter._prepare_finding(issue))

@@ -1,6 +1,6 @@
 {
   "server_config": "standard",
   "aws": {
-    "sec_hub_product_arn": "arn:aws:securityhub:us-west-2:324264561773:product/aws/guardduty"
+    "sec_hub_product_arn": "arn:aws:securityhub:eu-west-2:324264561773:product/guardicore/aws-infection-monkey"
   }
 }
