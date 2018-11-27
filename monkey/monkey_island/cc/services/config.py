@@ -869,12 +869,19 @@ SCHEMA = {
     }
 }
 
+# This should be used for config values of array type (array of strings only)
 ENCRYPTED_CONFIG_ARRAYS = \
     [
         ['basic', 'credentials', 'exploit_password_list'],
         ['internal', 'exploits', 'exploit_lm_hash_list'],
         ['internal', 'exploits', 'exploit_ntlm_hash_list'],
         ['internal', 'exploits', 'exploit_ssh_keys']
+    ]
+
+# This should be used for config values of string type
+ENCRYPTED_CONFIG_STRINGS = \
+    [
+        
     ]
 
 
@@ -913,8 +920,11 @@ class ConfigService:
         config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}, {config_key: 1})
         for config_key_part in config_key_as_arr:
             config = config[config_key_part]
-        if should_decrypt and (config_key_as_arr in ENCRYPTED_CONFIG_ARRAYS):
-            config = [encryptor.dec(x) for x in config]
+        if should_decrypt:
+            if config_key_as_arr in ENCRYPTED_CONFIG_ARRAYS:
+                config = [encryptor.dec(x) for x in config]
+            elif config_key_as_arr in ENCRYPTED_CONFIG_STRINGS:
+                config = encryptor.dec(config)
         return config
 
     @staticmethod
@@ -1071,7 +1081,7 @@ class ConfigService:
         """
         Same as decrypt_config but for a flat configuration
         """
-        keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
+        keys = [config_arr_as_array[2] for config_arr_as_array in (ENCRYPTED_CONFIG_ARRAYS + ENCRYPTED_CONFIG_STRINGS)]
         for key in keys:
             if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], string_types):
                 # Check if we are decrypting ssh key pair
@@ -1085,18 +1095,26 @@ class ConfigService:
 
     @staticmethod
     def _encrypt_or_decrypt_config(config, is_decrypt=False):
-        for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS:
+        for config_arr_as_array in (ENCRYPTED_CONFIG_ARRAYS + ENCRYPTED_CONFIG_STRINGS):
             config_arr = config
+            parent_config_arr = None
+
+            # Because the config isn't flat, this for-loop gets the actual config value out of the config
             for config_key_part in config_arr_as_array:
+                parent_config_arr = config_arr
                 config_arr = config_arr[config_key_part]
 
-            for i in range(len(config_arr)):
-                # Check if array of shh key pairs and then decrypt
-                if isinstance(config_arr[i], dict) and 'public_key' in config_arr[i]:
-                    config_arr[i] = ConfigService.decrypt_ssh_key_pair(config_arr[i]) if is_decrypt else \
-                                    ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
-                else:
-                    config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
+            if isinstance(config_arr, collections.Sequence) and not isinstance(config_arr, string_types):
+                for i in range(len(config_arr)):
+                    # Check if array of shh key pairs and then decrypt
+                    if isinstance(config_arr[i], dict) and 'public_key' in config_arr[i]:
+                        config_arr[i] = ConfigService.decrypt_ssh_key_pair(config_arr[i]) if is_decrypt else \
+                                        ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
+                    else:
+                        config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
+            else:
+                parent_config_arr[config_arr_as_array[-1]] =\
+                    encryptor.dec(config_arr) if is_decrypt else encryptor.enc(config_arr)
 
     @staticmethod
     def decrypt_ssh_key_pair(pair, encrypt=False):
