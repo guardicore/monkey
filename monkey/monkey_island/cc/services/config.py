@@ -649,19 +649,19 @@ SCHEMA = {
                             'title': 'AWS account ID',
                             'type': 'string',
                             'description': 'Your AWS account ID that is subscribed to security hub feeds',
-                            'default': " "
+                            'default': ""
                         },
                         'aws_access_key_id': {
                             'title': 'AWS access key ID',
                             'type': 'string',
                             'description': 'Your AWS public access key ID, can be found in the IAM user interface in the AWS console.',
-                            'default': " "
+                            'default': ""
                         },
                         'aws_secret_access_key': {
                             'title': 'AWS secret access key',
                             'type': 'string',
                             'description': 'Your AWS secret access key id, you can get this after creating a public access key in the console.',
-                            'default': " "
+                            'default': ""
                         }
                     }
                 }
@@ -1107,11 +1107,15 @@ class ConfigService:
         ConfigService._encrypt_or_decrypt_config(config, False)
 
     @staticmethod
-    def decrypt_flat_config(flat_config):
+    def decrypt_flat_config(flat_config, is_island=False):
         """
         Same as decrypt_config but for a flat configuration
         """
-        keys = [config_arr_as_array[2] for config_arr_as_array in (ENCRYPTED_CONFIG_ARRAYS + ENCRYPTED_CONFIG_STRINGS)]
+        if is_island:
+            keys = [config_arr_as_array[2] for config_arr_as_array in
+                    (ENCRYPTED_CONFIG_ARRAYS + ENCRYPTED_CONFIG_STRINGS)]
+        else:
+            keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
         for key in keys:
             if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], string_types):
                 # Check if we are decrypting ssh key pair
