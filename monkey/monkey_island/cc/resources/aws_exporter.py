@@ -26,7 +26,8 @@ class AWSExporter(Exporter):
             return True
         for machine in issues_list:
             for issue in issues_list[machine]:
-                findings_list.append(AWSExporter._prepare_finding(issue))
+                if not issue.get('aws_instance_id', None):
+                    findings_list.append(AWSExporter._prepare_finding(issue))
 
         if not AWSExporter._send_findings(findings_list, AWSExporter._get_aws_keys()):
             logger.error('Exporting findings to aws failed')

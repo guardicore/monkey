@@ -553,7 +553,7 @@ class ReportService:
 
     @staticmethod
     def get_machine_aws_instance_id(hostname):
-        return str(list(mongo.db.monkey.find({'hostname': hostname}, {'aws_instance_id': 1}))[0]['aws_instance_id'])
+        return str(list(mongo.db.monkey.find({'hostname': hostname}, {'aws_instance_id': 1}))[0].get('aws_instance_id', None))
 
     @staticmethod
     def get_issues():
