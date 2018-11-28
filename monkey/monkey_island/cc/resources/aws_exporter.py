@@ -103,7 +103,6 @@ class AWSExporter(Exporter):
                                        region_name=region)
 
             import_response = securityhub.batch_import_findings(Findings=findings_list)
-            print import_response
             if import_response['ResponseMetadata']['HTTPStatusCode'] == 200:
                 return True
             else:
