@@ -192,7 +192,8 @@ class Telemetry(flask_restful.Resource):
             wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
             wmi_handler.process_and_handle_wmi_info()
         if 'aws' in telemetry_json['data']:
-            mongo.db.monkey.update_one({'_id': monkey_id}, {'aws_instance_id': telemetry_json['data']['instance-id']})
+            mongo.db.monkey.update_one({'_id': monkey_id},
+                                       {'aws_instance_id': telemetry_json['data']['aws']['instance-id']})
 
     @staticmethod
     def add_ip_to_ssh_keys(ip, ssh_info):
