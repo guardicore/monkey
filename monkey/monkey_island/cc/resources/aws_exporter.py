@@ -77,8 +77,8 @@ class AWSExporter(Exporter):
         }
 
         configured_product_arn = load_server_configuration_from_file()['aws'].get('sec_hub_product_arn', '')
-        product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region='us-west-2', arn=configured_product_arn)
-        instance_arn = 'arn:aws:ec2:' + region + ':instance:{instance_id}'
+        product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region=region, arn=configured_product_arn)
+        instance_arn = 'arn:aws:ec2:' + str(region) + ':instance:{instance_id}'
         account_id = AWSExporter._get_aws_keys().get('aws_account_id', '')
 
         finding = {
@@ -98,6 +98,10 @@ class AWSExporter(Exporter):
     @staticmethod
     def _send_findings(findings_list, creds_dict, region):
         try:
+            if not creds_dict:
+                logger.info('No AWS access credentials received in configuration')
+                return False
+
             securityhub = boto3.client('securityhub',
                                        aws_access_key_id=creds_dict.get('aws_access_key_id', ''),
                                        aws_secret_access_key=creds_dict.get('aws_secret_access_key', ''),
@@ -109,10 +113,10 @@ class AWSExporter(Exporter):
             else:
                 return False
         except UnknownServiceError as e:
-            logger.warning('AWS exporter called but AWS-CLI not installed')
+            logger.warning('AWS exporter called but AWS-CLI securityhub service is not installed')
             return False
         except Exception as e:
-            logger.error('AWS security hub findings failed to send.')
+            logger.exception('AWS security hub findings failed to send.')
             return False
 
     @staticmethod

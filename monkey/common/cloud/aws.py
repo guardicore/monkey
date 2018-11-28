@@ -10,6 +10,7 @@ class AWS(object):
             self.region = urllib2.urlopen('http://169.254.169.254/latest/meta-data/placement/availability-zone').read()[:-1]
         except urllib2.URLError:
             self.instance_id = None
+            self.region = None
 
     def get_instance_id(self):
         return self.instance_id

@@ -1,6 +1,3 @@
 {
-  "server_config": "standard",
-  "aws": {
-    "sec_hub_product_arn": "324264561773:product/guardicore/aws-infection-monkey"
-  }
+  "server_config": "standard"
 }
