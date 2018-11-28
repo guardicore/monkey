@@ -77,7 +77,8 @@ class AWSExporter(Exporter):
         }
 
         configured_product_arn = load_server_configuration_from_file()['aws'].get('sec_hub_product_arn', '')
-        product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region=region, arn=configured_product_arn)
+        product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region='us-west-2', arn=configured_product_arn)
+        instance_arn = 'arn:aws:ec2:' + region + ':instance:{instance_id}'
         account_id = AWSExporter._get_aws_keys().get('aws_account_id', '')
 
         finding = {
@@ -92,7 +93,7 @@ class AWSExporter(Exporter):
             "CreatedAt": datetime.now().isoformat() + 'Z',
             "UpdatedAt": datetime.now().isoformat() + 'Z',
         }
-        return AWSExporter.merge_two_dicts(finding, findings_dict[issue['type']](issue))
+        return AWSExporter.merge_two_dicts(finding, findings_dict[issue['type']](issue, instance_arn))
 
     @staticmethod
     def _send_findings(findings_list, creds_dict, region):
@@ -115,7 +116,7 @@ class AWSExporter(Exporter):
             return False
 
     @staticmethod
-    def _handle_tunnel_issue(issue):
+    def _handle_tunnel_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 5,
@@ -133,7 +134,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -141,7 +142,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_sambacry_issue(issue):
+    def _handle_sambacry_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 10,
@@ -158,7 +159,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -166,7 +167,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_smb_pth_issue(issue):
+    def _handle_smb_pth_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 5,
@@ -184,7 +185,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -192,7 +193,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_ssh_issue(issue):
+    def _handle_ssh_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -210,7 +211,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -218,7 +219,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_ssh_key_issue(issue):
+    def _handle_ssh_key_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -236,14 +237,14 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
         return finding
 
     @staticmethod
-    def _handle_elastic_issue(issue):
+    def _handle_elastic_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 10,
@@ -259,7 +260,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -267,7 +268,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_island_cross_segment_issue(issue):
+    def _handle_island_cross_segment_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -288,7 +289,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -296,7 +297,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_shared_passwords_issue(issue):
+    def _handle_shared_passwords_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -312,7 +313,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -320,7 +321,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_shellshock_issue(issue):
+    def _handle_shellshock_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 10,
@@ -337,7 +338,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -345,7 +346,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_smb_password_issue(issue):
+    def _handle_smb_password_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -363,7 +364,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -371,7 +372,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_wmi_password_issue(issue):
+    def _handle_wmi_password_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -389,7 +390,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -397,7 +398,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_wmi_pth_issue(issue):
+    def _handle_wmi_pth_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -415,7 +416,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -423,7 +424,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_rdp_issue(issue):
+    def _handle_rdp_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -441,7 +442,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -449,7 +450,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_shared_passwords_domain_issue(issue):
+    def _handle_shared_passwords_domain_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -466,7 +467,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -474,7 +475,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_shared_admins_domain_issue(issue):
+    def _handle_shared_admins_domain_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -492,7 +493,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -500,7 +501,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_strong_users_on_crit_issue(issue):
+    def _handle_strong_users_on_crit_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 1,
@@ -518,7 +519,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -526,7 +527,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_struts2_issue(issue):
+    def _handle_struts2_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 10,
@@ -543,7 +544,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -551,7 +552,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_weblogic_issue(issue):
+    def _handle_weblogic_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 10,
@@ -570,7 +571,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
@@ -578,7 +579,7 @@ class AWSExporter(Exporter):
         return finding
 
     @staticmethod
-    def _handle_hadoop_issue(issue):
+    def _handle_hadoop_issue(issue, instance_arn):
         finding = \
             {"Severity": {
                 "Product": 10,
@@ -594,7 +595,7 @@ class AWSExporter(Exporter):
         if 'aws_instance_id' in issue:
             finding["Resources"] = [{
                 "Type": "AwsEc2Instance",
-                "Id": issue['aws_instance_id']
+                "Id": instance_arn.format(instance_id=issue['aws_instance_id'])
             }]
         else:
             finding["Resources"] = [{'Type': 'Other'}]
