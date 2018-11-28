@@ -20,7 +20,7 @@ class AWSExporter(Exporter):
 
     @staticmethod
     def handle_report(report_json):
-
+        aws = AWS()
         findings_list = []
         issues_list = report_json['recommendations']['issues']
         if not issues_list:
@@ -29,9 +29,9 @@ class AWSExporter(Exporter):
         for machine in issues_list:
             for issue in issues_list[machine]:
                 if issue.get('aws_instance_id', None):
-                    findings_list.append(AWSExporter._prepare_finding(issue))
+                    findings_list.append(AWSExporter._prepare_finding(issue, aws.get_region()))
 
-        if not AWSExporter._send_findings(findings_list, AWSExporter._get_aws_keys()):
+        if not AWSExporter._send_findings(findings_list, AWSExporter._get_aws_keys(), aws.get_region()):
             logger.error('Exporting findings to aws failed')
             return False
 
@@ -52,7 +52,7 @@ class AWSExporter(Exporter):
         return z
 
     @staticmethod
-    def _prepare_finding(issue):
+    def _prepare_finding(issue, region):
         findings_dict = {
             'island_cross_segment': AWSExporter._handle_island_cross_segment_issue,
             'ssh': AWSExporter._handle_ssh_issue,
@@ -76,9 +76,8 @@ class AWSExporter(Exporter):
             # azure and conficker are not relevant issues for an AWS env
         }
 
-        aws = AWS()
         configured_product_arn = load_server_configuration_from_file()['aws'].get('sec_hub_product_arn', '')
-        product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region=aws.get_region(), arn=configured_product_arn)
+        product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region=region, arn=configured_product_arn)
         account_id = AWSExporter._get_aws_keys().get('aws_account_id', '')
 
         finding = {
@@ -96,11 +95,12 @@ class AWSExporter(Exporter):
         return AWSExporter.merge_two_dicts(finding, findings_dict[issue['type']](issue))
 
     @staticmethod
-    def _send_findings(findings_list, creds_dict):
+    def _send_findings(findings_list, creds_dict, region):
         try:
             securityhub = boto3.client('securityhub',
                                        aws_access_key_id=creds_dict.get('aws_access_key_id', ''),
-                                       aws_secret_access_key=creds_dict.get('aws_secret_access_key', ''))
+                                       aws_secret_access_key=creds_dict.get('aws_secret_access_key', ''),
+                                       region_name=region)
 
             import_response = securityhub.batch_import_findings(Findings=findings_list)
             print import_response
