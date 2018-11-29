@@ -555,7 +555,8 @@ class ReportService:
     def get_machine_aws_instance_id(hostname):
         aws_instance_id_list = list(mongo.db.monkey.find({'hostname': hostname}, {'aws_instance_id': 1}))
         if aws_instance_id_list:
-            return str(aws_instance_id_list[0].get('aws_instance_id', None))
+            if 'aws_instance_id' in aws_instance_id_list[0]:
+                return str(aws_instance_id_list[0]['aws_instance_id'])
         else:
             return None
 

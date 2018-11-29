@@ -194,7 +194,7 @@ class Telemetry(flask_restful.Resource):
         if 'aws' in telemetry_json['data']:
             if 'instance_id' in telemetry_json['data']['aws']:
                 mongo.db.monkey.update_one({'_id': monkey_id},
-                                           {'aws_instance_id': telemetry_json['data']['aws']['instance_id']})
+                                           {'$set': {'aws_instance_id': telemetry_json['data']['aws']['instance_id']}})
 
     @staticmethod
     def add_ip_to_ssh_keys(ip, ssh_info):
