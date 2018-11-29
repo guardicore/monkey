@@ -192,7 +192,7 @@ class Telemetry(flask_restful.Resource):
             wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
             wmi_handler.process_and_handle_wmi_info()
         if 'aws' in telemetry_json['data']:
-            if 'instance-id' in telemetry_json['data']['aws']:
+            if 'instance_id' in telemetry_json['data']['aws']:
                 mongo.db.monkey.update_one({'_id': monkey_id},
                                            {'aws_instance_id': telemetry_json['data']['aws']['instance-id']})
 
