@@ -16,11 +16,9 @@ RUN tar xvf infection_monkey_deb.${RELEASE}.tgz  \
     && apt-get -yqq upgrade                      \
     && apt-get -yqq install python-pip           \
                             python-dev           \
-                            libssl-dev           \
-                            supervisor           \
     && dpkg -i *.deb                             \
     && rm -f *.deb *.tgz
 
-COPY stack.conf /etc/supervisor/conf.d/stack.conf
-
-ENTRYPOINT [ "supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf" ]
+WORKDIR /var/monkey
+ENTRYPOINT ["/var/monkey/monkey_island/bin/python/bin/python"]
+CMD ["/var/monkey/monkey_island.py"]
