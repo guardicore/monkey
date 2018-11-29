@@ -7,8 +7,7 @@ services:
     volumes:
       - db_data:/data/db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: test
+      MONGO_INITDB_DATABASE: monkey
   monkey:
     depends_on:
       - db
@@ -17,7 +16,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MONGO_URL: mongodb://root:test@db:27017/
+      MONGO_URL: mongodb://db:27017/monkey
 
 volumes:
   db_data:
