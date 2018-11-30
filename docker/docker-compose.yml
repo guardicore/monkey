@@ -7,7 +7,7 @@ services:
     volumes:
       - db_data:/data/db
     environment:
-      MONGO_INITDB_DATABASE: monkey
+      MONGO_INITDB_DATABASE: monkeyisland
   monkey:
     depends_on:
       - db
