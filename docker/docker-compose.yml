@@ -16,7 +16,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MONGO_URL: mongodb://db:27017/monkey
+      MONGO_URL: mongodb://db:27017/monkeyisland
 
 volumes:
   db_data:
