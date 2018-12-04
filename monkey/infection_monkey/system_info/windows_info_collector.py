@@ -55,6 +55,9 @@ class WindowsInfoCollector(InfoCollector):
         LOG.debug('finished get_wmi_info')
 
     def get_mimikatz_info(self):
+        from infection_monkey.config import WormConfiguration
+        if not WormConfiguration.should_use_mimikatz:
+            return
         mimikatz_collector = MimikatzCollector()
         mimikatz_info = mimikatz_collector.get_logon_info()
         if mimikatz_info:
