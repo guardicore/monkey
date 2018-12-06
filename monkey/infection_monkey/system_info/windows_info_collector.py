@@ -38,7 +38,9 @@ class WindowsInfoCollector(InfoCollector):
         super(WindowsInfoCollector, self).get_info()
         self.get_wmi_info()
         self.get_installed_packages()
-        self.get_mimikatz_info()
+        from infection_monkey.config import WormConfiguration
+        if WormConfiguration.should_use_mimikatz:
+            self.get_mimikatz_info()
 
         return self.info
 
