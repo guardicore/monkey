@@ -1,5 +1,6 @@
 # Files used to deploy development version of infection monkey
-On windows:<br>
+## Windows
+
 Before running the script you must have git installed.<br>
 Cd to scripts directory and use the scripts.<br>
 First argument is an empty directory (script can create one) and second is branch you want to clone.
@@ -10,8 +11,9 @@ powershell -ExecutionPolicy ByPass -Command ". .\deploy_windows.ps1; Deploy-Wind
 ./run_script.bat "" "master"(Sets up master branch instead of develop in current dir)
 Don't forget to add python to PATH or do so while installing it via this script.<br>
 
-On Linux:<br>
-You must have root permissions, but don't run the script as root.<br>
+## Linux
+
+You must have root permissions, but there is no need to run the script as root.<br>
 Launch deploy_linux.sh from scripts directory.<br>
 First argument is an empty directory (script can create one) and second is branch you want to clone.
 Example usages:<br>
