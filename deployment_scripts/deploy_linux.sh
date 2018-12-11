@@ -62,6 +62,12 @@ if [[ ${python_version} == *"command not found"* ]] || [[ ${python_version} != *
     exit 1
 fi
 
+log_message "Updating package list"
+sudo apt-get update
+
+log_message "Installing pip"
+sudo apt-get install python-pip
+
 log_message "Installing island requirements"
 requirements="$ISLAND_PATH/requirements.txt"
 python -m pip install --user -r ${requirements} || handle_error
@@ -121,6 +127,11 @@ ${ISLAND_PATH}/linux/create_certificate.sh || handle_error
 # Install npm
 log_message "Installing npm"
 sudo apt-get install npm
+
+# Update node
+log_message "Updating node"
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
 log_message "Generating front end"
 cd "$ISLAND_PATH/cc/ui" || handle_error
