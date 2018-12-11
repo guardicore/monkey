@@ -8,7 +8,6 @@ from enum import Enum
 from six import text_type
 
 from cc.database import mongo
-from cc.environment.environment import load_env_from_file, AWS
 from cc.resources.aws_exporter import AWSExporter
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
@@ -677,9 +676,7 @@ class ReportService:
     @staticmethod
     def is_report_generated():
         generated_report = mongo.db.report.find_one({})
-        if generated_report is None:
-            return False
-        return True
+        return generated_report is not None
 
     @staticmethod
     def generate_report():
@@ -734,6 +731,10 @@ class ReportService:
 
     @staticmethod
     def is_latest_report_exists():
+        """
+        This function checks if a monkey report was already generated and if it's the latest one.
+        :return: True if report is the latest one, False if there isn't a report or its not the latest.
+        """
         latest_report_doc = mongo.db.report.find_one({}, {'meta.latest_monkey_modifytime': 1})
 
         if latest_report_doc:
@@ -754,14 +755,6 @@ class ReportService:
         return mongo.db.edge.count(
             {'exploits': {'$elemMatch': {'exploiter': exploit_type, 'result': True}}},
             limit=1) > 0
-
-    @staticmethod
-    def get_active_exporters():
-        # This function should be in another module in charge of building a list of active exporters
-        exporters_list = []
-        if str(load_env_from_file()) == AWS:
-            exporters_list.append(AWSExporter)
-        return exporters_list
 
     @staticmethod
     def export_to_exporters(report):
