@@ -69,6 +69,7 @@ def process_datas(orig_datas):
 def get_binaries():
     binaries = get_windows_only_binaries() if is_windows() else get_linux_only_binaries()
     binaries += get_sc_binaries()
+    binaries += get_traceroute_binaries()
     return binaries
 
 
@@ -93,6 +94,10 @@ def get_sc_binaries():
 
 def get_msvcr():
     return [('msvcr100.dll', os.environ['WINDIR'] + '\\system32\\msvcr100.dll', 'BINARY')]
+
+
+def get_traceroute_binaries():
+    return [('traceroute', get_bin_file_path('traceroute'), 'BINARY')]
 
 
 def get_monkey_filename():

@@ -9,9 +9,12 @@ import re
 
 from six.moves import range
 
+from infection_monkey.pyinstaller_utils import get_binary_file_path
+
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
-IP_ADDR_RE = r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
+IP_ADDR_RE = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
+IP_ADDR_PARENT_RE = r'\(' + IP_ADDR_RE + r'\)'
 
 LOG = logging.getLogger(__name__)
 SLEEP_BETWEEN_POLL = 0.5
@@ -188,19 +191,8 @@ def traceroute(target_ip, ttl):
         return _traceroute_linux(target_ip, ttl)
 
 
-def _traceroute_windows(target_ip, ttl):
-    """
-    Traceroute for a specific IP/name - Windows implementation
-    """
-    # we'll just use tracert because that's always there
-    cli = ["tracert",
-           "-d",
-           "-w", "250",
-           "-h", str(ttl),
-           target_ip]
-    proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
-    stdout, stderr = proc_obj.communicate()
-    ip_lines = stdout.split('\r\n')
+def _parse_traceroute(output, regex, ttl):
+    ip_lines = output.split('\n')
     trace_list = []
 
     first_line_index = None
@@ -213,7 +205,7 @@ def _traceroute_windows(target_ip, ttl):
         if re.search(r'^\s*' + str(i - first_line_index + 1), ip_lines[i]) is None:  # If trace is finished
             break
 
-        re_res = re.search(IP_ADDR_RE, ip_lines[i])
+        re_res = re.search(regex, ip_lines[i])
         if re_res is None:
             ip_addr = None
         else:
@@ -223,36 +215,35 @@ def _traceroute_windows(target_ip, ttl):
     return trace_list
 
 
+def _traceroute_windows(target_ip, ttl):
+    """
+    Traceroute for a specific IP/name - Windows implementation
+    """
+    # we'll just use tracert because that's always there
+    cli = ["tracert",
+           "-d",
+           "-w", "250",
+           "-h", str(ttl),
+           target_ip]
+    proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
+    stdout, stderr = proc_obj.communicate()
+    stdout = stdout.replace('\r', '')
+    return _parse_traceroute(stdout, IP_ADDR_RE, ttl)
+
+
 def _traceroute_linux(target_ip, ttl):
     """
     Traceroute for a specific IP/name - Linux implementation
     """
-    # implementation note: We're currently going to just use ping.
-    # reason is, implementing a non root requiring user is complicated (see traceroute(8) code)
-    # while this is just ugly
-    # we can't use traceroute because it's not always installed
-    current_ttl = 1
-    trace_list = []
-    while current_ttl <= ttl:
-        cli = ["ping",
-               "-c", "1",
-               "-w", "1",
-               "-t", str(current_ttl),
-               target_ip]
-        proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
-        stdout, stderr = proc_obj.communicate()
-        ips = re.findall(IP_ADDR_RE, stdout)
-        if len(ips) < 2:  # Unexpected output. Fail the whole thing since it's not reliable.
-            return []
-        elif ips[-1] in trace_list:  # Failed getting this hop
-            trace_list.append(None)
-        else:
-            trace_list.append(ips[-1])
-            dest_ip = ips[0]  # first ip is dest ip. must be parsed here since it can change between pings
 
-            if dest_ip == ips[-1]:
-                break
+    traceroute_path = get_binary_file_path("traceroute")
+    cli = [traceroute_path,
+           "-m", str(ttl),
+           target_ip]
+    proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
+    stdout, stderr = proc_obj.communicate()
 
-        current_ttl += 1
-
-    return trace_list
+    lines = _parse_traceroute(stdout, IP_ADDR_PARENT_RE, ttl)
+    lines = [x[1:-1] if x else None  # Removes parenthesis
+             for x in lines]
+    return lines
