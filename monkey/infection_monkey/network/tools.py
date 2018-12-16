@@ -192,6 +192,14 @@ def traceroute(target_ip, ttl):
 
 
 def _parse_traceroute(output, regex, ttl):
+    """
+    Parses the output of traceroute (from either Linux or Windows)
+    :param output:  The output of the traceroute
+    :param regex:   Regex for finding an IP address
+    :param ttl:     Max TTL. Must be the same as the TTL used as param for traceroute.
+    :return:        List of ips which are the hops on the way to the traceroute destination.
+                    If a hop's IP wasn't found by traceroute, instead of an IP, the array will contain None
+    """
     ip_lines = output.split('\n')
     trace_list = []
 
