@@ -68,3 +68,13 @@ bin
 /monkey/monkey_island/cc/server.crt
 /monkey/monkey_island/cc/server.csr
 /monkey/monkey_island/cc/ui/node_modules/
+
+# MonkeyZoo
+# Network status files
+MonkeyZoo/*
+# Except
+!MonkeyZoo/main.tf
+!MonkeyZoo/variables.tf
+!MonkeyZoo/README.MD
+!MonkeyZoo/config.tf
+!MonkeyZoo/MonkeyZooDocs.pdf
