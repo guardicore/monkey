@@ -5,14 +5,6 @@ locals {
   default_windows="${google_compute_instance_template.windows2016.self_link}"
 }
 
-variable "region" {
-  default="europe-west3"
-}
-
-variable "zone" {
-  default="europe-west3-b"
-}
-
 resource "google_compute_network" "monkeyzoo" {
   name                    = "monkeyzoo"
   auto_create_subnetworks = false
@@ -78,20 +70,18 @@ resource "google_compute_firewall" "tunneling-out" {
 resource "google_compute_subnetwork" "monkeyzoo-main" {
   name            = "monkeyzoo-main"
   ip_cidr_range   = "10.2.2.0/24"
-  region          = "europe-west3"
   network         = "${google_compute_network.monkeyzoo.self_link}"
 }
 
 resource "google_compute_subnetwork" "tunneling-main" {
   name            = "tunneling-main"
   ip_cidr_range   = "10.2.1.0/28"
-  region          = "europe-west3"
   network         = "${google_compute_network.tunneling.self_link}"
 }
 
 resource "google_compute_instance_template" "ubuntu16" {
   name        = "ubuntu16"
-  description = "Creates ubuntu 16.04 LTS servers at europe-west3-a."
+  description = "Creates ubuntu 16.04 LTS servers."
 
   tags = ["test-machine", "ubuntu16", "linux"]
 
@@ -116,7 +106,7 @@ resource "google_compute_instance_template" "ubuntu16" {
 
 resource "google_compute_instance_template" "windows2016" {
   name        = "windows2016"
-  description = "Creates windows 2016 core servers at europe-west3-a."
+  description = "Creates windows 2016 core servers."
 
   tags = ["test-machine", "windows2016core", "windows"]
 
@@ -480,8 +470,8 @@ resource "google_compute_instance_from_template" "island-linux-250" {
     subnetwork="monkeyzoo-main"
     network_ip="10.2.2.250"
     access_config {
-      // Cheaper, non-premium routing
-      network_tier = "STANDARD"
+      // Cheaper, non-premium routing (not available in some regions)
+      // network_tier = "STANDARD"
     }
   }
 }
@@ -499,8 +489,8 @@ resource "google_compute_instance_from_template" "island-windows-251" {
     subnetwork="monkeyzoo-main"
     network_ip="10.2.2.251"
     access_config {
-      // Cheaper, non-premium routing
-      network_tier = "STANDARD"
+      // Cheaper, non-premium routing (not available in some regions)
+      // network_tier = "STANDARD"
     }
   }
 }
