@@ -90,6 +90,7 @@ resource "google_compute_instance_template" "ubuntu16" {
 
   disk {
     source_image = "ubuntu-os-cloud/ubuntu-1604-lts"
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -115,6 +116,7 @@ resource "google_compute_instance_template" "windows2016" {
 
   disk {
     source_image = "windows-cloud/windows-2016"
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -132,6 +134,7 @@ resource "google_compute_instance_from_template" "hadoop-2" {
     initialize_params {
       image = "${data.google_compute_image.hadoop-2.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -145,6 +148,7 @@ resource "google_compute_instance_from_template" "hadoop-3" {
     initialize_params {
       image = "${data.google_compute_image.hadoop-3.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -158,6 +162,7 @@ resource "google_compute_instance_from_template" "elastic-4" {
     initialize_params {
       image = "${data.google_compute_image.elastic-4.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -171,6 +176,7 @@ resource "google_compute_instance_from_template" "elastic-5" {
     initialize_params {
       image = "${data.google_compute_image.elastic-5.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -215,6 +221,7 @@ resource "google_compute_instance_from_template" "shellshock-8" {
     initialize_params {
       image = "${data.google_compute_image.shellshock-8.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -228,11 +235,12 @@ resource "google_compute_instance_from_template" "tunneling-9" {
     initialize_params {
       image = "${data.google_compute_image.tunneling-9.self_link}"
     }
+    auto_delete = true
   }
   network_interface{
     subnetwork="tunneling-main"
     network_ip="10.2.1.9"
-    
+
   }
   network_interface{
     subnetwork="monkeyzoo-main"
@@ -247,6 +255,7 @@ resource "google_compute_instance_from_template" "tunneling-10" {
     initialize_params {
       image = "${data.google_compute_image.tunneling-10.self_link}"
     }
+    auto_delete = true
   }
   network_interface{
     subnetwork="tunneling-main"
@@ -262,6 +271,7 @@ resource "google_compute_instance_from_template" "sshkeys-11" {
     initialize_params {
       image = "${data.google_compute_image.sshkeys-11.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -276,6 +286,7 @@ resource "google_compute_instance_from_template" "sshkeys-12" {
     initialize_params {
       image = "${data.google_compute_image.sshkeys-12.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -305,6 +316,7 @@ resource "google_compute_instance_from_template" "mimikatz-14" {
     initialize_params {
       image = "${data.google_compute_image.mimikatz-14.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -334,6 +346,7 @@ resource "google_compute_instance_from_template" "mssql-16" {
     initialize_params {
       image = "${data.google_compute_image.mssql-16.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -366,6 +379,7 @@ resource "google_compute_instance_from_template" "weblogic-18" {
     initialize_params {
       image = "${data.google_compute_image.weblogic-18.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -380,6 +394,7 @@ resource "google_compute_instance_from_template" "weblogic-19" {
     initialize_params {
       image = "${data.google_compute_image.weblogic-19.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -394,6 +409,7 @@ resource "google_compute_instance_from_template" "smb-20" {
     initialize_params {
       image = "${data.google_compute_image.smb-20.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -423,6 +439,7 @@ resource "google_compute_instance_from_template" "scan-22" {
     initialize_params {
       image = "${data.google_compute_image.scan-22.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -436,6 +453,7 @@ resource "google_compute_instance_from_template" "struts2-23" {
     initialize_params {
       image = "${data.google_compute_image.struts2-23.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -450,6 +468,7 @@ resource "google_compute_instance_from_template" "struts2-24" {
     initialize_params {
       image = "${data.google_compute_image.struts2-24.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -465,6 +484,7 @@ resource "google_compute_instance_from_template" "island-linux-250" {
     initialize_params {
       image = "${data.google_compute_image.island-linux-250.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
@@ -484,6 +504,7 @@ resource "google_compute_instance_from_template" "island-windows-251" {
     initialize_params {
       image = "${data.google_compute_image.island-windows-251.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
