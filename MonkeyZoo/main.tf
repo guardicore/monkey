@@ -140,6 +140,8 @@ resource "google_compute_instance_from_template" "hadoop-2" {
     subnetwork="monkeyzoo-main"
     network_ip="10.2.2.2"
   }
+  // Add required ssh keys for hadoop service and restart it
+  metadata_startup_script = "[ ! -f /home/vakaris_zilius/.ssh/authorized_keys ] && sudo cat /home/vakaris_zilius/.ssh/id_rsa.pub >> /home/vakaris_zilius/.ssh/authorized_keys && sudo reboot"
 }
 resource "google_compute_instance_from_template" "hadoop-3" {
   name         = "hadoop-3"
@@ -183,7 +185,7 @@ resource "google_compute_instance_from_template" "elastic-5" {
     network_ip="10.2.2.5"
   }
 }
-/*
+/* Couldn't find ubuntu packages for required samba version (too old).
 resource "google_compute_instance_from_template" "sambacry-6" {
   name         = "sambacry-6"
   source_instance_template = "${local.default_ubuntu}"
@@ -198,7 +200,7 @@ resource "google_compute_instance_from_template" "sambacry-6" {
   }
 }
 */
-/* WE NEED COSTOM 32-BIT UBUNTU FOR THIS MACHINE
+/* We need custom 32 bit Ubuntu machine for this (there are no 32 bit ubuntu machines in GCP).
 resource "google_compute_instance_from_template" "sambacry-7" {
   name         = "sambacry-7"
   source_instance_template = "${local.default_ubuntu}"
@@ -324,7 +326,6 @@ resource "google_compute_instance_from_template" "mimikatz-14" {
   }
 }
 
-/*
 resource "google_compute_instance_from_template" "mimikatz-15" {
   name         = "mimikatz-15"
   source_instance_template = "${local.default_windows}"
@@ -332,13 +333,14 @@ resource "google_compute_instance_from_template" "mimikatz-15" {
     initialize_params {
       image = "${data.google_compute_image.mimikatz-15.self_link}"
     }
+    auto_delete = true
   }
   network_interface {
     subnetwork="monkeyzoo-main"
     network_ip="10.2.2.15"
   }
 }
-*/
+
 resource "google_compute_instance_from_template" "mssql-16" {
   name         = "mssql-16"
   source_instance_template = "${local.default_windows}"
@@ -353,7 +355,7 @@ resource "google_compute_instance_from_template" "mssql-16" {
     network_ip="10.2.2.16"
   }
 }
-/*
+/* We need to alter monkey's behavior for this to upload 32-bit monkey instead of 64-bit (not yet developed)
 resource "google_compute_instance_from_template" "upgrader-17" {
   name         = "upgrader-17"
   source_instance_template = "${local.default_windows}"
