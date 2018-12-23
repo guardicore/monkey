@@ -179,7 +179,7 @@ def tcp_port_to_service(port):
     return 'tcp-' + str(port)
 
 
-def traceroute(target_ip, ttl):
+def traceroute(target_ip, ttl=64):
     """
     Traceroute for a specific IP/name.
     :param target_ip: IP/name of target
