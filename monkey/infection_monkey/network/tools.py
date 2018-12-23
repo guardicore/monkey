@@ -10,6 +10,7 @@ import re
 from six.moves import range
 
 from infection_monkey.pyinstaller_utils import get_binary_file_path
+from infection_monkey.utils import is_64bit_python
 
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
@@ -191,6 +192,21 @@ def traceroute(target_ip, ttl):
         return _traceroute_linux(target_ip, ttl)
 
 
+def _get_traceroute_bin_path():
+    """
+    Gets the path to the prebuilt traceroute executable
+
+    This is the traceroute utility from: http://traceroute.sourceforge.net
+    Its been built using the buildroot utility with the following settings:
+        * Statically link to musl and all other required libs
+        * Optimize for size
+    This is done because not all linux distros come with traceroute out-of-the-box, and to ensure it behaves as expected
+
+    :return: Path to traceroute executable
+    """
+    return get_binary_file_path("traceroute64" if is_64bit_python() else "traceroute32")
+
+
 def _parse_traceroute(output, regex, ttl):
     """
     Parses the output of traceroute (from either Linux or Windows)
@@ -244,8 +260,7 @@ def _traceroute_linux(target_ip, ttl):
     Traceroute for a specific IP/name - Linux implementation
     """
 
-    traceroute_path = get_binary_file_path("traceroute")
-    cli = [traceroute_path,
+    cli = [_get_traceroute_bin_path(),
            "-m", str(ttl),
            target_ip]
     proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)

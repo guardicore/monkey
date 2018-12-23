@@ -97,7 +97,8 @@ def get_msvcr():
 
 
 def get_traceroute_binaries():
-    return [('traceroute', get_bin_file_path('traceroute'), 'BINARY')]
+    traceroute_name = 'traceroute32' if is_32_bit() else 'traceroute64'
+    return [(traceroute_name, get_bin_file_path(traceroute_name), 'BINARY')]
 
 
 def get_monkey_filename():
