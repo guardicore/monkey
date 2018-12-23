@@ -251,7 +251,7 @@ def _traceroute_linux(target_ip, ttl):
     proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
     stdout, stderr = proc_obj.communicate()
 
-    lines = _parse_traceroute(stdout, IP_ADDR_PARENT_RE, ttl)
+    lines = _parse_traceroute(stdout, IP_ADDR_PARENTHESES_RE, ttl)
     lines = [x[1:-1] if x else None  # Removes parenthesis
              for x in lines]
     return lines
