@@ -182,6 +182,7 @@ def tcp_port_to_service(port):
 def traceroute(target_ip, ttl=64):
     """
     Traceroute for a specific IP/name.
+    Note, may throw exception on failure that should be handled by caller.
     :param target_ip: IP/name of target
     :param ttl: Max TTL
     :return: Sequence of IPs in the way
