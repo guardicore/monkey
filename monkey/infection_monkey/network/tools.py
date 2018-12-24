@@ -9,9 +9,13 @@ import re
 
 from six.moves import range
 
+from infection_monkey.pyinstaller_utils import get_binary_file_path
+from infection_monkey.utils import is_64bit_python
+
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
-IP_ADDR_RE = r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
+IP_ADDR_RE = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
+IP_ADDR_PARENTHESES_RE = r'\(' + IP_ADDR_RE + r'\)'
 
 LOG = logging.getLogger(__name__)
 SLEEP_BETWEEN_POLL = 0.5
@@ -175,9 +179,10 @@ def tcp_port_to_service(port):
     return 'tcp-' + str(port)
 
 
-def traceroute(target_ip, ttl):
+def traceroute(target_ip, ttl=64):
     """
     Traceroute for a specific IP/name.
+    Note, may throw exception on failure that should be handled by caller.
     :param target_ip: IP/name of target
     :param ttl: Max TTL
     :return: Sequence of IPs in the way
@@ -186,6 +191,53 @@ def traceroute(target_ip, ttl):
         return _traceroute_windows(target_ip, ttl)
     else:  # linux based hopefully
         return _traceroute_linux(target_ip, ttl)
+
+
+def _get_traceroute_bin_path():
+    """
+    Gets the path to the prebuilt traceroute executable
+
+    This is the traceroute utility from: http://traceroute.sourceforge.net
+    Its been built using the buildroot utility with the following settings:
+        * Statically link to musl and all other required libs
+        * Optimize for size
+    This is done because not all linux distros come with traceroute out-of-the-box, and to ensure it behaves as expected
+
+    :return: Path to traceroute executable
+    """
+    return get_binary_file_path("traceroute64" if is_64bit_python() else "traceroute32")
+
+
+def _parse_traceroute(output, regex, ttl):
+    """
+    Parses the output of traceroute (from either Linux or Windows)
+    :param output:  The output of the traceroute
+    :param regex:   Regex for finding an IP address
+    :param ttl:     Max TTL. Must be the same as the TTL used as param for traceroute.
+    :return:        List of ips which are the hops on the way to the traceroute destination.
+                    If a hop's IP wasn't found by traceroute, instead of an IP, the array will contain None
+    """
+    ip_lines = output.split('\n')
+    trace_list = []
+
+    first_line_index = None
+    for i in range(len(ip_lines)):
+        if re.search(r'^\s*1', ip_lines[i]) is not None:
+            first_line_index = i
+            break
+
+    for i in range(first_line_index, first_line_index + ttl):
+        if re.search(r'^\s*' + str(i - first_line_index + 1), ip_lines[i]) is None:  # If trace is finished
+            break
+
+        re_res = re.search(regex, ip_lines[i])
+        if re_res is None:
+            ip_addr = None
+        else:
+            ip_addr = re_res.group()
+        trace_list.append(ip_addr)
+
+    return trace_list
 
 
 def _traceroute_windows(target_ip, ttl):
@@ -200,59 +252,22 @@ def _traceroute_windows(target_ip, ttl):
            target_ip]
     proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
     stdout, stderr = proc_obj.communicate()
-    ip_lines = stdout.split('\r\n')
-    trace_list = []
-
-    first_line_index = None
-    for i in range(len(ip_lines)):
-        if re.search(r'^\s*1', ip_lines[i]) is not None:
-            first_line_index = i
-            break
-
-    for i in range(first_line_index, first_line_index + ttl):
-        if re.search(r'^\s*' + str(i - first_line_index + 1), ip_lines[i]) is None:  # If trace is finished
-            break
-
-        re_res = re.search(IP_ADDR_RE, ip_lines[i])
-        if re_res is None:
-            ip_addr = None
-        else:
-            ip_addr = re_res.group()
-        trace_list.append(ip_addr)
-
-    return trace_list
+    stdout = stdout.replace('\r', '')
+    return _parse_traceroute(stdout, IP_ADDR_RE, ttl)
 
 
 def _traceroute_linux(target_ip, ttl):
     """
     Traceroute for a specific IP/name - Linux implementation
     """
-    # implementation note: We're currently going to just use ping.
-    # reason is, implementing a non root requiring user is complicated (see traceroute(8) code)
-    # while this is just ugly
-    # we can't use traceroute because it's not always installed
-    current_ttl = 1
-    trace_list = []
-    while current_ttl <= ttl:
-        cli = ["ping",
-               "-c", "1",
-               "-w", "1",
-               "-t", str(current_ttl),
-               target_ip]
-        proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
-        stdout, stderr = proc_obj.communicate()
-        ips = re.findall(IP_ADDR_RE, stdout)
-        if len(ips) < 2:  # Unexpected output. Fail the whole thing since it's not reliable.
-            return []
-        elif ips[-1] in trace_list:  # Failed getting this hop
-            trace_list.append(None)
-        else:
-            trace_list.append(ips[-1])
-            dest_ip = ips[0]  # first ip is dest ip. must be parsed here since it can change between pings
 
-            if dest_ip == ips[-1]:
-                break
+    cli = [_get_traceroute_bin_path(),
+           "-m", str(ttl),
+           target_ip]
+    proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
+    stdout, stderr = proc_obj.communicate()
 
-        current_ttl += 1
-
-    return trace_list
+    lines = _parse_traceroute(stdout, IP_ADDR_PARENTHESES_RE, ttl)
+    lines = [x[1:-1] if x else None  # Removes parenthesis
+             for x in lines]
+    return lines
