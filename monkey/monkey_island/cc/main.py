@@ -34,6 +34,8 @@ def main():
         logger.info('Waiting for MongoDB server')
         time.sleep(1)
 
+
+
     app = init_app(mongo_url)
     if env.is_debug():
         app.run(host='0.0.0.0', debug=True, ssl_context=('monkey_island/cc/server.crt', 'monkey_island/cc/server.key'))
@@ -44,6 +46,7 @@ def main():
         http_server.listen(env.get_island_port())
         logger.info(
             'Monkey Island Server is running on https://{}:{}'.format(local_ip_addresses()[0], env.get_island_port()))
+
         IOLoop.instance().start()
 
 

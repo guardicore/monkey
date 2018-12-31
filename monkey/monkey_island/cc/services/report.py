@@ -8,7 +8,7 @@ from enum import Enum
 from six import text_type
 
 from cc.database import mongo
-from cc.resources.aws_exporter import AWSExporter
+from cc.report_exporter_manager import ReportExporterManager
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
@@ -723,7 +723,7 @@ class ReportService:
                         'latest_monkey_modifytime': monkey_latest_modify_time
                     }
             }
-        ReportService.export_to_exporters(report)
+        ReportExporterManager().export(report)
         mongo.db.report.drop()
         mongo.db.report.insert_one(report)
 
@@ -755,8 +755,3 @@ class ReportService:
         return mongo.db.edge.count(
             {'exploits': {'$elemMatch': {'exploiter': exploit_type, 'result': True}}},
             limit=1) > 0
-
-    @staticmethod
-    def export_to_exporters(report):
-        for exporter in ReportService.get_active_exporters():
-            exporter.handle_report(report)
