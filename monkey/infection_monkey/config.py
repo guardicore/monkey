@@ -20,6 +20,7 @@ class Configuration(object):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
         exploit_import = importlib.import_module('infection_monkey.exploit')
+        post_breach_import = importlib.import_module('infection_monkey.post_breach')
 
         unknown_items = []
         for key, value in formatted_data.items():
@@ -38,6 +39,9 @@ class Configuration(object):
                 setattr(self, key, scanner_object)
             elif key == 'exploiter_classes':
                 class_objects = [getattr(exploit_import, val) for val in value]
+                setattr(self, key, class_objects)
+            elif key == 'post_breach_actions':
+                class_objects = [getattr(post_breach_import, val) for val in value]
                 setattr(self, key, class_objects)
             else:
                 if hasattr(self, key):
@@ -265,6 +269,8 @@ class Configuration(object):
     ###########################
 
     extract_azure_creds = True
+
+    post_breach_actions = []
 
 
 WormConfiguration = Configuration()
