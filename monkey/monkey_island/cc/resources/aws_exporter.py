@@ -9,6 +9,9 @@ from cc.services.config import ConfigService
 from cc.environment.environment import load_server_configuration_from_file
 from common.cloud.aws import AWS
 
+__author__ = 'maor.rayzin'
+
+
 logger = logging.getLogger(__name__)
 
 AWS_CRED_CONFIG_KEYS = [['cnc', 'aws_config', 'aws_access_key_id'],

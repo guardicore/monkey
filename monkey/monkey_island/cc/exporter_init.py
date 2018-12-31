@@ -2,6 +2,7 @@ from cc.environment.environment import load_env_from_file, AWS
 from cc.report_exporter_manager import ReportExporterManager
 from cc.resources.aws_exporter import AWSExporter
 
+__author__ = 'maor.rayzin'
 
 def populate_exporter_list():
 
