@@ -7,8 +7,6 @@ from abc import ABCMeta
 from itertools import product
 import importlib
 
-importlib.import_module('infection_monkey', 'network')
-
 __author__ = 'itamar'
 
 GUID = str(uuid.getnode())
