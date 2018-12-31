@@ -1,4 +1,5 @@
-How to build a monkey binary from scratch.
+To get development versions of Monkey Island and Monkey look into deployment scripts folder.
+If you only want to monkey from scratch you may refer to the instructions below.
 
 The monkey is composed of three separate parts.
 * The Infection Monkey itself - PyInstaller compressed python archives
