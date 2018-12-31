@@ -817,7 +817,7 @@ SCHEMA = {
                         "tcp_scan_interval": {
                             "title": "TCP scan interval",
                             "type": "integer",
-                            "default": 200,
+                            "default": 0,
                             "description": "Time to sleep (in milliseconds) between scans"
                         },
                         "tcp_scan_timeout": {
