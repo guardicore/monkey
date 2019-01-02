@@ -18,6 +18,7 @@ json_setup_logging(default_path=os.path.join(BASE_PATH, 'cc', 'island_logger_def
 logger = logging.getLogger(__name__)
 
 from cc.app import init_app
+from cc.exporter_init import populate_exporter_list
 from cc.utils import local_ip_addresses
 from cc.environment.environment import env
 from cc.database import is_db_server_up
@@ -34,8 +35,7 @@ def main():
         logger.info('Waiting for MongoDB server')
         time.sleep(1)
 
-
-
+    populate_exporter_list()
     app = init_app(mongo_url)
     if env.is_debug():
         app.run(host='0.0.0.0', debug=True, ssl_context=('monkey_island/cc/server.crt', 'monkey_island/cc/server.key'))

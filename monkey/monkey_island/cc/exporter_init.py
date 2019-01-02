@@ -4,6 +4,7 @@ from cc.resources.aws_exporter import AWSExporter
 
 __author__ = 'maor.rayzin'
 
+
 def populate_exporter_list():
 
     manager = ReportExporterManager()

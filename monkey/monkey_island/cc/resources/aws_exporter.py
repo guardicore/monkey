@@ -131,7 +131,7 @@ class AWSExporter(Exporter):
                 "Id": instance_arn.format(instance_id=instance_id)
             }]
         else:
-            return [{'Type': 'Other'}]
+            return [{'Type': 'Other', 'Id': 'None'}]
 
     @staticmethod
     def _build_generic_finding(severity, title, description, recommendation, instance_arn, instance_id=None):
@@ -140,7 +140,7 @@ class AWSExporter(Exporter):
                 "Product": severity,
                 "Normalized": 100
             },
-            'Resource': AWSExporter._get_finding_resource(instance_id, instance_arn),
+            'Resources': AWSExporter._get_finding_resource(instance_id, instance_arn),
             "Title": title,
             "Description": description,
             "Remediation": {

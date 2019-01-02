@@ -3,6 +3,8 @@ import functools
 
 import ipaddress
 import logging
+
+from bson import json_util
 from enum import Enum
 
 from six import text_type
@@ -725,9 +727,21 @@ class ReportService:
             }
         ReportExporterManager().export(report)
         mongo.db.report.drop()
-        mongo.db.report.insert_one(report)
+        mongo.db.report.insert_one(ReportService.clean_report_before_mongo_insert(report))
 
         return report
+
+    @staticmethod
+    def clean_report_before_mongo_insert(report_dict):
+        """
+        mongodb doesn't allow for '.' and '$' in a key's name, this function replaces the '.' char with the unicode
+        \u002E char instead.
+        :return:
+        """
+        report_as_json = json_util.dumps(report_dict)
+        report_as_json.replace('.', '\u002E')
+        return json_util.loads(report_as_json)
+
 
     @staticmethod
     def is_latest_report_exists():
