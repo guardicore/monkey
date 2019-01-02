@@ -727,19 +727,18 @@ class ReportService:
             }
         ReportExporterManager().export(report)
         mongo.db.report.drop()
-        mongo.db.report.insert_one(ReportService.clean_report_before_mongo_insert(report))
+        mongo.db.report.insert_one(ReportService.encode_dot_char_before_mongo_insert(report))
 
         return report
 
     @staticmethod
-    def clean_report_before_mongo_insert(report_dict):
+    def encode_dot_char_before_mongo_insert(report_dict):
         """
         mongodb doesn't allow for '.' and '$' in a key's name, this function replaces the '.' char with the unicode
-        \u002E char instead.
-        :return:
+        ,,, combo instead.
+        :return: dict with formatted keys with no dots.
         """
-        report_as_json = json_util.dumps(report_dict)
-        report_as_json.replace('.', '\u002E')
+        report_as_json = json_util.dumps(report_dict).replace('.', ',,,')
         return json_util.loads(report_as_json)
 
 
@@ -759,9 +758,18 @@ class ReportService:
         return False
 
     @staticmethod
+    def decode_dot_char_before_mongo_insert(report_dict):
+        """
+        this function replaces the ',,,' combo with the '.' char instead.
+        :return: report dict with formatted keys (',,,' -> '.')
+        """
+        report_as_json = json_util.dumps(report_dict).replace(',,,', '.')
+        return json_util.loads(report_as_json)
+
+    @staticmethod
     def get_report():
         if ReportService.is_latest_report_exists():
-            return mongo.db.report.find_one()
+            return ReportService.decode_dot_char_before_mongo_insert(mongo.db.report.find_one())
         return ReportService.generate_report()
 
     @staticmethod
