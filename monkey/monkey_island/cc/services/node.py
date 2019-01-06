@@ -63,7 +63,7 @@ class NodeService:
 
     @staticmethod
     def get_node_label(node):
-        domain_name = node["domain_name"]
+        domain_name = ""
         if node["domain_name"]:
             domain_name = " ("+node["domain_name"]+")"
         return node["os"]["version"] + " : " + node["ip_addresses"][0] + domain_name

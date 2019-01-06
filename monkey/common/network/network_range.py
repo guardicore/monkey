@@ -140,27 +140,33 @@ class SingleIpRange(NetworkRange):
         Checks if we could translate domain name entered into IP address
         :return: True if dns found domain name and false otherwise
         """
-        return hasattr(self, "_ip_address") and self._ip_address
+        return self._ip_address
 
     @staticmethod
     def string_to_host(string):
         """
-        Converts the string that user entered in "Scan IP/subnet list" to dict of domain name and ip
+        Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name and ip
         :param string: String that was entered in "Scan IP/subnet list"
         :return: A tuple in format (IP, domain_name). Eg. (192.168.55.1, www.google.com)
         """
         # The most common use case is to enter ip/range into "Scan IP/subnet list"
         domain_name = ''
-        ip = string
 
-        # If a string was entered instead of IP we presume that it was domain name and translate it
-        if re.search('[a-zA-Z]', string):
+        # Make sure to have unicode string
+        user_input = string.decode('utf-8', 'ignore')
+
+        # Try casting user's input as IP
+        try:
+            ip = ipaddress.ip_address(user_input).exploded
+        except ValueError:
+            # Exception means that it's a domain name
             try:
                 ip = socket.gethostbyname(string)
                 domain_name = string
             except socket.error:
-                LOG.error(
-                    "You'r specified host: {} is not found as a domain name and it's not an IP address".format(string))
+                LOG.error("Your specified host: {} is not found as a domain name and"
+                          " it's not an IP address".format(string))
                 return None, string
+        # If a string was entered instead of IP we presume that it was domain name and translate it
         return ip, domain_name
 
