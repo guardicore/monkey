@@ -59,10 +59,10 @@ class PingScanner(HostScanner, HostFinger):
         if regex_result:
             try:
                 ttl = int(regex_result.group(0))
-                if LINUX_TTL == ttl:
-                    host.os['type'] = 'linux'
-                elif WINDOWS_TTL == ttl:
+                if (ttl > LINUX_TTL) and (ttl <= WINDOWS_TTL):
                     host.os['type'] = 'windows'
+                if ttl <= LINUX_TTL:
+                    host.os['type'] = 'linux'
                 return True
             except Exception as exc:
                 LOG.debug("Error parsing ping fingerprint: %s", exc)
