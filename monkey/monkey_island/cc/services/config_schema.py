@@ -701,14 +701,14 @@ SCHEMA = {
                             "default": 5,
                             "description": "Number of attempts to exploit using MS08_067"
                         },
-                        "ms08_067_remote_user_add": {
-                            "title": "MS08_067 remote user",
+                        "user_to_add": {
+                            "title": "Remote user",
                             "type": "string",
                             "default": "Monkey_IUSER_SUPPORT",
                             "description": "Username to add on successful exploit"
                         },
-                        "ms08_067_remote_user_pass": {
-                            "title": "MS08_067 remote user password",
+                        "remote_user_pass": {
+                            "title": "Remote user password",
                             "type": "string",
                             "default": "Password1!",
                             "description": "Password to use for created user"

@@ -36,14 +36,14 @@ class BackdoorUser(object):
     def add_user_linux():
         cmd_line = ['useradd', '-M', '--expiredate',
                     datetime.datetime.today().strftime('%Y-%m-%d'), '--inactive', '0', '-c', 'MONKEY_USER',
-                    WormConfiguration.ms08_067_remote_user_add]
+                    WormConfiguration.user_to_add]
         retval = subprocess.call(cmd_line)
         return retval
 
     @staticmethod
     def add_user_windows():
-        cmd_line = ['net', 'user', WormConfiguration.ms08_067_remote_user_add,
-                    WormConfiguration.ms08_067_remote_user_pass,
+        cmd_line = ['net', 'user', WormConfiguration.user_to_add,
+                    WormConfiguration.remote_user_pass,
                     '/add', '/ACTIVE:NO']
         retval = subprocess.call(cmd_line)
         return retval

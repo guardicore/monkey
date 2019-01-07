@@ -208,8 +208,8 @@ class Configuration(object):
     skip_exploit_if_file_exist = False
 
     ms08_067_exploit_attempts = 5
-    ms08_067_remote_user_add = "Monkey_IUSER_SUPPORT"
-    ms08_067_remote_user_pass = "Password1!"
+    user_to_add = "Monkey_IUSER_SUPPORT"
+    remote_user_pass = "Password1!"
 
     # rdp exploiter
     rdp_use_vbs_download = True
