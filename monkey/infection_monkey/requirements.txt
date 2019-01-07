@@ -15,3 +15,4 @@ ecdsa
 netifaces
 ipaddress
 wmi
+pywin32
