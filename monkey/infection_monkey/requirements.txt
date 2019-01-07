@@ -14,5 +14,7 @@ six
 ecdsa
 netifaces
 ipaddress
+wmi
+pywin32
 pymssql
 pyftpdlib

@@ -44,7 +44,8 @@ Check out the [Setup](https://github.com/guardicore/monkey/wiki/setup) page in t
 
 Building the Monkey from source
 -------------------------------
-If you want to build the monkey from source, see [Setup](https://github.com/guardicore/monkey/wiki/Setup#compile-it-yourself)
+To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts) folder.
+If you only want to build the monkey from source, see [Setup](https://github.com/guardicore/monkey/wiki/Setup#compile-it-yourself)
 and follow the instructions at the readme files under [infection_monkey](infection_monkey) and [monkey_island](monkey_island). 
 
 

@@ -12,6 +12,7 @@ from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 from cc.utils import local_ip_addresses, get_subnets
+from pth_report import PTHReportService
 from common.network.network_range import NetworkRange
 
 __author__ = "itay.mizeretz"
@@ -50,13 +51,16 @@ class ReportService:
         AZURE = 6
         STOLEN_SSH_KEYS = 7
         STRUTS2 = 8
-        WEBLOGIC = 9,
-        HADOOP = 10,
-        MSSQL = 11
+        WEBLOGIC = 9
+        HADOOP = 10
+        PTH_CRIT_SERVICES_ACCESS = 11,
+        MSSQL = 12
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
         TUNNEL = 1
+        SHARED_LOCAL_ADMIN = 2
+        SHARED_PASSWORDS = 3
 
     @staticmethod
     def get_first_monkey_time():
@@ -108,25 +112,28 @@ class ReportService:
 
     @staticmethod
     def get_scanned():
+
+        formatted_nodes = []
+
         nodes = \
             [NodeService.get_displayed_node_by_id(node['_id'], True) for node in mongo.db.node.find({}, {'_id': 1})] \
             + [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
                mongo.db.monkey.find({}, {'_id': 1})]
-        nodes = [
-            {
-                'label': node['label'],
-                'ip_addresses': node['ip_addresses'],
-                'accessible_from_nodes':
-                    (x['hostname'] for x in
-                     (NodeService.get_displayed_node_by_id(edge['from'], True)
-                      for edge in EdgeService.get_displayed_edges_by_to(node['id'], True))),
-                'services': node['services']
-            }
-            for node in nodes]
+        for node in nodes:
+            formatted_nodes.append(
+                {
+                    'label': node['label'],
+                    'ip_addresses': node['ip_addresses'],
+                    'accessible_from_nodes':
+                        (x['hostname'] for x in
+                         (NodeService.get_displayed_node_by_id(edge['from'], True)
+                          for edge in EdgeService.get_displayed_edges_by_to(node['id'], True))),
+                    'services': node['services']
+                })
 
         logger.info('Scanned nodes generated for reporting')
 
-        return nodes
+        return formatted_nodes
 
     @staticmethod
     def get_exploited():
@@ -165,13 +172,14 @@ class ReportService:
             origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
             for user in monkey_creds:
                 for pass_type in monkey_creds[user]:
-                    creds.append(
+                    cred_row = \
                         {
                             'username': user.replace(',', '.'),
                             'type': PASS_TYPE_DICT[pass_type],
                             'origin': origin
                         }
-                    )
+                    if cred_row not in creds:
+                        creds.append(cred_row)
         logger.info('Stolen creds generated for reporting')
         return creds
 
@@ -425,7 +433,7 @@ class ReportService:
             ip_in_src = None
             ip_in_dst = None
             for ip_addr in monkey['ip_addresses']:
-                if source_subnet_range.is_in_range(unicode(ip_addr)):
+                if source_subnet_range.is_in_range(text_type(ip_addr)):
                     ip_in_src = ip_addr
                     break
 
@@ -434,7 +442,7 @@ class ReportService:
                 continue
 
             for ip_addr in monkey['ip_addresses']:
-                if target_subnet_range.is_in_range(unicode(ip_addr)):
+                if target_subnet_range.is_in_range(text_type(ip_addr)):
                     ip_in_dst = ip_addr
                     break
 
@@ -470,7 +478,7 @@ class ReportService:
         scans.rewind()  # If we iterated over scans already we need to rewind.
         for scan in scans:
             target_ip = scan['data']['machine']['ip_addr']
-            if target_subnet_range.is_in_range(unicode(target_ip)):
+            if target_subnet_range.is_in_range(text_type(target_ip)):
                 monkey = NodeService.get_monkey_by_guid(scan['monkey_guid'])
                 cross_segment_ip = ReportService.get_ip_in_src_and_not_in_dst(monkey['ip_addresses'],
                                                                               source_subnet_range,
@@ -530,22 +538,43 @@ class ReportService:
         return cross_segment_issues
 
     @staticmethod
+    def get_domain_issues():
+
+        ISSUE_GENERATORS = [
+            PTHReportService.get_duplicated_passwords_issues,
+            PTHReportService.get_shared_admins_issues,
+        ]
+        issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
+        domain_issues_dict = {}
+        for issue in issues:
+            if not issue.get('is_local', True):
+                machine = issue.get('machine').upper()
+                if machine not in domain_issues_dict:
+                    domain_issues_dict[machine] = []
+                domain_issues_dict[machine].append(issue)
+        logger.info('Domain issues generated for reporting')
+        return domain_issues_dict
+
+    @staticmethod
     def get_issues():
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
             ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
-            ReportService.get_azure_issues
+            ReportService.get_azure_issues,
+            PTHReportService.get_duplicated_passwords_issues,
+            PTHReportService.get_strong_users_on_crit_issues
         ]
 
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
 
         issues_dict = {}
         for issue in issues:
-            machine = issue['machine']
-            if machine not in issues_dict:
-                issues_dict[machine] = []
-            issues_dict[machine].append(issue)
+            if issue.get('is_local', True):
+                machine = issue.get('machine').upper()
+                if machine not in issues_dict:
+                    issues_dict[machine] = []
+                issues_dict[machine].append(issue)
         logger.info('Issues generated for reporting')
         return issues_dict
 
@@ -613,6 +642,8 @@ class ReportService:
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
+                elif issue['type'] == 'strong_users_on_crit':
+                    issues_byte_array[ReportService.ISSUES_DICT.PTH_CRIT_SERVICES_ACCESS.value] = True
                 elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
                     issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS.value] = True
 
@@ -620,7 +651,7 @@ class ReportService:
 
     @staticmethod
     def get_warnings_overview(issues, cross_segment_issues):
-        warnings_byte_array = [False] * 2
+        warnings_byte_array = [False] * len(ReportService.WARNINGS_DICT)
 
         for machine in issues:
             for issue in issues[machine]:
@@ -628,6 +659,10 @@ class ReportService:
                     warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
                 elif issue['type'] == 'tunnel':
                     warnings_byte_array[ReportService.WARNINGS_DICT.TUNNEL.value] = True
+                elif issue['type'] == 'shared_admins':
+                    warnings_byte_array[ReportService.WARNINGS_DICT.SHARED_LOCAL_ADMIN.value] = True
+                elif issue['type'] == 'shared_passwords':
+                    warnings_byte_array[ReportService.WARNINGS_DICT.SHARED_PASSWORDS.value] = True
 
         if len(cross_segment_issues) != 0:
             warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
@@ -651,6 +686,7 @@ class ReportService:
 
     @staticmethod
     def get_report():
+        domain_issues = ReportService.get_domain_issues()
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
@@ -678,11 +714,14 @@ class ReportService:
                         'exploited': ReportService.get_exploited(),
                         'stolen_creds': ReportService.get_stolen_creds(),
                         'azure_passwords': ReportService.get_azure_creds(),
-                        'ssh_keys': ReportService.get_ssh_keys()
+                        'ssh_keys': ReportService.get_ssh_keys(),
+                        'strong_users': PTHReportService.get_strong_users_on_crit_details(),
+                        'pth_map': PTHReportService.get_pth_map()
                     },
                 'recommendations':
                     {
-                        'issues': issues
+                        'issues': issues,
+                        'domain_issues': domain_issues
                     }
             }
 

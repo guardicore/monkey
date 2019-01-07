@@ -8,6 +8,8 @@ import StolenPasswords from 'components/report-components/StolenPasswords';
 import CollapsibleWellComponent from 'components/report-components/CollapsibleWell';
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
+import PassTheHashMapPageComponent from "./PassTheHashMapPage";
+import StrongUsers from "components/report-components/StrongUsers";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 let monkeyLogoImage = require('../../images/monkey-icon.svg');
@@ -27,13 +29,17 @@ class ReportPageComponent extends AuthComponent {
       STRUTS2: 8,
       WEBLOGIC: 9,
       HADOOP: 10,
-      MSSQL: 11
+      PTH_CRIT_SERVICES_ACCESS: 11,
+      MSSQL: 12
     };
 
   Warning =
     {
       CROSS_SEGMENT: 0,
-      TUNNEL: 1
+      TUNNEL: 1,
+      SHARED_LOCAL_ADMIN: 2,
+      SHARED_PASSWORDS: 3,
+      SHARED_PASSWORDS_DOMAIN: 4
     };
 
   constructor(props) {
@@ -49,7 +55,6 @@ class ReportPageComponent extends AuthComponent {
   componentDidMount() {
     this.updateMonkeysRunning().then(res => this.getReportFromServer(res));
     this.updateMapFromServer();
-    this.interval = setInterval(this.updateMapFromServer, 5000);
   }
 
   componentWillUnmount() {
@@ -100,7 +105,7 @@ class ReportPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
-          edge.color = edgeGroupToColor(edge.group);
+          edge.color = {'color': edgeGroupToColor(edge.group)};
         });
         this.setState({graph: res});
         this.props.onStatusChange();
@@ -335,8 +340,10 @@ class ReportPageComponent extends AuthComponent {
                       CVE-2017-10271</a>)</li> : null }
                   {this.state.report.overview.issues[this.Issue.HADOOP] ?
                     <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
+                  {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] ?
+                    <li>Mimikatz found login credentials of a user who has admin access to a server defined as critical.</li>: null }
                   {this.state.report.overview.issues[this.Issue.MSSQL] ?
-                    <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li> : null }
+                  <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li> : null }
                 </ul>
               </div>
               :
@@ -362,6 +369,10 @@ class ReportPageComponent extends AuthComponent {
                       communicate.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
                     <li>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
+                  {this.state.report.overview.warnings[this.Warning.SHARED_LOCAL_ADMIN] ?
+                    <li>Shared local administrator account - Different machines have the same account as a local administrator.</li> : null}
+                  {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS] ?
+                    <li>Multiple users have the same password</li> : null}
                 </ul>
               </div>
               :
@@ -393,7 +404,13 @@ class ReportPageComponent extends AuthComponent {
     return (
       <div id="recommendations">
         <h3>
-          Recommendations
+          Domain related recommendations
+        </h3>
+        <div>
+          {this.generateIssues(this.state.report.recommendations.domain_issues)}
+        </div>
+        <h3>
+          Machine related Recommendations
         </h3>
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
@@ -446,9 +463,36 @@ class ReportPageComponent extends AuthComponent {
         <div style={{marginBottom: '20px'}}>
           <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
-        <div>
+        <div style={{position: 'relative', height: '80vh'}}>
+        {this.generateReportPthMap()}
+        </div>
+        <div style={{marginBottom: '20px'}}>
           <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>
+        <div>
+          <StrongUsers data = {this.state.report.glance.strong_users} />
+        </div>
+      </div>
+    );
+  }
+
+  generateReportPthMap() {
+    return (
+      <div id="pth">
+        <h3>
+          Credentials Map
+        </h3>
+        <p>
+          This map visualizes possible attack paths through the network using credential compromise. Paths represent lateral movement opportunities by attackers.
+        </p>
+        <div className="map-legend">
+          <b>Legend: </b>
+          <span>Access credentials <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span> <b style={{color: '#aeaeae'}}> | </b>
+        </div>
+        <div>
+          <PassTheHashMapPageComponent graph={this.state.report.glance.pth_map} />
+        </div>
+        <br />
       </div>
     );
   }
@@ -709,6 +753,57 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateSharedCredsDomainIssue(issue) {
+    return (
+    <li>
+        Some domain users are sharing passwords, this should be fixed by changing passwords.
+        <CollapsibleWellComponent>
+          These users are sharing access password:
+           {this.generateInfoBadges(issue.shared_with)}.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateSharedCredsIssue(issue) {
+    return (
+    <li>
+        Some users are sharing passwords, this should be fixed by changing passwords.
+        <CollapsibleWellComponent>
+          These users are sharing access password:
+           {this.generateInfoBadges(issue.shared_with)}.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateSharedLocalAdminsIssue(issue) {
+    return (
+    <li>
+        Make sure the right administrator accounts are managing the right machines, and that there isn’t an unintentional local admin sharing.
+        <CollapsibleWellComponent>
+          Here is a list of machines which the account <span
+          className="label label-primary">{issue.username}</span> is defined as an administrator:
+          {this.generateInfoBadges(issue.shared_machines)}
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateStrongUsersOnCritIssue(issue) {
+    return (
+    <li>
+        This critical machine is open to attacks via strong users with access to it.
+        <CollapsibleWellComponent>
+          The services: {this.generateInfoBadges(issue.services)} have been found on the machine
+          thus classifying it as a critical machine.
+          These users has access to it:
+           {this.generateInfoBadges(issue.threatening_users)}.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
   generateTunnelIssue(issue) {
     return (
       <li>
@@ -744,7 +839,7 @@ class ReportPageComponent extends AuthComponent {
     return (
       <li>
         Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
-        critical patch updates.</a> Or change server version. Vulnerable versions are
+        critical patch updates.</a> Or update to the latest version. Vulnerable versions are
         10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
@@ -764,7 +859,7 @@ class ReportPageComponent extends AuthComponent {
         Run Hadoop in secure mode (<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
         add Kerberos authentication</a>).
         <CollapsibleWellComponent>
-          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          The Hadoop server at <span className="label label-primary">{issue.machine}</span> (<span
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
           className="label label-danger">remote code execution</span> attack.
           <br/>
@@ -830,6 +925,18 @@ generateMSSQLIssue(issue) {
         break;
       case 'island_cross_segment':
         data = this.generateIslandCrossSegmentIssue(issue);
+        break;
+      case 'shared_passwords':
+        data = this.generateSharedCredsIssue(issue);
+        break;
+      case 'shared_passwords_domain':
+        data = this.generateSharedCredsDomainIssue(issue);
+        break;
+      case 'shared_admins_domain':
+        data = this.generateSharedLocalAdminsIssue(issue);
+        break;
+      case 'strong_users_on_crit':
+        data = this.generateStrongUsersOnCritIssue(issue);
         break;
       case 'tunnel':
         data = this.generateTunnelIssue(issue);

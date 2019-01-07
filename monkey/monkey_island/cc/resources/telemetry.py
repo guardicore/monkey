@@ -1,6 +1,5 @@
 import json
 import logging
-import traceback
 import copy
 from datetime import datetime
 
@@ -10,10 +9,12 @@ from flask import request
 
 from cc.auth import jwt_required
 from cc.database import mongo
+from cc.services import mimikatz_utils
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
 from cc.encryptor import encryptor
+from cc.services.wmi_handler import WMIHandler
 
 __author__ = 'Barak'
 
@@ -170,6 +171,8 @@ class Telemetry(flask_restful.Resource):
 
     @staticmethod
     def process_system_info_telemetry(telemetry_json):
+        users_secrets = {}
+        monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
         if 'ssh_info' in telemetry_json['data']:
             ssh_info = telemetry_json['data']['ssh_info']
             Telemetry.encrypt_system_info_ssh_keys(ssh_info)
@@ -182,6 +185,12 @@ class Telemetry(flask_restful.Resource):
             Telemetry.encrypt_system_info_creds(creds)
             Telemetry.add_system_info_creds_to_config(creds)
             Telemetry.replace_user_dot_with_comma(creds)
+        if 'mimikatz' in telemetry_json['data']:
+            users_secrets = mimikatz_utils.MimikatzSecrets.\
+                extract_secrets_from_mimikatz(telemetry_json['data'].get('mimikatz', ''))
+        if 'wmi' in telemetry_json['data']:
+            wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
+            wmi_handler.process_and_handle_wmi_info()
 
     @staticmethod
     def add_ip_to_ssh_keys(ip, ssh_info):

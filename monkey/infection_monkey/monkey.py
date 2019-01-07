@@ -109,6 +109,10 @@ class InfectionMonkey(object):
             system_info = system_info_collector.get_info()
             ControlClient.send_telemetry("system_info_collection", system_info)
 
+        for action_class in WormConfiguration.post_breach_actions:
+            action = action_class()
+            action.act()
+
         if 0 == WormConfiguration.depth:
             LOG.debug("Reached max depth, shutting down")
             ControlClient.send_telemetry("trace", "Reached max depth, shutting down")
@@ -119,9 +123,6 @@ class InfectionMonkey(object):
         for iteration_index in xrange(WormConfiguration.max_iterations):
             ControlClient.keepalive()
             ControlClient.load_control_config()
-
-            LOG.debug("Users to try: %s" % str(WormConfiguration.exploit_user_list))
-            LOG.debug("Passwords to try: %s" % str(WormConfiguration.exploit_password_list))
 
             self._network.initialize()
 

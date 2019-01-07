@@ -2,10 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table'
 
 let renderArray = function(val) {
-  if (val.length === 0) {
-    return '';
-  }
-  return val.reduce((total, new_str) => total + ', ' + new_str);
+  return <div>{val.map(x => <div>{x}</div>)}</div>;
 };
 
 const columns = [

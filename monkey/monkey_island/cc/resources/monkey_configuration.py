@@ -1,7 +1,7 @@
 import json
 
 import flask_restful
-from flask import request, jsonify
+from flask import request, jsonify, abort
 
 from cc.auth import jwt_required
 from cc.services.config import ConfigService
@@ -20,5 +20,6 @@ class MonkeyConfiguration(flask_restful.Resource):
         if 'reset' in config_json:
             ConfigService.reset_config()
         else:
-            ConfigService.update_config(config_json, should_encrypt=True)
+            if not ConfigService.update_config(config_json, should_encrypt=True):
+                abort(400)
         return self.get()

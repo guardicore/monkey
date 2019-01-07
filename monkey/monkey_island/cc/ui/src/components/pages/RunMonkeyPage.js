@@ -52,7 +52,7 @@ class RunMonkeyPageComponent extends AuthComponent {
 
   generateLinuxCmd(ip, is32Bit) {
     let bitText = is32Bit ? '32' : '64';
-    return `curl -O -k https://${ip}:5000/api/monkey/download/monkey-linux-${bitText}; chmod +x monkey-linux-${bitText}; ./monkey-linux-${bitText} m0nk3y -s ${ip}:5000`
+    return `wget --no-check-certificate https://${ip}:5000/api/monkey/download/monkey-linux-${bitText}; chmod +x monkey-linux-${bitText}; ./monkey-linux-${bitText} m0nk3y -s ${ip}:5000`
   }
 
   generateWindowsCmd(ip, is32Bit) {

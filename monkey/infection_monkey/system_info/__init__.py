@@ -6,7 +6,9 @@ import psutil
 from enum import IntEnum
 
 from infection_monkey.network.info import get_host_subnets
+from infection_monkey.system_info.aws_collector import AwsCollector
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
+from infection_monkey.system_info.netstat_collector import NetstatCollector
 
 LOG = logging.getLogger(__name__)
 
@@ -57,6 +59,13 @@ class InfoCollector(object):
     def __init__(self):
         self.info = {}
 
+    def get_info(self):
+        self.get_hostname()
+        self.get_process_list()
+        self.get_network_info()
+        self.get_azure_info()
+        self.get_aws_info()
+
     def get_hostname(self):
         """
         Adds the fully qualified computer hostname to the system information.
@@ -99,12 +108,16 @@ class InfoCollector(object):
     def get_network_info(self):
         """
         Adds network information from the host to the system information.
-        Currently updates with a list of networks accessible from host,
-        containing host ip and the subnet range.
+        Currently updates with netstat and a list of networks accessible from host
+        containing host ip and the subnet range
         :return: None. Updates class information
         """
         LOG.debug("Reading subnets")
-        self.info['network_info'] = {'networks': get_host_subnets()}
+        self.info['network_info'] =\
+            {
+                'networks': get_host_subnets(),
+                'netstat': NetstatCollector.get_netstat_info()
+            }
 
     def get_azure_info(self):
         """
@@ -131,3 +144,6 @@ class InfoCollector(object):
         if len(azure_creds) != 0:
             self.info["Azure"] = {}
             self.info["Azure"]['usernames'] = [cred[0] for cred in azure_creds]
+
+    def get_aws_info(self):
+        self.info['aws'] = AwsCollector().get_aws_info()
