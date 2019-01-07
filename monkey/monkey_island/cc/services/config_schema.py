@@ -26,6 +26,13 @@ SCHEMA = {
                 {
                     "type": "string",
                     "enum": [
+                        "MSSQLExploiter"
+                    ],
+                    "title": "MSSQL Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
                         "RdpExploiter"
                     ],
                     "title": "RDP Exploiter (UNSAFE)"
@@ -670,6 +677,7 @@ SCHEMA = {
                             "default": [
                                 "SmbExploiter",
                                 "WmiExploiter",
+                                "MSSQLExploiter",
                                 "SSHExploiter",
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
