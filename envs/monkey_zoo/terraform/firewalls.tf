@@ -4,7 +4,7 @@ resource "google_compute_firewall" "islands-in" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "443", "3389"]
+    ports    = ["22", "443", "3389", "5000"]
   }
 
   direction = "INGRESS"
