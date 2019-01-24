@@ -76,7 +76,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     Remove-Item $TEMP_VC_FOR_PYTHON27_INSTALLER
 
     # Install requirements for island
-    $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
+    $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements_windows.txt" -ErrorAction Stop
     "Upgrading pip..."
     $output = cmd.exe /c 'python -m pip install --user --upgrade pip 2>&1'
     $output
@@ -86,7 +86,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
     & python -m pip install --user -r $islandRequirements
     # Install requirements for monkey
-    $monkeyRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\requirements.txt"
+    $monkeyRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\requirements_windows.txt"
     & python -m pip install --user -r $monkeyRequirements
 
     # Download mongodb
