@@ -40,7 +40,8 @@ class ReportService:
             'ShellShockExploiter': 'ShellShock Exploiter',
             'Struts2Exploiter': 'Struts2 Exploiter',
             'WebLogicExploiter': 'Oracle WebLogic Exploiter',
-            'HadoopExploiter': 'Hadoop/Yarn Exploiter'
+            'HadoopExploiter': 'Hadoop/Yarn Exploiter',
+            'MSSQLExploiter': 'MSSQL Exploiter'
         }
 
     class ISSUES_DICT(Enum):
@@ -55,7 +56,8 @@ class ReportService:
         STRUTS2 = 8
         WEBLOGIC = 9
         HADOOP = 10
-        PTH_CRIT_SERVICES_ACCESS = 11
+        PTH_CRIT_SERVICES_ACCESS = 11,
+        MSSQL = 12
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -330,6 +332,12 @@ class ReportService:
         return processed_exploit
 
     @staticmethod
+    def process_mssql_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'mssql'
+        return processed_exploit
+
+    @staticmethod
     def process_exploit(exploit):
         exploiter_type = exploit['data']['exploiter']
         EXPLOIT_PROCESS_FUNCTION_DICT = {
@@ -343,7 +351,8 @@ class ReportService:
             'ShellShockExploiter': ReportService.process_shellshock_exploit,
             'Struts2Exploiter': ReportService.process_struts2_exploit,
             'WebLogicExploiter': ReportService.process_weblogic_exploit,
-            'HadoopExploiter': ReportService.process_hadoop_exploit
+            'HadoopExploiter': ReportService.process_hadoop_exploit,
+            'MSSQLExploiter': ReportService.process_mssql_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
@@ -571,6 +580,7 @@ class ReportService:
             PTHReportService.get_duplicated_passwords_issues,
             PTHReportService.get_strong_users_on_crit_issues
         ]
+
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
 
         issues_dict = {}
@@ -643,6 +653,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.STRUTS2.value] = True
                 elif issue['type'] == 'weblogic':
                     issues_byte_array[ReportService.ISSUES_DICT.WEBLOGIC.value] = True
+                elif issue['type'] == 'mssql':
+                    issues_byte_array[ReportService.ISSUES_DICT.MSSQL.value] = True
                 elif issue['type'] == 'hadoop':
                     issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
