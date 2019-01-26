@@ -27,7 +27,9 @@ ENCRYPTED_CONFIG_ARRAYS = \
 # This should be used for config values of string type
 ENCRYPTED_CONFIG_STRINGS = \
     [
-
+        ['cnc', 'aws_config', 'aws_access_key_id'],
+        ['cnc', 'aws_config', 'aws_account_id'],
+        ['cnc', 'aws_config', 'aws_secret_access_key']
     ]
 
 
@@ -38,11 +40,12 @@ class ConfigService:
         pass
 
     @staticmethod
-    def get_config(is_initial_config=False, should_decrypt=True):
+    def get_config(is_initial_config=False, should_decrypt=True, is_island=False):
         """
         Gets the entire global config.
         :param is_initial_config: If True, the initial config will be returned instead of the current config.
         :param should_decrypt: If True, all config values which are set as encrypted will be decrypted.
+        :param is_island: If True, will include island specific configuration parameters.
         :return: The entire global config.
         """
         config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}) or {}
@@ -50,6 +53,8 @@ class ConfigService:
             config.pop(field, None)
         if should_decrypt and len(config) > 0:
             ConfigService.decrypt_config(config)
+        if not is_island:
+            config.get('cnc', {}).pop('aws_config', None)
         return config
 
     @staticmethod
@@ -223,11 +228,15 @@ class ConfigService:
         ConfigService._encrypt_or_decrypt_config(config, False)
 
     @staticmethod
-    def decrypt_flat_config(flat_config):
+    def decrypt_flat_config(flat_config, is_island=False):
         """
         Same as decrypt_config but for a flat configuration
         """
-        keys = [config_arr_as_array[2] for config_arr_as_array in (ENCRYPTED_CONFIG_ARRAYS + ENCRYPTED_CONFIG_STRINGS)]
+        if is_island:
+            keys = [config_arr_as_array[2] for config_arr_as_array in
+                    (ENCRYPTED_CONFIG_ARRAYS + ENCRYPTED_CONFIG_STRINGS)]
+        else:
+            keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
         for key in keys:
             if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], string_types):
                 # Check if we are decrypting ssh key pair
