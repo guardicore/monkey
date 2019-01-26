@@ -431,18 +431,6 @@ SCHEMA = {
                     "title": "Classes",
                     "type": "object",
                     "properties": {
-                        "scanner_class": {
-                            "title": "Scanner class",
-                            "type": "string",
-                            "default": "TcpScanner",
-                            "enum": [
-                                "TcpScanner"
-                            ],
-                            "enumNames": [
-                                "TcpScanner"
-                            ],
-                            "description": "Determines class to scan for machines. (Shouldn't be changed)"
-                        },
                         "finger_classes": {
                             "title": "Fingerprint classes",
                             "type": "array",

@@ -133,8 +133,7 @@ class InfectionMonkey(object):
             if not self._keep_running or not WormConfiguration.alive:
                 break
 
-            machines = self._network.get_victim_machines(WormConfiguration.scanner_class,
-                                                         max_find=WormConfiguration.victims_max_find,
+            machines = self._network.get_victim_machines(max_find=WormConfiguration.victims_max_find,
                                                          stop_callback=ControlClient.check_for_stop)
             is_empty = True
             for machine in machines:
@@ -148,7 +147,7 @@ class InfectionMonkey(object):
                     finger.get_host_fingerprint(machine)
 
                 ControlClient.send_telemetry('scan', {'machine': machine.as_dict(),
-                                                      'scanner': WormConfiguration.scanner_class.__name__})
+                                                      })
 
                 # skip machines that we've already exploited
                 if machine in self._exploited_machines:

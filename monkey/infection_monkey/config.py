@@ -135,7 +135,6 @@ class Configuration(object):
     # how many scan iterations to perform on each run
     max_iterations = 1
 
-    scanner_class = None
     finger_classes = []
     exploiter_classes = []
 

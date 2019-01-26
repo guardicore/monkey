@@ -6,7 +6,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
 from infection_monkey.model import VictimHost
 from infection_monkey.network import HostScanner
-
+from infection_monkey.network import TcpScanner, PingScanner
 __author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ class NetworkScanner(object):
 
         return subnets_to_scan
 
-    def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
+    def get_victim_machines(self, max_find=5, stop_callback=None):
         """
         Finds machines according to the ranges specified in the object
         :param scan_type: A hostscanner class, will be instanced and used to scan for new machines
@@ -70,10 +70,9 @@ class NetworkScanner(object):
         :param stop_callback: A callback to check at any point if we should stop scanning
         :return: yields a sequence of VictimHost instances
         """
-        if not scan_type:
-            return
 
-        scanner = scan_type()
+        TCPscan = TcpScanner()
+        Pinger = PingScanner()
         victims_count = 0
 
         for net_range in self._ranges:
@@ -94,9 +93,11 @@ class NetworkScanner(object):
                     continue
 
                 LOG.debug("Scanning %r...", victim)
+                pingAlive = Pinger.is_host_alive(victim)
+                tcpAlive = TCPscan.is_host_alive(victim)
 
                 # if scanner detect machine is up, add it to victims list
-                if scanner.is_host_alive(victim):
+                if pingAlive or tcpAlive:
                     LOG.debug("Found potential victim: %r", victim)
                     victims_count += 1
                     yield victim
