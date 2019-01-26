@@ -1,6 +1,5 @@
 WARNING_SIGN = u" \u26A0"
 
-
 SCHEMA = {
     "title": "Monkey",
     "type": "object",
@@ -22,6 +21,13 @@ SCHEMA = {
                         "WmiExploiter"
                     ],
                     "title": "WMI Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "MSSQLExploiter"
+                    ],
+                    "title": "MSSQL Exploiter"
                 },
                 {
                     "type": "string",
@@ -87,6 +93,19 @@ SCHEMA = {
                     "title": "Hadoop/Yarn Exploiter"
                 }
             ]
+        },
+        "post_breach_acts": {
+            "title": "Post breach actions",
+            "type": "string",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        "BackdoorUser"
+                    ],
+                    "title": "Back door user",
+                },
+            ],
         },
         "finger_classes": {
             "title": "Fingerprint class",
@@ -276,7 +295,19 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description": "Is the monkey alive"
-                        }
+                        },
+                        "post_breach_actions": {
+                            "title": "Post breach actions",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "$ref": "#/definitions/post_breach_acts"
+                            },
+                            "default": [
+                                "BackdoorUser",
+                            ],
+                            "description": "List of actions the Monkey will run post breach"
+                        },
                     }
                 },
                 "behaviour": {
@@ -612,6 +643,31 @@ SCHEMA = {
                             "description": "The current command server the monkey is communicating with"
                         }
                     }
+                },
+                'aws_config': {
+                    'title': 'AWS Configuration',
+                    'type': 'object',
+                    'description': 'These credentials will be used in order to export the monkey\'s findings to the AWS Security Hub.',
+                    'properties': {
+                        'aws_account_id': {
+                            'title': 'AWS account ID',
+                            'type': 'string',
+                            'description': 'Your AWS account ID that is subscribed to security hub feeds',
+                            'default': ''
+                        },
+                        'aws_access_key_id': {
+                            'title': 'AWS access key ID',
+                            'type': 'string',
+                            'description': 'Your AWS public access key ID, can be found in the IAM user interface in the AWS console.',
+                            'default': ''
+                        },
+                        'aws_secret_access_key': {
+                            'title': 'AWS secret access key',
+                            'type': 'string',
+                            'description': 'Your AWS secret access key id, you can get this after creating a public access key in the console.',
+                            'default': ''
+                        }
+                    }
                 }
             }
         },
@@ -633,6 +689,7 @@ SCHEMA = {
                             "default": [
                                 "SmbExploiter",
                                 "WmiExploiter",
+                                "MSSQLExploiter",
                                 "SSHExploiter",
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
@@ -664,14 +721,14 @@ SCHEMA = {
                             "default": 5,
                             "description": "Number of attempts to exploit using MS08_067"
                         },
-                        "ms08_067_remote_user_add": {
-                            "title": "MS08_067 remote user",
+                        "user_to_add": {
+                            "title": "Remote user",
                             "type": "string",
                             "default": "Monkey_IUSER_SUPPORT",
                             "description": "Username to add on successful exploit"
                         },
-                        "ms08_067_remote_user_pass": {
-                            "title": "MS08_067 remote user password",
+                        "remote_user_pass": {
+                            "title": "Remote user password",
                             "type": "string",
                             "default": "Password1!",
                             "description": "Password to use for created user"
@@ -805,7 +862,7 @@ SCHEMA = {
                         "tcp_scan_interval": {
                             "title": "TCP scan interval",
                             "type": "integer",
-                            "default": 200,
+                            "default": 0,
                             "description": "Time to sleep (in milliseconds) between scans"
                         },
                         "tcp_scan_timeout": {

@@ -3,11 +3,14 @@ import functools
 
 import ipaddress
 import logging
+
+from bson import json_util
 from enum import Enum
 
 from six import text_type
 
 from cc.database import mongo
+from cc.report_exporter_manager import ReportExporterManager
 from cc.services.config import ConfigService
 from cc.services.edge import EdgeService
 from cc.services.node import NodeService
@@ -37,7 +40,8 @@ class ReportService:
             'ShellShockExploiter': 'ShellShock Exploiter',
             'Struts2Exploiter': 'Struts2 Exploiter',
             'WebLogicExploiter': 'Oracle WebLogic Exploiter',
-            'HadoopExploiter': 'Hadoop/Yarn Exploiter'
+            'HadoopExploiter': 'Hadoop/Yarn Exploiter',
+            'MSSQLExploiter': 'MSSQL Exploiter'
         }
 
     class ISSUES_DICT(Enum):
@@ -52,7 +56,8 @@ class ReportService:
         STRUTS2 = 8
         WEBLOGIC = 9
         HADOOP = 10
-        PTH_CRIT_SERVICES_ACCESS = 11
+        PTH_CRIT_SERVICES_ACCESS = 11,
+        MSSQL = 12
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -123,9 +128,9 @@ class ReportService:
                     'label': node['label'],
                     'ip_addresses': node['ip_addresses'],
                     'accessible_from_nodes':
-                        (x['hostname'] for x in
+                        list((x['hostname'] for x in
                          (NodeService.get_displayed_node_by_id(edge['from'], True)
-                          for edge in EdgeService.get_displayed_edges_by_to(node['id'], True))),
+                          for edge in EdgeService.get_displayed_edges_by_to(node['id'], True)))),
                     'services': node['services']
                 })
 
@@ -327,6 +332,12 @@ class ReportService:
         return processed_exploit
 
     @staticmethod
+    def process_mssql_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'mssql'
+        return processed_exploit
+
+    @staticmethod
     def process_exploit(exploit):
         exploiter_type = exploit['data']['exploiter']
         EXPLOIT_PROCESS_FUNCTION_DICT = {
@@ -340,7 +351,8 @@ class ReportService:
             'ShellShockExploiter': ReportService.process_shellshock_exploit,
             'Struts2Exploiter': ReportService.process_struts2_exploit,
             'WebLogicExploiter': ReportService.process_weblogic_exploit,
-            'HadoopExploiter': ReportService.process_hadoop_exploit
+            'HadoopExploiter': ReportService.process_hadoop_exploit,
+            'MSSQLExploiter': ReportService.process_mssql_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
@@ -540,11 +552,23 @@ class ReportService:
         for issue in issues:
             if not issue.get('is_local', True):
                 machine = issue.get('machine').upper()
+                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get('machine'))
                 if machine not in domain_issues_dict:
                     domain_issues_dict[machine] = []
+                if aws_instance_id:
+                    issue['aws_instance_id'] = aws_instance_id
                 domain_issues_dict[machine].append(issue)
         logger.info('Domain issues generated for reporting')
         return domain_issues_dict
+
+    @staticmethod
+    def get_machine_aws_instance_id(hostname):
+        aws_instance_id_list = list(mongo.db.monkey.find({'hostname': hostname}, {'aws_instance_id': 1}))
+        if aws_instance_id_list:
+            if 'aws_instance_id' in aws_instance_id_list[0]:
+                return str(aws_instance_id_list[0]['aws_instance_id'])
+        else:
+            return None
 
     @staticmethod
     def get_issues():
@@ -556,14 +580,18 @@ class ReportService:
             PTHReportService.get_duplicated_passwords_issues,
             PTHReportService.get_strong_users_on_crit_issues
         ]
+
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
 
         issues_dict = {}
         for issue in issues:
             if issue.get('is_local', True):
                 machine = issue.get('machine').upper()
+                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get('machine'))
                 if machine not in issues_dict:
                     issues_dict[machine] = []
+                if aws_instance_id:
+                    issue['aws_instance_id'] = aws_instance_id
                 issues_dict[machine].append(issue)
         logger.info('Issues generated for reporting')
         return issues_dict
@@ -625,6 +653,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.STRUTS2.value] = True
                 elif issue['type'] == 'weblogic':
                     issues_byte_array[ReportService.ISSUES_DICT.WEBLOGIC.value] = True
+                elif issue['type'] == 'mssql':
+                    issues_byte_array[ReportService.ISSUES_DICT.MSSQL.value] = True
                 elif issue['type'] == 'hadoop':
                     issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
@@ -659,26 +689,17 @@ class ReportService:
 
     @staticmethod
     def is_report_generated():
-        generated_report = mongo.db.report.find_one({'name': 'generated_report'})
-        if generated_report is None:
-            return False
-        return generated_report['value']
+        generated_report = mongo.db.report.find_one({})
+        return generated_report is not None
 
     @staticmethod
-    def set_report_generated():
-        mongo.db.report.update(
-            {'name': 'generated_report'},
-            {'$set': {'value': True}},
-            upsert=True)
-        logger.info("Report marked as generated.")
-
-    @staticmethod
-    def get_report():
+    def generate_report():
         domain_issues = ReportService.get_domain_issues()
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
         cross_segment_issues = ReportService.get_cross_segment_issues()
+        monkey_latest_modify_time = list(NodeService.get_latest_modified_monkey())[0]['modifytime']
 
         report = \
             {
@@ -710,14 +731,58 @@ class ReportService:
                     {
                         'issues': issues,
                         'domain_issues': domain_issues
+                    },
+                'meta':
+                    {
+                        'latest_monkey_modifytime': monkey_latest_modify_time
                     }
             }
-
-        finished_run = NodeService.is_monkey_finished_running()
-        if finished_run:
-            ReportService.set_report_generated()
+        ReportExporterManager().export(report)
+        mongo.db.report.drop()
+        mongo.db.report.insert_one(ReportService.encode_dot_char_before_mongo_insert(report))
 
         return report
+
+    @staticmethod
+    def encode_dot_char_before_mongo_insert(report_dict):
+        """
+        mongodb doesn't allow for '.' and '$' in a key's name, this function replaces the '.' char with the unicode
+        ,,, combo instead.
+        :return: dict with formatted keys with no dots.
+        """
+        report_as_json = json_util.dumps(report_dict).replace('.', ',,,')
+        return json_util.loads(report_as_json)
+
+
+    @staticmethod
+    def is_latest_report_exists():
+        """
+        This function checks if a monkey report was already generated and if it's the latest one.
+        :return: True if report is the latest one, False if there isn't a report or its not the latest.
+        """
+        latest_report_doc = mongo.db.report.find_one({}, {'meta.latest_monkey_modifytime': 1})
+
+        if latest_report_doc:
+            report_latest_modifytime = latest_report_doc['meta']['latest_monkey_modifytime']
+            latest_monkey_modifytime = NodeService.get_latest_modified_monkey()[0]['modifytime']
+            return report_latest_modifytime == latest_monkey_modifytime
+
+        return False
+
+    @staticmethod
+    def decode_dot_char_before_mongo_insert(report_dict):
+        """
+        this function replaces the ',,,' combo with the '.' char instead.
+        :return: report dict with formatted keys (',,,' -> '.')
+        """
+        report_as_json = json_util.dumps(report_dict).replace(',,,', '.')
+        return json_util.loads(report_as_json)
+
+    @staticmethod
+    def get_report():
+        if ReportService.is_latest_report_exists():
+            return ReportService.decode_dot_char_before_mongo_insert(mongo.db.report.find_one())
+        return ReportService.generate_report()
 
     @staticmethod
     def did_exploit_type_succeed(exploit_type):

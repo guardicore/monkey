@@ -24,7 +24,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   componentDidMount() {
-    this.authFetch('/api/configuration')
+    this.authFetch('/api/configuration/island')
       .then(res => res.json())
       .then(res => {
         let sections = [];
@@ -44,7 +44,7 @@ class ConfigurePageComponent extends AuthComponent {
   onSubmit = ({formData}) => {
     this.currentFormData = formData;
     this.updateConfigSection();
-    this.authFetch('/api/configuration',
+    this.authFetch('/api/configuration/island',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},

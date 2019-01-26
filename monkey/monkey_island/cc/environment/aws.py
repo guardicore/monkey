@@ -8,11 +8,15 @@ __author__ = 'itay.mizeretz'
 class AwsEnvironment(Environment):
     def __init__(self):
         super(AwsEnvironment, self).__init__()
-        self._instance_id = AwsEnvironment._get_instance_id()
+        self.aws_info = AWS()
+        self._instance_id = self._get_instance_id()
+        self.region = self._get_region()
 
-    @staticmethod
-    def _get_instance_id():
-        return AWS.get_instance_id()
+    def _get_instance_id(self):
+        return self.aws_info.get_instance_id()
+
+    def _get_region(self):
+        return self.aws_info.get_region()
 
     def is_auth_enabled(self):
         return True

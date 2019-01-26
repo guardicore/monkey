@@ -41,6 +41,8 @@ Setup
 -------------------------------
 Check out the [Setup](https://github.com/guardicore/monkey/wiki/setup) page in the Wiki or a quick getting [started guide](https://www.guardicore.com/infectionmonkey/wt/).
 
+The Infection Monkey supports a variety of platforms, documented [in the wiki](https://github.com/guardicore/monkey/wiki/OS-compatibility).
+
 
 Building the Monkey from source
 -------------------------------
