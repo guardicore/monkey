@@ -1,6 +1,4 @@
-
-class Exporter:
-
+class Exporter(object):
     def __init__(self):
         pass
 
