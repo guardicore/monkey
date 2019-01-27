@@ -6,6 +6,7 @@ import cc.services.log
 from cc.database import mongo
 from cc.services.edge import EdgeService
 from cc.utils import local_ip_addresses
+import socket
 
 __author__ = "itay.mizeretz"
 
@@ -267,7 +268,7 @@ class NodeService:
     def get_monkey_island_node():
         island_node = NodeService.get_monkey_island_pseudo_net_node()
         island_node["ip_addresses"] = local_ip_addresses()
-        island_node["domain_name"] = ""
+        island_node["domain_name"] = socket.gethostname()
         return island_node
 
     @staticmethod

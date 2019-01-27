@@ -51,11 +51,22 @@ class NetworkRange(object):
         address_str = address_str.strip()
         if not address_str:  # Empty string
             return None
-        if -1 != address_str.find('-'):
+        if NetworkRange.check_if_range(address_str):
             return IpRange(ip_range=address_str)
         if -1 != address_str.find('/'):
             return CidrRange(cidr_range=address_str)
         return SingleIpRange(ip_address=address_str)
+
+    @staticmethod
+    def check_if_range(address_str):
+        if -1 != address_str.find('-'):
+            ips = address_str.split('-')
+            try:
+                ipaddress.ip_address(ips[0]) and ipaddress.ip_address(ips[1])
+            except ValueError as e:
+                return False
+            return True
+        return False
 
     @staticmethod
     def _ip_to_number(address):
