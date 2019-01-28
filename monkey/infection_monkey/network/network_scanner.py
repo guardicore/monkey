@@ -113,7 +113,7 @@ class NetworkScanner(object):
 
                 if WormConfiguration.tcp_scan_interval:
                     # time.sleep uses seconds, while config is in milliseconds
-                    time.sleep(WormConfiguration.tcp_scan_interval/1000)
+                    time.sleep(WormConfiguration.tcp_scan_interval/float(1000))
 
     @staticmethod
     def _is_any_ip_in_subnet(ip_addresses, subnet_str):
