@@ -10,6 +10,7 @@ from cc.encryptor import encryptor
 from cc.environment.environment import env
 from cc.utils import local_ip_addresses
 from config_schema import SCHEMA
+
 __author__ = "itay.mizeretz"
 
 logger = logging.getLogger(__name__)
