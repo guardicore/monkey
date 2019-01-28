@@ -6,7 +6,6 @@ from abc import ABCMeta, abstractmethod
 import ipaddress
 from six import text_type
 import logging
-import re
 
 __author__ = 'itamar'
 

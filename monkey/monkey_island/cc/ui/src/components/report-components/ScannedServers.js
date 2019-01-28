@@ -5,13 +5,17 @@ let renderArray = function(val) {
   return <div>{val.map(x => <div>{x}</div>)}</div>;
 };
 
+let renderIpAddresses = function (val) {
+  return <div>{renderArray(val.ip_addresses)} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")} </div>;
+};
+
 const columns = [
   {
     Header: 'Scanned Servers',
     columns: [
       { Header: 'Machine', accessor: 'label'},
       { Header: 'IP Addresses', id: 'ip_addresses',
-        accessor: x => renderArray(x.ip_addresses)+(x.domain_name ? " ("+x.domain_name+")" : "")},
+        accessor: x => renderIpAddresses(x)},
       { Header: 'Accessible From', id: 'accessible_from_nodes', accessor: x => renderArray(x.accessible_from_nodes)},
       { Header: 'Services', id: 'services', accessor: x => renderArray(x.services)}
     ]

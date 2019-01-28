@@ -131,7 +131,8 @@ class ReportService:
                         list((x['hostname'] for x in
                          (NodeService.get_displayed_node_by_id(edge['from'], True)
                           for edge in EdgeService.get_displayed_edges_by_to(node['id'], True)))),
-                    'services': node['services']
+                    'services': node['services'],
+                    'domain_name': node['domain_name']
                 })
 
         logger.info('Scanned nodes generated for reporting')
@@ -151,6 +152,7 @@ class ReportService:
             {
                 'label': monkey['label'],
                 'ip_addresses': monkey['ip_addresses'],
+                'domain_name': node['domain_name'],
                 'exploits': list(set(
                     [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in monkey['exploits'] if
                      exploit['result']]))
