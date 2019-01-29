@@ -149,8 +149,7 @@ class Telemetry(flask_restful.Resource):
         new_scan = \
             {
                 "timestamp": telemetry_json["timestamp"],
-                "data": data,
-                "scanner": telemetry_json['data']['scanner']
+                "data": data
             }
         mongo.db.edge.update(
             {"_id": edge["_id"]},
@@ -160,16 +159,15 @@ class Telemetry(flask_restful.Resource):
 
         node = mongo.db.node.find_one({"_id": edge["to"]})
         if node is not None:
-            if new_scan["scanner"] == "TcpScanner":
-                scan_os = new_scan["data"]["os"]
-                if "type" in scan_os:
-                    mongo.db.node.update({"_id": node["_id"]},
-                                         {"$set": {"os.type": scan_os["type"]}},
-                                         upsert=False)
-                if "version" in scan_os:
-                    mongo.db.node.update({"_id": node["_id"]},
-                                         {"$set": {"os.version": scan_os["version"]}},
-                                         upsert=False)
+            scan_os = new_scan["data"]["os"]
+            if "type" in scan_os:
+                mongo.db.node.update({"_id": node["_id"]},
+                                     {"$set": {"os.type": scan_os["type"]}},
+                                     upsert=False)
+            if "version" in scan_os:
+                mongo.db.node.update({"_id": node["_id"]},
+                                     {"$set": {"os.version": scan_os["version"]}},
+                                     upsert=False)
 
     @staticmethod
     def process_system_info_telemetry(telemetry_json):
