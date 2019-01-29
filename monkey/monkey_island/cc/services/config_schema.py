@@ -298,10 +298,18 @@ SCHEMA = {
                         },
                         "post_breach_actions": {
                             "title": "Post breach actions",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "$ref": "#/definitions/post_breach_acts"
+                            "type": "object",
+                            "properties": {
+                                "linux": {
+                                    "title": "Linux command",
+                                    "type": "string",
+                                    "description": "Linux command to execute after breaching"
+                                },
+                                "windows": {
+                                    "title": "Windows command",
+                                    "type": "string",
+                                    "description": "Windows command to execute after breaching"
+                                }
                             },
                             "default": [
                             ],
