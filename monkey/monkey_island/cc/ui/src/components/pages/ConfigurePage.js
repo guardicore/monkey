@@ -153,21 +153,13 @@ class ConfigurePageComponent extends AuthComponent {
   render() {
     let displayedSchema = {};
     const uiSchema = {
-      monkey:{
-        properties:{
-          general: {
-            properties:{
-              post_breach_actions: {
-                properties: {
-                  linux: {
-                    "ui:widget": "textarea"
-                  },
-                  windows: {
-                    "ui:widget": "textarea"
-                  }
-                }
-              }
-            }
+      general: {
+        post_breach_actions: {
+          linux: {
+            "ui:widget": "textarea"
+          },
+          windows: {
+            "ui:widget": "textarea"
           }
         }
       }
