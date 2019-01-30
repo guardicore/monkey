@@ -152,6 +152,26 @@ class ConfigurePageComponent extends AuthComponent {
 
   render() {
     let displayedSchema = {};
+    const uiSchema = {
+      monkey:{
+        properties:{
+          general: {
+            properties:{
+              post_breach_actions: {
+                properties: {
+                  linux: {
+                    "ui:widget": "textarea"
+                  },
+                  windows: {
+                    "ui:widget": "textarea"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    };
     if (this.state.schema.hasOwnProperty('properties')) {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
@@ -178,6 +198,7 @@ class ConfigurePageComponent extends AuthComponent {
         }
         { this.state.selectedSection ?
           <Form schema={displayedSchema}
+                uiSchema={uiSchema}
                 formData={this.state.configuration[this.state.selectedSection]}
                 onSubmit={this.onSubmit}
                 onChange={this.onChange}>
