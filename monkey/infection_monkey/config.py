@@ -34,9 +34,6 @@ class Configuration(object):
             if key == 'finger_classes':
                 class_objects = [getattr(network_import, val) for val in value]
                 setattr(self, key, class_objects)
-            elif key == 'scanner_class':
-                scanner_object = getattr(network_import, value)
-                setattr(self, key, scanner_object)
             elif key == 'exploiter_classes':
                 class_objects = [getattr(exploit_import, val) for val in value]
                 setattr(self, key, class_objects)
