@@ -13,6 +13,7 @@ from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
 from infection_monkey.monkey import InfectionMonkey
+import infection_monkey.post_breach # dummy import for pyinstaller
 
 __author__ = 'itamar'
 
