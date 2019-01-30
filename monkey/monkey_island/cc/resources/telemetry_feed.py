@@ -35,7 +35,7 @@ class TelemetryFeed(flask_restful.Resource):
             {
                 'id': telem['_id'],
                 'timestamp': telem['timestamp'].strftime('%d/%m/%Y %H:%M:%S'),
-                'hostname': NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname'],
+                'hostname': NodeService.get_monkey_by_guid(telem['monkey_guid']).get('hostname','missing'),
                 'brief': TELEM_PROCESS_DICT[telem['telem_type']](telem)
             }
 
