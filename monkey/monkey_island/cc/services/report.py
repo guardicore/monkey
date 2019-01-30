@@ -152,7 +152,7 @@ class ReportService:
             {
                 'label': monkey['label'],
                 'ip_addresses': monkey['ip_addresses'],
-                'domain_name': node['domain_name'],
+                'domain_name': monkey['domain_name'],
                 'exploits': list(set(
                     [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in monkey['exploits'] if
                      exploit['result']]))
