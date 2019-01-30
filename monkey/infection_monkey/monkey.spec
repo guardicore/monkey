@@ -85,7 +85,7 @@ def get_linux_only_binaries():
 
 
 def get_hidden_imports():
-    return ['_cffi_backend', 'queue', '_mssql'] if is_windows() else ['_cffi_backend']
+    return ['_cffi_backend', 'queue', '_mssql'] if is_windows() else ['_cffi_backend','_mssql']
 
 
 def get_sc_binaries():
