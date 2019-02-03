@@ -30,3 +30,8 @@ def is_64bit_python():
 def is_windows_os():
     return sys.platform.startswith("win")
 
+
+def utf_to_ascii(string):
+    # Converts utf string to ascii. Safe to use even if string is already ascii.
+    udata = string.decode("utf-8")
+    return udata.encode("ascii", "ignore")

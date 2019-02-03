@@ -6,6 +6,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
 from infection_monkey.model import VictimHost
 from infection_monkey.network import HostScanner
+from infection_monkey.network import TcpScanner, PingScanner
 
 __author__ = 'itamar'
 
@@ -62,7 +63,7 @@ class NetworkScanner(object):
 
         return subnets_to_scan
 
-    def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
+    def get_victim_machines(self, max_find=5, stop_callback=None):
         """
         Finds machines according to the ranges specified in the object
         :param scan_type: A hostscanner class, will be instanced and used to scan for new machines
@@ -70,16 +71,18 @@ class NetworkScanner(object):
         :param stop_callback: A callback to check at any point if we should stop scanning
         :return: yields a sequence of VictimHost instances
         """
-        if not scan_type:
-            return
 
-        scanner = scan_type()
+        TCPscan = TcpScanner()
+        Pinger = PingScanner()
         victims_count = 0
 
         for net_range in self._ranges:
             LOG.debug("Scanning for potential victims in the network %r", net_range)
             for ip_addr in net_range:
-                victim = VictimHost(ip_addr)
+                if hasattr(net_range, 'domain_name'):
+                    victim = VictimHost(ip_addr, net_range.domain_name)
+                else:
+                    victim = VictimHost(ip_addr)
                 if stop_callback and stop_callback():
                     LOG.debug("Got stop signal")
                     break
@@ -94,9 +97,11 @@ class NetworkScanner(object):
                     continue
 
                 LOG.debug("Scanning %r...", victim)
+                pingAlive = Pinger.is_host_alive(victim)
+                tcpAlive = TCPscan.is_host_alive(victim)
 
                 # if scanner detect machine is up, add it to victims list
-                if scanner.is_host_alive(victim):
+                if pingAlive or tcpAlive:
                     LOG.debug("Found potential victim: %r", victim)
                     victims_count += 1
                     yield victim
@@ -106,8 +111,9 @@ class NetworkScanner(object):
 
                         break
 
-                if SCAN_DELAY:
-                    time.sleep(SCAN_DELAY)
+                if WormConfiguration.tcp_scan_interval:
+                    # time.sleep uses seconds, while config is in milliseconds
+                    time.sleep(WormConfiguration.tcp_scan_interval/float(1000))
 
     @staticmethod
     def _is_any_ip_in_subnet(ip_addresses, subnet_str):

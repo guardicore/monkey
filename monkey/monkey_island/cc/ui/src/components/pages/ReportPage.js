@@ -29,7 +29,8 @@ class ReportPageComponent extends AuthComponent {
       STRUTS2: 8,
       WEBLOGIC: 9,
       HADOOP: 10,
-      PTH_CRIT_SERVICES_ACCESS: 11
+      PTH_CRIT_SERVICES_ACCESS: 11,
+      MSSQL: 12
     };
 
   Warning =
@@ -104,7 +105,7 @@ class ReportPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
-          edge.color = edgeGroupToColor(edge.group);
+          edge.color = {'color': edgeGroupToColor(edge.group)};
         });
         this.setState({graph: res});
         this.props.onStatusChange();
@@ -341,6 +342,8 @@ class ReportPageComponent extends AuthComponent {
                     <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                   {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] ?
                     <li>Mimikatz found login credentials of a user who has admin access to a server defined as critical.</li>: null }
+                  {this.state.report.overview.issues[this.Issue.MSSQL] ?
+                  <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li> : null }
                 </ul>
               </div>
               :
@@ -412,7 +415,6 @@ class ReportPageComponent extends AuthComponent {
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
         </div>
-
       </div>
     );
   }
@@ -837,7 +839,7 @@ class ReportPageComponent extends AuthComponent {
     return (
       <li>
         Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
-        critical patch updates.</a> Or change server version. Vulnerable versions are
+        critical patch updates.</a> Or update to the latest version. Vulnerable versions are
         10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
@@ -857,7 +859,7 @@ class ReportPageComponent extends AuthComponent {
         Run Hadoop in secure mode (<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
         add Kerberos authentication</a>).
         <CollapsibleWellComponent>
-          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
+          The Hadoop server at <span className="label label-primary">{issue.machine}</span> (<span
           className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
           className="label label-danger">remote code execution</span> attack.
           <br/>
@@ -867,7 +869,23 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-
+generateMSSQLIssue(issue) {
+    return(
+      <li>
+        Disable the xp_cmdshell option.
+        <CollapsibleWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="label label-danger">MSSQL exploit attack</span>.
+          <br/>
+          The attack was made possible because the target machine used an outdated MSSQL server configuration allowing
+          the usage of the xp_cmdshell command. To learn more about how to disable this feature, read <a
+           href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017">
+            Microsoft's documentation. </a>
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
 
   generateIssue = (issue) => {
     let data;
@@ -934,6 +952,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'hadoop':
         data = this.generateHadoopIssue(issue);
+        break;
+      case 'mssql':
+        data = this.generateMSSQLIssue(issue);
         break;
     }
     return data;

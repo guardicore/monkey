@@ -86,7 +86,7 @@
     "react-graph-vis": "^1.0.2",
     "react-json-tree": "^0.11.0",
     "react-jsonschema-form": "^1.0.5",
-    "react-redux": "^5.0.7",
+    "react-redux": "^5.1.1",
     "react-router-dom": "^4.3.1",
     "react-table": "^6.8.6",
     "react-toggle": "^4.0.1",
