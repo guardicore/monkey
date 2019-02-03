@@ -7,7 +7,7 @@ from botocore.exceptions import UnknownServiceError
 from cc.resources.exporter import Exporter
 from cc.services.config import ConfigService
 from cc.environment.environment import load_server_configuration_from_file
-from common.cloud.aws import AWS
+from common.cloud.aws_instance import AwsInstance
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class AWSExporter(Exporter):
 
     @staticmethod
     def handle_report(report_json):
-        aws = AWS()
+        aws = AwsInstance()
         findings_list = []
         issues_list = report_json['recommendations']['issues']
         if not issues_list:
