@@ -15,3 +15,4 @@ ipaddress
 enum34
 PyCrypto
 boto3
+awscli

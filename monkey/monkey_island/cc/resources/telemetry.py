@@ -90,10 +90,11 @@ class Telemetry(flask_restful.Resource):
     @staticmethod
     def get_edge_by_scan_or_exploit_telemetry(telemetry_json):
         dst_ip = telemetry_json['data']['machine']['ip_addr']
+        dst_domain_name = telemetry_json['data']['machine']['domain_name']
         src_monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
         dst_node = NodeService.get_monkey_by_ip(dst_ip)
         if dst_node is None:
-            dst_node = NodeService.get_or_create_node(dst_ip)
+            dst_node = NodeService.get_or_create_node(dst_ip, dst_domain_name)
 
         return EdgeService.get_or_create_edge(src_monkey["_id"], dst_node["_id"])
 
@@ -144,30 +145,29 @@ class Telemetry(flask_restful.Resource):
         edge = Telemetry.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
         data = copy.deepcopy(telemetry_json['data']['machine'])
         ip_address = data.pop("ip_addr")
+        domain_name = data.pop("domain_name")
         new_scan = \
             {
                 "timestamp": telemetry_json["timestamp"],
-                "data": data,
-                "scanner": telemetry_json['data']['scanner']
+                "data": data
             }
         mongo.db.edge.update(
             {"_id": edge["_id"]},
             {"$push": {"scans": new_scan},
-             "$set": {"ip_address": ip_address}}
+             "$set": {"ip_address": ip_address, 'domain_name': domain_name}}
         )
 
         node = mongo.db.node.find_one({"_id": edge["to"]})
         if node is not None:
-            if new_scan["scanner"] == "TcpScanner":
-                scan_os = new_scan["data"]["os"]
-                if "type" in scan_os:
-                    mongo.db.node.update({"_id": node["_id"]},
-                                         {"$set": {"os.type": scan_os["type"]}},
-                                         upsert=False)
-                if "version" in scan_os:
-                    mongo.db.node.update({"_id": node["_id"]},
-                                         {"$set": {"os.version": scan_os["version"]}},
-                                         upsert=False)
+            scan_os = new_scan["data"]["os"]
+            if "type" in scan_os:
+                mongo.db.node.update({"_id": node["_id"]},
+                                     {"$set": {"os.type": scan_os["type"]}},
+                                     upsert=False)
+            if "version" in scan_os:
+                mongo.db.node.update({"_id": node["_id"]},
+                                     {"$set": {"os.version": scan_os["version"]}},
+                                     upsert=False)
 
     @staticmethod
     def process_system_info_telemetry(telemetry_json):

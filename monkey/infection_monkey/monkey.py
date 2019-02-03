@@ -109,6 +109,10 @@ class InfectionMonkey(object):
             system_info = system_info_collector.get_info()
             ControlClient.send_telemetry("system_info_collection", system_info)
 
+        for action_class in WormConfiguration.post_breach_actions:
+            action = action_class()
+            action.act()
+
         if 0 == WormConfiguration.depth:
             LOG.debug("Reached max depth, shutting down")
             ControlClient.send_telemetry("trace", "Reached max depth, shutting down")
@@ -120,9 +124,6 @@ class InfectionMonkey(object):
             ControlClient.keepalive()
             ControlClient.load_control_config()
 
-            LOG.debug("Users to try: %s" % str(WormConfiguration.exploit_user_list))
-            LOG.debug("Passwords to try: %s" % str(WormConfiguration.exploit_password_list))
-
             self._network.initialize()
 
             self._exploiters = WormConfiguration.exploiter_classes
@@ -132,8 +133,7 @@ class InfectionMonkey(object):
             if not self._keep_running or not WormConfiguration.alive:
                 break
 
-            machines = self._network.get_victim_machines(WormConfiguration.scanner_class,
-                                                         max_find=WormConfiguration.victims_max_find,
+            machines = self._network.get_victim_machines(max_find=WormConfiguration.victims_max_find,
                                                          stop_callback=ControlClient.check_for_stop)
             is_empty = True
             for machine in machines:
@@ -147,7 +147,7 @@ class InfectionMonkey(object):
                     finger.get_host_fingerprint(machine)
 
                 ControlClient.send_telemetry('scan', {'machine': machine.as_dict(),
-                                                      'scanner': WormConfiguration.scanner_class.__name__})
+                                                      })
 
                 # skip machines that we've already exploited
                 if machine in self._exploited_machines:

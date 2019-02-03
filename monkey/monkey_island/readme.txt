@@ -1,3 +1,6 @@
+To get development versions of Monkey Island and Monkey look into deployment scripts folder.
+If you only want to run the software from source you may refer to the instructions below.
+
 How to set up the Monkey Island server:
 
 ---------------- On Windows ----------------:
