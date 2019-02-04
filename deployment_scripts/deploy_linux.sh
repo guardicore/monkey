@@ -69,7 +69,7 @@ log_message "Installing pip"
 sudo apt-get install python-pip
 
 log_message "Installing island requirements"
-requirements="$ISLAND_PATH/requirements_linux.txt"
+requirements="$ISLAND_PATH/requirements.txt"
 python -m pip install --user -r ${requirements} || handle_error
 
 # Download binaries
