@@ -23,11 +23,16 @@ class PostBreach(object):
     @staticmethod
     def config_to_pba_list(config):
         """
-        Should return a list of PBA's generated from config
+        Should return a list of PBA's generated from config. After ATT&CK is implemented this will pick
+        which PBA's to run.
         """
         pba_list = []
-        if config.post_breach_actions["linux"] or config.post_breach_actions["windows"]:
-            pba_list.append(PBA(config.post_breach_actions["linux"], config.post_breach_actions["windows"]))
+        # Get custom PBA command from config
+        custom_pba_linux = config.post_breach_actions['linux'] if "linux" in config.post_breach_actions else ""
+        custom_pba_windows = config.post_breach_actions['windows'] if "windows" in config.post_breach_actions else ""
+
+        if custom_pba_linux or custom_pba_windows:
+            pba_list.append(PBA(custom_pba_linux, custom_pba_windows))
         return pba_list
 
 
