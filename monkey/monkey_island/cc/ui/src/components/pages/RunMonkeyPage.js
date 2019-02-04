@@ -4,6 +4,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import {Icon} from 'react-fa';
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
+import AwsRunTable from "../run-monkey/AwsRunTable";
 
 class RunMonkeyPageComponent extends AuthComponent {
 
@@ -13,9 +14,13 @@ class RunMonkeyPageComponent extends AuthComponent {
       ips: [],
       runningOnIslandState: 'not_running',
       runningOnClientState: 'not_running',
+      awsClicked: false,
       selectedIp: '0.0.0.0',
       selectedOs: 'windows-32',
-      showManual: false
+      showManual: false,
+      showAws: false,
+      isOnAws: false,
+      awsMachines: []
     };
   }
 
@@ -34,6 +39,18 @@ class RunMonkeyPageComponent extends AuthComponent {
           this.setState({runningOnIslandState: 'running'});
         } else {
           this.setState({runningOnIslandState: 'not_running'});
+        }
+      });
+
+    this.authFetch('/api/remote-monkey?action=list_aws')
+      .then(res => res.json())
+      .then(res =>{
+        let is_aws = res['is_aws'];
+        if (is_aws) {
+          let instances = res['instances'];
+          if (instances) {
+            this.setState({isOnAws: true, awsMachines: instances});
+          }
         }
       });
 
@@ -134,6 +151,56 @@ class RunMonkeyPageComponent extends AuthComponent {
     });
   };
 
+  toggleAws = () => {
+    this.setState({
+      showAws: !this.state.showAws
+    });
+  };
+
+  runOnAws = () => {
+    this.setState({
+      awsClicked: true
+    });
+
+    let instances = this.awsTable.state.selection.map(x => this.instanceIdToInstance(x));
+
+    this.authFetch('/api/remote-monkey',
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({type: 'aws', instances: instances, island_ip: this.state.selectedIp})
+      }).then(res => res.json())
+      .then(res => {
+        let result = res['result'];
+
+        // update existing state, not run-over
+        let prevRes = this.awsTable.state.result;
+        for (let key in result) {
+          if (result.hasOwnProperty(key)) {
+            prevRes[key] = result[key];
+          }
+        }
+        this.awsTable.setState({
+          result: prevRes,
+          selection: [],
+          selectAll: false
+        });
+
+        this.setState({
+          awsClicked: false
+        });
+      });
+  };
+
+  instanceIdToInstance = (instance_id) => {
+    let instance = this.state.awsMachines.find(
+      function (inst) {
+        return inst['instance_id'] === instance_id;
+      });
+    return {'instance_id': instance_id, 'os': instance['os']}
+
+  };
+
   render() {
     return (
       <Col xs={12} lg={8}>
@@ -166,7 +233,7 @@ class RunMonkeyPageComponent extends AuthComponent {
         <p className="text-center">
           OR
         </p>
-        <p style={{'marginBottom': '2em'}}>
+        <p style={this.state.showManual || !this.state.isOnAws ? {'marginBottom': '2em'} : {}}>
           <button onClick={this.toggleManual} className={'btn btn-default btn-lg center-block' + (this.state.showManual ? ' active' : '')}>
             Run on machine of your choice
           </button>
@@ -194,6 +261,51 @@ class RunMonkeyPageComponent extends AuthComponent {
               Copy the following command to your machine and run it with Administrator or root privileges.
             </p>
             {this.generateCmdDiv()}
+          </div>
+        </Collapse>
+        {
+          this.state.isOnAws ?
+            <p className="text-center">
+              OR
+            </p>
+            :
+            null
+        }
+        {
+          this.state.isOnAws ?
+            <p style={{'marginBottom': '2em'}}>
+              <button onClick={this.toggleAws} className={'btn btn-default btn-lg center-block' + (this.state.showAws ? ' active' : '')}>
+                Run on AWS machine of your choice
+              </button>
+            </p>
+            :
+            null
+        }
+        <Collapse in={this.state.showAws}>
+          <div style={{'marginBottom': '2em'}}>
+            <p style={{'fontSize': '1.2em'}}>
+              Select server IP address
+            </p>
+            {
+              this.state.ips.length > 1 ?
+              <Nav bsStyle="pills" justified activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
+                   style={{'marginBottom': '2em'}}>
+                {this.state.ips.map(ip => <NavItem key={ip} eventKey={ip}>{ip}</NavItem>)}
+              </Nav>
+              : <div style={{'marginBottom': '2em'}} />
+            }
+
+            <AwsRunTable
+              data={this.state.awsMachines}
+              ref={r => (this.awsTable = r)}
+            />
+            <button
+              onClick={this.runOnAws}
+              className={'btn btn-default btn-md center-block'}
+              disabled={this.state.awsClicked}>
+              Run on selected machines
+              { this.state.awsClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null }
+            </button>
           </div>
         </Collapse>
 

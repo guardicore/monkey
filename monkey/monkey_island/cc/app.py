@@ -22,6 +22,7 @@ from cc.resources.island_configuration import IslandConfiguration
 from cc.resources.monkey_download import MonkeyDownload
 from cc.resources.netmap import NetMap
 from cc.resources.node import Node
+from cc.resources.remote_run import RemoteRun
 from cc.resources.report import Report
 from cc.resources.root import Root
 from cc.resources.telemetry import Telemetry
@@ -115,5 +116,6 @@ def init_app(mongo_url):
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')
+    api.add_resource(RemoteRun, '/api/remote-monkey', '/api/remote-monkey/')
 
     return app

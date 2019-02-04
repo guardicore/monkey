@@ -8,7 +8,6 @@ class AwsService(object):
     Supplies various AWS services
     """
 
-    # TODO: consider changing from static to singleton, and generally change design
     access_key_id = None
     secret_access_key = None
     region = None
@@ -39,3 +38,17 @@ class AwsService(object):
     @staticmethod
     def get_regions():
         return AwsService.get_session().get_available_regions('ssm')
+
+    @staticmethod
+    def get_instances():
+        return \
+            [
+                {
+                    'instance_id': x['InstanceId'],
+                    'name': x['ComputerName'],
+                    'os': x['PlatformType'].lower(),
+                    'ip_address': x['IPAddress']
+                }
+                for x in AwsService.get_client('ssm').describe_instance_information()['InstanceInformationList']
+            ]
+
