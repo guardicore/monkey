@@ -16,6 +16,7 @@ from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.windows_upgrader import WindowsUpgrader
+from infection_monkey.post_breach.post_breach import PostBreach
 
 __author__ = 'itamar'
 
@@ -108,6 +109,10 @@ class InfectionMonkey(object):
             system_info_collector = SystemInfoCollector()
             system_info = system_info_collector.get_info()
             ControlClient.send_telemetry("system_info_collection", system_info)
+
+        pb = PostBreach()
+        output = pb.execute()
+        ControlClient.send_telemetry("post_breach", {'output': output})
 
         for action_class in WormConfiguration.post_breach_actions:
             action = action_class()
