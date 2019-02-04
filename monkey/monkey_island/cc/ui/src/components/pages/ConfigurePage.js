@@ -153,7 +153,7 @@ class ConfigurePageComponent extends AuthComponent {
   render() {
     let displayedSchema = {};
     const uiSchema = {
-      general: {
+      behaviour: {
         post_breach_actions: {
           linux: {
             "ui:widget": "textarea"

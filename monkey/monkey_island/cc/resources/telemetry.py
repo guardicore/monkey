@@ -257,6 +257,13 @@ class Telemetry(flask_restful.Resource):
                 if len(credential) > 0:
                     attempts[i][field] = encryptor.enc(credential.encode('utf-8'))
 
+    @staticmethod
+    def process_post_breach_telemetry(telemetry_json):
+        if telemetry_json['output']:
+            node = NodeService.get_or_create_node(telemetry_json['ip'], telemetry_json['domain_name'])
+
+
+        pass
 
 TELEM_PROCESS_DICT = \
     {
@@ -265,5 +272,6 @@ TELEM_PROCESS_DICT = \
         'exploit': Telemetry.process_exploit_telemetry,
         'scan': Telemetry.process_scan_telemetry,
         'system_info_collection': Telemetry.process_system_info_telemetry,
-        'trace': Telemetry.process_trace_telemetry
+        'trace': Telemetry.process_trace_telemetry,
+        'post_breach': Telemetry.process_post_breach_telemetry
     }

@@ -94,19 +94,6 @@ SCHEMA = {
                 }
             ]
         },
-        "post_breach_acts": {
-            "title": "Post breach actions",
-            "type": "string",
-            "anyOf": [
-                {
-                    "type": "string",
-                    "enum": [
-                        "BackdoorUser"
-                    ],
-                    "title": "Back door user",
-                },
-            ],
-        },
         "finger_classes": {
             "title": "Fingerprint class",
             "type": "string",
@@ -295,7 +282,13 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description": "Is the monkey alive"
-                        },
+                        }
+                    }
+                },
+                "behaviour": {
+                    "title": "Behaviour",
+                    "type": "object",
+                    "properties": {
                         "post_breach_actions": {
                             "title": "Post breach actions",
                             "type": "object",
@@ -315,12 +308,6 @@ SCHEMA = {
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
-                    }
-                },
-                "behaviour": {
-                    "title": "Behaviour",
-                    "type": "object",
-                    "properties": {
                         "self_delete_in_cleanup": {
                             "title": "Self delete on cleanup",
                             "type": "boolean",
