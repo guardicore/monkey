@@ -259,11 +259,9 @@ class Telemetry(flask_restful.Resource):
 
     @staticmethod
     def process_post_breach_telemetry(telemetry_json):
-        if telemetry_json['output']:
-            node = NodeService.get_or_create_node(telemetry_json['ip'], telemetry_json['domain_name'])
-
-
-        pass
+        mongo.db.monkey.update(
+            {'guid': telemetry_json['monkey_guid']},
+            {'$push': {'post_breach_actions': telemetry_json['data']}})
 
 TELEM_PROCESS_DICT = \
     {
