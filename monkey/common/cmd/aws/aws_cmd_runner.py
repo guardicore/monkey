@@ -1,9 +1,7 @@
-import time
 import logging
 
 from common.cloud.aws_service import AwsService
-from common.cmd.aws_cmd_result import AwsCmdResult
-from common.cmd.cmd_result import CmdResult
+from common.cmd.aws.aws_cmd_result import AwsCmdResult
 from common.cmd.cmd_runner import CmdRunner
 from common.cmd.cmd_status import CmdStatus
 
@@ -14,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 class AwsCmdRunner(CmdRunner):
     """
-    Class for running a command on a remote AWS machine
+    Class for running commands on a remote AWS machine
     """
 
-    def __init__(self, instance_id, region, is_linux):
+    def __init__(self, is_linux, instance_id, region = None):
         super(AwsCmdRunner, self).__init__(is_linux)
         self.instance_id = instance_id
         self.region = region
@@ -37,8 +35,8 @@ class AwsCmdRunner(CmdRunner):
         else:
             return CmdStatus.FAILURE
 
-    def run_command_async(self, command):
+    def run_command_async(self, command_line):
         doc_name = "AWS-RunShellScript" if self.is_linux else "AWS-RunPowerShellScript"
-        command_res = self.ssm.send_command(DocumentName=doc_name, Parameters={'commands': [command]},
+        command_res = self.ssm.send_command(DocumentName=doc_name, Parameters={'commands': [command_line]},
                                             InstanceIds=[self.instance_id])
         return command_res['Command']['CommandId']
