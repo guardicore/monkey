@@ -110,16 +110,7 @@ class InfectionMonkey(object):
             system_info = system_info_collector.get_info()
             ControlClient.send_telemetry("system_info_collection", system_info)
 
-        pb = PostBreach()
-        output = pb.execute()
-        if output and WormConfiguration.collect_system_info:
-            ControlClient.send_telemetry('post_breach', {'output': output,
-                                                         'ip': system_info['network_info']['networks'][0]['addr'],
-                                                         'domain_name': system_info['hostname']})
-
-        for action_class in WormConfiguration.post_breach_actions:
-            action = action_class()
-            action.act()
+        PostBreach().execute()
 
         if 0 == WormConfiguration.depth:
             LOG.debug("Reached max depth, shutting down")
