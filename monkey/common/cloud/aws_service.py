@@ -1,4 +1,5 @@
 import boto3
+from botocore.exceptions import ClientError
 
 __author__ = 'itay.mizeretz'
 
@@ -38,6 +39,14 @@ class AwsService(object):
     @staticmethod
     def get_regions():
         return AwsService.get_session().get_available_regions('ssm')
+
+    @staticmethod
+    def test_client():
+        try:
+            AwsService.get_client('ssm').describe_instance_information()
+            return True
+        except ClientError:
+            return False
 
     @staticmethod
     def get_instances():

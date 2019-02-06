@@ -10,6 +10,7 @@ __author__ = "itay.mizeretz"
 
 class RemoteRunAwsService:
     aws_instance = None
+    is_auth = False
 
     def __init__(self):
         pass
@@ -48,12 +49,18 @@ class RemoteRunAwsService:
     def update_aws_auth_params():
         """
         Updates the AWS authentication parameters according to config
-        :return: None
+        :return: True if new params allow successful authentication. False otherwise
         """
         access_key_id = ConfigService.get_config_value(['cnc', 'aws_config', 'aws_access_key_id'], False, True)
         secret_access_key = ConfigService.get_config_value(['cnc', 'aws_config', 'aws_secret_access_key'], False, True)
-        AwsService.set_auth_params(access_key_id, secret_access_key)
+
+        if (access_key_id != AwsService.access_key_id) or (secret_access_key != AwsService.secret_access_key):
+            AwsService.set_auth_params(access_key_id, secret_access_key)
+            RemoteRunAwsService.is_auth = AwsService.test_client()
+
         AwsService.set_region(RemoteRunAwsService.aws_instance.region)
+
+        return RemoteRunAwsService.is_auth
 
     @staticmethod
     def get_bitness(instances):
