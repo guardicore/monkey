@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col, Well, Nav, NavItem, Collapse} from 'react-bootstrap';
+import {Button, Col, Well, Nav, NavItem, Collapse, Form, FormControl, FormGroup} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {Icon} from 'react-fa';
 import {Link} from 'react-router-dom';
@@ -20,8 +20,13 @@ class RunMonkeyPageComponent extends AuthComponent {
       showManual: false,
       showAws: false,
       isOnAws: false,
+      isAwsAuth: false,
+      awsUpdateClicked: false,
+      awsUpdateFailed: false,
+      awsKeyId: '',
+      awsSecretKey: '',
       awsMachines: []
-    };
+  };
   }
 
   componentDidMount() {
@@ -42,16 +47,13 @@ class RunMonkeyPageComponent extends AuthComponent {
         }
       });
 
-    this.authFetch('/api/remote-monkey?action=list_aws')
-      .then(res => res.json())
-      .then(res =>{
-        let is_aws = res['is_aws'];
-        if (is_aws) {
-          let instances = res['instances'];
-          if (instances) {
-            this.setState({isOnAws: true, awsMachines: instances});
-          }
-        }
+    this.fetchAwsInfo();
+    this.fetchConfig()
+      .then(config => {
+        this.setState({
+          awsKeyId: config['cnc']['aws_config']['aws_access_key_id'],
+          awsSecretKey: config['cnc']['aws_config']['aws_secret_access_key']
+        });
       });
 
     this.authFetch('/api/client-monkey')
@@ -65,6 +67,17 @@ class RunMonkeyPageComponent extends AuthComponent {
       });
 
     this.props.onStatusChange();
+  }
+
+  fetchAwsInfo() {
+    return this.authFetch('/api/remote-monkey?action=list_aws')
+      .then(res => res.json())
+      .then(res =>{
+        let is_aws = res['is_aws'];
+        if (is_aws) {
+          this.setState({isOnAws: true, awsMachines: res['instances'], isAwsAuth: res['auth']});
+        }
+      });
   }
 
   generateLinuxCmd(ip, is32Bit) {
@@ -192,6 +205,60 @@ class RunMonkeyPageComponent extends AuthComponent {
       });
   };
 
+  updateAwsKeyId = (evt) => {
+    this.setState({
+      awsKeyId: evt.target.value
+    });
+  };
+
+  updateAwsSecretKey = (evt) => {
+    this.setState({
+      awsSecretKey: evt.target.value
+    });
+  };
+
+  fetchConfig() {
+    return this.authFetch('/api/configuration/island')
+      .then(res => res.json())
+      .then(res => {
+        return res.configuration;
+      })
+  }
+
+  updateAwsKeys = () => {
+    this.setState({
+      awsUpdateClicked: true,
+      awsUpdateFailed: false
+    });
+    this.fetchConfig()
+      .then(config => {
+        let new_config = config;
+        new_config['cnc']['aws_config']['aws_access_key_id'] = this.state.awsKeyId;
+        new_config['cnc']['aws_config']['aws_secret_access_key'] = this.state.awsSecretKey;
+        return new_config;
+      })
+      .then(new_config => {
+        this.authFetch('/api/configuration/island',
+          {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(new_config)
+          })
+          .then(res => res.json())
+          .then(res => {
+            this.fetchAwsInfo()
+              .then(res => {
+                if (!this.state.isAwsAuth) {
+                  this.setState({
+                    awsUpdateClicked: false,
+                    awsUpdateFailed: true
+                  })
+                }
+              });
+          });
+      });
+  };
+
   instanceIdToInstance = (instance_id) => {
     let instance = this.state.awsMachines.find(
       function (inst) {
@@ -200,6 +267,80 @@ class RunMonkeyPageComponent extends AuthComponent {
     return {'instance_id': instance_id, 'os': instance['os']}
 
   };
+
+  renderAuthAwsDiv() {
+    return (
+      <div style={{'marginBottom': '2em'}}>
+        <p style={{'fontSize': '1.2em'}}>
+          Select Island IP address
+        </p>
+        {
+          this.state.ips.length > 1 ?
+            <Nav bsStyle="pills" justified activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
+                 style={{'marginBottom': '2em'}}>
+              {this.state.ips.map(ip => <NavItem key={ip} eventKey={ip}>{ip}</NavItem>)}
+            </Nav>
+            : <div style={{'marginBottom': '2em'}} />
+        }
+
+        <AwsRunTable
+          data={this.state.awsMachines}
+          ref={r => (this.awsTable = r)}
+        />
+        <div style={{'marginTop': '1em'}}>
+          <button
+            onClick={this.runOnAws}
+            className={'btn btn-default btn-md center-block'}
+            disabled={this.state.awsClicked}>
+            Run on selected machines
+            { this.state.awsClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null }
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  renderNotAuthAwsDiv() {
+    return (
+      <div style={{'marginBottom': '2em'}}>
+        <p style={{'fontSize': '1.2em'}}>
+          You haven't set your AWS account details or they're incorrect. Please enter them below to proceed.
+        </p>
+        <div style={{'marginTop': '1em'}}>
+          <div className="col-sm-12">
+          <div className="col-sm-6 col-sm-offset-3" style={{'fontSize': '1.2em'}}>
+            <div className="panel panel-default">
+              <div className="panel-body">
+                <div className="input-group center-block text-center">
+                  <input type="text" className="form-control" placeholder="AWS Access Key ID"
+                         value={this.state.awsKeyId}
+                         onChange={evt => this.updateAwsKeyId(evt)}/>
+                  <input type="text" className="form-control" placeholder="AWS Secret Access Key"
+                         value={this.state.awsSecretKey}
+                         onChange={evt => this.updateAwsSecretKey(evt)}/>
+                  <Button
+                    onClick={this.updateAwsKeys}
+                    className={'btn btn-default btn-md center-block'}
+                    disabled={this.state.awsUpdateClicked}
+                    variant="primary">
+                    Update AWS details
+                    { this.state.awsUpdateClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null }
+                  </Button>
+                  {
+                    this.state.awsUpdateFailed ?
+                      <div className="alert alert-danger" role="alert">Authentication failed. Bad credentials.</div>
+                      :
+                      null
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   render() {
     return (
@@ -282,31 +423,10 @@ class RunMonkeyPageComponent extends AuthComponent {
             null
         }
         <Collapse in={this.state.showAws}>
-          <div style={{'marginBottom': '2em'}}>
-            <p style={{'fontSize': '1.2em'}}>
-              Select server IP address
-            </p>
-            {
-              this.state.ips.length > 1 ?
-              <Nav bsStyle="pills" justified activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
-                   style={{'marginBottom': '2em'}}>
-                {this.state.ips.map(ip => <NavItem key={ip} eventKey={ip}>{ip}</NavItem>)}
-              </Nav>
-              : <div style={{'marginBottom': '2em'}} />
-            }
+          {
+            this.state.isAwsAuth ? this.renderAuthAwsDiv() : this.renderNotAuthAwsDiv()
+          }
 
-            <AwsRunTable
-              data={this.state.awsMachines}
-              ref={r => (this.awsTable = r)}
-            />
-            <button
-              onClick={this.runOnAws}
-              className={'btn btn-default btn-md center-block'}
-              disabled={this.state.awsClicked}>
-              Run on selected machines
-              { this.state.awsClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null }
-            </button>
-          </div>
         </Collapse>
 
         <p style={{'fontSize': '1.2em'}}>
