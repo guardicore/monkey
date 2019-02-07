@@ -1,3 +1,4 @@
+import { SHA3 } from 'sha3';
 import decode from 'jwt-decode';
 import {SERVER_CONFIG} from '../server_config/ServerConfig';
 
@@ -6,7 +7,7 @@ export default class AuthService {
 
   login = (username, password) => {
     if (this.AUTH_ENABLED) {
-      return this._login(username, password);
+      return this._login(username, this.hashSha3(password));
     } else {
       return {result: true};
     }
@@ -19,6 +20,12 @@ export default class AuthService {
       return fetch(url, options);
     }
   };
+
+  hashSha3(text) {
+    let hash = new SHA3(512);
+    hash.update(text);
+    return this._toHexStr(hash.digest());
+  }
 
   _login = (username, password) => {
     return this._authFetch('/api/auth', {
@@ -102,5 +109,10 @@ export default class AuthService {
   _getToken() {
     return localStorage.getItem('jwt')
   }
+
+  _toHexStr(byteArr) {
+    return byteArr.reduce((acc, x) => (acc + ('0' + x.toString(0x10)).slice(-2)), '');
+  }
+
 
 }
