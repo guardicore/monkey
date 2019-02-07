@@ -1,0 +1,22 @@
+version: '3.3'
+
+services:
+  db:
+    image: mongo:4
+    restart: always
+    volumes:
+      - db_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: monkeyisland
+  monkey:
+    depends_on:
+      - db
+    build: .
+    image: monkey:latest
+    ports:
+      - "5000:5000"
+    environment:
+      MONGO_URL: mongodb://db:27017/monkeyisland
+
+volumes:
+  db_data:
