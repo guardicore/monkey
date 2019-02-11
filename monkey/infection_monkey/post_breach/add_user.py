@@ -23,14 +23,17 @@ class BackdoorUser(object):
 
     def act(self):
         LOG.info("Adding a user")
-        if sys.platform.startswith("win"):
-            retval = self.add_user_windows()
-        else:
-            retval = self.add_user_linux()
-        if retval != 0:
-            LOG.warn("Failed to add a user")
-        else:
-            LOG.info("Done adding user")
+        try:
+            if sys.platform.startswith("win"):
+                retval = self.add_user_windows()
+            else:
+                retval = self.add_user_linux()
+            if retval != 0:
+                LOG.warn("Failed to add a user")
+            else:
+                LOG.info("Done adding user")
+        except OSError:
+            LOG.exception("Exception while adding a user")
 
     @staticmethod
     def add_user_linux():
