@@ -69,7 +69,6 @@ def process_datas(orig_datas):
 def get_binaries():
     binaries = get_windows_only_binaries() if is_windows() else get_linux_only_binaries()
     binaries += get_sc_binaries()
-    binaries += get_traceroute_binaries()
     return binaries
 
 
@@ -81,6 +80,7 @@ def get_windows_only_binaries():
 
 def get_linux_only_binaries():
     binaries = []
+    binaries += get_traceroute_binaries()
     return binaries
 
 
