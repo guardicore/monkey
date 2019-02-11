@@ -98,7 +98,7 @@ b. Download our pre-built traceroute binaries
 -- Traceroute --
 
 Traceroute requires two standalone binaries to execute remotely.
-The monkey carries it since traceroute isn't built in all linux distributions.
+The monkey carries the standalone binaries since traceroute isn't built in all Linux distributions.
 You can either build them yourself or download pre-built binaries.
 
 a. Build traceroute yourself
