@@ -155,7 +155,8 @@ class ReportService:
                 'domain_name': monkey['domain_name'],
                 'exploits': list(set(
                     [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in monkey['exploits'] if
-                     exploit['result']]))
+                     exploit['result']])),
+                'post_breach_actions': monkey['post_breach_actions'] if 'post_breach_actions' in monkey else 'None'
             }
             for monkey in exploited]
 
