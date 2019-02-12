@@ -33,20 +33,18 @@ def init_jwt(app):
         user_id = payload['identity']
         return userid_table.get(user_id, None)
 
-    if env.is_auth_enabled():
-        JWT(app, authenticate, identity)
+    JWT(app, authenticate, identity)
 
 
 def jwt_required(realm=None):
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
-            if env.is_auth_enabled():
-                try:
-                    _jwt_required(realm or current_app.config['JWT_DEFAULT_REALM'])
-                except JWTError:
-                    abort(401)
-            return fn(*args, **kwargs)
+            try:
+                _jwt_required(realm or current_app.config['JWT_DEFAULT_REALM'])
+                return fn(*args, **kwargs)
+            except JWTError:
+                abort(401)
 
         return decorator
 

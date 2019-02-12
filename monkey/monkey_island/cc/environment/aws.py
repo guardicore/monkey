@@ -18,9 +18,6 @@ class AwsEnvironment(Environment):
     def _get_region(self):
         return self.aws_info.get_region()
 
-    def is_auth_enabled(self):
-        return True
-
     def get_auth_users(self):
         return [
             cc.auth.User(1, 'monkey', self.hash_secret(self._instance_id))

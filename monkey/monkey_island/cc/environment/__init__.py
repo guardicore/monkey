@@ -38,9 +38,5 @@ class Environment(object):
         return h.hexdigest()
 
     @abc.abstractmethod
-    def is_auth_enabled(self):
-        return
-
-    @abc.abstractmethod
     def get_auth_users(self):
         return
