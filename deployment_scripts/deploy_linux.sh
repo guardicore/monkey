@@ -121,7 +121,7 @@ openssl req -new -key cc/server.key -out cc/server.csr \
 openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/server.crt || handle_error
 
 
-chmod +x ${ISLAND_PATH}/linux/create_certificate.sh || handle_error
+sudo chmod +x ${ISLAND_PATH}/linux/create_certificate.sh || handle_error
 ${ISLAND_PATH}/linux/create_certificate.sh || handle_error
 
 # Install npm
@@ -142,16 +142,16 @@ npm run dist
 log_message "Installing monkey requirements"
 sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev libc++1
 cd ${monkey_home}/monkey/infection_monkey || handle_error
-python -m pip install --user -r requirements.txt || handle_error
+python -m pip install --user -r requirements_linux.txt || handle_error
 
 # Build samba
 log_message "Building samba binaries"
 sudo apt-get install gcc-multilib
 cd ${monkey_home}/monkey/infection_monkey/monkey_utils/sambacry_monkey_runner
-chmod +x ./build.sh || handle_error
+sudo chmod +x ./build.sh || handle_error
 ./build.sh
 
-chmod +x ${monkey_home}/monkey/infection_monkey/build_linux.sh
+sudo chmod +x ${monkey_home}/monkey/infection_monkey/build_linux.sh
 
 log_message "Deployment script finished."
 exit 0
