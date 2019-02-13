@@ -1,14 +1,15 @@
 import cc.auth
 from cc.environment import Environment
-from common.cloud.aws import AWS
+from common.cloud.aws_instance import AwsInstance
 from Crypto.Hash import SHA3_512
+
 __author__ = 'itay.mizeretz'
 
 
 class AwsEnvironment(Environment):
     def __init__(self):
         super(AwsEnvironment, self).__init__()
-        self.aws_info = AWS()
+        self.aws_info = AwsInstance()
         self._instance_id = self._get_instance_id()
         self.region = self._get_region()
 
