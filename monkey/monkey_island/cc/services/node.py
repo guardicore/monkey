@@ -143,7 +143,7 @@ class NodeService:
                 "os": NodeService.get_monkey_os(monkey),
                 "dead": monkey["dead"],
                 "domain_name": "",
-                "post_breach_actions": monkey["post_breach_actions"]
+                "post_breach_actions": monkey["post_breach_actions"] if "post_breach_actions" in monkey else ""
             }
 
     @staticmethod

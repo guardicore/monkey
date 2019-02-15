@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Col} from 'react-bootstrap';
 import BreachedServers from 'components/report-components/BreachedServers';
 import ScannedServers from 'components/report-components/ScannedServers';
+import PostBreach from 'components/report-components/PostBreach';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/StolenPasswords';
@@ -459,6 +460,9 @@ class ReportPageComponent extends AuthComponent {
         </div>
         <div style={{marginBottom: '20px'}}>
           <BreachedServers data={this.state.report.glance.exploited}/>
+        </div>
+        <div style={{marginBottom: '20px'}}>
+          <PostBreach data={this.state.report.glance.exploited}/>
         </div>
         <div style={{marginBottom: '20px'}}>
           <ScannedServers data={this.state.report.glance.scanned}/>
