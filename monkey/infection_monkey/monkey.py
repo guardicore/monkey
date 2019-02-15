@@ -16,7 +16,7 @@ from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.windows_upgrader import WindowsUpgrader
-from infection_monkey.post_breach.post_breach import PostBreach
+from infection_monkey.post_breach.post_breach_handler import PostBreach
 
 __author__ = 'itamar'
 

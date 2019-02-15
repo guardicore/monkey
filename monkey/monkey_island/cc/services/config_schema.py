@@ -94,6 +94,19 @@ SCHEMA = {
                 }
             ]
         },
+        "post_breach_acts": {
+            "title": "Post breach actions",
+            "type": "string",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        "BackdoorUser"
+                    ],
+                    "title": "Back door user",
+                },
+            ],
+        },
         "finger_classes": {
             "title": "Fingerprint class",
             "type": "string",
@@ -282,27 +295,59 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description": "Is the monkey alive"
-                        }
+                        },
+                        "post_breach_actions": {
+                            "title": "Post breach actions",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "$ref": "#/definitions/post_breach_acts"
+                            },
+                            "default": [
+                                "BackdoorUser",
+                            ],
+                            "description": "List of actions the Monkey will run post breach"
+                        },
                     }
                 },
                 "behaviour": {
                     "title": "Behaviour",
                     "type": "object",
                     "properties": {
-                        "post_breach_actions": {
-                            "title": "Post breach actions",
+                        "custom_post_breach": {
+                            "title": "Custom post breach actions",
                             "type": "object",
                             "properties": {
                                 "linux": {
                                     "title": "Linux command",
                                     "type": "string",
-                                    "description": "Linux command to execute after breaching"
+                                    "default": "",
+                                    "description": "Linux command to execute after breaching."
+                                },
+                                "linux_file": {
+                                    "title": "Linux file",
+                                    "type": "string",
+                                    "default": "",
+                                    "format": "data-url",
+                                    "description": "File to be executed after breaching. "
+                                                   "If you want custom execution behavior, "
+                                                   "specify it in 'Linux command' field. "
                                 },
                                 "windows": {
                                     "title": "Windows command",
                                     "type": "string",
+                                    "default": "",
                                     "description": "Windows command to execute after breaching"
-                                }
+                                },
+                                "windows_file": {
+                                    "title": "Windows file",
+                                    "type": "string",
+                                    "default": "",
+                                    "format": "data-url",
+                                    "description": "File to be executed after breaching. "
+                                                   "If you want custom execution behavior, "
+                                                   "specify it in 'Windows command' field. "
+                                },
                             },
                             "default": [
                             ],

@@ -59,6 +59,12 @@ class ConfigurePageComponent extends AuthComponent {
       })
       .then(res => res.json())
       .then(res => {
+        // Leave PBA files on external configuration
+        let windows_file = this.state.configuration.monkey.behaviour.custom_post_breach.windows_file;
+        let linux_file = this.state.configuration.monkey.behaviour.custom_post_breach.linux_file;
+        res.configuration.monkey.behaviour.custom_post_breach.linux_file = windows_file;
+        res.configuration.monkey.behaviour.custom_post_breach.windows_file = linux_file;
+
         this.setState({
           lastAction: 'saved',
           schema: res.schema,
@@ -154,7 +160,7 @@ class ConfigurePageComponent extends AuthComponent {
     let displayedSchema = {};
     const uiSchema = {
       behaviour: {
-        post_breach_actions: {
+        custom_post_breach: {
           linux: {
             "ui:widget": "textarea"
           },
@@ -193,7 +199,7 @@ class ConfigurePageComponent extends AuthComponent {
                 uiSchema={uiSchema}
                 formData={this.state.configuration[this.state.selectedSection]}
                 onSubmit={this.onSubmit}
-                onChange={this.onChange}>
+                onChange={this.onChange} >
             <div>
               { this.state.allMonkeysAreDead ?
                 '' :

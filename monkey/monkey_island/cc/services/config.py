@@ -4,6 +4,9 @@ import functools
 import logging
 from jsonschema import Draft4Validator, validators
 from six import string_types
+from werkzeug.utils import secure_filename
+import os
+import base64
 
 from cc.database import mongo
 from cc.encryptor import encryptor
@@ -33,6 +36,7 @@ ENCRYPTED_CONFIG_STRINGS = \
         ['cnc', 'aws_config', 'aws_secret_access_key']
     ]
 
+UPLOADS_DIR = './monkey_island/cc/userUploads'
 
 class ConfigService:
     default_config = None
@@ -138,6 +142,8 @@ class ConfigService:
 
     @staticmethod
     def update_config(config_json, should_encrypt):
+        if 'custom_post_breach' in config_json['monkey']['behaviour']:
+            ConfigService.add_PBA_files(config_json['monkey']['behaviour']['custom_post_breach'])
         if should_encrypt:
             try:
                 ConfigService.encrypt_config(config_json)
@@ -281,3 +287,40 @@ class ConfigService:
             pair['public_key'] = encryptor.dec(pair['public_key'])
             pair['private_key'] = encryptor.dec(pair['private_key'])
         return pair
+
+    @staticmethod
+    def add_PBA_files(post_breach_files):
+        """
+        Interceptor of config saving process that uploads PBA files to server
+        and saves filenames and sizes in config instead of full file.
+        :param post_breach_files: Data URL encoded files
+        """
+        # If any file is uploaded
+        if any(file_name in post_breach_files for file_name in ['linux_file', 'windows_file']):
+            # Create directory for file uploads if not present
+            if not os.path.exists(UPLOADS_DIR):
+                os.makedirs(UPLOADS_DIR)
+        if 'linux_file' in post_breach_files:
+            post_breach_files['linux_file'] = ConfigService.upload_file(post_breach_files['linux_file'], UPLOADS_DIR)
+        if 'windows_file' in post_breach_files:
+            post_breach_files['windows_file'] = ConfigService.upload_file(post_breach_files['windows_file'], UPLOADS_DIR)
+
+    @staticmethod
+    def upload_file(file_data, directory):
+        """
+        We parse data URL format of the file and save it
+        :param file_data: file encoded in data URL format
+        :param directory: where to save the file
+        :return: filename of saved file
+        """
+        file_parts = file_data.split(';')
+        if len(file_parts) != 3 and not file_parts[2].startswith('base64,'):
+            logger.error("Invalid file format was submitted to the server")
+            return False
+        # Strip 'name=' from this field and secure the filename
+        filename = secure_filename(file_parts[1][5:])
+        file_path = os.path.join(directory, filename)
+        with open(file_path, 'wb') as file_:
+            file_.write(base64.decodestring(file_parts[2][7:]))
+        file_size = os.path.getsize(file_path)
+        return [filename, file_size]

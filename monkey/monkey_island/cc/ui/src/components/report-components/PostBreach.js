@@ -9,21 +9,27 @@ let renderIpAddresses = function (val) {
   return <div>{renderArray(val.ip_addresses)} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")} </div>;
 };
 
+let renderPostBreach = function (val) {
+  return <div>{val.map(x => <div>Name: {x.name}<br/>Command: {x.command}<br/>Output: {x.output}<br/></div>)}</div>;
+};
+
+let renderMachine = function (val) {
+  return <div>{val.label} {renderIpAddresses(val)}</div>
+};
+
 const columns = [
   {
-    Header: 'Breached Servers',
+    Header: 'Post breach actions',
     columns: [
-      {Header: 'Machine', accessor: 'label'},
-      {Header: 'IP Addresses', id: 'ip_addresses',
-       accessor: x => renderIpAddresses(x)},
-      {Header: 'Exploits', id: 'exploits', accessor: x => renderArray(x.exploits)}
-      ]
+      {Header: 'Machine', id: 'machines', accessor: x => renderMachine(x)},
+      {Header: 'Post breach actions:', id: 'post_breach_actions', accessor: x => renderPostBreach(x.post_breach_actions)}
+    ]
   }
 ];
 
 const pageSize = 10;
 
-class BreachedServersComponent extends React.Component {
+class PostBreachComponent extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -44,4 +50,4 @@ class BreachedServersComponent extends React.Component {
   }
 }
 
-export default BreachedServersComponent;
+export default PostBreachComponent;

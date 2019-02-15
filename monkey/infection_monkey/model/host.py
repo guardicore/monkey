@@ -46,6 +46,3 @@ class VictimHost(object):
 
     def set_default_server(self, default_server):
         self.default_server = default_server
-
-    def is_linux(self):
-        return 'linux' in self.os['type']
