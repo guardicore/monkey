@@ -29,9 +29,11 @@ class AppComponent extends AuthComponent {
   updateStatus = () => {
     this.auth.loggedIn()
       .then(res => {
-        this.setState({
-          isLoggedIn: res
-        });
+        if (this.state.isLoggedIn !== res) {
+          this.setState({
+            isLoggedIn: res
+          });
+        }
 
         if (res) {
           this.authFetch('/api')
