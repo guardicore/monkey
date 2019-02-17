@@ -9,33 +9,26 @@ The monkey is composed of three separate parts.
 
 --- Windows ---
 
-1. Install python 2.7. Preferably you should use ActiveState Python which includes pywin32 built in. 
-    You must use an up to date version, at least version 2.7.10
-    https://www.python.org/download/releases/2.7/
-2.	Install pywin32 (if you didn't install ActiveState Python)
-	Install pywin32, minimum build 219
-		http://sourceforge.net/projects/pywin32/files/pywin32
-3.	Add python directories to PATH environment variable (if you didn't install ActiveState Python)
+1. Install python 2.7.15
+    Download and install from: https://www.python.org/downloads/release/python-2715/
+2.	Add python directories to PATH environment variable (if you didn't install ActiveState Python)
 	a. Run the following command on a cmd console (Replace C:\Python27 with your python directory if it's different)
 		setx /M PATH "%PATH%;C:\Python27;C:\Pytohn27\Scripts
 	b. Close the console, make sure you execute all commands in a new cmd console from now on.
-4.	Install pip
-	a. Download and run the pip installer
-	https://bootstrap.pypa.io/get-pip.py
-5.	Install further dependencies
+3.	Install further dependencies
 	a. install VCForPython27.msi
 		https://aka.ms/vcpython27
 	b. if not installed, install Microsoft Visual C++ 2010 SP1 Redistributable Package
 		32bit: http://www.microsoft.com/en-us/download/details.aspx?id=8328
 		64bit: http://www.microsoft.com/en-us/download/details.aspx?id=13523
-6.	Download the dependent python packages using 
-		pip install -r requirements.txt
-7.	Download and extract UPX binary to [source-path]\monkey\infection_monkey\bin\upx.exe:
+4.	Download the dependent python packages using 
+		pip install -r requirements_windows.txt
+5.	Download and extract UPX binary to [source-path]\monkey\infection_monkey\bin\upx.exe:
 		https://github.com/upx/upx/releases/download/v3.94/upx394w.zip
-8.	Build/Download Sambacry and Mimikatz binaries
+6.	Build/Download Sambacry and Mimikatz binaries
 	a. Build/Download according to sections at the end of this readme.
 	b. Place the binaries under [code location]\infection_monkey\bin
-9.	To build the final exe:
+7.	To build the final exe:
 		cd [code location]/infection_monkey
 		build_windows.bat 
 		output is placed under dist\monkey.exe
@@ -49,7 +42,7 @@ Tested on Ubuntu 16.04 and 17.04.
 		sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev libc++1
     Install the python packages listed in requirements.txt using pip
         cd [code location]/infection_monkey
-		pip install -r requirements.txt
+		pip install -r requirements_linux.txt
 2.	Build Sambacry binaries
 	a. Build/Download according to sections at the end of this readme.
 	b. Place the binaries under [code location]\infection_monkey\bin, under the names 'sc_monkey_runner32.so', 'sc_monkey_runner64.so'
