@@ -271,9 +271,6 @@ class RunMonkeyPageComponent extends AuthComponent {
   renderAuthAwsDiv() {
     return (
       <div style={{'marginBottom': '2em'}}>
-        <p style={{'fontSize': '1.2em'}}>
-          Select Island IP address
-        </p>
         {
           this.state.ips.length > 1 ?
             <Nav bsStyle="pills" justified activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
