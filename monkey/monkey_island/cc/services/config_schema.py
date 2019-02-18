@@ -304,7 +304,6 @@ SCHEMA = {
                                 "$ref": "#/definitions/post_breach_acts"
                             },
                             "default": [
-                                "BackdoorUser",
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
