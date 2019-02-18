@@ -327,17 +327,19 @@ class RunMonkeyPageComponent extends AuthComponent {
               </div>
             </div>
           </div>
+            <div className="col-sm-8 col-sm-offset-2" style={{'fontSize': '1.2em'}}>
+              <p className="alert alert-info">
+                <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+                In order to remotely run commands on AWS EC2 instances, please make sure you have
+                the <a href="https://docs.aws.amazon.com/console/ec2/run-command/prereqs" target="_blank">prerequisites</a> and if the
+                instances don't show up, check the
+                AWS <a href="https://docs.aws.amazon.com/console/ec2/run-command/troubleshooting" target="_blank">troubleshooting guide</a>.
+              </p>
+            </div>
             {
               this.state.awsUpdateFailed ?
                 <div className="col-sm-8 col-sm-offset-2" style={{'fontSize': '1.2em'}}>
                   <p className="alert alert-danger" role="alert">Authentication failed.</p>
-                  <p className="alert alert-info">
-                    <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                    In order to remotely run commands on AWS EC2 instances, please make sure you have
-                    the <a href="https://docs.aws.amazon.com/console/ec2/run-command/prereqs" target="_blank">prerequisites</a> and if the
-                    instances don't show up, check the
-                    AWS <a href="https://docs.aws.amazon.com/console/ec2/run-command/troubleshooting" target="_blank">troubleshooting guide</a>.
-                  </p>
                 </div>
                 :
                 null
