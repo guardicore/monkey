@@ -93,7 +93,7 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   resetConfig = () => {
-    this.authFetch('/api/configuration',
+    this.authFetch('/api/configuration/island',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
