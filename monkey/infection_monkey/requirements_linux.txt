@@ -1,6 +1,6 @@
 enum34
 impacket
-PyCrypto
+pycryptodome
 pyasn1
 cffi
 twisted
@@ -15,3 +15,5 @@ ecdsa
 netifaces
 ipaddress
 wmi
+pymssql
+pyftpdlib

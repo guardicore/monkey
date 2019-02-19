@@ -31,11 +31,13 @@ class TelemetryFeed(flask_restful.Resource):
 
     @staticmethod
     def get_displayed_telemetry(telem):
+        monkey = NodeService.get_monkey_by_guid(telem['monkey_guid'])
+        default_hostname = "GUID-" + telem['monkey_guid']
         return \
             {
                 'id': telem['_id'],
                 'timestamp': telem['timestamp'].strftime('%d/%m/%Y %H:%M:%S'),
-                'hostname': NodeService.get_monkey_by_guid(telem['monkey_guid']).get('hostname','missing'),
+                'hostname': monkey.get('hostname', default_hostname) if monkey else default_hostname,
                 'brief': TELEM_PROCESS_DICT[telem['telem_type']](telem)
             }
 
@@ -52,7 +54,7 @@ class TelemetryFeed(flask_restful.Resource):
     @staticmethod
     def get_state_telem_brief(telem):
         if telem['data']['done']:
-            return 'Monkey died.'
+            return '''Monkey finishing it's execution.'''
         else:
             return 'Monkey started.'
 

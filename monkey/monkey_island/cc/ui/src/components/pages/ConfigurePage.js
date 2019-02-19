@@ -93,7 +93,7 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   resetConfig = () => {
-    this.authFetch('/api/configuration',
+    this.authFetch('/api/configuration/island',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -141,9 +141,12 @@ class ConfigurePageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         // This check is used to prevent unnecessary re-rendering
-        this.setState({
-          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done'])
-        });
+        let allMonkeysAreDead = (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']);
+        if (allMonkeysAreDead !== this.state.allMonkeysAreDead) {
+          this.setState({
+            allMonkeysAreDead: allMonkeysAreDead
+          });
+        }
       });
   };
 

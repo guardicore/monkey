@@ -1,6 +1,6 @@
 import logging
 
-from common.cloud.aws import AWS
+from common.cloud.aws_instance import AwsInstance
 
 __author__ = 'itay.mizeretz'
 
@@ -15,7 +15,7 @@ class AwsCollector(object):
     @staticmethod
     def get_aws_info():
         LOG.info("Collecting AWS info")
-        aws = AWS()
+        aws = AwsInstance()
         info = {}
         if aws.is_aws_instance():
             LOG.info("Machine is an AWS instance")
