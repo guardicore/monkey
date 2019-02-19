@@ -25,6 +25,9 @@ class Monkey(flask_restful.Resource):
         if guid:
             monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
             monkey_json['config'] = ConfigService.decrypt_flat_config(monkey_json['config'])
+            # Don't send file contents to the monkey
+            monkey_json['config']['custom_post_breach']['linux_file'] = ''
+            monkey_json['config']['custom_post_breach']['windows_file'] = ''
             return monkey_json
 
         return {}

@@ -179,6 +179,7 @@ class ConfigService:
 
     @staticmethod
     def reset_config():
+        ConfigService.remove_PBA_files()
         config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
         ConfigService.update_config(config, should_encrypt=False)
@@ -308,6 +309,26 @@ class ConfigService:
             windows_name, windows_size = ConfigService.upload_file(post_breach_files['windows_file'], UPLOADS_DIR)
             post_breach_files['windows_file_info']['name'] = windows_name
             post_breach_files['windows_file_info']['size'] = windows_size
+
+    @staticmethod
+    def remove_PBA_files():
+        # Remove PBA files
+        current_config = ConfigService.get_config()
+        if current_config:
+            linux_file_name = ConfigService.get_config_value(['monkey', 'behaviour', 'custom_post_breach', 'linux_file_info', 'name'])
+            windows_file_name = ConfigService.get_config_value(['monkey', 'behaviour', 'custom_post_breach', 'windows_file_info', 'name'])
+            ConfigService.remove_file(linux_file_name)
+            ConfigService.remove_file(windows_file_name)
+
+    @staticmethod
+    def remove_file(file_name):
+        file_path = os.path.join(UPLOADS_DIR, file_name)
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except OSError as e:
+            logger.error("Can't remove previously uploaded post breach files: %s" % e)
+
 
     @staticmethod
     def upload_file(file_data, directory):
