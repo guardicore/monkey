@@ -60,10 +60,14 @@ class ConfigurePageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         // Leave PBA files on external configuration
-        let windows_file = this.state.configuration.monkey.behaviour.custom_post_breach.windows_file;
-        let linux_file = this.state.configuration.monkey.behaviour.custom_post_breach.linux_file;
-        res.configuration.monkey.behaviour.custom_post_breach.linux_file = windows_file;
-        res.configuration.monkey.behaviour.custom_post_breach.windows_file = linux_file;
+        if ('linux_file' in this.state.configuration.monkey.behaviour.custom_post_breach){
+          let linux_file = this.state.configuration.monkey.behaviour.custom_post_breach.linux_file;
+          res.configuration.monkey.behaviour.custom_post_breach.windows_file = linux_file;
+        }
+        if ('windows_file' in this.state.configuration.monkey.behaviour.custom_post_breach){
+          let windows_file = this.state.configuration.monkey.behaviour.custom_post_breach.windows_file;
+          res.configuration.monkey.behaviour.custom_post_breach.linux_file = windows_file;
+        }
 
         this.setState({
           lastAction: 'saved',

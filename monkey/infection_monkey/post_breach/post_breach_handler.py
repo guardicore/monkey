@@ -43,16 +43,16 @@ class PostBreach(object):
         # Download user's pba file by providing dest. dir, filename and file size
         if config.custom_post_breach['linux_file'] and self.os_is_linux:
             uploaded = PostBreach.download_PBA_file(PostBreach.get_dest_dir(config, self.os_is_linux),
-                                         config.custom_post_breach['linux_file'][0],
-                                         config.custom_post_breach['linux_file'][1])
+                                         config.custom_post_breach['linux_file_info']['name'],
+                                         config.custom_post_breach['linux_file_info']['size'])
             if not custom_pba_linux and uploaded:
-                pba_list.append(FileExecution("./"+config.custom_post_breach['linux_file'][0]))
+                pba_list.append(FileExecution("./"+config.custom_post_breach['linux_file_info']['name']))
         elif config.custom_post_breach['windows_file'] and not self.os_is_linux:
             uploaded = PostBreach.download_PBA_file(PostBreach.get_dest_dir(config, self.os_is_linux),
-                                         config.custom_post_breach['windows_file'][0],
-                                         config.custom_post_breach['windows_file'][1])
+                                         config.custom_post_breach['windows_file_info']['name'],
+                                         config.custom_post_breach['windows_file_info']['size'])
             if not custom_pba_windows and uploaded:
-                pba_list.append(FileExecution(config.custom_post_breach['windows_file'][0]))
+                pba_list.append(FileExecution(config.custom_post_breach['windows_file_info']['name']))
 
         return pba_list
 

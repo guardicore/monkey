@@ -301,9 +301,13 @@ class ConfigService:
             if not os.path.exists(UPLOADS_DIR):
                 os.makedirs(UPLOADS_DIR)
         if 'linux_file' in post_breach_files:
-            post_breach_files['linux_file'] = ConfigService.upload_file(post_breach_files['linux_file'], UPLOADS_DIR)
+            linux_name, linux_size = ConfigService.upload_file(post_breach_files['linux_file'], UPLOADS_DIR)
+            post_breach_files['linux_file_info']['name'] = linux_name
+            post_breach_files['linux_file_info']['size'] = linux_size
         if 'windows_file' in post_breach_files:
-            post_breach_files['windows_file'] = ConfigService.upload_file(post_breach_files['windows_file'], UPLOADS_DIR)
+            windows_name, windows_size = ConfigService.upload_file(post_breach_files['windows_file'], UPLOADS_DIR)
+            post_breach_files['windows_file_info']['name'] = windows_name
+            post_breach_files['windows_file_info']['size'] = windows_size
 
     @staticmethod
     def upload_file(file_data, directory):

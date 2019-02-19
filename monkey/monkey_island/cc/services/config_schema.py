@@ -327,7 +327,6 @@ SCHEMA = {
                                 "linux_file": {
                                     "title": "Linux file",
                                     "type": "string",
-                                    "default": "",
                                     "format": "data-url",
                                     "description": "File to be executed after breaching. "
                                                    "If you want custom execution behavior, "
@@ -342,12 +341,39 @@ SCHEMA = {
                                 "windows_file": {
                                     "title": "Windows file",
                                     "type": "string",
-                                    "default": "",
                                     "format": "data-url",
                                     "description": "File to be executed after breaching. "
                                                    "If you want custom execution behavior, "
                                                    "specify it in 'Windows command' field. "
                                 },
+                                "windows_file_info": {
+                                    "title": "Windows PBA file info",
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "default": ""
+                                        },
+                                        "size": {
+                                            "type": "string",
+                                            "default": "0"
+                                        },
+                                    }
+                                },
+                                "linux_file_info": {
+                                    "title": "Linux PBA file info",
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "default": ""
+                                        },
+                                        "size": {
+                                            "type": "string",
+                                            "default": "0"
+                                        },
+                                    }
+                                }
                             },
                             "default": [
                             ],
