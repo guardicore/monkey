@@ -70,11 +70,13 @@ class ConfigService:
         :param is_initial_config: If True, returns the value of the initial config instead of the current config.
         :param should_decrypt: If True, the value of the config key will be decrypted
                                (if it's in the list of encrypted config values).
-        :return: The value of the requested config key.
+        :return: The value of the requested config key or False, if such key doesn't exist.
         """
         config_key = functools.reduce(lambda x, y: x + '.' + y, config_key_as_arr)
         config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}, {config_key: 1})
         for config_key_part in config_key_as_arr:
+            if config_key_part not in config:
+                return False
             config = config[config_key_part]
         if should_decrypt:
             if config_key_as_arr in ENCRYPTED_CONFIG_ARRAYS:
@@ -142,8 +144,6 @@ class ConfigService:
 
     @staticmethod
     def update_config(config_json, should_encrypt):
-        if 'custom_post_breach' in config_json['monkey']['behaviour']:
-            ConfigService.add_PBA_files(config_json['monkey']['behaviour']['custom_post_breach'])
         if should_encrypt:
             try:
                 ConfigService.encrypt_config(config_json)
@@ -211,13 +211,7 @@ class ConfigService:
             if instance != {}:
                 return
             for property, subschema in properties.iteritems():
-                main_dict = {}
-                for property2, subschema2 in subschema["properties"].iteritems():
-                    sub_dict = {}
-                    for property3, subschema3 in subschema2["properties"].iteritems():
-                        if "default" in subschema3:
-                            sub_dict[property3] = subschema3["default"]
-                    main_dict[property2] = sub_dict
+                main_dict = ConfigService.r_get_properties(subschema)
                 instance.setdefault(property, main_dict)
 
             for error in validate_properties(validator, properties, instance, schema):
@@ -226,6 +220,16 @@ class ConfigService:
         return validators.extend(
             validator_class, {"properties": set_defaults},
         )
+
+    @staticmethod
+    def r_get_properties(schema):
+        if "default" in schema:
+            return schema["default"]
+        if "properties" in schema:
+            dict_ = {}
+            for property, subschema in schema["properties"].iteritems():
+                dict_[property] = ConfigService.r_get_properties(subschema)
+            return dict_
 
     @staticmethod
     def decrypt_config(config):
@@ -312,13 +316,15 @@ class ConfigService:
 
     @staticmethod
     def remove_PBA_files():
-        # Remove PBA files
-        current_config = ConfigService.get_config()
-        if current_config:
-            linux_file_name = ConfigService.get_config_value(['monkey', 'behaviour', 'custom_post_breach', 'linux_file_info', 'name'])
-            windows_file_name = ConfigService.get_config_value(['monkey', 'behaviour', 'custom_post_breach', 'windows_file_info', 'name'])
-            ConfigService.remove_file(linux_file_name)
-            ConfigService.remove_file(windows_file_name)
+        if ConfigService.get_config():
+            linux_file_name = ConfigService.get_config_value(
+                ['monkey', 'behaviour', 'custom_post_breach', 'linux_file_info', 'name'])
+            windows_file_name = ConfigService.get_config_value(
+                ['monkey', 'behaviour', 'custom_post_breach', 'windows_file_info', 'name'])
+            if linux_file_name:
+                ConfigService.remove_file(linux_file_name)
+            if windows_file_name:
+                ConfigService.remove_file(windows_file_name)
 
     @staticmethod
     def remove_file(file_name):

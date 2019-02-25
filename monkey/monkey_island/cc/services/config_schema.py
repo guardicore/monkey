@@ -375,8 +375,6 @@ SCHEMA = {
                                     }
                                 }
                             },
-                            "default": [
-                            ],
                             "description": "List of actions the Monkey will run post breach"
                         },
                         "self_delete_in_cleanup": {

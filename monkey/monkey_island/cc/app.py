@@ -29,6 +29,7 @@ from cc.resources.telemetry import Telemetry
 from cc.resources.telemetry_feed import TelemetryFeed
 from cc.resources.pba_file_download import PBAFileDownload
 from cc.services.config import ConfigService
+from cc.resources.file_upload import FileUpload
 
 __author__ = 'Barak'
 
@@ -118,6 +119,7 @@ def init_app(mongo_url):
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')
     api.add_resource(PBAFileDownload, '/api/pba/download/<string:path>')
+    api.add_resource(FileUpload, '/api/fileUpload/<string:file_type>')
     api.add_resource(RemoteRun, '/api/remote-monkey', '/api/remote-monkey/')
 
     return app

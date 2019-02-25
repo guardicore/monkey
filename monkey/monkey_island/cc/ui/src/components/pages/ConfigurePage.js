@@ -3,6 +3,8 @@ import Form from 'react-jsonschema-form';
 import {Col, Nav, NavItem} from 'react-bootstrap';
 import fileDownload from 'js-file-download';
 import AuthComponent from '../AuthComponent';
+import { FilePond, registerPlugin } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
 
 class ConfigurePageComponent extends AuthComponent {
   constructor(props) {
@@ -59,16 +61,6 @@ class ConfigurePageComponent extends AuthComponent {
       })
       .then(res => res.json())
       .then(res => {
-        // Leave PBA files on external configuration
-        if ('linux_file' in this.state.configuration.monkey.behaviour.custom_post_breach){
-          let linux_file = this.state.configuration.monkey.behaviour.custom_post_breach.linux_file;
-          res.configuration.monkey.behaviour.custom_post_breach.windows_file = linux_file;
-        }
-        if ('windows_file' in this.state.configuration.monkey.behaviour.custom_post_breach){
-          let windows_file = this.state.configuration.monkey.behaviour.custom_post_breach.windows_file;
-          res.configuration.monkey.behaviour.custom_post_breach.linux_file = windows_file;
-        }
-
         this.setState({
           lastAction: 'saved',
           schema: res.schema,
@@ -160,6 +152,15 @@ class ConfigurePageComponent extends AuthComponent {
       });
   };
 
+  PBAwindows = () => {
+    return (<FilePond server='/api/fileUpload/PBAwindows'/>)
+  };
+
+  PBAlinux = () => {
+    return (<FilePond server='/api/fileUpload/PBAlinux'/>)
+  };
+
+
   render() {
     let displayedSchema = {};
     const uiSchema = {
@@ -168,8 +169,14 @@ class ConfigurePageComponent extends AuthComponent {
           linux: {
             "ui:widget": "textarea"
           },
+          linux_file: {
+            "ui:widget": this.PBAlinux
+          },
           windows: {
             "ui:widget": "textarea"
+          },
+          windows_file: {
+            "ui:widget": this.PBAwindows
           }
         }
       }
