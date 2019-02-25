@@ -153,6 +153,9 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   PBAwindows = () => {
+    if (! this.state.configuration.monkey.behaviour.custom_post_breach.windows_file_info){
+      
+    }
     return (<FilePond server='/api/fileUpload/PBAwindows'/>)
   };
 
