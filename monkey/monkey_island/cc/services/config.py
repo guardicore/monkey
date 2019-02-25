@@ -203,15 +203,9 @@ class ConfigService:
             # Do it only for root.
             if instance != {}:
                 return
-            for property, subschema in properties.iteritems():
-                main_dict = {}
-                for property2, subschema2 in subschema["properties"].iteritems():
-                    sub_dict = {}
-                    for property3, subschema3 in subschema2["properties"].iteritems():
-                        if "default" in subschema3:
-                            sub_dict[property3] = subschema3["default"]
-                    main_dict[property2] = sub_dict
-                instance.setdefault(property, main_dict)
+            for property_, subschema in properties.iteritems():
+                main_dict = ConfigService.r_get_properties(subschema)
+                instance.setdefault(property_, main_dict)
 
             for error in validate_properties(validator, properties, instance, schema):
                 yield error
@@ -219,6 +213,16 @@ class ConfigService:
         return validators.extend(
             validator_class, {"properties": set_defaults},
         )
+
+    @staticmethod
+    def r_get_properties(schema):
+        if "default" in schema:
+            return schema["default"]
+        if "properties" in schema:
+            dict_ = {}
+            for property_, subschema in schema["properties"].iteritems():
+                dict_[property_] = ConfigService.r_get_properties(subschema)
+            return dict_
 
     @staticmethod
     def decrypt_config(config):
