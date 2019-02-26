@@ -6,26 +6,23 @@ How to set up the Monkey Island server:
 ---------------- On Windows ----------------:
 0. Exclude the folder you are planning to install the Monkey in from your AV software, as it might block or delete files from the installation.
 1. Create folder "bin" under monkey_island
-2. Place portable version of Python 2.7
-	2.1. Download and install from: https://www.python.org/download/releases/2.7/
-	2.2. Install the required python libraries using "python -m pip install -r monkey_island\requirements.txt"
-	2.3. Copy contents from installation path (Usually C:\Python27) to monkey_island\bin\Python27
-	2.4. Copy Python27.dll from System32 folder (Usually C:\Windows\System32 or C:\Python27) to monkey_island\bin\Python27
-	2.5. (Optional) You may uninstall Python27 if you like.
+2. Place portable version of Python 2.7.15
+	2.1. Download and install from: https://www.python.org/downloads/release/python-2715/
+	2.2. Install virtualenv using "python -m pip install virtualenv"
+	2.3. Create a virtualenv using "python -m virtualenv --always-copy <PATH TO BIN>\Python27" Where <PATH TO BIN> is the path to the bin folder created on step 1.
+	2.4. Run "python -m virtualenv --relocatable <PATH TO BIN>\Python27"
+	2.5. Install the required python libraries using "<PATH TO BIN>\Python27\Scripts\python -m pip install -r monkey_island\requirements.txt"
+	2.6. Copy DLLs from installation path (Usually C:\Python27\DLLs) to <PATH TO BIN>\Python27\DLLs
+	2.7. (Optional) You may uninstall Python27 if you like.
 3. Setup mongodb (Use one of the following two options):
-    3.1 Place portable version of mongodb
-	   3.1.1 Download from: https://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip
- 	   3.2.1 Extract contents from bin folder to monkey_island\bin\mongodb.
-	   3.3.1 Create monkey_island\db folder.
-	
+    3.a Place portable version of mongodb
+	   3.a.1. Download from: https://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip
+ 	   3.a.2. Extract contents from bin folder to monkey_island\bin\mongodb.
+	   3.a.3. Create monkey_island\db folder.
 	OR
-
-    3.1 If you have an instance of mongodb running on a different host, set the MONKEY_MONGO_URL environment variable:
-
-        example for mongodb running on host with IP address 192.168.10.10:
-
-        set MONKEY_MONGO_URL="mongodb://192.168.10.10:27107/monkeyisland"
-
+    3.b. Use already running instance of mongodb
+		3.b.1. Run 'set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkeyisland"'. Replace '<SERVER ADDR>' with address of mongo server
+        
 4. Place portable version of OpenSSL
 	4.1. Download from: https://indy.fulgan.com/SSL/Archive/openssl-1.0.2l-i386-win32.zip
 	4.2. Extract content from bin folder to monkey_island\bin\openssl
@@ -67,23 +64,16 @@ How to run:
 	monkey-windows-64.exe - monkey binary for windows 64bi
 
 4. Setup MongoDB (Use one of the two following options):
-
-        4.1 Download MongoDB and extract it to /var/monkey_island/bin/mongodb
+        4.a. Download MongoDB and extract it to /var/monkey_island/bin/mongodb
                 for debian64 - https://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian81-latest.tgz
                 for ubuntu64 16.10 - https://downloads.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-latest.tgz
                 find more at - https://www.mongodb.org/downloads#production
                 untar.gz with: tar -zxvf filename.tar.gz -C /var/monkey_island/bin/mongodb
                 (make sure the content of the mongo folder is in this directory, meaning this path exists:
-                        /var/monkey_island/bin/mongodb/bin)
-        
+                        /var/monkey_island/bin/mongodb/bin)        
         OR
-
-        4.1 If you have an instance of mongodb running on a different host, set the MONKEY_MONGO_URL environment variable:
-
-            example for mongodb running on host with IP address 192.168.10.10:
-
-                set MONKEY_MONGO_URL="mongodb://192.168.10.10:27107/monkeyisland"
-
+        4.b. Use already running instance of mongodb
+			4.b.1. Run 'set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkeyisland"'. Replace '<SERVER ADDR>' with address of mongo server
 
 5. install OpenSSL
     sudo apt-get install openssl

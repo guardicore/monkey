@@ -34,9 +34,12 @@ class LoginPageComponent extends React.Component {
     this.state = {
       failed: false
     };
-    if (this.auth.loggedIn()) {
-      this.redirectToHome();
-    }
+    this.auth.loggedIn()
+      .then(res => {
+        if (res) {
+          this.redirectToHome();
+        }
+      });
   }
 
   render() {
