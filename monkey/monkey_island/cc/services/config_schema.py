@@ -688,7 +688,6 @@ SCHEMA = {
                             "default": [
                                 "SmbExploiter",
                                 "WmiExploiter",
-                                "MSSQLExploiter",
                                 "SSHExploiter",
                                 "ShellShockExploiter",
                                 "SambaCryExploiter",
