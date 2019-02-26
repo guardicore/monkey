@@ -86,6 +86,12 @@ class ConfigService:
         return config
 
     @staticmethod
+    def set_config_value(config_key_as_arr, value):
+        mongo_key = ".".join(config_key_as_arr)
+        mongo.db.config.update({'name': 'newconfig'},
+                               {"$set": {mongo_key: value}})
+
+    @staticmethod
     def get_flat_config(is_initial_config=False, should_decrypt=True):
         config_json = ConfigService.get_config(is_initial_config, should_decrypt)
         flat_config_json = {}

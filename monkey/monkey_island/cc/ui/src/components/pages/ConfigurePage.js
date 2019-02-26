@@ -3,7 +3,7 @@ import Form from 'react-jsonschema-form';
 import {Col, Nav, NavItem} from 'react-bootstrap';
 import fileDownload from 'js-file-download';
 import AuthComponent from '../AuthComponent';
-import { FilePond, registerPlugin } from 'react-filepond';
+import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 
 class ConfigurePageComponent extends AuthComponent {
@@ -21,7 +21,9 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       sections: [],
       selectedSection: 'basic',
-      allMonkeysAreDead: true
+      allMonkeysAreDead: true,
+      PBAwinFile: [],
+      PBAlinuxFile: []
     };
   }
 
@@ -95,6 +97,7 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   resetConfig = () => {
+    this.removePBAfiles();
     this.authFetch('/api/configuration/island',
       {
         method: 'POST',
@@ -111,6 +114,16 @@ class ConfigurePageComponent extends AuthComponent {
         this.props.onStatusChange();
       });
   };
+
+  removePBAfiles(){
+    // We need to clean files from widget, local state and configuration (to sync with bac end)
+    if (this.hasOwnProperty('PBAlinuxPond')){
+      this.PBAlinuxPond.removeFile();
+      this.PBAwindowsPond.removeFile();
+    }
+    this.setState({PBAlinuxFile: []});
+    this.setState({PBAwinFile: []});
+  }
 
   onReadFile = (event) => {
     try {
@@ -153,16 +166,75 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   PBAwindows = () => {
-    if (! this.state.configuration.monkey.behaviour.custom_post_breach.windows_file_info){
-      
-    }
-    return (<FilePond server='/api/fileUpload/PBAwindows'/>)
+    return (<FilePond
+      server='/api/fileUpload/PBAwindows'
+      files={this.getWinPBAfile()}
+      onupdatefiles={fileItems => {
+        this.setState({
+          PBAwinFile: fileItems.map(fileItem => fileItem.file)
+        })
+      }}
+      ref={ref => this.PBAwindowsPond = ref}
+    />)
   };
 
   PBAlinux = () => {
-    return (<FilePond server='/api/fileUpload/PBAlinux'/>)
+    return (<FilePond
+      server='/api/fileUpload/PBAlinux'
+      files={this.getLinuxPBAfile()}
+      onupdatefiles={fileItems => {
+        this.setState({
+          PBAlinuxFile: fileItems.map(fileItem => fileItem.file)
+        })
+      }}
+      ref={ref => this.PBAlinuxPond = ref}
+      onload={this.props.setRemovePBAfiles(false)}
+    />)
+
   };
 
+  getWinPBAfile(){
+    if (this.props.removePBAfiles){
+      // If env was reset we need to remove files in react state
+      /*if (this.hasOwnProperty('PBAwinFile')){
+        this.setState({PBAwinFile: ''})
+      }*/
+    } else if (this.state.PBAwinFile.length !== 0){
+      console.log("Getting from local state")
+      return ConfigurePageComponent.getPBAfile(this.state.PBAwinFile[0], true)
+    } else {
+      console.log("Getting from config")
+      return ConfigurePageComponent.getPBAfile(this.state.configuration.monkey.behaviour.custom_post_breach.windows_file_info)
+    }
+  }
+
+  getLinuxPBAfile(){
+    if (this.props.removePBAfiles) {
+      // If env was reset we need to remove files in react state
+      /*if (this.hasOwnProperty('PBAlinuxFile')){
+        this.setState({PBAlinuxFile: ''})
+      }*/
+    } else if (this.state.PBAlinuxFile.length !== 0){
+      console.log("Getting from local state")
+      return ConfigurePageComponent.getPBAfile(this.state.PBAlinuxFile[0], true)
+    } else {
+      console.log("Getting from config")
+      return ConfigurePageComponent.getPBAfile(this.state.configuration.monkey.behaviour.custom_post_breach.linux_file_info)
+    }
+  }
+
+  static getPBAfile(fileSrc, isMock=false){
+    let PBAfile = [{
+      source: fileSrc.name,
+      options: {
+        type: 'limbo'
+      }
+    }];
+    if (isMock){
+      PBAfile[0].options.file = fileSrc
+    }
+    return PBAfile
+  }
 
   render() {
     let displayedSchema = {};
@@ -180,6 +252,12 @@ class ConfigurePageComponent extends AuthComponent {
           },
           windows_file: {
             "ui:widget": this.PBAwindows
+          },
+          linux_file_info: {
+            classNames: "linux-pba-file-info"
+          },
+          windows_file_info: {
+            classNames: "windows-pba-file-info"
           }
         }
       }
@@ -188,7 +266,6 @@ class ConfigurePageComponent extends AuthComponent {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }
-
     return (
       <Col xs={12} lg={8}>
         <h1 className="page-title">Monkey Configuration</h1>
@@ -276,7 +353,6 @@ class ConfigurePageComponent extends AuthComponent {
             </div>
             : ''}
         </div>
-
       </Col>
     );
   }
