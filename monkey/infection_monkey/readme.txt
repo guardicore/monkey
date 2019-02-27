@@ -13,7 +13,7 @@ The monkey is composed of three separate parts.
     Download and install from: https://www.python.org/downloads/release/python-2715/
 2.	Add python directories to PATH environment variable (if you didn't install ActiveState Python)
 	a. Run the following command on a cmd console (Replace C:\Python27 with your python directory if it's different)
-		setx /M PATH "%PATH%;C:\Python27;C:\Pytohn27\Scripts
+		setx /M PATH "%PATH%;C:\Python27;C:\Python27\Scripts
 	b. Close the console, make sure you execute all commands in a new cmd console from now on.
 3.	Install further dependencies
 	a. install VCForPython27.msi
