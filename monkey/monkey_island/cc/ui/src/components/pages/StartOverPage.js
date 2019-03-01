@@ -108,7 +108,6 @@ class StartOverPageComponent extends AuthComponent {
           this.setState({
               cleaned: true
             });
-          this.props.setRemovePBAfiles(true)
         }
       });
   }

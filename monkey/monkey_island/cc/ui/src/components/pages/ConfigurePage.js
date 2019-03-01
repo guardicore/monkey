@@ -117,10 +117,14 @@ class ConfigurePageComponent extends AuthComponent {
 
   removePBAfiles(){
     // We need to clean files from widget, local state and configuration (to sync with bac end)
-    if (this.hasOwnProperty('PBAlinuxPond')){
+    if (this.hasOwnProperty('PBAlinuxPond') && this.PBAwindowsPond !== null){
       this.PBAlinuxPond.removeFile();
       this.PBAwindowsPond.removeFile();
     }
+    let request_options = {method: 'DELETE',
+                           headers: {'Content-Type': 'text/plain'}};
+    this.authFetch('/api/fileUpload/PBAlinux', request_options);
+    this.authFetch('/api/fileUpload/PBAwindows', request_options);
     this.setState({PBAlinuxFile: []});
     this.setState({PBAwinFile: []});
   }
@@ -188,37 +192,21 @@ class ConfigurePageComponent extends AuthComponent {
         })
       }}
       ref={ref => this.PBAlinuxPond = ref}
-      onload={this.props.setRemovePBAfiles(false)}
     />)
-
   };
 
   getWinPBAfile(){
-    if (this.props.removePBAfiles){
-      // If env was reset we need to remove files in react state
-      /*if (this.hasOwnProperty('PBAwinFile')){
-        this.setState({PBAwinFile: ''})
-      }*/
-    } else if (this.state.PBAwinFile.length !== 0){
-      console.log("Getting from local state")
+    if (this.state.PBAwinFile.length !== 0){
       return ConfigurePageComponent.getPBAfile(this.state.PBAwinFile[0], true)
-    } else {
-      console.log("Getting from config")
+    } else if (this.state.configuration.monkey.behaviour.custom_post_breach.windows_file_info.name){
       return ConfigurePageComponent.getPBAfile(this.state.configuration.monkey.behaviour.custom_post_breach.windows_file_info)
     }
   }
 
   getLinuxPBAfile(){
-    if (this.props.removePBAfiles) {
-      // If env was reset we need to remove files in react state
-      /*if (this.hasOwnProperty('PBAlinuxFile')){
-        this.setState({PBAlinuxFile: ''})
-      }*/
-    } else if (this.state.PBAlinuxFile.length !== 0){
-      console.log("Getting from local state")
+    if (this.state.PBAlinuxFile.length !== 0){
       return ConfigurePageComponent.getPBAfile(this.state.PBAlinuxFile[0], true)
-    } else {
-      console.log("Getting from config")
+    } else if (this.state.configuration.monkey.behaviour.custom_post_breach.linux_file_info.name) {
       return ConfigurePageComponent.getPBAfile(this.state.configuration.monkey.behaviour.custom_post_breach.linux_file_info)
     }
   }
@@ -242,22 +230,28 @@ class ConfigurePageComponent extends AuthComponent {
       behaviour: {
         custom_post_breach: {
           linux: {
-            "ui:widget": "textarea"
+            "ui:widget": "textarea",
+            "ui:emptyValue": ""
           },
           linux_file: {
             "ui:widget": this.PBAlinux
           },
           windows: {
-            "ui:widget": "textarea"
+            "ui:widget": "textarea",
+            "ui:emptyValue": ""
           },
           windows_file: {
             "ui:widget": this.PBAwindows
           },
           linux_file_info: {
-            classNames: "linux-pba-file-info"
+            classNames: "linux-pba-file-info",
+            name:{ "ui:emptyValue": ""},
+            size:{ "ui:emptyValue": "0"}
           },
           windows_file_info: {
-            classNames: "windows-pba-file-info"
+            classNames: "windows-pba-file-info",
+            name:{ "ui:emptyValue": ""},
+            size:{ "ui:emptyValue": "0"}
           }
         }
       }
@@ -290,7 +284,8 @@ class ConfigurePageComponent extends AuthComponent {
                 uiSchema={uiSchema}
                 formData={this.state.configuration[this.state.selectedSection]}
                 onSubmit={this.onSubmit}
-                onChange={this.onChange} >
+                onChange={this.onChange}
+                noValidate={true}>
             <div>
               { this.state.allMonkeysAreDead ?
                 '' :

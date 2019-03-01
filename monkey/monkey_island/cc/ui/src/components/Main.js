@@ -179,15 +179,11 @@ class AppComponent extends AuthComponent {
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className="main">
               <Route path='/login' render={(props) => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
               {this.renderRoute('/', <RunServerPage onStatusChange={this.updateStatus}/>, true)}
-              {this.renderRoute('/configure', <ConfigurePage onStatusChange={this.updateStatus}
-                                                             removePBAfiles={this.state.removePBAfiles}
-                                                             setRemovePBAfiles={this.setRemovePBAfiles}/>)}
+              {this.renderRoute('/configure', <ConfigurePage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/run-monkey', <RunMonkeyPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}
-                                                              removePBAfiles={this.state.removePBAfiles}
-                                                              setRemovePBAfiles={this.setRemovePBAfiles}/>)}
+              {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/report', <ReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>

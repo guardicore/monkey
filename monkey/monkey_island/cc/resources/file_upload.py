@@ -1,6 +1,6 @@
 import flask_restful
 from flask import request, send_from_directory, Response
-from cc.services.config import ConfigService
+from cc.services.config import ConfigService, WINDOWS_PBA_INFO, LINUX_PBA_INFO
 import os
 from werkzeug.utils import secure_filename
 import logging
@@ -13,12 +13,6 @@ GET_FILE_DIR = "./userUploads"
 # What endpoints front end uses to identify which files to work with
 LINUX_PBA_TYPE = 'PBAlinux'
 WINDOWS_PBA_TYPE = 'PBAwindows'
-# Where to find file info in config
-PBA_CONF_PATH = ['monkey', 'behaviour', 'custom_post_breach']
-WINDOWS_PBA_INFO = copy.deepcopy(PBA_CONF_PATH)
-WINDOWS_PBA_INFO.append('windows_file_info')
-LINUX_PBA_INFO = copy.deepcopy(PBA_CONF_PATH)
-LINUX_PBA_INFO.append('linux_file_info')
 
 
 class FileUpload(flask_restful.Resource):

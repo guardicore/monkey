@@ -19,20 +19,25 @@ class PBA(object):
         else:
             command = self.windows_command
             exec_funct = self.execute_win
-        try:
+        if command:
             ControlClient.send_telemetry('post_breach', {'command': command,
                                                          'output': exec_funct(),
                                                          'name': self.name})
-            return True
-        except subprocess.CalledProcessError as e:
-            ControlClient.send_telemetry('post_breach', {'command': command,
-                                                         'output': "Couldn't execute post breach command: %s" % e,
-                                                         'name': self.name})
-            LOG.error("Couldn't execute post breach command: %s" % e)
-            return False
 
     def execute_linux(self):
-        return subprocess.check_output(self.linux_command, shell=True) if self.linux_command else False
+        # Default linux PBA execution function. Override if additional functionality is needed
+        if self.linux_command:
+            try:
+                return subprocess.check_output(self.linux_command, stderr=subprocess.STDOUT, shell=True)
+            except subprocess.CalledProcessError as e:
+                # Return error output of the command
+                return e.output
 
     def execute_win(self):
-        return subprocess.check_output(self.windows_command, shell=True) if self.windows_command else False
+        # Default windows PBA execution function. Override if additional functionality is needed
+        if self.windows_command:
+            try:
+                return subprocess.check_output(self.windows_command, stderr=subprocess.STDOUT, shell=True)
+            except subprocess.CalledProcessError as e:
+                # Return error output of the command
+                return e.output

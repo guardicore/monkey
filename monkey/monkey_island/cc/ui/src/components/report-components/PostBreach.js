@@ -9,11 +9,22 @@ let renderIpAddresses = function (val) {
   return <div>{renderArray(val.ip_addresses)} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")} </div>;
 };
 
-let renderPostBreach = function (val) {
-  return <div>{val.map(x => <div>Name: {x.name}<br/>Command: {x.command}<br/>Output: {x.output}<br/></div>)}</div>;
+let renderPostBreach = function (machine, pbaList) {
+  if (pbaList.length === 0){
+    return
+  } else {
+      return <div>Machine: {machine.label}<br/>
+             {pbaList.map(x => <div>Name: {x.name}<br/>
+                                    Command: {x.command}<br/>
+                                    Output: {x.output}<br/></div>)}
+                                    </div>;
+  }
 };
 
 let renderMachine = function (val) {
+  if (val.pba_results.length === 0){
+    return
+  }
   return <div>{val.label} {renderIpAddresses(val)}</div>
 };
 
@@ -21,8 +32,7 @@ const columns = [
   {
     Header: 'Post breach actions',
     columns: [
-      {Header: 'Machine', id: 'machines', accessor: x => renderMachine(x)},
-      {Header: 'Post breach actions:', id: 'post_breach_actions', accessor: x => renderPostBreach(x.post_breach_actions)}
+      {id: 'post_breach_actions', accessor: x => renderPostBreach(x, x.pba_results)}
     ]
   }
 ];

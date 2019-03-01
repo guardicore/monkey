@@ -38,6 +38,13 @@ ENCRYPTED_CONFIG_STRINGS = \
 
 UPLOADS_DIR = './monkey_island/cc/userUploads'
 
+# Where to find file info in config
+PBA_CONF_PATH = ['monkey', 'behaviour', 'custom_post_breach']
+WINDOWS_PBA_INFO = copy.deepcopy(PBA_CONF_PATH)
+WINDOWS_PBA_INFO.append('windows_file_info')
+LINUX_PBA_INFO = copy.deepcopy(PBA_CONF_PATH)
+LINUX_PBA_INFO.append('linux_file_info')
+
 class ConfigService:
     default_config = None
 
@@ -150,6 +157,8 @@ class ConfigService:
 
     @staticmethod
     def update_config(config_json, should_encrypt):
+        # Island file upload on file_upload endpoint and sets correct config there
+        ConfigService.keep_PBA_files(config_json)
         if should_encrypt:
             try:
                 ConfigService.encrypt_config(config_json)
@@ -159,6 +168,18 @@ class ConfigService:
         mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
         logger.info('monkey config was updated')
         return True
+
+    @staticmethod
+    def keep_PBA_files(config_json):
+        """
+        file_upload endpoint handles file upload and sets config asynchronously.
+        This brings file info in config up to date.
+        """
+        if ConfigService.get_config():
+            linux_info = ConfigService.get_config_value(LINUX_PBA_INFO)
+            windows_info = ConfigService.get_config_value(WINDOWS_PBA_INFO)
+            config_json['monkey']['behaviour']['custom_post_breach']['linux_file_info'] = linux_info
+            config_json['monkey']['behaviour']['custom_post_breach']['windows_file_info'] = windows_info
 
     @staticmethod
     def init_default_config():

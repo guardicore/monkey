@@ -261,7 +261,7 @@ class Telemetry(flask_restful.Resource):
     def process_post_breach_telemetry(telemetry_json):
         mongo.db.monkey.update(
             {'guid': telemetry_json['monkey_guid']},
-            {'$push': {'post_breach_actions': telemetry_json['data']}})
+            {'$push': {'pba_results': telemetry_json['data']}})
 
 TELEM_PROCESS_DICT = \
     {
