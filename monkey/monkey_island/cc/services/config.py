@@ -45,6 +45,7 @@ WINDOWS_PBA_INFO.append('windows_file_info')
 LINUX_PBA_INFO = copy.deepcopy(PBA_CONF_PATH)
 LINUX_PBA_INFO.append('linux_file_info')
 
+
 class ConfigService:
     default_config = None
 
@@ -157,7 +158,7 @@ class ConfigService:
 
     @staticmethod
     def update_config(config_json, should_encrypt):
-        # Island file upload on file_upload endpoint and sets correct config there
+        # Island file upload happens on pba_file_upload endpoint and config is set there
         ConfigService.keep_PBA_files(config_json)
         if should_encrypt:
             try:
@@ -173,7 +174,7 @@ class ConfigService:
     def keep_PBA_files(config_json):
         """
         file_upload endpoint handles file upload and sets config asynchronously.
-        This brings file info in config up to date.
+        This saves file info from being overridden.
         """
         if ConfigService.get_config():
             linux_info = ConfigService.get_config_value(LINUX_PBA_INFO)
@@ -250,6 +251,7 @@ class ConfigService:
 
     @staticmethod
     def r_get_properties(schema):
+        """ Recursively gets all nested properties in schema"""
         if "default" in schema:
             return schema["default"]
         if "properties" in schema:

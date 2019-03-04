@@ -132,7 +132,8 @@ class ReportService:
                          (NodeService.get_displayed_node_by_id(edge['from'], True)
                           for edge in EdgeService.get_displayed_edges_by_to(node['id'], True)))),
                     'services': node['services'],
-                    'domain_name': node['domain_name']
+                    'domain_name': node['domain_name'],
+                    'pba_results': node['pba_results'] if 'pba_results' in node else 'None'
                 })
 
         logger.info('Scanned nodes generated for reporting')
@@ -156,7 +157,6 @@ class ReportService:
                 'exploits': list(set(
                     [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in monkey['exploits'] if
                      exploit['result']])),
-                'pba_results': monkey['pba_results'] if 'pba_results' in monkey else 'None'
             }
             for monkey in exploited]
 

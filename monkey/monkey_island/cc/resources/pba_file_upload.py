@@ -4,7 +4,6 @@ from cc.services.config import ConfigService, WINDOWS_PBA_INFO, LINUX_PBA_INFO
 import os
 from werkzeug.utils import secure_filename
 import logging
-from cc.database import mongo
 import copy
 
 LOG = logging.getLogger(__name__)

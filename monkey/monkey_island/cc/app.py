@@ -29,7 +29,7 @@ from cc.resources.telemetry import Telemetry
 from cc.resources.telemetry_feed import TelemetryFeed
 from cc.resources.pba_file_download import PBAFileDownload
 from cc.services.config import ConfigService
-from cc.resources.file_upload import FileUpload
+from cc.resources.pba_file_upload import FileUpload
 
 __author__ = 'Barak'
 

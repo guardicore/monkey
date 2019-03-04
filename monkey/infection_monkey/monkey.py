@@ -113,6 +113,10 @@ class InfectionMonkey(object):
             system_info = system_info_collector.get_info()
             ControlClient.send_telemetry("system_info_collection", system_info)
 
+        for action_class in WormConfiguration.post_breach_actions:
+            action = action_class()
+            action.act()
+
         PostBreach().execute()
 
         if 0 == WormConfiguration.depth:

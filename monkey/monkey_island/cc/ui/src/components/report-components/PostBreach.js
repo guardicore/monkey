@@ -21,13 +21,6 @@ let renderPostBreach = function (machine, pbaList) {
   }
 };
 
-let renderMachine = function (val) {
-  if (val.pba_results.length === 0){
-    return
-  }
-  return <div>{val.label} {renderIpAddresses(val)}</div>
-};
-
 const columns = [
   {
     Header: 'Post breach actions',
