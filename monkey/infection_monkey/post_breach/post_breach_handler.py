@@ -34,7 +34,7 @@ class PostBreach(object):
     def get_custom(config):
         custom_list = []
         file_pba = FileExecution()
-        command_pba = PBA(name="Custom post breach action")
+        command_pba = PBA(name="Custom")
         post_breach = config.custom_post_breach
         linux_command = post_breach['linux']
         windows_command = post_breach['windows']

@@ -82,7 +82,9 @@ class TelemetryFeed(flask_restful.Resource):
 
     @staticmethod
     def get_post_breach_telem_brief(telem):
-        pass
+        return '%s post breach action executed on %s (%s) machine' % (telem['data']['name'],
+                                                                      telem['data']['hostname'],
+                                                                      telem['data']['ip'])
 
 
 TELEM_PROCESS_DICT = \

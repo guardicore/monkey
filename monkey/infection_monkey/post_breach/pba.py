@@ -1,6 +1,7 @@
 import logging
 from infection_monkey.control import ControlClient
 import subprocess
+import socket
 
 LOG = logging.getLogger(__name__)
 
@@ -20,9 +21,13 @@ class PBA(object):
             command = self.windows_command
             exec_funct = self.execute_win
         if command:
+            hostname = socket.gethostname()
             ControlClient.send_telemetry('post_breach', {'command': command,
                                                          'output': exec_funct(),
-                                                         'name': self.name})
+                                                         'name': self.name,
+                                                         'hostname': hostname,
+                                                         'ip': socket.gethostbyname(hostname)
+            })
 
     def execute_linux(self):
         # Default linux PBA execution function. Override if additional functionality is needed
