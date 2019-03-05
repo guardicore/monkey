@@ -18,3 +18,4 @@ wmi
 pywin32
 pymssql
 pyftpdlib
+enum34

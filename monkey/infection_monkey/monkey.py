@@ -167,44 +167,17 @@ class InfectionMonkey(object):
                     LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
                     machine.set_default_server(self._default_server)
 
-                successful_exploiter = None
+                # Order exploits according to their type
+                self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
+                host_exploited = False
                 for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
-                    if not exploiter.is_os_supported():
-                        LOG.info("Skipping exploiter %s host:%r, os is not supported",
-                                 exploiter.__class__.__name__, machine)
-                        continue
-
-                    LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
-
-                    result = False
-                    try:
-                        result = exploiter.exploit_host()
-                        if result:
-                            successful_exploiter = exploiter
-                            break
-                        else:
-                            LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
-
-                    except Exception as exc:
-                        LOG.exception("Exception while attacking %s using %s: %s",
-                                      machine, exploiter.__class__.__name__, exc)
-                    finally:
-                        exploiter.send_exploit_telemetry(result)
-
-                if successful_exploiter:
-                    self._exploited_machines.add(machine)
-
-                    LOG.info("Successfully propagated to %s using %s",
-                             machine, successful_exploiter.__class__.__name__)
-
-                    # check if max-exploitation limit is reached
-                    if WormConfiguration.victims_max_exploit <= len(self._exploited_machines):
-                        self._keep_running = False
-
-                        LOG.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)
+                    if self.try_exploiting(machine, exploiter):
+                        host_exploited = True
                         break
-                else:
+                if not host_exploited:
                     self._fail_exploitation_machines.add(machine)
+                if not self._keep_running:
+                    break
 
             if (not is_empty) and (WormConfiguration.max_iterations > iteration_index + 1):
                 time_to_sleep = WormConfiguration.timeout_between_iterations
@@ -279,3 +252,50 @@ class InfectionMonkey(object):
             log = ''
 
         ControlClient.send_log(log)
+
+    def try_exploiting(self, machine, exploiter):
+        """
+        Workflow of exploiting one machine with one exploiter
+        :param machine: Machine monkey tries to exploit
+        :param exploiter: Exploiter to use on that machine
+        :return: True if successfully exploited, False otherwise
+        """
+        if not exploiter.is_os_supported():
+            LOG.info("Skipping exploiter %s host:%r, os is not supported",
+                     exploiter.__class__.__name__, machine)
+            return False
+
+        LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
+
+        result = False
+        try:
+            result = exploiter.exploit_host()
+            if result:
+                self.successfully_exploited(machine, exploiter)
+                return True
+            else:
+                LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
+
+        except Exception as exc:
+            LOG.exception("Exception while attacking %s using %s: %s",
+                          machine, exploiter.__class__.__name__, exc)
+        finally:
+            exploiter.send_exploit_telemetry(result)
+        return False
+
+    def successfully_exploited(self, machine, exploiter):
+        """
+        Workflow of registering successfully exploited machine
+        :param machine: machine that was exploited
+        :param exploiter: exploiter that succeeded
+        """
+        self._exploited_machines.add(machine)
+
+        LOG.info("Successfully propagated to %s using %s",
+                 machine, exploiter.__class__.__name__)
+
+        # check if max-exploitation limit is reached
+        if WormConfiguration.victims_max_exploit <= len(self._exploited_machines):
+            self._keep_running = False
+
+            LOG.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)
