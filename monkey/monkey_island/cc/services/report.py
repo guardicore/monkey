@@ -58,7 +58,8 @@ class ReportService:
         WEBLOGIC = 9
         HADOOP = 10
         PTH_CRIT_SERVICES_ACCESS = 11,
-        MSSQL = 12
+        MSSQL = 12,
+        VSFTPD = 13
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -293,7 +294,7 @@ class ReportService:
     @staticmethod
     def process_vsftpd_exploit(exploit):
         processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        processed_exploit['type'] = 'ftp'
+        processed_exploit['type'] = 'vsftp'
         return processed_exploit        
 
     @staticmethod
@@ -652,6 +653,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.ELASTIC.value] = True
                 elif issue['type'] == 'sambacry':
                     issues_byte_array[ReportService.ISSUES_DICT.SAMBACRY.value] = True
+                elif issue['type'] == 'vsftp':
+                    issues_byte_array[ReportService.ISSUES_DICT.VSFTPD.value] = True
                 elif issue['type'] == 'shellshock':
                     issues_byte_array[ReportService.ISSUES_DICT.SHELLSHOCK.value] = True
                 elif issue['type'] == 'conficker':
