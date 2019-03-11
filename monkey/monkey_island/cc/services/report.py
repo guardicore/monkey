@@ -41,7 +41,8 @@ class ReportService:
             'Struts2Exploiter': 'Struts2 Exploiter',
             'WebLogicExploiter': 'Oracle WebLogic Exploiter',
             'HadoopExploiter': 'Hadoop/Yarn Exploiter',
-            'MSSQLExploiter': 'MSSQL Exploiter'
+            'MSSQLExploiter': 'MSSQL Exploiter',
+            'VSFTPDExploiter': 'VSFTPD Backdoor Exploited'
         }
 
     class ISSUES_DICT(Enum):
@@ -253,6 +254,7 @@ class ReportService:
                 else:
                     processed_exploit['type'] = 'hash'
                 return processed_exploit
+        return processed_exploit
 
     @staticmethod
     def process_smb_exploit(exploit):
@@ -287,6 +289,12 @@ class ReportService:
         processed_exploit = ReportService.process_general_creds_exploit(exploit)
         processed_exploit['type'] = 'rdp'
         return processed_exploit
+
+    @staticmethod
+    def process_vsftpd_exploit(exploit):
+        processed_exploit = ReportService.process_general_creds_exploit(exploit)
+        processed_exploit['type'] = 'ftp'
+        return processed_exploit        
 
     @staticmethod
     def process_sambacry_exploit(exploit):
@@ -354,7 +362,8 @@ class ReportService:
             'Struts2Exploiter': ReportService.process_struts2_exploit,
             'WebLogicExploiter': ReportService.process_weblogic_exploit,
             'HadoopExploiter': ReportService.process_hadoop_exploit,
-            'MSSQLExploiter': ReportService.process_mssql_exploit
+            'MSSQLExploiter': ReportService.process_mssql_exploit,
+            'VSFTPDExploiter': ReportService.process_vsftpd_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)

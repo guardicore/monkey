@@ -91,6 +91,13 @@ SCHEMA = {
                         "HadoopExploiter"
                     ],
                     "title": "Hadoop/Yarn Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "VSFTPDExploiter"
+                    ],
+                    "title": "VSFTPD Exploiter"
                 }
             ]
         },
@@ -694,7 +701,8 @@ SCHEMA = {
                                 "ElasticGroovyExploiter",
                                 "Struts2Exploiter",
                                 "WebLogicExploiter",
-                                "HadoopExploiter"
+                                "HadoopExploiter",
+                                "VSFTPDExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
