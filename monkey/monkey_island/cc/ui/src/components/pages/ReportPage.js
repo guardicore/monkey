@@ -302,7 +302,7 @@ class ReportPageComponent extends AuthComponent {
                 className="label label-warning">
                     {this.state.report.overview.issues.filter(function (x) {
                       return x === true;
-                    }).length} threats.</span>:
+                    }).length} threats</span>:
                 <ul>
                   {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] ?
                     <li>Stolen SSH keys are used to exploit other machines.</li> : null }                  
