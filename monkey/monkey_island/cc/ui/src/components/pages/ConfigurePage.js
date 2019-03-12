@@ -3,6 +3,7 @@ import Form from 'react-jsonschema-form';
 import {Col, Nav, NavItem} from 'react-bootstrap';
 import fileDownload from 'js-file-download';
 import AuthComponent from '../AuthComponent';
+import AttackComponent from 'components/config-components/Att&ck'
 import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 
@@ -13,6 +14,8 @@ class ConfigurePageComponent extends AuthComponent {
     this.PBAlinuxPond = null;
     this.currentSection = 'basic';
     this.currentFormData = {};
+    this.sectionsOrder = ['basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal', 'ATT&CK'];
+
     this.sectionsOrder = ['basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
     this.uiSchema = {
       behaviour: {
@@ -296,7 +299,8 @@ class ConfigurePageComponent extends AuthComponent {
             </div>
             : <div />
         }
-        { this.state.selectedSection ?
+        { this.state.selectedSection === 'ATT&CK' ?
+            <AttackComponent/> :  this.state.selectedSection ?
           <Form schema={displayedSchema}
                 uiSchema={this.uiSchema}
                 formData={this.state.configuration[this.state.selectedSection]}
