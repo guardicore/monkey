@@ -403,9 +403,8 @@ class ReportPageComponent extends AuthComponent {
   generateReportRecommendationsSection() {
     return (
       <div id="recommendations">
-        <h3>
-          Domain related recommendations
-        </h3>
+        {Object.keys(this.state.report.recommendations.domain_issues).length !=0 ?
+                     <h3>Domain related recommendations</h3> : null }
         <div>
           {this.generateIssues(this.state.report.recommendations.domain_issues)}
         </div>
