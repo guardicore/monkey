@@ -271,12 +271,10 @@ class Configuration(object):
     extract_azure_creds = True
 
     post_breach_actions = []
-    custom_post_breach = {"linux": "",
-                          "windows": "",
-                          "linux_file": None,
-                          "windows_file": None,
-                          "linux_file_info": None,
-                          "windows_file_info": None}
+    custom_pba_linux_cmd = ""
+    custom_pba_windows_cmd = ""
+    custom_pba_linux_file_info = None
+    custom_pba_windows_file_info = None
 
 
 WormConfiguration = Configuration()

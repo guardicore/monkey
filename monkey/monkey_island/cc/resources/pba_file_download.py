@@ -1,14 +1,14 @@
-import json
-import logging
-import os
-
 import flask_restful
-from flask import request, send_from_directory
+from flask import send_from_directory
+from cc.services.config import UPLOADS_DIR
 
-UPLOADS_DIR = "./userUploads"
+__author__ = 'VakarisZ'
 
 
 class PBAFileDownload(flask_restful.Resource):
+    """
+    File download endpoint used by monkey to download user's PBA file
+    """
     # Used by monkey. can't secure.
     def get(self, path):
         return send_from_directory(UPLOADS_DIR, path)

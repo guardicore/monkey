@@ -36,14 +36,11 @@ ENCRYPTED_CONFIG_STRINGS = \
         ['cnc', 'aws_config', 'aws_secret_access_key']
     ]
 
-UPLOADS_DIR = './monkey_island/cc/userUploads'
+UPLOADS_DIR = '/cc/userUploads'
 
-# Where to find file info in config
-PBA_CONF_PATH = ['monkey', 'behaviour', 'custom_post_breach']
-WINDOWS_PBA_INFO = copy.deepcopy(PBA_CONF_PATH)
-WINDOWS_PBA_INFO.append('windows_file_info')
-LINUX_PBA_INFO = copy.deepcopy(PBA_CONF_PATH)
-LINUX_PBA_INFO.append('linux_file_info')
+# Where to find file names in config
+PBA_WINDOWS_FILENAME_PATH = ['monkey', 'behaviour', 'PBA_windows_filename']
+PBA_LINUX_FILENAME_PATH = ['monkey', 'behaviour', 'PBA_linux_filename']
 
 
 class ConfigService:
@@ -78,13 +75,11 @@ class ConfigService:
         :param is_initial_config: If True, returns the value of the initial config instead of the current config.
         :param should_decrypt: If True, the value of the config key will be decrypted
                                (if it's in the list of encrypted config values).
-        :return: The value of the requested config key or False, if such key doesn't exist.
+        :return: The value of the requested config key.
         """
         config_key = functools.reduce(lambda x, y: x + '.' + y, config_key_as_arr)
         config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}, {config_key: 1})
         for config_key_part in config_key_as_arr:
-            if config_key_part not in config:
-                return False
             config = config[config_key_part]
         if should_decrypt:
             if config_key_as_arr in ENCRYPTED_CONFIG_ARRAYS:
@@ -158,7 +153,7 @@ class ConfigService:
 
     @staticmethod
     def update_config(config_json, should_encrypt):
-        # Island file upload happens on pba_file_upload endpoint and config is set there
+        # PBA file upload happens on pba_file_upload endpoint and corresponding config options are set there
         ConfigService.keep_PBA_files(config_json)
         if should_encrypt:
             try:
@@ -173,14 +168,14 @@ class ConfigService:
     @staticmethod
     def keep_PBA_files(config_json):
         """
-        file_upload endpoint handles file upload and sets config asynchronously.
-        This saves file info from being overridden.
+        Sets PBA file info in config_json to current config's PBA file info values.
+        :param config_json: config_json that will be modified
         """
         if ConfigService.get_config():
-            linux_info = ConfigService.get_config_value(LINUX_PBA_INFO)
-            windows_info = ConfigService.get_config_value(WINDOWS_PBA_INFO)
-            config_json['monkey']['behaviour']['custom_post_breach']['linux_file_info'] = linux_info
-            config_json['monkey']['behaviour']['custom_post_breach']['windows_file_info'] = windows_info
+            linux_filename = ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
+            windows_filename = ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
+            config_json['monkey']['behaviour']['PBA_linux_filename'] = linux_filename
+            config_json['monkey']['behaviour']['PBA_windows_filename'] = windows_filename
 
     @staticmethod
     def init_default_config():
@@ -239,7 +234,13 @@ class ConfigService:
             if instance != {}:
                 return
             for property, subschema in properties.iteritems():
-                main_dict = ConfigService.r_get_properties(subschema)
+                main_dict = {}
+                for property2, subschema2 in subschema["properties"].iteritems():
+                    sub_dict = {}
+                    for property3, subschema3 in subschema2["properties"].iteritems():
+                        if "default" in subschema3:
+                            sub_dict[property3] = subschema3["default"]
+                    main_dict[property2] = sub_dict
                 instance.setdefault(property, main_dict)
 
             for error in validate_properties(validator, properties, instance, schema):
@@ -248,17 +249,6 @@ class ConfigService:
         return validators.extend(
             validator_class, {"properties": set_defaults},
         )
-
-    @staticmethod
-    def r_get_properties(schema):
-        """ Recursively gets all nested properties in schema"""
-        if "default" in schema:
-            return schema["default"]
-        if "properties" in schema:
-            dict_ = {}
-            for property, subschema in schema["properties"].iteritems():
-                dict_[property] = ConfigService.r_get_properties(subschema)
-            return dict_
 
     @staticmethod
     def decrypt_config(config):
@@ -323,27 +313,6 @@ class ConfigService:
         return pair
 
     @staticmethod
-    def add_PBA_files(post_breach_files):
-        """
-        Interceptor of config saving process that uploads PBA files to server
-        and saves filenames and sizes in config instead of full file.
-        :param post_breach_files: Data URL encoded files
-        """
-        # If any file is uploaded
-        if any(file_name in post_breach_files for file_name in ['linux_file', 'windows_file']):
-            # Create directory for file uploads if not present
-            if not os.path.exists(UPLOADS_DIR):
-                os.makedirs(UPLOADS_DIR)
-        if 'linux_file' in post_breach_files:
-            linux_name, linux_size = ConfigService.upload_file(post_breach_files['linux_file'], UPLOADS_DIR)
-            post_breach_files['linux_file_info']['name'] = linux_name
-            post_breach_files['linux_file_info']['size'] = linux_size
-        if 'windows_file' in post_breach_files:
-            windows_name, windows_size = ConfigService.upload_file(post_breach_files['windows_file'], UPLOADS_DIR)
-            post_breach_files['windows_file_info']['name'] = windows_name
-            post_breach_files['windows_file_info']['size'] = windows_size
-
-    @staticmethod
     def remove_PBA_files():
         if ConfigService.get_config():
             linux_file_name = ConfigService.get_config_value(
@@ -363,24 +332,3 @@ class ConfigService:
                 os.remove(file_path)
         except OSError as e:
             logger.error("Can't remove previously uploaded post breach files: %s" % e)
-
-
-    @staticmethod
-    def upload_file(file_data, directory):
-        """
-        We parse data URL format of the file and save it
-        :param file_data: file encoded in data URL format
-        :param directory: where to save the file
-        :return: filename of saved file
-        """
-        file_parts = file_data.split(';')
-        if len(file_parts) != 3 and not file_parts[2].startswith('base64,'):
-            logger.error("Invalid file format was submitted to the server")
-            return False
-        # Strip 'name=' from this field and secure the filename
-        filename = secure_filename(file_parts[1][5:])
-        file_path = os.path.join(directory, filename)
-        with open(file_path, 'wb') as file_:
-            file_.write(base64.decodestring(file_parts[2][7:]))
-        file_size = os.path.getsize(file_path)
-        return [filename, file_size]

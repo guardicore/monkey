@@ -304,7 +304,6 @@ SCHEMA = {
                                 "$ref": "#/definitions/post_breach_acts"
                             },
                             "default": [
-                                "BackdoorUser",
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
@@ -314,68 +313,45 @@ SCHEMA = {
                     "title": "Behaviour",
                     "type": "object",
                     "properties": {
-                        "custom_post_breach": {
-                            "title": "Custom post breach actions",
-                            "type": "object",
-                            "properties": {
-                                "linux": {
-                                    "title": "Linux command",
-                                    "type": "string",
-                                    "default": "",
-                                    "description": "Linux command to execute after breaching."
-                                },
-                                "linux_file": {
-                                    "title": "Linux file",
-                                    "type": "string",
-                                    "format": "data-url",
-                                    "description": "File to be executed after breaching. "
-                                                   "If you want custom execution behavior, "
-                                                   "specify it in 'Linux command' field. "
-                                },
-                                "windows": {
-                                    "title": "Windows command",
-                                    "type": "string",
-                                    "default": "",
-                                    "description": "Windows command to execute after breaching"
-                                },
-                                "windows_file": {
-                                    "title": "Windows file",
-                                    "type": "string",
-                                    "format": "data-url",
-                                    "description": "File to be executed after breaching. "
-                                                   "If you want custom execution behavior, "
-                                                   "specify it in 'Windows command' field. "
-                                },
-                                "windows_file_info": {
-                                    "title": "Windows PBA file info",
-                                    "type": "object",
-                                    "properties": {
-                                        "name": {
-                                            "type": "string",
-                                            "default": ""
-                                        },
-                                        "size": {
-                                            "type": "string",
-                                            "default": "0"
-                                        },
-                                    }
-                                },
-                                "linux_file_info": {
-                                    "title": "Linux PBA file info",
-                                    "type": "object",
-                                    "properties": {
-                                        "name": {
-                                            "type": "string",
-                                            "default": ""
-                                        },
-                                        "size": {
-                                            "type": "string",
-                                            "default": "0"
-                                        },
-                                    }
-                                }
-                            },
-                            "description": "List of actions the Monkey will run post breach"
+                        "custom_PBA_linux_cmd": {
+                            "title": "Linux post breach command",
+                            "type": "string",
+                            "default": "",
+                            "description": "Linux command to be executed after breaching."
+                        },
+                        "PBA_linux_file": {
+                            "title": "Linux post breach file",
+                            "type": "string",
+                            "format": "data-url",
+                            "description": "File to be executed after breaching. "
+                                           "If you want custom execution behavior, "
+                                           "specify it in 'Linux post breach command' field. "
+                                           "Reference your file by filename."
+                        },
+                        "custom_PBA_windows_cmd": {
+                            "title": "Windows command",
+                            "type": "string",
+                            "default": "",
+                            "description": "Windows command to be executed after breaching."
+                        },
+                        "PBA_windows_file": {
+                            "title": "Windows file",
+                            "type": "string",
+                            "format": "data-url",
+                            "description": "File to be executed after breaching. "
+                                           "If you want custom execution behavior, "
+                                           "specify it in 'Windows post breach command' field. "
+                                           "Reference your file by filename."
+                        },
+                        "PBA_windows_filename": {
+                            "title": "Windows PBA filename",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "PBA_linux_filename": {
+                            "title": "Linux PBA filename",
+                            "type": "string",
+                            "default": ""
                         },
                         "self_delete_in_cleanup": {
                             "title": "Self delete on cleanup",

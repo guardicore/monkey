@@ -9,11 +9,37 @@ import 'filepond/dist/filepond.min.css';
 class ConfigurePageComponent extends AuthComponent {
   constructor(props) {
     super(props);
-
+    this.PBAwindowsPond = null;
+    this.PBAlinuxPond = null;
     this.currentSection = 'basic';
     this.currentFormData = {};
     this.sectionsOrder = ['basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
-
+    this.uiSchema = {
+      behaviour: {
+        custom_PBA_linux_cmd: {
+          "ui:widget": "textarea",
+          "ui:emptyValue": ""
+        },
+        PBA_linux_file: {
+          "ui:widget": this.PBAlinux
+        },
+        custom_PBA_windows_cmd: {
+          "ui:widget": "textarea",
+          "ui:emptyValue": ""
+        },
+        PBA_windows_file: {
+          "ui:widget": this.PBAwindows
+        },
+        PBA_linux_filename: {
+          classNames: "linux-pba-file-info",
+          "ui:emptyValue": ""
+        },
+        PBA_windows_filename: {
+          classNames: "windows-pba-file-info",
+          "ui:emptyValue": ""
+        }
+      }
+    };
     // set schema from server
     this.state = {
       schema: {},
@@ -117,16 +143,17 @@ class ConfigurePageComponent extends AuthComponent {
 
   removePBAfiles(){
     // We need to clean files from widget, local state and configuration (to sync with bac end)
-    if (this.hasOwnProperty('PBAlinuxPond') && this.PBAwindowsPond !== null){
-      this.PBAlinuxPond.removeFile();
+    if (this.PBAwindowsPond !== null){
       this.PBAwindowsPond.removeFile();
+    }
+    if (this.PBAlinuxPond !== null){
+      this.PBAlinuxPond.removeFile();
     }
     let request_options = {method: 'DELETE',
                            headers: {'Content-Type': 'text/plain'}};
     this.authFetch('/api/fileUpload/PBAlinux', request_options);
     this.authFetch('/api/fileUpload/PBAwindows', request_options);
-    this.setState({PBAlinuxFile: []});
-    this.setState({PBAwinFile: []});
+    this.setState({PBAlinuxFile: [], PBAwinFile: []});
   }
 
   onReadFile = (event) => {
@@ -197,65 +224,43 @@ class ConfigurePageComponent extends AuthComponent {
 
   getWinPBAfile(){
     if (this.state.PBAwinFile.length !== 0){
-      return ConfigurePageComponent.getPBAfile(this.state.PBAwinFile[0], true)
-    } else if (this.state.configuration.monkey.behaviour.custom_post_breach.windows_file_info.name){
-      return ConfigurePageComponent.getPBAfile(this.state.configuration.monkey.behaviour.custom_post_breach.windows_file_info)
+      return ConfigurePageComponent.getMockPBAfile(this.state.PBAwinFile[0])
+    } else if (this.state.configuration.monkey.behaviour.PBA_windows_filename){
+      return ConfigurePageComponent.getFullPBAfile(this.state.configuration.monkey.behaviour.PBA_windows_filename)
     }
   }
 
   getLinuxPBAfile(){
     if (this.state.PBAlinuxFile.length !== 0){
-      return ConfigurePageComponent.getPBAfile(this.state.PBAlinuxFile[0], true)
-    } else if (this.state.configuration.monkey.behaviour.custom_post_breach.linux_file_info.name) {
-      return ConfigurePageComponent.getPBAfile(this.state.configuration.monkey.behaviour.custom_post_breach.linux_file_info)
+      return ConfigurePageComponent.getMockPBAfile(this.state.PBAlinuxFile[0])
+    } else if (this.state.configuration.monkey.behaviour.PBA_linux_filename) {
+      return ConfigurePageComponent.getFullPBAfile(this.state.configuration.monkey.behaviour.PBA_linux_filename)
     }
   }
 
-  static getPBAfile(fileSrc, isMock=false){
-    let PBAfile = [{
-      source: fileSrc.name,
+  static getFullPBAfile(filename){
+    let pbaFile = [{
+      source: filename,
       options: {
         type: 'limbo'
       }
     }];
-    if (isMock){
-      PBAfile[0].options.file = fileSrc
-    }
-    return PBAfile
+    return pbaFile
+  }
+
+  static getMockPBAfile(mockFile){
+    let pbaFile = [{
+      source: mockFile.name,
+      options: {
+        type: 'limbo'
+      }
+    }];
+    pbaFile[0].options.file = mockFile;
+    return pbaFile
   }
 
   render() {
     let displayedSchema = {};
-    const uiSchema = {
-      behaviour: {
-        custom_post_breach: {
-          linux: {
-            "ui:widget": "textarea",
-            "ui:emptyValue": ""
-          },
-          linux_file: {
-            "ui:widget": this.PBAlinux
-          },
-          windows: {
-            "ui:widget": "textarea",
-            "ui:emptyValue": ""
-          },
-          windows_file: {
-            "ui:widget": this.PBAwindows
-          },
-          linux_file_info: {
-            classNames: "linux-pba-file-info",
-            name:{ "ui:emptyValue": ""},
-            size:{ "ui:emptyValue": "0"}
-          },
-          windows_file_info: {
-            classNames: "windows-pba-file-info",
-            name:{ "ui:emptyValue": ""},
-            size:{ "ui:emptyValue": "0"}
-          }
-        }
-      }
-    };
     if (this.state.schema.hasOwnProperty('properties')) {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
@@ -281,7 +286,7 @@ class ConfigurePageComponent extends AuthComponent {
         }
         { this.state.selectedSection ?
           <Form schema={displayedSchema}
-                uiSchema={uiSchema}
+                uiSchema={this.uiSchema}
                 formData={this.state.configuration[this.state.selectedSection]}
                 onSubmit={this.onSubmit}
                 onChange={this.onChange}

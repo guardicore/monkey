@@ -1,30 +1,46 @@
 import flask_restful
 from flask import request, send_from_directory, Response
-from cc.services.config import ConfigService, WINDOWS_PBA_INFO, LINUX_PBA_INFO
+from cc.services.config import ConfigService, PBA_WINDOWS_FILENAME_PATH, PBA_LINUX_FILENAME_PATH, UPLOADS_DIR
+from cc.auth import jwt_required
 import os
 from werkzeug.utils import secure_filename
 import logging
 import copy
 
+__author__ = 'VakarisZ'
+
 LOG = logging.getLogger(__name__)
-UPLOADS_DIR = "./monkey_island/cc/userUploads"
 GET_FILE_DIR = "./userUploads"
-# What endpoints front end uses to identify which files to work with
+# Front end uses these strings to identify which files to work with (linux of windows)
 LINUX_PBA_TYPE = 'PBAlinux'
 WINDOWS_PBA_TYPE = 'PBAwindows'
 
 
 class FileUpload(flask_restful.Resource):
-
+    """
+    File upload endpoint used to exchange files with filepond component on the front-end
+    """
+    @jwt_required()
     def get(self, file_type):
+        """
+        Sends file to filepond
+        :param file_type: Type indicates which file to send, linux or windows
+        :return: Returns file contents
+        """
         # Verify that file_name is indeed a file from config
         if file_type == LINUX_PBA_TYPE:
-            filename = ConfigService.get_config_value(copy.deepcopy(LINUX_PBA_INFO))['name']
+            filename = ConfigService.get_config_value(copy.deepcopy(PBA_LINUX_FILENAME_PATH))
         else:
-            filename = ConfigService.get_config_value(copy.deepcopy(WINDOWS_PBA_INFO))['name']
+            filename = ConfigService.get_config_value(copy.deepcopy(PBA_WINDOWS_FILENAME_PATH))
         return send_from_directory(GET_FILE_DIR, filename)
 
+    @jwt_required()
     def post(self, file_type):
+        """
+        Receives user's uploaded file from filepond
+        :param file_type: Type indicates which file was received, linux or windows
+        :return: Returns flask response object with uploaded file's filename
+        """
         filename = FileUpload.upload_pba_file(request, (file_type == LINUX_PBA_TYPE))
 
         response = Response(
@@ -32,9 +48,15 @@ class FileUpload(flask_restful.Resource):
             status=200, mimetype='text/plain')
         return response
 
+    @jwt_required()
     def delete(self, file_type):
-        file_conf_path = LINUX_PBA_INFO if file_type == 'PBAlinux' else WINDOWS_PBA_INFO
-        filename = ConfigService.get_config_value(file_conf_path)['name']
+        """
+        Deletes file that has been deleted on the front end
+        :param file_type: Type indicates which file was deleted, linux of windows
+        :return: Empty response
+        """
+        file_conf_path = PBA_LINUX_FILENAME_PATH if file_type == 'PBAlinux' else PBA_WINDOWS_FILENAME_PATH
+        filename = ConfigService.get_config_value(file_conf_path)
         file_path = os.path.join(UPLOADS_DIR, filename)
         try:
             if os.path.exists(file_path):
@@ -47,26 +69,14 @@ class FileUpload(flask_restful.Resource):
 
     @staticmethod
     def upload_pba_file(request_, is_linux=True):
+        """
+        Uploads PBA file to island's file system
+        :param request_: Request object containing PBA file
+        :param is_linux: Boolean indicating if this file is for windows or for linux
+        :return: filename string
+        """
         filename = secure_filename(request_.files['filepond'].filename)
         file_path = os.path.join(UPLOADS_DIR, filename)
         request_.files['filepond'].save(file_path)
-        file_size = os.path.getsize(file_path)
-        ConfigService.set_config_value((LINUX_PBA_INFO if is_linux else WINDOWS_PBA_INFO),
-                                       {'size': file_size, 'name': filename})
+        ConfigService.set_config_value((PBA_LINUX_FILENAME_PATH if is_linux else PBA_WINDOWS_FILENAME_PATH), filename)
         return filename
-
-    @staticmethod
-    def get_file_info_db_paths(is_linux=True):
-        """
-        Gets PBA file size and name parameter config paths for linux and windows
-        :param is_linux: determines whether to get windows or linux file params
-        :return: returns tuple of filename and file size paths in config
-        """
-        if is_linux:
-            file_info = 'linux_file_info'
-        else:
-            file_info = 'windows_file_info'
-        config_path = 'monkey.behaviour.custom_post_breach.' + file_info + '.'
-        size_path = config_path + 'size'
-        name_path = config_path + 'name'
-        return name_path, size_path
