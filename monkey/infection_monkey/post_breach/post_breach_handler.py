@@ -1,6 +1,5 @@
 import logging
 import infection_monkey.config
-import platform
 from file_execution import FileExecution
 from pba import PBA
 from infection_monkey.utils import is_windows_os
