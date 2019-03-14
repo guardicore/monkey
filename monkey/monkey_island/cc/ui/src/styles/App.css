@@ -424,6 +424,14 @@ body {
   top: 30%;
 }
 
+.pba-danger {
+  background-color: #ffc7af;
+}
+
+.pba-success {
+  background-color: #afd2a2;
+}
+
 /* Print report styling */
 
 @media print {

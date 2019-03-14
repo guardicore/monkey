@@ -4,9 +4,7 @@ import functools
 import logging
 from jsonschema import Draft4Validator, validators
 from six import string_types
-from werkzeug.utils import secure_filename
 import os
-import base64
 
 from cc.database import mongo
 from cc.encryptor import encryptor
@@ -36,7 +34,7 @@ ENCRYPTED_CONFIG_STRINGS = \
         ['cnc', 'aws_config', 'aws_secret_access_key']
     ]
 
-UPLOADS_DIR = '/cc/userUploads'
+UPLOADS_DIR = 'monkey_island/cc/userUploads'
 
 # Where to find file names in config
 PBA_WINDOWS_FILENAME_PATH = ['monkey', 'behaviour', 'PBA_windows_filename']
@@ -315,14 +313,12 @@ class ConfigService:
     @staticmethod
     def remove_PBA_files():
         if ConfigService.get_config():
-            linux_file_name = ConfigService.get_config_value(
-                ['monkey', 'behaviour', 'custom_post_breach', 'linux_file_info', 'name'])
-            windows_file_name = ConfigService.get_config_value(
-                ['monkey', 'behaviour', 'custom_post_breach', 'windows_file_info', 'name'])
-            if linux_file_name:
-                ConfigService.remove_file(linux_file_name)
-            if windows_file_name:
-                ConfigService.remove_file(windows_file_name)
+            linux_filename = ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
+            windows_filename = ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
+            if linux_filename:
+                ConfigService.remove_file(linux_filename)
+            if windows_filename:
+                ConfigService.remove_file(windows_filename)
 
     @staticmethod
     def remove_file(file_name):

@@ -24,15 +24,15 @@ class FileExecution(PBA):
         self.windows_filename = WormConfiguration.PBA_windows_filename
         super(FileExecution, self).__init__("File execution", linux_command, windows_command)
 
-    def execute_linux(self):
+    def _execute_linux(self):
         FileExecution.download_PBA_file(FileExecution.get_dest_dir(WormConfiguration, True),
                                         self.linux_filename)
-        return super(FileExecution, self).execute_linux()
+        return super(FileExecution, self)._execute_linux()
 
-    def execute_win(self):
+    def _execute_win(self):
         FileExecution.download_PBA_file(FileExecution.get_dest_dir(WormConfiguration, True),
                                         self.windows_filename)
-        return super(FileExecution, self).execute_win()
+        return super(FileExecution, self)._execute_win()
 
     def add_default_command(self, is_linux):
         """

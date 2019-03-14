@@ -329,13 +329,13 @@ SCHEMA = {
                                            "Reference your file by filename."
                         },
                         "custom_PBA_windows_cmd": {
-                            "title": "Windows command",
+                            "title": "Windows post breach command",
                             "type": "string",
                             "default": "",
                             "description": "Windows command to be executed after breaching."
                         },
                         "PBA_windows_file": {
-                            "title": "Windows file",
+                            "title": "Windows post breach file",
                             "type": "string",
                             "format": "data-url",
                             "description": "File to be executed after breaching. "

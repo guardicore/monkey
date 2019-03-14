@@ -198,7 +198,13 @@ class ConfigurePageComponent extends AuthComponent {
 
   PBAwindows = () => {
     return (<FilePond
-      server='/api/fileUpload/PBAwindows'
+      server={{ url:'/api/fileUpload/PBAwindows',
+                process: {headers: {'Authorization': this.jwtHeader}},
+                revert: {headers: {'Authorization': this.jwtHeader}},
+                restore: {headers: {'Authorization': this.jwtHeader}},
+                load: {headers: {'Authorization': this.jwtHeader}},
+                fetch: {headers: {'Authorization': this.jwtHeader}}
+      }}
       files={this.getWinPBAfile()}
       onupdatefiles={fileItems => {
         this.setState({
@@ -211,7 +217,13 @@ class ConfigurePageComponent extends AuthComponent {
 
   PBAlinux = () => {
     return (<FilePond
-      server='/api/fileUpload/PBAlinux'
+      server={{ url:'/api/fileUpload/PBAlinux',
+                process: {headers: {'Authorization': this.jwtHeader}},
+                revert: {headers: {'Authorization': this.jwtHeader}},
+                restore: {headers: {'Authorization': this.jwtHeader}},
+                load: {headers: {'Authorization': this.jwtHeader}},
+                fetch: {headers: {'Authorization': this.jwtHeader}}
+      }}
       files={this.getLinuxPBAfile()}
       onupdatefiles={fileItems => {
         this.setState({

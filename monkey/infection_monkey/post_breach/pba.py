@@ -36,7 +36,7 @@ class PBA(object):
         if command:
             hostname = socket.gethostname()
             ControlClient.send_telemetry('post_breach', {'command': command,
-                                                         'output': exec_funct(),
+                                                         'result': exec_funct(),
                                                          'name': self.name,
                                                          'hostname': hostname,
                                                          'ip': socket.gethostbyname(hostname)
@@ -46,18 +46,23 @@ class PBA(object):
         """
         Default linux PBA execution function. Override it if additional functionality is needed
         """
-        self._execute_default(self.linux_command)
+        return self._execute_default(self.linux_command)
 
     def _execute_win(self):
         """
         Default linux PBA execution function. Override it if additional functionality is needed
         """
-        self._execute_default(self.windows_command)
+        return self._execute_default(self.windows_command)
 
     @staticmethod
     def _execute_default(command):
+        """
+        Default post breach command execution routine
+        :param command: What command to execute
+        :return: Tuple of command's output string and boolean, indicating if it succeeded
+        """
         try:
-            return subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+            return subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True), True
         except subprocess.CalledProcessError as e:
             # Return error output of the command
-            return e.output
+            return e.output, False

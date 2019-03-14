@@ -51,22 +51,22 @@ class PostBreach(object):
         command_pba = PBA(name="Custom")
 
         # Add linux commands to PBA's
-        if config['PBA_linux_filename']:
-            if config['custom_PBA_linux_cmd']:
-                file_pba.linux_command = config['custom_PBA_linux_cmd']
+        if config.PBA_linux_filename:
+            if config.custom_PBA_linux_cmd:
+                file_pba.linux_command = config.custom_PBA_linux_cmd
             else:
                 file_pba.add_default_command(is_linux=True)
-        elif config['custom_PBA_linux_cmd']:
-            command_pba.linux_command = config['custom_PBA_linux_cmd']
+        elif config.custom_PBA_linux_cmd:
+            command_pba.linux_command = config.custom_PBA_linux_cmd
 
         # Add windows commands to PBA's
-        if config['PBA_windows_filename']:
-            if config['custom_PBA_windows_cmd']:
-                file_pba.windows_command = config['custom_PBA_windows_cmd']
+        if config.PBA_windows_filename:
+            if config.custom_PBA_windows_cmd:
+                file_pba.windows_command = config.custom_PBA_windows_cmd
             else:
                 file_pba.add_default_command(is_linux=False)
-        elif config['custom_PBA_windows_cmd']:
-            command_pba.windows_command = config['custom_PBA_windows_cmd']
+        elif config.custom_PBA_windows_cmd:
+            command_pba.windows_command = config.custom_PBA_windows_cmd
 
         # Add PBA's to list
         if file_pba.linux_command or file_pba.windows_command:

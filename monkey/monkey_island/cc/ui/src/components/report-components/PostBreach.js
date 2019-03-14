@@ -13,9 +13,19 @@ let renderMachine = function (data) {
   return <div>{data.label} ( {renderIpAddresses(data)} )</div>
 };
 
+let renderPbaResults = function (results) {
+  let pbaClass = "";
+  if (results[1]){
+    pbaClass="pba-success"
+  } else {
+    pbaClass="pba-danger"
+  }
+  return <div className={pbaClass}> {results[0]} </div>
+};
+
 const subColumns = [
   {id: 'pba_name', Header: "Name", accessor: x => x.name, style: { 'white-space': 'unset' }},
-  {id: 'pba_output', Header: "Output", accessor: x => x.output, style: { 'white-space': 'unset' }}
+  {id: 'pba_output', Header: "Output", accessor: x => renderPbaResults(x.result), style: { 'white-space': 'unset' }}
 ];
 
 let renderDetails = function (data) {

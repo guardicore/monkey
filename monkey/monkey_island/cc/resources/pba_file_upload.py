@@ -55,13 +55,13 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file was deleted, linux of windows
         :return: Empty response
         """
-        file_conf_path = PBA_LINUX_FILENAME_PATH if file_type == 'PBAlinux' else PBA_WINDOWS_FILENAME_PATH
-        filename = ConfigService.get_config_value(file_conf_path)
+        filename_path = PBA_LINUX_FILENAME_PATH if file_type == 'PBAlinux' else PBA_WINDOWS_FILENAME_PATH
+        filename = ConfigService.get_config_value(filename_path)
         file_path = os.path.join(UPLOADS_DIR, filename)
         try:
             if os.path.exists(file_path):
                 os.remove(file_path)
-            ConfigService.set_config_value(file_conf_path, {'size': '0', 'name': ''})
+            ConfigService.set_config_value(filename_path, '')
         except OSError as e:
             LOG.error("Can't remove previously uploaded post breach files: %s" % e)
 
