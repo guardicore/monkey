@@ -13,6 +13,13 @@ SCHEMA = {
                     "description": "Exploitation of a software vulnerability occurs when an adversary "
                                    "takes advantage of a programming error in a program, service, or within the "
                                    "operating system software or kernel itself to execute adversary-controlled code."
+                },
+                "T1075": {
+                    "title": "T1075 Pass the hash",
+                    "type": "bool",
+                    "default": True,
+                    "description": "Pass the hash (PtH) is a method of authenticating as a user without "
+                                   "having access to the user's cleartext password."
                 }
             }
         },

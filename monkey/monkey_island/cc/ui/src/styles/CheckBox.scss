@@ -1,0 +1,103 @@
+// readable
+$desired-line-height: 24px;
+$desired-height: 36px;
+$text-offset: 2px;
+
+// usable
+$dlh: $desired-line-height;
+$dh: $desired-height;
+$to: $text-offset;
+
+// coooolors
+$light-grey: #EAF4F4;
+$medium-grey: #7B9EA8;
+$dark-grey: #7B9EA8;
+$green: #44CF6C;
+
+.ui-checkbox-btn {
+	position: relative;
+	display: inline-block;
+
+	padding: (($dh - $dlh) / 2) ($dlh / 2);
+	border-radius: $dh / 2; // overcompensate
+	background-color: rgba(red, .6);
+
+	input { display: none; } // turn off, but not forgotten
+
+	.icon,
+	.text {
+		display: inline-block;
+		vertical-align: top;
+		color: inherit;
+	}
+
+	.text {
+		font-size: 14px;
+		line-height: $dlh - $to;
+		padding-top: $to;
+		padding-left: 4px;
+	}
+
+	// color states
+	&.is-unchecked {
+		border: 1px solid $medium-grey;
+		background-color: transparent;
+		color: $dark-grey;
+		fill: $dark-grey;
+	}
+
+	&.is-checked {
+		border: 1px solid $green;
+		background-color: $green;
+		color: white;
+		fill: white;
+	}
+}
+
+.icon {
+	position: relative;
+	display: inline-block;
+	width: $dlh - 4;
+	height: $dlh;
+
+	svg {
+		position: absolute;
+		top: 0; right: 0; bottom: 0; left: 0;
+		margin: auto;
+		width: 16px;
+		height: auto;
+		fill: inherit;
+	}
+
+	.is-checked & {
+		color: white;
+		fill: white;
+	}
+}
+
+// ping animation magic
+.ui-btn-ping {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 50%;
+	transform: translate3d(-50%, -50%, 0); // center center by default
+
+	// set the square
+	&:before {
+		content: '';
+		transform: scale(0, 0); // center center by default
+		transition-property: background-color transform;
+		transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+		display: block;
+		padding-bottom: 100%;
+		border-radius: 50%;
+		background-color: rgba(white, .84);;
+	}
+
+	.do-ping &:before {
+		transform: scale(2.5, 2.5);
+		transition-duration: .35s;
+		background-color: rgba(white, .08);
+	}
+}

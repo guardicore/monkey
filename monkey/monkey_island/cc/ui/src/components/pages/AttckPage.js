@@ -1,8 +1,7 @@
 import React from 'react';
-import Form from 'react-jsonschema-form';
-import {Col, Nav, NavItem} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import 'filepond/dist/filepond.min.css';
+import MatrixComponent from '../attck/MatrixComponent'
 
 class AttckComponent extends AuthComponent {
   constructor(props) {
@@ -12,7 +11,6 @@ class AttckComponent extends AuthComponent {
     this.sectionsOrder = ['ATT&CK matrix'];
     // set schema from server
     this.state = {
-      schema: {},
       configuration: {},
       lastAction: 'none',
       sections: [],
@@ -29,16 +27,21 @@ class AttckComponent extends AuthComponent {
           sections.push({key: sectionKey, title: res.configuration.title});
         }
         this.setState({
-          schema: res.schema,
           configuration: res.configuration,
           sections: sections,
           selectedSection: 'ATT&CK matrix'
-        })
+        });
       });
   }
 
   render() {
-    return (<Col xs={12} lg={8}> Vakaris </Col>);
+    let content;
+    if (Object.keys(this.state.configuration).length === 0) {
+      content = (<h1>Fetching configuration...</h1>);
+    } else {
+      content = (<MatrixComponent configuration={this.state.configuration} />);
+    }
+    return <div>{content}</div>;
   }
 }
 

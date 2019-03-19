@@ -8,6 +8,5 @@ from cc.services.attck.attck import AttckService
 class AttckConfiguration(flask_restful.Resource):
     @jwt_required()
     def get(self):
-        return jsonify(schema=AttckService.get_config_schema(),
-                       configuration=AttckService.get_config())
+        return jsonify(configuration=AttckService.get_config()['properties'])
 
