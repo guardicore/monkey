@@ -76,6 +76,9 @@ class InfectionMonkey(object):
             LOG.info("Monkey couldn't find server. Going down.")
             return
 
+        # Create a dir for monkey files if there isn't one
+        utils.create_monkey_dir()
+
         if WindowsUpgrader.should_upgrade():
             self._upgrading_to_64 = True
             self._singleton.unlock()
@@ -216,6 +219,7 @@ class InfectionMonkey(object):
             self._singleton.unlock()
 
         InfectionMonkey.self_delete()
+        utils.remove_monkey_dir()
         LOG.info("Monkey is shutting down")
 
     @staticmethod
