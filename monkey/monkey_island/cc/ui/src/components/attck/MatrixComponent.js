@@ -12,7 +12,7 @@ let renderTechnique = function (technique) {
   if (technique == null){
     return (<div></div>)
   } else {
-    return (<div>{technique.title}</div>)
+    return (<CheckBox>{technique.title}</CheckBox>)
   }
 };
 
@@ -59,7 +59,8 @@ class MatrixComponent extends AuthComponent {
       return {
         Header: key,
         id: key,
-        accessor: x => renderTechnique(x[key].technique)
+        accessor: x => renderTechnique(x[key].technique),
+        style: { 'white-space': 'unset' }
       };
     });
   }
