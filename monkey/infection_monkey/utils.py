@@ -42,19 +42,19 @@ def create_monkey_dir():
     """
     Creates directory for monkey and related files
     """
-    if is_windows_os():
-        if not os.path.exists(WormConfiguration.monkey_dir_windows):
-            os.mkdir(WormConfiguration.monkey_dir_windows)
-    else:
-        if not os.path.exists(WormConfiguration.monkey_log_path_linux):
-            os.mkdir(WormConfiguration.monkey_dir_linux)
+    if not os.path.exists(get_monkey_dir_path()):
+        os.mkdir(get_monkey_dir_path())
 
 
 def remove_monkey_dir():
     """
     Removes monkey's root directory
     """
+    shutil.rmtree(get_monkey_dir_path(), ignore_errors=True)
+
+
+def get_monkey_dir_path():
     if is_windows_os():
-        shutil.rmtree(WormConfiguration.monkey_dir_windows, ignore_errors=True)
+        return WormConfiguration.monkey_dir_windows
     else:
-        shutil.rmtree(WormConfiguration.monkey_dir_linux, ignore_errors=True)
+        return WormConfiguration.monkey_dir_linux
