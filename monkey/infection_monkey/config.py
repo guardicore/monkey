@@ -107,9 +107,6 @@ class Configuration(object):
     dropper_target_path_win_32 = r"C:\Windows\monkey32.exe"
     dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
-    # Monkey dir paths
-    monkey_dir_linux = '/tmp/monkey_dir'
-    monkey_dir_windows = r'C:\Windows\temp\monkey_dir'
 
     ###########################
     # Kill file
@@ -163,6 +160,10 @@ class Configuration(object):
     internet_services = ["monkey.guardicore.com", "www.google.com"]
 
     keep_tunnel_open_time = 60
+
+    # Monkey files directories
+    monkey_dir_linux = '/tmp/monkey_dir'
+    monkey_dir_windows = r'C:\Windows\Temp\monkey_dir'
 
     ###########################
     # scanners config
