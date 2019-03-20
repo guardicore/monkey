@@ -1,10 +1,12 @@
 import React from 'react';
 import Form from 'react-jsonschema-form';
 import {Col, Nav, NavItem} from 'react-bootstrap';
-import CheckBox from '../ui-components/checkBox'
+import Checkbox from '../ui-components/checkbox'
+import Tooltip from 'react-tooltip-lite'
 import AuthComponent from '../AuthComponent';
-import 'filepond/dist/filepond.min.css';
 import ReactTable from "react-table";
+import 'filepond/dist/filepond.min.css';
+import '../../styles/Tooltip.scss';
 
 
 let renderTechnique = function (technique) {
@@ -12,7 +14,8 @@ let renderTechnique = function (technique) {
   if (technique == null){
     return (<div></div>)
   } else {
-    return (<CheckBox>{technique.title}</CheckBox>)
+    return (<Tooltip content={technique.description} direction="down"><Checkbox>
+      {technique.title}</Checkbox> </Tooltip>)
   }
 };
 
