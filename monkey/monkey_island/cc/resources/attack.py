@@ -1,11 +1,8 @@
 import flask_restful
-from flask import request, send_from_directory, Response
-from cc.services.config import ConfigService, PBA_WINDOWS_FILENAME_PATH, PBA_LINUX_FILENAME_PATH, UPLOADS_DIR
-from cc.auth import jwt_required
-import os
-from werkzeug.utils import secure_filename
+from flask import request
+import json
+from cc.services.attck.attack_results import set_results
 import logging
-import copy
 
 __author__ = 'VakarisZ'
 
@@ -14,9 +11,14 @@ LOG = logging.getLogger(__name__)
 
 class Attack(flask_restful.Resource):
     """
-    ATT&CK endpoint used to retrieve matrix related info
+    ATT&CK endpoint used to retrieve matrix related info from monkey
     """
 
-    @jwt_required()
-    def post(self, attack_type):
-
+    def post(self, technique):
+        """
+        Gets ATT&CK telemetry data and stores it in the database
+        :param technique: Technique ID, e.g. T1111
+        """
+        data = json.loads(request.data)
+        set_results(technique, data)
+        return {}
