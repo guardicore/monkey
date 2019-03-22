@@ -1,7 +1,7 @@
 // colors
 $light-grey: #EAF4F4;
 $medium-grey: #7B9EA8;
-$dark-grey: #7B9EA8;
+$dark-grey: #7a7d7b;
 $green: #44CF6C;
 $black: #000000;
 
@@ -32,6 +32,12 @@ $black: #000000;
 		color: $black;
 		fill: $black;
 	}
+
+  &.blocked {
+    background-color: $dark-grey;
+		color: $black;
+		fill: $black;
+  }
 
 	&.is-checked {
 		border: 1px solid $green;

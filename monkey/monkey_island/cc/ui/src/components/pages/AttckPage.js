@@ -1,7 +1,7 @@
 import React from 'react';
 import AuthComponent from '../AuthComponent';
 import 'filepond/dist/filepond.min.css';
-import MatrixComponent from '../attck/MatrixComponent'
+import MatrixComponent from '../attack/MatrixComponent'
 
 class AttckComponent extends AuthComponent {
   constructor(props) {
@@ -12,14 +12,13 @@ class AttckComponent extends AuthComponent {
     // set schema from server
     this.state = {
       configuration: {},
-      lastAction: 'none',
       sections: [],
       selectedSection: 'ATT&CK matrix',
     };
   }
 
   componentDidMount() {
-    this.authFetch('/api/attck')
+    this.authFetch('/api/attack')
       .then(res => res.json())
       .then(res => {
         let sections = [];
@@ -36,11 +35,7 @@ class AttckComponent extends AuthComponent {
 
   render() {
     let content;
-    if (Object.keys(this.state.configuration).length === 0) {
-      content = (<h1>Fetching configuration...</h1>);
-    } else {
-      content = (<MatrixComponent configuration={this.state.configuration} />);
-    }
+    content = (<MatrixComponent configuration={this.state.configuration} />);
     return <div>{content}</div>;
   }
 }
