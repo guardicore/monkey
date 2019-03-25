@@ -218,6 +218,7 @@ class InfectionMonkey(object):
                 self.send_log()
             self._singleton.unlock()
 
+        utils.remove_monkey_dir()
         InfectionMonkey.self_delete()
         LOG.info("Monkey is shutting down")
 
@@ -233,7 +234,6 @@ class InfectionMonkey(object):
         if WormConfiguration.self_delete_in_cleanup \
                 and -1 == sys.executable.find('python'):
             try:
-                utils.remove_monkey_dir()
                 if "win32" == sys.platform:
                     from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
                     startupinfo = subprocess.STARTUPINFO()
