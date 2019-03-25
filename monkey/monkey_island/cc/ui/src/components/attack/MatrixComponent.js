@@ -46,15 +46,18 @@ let parseTechniques = function (data, maxLen) {
 class MatrixComponent extends AuthComponent {
   constructor(props) {
     super(props);
-    this.state = {lastAction: 'none', matrixData: this.props.configuration};
     // Copy configuration and parse it for ATT&CK matrix table
     let configCopy = JSON.parse(JSON.stringify(this.props.configuration));
-    this.maxTechniques = findMaxTechniques(Object.values(configCopy));
-    this.data = parseTechniques(Object.values(configCopy), this.maxTechniques);
-  }
+    this.state = {lastAction: 'none',
+                  configData: this.props.configuration,
+                  maxTechniques: findMaxTechniques(Object.values(configCopy))};
+    this.state.matrixTableData = parseTechniques(Object.values(configCopy), this.state.maxTechniques);
+    this.state.columns = this.getColumns(this.state.matrixTableData)
+  };
 
-  getColumns() {
-    return Object.keys(this.data[0]).map((key)=>{
+
+  getColumns(matrixData) {
+    return Object.keys(matrixData[0]).map((key)=>{
       return {
         Header: key,
         id: key,
@@ -84,7 +87,7 @@ class MatrixComponent extends AuthComponent {
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(this.state.matrixData)
+        body: JSON.stringify(this.state.configData)
       })
       .then(res => {
         if (!res.ok)
@@ -102,26 +105,54 @@ class MatrixComponent extends AuthComponent {
       });
   };
 
-  handleTechniqueChange = (technique, value) => {
-    Object.entries(this.state.matrixData).forEach(techType => {
-      if(techType[1].properties.hasOwnProperty(technique)){
-        let tempMatrix = this.state.matrixData;
-        tempMatrix[techType[0]].properties[technique].value = value;
-        this.setState({matrixData: tempMatrix});
-      }
+  resetConfig = () => {
+    this.authFetch('/api/attack',
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify('reset_attack_matrix')
+      })
+      .then(res => res.json())
+      .then(res => {
+        this.updateStateFromConfig(res.configuration, 'reset')
+      });
+  };
+
+  updateStateFromConfig = (config, lastAction = '') => {
+    let configCopy = JSON.parse(JSON.stringify(config));
+    let maxTechniques = findMaxTechniques(Object.values(configCopy));
+    let matrixTableData = parseTechniques(Object.values(configCopy), maxTechniques);
+    let columns = this.getColumns(matrixTableData);
+    this.setState({
+      lastAction: lastAction,
+      configData: config,
+      maxTechniques: maxTechniques,
+      matrixTableData: matrixTableData,
+      columns: columns
     });
   };
 
+  handleTechniqueChange = (technique, value) => {
+    // Change value on configuration
+    Object.entries(this.state.configData).forEach(techType => {
+      if(techType[1].properties.hasOwnProperty(technique)){
+        let tempMatrix = this.state.configData;
+        tempMatrix[techType[0]].properties[technique].value = value;
+        this.updateStateFromConfig(tempMatrix);
+      }
+    });
+
+  };
+
   render() {
-    let columns = this.getColumns();
     return (
       <div className={"attack-matrix"}>
         <form onSubmit={this.onSubmit}>
           <ReactTable
-                  columns={columns}
-                  data={this.data}
+                  columns={this.state.columns}
+                  data={this.state.matrixTableData}
                   showPagination={false}
-                  defaultPageSize={this.maxTechniques} />
+                  defaultPageSize={this.state.maxTechniques} />
           <div className={"messages"}>
             { this.state.lastAction === 'reset' ?
               <div className="alert alert-success">
@@ -145,6 +176,9 @@ class MatrixComponent extends AuthComponent {
           <div className="text-center">
             <button type="button" onClick={this.onSubmit} className="btn btn-success btn-lg" style={{margin: '5px'}}>
               Apply to configuration
+            </button>
+            <button type="button" onClick={this.resetConfig} className="btn btn-danger btn-lg" style={{margin: '5px'}}>
+              Reset to default matrix
             </button>
           </div>
         </form>

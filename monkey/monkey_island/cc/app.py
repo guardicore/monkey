@@ -29,7 +29,7 @@ from cc.resources.telemetry import Telemetry
 from cc.resources.telemetry_feed import TelemetryFeed
 from cc.resources.pba_file_download import PBAFileDownload
 from cc.resources.pba_file_upload import FileUpload
-from cc.resources.attack import AttckConfiguration
+from cc.resources.attack import AttackConfiguration
 from cc.services.config import ConfigService
 
 __author__ = 'Barak'
@@ -124,6 +124,6 @@ def init_app(mongo_url):
                      '/api/fileUpload/<string:file_type>?load=<string:filename>',
                      '/api/fileUpload/<string:file_type>?restore=<string:filename>')
     api.add_resource(RemoteRun, '/api/remote-monkey', '/api/remote-monkey/')
-    api.add_resource(AttckConfiguration, '/api/attack')
+    api.add_resource(AttackConfiguration, '/api/attack')
 
     return app

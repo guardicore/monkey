@@ -162,7 +162,7 @@ class AppComponent extends AuthComponent {
 
               <hr/>
               <ul>
-                <li><NavLink to="/attck">ATT&CK Configuration</NavLink></li>
+                <li><NavLink to="/attack">ATT&CK Configuration</NavLink></li>
                 <li><NavLink to="/configure">Configuration</NavLink></li>
                 <li><NavLink to="/infection/telemetry">Log</NavLink></li>
               </ul>
@@ -188,7 +188,7 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/report', <ReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/attck', <AttckPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/attack', <AttckPage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>
         </Grid>
