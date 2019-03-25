@@ -14,7 +14,7 @@ import ReportPage from 'components/pages/ReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
-import AttckPage from 'components/pages/AttckPage'
+import AttckPage from 'components/pages/AttackPage'
 
 import 'normalize.css/normalize.css';
 import 'react-data-components/css/table-twbs.css';

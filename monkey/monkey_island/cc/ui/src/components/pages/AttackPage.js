@@ -3,7 +3,7 @@ import AuthComponent from '../AuthComponent';
 import 'filepond/dist/filepond.min.css';
 import MatrixComponent from '../attack/MatrixComponent'
 
-class AttckComponent extends AuthComponent {
+class AttackComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.currentSection = 'ATT&CK matrix';
@@ -35,9 +35,13 @@ class AttckComponent extends AuthComponent {
 
   render() {
     let content;
-    content = (<MatrixComponent configuration={this.state.configuration} />);
+    if (Object.keys(this.state.configuration).length === 0) {
+      content = (<h1>Fetching configuration...</h1>);
+    } else {
+      content = (<MatrixComponent configuration={this.state.configuration} />);
+    }
     return <div>{content}</div>;
   }
 }
 
-export default AttckComponent;
+export default AttackComponent;

@@ -80,7 +80,6 @@ class MatrixComponent extends AuthComponent {
   };
 
   onSubmit = () => {
-    console.log(this.state.matrixData);
     this.authFetch('/api/attack',
       {
         method: 'POST',
@@ -144,7 +143,7 @@ class MatrixComponent extends AuthComponent {
               : ''}
           </div>
           <div className="text-center">
-            <button onClick={this.onSubmit} className="btn btn-success btn-lg" style={{margin: '5px'}}>
+            <button type="button" onClick={this.onSubmit} className="btn btn-success btn-lg" style={{margin: '5px'}}>
               Apply to configuration
             </button>
           </div>
