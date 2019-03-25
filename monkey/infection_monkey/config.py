@@ -161,6 +161,10 @@ class Configuration(object):
 
     keep_tunnel_open_time = 60
 
+    # Monkey files directories
+    monkey_dir_linux = '/tmp/monkey_dir'
+    monkey_dir_windows = r'C:\Windows\Temp\monkey_dir'
+
     ###########################
     # scanners config
     ###########################
