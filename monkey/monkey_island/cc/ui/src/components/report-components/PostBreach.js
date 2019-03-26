@@ -58,7 +58,7 @@ class PostBreachComponent extends React.Component {
 
   render() {
     let pbaMachines = this.props.data.filter(function(value, index, arr){
-        return ( value.pba_results !== "None" && value.pba_results.length);
+        return ( value.pba_results !== "None" && value.pba_results.length > 0);
     });
     let defaultPageSize = pbaMachines.length > pageSize ? pageSize : pbaMachines.length;
     let showPagination = pbaMachines > pageSize;

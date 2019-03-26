@@ -4,7 +4,7 @@ import functools
 import logging
 from jsonschema import Draft4Validator, validators
 from six import string_types
-import os
+import cc.services.post_breach_files
 
 from cc.database import mongo
 from cc.encryptor import encryptor
@@ -33,12 +33,6 @@ ENCRYPTED_CONFIG_STRINGS = \
         ['cnc', 'aws_config', 'aws_account_id'],
         ['cnc', 'aws_config', 'aws_secret_access_key']
     ]
-
-UPLOADS_DIR = 'monkey_island/cc/userUploads'
-
-# Where to find file names in config
-PBA_WINDOWS_FILENAME_PATH = ['monkey', 'behaviour', 'PBA_windows_filename']
-PBA_LINUX_FILENAME_PATH = ['monkey', 'behaviour', 'PBA_linux_filename']
 
 
 class ConfigService:
@@ -152,7 +146,7 @@ class ConfigService:
     @staticmethod
     def update_config(config_json, should_encrypt):
         # PBA file upload happens on pba_file_upload endpoint and corresponding config options are set there
-        ConfigService.keep_PBA_files(config_json)
+        cc.services.post_breach_files.set_config_PBA_files(config_json)
         if should_encrypt:
             try:
                 ConfigService.encrypt_config(config_json)
@@ -162,18 +156,6 @@ class ConfigService:
         mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
         logger.info('monkey config was updated')
         return True
-
-    @staticmethod
-    def keep_PBA_files(config_json):
-        """
-        Sets PBA file info in config_json to current config's PBA file info values.
-        :param config_json: config_json that will be modified
-        """
-        if ConfigService.get_config():
-            linux_filename = ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
-            windows_filename = ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
-            config_json['monkey']['behaviour']['PBA_linux_filename'] = linux_filename
-            config_json['monkey']['behaviour']['PBA_windows_filename'] = windows_filename
 
     @staticmethod
     def init_default_config():
@@ -200,7 +182,7 @@ class ConfigService:
 
     @staticmethod
     def reset_config():
-        ConfigService.remove_PBA_files()
+        cc.services.post_breach_files.remove_PBA_files()
         config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
         ConfigService.update_config(config, should_encrypt=False)
@@ -309,22 +291,3 @@ class ConfigService:
             pair['public_key'] = encryptor.dec(pair['public_key'])
             pair['private_key'] = encryptor.dec(pair['private_key'])
         return pair
-
-    @staticmethod
-    def remove_PBA_files():
-        if ConfigService.get_config():
-            linux_filename = ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
-            windows_filename = ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
-            if linux_filename:
-                ConfigService.remove_file(linux_filename)
-            if windows_filename:
-                ConfigService.remove_file(windows_filename)
-
-    @staticmethod
-    def remove_file(file_name):
-        file_path = os.path.join(UPLOADS_DIR, file_name)
-        try:
-            if os.path.exists(file_path):
-                os.remove(file_path)
-        except OSError as e:
-            logger.error("Can't remove previously uploaded post breach files: %s" % e)

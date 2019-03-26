@@ -3,11 +3,14 @@ import infection_monkey.config
 from file_execution import FileExecution
 from pba import PBA
 from infection_monkey.utils import is_windows_os
+from infection_monkey.utils import get_monkey_dir_path
 
 LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
 
+DIR_CHANGE_WINDOWS = 'cd %s & '
+DIR_CHANGE_LINUX = 'cd %s ; '
 
 class PostBreach(object):
     """
@@ -31,7 +34,6 @@ class PostBreach(object):
         Returns a list of PBA objects generated from config.
         :param config: Monkey configuration
         :return: A list of PBA objects.
-        TODO: Parse PBA's from PBA array (like 'add_user'). Also merge the whole outdated PBA structure into this one.
         """
         pba_list = []
         pba_list.extend(PostBreach.get_custom_PBA(config))
@@ -49,23 +51,27 @@ class PostBreach(object):
         file_pba = FileExecution()
         command_pba = PBA(name="Custom")
 
-        # Add linux commands to PBA's
-        if config.PBA_linux_filename:
-            if config.custom_PBA_linux_cmd:
-                file_pba.linux_command = config.custom_PBA_linux_cmd
-            else:
-                file_pba.add_default_command(is_linux=True)
-        elif config.custom_PBA_linux_cmd:
-            command_pba.linux_command = config.custom_PBA_linux_cmd
-
-        # Add windows commands to PBA's
-        if config.PBA_windows_filename:
-            if config.custom_PBA_windows_cmd:
-                file_pba.windows_command = config.custom_PBA_windows_cmd
-            else:
-                file_pba.add_default_command(is_linux=False)
-        elif config.custom_PBA_windows_cmd:
-            command_pba.windows_command = config.custom_PBA_windows_cmd
+        if not is_windows_os():
+            # Add linux commands to PBA's
+            if config.PBA_linux_filename:
+                if config.custom_PBA_linux_cmd:
+                    # Add change dir command, because user will try to access his file
+                    file_pba.linux_command = (DIR_CHANGE_LINUX % get_monkey_dir_path()) + config.custom_PBA_linux_cmd
+                else:
+                    file_pba.add_default_command(is_linux=True)
+            elif config.custom_PBA_linux_cmd:
+                command_pba.linux_command = config.custom_PBA_linux_cmd
+        else:
+            # Add windows commands to PBA's
+            if config.PBA_windows_filename:
+                if config.custom_PBA_windows_cmd:
+                    # Add change dir command, because user will try to access his file
+                    file_pba.windows_command = (DIR_CHANGE_WINDOWS % get_monkey_dir_path()) + \
+                                               config.custom_PBA_windows_cmd
+                else:
+                    file_pba.add_default_command(is_linux=False)
+            elif config.custom_PBA_windows_cmd:
+                command_pba.windows_command = config.custom_PBA_windows_cmd
 
         # Add PBA's to list
         if file_pba.linux_command or file_pba.windows_command:

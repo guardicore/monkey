@@ -1,6 +1,6 @@
 import flask_restful
 from flask import send_from_directory
-from cc.services.config import UPLOADS_DIR
+from cc.resources.pba_file_upload import GET_FILE_DIR
 
 __author__ = 'VakarisZ'
 
@@ -11,4 +11,4 @@ class PBAFileDownload(flask_restful.Resource):
     """
     # Used by monkey. can't secure.
     def get(self, path):
-        return send_from_directory(UPLOADS_DIR, path)
+        return send_from_directory(GET_FILE_DIR, path)

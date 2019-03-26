@@ -1,6 +1,7 @@
 import flask_restful
 from flask import request, send_from_directory, Response
-from cc.services.config import ConfigService, PBA_WINDOWS_FILENAME_PATH, PBA_LINUX_FILENAME_PATH, UPLOADS_DIR
+from cc.services.config import ConfigService
+from cc.services.post_breach_files import PBA_WINDOWS_FILENAME_PATH, PBA_LINUX_FILENAME_PATH, UPLOADS_DIR
 from cc.auth import jwt_required
 import os
 from werkzeug.utils import secure_filename
