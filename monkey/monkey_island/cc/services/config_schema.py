@@ -13,84 +13,96 @@ SCHEMA = {
                     "enum": [
                         "SmbExploiter"
                     ],
-                    "title": "SMB Exploiter"
+                    "title": "SMB Exploiter",
+                    "attack_techniques": ["T1110", "T1210", "T1021", "T1035", "T1075"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "WmiExploiter"
                     ],
-                    "title": "WMI Exploiter"
+                    "title": "WMI Exploiter",
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "MSSQLExploiter"
                     ],
-                    "title": "MSSQL Exploiter"
+                    "title": "MSSQL Exploiter",
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "RdpExploiter"
                     ],
-                    "title": "RDP Exploiter (UNSAFE)"
+                    "title": "RDP Exploiter (UNSAFE)",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "Ms08_067_Exploiter"
                     ],
-                    "title": "MS08-067 Exploiter (UNSAFE)"
+                    "title": "MS08-067 Exploiter (UNSAFE)",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "SSHExploiter"
                     ],
-                    "title": "SSH Exploiter"
+                    "title": "SSH Exploiter",
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "ShellShockExploiter"
                     ],
-                    "title": "ShellShock Exploiter"
+                    "title": "ShellShock Exploiter",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "SambaCryExploiter"
                     ],
-                    "title": "SambaCry Exploiter"
+                    "title": "SambaCry Exploiter",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "ElasticGroovyExploiter"
                     ],
-                    "title": "ElasticGroovy Exploiter"
+                    "title": "ElasticGroovy Exploiter",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "Struts2Exploiter"
                     ],
-                    "title": "Struts2 Exploiter"
+                    "title": "Struts2 Exploiter",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "WebLogicExploiter"
                     ],
-                    "title": "Oracle Web Logic Exploiter"
+                    "title": "Oracle Web Logic Exploiter",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "HadoopExploiter"
                     ],
-                    "title": "Hadoop/Yarn Exploiter"
+                    "title": "Hadoop/Yarn Exploiter",
+                    "attack_techniques": []
                 }
             ]
         },

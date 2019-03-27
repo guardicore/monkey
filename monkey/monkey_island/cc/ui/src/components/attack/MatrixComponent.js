@@ -55,7 +55,6 @@ class MatrixComponent extends AuthComponent {
     this.state.columns = this.getColumns(this.state.matrixTableData)
   };
 
-
   getColumns(matrixData) {
     return Object.keys(matrixData[0]).map((key)=>{
       return {
@@ -132,12 +131,20 @@ class MatrixComponent extends AuthComponent {
     });
   };
 
-  handleTechniqueChange = (technique, value) => {
+  handleTechniqueChange = (technique, value, mapped=false) => {
     // Change value on configuration
     Object.entries(this.state.configData).forEach(techType => {
       if(techType[1].properties.hasOwnProperty(technique)){
         let tempMatrix = this.state.configData;
         tempMatrix[techType[0]].properties[technique].value = value;
+        // Toggle all mapped techniques
+        if (! mapped && tempMatrix[techType[0]].properties[technique].hasOwnProperty('mapped_to')){
+          console.log("Triggered");
+          tempMatrix[techType[0]].properties[technique].mapped_to.forEach(mappedTechnique => {
+            console.log(mappedTechnique)
+            this.handleTechniqueChange(mappedTechnique, value, true)
+          })
+        }
         this.updateStateFromConfig(tempMatrix);
       }
     });

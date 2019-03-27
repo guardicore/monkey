@@ -2,6 +2,22 @@ SCHEMA = {
     "title": "ATT&CK configuration",
     "type": "object",
     "properties": {
+        "initial_access": {
+            "title": "Initial access",
+            "type": "object",
+            "properties": {
+                "T1078": {
+                    "title": "T1078 Valid accounts",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Adversaries may steal the credentials of a specific user or service account using "
+                                   "Credential Access techniques or capture credentials earlier in their "
+                                   "reconnaissance process.",
+                    "mapped_to": ["T1003"]
+                }
+            }
+        },
         "lateral_movement": {
             "title": "Lateral movement",
             "type": "object",
@@ -36,6 +52,16 @@ SCHEMA = {
                     "necessary": False,
                     "description": "Adversaries may use brute force techniques to attempt access to accounts "
                                    "when passwords are unknown or when password hashes are obtained."
+                },
+                "T1003": {
+                    "title": "T1003 Credential dumping",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Credential dumping is the process of obtaining account login and password "
+                                   "information, normally in the form of a hash or a clear text password, "
+                                   "from the operating system and software.",
+                    "mapped_to": ["T1078"]
                 }
             }
         },
