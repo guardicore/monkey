@@ -14,7 +14,7 @@ SCHEMA = {
                     "description": "Adversaries may steal the credentials of a specific user or service account using "
                                    "Credential Access techniques or capture credentials earlier in their "
                                    "reconnaissance process.",
-                    "mapped_to": ["T1003"]
+                    "depends_on": ["T1003"]
                 }
             }
         },
@@ -61,7 +61,7 @@ SCHEMA = {
                     "description": "Credential dumping is the process of obtaining account login and password "
                                    "information, normally in the form of a hash or a clear text password, "
                                    "from the operating system and software.",
-                    "mapped_to": ["T1078"]
+                    "depends_on": ["T1078"]
                 }
             }
         },

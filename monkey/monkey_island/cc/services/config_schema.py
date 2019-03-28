@@ -116,6 +116,7 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
+                    "attack_techniques": ["T1110"]
                 },
             ],
         },
@@ -135,7 +136,8 @@ SCHEMA = {
                     "enum": [
                         "SSHFinger"
                     ],
-                    "title": "SSHFinger"
+                    "title": "SSHFinger",
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
@@ -393,6 +395,7 @@ SCHEMA = {
                             "title": "Harvest Azure Credentials",
                             "type": "boolean",
                             "default": True,
+                            "attack_techniques": ["T1110", "T1078"],
                             "description":
                                 "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         },
@@ -406,6 +409,7 @@ SCHEMA = {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
+                            "attack_techniques": ["T1110", "T1078"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }

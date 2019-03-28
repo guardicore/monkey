@@ -138,9 +138,9 @@ class MatrixComponent extends AuthComponent {
         let tempMatrix = this.state.configData;
         tempMatrix[techType[0]].properties[technique].value = value;
         // Toggle all mapped techniques
-        if (! mapped && tempMatrix[techType[0]].properties[technique].hasOwnProperty('mapped_to')){
+        if (! mapped && tempMatrix[techType[0]].properties[technique].hasOwnProperty('depends_on')){
           console.log("Triggered");
-          tempMatrix[techType[0]].properties[technique].mapped_to.forEach(mappedTechnique => {
+          tempMatrix[techType[0]].properties[technique].depends_on.forEach(mappedTechnique => {
             console.log(mappedTechnique)
             this.handleTechniqueChange(mappedTechnique, value, true)
           })
