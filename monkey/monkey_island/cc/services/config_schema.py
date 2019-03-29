@@ -14,7 +14,7 @@ SCHEMA = {
                         "SmbExploiter"
                     ],
                     "title": "SMB Exploiter",
-                    "attack_techniques": ["T1110", "T1210", "T1021", "T1035", "T1075"]
+                    "attack_techniques": ["T1110", "T1210", "T1021", "T1035", "T1075", "T16616161"]
                 },
                 {
                     "type": "string",
@@ -409,7 +409,7 @@ SCHEMA = {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1110", "T1078"],
+                            "attack_techniques": ["T1110", "T1078", "T123123123"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }

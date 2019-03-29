@@ -5,6 +5,8 @@ from flask import jsonify, request
 from cc.auth import jwt_required
 from cc.services.attack.attack_config import *
 
+__author__ = "VakarisZ"
+
 
 class AttackConfiguration(flask_restful.Resource):
     @jwt_required()
