@@ -277,7 +277,6 @@ class ConfigurePageComponent extends AuthComponent {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }
-
     return (
       <Col xs={12} lg={8}>
         <h1 className="page-title">Monkey Configuration</h1>
@@ -299,9 +298,11 @@ class ConfigurePageComponent extends AuthComponent {
         }
         { this.state.selectedSection ?
           <Form schema={displayedSchema}
+                uiSchema={this.uiSchema}
                 formData={this.state.configuration[this.state.selectedSection]}
                 onSubmit={this.onSubmit}
-                onChange={this.onChange}>
+                onChange={this.onChange}
+                noValidate={true}>
             <div>
               { this.state.allMonkeysAreDead ?
                 '' :
@@ -364,7 +365,6 @@ class ConfigurePageComponent extends AuthComponent {
             </div>
             : ''}
         </div>
-
       </Col>
     );
   }

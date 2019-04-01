@@ -20,8 +20,7 @@ class Checkbox extends React.PureComponent {
 		this.ping = this.ping.bind(this);
 		this.composeStateClasses = this.composeStateClasses.bind(this);
 	}
-
-	//
+	
 	toggleChecked() {
 		if (this.state.isAnimating) return false;
 		this.setState({
@@ -30,12 +29,12 @@ class Checkbox extends React.PureComponent {
 		}, () => { this.props.changeHandler(this.props.name, this.state.checked)});
 	}
 
-	//
+	// Stops animation
 	ping() {
 		this.setState({ isAnimating: false })
 	}
 
-	//
+	// Creates class string for component
 	composeStateClasses(core) {
 		let result = core;
     if (this.state.necessary){
@@ -48,7 +47,6 @@ class Checkbox extends React.PureComponent {
 		return result;
 	}
 
-	//
 	render() {
 		const cl = this.composeStateClasses('ui-checkbox-btn');
 		return (

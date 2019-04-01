@@ -11,7 +11,9 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
-                    "description": "Adversaries may steal the credentials of a specific user or service account using "
+                    "description": "Mapped with T1003 Credential dumping because both techniques "
+                                   "require same credential harvesting modules. "
+                                   "Adversaries may steal the credentials of a specific user or service account using "
                                    "Credential Access techniques or capture credentials earlier in their "
                                    "reconnaissance process.",
                     "depends_on": ["T1003"]
@@ -48,7 +50,7 @@ SCHEMA = {
                 "T1110": {
                     "title": "T1110 Brute force",
                     "type": "bool",
-                    "value": False,
+                    "value": True,
                     "necessary": False,
                     "description": "Adversaries may use brute force techniques to attempt access to accounts "
                                    "when passwords are unknown or when password hashes are obtained."
@@ -58,7 +60,9 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
-                    "description": "Credential dumping is the process of obtaining account login and password "
+                    "description": "Mapped with T1078 Valid Accounts because both techniques require"
+                                   " same credential harvesting modules. "
+                                   "Credential dumping is the process of obtaining account login and password "
                                    "information, normally in the form of a hash or a clear text password, "
                                    "from the operating system and software.",
                     "depends_on": ["T1078"]

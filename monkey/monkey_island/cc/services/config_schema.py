@@ -14,7 +14,7 @@ SCHEMA = {
                         "SmbExploiter"
                     ],
                     "title": "SMB Exploiter",
-                    "attack_techniques": ["T1110", "T1210", "T1021", "T1035", "T1075", "T16616161"]
+                    "attack_techniques": ["T1110", "T1210", "T1075"]
                 },
                 {
                     "type": "string",
@@ -22,7 +22,7 @@ SCHEMA = {
                         "WmiExploiter"
                     ],
                     "title": "WMI Exploiter",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": ["T1110", "T1210"]
                 },
                 {
                     "type": "string",
@@ -30,7 +30,7 @@ SCHEMA = {
                         "MSSQLExploiter"
                     ],
                     "title": "MSSQL Exploiter",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": ["T1110", "T1210"]
                 },
                 {
                     "type": "string",
@@ -54,7 +54,7 @@ SCHEMA = {
                         "SSHExploiter"
                     ],
                     "title": "SSH Exploiter",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": ["T1110", "T1210"]
                 },
                 {
                     "type": "string",
@@ -62,7 +62,7 @@ SCHEMA = {
                         "ShellShockExploiter"
                     ],
                     "title": "ShellShock Exploiter",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
@@ -70,7 +70,7 @@ SCHEMA = {
                         "SambaCryExploiter"
                     ],
                     "title": "SambaCry Exploiter",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
@@ -78,7 +78,7 @@ SCHEMA = {
                         "ElasticGroovyExploiter"
                     ],
                     "title": "ElasticGroovy Exploiter",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
@@ -86,7 +86,7 @@ SCHEMA = {
                         "Struts2Exploiter"
                     ],
                     "title": "Struts2 Exploiter",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
@@ -94,7 +94,7 @@ SCHEMA = {
                         "WebLogicExploiter"
                     ],
                     "title": "Oracle Web Logic Exploiter",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
@@ -102,7 +102,7 @@ SCHEMA = {
                         "HadoopExploiter"
                     ],
                     "title": "Hadoop/Yarn Exploiter",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1210"]
                 }
             ]
         },
@@ -116,7 +116,7 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": []
                 },
             ],
         },
@@ -129,7 +129,8 @@ SCHEMA = {
                     "enum": [
                         "SMBFinger"
                     ],
-                    "title": "SMBFinger"
+                    "title": "SMBFinger",
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
@@ -137,7 +138,7 @@ SCHEMA = {
                         "SSHFinger"
                     ],
                     "title": "SSHFinger",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
@@ -158,14 +159,16 @@ SCHEMA = {
                     "enum": [
                         "MySQLFinger"
                     ],
-                    "title": "MySQLFinger"
+                    "title": "MySQLFinger",
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "MSSQLFinger"
                     ],
-                    "title": "MSSQLFinger"
+                    "title": "MSSQLFinger",
+                    "attack_techniques": ["T1210"]
                 },
 
                 {
@@ -173,7 +176,8 @@ SCHEMA = {
                     "enum": [
                         "ElasticFinger"
                     ],
-                    "title": "ElasticFinger"
+                    "title": "ElasticFinger",
+                    "attack_techniques": ["T1210"]
                 }
             ]
         }
@@ -409,7 +413,7 @@ SCHEMA = {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1110", "T1078", "T123123123"],
+                            "attack_techniques": ["T1110", "T1078"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }

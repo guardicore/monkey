@@ -18,7 +18,7 @@ let findMaxTechniques =  function (data){
   return maxLen
 };
 
-// Parses config schema into data suitable for react-table (ATT&CK matrix)
+// Parses ATT&CK config schema into data suitable for react-table (ATT&CK matrix)
 let parseTechniques = function (data, maxLen) {
   let techniques = [];
   // Create rows with attack techniques
@@ -46,7 +46,7 @@ let parseTechniques = function (data, maxLen) {
 class MatrixComponent extends AuthComponent {
   constructor(props) {
     super(props);
-    // Copy configuration and parse it for ATT&CK matrix table
+    // Copy ATT&CK configuration and parse it for ATT&CK matrix table
     let configCopy = JSON.parse(JSON.stringify(this.props.configuration));
     this.state = {lastAction: 'none',
                   configData: this.props.configuration,
@@ -117,6 +117,7 @@ class MatrixComponent extends AuthComponent {
       });
   };
 
+  // Updates state based on values in config supplied.
   updateStateFromConfig = (config, lastAction = '') => {
     let configCopy = JSON.parse(JSON.stringify(config));
     let maxTechniques = findMaxTechniques(Object.values(configCopy));
@@ -131,6 +132,7 @@ class MatrixComponent extends AuthComponent {
     });
   };
 
+  // Handles change in technique, when user toggles it
   handleTechniqueChange = (technique, value, mapped=false) => {
     // Change value on configuration
     Object.entries(this.state.configData).forEach(techType => {
@@ -139,9 +141,7 @@ class MatrixComponent extends AuthComponent {
         tempMatrix[techType[0]].properties[technique].value = value;
         // Toggle all mapped techniques
         if (! mapped && tempMatrix[techType[0]].properties[technique].hasOwnProperty('depends_on')){
-          console.log("Triggered");
           tempMatrix[techType[0]].properties[technique].depends_on.forEach(mappedTechnique => {
-            console.log(mappedTechnique)
             this.handleTechniqueChange(mappedTechnique, value, true)
           })
         }
