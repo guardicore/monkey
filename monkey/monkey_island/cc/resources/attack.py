@@ -1,7 +1,7 @@
 import flask_restful
 from flask import request
 import json
-from cc.services.attack.attack_results import set_results
+from cc.services.attck.attack_results import set_results
 import logging
 
 __author__ = 'VakarisZ'
@@ -9,7 +9,7 @@ __author__ = 'VakarisZ'
 LOG = logging.getLogger(__name__)
 
 
-class AttackTelem(flask_restful.Resource):
+class Attack(flask_restful.Resource):
     """
     ATT&CK endpoint used to retrieve matrix related info from monkey
     """
