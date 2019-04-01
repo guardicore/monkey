@@ -16,6 +16,7 @@ from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.windows_upgrader import WindowsUpgrader
+from infection_monkey.post_breach.post_breach_handler import PostBreach
 
 __author__ = 'itamar'
 
@@ -115,6 +116,8 @@ class InfectionMonkey(object):
         for action_class in WormConfiguration.post_breach_actions:
             action = action_class()
             action.act()
+
+        PostBreach().execute()
 
         if 0 == WormConfiguration.depth:
             LOG.debug("Reached max depth, shutting down")

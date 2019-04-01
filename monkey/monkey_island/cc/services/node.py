@@ -142,7 +142,8 @@ class NodeService:
                 "group": NodeService.get_monkey_group(monkey),
                 "os": NodeService.get_monkey_os(monkey),
                 "dead": monkey["dead"],
-                "domain_name": ""
+                "domain_name": "",
+                "pba_results": monkey["pba_results"] if "pba_results" in monkey else []
             }
 
     @staticmethod
