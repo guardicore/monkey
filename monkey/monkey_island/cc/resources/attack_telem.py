@@ -1,7 +1,7 @@
 import flask_restful
 from flask import request
 import json
-from cc.services.attack.attack_telem import set_results
+from cc.services.attack.attack_results import set_results
 import logging
 
 __author__ = 'VakarisZ'

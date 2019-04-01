@@ -1,6 +1,3 @@
-"""
-File that contains ATT&CK telemetry storing/retrieving logic
-"""
 import logging
 from cc.database import mongo
 

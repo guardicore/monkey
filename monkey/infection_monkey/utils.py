@@ -2,8 +2,12 @@ import os
 import sys
 import shutil
 import struct
+import socket
 
 from infection_monkey.config import WormConfiguration
+
+LOCAL_IP = '127.0.0.1'
+MOCK_IP = '10.255.255.255'
 
 
 def get_monkey_log_path():
@@ -30,6 +34,26 @@ def is_64bit_python():
 
 def is_windows_os():
     return sys.platform.startswith("win")
+
+
+def get_host_info():
+    return {'hostname': socket.gethostname(), 'ip': get_primary_ip()}
+
+
+def get_primary_ip():
+    """
+    :return: Primary (default route) IP address
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect((MOCK_IP, 1))
+        ip = s.getsockname()[0]
+    except:
+        ip = LOCAL_IP
+    finally:
+        s.close()
+    return ip
 
 
 def utf_to_ascii(string):

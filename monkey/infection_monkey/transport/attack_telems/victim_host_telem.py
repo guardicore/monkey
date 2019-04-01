@@ -1,5 +1,4 @@
 from infection_monkey.transport.attack_telems.base_telem import AttackTelem
-from infection_monkey.config import GUID
 
 __author__ = "VakarisZ"
 
@@ -14,7 +13,7 @@ class VictimHostTelem(AttackTelem):
         :param machine: VictimHost obj from model/host.py
         :param data: Other data relevant to the attack technique
         """
-        super(VictimHostTelem, self).__init__(technique, status, data)
+        super(VictimHostTelem, self).__init__(technique, status, data, machine=False)
         victim_host = {'hostname': machine.domain_name, 'ip': machine.ip_addr}
         if data:
             self.data.update(data)
