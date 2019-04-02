@@ -32,6 +32,7 @@ from cc.services.config import ConfigService
 from cc.resources.pba_file_upload import FileUpload
 from cc.resources.attack_config import AttackConfiguration
 from cc.resources.attack_telem import AttackTelem
+from cc.resources.attack_report import AttackReport
 
 __author__ = 'Barak'
 
@@ -126,6 +127,7 @@ def init_app(mongo_url):
                      '/api/fileUpload/<string:file_type>?restore=<string:filename>')
     api.add_resource(RemoteRun, '/api/remote-monkey', '/api/remote-monkey/')
     api.add_resource(AttackTelem, '/api/attack/<string:technique>')
+    api.add_resource(AttackReport, '/api/attack/report')
     api.add_resource(AttackConfiguration, '/api/attack')
 
     return app
