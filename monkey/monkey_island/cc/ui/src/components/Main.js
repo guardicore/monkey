@@ -85,6 +85,7 @@ class AppComponent extends AuthComponent {
         run_monkey: false,
         infection_done: false,
         report_done: false,
+        attack_report_done:false,
         isLoggedIn: undefined
       }
     };
@@ -148,6 +149,15 @@ class AppComponent extends AuthComponent {
                     <span className="number">4.</span>
                     Security Report
                     {this.state.completedSteps.report_done ?
+                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      : ''}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/attack_report">
+                    <span className="number">5.</span>
+                    Security Report
+                    {this.state.completedSteps.attack_report_done ?
                       <Icon name="check" className="pull-right checkmark text-success"/>
                       : ''}
                   </NavLink>
