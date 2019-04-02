@@ -2,8 +2,8 @@ import logging
 
 import flask_restful
 
-from cc.auth import jwt_required
-from cc.services.island_logs import IslandLogService
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.services.island_logs import IslandLogService
 
 __author__ = "Maor.Rayzin"
 

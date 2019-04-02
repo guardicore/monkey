@@ -6,10 +6,10 @@ import sys
 from flask import request, jsonify, make_response
 import flask_restful
 
-from cc.environment.environment import env
-from cc.resources.monkey_download import get_monkey_executable
-from cc.services.node import NodeService
-from cc.utils import local_ip_addresses
+from monkey_island.cc.environment.environment import env
+from monkey_island.cc.resources.monkey_download import get_monkey_executable
+from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.utils import local_ip_addresses
 
 __author__ = 'Barak'
 

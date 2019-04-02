@@ -5,10 +5,10 @@ import logging
 from jsonschema import Draft4Validator, validators
 from six import string_types
 
-from cc.database import mongo
-from cc.encryptor import encryptor
-from cc.environment.environment import env
-from cc.utils import local_ip_addresses
+from monkey_island.cc.database import mongo
+from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.environment.environment import env
+from monkey_island.cc.utils import local_ip_addresses
 from config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
