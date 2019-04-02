@@ -1,4 +1,3 @@
-from enum import Enum
 from infection_monkey.config import WormConfiguration, GUID
 import requests
 import json
@@ -8,15 +7,6 @@ import logging
 __author__ = "VakarisZ"
 
 LOG = logging.getLogger(__name__)
-
-
-class ScanStatus(Enum):
-    # Technique wasn't scanned
-    UNSCANNED = 0
-    # Technique was attempted/scanned
-    SCANNED = 1
-    # Technique was attempted and succeeded
-    USED = 2
 
 
 class AttackTelem(object):
