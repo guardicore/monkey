@@ -15,7 +15,4 @@ class VictimHostTelem(AttackTelem):
         """
         super(VictimHostTelem, self).__init__(technique, status, data)
         victim_host = {'hostname': machine.domain_name, 'ip': machine.ip_addr}
-        if data:
-            self.data.update(data)
-        if machine:
-            self.data.update({'machine': victim_host})
+        self.data.update({'machine': victim_host})
