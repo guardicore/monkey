@@ -33,6 +33,7 @@ from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.attack_telem import AttackTelem
 from monkey_island.cc.resources.attack_config import AttackConfiguration
+from monkey_island.cc.resources.attack_report import AttackReport
 
 __author__ = 'Barak'
 
@@ -126,7 +127,8 @@ def init_app(mongo_url):
                      '/api/fileUpload/<string:file_type>?load=<string:filename>',
                      '/api/fileUpload/<string:file_type>?restore=<string:filename>')
     api.add_resource(RemoteRun, '/api/remote-monkey', '/api/remote-monkey/')
-    api.add_resource(AttackConfiguration, '/api/attack')
     api.add_resource(AttackTelem, '/api/attack/<string:technique>')
+    api.add_resource(AttackReport, '/api/attack/report')
+    api.add_resource(AttackConfiguration, '/api/attack')
 
     return app
