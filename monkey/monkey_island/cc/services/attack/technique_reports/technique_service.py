@@ -1,5 +1,6 @@
-from cc.database import mongo
+from monkey_island.cc.database import mongo
 from common.utils.attack_status_enum import ScanStatus
+from monkey_island.cc.services.attack.attack_config import get_technique
 
 __author__ = "VakarisZ"
 
@@ -14,4 +15,4 @@ def technique_status(technique):
 
 
 def technique_title(technique):
-    return technique+" title from SCHEMA"
+    return get_technique(technique)['title']

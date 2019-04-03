@@ -1,3 +1,135 @@
+$transition: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 10px;
+}
+
+body {
+  font: 1.6rem / 1.5 "Montserrat", sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  font-size: 1.6rem;
+  overflow-y: scroll;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-size: inherit;
+  margin: 0;
+  padding: 1rem;
+  background: transparent;
+  border: 1px solid #ccc;
+  box-shadow: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+img {
+  vertical-align: bottom;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: black;
+  font-size: inherit;
+}
+
+h2 {
+  margin: 0.5rem;
+}
+
+.info {
+  margin-bottom: 3rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+.app {
+  min-height: 100vh;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.btn {
+  width: 100%;
+  box-shadow: 0 2px 6px #ccc;
+  border: none;
+  transition: background-color $transition;
+  font-family: inherit;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  > span {
+  }
+}
+
+.item {
+  padding: 0.5rem;
+  &--active {
+    .btn {
+      background-color: #f7f7f7;
+    }
+  }
+}
+
+.collapse {
+  transition: height $transition;
+  overflow: hidden;
+}
+
+.content {
+  padding: 2rem 0;
+  transition: transform $transition;
+  will-change: transform;
+  $offset: 10px;
+
+  &.collapsing {
+    transform: translateY(-$offset);
+  }
+  &.collapsed {
+    transform: translateY(-$offset);
+  }
+  &.expanding {
+    transform: translateX(0px);
+  }
+  &.expanded {
+    transform: translateX(0px);
+  }
+}
+
+.text {
+  margin-bottom: 1rem;
+}
+
+.state {
+  display: inline-block;
+  min-width: 6em;
+}
+
+
+.image-wrapper {
+  position: relative;
+  max-width: 500px;
+  height: 0;
+  padding-bottom: 40%;
+  margin-bottom: 1rem;
+  background: #eee;
+
+  &__img {
+    object-fit: cover;
+    width: 100%;
+    position: absolute;
+  }
+}
+
 .collapse-css-transition {
   transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
