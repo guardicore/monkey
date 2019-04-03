@@ -7,6 +7,7 @@ from flask import request, make_response, jsonify
 from cc.auth import jwt_required
 from cc.database import mongo
 from cc.services.config import ConfigService
+from cc.services.attack.attack_config import reset_config as reset_attack_config
 from cc.services.node import NodeService
 from cc.services.report import ReportService
 from cc.utils import local_ip_addresses
@@ -47,6 +48,7 @@ class Root(flask_restful.Resource):
         # We can't drop system collections.
         [mongo.db[x].drop() for x in mongo.db.collection_names() if not x.startswith('system.')]
         ConfigService.init_config()
+        reset_attack_config()
         logger.info('DB was reset')
         return jsonify(status='OK')
 

@@ -16,3 +16,4 @@ enum34
 pycryptodome
 boto3
 awscli
+dpath

@@ -515,3 +515,8 @@ body {
   }
 
 }
+
+/* Attack config page */
+.attack-matrix .messages {
+  margin-bottom: 30px;
+}
