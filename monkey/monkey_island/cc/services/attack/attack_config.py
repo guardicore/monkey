@@ -14,6 +14,20 @@ def get_config():
     return config
 
 
+def get_technique(technique_id):
+    """
+    Gets technique by id
+    :param technique_id: E.g. T1210
+    :return: Technique object or false if technique is not found
+    """
+    attack_config = get_config()
+    for key, attack_type in attack_config['properties'].items():
+        for key, technique in attack_type['properties'].items():
+            if key == technique_id:
+                return technique
+    return False
+
+
 def get_config_schema():
     return SCHEMA
 
