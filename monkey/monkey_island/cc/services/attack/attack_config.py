@@ -32,7 +32,7 @@ def apply_to_monkey_config():
     Applies ATT&CK matrix to the monkey configuration
     :return:
     """
-    attack_techniques = get_techniques()
+    attack_techniques = get_technique_values()
     monkey_config = ConfigService.get_config(False, True, True)
     monkey_schema = ConfigService.get_config_schema()
     set_arrays(attack_techniques, monkey_config, monkey_schema)
@@ -147,9 +147,9 @@ def r_alter_array(config_value, array_name, field, remove=True):
                 r_alter_array(prop[1], array_name, field, remove)
 
 
-def get_techniques():
+def get_technique_values():
     """
-    Parses ATT&CK config into a dic of techniques.
+    Parses ATT&CK config into a dic of techniques and corresponding values.
     :return: Dictionary of techniques. Format: {"T1110": True, "T1075": False, ...}
     """
     attack_config = get_config()
