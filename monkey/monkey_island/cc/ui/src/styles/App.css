@@ -516,7 +516,28 @@ body {
 
 }
 
-/* Attack config page */
+/* Attack pages */
 .attack-matrix .messages {
   margin-bottom: 30px;
+}
+
+.icon-info {
+  color: #ade3eb !important;
+}
+
+.icon-warning {
+  color: #f0ad4e !important;
+}
+
+.icon-danger {
+  color: #d9acac !important;
+}
+
+.icon-default {
+  color: #e0ddde !important;
+}
+
+.attack-legend {
+  text-align: center;
+  margin-bottom: 20px;
 }

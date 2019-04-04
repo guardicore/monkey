@@ -21,7 +21,6 @@ class T1210 extends React.Component {
     super(props);
   }
   render() {
-    console.log(this.props);
     return (
       <Collapse isOpen={true || false}>
         <div>{this.props.data.message}</div>

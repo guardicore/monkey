@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@kunukn/react-collapse": "^1.0.5",
-    "bootstrap": "3.3.7",
+    "bootstrap": "^3.3.7",
     "classnames": "^2.2.6",
     "core-js": "^2.5.7",
     "downloadjs": "^1.4.7",

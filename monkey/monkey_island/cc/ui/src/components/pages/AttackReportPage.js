@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col} from 'react-bootstrap';
+import {Button, Col, Row, TabContainer} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
@@ -20,7 +20,8 @@ class AttackReportPageComponent extends AuthComponent {
     this.state = {
       report: {},
       allMonkeysAreDead: false,
-      runStarted: true
+      runStarted: true,
+      index: 1
     };
   }
 
@@ -53,40 +54,56 @@ class AttackReportPageComponent extends AuthComponent {
     }
   }
 
-  state = {
-    index: 1,
-  };
+  onToggle = index =>
+    this.setState(state => ({ index: state.index === index ? null : index }));
 
-  onToggle = () => {
-    this.setState(state => ({ isOpen: !state.isOpen }));
-  };
+  getTechniqueCollapse(tech_id){
+    switch (this.state.report[tech_id].status) {
+      case 'SCANNED':
+        var className = 'collapse-info';
+        break;
+      case 'USED':
+        var className = 'collapse-danger';
+        break;
+      default:
+        var className = 'collapse-default';
+    }
 
-  getTechniqueCollapse(technique){
-    const TechniqueComponent = tech_components[technique];
     return (
-      <div className={classNames("item", { "item--active": this.state.index === 1 })}>
-        <button className="btn" onClick={() => this.onToggle(1)}>
-          <span>select 1</span> <span>{this.state.item1}</span>
+      <div className={classNames("collapse-item", { "item--active": this.state.index === 1 })}>
+        <button className={classNames("btn-collapse", className)} onClick={() => this.onToggle(1)}>
+          <span>{this.state.report[tech_id].title}</span>
+          <span>
+              <i className={classNames("fa", this.state.index === 1 ? "fa-chevron-down" : "fa-chevron-up")}></i>
+          </span>
         </button>
         <Collapse
-          className="collapse"
+          className="collapse-comp"
           isOpen={this.state.index === 1}
           onChange={({ collapseState }) => {
             this.setState({ item1: collapseState });
           }}
           onInit={({ collapseState }) => {
             this.setState({ item1: collapseState });
-          }}>
-          <TechniqueComponent data={this.state.report[technique]} />
-        </Collapse>
+          }}
+          render={collapseState => this.createTechniqueContent(collapseState, tech_id)}/>
+      </div>
+    );
+  }
+
+  createTechniqueContent(collapseState, technique) {
+    const TechniqueComponent = tech_components[technique];
+    return (
+      <div className={`content ${collapseState}`}>
+        <TechniqueComponent data={this.state.report[technique]} />
       </div>
     );
   }
 
   generateReportContent(){
     let content = '';
-    Object.keys(this.state.report).forEach((technique) => {
-      content = this.getTechniqueCollapse(technique)
+    Object.keys(this.state.report).forEach((tech_id) => {
+      content = this.getTechniqueCollapse(tech_id)
     });
     return <section className="app">{content}</section>
   }
@@ -109,6 +126,20 @@ class AttackReportPageComponent extends AuthComponent {
     return (
       <Col xs={12} lg={8}>
         <h1 className="page-title no-print">5. ATT&CK Report</h1>
+        <div id="header" className="row justify-content-between attack-legend">
+          <Col xs={4}>
+            <i className="fa fa-circle icon-default"></i>
+            <span> - Unscanned</span>
+          </Col>
+          <Col xs={4}>
+            <i className="fa fa-circle icon-info"></i>
+            <span> - Scanned</span>
+          </Col>
+          <Col xs={4}>
+            <i className="fa fa-circle icon-danger"></i>
+            <span> - Used</span>
+          </Col>
+        </div>
         <div style={{'fontSize': '1.2em'}}>
           {content}
         </div>
