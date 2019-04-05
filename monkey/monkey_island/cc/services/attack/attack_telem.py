@@ -3,6 +3,7 @@ File that contains ATT&CK telemetry storing/retrieving logic
 """
 import logging
 from monkey_island.cc.database import mongo
+from time import time
 
 __author__ = "VakarisZ"
 
@@ -17,3 +18,8 @@ def set_results(technique, data):
     """
     data.update({'technique': technique})
     mongo.db.attack_results.insert(data)
+    mongo.db.attack_results.update({'name': 'latest'}, {'name': 'latest', 'timestamp': time()}, upsert=True)
+
+
+def get_latest_telem():
+    return mongo.db.attack_results.find({'name': 'latest'})

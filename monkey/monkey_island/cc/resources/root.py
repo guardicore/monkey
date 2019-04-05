@@ -10,6 +10,7 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.attack.attack_config import reset_config as reset_attack_config
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.report import ReportService
+from cc.services.attack.attack_report import AttackReportService
 from monkey_island.cc.utils import local_ip_addresses
 from monkey_island.cc.services.post_breach_files import remove_PBA_files
 
@@ -71,5 +72,7 @@ class Root(flask_restful.Resource):
         else:
             if is_any_exists:
                 ReportService.get_report()
+                AttackReportService.get_report()
             report_done = ReportService.is_report_generated()
+            attack_report_done = AttackReportService.is_report_generated()
         return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done, report_done=report_done)
