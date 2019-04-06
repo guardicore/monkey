@@ -9,12 +9,12 @@ from enum import Enum
 
 from six import text_type
 
-from cc.database import mongo
-from cc.report_exporter_manager import ReportExporterManager
-from cc.services.config import ConfigService
-from cc.services.edge import EdgeService
-from cc.services.node import NodeService
-from cc.utils import local_ip_addresses, get_subnets
+from monkey_island.cc.database import mongo
+from monkey_island.cc.report_exporter_manager import ReportExporterManager
+from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.edge import EdgeService
+from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.utils import local_ip_addresses, get_subnets
 from pth_report import PTHReportService
 from common.network.network_range import NetworkRange
 

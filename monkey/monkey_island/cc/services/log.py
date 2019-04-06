@@ -1,7 +1,7 @@
 from datetime import datetime
 
-import cc.services.node
-from cc.database import mongo, database
+import monkey_island.cc.services.node
+from monkey_island.cc.database import mongo, database
 
 __author__ = "itay.mizeretz"
 
@@ -15,8 +15,8 @@ class LogService:
         log = mongo.db.log.find_one({'monkey_id': monkey_id})
         if log:
             log_file = database.gridfs.get(log['file_id'])
-            monkey_label = cc.services.node.NodeService.get_monkey_label(
-                cc.services.node.NodeService.get_monkey_by_id(log['monkey_id']))
+            monkey_label = monkey_island.cc.services.node.NodeService.get_monkey_label(
+                monkey_island.cc.services.node.NodeService.get_monkey_by_id(log['monkey_id']))
             return \
                 {
                     'monkey_label': monkey_label,

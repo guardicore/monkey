@@ -1,7 +1,7 @@
 from bson import ObjectId
 
-from cc.database import mongo
-import cc.services.node
+from monkey_island.cc.database import mongo
+import monkey_island.cc.services.node
 
 __author__ = "itay.mizeretz"
 
@@ -87,7 +87,7 @@ class EdgeService:
 
     @staticmethod
     def get_infected_monkey_island_pseudo_edges():
-        monkey = cc.services.node.NodeService.get_monkey_island_monkey()
+        monkey = monkey_island.cc.services.node.NodeService.get_monkey_island_monkey()
         existing_ids = [x["from"] for x in mongo.db.edge.find({"to": monkey["_id"]})]
         monkey_ids = [x["_id"] for x in mongo.db.monkey.find({})
                       if ("tunnel" not in x) and (x["_id"] not in existing_ids) and (x["_id"] != monkey["_id"])]
@@ -136,11 +136,11 @@ class EdgeService:
             {"_id": edge["_id"]},
             {"$set": {"exploited": True}}
         )
-        cc.services.node.NodeService.set_node_exploited(edge["to"])
+        monkey_island.cc.services.node.NodeService.set_node_exploited(edge["to"])
 
     @staticmethod
     def get_edge_label(edge):
-        NodeService = cc.services.node.NodeService
+        NodeService = monkey_island.cc.services.node.NodeService
         from_label = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
         if edge["to"] == ObjectId("000000000000000000000000"):
             to_label = 'MonkeyIsland'

@@ -1,9 +1,9 @@
 import json
 import logging
 
-from cc.environment import standard
-from cc.environment import aws
-from cc.environment import password
+from monkey_island.cc.environment import standard
+from monkey_island.cc.environment import aws
+from monkey_island.cc.environment import password
 
 __author__ = 'itay.mizeretz'
 

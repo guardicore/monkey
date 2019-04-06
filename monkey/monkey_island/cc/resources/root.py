@@ -4,12 +4,12 @@ import logging
 import flask_restful
 from flask import request, make_response, jsonify
 
-from cc.auth import jwt_required
-from cc.database import mongo
-from cc.services.config import ConfigService
-from cc.services.node import NodeService
-from cc.services.report import ReportService
-from cc.utils import local_ip_addresses
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.services.report import ReportService
+from monkey_island.cc.utils import local_ip_addresses
 
 __author__ = 'Barak'
 

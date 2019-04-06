@@ -8,26 +8,26 @@ from bson.json_util import dumps
 from flask import Flask, send_from_directory, make_response, Response
 from werkzeug.exceptions import NotFound
 
-from cc.auth import init_jwt
-from cc.database import mongo, database
-from cc.environment.environment import env
-from cc.resources.client_run import ClientRun
-from cc.resources.edge import Edge
-from cc.resources.local_run import LocalRun
-from cc.resources.log import Log
-from cc.resources.island_logs import IslandLog
-from cc.resources.monkey import Monkey
-from cc.resources.monkey_configuration import MonkeyConfiguration
-from cc.resources.island_configuration import IslandConfiguration
-from cc.resources.monkey_download import MonkeyDownload
-from cc.resources.netmap import NetMap
-from cc.resources.node import Node
-from cc.resources.remote_run import RemoteRun
-from cc.resources.report import Report
-from cc.resources.root import Root
-from cc.resources.telemetry import Telemetry
-from cc.resources.telemetry_feed import TelemetryFeed
-from cc.services.config import ConfigService
+from monkey_island.cc.auth import init_jwt
+from monkey_island.cc.database import mongo, database
+from monkey_island.cc.environment.environment import env
+from monkey_island.cc.resources.client_run import ClientRun
+from monkey_island.cc.resources.edge import Edge
+from monkey_island.cc.resources.local_run import LocalRun
+from monkey_island.cc.resources.log import Log
+from monkey_island.cc.resources.island_logs import IslandLog
+from monkey_island.cc.resources.monkey import Monkey
+from monkey_island.cc.resources.monkey_configuration import MonkeyConfiguration
+from monkey_island.cc.resources.island_configuration import IslandConfiguration
+from monkey_island.cc.resources.monkey_download import MonkeyDownload
+from monkey_island.cc.resources.netmap import NetMap
+from monkey_island.cc.resources.node import Node
+from monkey_island.cc.resources.remote_run import RemoteRun
+from monkey_island.cc.resources.report import Report
+from monkey_island.cc.resources.root import Root
+from monkey_island.cc.resources.telemetry import Telemetry
+from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
+from monkey_island.cc.services.config import ConfigService
 
 __author__ = 'Barak'
 
