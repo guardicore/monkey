@@ -13,4 +13,6 @@ MESSAGES = {
 
 def get_report_data():
     data = get_tech_base_data(TECHNIQUE, MESSAGES)
+
+    data.update()
     return data
