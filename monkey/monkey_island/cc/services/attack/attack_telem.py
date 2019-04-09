@@ -22,4 +22,4 @@ def set_results(technique, data):
 
 
 def get_latest_telem():
-    return mongo.db.attack_results.find({'name': 'latest'})
+    return mongo.db.attack_results.find_one({'name': 'latest'})

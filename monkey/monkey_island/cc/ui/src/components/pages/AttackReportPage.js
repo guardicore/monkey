@@ -18,7 +18,7 @@ class AttackReportPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
-      report: {},
+      report: false,
       allMonkeysAreDead: false,
       runStarted: true,
       index: 1
@@ -105,27 +105,8 @@ class AttackReportPageComponent extends AuthComponent {
     Object.keys(this.state.report).forEach((tech_id) => {
       content = this.getTechniqueCollapse(tech_id)
     });
-    return <section className="app">{content}</section>
-  }
-
-  render() {
-    let content;
-    if (Object.keys(this.state.report).length === 0) {
-      if (this.state.runStarted) {
-        content = (<h1>Generating Report...</h1>);
-      } else {
-        content =
-          <p className="alert alert-warning">
-            <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-            You have to run a monkey before generating a report!
-          </p>;
-      }
-    } else {
-      content = this.generateReportContent();
-    }
     return (
-      <Col xs={12} lg={8}>
-        <h1 className="page-title no-print">5. ATT&CK Report</h1>
+      <div>
         <div id="header" className="row justify-content-between attack-legend">
           <Col xs={4}>
             <i className="fa fa-circle icon-default"></i>
@@ -140,6 +121,32 @@ class AttackReportPageComponent extends AuthComponent {
             <span> - Used</span>
           </Col>
         </div>
+        <section className="app">{content}</section>
+      </div>
+    )
+  }
+
+  render() {
+    let content;
+    console.log(this.state.report);
+    if (this.state.report === false){
+        content = (<h1>Generating Report...</h1>);
+    } else if (Object.keys(this.state.report).length === 0) {
+      if (this.state.runStarted) {
+        content = (<h1>No techniques were scanned</h1>);
+      } else {
+        content =
+          <p className="alert alert-warning">
+            <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+            You have to run a monkey before generating a report!
+          </p>;
+      }
+    } else {
+      content = this.generateReportContent();
+    }
+    return (
+      <Col xs={12} lg={8}>
+        <h1 className="page-title no-print">5. ATT&CK Report</h1>
         <div style={{'fontSize': '1.2em'}}>
           {content}
         </div>

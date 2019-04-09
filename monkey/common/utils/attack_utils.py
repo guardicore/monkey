@@ -8,3 +8,6 @@ class ScanStatus(Enum):
     SCANNED = 1
     # Technique was attempted and succeeded
     USED = 2
+
+
+BITS_UPLOAD_STRING = "Bits job was used to upload monkey to a remote system."

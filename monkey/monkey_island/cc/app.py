@@ -30,9 +30,9 @@ from cc.resources.telemetry_feed import TelemetryFeed
 from cc.resources.pba_file_download import PBAFileDownload
 from cc.services.config import ConfigService
 from cc.resources.pba_file_upload import FileUpload
-from cc.resources.attack_config import AttackConfiguration
-from cc.resources.attack_telem import AttackTelem
-from cc.resources.attack_report import AttackReport
+from cc.resources.attack.attack_config import AttackConfiguration
+from cc.resources.attack.attack_telem import AttackTelem
+from cc.resources.attack.attack_report import AttackReport
 
 __author__ = 'Barak'
 

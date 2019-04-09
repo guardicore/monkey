@@ -541,3 +541,9 @@ body {
   text-align: center;
   margin-bottom: 20px;
 }
+
+.attack-report.footer-text{
+  text-align: right;
+  font-size: 0.8em;
+  margin-top: 20px;
+}
