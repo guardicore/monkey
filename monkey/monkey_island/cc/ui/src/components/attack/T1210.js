@@ -3,7 +3,7 @@ import '../../styles/Collapse.scss'
 import {Link} from "react-router-dom";
 
 let renderArray = function(val) {
-  return <span>{val.map(x => <span key={x.toString()}>{x} </span>)}</span>;
+  return <span>{val.map(x => <span key={x.toString()}> {x} </span>)}</span>;
 };
 
 
@@ -48,9 +48,9 @@ class T1210 extends React.Component {
     return (
       <div>
         <div>{this.props.data.message}</div>
-        <div>Found services: </div>
+        {this.props.data.scanned_machines.length > 0 ? <div>Found services: </div> : ''}
         {this.renderScannedMachines(this.props.data.scanned_machines)}
-        <div>Successful exploiters:</div>
+        {this.props.data.exploited_machines.length > 0 ? <div>Successful exploiters:</div> : ''}
         {this.renderExploitedMachines(this.props.data.exploited_machines)}
         <div className="attack-report footer-text">
           To get more info about scanned and exploited machines view <Link to="/report">standard report.</Link>

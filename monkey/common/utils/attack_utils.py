@@ -10,4 +10,4 @@ class ScanStatus(Enum):
     USED = 2
 
 
-BITS_UPLOAD_STRING = "Bits job was used to upload monkey to a remote system."
+BITS_UPLOAD_STRING = {"usage": "Bits job was used to upload monkey to a remote system."}

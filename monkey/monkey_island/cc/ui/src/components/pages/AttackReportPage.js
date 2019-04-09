@@ -128,18 +128,18 @@ class AttackReportPageComponent extends AuthComponent {
 
   render() {
     let content;
-    console.log(this.state.report);
-    if (this.state.report === false){
+    if (! this.state.runStarted)
+    {
+      content =
+        <p className="alert alert-warning">
+          <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+          You have to run a monkey before generating a report!
+        </p>;
+    } else if (this.state.report === false){
         content = (<h1>Generating Report...</h1>);
     } else if (Object.keys(this.state.report).length === 0) {
       if (this.state.runStarted) {
         content = (<h1>No techniques were scanned</h1>);
-      } else {
-        content =
-          <p className="alert alert-warning">
-            <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-            You have to run a monkey before generating a report!
-          </p>;
       }
     } else {
       content = this.generateReportContent();
