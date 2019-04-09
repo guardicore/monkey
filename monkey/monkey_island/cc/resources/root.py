@@ -69,10 +69,12 @@ class Root(flask_restful.Resource):
         infection_done = NodeService.is_monkey_finished_running()
         if not infection_done:
             report_done = False
+            attack_report_done = False
         else:
             if is_any_exists:
                 ReportService.get_report()
-                AttackReportService.get_report()
+                AttackReportService.get_latest_report()
             report_done = ReportService.is_report_generated()
             attack_report_done = AttackReportService.is_report_generated()
-        return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done, report_done=report_done)
+        return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done,
+                    report_done=report_done, attack_report_done=attack_report_done)
