@@ -5,6 +5,9 @@ __author__ = 'itay.mizeretz'
 
 
 class AwsInstance(object):
+    """
+    Class which gives useful information about the current instance you're on.
+    """
     def __init__(self):
         try:
             self.instance_id = urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id', timeout=2).read()
