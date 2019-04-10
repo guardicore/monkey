@@ -417,10 +417,10 @@ class RunMonkeyPageComponent extends AuthComponent {
         </Collapse>
         {
           this.state.is_loading_aws ?
-            <div className='sweet-loading'>
+            <div className='sweet-loading center-block'>
               <ClipLoader
                 sizeUnit={"px"}
-                size={150}
+                size={30}
                 color={'#ffcc00'}
                 loading={this.state.loading}
               />
