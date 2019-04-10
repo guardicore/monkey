@@ -1,6 +1,8 @@
 import React from 'react';
 import {Button, Col, Well, Nav, NavItem, Collapse, Form, FormControl, FormGroup} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import ClipLoader from 'react-spinners/ClipLoader';
+
 import {Icon} from 'react-fa';
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
@@ -25,7 +27,8 @@ class RunMonkeyPageComponent extends AuthComponent {
       awsUpdateFailed: false,
       awsKeyId: '',
       awsSecretKey: '',
-      awsMachines: []
+      awsMachines: [],
+      is_loading_aws: true
   };
   }
 
@@ -75,7 +78,7 @@ class RunMonkeyPageComponent extends AuthComponent {
       .then(res =>{
         let is_aws = res['is_aws'];
         if (is_aws) {
-          this.setState({isOnAws: true, awsMachines: res['instances'], isAwsAuth: res['auth']});
+          this.setState({isOnAws: true, awsMachines: res['instances'], isAwsAuth: res['auth'], is_loading_aws: false});
         }
       });
   }
@@ -412,6 +415,18 @@ class RunMonkeyPageComponent extends AuthComponent {
             {this.generateCmdDiv()}
           </div>
         </Collapse>
+        {
+          this.state.is_loading_aws ?
+            <div className='sweet-loading'>
+              <ClipLoader
+                css={override}
+                sizeUnit={"px"}
+                size={150}
+                color={'#123abc'}
+                loading={this.state.loading}
+              />
+          </div> :  null
+        }
         {
           this.state.isOnAws ?
             <p className="text-center">
