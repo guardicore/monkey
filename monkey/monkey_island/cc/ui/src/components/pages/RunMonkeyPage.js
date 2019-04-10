@@ -298,7 +298,7 @@ class RunMonkeyPageComponent extends AuthComponent {
         </div>
         <div style={{'marginTop': '1em'}}>
           <p>
-            Not sure what this is? Not seeing your AWS EC2 instances? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances}">Read the documentation</a>!
+            Not sure what this is? Not seeing your AWS EC2 instances? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read the documentation</a>!
           </p>
         </div>
       </div>
@@ -420,7 +420,6 @@ class RunMonkeyPageComponent extends AuthComponent {
             {this.generateCmdDiv()}
           </div>
         </Collapse>
-        /* TODO - How to center this component? */
         {
           this.state.is_loading_aws ?
             <p style={{'marginBottom': '2em', 'align': 'center'}}>
