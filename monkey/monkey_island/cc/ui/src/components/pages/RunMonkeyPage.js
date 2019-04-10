@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Col, Well, Nav, NavItem, Collapse, Form, FormControl, FormGroup} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import ClipLoader from 'react-spinners/ClipLoader';
+import GridLoader from 'react-spinners/GridLoader';
 
 import {Icon} from 'react-fa';
 import {Link} from 'react-router-dom';
@@ -417,14 +417,17 @@ class RunMonkeyPageComponent extends AuthComponent {
         </Collapse>
         {
           this.state.is_loading_aws ?
-            <div className='sweet-loading center-block'>
-              <ClipLoader
-                sizeUnit={"px"}
-                size={30}
-                color={'#ffcc00'}
-                loading={this.state.loading}
-              />
-          </div> : null
+            <p style={{'marginBottom': '2em', 'align': 'center'}}>
+              <div className='sweet-loading center-block'>
+                <GridLoader
+                  sizeUnit={"px"}
+                  size={30}
+                  color={'#ffcc00'}
+                  loading={this.state.loading}
+                />
+              </div>
+            </p>
+             : null
         }
         {
           this.state.isOnAws ?
