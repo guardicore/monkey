@@ -1,60 +1,43 @@
 import React from 'react';
 import '../../styles/Collapse.scss'
-import {Link} from "react-router-dom";
+import ReactTable from "react-table";
 
-let renderArray = function(val) {
-  return <span>{val.map(x => <span key={x.toString()}>{x} </span>)}</span>;
-};
-
-
-let renderMachine = function (val, index, exploited=false) {
+let renderMachine = function (val) {
   return (
-    <div key={index}>
-      {renderArray(val.ip_addresses)}
-      {(val.domain_name ? " (".concat(val.domain_name, ")") : " (".concat(val.label, ")"))} :
-      {exploited ? renderArray(val.exploits) : renderArray(val.services)}
-    </div>
+    <span>{val.ip_addr} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")}</span>
   )
 };
 
+const columns = [
+  {
+    columns: [
+      {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x), style: { 'whiteSpace': 'unset' }, width: 200},
+      {Header: 'Time', id: 'time', accessor: x => x.time, style: { 'whiteSpace': 'unset' }, width: 170},
+      {Header: 'Usage', id: 'usage', accessor: x => x.usage, style: { 'whiteSpace': 'unset' }}
+      ]
+  }
+];
+
 class T1210 extends React.Component {
-
-  renderScannedMachines = (machines) => {
-    let content = [];
-    for (let i = 0; i < machines.length; i++ ){
-      if (machines[i].services.length !== 0){
-        content.push(renderMachine(machines[i], i))
-      }
-    }
-    return <div>{content}</div>;
-  };
-
-  renderExploitedMachines = (machines) => {
-    let content = [];
-    for (let i = 0; i < machines.length; i++ ){
-      if (machines[i].exploits.length !== 0){
-        content.push(renderMachine(machines[i], i, true))
-      }
-    }
-    return <div>{content}</div>;
-  };
 
   constructor(props) {
     super(props);
   }
 
   render() {
-    console.log(this.props);
     return (
-      <div>
-        <div>{this.props.data.message}</div>
-        <div>Found services: </div>
-        {this.renderScannedMachines(this.props.data.scanned_machines)}
-        <div>Successful exploiters:</div>
-        {this.renderExploitedMachines(this.props.data.exploited_machines)}
-        <div className="attack-report footer-text">
-          To get more info about scanned and exploited machines view <Link to="/report">standard report.</Link>
+      <div className="data-table-container">
+        <div>
+          <div>{this.props.data.message}</div>
+          {this.props.data.bits_jobs.length > 0 ? <div>BITS jobs were used in these machines: </div> : ''}
         </div>
+        <br/>
+        <ReactTable
+          columns={columns}
+          data={this.props.data.bits_jobs}
+          showPagination={false}
+          defaultPageSize={this.props.data.bits_jobs.length}
+        />
       </div>
     );
   }

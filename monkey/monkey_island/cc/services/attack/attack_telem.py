@@ -18,7 +18,7 @@ def set_results(technique, data):
     """
     data.update({'technique': technique})
     mongo.db.attack_results.insert(data)
-    mongo.db.attack_results.update({'name': 'latest'}, {'name': 'latest', 'timestamp': time()}, upsert=True)
+    mongo.db.attack_results.update({'name': 'latest'}, {'name': 'latest', 'time': data['time']}, upsert=True)
 
 
 def get_latest_telem():
