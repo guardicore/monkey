@@ -69,6 +69,8 @@ class AwsService(object):
     @staticmethod
     def get_instances():
         """
+        Get the information for all instances with the relevant roles.
+
         This function will assume that it's running on an EC2 instance with the correct IAM role.
         See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam-role for details.
 
