@@ -432,7 +432,10 @@ class RunMonkeyPageComponent extends AuthComponent {
         }
         <Collapse in={this.state.showAws}>
           {
-            this.state.isAwsAuth ? this.renderAuthAwsDiv() : this.renderNotAuthAwsDiv()
+            // this.state.isAwsAuth ? this.renderAuthAwsDiv() : this.renderNotAuthAwsDiv()
+            // TODO For now - assume running on machine with the required IAM roles. - This needs to be explained via
+            // the UI.
+            this.renderAuthAwsDiv()
           }
 
         </Collapse>

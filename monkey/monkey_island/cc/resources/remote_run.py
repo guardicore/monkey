@@ -24,10 +24,7 @@ class RemoteRun(flask_restful.Resource):
             is_aws = RemoteRunAwsService.is_running_on_aws()
             resp = {'is_aws': is_aws}
             if is_aws:
-                is_auth = RemoteRunAwsService.update_aws_auth_params()
-                resp['auth'] = is_auth
-                if is_auth:
-                    resp['instances'] = AwsService.get_instances()
+                resp['instances'] = AwsService.get_instances()
             return jsonify(resp)
 
         return {}
