@@ -1,4 +1,5 @@
 import boto3
+import botocore
 from botocore.exceptions import ClientError
 
 __author__ = 'itay.mizeretz'
@@ -50,14 +51,26 @@ class AwsService(object):
 
     @staticmethod
     def get_instances():
-        return \
-            [
-                {
-                    'instance_id': x['InstanceId'],
-                    'name': x['ComputerName'],
-                    'os': x['PlatformType'].lower(),
-                    'ip_address': x['IPAddress']
-                }
-                for x in AwsService.get_client('ssm').describe_instance_information()['InstanceInformationList']
-            ]
+        """
+        This function will assume that it's running on an EC2 instance with the correct IAM role.
+        See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam-role for details.
+        :return:
+        """
+        #
+        local_ssm_client = boto3.client("ssm", region_name=AwsService.region)
+        try:
+            response = local_ssm_client.describe_instance_information()
 
+            return \
+                [
+                    {
+                        'instance_id': x['InstanceId'],
+                        'name': x['ComputerName'],
+                        'os': x['PlatformType'].lower(),
+                        'ip_address': x['IPAddress']
+                    }
+                    for x in response['InstanceInformationList']
+                ]
+        except botocore.exceptions.ClientError as e:
+            print e.response + " " + e.message + " ... " + e.operation_name
+            raise e
