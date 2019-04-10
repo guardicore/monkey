@@ -271,7 +271,7 @@ class RunMonkeyPageComponent extends AuthComponent {
 
   };
 
-  renderAuthAwsDiv() {
+  renderAwsMachinesDiv() {
     return (
       <div style={{'marginBottom': '2em'}}>
         {
@@ -295,6 +295,11 @@ class RunMonkeyPageComponent extends AuthComponent {
             Run on selected machines
             { this.state.awsClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null }
           </button>
+        </div>
+        <div style={{'marginTop': '1em'}}>
+          <p>
+            Not sure what this is? Not seeing your AWS EC2 instances? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances}">Read the documentation</a>!
+          </p>
         </div>
       </div>
     )
@@ -415,10 +420,11 @@ class RunMonkeyPageComponent extends AuthComponent {
             {this.generateCmdDiv()}
           </div>
         </Collapse>
+        /* TODO - How to center this component? */
         {
           this.state.is_loading_aws ?
             <p style={{'marginBottom': '2em', 'align': 'center'}}>
-              <div className='sweet-loading center-block'>
+              <div className='sweet-loading'>
                 <GridLoader
                   sizeUnit={"px"}
                   size={30}
@@ -449,10 +455,7 @@ class RunMonkeyPageComponent extends AuthComponent {
         }
         <Collapse in={this.state.showAws}>
           {
-            // this.state.isAwsAuth ? this.renderAuthAwsDiv() : this.renderNotAuthAwsDiv()
-            // TODO For now - assume running on machine with the required IAM roles. - This needs to be explained via
-            // the UI.
-            this.renderAuthAwsDiv()
+            this.renderAwsMachinesDiv()
           }
 
         </Collapse>
