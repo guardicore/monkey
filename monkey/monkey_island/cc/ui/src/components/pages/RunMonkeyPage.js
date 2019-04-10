@@ -419,13 +419,12 @@ class RunMonkeyPageComponent extends AuthComponent {
           this.state.is_loading_aws ?
             <div className='sweet-loading'>
               <ClipLoader
-                css={override}
                 sizeUnit={"px"}
                 size={150}
-                color={'#123abc'}
+                color={'#ffcc00'}
                 loading={this.state.loading}
               />
-          </div> :  null
+          </div> : null
         }
         {
           this.state.isOnAws ?

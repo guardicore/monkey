@@ -91,6 +91,7 @@
     "react-table": "^6.8.6",
     "react-toggle": "^4.0.1",
     "redux": "^4.0.0",
-    "sha3": "^2.0.0"
+    "sha3": "^2.0.0",
+    "react-spinners": "latest"
   }
 }
