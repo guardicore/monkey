@@ -5,10 +5,12 @@ import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 import Collapse from '@kunukn/react-collapse';
 import T1210 from '../attack/T1210';
+import T1197 from '../attack/T1197';
 import '../../styles/Collapse.scss'
 
 const tech_components = {
-  'T1210': T1210
+  'T1210': T1210,
+  'T1197': T1197
 };
 
 const classNames = require('classnames');
@@ -21,7 +23,7 @@ class AttackReportPageComponent extends AuthComponent {
       report: false,
       allMonkeysAreDead: false,
       runStarted: true,
-      index: 1
+      collapseOpen: ''
     };
   }
 
@@ -54,8 +56,8 @@ class AttackReportPageComponent extends AuthComponent {
     }
   }
 
-  onToggle = index =>
-    this.setState(state => ({ index: state.index === index ? null : index }));
+  onToggle = technique =>
+    this.setState(state => ({ collapseOpen: state.collapseOpen === technique ? null : technique }));
 
   getTechniqueCollapse(tech_id){
     switch (this.state.report[tech_id].status) {
@@ -70,21 +72,21 @@ class AttackReportPageComponent extends AuthComponent {
     }
 
     return (
-      <div className={classNames("collapse-item", { "item--active": this.state.index === 1 })}>
-        <button className={classNames("btn-collapse", className)} onClick={() => this.onToggle(1)}>
+      <div key={tech_id} className={classNames("collapse-item", { "item--active": this.state.collapseOpen === tech_id })}>
+        <button className={classNames("btn-collapse", className)} onClick={() => this.onToggle(tech_id)}>
           <span>{this.state.report[tech_id].title}</span>
           <span>
-              <i className={classNames("fa", this.state.index === 1 ? "fa-chevron-down" : "fa-chevron-up")}></i>
+              <i className={classNames("fa", this.state.collapseOpen === tech_id ? "fa-chevron-down" : "fa-chevron-up")}></i>
           </span>
         </button>
         <Collapse
           className="collapse-comp"
-          isOpen={this.state.index === 1}
+          isOpen={this.state.collapseOpen === tech_id}
           onChange={({ collapseState }) => {
-            this.setState({ item1: collapseState });
+            this.setState({ tech_id: collapseState });
           }}
           onInit={({ collapseState }) => {
-            this.setState({ item1: collapseState });
+            this.setState({ tech_id: collapseState });
           }}
           render={collapseState => this.createTechniqueContent(collapseState, tech_id)}/>
       </div>
@@ -101,9 +103,10 @@ class AttackReportPageComponent extends AuthComponent {
   }
 
   generateReportContent(){
-    let content = '';
+    let content = [];
+    console.log(this.state.report);
     Object.keys(this.state.report).forEach((tech_id) => {
-      content = this.getTechniqueCollapse(tech_id)
+      content.push(this.getTechniqueCollapse(tech_id))
     });
     return (
       <div>

@@ -1,5 +1,5 @@
 import logging
-from cc.services.attack.technique_reports import T1210
+from cc.services.attack.technique_reports import T1210, T1197
 from cc.services.attack.attack_telem import get_latest_telem
 from cc.services.attack.attack_config import get_technique_values
 from cc.database import mongo
@@ -9,7 +9,8 @@ __author__ = "VakarisZ"
 
 LOG = logging.getLogger(__name__)
 
-TECHNIQUES = {'T1210': T1210}
+TECHNIQUES = {'T1210': T1210,
+              'T1197': T1197}
 
 REPORT_NAME = 'new_report'
 
@@ -44,7 +45,7 @@ class AttackReportService:
         if AttackReportService.is_report_generated():
             telem_time = get_latest_telem()
             latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
-            if telem_time and telem_time['timestamp'] == latest_report['meta']['timestamp']:
+            if telem_time and latest_report['meta'] and telem_time['time'] == latest_report['meta']['time']:
                 return latest_report
         return AttackReportService.generate_new_report()
 

@@ -6,6 +6,11 @@ __author__ = "VakarisZ"
 
 
 def technique_status(technique):
+    """
+    Gets status of certain attack technique. If
+    :param technique:
+    :return:
+    """
     if mongo.db.attack_results.find_one({'status': ScanStatus.USED.value, 'technique': technique}):
         return ScanStatus.USED
     elif mongo.db.attack_results.find_one({'status': ScanStatus.SCANNED.value, 'technique': technique}):

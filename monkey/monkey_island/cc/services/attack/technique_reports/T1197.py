@@ -1,5 +1,5 @@
 from monkey_island.cc.services.attack.technique_reports.technique_service import *
-from cc.services.report import ReportService
+from cc.database import mongo
 
 __author__ = "VakarisZ"
 
@@ -13,6 +13,13 @@ MESSAGES = {
 
 def get_report_data():
     data = get_tech_base_data(TECHNIQUE, MESSAGES)
-
-    data.update()
+    bits_results = mongo.db.attack_results.aggregate([{'$match': {'technique': TECHNIQUE}},
+                                                      {'$group': {'_id': {'ip_addr': '$machine.ip_addr', 'usage': '$usage'},
+                                                                  'ip_addr': {'$first': '$machine.ip_addr'},
+                                                                  'domain_name': {'$first': '$machine.domain_name'},
+                                                                  'usage': {'$first': '$usage'},
+                                                                  'time': {'$first': '$time'}}
+                                                       }])
+    bits_results = list(bits_results)
+    data.update({'bits_jobs': bits_results})
     return data
