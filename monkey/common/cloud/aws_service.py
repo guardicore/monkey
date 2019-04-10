@@ -6,6 +6,21 @@ from common.cloud.aws_instance import AwsInstance
 
 __author__ = 'itay.mizeretz'
 
+INSTANCE_INFORMATION_LIST_KEY = 'InstanceInformationList'
+INSTANCE_ID_KEY = 'InstanceId'
+COMPUTER_NAME_KEY = 'ComputerName'
+PLATFORM_TYPE_KEY = 'PlatformType'
+IP_ADDRESS_KEY = 'IPAddress'
+
+
+def filter_instance_data_from_aws_response(response):
+    return [{
+        'instance_id': x[INSTANCE_ID_KEY],
+        'name': x[COMPUTER_NAME_KEY],
+        'os': x[PLATFORM_TYPE_KEY].lower(),
+        'ip_address': x[IP_ADDRESS_KEY]
+    } for x in response[INSTANCE_INFORMATION_LIST_KEY]]
+
 
 class AwsService(object):
     """
@@ -56,24 +71,16 @@ class AwsService(object):
         """
         This function will assume that it's running on an EC2 instance with the correct IAM role.
         See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam-role for details.
-        :return:
+
+        :return: All visible instances from this instance
         """
-        # local_ssm_client = boto3.client("ssm", region_name=AwsService.region)
         current_instance = AwsInstance()
         local_ssm_client = boto3.client("ssm", region_name=current_instance.get_region())
         try:
             response = local_ssm_client.describe_instance_information()
 
-            return \
-                [
-                    {
-                        'instance_id': x['InstanceId'],
-                        'name': x['ComputerName'],
-                        'os': x['PlatformType'].lower(),
-                        'ip_address': x['IPAddress']
-                    }
-                    for x in response['InstanceInformationList']
-                ]
+            filtered_instances_data = filter_instance_data_from_aws_response(response)
+            return filtered_instances_data
         except botocore.exceptions.ClientError as e:
             print e.response + " " + e.message + " ... " + e.operation_name
             raise e
