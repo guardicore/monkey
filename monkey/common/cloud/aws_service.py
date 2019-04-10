@@ -59,7 +59,8 @@ class AwsService(object):
         :return:
         """
         # local_ssm_client = boto3.client("ssm", region_name=AwsService.region)
-        local_ssm_client = boto3.client("ssm", region_name=AwsInstance.get_region())
+        current_instance = AwsInstance()
+        local_ssm_client = boto3.client("ssm", region_name=current_instance.get_region())
         try:
             response = local_ssm_client.describe_instance_information()
 
