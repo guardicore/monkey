@@ -2,6 +2,8 @@ import boto3
 import botocore
 from botocore.exceptions import ClientError
 
+from common.cloud.aws_instance import AwsInstance
+
 __author__ = 'itay.mizeretz'
 
 
@@ -56,8 +58,8 @@ class AwsService(object):
         See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam-role for details.
         :return:
         """
-        #
-        local_ssm_client = boto3.client("ssm", region_name=AwsService.region)
+        # local_ssm_client = boto3.client("ssm", region_name=AwsService.region)
+        local_ssm_client = boto3.client("ssm", region_name=AwsInstance.get_region())
         try:
             response = local_ssm_client.describe_instance_information()
 
