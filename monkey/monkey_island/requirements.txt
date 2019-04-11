@@ -15,6 +15,6 @@ ipaddress
 enum34
 pycryptodome
 boto3
-awscli
-cffi
+botocore
+awsclicffi
 PyInstaller
