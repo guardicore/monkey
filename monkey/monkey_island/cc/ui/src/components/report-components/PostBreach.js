@@ -24,8 +24,8 @@ let renderPbaResults = function (results) {
 };
 
 const subColumns = [
-  {id: 'pba_name', Header: "Name", accessor: x => x.name, style: { 'white-space': 'unset' }},
-  {id: 'pba_output', Header: "Output", accessor: x => renderPbaResults(x.result), style: { 'white-space': 'unset' }}
+  {id: 'pba_name', Header: "Name", accessor: x => x.name, style: { 'whiteSpace': 'unset' }},
+  {id: 'pba_output', Header: "Output", accessor: x => renderPbaResults(x.result), style: { 'whiteSpace': 'unset' }}
 ];
 
 let renderDetails = function (data) {
