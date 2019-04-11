@@ -65,6 +65,10 @@ To deploy:
     **Compute Engine -> Compute Network Admin**
     and
     **Compute Engine -> Compute Instance Admin**
+    and
+    **Compute Engine -> Compute Security Admin**
+    and
+    **Service Account User**
     
     or
     
