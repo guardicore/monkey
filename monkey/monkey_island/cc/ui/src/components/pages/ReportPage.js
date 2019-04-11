@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Col} from 'react-bootstrap';
 import BreachedServers from 'components/report-components/BreachedServers';
 import ScannedServers from 'components/report-components/ScannedServers';
+import PostBreach from 'components/report-components/PostBreach';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/StolenPasswords';
@@ -29,7 +30,8 @@ class ReportPageComponent extends AuthComponent {
       STRUTS2: 8,
       WEBLOGIC: 9,
       HADOOP: 10,
-      PTH_CRIT_SERVICES_ACCESS: 11
+      PTH_CRIT_SERVICES_ACCESS: 11,
+      MSSQL: 12
     };
 
   Warning =
@@ -104,7 +106,7 @@ class ReportPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
-          edge.color = edgeGroupToColor(edge.group);
+          edge.color = {'color': edgeGroupToColor(edge.group)};
         });
         this.setState({graph: res});
         this.props.onStatusChange();
@@ -341,6 +343,8 @@ class ReportPageComponent extends AuthComponent {
                     <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                   {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] ?
                     <li>Mimikatz found login credentials of a user who has admin access to a server defined as critical.</li>: null }
+                  {this.state.report.overview.issues[this.Issue.MSSQL] ?
+                  <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li> : null }
                 </ul>
               </div>
               :
@@ -412,7 +416,6 @@ class ReportPageComponent extends AuthComponent {
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
         </div>
-
       </div>
     );
   }
@@ -457,6 +460,9 @@ class ReportPageComponent extends AuthComponent {
         </div>
         <div style={{marginBottom: '20px'}}>
           <BreachedServers data={this.state.report.glance.exploited}/>
+        </div>
+        <div style={{marginBottom: '20px'}}>
+          <PostBreach data={this.state.report.glance.scanned}/>
         </div>
         <div style={{marginBottom: '20px'}}>
           <ScannedServers data={this.state.report.glance.scanned}/>
@@ -867,7 +873,23 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-
+generateMSSQLIssue(issue) {
+    return(
+      <li>
+        Disable the xp_cmdshell option.
+        <CollapsibleWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="label label-danger">MSSQL exploit attack</span>.
+          <br/>
+          The attack was made possible because the target machine used an outdated MSSQL server configuration allowing
+          the usage of the xp_cmdshell command. To learn more about how to disable this feature, read <a
+           href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017">
+            Microsoft's documentation. </a>
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
 
   generateIssue = (issue) => {
     let data;
@@ -934,6 +956,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'hadoop':
         data = this.generateHadoopIssue(issue);
+        break;
+      case 'mssql':
+        data = this.generateMSSQLIssue(issue);
         break;
     }
     return data;

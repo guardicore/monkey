@@ -13,5 +13,7 @@ jsonschema
 netifaces
 ipaddress
 enum34
-PyCrypto
+pycryptodome
+boto3
+awscli
 virtualenv

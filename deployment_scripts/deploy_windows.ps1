@@ -39,7 +39,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         New-Item -ItemType directory -path $binDir
         "Bin directory added"
     }
-    
+
     # We check if python is installed
     try
     {
@@ -72,7 +72,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     "Downloading Visual C++ Compiler for Python 2.7 ..."
     $webClient.DownloadFile($VC_FOR_PYTHON27_URL, $TEMP_VC_FOR_PYTHON27_INSTALLER)
     Start-Process -Wait $TEMP_VC_FOR_PYTHON27_INSTALLER -ErrorAction Stop
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") 
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
     Remove-Item $TEMP_VC_FOR_PYTHON27_INSTALLER
 
     # Install requirements for island
@@ -86,7 +86,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
     & python -m pip install --user -r $islandRequirements
     # Install requirements for monkey
-    $monkeyRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\requirements.txt"
+    $monkeyRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\requirements_windows.txt"
     & python -m pip install --user -r $monkeyRequirements
 
     # Download mongodb

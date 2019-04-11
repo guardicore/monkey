@@ -27,31 +27,44 @@ let guardicoreLogoImage = require('../images/guardicore-logo.png');
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
-    if (this.auth.loggedIn()){
-      this.authFetch('/api')
-        .then(res => res.json())
-        .then(res => {
-          // This check is used to prevent unnecessary re-rendering
-          let isChanged = false;
-          for (let step in this.state.completedSteps) {
-            if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
-              isChanged = true;
-              break;
-            }
-          }
-          if (isChanged) {
-            this.setState({completedSteps: res['completed_steps']});
-          }
-        });
-    }
+    this.auth.loggedIn()
+      .then(res => {
+        if (this.state.isLoggedIn !== res) {
+          this.setState({
+            isLoggedIn: res
+          });
+        }
+
+        if (res) {
+          this.authFetch('/api')
+            .then(res => res.json())
+            .then(res => {
+              // This check is used to prevent unnecessary re-rendering
+              let isChanged = false;
+              for (let step in this.state.completedSteps) {
+                if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
+                  isChanged = true;
+                  break;
+                }
+              }
+              if (isChanged) {
+                this.setState({completedSteps: res['completed_steps']});
+              }
+            });
+        }
+      });
   };
 
   renderRoute = (route_path, page_component, is_exact_path = false) => {
     let render_func = (props) => {
-      if (this.auth.loggedIn()) {
-        return page_component;
-      } else {
-        return <Redirect to={{pathname: '/login'}}/>;
+      switch (this.state.isLoggedIn) {
+        case true:
+          return page_component;
+        case false:
+          return <Redirect to={{pathname: '/login'}}/>;
+        default:
+          return page_component;
+
       }
     };
 
@@ -65,14 +78,21 @@ class AppComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
+      removePBAfiles: false,
       completedSteps: {
         run_server: true,
         run_monkey: false,
         infection_done: false,
-        report_done: false
+        report_done: false,
+        isLoggedIn: undefined
       }
     };
   }
+
+  // Sets the property that indicates if we need to remove PBA files from state or not
+  setRemovePBAfiles = (rmFiles) => {
+    this.setState({removePBAfiles: rmFiles});
+  };
 
   componentDidMount() {
     this.updateStatus();

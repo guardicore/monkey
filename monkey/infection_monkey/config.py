@@ -7,8 +7,6 @@ from abc import ABCMeta
 from itertools import product
 import importlib
 
-importlib.import_module('infection_monkey', 'network')
-
 __author__ = 'itamar'
 
 GUID = str(uuid.getnode())
@@ -22,6 +20,7 @@ class Configuration(object):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
         exploit_import = importlib.import_module('infection_monkey.exploit')
+        post_breach_import = importlib.import_module('infection_monkey.post_breach')
 
         unknown_items = []
         for key, value in formatted_data.items():
@@ -35,11 +34,11 @@ class Configuration(object):
             if key == 'finger_classes':
                 class_objects = [getattr(network_import, val) for val in value]
                 setattr(self, key, class_objects)
-            elif key == 'scanner_class':
-                scanner_object = getattr(network_import, value)
-                setattr(self, key, scanner_object)
             elif key == 'exploiter_classes':
                 class_objects = [getattr(exploit_import, val) for val in value]
+                setattr(self, key, class_objects)
+            elif key == 'post_breach_actions':
+                class_objects = [getattr(post_breach_import, val) for val in value]
                 setattr(self, key, class_objects)
             else:
                 if hasattr(self, key):
@@ -133,7 +132,6 @@ class Configuration(object):
     # how many scan iterations to perform on each run
     max_iterations = 1
 
-    scanner_class = None
     finger_classes = []
     exploiter_classes = []
 
@@ -162,6 +160,10 @@ class Configuration(object):
     internet_services = ["monkey.guardicore.com", "www.google.com"]
 
     keep_tunnel_open_time = 60
+
+    # Monkey files directories
+    monkey_dir_linux = '/tmp/monkey_dir'
+    monkey_dir_windows = r'C:\Windows\Temp\monkey_dir'
 
     ###########################
     # scanners config
@@ -193,7 +195,7 @@ class Configuration(object):
                         9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
-    tcp_scan_interval = 200
+    tcp_scan_interval = 0
     tcp_scan_get_banner = True
 
     # Ping Scanner
@@ -206,8 +208,8 @@ class Configuration(object):
     skip_exploit_if_file_exist = False
 
     ms08_067_exploit_attempts = 5
-    ms08_067_remote_user_add = "Monkey_IUSER_SUPPORT"
-    ms08_067_remote_user_pass = "Password1!"
+    user_to_add = "Monkey_IUSER_SUPPORT"
+    remote_user_pass = "Password1!"
 
     # rdp exploiter
     rdp_use_vbs_download = True
@@ -267,6 +269,12 @@ class Configuration(object):
     ###########################
 
     extract_azure_creds = True
+
+    post_breach_actions = []
+    custom_PBA_linux_cmd = ""
+    custom_PBA_windows_cmd = ""
+    PBA_linux_filename = None
+    PBA_windows_filename = None
 
 
 WormConfiguration = Configuration()

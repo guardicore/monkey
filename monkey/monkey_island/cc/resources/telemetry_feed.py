@@ -31,11 +31,13 @@ class TelemetryFeed(flask_restful.Resource):
 
     @staticmethod
     def get_displayed_telemetry(telem):
+        monkey = NodeService.get_monkey_by_guid(telem['monkey_guid'])
+        default_hostname = "GUID-" + telem['monkey_guid']
         return \
             {
                 'id': telem['_id'],
                 'timestamp': telem['timestamp'].strftime('%d/%m/%Y %H:%M:%S'),
-                'hostname': NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname'],
+                'hostname': monkey.get('hostname', default_hostname) if monkey else default_hostname,
                 'brief': TELEM_PROCESS_DICT[telem['telem_type']](telem)
             }
 
@@ -52,7 +54,7 @@ class TelemetryFeed(flask_restful.Resource):
     @staticmethod
     def get_state_telem_brief(telem):
         if telem['data']['done']:
-            return 'Monkey died.'
+            return '''Monkey finishing it's execution.'''
         else:
             return 'Monkey started.'
 
@@ -78,6 +80,12 @@ class TelemetryFeed(flask_restful.Resource):
     def get_trace_telem_brief(telem):
         return 'Monkey reached max depth.'
 
+    @staticmethod
+    def get_post_breach_telem_brief(telem):
+        return '%s post breach action executed on %s (%s) machine' % (telem['data']['name'],
+                                                                      telem['data']['hostname'],
+                                                                      telem['data']['ip'])
+
 
 TELEM_PROCESS_DICT = \
     {
@@ -86,5 +94,6 @@ TELEM_PROCESS_DICT = \
         'exploit': TelemetryFeed.get_exploit_telem_brief,
         'scan': TelemetryFeed.get_scan_telem_brief,
         'system_info_collection': TelemetryFeed.get_systeminfo_telem_brief,
-        'trace': TelemetryFeed.get_trace_telem_brief
+        'trace': TelemetryFeed.get_trace_telem_brief,
+        'post_breach': TelemetryFeed.get_post_breach_telem_brief
     }

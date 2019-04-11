@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 import struct
 
 from infection_monkey.config import WormConfiguration
@@ -35,3 +36,25 @@ def utf_to_ascii(string):
     # Converts utf string to ascii. Safe to use even if string is already ascii.
     udata = string.decode("utf-8")
     return udata.encode("ascii", "ignore")
+
+
+def create_monkey_dir():
+    """
+    Creates directory for monkey and related files
+    """
+    if not os.path.exists(get_monkey_dir_path()):
+        os.mkdir(get_monkey_dir_path())
+
+
+def remove_monkey_dir():
+    """
+    Removes monkey's root directory
+    """
+    shutil.rmtree(get_monkey_dir_path(), ignore_errors=True)
+
+
+def get_monkey_dir_path():
+    if is_windows_os():
+        return WormConfiguration.monkey_dir_windows
+    else:
+        return WormConfiguration.monkey_dir_linux

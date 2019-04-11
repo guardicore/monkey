@@ -13,6 +13,7 @@ from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
 from infection_monkey.monkey import InfectionMonkey
+import infection_monkey.post_breach # dummy import for pyinstaller
 
 __author__ = 'itamar'
 
@@ -21,7 +22,7 @@ LOG = None
 LOG_CONFIG = {'version': 1,
               'disable_existing_loggers': False,
               'formatters': {'standard': {
-                  'format': '%(asctime)s [%(process)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s'},
+                  'format': '%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s'},
                              },
               'handlers': {'console': {'class': 'logging.StreamHandler',
                                        'level': 'DEBUG',

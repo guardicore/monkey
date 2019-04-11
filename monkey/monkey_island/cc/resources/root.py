@@ -10,6 +10,7 @@ from cc.services.config import ConfigService
 from cc.services.node import NodeService
 from cc.services.report import ReportService
 from cc.utils import local_ip_addresses
+from cc.services.post_breach_files import remove_PBA_files
 
 __author__ = 'Barak'
 
@@ -42,6 +43,7 @@ class Root(flask_restful.Resource):
     @staticmethod
     @jwt_required()
     def reset_db():
+        remove_PBA_files()
         # We can't drop system collections.
         [mongo.db[x].drop() for x in mongo.db.collection_names() if not x.startswith('system.')]
         ConfigService.init_config()
@@ -65,5 +67,7 @@ class Root(flask_restful.Resource):
         if not infection_done:
             report_done = False
         else:
+            if is_any_exists:
+                ReportService.get_report()
             report_done = ReportService.is_report_generated()
         return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done, report_done=report_done)
