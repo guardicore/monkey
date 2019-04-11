@@ -56,10 +56,22 @@ Requirements:
     whole network at once).
 
 To deploy:
-1.  Crete a service account for your project named
-    “your\_name-monkeyZoo-user” and download its **Service account
-    key**. Select JSON format.
-2.  Get these permissions in monkeyZoo project for your service account:
+1.  Configure service account for your project:
+
+    a. Create a service account and name it “your\_name-monkeyZoo-user” 
+    
+    b. Give these permissions to your service account:
+    
+    **Compute Engine -> Compute Network Admin**
+    and
+    **Compute Engine -> Compute Instance Admin**
+    
+    or
+    
+    **Project -> Owner**
+    
+    c. Download its **Service account key**. Select JSON format.
+2.  Get these permissions in monkeyZoo project for your service account (ask monkey developers to add them):
 
     a.  **Compute Engine -\> Compute image user**
 3.  Change configurations located in the
