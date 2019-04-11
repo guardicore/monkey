@@ -86,7 +86,9 @@ def r_set_booleans(path, value, attack_techniques, monkey_config):
         # If 'value' is a boolean value that should be set:
         if 'type' in value and value['type'] == 'boolean' and 'attack_techniques' in value:
             try:
-                set_bool_conf_val(path, should_enable_field(value['attack_techniques'], attack_techniques), monkey_config)
+                set_bool_conf_val(path,
+                                  should_enable_field(value['attack_techniques'], attack_techniques),
+                                  monkey_config)
             except KeyError:
                 # Monkey schema has a technique that is not yet implemented
                 pass
@@ -154,7 +156,7 @@ def get_technique_values():
     """
     attack_config = get_config()
     techniques = {}
-    for key, attack_type in attack_config['properties'].items():
+    for type_name, attack_type in attack_config['properties'].items():
         for key, technique in attack_type['properties'].items():
             techniques[key] = technique['value']
     return techniques
