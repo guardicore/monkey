@@ -71,3 +71,15 @@ bin
 
 # User files
 /monkey/monkey_island/cc/userUploads
+
+# MonkeyZoo
+# Network status files
+MonkeyZoo/*
+# Except
+!MonkeyZoo/main.tf
+!MonkeyZoo/variables.tf
+!MonkeyZoo/README.MD
+!MonkeyZoo/config.tf
+!MonkeyZoo/MonkeyZooDocs.pdf
+
+
