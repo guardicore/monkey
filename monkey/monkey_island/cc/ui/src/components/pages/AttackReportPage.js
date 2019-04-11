@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col, Row, TabContainer} from 'react-bootstrap';
+import {Col} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
