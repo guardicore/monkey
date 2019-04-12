@@ -1,56 +1,76 @@
 import React from 'react';
 import '../../styles/Collapse.scss'
 import {Link} from "react-router-dom";
-
-let renderArray = function(val) {
-  return <span>{val.map(x => <span key={x.toString()}> {x} </span>)}</span>;
-};
+import ReactTable from "react-table";
 
 
-let renderMachine = function (val, index, exploited=false) {
+let renderMachine = function (val) {
   return (
-    <div key={index}>
-      {renderArray(val.ip_addresses)}
-      {(val.domain_name ? " (".concat(val.domain_name, ")") : " (".concat(val.label, ")"))} :
-      {exploited ? renderArray(val.exploits) : renderArray(val.services)}
-    </div>
+    <span>{val.ip_addr} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")}</span>
   )
 };
 
+let renderPort = function (service){
+  if(service.url){
+    return service.url
+  } else {
+    return service.port
+  }
+};
+
+const columns = [
+  {
+    columns: [
+      {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x), style: { 'whiteSpace': 'unset' }, width: 200},
+      {Header: 'Time', id: 'time', accessor: x => x.time, style: { 'whiteSpace': 'unset' }, width: 170},
+      {Header: 'Port/url', id: 'port', accessor: x =>renderPort(x), style: { 'whiteSpace': 'unset' }},
+      {Header: 'Service', id: 'service', accessor: x => x.service, style: { 'whiteSpace': 'unset' }}
+      ]
+  }
+];
+
 class T1210 extends React.Component {
-
-  renderScannedMachines = (machines) => {
-    let content = [];
-    for (let i = 0; i < machines.length; i++ ){
-      if (machines[i].services.length !== 0){
-        content.push(renderMachine(machines[i], i))
-      }
-    }
-    return <div>{content}</div>;
-  };
-
-  renderExploitedMachines = (machines) => {
-    let content = [];
-    for (let i = 0; i < machines.length; i++ ){
-      if (machines[i].exploits.length !== 0){
-        content.push(renderMachine(machines[i], i, true))
-      }
-    }
-    return <div>{content}</div>;
-  };
 
   constructor(props) {
     super(props);
+  }
+
+  renderFoundServices(data) {
+    return (
+      <div>
+        <br/>
+        <div>Found services: </div>
+        <ReactTable
+            columns={columns}
+            data={data}
+            showPagination={false}
+            defaultPageSize={data.length}
+        />
+      </div>)
+  }
+
+  renderExploitedServices(data) {
+    return (
+      <div>
+        <br/>
+        <div>Exploited services: </div>
+        <ReactTable
+            columns={columns}
+            data={data}
+            showPagination={false}
+            defaultPageSize={data.length}
+        />
+      </div>)
   }
 
   render() {
     return (
       <div>
         <div>{this.props.data.message}</div>
-        {this.props.data.scanned_machines.length > 0 ? <div>Found services: </div> : ''}
-        {this.renderScannedMachines(this.props.data.scanned_machines)}
-        {this.props.data.exploited_machines.length > 0 ? <div>Successful exploiters:</div> : ''}
-        {this.renderExploitedMachines(this.props.data.exploited_machines)}
+        {this.props.data.found_services.length > 0 ?
+          this.renderFoundServices(this.props.data.found_services) : ''}
+        {this.props.data.exploited_services.length > 0 ?
+          this.renderExploitedServices(this.props.data.exploited_services) : ''}
         <div className="attack-report footer-text">
           To get more info about scanned and exploited machines view <Link to="/report">standard report.</Link>
         </div>

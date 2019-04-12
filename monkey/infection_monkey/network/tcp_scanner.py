@@ -4,6 +4,8 @@ from random import shuffle
 import infection_monkey.config
 from infection_monkey.network import HostScanner, HostFinger
 from infection_monkey.network.tools import check_tcp_ports, tcp_port_to_service
+from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
+from common.utils.attack_utils import ScanStatus
 
 __author__ = 'itamar'
 
@@ -31,6 +33,9 @@ class TcpScanner(HostScanner, HostFinger):
 
         ports, banners = check_tcp_ports(host.ip_addr, target_ports, self._config.tcp_scan_timeout / 1000.0,
                                          self._config.tcp_scan_get_banner)
+        for port in ports:
+            VictimHostTelem('T1210', ScanStatus.SCANNED.value,
+                            host, {'port': port, 'service': 'unknown(TCP)'}).send()
         for target_port, banner in izip_longest(ports, banners, fillvalue=None):
             service = tcp_port_to_service(target_port)
             host.services[service] = {}

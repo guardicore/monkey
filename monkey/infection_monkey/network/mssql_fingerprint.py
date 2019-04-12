@@ -4,6 +4,8 @@ import socket
 from infection_monkey.model.host import VictimHost
 from infection_monkey.network import HostFinger
 import infection_monkey.config
+from common.utils.attack_utils import ScanStatus
+from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
 
 __author__ = 'Maor Rayzin'
 
@@ -68,6 +70,8 @@ class MSSQLFinger(HostFinger):
         # Loop through the server data
         instances_list = data[3:].decode().split(';;')
         LOG.info('{0} MSSQL instances found'.format(len(instances_list)))
+        VictimHostTelem('T1210', ScanStatus.SCANNED.value,
+                        host, {'port': MSSQLFinger.SQL_BROWSER_DEFAULT_PORT, 'service': 'MsSQL'}).send()
         for instance in instances_list:
             instance_info = instance.split(';')
             if len(instance_info) > 1:

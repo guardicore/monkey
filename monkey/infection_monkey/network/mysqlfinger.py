@@ -5,6 +5,8 @@ import infection_monkey.config
 from infection_monkey.model.host import VictimHost
 from infection_monkey.network import HostFinger
 from infection_monkey.network.tools import struct_unpack_tracker, struct_unpack_tracker_string
+from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
+from common.utils.attack_utils import ScanStatus
 
 MYSQL_PORT = 3306
 SQL_SERVICE = 'mysqld-3306'
@@ -59,7 +61,8 @@ class MySQLFinger(HostFinger):
             host.services[SQL_SERVICE]['minor_version'] = version[1]
             host.services[SQL_SERVICE]['build_version'] = version[2]
             thread_id, curpos = struct_unpack_tracker(data, curpos, "<I")  # ignore thread id
-
+            VictimHostTelem('T1210', ScanStatus.SCANNED.value,
+                            host, {'port': MYSQL_PORT, 'service': 'MYSQL'}).send()
             # protocol parsing taken from
             # https://nmap.org/nsedoc/scripts/mysql-info.html
             if protocol == 10:

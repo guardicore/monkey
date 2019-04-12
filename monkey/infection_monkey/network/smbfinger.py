@@ -5,6 +5,8 @@ from odict import odict
 
 from infection_monkey.network import HostFinger
 from infection_monkey.model.host import VictimHost
+from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
+from common.utils.attack_utils import ScanStatus
 
 SMB_PORT = 445
 SMB_SERVICE = 'tcp-445'
@@ -150,7 +152,8 @@ class SMBFinger(HostFinger):
                     host.os['version'] = os_version
                 else:
                     host.services[SMB_SERVICE]['os-version'] = os_version
-
+                VictimHostTelem('T1210', ScanStatus.SCANNED.value,
+                                host, {'port': SMB_PORT, 'service': 'SMB'}).send()
                 return True
         except Exception as exc:
             LOG.debug("Error getting smb fingerprint: %s", exc)
