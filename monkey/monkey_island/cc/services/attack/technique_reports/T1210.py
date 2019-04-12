@@ -13,18 +13,24 @@ MESSAGES = {
 
 
 def get_report_data():
-    data = {}
-    scanned_machines = ReportService.get_scanned()
-    exploited_machines = ReportService.get_exploited()
-    data.update({'message': MESSAGES['unscanned'], 'status': ScanStatus.UNSCANNED.name})
-    for machine in scanned_machines:
-        if machine['services']:
-            data.update({'message': MESSAGES['scanned'], 'status': ScanStatus.SCANNED.name})
-    for machine in exploited_machines:
-        if machine['exploits']:
-            data.update({'message': MESSAGES['used'], 'status': ScanStatus.USED.name})
-    data.update({'technique': TECHNIQUE, 'title': technique_title(TECHNIQUE)})
-    data.update({'scanned_machines': scanned_machines})
-    data.update({'exploited_machines': exploited_machines})
+    data = get_tech_base_data(TECHNIQUE, MESSAGES)
+    found_services = get_res_by_status(ScanStatus.SCANNED.value)
+    exploited_services = get_res_by_status(ScanStatus.USED.value)
+    data.update({'found_services': found_services, 'exploited_services': exploited_services})
     return data
 
+
+def get_res_by_status(status):
+    results = mongo.db.attack_results.aggregate([{'$match': {'technique': TECHNIQUE, 'status': status}},
+                                                         {'$group': {
+                                                             '_id': {'ip_addr': '$machine.ip_addr',
+                                                                     'port': '$port',
+                                                                     'url': '$url'},
+                                                             'ip_addr': {'$first': '$machine.ip_addr'},
+                                                             'domain_name': {'$first': '$machine.domain_name'},
+                                                             'port': {'$first': '$port'},
+                                                             'url': {'$first': '$url'},
+                                                             'service': {'$last': '$service'},
+                                                             'time': {'$first': '$time'}}
+                                                         }])
+    return list(results)

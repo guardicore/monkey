@@ -1,6 +1,8 @@
 import infection_monkey.config
 from infection_monkey.network import HostFinger
 from infection_monkey.model.host import VictimHost
+from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
+from common.utils.attack_utils import ScanStatus
 import logging
 
 LOG = logging.getLogger(__name__)
@@ -40,6 +42,8 @@ class HTTPFinger(HostFinger):
                         host.services['tcp-' + port[1]]['name'] = 'http'
                         host.services['tcp-' + port[1]]['data'] = (server,ssl)
                         LOG.info("Port %d is open on host %s " % (port[0], host))
+                        VictimHostTelem('T1210', ScanStatus.SCANNED.value,
+                                        host, {'port': port[0], 'service': 'HTTP/HTTPS'}).send()
                         break  # https will be the same on the same port
                 except Timeout:
                     pass

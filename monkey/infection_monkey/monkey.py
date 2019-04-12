@@ -17,6 +17,8 @@ from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
+from common.utils.attack_utils import ScanStatus
+from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
 
 __author__ = 'itamar'
 
