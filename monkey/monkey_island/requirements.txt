@@ -1,5 +1,5 @@
 python-dateutil
-tornado
+tornado==5.1.1
 werkzeug
 jinja2
 markupsafe
@@ -16,3 +16,4 @@ enum34
 pycryptodome
 boto3
 awscli
+bson
