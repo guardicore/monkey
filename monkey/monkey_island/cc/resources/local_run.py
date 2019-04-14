@@ -10,11 +10,13 @@ from monkey_island.cc.environment.environment import env
 from monkey_island.cc.resources.monkey_download import get_monkey_executable
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.utils import local_ip_addresses
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = 'Barak'
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 def run_local_monkey():
     import platform
@@ -26,8 +28,8 @@ def run_local_monkey():
     if not result:
         return False, "OS Type not found"
 
-    monkey_path = os.path.join(os.getcwd(), 'monkey_island', 'cc', 'binaries', result['filename'])
-    target_path = os.path.join(os.getcwd(), 'monkey_island', result['filename'])
+    monkey_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'binaries', result['filename'])
+    target_path = os.path.join(MONKEY_ISLAND_ABS_PATH, result['filename'])
 
     # copy the executable to temp path (don't run the monkey from its current location as it may delete itself)
     try:
