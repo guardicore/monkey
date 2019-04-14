@@ -4,9 +4,9 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import UnknownServiceError
 
-from cc.resources.exporter import Exporter
-from cc.services.config import ConfigService
-from cc.environment.environment import load_server_configuration_from_file
+from monkey_island.cc.resources.exporter import Exporter
+from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.environment.environment import load_server_configuration_from_file
 from common.cloud.aws_instance import AwsInstance
 
 __author__ = 'maor.rayzin'

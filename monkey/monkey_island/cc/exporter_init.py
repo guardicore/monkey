@@ -1,6 +1,6 @@
-from cc.environment.environment import load_env_from_file, AWS
-from cc.report_exporter_manager import ReportExporterManager
-from cc.resources.aws_exporter import AWSExporter
+from monkey_island.cc.environment.environment import load_env_from_file, AWS
+from monkey_island.cc.report_exporter_manager import ReportExporterManager
+from monkey_island.cc.resources.aws_exporter import AWSExporter
 
 __author__ = 'maor.rayzin'
 

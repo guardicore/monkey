@@ -1,5 +1,5 @@
-from cc.environment import Environment
-import cc.auth
+from monkey_island.cc.environment import Environment
+import monkey_island.cc.auth
 
 __author__ = 'itay.mizeretz'
 
@@ -8,5 +8,5 @@ class PasswordEnvironment(Environment):
 
     def get_auth_users(self):
         return [
-            cc.auth.User(1, self.config['user'], self.config['hash'])
+            monkey_island.cc.auth.User(1, self.config['user'], self.config['hash'])
         ]

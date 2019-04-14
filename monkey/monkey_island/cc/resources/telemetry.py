@@ -7,14 +7,14 @@ import dateutil
 import flask_restful
 from flask import request
 
-from cc.auth import jwt_required
-from cc.database import mongo
-from cc.services import mimikatz_utils
-from cc.services.config import ConfigService
-from cc.services.edge import EdgeService
-from cc.services.node import NodeService
-from cc.encryptor import encryptor
-from cc.services.wmi_handler import WMIHandler
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services import mimikatz_utils
+from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.edge import EdgeService
+from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.services.wmi_handler import WMIHandler
 
 __author__ = 'Barak'
 

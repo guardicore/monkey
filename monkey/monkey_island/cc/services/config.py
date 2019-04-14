@@ -4,12 +4,12 @@ import functools
 import logging
 from jsonschema import Draft4Validator, validators
 from six import string_types
-import cc.services.post_breach_files
+import monkey_island.cc.services.post_breach_files
 
-from cc.database import mongo
-from cc.encryptor import encryptor
-from cc.environment.environment import env
-from cc.utils import local_ip_addresses
+from monkey_island.cc.database import mongo
+from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.environment.environment import env
+from monkey_island.cc.utils import local_ip_addresses
 from config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
@@ -146,7 +146,7 @@ class ConfigService:
     @staticmethod
     def update_config(config_json, should_encrypt):
         # PBA file upload happens on pba_file_upload endpoint and corresponding config options are set there
-        cc.services.post_breach_files.set_config_PBA_files(config_json)
+        monkey_island.cc.services.post_breach_files.set_config_PBA_files(config_json)
         if should_encrypt:
             try:
                 ConfigService.encrypt_config(config_json)
@@ -182,7 +182,7 @@ class ConfigService:
 
     @staticmethod
     def reset_config():
-        cc.services.post_breach_files.remove_PBA_files()
+        monkey_island.cc.services.post_breach_files.remove_PBA_files()
         config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
         ConfigService.update_config(config, should_encrypt=False)
