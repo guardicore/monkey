@@ -3,8 +3,8 @@ import json
 import flask_restful
 from flask import request, jsonify, abort
 
-from cc.auth import jwt_required
-from cc.services.config import ConfigService
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.services.config import ConfigService
 
 __author__ = 'Barak'
 
