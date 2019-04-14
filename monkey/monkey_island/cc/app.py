@@ -28,6 +28,7 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = 'Barak'
 
@@ -39,7 +40,7 @@ def serve_static_file(static_path):
     if static_path.startswith('api/'):
         raise NotFound()
     try:
-        return send_from_directory(os.path.join(os.getcwd(), 'monkey_island/cc/ui/dist'), static_path)
+        return send_from_directory(os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc/ui/dist'), static_path)
     except NotFound:
         # Because react uses various urls for same index page, this is probably the user's intention.
         if static_path == HOME_FILE:

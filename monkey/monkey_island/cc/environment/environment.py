@@ -1,9 +1,11 @@
 import json
 import logging
+import os
 
 from monkey_island.cc.environment import standard
 from monkey_island.cc.environment import aws
 from monkey_island.cc.environment import password
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = 'itay.mizeretz'
 
@@ -21,7 +23,7 @@ ENV_DICT = {
 
 
 def load_server_configuration_from_file():
-    with open('monkey_island/cc/server_config.json', 'r') as f:
+    with open(os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc/server_config.json'), 'r') as f:
         config_content = f.read()
     return json.loads(config_content)
 
