@@ -1,8 +1,8 @@
 import logging
 from dpath import util
-from cc.database import mongo
-from attack_schema import SCHEMA
-from cc.services.config import ConfigService
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.attack.attack_schema import SCHEMA
+from monkey_island.cc.services.config import ConfigService
 
 __author__ = "VakarisZ"
 

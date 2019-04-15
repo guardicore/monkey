@@ -2,8 +2,8 @@ import flask_restful
 import json
 from flask import jsonify, request
 
-from cc.auth import jwt_required
-from cc.services.attack.attack_config import *
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.services.attack.attack_config import *
 
 __author__ = "VakarisZ"
 
