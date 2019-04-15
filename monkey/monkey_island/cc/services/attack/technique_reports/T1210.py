@@ -1,5 +1,4 @@
 from monkey_island.cc.services.attack.technique_reports.technique_service import *
-from cc.services.report import ReportService
 from common.utils.attack_utils import ScanStatus
 
 __author__ = "VakarisZ"

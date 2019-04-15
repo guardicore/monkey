@@ -1,5 +1,5 @@
 from monkey_island.cc.services.attack.technique_reports.technique_service import *
-from cc.database import mongo
+from monkey_island.cc.database import mongo
 
 __author__ = "VakarisZ"
 

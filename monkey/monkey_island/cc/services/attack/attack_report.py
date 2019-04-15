@@ -1,8 +1,8 @@
 import logging
-from cc.services.attack.technique_reports import T1210, T1197
-from cc.services.attack.attack_telem import get_latest_telem
-from cc.services.attack.attack_config import get_technique_values
-from cc.database import mongo
+from monkey_island.cc.services.attack.technique_reports import T1210, T1197
+from monkey_island.cc.services.attack.attack_telem import get_latest_telem
+from monkey_island.cc.services.attack.attack_config import get_technique_values
+from monkey_island.cc.database import mongo
 
 __author__ = "VakarisZ"
 

@@ -104,7 +104,6 @@ class AttackReportPageComponent extends AuthComponent {
 
   generateReportContent(){
     let content = [];
-    console.log(this.state.report);
     Object.keys(this.state.report).forEach((tech_id) => {
       content.push(this.getTechniqueCollapse(tech_id))
     });

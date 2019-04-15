@@ -31,9 +31,9 @@ from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.resources.pba_file_upload import FileUpload
-from monkey_island.cc.resources.attack_telem import AttackTelem
-from monkey_island.cc.resources.attack_config import AttackConfiguration
-from monkey_island.cc.resources.attack_report import AttackReport
+from monkey_island.cc.resources.attack.attack_telem import AttackTelem
+from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
+from monkey_island.cc.resources.attack.attack_report import AttackReport
 
 __author__ = 'Barak'
 
