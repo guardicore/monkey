@@ -18,3 +18,4 @@ boto3
 awscli
 cffi
 PyInstaller
+virtualenv
