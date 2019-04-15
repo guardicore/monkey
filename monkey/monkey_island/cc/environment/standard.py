@@ -1,5 +1,5 @@
-import cc.auth
-from cc.environment import Environment
+import monkey_island.cc.auth
+from monkey_island.cc.environment import Environment
 
 __author__ = 'itay.mizeretz'
 
@@ -11,5 +11,5 @@ class StandardEnvironment(Environment):
 
     def get_auth_users(self):
         return [
-            cc.auth.User(1, StandardEnvironment.NO_AUTH_CREDS, StandardEnvironment.NO_AUTH_CREDS)
+            monkey_island.cc.auth.User(1, StandardEnvironment.NO_AUTH_CREDS, StandardEnvironment.NO_AUTH_CREDS)
         ]

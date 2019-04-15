@@ -5,9 +5,9 @@ import flask_restful
 from flask import request
 import flask_pymongo
 
-from cc.auth import jwt_required
-from cc.database import mongo
-from cc.services.node import NodeService
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.node import NodeService
 
 __author__ = 'itay.mizeretz'
 

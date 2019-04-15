@@ -72,8 +72,7 @@ b. Download our pre-built sambacry binaries
 
 -- Mimikatz --
 
-Mimikatz is required for the Monkey to be able to steal credentials on Windows. It's possible to either compile from sources (requires Visual Studio 2013 and up) or download the binaries from 
-You can either build them yourself or download pre-built binaries.
+Mimikatz is required for the Monkey to be able to steal credentials on Windows. It's possible to either compile binaries from source (requires Visual Studio 2013 and up) or download them from our repository.
 a. Build Mimikatz yourself
 	a.0. Building mimikatz requires Visual Studio 2013 and up
 	a.1. Clone our version of mimikatz from https://github.com/guardicore/mimikatz/tree/1.1.0
@@ -84,7 +83,7 @@ a. Build Mimikatz yourself
 		a.3.3. The zip file should be named mk32.zip/mk64.zip accordingly.
 		a.3.4. Zipping with 7zip has been tested. Other zipping software may not work.
 		
-b. Download our pre-built traceroute binaries
+b. Download our pre-built mimikatz binaries
 	b.1. Download both 32 and 64 bit zipped DLLs from https://github.com/guardicore/mimikatz/releases/tag/1.1.0
 	b.2. Place them under [code location]\infection_monkey\bin
 

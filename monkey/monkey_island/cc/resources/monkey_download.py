@@ -5,6 +5,8 @@ import os
 import flask_restful
 from flask import request, send_from_directory
 
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+
 __author__ = 'Barak'
 
 logger = logging.getLogger(__name__)
@@ -70,7 +72,7 @@ class MonkeyDownload(flask_restful.Resource):
 
     # Used by monkey. can't secure.
     def get(self, path):
-        return send_from_directory('binaries', path)
+        return send_from_directory(os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'binaries'), path)
 
     # Used by monkey. can't secure.
     def post(self):
@@ -81,7 +83,7 @@ class MonkeyDownload(flask_restful.Resource):
 
             if result:
                 # change resulting from new base path
-                real_path = os.path.join("monkey_island", "cc", 'binaries', result['filename'])
+                real_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", 'binaries', result['filename'])
                 if os.path.isfile(real_path):
                     result['size'] = os.path.getsize(real_path)
                     return result

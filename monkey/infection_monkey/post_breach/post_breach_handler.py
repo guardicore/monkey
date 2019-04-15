@@ -12,6 +12,7 @@ __author__ = 'VakarisZ'
 DIR_CHANGE_WINDOWS = 'cd %s & '
 DIR_CHANGE_LINUX = 'cd %s ; '
 
+
 class PostBreach(object):
     """
     This class handles post breach actions execution

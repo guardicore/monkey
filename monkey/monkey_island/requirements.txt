@@ -17,3 +17,6 @@ pycryptodome
 boto3
 awscli
 dpath
+bson
+cffi
+PyInstaller
