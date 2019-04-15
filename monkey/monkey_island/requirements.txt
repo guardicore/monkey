@@ -19,3 +19,4 @@ awscli
 cffi
 PyInstaller
 virtualenv
+wheel

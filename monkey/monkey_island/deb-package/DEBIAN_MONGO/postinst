@@ -9,11 +9,11 @@ pip2 install virtualenv --no-index --find-links file://$INSTALLATION_FOLDER
 virtualenv -p python2.7 ${PYTHON_FOLDER}
 
 # install pip requirements
-${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/monkey_island/pip_requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
+${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/monkey_island/requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
 
 # remove installation folder and unnecessary files
 rm -rf ${INSTALLATION_FOLDER}
-rm -f ${MONKEY_FOLDER}/monkey_island/pip_requirements.txt
+rm -f ${MONKEY_FOLDER}/monkey_island/requirements.txt
 
 ${MONKEY_FOLDER}/monkey_island/install_mongo.sh ${MONKEY_FOLDER}/monkey_island/bin/mongodb
 
