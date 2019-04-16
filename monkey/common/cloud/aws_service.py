@@ -1,3 +1,5 @@
+import logging
+
 import boto3
 import botocore
 from botocore.exceptions import ClientError
@@ -11,6 +13,9 @@ INSTANCE_ID_KEY = 'InstanceId'
 COMPUTER_NAME_KEY = 'ComputerName'
 PLATFORM_TYPE_KEY = 'PlatformType'
 IP_ADDRESS_KEY = 'IPAddress'
+
+
+logger = logging.getLogger(__name__)
 
 
 def filter_instance_data_from_aws_response(response):
@@ -74,6 +79,7 @@ class AwsService(object):
         This function will assume that it's running on an EC2 instance with the correct IAM role.
         See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam-role for details.
 
+        :raises: botocore.exceptions.ClientError if can't describe local instance information.
         :return: All visible instances from this instance
         """
         current_instance = AwsInstance()
@@ -84,5 +90,5 @@ class AwsService(object):
             filtered_instances_data = filter_instance_data_from_aws_response(response)
             return filtered_instances_data
         except botocore.exceptions.ClientError as e:
-            print e.response + " " + e.message + " ... " + e.operation_name
+            logger.info("AWS client error while trying to get instances: " + e.message)
             raise e
