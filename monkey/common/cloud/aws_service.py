@@ -6,7 +6,7 @@ from botocore.exceptions import ClientError
 
 from common.cloud.aws_instance import AwsInstance
 
-__author__ = 'itay.mizeretz'
+__author__ = ['itay.mizeretz', 'shay.nehmad']
 
 INSTANCE_INFORMATION_LIST_KEY = 'InstanceInformationList'
 INSTANCE_ID_KEY = 'InstanceId'

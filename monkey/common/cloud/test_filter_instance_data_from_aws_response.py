@@ -4,6 +4,9 @@ from aws_service import filter_instance_data_from_aws_response
 import json
 
 
+__author__ = 'shay.nehmad'
+
+
 class TestFilter_instance_data_from_aws_response(TestCase):
     def test_filter_instance_data_from_aws_response(self):
         json_response_full = """
