@@ -1,4 +1,5 @@
 import React from 'react';
+import { css } from '@emotion/core';
 import {Button, Col, Well, Nav, NavItem, Collapse, Form, FormControl, FormGroup} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import GridLoader from 'react-spinners/GridLoader';
@@ -92,6 +93,8 @@ class RunMonkeyPageComponent extends AuthComponent {
           } else {
             this.setState({isOnAws: true, awsMachines: res['instances'], isAwsAuth: res['auth'], isLoadingAws: false});
           }
+        } else {
+          this.setState({isOnAws: false, isLoadingAws: false});
         }
       });
   }
