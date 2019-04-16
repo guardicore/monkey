@@ -1,6 +1,6 @@
 import json
 
-from botocore.exceptions import NoCredentialsError
+from botocore.exceptions import NoCredentialsError, ClientError
 from flask import request, jsonify, make_response
 import flask_restful
 
@@ -30,6 +30,10 @@ class RemoteRun(flask_restful.Resource):
                     resp['instances'] = AwsService.get_instances()
                 except NoCredentialsError as e:
                     # Probably, role hasn't been defined.
+                    resp['error'] = e.message
+                    return jsonify(resp)
+                except ClientError as e:
+                    # Probably, role doesn't allow SSM.
                     resp['error'] = e.message
                     return jsonify(resp)
             return jsonify(resp)
