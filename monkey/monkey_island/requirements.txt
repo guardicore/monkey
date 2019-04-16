@@ -16,5 +16,8 @@ enum34
 pycryptodome
 boto3
 botocore
-awsclicffi
 PyInstaller
+awscli
+cffi
+virtualenv
+wheel
