@@ -3,11 +3,7 @@
 export os_version_monkey=$(cat /etc/issue)
 MONGODB_DIR=$1 # If using deb, this should be: /var/monkey/monkey_island/bin/mongodb
 
-if  [[ $os_version_monkey == "Ubuntu 14.04"* ]] ;
-then
-	echo Detected Ubuntu 14.04
-    export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1404-3.6.12.tgz"
-elif [[ $os_version_monkey == "Ubuntu 16.04"* ]] ;
+if [[ $os_version_monkey == "Ubuntu 16.04"* ]] ;
 then
 	echo Detected Ubuntu 16.04
 	export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-3.6.12.tgz"
