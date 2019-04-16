@@ -2,8 +2,8 @@ import json
 from flask import request, jsonify, make_response
 import flask_restful
 
-from cc.auth import jwt_required
-from cc.services.remote_run_aws import RemoteRunAwsService
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from common.cloud.aws_service import AwsService
 
 

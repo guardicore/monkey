@@ -1,5 +1,5 @@
 python-dateutil
-tornado
+tornado==5.1.1
 werkzeug
 jinja2
 markupsafe
@@ -9,7 +9,7 @@ flask
 Flask-Pymongo
 Flask-Restful
 Flask-JWT
-jsonschema
+jsonschema==2.6.0
 netifaces
 ipaddress
 enum34
@@ -17,3 +17,6 @@ pycryptodome
 boto3
 botocore
 awscli
+bson
+cffi
+PyInstaller

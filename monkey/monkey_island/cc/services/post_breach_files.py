@@ -1,4 +1,4 @@
-import cc.services.config
+import monkey_island.cc.services.config
 import logging
 import os
 
@@ -13,9 +13,9 @@ UPLOADS_DIR = 'monkey_island/cc/userUploads'
 
 
 def remove_PBA_files():
-    if cc.services.config.ConfigService.get_config():
-        windows_filename = cc.services.config.ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
-        linux_filename = cc.services.config.ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
+    if monkey_island.cc.services.config.ConfigService.get_config():
+        windows_filename = monkey_island.cc.services.config.ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
+        linux_filename = monkey_island.cc.services.config.ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
         if linux_filename:
             remove_file(linux_filename)
         if windows_filename:
@@ -36,8 +36,8 @@ def set_config_PBA_files(config_json):
     Sets PBA file info in config_json to current config's PBA file info values.
     :param config_json: config_json that will be modified
     """
-    if cc.services.config.ConfigService.get_config():
-        linux_filename = cc.services.config.ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
-        windows_filename = cc.services.config.ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
+    if monkey_island.cc.services.config.ConfigService.get_config():
+        linux_filename = monkey_island.cc.services.config.ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
+        windows_filename = monkey_island.cc.services.config.ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
         config_json['monkey']['behaviour']['PBA_linux_filename'] = linux_filename
         config_json['monkey']['behaviour']['PBA_windows_filename'] = windows_filename
