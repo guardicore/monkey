@@ -63,6 +63,13 @@ class RemoteRunAwsService:
         return RemoteRunAwsService.is_auth
 
     @staticmethod
+    def update_aws_region_authless():
+        """
+        Updates the AWS region without auth params (via IAM role)
+        """
+        AwsService.set_region(RemoteRunAwsService.aws_instance.region)
+
+    @staticmethod
     def get_bitness(instances):
         """
         For all given instances, checks whether they're 32 or 64 bit.
