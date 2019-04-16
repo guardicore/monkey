@@ -1,4 +1,6 @@
 import json
+
+from botocore.exceptions import NoCredentialsError
 from flask import request, jsonify, make_response
 import flask_restful
 
@@ -24,7 +26,12 @@ class RemoteRun(flask_restful.Resource):
             is_aws = RemoteRunAwsService.is_running_on_aws()
             resp = {'is_aws': is_aws}
             if is_aws:
-                resp['instances'] = AwsService.get_instances()
+                try:
+                    resp['instances'] = AwsService.get_instances()
+                except NoCredentialsError as e:
+                    # Probably, role hasn't been defined.
+                    resp['error'] = e.message
+                    return jsonify(resp)
             return jsonify(resp)
 
         return {}

@@ -8,6 +8,12 @@ import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import AwsRunTable from "../run-monkey/AwsRunTable";
 
+const loading_css_override = css`
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+`;
+
 class RunMonkeyPageComponent extends AuthComponent {
 
   constructor(props) {
@@ -28,7 +34,9 @@ class RunMonkeyPageComponent extends AuthComponent {
       awsKeyId: '',
       awsSecretKey: '',
       awsMachines: [],
-      is_loading_aws: true
+      isLoadingAws: true,
+      isErrorWhileCollectingAwsMachines: false,
+      awsMachineCollectionErrorMsg: ''
   };
   }
 
@@ -77,8 +85,13 @@ class RunMonkeyPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res =>{
         let is_aws = res['is_aws'];
+        let isErrorWhileCollectingAwsMachines = (res['error'] != null);
         if (is_aws) {
-          this.setState({isOnAws: true, awsMachines: res['instances'], isAwsAuth: res['auth'], is_loading_aws: false});
+          if (isErrorWhileCollectingAwsMachines) {
+            this.setState({isOnAws: true, isErrorWhileCollectingAwsMachines: true, awsMachineCollectionErrorMsg: res['error'], isAwsAuth: res['auth'], isLoadingAws: false});
+          } else {
+            this.setState({isOnAws: true, awsMachines: res['instances'], isAwsAuth: res['auth'], isLoadingAws: false});
+          }
         }
       });
   }
@@ -421,10 +434,11 @@ class RunMonkeyPageComponent extends AuthComponent {
           </div>
         </Collapse>
         {
-          this.state.is_loading_aws ?
+          this.state.isLoadingAws ?
             <p style={{'marginBottom': '2em', 'align': 'center'}}>
               <div className='sweet-loading'>
                 <GridLoader
+                  css={loading_css_override}
                   sizeUnit={"px"}
                   size={30}
                   color={'#ffcc00'}
@@ -454,7 +468,16 @@ class RunMonkeyPageComponent extends AuthComponent {
         }
         <Collapse in={this.state.showAws}>
           {
-            this.renderAwsMachinesDiv()
+            this.state.isErrorWhileCollectingAwsMachines ?
+              <div style={{'marginTop': '1em'}}>
+                <p>
+                  Error while collecting AWS machine data. Error message: {this.state.awsMachineCollectionErrorMsg}
+
+                  Are you sure you've set the correct role? Not sure what this is? Not seeing your AWS EC2 instances? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read the documentation</a>!
+                </p>
+              </div>
+              :
+              this.renderAwsMachinesDiv()
           }
 
         </Collapse>
