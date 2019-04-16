@@ -45,11 +45,9 @@ class RemoteRun(flask_restful.Resource):
         body = json.loads(request.data)
         resp = {}
         if body.get('type') == 'aws':
-            is_auth = RemoteRunAwsService.update_aws_auth_params()
-            resp['auth'] = is_auth
-            if is_auth:
-                result = self.run_aws_monkeys(body)
-                resp['result'] = result
+            RemoteRunAwsService.update_aws_region_authless()
+            result = self.run_aws_monkeys(body)
+            resp['result'] = result
             return jsonify(resp)
 
         # default action
