@@ -16,6 +16,9 @@ from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.windows_upgrader import WindowsUpgrader
+from infection_monkey.post_breach.post_breach_handler import PostBreach
+from common.utils.attack_utils import ScanStatus
+from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
 
 __author__ = 'itamar'
 
@@ -76,6 +79,9 @@ class InfectionMonkey(object):
             LOG.info("Monkey couldn't find server. Going down.")
             return
 
+        # Create a dir for monkey files if there isn't one
+        utils.create_monkey_dir()
+
         if WindowsUpgrader.should_upgrade():
             self._upgrading_to_64 = True
             self._singleton.unlock()
@@ -112,6 +118,8 @@ class InfectionMonkey(object):
         for action_class in WormConfiguration.post_breach_actions:
             action = action_class()
             action.act()
+
+        PostBreach().execute()
 
         if 0 == WormConfiguration.depth:
             LOG.debug("Reached max depth, shutting down")
@@ -173,9 +181,11 @@ class InfectionMonkey(object):
                 for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
                     if self.try_exploiting(machine, exploiter):
                         host_exploited = True
+                        VictimHostTelem('T1210', ScanStatus.USED.value, machine=machine).send()
                         break
                 if not host_exploited:
                     self._fail_exploitation_machines.add(machine)
+                    VictimHostTelem('T1210', ScanStatus.SCANNED.value, machine=machine).send()
                 if not self._keep_running:
                     break
 
@@ -215,6 +225,7 @@ class InfectionMonkey(object):
                 self.send_log()
             self._singleton.unlock()
 
+        utils.remove_monkey_dir()
         InfectionMonkey.self_delete()
         LOG.info("Monkey is shutting down")
 

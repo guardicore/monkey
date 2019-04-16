@@ -9,12 +9,12 @@ from enum import Enum
 
 from six import text_type
 
-from cc.database import mongo
-from cc.report_exporter_manager import ReportExporterManager
-from cc.services.config import ConfigService
-from cc.services.edge import EdgeService
-from cc.services.node import NodeService
-from cc.utils import local_ip_addresses, get_subnets
+from monkey_island.cc.database import mongo
+from monkey_island.cc.report_exporter_manager import ReportExporterManager
+from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.edge import EdgeService
+from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.utils import local_ip_addresses, get_subnets
 from pth_report import PTHReportService
 from common.network.network_range import NetworkRange
 
@@ -132,7 +132,8 @@ class ReportService:
                          (NodeService.get_displayed_node_by_id(edge['from'], True)
                           for edge in EdgeService.get_displayed_edges_by_to(node['id'], True)))),
                     'services': node['services'],
-                    'domain_name': node['domain_name']
+                    'domain_name': node['domain_name'],
+                    'pba_results': node['pba_results'] if 'pba_results' in node else 'None'
                 })
 
         logger.info('Scanned nodes generated for reporting')

@@ -163,6 +163,18 @@ body {
  * Configuration Page
  */
 
+.linux-pba-file-info, .windows-pba-file-info {
+  display: none
+}
+
+.filepond--root li {
+  overflow: visible;
+}
+
+.filepond--root * {
+  font-size: 1.04em;
+}
+
 .rjsf .form-group .form-group {
   margin-left: 2em;
 }
@@ -410,6 +422,14 @@ body {
 
 .modal-dialog {
   top: 30%;
+}
+
+.pba-danger {
+  background-color: #ffc7af;
+}
+
+.pba-success {
+  background-color: #afd2a2;
 }
 
 /* Print report styling */

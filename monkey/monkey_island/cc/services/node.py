@@ -2,10 +2,10 @@ from datetime import datetime, timedelta
 
 from bson import ObjectId
 
-import cc.services.log
-from cc.database import mongo
-from cc.services.edge import EdgeService
-from cc.utils import local_ip_addresses
+import monkey_island.cc.services.log
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.edge import EdgeService
+from monkey_island.cc.utils import local_ip_addresses
 import socket
 
 __author__ = "itay.mizeretz"
@@ -59,7 +59,7 @@ class NodeService:
         else:
             new_node["services"] = []
 
-        new_node['has_log'] = cc.services.log.LogService.log_exists(ObjectId(node_id))
+        new_node['has_log'] = monkey_island.cc.services.log.LogService.log_exists(ObjectId(node_id))
         return new_node
 
     @staticmethod
@@ -142,7 +142,8 @@ class NodeService:
                 "group": NodeService.get_monkey_group(monkey),
                 "os": NodeService.get_monkey_os(monkey),
                 "dead": monkey["dead"],
-                "domain_name": ""
+                "domain_name": "",
+                "pba_results": monkey["pba_results"] if "pba_results" in monkey else []
             }
 
     @staticmethod

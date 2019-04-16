@@ -15,6 +15,12 @@ export default class AuthService {
     return this._authFetch(url, options);
   };
 
+  jwtHeader = () => {
+    if (this._loggedIn()) {
+      return 'JWT ' + this._getToken();
+    }
+  };
+
   hashSha3(text) {
     let hash = new SHA3(512);
     hash.update(text);

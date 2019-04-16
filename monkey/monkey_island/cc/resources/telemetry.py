@@ -7,14 +7,14 @@ import dateutil
 import flask_restful
 from flask import request
 
-from cc.auth import jwt_required
-from cc.database import mongo
-from cc.services import mimikatz_utils
-from cc.services.config import ConfigService
-from cc.services.edge import EdgeService
-from cc.services.node import NodeService
-from cc.encryptor import encryptor
-from cc.services.wmi_handler import WMIHandler
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services import mimikatz_utils
+from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.edge import EdgeService
+from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.services.wmi_handler import WMIHandler
 
 __author__ = 'Barak'
 
@@ -257,6 +257,11 @@ class Telemetry(flask_restful.Resource):
                 if len(credential) > 0:
                     attempts[i][field] = encryptor.enc(credential.encode('utf-8'))
 
+    @staticmethod
+    def process_post_breach_telemetry(telemetry_json):
+        mongo.db.monkey.update(
+            {'guid': telemetry_json['monkey_guid']},
+            {'$push': {'pba_results': telemetry_json['data']}})
 
 TELEM_PROCESS_DICT = \
     {
@@ -265,5 +270,6 @@ TELEM_PROCESS_DICT = \
         'exploit': Telemetry.process_exploit_telemetry,
         'scan': Telemetry.process_scan_telemetry,
         'system_info_collection': Telemetry.process_system_info_telemetry,
-        'trace': Telemetry.process_trace_telemetry
+        'trace': Telemetry.process_trace_telemetry,
+        'post_breach': Telemetry.process_post_breach_telemetry
     }

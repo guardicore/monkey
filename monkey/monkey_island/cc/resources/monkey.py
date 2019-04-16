@@ -5,9 +5,9 @@ import dateutil.parser
 from flask import request
 import flask_restful
 
-from cc.database import mongo
-from cc.services.config import ConfigService
-from cc.services.node import NodeService
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.node import NodeService
 
 __author__ = 'Barak'
 
