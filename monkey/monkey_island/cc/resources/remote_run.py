@@ -50,6 +50,9 @@ class RemoteRun(flask_restful.Resource):
             if is_auth:
                 result = self.run_aws_monkeys(body)
                 resp['result'] = result
+            else:
+                result = self.run_aws_monkeys(body)
+                resp['result'] = result
             return jsonify(resp)
 
         # default action
