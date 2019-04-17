@@ -520,3 +520,8 @@ body {
 .attack-matrix .messages {
   margin-bottom: 30px;
 }
+
+.attack-legend {
+  text-align: center;
+  margin-bottom: 20px;
+}
