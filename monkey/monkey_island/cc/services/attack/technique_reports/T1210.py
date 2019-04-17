@@ -12,24 +12,35 @@ MESSAGES = {
 
 
 def get_report_data():
-    data = get_tech_base_data(TECHNIQUE, MESSAGES)
-    found_services = get_res_by_status(ScanStatus.SCANNED.value)
-    exploited_services = get_res_by_status(ScanStatus.USED.value)
-    data.update({'found_services': found_services, 'exploited_services': exploited_services})
+    data = {'title': technique_title(TECHNIQUE)}
+    scanned_services = get_scanned_services()
+    exploited_services = get_exploited_services()
+    if exploited_services:
+        data.update({'status': ScanStatus.USED.name, 'message': MESSAGES['used']})
+    elif scanned_services:
+        data.update({'status': ScanStatus.SCANNED.name, 'message': MESSAGES['scanned']})
+    else:
+        data.update({'status': ScanStatus.UNSCANNED.name, 'message': MESSAGES['unscanned']})
+    data.update({'scanned_services': scanned_services, 'exploited_services': exploited_services})
     return data
 
 
-def get_res_by_status(status):
-    results = mongo.db.attack_results.aggregate([{'$match': {'technique': TECHNIQUE, 'status': status}},
-                                                         {'$group': {
-                                                             '_id': {'ip_addr': '$machine.ip_addr',
-                                                                     'port': '$port',
-                                                                     'url': '$url'},
-                                                             'ip_addr': {'$first': '$machine.ip_addr'},
-                                                             'domain_name': {'$first': '$machine.domain_name'},
-                                                             'port': {'$first': '$port'},
-                                                             'url': {'$first': '$url'},
-                                                             'service': {'$last': '$service'},
-                                                             'time': {'$first': '$time'}}
-                                                         }])
+def get_scanned_services():
+    results = mongo.db.telemetry.aggregate([{'$match': {'telem_type': 'scan'}},
+                                            {'$group': {
+                                                '_id': {'ip_addr': '$data.machine.ip_addr',
+                                                        'services': '$data.machine.services'
+                                                        },
+                                                'machine': {'$first': '$data.machine'}}}])
+    return list(results)
+
+
+def get_exploited_services():
+    results = mongo.db.telemetry.aggregate([{'$match': {'telem_type': 'exploit', 'data.result': True}},
+                                            {'$group': {
+                                                '_id': {'ip_addr': '$data.machine.ip_addr',
+                                                        'info': '$data.info'
+                                                        },
+                                                'service': {'$first': '$data.info.exploited_service'},
+                                                'machine': {'$first': '$data.machine'}}}])
     return list(results)

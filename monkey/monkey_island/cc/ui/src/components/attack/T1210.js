@@ -10,21 +10,26 @@ let renderMachine = function (val) {
   )
 };
 
-let renderPort = function (service){
-  if(service.url){
-    return service.url
-  } else {
-    return service.port
+let formatScanned = function (data){
+  let result = [];
+  for(let service in data.machine.services){
+    let scanned_service = {'machine': data.machine,
+                           'service': {'endpoint': data.machine.services[service].endpoint,
+                                       'name': data.machine.services[service].display_name,
+                                       'time': data.machine.services[service].time}};
+    result.push(scanned_service)
   }
+  return result
 };
 
 const columns = [
   {
     columns: [
-      {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x), style: { 'whiteSpace': 'unset' }, width: 200},
-      {Header: 'Time', id: 'time', accessor: x => x.time, style: { 'whiteSpace': 'unset' }, width: 170},
-      {Header: 'Port/url', id: 'port', accessor: x =>renderPort(x), style: { 'whiteSpace': 'unset' }},
-      {Header: 'Service', id: 'service', accessor: x => x.service, style: { 'whiteSpace': 'unset' }}
+      {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
+        style: { 'whiteSpace': 'unset' }, width: 200},
+      {Header: 'Time', id: 'time', accessor: x => x.service.time, style: { 'whiteSpace': 'unset' }, width: 170},
+      {Header: 'Port/url', id: 'port', accessor: x =>x.service.endpoint, style: { 'whiteSpace': 'unset' }},
+      {Header: 'Service', id: 'service', accessor: x => x.service.name, style: { 'whiteSpace': 'unset' }}
       ]
   }
 ];
@@ -35,7 +40,7 @@ class T1210 extends React.Component {
     super(props);
   }
 
-  renderFoundServices(data) {
+  renderScannedServices(data) {
     return (
       <div>
         <br/>
@@ -64,11 +69,14 @@ class T1210 extends React.Component {
   }
 
   render() {
+    let scanned_services = this.props.data.scanned_services.map(formatScanned).flat();
+    console.log(scanned_services);
+    console.log(this.props.data);
     return (
       <div>
         <div>{this.props.data.message}</div>
-        {this.props.data.found_services.length > 0 ?
-          this.renderFoundServices(this.props.data.found_services) : ''}
+        {scanned_services.length > 0 ?
+          this.renderScannedServices(scanned_services) : ''}
         {this.props.data.exploited_services.length > 0 ?
           this.renderExploitedServices(this.props.data.exploited_services) : ''}
         <div className="attack-report footer-text">

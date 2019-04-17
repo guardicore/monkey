@@ -13,6 +13,9 @@ BANNER_READ = 1024
 
 
 class TcpScanner(HostScanner, HostFinger):
+
+    _SCANNED_SERVICE = 'unknown(TCP)'
+
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
 
@@ -33,12 +36,10 @@ class TcpScanner(HostScanner, HostFinger):
 
         ports, banners = check_tcp_ports(host.ip_addr, target_ports, self._config.tcp_scan_timeout / 1000.0,
                                          self._config.tcp_scan_get_banner)
-        for port in ports:
-            VictimHostTelem('T1210', ScanStatus.SCANNED.value,
-                            host, {'port': port, 'service': 'unknown(TCP)'}).send()
         for target_port, banner in izip_longest(ports, banners, fillvalue=None):
             service = tcp_port_to_service(target_port)
             host.services[service] = {}
+            host.services[service].update(self.format_service_info(port=target_port))
             if banner:
                 host.services[service]['banner'] = banner
             if only_one_port:

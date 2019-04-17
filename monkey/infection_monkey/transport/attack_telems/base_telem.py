@@ -3,7 +3,7 @@ import requests
 import json
 from infection_monkey.control import ControlClient
 import logging
-import datetime
+from infection_monkey.utils import get_current_time_string
 
 __author__ = "VakarisZ"
 
@@ -21,7 +21,7 @@ class AttackTelem(object):
         """
         self.technique = technique
         self.result = status
-        self.data = {'status': status, 'id': GUID, 'time': AttackTelem.get_current_time_string()}
+        self.data = {'status': status, 'id': GUID, 'time': get_current_time_string()}
         if data:
             self.data.update(data)
 
@@ -40,13 +40,3 @@ class AttackTelem(object):
         except Exception as exc:
             LOG.warn("Error connecting to control server %s: %s",
                      WormConfiguration.current_server, exc)
-
-    @staticmethod
-    def get_current_time_string():
-        time = datetime.datetime.now()
-        return "%s-%s-%s %s:%s:%s" % (time.date().year,
-                                      time.date().month,
-                                      time.date().day,
-                                      time.time().hour,
-                                      time.time().minute,
-                                      time.time().second)

@@ -8,8 +8,6 @@ from requests.exceptions import Timeout, ConnectionError
 import infection_monkey.config
 from infection_monkey.model.host import VictimHost
 from infection_monkey.network import HostFinger
-from common.utils.attack_utils import ScanStatus
-from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
 
 ES_PORT = 9200
 ES_SERVICE = 'elastic-search-9200'
@@ -22,6 +20,7 @@ class ElasticFinger(HostFinger):
     """
         Fingerprints elastic search clusters, only on port 9200
     """
+    _SCANNED_SERVICE = 'Elastic search'
 
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
@@ -41,8 +40,7 @@ class ElasticFinger(HostFinger):
                 host.services[ES_SERVICE]['cluster_name'] = data['cluster_name']
                 host.services[ES_SERVICE]['name'] = data['name']
                 host.services[ES_SERVICE]['version'] = data['version']['number']
-                VictimHostTelem('T1210', ScanStatus.SCANNED.value,
-                                host, {'port': ES_PORT, 'service': 'Elastic'}).send()
+                host.services[ES_SERVICE].update(self.format_service_info(url=url))
                 return True
         except Timeout:
             LOG.debug("Got timeout while trying to read header information")

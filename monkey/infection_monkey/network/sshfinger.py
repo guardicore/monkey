@@ -4,8 +4,6 @@ import infection_monkey.config
 from infection_monkey.model.host import VictimHost
 from infection_monkey.network import HostFinger
 from infection_monkey.network.tools import check_tcp_port
-from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
-from common.utils.attack_utils import ScanStatus
 
 SSH_PORT = 22
 SSH_SERVICE_DEFAULT = 'tcp-22'
@@ -16,6 +14,8 @@ LINUX_DIST_SSH = ['ubuntu', 'debian']
 
 
 class SSHFinger(HostFinger):
+    _SCANNED_SERVICE = 'SSH'
+
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
         self._banner_regex = re.compile(SSH_REGEX, re.IGNORECASE)
@@ -51,8 +51,7 @@ class SSHFinger(HostFinger):
                 host.services[SSH_SERVICE_DEFAULT]['banner'] = banner
                 if self._banner_regex.search(banner):
                     self._banner_match(SSH_SERVICE_DEFAULT, host, banner)
-                VictimHostTelem('T1210', ScanStatus.SCANNED.value,
-                                host, {'port': SSH_PORT, 'service': 'SSH'}).send()
+                host.services[SSH_SERVICE_DEFAULT].update(self.format_service_info(port=SSH_PORT))
                 return True
 
         return False

@@ -4,8 +4,6 @@ import socket
 from infection_monkey.model.host import VictimHost
 from infection_monkey.network import HostFinger
 import infection_monkey.config
-from common.utils.attack_utils import ScanStatus
-from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
 
 __author__ = 'Maor Rayzin'
 
@@ -18,7 +16,7 @@ class MSSQLFinger(HostFinger):
     SQL_BROWSER_DEFAULT_PORT = 1434
     BUFFER_SIZE = 4096
     TIMEOUT = 5
-    SERVICE_NAME = 'MSSQL'
+    _SCANNED_SERVICE = 'MSSQL'
 
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
@@ -65,22 +63,20 @@ class MSSQLFinger(HostFinger):
             sock.close()
             return False
 
-        host.services[self.SERVICE_NAME] = {}
+        host.services[self._SCANNED_SERVICE] = {}
 
         # Loop through the server data
         instances_list = data[3:].decode().split(';;')
         LOG.info('{0} MSSQL instances found'.format(len(instances_list)))
-        VictimHostTelem('T1210', ScanStatus.SCANNED.value,
-                        host, {'port': MSSQLFinger.SQL_BROWSER_DEFAULT_PORT, 'service': 'MsSQL'}).send()
         for instance in instances_list:
             instance_info = instance.split(';')
             if len(instance_info) > 1:
-                host.services[self.SERVICE_NAME][instance_info[1]] = {}
+                host.services[self._SCANNED_SERVICE][instance_info[1]] = {}
                 for i in range(1, len(instance_info), 2):
                     # Each instance's info is nested under its own name, if there are multiple instances
                     # each will appear under its own name
-                    host.services[self.SERVICE_NAME][instance_info[1]][instance_info[i - 1]] = instance_info[i]
-
+                    host.services[self._SCANNED_SERVICE][instance_info[1]][instance_info[i - 1]] = instance_info[i]
+        host.services[self._SCANNED_SERVICE].update(self.format_service_info(port=MSSQLFinger.SQL_BROWSER_DEFAULT_PORT))
         # Close the socket
         sock.close()
 
