@@ -404,15 +404,17 @@ class ReportPageComponent extends AuthComponent {
   generateReportRecommendationsSection() {
     return (
       <div id="recommendations">
-        <h3>
-          Domain related recommendations
-        </h3>
+        {/* Checks if there are any domain issues. If there are more then one: render the title. Otherwise,
+         * don't render it (since the issues themselves will be empty. */}
+        {Object.keys(this.state.report.recommendations.domain_issues).length !== 0 ?
+                     <h3>Domain related recommendations</h3> : null }
         <div>
           {this.generateIssues(this.state.report.recommendations.domain_issues)}
         </div>
-        <h3>
-          Machine related Recommendations
-        </h3>
+        {/* Checks if there are any issues. If there are more then one: render the title. Otherwise,
+         * don't render it (since the issues themselves will be empty. */}
+        {Object.keys(this.state.report.recommendations.issues).length !== 0 ?
+          <h3>Machine related recommendations</h3> : null }
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
         </div>
