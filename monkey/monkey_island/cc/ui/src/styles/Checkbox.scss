@@ -1,7 +1,7 @@
 // colors
 $light-grey: #EAF4F4;
 $medium-grey: #7B9EA8;
-$dark-grey: #7a7d7b;
+$dark-green: #007d02;
 $green: #44CF6C;
 $black: #000000;
 
@@ -34,13 +34,12 @@ $black: #000000;
 	}
 
   &.blocked {
-    background-color: $dark-grey;
-		color: $black;
-		fill: $black;
+    background-color: $dark-green;
+		color: $light-grey;
+		fill: $light-grey;
   }
 
 	&.is-checked {
-		border: 1px solid $green;
 		background-color: $green;
 		color: white;
 		fill: white;
@@ -91,4 +90,16 @@ $black: #000000;
 		transition-duration: .35s;
 		background-color: rgba(white, .08);
 	}
+}
+
+.icon-checked{
+  color:$green
+}
+
+.icon-mandatory{
+  color:$dark-green
+}
+
+.icon-unchecked{
+  color:$black;
 }
