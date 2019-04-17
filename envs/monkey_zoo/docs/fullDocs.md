@@ -719,18 +719,17 @@ fullTest.conf is a good config to start, because it covers all machines.
 </tr>
 <tr class="even">
 <td>Server’s config:</td>
-<td><p>xp_cmdshell feature enabled in MSSQL server</p>
-<p>Server’s creds (sa): admin, }8Ys#"</p></td>
+<td><p>xp_cmdshell feature enabled in MSSQL server</p></td>
 </tr>
 <tr class="odd">
+<td>SQL server auth. creds:</td>
+<td><p>m0nk3y : Xk8VDTsC</p></td>
+</tr>
+<tr class="even">
 <td>Notes:</td>
 <td><p>Enabled SQL server browser service</p>
 <p><a href="https://docs.microsoft.com/en-us/sql/relational-databases/lesson-2-connecting-from-another-computer?view=sql-server-2017">Enabled remote connections</a></p>
 <p><a href="https://support.plesk.com/hc/en-us/articles/213397429-How-to-change-a-password-for-the-sa-user-in-MS-SQL-">Changed default password</a></p></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
 </tr>
 </tbody>
 </table>
