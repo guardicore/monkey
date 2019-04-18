@@ -313,7 +313,8 @@ class RunMonkeyPageComponent extends AuthComponent {
           </button>
         </div>
         <div style={{'marginTop': '1em'}}>
-          <p>
+          <p className="alert alert-info">
+            <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
             Not sure what this is? Not seeing your AWS EC2 instances? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read the documentation</a>!
           </p>
         </div>
