@@ -475,6 +475,7 @@ class RunMonkeyPageComponent extends AuthComponent {
             this.state.isErrorWhileCollectingAwsMachines ?
               <div style={{'marginTop': '1em'}}>
                 <p class="alert alert-warning">
+                  <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
                   Error while collecting AWS machine data. Error message: <code>{this.state.awsMachineCollectionErrorMsg}</code><br/>
                   Are you sure you've set the correct role on your Island AWS machine?<br/>
                   Not sure what this is? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read the documentation</a>!
