@@ -1,5 +1,4 @@
-from abc import ABCMeta, abstractmethod
-from infection_monkey.utils import get_current_time_string
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 __author__ = 'itamar'
 
@@ -15,21 +14,23 @@ class HostScanner(object):
 class HostFinger(object):
     __metaclass__ = ABCMeta
 
-    _SCANNED_SERVICE = ''
+    @abstractproperty
+    def _SCANNED_SERVICE(self):
+        pass
 
-    def format_service_info(self, port=None, url=None):
-        if port:
-            service_endpoint = port
-        elif url:
-            service_endpoint = url
+    def init_service(self, services, service_key):
+        services[service_key] = {}
+        services[service_key]['display_name'] = self._SCANNED_SERVICE
+
+    def add_found_port(self, services, port, key=None):
+        if key:
+            services[key]['port'] = port
         else:
-            raise NotImplementedError("You must pass either port or url to get formatted service info.")
-        if not self._SCANNED_SERVICE:
-            raise NotImplementedError("You must override _SCANNED_SERVICE property"
-                                      " to name what service is being scanned.")
-        return {'display_name': self._SCANNED_SERVICE,
-                'endpoint': service_endpoint,
-                'time': get_current_time_string()}
+            for service in services:
+                if services[service]['display_name'] == self._SCANNED_SERVICE:
+                    service[service]['port'] = port
+                    return
+            raise KeyError
 
     @abstractmethod
     def get_host_fingerprint(self, host):

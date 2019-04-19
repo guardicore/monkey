@@ -114,7 +114,7 @@ class SMBFinger(HostFinger):
             s.settimeout(0.7)
             s.connect((host.ip_addr, SMB_PORT))
 
-            host.services[SMB_SERVICE] = {}
+            self.init_service(host.services, SMB_SERVICE)
 
             h = SMBHeader(cmd="\x72", flag1="\x18", flag2="\x53\xc8")
             n = SMBNego(data=SMBNegoFingerData())
@@ -152,7 +152,7 @@ class SMBFinger(HostFinger):
                     host.os['version'] = os_version
                 else:
                     host.services[SMB_SERVICE]['os-version'] = os_version
-                host.services[SMB_SERVICE].update(self.format_service_info(port=SMB_PORT))
+                self.add_found_port(host.services, SMB_PORT)
                 return True
         except Exception as exc:
             LOG.debug("Error getting smb fingerprint: %s", exc)

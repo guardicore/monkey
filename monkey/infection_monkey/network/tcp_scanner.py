@@ -38,8 +38,8 @@ class TcpScanner(HostScanner, HostFinger):
                                          self._config.tcp_scan_get_banner)
         for target_port, banner in izip_longest(ports, banners, fillvalue=None):
             service = tcp_port_to_service(target_port)
-            host.services[service] = {}
-            host.services[service].update(self.format_service_info(port=target_port))
+            self.init_service(host.services, service)
+            self.add_found_port(host.services, target_port, key=service)
             if banner:
                 host.services[service]['banner'] = banner
             if only_one_port:

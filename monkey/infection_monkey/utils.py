@@ -58,12 +58,3 @@ def get_monkey_dir_path():
         return WormConfiguration.monkey_dir_windows
     else:
         return WormConfiguration.monkey_dir_linux
-
-def get_current_time_string():
-    time = datetime.datetime.now()
-    return "%s-%s-%s %s:%s:%s" % (time.date().year,
-                                  time.date().month,
-                                  time.date().day,
-                                  time.time().hour,
-                                  time.time().minute,
-                                  time.time().second)

@@ -51,14 +51,14 @@ class MySQLFinger(HostFinger):
 
             version, curpos = struct_unpack_tracker_string(data, curpos)  # special coded to solve string parsing
             version = version[0]
-            host.services[SQL_SERVICE] = {}
+            self.init_service(host.services, SQL_SERVICE)
             host.services[SQL_SERVICE]['version'] = version
             version = version.split('-')[0].split('.')
             host.services[SQL_SERVICE]['major_version'] = version[0]
             host.services[SQL_SERVICE]['minor_version'] = version[1]
             host.services[SQL_SERVICE]['build_version'] = version[2]
             thread_id, curpos = struct_unpack_tracker(data, curpos, "<I")  # ignore thread id
-            host.services[SQL_SERVICE].update(self.format_service_info(port=MYSQL_PORT))
+            self.add_found_port(host.services, MYSQL_PORT)
             # protocol parsing taken from
             # https://nmap.org/nsedoc/scripts/mysql-info.html
             if protocol == 10:

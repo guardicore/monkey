@@ -20,6 +20,9 @@ LOG = logging.getLogger(__name__)
 
 
 class PingScanner(HostScanner, HostFinger):
+
+    _SCANNED_SERVICE = ''
+
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
         self._devnull = open(os.devnull, "w")

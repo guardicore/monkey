@@ -27,20 +27,19 @@ def get_report_data():
 
 def get_scanned_services():
     results = mongo.db.telemetry.aggregate([{'$match': {'telem_type': 'scan'}},
-                                            {'$group': {
-                                                '_id': {'ip_addr': '$data.machine.ip_addr',
-                                                        'services': '$data.machine.services'
-                                                        },
-                                                'machine': {'$first': '$data.machine'}}}])
+                                           {'$sort': {'data.service_count': -1}},
+                                           {'$group': {
+                                                '_id': {'ip_addr': '$data.machine.ip_addr'},
+                                                'machine': {'$first': '$data.machine'},
+                                                'time': {'$first': '$timestamp'}}}])
     return list(results)
 
 
 def get_exploited_services():
     results = mongo.db.telemetry.aggregate([{'$match': {'telem_type': 'exploit', 'data.result': True}},
                                             {'$group': {
-                                                '_id': {'ip_addr': '$data.machine.ip_addr',
-                                                        'info': '$data.info'
-                                                        },
-                                                'service': {'$first': '$data.info.exploited_service'},
-                                                'machine': {'$first': '$data.machine'}}}])
+                                                '_id': {'ip_addr': '$data.machine.ip_addr'},
+                                                'service': {'$first': '$data.info'},
+                                                'machine': {'$first': '$data.machine'},
+                                                'time': {'$first': '$timestamp'}}}])
     return list(results)

@@ -3,7 +3,6 @@ import requests
 import json
 from infection_monkey.control import ControlClient
 import logging
-from infection_monkey.utils import get_current_time_string
 
 __author__ = "VakarisZ"
 
@@ -21,7 +20,7 @@ class AttackTelem(object):
         """
         self.technique = technique
         self.result = status
-        self.data = {'status': status, 'id': GUID, 'time': get_current_time_string()}
+        self.data = {'status': status, 'id': GUID}
         if data:
             self.data.update(data)
 

@@ -40,18 +40,19 @@ class SSHFinger(HostFinger):
             banner = data.get('banner', '')
             if self._banner_regex.search(banner):
                 self._banner_match(name, host, banner)
+                host.services[SSH_SERVICE_DEFAULT]['display_name'] = self._SCANNED_SERVICE
                 return
 
         is_open, banner = check_tcp_port(host.ip_addr, SSH_PORT, TIMEOUT, True)
 
         if is_open:
-            host.services[SSH_SERVICE_DEFAULT] = {}
+            self.init_service(host.services, SSH_SERVICE_DEFAULT)
 
             if banner:
                 host.services[SSH_SERVICE_DEFAULT]['banner'] = banner
                 if self._banner_regex.search(banner):
                     self._banner_match(SSH_SERVICE_DEFAULT, host, banner)
-                host.services[SSH_SERVICE_DEFAULT].update(self.format_service_info(port=SSH_PORT))
+                self.add_found_port(host.services, SSH_PORT)
                 return True
 
         return False

@@ -36,11 +36,11 @@ class ElasticFinger(HostFinger):
             url = 'http://%s:%s/' % (host.ip_addr, ES_PORT)
             with closing(requests.get(url, timeout=ES_HTTP_TIMEOUT)) as req:
                 data = json.loads(req.text)
-                host.services[ES_SERVICE] = {}
+                self.init_service(host.services, ES_SERVICE)
                 host.services[ES_SERVICE]['cluster_name'] = data['cluster_name']
                 host.services[ES_SERVICE]['name'] = data['name']
                 host.services[ES_SERVICE]['version'] = data['version']['number']
-                host.services[ES_SERVICE].update(self.format_service_info(url=url))
+                self.add_found_port(host.services, ES_PORT)
                 return True
         except Timeout:
             LOG.debug("Got timeout while trying to read header information")
