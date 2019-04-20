@@ -46,13 +46,7 @@ let parseTechniques = function (data, maxLen) {
 class MatrixComponent extends AuthComponent {
   constructor(props) {
     super(props);
-    // Copy ATT&CK configuration and parse it for ATT&CK matrix table
-    let configCopy = JSON.parse(JSON.stringify(this.props.configuration));
-    this.state = {lastAction: 'none',
-                  configData: this.props.configuration,
-                  maxTechniques: findMaxTechniques(Object.values(configCopy))};
-    this.state.matrixTableData = parseTechniques(Object.values(configCopy), this.state.maxTechniques);
-    this.state.columns = this.getColumns(this.state.matrixTableData)
+    this.state = this.getStateFromConfig(this.props.configuration, 'none');
   };
 
   getColumns(matrixData) {
@@ -68,7 +62,7 @@ class MatrixComponent extends AuthComponent {
 
   renderTechnique(technique) {
     if (technique == null){
-      return (<div></div>)
+      return (<div />)
     } else {
       return (<Tooltip content={technique.description} direction="down">
                 <Checkbox checked={technique.value}
@@ -119,17 +113,21 @@ class MatrixComponent extends AuthComponent {
 
   // Updates state based on values in config supplied.
   updateStateFromConfig = (config, lastAction = '') => {
+    this.setState(this.getStateFromConfig(config, lastAction));
+  };
+
+  getStateFromConfig = (config, lastAction) => {
     let configCopy = JSON.parse(JSON.stringify(config));
     let maxTechniques = findMaxTechniques(Object.values(configCopy));
     let matrixTableData = parseTechniques(Object.values(configCopy), maxTechniques);
     let columns = this.getColumns(matrixTableData);
-    this.setState({
+    return {
       lastAction: lastAction,
       configData: config,
       maxTechniques: maxTechniques,
       matrixTableData: matrixTableData,
       columns: columns
-    });
+    };
   };
 
   // Handles change in technique, when user toggles it

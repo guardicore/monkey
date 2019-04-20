@@ -1,7 +1,7 @@
 import '../../styles/Checkbox.scss'
 import React from 'react';
 
-class Checkbox extends React.PureComponent {
+class CheckboxComponent extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.checked !== prevProps.checked) {
@@ -20,7 +20,7 @@ class Checkbox extends React.PureComponent {
 		this.ping = this.ping.bind(this);
 		this.composeStateClasses = this.composeStateClasses.bind(this);
 	}
-	
+
 	toggleChecked() {
 		if (this.state.isAnimating) return false;
 		this.setState({
@@ -63,4 +63,4 @@ class Checkbox extends React.PureComponent {
 	}
 }
 
-export default Checkbox;
+export default CheckboxComponent;
