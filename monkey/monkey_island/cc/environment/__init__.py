@@ -37,6 +37,21 @@ class Environment(object):
         h.update(secret)
         return h.hexdigest()
 
+    def get_deployment(self):
+        return self._get_from_config('deployment', 'unknown')
+
+    def is_develop(self):
+        return self.get_deployment() == 'develop'
+
+    def get_version(self):
+        return self._get_from_config('monkey_version', 'unknown') + ('-dev' if self.is_develop() else '')
+
+    def _get_from_config(self, key, default_value=None):
+        val = default_value
+        if self.config is not None:
+            val = self.config.get(key, val)
+        return val
+
     @abc.abstractmethod
     def get_auth_users(self):
         return
