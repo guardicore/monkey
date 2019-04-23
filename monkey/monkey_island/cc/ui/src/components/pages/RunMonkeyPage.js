@@ -290,6 +290,12 @@ class RunMonkeyPageComponent extends AuthComponent {
   renderAwsMachinesDiv() {
     return (
       <div style={{'marginBottom': '2em'}}>
+        <div style={{'marginTop': '1em', 'marginBottom': '1em'}}>
+          <p className="alert alert-info">
+            <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+            Not sure what this is? Not seeing your AWS EC2 instances? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read the documentation</a>!
+          </p>
+        </div>
         {
           this.state.ips.length > 1 ?
             <Nav bsStyle="pills" justified activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
@@ -311,12 +317,6 @@ class RunMonkeyPageComponent extends AuthComponent {
             Run on selected machines
             { this.state.awsClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null }
           </button>
-        </div>
-        <div style={{'marginTop': '1em'}}>
-          <p className="alert alert-info">
-            <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-            Not sure what this is? Not seeing your AWS EC2 instances? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read the documentation</a>!
-          </p>
         </div>
       </div>
     )
@@ -474,7 +474,7 @@ class RunMonkeyPageComponent extends AuthComponent {
           {
             this.state.isErrorWhileCollectingAwsMachines ?
               <div style={{'marginTop': '1em'}}>
-                <p class="alert alert-warning">
+                <p class="alert alert-danger">
                   <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
                   Error while collecting AWS machine data. Error message: <code>{this.state.awsMachineCollectionErrorMsg}</code><br/>
                   Are you sure you've set the correct role on your Island AWS machine?<br/>
