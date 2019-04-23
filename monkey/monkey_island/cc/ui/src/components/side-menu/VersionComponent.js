@@ -1,8 +1,7 @@
 import React from 'react';
-import AuthComponent from "../AuthComponent";
 import {Icon} from 'react-fa';
 
-class VersionComponent extends AuthComponent {
+class VersionComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,7 +12,7 @@ class VersionComponent extends AuthComponent {
   }
 
   componentDidMount() {
-    this.authFetch('/api/version-update')
+    this.fetch('/api/version-update') // This is not authenticated on purpose
       .then(res => res.json())
       .then(res => {
         this.setState({
