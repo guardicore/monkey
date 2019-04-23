@@ -8,6 +8,11 @@ from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from common.cloud.aws_service import AwsService
 
+CLIENT_ERROR_FORMAT = "ClientError, error message: '{}'. Probably, the IAM role that has been associated with the " \
+                      "instance doesn't permit SSM calls. "
+NO_CREDS_ERROR_FORMAT = "NoCredentialsError, error message: '{}'. Probably, no IAM role has been associated with the " \
+                        "instance. "
+
 
 class RemoteRun(flask_restful.Resource):
     def __init__(self):
@@ -29,12 +34,10 @@ class RemoteRun(flask_restful.Resource):
                 try:
                     resp['instances'] = AwsService.get_instances()
                 except NoCredentialsError as e:
-                    # Probably, role hasn't been defined.
-                    resp['error'] = e.message
+                    resp['error'] = NO_CREDS_ERROR_FORMAT.format(e.message)
                     return jsonify(resp)
                 except ClientError as e:
-                    # Probably, role doesn't allow SSM.
-                    resp['error'] = e.message
+                    resp['error'] = CLIENT_ERROR_FORMAT.format(e.message)
                     return jsonify(resp)
             return jsonify(resp)
 
