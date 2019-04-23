@@ -13,6 +13,7 @@ class Environment(object):
     _MONGO_URL = os.environ.get("MONKEY_MONGO_URL", "mongodb://localhost:27017/monkeyisland")
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(hours=1)
+    _MONKEY_VERSION = "1.6.2"
 
     def __init__(self):
         self.config = None
@@ -44,7 +45,7 @@ class Environment(object):
         return self.get_deployment() == 'develop'
 
     def get_version(self):
-        return self._get_from_config('monkey_version', 'unknown') + ('-dev' if self.is_develop() else '')
+        return self._MONKEY_VERSION + ('-dev' if self.is_develop() else '')
 
     def _get_from_config(self, key, default_value=None):
         val = default_value
