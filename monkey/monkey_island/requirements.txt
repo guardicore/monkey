@@ -19,3 +19,5 @@ awscli
 bson
 cffi
 PyInstaller
+virtualenv
+wheel
