@@ -1,5 +1,4 @@
 {
   "server_config": "standard",
-  "deployment": "develop",
-  "monkey_version": "1.6.2"
+  "deployment": "develop"
 }
