@@ -105,10 +105,15 @@ class AWSExporter(Exporter):
     @staticmethod
     def _send_findings(findings_list, region):
         try:
-            securityhub = boto3.client('securityhub', region_name=region)
+            logger.debug("Trying to acquire securityhub boto3 client in " + region)
+            security_hub_client = boto3.client('securityhub', region_name=region)
+            logger.debug("Client acquired: {0}".format(repr(security_hub_client)))
+
             # Assumes the machine has the correct IAM role to do this, @see
             # https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances
-            import_response = securityhub.batch_import_findings(Findings=findings_list)
+            import_response = security_hub_client.batch_import_findings(Findings=findings_list)
+            logger.debug("Import findings response: {0}".format(repr(import_response)))
+
             if import_response['ResponseMetadata']['HTTPStatusCode'] == 200:
                 return True
             else:
