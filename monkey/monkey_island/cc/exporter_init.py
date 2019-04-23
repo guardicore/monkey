@@ -1,19 +1,18 @@
-from monkey_island.cc.environment.environment import load_env_from_file, AWS
+import logging
+
 from monkey_island.cc.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.resources.aws_exporter import AWSExporter
+from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 
-__author__ = 'maor.rayzin'
+logger = logging.getLogger(__name__)
 
 
 def populate_exporter_list():
-
     manager = ReportExporterManager()
-    if is_aws_exporter_required():
+    if RemoteRunAwsService.is_running_on_aws():
         manager.add_exporter_to_list(AWSExporter)
 
+    if len(manager.get_exporters_list()) != 0:
+        logger.debug(
+            "Populated exporters list with the following exporters: {0}".format(str(manager.get_exporters_list())))
 
-def is_aws_exporter_required():
-    if str(load_env_from_file()) == AWS:
-        return True
-    else:
-        return False
