@@ -138,7 +138,7 @@ def check_internet_access(services):
     """
     for host in services:
         try:
-            requests.get("https://%s" % (host,), timeout=TIMEOUT)
+            requests.get("https://%s" % (host,), timeout=TIMEOUT, verify=False)
             return True
         except ConnectionError:
             # Failed connecting
