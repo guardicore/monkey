@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 def populate_exporter_list():
     manager = ReportExporterManager()
+    RemoteRunAwsService.init()
     if RemoteRunAwsService.is_running_on_aws():
         manager.add_exporter_to_list(AWSExporter)
 
