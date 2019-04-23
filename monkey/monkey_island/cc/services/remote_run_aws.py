@@ -46,23 +46,6 @@ class RemoteRunAwsService:
         return RemoteRunAwsService.aws_instance.is_aws_instance()
 
     @staticmethod
-    def update_aws_auth_params():
-        """
-        Updates the AWS authentication parameters according to config
-        :return: True if new params allow successful authentication. False otherwise
-        """
-        AwsService.set_region(RemoteRunAwsService.aws_instance.region)
-
-        access_key_id = ConfigService.get_config_value(['cnc', 'aws_config', 'aws_access_key_id'], False, True)
-        secret_access_key = ConfigService.get_config_value(['cnc', 'aws_config', 'aws_secret_access_key'], False, True)
-
-        if (access_key_id != AwsService.access_key_id) or (secret_access_key != AwsService.secret_access_key):
-            AwsService.set_auth_params(access_key_id, secret_access_key)
-            RemoteRunAwsService.is_auth = AwsService.test_client()
-
-        return RemoteRunAwsService.is_auth
-
-    @staticmethod
     def update_aws_region_authless():
         """
         Updates the AWS region without auth params (via IAM role)

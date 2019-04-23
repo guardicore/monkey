@@ -29,17 +29,15 @@ def filter_instance_data_from_aws_response(response):
 
 class AwsService(object):
     """
-    Supplies various AWS services
+    A wrapper class around the boto3 client and session modules, which supplies various AWS services.
+
+    This class will assume:
+        1. That it's running on an EC2 instance
+        2. That the instance is associated with the correct IAM role. See
+        https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam-role for details.
     """
 
-    access_key_id = None
-    secret_access_key = None
     region = None
-
-    @staticmethod
-    def set_auth_params(access_key_id, secret_access_key):
-        AwsService.access_key_id = access_key_id
-        AwsService.secret_access_key = secret_access_key
 
     @staticmethod
     def set_region(region):
@@ -49,15 +47,11 @@ class AwsService(object):
     def get_client(client_type, region=None):
         return boto3.client(
             client_type,
-            aws_access_key_id=AwsService.access_key_id,
-            aws_secret_access_key=AwsService.secret_access_key,
             region_name=region if region is not None else AwsService.region)
 
     @staticmethod
     def get_session():
-        return boto3.session.Session(
-            aws_access_key_id=AwsService.access_key_id,
-            aws_secret_access_key=AwsService.secret_access_key)
+        return boto3.session.Session()
 
     @staticmethod
     def get_regions():
@@ -83,12 +77,12 @@ class AwsService(object):
         :return: All visible instances from this instance
         """
         current_instance = AwsInstance()
-        local_ssm_client = boto3.client("ssm", region_name=current_instance.get_region())
+        local_ssm_client = boto3.client("ssm", current_instance.get_region())
         try:
             response = local_ssm_client.describe_instance_information()
 
             filtered_instances_data = filter_instance_data_from_aws_response(response)
             return filtered_instances_data
         except botocore.exceptions.ClientError as e:
-            logger.info("AWS client error while trying to get instances: " + e.message)
+            logger.warning("AWS client error while trying to get instances: " + e.message)
             raise e
