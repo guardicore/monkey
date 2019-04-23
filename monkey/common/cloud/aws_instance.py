@@ -1,6 +1,8 @@
 import json
 import re
 import urllib2
+import logging
+
 
 __author__ = 'itay.mizeretz'
 
@@ -9,26 +11,33 @@ AWS_LATEST_METADATA_URI_PREFIX = 'http://{0}/latest/'.format(AWS_INSTANCE_METADA
 ACCOUNT_ID_KEY = "accountId"
 
 
+logger = logging.getLogger(__name__)
+
+
 class AwsInstance(object):
     """
     Class which gives useful information about the current instance you're on.
     """
 
     def __init__(self):
+        self.instance_id = None
+        self.region = None
+        self.account_id = None
+
         try:
             self.instance_id = urllib2.urlopen(
                 AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2).read()
             self.region = self._parse_region(
                 urllib2.urlopen(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read())
-        except urllib2.URLError:
-            self.instance_id = None
-            self.region = None
+        except urllib2.URLError as e:
+            logger.error("Failed init of AwsInstance while getting metadata: {}".format(e.message))
+
         try:
             self.account_id = self._extract_account_id(
                 urllib2.urlopen(
                     AWS_LATEST_METADATA_URI_PREFIX + 'dynamic/instance-identity/document', timeout=2).read())
-        except urllib2.URLError:
-            self.account_id = None
+        except urllib2.URLError as e:
+            logger.error("Failed init of AwsInstance while getting dynamic instance data: {}".format(e.message))
 
     @staticmethod
     def _parse_region(region_url_response):
