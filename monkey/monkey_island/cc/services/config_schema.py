@@ -643,19 +643,6 @@ SCHEMA = {
                         }
                     }
                 },
-                'aws_config': {
-                    'title': 'AWS Configuration',
-                    'type': 'object',
-                    'description': 'These credentials will be used in order to export the monkey\'s findings to the AWS Security Hub.',
-                    'properties': {
-                        'aws_account_id': {
-                            'title': 'AWS account ID',
-                            'type': 'string',
-                            'description': 'Your AWS account ID that is subscribed to security hub feeds. If left empty, the island will try to automatically acquire this via the AWS metadata service.',
-                            'default': ''
-                        }
-                    }
-                }
             }
         },
         "exploits": {

@@ -8,19 +8,13 @@ from botocore.exceptions import UnknownServiceError
 from common.cloud.aws_instance import AwsInstance
 from monkey_island.cc.environment.environment import load_server_configuration_from_file
 from monkey_island.cc.resources.exporter import Exporter
-from monkey_island.cc.services.config import ConfigService
 
 __author__ = 'maor.rayzin'
 
 logger = logging.getLogger(__name__)
 
-AWS_CRED_CONFIG_KEYS = [['cnc', 'aws_config', 'aws_access_key_id'],
-                        ['cnc', 'aws_config', 'aws_secret_access_key'],
-                        ['cnc', 'aws_config', 'aws_account_id']]
-
 
 class AWSExporter(Exporter):
-
     @staticmethod
     def handle_report(report_json):
 
@@ -42,14 +36,6 @@ class AWSExporter(Exporter):
             return False
 
         return True
-
-    @staticmethod
-    def _get_aws_keys():
-        creds_dict = {}
-        for key in AWS_CRED_CONFIG_KEYS:
-            creds_dict[key[2]] = str(ConfigService.get_config_value(key))
-
-        return creds_dict
 
     @staticmethod
     def merge_two_dicts(x, y):
@@ -85,11 +71,8 @@ class AWSExporter(Exporter):
         configured_product_arn = load_server_configuration_from_file()['aws'].get('sec_hub_product_arn', '')
         product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region=region, arn=configured_product_arn)
         instance_arn = 'arn:aws:ec2:' + str(region) + ':instance:{instance_id}'
-        account_id = AWSExporter._get_aws_keys().get('aws_account_id', '')
-        if account_id is '':
-            logger.debug("aws account id not manually configured - acquiring via AwsInstance")
-            account_id = AwsInstance().get_account_id()
-            logger.debug("aws account id acquired: {}".format(account_id))
+        account_id = AwsInstance().get_account_id()
+        logger.debug("aws account id acquired: {}".format(account_id))
 
         finding = {
             "SchemaVersion": "2018-10-08",

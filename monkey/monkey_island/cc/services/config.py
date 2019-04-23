@@ -25,14 +25,6 @@ ENCRYPTED_CONFIG_ARRAYS = \
         ['internal', 'exploits', 'exploit_ssh_keys']
     ]
 
-# This should be used for config values of string type
-ENCRYPTED_CONFIG_STRINGS = \
-    [
-        ['cnc', 'aws_config', 'aws_access_key_id'],
-        ['cnc', 'aws_config', 'aws_account_id'],
-        ['cnc', 'aws_config', 'aws_secret_access_key']
-    ]
-
 
 class ConfigService:
     default_config = None

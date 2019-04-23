@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from '@emotion/core';
-import {Button, Col, Well, Nav, NavItem, Collapse, Form, FormControl, FormGroup} from 'react-bootstrap';
+import {Button, Col, Well, Nav, NavItem, Collapse} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import GridLoader from 'react-spinners/GridLoader';
 
@@ -29,11 +29,8 @@ class RunMonkeyPageComponent extends AuthComponent {
       showManual: false,
       showAws: false,
       isOnAws: false,
-      isAwsAuth: false,
       awsUpdateClicked: false,
       awsUpdateFailed: false,
-      awsKeyId: '',
-      awsSecretKey: '',
       awsMachines: [],
       isLoadingAws: true,
       isErrorWhileCollectingAwsMachines: false,
@@ -60,13 +57,7 @@ class RunMonkeyPageComponent extends AuthComponent {
       });
 
     this.fetchAwsInfo();
-    this.fetchConfig()
-      .then(config => {
-        this.setState({
-          awsKeyId: config['cnc']['aws_config']['aws_access_key_id'],
-          awsSecretKey: config['cnc']['aws_config']['aws_secret_access_key']
-        });
-      });
+    this.fetchConfig();
 
     this.authFetch('/api/client-monkey')
       .then(res => res.json())
@@ -86,12 +77,13 @@ class RunMonkeyPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res =>{
         let is_aws = res['is_aws'];
-        let isErrorWhileCollectingAwsMachines = (res['error'] != null);
+        // Checks if there was an error while collecting the aws machines.
+        let is_error_while_collecting_aws_machines = (res['error'] != null);
         if (is_aws) {
-          if (isErrorWhileCollectingAwsMachines) {
-            this.setState({isOnAws: true, isErrorWhileCollectingAwsMachines: true, awsMachineCollectionErrorMsg: res['error'], isAwsAuth: res['auth'], isLoadingAws: false});
+          if (is_error_while_collecting_aws_machines) {
+            this.setState({isOnAws: true, isErrorWhileCollectingAwsMachines: true, awsMachineCollectionErrorMsg: res['error'], isLoadingAws: false});
           } else {
-            this.setState({isOnAws: true, awsMachines: res['instances'], isAwsAuth: res['auth'], isLoadingAws: false});
+            this.setState({isOnAws: true, awsMachines: res['instances'], isLoadingAws: false});
           }
         } else {
           this.setState({isOnAws: false, isLoadingAws: false});
@@ -223,19 +215,6 @@ class RunMonkeyPageComponent extends AuthComponent {
         });
       });
   };
-
-  updateAwsKeyId = (evt) => {
-    this.setState({
-      awsKeyId: evt.target.value
-    });
-  };
-
-  updateAwsSecretKey = (evt) => {
-    this.setState({
-      awsSecretKey: evt.target.value
-    });
-  };
-
   fetchConfig() {
     return this.authFetch('/api/configuration/island')
       .then(res => res.json())
@@ -243,41 +222,6 @@ class RunMonkeyPageComponent extends AuthComponent {
         return res.configuration;
       })
   }
-
-  updateAwsKeys = () => {
-    this.setState({
-      awsUpdateClicked: true,
-      awsUpdateFailed: false
-    });
-    this.fetchConfig()
-      .then(config => {
-        let new_config = config;
-        new_config['cnc']['aws_config']['aws_access_key_id'] = this.state.awsKeyId;
-        new_config['cnc']['aws_config']['aws_secret_access_key'] = this.state.awsSecretKey;
-        return new_config;
-      })
-      .then(new_config => {
-        this.authFetch('/api/configuration/island',
-          {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(new_config)
-          })
-          .then(res => res.json())
-          .then(res => {
-            this.fetchAwsInfo()
-              .then(res => {
-                if (!this.state.isAwsAuth) {
-                  this.setState({
-                    awsUpdateClicked: false,
-                    awsUpdateFailed: true
-                  })
-                }
-              });
-          });
-      });
-  };
-
   instanceIdToInstance = (instance_id) => {
     let instance = this.state.awsMachines.find(
       function (inst) {
@@ -321,60 +265,6 @@ class RunMonkeyPageComponent extends AuthComponent {
       </div>
     )
   }
-
-  renderNotAuthAwsDiv() {
-    return (
-      <div style={{'marginBottom': '2em'}}>
-        <p style={{'fontSize': '1.2em'}}>
-          You haven't set your AWS account details or they're incorrect. Please enter them below to proceed.
-        </p>
-        <div style={{'marginTop': '1em'}}>
-          <div className="col-sm-12">
-          <div className="col-sm-6 col-sm-offset-3" style={{'fontSize': '1.2em'}}>
-            <div className="panel panel-default">
-              <div className="panel-body">
-                <div className="input-group center-block text-center">
-                  <input type="text" className="form-control" placeholder="AWS Access Key ID"
-                         value={this.state.awsKeyId}
-                         onChange={evt => this.updateAwsKeyId(evt)}/>
-                  <input type="text" className="form-control" placeholder="AWS Secret Access Key"
-                         value={this.state.awsSecretKey}
-                         onChange={evt => this.updateAwsSecretKey(evt)}/>
-                  <Button
-                    onClick={this.updateAwsKeys}
-                    className={'btn btn-default btn-md center-block'}
-                    disabled={this.state.awsUpdateClicked}
-                    variant="primary">
-                    Update AWS details
-                    { this.state.awsUpdateClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null }
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-            <div className="col-sm-8 col-sm-offset-2" style={{'fontSize': '1.2em'}}>
-              <p className="alert alert-info">
-                <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                In order to remotely run commands on AWS EC2 instances, please make sure you have
-                the <a href="https://docs.aws.amazon.com/console/ec2/run-command/prereqs" target="_blank">prerequisites</a> and if the
-                instances don't show up, check the
-                AWS <a href="https://docs.aws.amazon.com/console/ec2/run-command/troubleshooting" target="_blank">troubleshooting guide</a>.
-              </p>
-            </div>
-            {
-              this.state.awsUpdateFailed ?
-                <div className="col-sm-8 col-sm-offset-2" style={{'fontSize': '1.2em'}}>
-                  <p className="alert alert-danger" role="alert">Authentication failed.</p>
-                </div>
-                :
-                null
-            }
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   render() {
     return (
       <Col xs={12} lg={8}>
