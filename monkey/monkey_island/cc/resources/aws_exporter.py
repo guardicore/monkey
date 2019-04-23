@@ -86,6 +86,10 @@ class AWSExporter(Exporter):
         product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region=region, arn=configured_product_arn)
         instance_arn = 'arn:aws:ec2:' + str(region) + ':instance:{instance_id}'
         account_id = AWSExporter._get_aws_keys().get('aws_account_id', '')
+        if account_id is '':
+            logger.debug("aws account id not manually configured - acquiring via AwsInstance")
+            account_id = AwsInstance().get_account_id()
+            logger.debug("aws account id acquired: {}".format(account_id))
 
         finding = {
             "SchemaVersion": "2018-10-08",
@@ -119,10 +123,10 @@ class AWSExporter(Exporter):
             else:
                 return False
         except UnknownServiceError as e:
-            logger.warning('AWS exporter called but AWS-CLI securityhub service is not installed')
+            logger.warning('AWS exporter called but AWS-CLI securityhub service is not installed. Error: ' + e.message)
             return False
         except Exception as e:
-            logger.exception('AWS security hub findings failed to send.')
+            logger.exception('AWS security hub findings failed to send. Error: ' + e.message)
             return False
 
     @staticmethod

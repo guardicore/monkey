@@ -651,19 +651,7 @@ SCHEMA = {
                         'aws_account_id': {
                             'title': 'AWS account ID',
                             'type': 'string',
-                            'description': 'Your AWS account ID that is subscribed to security hub feeds',
-                            'default': ''
-                        },
-                        'aws_access_key_id': {
-                            'title': 'AWS access key ID',
-                            'type': 'string',
-                            'description': 'Your AWS public access key ID, can be found in the IAM user interface in the AWS console.',
-                            'default': ''
-                        },
-                        'aws_secret_access_key': {
-                            'title': 'AWS secret access key',
-                            'type': 'string',
-                            'description': 'Your AWS secret access key id, you can get this after creating a public access key in the console.',
+                            'description': 'Your AWS account ID that is subscribed to security hub feeds. If left empty, the island will try to automatically acquire this via the AWS metadata service.',
                             'default': ''
                         }
                     }
