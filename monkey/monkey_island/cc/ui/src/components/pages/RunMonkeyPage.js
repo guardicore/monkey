@@ -77,26 +77,30 @@ class RunMonkeyPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res =>{
         let is_aws = res['is_aws'];
-        // Checks if there was an error while collecting the aws machines.
-        let is_error_while_collecting_aws_machines = (res['error'] != null);
         if (is_aws) {
+          // On AWS!
+          // Checks if there was an error while collecting the aws machines.
+          let is_error_while_collecting_aws_machines = (res['error'] != null);
           if (is_error_while_collecting_aws_machines) {
+            // There was an error. Finish loading, and display error message.
             this.setState({isOnAws: true, isErrorWhileCollectingAwsMachines: true, awsMachineCollectionErrorMsg: res['error'], isLoadingAws: false});
           } else {
+            // No error! Finish loading and display machines for user
             this.setState({isOnAws: true, awsMachines: res['instances'], isLoadingAws: false});
           }
         } else {
+          // Not on AWS. Finish loading and don't display the AWS div.
           this.setState({isOnAws: false, isLoadingAws: false});
         }
       });
   }
 
-  generateLinuxCmd(ip, is32Bit) {
+  static generateLinuxCmd(ip, is32Bit) {
     let bitText = is32Bit ? '32' : '64';
     return `wget --no-check-certificate https://${ip}:5000/api/monkey/download/monkey-linux-${bitText}; chmod +x monkey-linux-${bitText}; ./monkey-linux-${bitText} m0nk3y -s ${ip}:5000`
   }
 
-  generateWindowsCmd(ip, is32Bit) {
+  static generateWindowsCmd(ip, is32Bit) {
     let bitText = is32Bit ? '32' : '64';
     return `powershell [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}; (New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/monkey-windows-${bitText}.exe','.\\monkey.exe'); ;Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`;
   }
@@ -129,9 +133,9 @@ class RunMonkeyPageComponent extends AuthComponent {
     let is32Bit = (this.state.selectedOs.split('-')[1] === '32');
     let cmdText = '';
     if (isLinux) {
-      cmdText = this.generateLinuxCmd(this.state.selectedIp, is32Bit);
+      cmdText = RunMonkeyPageComponent.generateLinuxCmd(this.state.selectedIp, is32Bit);
     } else {
-      cmdText = this.generateWindowsCmd(this.state.selectedIp, is32Bit);
+      cmdText = RunMonkeyPageComponent.generateWindowsCmd(this.state.selectedIp, is32Bit);
     }
     return (
       <Well key={'cmdDiv'+this.state.selectedIp} className="well-sm" style={{'margin': '0.5em'}}>
@@ -159,7 +163,7 @@ class RunMonkeyPageComponent extends AuthComponent {
     });
   };
 
-  renderIconByState(state) {
+  static renderIconByState(state) {
     if (state === 'running') {
       return <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
     } else if (state === 'installing') {
@@ -279,7 +283,7 @@ class RunMonkeyPageComponent extends AuthComponent {
                   disabled={this.state.runningOnIslandState !== 'not_running'}
                   >
             Run on Monkey Island Server
-            { this.renderIconByState(this.state.runningOnIslandState) }
+            { RunMonkeyPageComponent.renderIconByState(this.state.runningOnIslandState) }
           </button>
           {
             // TODO: implement button functionality

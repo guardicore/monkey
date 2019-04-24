@@ -99,7 +99,7 @@ def init_app(mongo_url):
         database.init()
         ConfigService.init_config()
 
-    # If on AWS, this will set the instance - for usage later in the code.
+    # If running on AWS, this will initialize the instance data, which is used "later" in the execution of the island.
     RemoteRunAwsService.init()
 
     app.add_url_rule('/', 'serve_home', serve_home)

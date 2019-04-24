@@ -9,7 +9,7 @@ from common.cloud.aws_instance import AwsInstance
 from monkey_island.cc.environment.environment import load_server_configuration_from_file
 from monkey_island.cc.resources.exporter import Exporter
 
-__author__ = 'maor.rayzin'
+__authors__ = ['maor.rayzin', 'shay.nehmad']
 
 logger = logging.getLogger(__name__)
 

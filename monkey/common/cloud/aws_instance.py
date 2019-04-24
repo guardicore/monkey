@@ -62,7 +62,18 @@ class AwsInstance(object):
 
     @staticmethod
     def _extract_account_id(instance_identity_document_response):
+        """
+        Extracts the account id from the dynamic/instance-identity/document metadata path.
+        Based on https://forums.aws.amazon.com/message.jspa?messageID=409028 which has a few more solutions,
+        in case Amazon break this mechanism.
+        :param instance_identity_document_response: json returned via the web page ../dynamic/instance-identity/document
+        :return: The account id
+        """
         return json.loads(instance_identity_document_response)[ACCOUNT_ID_KEY]
 
     def get_account_id(self):
+        """
+        :return:    the AWS account ID which "owns" this instance.
+        See https://docs.aws.amazon.com/general/latest/gr/acct-identifiers.html
+        """
         return self.account_id
