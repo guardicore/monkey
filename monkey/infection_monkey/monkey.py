@@ -16,6 +16,9 @@ from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.windows_upgrader import WindowsUpgrader
+from infection_monkey.post_breach.post_breach_handler import PostBreach
+from common.utils.attack_utils import ScanStatus
+from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
 
 __author__ = 'itamar'
 
@@ -76,6 +79,9 @@ class InfectionMonkey(object):
             LOG.info("Monkey couldn't find server. Going down.")
             return
 
+        # Create a dir for monkey files if there isn't one
+        utils.create_monkey_dir()
+
         if WindowsUpgrader.should_upgrade():
             self._upgrading_to_64 = True
             self._singleton.unlock()
@@ -112,6 +118,8 @@ class InfectionMonkey(object):
         for action_class in WormConfiguration.post_breach_actions:
             action = action_class()
             action.act()
+
+        PostBreach().execute()
 
         if 0 == WormConfiguration.depth:
             LOG.debug("Reached max depth, shutting down")
@@ -167,44 +175,19 @@ class InfectionMonkey(object):
                     LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
                     machine.set_default_server(self._default_server)
 
-                successful_exploiter = None
+                # Order exploits according to their type
+                self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
+                host_exploited = False
                 for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
-                    if not exploiter.is_os_supported():
-                        LOG.info("Skipping exploiter %s host:%r, os is not supported",
-                                 exploiter.__class__.__name__, machine)
-                        continue
-
-                    LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
-
-                    result = False
-                    try:
-                        result = exploiter.exploit_host()
-                        if result:
-                            successful_exploiter = exploiter
-                            break
-                        else:
-                            LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
-
-                    except Exception as exc:
-                        LOG.exception("Exception while attacking %s using %s: %s",
-                                      machine, exploiter.__class__.__name__, exc)
-                    finally:
-                        exploiter.send_exploit_telemetry(result)
-
-                if successful_exploiter:
-                    self._exploited_machines.add(machine)
-
-                    LOG.info("Successfully propagated to %s using %s",
-                             machine, successful_exploiter.__class__.__name__)
-
-                    # check if max-exploitation limit is reached
-                    if WormConfiguration.victims_max_exploit <= len(self._exploited_machines):
-                        self._keep_running = False
-
-                        LOG.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)
+                    if self.try_exploiting(machine, exploiter):
+                        host_exploited = True
+                        VictimHostTelem('T1210', ScanStatus.USED.value, machine=machine).send()
                         break
-                else:
+                if not host_exploited:
                     self._fail_exploitation_machines.add(machine)
+                    VictimHostTelem('T1210', ScanStatus.SCANNED.value, machine=machine).send()
+                if not self._keep_running:
+                    break
 
             if (not is_empty) and (WormConfiguration.max_iterations > iteration_index + 1):
                 time_to_sleep = WormConfiguration.timeout_between_iterations
@@ -242,6 +225,7 @@ class InfectionMonkey(object):
                 self.send_log()
             self._singleton.unlock()
 
+        utils.remove_monkey_dir()
         InfectionMonkey.self_delete()
         LOG.info("Monkey is shutting down")
 
@@ -279,3 +263,50 @@ class InfectionMonkey(object):
             log = ''
 
         ControlClient.send_log(log)
+
+    def try_exploiting(self, machine, exploiter):
+        """
+        Workflow of exploiting one machine with one exploiter
+        :param machine: Machine monkey tries to exploit
+        :param exploiter: Exploiter to use on that machine
+        :return: True if successfully exploited, False otherwise
+        """
+        if not exploiter.is_os_supported():
+            LOG.info("Skipping exploiter %s host:%r, os is not supported",
+                     exploiter.__class__.__name__, machine)
+            return False
+
+        LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
+
+        result = False
+        try:
+            result = exploiter.exploit_host()
+            if result:
+                self.successfully_exploited(machine, exploiter)
+                return True
+            else:
+                LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
+
+        except Exception as exc:
+            LOG.exception("Exception while attacking %s using %s: %s",
+                          machine, exploiter.__class__.__name__, exc)
+        finally:
+            exploiter.send_exploit_telemetry(result)
+        return False
+
+    def successfully_exploited(self, machine, exploiter):
+        """
+        Workflow of registering successfully exploited machine
+        :param machine: machine that was exploited
+        :param exploiter: exploiter that succeeded
+        """
+        self._exploited_machines.add(machine)
+
+        LOG.info("Successfully propagated to %s using %s",
+                 machine, exploiter.__class__.__name__)
+
+        # check if max-exploitation limit is reached
+        if WormConfiguration.victims_max_exploit <= len(self._exploited_machines):
+            self._keep_running = False
+
+            LOG.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)

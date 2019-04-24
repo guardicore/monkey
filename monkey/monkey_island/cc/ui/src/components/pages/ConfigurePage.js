@@ -3,15 +3,43 @@ import Form from 'react-jsonschema-form';
 import {Col, Nav, NavItem} from 'react-bootstrap';
 import fileDownload from 'js-file-download';
 import AuthComponent from '../AuthComponent';
+import { FilePond } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
 
 class ConfigurePageComponent extends AuthComponent {
   constructor(props) {
     super(props);
-
+    this.PBAwindowsPond = null;
+    this.PBAlinuxPond = null;
     this.currentSection = 'basic';
     this.currentFormData = {};
     this.sectionsOrder = ['basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
-
+    this.uiSchema = {
+      behaviour: {
+        custom_PBA_linux_cmd: {
+          "ui:widget": "textarea",
+          "ui:emptyValue": ""
+        },
+        PBA_linux_file: {
+          "ui:widget": this.PBAlinux
+        },
+        custom_PBA_windows_cmd: {
+          "ui:widget": "textarea",
+          "ui:emptyValue": ""
+        },
+        PBA_windows_file: {
+          "ui:widget": this.PBAwindows
+        },
+        PBA_linux_filename: {
+          classNames: "linux-pba-file-info",
+          "ui:emptyValue": ""
+        },
+        PBA_windows_filename: {
+          classNames: "windows-pba-file-info",
+          "ui:emptyValue": ""
+        }
+      }
+    };
     // set schema from server
     this.state = {
       schema: {},
@@ -19,7 +47,9 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       sections: [],
       selectedSection: 'basic',
-      allMonkeysAreDead: true
+      allMonkeysAreDead: true,
+      PBAwinFile: [],
+      PBAlinuxFile: []
     };
   }
 
@@ -93,6 +123,7 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   resetConfig = () => {
+    this.removePBAfiles();
     this.authFetch('/api/configuration/island',
       {
         method: 'POST',
@@ -109,6 +140,21 @@ class ConfigurePageComponent extends AuthComponent {
         this.props.onStatusChange();
       });
   };
+
+  removePBAfiles(){
+    // We need to clean files from widget, local state and configuration (to sync with bac end)
+    if (this.PBAwindowsPond !== null){
+      this.PBAwindowsPond.removeFile();
+    }
+    if (this.PBAlinuxPond !== null){
+      this.PBAlinuxPond.removeFile();
+    }
+    let request_options = {method: 'DELETE',
+                           headers: {'Content-Type': 'text/plain'}};
+    this.authFetch('/api/fileUpload/PBAlinux', request_options);
+    this.authFetch('/api/fileUpload/PBAwindows', request_options);
+    this.setState({PBAlinuxFile: [], PBAwinFile: []});
+  }
 
   onReadFile = (event) => {
     try {
@@ -150,13 +196,87 @@ class ConfigurePageComponent extends AuthComponent {
       });
   };
 
+  PBAwindows = () => {
+    return (<FilePond
+      server={{ url:'/api/fileUpload/PBAwindows',
+                process: {headers: {'Authorization': this.jwtHeader}},
+                revert: {headers: {'Authorization': this.jwtHeader}},
+                restore: {headers: {'Authorization': this.jwtHeader}},
+                load: {headers: {'Authorization': this.jwtHeader}},
+                fetch: {headers: {'Authorization': this.jwtHeader}}
+      }}
+      files={this.getWinPBAfile()}
+      onupdatefiles={fileItems => {
+        this.setState({
+          PBAwinFile: fileItems.map(fileItem => fileItem.file)
+        })
+      }}
+      ref={ref => this.PBAwindowsPond = ref}
+    />)
+  };
+
+  PBAlinux = () => {
+    return (<FilePond
+      server={{ url:'/api/fileUpload/PBAlinux',
+                process: {headers: {'Authorization': this.jwtHeader}},
+                revert: {headers: {'Authorization': this.jwtHeader}},
+                restore: {headers: {'Authorization': this.jwtHeader}},
+                load: {headers: {'Authorization': this.jwtHeader}},
+                fetch: {headers: {'Authorization': this.jwtHeader}}
+      }}
+      files={this.getLinuxPBAfile()}
+      onupdatefiles={fileItems => {
+        this.setState({
+          PBAlinuxFile: fileItems.map(fileItem => fileItem.file)
+        })
+      }}
+      ref={ref => this.PBAlinuxPond = ref}
+    />)
+  };
+
+  getWinPBAfile(){
+    if (this.state.PBAwinFile.length !== 0){
+      return ConfigurePageComponent.getMockPBAfile(this.state.PBAwinFile[0])
+    } else if (this.state.configuration.monkey.behaviour.PBA_windows_filename){
+      return ConfigurePageComponent.getFullPBAfile(this.state.configuration.monkey.behaviour.PBA_windows_filename)
+    }
+  }
+
+  getLinuxPBAfile(){
+    if (this.state.PBAlinuxFile.length !== 0){
+      return ConfigurePageComponent.getMockPBAfile(this.state.PBAlinuxFile[0])
+    } else if (this.state.configuration.monkey.behaviour.PBA_linux_filename) {
+      return ConfigurePageComponent.getFullPBAfile(this.state.configuration.monkey.behaviour.PBA_linux_filename)
+    }
+  }
+
+  static getFullPBAfile(filename){
+    let pbaFile = [{
+      source: filename,
+      options: {
+        type: 'limbo'
+      }
+    }];
+    return pbaFile
+  }
+
+  static getMockPBAfile(mockFile){
+    let pbaFile = [{
+      source: mockFile.name,
+      options: {
+        type: 'limbo'
+      }
+    }];
+    pbaFile[0].options.file = mockFile;
+    return pbaFile
+  }
+
   render() {
     let displayedSchema = {};
     if (this.state.schema.hasOwnProperty('properties')) {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }
-
     return (
       <Col xs={12} lg={8}>
         <h1 className="page-title">Monkey Configuration</h1>
@@ -178,9 +298,11 @@ class ConfigurePageComponent extends AuthComponent {
         }
         { this.state.selectedSection ?
           <Form schema={displayedSchema}
+                uiSchema={this.uiSchema}
                 formData={this.state.configuration[this.state.selectedSection]}
                 onSubmit={this.onSubmit}
-                onChange={this.onChange}>
+                onChange={this.onChange}
+                noValidate={true}>
             <div>
               { this.state.allMonkeysAreDead ?
                 '' :
@@ -243,7 +365,6 @@ class ConfigurePageComponent extends AuthComponent {
             </div>
             : ''}
         </div>
-
       </Col>
     );
   }

@@ -78,6 +78,7 @@ class AppComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
+      removePBAfiles: false,
       completedSteps: {
         run_server: true,
         run_monkey: false,
@@ -87,6 +88,11 @@ class AppComponent extends AuthComponent {
       }
     };
   }
+
+  // Sets the property that indicates if we need to remove PBA files from state or not
+  setRemovePBAfiles = (rmFiles) => {
+    this.setState({removePBAfiles: rmFiles});
+  };
 
   componentDidMount() {
     this.updateStatus();

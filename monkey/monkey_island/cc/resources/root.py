@@ -10,6 +10,7 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.report import ReportService
 from monkey_island.cc.utils import local_ip_addresses
+from monkey_island.cc.services.post_breach_files import remove_PBA_files
 
 __author__ = 'Barak'
 
@@ -42,6 +43,7 @@ class Root(flask_restful.Resource):
     @staticmethod
     @jwt_required()
     def reset_db():
+        remove_PBA_files()
         # We can't drop system collections.
         [mongo.db[x].drop() for x in mongo.db.collection_names() if not x.startswith('system.')]
         ConfigService.init_config()

@@ -313,6 +313,46 @@ SCHEMA = {
                     "title": "Behaviour",
                     "type": "object",
                     "properties": {
+                        "custom_PBA_linux_cmd": {
+                            "title": "Linux post breach command",
+                            "type": "string",
+                            "default": "",
+                            "description": "Linux command to be executed after breaching."
+                        },
+                        "PBA_linux_file": {
+                            "title": "Linux post breach file",
+                            "type": "string",
+                            "format": "data-url",
+                            "description": "File to be executed after breaching. "
+                                           "If you want custom execution behavior, "
+                                           "specify it in 'Linux post breach command' field. "
+                                           "Reference your file by filename."
+                        },
+                        "custom_PBA_windows_cmd": {
+                            "title": "Windows post breach command",
+                            "type": "string",
+                            "default": "",
+                            "description": "Windows command to be executed after breaching."
+                        },
+                        "PBA_windows_file": {
+                            "title": "Windows post breach file",
+                            "type": "string",
+                            "format": "data-url",
+                            "description": "File to be executed after breaching. "
+                                           "If you want custom execution behavior, "
+                                           "specify it in 'Windows post breach command' field. "
+                                           "Reference your file by filename."
+                        },
+                        "PBA_windows_filename": {
+                            "title": "Windows PBA filename",
+                            "type": "string",
+                            "default": ""
+                        },
+                        "PBA_linux_filename": {
+                            "title": "Linux PBA filename",
+                            "type": "string",
+                            "default": ""
+                        },
                         "self_delete_in_cleanup": {
                             "title": "Self delete on cleanup",
                             "type": "boolean",
@@ -423,7 +463,19 @@ SCHEMA = {
                             "type": "integer",
                             "default": 60,
                             "description": "Time to keep tunnel open before going down after last exploit (in seconds)"
-                        }
+                        },
+                        "monkey_dir_windows": {
+                            "title": "Monkey's windows directory",
+                            "type": "string",
+                            "default": r"C:\Windows\temp\monkey_dir",
+                            "description": "Directory containing all monkey files on windows"
+                        },
+                        "monkey_dir_linux": {
+                            "title": "Monkey's linux directory",
+                            "type": "string",
+                            "default": "/tmp/monkey_dir",
+                            "description": "Directory containing all monkey files on linux"
+                        },
                     }
                 },
                 "classes": {

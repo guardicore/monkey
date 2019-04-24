@@ -17,3 +17,4 @@ ipaddress
 wmi
 pymssql
 pyftpdlib
+enum34

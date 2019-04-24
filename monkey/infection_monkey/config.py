@@ -161,6 +161,10 @@ class Configuration(object):
 
     keep_tunnel_open_time = 60
 
+    # Monkey files directories
+    monkey_dir_linux = '/tmp/monkey_dir'
+    monkey_dir_windows = r'C:\Windows\Temp\monkey_dir'
+
     ###########################
     # scanners config
     ###########################
@@ -267,6 +271,10 @@ class Configuration(object):
     extract_azure_creds = True
 
     post_breach_actions = []
+    custom_PBA_linux_cmd = ""
+    custom_PBA_windows_cmd = ""
+    PBA_linux_filename = None
+    PBA_windows_filename = None
 
 
 WormConfiguration = Configuration()
