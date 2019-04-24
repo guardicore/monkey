@@ -54,7 +54,7 @@ class TelemetryFeed(flask_restful.Resource):
     @staticmethod
     def get_state_telem_brief(telem):
         if telem['data']['done']:
-            return '''Monkey finishing it's execution.'''
+            return '''Monkey finishing its execution.'''
         else:
             return 'Monkey started.'
 

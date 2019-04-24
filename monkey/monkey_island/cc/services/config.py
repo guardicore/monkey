@@ -25,14 +25,6 @@ ENCRYPTED_CONFIG_ARRAYS = \
         ['internal', 'exploits', 'exploit_ssh_keys']
     ]
 
-# This should be used for config values of string type
-ENCRYPTED_CONFIG_STRINGS = \
-    [
-        ['cnc', 'aws_config', 'aws_access_key_id'],
-        ['cnc', 'aws_config', 'aws_account_id'],
-        ['cnc', 'aws_config', 'aws_secret_access_key']
-    ]
-
 
 class ConfigService:
     default_config = None
@@ -75,8 +67,6 @@ class ConfigService:
         if should_decrypt:
             if config_key_as_arr in ENCRYPTED_CONFIG_ARRAYS:
                 config = [encryptor.dec(x) for x in config]
-            elif config_key_as_arr in ENCRYPTED_CONFIG_STRINGS:
-                config = encryptor.dec(config)
         return config
 
     @staticmethod
@@ -233,11 +223,8 @@ class ConfigService:
         """
         Same as decrypt_config but for a flat configuration
         """
-        if is_island:
-            keys = [config_arr_as_array[2] for config_arr_as_array in
-                    (ENCRYPTED_CONFIG_ARRAYS + ENCRYPTED_CONFIG_STRINGS)]
-        else:
-            keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
+        keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
+
         for key in keys:
             if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], string_types):
                 # Check if we are decrypting ssh key pair
@@ -251,7 +238,7 @@ class ConfigService:
 
     @staticmethod
     def _encrypt_or_decrypt_config(config, is_decrypt=False):
-        for config_arr_as_array in (ENCRYPTED_CONFIG_ARRAYS + ENCRYPTED_CONFIG_STRINGS):
+        for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS:
             config_arr = config
             parent_config_arr = None
 

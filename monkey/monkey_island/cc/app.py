@@ -29,6 +29,7 @@ from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 
 __author__ = 'Barak'
 
@@ -97,6 +98,9 @@ def init_app(mongo_url):
     with app.app_context():
         database.init()
         ConfigService.init_config()
+
+    # If running on AWS, this will initialize the instance data, which is used "later" in the execution of the island.
+    RemoteRunAwsService.init()
 
     app.add_url_rule('/', 'serve_home', serve_home)
     app.add_url_rule('/<path:static_path>', 'serve_static_file', serve_static_file)
