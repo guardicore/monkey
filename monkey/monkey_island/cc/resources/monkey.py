@@ -2,11 +2,12 @@ import json
 from datetime import datetime
 
 import dateutil.parser
-from flask import request
 import flask_restful
+from flask import request
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.monkey_timeout import start_timer_decorator
 from monkey_island.cc.services.node import NodeService
 
 __author__ = 'Barak'
@@ -17,6 +18,7 @@ __author__ = 'Barak'
 class Monkey(flask_restful.Resource):
 
     # Used by monkey. can't secure.
+    @start_timer_decorator
     def get(self, guid=None, **kw):
         NodeService.update_dead_monkeys()  # refresh monkeys status
         if not guid:
@@ -88,7 +90,7 @@ class Monkey(flask_restful.Resource):
                 parent_to_add = (exploit_telem[0].get('monkey_guid'), exploit_telem[0].get('data').get('exploiter'))
             else:
                 parent_to_add = (parent, None)
-        elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in  monkey_json:
+        elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in monkey_json:
             exploit_telem = [x for x in
                              mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}})]
