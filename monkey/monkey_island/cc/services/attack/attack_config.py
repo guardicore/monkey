@@ -151,7 +151,7 @@ def r_alter_array(config_value, array_name, field, remove=True):
 
 def get_technique_values():
     """
-    Parses ATT&CK config into a dic of techniques and corresponding values.
+    Parses ATT&CK config into a dict of techniques and corresponding values.
     :return: Dictionary of techniques. Format: {"T1110": True, "T1075": False, ...}
     """
     attack_config = get_config()
