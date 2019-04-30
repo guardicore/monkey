@@ -1,3 +1,4 @@
+bson
 python-dateutil
 tornado==5.1.1
 werkzeug
@@ -16,8 +17,8 @@ enum34
 pycryptodome
 boto3
 awscli
-bson
 cffi
 PyInstaller
 virtualenv
 wheel
+requests
