@@ -14,7 +14,7 @@ SCHEMA = {
                         "SmbExploiter"
                     ],
                     "title": "SMB Exploiter",
-                    "attack_techniques": ["T1110", "T1210", "T1075"]
+                    "attack_techniques": ["T1110", "T1075"]
                 },
                 {
                     "type": "string",
@@ -54,55 +54,49 @@ SCHEMA = {
                         "SSHExploiter"
                     ],
                     "title": "SSH Exploiter",
-                    "attack_techniques": ["T1110", "T1210"]
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "ShellShockExploiter"
                     ],
-                    "title": "ShellShock Exploiter",
-                    "attack_techniques": ["T1210"]
+                    "title": "ShellShock Exploiter"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "SambaCryExploiter"
                     ],
-                    "title": "SambaCry Exploiter",
-                    "attack_techniques": ["T1210"]
+                    "title": "SambaCry Exploiter"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "ElasticGroovyExploiter"
                     ],
-                    "title": "ElasticGroovy Exploiter",
-                    "attack_techniques": ["T1210"]
+                    "title": "ElasticGroovy Exploiter"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "Struts2Exploiter"
                     ],
-                    "title": "Struts2 Exploiter",
-                    "attack_techniques": ["T1210"]
+                    "title": "Struts2 Exploiter"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "WebLogicExploiter"
                     ],
-                    "title": "Oracle Web Logic Exploiter",
-                    "attack_techniques": ["T1210"]
+                    "title": "Oracle Web Logic Exploiter"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "HadoopExploiter"
                     ],
-                    "title": "Hadoop/Yarn Exploiter",
-                    "attack_techniques": ["T1210"]
+                    "title": "Hadoop/Yarn Exploiter"
                 }
             ]
         },
@@ -184,9 +178,22 @@ SCHEMA = {
     },
     "properties": {
         "basic": {
-            "title": "Basic - Credentials",
+            "title": "Basic - Exploits",
             "type": "object",
             "properties": {
+                "general": {
+                    "title": "General",
+                    "type": "object",
+                    "properties": {
+                        "should_exploit": {
+                            "title": "Exploit network machines",
+                            "type": "boolean",
+                            "default": True,
+                            "attack_techniques": ["T1210"],
+                            "description": "Determines if monkey should try to safely exploit machines on the network"
+                        }
+                    }
+                },
                 "credentials": {
                     "title": "Credentials",
                     "type": "object",
@@ -399,7 +406,7 @@ SCHEMA = {
                             "title": "Harvest Azure Credentials",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1110", "T1078"],
+                            "attack_techniques": ["T1003", "T1078"],
                             "description":
                                 "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         },
@@ -413,7 +420,7 @@ SCHEMA = {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1110", "T1078"],
+                            "attack_techniques": ["T1003", "T1078"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }

@@ -25,7 +25,7 @@ class Root(flask_restful.Resource):
         if not action:
             return Root.get_server_info()
         elif action == "reset":
-            return jwt_required()(Database.reset_db())
+            return jwt_required()(Database.reset_db)()
         elif action == "killall":
             return Root.kill_all()
         elif action == "is-up":

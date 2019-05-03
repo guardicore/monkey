@@ -21,31 +21,39 @@ class ConfigurePageComponent extends AuthComponent {
     this.initialConfig = {};
     this.initialAttackConfig = {};
     this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
-    this.uiSchema = {
-      behaviour: {
-        custom_PBA_linux_cmd: {
-          "ui:widget": "textarea",
-          "ui:emptyValue": ""
-        },
-        PBA_linux_file: {
-          "ui:widget": this.PBAlinux
-        },
-        custom_PBA_windows_cmd: {
-          "ui:widget": "textarea",
-          "ui:emptyValue": ""
-        },
-        PBA_windows_file: {
-          "ui:widget": this.PBAwindows
-        },
-        PBA_linux_filename: {
-          classNames: "linux-pba-file-info",
-          "ui:emptyValue": ""
-        },
-        PBA_windows_filename: {
-          classNames: "windows-pba-file-info",
-          "ui:emptyValue": ""
+    this.uiSchemas = {
+      basic: {"ui:order": ["general", "credentials"]},
+      basic_network: {},
+      monkey: {
+        behaviour: {
+          custom_PBA_linux_cmd: {
+            "ui:widget": "textarea",
+            "ui:emptyValue": ""
+          },
+          PBA_linux_file: {
+            "ui:widget": this.PBAlinux
+          },
+          custom_PBA_windows_cmd: {
+            "ui:widget": "textarea",
+            "ui:emptyValue": ""
+          },
+          PBA_windows_file: {
+            "ui:widget": this.PBAwindows
+          },
+          PBA_linux_filename: {
+            classNames: "linux-pba-file-info",
+            "ui:emptyValue": ""
+          },
+          PBA_windows_filename: {
+            classNames: "windows-pba-file-info",
+            "ui:emptyValue": ""
+          }
         }
-      }
+      },
+      cnc: {},
+      network: {},
+      exploits: {},
+      internal: {}
     };
     // set schema from server
     this.state = {
@@ -409,7 +417,7 @@ class ConfigurePageComponent extends AuthComponent {
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }
     let config_content = (<Form schema={displayedSchema}
-                                uiSchema={this.uiSchema}
+                                uiSchema={this.uiSchemas[this.state.selectedSection]}
                                 formData={this.state.configuration[this.state.selectedSection]}
                                 onChange={this.onChange}
                                 noValidate={true}>
