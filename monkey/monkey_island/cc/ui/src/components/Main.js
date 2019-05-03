@@ -14,7 +14,6 @@ import ReportPage from 'components/pages/ReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
-import AttckPage from 'components/pages/AttackPage'
 import AttackReportPage from 'components/pages/AttackReportPage';
 
 import 'normalize.css/normalize.css';
@@ -173,7 +172,6 @@ class AppComponent extends AuthComponent {
 
               <hr/>
               <ul>
-                <li><NavLink to="/attack">ATT&CK Configuration</NavLink></li>
                 <li><NavLink to="/configure">Configuration</NavLink></li>
                 <li><NavLink to="/infection/telemetry">Log</NavLink></li>
               </ul>
@@ -200,7 +198,6 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/report', <ReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/attack_report', <AttackReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/attack', <AttckPage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>
         </Grid>

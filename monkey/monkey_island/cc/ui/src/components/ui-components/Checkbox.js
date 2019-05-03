@@ -1,7 +1,7 @@
 import '../../styles/Checkbox.scss'
 import React from 'react';
 
-class Checkbox extends React.PureComponent {
+class CheckboxComponent extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.checked !== prevProps.checked) {
@@ -9,6 +9,12 @@ class Checkbox extends React.PureComponent {
     }
   }
 
+  /*
+  Parent component can pass a name and a changeHandler (function) for this component in props.
+	changeHandler(name, checked) function will be called with these parameters:
+	this.props.name (the name of this component) and
+	this.state.checked (boolean indicating if this component is checked or not)
+  */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -17,20 +23,21 @@ class Checkbox extends React.PureComponent {
 			isAnimating: false
 		};
 		this.toggleChecked = this.toggleChecked.bind(this);
-		this.ping = this.ping.bind(this);
+		this.stopAnimation = this.stopAnimation.bind(this);
 		this.composeStateClasses = this.composeStateClasses.bind(this);
 	}
-	
+
+	//Toggles component.
 	toggleChecked() {
-		if (this.state.isAnimating) return false;
+		if (this.state.isAnimating) {return false;}
 		this.setState({
 			checked: !this.state.checked,
 			isAnimating: true,
-		}, () => { this.props.changeHandler(this.props.name, this.state.checked)});
+		}, () => { this.props.changeHandler ? this.props.changeHandler(this.props.name, this.state.checked) : null});
 	}
 
-	// Stops animation
-	ping() {
+	// Stops ping animation on checkbox after click
+	stopAnimation() {
 		this.setState({ isAnimating: false })
 	}
 
@@ -57,10 +64,10 @@ class Checkbox extends React.PureComponent {
                  type="checkbox" value={this.state.checked}
                  name={this.props.name}/>
 					<label className="text">{ this.props.children }</label>
-				<div className="ui-btn-ping" onTransitionEnd={this.ping}></div>
+				<div className="ui-btn-ping" onTransitionEnd={this.stopAnimation}></div>
 			</div>
 		)
 	}
 }
 
-export default Checkbox;
+export default CheckboxComponent;

@@ -6,13 +6,11 @@ from flask import request, make_response, jsonify
 
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
-from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.attack.attack_config import reset_config as reset_attack_config
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.report import ReportService
 from cc.services.attack.attack_report import AttackReportService
 from monkey_island.cc.utils import local_ip_addresses
-from monkey_island.cc.services.post_breach_files import remove_PBA_files
+from monkey_island.cc.services.database import Database
 
 __author__ = 'Barak'
 
@@ -28,7 +26,7 @@ class Root(flask_restful.Resource):
         if not action:
             return Root.get_server_info()
         elif action == "reset":
-            return Root.reset_db()
+            return jwt_required()(Database.reset_db)()
         elif action == "killall":
             return Root.kill_all()
         elif action == "is-up":
@@ -41,17 +39,6 @@ class Root(flask_restful.Resource):
     def get_server_info():
         return jsonify(ip_addresses=local_ip_addresses(), mongo=str(mongo.db),
                        completed_steps=Root.get_completed_steps())
-
-    @staticmethod
-    @jwt_required()
-    def reset_db():
-        remove_PBA_files()
-        # We can't drop system collections.
-        [mongo.db[x].drop() for x in mongo.db.collection_names() if not x.startswith('system.')]
-        ConfigService.init_config()
-        reset_attack_config()
-        logger.info('DB was reset')
-        return jsonify(status='OK')
 
     @staticmethod
     @jwt_required()

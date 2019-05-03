@@ -17,6 +17,8 @@ from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
+from common.utils.attack_utils import ScanStatus
+from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
 
 __author__ = 'itamar'
 
@@ -174,14 +176,15 @@ class InfectionMonkey(object):
                     machine.set_default_server(self._default_server)
 
                 # Order exploits according to their type
-                self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
-                host_exploited = False
-                for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
-                    if self.try_exploiting(machine, exploiter):
-                        host_exploited = True
-                        break
-                if not host_exploited:
-                    self._fail_exploitation_machines.add(machine)
+                if WormConfiguration.should_exploit:
+                    self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
+                    host_exploited = False
+                    for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
+                        if self.try_exploiting(machine, exploiter):
+                            host_exploited = True
+                            break
+                    if not host_exploited:
+                        self._fail_exploitation_machines.add(machine)
                 if not self._keep_running:
                     break
 
