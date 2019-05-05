@@ -10,7 +10,10 @@ class Environment(object):
     __metaclass__ = abc.ABCMeta
 
     _ISLAND_PORT = 5000
-    _MONGO_URL = os.environ.get("MONKEY_MONGO_URL", "mongodb://localhost:27017/monkeyisland")
+    _MONGO_DB_NAME = "monkeyisland"
+    _MONGO_DB_HOST = "localhost"
+    _MONGO_DB_PORT = 27017
+    _MONGO_URL = os.environ.get("MONKEY_MONGO_URL", "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)))
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(hours=1)
 
@@ -40,3 +43,15 @@ class Environment(object):
     @abc.abstractmethod
     def get_auth_users(self):
         return
+
+    @property
+    def mongo_db_name(self):
+        return self._MONGO_DB_NAME
+
+    @property
+    def mongo_db_host(self):
+        return self._MONGO_DB_HOST
+
+    @property
+    def mongo_db_port(self):
+        return self._MONGO_DB_PORT
