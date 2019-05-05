@@ -1,13 +1,13 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import dateutil.parser
 import flask_restful
 from flask import request
 
+from monkey_island.cc import models
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.monkey_timeout import start_timer_decorator
 from monkey_island.cc.services.node import NodeService
 
 __author__ = 'Barak'
@@ -18,7 +18,6 @@ __author__ = 'Barak'
 class Monkey(flask_restful.Resource):
 
     # Used by monkey. can't secure.
-    @start_timer_decorator
     def get(self, guid=None, **kw):
         NodeService.update_dead_monkeys()  # refresh monkeys status
         if not guid:
@@ -48,6 +47,11 @@ class Monkey(flask_restful.Resource):
         if 'tunnel' in monkey_json:
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
+
+        current_ttl = models.monkey.Ttl(expire_at=datetime.now() + timedelta(seconds=30))
+        current_ttl.save()
+
+        update['$set']['ttl_ref'] = current_ttl.id
 
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 

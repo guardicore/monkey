@@ -22,3 +22,4 @@ bson
 cffi
 virtualenv
 wheel
+mongoengine

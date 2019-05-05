@@ -7,6 +7,7 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.services.edge import EdgeService
 from monkey_island.cc.utils import local_ip_addresses
 import socket
+from monkey_island.cc import models
 
 __author__ = "itay.mizeretz"
 
@@ -141,7 +142,7 @@ class NodeService:
                 "label": label,
                 "group": NodeService.get_monkey_group(monkey),
                 "os": NodeService.get_monkey_os(monkey),
-                "dead": monkey["dead"],
+                "dead": models.Monkey.objects(id=monkey["_id"])[0].is_dead(),
                 "domain_name": "",
                 "pba_results": monkey["pba_results"] if "pba_results" in monkey else []
             }
@@ -293,7 +294,7 @@ class NodeService:
 
     @staticmethod
     def is_any_monkey_alive():
-        return mongo.db.monkey.find_one({'dead': False}) is not None
+        return models.Monkey.objects(dead=False).count() > 0
 
     @staticmethod
     def is_any_monkey_exists():
