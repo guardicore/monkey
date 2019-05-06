@@ -4,8 +4,6 @@ from random import shuffle
 import infection_monkey.config
 from infection_monkey.network import HostScanner, HostFinger
 from infection_monkey.network.tools import check_tcp_ports, tcp_port_to_service
-from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
-from common.utils.attack_utils import ScanStatus
 
 __author__ = 'itamar'
 
@@ -38,8 +36,7 @@ class TcpScanner(HostScanner, HostFinger):
                                          self._config.tcp_scan_get_banner)
         for target_port, banner in izip_longest(ports, banners, fillvalue=None):
             service = tcp_port_to_service(target_port)
-            self.init_service(host.services, service)
-            self.add_found_port(host.services, target_port, key=service)
+            self.init_service(host.services, service, target_port)
             if banner:
                 host.services[service]['banner'] = banner
             if only_one_port:

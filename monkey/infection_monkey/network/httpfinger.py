@@ -37,9 +37,8 @@ class HTTPFinger(HostFinger):
                     with closing(head(url, verify=False, timeout=1)) as req:
                         server = req.headers.get('Server')
                         ssl = True if 'https://' in url else False
-                        self.init_service(host.services, ('tcp-' + port[1]))
+                        self.init_service(host.services, ('tcp-' + port[1]), port[0])
                         host.services['tcp-' + port[1]]['name'] = 'http'
-                        self.add_found_port(host.services, port[0], ('tcp-' + port[1]))
                         host.services['tcp-' + port[1]]['data'] = (server,ssl)
                         LOG.info("Port %d is open on host %s " % (port[0], host))
                         break  # https will be the same on the same port

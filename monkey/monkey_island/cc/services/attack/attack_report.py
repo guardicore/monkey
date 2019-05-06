@@ -1,7 +1,7 @@
 import logging
 from monkey_island.cc.services.attack.technique_reports import T1210, T1197
-from monkey_island.cc.services.attack.attack_telem import get_latest_telem
-from monkey_island.cc.services.attack.attack_config import get_technique_values
+from monkey_island.cc.services.attack.attack_telem import AttackTelemService
+from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
 
 __author__ = "VakarisZ"
@@ -9,8 +9,8 @@ __author__ = "VakarisZ"
 
 LOG = logging.getLogger(__name__)
 
-TECHNIQUES = {'T1210': T1210,
-              'T1197': T1197}
+TECHNIQUES = {'T1210': T1210.T1210,
+              'T1197': T1197.T1197}
 
 REPORT_NAME = 'new_report'
 
@@ -25,8 +25,8 @@ class AttackReportService:
         Generates new report based on telemetries, replaces old report in db with new one.
         :return: Report object
         """
-        report = {'techniques': {}, 'meta': get_latest_telem(), 'name': REPORT_NAME}
-        for tech_id, value in get_technique_values().items():
+        report = {'techniques': {}, 'meta': AttackTelemService.get_latest_telem(), 'name': REPORT_NAME}
+        for tech_id, value in AttackConfig.get_technique_values().items():
             if value:
                 try:
                     report['techniques'].update({tech_id: TECHNIQUES[tech_id].get_report_data()})
@@ -43,7 +43,7 @@ class AttackReportService:
         :return: report dict.
         """
         if AttackReportService.is_report_generated():
-            telem_time = get_latest_telem()
+            telem_time = AttackTelemService.get_latest_telem()
             latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
             if telem_time and latest_report['meta'] and telem_time['time'] == latest_report['meta']['time']:
                 return latest_report

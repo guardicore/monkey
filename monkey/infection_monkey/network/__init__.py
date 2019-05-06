@@ -18,19 +18,10 @@ class HostFinger(object):
     def _SCANNED_SERVICE(self):
         pass
 
-    def init_service(self, services, service_key):
+    def init_service(self, services, service_key, port):
         services[service_key] = {}
         services[service_key]['display_name'] = self._SCANNED_SERVICE
-
-    def add_found_port(self, services, port, key=None):
-        if key:
-            services[key]['port'] = port
-        else:
-            for service in services:
-                if services[service]['display_name'] == self._SCANNED_SERVICE:
-                    service[service]['port'] = port
-                    return
-            raise KeyError
+        services[service_key]['port'] = port
 
     @abstractmethod
     def get_host_fingerprint(self, host):

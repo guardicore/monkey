@@ -63,7 +63,7 @@ class MSSQLFinger(HostFinger):
             sock.close()
             return False
 
-        self.init_service(host.services, self._SCANNED_SERVICE)
+        self.init_service(host.services, self._SCANNED_SERVICE, MSSQLFinger.SQL_BROWSER_DEFAULT_PORT)
 
         # Loop through the server data
         instances_list = data[3:].decode().split(';;')
@@ -76,7 +76,6 @@ class MSSQLFinger(HostFinger):
                     # Each instance's info is nested under its own name, if there are multiple instances
                     # each will appear under its own name
                     host.services[self._SCANNED_SERVICE][instance_info[1]][instance_info[i - 1]] = instance_info[i]
-        self.add_found_port(host.services, MSSQLFinger.SQL_BROWSER_DEFAULT_PORT)
         # Close the socket
         sock.close()
 

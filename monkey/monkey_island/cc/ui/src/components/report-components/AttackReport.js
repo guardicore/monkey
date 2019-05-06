@@ -4,8 +4,8 @@ import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 import Collapse from '@kunukn/react-collapse';
-import T1210 from '../attack/T1210';
-import T1197 from '../attack/T1197';
+import T1210 from '../attack/techniques/T1210';
+import T1197 from '../attack/techniques/T1197';
 import '../../styles/Collapse.scss'
 
 const tech_components = {
@@ -146,14 +146,7 @@ class AttackReportPageComponent extends AuthComponent {
     } else {
       content = this.generateReportContent();
     }
-    return (
-      <Col xs={12} lg={8}>
-        <h1 className="page-title no-print">5. ATT&CK Report</h1>
-        <div style={{'fontSize': '1.2em'}}>
-          {content}
-        </div>
-      </Col>
-    );
+    return ( <div> {content} </div> );
   }
 }
 

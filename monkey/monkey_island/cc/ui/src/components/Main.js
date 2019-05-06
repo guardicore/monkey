@@ -14,7 +14,6 @@ import ReportPage from 'components/pages/ReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
-import AttackReportPage from 'components/pages/AttackReportPage';
 
 import 'normalize.css/normalize.css';
 import 'react-data-components/css/table-twbs.css';
@@ -85,7 +84,6 @@ class AppComponent extends AuthComponent {
         run_monkey: false,
         infection_done: false,
         report_done: false,
-        attack_report_done:false,
         isLoggedIn: undefined
       }
     };
@@ -154,15 +152,6 @@ class AppComponent extends AuthComponent {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/attack_report">
-                    <span className="number">5.</span>
-                    ATT&CK report
-                    {this.state.completedSteps.attack_report_done ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
-                      : ''}
-                  </NavLink>
-                </li>
-                <li>
                   <NavLink to="/start-over">
                     <span className="number"><i className="fa fa-undo" style={{'marginLeft': '-1px'}}/></span>
                     Start Over
@@ -196,7 +185,6 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/report', <ReportPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/attack_report', <AttackReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>

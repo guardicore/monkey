@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../styles/Collapse.scss'
+import '../../../styles/Collapse.scss'
 import {Link} from "react-router-dom";
 import ReactTable from "react-table";
 
