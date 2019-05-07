@@ -101,7 +101,7 @@ def init_app(mongo_url):
 
     with app.app_context():
         database.init()
-        Database.reset_db()
+        Database.init_db()
 
     app.add_url_rule('/', 'serve_home', serve_home)
     app.add_url_rule('/<path:static_path>', 'serve_static_file', serve_static_file)

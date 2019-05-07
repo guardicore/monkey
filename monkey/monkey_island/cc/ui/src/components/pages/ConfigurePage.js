@@ -21,7 +21,24 @@ class ConfigurePageComponent extends AuthComponent {
     this.initialConfig = {};
     this.initialAttackConfig = {};
     this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
-    this.uiSchemas = {
+    this.uiSchemas = ConfigurePageComponent.getUiSchemas();
+    // set schema from server
+    this.state = {
+      schema: {},
+      configuration: {},
+      attackConfig: {},
+      lastAction: 'none',
+      sections: [],
+      selectedSection: 'attack',
+      allMonkeysAreDead: true,
+      PBAwinFile: [],
+      PBAlinuxFile: [],
+      showAttackAlert: false
+    };
+  }
+
+  static getUiSchemas(){
+    return ({
       basic: {"ui:order": ["general", "credentials"]},
       basic_network: {},
       monkey: {
@@ -54,20 +71,7 @@ class ConfigurePageComponent extends AuthComponent {
       network: {},
       exploits: {},
       internal: {}
-    };
-    // set schema from server
-    this.state = {
-      schema: {},
-      configuration: {},
-      attackConfig: {},
-      lastAction: 'none',
-      sections: [],
-      selectedSection: 'attack',
-      allMonkeysAreDead: true,
-      PBAwinFile: [],
-      PBAlinuxFile: [],
-      showAttackAlert: false
-    };
+    })
   }
 
   setInitialConfig(config) {
@@ -138,7 +142,6 @@ class ConfigurePageComponent extends AuthComponent {
                    this.setState({lastAction: 'saved'})})
       .then(this.updateConfig())
       .catch(error => {
-        console.log('bad attack configuration');
         this.setState({lastAction: 'invalid_configuration'});
       });
   };
@@ -410,58 +413,79 @@ class ConfigurePageComponent extends AuthComponent {
     return pbaFile
   }
 
+  renderMatrix = () => {
+    return (<MatrixComponent configuration={this.state.attackConfig}
+                             submit={this.componentDidMount}
+                             reset={this.resetConfig}
+                             change={this.attackTechniqueChange}/>)
+  };
+
+
+  renderConfigContent = (displayedSchema) => {
+    return (<div>
+              {this.renderBasicNetworkWarning()}
+              <Form schema={displayedSchema}
+                    uiSchema={this.uiSchemas[this.state.selectedSection]}
+                    formData={this.state.configuration[this.state.selectedSection]}
+                    onChange={this.onChange}
+                    noValidate={true} >
+                <button type="submit" className={"hidden"}>Submit</button>
+              </Form>
+            </div> )
+  };
+
+  renderRunningMonkeysWarning = () => {
+    return (<div>
+              { this.state.allMonkeysAreDead ?
+                '' :
+                <div className="alert alert-warning">
+                  <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+                  Some monkeys are currently running. Note that changing the configuration will only apply to new
+                  infections.
+                </div>
+              }
+            </div>)
+  };
+
+  renderBasicNetworkWarning = () => {
+    if (this.state.selectedSection === 'basic_network'){
+      return (<div className="alert alert-info">
+                <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+                The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey scans machines
+                according to its range class.
+              </div>)
+    } else {
+      return (<div />)
+    }
+  };
+
+  renderNav = () => {
+    return (<Nav bsStyle="tabs" justified
+                 activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
+                 style={{'marginBottom': '2em'}}>
+              {this.state.sections.map(section => <NavItem key={section.key} eventKey={section.key}>{section.title}</NavItem>)}
+            </Nav>)
+  };
+
   render() {
     let displayedSchema = {};
     if (this.state.schema.hasOwnProperty('properties') && this.state.selectedSection !== 'attack') {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }
-    let config_content = (<Form schema={displayedSchema}
-                                uiSchema={this.uiSchemas[this.state.selectedSection]}
-                                formData={this.state.configuration[this.state.selectedSection]}
-                                onChange={this.onChange}
-                                noValidate={true}>
-                            <div>
-                              { this.state.allMonkeysAreDead ?
-                                '' :
-                                <div className="alert alert-warning">
-                                  <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-                                  Some monkeys are currently running. Note that changing the configuration will only apply to new
-                                  infections.
-                                </div>
-                              }
-                            </div>
-                          </Form>);
-    let attack_content = (<MatrixComponent configuration={this.state.attackConfig}
-                                           submit={this.componentDidMount}
-                                           reset={this.resetConfig}
-                                           change={this.attackTechniqueChange}/>);
     let content = '';
     if (this.state.selectedSection === 'attack' && Object.entries(this.state.attackConfig).length !== 0 ) {
-      content = attack_content
+      content = this.renderMatrix()
     } else if(this.state.selectedSection !== 'attack') {
-      content = config_content
+      content = this.renderConfigContent(displayedSchema)
     }
-
 
     return (
       <Col xs={12} lg={8}>
         {this.renderAttackAlertModal()}
         <h1 className="page-title">Monkey Configuration</h1>
-        <Nav bsStyle="tabs" justified
-             activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
-             style={{'marginBottom': '2em'}}>
-          {this.state.sections.map(section => <NavItem key={section.key} eventKey={section.key}>{section.title}</NavItem>)}
-        </Nav>
-        {
-          this.state.selectedSection === 'basic_network' ?
-            <div className="alert alert-info">
-              <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-              The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey scans machines
-              according to its range class.
-            </div>
-            : <div />
-        }
+        {this.renderNav()}
+        { this.renderRunningMonkeysWarning()}
         { content }
         <div className="text-center">
           <button type="submit" onClick={this.onSubmit} className="btn btn-success btn-lg" style={{margin: '5px'}}>

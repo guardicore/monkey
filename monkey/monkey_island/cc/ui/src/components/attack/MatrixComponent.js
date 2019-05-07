@@ -96,24 +96,29 @@ class MatrixComponent extends AuthComponent {
     return {'columns': columns, 'matrixTableData': matrixTableData, 'maxTechniques': maxTechniques}
   };
 
+  renderLegend = () => {
+    return (
+    <div id="header" className="row justify-content-between attack-legend">
+      <Col xs={4}>
+        <i className="fa fa-circle-thin icon-unchecked"></i>
+        <span> - Dissabled</span>
+      </Col>
+      <Col xs={4}>
+        <i className="fa fa-circle icon-checked"></i>
+        <span> - Enabled</span>
+      </Col>
+      <Col xs={4}>
+        <i className="fa fa-circle icon-mandatory"></i>
+        <span> - Mandatory</span>
+      </Col>
+    </div>)
+  };
+
   render() {
     let tableData = this.getTableData(this.props.configuration);
     return (
       <div>
-        <div id="header" className="row justify-content-between attack-legend">
-          <Col xs={4}>
-            <i className="fa fa-circle-thin icon-unchecked"></i>
-            <span> - Dissabled</span>
-          </Col>
-          <Col xs={4}>
-            <i className="fa fa-circle icon-checked"></i>
-            <span> - Enabled</span>
-          </Col>
-          <Col xs={4}>
-            <i className="fa fa-circle icon-mandatory"></i>
-            <span> - Mandatory</span>
-          </Col>
-        </div>
+        {this.renderLegend()}
         <div className={"attack-matrix"}>
           <ReactTable columns={tableData['columns']}
                       data={tableData['matrixTableData']}

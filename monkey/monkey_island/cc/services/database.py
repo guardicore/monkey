@@ -23,3 +23,9 @@ class Database(object):
         AttackConfig.reset_config()
         logger.info('DB was reset')
         return jsonify(status='OK')
+
+    @staticmethod
+    def init_db():
+        if not mongo.db.collection_names():
+            Database.reset_db()
+
