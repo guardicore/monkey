@@ -12,6 +12,13 @@ from monkey_ttl import MonkeyTtl
 
 
 class TestMonkey(TestCase):
+    """
+    Make sure to set server environment to `testing` in server.json! Otherwise this will mess up your mongo instance and
+    won't work.
+
+    Also, the working directory needs to be the working directory from which you usually run the island so the
+    server.json file is found and loaded.
+    """
     def test_is_dead(self):
         # Arrange
         alive_monkey_ttl = MonkeyTtl(expire_at=datetime.now() + timedelta(seconds=30))
