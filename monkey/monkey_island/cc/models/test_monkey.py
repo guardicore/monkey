@@ -7,6 +7,7 @@ from unittest import TestCase
 import mongomock
 
 from monkey import Monkey
+from monkey_island.cc.models.errors import MonkeyNotFoundError
 from monkey_ttl import MonkeyTtl
 
 
@@ -35,3 +36,9 @@ class TestMonkey(TestCase):
         self.assertTrue(mia_monkey.is_dead())
         self.assertFalse(alive_monkey.is_dead())
 
+    def test_get_single_monkey_by_id(self):
+        a_monkey = Monkey(guid=str(uuid.uuid4()))
+        a_monkey.save()
+
+        self.assertIsNotNone(Monkey.get_single_monkey_by_id(a_monkey.id))
+        self.assertRaises(MonkeyNotFoundError, Monkey.get_single_monkey_by_id, "abcdefabcdefabcdefabcdef")

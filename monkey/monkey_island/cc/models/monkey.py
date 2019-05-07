@@ -5,6 +5,7 @@ import mongoengine
 from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, DateField, \
     ReferenceField
 
+from monkey_island.cc.models.errors import MonkeyNotFoundError
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 
 
@@ -32,6 +33,13 @@ class Monkey(Document):
     pba_results = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
 
+    @staticmethod
+    def get_single_monkey_by_id(db_id):
+        try:
+            return Monkey.objects(id=db_id)[0]
+        except IndexError:
+            raise MonkeyNotFoundError("id: {0}".format(str(db_id)))
+
     def is_dead(self):
         monkey_is_dead = False
         if self.dead:
@@ -41,7 +49,7 @@ class Monkey(Document):
                 if MonkeyTtl.objects(id=self.ttl_ref.id).count() == 0:
                     # No TTLs - monkey has timed out. The monkey is MIA.
                     monkey_is_dead = True
-            except mongoengine.DoesNotExist:
+            except (mongoengine.DoesNotExist, AttributeError):
                 # Trying to dereference unknown document - the monkey is MIA.
                 monkey_is_dead = True
         return monkey_is_dead
