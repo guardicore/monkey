@@ -10,6 +10,8 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 
+MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 30
+
 __author__ = 'Barak'
 
 # TODO: separate logic from interface
@@ -49,7 +51,9 @@ class Monkey(flask_restful.Resource):
             NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
 
         # The TTL data uses the new `models` module which depends on mongoengine.
-        current_ttl = MonkeyTtl(expire_at=datetime.now() + timedelta(seconds=30))
+        # Using UTC to make the mongodb TTL feature work. See
+        # https://stackoverflow.com/questions/55994379/mongodb-ttl-index-doesnt-delete-expired-documents.
+        current_ttl = MonkeyTtl(expire_at=datetime.utcnow() + timedelta(seconds=MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS))
         current_ttl.save()
 
         update['$set']['ttl_ref'] = current_ttl.id
