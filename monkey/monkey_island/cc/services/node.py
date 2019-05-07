@@ -68,7 +68,7 @@ class NodeService:
     def get_node_label(node):
         domain_name = ""
         if node["domain_name"]:
-            domain_name = " ("+node["domain_name"]+")"
+            domain_name = " (" + node["domain_name"] + ")"
         return node["os"]["version"] + " : " + node["ip_addresses"][0] + domain_name
 
     @staticmethod
@@ -106,7 +106,8 @@ class NodeService:
 
     @staticmethod
     def get_monkey_critical_services(monkey_id):
-        critical_services = mongo.db.monkey.find_one({'_id': monkey_id}, {'critical_services': 1}).get('critical_services', [])
+        critical_services = mongo.db.monkey.find_one({'_id': monkey_id}, {'critical_services': 1}).get(
+            'critical_services', [])
         return critical_services
 
     @staticmethod
@@ -296,7 +297,8 @@ class NodeService:
 
     @staticmethod
     def is_any_monkey_alive():
-        return models.Monkey.objects(dead=False).count() > 0
+        all_monkeys = models.Monkey.objects()
+        return any(not monkey.is_dead() for monkey in all_monkeys)
 
     @staticmethod
     def is_any_monkey_exists():
