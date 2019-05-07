@@ -59,21 +59,21 @@ class AttackReportPageComponent extends AuthComponent {
   onToggle = technique =>
     this.setState(state => ({ collapseOpen: state.collapseOpen === technique ? null : technique }));
 
-  getTechniqueCollapse(tech_id){
+  getComponentClass(tech_id){
     switch (this.state.report[tech_id].status) {
       case 'SCANNED':
-        var className = 'collapse-info';
-        break;
+        return 'collapse-info';
       case 'USED':
-        var className = 'collapse-danger';
-        break;
+        return 'collapse-danger';
       default:
-        var className = 'collapse-default';
+        return 'collapse-default';
     }
+  }
 
+  getTechniqueCollapse(tech_id){
     return (
       <div key={tech_id} className={classNames("collapse-item", { "item--active": this.state.collapseOpen === tech_id })}>
-        <button className={classNames("btn-collapse", className)} onClick={() => this.onToggle(tech_id)}>
+        <button className={classNames("btn-collapse", this.getComponentClass(tech_id))} onClick={() => this.onToggle(tech_id)}>
           <span>{this.state.report[tech_id].title}</span>
           <span>
               <i className={classNames("fa", this.state.collapseOpen === tech_id ? "fa-chevron-down" : "fa-chevron-up")}></i>
@@ -102,6 +102,23 @@ class AttackReportPageComponent extends AuthComponent {
     );
   }
 
+  renderLegend() {
+    return( <div id="header" className="row justify-content-between attack-legend">
+              <Col xs={4}>
+                <i className="fa fa-circle icon-default"></i>
+                <span> - Unscanned</span>
+              </Col>
+              <Col xs={4}>
+                <i className="fa fa-circle icon-info"></i>
+                <span> - Scanned</span>
+              </Col>
+              <Col xs={4}>
+                <i className="fa fa-circle icon-danger"></i>
+                <span> - Used</span>
+              </Col>
+            </div>)
+  }
+
   generateReportContent(){
     let content = [];
     Object.keys(this.state.report).forEach((tech_id) => {
@@ -109,20 +126,7 @@ class AttackReportPageComponent extends AuthComponent {
     });
     return (
       <div>
-        <div id="header" className="row justify-content-between attack-legend">
-          <Col xs={4}>
-            <i className="fa fa-circle icon-default"></i>
-            <span> - Unscanned</span>
-          </Col>
-          <Col xs={4}>
-            <i className="fa fa-circle icon-info"></i>
-            <span> - Scanned</span>
-          </Col>
-          <Col xs={4}>
-            <i className="fa fa-circle icon-danger"></i>
-            <span> - Used</span>
-          </Col>
-        </div>
+        {this.renderLegend()}
         <section className="app">{content}</section>
       </div>
     )

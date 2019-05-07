@@ -21,11 +21,24 @@ class T1210 extends React.Component {
       ]
   }
 
-  static renderMachine = (val) => {
+  static renderMachine(val){
     return (
       <span>{val.ip_addr} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")}</span>
     )
   };
+
+  renderExploitedMachines(){
+    if (this.props.data.bits_jobs.length === 0){
+      return (<div />)
+    } else {
+      return (<ReactTable
+                columns={this.columns}
+                data={this.props.data.bits_jobs}
+                showPagination={false}
+                defaultPageSize={this.props.data.bits_jobs.length}
+              />)
+    }
+  }
 
   render() {
     return (
@@ -35,12 +48,7 @@ class T1210 extends React.Component {
           {this.props.data.bits_jobs.length > 0 ? <div>BITS jobs were used in these machines: </div> : ''}
         </div>
         <br/>
-        <ReactTable
-          columns={this.columns}
-          data={this.props.data.bits_jobs}
-          showPagination={false}
-          defaultPageSize={this.props.data.bits_jobs.length}
-        />
+        {this.renderExploitedMachines()}
       </div>
     );
   }
