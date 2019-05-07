@@ -3,51 +3,9 @@ Define a Document Schema for the Monkey document.
 """
 import mongoengine
 from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, DateField, \
-    EmbeddedDocument, connect, ReferenceField, DateTimeField
+    ReferenceField
 
-from monkey_island.cc.environment.environment import env
-
-connect(db=env.mongo_db_name, host=env.mongo_db_host, port=env.mongo_db_port)
-
-
-class Config(EmbeddedDocument):
-    """
-    No need to define this schema here. It will change often and is already is defined in
-    monkey_island.cc.services.config_schema.
-    See https://mongoengine-odm.readthedocs.io/apireference.html#mongoengine.FieldDoesNotExist
-    """
-    meta = {'strict': False}
-    pass
-
-
-class Creds(EmbeddedDocument):
-    """
-    TODO get an example of this data, and make it strict
-    """
-    meta = {'strict': False}
-    pass
-
-
-class PbaResults(EmbeddedDocument):
-    ip = StringField()
-    hostname = StringField()
-    command = StringField()
-    name = StringField()
-    result = ListField()
-
-
-class MonkeyTtl(Document):
-    meta = {
-        'indexes': [
-            {
-                'name': 'TTL_index',
-                'fields': ['expire_at'],
-                'expireAfterSeconds': 0
-            }
-        ]
-    }
-
-    expire_at = DateTimeField()
+from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 
 
 class Monkey(Document):
@@ -81,9 +39,9 @@ class Monkey(Document):
         else:
             try:
                 if MonkeyTtl.objects(id=self.ttl_ref.id).count() == 0:
-                    # No TTLs - monkey has timed out. The monkey is MIA
+                    # No TTLs - monkey has timed out. The monkey is MIA.
                     monkey_is_dead = True
             except mongoengine.DoesNotExist:
-                # Trying to dereference unknown document
+                # Trying to dereference unknown document - the monkey is MIA.
                 monkey_is_dead = True
         return monkey_is_dead

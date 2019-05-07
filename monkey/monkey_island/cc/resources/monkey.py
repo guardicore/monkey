@@ -5,7 +5,7 @@ import dateutil.parser
 import flask_restful
 from flask import request
 
-from monkey_island.cc import models
+from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
@@ -48,7 +48,8 @@ class Monkey(flask_restful.Resource):
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
 
-        current_ttl = models.monkey.MonkeyTtl(expire_at=datetime.now() + timedelta(seconds=30))
+        # The TTL data uses the new `models` module which depends on mongoengine.
+        current_ttl = MonkeyTtl(expire_at=datetime.now() + timedelta(seconds=30))
         current_ttl.save()
 
         update['$set']['ttl_ref'] = current_ttl.id

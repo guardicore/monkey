@@ -16,9 +16,19 @@ class Environment(object):
     _MONGO_URL = os.environ.get("MONKEY_MONGO_URL", "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)))
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(hours=1)
+    _testing = False
+
+    @property
+    def testing(self):
+        return self._testing
+
+    @testing.setter
+    def testing(self, value):
+        self._testing = value
 
     def __init__(self):
         self.config = None
+        self._testing = False  # Assume env is not for unit testing.
 
     def set_config(self, config):
         self.config = config
