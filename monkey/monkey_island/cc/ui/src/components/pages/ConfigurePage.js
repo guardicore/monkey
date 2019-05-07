@@ -274,12 +274,14 @@ class ConfigurePageComponent extends AuthComponent {
         });
         this.setInitialConfig(res.configuration);
         this.props.onStatusChange();
-      }).then(this.authFetch(ATTACK_URL,{ method: 'POST',
-                                             headers: {'Content-Type': 'application/json'},
-                                             body: JSON.stringify('reset_attack_matrix')}))
+      });
+    this.authFetch(ATTACK_URL,{ method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify('reset_attack_matrix')})
       .then(res => res.json())
       .then(res => {
-        this.setState({attackConfig: res.configuration})
+        this.setState({attackConfig: res.configuration});
+        this.setInitialAttackConfig(res.configuration);
       })
   };
 
