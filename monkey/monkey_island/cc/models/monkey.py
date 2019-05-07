@@ -16,6 +16,7 @@ class Monkey(Document):
         *   The logic section defines complex questions we can ask about a single document which are asked multiple
             times, somewhat like an API.
     """
+    # SCHEMA
     guid = StringField(required=True)
     config = EmbeddedDocumentField('Config')
     creds = ListField(EmbeddedDocumentField('Creds'))
@@ -33,6 +34,7 @@ class Monkey(Document):
     pba_results = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
 
+    # LOGIC
     @staticmethod
     def get_single_monkey_by_id(db_id):
         try:
