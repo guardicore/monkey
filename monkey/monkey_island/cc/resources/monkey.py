@@ -1,13 +1,16 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import dateutil.parser
-from flask import request
 import flask_restful
+from flask import request
 
+from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
+
+MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 120
 
 __author__ = 'Barak'
 
@@ -46,6 +49,14 @@ class Monkey(flask_restful.Resource):
         if 'tunnel' in monkey_json:
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
+
+        # The TTL data uses the new `models` module which depends on mongoengine.
+        # Using UTC to make the mongodb TTL feature work. See
+        # https://stackoverflow.com/questions/55994379/mongodb-ttl-index-doesnt-delete-expired-documents.
+        current_ttl = MonkeyTtl(expire_at=datetime.utcnow() + timedelta(seconds=MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS))
+        current_ttl.save()
+
+        update['$set']['ttl_ref'] = current_ttl.id
 
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
@@ -88,7 +99,7 @@ class Monkey(flask_restful.Resource):
                 parent_to_add = (exploit_telem[0].get('monkey_guid'), exploit_telem[0].get('data').get('exploiter'))
             else:
                 parent_to_add = (parent, None)
-        elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in  monkey_json:
+        elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in monkey_json:
             exploit_telem = [x for x in
                              mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}})]

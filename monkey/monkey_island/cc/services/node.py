@@ -4,9 +4,11 @@ from bson import ObjectId
 
 import monkey_island.cc.services.log
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.edge import EdgeService
 from monkey_island.cc.utils import local_ip_addresses
 import socket
+from monkey_island.cc import models
 
 __author__ = "itay.mizeretz"
 
@@ -123,7 +125,7 @@ class NodeService:
             monkey_type = "manual" if NodeService.get_monkey_manual_run(monkey) else "monkey"
 
         monkey_os = NodeService.get_monkey_os(monkey)
-        monkey_running = "" if monkey["dead"] else "_running"
+        monkey_running = "" if Monkey.get_single_monkey_by_id(monkey["_id"]).is_dead() else "_running"
         return "%s_%s%s" % (monkey_type, monkey_os, monkey_running)
 
     @staticmethod
@@ -135,13 +137,14 @@ class NodeService:
     @staticmethod
     def monkey_to_net_node(monkey, for_report=False):
         label = monkey['hostname'] if for_report else NodeService.get_monkey_label(monkey)
+        is_monkey_dead = Monkey.get_single_monkey_by_id(monkey["_id"]).is_dead()
         return \
             {
                 "id": monkey["_id"],
                 "label": label,
                 "group": NodeService.get_monkey_group(monkey),
                 "os": NodeService.get_monkey_os(monkey),
-                "dead": monkey["dead"],
+                "dead": is_monkey_dead,
                 "domain_name": "",
                 "pba_results": monkey["pba_results"] if "pba_results" in monkey else []
             }
@@ -293,7 +296,7 @@ class NodeService:
 
     @staticmethod
     def is_any_monkey_alive():
-        return mongo.db.monkey.find_one({'dead': False}) is not None
+        return models.Monkey.objects(dead=False).count() > 0
 
     @staticmethod
     def is_any_monkey_exists():

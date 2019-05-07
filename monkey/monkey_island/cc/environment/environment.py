@@ -2,7 +2,10 @@ import json
 import logging
 import os
 
+env = None
+
 from monkey_island.cc.environment import standard
+from monkey_island.cc.environment import testing
 from monkey_island.cc.environment import aws
 from monkey_island.cc.environment import password
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
@@ -14,11 +17,13 @@ logger = logging.getLogger(__name__)
 AWS = 'aws'
 STANDARD = 'standard'
 PASSWORD = 'password'
+TESTING = 'testing'
 
 ENV_DICT = {
     STANDARD: standard.StandardEnvironment,
     AWS: aws.AwsEnvironment,
     PASSWORD: password.PasswordEnvironment,
+    TESTING: testing.TestingEnvironment
 }
 
 
@@ -31,6 +36,7 @@ def load_server_configuration_from_file():
 def load_env_from_file():
     config_json = load_server_configuration_from_file()
     return config_json['server_config']
+
 
 try:
     config_json = load_server_configuration_from_file()
