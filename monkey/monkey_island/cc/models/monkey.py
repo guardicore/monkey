@@ -22,7 +22,7 @@ class Config(EmbeddedDocument):
 
 class Creds(EmbeddedDocument):
     """
-    TODO get an example of this data
+    TODO get an example of this data, and make it strict
     """
     meta = {'strict': False}
     pass
@@ -36,7 +36,7 @@ class PbaResults(EmbeddedDocument):
     result = ListField()
 
 
-class Ttl(Document):
+class MonkeyTtl(Document):
     meta = {
         'indexes': [
             {
@@ -72,7 +72,7 @@ class Monkey(Document):
     config_error = BooleanField()
     critical_services = ListField(StringField())
     pba_results = ListField()
-    ttl_ref = ReferenceField(Ttl)
+    ttl_ref = ReferenceField(MonkeyTtl)
 
     def is_dead(self):
         monkey_is_dead = False
@@ -80,7 +80,7 @@ class Monkey(Document):
             monkey_is_dead = True
         else:
             try:
-                if Ttl.objects(id=self.ttl_ref.id).count() == 0:
+                if MonkeyTtl.objects(id=self.ttl_ref.id).count() == 0:
                     # No TTLs - monkey has timed out. The monkey is MIA
                     monkey_is_dead = True
             except mongoengine.DoesNotExist:
