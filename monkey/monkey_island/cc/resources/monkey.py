@@ -10,7 +10,7 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 
-MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 30
+MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 120
 
 __author__ = 'Barak'
 
