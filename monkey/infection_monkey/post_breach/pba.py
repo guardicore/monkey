@@ -34,6 +34,15 @@ class PBA(object):
 
     @staticmethod
     def default_get_pba(name, pba_class, linux_cmd="", windows_cmd=""):
+        """
+        Default get_pba() method implementation
+        :param name: PBA name
+        :param pba_class: class instance. Class's name is matched to config to determine
+        if corresponding field was enabled in post breach array or not.
+        :param linux_cmd: commands for linux
+        :param windows_cmd: commands for windows
+        :return: post breach action
+        """
         if pba_class.__name__ in WormConfiguration.post_breach_actions:
             command = PBA.choose_command(linux_cmd, windows_cmd)
             if command:
@@ -55,7 +64,6 @@ class PBA(object):
     def _execute_default(self):
         """
         Default post breach command execution routine
-        :param command: What command to execute
         :return: Tuple of command's output string and boolean, indicating if it succeeded
         """
         try:
@@ -66,4 +74,10 @@ class PBA(object):
 
     @staticmethod
     def choose_command(linux_cmd, windows_cmd):
+        """
+        Helper method that chooses between linux and windows commands.
+        :param linux_cmd:
+        :param windows_cmd:
+        :return: Command for current os
+        """
         return windows_cmd if is_windows_os() else linux_cmd
