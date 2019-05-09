@@ -250,8 +250,9 @@ SCHEMA = {
                             "default": [
                             ],
                             "description":
-                                "List of IPs/subnets the monkey should scan."
-                                " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\""
+                                "List of IPs/subnets/hosts the monkey should scan."
+                                " Examples: \"192.168.0.1\", \"192.168.0.5-192.168.0.20\", \"192.168.0.5/24\","
+                                " \"printer.example\""
                         }
                     }
                 },
