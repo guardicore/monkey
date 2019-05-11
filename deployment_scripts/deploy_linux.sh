@@ -81,8 +81,7 @@ wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_64_BINARY_URL}
 # Allow them to be executed
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
-chmod a+x "$ISLAND_BINARIES_PATH/$WINDOWS_32_BINARY_NAME"
-chmod a+x "$ISLAND_BINARIES_PATH/$WINDOWS_64_BINARY_NAME"
+
 
 # Get machine type/kernel version
 kernel=`uname -m`
