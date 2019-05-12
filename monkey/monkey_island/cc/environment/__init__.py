@@ -13,7 +13,7 @@ class Environment(object):
     _MONGO_URL = os.environ.get("MONKEY_MONGO_URL", "mongodb://localhost:27017/monkeyisland")
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(hours=1)
-    _MONKEY_VERSION = "1.6.2"
+    _MONKEY_VERSION = "1.6.3"
 
     def __init__(self):
         self.config = None
