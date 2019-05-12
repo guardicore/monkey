@@ -89,25 +89,8 @@ kernel=`uname -m`
 linux_dist=`lsb_release -a 2> /dev/null`
 
 # If a user haven't installed mongo manually check if we can install it with our script
-if [[ ! -f "$MONGO_BIN_PATH/mongod" ]] && { [[ ${kernel} != "x86_64" ]] || \
-   { [[ ${linux_dist} != *"Debian"* ]] && [[ ${linux_dist} != *"Ubuntu"* ]]; }; }; then
-    echo "Script does not support your operating system for mongodb installation.
-    Reference monkey island readme and install it manually"
-    exit 1
-fi
-
-# Download mongo
-if [[ ! -f "$MONGO_BIN_PATH/mongod" ]]; then
-    log_message "Downloading mongodb"
-    if [[ ${linux_dist} == *"Debian"* ]]; then
-        wget -c -N -O "/tmp/mongo.tgz" ${MONGO_DEBIAN_URL}
-    elif [[ ${linux_dist} == *"Ubuntu"* ]]; then
-        wget -c -N -O "/tmp/mongo.tgz" ${MONGO_UBUNTU_URL}
-    fi
-    tar --strip 2 --wildcards -C ${MONGO_BIN_PATH} -zxvf /tmp/mongo.tgz mongo*/bin/* || handle_error
-else
-    log_message "Mongo db already installed"
-fi
+log_message "Installing MongoDB"
+${ISLAND_PATH}/linux/install_mongo.sh ${MONGO_BIN_PATH} || handle_error
 
 log_message "Installing openssl"
 sudo apt-get install openssl

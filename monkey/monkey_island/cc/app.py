@@ -28,6 +28,7 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
+from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
@@ -83,18 +84,14 @@ def output_json(obj, code, headers=None):
     return resp
 
 
-def init_app(mongo_url):
-    app = Flask(__name__)
-
-    api = flask_restful.Api(app)
-    api.representations = {'application/json': output_json}
-
+def init_app_config(app, mongo_url):
     app.config['MONGO_URI'] = mongo_url
-
     app.config['SECRET_KEY'] = str(uuid.getnode())
     app.config['JWT_AUTH_URL_RULE'] = '/api/auth'
     app.config['JWT_EXPIRATION_DELTA'] = env.get_auth_expiration_time()
 
+
+def init_app_services(app):
     init_jwt(app)
     mongo.init_app(app)
 
@@ -105,9 +102,13 @@ def init_app(mongo_url):
     # If running on AWS, this will initialize the instance data, which is used "later" in the execution of the island.
     RemoteRunAwsService.init()
 
+
+def init_app_url_rules(app):
     app.add_url_rule('/', 'serve_home', serve_home)
     app.add_url_rule('/<path:static_path>', 'serve_static_file', serve_static_file)
 
+
+def init_api_resources(api):
     api.add_resource(Root, '/api')
     api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
     api.add_resource(LocalRun, '/api/local-monkey', '/api/local-monkey/')
@@ -130,5 +131,18 @@ def init_app(mongo_url):
                      '/api/fileUpload/<string:file_type>?restore=<string:filename>')
     api.add_resource(RemoteRun, '/api/remote-monkey', '/api/remote-monkey/')
     api.add_resource(AttackTelem, '/api/attack/<string:technique>')
+    api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
+
+
+def init_app(mongo_url):
+    app = Flask(__name__)
+
+    api = flask_restful.Api(app)
+    api.representations = {'application/json': output_json}
+
+    init_app_config(app, mongo_url)
+    init_app_services(app)
+    init_app_url_rules(app)
+    init_api_resources(api)
 
     return app
