@@ -16,9 +16,10 @@ ipaddress
 enum34
 pycryptodome
 boto3
+botocore
+PyInstaller
 awscli
 cffi
-PyInstaller
 virtualenv
 wheel
 requests

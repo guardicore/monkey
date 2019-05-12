@@ -31,6 +31,7 @@ from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.attack_telem import AttackTelem
 
@@ -97,6 +98,9 @@ def init_app_services(app):
     with app.app_context():
         database.init()
         ConfigService.init_config()
+
+    # If running on AWS, this will initialize the instance data, which is used "later" in the execution of the island.
+    RemoteRunAwsService.init()
 
 
 def init_app_url_rules(app):

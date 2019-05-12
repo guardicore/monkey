@@ -1,10 +1,19 @@
 import React from 'react';
-import {Button, Col, Well, Nav, NavItem, Collapse, Form, FormControl, FormGroup} from 'react-bootstrap';
+import { css } from '@emotion/core';
+import {Button, Col, Well, Nav, NavItem, Collapse} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import GridLoader from 'react-spinners/GridLoader';
+
 import {Icon} from 'react-fa';
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import AwsRunTable from "../run-monkey/AwsRunTable";
+
+const loading_css_override = css`
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+`;
 
 class RunMonkeyPageComponent extends AuthComponent {
 
@@ -20,12 +29,12 @@ class RunMonkeyPageComponent extends AuthComponent {
       showManual: false,
       showAws: false,
       isOnAws: false,
-      isAwsAuth: false,
       awsUpdateClicked: false,
       awsUpdateFailed: false,
-      awsKeyId: '',
-      awsSecretKey: '',
-      awsMachines: []
+      awsMachines: [],
+      isLoadingAws: true,
+      isErrorWhileCollectingAwsMachines: false,
+      awsMachineCollectionErrorMsg: ''
   };
   }
 
@@ -48,13 +57,7 @@ class RunMonkeyPageComponent extends AuthComponent {
       });
 
     this.fetchAwsInfo();
-    this.fetchConfig()
-      .then(config => {
-        this.setState({
-          awsKeyId: config['cnc']['aws_config']['aws_access_key_id'],
-          awsSecretKey: config['cnc']['aws_config']['aws_secret_access_key']
-        });
-      });
+    this.fetchConfig();
 
     this.authFetch('/api/client-monkey')
       .then(res => res.json())
@@ -75,17 +78,29 @@ class RunMonkeyPageComponent extends AuthComponent {
       .then(res =>{
         let is_aws = res['is_aws'];
         if (is_aws) {
-          this.setState({isOnAws: true, awsMachines: res['instances'], isAwsAuth: res['auth']});
+          // On AWS!
+          // Checks if there was an error while collecting the aws machines.
+          let is_error_while_collecting_aws_machines = (res['error'] != null);
+          if (is_error_while_collecting_aws_machines) {
+            // There was an error. Finish loading, and display error message.
+            this.setState({isOnAws: true, isErrorWhileCollectingAwsMachines: true, awsMachineCollectionErrorMsg: res['error'], isLoadingAws: false});
+          } else {
+            // No error! Finish loading and display machines for user
+            this.setState({isOnAws: true, awsMachines: res['instances'], isLoadingAws: false});
+          }
+        } else {
+          // Not on AWS. Finish loading and don't display the AWS div.
+          this.setState({isOnAws: false, isLoadingAws: false});
         }
       });
   }
 
-  generateLinuxCmd(ip, is32Bit) {
+  static generateLinuxCmd(ip, is32Bit) {
     let bitText = is32Bit ? '32' : '64';
     return `wget --no-check-certificate https://${ip}:5000/api/monkey/download/monkey-linux-${bitText}; chmod +x monkey-linux-${bitText}; ./monkey-linux-${bitText} m0nk3y -s ${ip}:5000`
   }
 
-  generateWindowsCmd(ip, is32Bit) {
+  static generateWindowsCmd(ip, is32Bit) {
     let bitText = is32Bit ? '32' : '64';
     return `powershell [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}; (New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/monkey-windows-${bitText}.exe','.\\monkey.exe'); ;Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`;
   }
@@ -118,9 +133,9 @@ class RunMonkeyPageComponent extends AuthComponent {
     let is32Bit = (this.state.selectedOs.split('-')[1] === '32');
     let cmdText = '';
     if (isLinux) {
-      cmdText = this.generateLinuxCmd(this.state.selectedIp, is32Bit);
+      cmdText = RunMonkeyPageComponent.generateLinuxCmd(this.state.selectedIp, is32Bit);
     } else {
-      cmdText = this.generateWindowsCmd(this.state.selectedIp, is32Bit);
+      cmdText = RunMonkeyPageComponent.generateWindowsCmd(this.state.selectedIp, is32Bit);
     }
     return (
       <Well key={'cmdDiv'+this.state.selectedIp} className="well-sm" style={{'margin': '0.5em'}}>
@@ -148,7 +163,7 @@ class RunMonkeyPageComponent extends AuthComponent {
     });
   };
 
-  renderIconByState(state) {
+  static renderIconByState(state) {
     if (state === 'running') {
       return <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
     } else if (state === 'installing') {
@@ -204,19 +219,6 @@ class RunMonkeyPageComponent extends AuthComponent {
         });
       });
   };
-
-  updateAwsKeyId = (evt) => {
-    this.setState({
-      awsKeyId: evt.target.value
-    });
-  };
-
-  updateAwsSecretKey = (evt) => {
-    this.setState({
-      awsSecretKey: evt.target.value
-    });
-  };
-
   fetchConfig() {
     return this.authFetch('/api/configuration/island')
       .then(res => res.json())
@@ -224,41 +226,6 @@ class RunMonkeyPageComponent extends AuthComponent {
         return res.configuration;
       })
   }
-
-  updateAwsKeys = () => {
-    this.setState({
-      awsUpdateClicked: true,
-      awsUpdateFailed: false
-    });
-    this.fetchConfig()
-      .then(config => {
-        let new_config = config;
-        new_config['cnc']['aws_config']['aws_access_key_id'] = this.state.awsKeyId;
-        new_config['cnc']['aws_config']['aws_secret_access_key'] = this.state.awsSecretKey;
-        return new_config;
-      })
-      .then(new_config => {
-        this.authFetch('/api/configuration/island',
-          {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(new_config)
-          })
-          .then(res => res.json())
-          .then(res => {
-            this.fetchAwsInfo()
-              .then(res => {
-                if (!this.state.isAwsAuth) {
-                  this.setState({
-                    awsUpdateClicked: false,
-                    awsUpdateFailed: true
-                  })
-                }
-              });
-          });
-      });
-  };
-
   instanceIdToInstance = (instance_id) => {
     let instance = this.state.awsMachines.find(
       function (inst) {
@@ -268,9 +235,15 @@ class RunMonkeyPageComponent extends AuthComponent {
 
   };
 
-  renderAuthAwsDiv() {
+  renderAwsMachinesDiv() {
     return (
       <div style={{'marginBottom': '2em'}}>
+        <div style={{'marginTop': '1em', 'marginBottom': '1em'}}>
+          <p className="alert alert-info">
+            <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+            Not sure what this is? Not seeing your AWS EC2 instances? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read the documentation</a>!
+          </p>
+        </div>
         {
           this.state.ips.length > 1 ?
             <Nav bsStyle="pills" justified activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
@@ -296,60 +269,6 @@ class RunMonkeyPageComponent extends AuthComponent {
       </div>
     )
   }
-
-  renderNotAuthAwsDiv() {
-    return (
-      <div style={{'marginBottom': '2em'}}>
-        <p style={{'fontSize': '1.2em'}}>
-          You haven't set your AWS account details or they're incorrect. Please enter them below to proceed.
-        </p>
-        <div style={{'marginTop': '1em'}}>
-          <div className="col-sm-12">
-          <div className="col-sm-6 col-sm-offset-3" style={{'fontSize': '1.2em'}}>
-            <div className="panel panel-default">
-              <div className="panel-body">
-                <div className="input-group center-block text-center">
-                  <input type="text" className="form-control" placeholder="AWS Access Key ID"
-                         value={this.state.awsKeyId}
-                         onChange={evt => this.updateAwsKeyId(evt)}/>
-                  <input type="text" className="form-control" placeholder="AWS Secret Access Key"
-                         value={this.state.awsSecretKey}
-                         onChange={evt => this.updateAwsSecretKey(evt)}/>
-                  <Button
-                    onClick={this.updateAwsKeys}
-                    className={'btn btn-default btn-md center-block'}
-                    disabled={this.state.awsUpdateClicked}
-                    variant="primary">
-                    Update AWS details
-                    { this.state.awsUpdateClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null }
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-            <div className="col-sm-8 col-sm-offset-2" style={{'fontSize': '1.2em'}}>
-              <p className="alert alert-info">
-                <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-                In order to remotely run commands on AWS EC2 instances, please make sure you have
-                the <a href="https://docs.aws.amazon.com/console/ec2/run-command/prereqs" target="_blank">prerequisites</a> and if the
-                instances don't show up, check the
-                AWS <a href="https://docs.aws.amazon.com/console/ec2/run-command/troubleshooting" target="_blank">troubleshooting guide</a>.
-              </p>
-            </div>
-            {
-              this.state.awsUpdateFailed ?
-                <div className="col-sm-8 col-sm-offset-2" style={{'fontSize': '1.2em'}}>
-                  <p className="alert alert-danger" role="alert">Authentication failed.</p>
-                </div>
-                :
-                null
-            }
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   render() {
     return (
       <Col xs={12} lg={8}>
@@ -364,7 +283,7 @@ class RunMonkeyPageComponent extends AuthComponent {
                   disabled={this.state.runningOnIslandState !== 'not_running'}
                   >
             Run on Monkey Island Server
-            { this.renderIconByState(this.state.runningOnIslandState) }
+            { RunMonkeyPageComponent.renderIconByState(this.state.runningOnIslandState) }
           </button>
           {
             // TODO: implement button functionality
@@ -413,6 +332,21 @@ class RunMonkeyPageComponent extends AuthComponent {
           </div>
         </Collapse>
         {
+          this.state.isLoadingAws ?
+            <p style={{'marginBottom': '2em', 'align': 'center'}}>
+              <div className='sweet-loading'>
+                <GridLoader
+                  css={loading_css_override}
+                  sizeUnit={"px"}
+                  size={30}
+                  color={'#ffcc00'}
+                  loading={this.state.loading}
+                />
+              </div>
+            </p>
+             : null
+        }
+        {
           this.state.isOnAws ?
             <p className="text-center">
               OR
@@ -432,7 +366,17 @@ class RunMonkeyPageComponent extends AuthComponent {
         }
         <Collapse in={this.state.showAws}>
           {
-            this.state.isAwsAuth ? this.renderAuthAwsDiv() : this.renderNotAuthAwsDiv()
+            this.state.isErrorWhileCollectingAwsMachines ?
+              <div style={{'marginTop': '1em'}}>
+                <p class="alert alert-danger">
+                  <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+                  Error while collecting AWS machine data. Error message: <code>{this.state.awsMachineCollectionErrorMsg}</code><br/>
+                  Are you sure you've set the correct role on your Island AWS machine?<br/>
+                  Not sure what this is? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read the documentation</a>!
+                </p>
+              </div>
+              :
+              this.renderAwsMachinesDiv()
           }
 
         </Collapse>

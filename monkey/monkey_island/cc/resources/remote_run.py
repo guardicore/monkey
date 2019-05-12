@@ -1,10 +1,17 @@
 import json
+
+from botocore.exceptions import NoCredentialsError, ClientError
 from flask import request, jsonify, make_response
 import flask_restful
 
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from common.cloud.aws_service import AwsService
+
+CLIENT_ERROR_FORMAT = "ClientError, error message: '{}'. Probably, the IAM role that has been associated with the " \
+                      "instance doesn't permit SSM calls. "
+NO_CREDS_ERROR_FORMAT = "NoCredentialsError, error message: '{}'. Probably, no IAM role has been associated with the " \
+                        "instance. "
 
 
 class RemoteRun(flask_restful.Resource):
@@ -24,10 +31,14 @@ class RemoteRun(flask_restful.Resource):
             is_aws = RemoteRunAwsService.is_running_on_aws()
             resp = {'is_aws': is_aws}
             if is_aws:
-                is_auth = RemoteRunAwsService.update_aws_auth_params()
-                resp['auth'] = is_auth
-                if is_auth:
+                try:
                     resp['instances'] = AwsService.get_instances()
+                except NoCredentialsError as e:
+                    resp['error'] = NO_CREDS_ERROR_FORMAT.format(e.message)
+                    return jsonify(resp)
+                except ClientError as e:
+                    resp['error'] = CLIENT_ERROR_FORMAT.format(e.message)
+                    return jsonify(resp)
             return jsonify(resp)
 
         return {}
@@ -37,11 +48,9 @@ class RemoteRun(flask_restful.Resource):
         body = json.loads(request.data)
         resp = {}
         if body.get('type') == 'aws':
-            is_auth = RemoteRunAwsService.update_aws_auth_params()
-            resp['auth'] = is_auth
-            if is_auth:
-                result = self.run_aws_monkeys(body)
-                resp['result'] = result
+            RemoteRunAwsService.update_aws_region_authless()
+            result = self.run_aws_monkeys(body)
+            resp['result'] = result
             return jsonify(resp)
 
         # default action
