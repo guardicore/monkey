@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class VersionUpdateService:
-    VERSION_SERVER_URL_PREF = 'https://monkey.guardicore.com'
+    VERSION_SERVER_URL_PREF = 'https://updates.infectionmonkey.com'
     VERSION_SERVER_CHECK_NEW_URL = VERSION_SERVER_URL_PREF + '?deployment=%s&monkey_version=%s'
     VERSION_SERVER_DOWNLOAD_URL = VERSION_SERVER_CHECK_NEW_URL + '&is_download=true'
 
