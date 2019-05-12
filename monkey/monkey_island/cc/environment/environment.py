@@ -32,6 +32,7 @@ def load_env_from_file():
     config_json = load_server_configuration_from_file()
     return config_json['server_config']
 
+
 try:
     config_json = load_server_configuration_from_file()
     __env_type = config_json['server_config']

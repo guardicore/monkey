@@ -65,12 +65,8 @@ How to run:
 
 4. Setup MongoDB (Use one of the two following options):
         4.a. Download MongoDB and extract it to /var/monkey_island/bin/mongodb
-                for debian64 - https://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian81-latest.tgz
-                for ubuntu64 16.10 - https://downloads.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-latest.tgz
-                find more at - https://www.mongodb.org/downloads#production
-                untar.gz with: tar -zxvf filename.tar.gz -C /var/monkey_island/bin/mongodb
-                (make sure the content of the mongo folder is in this directory, meaning this path exists:
-                        /var/monkey_island/bin/mongodb/bin)        
+			4.a.1. Run '/var/monkey_island/linux/install_mongo.sh /var/monkey_island/bin/mongodb'
+				   This will download and extract the relevant mongoDB for your OS.
         OR
         4.b. Use already running instance of mongodb
 			4.b.1. Run 'set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkeyisland"'. Replace '<SERVER ADDR>' with address of mongo server
