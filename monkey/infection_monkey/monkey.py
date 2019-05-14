@@ -19,6 +19,7 @@ from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
+from infection_monkey.exploit.tools import get_interface_to_target
 
 __author__ = 'itamar'
 
@@ -39,6 +40,7 @@ class InfectionMonkey(object):
         self._exploiters = None
         self._fingerprint = None
         self._default_server = None
+        self._default_server_port = None
         self._depth = 0
         self._opts = None
         self._upgrading_to_64 = False
@@ -59,6 +61,10 @@ class InfectionMonkey(object):
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
         self._default_server = self._opts.server
+        try:
+            self._default_server_port = self._default_server.split(':')[1]
+        except KeyError:
+            self._default_server_port = ''
         if self._opts.depth:
             WormConfiguration._depth_from_commandline = True
         self._keep_running = True
@@ -172,8 +178,8 @@ class InfectionMonkey(object):
                 if monkey_tunnel:
                     monkey_tunnel.set_tunnel_for_host(machine)
                 if self._default_server:
+                    machine.set_default_server(get_interface_to_target(machine.ip_addr)+':'+self._default_server_port)
                     LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
-                    machine.set_default_server(self._default_server)
 
                 # Order exploits according to their type
                 self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
