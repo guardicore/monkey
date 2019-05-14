@@ -45,12 +45,15 @@ class UsersPBA(PBA):
                                          (WormConfiguration.current_server, filename),
                                          verify=False,
                                          proxies=ControlClient.proxies)
+        if not pba_file_contents.content:
+            LOG.error("Island didn't respond with post breach file.")
+            return False
         try:
             with open(os.path.join(dst_dir, filename), 'wb') as written_PBA_file:
                 written_PBA_file.write(pba_file_contents.content)
             return True
         except IOError as e:
-            LOG.error("Can not download post breach file to target machine, because %s" % e)
+            LOG.error("Can not upload post breach file to target machine: %s" % e)
             return False
 
     @staticmethod
