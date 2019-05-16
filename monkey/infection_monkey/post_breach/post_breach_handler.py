@@ -40,7 +40,8 @@ class PostBreach(object):
             # Import module from that file
             module = importlib.import_module(PATH_TO_ACTIONS + pba_file)
             # Get all classes in a module
-            pba_classes = [m[1] for m in inspect.getmembers(module, inspect.isclass) if m[1].__module__ == module.__name__]
+            pba_classes = [m[1] for m in inspect.getmembers(module, inspect.isclass)
+                           if ((m[1].__module__ == module.__name__) and getattr(m[1], "get_pba", False))]
             # Get post breach action object from class
             for pba_class in pba_classes:
                 pba = pba_class.get_pba()
