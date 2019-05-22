@@ -20,6 +20,7 @@ import 'react-data-components/css/table-twbs.css';
 import 'styles/App.css';
 import 'react-toggle/style.css';
 import 'react-table/react-table.css';
+import VersionComponent from "./side-menu/VersionComponent";
 
 let logoImage = require('../images/monkey-icon.svg');
 let infectionMonkeyImage = require('../images/infection-monkey.svg');
@@ -85,7 +86,7 @@ class AppComponent extends AuthComponent {
         infection_done: false,
         report_done: false,
         isLoggedIn: undefined
-      }
+      },
     };
   }
 
@@ -175,6 +176,7 @@ class AppComponent extends AuthComponent {
               <div className="license-link text-center">
                 <NavLink to="/license">License</NavLink>
               </div>
+              <VersionComponent/>
             </Col>
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className="main">
               <Route path='/login' render={(props) => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>

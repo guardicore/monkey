@@ -13,7 +13,8 @@ from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
 from infection_monkey.monkey import InfectionMonkey
-import infection_monkey.post_breach # dummy import for pyinstaller
+# noinspection PyUnresolvedReferences
+import infection_monkey.post_breach  # dummy import for pyinstaller
 
 __author__ = 'itamar'
 
@@ -23,7 +24,7 @@ LOG_CONFIG = {'version': 1,
               'disable_existing_loggers': False,
               'formatters': {'standard': {
                   'format': '%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s'},
-                             },
+              },
               'handlers': {'console': {'class': 'logging.StreamHandler',
                                        'level': 'DEBUG',
                                        'formatter': 'standard'},
@@ -70,7 +71,8 @@ def main():
     print("Loaded Configuration: %r" % WormConfiguration.as_dict())
 
     # Make sure we're not in a machine that has the kill file
-    kill_path = os.path.expandvars(WormConfiguration.kill_file_path_windows) if sys.platform == "win32" else WormConfiguration.kill_file_path_linux
+    kill_path = os.path.expandvars(
+        WormConfiguration.kill_file_path_windows) if sys.platform == "win32" else WormConfiguration.kill_file_path_linux
     if os.path.exists(kill_path):
         print("Kill path found, finished run")
         return True

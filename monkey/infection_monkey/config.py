@@ -157,7 +157,7 @@ class Configuration(object):
     retry_failed_explotation = True
 
     # addresses of internet servers to ping and check if the monkey has internet acccess.
-    internet_services = ["monkey.guardicore.com", "www.google.com"]
+    internet_services = ["updates.infectionmonkey.com", "www.google.com"]
 
     keep_tunnel_open_time = 60
 
