@@ -2,7 +2,6 @@ import logging
 import socket
 import struct
 import time
-from difflib import get_close_matches
 from threading import Thread
 
 from infection_monkey.model import VictimHost
@@ -10,6 +9,7 @@ from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import local_ips, get_free_tcp_port
 from infection_monkey.network.tools import check_tcp_port
 from infection_monkey.transport.base import get_last_serve_time
+from infection_monkey.exploit.tools import get_interface_to_target
 
 __author__ = 'hoffer'
 
@@ -148,9 +148,9 @@ class MonkeyTunnel(Thread):
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)
                 if '?' == search:
-                    ip_match = get_close_matches(address[0], self.l_ips) or self.l_ips
+                    ip_match = get_interface_to_target(address[0])
                     if ip_match:
-                        answer = '%s:%d' % (ip_match[0], self.local_port)
+                        answer = '%s:%d' % (ip_match, self.local_port)
                         LOG.debug("Got tunnel request from %s, answering with %s", address[0], answer)
                         self._broad_sock.sendto(answer, (address[0], MCAST_PORT))
                 elif '+' == search:
@@ -187,8 +187,8 @@ class MonkeyTunnel(Thread):
         if not self.local_port:
             return
 
-        ip_match = get_close_matches(host.ip_addr, local_ips()) or self.l_ips
-        host.default_tunnel = '%s:%d' % (ip_match[0], self.local_port)
+        ip_match = get_interface_to_target(host.ip_addr)
+        host.default_tunnel = '%s:%d' % (ip_match, self.local_port)
 
     def stop(self):
         self._stopped = True
