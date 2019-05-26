@@ -14,6 +14,8 @@ import ReportPage from 'components/pages/ReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
+import Notifier from "react-desktop-notification"
+
 
 import 'normalize.css/normalize.css';
 import 'react-data-components/css/table-twbs.css';
@@ -105,6 +107,8 @@ class AppComponent extends AuthComponent {
   }
 
   render() {
+    this.showInfectionDoneNotification();
+
     return (
       <Router>
         <Grid fluid={true}>
@@ -193,6 +197,17 @@ class AppComponent extends AuthComponent {
         </Grid>
       </Router>
     );
+  }
+
+  showInfectionDoneNotification() {
+    if (this.state.completedSteps.infection_done) {
+      console.log("Trying to show notification...");
+      Notifier.start(
+        "Monkey Island",
+        "Infection is done. Click to see results",
+        "https://localhost:5000/report",
+        {logoImage});
+    }
   }
 }
 
