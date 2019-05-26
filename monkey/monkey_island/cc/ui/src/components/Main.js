@@ -52,6 +52,7 @@ class AppComponent extends AuthComponent {
               }
               if (isChanged) {
                 this.setState({completedSteps: res['completed_steps']});
+                this.showInfectionDoneNotification();
               }
             });
         }
@@ -107,8 +108,6 @@ class AppComponent extends AuthComponent {
   }
 
   render() {
-    this.showInfectionDoneNotification();
-
     return (
       <Router>
         <Grid fluid={true}>
@@ -206,7 +205,7 @@ class AppComponent extends AuthComponent {
         "Monkey Island",
         "Infection is done. Click to see results",
         "https://localhost:5000/report",
-        {logoImage});
+        "");
     }
   }
 }
