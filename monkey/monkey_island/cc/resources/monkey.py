@@ -19,9 +19,7 @@ __author__ = 'Barak'
 
 def create_monkey_ttl():
     # The TTL data uses the new `models` module which depends on mongoengine.
-    # Using UTC to make the mongodb TTL feature work. See
-    # https://stackoverflow.com/questions/55994379/mongodb-ttl-index-doesnt-delete-expired-documents.
-    current_ttl = MonkeyTtl(expire_at=datetime.utcnow() + timedelta(seconds=MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS))
+    current_ttl = MonkeyTtl(MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
     current_ttl.save()
     ttlid = current_ttl.id
     return ttlid
