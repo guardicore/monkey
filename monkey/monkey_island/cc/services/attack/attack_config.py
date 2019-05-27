@@ -86,14 +86,10 @@ class AttackConfig(object):
             dictionary = {}
             # If 'value' is a boolean value that should be set:
             if 'type' in value and value['type'] == 'boolean' and 'attack_techniques' in value:
-                try:
-                    AttackConfig.set_bool_conf_val(path,
-                                                   AttackConfig.should_enable_field(value['attack_techniques'],
-                                                                                    attack_techniques),
-                                                   monkey_config)
-                except KeyError:
-                    # Monkey schema has a technique that is not yet implemented
-                    pass
+                AttackConfig.set_bool_conf_val(path,
+                                               AttackConfig.should_enable_field(value['attack_techniques'],
+                                                                                attack_techniques),
+                                               monkey_config)
             # If 'value' is dict, we go over each of it's fields to search for booleans
             elif 'properties' in value:
                 dictionary = value['properties']
@@ -124,8 +120,11 @@ class AttackConfig(object):
         :return: True, if user enabled all techniques used by the field, false otherwise
         """
         for technique in field_techniques:
-            if not users_techniques[technique]:
-                return False
+            try:
+                if not users_techniques[technique]:
+                    return False
+            except KeyError:
+                logger.error("Attack technique %s is defined in schema, but not implemented." % technique)
         return True
 
     @staticmethod

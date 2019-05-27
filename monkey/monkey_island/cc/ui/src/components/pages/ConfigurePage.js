@@ -249,7 +249,7 @@ class ConfigurePageComponent extends AuthComponent {
     if ((key === 'attack' && this.userChangedConfig()) ||
         (this.currentSection === 'attack' && this.userChangedMatrix())){
       this.setState({showAttackAlert: true});
-      return
+      return;
     }
     this.currentSection = key;
     this.setState({
