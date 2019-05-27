@@ -1,12 +1,12 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import dateutil.parser
 import flask_restful
 from flask import request
 
-from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 
@@ -19,7 +19,7 @@ __author__ = 'Barak'
 
 def create_monkey_ttl():
     # The TTL data uses the new `models` module which depends on mongoengine.
-    current_ttl = MonkeyTtl(MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
+    current_ttl = MonkeyTtl.create_ttl_expire_in(MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
     current_ttl.save()
     ttlid = current_ttl.id
     return ttlid

@@ -9,9 +9,14 @@ class MonkeyTtl(Document):
     See https://docs.mongodb.com/manual/tutorial/expire-data/ and
     https://stackoverflow.com/questions/55994379/mongodb-ttl-index-doesnt-delete-expired-documents/56021663#56021663
     for more information about how TTL indexing works and why this class is set up the way it is.
+
+    If you wish to use this class, you can create it using the create_ttl_expire_in(seconds) function.
+    If you wish to create an instance of this class directly, see the inner implementation of
+    create_ttl_expire_in(seconds) to see how to do so.  
     """
 
-    def __init__(self, expiry_in_seconds, *args, **values):
+    @staticmethod
+    def create_ttl_expire_in(expiry_in_seconds):
         """
         Initializes a TTL object which will expire in expire_in_seconds seconds from when created.
         Remember to call .save() on the object after creation.
@@ -20,8 +25,7 @@ class MonkeyTtl(Document):
         """
         # Using UTC to make the mongodb TTL feature work. See
         # https://stackoverflow.com/questions/55994379/mongodb-ttl-index-doesnt-delete-expired-documents.
-        super(MonkeyTtl, self).__init__(
-            expire_at=datetime.utcnow() + timedelta(seconds=expiry_in_seconds), *args, **values)
+        return MonkeyTtl(expire_at=datetime.utcnow() + timedelta(seconds=expiry_in_seconds))
 
     meta = {
         'indexes': [
