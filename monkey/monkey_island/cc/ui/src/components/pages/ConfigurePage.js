@@ -175,7 +175,6 @@ class ConfigurePageComponent extends AuthComponent {
         console.log('bad configuration');
         this.setState({lastAction: 'invalid_configuration'});
       });
-
   };
 
   // Alters attack configuration when user toggles technique
@@ -187,13 +186,19 @@ class ConfigurePageComponent extends AuthComponent {
         let tempMatrix = this.state.attackConfig;
         tempMatrix[techType[0]].properties[technique].value = value;
         this.setState({attackConfig: tempMatrix});
-        // Toggle all mapped techniques
-        if (! mapped && tempMatrix[techType[0]].properties[technique].hasOwnProperty('depends_on')){
-          tempMatrix[techType[0]].properties[technique].depends_on.forEach(mappedTechnique => {
-            this.attackTechniqueChange(mappedTechnique, value, true)
-          })
-        }
 
+        // Toggle all mapped techniques
+        if (! mapped ){
+          // Loop trough each column and each row
+          Object.entries(this.state.attackConfig).forEach(otherType => {
+            Object.entries(otherType[1].properties).forEach(otherTech => {
+              // If this technique depends on a technique that was changed
+              if (otherTech[1].hasOwnProperty('depends_on') && otherTech[1]['depends_on'].includes(technique)){
+                this.attackTechniqueChange(otherTech[0], value, true)
+              }
+            })
+          });
+        }
       }
     });
   };
