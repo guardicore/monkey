@@ -7,7 +7,7 @@ from unittest import TestCase
 import mongomock
 
 from monkey import Monkey
-from monkey_island.cc.models.errors import MonkeyNotFoundError
+from monkey_island.cc.models.monkey import MonkeyNotFoundError
 from monkey_ttl import MonkeyTtl
 
 
