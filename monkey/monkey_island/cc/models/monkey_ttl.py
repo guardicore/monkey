@@ -12,7 +12,7 @@ class MonkeyTtl(Document):
 
     If you wish to use this class, you can create it using the create_ttl_expire_in(seconds) function.
     If you wish to create an instance of this class directly, see the inner implementation of
-    create_ttl_expire_in(seconds) to see how to do so.  
+    create_ttl_expire_in(seconds) to see how to do so.
     """
 
     @staticmethod
