@@ -41,10 +41,14 @@ class UsersPBA(PBA):
         :return: True if successful, false otherwise
         """
 
-        pba_file_contents = requests.get("https://%s/api/pba/download/%s" %
-                                         (WormConfiguration.current_server, filename),
-                                         verify=False,
-                                         proxies=ControlClient.proxies)
+        try:
+            pba_file_contents = requests.get("https://%s/api/pba/download/%s" %
+                                             (WormConfiguration.current_server, filename),
+                                             verify=False,
+                                             proxies=ControlClient.proxies)
+        except requests.exceptions.RequestException:
+            return False
+        
         if not pba_file_contents.content:
             LOG.error("Island didn't respond with post breach file.")
             return False
