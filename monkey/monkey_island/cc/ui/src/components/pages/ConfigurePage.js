@@ -75,10 +75,12 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   setInitialConfig(config) {
+    // Sets a reference to know if config was changed
     this.initialConfig = JSON.parse(JSON.stringify(config));
   }
 
   setInitialAttackConfig(attackConfig) {
+    // Sets a reference to know if attack config was changed
     this.initialAttackConfig = JSON.parse(JSON.stringify(attackConfig));
   }
 
@@ -138,9 +140,9 @@ class ConfigurePageComponent extends AuthComponent {
         }
         return res;
       })
-      .then(() => {this.setInitialAttackConfig(this.state.attackConfig);
-                   this.setState({lastAction: 'saved'})})
+      .then(() => {this.setInitialAttackConfig(this.state.attackConfig);})
       .then(this.updateConfig())
+      .then(this.setState({lastAction: 'saved'}))
       .catch(error => {
         this.setState({lastAction: 'invalid_configuration'});
       });

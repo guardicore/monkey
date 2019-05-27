@@ -22,7 +22,7 @@ SCHEMA = {
                         "WmiExploiter"
                     ],
                     "title": "WMI Exploiter",
-                    "attack_techniques": ["T1110", "T1210"]
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
@@ -30,7 +30,7 @@ SCHEMA = {
                         "MSSQLExploiter"
                     ],
                     "title": "MSSQL Exploiter",
-                    "attack_techniques": ["T1110", "T1210"]
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",

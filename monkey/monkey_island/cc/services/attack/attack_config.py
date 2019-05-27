@@ -55,7 +55,7 @@ class AttackConfig(object):
         for key, definition in monkey_schema['definitions'].items():
             for array_field in definition['anyOf']:
                 # Check if current array field has attack_techniques assigned to it
-                if 'attack_techniques' in array_field:
+                if 'attack_techniques' in array_field and array_field['attack_techniques']:
                     should_remove = not AttackConfig.should_enable_field(array_field['attack_techniques'],
                                                                          attack_techniques)
                     # If exploiter's attack technique is disabled, disable the exploiter/scanner/PBA
@@ -85,7 +85,8 @@ class AttackConfig(object):
         if isinstance(value, dict):
             dictionary = {}
             # If 'value' is a boolean value that should be set:
-            if 'type' in value and value['type'] == 'boolean' and 'attack_techniques' in value:
+            if 'type' in value and value['type'] == 'boolean' \
+                    and 'attack_techniques' in value and value['attack_techniques']:
                 AttackConfig.set_bool_conf_val(path,
                                                AttackConfig.should_enable_field(value['attack_techniques'],
                                                                                 attack_techniques),
