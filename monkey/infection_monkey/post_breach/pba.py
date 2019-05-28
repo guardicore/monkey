@@ -2,7 +2,7 @@ import logging
 import subprocess
 from infection_monkey.control import ControlClient
 from infection_monkey.utils import is_windows_os
-from infection_monkey.config import WormConfiguration, GUID
+from infection_monkey.config import WormConfiguration
 
 
 LOG = logging.getLogger(__name__)
@@ -14,38 +14,28 @@ class PBA(object):
     """
     Post breach action object. Can be extended to support more than command execution on target machine.
     """
-    def __init__(self, name="unknown", command=""):
+    def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
         """
         :param name: Name of post breach action.
         :param command: Command that will be executed on breached machine
         """
-        self.command = command
+        self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
 
-    @staticmethod
-    def get_pba():
+    def get_pba(self):
         """
-        Should be overridden by all child classes.
-        This method returns a PBA object based on worm's configuration.
-        :return: An array of PBA objects.
+        This method returns a PBA object based on a worm's configuration.
+        Return None or False if you don't want the pba to be executed.
+        :return: A pba object.
         """
-        raise NotImplementedError()
+        return self
 
-    @staticmethod
-    def default_get_pba(name, pba_class, linux_cmd="", windows_cmd=""):
+    def should_run(self, class_name):
         """
-        Default get_pba() method implementation
-        :param name: PBA name
-        :param pba_class: class instance. Class's name is matched to config to determine
-        if corresponding field was enabled in post breach array or not.
-        :param linux_cmd: commands for linux
-        :param windows_cmd: commands for windows
-        :return: post breach action
+        Decides if post breach action is enabled in config
+        :return: True if it needs to be ran, false otherwise
         """
-        if pba_class.__name__ in WormConfiguration.post_breach_actions:
-            command = PBA.choose_command(linux_cmd, windows_cmd)
-            if command:
-                return PBA(name, command)
+        return class_name in WormConfiguration.post_breach_actions
 
     def run(self):
         """
@@ -55,8 +45,7 @@ class PBA(object):
         result = exec_funct()
         ControlClient.send_telemetry('post_breach', {'command': self.command,
                                                      'result': result,
-                                                     'name': self.name,
-                                                     'guid': GUID})
+                                                     'name': self.name})
 
     def _execute_default(self):
         """

@@ -1,6 +1,7 @@
 import logging
 import inspect
 import importlib
+from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.actions import get_pba_files
 from infection_monkey.utils import is_windows_os
 
@@ -41,10 +42,10 @@ class PostBreach(object):
             module = importlib.import_module(PATH_TO_ACTIONS + pba_file)
             # Get all classes in a module
             pba_classes = [m[1] for m in inspect.getmembers(module, inspect.isclass)
-                           if ((m[1].__module__ == module.__name__) and getattr(m[1], "get_pba", False))]
+                           if ((m[1].__module__ == module.__name__) and issubclass(m[1], PBA))]
             # Get post breach action object from class
             for pba_class in pba_classes:
-                pba = pba_class.get_pba()
-                if pba:
+                pba = pba_class()
+                if pba.should_run(pba_class.__name__):
                     pba_list.append(pba)
         return pba_list
