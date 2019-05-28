@@ -15,16 +15,20 @@ ${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/monkey_island/requi
 rm -rf ${INSTALLATION_FOLDER}
 rm -f ${MONKEY_FOLDER}/monkey_island/requirements.txt
 
+${MONKEY_FOLDER}/monkey_island/install_mongo.sh ${MONKEY_FOLDER}/monkey_island/bin/mongodb
+
 if [ -d "/etc/systemd/network" ]; then
     cp ${MONKEY_FOLDER}/monkey_island/service/systemd/*.service /lib/systemd/system/
     chmod +x ${MONKEY_FOLDER}/monkey_island/service/systemd/start_server.sh
     systemctl daemon-reload
+    systemctl enable monkey-mongo
     systemctl enable monkey-island
 fi
 
 ${MONKEY_FOLDER}/monkey_island/create_certificate.sh
 
 service monkey-island start
+service monkey-mongo start
 
 echo Monkey Island installation ended
 
