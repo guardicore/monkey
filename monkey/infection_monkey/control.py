@@ -23,6 +23,8 @@ DOWNLOAD_CHUNK = 1024
 # to prevent the monkey from just waiting forever to try and connect to an island before going elsewhere.
 TIMEOUT = 15
 
+PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
+
 
 class ControlClient(object):
     proxies = {}
@@ -306,3 +308,13 @@ class ControlClient(object):
             target_addr, target_port = None, None
 
         return tunnel.MonkeyTunnel(proxy_class, target_addr=target_addr, target_port=target_port)
+
+    @staticmethod
+    def get_pba_file(filename):
+        try:
+            return requests.get(PBA_FILE_DOWNLOAD %
+                                (WormConfiguration.current_server, filename),
+                                verify=False,
+                                proxies=ControlClient.proxies)
+        except requests.exceptions.RequestException:
+            return False

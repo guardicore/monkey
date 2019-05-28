@@ -1,9 +1,8 @@
 import logging
 import subprocess
-import socket
 from infection_monkey.control import ControlClient
 from infection_monkey.utils import is_windows_os
-from infection_monkey.config import WormConfiguration
+from infection_monkey.config import WormConfiguration, GUID
 
 
 LOG = logging.getLogger(__name__)
@@ -53,13 +52,11 @@ class PBA(object):
         Runs post breach action command
         """
         exec_funct = self._execute_default
-        hostname = socket.gethostname()
+        result = exec_funct()
         ControlClient.send_telemetry('post_breach', {'command': self.command,
-                                                     'result': exec_funct(),
+                                                     'result': result,
                                                      'name': self.name,
-                                                     'hostname': hostname,
-                                                     'ip': socket.gethostbyname(hostname)
-                                                     })
+                                                     'guid': GUID})
 
     def _execute_default(self):
         """
