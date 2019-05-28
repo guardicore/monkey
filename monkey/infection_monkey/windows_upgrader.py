@@ -37,8 +37,8 @@ class WindowsUpgrader(object):
             with monkeyfs.open(monkey_64_path, "rb") as downloaded_monkey_file:
                 with open(WormConfiguration.dropper_target_path_win_64, 'wb') as written_monkey_file:
                     shutil.copyfileobj(downloaded_monkey_file, written_monkey_file)
-        except (IOError, AttributeError):
-            LOG.error("Failed to download the Monkey to the target path.")
+        except (IOError, AttributeError) as e:
+            LOG.error("Failed to download the Monkey to the target path: %s." % e)
             return
 
         monkey_options = build_monkey_commandline_explicitly(opts.parent, opts.tunnel, opts.server, opts.depth)

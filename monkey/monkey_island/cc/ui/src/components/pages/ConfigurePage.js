@@ -151,19 +151,7 @@ class ConfigurePageComponent extends AuthComponent {
   configSubmit = () => {
     // Submit monkey configuration
     this.updateConfigSection();
-    this.authFetch(CONFIG_URL,
-      {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(this.state.configuration)
-      })
-      .then(res => {
-        if (!res.ok)
-        {
-          throw Error()
-        }
-        return res;
-      })
+    this.sendConfig()
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -313,7 +301,7 @@ class ConfigurePageComponent extends AuthComponent {
         configuration: JSON.parse(event.target.result),
         selectedSection: 'basic',
         lastAction: 'import_success'
-      });
+      }, () => {this.sendConfig()});
       this.currentSection = 'basic';
       this.currentFormData = {};
     } catch(SyntaxError) {
@@ -324,6 +312,26 @@ class ConfigurePageComponent extends AuthComponent {
   exportConfig = () => {
     this.updateConfigSection();
     fileDownload(JSON.stringify(this.state.configuration, null, 2), 'monkey.conf');
+  };
+
+  sendConfig() {
+    return (
+      this.authFetch('/api/configuration/island',
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.state.configuration)
+      })
+      .then(res => {
+        if (!res.ok)
+        {
+          throw Error()
+        }
+        return res;
+      }).catch(error => {
+        console.log('bad configuration');
+        this.setState({lastAction: 'invalid_configuration'});
+      }));
   };
 
   importConfig = (event) => {
@@ -402,13 +410,12 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   static getFullPBAfile(filename){
-    let pbaFile = [{
+    return [{
       source: filename,
       options: {
         type: 'limbo'
       }
     }];
-    return pbaFile
   }
 
   static getMockPBAfile(mockFile){
@@ -536,7 +543,7 @@ class ConfigurePageComponent extends AuthComponent {
           { this.state.lastAction === 'invalid_configuration' ?
             <div className="alert alert-danger">
               <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
-              An invalid configuration file was imported and submitted, probably outdated.
+              An invalid configuration file was imported or submitted.
             </div>
             : ''}
           { this.state.lastAction === 'import_success' ?
