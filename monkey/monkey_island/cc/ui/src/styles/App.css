@@ -186,6 +186,10 @@ body {
 .nav-tabs > li > a {
   height: 63px
 }
+
+.nav > li > a:focus {
+  background-color: transparent !important;
+}
 /*
  * Run Monkey Page
  */
@@ -514,6 +518,16 @@ body {
     background-color: #d9534f !important;
   }
 
+}
+
+/* Attack config page */
+.attack-matrix .messages {
+  margin-bottom: 30px;
+}
+
+.attack-legend {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .version-text {

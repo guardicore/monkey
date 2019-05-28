@@ -1,7 +1,7 @@
 import flask_restful
 from flask import request
 import json
-from monkey_island.cc.services.attack.attack_telem import set_results
+from monkey_island.cc.services.attack.attack_telem import AttackTelemService
 import logging
 
 __author__ = 'VakarisZ'
@@ -20,5 +20,5 @@ class AttackTelem(flask_restful.Resource):
         :param technique: Technique ID, e.g. T1111
         """
         data = json.loads(request.data)
-        set_results(technique, data)
+        AttackTelemService.set_results(technique, data)
         return {}

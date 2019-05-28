@@ -73,6 +73,7 @@
     "json-loader": "^0.5.7",
     "jwt-decode": "^2.2.0",
     "moment": "^2.22.2",
+    "node-sass": "^4.11.0",
     "normalize.css": "^8.0.0",
     "npm": "^6.4.1",
     "prop-types": "^15.6.2",
@@ -92,7 +93,9 @@
     "react-router-dom": "^4.3.1",
     "react-table": "^6.8.6",
     "react-toggle": "^4.0.1",
+    "react-tooltip-lite": "^1.9.1",
     "redux": "^4.0.0",
+    "sass-loader": "^7.1.0",
     "sha3": "^2.0.0",
     "react-spinners": "^0.5.4",
     "@emotion/core": "^10.0.10"
