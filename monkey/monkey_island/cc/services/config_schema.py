@@ -13,42 +13,48 @@ SCHEMA = {
                     "enum": [
                         "SmbExploiter"
                     ],
-                    "title": "SMB Exploiter"
+                    "title": "SMB Exploiter",
+                    "attack_techniques": ["T1110", "T1075"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "WmiExploiter"
                     ],
-                    "title": "WMI Exploiter"
+                    "title": "WMI Exploiter",
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "MSSQLExploiter"
                     ],
-                    "title": "MSSQL Exploiter"
+                    "title": "MSSQL Exploiter",
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "RdpExploiter"
                     ],
-                    "title": "RDP Exploiter (UNSAFE)"
+                    "title": "RDP Exploiter (UNSAFE)",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "Ms08_067_Exploiter"
                     ],
-                    "title": "MS08-067 Exploiter (UNSAFE)"
+                    "title": "MS08-067 Exploiter (UNSAFE)",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "SSHExploiter"
                     ],
-                    "title": "SSH Exploiter"
+                    "title": "SSH Exploiter",
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
@@ -111,6 +117,7 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
+                    "attack_techniques": []
                 },
             ],
         },
@@ -123,14 +130,16 @@ SCHEMA = {
                     "enum": [
                         "SMBFinger"
                     ],
-                    "title": "SMBFinger"
+                    "title": "SMBFinger",
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "SSHFinger"
                     ],
-                    "title": "SSHFinger"
+                    "title": "SSHFinger",
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
@@ -151,14 +160,16 @@ SCHEMA = {
                     "enum": [
                         "MySQLFinger"
                     ],
-                    "title": "MySQLFinger"
+                    "title": "MySQLFinger",
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "MSSQLFinger"
                     ],
-                    "title": "MSSQLFinger"
+                    "title": "MSSQLFinger",
+                    "attack_techniques": ["T1210"]
                 },
 
                 {
@@ -166,16 +177,30 @@ SCHEMA = {
                     "enum": [
                         "ElasticFinger"
                     ],
-                    "title": "ElasticFinger"
+                    "title": "ElasticFinger",
+                    "attack_techniques": ["T1210"]
                 }
             ]
         }
     },
     "properties": {
         "basic": {
-            "title": "Basic - Credentials",
+            "title": "Basic - Exploits",
             "type": "object",
             "properties": {
+                "general": {
+                    "title": "General",
+                    "type": "object",
+                    "properties": {
+                        "should_exploit": {
+                            "title": "Exploit network machines",
+                            "type": "boolean",
+                            "default": True,
+                            "attack_techniques": ["T1210"],
+                            "description": "Determines if monkey should try to safely exploit machines on the network"
+                        }
+                    }
+                },
                 "credentials": {
                     "title": "Credentials",
                     "type": "object",
@@ -389,6 +414,7 @@ SCHEMA = {
                             "title": "Harvest Azure Credentials",
                             "type": "boolean",
                             "default": True,
+                            "attack_techniques": ["T1003", "T1078"],
                             "description":
                                 "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         },
@@ -402,6 +428,7 @@ SCHEMA = {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
+                            "attack_techniques": ["T1003", "T1078"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }

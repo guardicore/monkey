@@ -201,6 +201,7 @@ class Configuration(object):
     # exploiters config
     ###########################
 
+    should_exploit = True
     skip_exploit_if_file_exist = False
 
     ms08_067_exploit_attempts = 5

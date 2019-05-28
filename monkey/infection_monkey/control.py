@@ -22,6 +22,10 @@ DOWNLOAD_CHUNK = 1024
 
 PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
+# random number greater than 5,
+# to prevent the monkey from just waiting forever to try and connect to an island before going elsewhere.
+TIMEOUT_IN_SECONDS = 15
+
 
 class ControlClient(object):
     proxies = {}
@@ -75,7 +79,7 @@ class ControlClient(object):
                 requests.get("https://%s/api?action=is-up" % (server,),
                              verify=False,
                              proxies=ControlClient.proxies,
-                             timeout=TIMEOUT)
+                             timeout=TIMEOUT_IN_SECONDS)
                 WormConfiguration.current_server = current_server
                 break
 
