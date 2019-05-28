@@ -31,7 +31,8 @@ class ReportPageComponent extends AuthComponent {
       WEBLOGIC: 9,
       HADOOP: 10,
       PTH_CRIT_SERVICES_ACCESS: 11,
-      MSSQL: 12
+      MSSQL: 12,
+      VSFTPD: 13
     };
 
   Warning =
@@ -298,19 +299,23 @@ class ReportPageComponent extends AuthComponent {
               return x === true;
             }).length > 0 ?
               <div>
-                During this simulated attack the Monkey uncovered <span
+                During this simulated attack the Monkey uncovered  <span
                 className="label label-warning">
                     {this.state.report.overview.issues.filter(function (x) {
                       return x === true;
                     }).length} threats</span>:
                 <ul>
                   {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] ?
-                    <li>Stolen SSH keys are used to exploit other machines.</li> : null }
+                    <li>Stolen SSH keys are used to exploit other machines.</li> : null }                  
                   {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
                     <li>Stolen credentials are used to exploit other machines.</li> : null}
                   {this.state.report.overview.issues[this.Issue.ELASTIC] ?
                     <li>Elasticsearch servers are vulnerable to <a
                       href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
+                    </li> : null}
+                  {this.state.report.overview.issues[this.Issue.VSFTPD] ?
+                    <li>VSFTPD is vulnerable to <a
+                      href="https://www.rapid7.com/db/modules/exploit/unix/ftp/vsftpd_234_backdoor">CVE-2011-2523</a>.
                     </li> : null}
                   {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
                     <li>Samba servers are vulnerable to ‘SambaCry’ (<a
@@ -421,6 +426,7 @@ class ReportPageComponent extends AuthComponent {
       </div>
     );
   }
+
 
   generateReportGlanceSection() {
     let exploitPercentage =
@@ -681,6 +687,28 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateVsftpdBackdoorIssue(issue) {
+    return (
+      <li>
+        Update your VSFTPD server to the latest version vsftpd-3.0.3.
+        <CollapsibleWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) has a backdoor running at port  <span
+          className="label label-danger">6200</span>.
+          <br/>
+          The attack was made possible because the VSFTPD server was not patched against CVE-2011-2523.
+          <br/><br/>In July 2011, it was discovered that vsftpd version 2.3.4 downloadable from the master site had been compromised.
+          Users logging into a compromised vsftpd-2.3.4 server may issue a ":)" smileyface as the username and gain a command shell on port 6200.
+          <br/><br/>
+          The Monkey executed commands by first logging in with ":)" in the username and then sending commands to the backdoor at port 6200.
+          <br/><br/>Read more about the security issue and remediation <a
+                      href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2523"
+                    >here</a>.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
   generateElasticIssue(issue) {
     return (
       <li>
@@ -896,6 +924,9 @@ generateMSSQLIssue(issue) {
   generateIssue = (issue) => {
     let data;
     switch (issue.type) {
+      case 'vsftp':
+        data = this.generateVsftpdBackdoorIssue(issue);
+        break;
       case 'smb_password':
         data = this.generateSmbPasswordIssue(issue);
         break;

@@ -1,3 +1,4 @@
+bson
 python-dateutil
 tornado==5.1.1
 werkzeug
@@ -18,9 +19,9 @@ boto3
 botocore
 PyInstaller
 awscli
-bson
 cffi
 virtualenv
 wheel
 mongoengine
 mongomock
+requests

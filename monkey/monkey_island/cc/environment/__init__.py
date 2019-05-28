@@ -16,6 +16,7 @@ class Environment(object):
     _MONGO_URL = os.environ.get("MONKEY_MONGO_URL", "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)))
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(hours=1)
+
     _testing = False
 
     @property
@@ -25,6 +26,9 @@ class Environment(object):
     @testing.setter
     def testing(self, value):
         self._testing = value
+
+    _MONKEY_VERSION = "1.6.3"
+
 
     def __init__(self):
         self.config = None
@@ -49,6 +53,21 @@ class Environment(object):
         h = SHA3_512.new()
         h.update(secret)
         return h.hexdigest()
+
+    def get_deployment(self):
+        return self._get_from_config('deployment', 'unknown')
+
+    def is_develop(self):
+        return self.get_deployment() == 'develop'
+
+    def get_version(self):
+        return self._MONKEY_VERSION + ('-dev' if self.is_develop() else '')
+
+    def _get_from_config(self, key, default_value=None):
+        val = default_value
+        if self.config is not None:
+            val = self.config.get(key, val)
+        return val
 
     @abc.abstractmethod
     def get_auth_users(self):

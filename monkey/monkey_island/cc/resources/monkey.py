@@ -1,12 +1,12 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import dateutil.parser
 import flask_restful
 from flask import request
 
-from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 
@@ -15,6 +15,14 @@ MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 120
 __author__ = 'Barak'
 
 # TODO: separate logic from interface
+
+
+def create_monkey_ttl():
+    # The TTL data uses the new `models` module which depends on mongoengine.
+    current_ttl = MonkeyTtl.create_ttl_expire_in(MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
+    current_ttl.save()
+    ttlid = current_ttl.id
+    return ttlid
 
 
 class Monkey(flask_restful.Resource):
@@ -50,13 +58,8 @@ class Monkey(flask_restful.Resource):
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
 
-        # The TTL data uses the new `models` module which depends on mongoengine.
-        # Using UTC to make the mongodb TTL feature work. See
-        # https://stackoverflow.com/questions/55994379/mongodb-ttl-index-doesnt-delete-expired-documents.
-        current_ttl = MonkeyTtl(expire_at=datetime.utcnow() + timedelta(seconds=MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS))
-        current_ttl.save()
-
-        update['$set']['ttl_ref'] = current_ttl.id
+        ttlid = create_monkey_ttl()
+        update['$set']['ttl_ref'] = ttlid
 
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
@@ -116,6 +119,8 @@ class Monkey(flask_restful.Resource):
         if 'tunnel' in monkey_json:
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             monkey_json.pop('tunnel')
+
+        monkey_json['ttl_ref'] = create_monkey_ttl()
 
         mongo.db.monkey.update({"guid": monkey_json["guid"]},
                                {"$set": monkey_json},

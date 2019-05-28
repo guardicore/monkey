@@ -104,8 +104,8 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = '/bin/sh'
-    dropper_target_path_win_32 = r"C:\Windows\monkey32.exe"
-    dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
+    dropper_target_path_win_32 = r"C:\Windows\temp\monkey32.exe"
+    dropper_target_path_win_64 = r"C:\Windows\temp\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
     ###########################
@@ -157,7 +157,7 @@ class Configuration(object):
     retry_failed_explotation = True
 
     # addresses of internet servers to ping and check if the monkey has internet acccess.
-    internet_services = ["monkey.guardicore.com", "www.google.com"]
+    internet_services = ["updates.infectionmonkey.com", "www.google.com"]
 
     keep_tunnel_open_time = 60
 
@@ -205,6 +205,7 @@ class Configuration(object):
     # exploiters config
     ###########################
 
+    should_exploit = True
     skip_exploit_if_file_exist = False
 
     ms08_067_exploit_attempts = 5

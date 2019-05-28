@@ -9,11 +9,16 @@ __author__ = "VakarisZ"
 logger = logging.getLogger(__name__)
 
 
-def set_results(technique, data):
-    """
-    Adds ATT&CK technique results(telemetry) to the database
-    :param technique: technique ID string e.g. T1110
-    :param data: Data, relevant to the technique
-    """
-    data.update({'technique': technique})
-    mongo.db.attack_results.insert(data)
+class AttackTelemService(object):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def set_results(technique, data):
+        """
+        Adds ATT&CK technique results(telemetry) to the database
+        :param technique: technique ID string e.g. T1110
+        :param data: Data, relevant to the technique
+        """
+        data.update({'technique': technique})
+        mongo.db.attack_results.insert(data)

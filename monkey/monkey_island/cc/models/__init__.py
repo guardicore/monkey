@@ -11,7 +11,7 @@ if env.testing:
 else:
     connect(db=env.mongo_db_name, host=env.mongo_db_host, port=env.mongo_db_port)
 
-# Order or importing matters here, for registering the embedded and referenced documents before using them.
+# Order of importing matters here, for registering the embedded and referenced documents before using them.
 from config import Config
 from creds import Creds
 from monkey_ttl import MonkeyTtl

@@ -8,12 +8,20 @@ import itertools
 import netifaces
 from subprocess import check_output
 from random import randint
+
+import requests
+from requests import ConnectionError
+
 from common.network.network_range import CidrRange
 
 try:
     long        # Python 2
 except NameError:
     long = int  # Python 3
+
+
+# Timeout for monkey connections
+TIMEOUT = 15
 
 
 def get_host_subnets():
@@ -124,14 +132,18 @@ def get_free_tcp_port(min_range=1000, max_range=65535):
 
 def check_internet_access(services):
     """
-    Checks if any of the services are accessible, over ICMP
+    Checks if any of the services are accessible, over HTTPS
     :param services: List of IPs/hostnames
     :return: boolean depending on internet access
     """
-    ping_str = "-n 1" if sys.platform.startswith("win") else "-c 1"
     for host in services:
-        if os.system("ping " + ping_str + " " + host) == 0:
+        try:
+            requests.get("https://%s" % (host,), timeout=TIMEOUT, verify=False)
             return True
+        except ConnectionError:
+            # Failed connecting
+            pass
+
     return False
 
 

@@ -1,13 +1,9 @@
 import uuid
-from datetime import timedelta, datetime
 from time import sleep
 from unittest import TestCase
 
-# noinspection PyUnresolvedReferences
-import mongomock
-
 from monkey import Monkey
-from monkey_island.cc.models.errors import MonkeyNotFoundError
+from monkey_island.cc.models.monkey import MonkeyNotFoundError
 from monkey_ttl import MonkeyTtl
 
 
@@ -21,7 +17,7 @@ class TestMonkey(TestCase):
     """
     def test_is_dead(self):
         # Arrange
-        alive_monkey_ttl = MonkeyTtl(expire_at=datetime.now() + timedelta(seconds=30))
+        alive_monkey_ttl = MonkeyTtl.create_ttl_expire_in(30)
         alive_monkey_ttl.save()
         alive_monkey = Monkey(
             guid=str(uuid.uuid4()),
@@ -30,7 +26,7 @@ class TestMonkey(TestCase):
         alive_monkey.save()
 
         # MIA stands for Missing In Action
-        mia_monkey_ttl = MonkeyTtl(expire_at=datetime.now() + timedelta(seconds=30))
+        mia_monkey_ttl = MonkeyTtl.create_ttl_expire_in(30)
         mia_monkey_ttl.save()
         mia_monkey = Monkey(guid=str(uuid.uuid4()), dead=False, ttl_ref=mia_monkey_ttl)
         mia_monkey.save()

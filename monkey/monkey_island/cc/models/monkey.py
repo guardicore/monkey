@@ -5,7 +5,6 @@ import mongoengine
 from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, DateField, \
     ReferenceField
 
-from monkey_island.cc.models.errors import MonkeyNotFoundError
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 
 
@@ -55,3 +54,7 @@ class Monkey(Document):
                 # Trying to dereference unknown document - the monkey is MIA.
                 monkey_is_dead = True
         return monkey_is_dead
+
+
+class MonkeyNotFoundError(Exception):
+    pass
