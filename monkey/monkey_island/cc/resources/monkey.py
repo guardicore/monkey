@@ -2,16 +2,27 @@ import json
 from datetime import datetime
 
 import dateutil.parser
-from flask import request
 import flask_restful
+from flask import request
 
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
+
+MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 60 * 5
 
 __author__ = 'Barak'
 
 # TODO: separate logic from interface
+
+
+def create_monkey_ttl():
+    # The TTL data uses the new `models` module which depends on mongoengine.
+    current_ttl = MonkeyTtl.create_ttl_expire_in(MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
+    current_ttl.save()
+    ttlid = current_ttl.id
+    return ttlid
 
 
 class Monkey(flask_restful.Resource):
@@ -46,6 +57,9 @@ class Monkey(flask_restful.Resource):
         if 'tunnel' in monkey_json:
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
+
+        ttlid = create_monkey_ttl()
+        update['$set']['ttl_ref'] = ttlid
 
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
@@ -88,7 +102,7 @@ class Monkey(flask_restful.Resource):
                 parent_to_add = (exploit_telem[0].get('monkey_guid'), exploit_telem[0].get('data').get('exploiter'))
             else:
                 parent_to_add = (parent, None)
-        elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in  monkey_json:
+        elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in monkey_json:
             exploit_telem = [x for x in
                              mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}})]
@@ -105,6 +119,8 @@ class Monkey(flask_restful.Resource):
         if 'tunnel' in monkey_json:
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             monkey_json.pop('tunnel')
+
+        monkey_json['ttl_ref'] = create_monkey_ttl()
 
         mongo.db.monkey.update({"guid": monkey_json["guid"]},
                                {"$set": monkey_json},
