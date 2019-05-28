@@ -75,10 +75,12 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   setInitialConfig(config) {
+    // Sets a reference to know if config was changed
     this.initialConfig = JSON.parse(JSON.stringify(config));
   }
 
   setInitialAttackConfig(attackConfig) {
+    // Sets a reference to know if attack config was changed
     this.initialAttackConfig = JSON.parse(JSON.stringify(attackConfig));
   }
 
@@ -138,9 +140,9 @@ class ConfigurePageComponent extends AuthComponent {
         }
         return res;
       })
-      .then(() => {this.setInitialAttackConfig(this.state.attackConfig);
-                   this.setState({lastAction: 'saved'})})
+      .then(() => {this.setInitialAttackConfig(this.state.attackConfig);})
       .then(this.updateConfig())
+      .then(this.setState({lastAction: 'saved'}))
       .catch(error => {
         this.setState({lastAction: 'invalid_configuration'});
       });
@@ -149,19 +151,7 @@ class ConfigurePageComponent extends AuthComponent {
   configSubmit = () => {
     // Submit monkey configuration
     this.updateConfigSection();
-    this.authFetch(CONFIG_URL,
-      {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(this.state.configuration)
-      })
-      .then(res => {
-        if (!res.ok)
-        {
-          throw Error()
-        }
-        return res;
-      })
+    this.sendConfig()
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -175,7 +165,6 @@ class ConfigurePageComponent extends AuthComponent {
         console.log('bad configuration');
         this.setState({lastAction: 'invalid_configuration'});
       });
-
   };
 
   // Alters attack configuration when user toggles technique
@@ -187,13 +176,19 @@ class ConfigurePageComponent extends AuthComponent {
         let tempMatrix = this.state.attackConfig;
         tempMatrix[techType[0]].properties[technique].value = value;
         this.setState({attackConfig: tempMatrix});
-        // Toggle all mapped techniques
-        if (! mapped && tempMatrix[techType[0]].properties[technique].hasOwnProperty('depends_on')){
-          tempMatrix[techType[0]].properties[technique].depends_on.forEach(mappedTechnique => {
-            this.attackTechniqueChange(mappedTechnique, value, true)
-          })
-        }
 
+        // Toggle all mapped techniques
+        if (! mapped ){
+          // Loop trough each column and each row
+          Object.entries(this.state.attackConfig).forEach(otherType => {
+            Object.entries(otherType[1].properties).forEach(otherTech => {
+              // If this technique depends on a technique that was changed
+              if (otherTech[1].hasOwnProperty('depends_on') && otherTech[1]['depends_on'].includes(technique)){
+                this.attackTechniqueChange(otherTech[0], value, true)
+              }
+            })
+          });
+        }
       }
     });
   };
@@ -245,12 +240,12 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   setSelectedSection = (key) => {
-    this.updateConfigSection();
     if ((key === 'attack' && this.userChangedConfig()) ||
         (this.currentSection === 'attack' && this.userChangedMatrix())){
       this.setState({showAttackAlert: true});
-      return
+      return;
     }
+    this.updateConfigSection();
     this.currentSection = key;
     this.setState({
       selectedSection: key
@@ -274,12 +269,14 @@ class ConfigurePageComponent extends AuthComponent {
         });
         this.setInitialConfig(res.configuration);
         this.props.onStatusChange();
-      }).then(this.authFetch(ATTACK_URL,{ method: 'POST',
-                                             headers: {'Content-Type': 'application/json'},
-                                             body: JSON.stringify('reset_attack_matrix')}))
+      });
+    this.authFetch(ATTACK_URL,{ method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify('reset_attack_matrix')})
       .then(res => res.json())
       .then(res => {
-        this.setState({attackConfig: res.configuration})
+        this.setState({attackConfig: res.configuration});
+        this.setInitialAttackConfig(res.configuration);
       })
   };
 
@@ -304,7 +301,7 @@ class ConfigurePageComponent extends AuthComponent {
         configuration: JSON.parse(event.target.result),
         selectedSection: 'basic',
         lastAction: 'import_success'
-      });
+      }, () => {this.sendConfig()});
       this.currentSection = 'basic';
       this.currentFormData = {};
     } catch(SyntaxError) {
@@ -315,6 +312,26 @@ class ConfigurePageComponent extends AuthComponent {
   exportConfig = () => {
     this.updateConfigSection();
     fileDownload(JSON.stringify(this.state.configuration, null, 2), 'monkey.conf');
+  };
+
+  sendConfig() {
+    return (
+      this.authFetch('/api/configuration/island',
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.state.configuration)
+      })
+      .then(res => {
+        if (!res.ok)
+        {
+          throw Error()
+        }
+        return res;
+      }).catch(error => {
+        console.log('bad configuration');
+        this.setState({lastAction: 'invalid_configuration'});
+      }));
   };
 
   importConfig = (event) => {
@@ -393,13 +410,12 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   static getFullPBAfile(filename){
-    let pbaFile = [{
+    return [{
       source: filename,
       options: {
         type: 'limbo'
       }
     }];
-    return pbaFile
   }
 
   static getMockPBAfile(mockFile){
@@ -527,7 +543,7 @@ class ConfigurePageComponent extends AuthComponent {
           { this.state.lastAction === 'invalid_configuration' ?
             <div className="alert alert-danger">
               <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
-              An invalid configuration file was imported and submitted, probably outdated.
+              An invalid configuration file was imported or submitted.
             </div>
             : ''}
           { this.state.lastAction === 'import_success' ?

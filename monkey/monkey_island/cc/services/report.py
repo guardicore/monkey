@@ -41,7 +41,8 @@ class ReportService:
             'Struts2Exploiter': 'Struts2 Exploiter',
             'WebLogicExploiter': 'Oracle WebLogic Exploiter',
             'HadoopExploiter': 'Hadoop/Yarn Exploiter',
-            'MSSQLExploiter': 'MSSQL Exploiter'
+            'MSSQLExploiter': 'MSSQL Exploiter',
+            'VSFTPDExploiter': 'VSFTPD Backdoor Exploited'
         }
 
     class ISSUES_DICT(Enum):
@@ -57,7 +58,8 @@ class ReportService:
         WEBLOGIC = 9
         HADOOP = 10
         PTH_CRIT_SERVICES_ACCESS = 11,
-        MSSQL = 12
+        MSSQL = 12,
+        VSFTPD = 13
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -254,6 +256,7 @@ class ReportService:
                 else:
                     processed_exploit['type'] = 'hash'
                 return processed_exploit
+        return processed_exploit
 
     @staticmethod
     def process_smb_exploit(exploit):
@@ -288,6 +291,12 @@ class ReportService:
         processed_exploit = ReportService.process_general_creds_exploit(exploit)
         processed_exploit['type'] = 'rdp'
         return processed_exploit
+
+    @staticmethod
+    def process_vsftpd_exploit(exploit):
+        processed_exploit = ReportService.process_general_creds_exploit(exploit)
+        processed_exploit['type'] = 'vsftp'
+        return processed_exploit        
 
     @staticmethod
     def process_sambacry_exploit(exploit):
@@ -355,7 +364,8 @@ class ReportService:
             'Struts2Exploiter': ReportService.process_struts2_exploit,
             'WebLogicExploiter': ReportService.process_weblogic_exploit,
             'HadoopExploiter': ReportService.process_hadoop_exploit,
-            'MSSQLExploiter': ReportService.process_mssql_exploit
+            'MSSQLExploiter': ReportService.process_mssql_exploit,
+            'VSFTPDExploiter': ReportService.process_vsftpd_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
@@ -644,6 +654,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.ELASTIC.value] = True
                 elif issue['type'] == 'sambacry':
                     issues_byte_array[ReportService.ISSUES_DICT.SAMBACRY.value] = True
+                elif issue['type'] == 'vsftp':
+                    issues_byte_array[ReportService.ISSUES_DICT.VSFTPD.value] = True
                 elif issue['type'] == 'shellshock':
                     issues_byte_array[ReportService.ISSUES_DICT.SHELLSHOCK.value] = True
                 elif issue['type'] == 'conficker':

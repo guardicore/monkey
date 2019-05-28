@@ -69,15 +69,11 @@ class AttackConfig(object):
         for key, definition in monkey_schema['definitions'].items():
             for array_field in definition['anyOf']:
                 # Check if current array field has attack_techniques assigned to it
-                if 'attack_techniques' not in array_field:
-                    continue
-                try:
-                    should_remove = not AttackConfig.should_enable_field(array_field['attack_techniques'], attack_techniques)
-                except KeyError:
-                    # Monkey schema field contains not yet implemented technique
-                    continue
-                # If exploiter's attack technique is disabled, disable the exploiter/scanner/PBA
-                AttackConfig.r_alter_array(monkey_config, key, array_field['enum'][0], remove=should_remove)
+                if 'attack_techniques' in array_field and array_field['attack_techniques']:
+                    should_remove = not AttackConfig.should_enable_field(array_field['attack_techniques'],
+                                                                         attack_techniques)
+                    # If exploiter's attack technique is disabled, disable the exploiter/scanner/PBA
+                    AttackConfig.r_alter_array(monkey_config, key, array_field['enum'][0], remove=should_remove)
 
     @staticmethod
     def set_booleans(attack_techniques, monkey_config, monkey_schema):
@@ -103,15 +99,12 @@ class AttackConfig(object):
         if isinstance(value, dict):
             dictionary = {}
             # If 'value' is a boolean value that should be set:
-            if 'type' in value and value['type'] == 'boolean' and 'attack_techniques' in value:
-                try:
-                    AttackConfig.set_bool_conf_val(path,
-                                                   AttackConfig.should_enable_field(value['attack_techniques'],
-                                                                                    attack_techniques),
-                                                   monkey_config)
-                except KeyError:
-                    # Monkey schema has a technique that is not yet implemented
-                    pass
+            if 'type' in value and value['type'] == 'boolean' \
+                    and 'attack_techniques' in value and value['attack_techniques']:
+                AttackConfig.set_bool_conf_val(path,
+                                               AttackConfig.should_enable_field(value['attack_techniques'],
+                                                                                attack_techniques),
+                                               monkey_config)
             # If 'value' is dict, we go over each of it's fields to search for booleans
             elif 'properties' in value:
                 dictionary = value['properties']
@@ -120,8 +113,8 @@ class AttackConfig(object):
             for key, item in dictionary.items():
                 path.append(key)
                 AttackConfig.r_set_booleans(path, item, attack_techniques, monkey_config)
-        # Method enumerated everything in current path, goes back a level.
-        del path[-1]
+                # Method enumerated everything in current path, goes back a level.
+                del path[-1]
 
     @staticmethod
     def set_bool_conf_val(path, val, monkey_config):
@@ -141,12 +134,12 @@ class AttackConfig(object):
         :param users_techniques: ATT&CK techniques that user chose
         :return: True, if user enabled all techniques used by the field, false otherwise
         """
-        # Method can't decide field value because it has no attack techniques assign to it.
-        if not field_techniques:
-            raise KeyError
         for technique in field_techniques:
-            if not users_techniques[technique]:
-                return False
+            try:
+                if not users_techniques[technique]:
+                    return False
+            except KeyError:
+                logger.error("Attack technique %s is defined in schema, but not implemented." % technique)
         return True
 
     @staticmethod

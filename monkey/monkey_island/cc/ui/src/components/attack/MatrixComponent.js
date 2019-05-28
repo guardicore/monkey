@@ -75,19 +75,6 @@ class MatrixComponent extends AuthComponent {
     }
   };
 
-  resetConfig = () => {
-    this.authFetch('/api/attack',
-      {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify('reset_attack_matrix')
-      })
-      .then(res => res.json())
-      .then(res => {
-        this.updateStateFromConfig(res.configuration, 'reset')
-      });
-  };
-
   getTableData = (config) => {
     let configCopy = JSON.parse(JSON.stringify(config));
     let maxTechniques = MatrixComponent.findMaxTechniques(Object.values(configCopy));

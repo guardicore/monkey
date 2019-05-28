@@ -65,8 +65,8 @@
   },
   "dependencies": {
     "@kunukn/react-collapse": "^1.0.5",
-    "bootstrap": "^3.3.7",
     "classnames": "^2.2.6",
+    "bootstrap": "3.4.1",
     "core-js": "^2.5.7",
     "downloadjs": "^1.4.7",
     "fetch": "^1.1.0",
@@ -98,6 +98,8 @@
     "react-tooltip-lite": "^1.9.1",
     "redux": "^4.0.0",
     "sass-loader": "^7.1.0",
-    "sha3": "^2.0.0"
+    "sha3": "^2.0.0",
+    "react-spinners": "^0.5.4",
+    "@emotion/core": "^10.0.10"
   }
 }

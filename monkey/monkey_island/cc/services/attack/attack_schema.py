@@ -53,7 +53,8 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "description": "Adversaries may use brute force techniques to attempt access to accounts "
-                                   "when passwords are unknown or when password hashes are obtained."
+                                   "when passwords are unknown or when password hashes are obtained.",
+                    "depends_on": ["T1210"]
                 },
                 "T1003": {
                     "title": "T1003 Credential dumping",
