@@ -10,8 +10,8 @@ __author__ = 'itay.mizeretz'
 
 
 class User(object):
-    def __init__(self, id, username, secret):
-        self.id = id
+    def __init__(self, user_id, username, secret):
+        self.id = user_id
         self.username = username
         self.secret = secret
 
