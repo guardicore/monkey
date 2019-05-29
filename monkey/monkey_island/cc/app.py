@@ -135,7 +135,6 @@ def init_api_resources(api):
     api.add_resource(AttackConfiguration, '/api/attack')
     api.add_resource(AttackTelem, '/api/attack/<string:technique>')
     api.add_resource(AttackReport, '/api/attack/report')
-    api.add_resource(AttackConfiguration, '/api/attack')
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
 
 
