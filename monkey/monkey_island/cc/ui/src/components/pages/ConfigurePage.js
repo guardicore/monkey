@@ -21,7 +21,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.initialConfig = {};
     this.initialAttackConfig = {};
     this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
-    this.uiSchemas = ConfigurePageComponent.getUiSchemas();
+    this.uiSchemas = this.getUiSchemas();
     // set schema from server
     this.state = {
       schema: {},
@@ -37,7 +37,7 @@ class ConfigurePageComponent extends AuthComponent {
     };
   }
 
-  static getUiSchemas(){
+  getUiSchemas(){
     return ({
       basic: {"ui:order": ["general", "credentials"]},
       basic_network: {},
