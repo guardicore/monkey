@@ -30,7 +30,8 @@ class PBA(object):
         """
         return self
 
-    def should_run(self, class_name):
+    @staticmethod
+    def should_run(class_name):
         """
         Decides if post breach action is enabled in config
         :return: True if it needs to be ran, false otherwise

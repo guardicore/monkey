@@ -58,8 +58,15 @@ class UsersPBA(PBA):
             UsersPBA.download_pba_file(get_monkey_dir_path(), self.filename)
         return super(UsersPBA, self)._execute_default()
 
-    def should_run(self, class_name):
-        return self.command
+    @staticmethod
+    def should_run(class_name):
+        if not is_windows_os():
+            if WormConfiguration.PBA_linux_filename or WormConfiguration.custom_PBA_linux_cmd:
+                return True
+        else:
+            if WormConfiguration.PBA_windows_filename or WormConfiguration.custom_PBA_windows_cmd:
+                return True
+        return False
 
     @staticmethod
     def download_pba_file(dst_dir, filename):

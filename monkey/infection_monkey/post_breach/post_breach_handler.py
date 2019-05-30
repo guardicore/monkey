@@ -45,7 +45,7 @@ class PostBreach(object):
                            if ((m[1].__module__ == module.__name__) and issubclass(m[1], PBA))]
             # Get post breach action object from class
             for pba_class in pba_classes:
-                pba = pba_class()
-                if pba.should_run(pba_class.__name__):
+                if pba_class.should_run(pba_class.__name__):
+                    pba = pba_class()
                     pba_list.append(pba)
         return pba_list
