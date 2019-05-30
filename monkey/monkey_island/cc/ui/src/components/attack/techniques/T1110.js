@@ -13,12 +13,12 @@ class T1110 extends React.Component {
     return ([{
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => this.renderMachine(x.machine),
-          style: { 'whiteSpace': 'unset' }, width: 200},
+          style: { 'whiteSpace': 'unset' }, width: 160},
         {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: { 'whiteSpace': 'unset' }, width: 170},
         {Header: 'Started', id: 'started', accessor: x => x.info.started, style: { 'whiteSpace': 'unset' }},
         {Header: 'Finished', id: 'finished', accessor: x => x.info.finished, style: { 'whiteSpace': 'unset' }},
         {Header: 'Attempts', id: 'attempts', accessor: x => x.attempts.length, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Successful credentials', id: 'credentials', accessor: x => this.renderCredentials(x.attempts), style: { 'whiteSpace': 'unset' }},
+        {Header: 'Successful credentials', id: 'credentials', accessor: x => x.successful_creds, style: { 'whiteSpace': 'unset' }},
         ]
     }])};
 
@@ -28,28 +28,11 @@ class T1110 extends React.Component {
     )
   };
 
-  static renderCredentials(creds){
-    let content = '';
-    creds.forEach((cred) => {
-      if (cred.result){
-        if (cred.ntlm_hash){
-          content += <span>{cred.user} ; NTLM hash: {cred.ntlm_hash}</span>
-        } else if (cred.ssh_key){
-          content += <span>{cred.user} ; SSH key: {cred.ssh_key}</span>
-        } else if (cred.lm_hash){
-          content += <span>{cred.user} ; LM hash: {cred.lm_hash}</span>
-        } else if (cred.password){
-          content += <span>{cred.user} : {cred.password}</span>
-        }
-        content += <span>{cred.user} : {cred.password}</span>
-      }
-    })
-  }
-
   render() {
     return (
       <div>
         <div>{this.props.data.message}</div>
+        <br/>
         <ReactTable
             columns={T1110.getServiceColumns()}
             data={this.props.data.services}
