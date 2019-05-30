@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table'
 
 let renderArray = function(val) {
-  return <span>{val.map(x => <span> {x}</span>)}</span>;
+  return <span>{val.map(x => <span key={x}> {x}</span>)}</span>;
 };
 
 let renderIpAddresses = function (val) {
@@ -36,7 +36,7 @@ let renderDetails = function (data) {
                   columns={subColumns}
                   defaultPageSize={defaultPageSize}
                   showPagination={showPagination}
-                  style={{"background-color": "#ededed"}}
+                  style={{"backgroundColor": "#ededed"}}
                 />
 };
 
