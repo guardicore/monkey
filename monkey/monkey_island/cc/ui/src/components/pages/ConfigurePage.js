@@ -299,9 +299,8 @@ class ConfigurePageComponent extends AuthComponent {
     try {
       this.setState({
         configuration: JSON.parse(event.target.result),
-        selectedSection: 'basic',
         lastAction: 'import_success'
-      }, () => {this.sendConfig()});
+      }, () => {this.sendConfig(); this.setInitialConfig(JSON.parse(event.target.result))});
       this.currentSection = 'basic';
       this.currentFormData = {};
     } catch(SyntaxError) {
