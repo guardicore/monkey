@@ -15,10 +15,10 @@ from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
+from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
 from common.utils.attack_utils import ScanStatus
-from infection_monkey.transport.attack_telems.victim_host_telem import VictimHostTelem
 from infection_monkey.exploit.tools import get_interface_to_target
 
 __author__ = 'itamar'
@@ -186,11 +186,11 @@ class InfectionMonkey(object):
                     for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
                         if self.try_exploiting(machine, exploiter):
                             host_exploited = True
-                            VictimHostTelem('T1210', ScanStatus.USED.value, machine=machine).send()
+                            VictimHostTelem('T1210', ScanStatus.USED, machine).send()
                             break
                     if not host_exploited:
                         self._fail_exploitation_machines.add(machine)
-                        VictimHostTelem('T1210', ScanStatus.SCANNED.value, machine=machine).send()
+                        VictimHostTelem('T1210', ScanStatus.SCANNED, machine).send()
                 if not self._keep_running:
                     break
 
