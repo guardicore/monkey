@@ -98,6 +98,7 @@ def main():
             except OSError:
                 pass
         LOG_CONFIG['handlers']['file']['filename'] = log_path
+        # noinspection PyUnresolvedReferences
         LOG_CONFIG['root']['handlers'].append('file')
     else:
         del LOG_CONFIG['handlers']['file']

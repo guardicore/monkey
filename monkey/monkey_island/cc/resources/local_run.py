@@ -7,6 +7,7 @@ from flask import request, jsonify, make_response
 import flask_restful
 
 from monkey_island.cc.environment.environment import env
+from monkey_island.cc.models import Monkey
 from monkey_island.cc.resources.monkey_download import get_monkey_executable
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.utils import local_ip_addresses
@@ -57,7 +58,7 @@ class LocalRun(flask_restful.Resource):
         NodeService.update_dead_monkeys()
         island_monkey = NodeService.get_monkey_island_monkey()
         if island_monkey is not None:
-            is_monkey_running = not island_monkey["dead"]
+            is_monkey_running = not Monkey.get_single_monkey_by_id(island_monkey["_id"]).is_dead()
         else:
             is_monkey_running = False
 

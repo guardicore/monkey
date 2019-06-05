@@ -51,7 +51,6 @@ class MonkeyDrops(object):
         LOG.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
 
     def start(self):
-
         if self._config['destination_path'] is None:
             LOG.error("No destination path specified")
             return False

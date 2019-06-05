@@ -121,10 +121,7 @@ class InfectionMonkey(object):
             system_info = system_info_collector.get_info()
             ControlClient.send_telemetry("system_info_collection", system_info)
 
-        for action_class in WormConfiguration.post_breach_actions:
-            action = action_class()
-            action.act()
-
+        # Executes post breach actions
         PostBreach().execute()
 
         if 0 == WormConfiguration.depth:
@@ -183,16 +180,17 @@ class InfectionMonkey(object):
                     LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
 
                 # Order exploits according to their type
-                self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
-                host_exploited = False
-                for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
-                    if self.try_exploiting(machine, exploiter):
-                        host_exploited = True
-                        VictimHostTelem('T1210', ScanStatus.USED.value, machine=machine).send()
-                        break
-                if not host_exploited:
-                    self._fail_exploitation_machines.add(machine)
-                    VictimHostTelem('T1210', ScanStatus.SCANNED.value, machine=machine).send()
+                if WormConfiguration.should_exploit:
+                    self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
+                    host_exploited = False
+                    for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
+                        if self.try_exploiting(machine, exploiter):
+                            host_exploited = True
+                            VictimHostTelem('T1210', ScanStatus.USED.value, machine=machine).send()
+                            break
+                    if not host_exploited:
+                        self._fail_exploitation_machines.add(machine)
+                        VictimHostTelem('T1210', ScanStatus.SCANNED.value, machine=machine).send()
                 if not self._keep_running:
                     break
 
