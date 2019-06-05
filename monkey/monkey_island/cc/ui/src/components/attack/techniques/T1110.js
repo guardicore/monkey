@@ -14,10 +14,10 @@ class T1110 extends React.Component {
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => this.renderMachine(x.machine),
           style: { 'whiteSpace': 'unset' }, width: 160},
-        {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: { 'whiteSpace': 'unset' }, width: 170},
+        {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: { 'whiteSpace': 'unset' }, width: 100},
         {Header: 'Started', id: 'started', accessor: x => x.info.started, style: { 'whiteSpace': 'unset' }},
         {Header: 'Finished', id: 'finished', accessor: x => x.info.finished, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Attempts', id: 'attempts', accessor: x => x.attempts.length, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Attempts', id: 'attempts', accessor: x => x.attempts.length, style: { 'whiteSpace': 'unset' }, width: 160},
         {Header: 'Successful credentials', id: 'credentials', accessor: x => x.successful_creds, style: { 'whiteSpace': 'unset' }},
         ]
     }])};
