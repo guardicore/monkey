@@ -38,7 +38,7 @@ class AttackTechnique(object):
         """
         pass
 
-    # noinspection PyMethodParameters
+    @staticmethod
     @abstractstatic
     def get_report_data():
         """
