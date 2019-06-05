@@ -23,11 +23,11 @@ import 'styles/App.css';
 import 'react-toggle/style.css';
 import 'react-table/react-table.css';
 import VersionComponent from "./side-menu/VersionComponent";
-import notificationIcon from '../images/notification-logo-512x512.png';
 
 let logoImage = require('../images/monkey-icon.svg');
 let infectionMonkeyImage = require('../images/infection-monkey.svg');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
+let notificationIcon = require('../images/notification-logo-512x512.png');
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
@@ -203,12 +203,13 @@ class AppComponent extends AuthComponent {
     if (this.state.completedSteps.infection_done) {
       let hostname = window.location.hostname;
       let url = `https://${hostname}:5000/report`;
-      console.log("Trying to show notification. URL: " + url + " | icon: " + {notificationIcon});
+      console.log("Trying to show notification. URL: " + url + " | icon: " + notificationIcon);
+
       Notifier.start(
         "Monkey Island",
         "Infection is done! Click here to go to the report page.",
         url,
-        {notificationIcon});
+        notificationIcon);
     }
   }
 }
