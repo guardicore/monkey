@@ -81,7 +81,7 @@ class ReportPageComponent extends AuthComponent {
     }
 
     return (
-      <Col xs={12} lg={8}>
+      <Col xs={12} lg={10}>
         <h1 className="page-title no-print">4. Security Report</h1>
         <div style={{'fontSize': '1.2em'}}>
           {content}
@@ -308,7 +308,7 @@ class ReportPageComponent extends AuthComponent {
                     }).length} threats</span>:
                 <ul>
                   {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] ?
-                    <li>Stolen SSH keys are used to exploit other machines.</li> : null }                  
+                    <li>Stolen SSH keys are used to exploit other machines.</li> : null }
                   {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
                     <li>Stolen credentials are used to exploit other machines.</li> : null}
                   {this.state.report.overview.issues[this.Issue.ELASTIC] ?

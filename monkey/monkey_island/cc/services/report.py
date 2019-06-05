@@ -57,8 +57,8 @@ class ReportService:
         STRUTS2 = 8
         WEBLOGIC = 9
         HADOOP = 10
-        PTH_CRIT_SERVICES_ACCESS = 11,
-        MSSQL = 12,
+        PTH_CRIT_SERVICES_ACCESS = 11
+        MSSQL = 12
         VSFTPD = 13
 
     class WARNINGS_DICT(Enum):
@@ -296,7 +296,7 @@ class ReportService:
     def process_vsftpd_exploit(exploit):
         processed_exploit = ReportService.process_general_creds_exploit(exploit)
         processed_exploit['type'] = 'vsftp'
-        return processed_exploit        
+        return processed_exploit
 
     @staticmethod
     def process_sambacry_exploit(exploit):
