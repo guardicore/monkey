@@ -21,7 +21,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.initialConfig = {};
     this.initialAttackConfig = {};
     this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
-    this.uiSchemas = ConfigurePageComponent.getUiSchemas();
+    this.uiSchemas = this.getUiSchemas();
     // set schema from server
     this.state = {
       schema: {},
@@ -37,7 +37,7 @@ class ConfigurePageComponent extends AuthComponent {
     };
   }
 
-  static getUiSchemas(){
+  getUiSchemas(){
     return ({
       basic: {"ui:order": ["general", "credentials"]},
       basic_network: {},
@@ -299,9 +299,8 @@ class ConfigurePageComponent extends AuthComponent {
     try {
       this.setState({
         configuration: JSON.parse(event.target.result),
-        selectedSection: 'basic',
         lastAction: 'import_success'
-      }, () => {this.sendConfig()});
+      }, () => {this.sendConfig(); this.setInitialConfig(JSON.parse(event.target.result))});
       this.currentSection = 'basic';
       this.currentFormData = {};
     } catch(SyntaxError) {
