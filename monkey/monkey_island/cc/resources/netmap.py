@@ -1,7 +1,4 @@
-import json
-
 import flask_restful
-from flask import request
 
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.services.edge import EdgeService
@@ -31,32 +28,4 @@ class NetMap(flask_restful.Resource):
                 "edges": edges
             }
 
-    @jwt_required()
-    def post(self, **kw):
-        post_data = json.loads(request.data)
 
-        print(post_data)
-
-        monkeys = [NodeService.monkey_to_net_node(x) for x in mongo.db.monkey.find({})]
-        nodes = [NodeService.node_to_net_node(x) for x in mongo.db.node.find({})]
-        edges = [EdgeService.edge_to_net_edge(x) for x in mongo.db.edge.find({})]
-
-        if NodeService.get_monkey_island_monkey() is None:
-            monkey_island = [NodeService.get_monkey_island_pseudo_net_node()]
-            edges += EdgeService.get_monkey_island_pseudo_edges()
-        else:
-            monkey_island = []
-            edges += EdgeService.get_infected_monkey_island_pseudo_edges()
-
-        all_nodes = monkeys + nodes + monkey_island
-        def filter_linux(machine):
-            if machine["os"] == "linux":
-                return False
-            return True
-        all_nodes = filter(filter_linux, all_nodes)
-
-        return \
-            {
-                "nodes": all_nodes,
-                "edges": edges
-            }

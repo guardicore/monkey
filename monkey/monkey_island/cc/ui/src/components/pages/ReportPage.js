@@ -103,17 +103,7 @@ class ReportPageComponent extends AuthComponent {
   };
 
   updateMapFromServer = () => {
-    this.authFetch('/api/netmap', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstParam: 'yourValue',
-          secondParam: 'yourOtherValue',
-        })
-    })
+    this.authFetch('/api/netmap')
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
