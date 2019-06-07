@@ -32,12 +32,13 @@ class T1075 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        <ReactTable
-            columns={T1075.getHashColumns()}
-            data={this.props.data.successful_logins}
-            showPagination={false}
-            defaultPageSize={this.props.data.successful_logins.length}
-        />
+        {this.props.data.status === 'USED' ?
+          <ReactTable
+              columns={T1075.getHashColumns()}
+              data={this.props.data.successful_logins}
+              showPagination={false}
+              defaultPageSize={this.props.data.successful_logins.length}
+          /> : ""}
       </div>
     );
   }
