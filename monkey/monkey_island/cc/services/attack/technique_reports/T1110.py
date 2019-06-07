@@ -53,7 +53,7 @@ class T1110(AttackTechnique):
         username = attempt['user']
         if attempt['lm_hash']:
             return '%s ; LM hash %s ...' % (username, encryptor.dec(attempt['lm_hash'])[0:5])
-        if attempt['lm_hash']:
+        if attempt['ntlm_hash']:
             return '%s ; NTLM hash %s ...' % (username, encryptor.dec(attempt['ntlm_hash'])[0:20])
         if attempt['ssh_key']:
             return '%s ; SSH key %s ...' % (username, encryptor.dec(attempt['ssh_key'])[0:15])
