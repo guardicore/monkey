@@ -520,7 +520,7 @@ class ReportPageComponent extends AuthComponent {
                 This report shows information about ATT&CK techniques used by Infection Monkey.
               </p>
               <div>
-                <AttackReport/>
+                <AttackReport reportData={this.state.report}/>
               </div>
               <br />
             </div>)
