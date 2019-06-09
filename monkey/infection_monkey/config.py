@@ -23,7 +23,8 @@ class Configuration(object):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
         exploit_import = importlib.import_module('infection_monkey.exploit')
-
+        pe_import      = importlib.import_module('infection_monkey.pe')
+        
         unknown_items = []
         for key, value in formatted_data.items():
             if key.startswith('_'):
@@ -38,6 +39,9 @@ class Configuration(object):
                 setattr(self, key, class_objects)
             elif key == 'exploiter_classes':
                 class_objects = [getattr(exploit_import, val) for val in value]
+                setattr(self, key, class_objects)
+            elif key == 'pe_classes':
+                class_objects = [getattr(pe_import, val) for val in value]
                 setattr(self, key, class_objects)
             else:
                 if hasattr(self, key):
@@ -139,7 +143,7 @@ class Configuration(object):
 
     finger_classes = []
     exploiter_classes = []
-
+    pe_classes = []
     # how many victims to look for in a single scan iteration
     victims_max_find = 30
 

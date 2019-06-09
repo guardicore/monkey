@@ -55,6 +55,12 @@ class MonkeyDrops(object):
             LOG.error("No destination path specified")
             return False
 
+        # we try to see if pe is present
+
+        for pe in WormConfiguration.pe_classes:
+            print pe
+
+
         # we copy/move only in case path is different
         try:
             file_moved = filecmp.cmp(self._config['source_path'], self._config['destination_path'])
