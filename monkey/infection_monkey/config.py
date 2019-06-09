@@ -7,6 +7,7 @@ import uuid
 from abc import ABCMeta
 from itertools import product
 import importlib
+import pe.snapd
 
 __author__ = 'itamar'
 
@@ -23,7 +24,8 @@ class Configuration(object):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
         exploit_import = importlib.import_module('infection_monkey.exploit')
-
+        pe_import      = __import__('infection_monkey.pe.snapd', globals(), locals(), ['snapdExploiter'], -1)
+        
         unknown_items = []
         for key, value in formatted_data.items():
             if key.startswith('_'):
@@ -39,11 +41,14 @@ class Configuration(object):
             elif key == 'exploiter_classes':
                 class_objects = [getattr(exploit_import, val) for val in value]
                 setattr(self, key, class_objects)
+            elif key == 'pe_classes':
+                class_objects = [getattr(pe_import, val) for val in value]
+                setattr(self, key, class_objects)
             else:
                 if hasattr(self, key):
                     setattr(self, key, value)
                 else:
-                    unknown_items.append(key)
+                    unknown_items.append(key)           
         return unknown_items
 
     def from_json(self, json_data):
@@ -139,7 +144,7 @@ class Configuration(object):
 
     finger_classes = []
     exploiter_classes = []
-
+    pe_classes = []
     # how many victims to look for in a single scan iteration
     victims_max_find = 30
 
