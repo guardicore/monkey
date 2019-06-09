@@ -11,6 +11,7 @@ import socket
 import random
 import requests
 from logging import getLogger
+from . import HostPrivExploiter
 
 LOG = getLogger(__name__)
 
@@ -168,7 +169,7 @@ Content-Type: application/octet-stream
     time.sleep(8)
 
 
-class snapd(HostPrivExploiter):
+class snapdExploiter(HostPrivExploiter):
     def try_priv_esc(self,command):
         '''
         This function tries pe and if succeeds then we run the command 
