@@ -62,7 +62,7 @@ def main():
         try:
             with open(config_file) as config_fo:
                 json_dict = json.load(config_fo)
-                WormConfiguration.from_kv(json_dict)
+                WormConfiguration.from_kv(json_dict)                
         except ValueError as e:
             print("Error loading config: %s, using default" % (e,))
     else:

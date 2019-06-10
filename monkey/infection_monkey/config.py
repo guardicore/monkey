@@ -7,6 +7,7 @@ import uuid
 from abc import ABCMeta
 from itertools import product
 import importlib
+import pe.snapd
 
 __author__ = 'itamar'
 
@@ -23,7 +24,7 @@ class Configuration(object):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
         exploit_import = importlib.import_module('infection_monkey.exploit')
-        pe_import      = importlib.import_module('infection_monkey.pe')
+        pe_import      = __import__('infection_monkey.pe.snapd', globals(), locals(), ['snapdExploiter'], -1)
         
         unknown_items = []
         for key, value in formatted_data.items():
@@ -47,7 +48,7 @@ class Configuration(object):
                 if hasattr(self, key):
                     setattr(self, key, value)
                 else:
-                    unknown_items.append(key)
+                    unknown_items.append(key)           
         return unknown_items
 
     def from_json(self, json_data):

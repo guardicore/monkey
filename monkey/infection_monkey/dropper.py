@@ -43,6 +43,7 @@ class MonkeyDrops(object):
         arg_parser.add_argument('-l', '--location')
         self.monkey_args = args[1:]
         self.opts, _ = arg_parser.parse_known_args(args)
+        self.pe = []
 
         self._config = {'source_path': os.path.abspath(sys.argv[0]),
                         'destination_path': self.opts.location}
@@ -54,12 +55,6 @@ class MonkeyDrops(object):
         if self._config['destination_path'] is None:
             LOG.error("No destination path specified")
             return False
-
-        # we try to see if pe is present
-
-        for pe in WormConfiguration.pe_classes:
-            print pe
-
 
         # we copy/move only in case path is different
         try:
@@ -117,6 +112,11 @@ class MonkeyDrops(object):
                 except:
                     LOG.warn("Cannot set reference date to destination file")
 
+         # we try to see if pe is present , if yes we execute it after copying the file.
+
+        #for priv_esc_class in WormConfiguration.pe_classes:
+        
+
         monkey_options =\
             build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
 
@@ -130,16 +130,23 @@ class MonkeyDrops(object):
             monkey_cmdline = GENERAL_CMDLINE_LINUX % {'monkey_directory': dest_path[0:dest_path.rfind("/")],
                                                       'monkey_commandline': inner_monkey_cmdline}
 
-        monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
-                                          stdin=None, stdout=None, stderr=None,
-                                          close_fds=True, creationflags=DETACHED_PROCESS)
+        #monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
+        #                                  stdin=None, stdout=None, stderr=None,
+        #                                  close_fds=True, creationflags=DETACHED_PROCESS)
 
-        LOG.info("Executed monkey process (PID=%d) with command line: %s",
-                 monkey_process.pid, monkey_cmdline)
+        self.pe = [priv_esc_class() for priv_esc_class in WormConfiguration.pe_classes]
+        for pe in self.pe:
+            if pe.try_priv_esc('Insert command here!'):
+                LOG.info("Executed monkey process  with command line: %s",monkey_cmdline)
+
+
+        
+        #LOG.info("Executed monkey process (PID=%d) with command line: %s",
+        #         monkey_process.pid, monkey_cmdline)
 
         time.sleep(3)
-        if monkey_process.poll() is not None:
-            LOG.warn("Seems like monkey died too soon")
+        #if monkey_process.poll() is not None:
+        #   LOG.warn("Seems like monkey died too soon")
 
     def cleanup(self):
         try:

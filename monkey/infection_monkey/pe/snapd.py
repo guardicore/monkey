@@ -9,7 +9,6 @@ import base64
 import string
 import socket
 import random
-import requests
 from logging import getLogger
 from . import HostPrivExploiter
 
@@ -197,3 +196,4 @@ class snapdExploiter(HostPrivExploiter):
         delete_snap(client_sock)
 
         LOG.info("Command Executed Successfully \n")
+        return True
