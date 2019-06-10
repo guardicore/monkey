@@ -12,6 +12,7 @@ class T1059 extends React.Component {
 
   static getHashColumns() {
     return ([{
+      Header: 'Example commands used',
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => RenderMachine(x.data[0].machine), style: { 'whiteSpace': 'unset'}, width: 160 },
         {Header: 'Approx. Time', id: 'time', accessor: x => x.data[0].info.finished, style: { 'whiteSpace': 'unset' }},
