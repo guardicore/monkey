@@ -13,8 +13,9 @@ class T1059 extends React.Component {
   static getHashColumns() {
     return ([{
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => RenderMachine(x.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Command', id: 'command', accessor: x => x.attempts[0].hashType, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Machine', id: 'machine', accessor: x => RenderMachine(x.data[0].machine), style: { 'whiteSpace': 'unset'}, width: 160 },
+        {Header: 'Approx. Time', id: 'time', accessor: x => x.data[0].info.finished, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Command', id: 'command', accessor: x => x.data[0].info.executed_cmds[0], style: { 'whiteSpace': 'unset' }},
         ]
     }])};
 
@@ -26,9 +27,9 @@ class T1059 extends React.Component {
         {this.props.data.status === 'USED' ?
           <ReactTable
               columns={T1059.getHashColumns()}
-              data={this.props.data.successful_logins}
+              data={this.props.data.cmds}
               showPagination={false}
-              defaultPageSize={this.props.data.successful_logins.length}
+              defaultPageSize={this.props.data.cmds.length}
           /> : ""}
       </div>
     );

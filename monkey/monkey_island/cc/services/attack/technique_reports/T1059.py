@@ -22,7 +22,7 @@ class T1059(AttackTechnique):
     @staticmethod
     def get_report_data():
         cmd_data = list(mongo.db.telemetry.aggregate(T1059.query))
-        data = {'title': T1059.technique_title(T1059.tech_id), 'data': cmd_data}
+        data = {'title': T1059.technique_title(T1059.tech_id), 'cmds': cmd_data}
         if cmd_data:
             data.update({'message': T1059.used_msg, 'status': ScanStatus.USED.name})
         else:
