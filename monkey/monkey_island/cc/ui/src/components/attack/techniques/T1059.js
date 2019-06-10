@@ -4,26 +4,17 @@ import ReactTable from "react-table";
 import { RenderMachine } from "./Helpers"
 
 
-class T1075 extends React.Component {
+class T1059 extends React.Component {
 
   constructor(props) {
     super(props);
-    this.props.data.successful_logins.forEach((login) => {
-      if(login.attempts[0].ntlm_hash !== ""){
-        login.attempts[0].hashType = 'NTLM';
-      } else if(login.attempts[0].lm_hash !== ""){
-        login.attempts[0].hashType = 'LM';
-      }
-    })
   }
 
   static getHashColumns() {
     return ([{
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => RenderMachine(x.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Username', id: 'username', accessor: x => x.attempts[0].user, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Hash type', id: 'hash', accessor: x => x.attempts[0].hashType, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Command', id: 'command', accessor: x => x.attempts[0].hashType, style: { 'whiteSpace': 'unset' }},
         ]
     }])};
 
@@ -34,7 +25,7 @@ class T1075 extends React.Component {
         <br/>
         {this.props.data.status === 'USED' ?
           <ReactTable
-              columns={T1075.getHashColumns()}
+              columns={T1059.getHashColumns()}
               data={this.props.data.successful_logins}
               showPagination={false}
               defaultPageSize={this.props.data.successful_logins.length}
@@ -44,4 +35,4 @@ class T1075 extends React.Component {
   }
 }
 
-export default T1075;
+export default T1059;
