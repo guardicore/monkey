@@ -64,6 +64,8 @@
     "webpack-dev-server": "^3.1.9"
   },
   "dependencies": {
+    "@kunukn/react-collapse": "^1.0.5",
+    "classnames": "^2.2.6",
     "bootstrap": "3.4.1",
     "core-js": "^2.5.7",
     "downloadjs": "^1.4.7",

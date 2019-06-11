@@ -20,6 +20,7 @@ class ElasticFinger(HostFinger):
     """
         Fingerprints elastic search clusters, only on port 9200
     """
+    _SCANNED_SERVICE = 'Elastic search'
 
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
@@ -35,7 +36,7 @@ class ElasticFinger(HostFinger):
             url = 'http://%s:%s/' % (host.ip_addr, ES_PORT)
             with closing(requests.get(url, timeout=ES_HTTP_TIMEOUT)) as req:
                 data = json.loads(req.text)
-                host.services[ES_SERVICE] = {}
+                self.init_service(host.services, ES_SERVICE, ES_PORT)
                 host.services[ES_SERVICE]['cluster_name'] = data['cluster_name']
                 host.services[ES_SERVICE]['name'] = data['name']
                 host.services[ES_SERVICE]['version'] = data['version']['number']

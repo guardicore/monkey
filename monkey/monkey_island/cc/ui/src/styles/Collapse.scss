@@ -1,0 +1,96 @@
+$transition: 500ms cubic-bezier(0.4, 0.1, 0.1, 0.5);
+
+$danger-color: #d9acac;
+$info-color: #ade3eb;
+$default-color: #e0ddde;
+
+.collapse-item button {
+  font-size: inherit;
+  margin: 0;
+  padding: 1rem;
+  background: transparent;
+  border: 1px solid #ccc;
+  box-shadow: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.collapse-item button span:first-child{
+  text-align:left;
+}
+
+.collapse-item button {
+  width: 100%;
+  box-shadow: 0 2px 6px #ccc;
+  border: none;
+  transition: background-color $transition;
+  display: flex;
+  font-family: inherit;
+    > span {
+    display: inline-block;
+    flex: 4;
+    text-align: right;
+
+    &:nth-child(2) {
+      flex: 3;
+    }
+  }
+}
+
+.collapse-danger {
+  background-color: $danger-color !important;
+}
+
+.collapse-info {
+  background-color: $info-color !important;
+}
+
+.collapse-default {
+  background-color: $default-color !important;
+}
+
+.collapse-item {
+  padding: 0.5rem;
+  &--active {
+    .btn-collapse {
+      background-color: #f7f7f7;
+    }
+  }
+}
+
+.collapse-item .collapse-comp {
+  padding: 0 7px 7px 7px;
+  border: 2px solid rgb(232, 228, 228);
+  border-top: 0;
+  display:block !important;
+  transition: height $transition;
+  overflow: hidden;
+}
+
+.collapse-item .content {
+  padding: 2rem 0;
+  transition: transform $transition;
+  will-change: transform;
+  $offset: 10px;
+
+  &.collapsing {
+    transform: translateY(-$offset);
+  }
+  &.collapse-comp {
+    transform: translateY(-$offset);
+  }
+  &.expanding {
+    transform: translateX(0px);
+  }
+  &.expanded {
+    transform: translateX(0px);
+  }
+}
+
+.collapse-item .text {
+  margin-bottom: 1rem;
+}
+
+.collapse-item .state {
+  display: inline-block;
+  min-width: 6em;
+}

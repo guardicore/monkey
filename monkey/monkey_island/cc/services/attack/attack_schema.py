@@ -75,7 +75,7 @@ SCHEMA = {
             "type": "object",
             "properties": {
                 "T1197": {
-                    "title": "T1197 Bits jobs",
+                    "title": "T1197 BITS jobs",
                     "type": "bool",
                     "value": True,
                     "necessary": True,

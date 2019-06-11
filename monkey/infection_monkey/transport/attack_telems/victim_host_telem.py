@@ -14,5 +14,5 @@ class VictimHostTelem(AttackTelem):
         :param data: Other data relevant to the attack technique
         """
         super(VictimHostTelem, self).__init__(technique, status, data)
-        victim_host = {'hostname': machine.domain_name, 'ip': machine.ip_addr}
+        victim_host = {'domain_name': machine.domain_name, 'ip_addr': machine.ip_addr}
         self.data.update({'machine': victim_host})
