@@ -263,6 +263,12 @@ class Telemetry(flask_restful.Resource):
             {'guid': telemetry_json['monkey_guid']},
             {'$push': {'pba_results': telemetry_json['data']}})
 
+    @staticmethod
+    def process_attack_telemetry(telemetry_json):
+        # No processing required
+        pass
+
+
 TELEM_PROCESS_DICT = \
     {
         'tunnel': Telemetry.process_tunnel_telemetry,
@@ -271,5 +277,6 @@ TELEM_PROCESS_DICT = \
         'scan': Telemetry.process_scan_telemetry,
         'system_info_collection': Telemetry.process_system_info_telemetry,
         'trace': Telemetry.process_trace_telemetry,
-        'post_breach': Telemetry.process_post_breach_telemetry
+        'post_breach': Telemetry.process_post_breach_telemetry,
+        'attack': Telemetry.process_attack_telemetry
     }
