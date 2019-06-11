@@ -2,7 +2,7 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
-import '../../styles/Collapse.scss'
+import '../../styles/Collapse.scss';
 import AuthComponent from '../AuthComponent';
 import Collapse from '@kunukn/react-collapse';
 import T1210 from '../attack/techniques/T1210';
@@ -11,6 +11,7 @@ import T1110 from '../attack/techniques/T1110';
 import T1075 from "../attack/techniques/T1075";
 import T1003 from "../attack/techniques/T1003";
 import T1059 from "../attack/techniques/T1059";
+import T1086 from "../attack/techniques/T1086";
 
 const tech_components = {
   'T1210': T1210,
@@ -18,7 +19,8 @@ const tech_components = {
   'T1110': T1110,
   'T1075': T1075,
   'T1003': T1003,
-  'T1059': T1059
+  'T1059': T1059,
+  'T1086': T1086
 };
 
 const classNames = require('classnames');
