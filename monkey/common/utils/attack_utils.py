@@ -8,3 +8,14 @@ class ScanStatus(Enum):
     SCANNED = 1
     # Technique was attempted and succeeded
     USED = 2
+
+# Dict that describes what BITS job was used for
+BITS_UPLOAD_STRING = {"usage": "BITS job was used to upload monkey to a remote system."}
+
+
+def format_time(time):
+    return "%s-%s %s:%s:%s" % (time.date().month,
+                               time.date().day,
+                               time.time().hour,
+                               time.time().minute,
+                               time.time().second)

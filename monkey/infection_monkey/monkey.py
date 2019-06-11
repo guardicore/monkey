@@ -158,7 +158,7 @@ class InfectionMonkey(object):
                     finger.get_host_fingerprint(machine)
 
                 ControlClient.send_telemetry('scan', {'machine': machine.as_dict(),
-                                                      })
+                                                      'service_count': len(machine.services)})
 
                 # skip machines that we've already exploited
                 if machine in self._exploited_machines:
@@ -186,11 +186,11 @@ class InfectionMonkey(object):
                     for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
                         if self.try_exploiting(machine, exploiter):
                             host_exploited = True
-                            VictimHostTelem('T1210', ScanStatus.USED, machine).send()
+                            VictimHostTelem('T1210', ScanStatus.USED, machine=machine).send()
                             break
                     if not host_exploited:
                         self._fail_exploitation_machines.add(machine)
-                        VictimHostTelem('T1210', ScanStatus.SCANNED, machine).send()
+                        VictimHostTelem('T1210', ScanStatus.SCANNED, machine=machine).send()
                 if not self._keep_running:
                     break
 
