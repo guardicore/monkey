@@ -7,7 +7,8 @@ class VictimHostTelem(AttackTelem):
 
     def __init__(self, technique, status, machine):
         """
-        ATT&CK telemetry that parses and sends VictimHost's (remote machine's) data
+        ATT&CK telemetry.
+        When `send` is called, it will parse and send the VictimHost's (remote machine's) data.
         :param technique: Technique ID. E.g. T111
         :param status: ScanStatus of technique
         :param machine: VictimHost obj from model/host.py

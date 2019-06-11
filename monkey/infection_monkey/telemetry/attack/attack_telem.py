@@ -1,10 +1,6 @@
-import logging
-
 from infection_monkey.telemetry.base_telem import BaseTelem
 
 __author__ = "VakarisZ"
-
-LOG = logging.getLogger(__name__)
 
 
 class AttackTelem(BaseTelem):

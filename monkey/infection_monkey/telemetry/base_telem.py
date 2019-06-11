@@ -1,11 +1,8 @@
 import abc
 
 from infection_monkey.control import ControlClient
-import logging
 
 __author__ = 'itay.mizeretz'
-
-LOG = logging.getLogger(__name__)
 
 
 class BaseTelem(object):
@@ -34,6 +31,6 @@ class BaseTelem(object):
     @abc.abstractmethod
     def get_data(self):
         """
-        :return: Telemetry type
+        :return: Data of telemetry (should be dict)
         """
         pass
