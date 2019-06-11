@@ -13,8 +13,17 @@ class TestVictimHostTelem(TestCase):
 
         telem = VictimHostTelem(technique, status, machine)
 
-        self.assertEqual(telem.technique, technique)
-        self.assertEqual(telem.status, status)
         self.assertEqual(telem.telem_type, 'attack')
-        self.assertEqual(telem.machine['domain_name'], machine.domain_name)
-        self.assertEqual(telem.machine['ip_addr'], machine.ip_addr)
+
+        expected_data = {
+            'machine': {
+                'domain_name': machine.domain_name,
+                'ip_addr': machine.ip_addr
+            },
+            'status': status.value,
+            'technique': technique
+        }
+
+        actual_data = telem.get_data()
+
+        self.assertEqual(actual_data, expected_data)
