@@ -16,6 +16,8 @@ class VictimHostTelem(AttackTelem):
         self.machine = {'domain_name': machine.domain_name, 'ip_addr': machine.ip_addr}
 
     def get_data(self):
-        return super(VictimHostTelem, self).get_data().update({
+        data = super(VictimHostTelem, self).get_data()
+        data.update({
             'machine': self.machine
         })
+        return data
