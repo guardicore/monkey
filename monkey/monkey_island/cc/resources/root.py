@@ -8,7 +8,7 @@ from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.report import ReportService
-from cc.services.attack.attack_report import AttackReportService
+from monkey_island.cc.services.attack.attack_report import AttackReportService
 from monkey_island.cc.utils import local_ip_addresses
 from monkey_island.cc.services.database import Database
 
