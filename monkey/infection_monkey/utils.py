@@ -1,8 +1,9 @@
 import os
-import sys
 import shutil
 import struct
-import datetime
+import sys
+import tempfile
+
 from infection_monkey.config import WormConfiguration
 
 
@@ -17,10 +18,9 @@ def get_dropper_log_path():
 
 
 def is_64bit_windows_os():
-    '''
+    """
     Checks for 64 bit Windows OS using environment variables.
-    :return:
-    '''
+    """
     return 'PROGRAMFILES(X86)' in os.environ
 
 
@@ -54,7 +54,4 @@ def remove_monkey_dir():
 
 
 def get_monkey_dir_path():
-    if is_windows_os():
-        return WormConfiguration.monkey_dir_windows
-    else:
-        return WormConfiguration.monkey_dir_linux
+    return os.path.join(tempfile.gettempdir(), WormConfiguration.monkey_dir_name)
