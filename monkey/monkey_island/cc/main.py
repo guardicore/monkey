@@ -6,7 +6,7 @@ import sys
 import time
 import logging
 
-MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.0.0"
+MINIMUM_MONGO_DB_VERSION_REQUIRED = "3.6.0"
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
