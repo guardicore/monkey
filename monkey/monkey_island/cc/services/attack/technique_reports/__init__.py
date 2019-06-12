@@ -61,6 +61,15 @@ class AttackTechnique(object):
             return ScanStatus.UNSCANNED
 
     @staticmethod
+    def get_message_and_status(technique, status):
+        if status == ScanStatus.UNSCANNED:
+            return {'message': technique.unscanned_msg, 'status': ScanStatus.UNSCANNED.name}
+        elif status == ScanStatus.SCANNED:
+            return {'message': technique.scanned_msg, 'status': ScanStatus.SCANNED.name}
+        else:
+            return {'message': technique.used_msg, 'status': ScanStatus.USED.name}
+
+    @staticmethod
     def technique_title(technique):
         """
         :param technique: Technique's id. E.g. T1110
