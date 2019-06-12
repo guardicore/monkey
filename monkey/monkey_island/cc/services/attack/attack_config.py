@@ -19,6 +19,20 @@ class AttackConfig(object):
         return config
 
     @staticmethod
+    def get_technique(technique_id):
+        """
+        Gets technique by id
+        :param technique_id: E.g. T1210
+        :return: Technique object or None if technique is not found
+        """
+        attack_config = AttackConfig.get_config()
+        for key, attack_type in attack_config['properties'].items():
+            for key, technique in attack_type['properties'].items():
+                if key == technique_id:
+                    return technique
+        return None
+
+    @staticmethod
     def get_config_schema():
         return SCHEMA
 

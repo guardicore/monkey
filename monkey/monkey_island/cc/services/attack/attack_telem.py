@@ -22,3 +22,9 @@ class AttackTelemService(object):
         """
         data.update({'technique': technique})
         mongo.db.attack_results.insert(data)
+        mongo.db.attack_results.update({'name': 'latest'}, {'name': 'latest', 'time': data['time']}, upsert=True)
+
+
+    @staticmethod
+    def get_latest_telem():
+        return mongo.db.attack_results.find_one({'name': 'latest'})

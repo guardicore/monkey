@@ -8,6 +8,7 @@ from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.report import ReportService
+from monkey_island.cc.services.attack.attack_report import AttackReportService
 from monkey_island.cc.utils import local_ip_addresses
 from monkey_island.cc.services.database import Database
 
@@ -58,5 +59,7 @@ class Root(flask_restful.Resource):
         else:
             if is_any_exists:
                 ReportService.get_report()
+                AttackReportService.get_latest_report()
             report_done = ReportService.is_report_generated()
-        return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done, report_done=report_done)
+        return dict(run_server=True, run_monkey=is_any_exists, infection_done=infection_done,
+                    report_done=report_done)

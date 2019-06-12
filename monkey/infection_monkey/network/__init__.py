@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 __author__ = 'itamar'
 
@@ -14,9 +14,19 @@ class HostScanner(object):
 class HostFinger(object):
     __metaclass__ = ABCMeta
 
+    @abstractproperty
+    def _SCANNED_SERVICE(self):
+        pass
+
+    def init_service(self, services, service_key, port):
+        services[service_key] = {}
+        services[service_key]['display_name'] = self._SCANNED_SERVICE
+        services[service_key]['port'] = port
+
     @abstractmethod
     def get_host_fingerprint(self, host):
         raise NotImplementedError()
+
 
 from infection_monkey.network.ping_scanner import PingScanner
 from infection_monkey.network.tcp_scanner import TcpScanner

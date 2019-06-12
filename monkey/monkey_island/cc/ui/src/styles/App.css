@@ -520,9 +520,25 @@ body {
 
 }
 
-/* Attack config page */
+/* Attack pages */
 .attack-matrix .messages {
   margin-bottom: 30px;
+}
+
+.icon-info {
+  color: #ade3eb !important;
+}
+
+.icon-warning {
+  color: #f0ad4e !important;
+}
+
+.icon-danger {
+  color: #d9acac !important;
+}
+
+.icon-default {
+  color: #e0ddde !important;
 }
 
 .attack-legend {
@@ -538,4 +554,10 @@ body {
   right: 0;
   margin-left: auto;
   margin-right: auto;
+}
+
+.attack-report.footer-text{
+  text-align: right;
+  font-size: 0.8em;
+  margin-top: 20px;
 }

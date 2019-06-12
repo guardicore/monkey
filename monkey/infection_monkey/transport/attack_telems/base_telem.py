@@ -16,7 +16,7 @@ class AttackTelem(object):
         Default ATT&CK telemetry constructor
         :param technique: Technique ID. E.g. T111
         :param status: int from ScanStatus Enum
-        :param data: Other data relevant to the attack technique
+        :param data: Dictionary of other relevant info. E.g. {'brute_force_blocked': True}
         """
         self.technique = technique
         self.result = status

@@ -1,11 +1,9 @@
-import logging
 import time
 
 from common.network.network_range import *
 from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
 from infection_monkey.model import VictimHost
-from infection_monkey.network import HostScanner
 from infection_monkey.network import TcpScanner, PingScanner
 
 __author__ = 'itamar'
@@ -66,7 +64,6 @@ class NetworkScanner(object):
     def get_victim_machines(self, max_find=5, stop_callback=None):
         """
         Finds machines according to the ranges specified in the object
-        :param scan_type: A hostscanner class, will be instanced and used to scan for new machines
         :param max_find: Max number of victims to find regardless of ranges
         :param stop_callback: A callback to check at any point if we should stop scanning
         :return: yields a sequence of VictimHost instances
