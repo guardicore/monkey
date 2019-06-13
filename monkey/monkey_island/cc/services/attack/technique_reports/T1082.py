@@ -12,26 +12,35 @@ class T1082(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey gathered system info from machines in the network."
 
-    # Gets data about successful PTH logins
-    query = [{'$match': {'telem_type': 'system_info_collection'},
+    query = [{'$match': {'telem_type': 'system_info_collection'}},
+             {'$project': {'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
+                           'aws': '$data.aws',
+                           'netstat': '$data.network_info.netstat',
+                           'process_list': '$data.process_list',
+                           'ssh_info': '$data.ssh_info',
+                           'azure_info': '$data.Azure'}},
              {'$project': {'_id': 0,
-                           'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
-                           'info': {'aws': '$data.aws',
-                                    'process_list': '$data.process_list.1'
-                           'attempt_cnt': {'$size': '$data.attempts'},
-                           'attempts': {'$filter': {'input': '$data.attempts',
-                                                    'as': 'attempt',
-                                                    'cond': {'$eq': ['$$attempt.result', True]}}}}}]
+                           'machine': 1,
+                           'collections': [
+                             {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$gt': ['$aws', {}]}]},
+                              'name': {'$literal': 'Amazon Web Services info'}},
+                             {'used': {'$and': [{'$ifNull': ['$process_list', False]}, {'$gt': ['$process_list', {}]}]},
+                              'name': {'$literal': 'Running process list'}},
+                             {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$ne': ['$netstat', []]}]},
+                              'name': {'$literal': 'Network connections'}},
+                             {'used': {'$and': [{'$ifNull': ['$ssh_info', False]}, {'$ne': ['$ssh_info', []]}]},
+                              'name': {'$literal': 'SSH info'}},
+                             {'used': {'$and': [{'$ifNull': ['$azure_info', False]}, {'$ne': ['$azure_info', []]}]},
+                              'name': {'$literal': 'Azure info'}}
+                             ]}}]
 
     @staticmethod
     def get_report_data():
         data = {'title': T1082.technique_title(T1082.tech_id)}
-        successful_logins = list(mongo.db.telemetry.aggregate(T1082.query))
-        data.update({'successful_logins': successful_logins})
-        if successful_logins:
+        system_info = list(mongo.db.telemetry.aggregate(T1082.query))
+        data.update({'system_info': system_info})
+        if system_info:
             data.update({'message': T1082.used_msg, 'status': ScanStatus.USED.name})
-        elif mongo.db.telemetry.count_documents(T1082.login_attempt_query):
-            data.update({'message': T1082.scanned_msg, 'status': ScanStatus.SCANNED.name})
         else:
             data.update({'message': T1082.unscanned_msg, 'status': ScanStatus.UNSCANNED.name})
         return data

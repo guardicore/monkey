@@ -106,5 +106,20 @@ SCHEMA = {
                 }
             }
         },
+        "discovery": {
+            "title": "Discovery",
+            "type": "object",
+            "properties": {
+                "T1082": {
+                    "title": "T1082 System information discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "An adversary may attempt to get detailed information about the "
+                                   "operating system and hardware, including version, patches, hotfixes, "
+                                   "service packs, and architecture."
+                }
+            }
+        },
     }
 }
