@@ -1,13 +1,13 @@
 import uuid
 from time import sleep
-from unittest import TestCase
 
 from monkey import Monkey
 from monkey_island.cc.models.monkey import MonkeyNotFoundError
+from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 from monkey_ttl import MonkeyTtl
 
 
-class TestMonkey(TestCase):
+class TestMonkey(IslandTestCase):
     """
     Make sure to set server environment to `testing` in server.json! Otherwise this will mess up your mongo instance and
     won't work.
@@ -15,7 +15,11 @@ class TestMonkey(TestCase):
     Also, the working directory needs to be the working directory from which you usually run the island so the
     server.json file is found and loaded.
     """
+
     def test_is_dead(self):
+        self.fail_if_not_testing_env()
+        self.clean_monkey_db()
+
         # Arrange
         alive_monkey_ttl = MonkeyTtl.create_ttl_expire_in(30)
         alive_monkey_ttl.save()
@@ -43,6 +47,9 @@ class TestMonkey(TestCase):
         self.assertFalse(alive_monkey.is_dead())
 
     def test_get_single_monkey_by_id(self):
+        self.fail_if_not_testing_env()
+        self.clean_monkey_db()
+
         # Arrange
         a_monkey = Monkey(guid=str(uuid.uuid4()))
         a_monkey.save()
@@ -52,3 +59,21 @@ class TestMonkey(TestCase):
         self.assertIsNotNone(Monkey.get_single_monkey_by_id(a_monkey.id))
         # Raise on non-existent monkey
         self.assertRaises(MonkeyNotFoundError, Monkey.get_single_monkey_by_id, "abcdefabcdefabcdefabcdef")
+
+    def test_get_os(self):
+        self.fail_if_not_testing_env()
+        self.clean_monkey_db()
+
+        linux_monkey = Monkey(guid=str(uuid.uuid4()),
+                              description="Linux shay-Virtual-Machine 4.15.0-50-generic #54-Ubuntu SMP Mon May 6 18:46:08 UTC 2019 x86_64 x86_64")
+        windows_monkey = Monkey(guid=str(uuid.uuid4()),
+                                description="Windows bla bla bla")
+        unknown_monkey = Monkey(guid=str(uuid.uuid4()),
+                                description="bla bla bla")
+        linux_monkey.save()
+        windows_monkey.save()
+        unknown_monkey.save()
+
+        self.assertEquals(1, len(filter(lambda m: m.get_os() == "windows", Monkey.objects())))
+        self.assertEquals(1, len(filter(lambda m: m.get_os() == "linux", Monkey.objects())))
+        self.assertEquals(1, len(filter(lambda m: m.get_os() == "unknown", Monkey.objects())))
