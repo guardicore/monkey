@@ -35,11 +35,15 @@ class T1110(AttackTechnique):
                 result['successful_creds'].append(T1110.parse_creds(attempt))
 
         if succeeded:
-            data = {'message': T1110.used_msg, 'status': ScanStatus.USED.name}
+            data = T1110.get_message_and_status(T1110, ScanStatus.USED)
         elif attempts:
-            data = {'message': T1110.scanned_msg, 'status': ScanStatus.SCANNED.name}
+            data = T1110.get_message_and_status(T1110, ScanStatus.SCANNED)
         else:
-            data = {'message': T1110.unscanned_msg, 'status': ScanStatus.UNSCANNED.name}
+            data = T1110.get_message_and_status(T1110, ScanStatus.UNSCANNED)
+
+        # Remove data with no successful brute force attempts
+        attempts = [attempt for attempt in attempts if attempt['attempts']]
+
         data.update({'services': attempts, 'title': T1110.technique_title(T1110.tech_id)})
         return data
 
@@ -51,21 +55,39 @@ class T1110(AttackTechnique):
         :return: string with username and used password/hash
         """
         username = attempt['user']
-        if attempt['lm_hash']:
-            return '%s ; LM hash %s ...' % (username, encryptor.dec(attempt['lm_hash'])[0:5])
-        if attempt['ntlm_hash']:
-            return '%s ; NTLM hash %s ...' % (username, encryptor.dec(attempt['ntlm_hash'])[0:20])
-        if attempt['ssh_key']:
-            return '%s ; SSH key %s ...' % (username, encryptor.dec(attempt['ssh_key'])[0:15])
-        if attempt['password']:
-            return '%s : %s' % (username, T1110.obfuscate_password(encryptor.dec(attempt['password'])))
+        creds = {'lm_hash': {'type': 'LM hash', 'output': T1110.censor_hash(attempt['lm_hash'])},
+                 'ntlm_hash': {'type': 'NTLM hash', 'output': T1110.censor_hash(attempt['ntlm_hash'], 20)},
+                 'ssh_key': {'type': 'SSH key', 'output': attempt['ssh_key']},
+                 'password': {'type': 'Plaintext password', 'output': T1110.censor_password(attempt['password'])}}
+        for key, cred in creds.items():
+            if attempt[key]:
+                return '%s ; %s : %s' % (username,
+                                         cred['type'],
+                                         cred['output'])
 
     @staticmethod
-    def obfuscate_password(password, plain_chars=3):
+    def censor_password(password, plain_chars=3, secret_chars=5):
         """
-        Obfuscates password by changing characters to *
+        Decrypts and obfuscates password by changing characters to *
         :param password: Password or string to obfuscate
         :param plain_chars: How many plain-text characters should be kept at the start of the string
+        :param secret_chars: How many * symbols should be used to hide the remainder of the password
         :return: Obfuscated string e.g. Pass****
         """
-        return password[0:plain_chars] + '*' * (len(password) - plain_chars)
+        if not password:
+            return ""
+        password = encryptor.dec(password)
+        return password[0:plain_chars] + '*' * secret_chars
+
+    @staticmethod
+    def censor_hash(hash_, plain_chars=5):
+        """
+        Decrypts and obfuscates hash by only showing a part of it
+        :param hash_: Hash to obfuscate
+        :param plain_chars: How many chars of hash should be shown
+        :return: Obfuscated string
+        """
+        if not hash_:
+            return ""
+        hash_ = encryptor.dec(hash_)
+        return hash_[0: plain_chars] + ' ...'

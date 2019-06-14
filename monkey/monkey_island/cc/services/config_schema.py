@@ -54,7 +54,7 @@ SCHEMA = {
                         "SSHExploiter"
                     ],
                     "title": "SSH Exploiter",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": ["T1110", "T1145"]
                 },
                 {
                     "type": "string",

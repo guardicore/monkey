@@ -1,20 +1,13 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
+import { renderMachineFromSystemData } from "./Helpers"
 
 
 class T1082 extends React.Component {
 
   constructor(props) {
     super(props);
-  }
-
-  static renderMachineString(data){
-    let machineStr = data['hostname'] + " ( ";
-    data['ips'].forEach(function(ipInfo){
-      machineStr += ipInfo['addr'] + " ";
-    });
-    return machineStr + ")"
   }
 
   static renderCollections(collections){
@@ -30,7 +23,7 @@ class T1082 extends React.Component {
   static getSystemInfoColumns() {
     return ([{
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => T1082.renderMachineString(x.machine), style: { 'whiteSpace': 'unset' }},
+        {Header: 'Machine', id: 'machine', accessor: x => renderMachineFromSystemData(x.machine), style: { 'whiteSpace': 'unset' }},
         {Header: 'Gathered info', id: 'info', accessor: x => T1082.renderCollections(x.collections), style: { 'whiteSpace': 'unset' }},
         ]
     }])};
