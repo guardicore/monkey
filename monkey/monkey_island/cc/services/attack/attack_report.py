@@ -1,5 +1,5 @@
 import logging
-from monkey_island.cc.services.attack.technique_reports import T1210, T1197
+from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110
 from monkey_island.cc.services.attack.attack_telem import AttackTelemService
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
@@ -10,7 +10,8 @@ __author__ = "VakarisZ"
 LOG = logging.getLogger(__name__)
 
 TECHNIQUES = {'T1210': T1210.T1210,
-              'T1197': T1197.T1197}
+              'T1197': T1197.T1197,
+              'T1110': T1110.T1110}
 
 REPORT_NAME = 'new_report'
 

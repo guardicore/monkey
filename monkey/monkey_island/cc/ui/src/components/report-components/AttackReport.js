@@ -6,11 +6,13 @@ import AuthComponent from '../AuthComponent';
 import Collapse from '@kunukn/react-collapse';
 import T1210 from '../attack/techniques/T1210';
 import T1197 from '../attack/techniques/T1197';
+import T1110 from '../attack/techniques/T1110';
 import '../../styles/Collapse.scss'
 
 const tech_components = {
   'T1210': T1210,
-  'T1197': T1197
+  'T1197': T1197,
+  'T1110': T1110
 };
 
 const classNames = require('classnames');
