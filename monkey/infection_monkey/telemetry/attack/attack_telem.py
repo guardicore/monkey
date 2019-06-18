@@ -15,7 +15,7 @@ class AttackTelem(BaseTelem):
         self.technique = technique
         self.status = status
 
-    telem_type = 'attack'
+    telem_catagory = 'attack'
 
     def get_data(self):
         return {

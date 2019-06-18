@@ -26,7 +26,7 @@ class Telemetry(flask_restful.Resource):
     @jwt_required()
     def get(self, **kw):
         monkey_guid = request.args.get('monkey_guid')
-        telem_type = request.args.get('telem_type')
+        telem_catagory = request.args.get('telem_catagory')
         timestamp = request.args.get('timestamp')
         if "null" == timestamp:  # special case to avoid ugly JS code...
             timestamp = None
@@ -36,8 +36,8 @@ class Telemetry(flask_restful.Resource):
 
         if monkey_guid:
             find_filter["monkey_guid"] = {'$eq': monkey_guid}
-        if telem_type:
-            find_filter["telem_type"] = {'$eq': telem_type}
+        if telem_catagory:
+            find_filter["telem_catagory"] = {'$eq': telem_catagory}
         if timestamp:
             find_filter['timestamp'] = {'$gt': dateutil.parser.parse(timestamp)}
 
@@ -53,11 +53,11 @@ class Telemetry(flask_restful.Resource):
 
         try:
             NodeService.update_monkey_modify_time(monkey["_id"])
-            telem_type = telemetry_json.get('telem_type')
-            if telem_type in TELEM_PROCESS_DICT:
-                TELEM_PROCESS_DICT[telem_type](telemetry_json)
+            telem_catagory = telemetry_json.get('telem_catagory')
+            if telem_catagory in TELEM_PROCESS_DICT:
+                TELEM_PROCESS_DICT[telem_catagory](telemetry_json)
             else:
-                logger.info('Got unknown type of telemetry: %s' % telem_type)
+                logger.info('Got unknown type of telemetry: %s' % telem_catagory)
         except Exception as ex:
             logger.error("Exception caught while processing telemetry", exc_info=True)
 
@@ -79,7 +79,7 @@ class Telemetry(flask_restful.Resource):
                 monkey_label = telem_monkey_guid
             x["monkey"] = monkey_label
             objects.append(x)
-            if x['telem_type'] == 'system_info_collection' and 'credentials' in x['data']:
+            if x['telem_catagory'] == 'system_info_collection' and 'credentials' in x['data']:
                 for user in x['data']['credentials']:
                     if -1 != user.find(','):
                         new_user = user.replace(',', '.')

@@ -13,7 +13,7 @@ class TestVictimHostTelem(TestCase):
 
         telem = VictimHostTelem(technique, status, machine)
 
-        self.assertEqual(telem.telem_type, 'attack')
+        self.assertEqual(telem.telem_catagory, 'attack')
 
         expected_data = {
             'machine': {
