@@ -308,7 +308,7 @@ class ReportPageComponent extends AuthComponent {
                     }).length} threats</span>:
                 <ul>
                   {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] ?
-                    <li>Stolen SSH keys are used to exploit other machines.</li> : null }                  
+                    <li>Stolen SSH keys are used to exploit other machines.</li> : null }
                   {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
                     <li>Stolen credentials are used to exploit other machines.</li> : null}
                   {this.state.report.overview.issues[this.Issue.ELASTIC] ?
@@ -889,16 +889,13 @@ class ReportPageComponent extends AuthComponent {
   generateWebLogicIssue(issue) {
     return (
       <li>
-        Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
-        critical patch updates.</a> Or update to the latest version. Vulnerable versions are
-        10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
+        Update Oracle WebLogic server to the latest supported version.
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
-          className="label label-danger">remote code execution</span> attack.
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to one of <span
+          className="label label-danger">remote code execution</span> attacks.
           <br/>
-          The attack was made possible due to incorrect permission assignment in Oracle Fusion Middleware
-          (subcomponent: WLS Security).
+          The attack was made possible due to one of the following vulnerabilities: CVE-2017-10271 or CVE-2019-2725
         </CollapsibleWellComponent>
       </li>
     );
