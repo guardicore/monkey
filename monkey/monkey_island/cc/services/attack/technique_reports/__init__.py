@@ -53,9 +53,9 @@ class AttackTechnique(object):
         :param technique: technique's id.
         :return: ScanStatus Enum object
         """
-        if mongo.db.attack_results.find_one({'status': ScanStatus.USED.value, 'technique': technique}):
+        if mongo.db.telemetry.find_one({'telem_catagory': 'attack', 'data.status': ScanStatus.USED.value, 'data.technique': technique}):
             return ScanStatus.USED
-        elif mongo.db.attack_results.find_one({'status': ScanStatus.SCANNED.value, 'technique': technique}):
+        elif mongo.db.telemetry.find_one({'telem_catagory': 'attack', 'data.status': ScanStatus.SCANNED.value, 'data.technique': technique}):
             return ScanStatus.SCANNED
         else:
             return ScanStatus.UNSCANNED
