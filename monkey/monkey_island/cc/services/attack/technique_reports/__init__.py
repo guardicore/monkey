@@ -62,12 +62,16 @@ class AttackTechnique(object):
 
     @staticmethod
     def get_message_and_status(technique, status):
+        return {'message': technique.get_message_by_status(technique, status), 'status': status.name}
+
+    @staticmethod
+    def get_message_by_status(technique, status):
         if status == ScanStatus.UNSCANNED:
-            return {'message': technique.unscanned_msg, 'status': ScanStatus.UNSCANNED.name}
+            return technique.unscanned_msg
         elif status == ScanStatus.SCANNED:
-            return {'message': technique.scanned_msg, 'status': ScanStatus.SCANNED.name}
+            return technique.scanned_msg
         else:
-            return {'message': technique.used_msg, 'status': ScanStatus.USED.name}
+            return technique.used_msg
 
     @staticmethod
     def technique_title(technique):
@@ -87,11 +91,7 @@ class AttackTechnique(object):
         data = {}
         status = AttackTechnique.technique_status(technique.tech_id)
         title = AttackTechnique.technique_title(technique.tech_id)
-        data.update({'status': status.name, 'title': title})
-        if status == ScanStatus.UNSCANNED:
-            data.update({'message': technique.unscanned_msg})
-        elif status == ScanStatus.SCANNED:
-            data.update({'message': technique.scanned_msg})
-        else:
-            data.update({'message': technique.used_msg})
+        data.update({'status': status.name,
+                     'title': title,
+                     'message': technique.get_message_by_status(technique, status)})
         return data
