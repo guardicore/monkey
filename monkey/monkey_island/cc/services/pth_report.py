@@ -1,6 +1,7 @@
 from itertools import product
 
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models import Monkey
 from bson import ObjectId
 
 from monkey_island.cc.services.groups_and_users_consts import USERTYPE
@@ -216,15 +217,15 @@ class PTHReportService(object):
 
     @staticmethod
     def generate_map_nodes():
-        monkeys = mongo.db.monkey.find({}, {'_id': 1, 'hostname': 1, 'critical_services': 1, 'ip_addresses': 1})
+        monkeys = filter(lambda m: m.get_os() == "windows", Monkey.objects())
 
         return [
             {
-                'id': monkey['_id'],
-                'label': '{0} : {1}'.format(monkey['hostname'], monkey['ip_addresses'][0]),
-                'group': 'critical' if monkey.get('critical_services', []) else 'normal',
-                'services': monkey.get('critical_services', []),
-                'hostname': monkey['hostname']
+                'id': monkey.guid,
+                'label': '{0} : {1}'.format(monkey.hostname, monkey.ip_addresses[0]),
+                'group': 'critical' if monkey.critical_services is not None else 'normal',
+                'services': monkey.critical_services,
+                'hostname': monkey.hostname
             } for monkey in monkeys
         ]
 

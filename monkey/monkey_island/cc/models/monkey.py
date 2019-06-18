@@ -55,6 +55,14 @@ class Monkey(Document):
                 monkey_is_dead = True
         return monkey_is_dead
 
+    def get_os(self):
+        os = "unknown"
+        if self.description.lower().find("linux") != -1:
+            os = "linux"
+        elif self.description.lower().find("windows") != -1:
+            os = "windows"
+        return os
+
 
 class MonkeyNotFoundError(Exception):
     pass
