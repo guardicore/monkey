@@ -53,9 +53,13 @@ class AttackTechnique(object):
         :param tech_id: ID of attack technique, for e.g. T1110
         :return: ScanStatus Enum object
         """
-        if mongo.db.attack_results.find_one({'status': ScanStatus.USED.value, 'technique': tech_id}):
+        if mongo.db.attack_results.find_one({'telem_catagory': 'attack',
+                                             'status': ScanStatus.USED.value,
+                                             'technique': tech_id}):
             return ScanStatus.USED
-        elif mongo.db.attack_results.find_one({'status': ScanStatus.SCANNED.value, 'technique': tech_id}):
+        elif mongo.db.attack_results.find_one({'telem_catagory': 'attack',
+                                               'status': ScanStatus.SCANNED.value,
+                                               'technique': tech_id}):
             return ScanStatus.SCANNED
         else:
             return ScanStatus.UNSCANNED
