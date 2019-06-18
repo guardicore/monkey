@@ -35,11 +35,11 @@ class T1110(AttackTechnique):
                 result['successful_creds'].append(T1110.parse_creds(attempt))
 
         if succeeded:
-            data = T1110.get_message_and_status(T1110, ScanStatus.USED)
+            data = T1110.get_message_and_status(ScanStatus.USED)
         elif attempts:
-            data = T1110.get_message_and_status(T1110, ScanStatus.SCANNED)
+            data = T1110.get_message_and_status(ScanStatus.SCANNED)
         else:
-            data = T1110.get_message_and_status(T1110, ScanStatus.UNSCANNED)
+            data = T1110.get_message_and_status(ScanStatus.UNSCANNED)
 
         # Remove data with no successful brute force attempts
         attempts = [attempt for attempt in attempts if attempt['attempts']]

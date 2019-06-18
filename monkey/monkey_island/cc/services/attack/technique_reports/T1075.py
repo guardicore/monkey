@@ -16,7 +16,7 @@ class T1075(AttackTechnique):
                                                                     {'lm_hash': {'$ne': ''}}]}}}
 
     # Gets data about successful PTH logins
-    query = [{'$match': {'telem_type': 'exploit',
+    query = [{'$match': {'telem_category': 'exploit',
                          'data.attempts': {'$not': {'$size': 0},
                                            '$elemMatch': {'$and': [{'$or': [{'ntlm_hash': {'$ne': ''}},
                                                                             {'lm_hash': {'$ne': ''}}]},
@@ -35,9 +35,9 @@ class T1075(AttackTechnique):
         successful_logins = list(mongo.db.telemetry.aggregate(T1075.query))
         data.update({'successful_logins': successful_logins})
         if successful_logins:
-            data.update({'message': T1075.used_msg, 'status': ScanStatus.USED.name})
+            data.update(T1075.get_message_and_status(ScanStatus.USED))
         elif mongo.db.telemetry.count_documents(T1075.login_attempt_query):
-            data.update({'message': T1075.scanned_msg, 'status': ScanStatus.SCANNED.name})
+            data.update(T1075.get_message_and_status(ScanStatus.SCANNED))
         else:
-            data.update({'message': T1075.unscanned_msg, 'status': ScanStatus.UNSCANNED.name})
+            data.update(T1075.get_message_and_status(ScanStatus.UNSCANNED))
         return data
