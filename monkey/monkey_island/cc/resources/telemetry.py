@@ -119,6 +119,8 @@ class Telemetry(flask_restful.Resource):
     def process_exploit_telemetry(telemetry_json):
         edge = Telemetry.get_edge_by_scan_or_exploit_telemetry(telemetry_json)
         Telemetry.encrypt_exploit_creds(telemetry_json)
+        telemetry_json['data']['info']['started'] = dateutil.parser.parse(telemetry_json['data']['info']['started'])
+        telemetry_json['data']['info']['finished'] = dateutil.parser.parse(telemetry_json['data']['info']['finished'])
 
         new_exploit = copy.deepcopy(telemetry_json['data'])
 

@@ -16,4 +16,6 @@ WINDOWS_COMMANDS = ['net', 'user', WormConfiguration.user_to_add,
 
 class BackdoorUser(PBA):
     def __init__(self):
-        super(BackdoorUser, self).__init__("Backdoor user", linux_cmd=LINUX_COMMANDS, windows_cmd=WINDOWS_COMMANDS)
+        super(BackdoorUser, self).__init__("Backdoor user",
+                                           linux_cmd=' '.join(LINUX_COMMANDS),
+                                           windows_cmd=WINDOWS_COMMANDS)

@@ -4,13 +4,6 @@ from monkey_island.cc.database import mongo
 
 __author__ = "VakarisZ"
 
-TECHNIQUE = "T1210"
-MESSAGES = {
-    'unscanned': "Monkey didn't scan any remote services. Maybe it didn't find any machines on the network?",
-    'scanned': "Monkey scanned for remote services on the network, but couldn't exploit any of them.",
-    'used': "Monkey scanned for remote services and exploited some on the network."
-}
-
 
 class T1210(AttackTechnique):
 
@@ -21,7 +14,7 @@ class T1210(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        data = {'title': T1210.technique_title(TECHNIQUE)}
+        data = {'title': T1210.technique_title(T1210.tech_id)}
         scanned_services = T1210.get_scanned_services()
         exploited_services = T1210.get_exploited_services()
         if exploited_services:
