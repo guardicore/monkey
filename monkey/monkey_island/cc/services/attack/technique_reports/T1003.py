@@ -17,9 +17,10 @@ class T1003(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        data = {'title': T1003.technique_title(T1003.tech_id)}
+        data = {'title': T1003.technique_title()}
         if mongo.db.telemetry.count_documents(T1003.query):
-            data.update({'message': T1003.used_msg, 'status': ScanStatus.USED.name})
+            status = ScanStatus.USED
         else:
-            data.update({'message': T1003.unscanned_msg, 'status': ScanStatus.UNSCANNED.name})
+            status = ScanStatus.UNSCANNED
+        data.update(T1003.get_message_and_status(status))
         return data
