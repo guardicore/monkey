@@ -33,7 +33,6 @@ from monkey_island.cc.services.database import Database
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.resources.pba_file_upload import FileUpload
-from monkey_island.cc.resources.attack.attack_telem import AttackTelem
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 
@@ -133,7 +132,6 @@ def init_api_resources(api):
                      '/api/fileUpload/<string:file_type>?restore=<string:filename>')
     api.add_resource(RemoteRun, '/api/remote-monkey', '/api/remote-monkey/')
     api.add_resource(AttackConfiguration, '/api/attack')
-    api.add_resource(AttackTelem, '/api/attack/<string:technique>')
     api.add_resource(AttackReport, '/api/attack/report')
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
 
