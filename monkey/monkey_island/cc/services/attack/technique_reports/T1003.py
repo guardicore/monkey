@@ -9,7 +9,7 @@ class T1003(AttackTechnique):
 
     tech_id = "T1003"
     unscanned_msg = "Monkey tried to obtain credentials from systems in the network but didn't find any or failed."
-    scanned_msg = "Monkey tried to obtain credentials from systems in the network but didn't find any or failed."
+    scanned_msg = ""
     used_msg = "Monkey successfully obtained some credentials from systems on the network."
 
     query = {'telem_type': 'system_info_collection', '$and': [{'data.credentials': {'$exists': True}},
