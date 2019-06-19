@@ -14,7 +14,7 @@ class T1210(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        data = {'title': T1210.technique_title(T1210.tech_id)}
+        data = {'title': T1210.technique_title()}
         scanned_services = T1210.get_scanned_services()
         exploited_services = T1210.get_exploited_services()
         if exploited_services:

@@ -44,7 +44,7 @@ class T1110(AttackTechnique):
         # Remove data with no successful brute force attempts
         attempts = [attempt for attempt in attempts if attempt['attempts']]
 
-        data.update({'services': attempts, 'title': T1110.technique_title(T1110.tech_id)})
+        data.update({'services': attempts, 'title': T1110.technique_title()})
         return data
 
     @staticmethod
