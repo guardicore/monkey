@@ -35,9 +35,10 @@ class T1075(AttackTechnique):
         successful_logins = list(mongo.db.telemetry.aggregate(T1075.query))
         data.update({'successful_logins': successful_logins})
         if successful_logins:
-            data.update(T1075.get_message_and_status(ScanStatus.USED))
+            status = ScanStatus.USED
         elif mongo.db.telemetry.count_documents(T1075.login_attempt_query):
-            data.update(T1075.get_message_and_status(ScanStatus.SCANNED))
+            status = ScanStatus.SCANNED
         else:
-            data.update(T1075.get_message_and_status(ScanStatus.UNSCANNED))
+            status = ScanStatus.UNSCANNED
+        data.update(T1075.get_message_and_status(status))
         return data
