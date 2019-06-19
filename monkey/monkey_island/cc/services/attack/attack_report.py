@@ -30,7 +30,7 @@ class AttackReportService:
         Generates new report based on telemetries, replaces old report in db with new one.
         :return: Report object
         """
-        report = {'techniques': {}, 'meta': AttackTelemService.get_latest_telem(), 'name': REPORT_NAME}
+        report = {'techniques': {}, 'latest_telem_time': AttackReportService.get_latest_attack_telem_time(), 'name': REPORT_NAME}
         for tech_id, value in AttackConfig.get_technique_values().items():
             if value:
                 try:
@@ -42,15 +42,23 @@ class AttackReportService:
         return report
 
     @staticmethod
+    def get_latest_attack_telem_time():
+        """
+        Gets timestamp of latest attack telem
+        :return: timestamp of latest attack telem
+        """
+        return [x['timestamp'] for x in mongo.db.telemetry.find({'telem_catagory': 'attack'}).sort('timestamp', -1).limit(1)][0]
+
+    @staticmethod
     def get_latest_report():
         """
         Gets latest report (by retrieving it from db or generating a new one).
         :return: report dict.
         """
         if AttackReportService.is_report_generated():
-            telem_time = AttackTelemService.get_latest_telem()
+            telem_time = AttackReportService.get_latest_attack_telem_time()
             latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
-            if telem_time and latest_report['meta'] and telem_time['time'] == latest_report['meta']['time']:
+            if telem_time and latest_report['latest_telem_time'] and telem_time == latest_report['latest_telem_time']:
                 return latest_report
         return AttackReportService.generate_new_report()
 

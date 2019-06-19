@@ -499,17 +499,11 @@ SCHEMA = {
                             "default": 60,
                             "description": "Time to keep tunnel open before going down after last exploit (in seconds)"
                         },
-                        "monkey_dir_windows": {
-                            "title": "Monkey's windows directory",
+                        "monkey_dir_name": {
+                            "title": "Monkey's directory name",
                             "type": "string",
-                            "default": r"C:\Windows\temp\monkey_dir",
-                            "description": "Directory containing all monkey files on windows"
-                        },
-                        "monkey_dir_linux": {
-                            "title": "Monkey's linux directory",
-                            "type": "string",
-                            "default": "/tmp/monkey_dir",
-                            "description": "Directory containing all monkey files on linux"
+                            "default": r"monkey_dir",
+                            "description": "Directory name for the directory which will contain all of the monkey files"
                         },
                     }
                 },

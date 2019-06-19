@@ -10,7 +10,7 @@ class T1059 extends React.Component {
     super(props);
   }
 
-  static getHashColumns() {
+  static getCommandColumns() {
     return ([{
       Header: 'Example commands used',
       columns: [
@@ -27,7 +27,7 @@ class T1059 extends React.Component {
         <br/>
         {this.props.data.status === 'USED' ?
           <ReactTable
-              columns={T1059.getHashColumns()}
+              columns={T1059.getCommandColumns()}
               data={this.props.data.cmds}
               showPagination={false}
               defaultPageSize={this.props.data.cmds.length}

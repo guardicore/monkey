@@ -46,43 +46,63 @@ class AttackTechnique(object):
         """
         pass
 
-    @staticmethod
-    def technique_status(technique):
+    @classmethod
+    def technique_status(cls):
         """
         Gets the status of a certain attack technique.
-        :param technique: technique's id.
         :return: ScanStatus Enum object
         """
-        if mongo.db.attack_results.find_one({'status': ScanStatus.USED.value, 'technique': technique}):
+        if mongo.db.attack_results.find_one({'telem_catagory': 'attack',
+                                             'status': ScanStatus.USED.value,
+                                             'technique': cls.tech_id}):
             return ScanStatus.USED
-        elif mongo.db.attack_results.find_one({'status': ScanStatus.SCANNED.value, 'technique': technique}):
+        elif mongo.db.attack_results.find_one({'telem_catagory': 'attack',
+                                               'status': ScanStatus.SCANNED.value,
+                                               'technique': cls.tech_id}):
             return ScanStatus.SCANNED
         else:
             return ScanStatus.UNSCANNED
 
-    @staticmethod
-    def technique_title(technique):
+    @classmethod
+    def get_message_and_status(cls, status):
         """
-        :param technique: Technique's id. E.g. T1110
+        Returns a dict with attack technique's message and status.
+        :param status: Enum type value from common/attack_utils.py
+        :return: Dict with message and status
+        """
+        return {'message': cls.get_message_by_status(status), 'status': status.name}
+
+    @classmethod
+    def get_message_by_status(cls, status):
+        """
+        Picks a message to return based on status.
+        :param status: Enum type value from common/attack_utils.py
+        :return: message string
+        """
+        if status == ScanStatus.UNSCANNED:
+            return cls.unscanned_msg
+        elif status == ScanStatus.SCANNED:
+            return cls.scanned_msg
+        else:
+            return cls.used_msg
+
+    @classmethod
+    def technique_title(cls):
+        """
         :return: techniques title. E.g. "T1110 Brute force"
         """
-        return AttackConfig.get_technique(technique)['title']
+        return AttackConfig.get_technique(cls.tech_id)['title']
 
-    @staticmethod
-    def get_tech_base_data(technique):
+    @classmethod
+    def get_tech_base_data(cls):
         """
         Gathers basic attack technique data into a dict.
-        :param technique: Technique's id. E.g. T1110
         :return: dict E.g. {'message': 'Brute force used', 'status': 'Used', 'title': 'T1110 Brute force'}
         """
         data = {}
-        status = AttackTechnique.technique_status(technique.tech_id)
-        title = AttackTechnique.technique_title(technique.tech_id)
-        data.update({'status': status.name, 'title': title})
-        if status == ScanStatus.UNSCANNED:
-            data.update({'message': technique.unscanned_msg})
-        elif status == ScanStatus.SCANNED:
-            data.update({'message': technique.scanned_msg})
-        else:
-            data.update({'message': technique.used_msg})
+        status = cls.technique_status()
+        title = cls.technique_title()
+        data.update({'status': status.name,
+                     'title': title,
+                     'message': cls.get_message_by_status(status)})
         return data

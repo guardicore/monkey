@@ -14,6 +14,8 @@ import ReportPage from 'components/pages/ReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
+import Notifier from "react-desktop-notification"
+
 
 import 'normalize.css/normalize.css';
 import 'react-data-components/css/table-twbs.css';
@@ -25,6 +27,7 @@ import VersionComponent from "./side-menu/VersionComponent";
 let logoImage = require('../images/monkey-icon.svg');
 let infectionMonkeyImage = require('../images/infection-monkey.svg');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
+let notificationIcon = require('../images/notification-logo-512x512.png');
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
@@ -50,6 +53,7 @@ class AppComponent extends AuthComponent {
               }
               if (isChanged) {
                 this.setState({completedSteps: res['completed_steps']});
+                this.showInfectionDoneNotification();
               }
             });
         }
@@ -193,6 +197,20 @@ class AppComponent extends AuthComponent {
         </Grid>
       </Router>
     );
+  }
+
+  showInfectionDoneNotification() {
+    if (this.state.completedSteps.infection_done) {
+      let hostname = window.location.hostname;
+      let url = `https://${hostname}:5000/report`;
+      console.log("Trying to show notification. URL: " + url + " | icon: " + notificationIcon);
+
+      Notifier.start(
+        "Monkey Island",
+        "Infection is done! Click here to go to the report page.",
+        url,
+        notificationIcon);
+    }
   }
 }
 
