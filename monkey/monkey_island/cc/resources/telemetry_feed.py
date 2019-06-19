@@ -38,7 +38,7 @@ class TelemetryFeed(flask_restful.Resource):
                 'id': telem['_id'],
                 'timestamp': telem['timestamp'].strftime('%d/%m/%Y %H:%M:%S'),
                 'hostname': monkey.get('hostname', default_hostname) if monkey else default_hostname,
-                'brief': TELEM_PROCESS_DICT[telem['telem_type']](telem)
+                'brief': TELEM_PROCESS_DICT[telem['telem_catagory']](telem)
             }
 
     @staticmethod
@@ -86,6 +86,10 @@ class TelemetryFeed(flask_restful.Resource):
                                                                       telem['data']['hostname'],
                                                                       telem['data']['ip'])
 
+    @staticmethod
+    def get_attack_telem_brief(telem):
+        return 'Monkey collected MITRE ATT&CK info.'
+
 
 TELEM_PROCESS_DICT = \
     {
@@ -95,5 +99,6 @@ TELEM_PROCESS_DICT = \
         'scan': TelemetryFeed.get_scan_telem_brief,
         'system_info_collection': TelemetryFeed.get_systeminfo_telem_brief,
         'trace': TelemetryFeed.get_trace_telem_brief,
-        'post_breach': TelemetryFeed.get_post_breach_telem_brief
+        'post_breach': TelemetryFeed.get_post_breach_telem_brief,
+        'attack': TelemetryFeed.get_attack_telem_brief
     }
