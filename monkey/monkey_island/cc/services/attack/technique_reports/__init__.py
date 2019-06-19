@@ -46,20 +46,19 @@ class AttackTechnique(object):
         """
         pass
 
-    @staticmethod
-    def technique_status(tech_id):
+    @classmethod
+    def technique_status(cls):
         """
         Gets the status of a certain attack technique.
-        :param tech_id: ID of attack technique, for e.g. T1110
         :return: ScanStatus Enum object
         """
         if mongo.db.attack_results.find_one({'telem_catagory': 'attack',
                                              'status': ScanStatus.USED.value,
-                                             'technique': tech_id}):
+                                             'technique': cls.tech_id}):
             return ScanStatus.USED
         elif mongo.db.attack_results.find_one({'telem_catagory': 'attack',
                                                'status': ScanStatus.SCANNED.value,
-                                               'technique': tech_id}):
+                                               'technique': cls.tech_id}):
             return ScanStatus.SCANNED
         else:
             return ScanStatus.UNSCANNED
@@ -87,13 +86,12 @@ class AttackTechnique(object):
         else:
             return cls.used_msg
 
-    @staticmethod
-    def technique_title(tech_id):
+    @classmethod
+    def technique_title(cls):
         """
-        :param tech_id: Technique's id. E.g. T1110
         :return: techniques title. E.g. "T1110 Brute force"
         """
-        return AttackConfig.get_technique(tech_id)['title']
+        return AttackConfig.get_technique(cls.tech_id)['title']
 
     @classmethod
     def get_tech_base_data(cls):
@@ -102,8 +100,8 @@ class AttackTechnique(object):
         :return: dict E.g. {'message': 'Brute force used', 'status': 'Used', 'title': 'T1110 Brute force'}
         """
         data = {}
-        status = AttackTechnique.technique_status(cls.tech_id)
-        title = AttackTechnique.technique_title(cls.tech_id)
+        status = cls.technique_status()
+        title = cls.technique_title()
         data.update({'status': status.name,
                      'title': title,
                      'message': cls.get_message_by_status(status)})
