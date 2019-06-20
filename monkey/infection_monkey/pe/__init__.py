@@ -9,4 +9,4 @@ class HostPrivExploiter(object):
     def try_priv_esc(self,commad):
         raise NotImplementedError()
 
-from .snapd import snapdExploiter
+from infection_monkey.pe.snapd import snapdExploiter

@@ -12,7 +12,7 @@ from ctypes import c_char_p
 import filecmp
 from infection_monkey.config import WormConfiguration
 from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
-from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
+from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX, MONKEY_ARG
 from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
 
 if "win32" == sys.platform:
@@ -66,6 +66,7 @@ class MonkeyDrops(object):
             os.remove(self._config['destination_path'])
 
         # first try to move the file
+        '''
         if not file_moved and WormConfiguration.dropper_try_move_first:
             try:
                 shutil.move(self._config['source_path'],
@@ -79,6 +80,7 @@ class MonkeyDrops(object):
                 LOG.debug("Error moving source file '%s' into '%s': %s",
                           self._config['source_path'], self._config['destination_path'],
                           exc)
+        '''
 
         # if file still need to change path, copy it
         if not file_moved:
@@ -127,29 +129,43 @@ class MonkeyDrops(object):
             # In linux we have a more complex commandline. There's a general outer one, and the inner one which actually
             # runs the monkey
             inner_monkey_cmdline = MONKEY_CMDLINE_LINUX % {'monkey_filename': dest_path.split("/")[-1]} + monkey_options
+
             monkey_cmdline = GENERAL_CMDLINE_LINUX % {'monkey_directory': dest_path[0:dest_path.rfind("/")],
                                                       'monkey_commandline': inner_monkey_cmdline}
 
-        #monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
-        #                                  stdin=None, stdout=None, stderr=None,
-        #                                  close_fds=True, creationflags=DETACHED_PROCESS)
 
+        LOG.info("Before going through the pe modules")
+        pe_exploited = False
         self.pe = [priv_esc_class() for priv_esc_class in WormConfiguration.pe_classes]
         for pe in self.pe:
-            if pe.try_priv_esc('Insert command here!'):
-                LOG.info("Executed monkey process  with command line: %s",monkey_cmdline)
+            LOG.info("Found pe module !")
+            cmdline = dest_path + " " + MONKEY_ARG +" " + monkey_options
+
+            if pe.try_priv_esc(cmdline):
+                pe_exploited = True
+
+        '''
+        if not pe_exploited:
+            monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
+                                                      stdin=None, stdout=None, stderr=None,
+                                                      close_fds=True, creationflags=DETACHED_PROCESS)
+
+            LOG.info("Executed monkey process (PID=%d) with command line: %s",
+                             monkey_process.pid, monkey_cmdline)
+
+            time.sleep(3)
+            if monkey_process.poll() is not None:
+                LOG.warn("Seems like monkey died too soon")
 
 
-        
-        #LOG.info("Executed monkey process (PID=%d) with command line: %s",
-        #         monkey_process.pid, monkey_cmdline)
+        '''
 
-        time.sleep(3)
-        #if monkey_process.poll() is not None:
-        #   LOG.warn("Seems like monkey died too soon")
+
+
 
     def cleanup(self):
         try:
+            LOG.info("clean up called ! ")
             if (self._config['source_path'].lower() != self._config['destination_path'].lower()) and \
                     os.path.exists(self._config['source_path']) and \
                     WormConfiguration.dropper_try_move_first:

@@ -86,7 +86,7 @@ class InfectionMonkey(object):
 
     def start(self):
         LOG.info("Monkey is running...")
-        LOG.info("\n\n\n\n\n\n\n The current user & its $id is %s    \n\n\n\n\n\n\n" % os.popen('echo $USER ; id ').read())
+        LOG.info("\n\n\n\n\n\n\n The current user & its $id is %s    \n\n\n\n\n\n\n" % os.geteuid())
 
         if not ControlClient.find_server(default_tunnel=self._default_tunnel):
             LOG.info("Monkey couldn't find server. Going down.")

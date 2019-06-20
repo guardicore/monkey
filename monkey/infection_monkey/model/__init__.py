@@ -41,3 +41,9 @@ HADOOP_LINUX_COMMAND = "! [ -f %(monkey_path)s ] " \
                     "&&  %(monkey_path)s %(monkey_type)s %(parameters)s"
 
 DOWNLOAD_TIMEOUT = 300
+
+
+# Commands needed for PE
+
+REMOVE_LASTLINE = "sudo sed -i '$ d' %(file_name)s"
+ADDUSER_TO_SUDOERS = "echo '%(user_name)s ALL = NOPASSWD: ALL' | sudo tee -a /etc/sudoers"
