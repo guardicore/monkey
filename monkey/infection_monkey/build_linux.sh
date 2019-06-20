@@ -1,2 +1,2 @@
 #!/bin/bash
-pyinstaller -F --log-level=DEBUG --clean monkey.spec
+pyinstaller  -F --log-level=DEBUG --clean monkey.spec

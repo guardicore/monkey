@@ -84,3 +84,15 @@ MonkeyZoo/*
 
 # vim swap files
 *.swp
+monkey/infection_monkey/venv/include/python2.7
+monkey/infection_monkey/venv/local/include
+monkey/infection_monkey/venv/local/lib
+monkey/infection_monkey/venv/readme.txt
+monkey/infection_monkey/venv/share/doc/impacket/README.md
+monkey/infection_monkey/venv/share/doc/impacket/LICENSE
+venv/include/python2.7
+venv/local/include
+venv/local/lib
+venv/readme.txt
+venv/share/doc/impacket/LICENSE
+venv/share/doc/impacket/README.md

