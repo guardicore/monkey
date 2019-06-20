@@ -114,9 +114,6 @@ class MonkeyDrops(object):
                 except:
                     LOG.warn("Cannot set reference date to destination file")
 
-         # we try to see if pe is present , if yes we execute it after copying the file.
-
-        #for priv_esc_class in WormConfiguration.pe_classes:
         
 
         monkey_options =\
@@ -133,35 +130,29 @@ class MonkeyDrops(object):
             monkey_cmdline = GENERAL_CMDLINE_LINUX % {'monkey_directory': dest_path[0:dest_path.rfind("/")],
                                                       'monkey_commandline': inner_monkey_cmdline}
 
+        # Check if Privilege can be escalated by going through the pe modules in the configuration
 
         LOG.info("Before going through the pe modules")
         pe_exploited = False
         self.pe = [priv_esc_class() for priv_esc_class in WormConfiguration.pe_classes]
         for pe in self.pe:
             LOG.info("Found pe module !")
-            cmdline = dest_path + " " + MONKEY_ARG +" " + monkey_options
+            cmdline = dest_path + " " + MONKEY_ARG + " " + monkey_options
 
             if pe.try_priv_esc(cmdline):
                 pe_exploited = True
 
-        '''
         if not pe_exploited:
             monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
                                                       stdin=None, stdout=None, stderr=None,
                                                       close_fds=True, creationflags=DETACHED_PROCESS)
 
-            LOG.info("Executed monkey process (PID=%d) with command line: %s",
+            LOG.info("Executed monkey process as a normal user with (PID=%d) with command line: %s",
                              monkey_process.pid, monkey_cmdline)
 
             time.sleep(3)
             if monkey_process.poll() is not None:
                 LOG.warn("Seems like monkey died too soon")
-
-
-        '''
-
-
-
 
     def cleanup(self):
         try:

