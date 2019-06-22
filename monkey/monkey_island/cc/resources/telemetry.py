@@ -273,6 +273,11 @@ class Telemetry(flask_restful.Resource):
         # No processing required
         pass
 
+    @staticmethod
+    def process_pe(telemetry_json):
+        # No processing required
+        pass
+
 
 TELEM_PROCESS_DICT = \
     {
@@ -283,5 +288,6 @@ TELEM_PROCESS_DICT = \
         'system_info': Telemetry.process_system_info_telemetry,
         'trace': Telemetry.process_trace_telemetry,
         'post_breach': Telemetry.process_post_breach_telemetry,
-        'attack': Telemetry.process_attack_telemetry
+        'attack': Telemetry.process_attack_telemetry,
+        'pe': Telemetry.process_pe
     }

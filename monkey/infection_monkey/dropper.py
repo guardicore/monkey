@@ -14,6 +14,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
 from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX, MONKEY_ARG
 from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
+from infection_monkey.network.info import local_ips
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -64,6 +65,8 @@ class MonkeyDrops(object):
 
         if not file_moved and os.path.exists(self._config['destination_path']):
             os.remove(self._config['destination_path'])
+
+        WormConfiguration.current_server = "192.168.1.217:5000"  # why is this not being updated from the file ?
 
         # first try to move the file
         '''
@@ -141,6 +144,8 @@ class MonkeyDrops(object):
 
             if pe.try_priv_esc(cmdline):
                 pe_exploited = True
+                local_ip = local_ips()
+                pe.send_pe_telemetry(True,str(local_ip))
 
         if not pe_exploited:
             monkey_process = subprocess.Popen(monkey_cmdline, shell=True,

