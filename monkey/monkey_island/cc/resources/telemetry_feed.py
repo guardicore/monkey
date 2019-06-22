@@ -97,6 +97,11 @@ class TelemetryFeed(flask_restful.Resource):
     def get_attack_telem_brief(telem):
         return 'Monkey collected MITRE ATT&CK info.'
 
+    @staticmethod
+    def get_pe_telem_brief(telem):
+        return '%s privilege escalation was successful at the machine %s. '% (telem['data']['pe_name'],
+                                                                              telem['data']['ip'])
+
 
 TELEM_PROCESS_DICT = \
     {
@@ -107,5 +112,6 @@ TELEM_PROCESS_DICT = \
         'system_info': TelemetryFeed.get_systeminfo_telem_brief,
         'trace': TelemetryFeed.get_trace_telem_brief,
         'post_breach': TelemetryFeed.get_post_breach_telem_brief,
-        'attack': TelemetryFeed.get_attack_telem_brief
+        'attack': TelemetryFeed.get_attack_telem_brief,
+        'pe': TelemetryFeed.get_pe_telem_brief
     }
