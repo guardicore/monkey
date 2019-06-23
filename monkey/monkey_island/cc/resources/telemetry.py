@@ -79,7 +79,7 @@ class Telemetry(flask_restful.Resource):
                 monkey_label = telem_monkey_guid
             x["monkey"] = monkey_label
             objects.append(x)
-            if x['telem_category'] == 'system_info_collection' and 'credentials' in x['data']:
+            if x['telem_category'] == 'system_info' and 'credentials' in x['data']:
                 for user in x['data']['credentials']:
                     if -1 != user.find(','):
                         new_user = user.replace(',', '.')
@@ -277,7 +277,7 @@ TELEM_PROCESS_DICT = \
         'state': Telemetry.process_state_telemetry,
         'exploit': Telemetry.process_exploit_telemetry,
         'scan': Telemetry.process_scan_telemetry,
-        'system_info_collection': Telemetry.process_system_info_telemetry,
+        'system_info': Telemetry.process_system_info_telemetry,
         'trace': Telemetry.process_trace_telemetry,
         'post_breach': Telemetry.process_post_breach_telemetry,
         'attack': Telemetry.process_attack_telemetry

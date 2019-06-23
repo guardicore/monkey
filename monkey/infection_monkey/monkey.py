@@ -18,6 +18,7 @@ from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.state_telem import StateTelem
+from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
@@ -123,7 +124,7 @@ class InfectionMonkey(object):
             LOG.debug("Calling system info collection")
             system_info_collector = SystemInfoCollector()
             system_info = system_info_collector.get_info()
-            ControlClient.send_telemetry("system_info_collection", system_info)
+            SystemInfoTelem(system_info).send()
 
         # Executes post breach actions
         PostBreach().execute()
