@@ -28,7 +28,7 @@ class T1210(AttackTechnique):
 
     @staticmethod
     def get_scanned_services():
-        results = mongo.db.telemetry.aggregate([{'$match': {'telem_catagory': 'scan'}},
+        results = mongo.db.telemetry.aggregate([{'$match': {'telem_category': 'scan'}},
                                                {'$sort': {'data.service_count': -1}},
                                                {'$group': {
                                                     '_id': {'ip_addr': '$data.machine.ip_addr'},
@@ -38,7 +38,7 @@ class T1210(AttackTechnique):
 
     @staticmethod
     def get_exploited_services():
-        results = mongo.db.telemetry.aggregate([{'$match': {'telem_catagory': 'exploit', 'data.result': True}},
+        results = mongo.db.telemetry.aggregate([{'$match': {'telem_category': 'exploit', 'data.result': True}},
                                                 {'$group': {
                                                     '_id': {'ip_addr': '$data.machine.ip_addr'},
                                                     'service': {'$first': '$data.info'},
