@@ -1,8 +1,9 @@
 import logging
+
+from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
-from monkey_island.cc.services.node import NodeService
 
 __author__ = "VakarisZ"
 
@@ -29,7 +30,7 @@ class AttackReportService:
         report =\
             {
                 'techniques': {},
-                'meta': {'latest_monkey_modifytime': NodeService.get_latest_modified_monkey()[0]['modifytime']},
+                'meta': {'latest_monkey_modifytime': Monkey.get_latest_modifytime()},
                 'name': REPORT_NAME
             }
 
@@ -50,7 +51,7 @@ class AttackReportService:
         :return: report dict.
         """
         if AttackReportService.is_report_generated():
-            monkey_modifytime = NodeService.get_latest_modified_monkey()[0]['modifytime']
+            monkey_modifytime = Monkey.get_latest_modifytime()
             latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
             report_modifytime = latest_report['meta']['latest_monkey_modifytime']
             if monkey_modifytime and report_modifytime and monkey_modifytime == report_modifytime:

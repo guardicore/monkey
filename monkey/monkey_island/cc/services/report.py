@@ -10,6 +10,7 @@ from enum import Enum
 from six import text_type
 
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models import Monkey
 from monkey_island.cc.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.edge import EdgeService
@@ -714,7 +715,7 @@ class ReportService:
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
         cross_segment_issues = ReportService.get_cross_segment_issues()
-        monkey_latest_modify_time = list(NodeService.get_latest_modified_monkey())[0]['modifytime']
+        monkey_latest_modify_time = Monkey.get_latest_modifytime()
 
         report = \
             {
@@ -779,7 +780,7 @@ class ReportService:
 
         if latest_report_doc:
             report_latest_modifytime = latest_report_doc['meta']['latest_monkey_modifytime']
-            latest_monkey_modifytime = NodeService.get_latest_modified_monkey()[0]['modifytime']
+            latest_monkey_modifytime = Monkey.get_latest_modifytime()
             return report_latest_modifytime == latest_monkey_modifytime
 
         return False

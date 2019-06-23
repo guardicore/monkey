@@ -41,6 +41,10 @@ class Monkey(Document):
         except IndexError:
             raise MonkeyNotFoundError("id: {0}".format(str(db_id)))
 
+    @staticmethod
+    def get_latest_modifytime():
+        return Monkey.objects.order_by('-modifytime').first().modifytime
+
     def is_dead(self):
         monkey_is_dead = False
         if self.dead:
