@@ -2,8 +2,8 @@
 Define a Document Schema for the Monkey document.
 """
 import mongoengine
-from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, DateField, \
-    ReferenceField
+from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, ReferenceField, \
+    DateTimeField
 
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 
@@ -24,8 +24,8 @@ class Monkey(Document):
     hostname = StringField()
     internet_access = BooleanField()
     ip_addresses = ListField(StringField())
-    keepalive = DateField()
-    modifytime = DateField()
+    keepalive = DateTimeField()
+    modifytime = DateTimeField()
     # TODO change this to an embedded document as well - RN it's an unnamed tuple which is confusing.
     parent = ListField(ListField(StringField()))
     config_error = BooleanField()
