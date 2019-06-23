@@ -38,7 +38,7 @@ class TelemetryFeed(flask_restful.Resource):
                 'id': telem['_id'],
                 'timestamp': telem['timestamp'].strftime('%d/%m/%Y %H:%M:%S'),
                 'hostname': monkey.get('hostname', default_hostname) if monkey else default_hostname,
-                'brief': TELEM_PROCESS_DICT[telem['telem_catagory']](telem)
+                'brief': TELEM_PROCESS_DICT[telem['telem_category']](telem)
             }
 
     @staticmethod
