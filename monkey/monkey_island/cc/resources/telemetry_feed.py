@@ -78,7 +78,7 @@ class TelemetryFeed(flask_restful.Resource):
 
     @staticmethod
     def get_trace_telem_brief(telem):
-        return 'Monkey reached max depth.'
+        return 'Trace: %s' % telem['data']['msg']
 
     @staticmethod
     def get_post_breach_telem_brief(telem):

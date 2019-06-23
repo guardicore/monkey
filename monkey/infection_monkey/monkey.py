@@ -16,7 +16,10 @@ from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
+from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.state_telem import StateTelem
+from infection_monkey.telemetry.trace_telem import TraceTelem
+from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
 from common.utils.attack_utils import ScanStatus
@@ -114,7 +117,7 @@ class InfectionMonkey(object):
 
         self._default_server = WormConfiguration.current_server
         LOG.debug("default server: %s" % self._default_server)
-        ControlClient.send_telemetry("tunnel", {'proxy': ControlClient.proxies.get('https')})
+        TunnelTelem().send()
 
         if WormConfiguration.collect_system_info:
             LOG.debug("Calling system info collection")
@@ -126,8 +129,7 @@ class InfectionMonkey(object):
         PostBreach().execute()
 
         if 0 == WormConfiguration.depth:
-            LOG.debug("Reached max depth, shutting down")
-            ControlClient.send_telemetry("trace", "Reached max depth, shutting down")
+            TraceTelem("Reached max depth, shutting down").send()
             return
         else:
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
@@ -158,8 +160,7 @@ class InfectionMonkey(object):
                              machine, finger.__class__.__name__)
                     finger.get_host_fingerprint(machine)
 
-                ControlClient.send_telemetry('scan', {'machine': machine.as_dict(),
-                                                      'service_count': len(machine.services)})
+                ScanTelem(machine).send()
 
                 # skip machines that we've already exploited
                 if machine in self._exploited_machines:
