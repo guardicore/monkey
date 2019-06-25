@@ -13,7 +13,7 @@ class T1086(AttackTechnique):
     used_msg = "Monkey successfully ran powershell commands on exploited machines in the network."
 
     query = [{'$match': {'telem_type': 'exploit',
-                         'data.info.executed_cmds.powershell': {'$exists': True}}},
+                         'data.info.executed_cmds.example': {'$elemMatch': {'powershell': True}}}},
              {'$project': {'_id': 0,
                            'machine': '$data.machine',
                            'info': '$data.info'}},
@@ -22,9 +22,10 @@ class T1086(AttackTechnique):
     @staticmethod
     def get_report_data():
         cmd_data = list(mongo.db.telemetry.aggregate(T1086.query))
-        data = {'title': T1086.technique_title(T1086.tech_id), 'cmds': cmd_data}
+        data = {'title': T1086.technique_title(), 'cmds': cmd_data}
         if cmd_data:
-            data.update({'message': T1086.used_msg, 'status': ScanStatus.USED.name})
+            status = ScanStatus.USED
         else:
-            data.update({'message': T1086.unscanned_msg, 'status': ScanStatus.UNSCANNED.name})
+            status = ScanStatus.UNSCANNED
+        data.update(T1086.get_message_and_status(status))
         return data
