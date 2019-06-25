@@ -285,9 +285,7 @@ class InfectionMonkey(object):
 
         result = False
         try:
-            exploiter.set_start_time()
             result = exploiter.exploit_host()
-            exploiter.set_finish_time()
             if result:
                 self.successfully_exploited(machine, exploiter)
                 return True
