@@ -13,7 +13,7 @@ class T1059(AttackTechnique):
     used_msg = "Monkey successfully ran commands on exploited machines in the network."
 
     query = [{'$match': {'telem_type': 'exploit',
-                         'data.info.executed_cmds.example': {'$exists': True}}},
+                         'data.info.executed_cmds': {'$exists': True, '$ne': []}}},
              {'$project': {'_id': 0,
                            'machine': '$data.machine',
                            'info': '$data.info'}},

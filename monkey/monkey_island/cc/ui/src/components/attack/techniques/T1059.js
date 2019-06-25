@@ -16,7 +16,7 @@ class T1059 extends React.Component {
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => RenderMachine(x.data[0].machine), style: { 'whiteSpace': 'unset'}, width: 160 },
         {Header: 'Approx. Time', id: 'time', accessor: x => x.data[0].info.finished, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Command', id: 'command', accessor: x => x.data[0].info.executed_cmds.example, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Command', id: 'command', accessor: x => x.data[0].info.executed_cmds[0].cmd, style: { 'whiteSpace': 'unset' }},
         ]
     }])};
 
