@@ -171,7 +171,7 @@ class ReportService:
         PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
         creds = []
         for telem in mongo.db.telemetry.find(
-                {'telem_catagory': 'system_info_collection', 'data.credentials': {'$exists': True}},
+                {'telem_category': 'system_info_collection', 'data.credentials': {'$exists': True}},
                 {'data.credentials': 1, 'monkey_guid': 1}
         ):
             monkey_creds = telem['data']['credentials']
@@ -199,7 +199,7 @@ class ReportService:
         """
         creds = []
         for telem in mongo.db.telemetry.find(
-                {'telem_catagory': 'system_info_collection', 'data.ssh_info': {'$exists': True}},
+                {'telem_category': 'system_info_collection', 'data.ssh_info': {'$exists': True}},
                 {'data.ssh_info': 1, 'monkey_guid': 1}
         ):
             origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
@@ -220,7 +220,7 @@ class ReportService:
         """
         creds = []
         for telem in mongo.db.telemetry.find(
-                {'telem_catagory': 'system_info_collection', 'data.Azure': {'$exists': True}},
+                {'telem_category': 'system_info_collection', 'data.Azure': {'$exists': True}},
                 {'data.Azure': 1, 'monkey_guid': 1}
         ):
             azure_users = telem['data']['Azure']['usernames']
@@ -373,7 +373,7 @@ class ReportService:
     @staticmethod
     def get_exploits():
         exploits = []
-        for exploit in mongo.db.telemetry.find({'telem_catagory': 'exploit', 'data.result': True}):
+        for exploit in mongo.db.telemetry.find({'telem_category': 'exploit', 'data.result': True}):
             new_exploit = ReportService.process_exploit(exploit)
             if new_exploit not in exploits:
                 exploits.append(new_exploit)
@@ -382,7 +382,7 @@ class ReportService:
     @staticmethod
     def get_monkey_subnets(monkey_guid):
         network_info = mongo.db.telemetry.find_one(
-            {'telem_catagory': 'system_info_collection', 'monkey_guid': monkey_guid},
+            {'telem_category': 'system_info_collection', 'monkey_guid': monkey_guid},
             {'data.network_info.networks': 1}
         )
         if network_info is None:
@@ -540,7 +540,7 @@ class ReportService:
 
     @staticmethod
     def get_cross_segment_issues():
-        scans = mongo.db.telemetry.find({'telem_catagory': 'scan'},
+        scans = mongo.db.telemetry.find({'telem_category': 'scan'},
                                         {'monkey_guid': 1, 'data.machine.ip_addr': 1, 'data.machine.services': 1})
 
         cross_segment_issues = []

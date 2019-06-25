@@ -1,5 +1,5 @@
 import logging
-from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110, T1075, T1003, T1059, T1086
+from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110, T1075, T1003, T1059
 from monkey_island.cc.services.attack.attack_telem import AttackTelemService
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
@@ -47,7 +47,7 @@ class AttackReportService:
         Gets timestamp of latest attack telem
         :return: timestamp of latest attack telem
         """
-        return [x['timestamp'] for x in mongo.db.telemetry.find({'telem_catagory': 'attack'}).sort('timestamp', -1).limit(1)][0]
+        return [x['timestamp'] for x in mongo.db.telemetry.find({'telem_category': 'attack'}).sort('timestamp', -1).limit(1)][0]
 
     @staticmethod
     def get_latest_report():

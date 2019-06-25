@@ -52,11 +52,11 @@ class AttackTechnique(object):
         Gets the status of a certain attack technique.
         :return: ScanStatus Enum object
         """
-        if mongo.db.attack_results.find_one({'telem_catagory': 'attack',
+        if mongo.db.attack_results.find_one({'telem_category': 'attack',
                                              'status': ScanStatus.USED.value,
                                              'technique': cls.tech_id}):
             return ScanStatus.USED
-        elif mongo.db.attack_results.find_one({'telem_catagory': 'attack',
+        elif mongo.db.attack_results.find_one({'telem_category': 'attack',
                                                'status': ScanStatus.SCANNED.value,
                                                'technique': cls.tech_id}):
             return ScanStatus.SCANNED

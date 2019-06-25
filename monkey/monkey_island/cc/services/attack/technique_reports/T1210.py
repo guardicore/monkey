@@ -22,14 +22,14 @@ class T1210(AttackTechnique):
         elif scanned_services:
             status = ScanStatus.SCANNED
         else:
-            status = ScanStatus.UNSCANNED.name
+            status = ScanStatus.UNSCANNED
         data.update(T1210.get_message_and_status(status))
         data.update({'scanned_services': scanned_services, 'exploited_services': exploited_services})
         return data
 
     @staticmethod
     def get_scanned_services():
-        results = mongo.db.telemetry.aggregate([{'$match': {'telem_catagory': 'scan'}},
+        results = mongo.db.telemetry.aggregate([{'$match': {'telem_category': 'scan'}},
                                                {'$sort': {'data.service_count': -1}},
                                                {'$group': {
                                                     '_id': {'ip_addr': '$data.machine.ip_addr'},
@@ -39,7 +39,7 @@ class T1210(AttackTechnique):
 
     @staticmethod
     def get_exploited_services():
-        results = mongo.db.telemetry.aggregate([{'$match': {'telem_catagory': 'exploit', 'data.result': True}},
+        results = mongo.db.telemetry.aggregate([{'$match': {'telem_category': 'exploit', 'data.result': True}},
                                                 {'$group': {
                                                     '_id': {'ip_addr': '$data.machine.ip_addr'},
                                                     'service': {'$first': '$data.info'},
