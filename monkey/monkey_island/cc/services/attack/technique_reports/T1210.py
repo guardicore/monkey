@@ -22,7 +22,7 @@ class T1210(AttackTechnique):
         elif scanned_services:
             status = ScanStatus.SCANNED
         else:
-            status = ScanStatus.UNSCANNED.name
+            status = ScanStatus.UNSCANNED
         data.update(T1210.get_message_and_status(status))
         data.update({'scanned_services': scanned_services, 'exploited_services': exploited_services})
         return data
