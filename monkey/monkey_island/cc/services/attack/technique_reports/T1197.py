@@ -13,13 +13,15 @@ class T1197(AttackTechnique):
     @staticmethod
     def get_report_data():
         data = T1197.get_tech_base_data()
-        bits_results = mongo.db.telemetry.aggregate([{'$match': {'telem_category': 'attack', 'data.technique': T1197.tech_id}},
-                                                          {'$group': {'_id': {'ip_addr': '$data.machine.ip_addr', 'usage': '$data.usage'},
-                                                                      'ip_addr': {'$first': '$data.machine.ip_addr'},
-                                                                      'domain_name': {'$first': '$data.machine.domain_name'},
-                                                                      'usage': {'$first': '$data.usage'},
-                                                                      'time': {'$first': '$timestamp'}}
-                                                           }])
+        bits_results = mongo.db.telemetry.aggregate([{'$match': {'telem_category': 'attack',
+                                                                 'data.technique': T1197.tech_id}},
+                                                     {'$group': {'_id': {'ip_addr': '$data.machine.ip_addr',
+                                                                         'usage': '$data.usage'},
+                                                                 'ip_addr': {'$first': '$data.machine.ip_addr'},
+                                                                 'domain_name': {'$first': '$data.machine.domain_name'},
+                                                                 'usage': {'$first': '$data.usage'},
+                                                                 'time': {'$first': '$timestamp'}}
+                                                      }])
         bits_results = list(bits_results)
         data.update({'bits_jobs': bits_results})
         return data
