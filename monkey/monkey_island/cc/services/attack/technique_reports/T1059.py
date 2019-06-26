@@ -14,10 +14,13 @@ class T1059(AttackTechnique):
 
     query = [{'$match': {'telem_category': 'exploit',
                          'data.info.executed_cmds': {'$exists': True, '$ne': []}}},
+             {'$unwind': '$data.info.executed_cmds'},
+             {'$sort': {'data.info.executed_cmds.powershell': 1}},
              {'$project': {'_id': 0,
                            'machine': '$data.machine',
                            'info': '$data.info'}},
-             {'$group': {'_id': '$machine', 'data': {'$push': '$$ROOT'}}}]
+             {'$group': {'_id': '$machine', 'data': {'$push': '$$ROOT'}}},
+             {'$project': {'_id': 0, 'data': {'$arrayElemAt': ['$data', 0]}}}]
 
     @staticmethod
     def get_report_data():

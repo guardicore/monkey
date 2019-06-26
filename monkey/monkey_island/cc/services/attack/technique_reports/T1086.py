@@ -12,11 +12,16 @@ class T1086(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey successfully ran powershell commands on exploited machines in the network."
 
-    query = [{'$match': {'telem_type': 'exploit',
-                         'data.info.executed_cmds.example': {'$elemMatch': {'powershell': True}}}},
-             {'$project': {'_id': 0,
-                           'machine': '$data.machine',
+    query = [{'$match': {'telem_category': 'exploit',
+                         'data.info.executed_cmds': {'$elemMatch': {'powershell': True}}}},
+             {'$project': {'machine': '$data.machine',
                            'info': '$data.info'}},
+             {'$project': {'_id': 0,
+                           'machine': 1,
+                           'info.finished': 1,
+                           'info.executed_cmds': {'$filter': {'input': '$info.executed_cmds',
+                                                              'as': 'command',
+                                                              'cond': {'$eq': ['$$command.powershell', True]}}}}},
              {'$group': {'_id': '$machine', 'data': {'$push': '$$ROOT'}}}]
 
     @staticmethod

@@ -14,14 +14,13 @@ class T1059 extends React.Component {
     return ([{
       Header: 'Example commands used',
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.data[0].machine), style: { 'whiteSpace': 'unset'}, width: 160 },
-        {Header: 'Approx. Time', id: 'time', accessor: x => x.data[0].info.finished, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Command', id: 'command', accessor: x => x.data[0].info.executed_cmds[0].cmd, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.data.machine), style: { 'whiteSpace': 'unset'}, width: 160 },
+        {Header: 'Approx. Time', id: 'time', accessor: x => x.data.info.finished, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Command', id: 'command', accessor: x => x.data.info.executed_cmds.cmd, style: { 'whiteSpace': 'unset' }},
         ]
     }])};
 
   render() {
-    console.log(this.props.data);
     return (
       <div>
         <div>{this.props.data.message}</div>
