@@ -12,7 +12,7 @@ class T1082(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey gathered system info from machines in the network."
 
-    query = [{'$match': {'telem_type': 'system_info_collection'}},
+    query = [{'$match': {'telem_category': 'system_info_collection'}},
              {'$project': {'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
                            'aws': '$data.aws',
                            'netstat': '$data.network_info.netstat',
@@ -36,11 +36,12 @@ class T1082(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        data = {'title': T1082.technique_title(T1082.tech_id)}
+        data = {'title': T1082.technique_title()}
         system_info = list(mongo.db.telemetry.aggregate(T1082.query))
         data.update({'system_info': system_info})
         if system_info:
-            data.update({'message': T1082.used_msg, 'status': ScanStatus.USED.name})
+            status = ScanStatus.USED
         else:
-            data.update({'message': T1082.unscanned_msg, 'status': ScanStatus.UNSCANNED.name})
+            status = ScanStatus.UNSCANNED
+        data.update(T1082.get_message_and_status(status))
         return data
