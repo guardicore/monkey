@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 import platform
@@ -42,13 +43,20 @@ class ControlClient(object):
         if has_internet_access is None:
             has_internet_access = check_internet_access(WormConfiguration.internet_services)
 
+        euid = os.geteuid()
+        if euid == '0':
+            root = 'root'
+        else:
+            root = os.popen('whoami').read()[:-1]
+
         monkey = {'guid': GUID,
                   'hostname': hostname,
                   'ip_addresses': local_ips(),
                   'description': " ".join(platform.uname()),
                   'internet_access': has_internet_access,
                   'config': WormConfiguration.as_dict(),
-                  'parent': parent}
+                  'parent': parent,
+                  'root': root}
 
         if ControlClient.proxies:
             monkey['tunnel'] = ControlClient.proxies.get('https')
