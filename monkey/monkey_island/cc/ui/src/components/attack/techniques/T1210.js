@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { RenderMachine } from "./Helpers"
+import { renderMachine } from "./Helpers"
 
 
 class T1210 extends React.Component {
@@ -13,7 +13,7 @@ class T1210 extends React.Component {
   static getScanColumns() {
     return ([{
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => RenderMachine(x.machine),
+        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
           style: { 'whiteSpace': 'unset' }, width: 200},
         {Header: 'Time', id: 'time', accessor: x => x.time, style: { 'whiteSpace': 'unset' }, width: 170},
         {Header: 'Port', id: 'port', accessor: x =>x.service.port, style: { 'whiteSpace': 'unset' }},
@@ -24,7 +24,7 @@ class T1210 extends React.Component {
   static getExploitColumns() {
     return ([{
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => RenderMachine(x.machine),
+        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
           style: { 'whiteSpace': 'unset' }, width: 200},
         {Header: 'Time', id: 'time', accessor: x => x.time, style: { 'whiteSpace': 'unset' }, width: 170},
         {Header: 'Port/url', id: 'port', accessor: x =>this.renderEndpoint(x.service), style: { 'whiteSpace': 'unset' }},

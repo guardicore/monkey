@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { RenderMachine } from "./Helpers"
+import { renderMachine } from "./Helpers"
 
 
 class T1210 extends React.Component {
@@ -9,7 +9,7 @@ class T1210 extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [ {Header: 'Machine',
-                      id: 'machine', accessor: x => RenderMachine(x),
+                      id: 'machine', accessor: x => renderMachine(x),
                       style: { 'whiteSpace': 'unset' },
                       width: 200},
                     {Header: 'Time',

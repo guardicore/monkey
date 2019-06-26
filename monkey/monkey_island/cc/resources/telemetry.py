@@ -26,7 +26,7 @@ class Telemetry(flask_restful.Resource):
     @jwt_required()
     def get(self, **kw):
         monkey_guid = request.args.get('monkey_guid')
-        telem_type = request.args.get('telem_type')
+        telem_category = request.args.get('telem_category')
         timestamp = request.args.get('timestamp')
         if "null" == timestamp:  # special case to avoid ugly JS code...
             timestamp = None
@@ -36,8 +36,8 @@ class Telemetry(flask_restful.Resource):
 
         if monkey_guid:
             find_filter["monkey_guid"] = {'$eq': monkey_guid}
-        if telem_type:
-            find_filter["telem_type"] = {'$eq': telem_type}
+        if telem_category:
+            find_filter["telem_category"] = {'$eq': telem_category}
         if timestamp:
             find_filter['timestamp'] = {'$gt': dateutil.parser.parse(timestamp)}
 
@@ -53,11 +53,11 @@ class Telemetry(flask_restful.Resource):
 
         try:
             NodeService.update_monkey_modify_time(monkey["_id"])
-            telem_type = telemetry_json.get('telem_type')
-            if telem_type in TELEM_PROCESS_DICT:
-                TELEM_PROCESS_DICT[telem_type](telemetry_json)
+            telem_category = telemetry_json.get('telem_category')
+            if telem_category in TELEM_PROCESS_DICT:
+                TELEM_PROCESS_DICT[telem_category](telemetry_json)
             else:
-                logger.info('Got unknown type of telemetry: %s' % telem_type)
+                logger.info('Got unknown type of telemetry: %s' % telem_category)
         except Exception as ex:
             logger.error("Exception caught while processing telemetry", exc_info=True)
 
@@ -79,7 +79,7 @@ class Telemetry(flask_restful.Resource):
                 monkey_label = telem_monkey_guid
             x["monkey"] = monkey_label
             objects.append(x)
-            if x['telem_type'] == 'system_info_collection' and 'credentials' in x['data']:
+            if x['telem_category'] == 'system_info_collection' and 'credentials' in x['data']:
                 for user in x['data']['credentials']:
                     if -1 != user.find(','):
                         new_user = user.replace(',', '.')
@@ -265,6 +265,12 @@ class Telemetry(flask_restful.Resource):
             {'guid': telemetry_json['monkey_guid']},
             {'$push': {'pba_results': telemetry_json['data']}})
 
+    @staticmethod
+    def process_attack_telemetry(telemetry_json):
+        # No processing required
+        pass
+
+
 TELEM_PROCESS_DICT = \
     {
         'tunnel': Telemetry.process_tunnel_telemetry,
@@ -273,5 +279,6 @@ TELEM_PROCESS_DICT = \
         'scan': Telemetry.process_scan_telemetry,
         'system_info_collection': Telemetry.process_system_info_telemetry,
         'trace': Telemetry.process_trace_telemetry,
-        'post_breach': Telemetry.process_post_breach_telemetry
+        'post_breach': Telemetry.process_post_breach_telemetry,
+        'attack': Telemetry.process_attack_telemetry
     }

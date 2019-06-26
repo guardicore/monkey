@@ -123,11 +123,11 @@ class ControlClient(object):
             return {}
 
     @staticmethod
-    def send_telemetry(telem_type, data):
+    def send_telemetry(telem_category, data):
         if not WormConfiguration.current_server:
             return
         try:
-            telemetry = {'monkey_guid': GUID, 'telem_type': telem_type, 'data': data}
+            telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': data}
             reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
                                   data=json.dumps(telemetry),
                                   headers={'content-type': 'application/json'},

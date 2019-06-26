@@ -49,7 +49,8 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 start_range += chunk
 
             if f.tell() == monkeyfs.getsize(self.filename):
-                self.report_download(self.client_address)
+                if self.report_download(self.client_address):
+                    self.close_connection = 1
 
             f.close()
 
@@ -171,7 +172,8 @@ class HTTPServer(threading.Thread):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
-                    self.close_connection = 1
+                    return True
+                return False
 
         httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
         httpd.timeout = 0.5  # this is irrelevant?
@@ -217,7 +219,8 @@ class LockedHTTPServer(threading.Thread):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
-                    self.close_connection = 1
+                    return True
+                return False
 
         httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
         self.lock.release()
