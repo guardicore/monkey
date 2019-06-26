@@ -20,6 +20,7 @@ class Monkey(Document):
     config = EmbeddedDocumentField('Config')
     creds = ListField(EmbeddedDocumentField('Creds'))
     dead = BooleanField()
+    root = StringField()
     description = StringField()
     hostname = StringField()
     internet_access = BooleanField()

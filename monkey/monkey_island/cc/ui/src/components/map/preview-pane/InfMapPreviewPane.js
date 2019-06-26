@@ -122,6 +122,15 @@ class InfMapPreviewPaneComponent extends PreviewPaneComponent {
     );
   }
 
+  runningAsLogRow(asset){
+    return (
+      <tr>
+        <th>Running as </th>
+        <td>{(asset.root)}</td>
+      </tr>
+    );
+  }
+
   exploitsTimeline(asset) {
     if (asset.exploits.length === 0) {
       return (<div/>);
@@ -174,6 +183,7 @@ class InfMapPreviewPaneComponent extends PreviewPaneComponent {
           {this.servicesRow(asset)}
           {this.accessibleRow(asset)}
           {this.forceKillRow(asset)}
+          {this.runningAsLogRow(asset)}
           {this.downloadLogRow(asset)}
           </tbody>
         </table>
