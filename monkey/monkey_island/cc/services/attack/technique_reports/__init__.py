@@ -107,8 +107,8 @@ class AttackTechnique(object):
                      'message': cls.get_message_by_status(status)})
         return data
 
-    @staticmethod
-    def get_base_data_by_status(technique, status):
-        data = technique.get_message_and_status(technique, status)
-        data.update({'title': technique.technique_title(technique.tech_id)})
+    @classmethod
+    def get_base_data_by_status(cls, status):
+        data = cls.get_message_and_status(status)
+        data.update({'title': cls.technique_title()})
         return data

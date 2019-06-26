@@ -1,7 +1,6 @@
 import logging
 from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110, T1075, T1003, T1059, T1086, T1082
 from monkey_island.cc.services.attack.technique_reports import T1145
-from monkey_island.cc.services.attack.attack_telem import AttackTelemService
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
 

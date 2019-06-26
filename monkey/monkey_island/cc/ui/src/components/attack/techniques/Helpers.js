@@ -6,6 +6,8 @@ export function renderMachine(val){
     )
 }
 
+/* Function takes data gathered from system info collector and creates a
+   string representation of machine from that data. */
 export function renderMachineFromSystemData(data) {
     let machineStr = data['hostname'] + " ( ";
     data['ips'].forEach(function(ipInfo){

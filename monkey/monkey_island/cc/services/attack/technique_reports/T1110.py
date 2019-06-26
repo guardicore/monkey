@@ -40,11 +40,11 @@ class T1110(AttackTechnique):
             status = ScanStatus.SCANNED
         else:
             status = ScanStatus.UNSCANNED
-        data = T1110.get_message_and_status(status)
+        data = T1110.get_base_data_by_status(status)
         # Remove data with no successful brute force attempts
         attempts = [attempt for attempt in attempts if attempt['attempts']]
 
-        data.update({'services': attempts, 'title': T1110.technique_title()})
+        data.update({'services': attempts})
         return data
 
     @staticmethod
