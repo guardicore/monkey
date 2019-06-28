@@ -91,6 +91,15 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Adversaries may abuse BITS to download, execute, "
                                    "and even clean up after running malicious code."
+                },
+                "T1107": {
+                    "title": "T1107 File Deletion",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may remove files over the course of an intrusion "
+                                   "to keep their footprint low or remove them at the end as part "
+                                   "of the post-intrusion cleanup process."
                 }
             }
         },

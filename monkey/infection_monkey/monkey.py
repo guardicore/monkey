@@ -16,6 +16,7 @@ from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
+from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
 from common.utils.attack_utils import ScanStatus
@@ -230,7 +231,6 @@ class InfectionMonkey(object):
                 self.send_log()
             self._singleton.unlock()
 
-        utils.remove_monkey_dir()
         InfectionMonkey.self_delete()
         LOG.info("Monkey is shutting down")
 
@@ -243,6 +243,11 @@ class InfectionMonkey(object):
 
     @staticmethod
     def self_delete():
+        if utils.remove_monkey_dir():
+            T1107Telem(ScanStatus.USED, utils.get_monkey_dir_path()).send()
+        else:
+            T1107Telem(ScanStatus.SCANNED, utils.get_monkey_dir_path()).send()
+
         if WormConfiguration.self_delete_in_cleanup \
                 and -1 == sys.executable.find('python'):
             try:
@@ -256,8 +261,10 @@ class InfectionMonkey(object):
                                      close_fds=True, startupinfo=startupinfo)
                 else:
                     os.remove(sys.executable)
+                    T1107Telem(ScanStatus.USED, sys.executable).send()
             except Exception as exc:
                 LOG.error("Exception in self delete: %s", exc)
+                T1107Telem(ScanStatus.SCANNED, sys.executable).send()
 
     def send_log(self):
         monkey_log_path = utils.get_monkey_log_path()

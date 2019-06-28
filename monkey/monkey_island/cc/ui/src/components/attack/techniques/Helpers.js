@@ -11,7 +11,11 @@ export function renderMachine(val){
 export function renderMachineFromSystemData(data) {
     let machineStr = data['hostname'] + " ( ";
     data['ips'].forEach(function(ipInfo){
-      machineStr += ipInfo['addr'] + " ";
+      if(typeof ipInfo === "object"){
+        machineStr += ipInfo['addr'] + " ";
+      } else {
+         machineStr += ipInfo + " ";
+      }
     });
     return machineStr + ")"
 }
