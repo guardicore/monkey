@@ -98,6 +98,15 @@ SCHEMA = {
             "title": "Execution",
             "type": "object",
             "properties": {
+                "T1035": {
+                    "title": "T1035 Service execution",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Adversaries may execute a binary, command, or script via a method "
+                                   "that interacts with Windows services, such as the Service Control Manager.",
+                    "depends_on": ["T1210"]
+                },
                 "T1059": {
                     "title": "T1059 Command line interface",
                     "type": "bool",
