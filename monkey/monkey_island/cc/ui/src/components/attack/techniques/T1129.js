@@ -1,10 +1,9 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { getUsageColumns } from "./Helpers"
+import {getUsageColumns} from "./Helpers";
 
-
-class T1035 extends React.Component {
+class T1129 extends React.Component {
 
   constructor(props) {
     super(props);
@@ -15,16 +14,16 @@ class T1035 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {this.props.data.services.length !== 0 ?
+        {this.props.data.dlls.length !== 0 ?
           <ReactTable
               columns={getUsageColumns()}
-              data={this.props.data.services}
+              data={this.props.data.dlls}
               showPagination={false}
-              defaultPageSize={this.props.data.services.length}
+              defaultPageSize={this.props.data.dlls.length}
           /> : ""}
       </div>
     );
   }
 }
 
-export default T1035;
+export default T1129;

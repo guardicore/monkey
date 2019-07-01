@@ -112,3 +112,23 @@ class AttackTechnique(object):
         data = cls.get_message_and_status(status)
         data.update({'title': cls.technique_title()})
         return data
+
+    @classmethod
+    def get_usage_query(cls):
+        """
+        :return: Query that parses attack telems for simple report component
+        (gets machines and attack technique usage).
+        """
+        return [{'$match': {'telem_category': 'attack',
+                            'data.technique': cls.tech_id}},
+                {'$lookup': {'from': 'monkey',
+                             'localField': 'monkey_guid',
+                             'foreignField': 'guid',
+                             'as': 'monkey'}},
+                {'$project': {'monkey': {'$arrayElemAt': ['$monkey', 0]},
+                              'status': '$data.status',
+                              'usage': '$data.usage'}},
+                {'$addFields': {'_id': 0,
+                                'machine': {'hostname': '$monkey.hostname', 'ips': '$monkey.ip_addresses'},
+                                'monkey': 0}},
+                {'$group': {'_id': {'machine': '$machine', 'status': '$status', 'usage': '$usage'}}}]

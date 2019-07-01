@@ -1,6 +1,6 @@
 import logging
 from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110, T1075, T1003, T1059, T1086, T1082
-from monkey_island.cc.services.attack.technique_reports import T1145, T1035
+from monkey_island.cc.services.attack.technique_reports import T1145, T1035, T1129
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
 
@@ -18,7 +18,8 @@ TECHNIQUES = {'T1210': T1210.T1210,
               'T1086': T1086.T1086,
               'T1082': T1082.T1082,
               'T1145': T1145.T1145,
-              'T1035': T1035.T1035}
+              'T1035': T1035.T1035,
+              'T1129': T1129.T1129}
 
 REPORT_NAME = 'new_report'
 
@@ -58,12 +59,12 @@ class AttackReportService:
         Gets latest report (by retrieving it from db or generating a new one).
         :return: report dict.
         """
+        return AttackReportService.generate_new_report()
         if AttackReportService.is_report_generated():
             telem_time = AttackReportService.get_latest_attack_telem_time()
             latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
             if telem_time and latest_report['latest_telem_time'] and telem_time == latest_report['latest_telem_time']:
                 return latest_report
-        return AttackReportService.generate_new_report()
 
     @staticmethod
     def is_report_generated():

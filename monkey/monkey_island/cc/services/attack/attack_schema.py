@@ -107,6 +107,15 @@ SCHEMA = {
                                    "that interacts with Windows services, such as the Service Control Manager.",
                     "depends_on": ["T1210"]
                 },
+                "T1129": {
+                    "title": "T1129 Execution through module load",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "The Windows module loader can be instructed to load DLLs from arbitrary "
+                                   "local paths and arbitrary Universal Naming Convention (UNC) network paths.",
+                    "depends_on": ["T1078", "T1003"]
+                },
                 "T1059": {
                     "title": "T1059 Command line interface",
                     "type": "bool",
