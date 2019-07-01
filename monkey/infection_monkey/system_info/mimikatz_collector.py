@@ -7,6 +7,7 @@ import zipfile
 import infection_monkey.config
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from infection_monkey.telemetry.attack.t1129_telem import T1129Telem
+from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.pyinstaller_utils import get_binary_file_path, get_binaries_dir_path
 
 __author__ = 'itay.mizeretz'
@@ -54,6 +55,7 @@ class MimikatzCollector(object):
         except Exception:
             LOG.exception("Error initializing mimikatz collector")
             status = ScanStatus.SCANNED
+        T1106Telem(status, UsageEnum.MIMIKATZ_WINAPI.name).send()
         T1129Telem(status, UsageEnum.MIMIKATZ).send()
 
     def get_logon_info(self):
