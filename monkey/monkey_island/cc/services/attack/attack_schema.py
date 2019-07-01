@@ -116,6 +116,15 @@ SCHEMA = {
                                    "local paths and arbitrary Universal Naming Convention (UNC) network paths.",
                     "depends_on": ["T1078", "T1003"]
                 },
+                "T1106": {
+                    "title": "T1106 Execution through API",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Adversary tools may directly use the Windows application "
+                                   "programming interface (API) to execute binaries.",
+                    "depends_on": ["T1210"]
+                },
                 "T1059": {
                     "title": "T1059 Command line interface",
                     "type": "bool",
