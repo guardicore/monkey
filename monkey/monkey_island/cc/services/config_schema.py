@@ -89,7 +89,7 @@ SCHEMA = {
                     "enum": [
                         "WebLogicExploiter"
                     ],
-                    "title": "Oracle Web Logic Exploiter"
+                    "title": "WebLogic Exploiter"
                 },
                 {
                     "type": "string",
