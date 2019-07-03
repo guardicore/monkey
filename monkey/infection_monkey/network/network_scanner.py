@@ -118,3 +118,6 @@ class NetworkScanner(object):
             if NetworkRange.get_range_obj(subnet_str).is_in_range(ip_address):
                 return True
         return False
+
+    def on_island(self, server):
+        return bool([x for x in self._ip_addresses if x in server])
