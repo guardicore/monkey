@@ -11,7 +11,7 @@ from ctypes import c_char_p
 
 import filecmp
 from infection_monkey.config import WormConfiguration
-from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
+from infection_monkey.exploit.tools.helpers import build_monkey_commandline_explicitly
 from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
 from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
 

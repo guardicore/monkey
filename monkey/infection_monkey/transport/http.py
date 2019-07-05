@@ -6,7 +6,6 @@ import threading
 import urllib
 from logging import getLogger
 from urlparse import urlsplit
-from threading import Lock
 
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
@@ -165,11 +164,15 @@ class HTTPServer(threading.Thread):
 
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
+            from common.utils.attack_utils import ScanStatus
+            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
+
             filename = self._filename
 
             @staticmethod
             def report_download(dest=None):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
+                TempHandler.T1105Telem(TempHandler.ScanStatus.USED, dest[0], self._filename).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
                     return True
@@ -212,11 +215,14 @@ class LockedHTTPServer(threading.Thread):
 
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
+            from common.utils.attack_utils import ScanStatus
+            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
             filename = self._filename
 
             @staticmethod
             def report_download(dest=None):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
+                TempHandler.T1105Telem(TempHandler.ScanStatus.USED, dest[0], self._filename).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
                     return True
