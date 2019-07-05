@@ -9,6 +9,7 @@ from urlparse import urlsplit
 
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
+from infection_monkey.exploit.tools.helpers import get_interface_to_target
 
 __author__ = 'hoffer'
 
@@ -172,7 +173,10 @@ class HTTPServer(threading.Thread):
             @staticmethod
             def report_download(dest=None):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
-                TempHandler.T1105Telem(TempHandler.ScanStatus.USED, dest[0], self._filename).send()
+                TempHandler.T1105Telem(TempHandler.ScanStatus.USED,
+                                       get_interface_to_target(dest[0]),
+                                       dest[0],
+                                       self._filename).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
                     return True
@@ -222,7 +226,10 @@ class LockedHTTPServer(threading.Thread):
             @staticmethod
             def report_download(dest=None):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
-                TempHandler.T1105Telem(TempHandler.ScanStatus.USED, dest[0], self._filename).send()
+                TempHandler.T1105Telem(TempHandler.ScanStatus.USED,
+                                       get_interface_to_target(dest[0]),
+                                       dest[0],
+                                       self._filename).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
                     return True

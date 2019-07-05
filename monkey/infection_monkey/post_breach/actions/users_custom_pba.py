@@ -85,10 +85,12 @@ class UsersPBA(PBA):
         if not pba_file_contents or not pba_file_contents.content:
             LOG.error("Island didn't respond with post breach file.")
             T1105Telem(ScanStatus.SCANNED,
+                       WormConfiguration.current_server.split(':')[0],
                        get_interface_to_target(WormConfiguration.current_server.split(':')[0]),
                        filename).send()
             return False
         T1105Telem(ScanStatus.USED,
+                   WormConfiguration.current_server.split(':')[0],
                    get_interface_to_target(WormConfiguration.current_server.split(':')[0]),
                    filename).send()
         try:

@@ -2,21 +2,24 @@ from infection_monkey.telemetry.attack.victim_host_telem import AttackTelem
 
 
 class T1105Telem(AttackTelem):
-    def __init__(self, status, host, path):
+    def __init__(self, status, src, dst, filename):
         """
         T1105 telemetry.
         :param status: ScanStatus of technique
-        :param host: IP of machine which downloaded the file
-        :param path: Uploaded file's path
+        :param src: IP of machine which uploaded the file
+        :param dst: IP of machine which downloaded the file
+        :param filename: Uploaded file's name
         """
         super(T1105Telem, self).__init__('T1105', status)
-        self.path = path
-        self.host = host
+        self.filename = filename
+        self.src = src
+        self.dst = dst
 
     def get_data(self):
         data = super(T1105Telem, self).get_data()
         data.update({
-            'path': self.path,
-            'host': self.host
+            'filename': self.filename,
+            'src': self.src,
+            'dst': self.dst
         })
         return data
