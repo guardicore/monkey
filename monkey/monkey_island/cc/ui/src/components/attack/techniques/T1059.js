@@ -21,7 +21,6 @@ class T1059 extends React.Component {
     }])};
 
   render() {
-    console.log(this.props.data);
     return (
       <div>
         <div>{this.props.data.message}</div>
