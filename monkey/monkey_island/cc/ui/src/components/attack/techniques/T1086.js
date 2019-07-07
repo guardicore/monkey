@@ -4,19 +4,19 @@ import ReactTable from "react-table";
 import { renderMachine } from "./Helpers"
 
 
-class T1059 extends React.Component {
+class T1086 extends React.Component {
 
   constructor(props) {
     super(props);
   }
 
-  static getCommandColumns() {
+  static getPowershellColumns() {
     return ([{
-      Header: 'Example commands used',
+      Header: 'Example Powershell commands used',
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.data.machine), style: { 'whiteSpace': 'unset'}, width: 160 },
-        {Header: 'Approx. Time', id: 'time', accessor: x => x.data.info.finished, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Command', id: 'command', accessor: x => x.data.info.executed_cmds.cmd, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.data[0].machine), style: { 'whiteSpace': 'unset'}, width: 160 },
+        {Header: 'Approx. Time', id: 'time', accessor: x => x.data[0].info.finished, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Command', id: 'command', accessor: x => x.data[0].info.executed_cmds[0].cmd, style: { 'whiteSpace': 'unset' }},
         ]
     }])};
 
@@ -27,7 +27,7 @@ class T1059 extends React.Component {
         <br/>
         {this.props.data.status === 'USED' ?
           <ReactTable
-              columns={T1059.getCommandColumns()}
+              columns={T1086.getPowershellColumns()}
               data={this.props.data.cmds}
               showPagination={false}
               defaultPageSize={this.props.data.cmds.length}
@@ -37,4 +37,4 @@ class T1059 extends React.Component {
   }
 }
 
-export default T1059;
+export default T1086;

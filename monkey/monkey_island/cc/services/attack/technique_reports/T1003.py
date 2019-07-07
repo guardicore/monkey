@@ -13,8 +13,8 @@ class T1003(AttackTechnique):
     used_msg = "Monkey successfully obtained some credentials from systems on the network."
 
     query = {'telem_category': 'system_info_collection', '$and': [{'data.credentials': {'$exists': True}},
-                                                              # $gt: {} checks if field is not an empty object
-                                                              {'data.credentials': {'$gt': {}}}]}
+                                                                  # $gt: {} checks if field is not an empty object
+                                                                  {'data.credentials': {'$gt': {}}}]}
 
     @staticmethod
     def get_report_data():

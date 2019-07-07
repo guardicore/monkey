@@ -95,6 +95,14 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Adversaries may use command-line interfaces to interact with systems "
                                    "and execute other software during the course of an operation.",
+                },
+                "T1086": {
+                    "title": "T1086 Powershell",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries can use PowerShell to perform a number of actions,"
+                                   " including discovery of information and execution of code.",
                 }
             }
         },
