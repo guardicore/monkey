@@ -131,5 +131,19 @@ SCHEMA = {
                 }
             }
         },
+        "command_and_control": {
+            "title": "Command and Control",
+            "type": "object",
+            "properties": {
+                "T1065": {
+                    "title": "T1065 Uncommonly used port",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may conduct C2 communications over a non-standard "
+                                   "port to bypass proxies and firewalls that have been improperly configured."
+                }
+            }
+        },
     }
 }
