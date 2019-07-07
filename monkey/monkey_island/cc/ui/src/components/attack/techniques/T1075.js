@@ -24,8 +24,8 @@ class T1075 extends React.Component {
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine), style: { 'whiteSpace': 'unset' }},
         {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Username', id: 'attempts', accessor: x => x.attempts[0].user, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Hash type', id: 'credentials', accessor: x => x.attempts[0].hashType, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Username', id: 'username', accessor: x => x.attempts[0].user, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Hash type', id: 'hash', accessor: x => x.attempts[0].hashType, style: { 'whiteSpace': 'unset' }},
         ]
     }])};
 

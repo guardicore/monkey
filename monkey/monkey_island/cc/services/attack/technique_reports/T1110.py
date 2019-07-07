@@ -13,7 +13,7 @@ class T1110(AttackTechnique):
     used_msg = "Monkey successfully used brute force in the network."
 
     # Gets data about brute force attempts
-    query = [{'$match': {'telem_type': 'exploit',
+    query = [{'$match': {'telem_category': 'exploit',
                          'data.attempts': {'$not': {'$size': 0}}}},
              {'$project': {'_id': 0,
                            'machine': '$data.machine',
