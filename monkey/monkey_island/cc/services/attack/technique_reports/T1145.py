@@ -1,0 +1,31 @@
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.attack.technique_reports import AttackTechnique
+from common.utils.attack_utils import ScanStatus
+
+__author__ = "VakarisZ"
+
+
+class T1145(AttackTechnique):
+    tech_id = "T1145"
+    unscanned_msg = "Monkey didn't find any shh keys."
+    scanned_msg = ""
+    used_msg = "Monkey found ssh keys on machines in the network."
+
+    # Gets data about ssh keys found
+    query = [{'$match': {'telem_category': 'system_info_collection',
+                         'data.ssh_info': {'$elemMatch': {'private_key': {'$exists': True}}}}},
+             {'$project': {'_id': 0,
+                           'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
+                           'ssh_info': '$data.ssh_info'}}]
+
+    @staticmethod
+    def get_report_data():
+        ssh_info = list(mongo.db.telemetry.aggregate(T1145.query))
+
+        if ssh_info:
+            status = ScanStatus.USED
+        else:
+            status = ScanStatus.UNSCANNED
+        data = T1145.get_base_data_by_status(status)
+        data.update({'ssh_info': ssh_info})
+        return data

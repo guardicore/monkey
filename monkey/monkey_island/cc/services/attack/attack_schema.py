@@ -67,6 +67,16 @@ SCHEMA = {
                                    "information, normally in the form of a hash or a clear text password, "
                                    "from the operating system and software.",
                     "depends_on": ["T1078"]
+                },
+                "T1145": {
+                    "title": "T1145 Private keys",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Adversaries may gather private keys from compromised systems for use in "
+                                   "authenticating to Remote Services like SSH or for use in decrypting "
+                                   "other collected files such as email.",
+                    "depends_on": ["T1110", "T1210"]
                 }
             }
         },
@@ -103,6 +113,21 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Adversaries can use PowerShell to perform a number of actions,"
                                    " including discovery of information and execution of code.",
+                }
+            }
+        },
+        "discovery": {
+            "title": "Discovery",
+            "type": "object",
+            "properties": {
+                "T1082": {
+                    "title": "T1082 System information discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "An adversary may attempt to get detailed information about the "
+                                   "operating system and hardware, including version, patches, hotfixes, "
+                                   "service packs, and architecture."
                 }
             }
         },
