@@ -172,7 +172,7 @@ class ReportService:
         PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
         creds = []
         for telem in mongo.db.telemetry.find(
-                {'telem_category': 'system_info_collection', 'data.credentials': {'$exists': True}},
+                {'telem_category': 'system_info', 'data.credentials': {'$exists': True}},
                 {'data.credentials': 1, 'monkey_guid': 1}
         ):
             monkey_creds = telem['data']['credentials']
@@ -200,7 +200,7 @@ class ReportService:
         """
         creds = []
         for telem in mongo.db.telemetry.find(
-                {'telem_category': 'system_info_collection', 'data.ssh_info': {'$exists': True}},
+                {'telem_category': 'system_info', 'data.ssh_info': {'$exists': True}},
                 {'data.ssh_info': 1, 'monkey_guid': 1}
         ):
             origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
@@ -221,7 +221,7 @@ class ReportService:
         """
         creds = []
         for telem in mongo.db.telemetry.find(
-                {'telem_category': 'system_info_collection', 'data.Azure': {'$exists': True}},
+                {'telem_category': 'system_info', 'data.Azure': {'$exists': True}},
                 {'data.Azure': 1, 'monkey_guid': 1}
         ):
             azure_users = telem['data']['Azure']['usernames']
@@ -383,7 +383,7 @@ class ReportService:
     @staticmethod
     def get_monkey_subnets(monkey_guid):
         network_info = mongo.db.telemetry.find_one(
-            {'telem_category': 'system_info_collection', 'monkey_guid': monkey_guid},
+            {'telem_category': 'system_info', 'monkey_guid': monkey_guid},
             {'data.network_info.networks': 1}
         )
         if network_info is None:
