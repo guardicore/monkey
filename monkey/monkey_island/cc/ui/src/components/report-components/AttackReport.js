@@ -2,17 +2,25 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
+import '../../styles/Collapse.scss';
 import AuthComponent from '../AuthComponent';
 import Collapse from '@kunukn/react-collapse';
 import T1210 from '../attack/techniques/T1210';
 import T1197 from '../attack/techniques/T1197';
 import T1110 from '../attack/techniques/T1110';
-import '../../styles/Collapse.scss'
+import T1075 from "../attack/techniques/T1075";
+import T1003 from "../attack/techniques/T1003";
+import T1059 from "../attack/techniques/T1059";
+import T1086 from "../attack/techniques/T1086";
 
 const tech_components = {
   'T1210': T1210,
   'T1197': T1197,
-  'T1110': T1110
+  'T1110': T1110,
+  'T1075': T1075,
+  'T1003': T1003,
+  'T1059': T1059,
+  'T1086': T1086
 };
 
 const classNames = require('classnames');
@@ -99,7 +107,7 @@ class AttackReportPageComponent extends AuthComponent {
     const TechniqueComponent = tech_components[technique];
     return (
       <div className={`content ${collapseState}`}>
-        <TechniqueComponent data={this.state.report[technique]} />
+        <TechniqueComponent data={this.state.report[technique]} reportData={this.props.reportData}/>
       </div>
     );
   }

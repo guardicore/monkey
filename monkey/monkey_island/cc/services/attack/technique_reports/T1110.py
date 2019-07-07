@@ -13,7 +13,7 @@ class T1110(AttackTechnique):
     used_msg = "Monkey successfully used brute force in the network."
 
     # Gets data about brute force attempts
-    query = [{'$match': {'telem_type': 'exploit',
+    query = [{'$match': {'telem_category': 'exploit',
                          'data.attempts': {'$not': {'$size': 0}}}},
              {'$project': {'_id': 0,
                            'machine': '$data.machine',
@@ -35,16 +35,16 @@ class T1110(AttackTechnique):
                 result['successful_creds'].append(T1110.parse_creds(attempt))
 
         if succeeded:
-            data = T1110.get_message_and_status(T1110, ScanStatus.USED)
+            status = ScanStatus.USED
         elif attempts:
-            data = T1110.get_message_and_status(T1110, ScanStatus.SCANNED)
+            status = ScanStatus.SCANNED
         else:
-            data = T1110.get_message_and_status(T1110, ScanStatus.UNSCANNED)
-
+            status = ScanStatus.UNSCANNED
+        data = T1110.get_message_and_status(status)
         # Remove data with no successful brute force attempts
         attempts = [attempt for attempt in attempts if attempt['attempts']]
 
-        data.update({'services': attempts, 'title': T1110.technique_title(T1110.tech_id)})
+        data.update({'services': attempts, 'title': T1110.technique_title()})
         return data
 
     @staticmethod

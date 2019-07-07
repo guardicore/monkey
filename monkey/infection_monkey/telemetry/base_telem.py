@@ -19,10 +19,10 @@ class BaseTelem(object):
         """
         Sends telemetry to island
         """
-        ControlClient.send_telemetry(self.telem_catagory, self.get_data())
+        ControlClient.send_telemetry(self.telem_category, self.get_data())
 
     @abc.abstractproperty
-    def telem_catagory(self):
+    def telem_category(self):
         """
         :return: Telemetry type
         """
