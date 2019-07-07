@@ -343,9 +343,7 @@ class ReportPageComponent extends AuthComponent {
                       href="https://cwiki.apache.org/confluence/display/WW/S2-045">
                       CVE-2017-5638</a>)</li> : null }
                   {this.state.report.overview.issues[this.Issue.WEBLOGIC] ?
-                    <li>Oracle WebLogic servers are vulnerable to remote code execution. (<a
-                      href="https://nvd.nist.gov/vuln/detail/CVE-2017-10271">
-                      CVE-2017-10271</a>)</li> : null }
+                    <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li> : null }
                   {this.state.report.overview.issues[this.Issue.HADOOP] ?
                     <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                   {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] ?
@@ -520,7 +518,7 @@ class ReportPageComponent extends AuthComponent {
                 This report shows information about ATT&CK techniques used by Infection Monkey.
               </p>
               <div>
-                <AttackReport/>
+                <AttackReport reportData={this.state.report}/>
               </div>
               <br />
             </div>)
@@ -889,16 +887,15 @@ class ReportPageComponent extends AuthComponent {
   generateWebLogicIssue(issue) {
     return (
       <li>
-        Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
-        critical patch updates.</a> Or update to the latest version. Vulnerable versions are
-        10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
+        Update Oracle WebLogic server to the latest supported version.
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
-          className="label label-danger">remote code execution</span> attack.
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to one of <span
+          className="label label-danger">remote code execution</span> attacks.
           <br/>
-          The attack was made possible due to incorrect permission assignment in Oracle Fusion Middleware
-          (subcomponent: WLS Security).
+          The attack was made possible due to one of the following vulnerabilities:
+          <a href={"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10271"}> CVE-2017-10271</a> or
+          <a href={"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-2725"}> CVE-2019-2725</a>
         </CollapsibleWellComponent>
       </li>
     );

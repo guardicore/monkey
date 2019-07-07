@@ -1,6 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
+import { renderMachine } from "./Helpers"
 
 
 class T1110 extends React.Component {
@@ -12,7 +13,7 @@ class T1110 extends React.Component {
   static getServiceColumns() {
     return ([{
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => this.renderMachine(x.machine),
+        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
           style: { 'whiteSpace': 'unset' }, width: 160},
         {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: { 'whiteSpace': 'unset' }, width: 100},
         {Header: 'Started', id: 'started', accessor: x => x.info.started, style: { 'whiteSpace': 'unset' }},
@@ -23,13 +24,7 @@ class T1110 extends React.Component {
     }])};
 
   static renderCreds(creds) {
-    return <span>{creds.map(cred => <div>{cred}</div>)}</span>
-  };
-
-  static renderMachine(val){
-    return (
-      <span>{val.ip_addr} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")}</span>
-    )
+    return <span>{creds.map(cred => <div key={cred}>{cred}</div>)}</span>
   };
 
   render() {

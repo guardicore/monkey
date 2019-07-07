@@ -1,6 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
+import { renderMachine } from "./Helpers"
 
 
 class T1210 extends React.Component {
@@ -8,7 +9,7 @@ class T1210 extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [ {Header: 'Machine',
-                      id: 'machine', accessor: x => T1210.renderMachine(x),
+                      id: 'machine', accessor: x => renderMachine(x),
                       style: { 'whiteSpace': 'unset' },
                       width: 200},
                     {Header: 'Time',
@@ -20,12 +21,6 @@ class T1210 extends React.Component {
                       style: { 'whiteSpace': 'unset' }}
       ]
   }
-
-  static renderMachine(val){
-    return (
-      <span>{val.ip_addr} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")}</span>
-    )
-  };
 
   renderExploitedMachines(){
     if (this.props.data.bits_jobs.length === 0){
