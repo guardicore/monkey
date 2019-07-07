@@ -16,8 +16,7 @@ class PostBreachTelem(BaseTelem):
         super(PostBreachTelem, self).__init__()
         self.pba = pba
         self.result = result
-        self.hostname = socket.gethostname()
-        self.ip = socket.gethostbyname(self.hostname)
+        self.hostname, self.ip = PostBreachTelem._get_hostname_and_ip()
 
     telem_category = 'post_breach'
 
@@ -29,3 +28,13 @@ class PostBreachTelem(BaseTelem):
             'hostname': self.hostname,
             'ip': self.ip
         }
+
+    @staticmethod
+    def _get_hostname_and_ip():
+        try:
+            hostname = socket.gethostname()
+            ip = socket.gethostbyname(hostname)
+        except socket.error:
+            hostname = "Unknown"
+            ip = "Unknown"
+        return hostname, ip
