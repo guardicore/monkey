@@ -50,7 +50,7 @@ class AttackTechnique(object):
     def technique_status(cls):
         """
         Gets the status of a certain attack technique.
-        :return: ScanStatus Enum object
+        :return: ScanStatus numeric value
         """
         if mongo.db.telemetry.find_one({'telem_category': 'attack',
                                         'data.status': ScanStatus.USED.value,
@@ -97,7 +97,7 @@ class AttackTechnique(object):
     def get_tech_base_data(cls):
         """
         Gathers basic attack technique data into a dict.
-        :return: dict E.g. {'message': 'Brute force used', 'status': 'Used', 'title': 'T1110 Brute force'}
+        :return: dict E.g. {'message': 'Brute force used', 'status': 2, 'title': 'T1110 Brute force'}
         """
         data = {}
         status = cls.technique_status()

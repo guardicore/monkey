@@ -11,7 +11,7 @@ class T1107 extends React.Component {
   }
 
   static renderDelete(status){
-    if(status === 2){
+    if(status === scanStatus.USED){
       return <span>Yes</span>
     } else {
       return <span>No</span>
