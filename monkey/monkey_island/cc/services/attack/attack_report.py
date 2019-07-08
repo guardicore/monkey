@@ -58,12 +58,12 @@ class AttackReportService:
         Gets latest report (by retrieving it from db or generating a new one).
         :return: report dict.
         """
-        return AttackReportService.generate_new_report()
         if AttackReportService.is_report_generated():
             telem_time = AttackReportService.get_latest_attack_telem_time()
             latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
             if telem_time and latest_report['latest_telem_time'] and telem_time == latest_report['latest_telem_time']:
                 return latest_report
+        return AttackReportService.generate_new_report()
 
     @staticmethod
     def is_report_generated():

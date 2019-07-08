@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachineFromSystemData } from "./Helpers"
+import { renderMachineFromSystemData, scanStatus } from "./Helpers"
 
 
 class T1107 extends React.Component {

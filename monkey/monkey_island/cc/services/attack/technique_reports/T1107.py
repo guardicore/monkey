@@ -7,7 +7,7 @@ __author__ = "VakarisZ"
 class T1107(AttackTechnique):
     tech_id = "T1107"
     unscanned_msg = ""
-    scanned_msg = "Monkey tried to delete files on a system in the network but failed."
+    scanned_msg = "Monkey tried to delete files on systems in the network, but failed."
     used_msg = "Monkey successfully deleted files on systems in the network."
 
     query = [{'$match': {'telem_category': 'attack',

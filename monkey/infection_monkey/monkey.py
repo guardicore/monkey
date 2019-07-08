@@ -243,10 +243,8 @@ class InfectionMonkey(object):
 
     @staticmethod
     def self_delete():
-        if utils.remove_monkey_dir():
-            T1107Telem(ScanStatus.USED, utils.get_monkey_dir_path()).send()
-        else:
-            T1107Telem(ScanStatus.SCANNED, utils.get_monkey_dir_path()).send()
+        status = ScanStatus.USED if utils.remove_monkey_dir() else ScanStatus.SCANNED
+        T1107Telem(status, utils.get_monkey_dir_path()).send()
 
         if WormConfiguration.self_delete_in_cleanup \
                 and -1 == sys.executable.find('python'):
