@@ -35,3 +35,9 @@ export function getUsageColumns() {
           accessor: x => x._id.usage,
           style: { 'whiteSpace': 'unset' }}]
     }])}
+
+export const scanStatus = {
+    UNSCANNED: 0,
+    SCANNED: 1,
+    USED: 2
+};

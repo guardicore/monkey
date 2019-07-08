@@ -78,13 +78,13 @@ class TelemetryFeed(flask_restful.Resource):
 
     @staticmethod
     def get_trace_telem_brief(telem):
-        return 'Monkey reached max depth.'
+        return 'Trace: %s' % telem['data']['msg']
 
     @staticmethod
     def get_post_breach_telem_brief(telem):
-        return '%s post breach action executed on %s (%s) machine' % (telem['data']['name'],
-                                                                      telem['data']['hostname'],
-                                                                      telem['data']['ip'])
+        return '%s post breach action executed on %s (%s) machine.' % (telem['data']['name'],
+                                                                       telem['data']['hostname'],
+                                                                       telem['data']['ip'])
 
     @staticmethod
     def get_attack_telem_brief(telem):
@@ -97,7 +97,7 @@ TELEM_PROCESS_DICT = \
         'state': TelemetryFeed.get_state_telem_brief,
         'exploit': TelemetryFeed.get_exploit_telem_brief,
         'scan': TelemetryFeed.get_scan_telem_brief,
-        'system_info_collection': TelemetryFeed.get_systeminfo_telem_brief,
+        'system_info': TelemetryFeed.get_systeminfo_telem_brief,
         'trace': TelemetryFeed.get_trace_telem_brief,
         'post_breach': TelemetryFeed.get_post_breach_telem_brief,
         'attack': TelemetryFeed.get_attack_telem_brief

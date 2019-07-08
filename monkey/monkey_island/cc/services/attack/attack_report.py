@@ -1,6 +1,7 @@
 import logging
+from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110, T1075, T1003, T1059, T1086, T1082
-from monkey_island.cc.services.attack.technique_reports import T1145, T1035, T1129
+from monkey_island.cc.services.attack.technique_reports import T1145, T1107, T1065, T1035, T1129
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
 
@@ -19,7 +20,9 @@ TECHNIQUES = {'T1210': T1210.T1210,
               'T1082': T1082.T1082,
               'T1145': T1145.T1145,
               'T1035': T1035.T1035,
-              'T1129': T1129.T1129}
+              'T1129': T1129.T1129,
+              'T1107': T1107.T1107,
+              'T1065': T1065.T1065}
 
 REPORT_NAME = 'new_report'
 
@@ -34,7 +37,13 @@ class AttackReportService:
         Generates new report based on telemetries, replaces old report in db with new one.
         :return: Report object
         """
-        report = {'techniques': {}, 'latest_telem_time': AttackReportService.get_latest_attack_telem_time(), 'name': REPORT_NAME}
+        report =\
+            {
+                'techniques': {},
+                'meta': {'latest_monkey_modifytime': Monkey.get_latest_modifytime()},
+                'name': REPORT_NAME
+            }
+
         for tech_id, value in AttackConfig.get_technique_values().items():
             if value:
                 try:
@@ -59,12 +68,13 @@ class AttackReportService:
         Gets latest report (by retrieving it from db or generating a new one).
         :return: report dict.
         """
-        return AttackReportService.generate_new_report()
         if AttackReportService.is_report_generated():
-            telem_time = AttackReportService.get_latest_attack_telem_time()
+            monkey_modifytime = Monkey.get_latest_modifytime()
             latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
-            if telem_time and latest_report['latest_telem_time'] and telem_time == latest_report['latest_telem_time']:
+            report_modifytime = latest_report['meta']['latest_monkey_modifytime']
+            if monkey_modifytime and report_modifytime and monkey_modifytime == report_modifytime:
                 return latest_report
+        return AttackReportService.generate_new_report()
 
     @staticmethod
     def is_report_generated():

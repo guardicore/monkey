@@ -309,10 +309,6 @@ class NodeService:
         return NodeService.is_any_monkey_exists() and not NodeService.is_any_monkey_alive()
 
     @staticmethod
-    def get_latest_modified_monkey():
-        return mongo.db.monkey.find({}).sort('modifytime', -1).limit(1)
-
-    @staticmethod
     def add_credentials_to_monkey(monkey_id, creds):
         mongo.db.monkey.update(
             {'_id': monkey_id},

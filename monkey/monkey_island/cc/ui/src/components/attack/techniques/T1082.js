@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachineFromSystemData } from "./Helpers"
+import { renderMachineFromSystemData, scanStatus } from "./Helpers"
 
 
 class T1082 extends React.Component {
@@ -33,7 +33,7 @@ class T1082 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {this.props.data.status === 'USED' ?
+        {this.props.data.status === scanStatus.USED ?
           <ReactTable
               columns={T1082.getSystemInfoColumns()}
               data={this.props.data.system_info}

@@ -91,6 +91,15 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Adversaries may abuse BITS to download, execute, "
                                    "and even clean up after running malicious code."
+                },
+                "T1107": {
+                    "title": "T1107 File Deletion",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may remove files over the course of an intrusion "
+                                   "to keep their footprint low or remove them at the end as part "
+                                   "of the post-intrusion cleanup process."
                 }
             }
         },
@@ -146,6 +155,20 @@ SCHEMA = {
                     "description": "An adversary may attempt to get detailed information about the "
                                    "operating system and hardware, including version, patches, hotfixes, "
                                    "service packs, and architecture."
+                }
+            }
+        },
+        "command_and_control": {
+            "title": "Command and Control",
+            "type": "object",
+            "properties": {
+                "T1065": {
+                    "title": "T1065 Uncommonly used port",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may conduct C2 communications over a non-standard "
+                                   "port to bypass proxies and firewalls that have been improperly configured."
                 }
             }
         },

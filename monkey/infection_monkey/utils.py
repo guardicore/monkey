@@ -49,8 +49,13 @@ def create_monkey_dir():
 def remove_monkey_dir():
     """
     Removes monkey's root directory
+    :return True if removed without errors and False otherwise
     """
-    shutil.rmtree(get_monkey_dir_path(), ignore_errors=True)
+    try:
+        shutil.rmtree(get_monkey_dir_path())
+        return True
+    except Exception:
+        return False
 
 
 def get_monkey_dir_path():
