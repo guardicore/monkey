@@ -27,8 +27,8 @@ class T1059(AttackTechnique):
         cmd_data = list(mongo.db.telemetry.aggregate(T1059.query))
         data = {'title': T1059.technique_title(), 'cmds': cmd_data}
         if cmd_data:
-            status = ScanStatus.USED
+            status = ScanStatus.USED.value
         else:
-            status = ScanStatus.UNSCANNED
+            status = ScanStatus.UNSCANNED.value
         data.update(T1059.get_message_and_status(status))
         return data
