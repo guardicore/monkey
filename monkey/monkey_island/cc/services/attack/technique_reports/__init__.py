@@ -70,7 +70,7 @@ class AttackTechnique(object):
         :param status: Enum from common/attack_utils.py integer value
         :return: Dict with message and status
         """
-        return {'message': cls.get_message_by_status(status), 'status': status.value}
+        return {'message': cls.get_message_by_status(status), 'status': status}
 
     @classmethod
     def get_message_by_status(cls, status):
