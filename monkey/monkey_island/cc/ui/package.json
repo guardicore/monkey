@@ -53,7 +53,6 @@
     "minimist": "^1.2.0",
     "mocha": "^5.2.0",
     "null-loader": "^0.1.1",
-    "open": "0.0.5",
     "phantomjs-prebuilt": "^2.1.16",
     "react-addons-test-utils": "^15.6.2",
     "react-hot-loader": "^4.3.11",

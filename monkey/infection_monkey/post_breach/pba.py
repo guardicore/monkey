@@ -2,6 +2,7 @@ import logging
 import subprocess
 import socket
 from infection_monkey.control import ControlClient
+from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils import is_windows_os
 from infection_monkey.config import WormConfiguration
 
@@ -45,12 +46,7 @@ class PBA(object):
         """
         exec_funct = self._execute_default
         result = exec_funct()
-        hostname = socket.gethostname()
-        ControlClient.send_telemetry('post_breach', {'command': self.command,
-                                                     'result': result,
-                                                     'name': self.name,
-                                                     'hostname': hostname,
-                                                     'ip': socket.gethostbyname(hostname)})
+        PostBreachTelem(self, result).send()
 
     def _execute_default(self):
         """

@@ -15,6 +15,7 @@ import T1086 from "../attack/techniques/T1086";
 import T1082 from "../attack/techniques/T1082";
 import T1145 from "../attack/techniques/T1145";
 import T1105 from "../attack/techniques/T1105";
+import T1065 from "../attack/techniques/T1065";
 
 const tech_components = {
   'T1210': T1210,
@@ -26,6 +27,7 @@ const tech_components = {
   'T1086': T1086,
   'T1082': T1082,
   'T1145': T1145,
+  'T1065': T1065,
   'T1105': T1105
 };
 
