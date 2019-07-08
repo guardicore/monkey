@@ -23,9 +23,9 @@ class T1145(AttackTechnique):
         ssh_info = list(mongo.db.telemetry.aggregate(T1145.query))
 
         if ssh_info:
-            status = ScanStatus.USED
+            status = ScanStatus.USED.value
         else:
-            status = ScanStatus.UNSCANNED
+            status = ScanStatus.UNSCANNED.value
         data = T1145.get_base_data_by_status(status)
         data.update({'ssh_info': ssh_info})
         return data

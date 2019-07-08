@@ -20,8 +20,8 @@ class T1003(AttackTechnique):
     def get_report_data():
         data = {'title': T1003.technique_title()}
         if mongo.db.telemetry.count_documents(T1003.query):
-            status = ScanStatus.USED
+            status = ScanStatus.USED.value
         else:
-            status = ScanStatus.UNSCANNED
+            status = ScanStatus.UNSCANNED.value
         data.update(T1003.get_message_and_status(status))
         return data

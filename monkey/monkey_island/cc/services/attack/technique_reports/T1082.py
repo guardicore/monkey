@@ -40,8 +40,8 @@ class T1082(AttackTechnique):
         system_info = list(mongo.db.telemetry.aggregate(T1082.query))
         data.update({'system_info': system_info})
         if system_info:
-            status = ScanStatus.USED
+            status = ScanStatus.USED.value
         else:
-            status = ScanStatus.UNSCANNED
+            status = ScanStatus.UNSCANNED.value
         data.update(T1082.get_message_and_status(status))
         return data
