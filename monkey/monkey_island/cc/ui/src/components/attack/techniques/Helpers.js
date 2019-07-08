@@ -19,3 +19,9 @@ export function renderMachineFromSystemData(data) {
     });
     return machineStr + ")"
 }
+
+export const scanStatus = {
+    UNSCANNED: 0,
+    SCANNED: 1,
+    USED: 2
+};
