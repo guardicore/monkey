@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachine } from "./Helpers"
+import { renderMachine, scanStatus } from "./Helpers"
 
 
 class T1110 extends React.Component {
@@ -32,7 +32,7 @@ class T1110 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {(this.props.data.status === 'SCANNED' || this.props.data.status === 'USED') ?
+        {this.props.data.status !== scanStatus.UNSCANNED ?
           <ReactTable
             columns={T1110.getServiceColumns()}
             data={this.props.data.services}
