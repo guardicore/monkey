@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachineFromSystemData } from "./Helpers"
+import { scanStatus } from "./Helpers"
 
 
 class T1105 extends React.Component {
@@ -25,7 +25,7 @@ class T1105 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {this.props.data.status !== 'UNSCANNED' ?
+        {this.props.data.status !== scanStatus.UNSCANNED ?
           <ReactTable
               columns={T1105.getFilesColumns()}
               data={this.props.data.files}
