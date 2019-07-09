@@ -19,3 +19,25 @@ export function renderMachineFromSystemData(data) {
     });
     return machineStr + ")"
 }
+
+/* Formats telemetry data that contains _id.machine and _id.usage fields into columns
+   for react table. */
+export function getUsageColumns() {
+    return ([{
+      columns: [
+        {Header: 'Machine',
+          id: 'machine',
+          accessor: x => renderMachineFromSystemData(x._id.machine),
+          style: { 'whiteSpace': 'unset' },
+          width: 300},
+        {Header: 'Usage',
+          id: 'usage',
+          accessor: x => x._id.usage,
+          style: { 'whiteSpace': 'unset' }}]
+    }])}
+
+export const scanStatus = {
+    UNSCANNED: 0,
+    SCANNED: 1,
+    USED: 2
+};

@@ -99,6 +99,15 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Adversaries may abuse BITS to download, execute, "
                                    "and even clean up after running malicious code."
+                },
+                "T1107": {
+                    "title": "T1107 File Deletion",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may remove files over the course of an intrusion "
+                                   "to keep their footprint low or remove them at the end as part "
+                                   "of the post-intrusion cleanup process."
                 }
             }
         },
@@ -106,6 +115,33 @@ SCHEMA = {
             "title": "Execution",
             "type": "object",
             "properties": {
+                "T1035": {
+                    "title": "T1035 Service execution",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Adversaries may execute a binary, command, or script via a method "
+                                   "that interacts with Windows services, such as the Service Control Manager.",
+                    "depends_on": ["T1210"]
+                },
+                "T1129": {
+                    "title": "T1129 Execution through module load",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "The Windows module loader can be instructed to load DLLs from arbitrary "
+                                   "local paths and arbitrary Universal Naming Convention (UNC) network paths.",
+                    "depends_on": ["T1078", "T1003"]
+                },
+                "T1106": {
+                    "title": "T1106 Execution through API",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Adversary tools may directly use the Windows application "
+                                   "programming interface (API) to execute binaries.",
+                    "depends_on": ["T1210"]
+                },
                 "T1059": {
                     "title": "T1059 Command line interface",
                     "type": "bool",
