@@ -85,7 +85,7 @@ class MonkeyDrops(object):
             os.remove(self._config['destination_path'])
 
         # first try to move the file
-        '''
+
         if not file_moved and WormConfiguration.dropper_try_move_first:
             try:
                 shutil.move(self._config['source_path'],
@@ -99,7 +99,6 @@ class MonkeyDrops(object):
                 LOG.debug("Error moving source file '%s' into '%s': %s",
                           self._config['source_path'], self._config['destination_path'],
                           exc)
-        '''
 
         # if file still need to change path, copy it
         if not file_moved:
@@ -161,7 +160,7 @@ class MonkeyDrops(object):
             if pe.try_priv_esc(cmdline):
                 pe_exploited = True
                 local_ip = local_ips()
-                pe.send_pe_telemetry(True,str(local_ip))
+                pe.send_pe_telemetry(True, str(local_ip))
 
         if not pe_exploited:
             monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
