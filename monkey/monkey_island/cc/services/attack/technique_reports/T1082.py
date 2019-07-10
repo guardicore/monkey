@@ -12,7 +12,7 @@ class T1082(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey gathered system info from machines in the network."
 
-    query = [{'$match': {'telem_category': 'system_info_collection'}},
+    query = [{'$match': {'telem_category': 'system_info'}},
              {'$project': {'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
                            'aws': '$data.aws',
                            'netstat': '$data.network_info.netstat',
