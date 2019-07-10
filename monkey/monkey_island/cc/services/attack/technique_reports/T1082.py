@@ -32,7 +32,9 @@ class T1082(AttackTechnique):
                               'name': {'$literal': 'SSH info'}},
                              {'used': {'$and': [{'$ifNull': ['$azure_info', False]}, {'$ne': ['$azure_info', []]}]},
                               'name': {'$literal': 'Azure info'}}
-                             ]}}]
+                             ]}},
+             {'$group': {'_id': {'machine': '$machine', 'collections': '$collections'}}},
+             {"$replaceRoot": {"newRoot": "$_id"}}]
 
     @staticmethod
     def get_report_data():
