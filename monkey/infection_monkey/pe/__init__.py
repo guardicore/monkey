@@ -14,3 +14,5 @@ class HostPrivExploiter(object):
         ControlClient.send_telemetry('pe', {'result': result, 'pe_name': self.__class__.__name__, 'ip': local_ip})
 
 from infection_monkey.pe.snapd import snapdExploiter
+from infection_monkey.pe.ptrace_scope import ptraceScopeExploiter
+from infection_monkey.pe.exim-CVE-2019-10149 import eximExploiter

