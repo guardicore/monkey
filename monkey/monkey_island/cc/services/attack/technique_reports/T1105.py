@@ -16,7 +16,9 @@ class T1105(AttackTechnique):
              {'$project': {'_id': 0,
                            'src': '$data.src',
                            'dst': '$data.dst',
-                           'filename': '$data.filename'}}]
+                           'filename': '$data.filename'}},
+             {'$group': {'_id': {'src': '$src', 'dst': '$dst', 'filename': '$filename'}}},
+             {"$replaceRoot": {"newRoot": "$_id"}}]
 
     @staticmethod
     def get_report_data():
