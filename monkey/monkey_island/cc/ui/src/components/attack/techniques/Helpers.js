@@ -20,7 +20,7 @@ export function renderMachineFromSystemData(data) {
     return machineStr + ")"
 }
 
-export const scanStatus = {
+export const ScanStatus = {
     UNSCANNED: 0,
     SCANNED: 1,
     USED: 2
