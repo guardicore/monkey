@@ -186,6 +186,22 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Adversaries may conduct C2 communications over a non-standard "
                                    "port to bypass proxies and firewalls that have been improperly configured."
+                },
+                "T1090": {
+                    "title": "T1090 Connection proxy",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "A connection proxy is used to direct network traffic between systems "
+                                   "or act as an intermediary for network communications."
+                },
+                "T1188": {
+                    "title": "T1188 Multi-hop proxy",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "To disguise the source of malicious traffic, "
+                                   "adversaries may chain together multiple proxies."
                 }
             }
         },
