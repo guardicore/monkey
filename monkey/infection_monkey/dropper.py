@@ -160,7 +160,7 @@ class MonkeyDrops(object):
             if pe.try_priv_esc(cmdline):
                 pe_exploited = True
                 local_ip = local_ips()
-                pe.send_pe_telemetry(True,str(local_ip))
+                pe.send_pe_telemetry(True, str(local_ip))
 
         if not pe_exploited:
             monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
