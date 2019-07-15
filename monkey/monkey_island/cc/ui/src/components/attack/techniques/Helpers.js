@@ -27,12 +27,12 @@ export function getUsageColumns() {
       columns: [
         {Header: 'Machine',
           id: 'machine',
-          accessor: x => renderMachineFromSystemData(x._id.machine),
+          accessor: x => renderMachineFromSystemData(x.machine),
           style: { 'whiteSpace': 'unset' },
           width: 300},
         {Header: 'Usage',
           id: 'usage',
-          accessor: x => x._id.usage,
+          accessor: x => x.usage,
           style: { 'whiteSpace': 'unset' }}]
     }])}
 
