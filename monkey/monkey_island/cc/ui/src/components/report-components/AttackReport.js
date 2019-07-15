@@ -22,6 +22,7 @@ import T1035 from "../attack/techniques/T1035";
 import T1129 from "../attack/techniques/T1129";
 import T1106 from "../attack/techniques/T1106";
 import T1188 from "../attack/techniques/T1188";
+import T1090 from "../attack/techniques/T1090";
 
 const tech_components = {
   'T1210': T1210,
@@ -39,7 +40,8 @@ const tech_components = {
   'T1129': T1129,
   'T1106': T1106,
   'T1107': T1107,
-  'T1188': T1188
+  'T1188': T1188,
+  'T1090': T1090
 };
 
 const classNames = require('classnames');
