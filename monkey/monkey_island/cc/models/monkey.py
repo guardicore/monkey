@@ -68,6 +68,10 @@ class Monkey(Document):
             os = "windows"
         return os
 
+    @staticmethod
+    def get_tunneled_monkeys():
+        return Monkey.objects(tunnel__exists=True)
+    
 
 class MonkeyNotFoundError(Exception):
     pass

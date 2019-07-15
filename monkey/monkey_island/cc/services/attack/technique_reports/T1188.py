@@ -1,5 +1,6 @@
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 from monkey_island.cc.models.monkey import Monkey
+from common.utils.attack_utils import ScanStatus
 
 __author__ = "VakarisZ"
 
@@ -11,29 +12,28 @@ class T1188(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey used multi-hop proxy."
 
-    query = [{'$match': {'telem_category': 'exploit',
-                         'data.info.executed_cmds': {'$exists': True, '$ne': []}}},
-             {'$unwind': '$data.info.executed_cmds'},
-             {'$sort': {'data.info.executed_cmds.powershell': 1}},
-             {'$project': {'_id': 0,
-                           'machine': '$data.machine',
-                           'info': '$data.info'}},
-             {'$group': {'_id': '$machine', 'data': {'$push': '$$ROOT'}}},
-             {'$project': {'_id': 0, 'data': {'$arrayElemAt': ['$data', 0]}}}]
-
     @staticmethod
     def get_report_data():
-        monkeys = T1188.get_tunneled_monkeys()
+        monkeys = Monkey.get_tunneled_monkeys()
+        hops = []
         for monkey in monkeys:
-            proxy_chain = 0
-            proxy = Monkey.objects(id=monkey.tunnel)
-            while proxy:
-                proxy_chain += 1
-                proxy = Monkey.objects(id=monkey.tunnel)
-
-        data = {'title': T1188.technique_title()}
+            proxy_count = 0
+            proxy = initial = monkey
+            while proxy.tunnel:
+                proxy_count += 1
+                proxy = proxy.tunnel
+            if proxy_count > 1:
+                hops.append({'from': T1188.get_network_info(initial),
+                             'to': T1188.get_network_info(proxy),
+                             'count': proxy_count})
+        if hops:
+            status = ScanStatus.USED.value
+        else:
+            status = ScanStatus.UNSCANNED.value
+        data = T1188.get_base_data_by_status(status)
+        data.update({'hops': hops})
         return data
 
     @staticmethod
-    def get_tunneled_monkeys():
-        return Monkey.objects(tunnel__exists=True)
+    def get_network_info(monkey):
+        return {'ips': monkey.ip_addresses, 'hostname': monkey.hostname}
