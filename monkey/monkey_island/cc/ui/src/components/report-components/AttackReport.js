@@ -158,7 +158,7 @@ class AttackReportPageComponent extends AuthComponent {
     return (
       <div>
         {this.renderLegend()}
-        <section className="app">{content}</section>
+        <section className="attack-report">{content}</section>
       </div>
     )
   }

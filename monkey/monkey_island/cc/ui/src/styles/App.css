@@ -525,6 +525,14 @@ body {
   margin-bottom: 30px;
 }
 
+.attack-matrix {
+  margin-bottom: 20px;
+}
+
+.attack-report .btn-collapse span:nth-of-type(2){
+  flex: 0;
+}
+
 .icon-info {
   color: #ade3eb !important;
 }

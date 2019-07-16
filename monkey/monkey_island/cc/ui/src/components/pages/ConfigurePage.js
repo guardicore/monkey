@@ -496,7 +496,7 @@ class ConfigurePageComponent extends AuthComponent {
     }
 
     return (
-      <Col xs={12} lg={8}>
+      <Col xs={12} lg={10}>
         {this.renderAttackAlertModal()}
         <h1 className="page-title">Monkey Configuration</h1>
         {this.renderNav()}
