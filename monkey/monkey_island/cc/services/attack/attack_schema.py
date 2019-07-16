@@ -205,5 +205,18 @@ SCHEMA = {
                 }
             }
         },
+        "exfiltration": {
+            "title": "Exfiltration",
+            "type": "object",
+            "properties": {
+                "T1041": {
+                    "title": "T1041 Exfiltration Over Command and Control Channel",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Data exfiltration is performed over the Command and Control channel."
+                }
+            }
+        }
     }
 }

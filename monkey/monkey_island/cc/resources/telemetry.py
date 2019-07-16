@@ -48,6 +48,7 @@ class Telemetry(flask_restful.Resource):
     def post(self):
         telemetry_json = json.loads(request.data)
         telemetry_json['timestamp'] = datetime.now()
+        telemetry_json['c2_channel'] = {'src': request.remote_addr, 'dst': request.host}
 
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
 
@@ -110,6 +111,7 @@ class Telemetry(flask_restful.Resource):
     @staticmethod
     def process_state_telemetry(telemetry_json):
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
+        NodeService.add_communication_info(monkey, telemetry_json['c2_channel'])
         if telemetry_json['data']['done']:
             NodeService.set_monkey_dead(monkey, True)
         else:

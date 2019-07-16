@@ -33,6 +33,7 @@ class Monkey(Document):
     pba_results = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
+    c2_info = EmbeddedDocumentField('C2Info')
 
     # LOGIC
     @staticmethod
