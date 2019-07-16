@@ -13,7 +13,5 @@ class T1129(UsageTechnique):
     @staticmethod
     def get_report_data():
         data = T1129.get_tech_base_data()
-        dlls = list(mongo.db.telemetry.aggregate(T1129.get_usage_query()))
-        dlls = list(map(T1129.parse_usages, dlls))
-        data.update({'dlls': dlls})
+        data.update({'dlls': T1129.get_usage_data()})
         return data

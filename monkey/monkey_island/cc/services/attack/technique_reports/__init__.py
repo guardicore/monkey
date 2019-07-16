@@ -135,6 +135,11 @@ class UsageTechnique(AttackTechnique):
         return usage
 
     @classmethod
+    def get_usage_data(cls):
+        data = list(mongo.db.telemetry.aggregate(cls.get_usage_query()))
+        return list(map(cls.parse_usages, data))
+
+    @classmethod
     def get_usage_query(cls):
         """
         :return: Query that parses attack telems for simple report component
