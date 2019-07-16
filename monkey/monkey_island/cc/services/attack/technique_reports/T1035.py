@@ -13,7 +13,5 @@ class T1035(UsageTechnique):
     @staticmethod
     def get_report_data():
         data = T1035.get_tech_base_data()
-        services = list(mongo.db.telemetry.aggregate(T1035.get_usage_query()))
-        services = list(map(T1035.parse_usages, services))
-        data.update({'services': services})
+        data.update({'services': T1035.get_usage_data()})
         return data
