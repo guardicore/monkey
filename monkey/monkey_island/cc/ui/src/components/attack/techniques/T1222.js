@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachineFromSystemData, scanStatus } from "./Helpers"
+import { renderMachine, scanStatus } from "./Helpers"
 
 
 class T1222 extends React.Component {
@@ -14,7 +14,7 @@ class T1222 extends React.Component {
     return ([{
       Header: "Permission modification commands",
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => renderMachineFromSystemData(x.machine), style: { 'whiteSpace': 'unset' }},
+        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine), style: { 'whiteSpace': 'unset' }},
         {Header: 'Command', id: 'command', accessor: x => x.command, style: { 'whiteSpace': 'unset' }},
         ]
     }])};

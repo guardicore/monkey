@@ -14,17 +14,7 @@ class T1222(AttackTechnique):
     query = [{'$match': {'telem_category': 'attack',
                          'data.technique': 'T1222',
                          'data.status': ScanStatus.USED.value}},
-             {'$lookup': {'from': 'monkey',
-                          'localField': 'monkey_guid',
-                          'foreignField': 'guid',
-                          'as': 'monkey'}},
-             {'$project': {'monkey': {'$arrayElemAt': ['$monkey', 0]},
-                           'status': '$data.status',
-                           'command': '$data.command'}},
-             {'$addFields': {'_id': 0,
-                             'machine': {'hostname': '$monkey.hostname', 'ips': '$monkey.ip_addresses'},
-                             'monkey': 0}},
-             {'$group': {'_id': {'machine': '$machine', 'status': '$status', 'command': '$command'}}},
+             {'$group': {'_id': {'machine': '$data.machine', 'status': '$data.status', 'command': '$data.command'}}},
              {"$replaceRoot": {"newRoot": "$_id"}}]
 
     @staticmethod
