@@ -182,6 +182,20 @@ SCHEMA = {
                 }
             }
         },
+        "collection": {
+            "title": "Collection",
+            "type": "object",
+            "properties": {
+                "T1005": {
+                    "title": "T1005 Data from local system",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Sensitive data can be collected from local system sources, such as the file system "
+                                   "or databases of information residing on the system prior to Exfiltration."
+                }
+            }
+        },
         "command_and_control": {
             "title": "Command and Control",
             "type": "object",
