@@ -36,6 +36,19 @@ export function getUsageColumns() {
           style: { 'whiteSpace': 'unset' }}]
     }])}
 
+/* Renders fields that contains 'used' boolean value and 'name' string value.
+'Used' value determines if 'name' value will be shown.
+ */
+export function renderCollections(info){
+    let output = [];
+    info.forEach(function(collection){
+      if(collection['used']){
+        output.push(<div key={collection['name']}>{collection['name']}</div>)
+      }
+    });
+    return (<div>{output}</div>);
+  }
+
 export const scanStatus = {
     UNSCANNED: 0,
     SCANNED: 1,
