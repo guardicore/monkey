@@ -1,0 +1,54 @@
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.attack.technique_reports import AttackTechnique
+from common.utils.attack_utils import ScanStatus
+from monkey_island.cc.services.attack.technique_reports.T1110 import T1110
+
+__author__ = "VakarisZ"
+
+
+class T1021(AttackTechnique):
+    tech_id = "T1021"
+    unscanned_msg = "Monkey didn't try to login to any remote services."
+    scanned_msg = "Monkey tried to login to remote services with valid credentials, but failed."
+    used_msg = "Monkey successfully logged into remote services on the network."
+
+    # Gets data about brute force attempts
+    query = [{'$match': {'telem_category': 'exploit',
+                         'data.attempts': {'$not': {'$size': 0}}}},
+             {'$project': {'_id': 0,
+                           'machine': '$data.machine',
+                           'info': '$data.info',
+                           'attempt_cnt': {'$size': '$data.attempts'},
+                           'attempts': {'$filter': {'input': '$data.attempts',
+                                                    'as': 'attempt',
+                                                    'cond': {'$and': [{'$eq': ['$$attempt.result', True]},
+                                                                      {'$or': [{'$ne': ['$$attempt.password', '']},
+                                                                               {'$ne': ['$$attempt.ssh_key', '']}]}]
+                                                             }
+                                                    }
+                                        }
+                           }
+              }]
+
+    scanned_query = {'telem_category': 'exploit',
+                     'data.attempts': {'$elemMatch': {'$or': [{'password': {'$ne': ''}},
+                                                              {'ssh_key': {'$ne': ''}}]}}}
+
+    @staticmethod
+    def get_report_data():
+        attempts = []
+        if mongo.db.telemetry.count_documents(T1021.scanned_query):
+            attempts = list(mongo.db.telemetry.aggregate(T1021.query))
+            if attempts:
+                status = ScanStatus.USED.value
+                for result in attempts:
+                    result['successful_creds'] = []
+                    for attempt in result['attempts']:
+                        result['successful_creds'].append(T1110.parse_creds(attempt))
+            else:
+                status = ScanStatus.SCANNED.value
+        else:
+            status = ScanStatus.UNSCANNED.value
+        data = T1021.get_base_data_by_status(status)
+        data.update({'services': attempts})
+        return data

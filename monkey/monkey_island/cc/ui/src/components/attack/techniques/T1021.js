@@ -1,0 +1,44 @@
+import React from 'react';
+import '../../../styles/Collapse.scss'
+import ReactTable from "react-table";
+import { renderMachine, scanStatus } from "./Helpers"
+
+
+class T1021 extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  static getServiceColumns() {
+    return ([{
+      columns: [
+        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
+          style: { 'whiteSpace': 'unset' }, width: 160},
+        {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: { 'whiteSpace': 'unset' }, width: 100},
+        {Header: 'Valid account used', id: 'credentials', accessor: x => this.renderCreds(x.successful_creds), style: { 'whiteSpace': 'unset' }},
+        ]
+    }])};
+
+  static renderCreds(creds) {
+    return <span>{creds.map(cred => <div key={cred}>{cred}</div>)}</span>
+  };
+
+  render() {
+    return (
+      <div>
+        <div>{this.props.data.message}</div>
+        <br/>
+        {this.props.data.status === scanStatus.USED ?
+          <ReactTable
+            columns={T1021.getServiceColumns()}
+            data={this.props.data.services}
+            showPagination={false}
+            defaultPageSize={this.props.data.services.length}
+          /> : ""}
+      </div>
+    );
+  }
+}
+
+export default T1021;
