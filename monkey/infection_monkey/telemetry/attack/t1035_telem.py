@@ -6,6 +6,6 @@ class T1035Telem(UsageTelem):
         """
         T1035 telemetry.
         :param status: ScanStatus of technique
-        :param usage: Usage string
+        :param usage: Enum name of UsageEnum
         """
         super(T1035Telem, self).__init__('T1035', status, usage)

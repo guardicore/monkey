@@ -4,8 +4,6 @@ import sys
 from abc import ABCMeta, abstractmethod
 
 from infection_monkey.config import WormConfiguration
-from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
-from common.utils.attack_utils import ScanStatus
 
 __author__ = 'itamar'
 
@@ -48,19 +46,14 @@ class WindowsSystemSingleton(_SystemSingleton):
         if not handle:
             LOG.error("Cannot acquire system singleton %r, unknown error %d",
                       self._mutex_name, last_error)
-            T1106Telem(ScanStatus.SCANNED, "WinAPI call to acquire system singleton "
-                                           "for monkey process wasn't successful.").send()
-
             return False
 
         if winerror.ERROR_ALREADY_EXISTS == last_error:
             LOG.debug("Cannot acquire system singleton %r, mutex already exist",
                       self._mutex_name)
-
             return False
 
         self._mutex_handle = handle
-        T1106Telem(ScanStatus.USED, "WinAPI was called to acquire system singleton for monkey's process.").send()
         LOG.debug("Global singleton mutex %r acquired",
                   self._mutex_name)
 
