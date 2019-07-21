@@ -5,7 +5,8 @@ import mongoengine
 from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, ReferenceField, \
     DateTimeField
 
-from monkey_island.cc.models.monkey_ttl import MonkeyTtl
+from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
+from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 
 
 class Monkey(Document):
@@ -43,6 +44,13 @@ class Monkey(Document):
             raise MonkeyNotFoundError("id: {0}".format(str(db_id)))
 
     @staticmethod
+    def get_single_monkey_by_guid(monkey_guid):
+        try:
+            return Monkey.objects(guid=monkey_guid)[0]
+        except IndexError:
+            raise MonkeyNotFoundError("guid: {0}".format(str(monkey_guid)))
+
+    @staticmethod
     def get_latest_modifytime():
         return Monkey.objects.order_by('-modifytime').first().modifytime
 
@@ -67,6 +75,9 @@ class Monkey(Document):
         elif self.description.lower().find("windows") != -1:
             os = "windows"
         return os
+
+    def renew_ttl(self, duration=DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS):
+        self.ttl_ref = create_monkey_ttl_document(duration)
 
 
 class MonkeyNotFoundError(Exception):
