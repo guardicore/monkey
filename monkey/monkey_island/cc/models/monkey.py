@@ -52,7 +52,9 @@ class Monkey(Document):
 
     @staticmethod
     def get_latest_modifytime():
-        return Monkey.objects.order_by('-modifytime').first().modifytime
+        if Monkey.objects.count() > 0:
+            return Monkey.objects.order_by('-modifytime').first().modifytime
+        return None
 
     def is_dead(self):
         monkey_is_dead = False
