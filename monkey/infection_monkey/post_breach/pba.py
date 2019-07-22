@@ -1,10 +1,11 @@
 import logging
 import subprocess
-import socket
-from infection_monkey.control import ControlClient
+
+from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils import is_windows_os
 from infection_monkey.config import WormConfiguration
+from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 
 
 LOG = logging.getLogger(__name__)
@@ -46,6 +47,8 @@ class PBA(object):
         """
         exec_funct = self._execute_default
         result = exec_funct()
+        if result[1] and isinstance(self.command, list) and len(self.command) > 1:
+            T1064Telem(ScanStatus.USED, "Scripts used to execute %s post breach action." % self.name).send()
         PostBreachTelem(self, result).send()
 
     def _execute_default(self):
