@@ -42,16 +42,16 @@ class Monkey(Document):
     @staticmethod
     def get_single_monkey_by_id(db_id):
         try:
-            return Monkey.objects(id=db_id)[0]
-        except IndexError:
-            raise MonkeyNotFoundError("id: {0}".format(str(db_id)))
+            return Monkey.objects.get(id=db_id)
+        except mongoengine.DoesNotExist as ex:
+            raise MonkeyNotFoundError("info: {0} | id: {1}".format(ex.message, str(db_id)))
 
     @staticmethod
     def get_single_monkey_by_guid(monkey_guid):
         try:
-            return Monkey.objects(guid=monkey_guid)[0]
-        except IndexError:
-            raise MonkeyNotFoundError("guid: {0}".format(str(monkey_guid)))
+            return Monkey.objects.get(guid=monkey_guid)
+        except mongoengine.DoesNotExist as ex:
+            raise MonkeyNotFoundError("info: {0} | guid: {1}".format(ex.message, str(monkey_guid)))
 
     @staticmethod
     def get_latest_modifytime():
