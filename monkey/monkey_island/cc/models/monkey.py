@@ -1,16 +1,12 @@
 """
 Define a Document Schema for the Monkey document.
 """
-import mongoengine
-import logging
 from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, ReferenceField, \
-    DateTimeField
+    DateTimeField, DynamicField, DoesNotExist
 
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
 from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 
-
-logger = logging.getLogger(__name__)
 
 class Monkey(Document):
     """
@@ -30,8 +26,11 @@ class Monkey(Document):
     ip_addresses = ListField(StringField())
     keepalive = DateTimeField()
     modifytime = DateTimeField()
-    # TODO change this to an embedded document as well - RN it's an unnamed tuple which is confusing.
-    parent = ListField(ListField(StringField()))
+    # TODO make "parent" an embedded document, so this can be removed and the schema explained (and validated) verbosly.
+    # This is a temporary fix, since mongoengine doesn't allow for lists of strings to be null
+    # (even with required=False of null=True).
+    # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904
+    parent = ListField(ListField(DynamicField()))
     config_error = BooleanField()
     critical_services = ListField(StringField())
     pba_results = ListField()
@@ -43,14 +42,14 @@ class Monkey(Document):
     def get_single_monkey_by_id(db_id):
         try:
             return Monkey.objects.get(id=db_id)
-        except mongoengine.DoesNotExist as ex:
+        except DoesNotExist as ex:
             raise MonkeyNotFoundError("info: {0} | id: {1}".format(ex.message, str(db_id)))
 
     @staticmethod
     def get_single_monkey_by_guid(monkey_guid):
         try:
             return Monkey.objects.get(guid=monkey_guid)
-        except mongoengine.DoesNotExist as ex:
+        except DoesNotExist as ex:
             raise MonkeyNotFoundError("info: {0} | guid: {1}".format(ex.message, str(monkey_guid)))
 
     @staticmethod
@@ -68,7 +67,7 @@ class Monkey(Document):
                 if MonkeyTtl.objects(id=self.ttl_ref.id).count() == 0:
                     # No TTLs - monkey has timed out. The monkey is MIA.
                     monkey_is_dead = True
-            except (mongoengine.DoesNotExist, AttributeError):
+            except (DoesNotExist, AttributeError):
                 # Trying to dereference unknown document - the monkey is MIA.
                 monkey_is_dead = True
         return monkey_is_dead
@@ -83,6 +82,7 @@ class Monkey(Document):
 
     def renew_ttl(self, duration=DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS):
         self.ttl_ref = create_monkey_ttl_document(duration)
+        self.save()
 
 
 class MonkeyNotFoundError(Exception):
