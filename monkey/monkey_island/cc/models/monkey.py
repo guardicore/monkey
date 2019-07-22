@@ -82,7 +82,6 @@ class Monkey(Document):
         return os
 
     def renew_ttl(self, duration=DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS):
-        logger.debug("Renewing TTL for monkey {0}".format(self.guid))
         self.ttl_ref = create_monkey_ttl_document(duration)
 
 
