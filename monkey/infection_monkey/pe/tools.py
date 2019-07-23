@@ -1,8 +1,12 @@
+'''
+Contains functions helpful for pe module
+'''
+
 import logging
 import platform
 import os
 from pwd import getpwuid
-__author__ = 'itamar'
+__author__ = 'D3fa1t'
 
 LOG = logging.getLogger(__name__)
 

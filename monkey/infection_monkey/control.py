@@ -1,4 +1,5 @@
 import os
+import ctypes
 import json
 import logging
 import platform
@@ -43,11 +44,11 @@ class ControlClient(object):
         if has_internet_access is None:
             has_internet_access = check_internet_access(WormConfiguration.internet_services)
 
-        euid = os.geteuid()
-        if euid == '0':
-            root = 'root'
-        else:
-            root = os.popen('whoami').read()[:-1]
+        try:
+            if os.getuid() == 0:  # won't throw an exception if it's linux
+                root = os.popen('whoami').read()[:-1]  # get the username
+        except AttributeError:
+            root = ctypes.windll.shell32.IsUserAnAdmin()
 
         monkey = {'guid': GUID,
                   'hostname': hostname,
