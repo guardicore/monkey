@@ -5,24 +5,15 @@ import dateutil.parser
 import flask_restful
 from flask import request
 
+from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.database import mongo
-from monkey_island.cc.models.monkey_ttl import MonkeyTtl
+from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
-
-MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 60 * 5
 
 __author__ = 'Barak'
 
 # TODO: separate logic from interface
-
-
-def create_monkey_ttl():
-    # The TTL data uses the new `models` module which depends on mongoengine.
-    current_ttl = MonkeyTtl.create_ttl_expire_in(MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
-    current_ttl.save()
-    ttlid = current_ttl.id
-    return ttlid
 
 
 class Monkey(flask_restful.Resource):
@@ -58,8 +49,8 @@ class Monkey(flask_restful.Resource):
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
 
-        ttlid = create_monkey_ttl()
-        update['$set']['ttl_ref'] = ttlid
+        ttl = create_monkey_ttl_document(DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
+        update['$set']['ttl_ref'] = ttl.id
 
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
@@ -120,7 +111,8 @@ class Monkey(flask_restful.Resource):
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             monkey_json.pop('tunnel')
 
-        monkey_json['ttl_ref'] = create_monkey_ttl()
+        ttl = create_monkey_ttl_document(DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
+        monkey_json['ttl_ref'] = ttl.id
 
         mongo.db.monkey.update({"guid": monkey_json["guid"]},
                                {"$set": monkey_json},
