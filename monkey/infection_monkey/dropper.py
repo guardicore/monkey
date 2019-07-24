@@ -14,8 +14,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
 from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX, MONKEY_ARG
 from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
-from infection_monkey.network.info import local_ips
-from infection_monkey.control import ControlClient
+from infection_monkey.pe.pe_handler import PrivilegeEscalation
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -45,35 +44,17 @@ class MonkeyDrops(object):
         arg_parser.add_argument('-l', '--location')
         self.monkey_args = args[1:]
         self.opts, _ = arg_parser.parse_known_args(args)
-        self.pe = []
-        self._default_server = None
-        self._default_server_port = None
+
         self._config = {'source_path': os.path.abspath(sys.argv[0]),
                         'destination_path': self.opts.location}
 
     def initialize(self):
         LOG.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
-        self._default_server = self.opts.server
-        try:
-            self._default_server_port = self._default_server.split(':')[1]
-        except KeyError:
-            self._default_server_port = ''
-
-        if self._default_server:
-            if self._default_server not in WormConfiguration.current_server:
-                LOG.debug("Added current server: %s" % self._default_server)
-                WormConfiguration.current_server = self._default_server
-            else:
-                LOG.debug("Default server: %s is already in command servers list" % self._default_server)
 
     def start(self):
         if self._config['destination_path'] is None:
             LOG.error("No destination path specified")
             return False
-
-        # we get the config file from the server
-        ControlClient.wakeup()
-        ControlClient.load_control_config()
 
         # we copy/move only in case path is different
         try:
@@ -85,7 +66,6 @@ class MonkeyDrops(object):
             os.remove(self._config['destination_path'])
 
         # first try to move the file
-
         if not file_moved and WormConfiguration.dropper_try_move_first:
             try:
                 shutil.move(self._config['source_path'],
@@ -132,8 +112,6 @@ class MonkeyDrops(object):
                 except:
                     LOG.warn("Cannot set reference date to destination file")
 
-        
-
         monkey_options =\
             build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
 
@@ -144,31 +122,22 @@ class MonkeyDrops(object):
             # In linux we have a more complex commandline. There's a general outer one, and the inner one which actually
             # runs the monkey
             inner_monkey_cmdline = MONKEY_CMDLINE_LINUX % {'monkey_filename': dest_path.split("/")[-1]} + monkey_options
-
             monkey_cmdline = GENERAL_CMDLINE_LINUX % {'monkey_directory': dest_path[0:dest_path.rfind("/")],
                                                       'monkey_commandline': inner_monkey_cmdline}
 
-        # Check if Privilege can be escalated by going through the pe modules in the configuration
-
-        LOG.info("Before going through the pe modules")
         pe_exploited = False
-        self.pe = [priv_esc_class() for priv_esc_class in WormConfiguration.pe_classes]
-        for pe in self.pe:
-            LOG.info("Found pe module !")
-            cmdline = dest_path + " " + MONKEY_ARG + " " + monkey_options
-
-            if pe.try_priv_esc(cmdline):
-                pe_exploited = True
-                local_ip = local_ips()
-                pe.send_pe_telemetry(True, str(local_ip))
+        cmdline = dest_path + " " + MONKEY_ARG + " " + monkey_options
+        privilege_escalation = PrivilegeEscalation(cmdline)
+        if privilege_escalation.execute():
+            pe_exploited = True
 
         if not pe_exploited:
             monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
-                                                      stdin=None, stdout=None, stderr=None,
-                                                      close_fds=True, creationflags=DETACHED_PROCESS)
+                                              stdin=None, stdout=None, stderr=None,
+                                              close_fds=True, creationflags=DETACHED_PROCESS)
 
-            LOG.info("Executed monkey process as a normal user with (PID=%d) with command line: %s",
-                             monkey_process.pid, monkey_cmdline)
+            LOG.info("Executed monkey process (PID=%d) with command line: %s",
+                     monkey_process.pid, monkey_cmdline)
 
             time.sleep(3)
             if monkey_process.poll() is not None:
@@ -176,7 +145,6 @@ class MonkeyDrops(object):
 
     def cleanup(self):
         try:
-            LOG.info("clean up called ! ")
             if (self._config['source_path'].lower() != self._config['destination_path'].lower()) and \
                     os.path.exists(self._config['source_path']) and \
                     WormConfiguration.dropper_try_move_first:
