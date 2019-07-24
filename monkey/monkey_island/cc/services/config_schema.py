@@ -181,19 +181,6 @@ SCHEMA = {
                     "attack_techniques": ["T1210"]
                 }
             ]
-        },
-        "pe_classes": {
-            "title": "Fingerprint class",
-            "type": "string",
-            "anyOf": [
-                {
-                    "type": "string",
-                    "enum": [
-                        "snapdExploiter"
-                    ],
-                    "title": "Snapd Privilege Escalation"
-                }
-            ]
         }
     },
     "properties": {
@@ -957,32 +944,6 @@ SCHEMA = {
                             "type": "integer",
                             "default": 1000,
                             "description": "Maximum time (in milliseconds) to wait for ping response"
-                        }
-                    }
-                }
-            }
-        },
-        "pe": {
-            "title": "Privilege Escalation",
-            "type": "object",
-            "properties": {
-                "general": {
-                    "title": "General",
-                    "type": "object",
-                    "properties": {
-                        "pe_classes": {
-                            "title": "Privilege Exploits",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "$ref": "#/definitions/pe_classes"
-                            },
-                            "default": [
-                                "snapdExploiter"
-                            ],
-                            "description":
-                                "Determines which privilege escalation exploits to use. " + WARNING_SIGN
-                                + " Note that using unsafe exploits may cause crashes of the exploited machine/service"
                         }
                     }
                 }
