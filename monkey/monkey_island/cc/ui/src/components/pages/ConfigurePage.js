@@ -20,7 +20,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.currentFormData = {};
     this.initialConfig = {};
     this.initialAttackConfig = {};
-    this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'pe', 'internal'];
+    this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
     this.uiSchemas = this.getUiSchemas();
     // set schema from server
     this.state = {
@@ -70,7 +70,6 @@ class ConfigurePageComponent extends AuthComponent {
       cnc: {},
       network: {},
       exploits: {},
-      pe: {},
       internal: {}
     })
   }
