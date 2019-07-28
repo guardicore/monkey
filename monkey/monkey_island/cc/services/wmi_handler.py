@@ -95,7 +95,7 @@ class WMIHandler(object):
             groups_entities_list = self.info_for_mongo[group_sid]['entities_list']
             child_sid = ''
 
-            if type(child_part) in (str, str):
+            if isinstance(child_part, str):
                 child_part = str(child_part)
                 name = None
                 domain_name = None

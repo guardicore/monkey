@@ -14,11 +14,6 @@ from requests import ConnectionError
 
 from common.network.network_range import CidrRange
 
-try:
-    int        # Python 2
-except NameError:
-    long = int  # Python 3
-
 
 # Timeout for monkey connections
 TIMEOUT = 15

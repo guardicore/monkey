@@ -1,5 +1,3 @@
-  # In python 2.7
-
 import os
 import os.path
 import sys

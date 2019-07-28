@@ -21,7 +21,7 @@ class MongoUtils:
         elif type(o) in (int, float, bool):
             return o
 
-        elif type(o) in (str, str):
+        elif isinstance(o, str):
             # mongo dosn't like unprintable chars, so we use repr :/
             return repr(o)
 
