@@ -1,10 +1,10 @@
 import uuid
 from time import sleep
 
-from monkey import Monkey
+from .monkey import Monkey
 from monkey_island.cc.models.monkey import MonkeyNotFoundError
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
-from monkey_ttl import MonkeyTtl
+from .monkey_ttl import MonkeyTtl
 
 
 class TestMonkey(IslandTestCase):
@@ -87,6 +87,6 @@ class TestMonkey(IslandTestCase):
         windows_monkey.save()
         unknown_monkey.save()
 
-        self.assertEquals(1, len(filter(lambda m: m.get_os() == "windows", Monkey.objects())))
-        self.assertEquals(1, len(filter(lambda m: m.get_os() == "linux", Monkey.objects())))
-        self.assertEquals(1, len(filter(lambda m: m.get_os() == "unknown", Monkey.objects())))
+        self.assertEqual(1, len([m for m in Monkey.objects() if m.get_os() == "windows"]))
+        self.assertEqual(1, len([m for m in Monkey.objects() if m.get_os() == "linux"]))
+        self.assertEqual(1, len([m for m in Monkey.objects() if m.get_os() == "unknown"]))

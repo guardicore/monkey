@@ -135,7 +135,7 @@ class InfectionMonkey(object):
         else:
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
-        for iteration_index in xrange(WormConfiguration.max_iterations):
+        for iteration_index in range(WormConfiguration.max_iterations):
             ControlClient.keepalive()
             ControlClient.load_control_config()
 

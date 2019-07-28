@@ -5,7 +5,7 @@ from monkey_island.cc.models import Monkey
 
 class IslandTestCase(unittest.TestCase):
     def fail_if_not_testing_env(self):
-        self.failIf(not env.testing, "Change server_config.json to testing environment.")
+        self.assertFalse(not env.testing, "Change server_config.json to testing environment.")
 
     @staticmethod
     def clean_monkey_db():

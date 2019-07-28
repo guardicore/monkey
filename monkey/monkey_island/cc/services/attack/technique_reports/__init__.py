@@ -6,9 +6,8 @@ from monkey_island.cc.services.attack.attack_config import AttackConfig
 from common.utils.code_utils import abstractstatic
 
 
-class AttackTechnique(object):
+class AttackTechnique(object, metaclass=abc.ABCMeta):
     """ Abstract class for ATT&CK report components """
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractproperty
     def unscanned_msg(self):

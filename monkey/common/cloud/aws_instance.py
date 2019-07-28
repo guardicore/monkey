@@ -1,6 +1,6 @@
 import json
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import logging
 
 
@@ -25,18 +25,18 @@ class AwsInstance(object):
         self.account_id = None
 
         try:
-            self.instance_id = urllib2.urlopen(
+            self.instance_id = urllib.request.urlopen(
                 AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2).read()
             self.region = self._parse_region(
-                urllib2.urlopen(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read())
-        except urllib2.URLError as e:
+                urllib.request.urlopen(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read())
+        except urllib.error.URLError as e:
             logger.warning("Failed init of AwsInstance while getting metadata: {}".format(e.message))
 
         try:
             self.account_id = self._extract_account_id(
-                urllib2.urlopen(
+                urllib.request.urlopen(
                     AWS_LATEST_METADATA_URI_PREFIX + 'dynamic/instance-identity/document', timeout=2).read())
-        except urllib2.URLError as e:
+        except urllib.error.URLError as e:
             logger.warning("Failed init of AwsInstance while getting dynamic instance data: {}".format(e.message))
 
     @staticmethod

@@ -41,7 +41,7 @@ class AttackReportService:
                 'name': REPORT_NAME
             }
 
-        for tech_id, value in AttackConfig.get_technique_values().items():
+        for tech_id, value in list(AttackConfig.get_technique_values().items()):
             if value:
                 try:
                     report['techniques'].update({tech_id: TECHNIQUES[tech_id].get_report_data()})

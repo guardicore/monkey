@@ -36,7 +36,7 @@ class SSHFinger(HostFinger):
     def get_host_fingerprint(self, host):
         assert isinstance(host, VictimHost)
 
-        for name, data in host.services.items():
+        for name, data in list(host.services.items()):
             banner = data.get('banner', '')
             if self._banner_regex.search(banner):
                 self._banner_match(name, host, banner)

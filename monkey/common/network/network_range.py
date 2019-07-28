@@ -12,9 +12,7 @@ __author__ = 'itamar'
 LOG = logging.getLogger(__name__)
 
 
-class NetworkRange(object):
-    __metaclass__ = ABCMeta
-
+class NetworkRange(object, metaclass=ABCMeta):
     def __init__(self, shuffle=True):
         self._shuffle = shuffle
 
@@ -119,7 +117,7 @@ class IpRange(NetworkRange):
         return self._lower_end_ip_num <= self._ip_to_number(ip_address) <= self._higher_end_ip_num
 
     def _get_range(self):
-        return range(self._lower_end_ip_num, self._higher_end_ip_num + 1)
+        return list(range(self._lower_end_ip_num, self._higher_end_ip_num + 1))
 
 
 class SingleIpRange(NetworkRange):

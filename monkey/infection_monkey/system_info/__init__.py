@@ -34,10 +34,10 @@ class SystemInfoCollector(object):
     def __init__(self):
         self.os = SystemInfoCollector.get_os()
         if OperatingSystem.Windows == self.os:
-            from windows_info_collector import WindowsInfoCollector
+            from .windows_info_collector import WindowsInfoCollector
             self.collector = WindowsInfoCollector()
         else:
-            from linux_info_collector import LinuxInfoCollector
+            from .linux_info_collector import LinuxInfoCollector
             self.collector = LinuxInfoCollector()
 
     def get_info(self):

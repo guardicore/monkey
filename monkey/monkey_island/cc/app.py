@@ -64,16 +64,16 @@ def normalize_obj(obj):
         obj['id'] = obj['_id']
         del obj['_id']
 
-    for key, value in obj.items():
-        if type(value) is bson.objectid.ObjectId:
+    for key, value in list(obj.items()):
+        if isinstance(value, bson.objectid.ObjectId):
             obj[key] = str(value)
-        if type(value) is datetime:
+        if isinstance(value, datetime):
             obj[key] = str(value)
-        if type(value) is dict:
+        if isinstance(value, dict):
             obj[key] = normalize_obj(value)
-        if type(value) is list:
+        if isinstance(value, list):
             for i in range(0, len(value)):
-                if type(value[i]) is dict:
+                if isinstance(value[i], dict):
                     value[i] = normalize_obj(value[i])
     return obj
 

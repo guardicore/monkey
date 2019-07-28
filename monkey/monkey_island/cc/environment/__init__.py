@@ -6,9 +6,7 @@ from Crypto.Hash import SHA3_512
 __author__ = 'itay.mizeretz'
 
 
-class Environment(object):
-    __metaclass__ = abc.ABCMeta
-
+class Environment(object, metaclass=abc.ABCMeta):
     _ISLAND_PORT = 5000
     _MONGO_DB_NAME = "monkeyisland"
     _MONGO_DB_HOST = "localhost"

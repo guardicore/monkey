@@ -10,9 +10,7 @@ __author__ = 'itamar'
 LOG = logging.getLogger(__name__)
 
 
-class _SystemSingleton(object):
-    __metaclass__ = ABCMeta
-
+class _SystemSingleton(object, metaclass=ABCMeta):
     @property
     @abstractmethod
     def locked(self):

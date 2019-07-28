@@ -12,8 +12,8 @@ class MongoUtils:
 
     @staticmethod
     def fix_obj_for_mongo(o):
-        if type(o) == dict:
-            return dict([(k, MongoUtils.fix_obj_for_mongo(v)) for k, v in o.iteritems()])
+        if isinstance(o, dict):
+            return dict([(k, MongoUtils.fix_obj_for_mongo(v)) for k, v in list(o.items())])
 
         elif type(o) in (list, tuple):
             return [MongoUtils.fix_obj_for_mongo(i) for i in o]
@@ -21,7 +21,7 @@ class MongoUtils:
         elif type(o) in (int, float, bool):
             return o
 
-        elif type(o) in (str, unicode):
+        elif type(o) in (str, str):
             # mongo dosn't like unprintable chars, so we use repr :/
             return repr(o)
 

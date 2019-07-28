@@ -217,7 +217,7 @@ class PTHReportService(object):
 
     @staticmethod
     def generate_map_nodes():
-        monkeys = filter(lambda m: m.get_os() == "windows", Monkey.objects())
+        monkeys = [m for m in Monkey.objects() if m.get_os() == "windows"]
 
         return [
             {

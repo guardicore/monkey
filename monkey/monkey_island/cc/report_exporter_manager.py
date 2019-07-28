@@ -14,9 +14,7 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class ReportExporterManager(object):
-    __metaclass__ = Singleton
-
+class ReportExporterManager(object, metaclass=Singleton):
     def __init__(self):
         self._exporters_set = set()
 

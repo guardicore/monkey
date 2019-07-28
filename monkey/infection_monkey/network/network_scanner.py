@@ -48,13 +48,13 @@ class NetworkScanner(object):
         subnets_to_scan = []
         if len(WormConfiguration.inaccessible_subnets) > 1:
             for subnet_str in WormConfiguration.inaccessible_subnets:
-                if NetworkScanner._is_any_ip_in_subnet([unicode(x) for x in self._ip_addresses], subnet_str):
+                if NetworkScanner._is_any_ip_in_subnet([str(x) for x in self._ip_addresses], subnet_str):
                     # If machine has IPs from 2 different subnets in the same group, there's no point checking the other
                     # subnet.
                     for other_subnet_str in WormConfiguration.inaccessible_subnets:
                         if other_subnet_str == subnet_str:
                             continue
-                        if not NetworkScanner._is_any_ip_in_subnet([unicode(x) for x in self._ip_addresses],
+                        if not NetworkScanner._is_any_ip_in_subnet([str(x) for x in self._ip_addresses],
                                                                    other_subnet_str):
                             subnets_to_scan.append(NetworkRange.get_range_obj(other_subnet_str))
                     break

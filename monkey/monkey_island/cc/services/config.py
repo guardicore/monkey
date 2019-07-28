@@ -10,7 +10,7 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.environment.environment import env
 from monkey_island.cc.utils import local_ip_addresses
-from config_schema import SCHEMA
+from .config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
 
@@ -203,11 +203,11 @@ class ConfigService:
             # Do it only for root.
             if instance != {}:
                 return
-            for property, subschema in properties.iteritems():
+            for property, subschema in properties.items():
                 main_dict = {}
-                for property2, subschema2 in subschema["properties"].iteritems():
+                for property2, subschema2 in subschema["properties"].items():
                     sub_dict = {}
-                    for property3, subschema3 in subschema2["properties"].iteritems():
+                    for property3, subschema3 in subschema2["properties"].items():
                         if "default" in subschema3:
                             sub_dict[property3] = subschema3["default"]
                     main_dict[property2] = sub_dict

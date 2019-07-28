@@ -5,12 +5,10 @@ from infection_monkey.control import ControlClient
 __author__ = 'itay.mizeretz'
 
 
-class BaseTelem(object):
+class BaseTelem(object, metaclass=abc.ABCMeta):
     """
     Abstract base class for telemetry.
     """
-
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self):
         pass

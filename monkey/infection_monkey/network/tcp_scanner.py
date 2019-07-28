@@ -1,4 +1,4 @@
-from itertools import izip_longest
+from itertools import zip_longest
 from random import shuffle
 
 import infection_monkey.config
@@ -34,7 +34,7 @@ class TcpScanner(HostScanner, HostFinger):
 
         ports, banners = check_tcp_ports(host.ip_addr, target_ports, self._config.tcp_scan_timeout / 1000.0,
                                          self._config.tcp_scan_get_banner)
-        for target_port, banner in izip_longest(ports, banners, fillvalue=None):
+        for target_port, banner in zip_longest(ports, banners, fillvalue=None):
             service = tcp_port_to_service(target_port)
             self.init_service(host.services, service, target_port)
             if banner:

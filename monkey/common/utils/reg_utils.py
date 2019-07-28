@@ -1,4 +1,4 @@
-import _winreg
+import winreg
 
 from common.utils.mongo_utils import MongoUtils
 
@@ -12,11 +12,11 @@ class RegUtils:
         pass
 
     @staticmethod
-    def get_reg_key(subkey_path, store=_winreg.HKEY_LOCAL_MACHINE):
-        key = _winreg.ConnectRegistry(None, store)
-        subkey = _winreg.OpenKey(key, subkey_path)
+    def get_reg_key(subkey_path, store=winreg.HKEY_LOCAL_MACHINE):
+        key = winreg.ConnectRegistry(None, store)
+        subkey = winreg.OpenKey(key, subkey_path)
 
-        d = dict([_winreg.EnumValue(subkey, i)[:2] for i in xrange(_winreg.QueryInfoKey(subkey)[0])])
+        d = dict([winreg.EnumValue(subkey, i)[:2] for i in range(winreg.QueryInfoKey(subkey)[0])])
         d = MongoUtils.fix_obj_for_mongo(d)
 
         subkey.Close()

@@ -59,7 +59,7 @@ class T1110(AttackTechnique):
                  'ntlm_hash': {'type': 'NTLM hash', 'output': T1110.censor_hash(attempt['ntlm_hash'], 20)},
                  'ssh_key': {'type': 'SSH key', 'output': attempt['ssh_key']},
                  'password': {'type': 'Plaintext password', 'output': T1110.censor_password(attempt['password'])}}
-        for key, cred in creds.items():
+        for key, cred in list(creds.items()):
             if attempt[key]:
                 return '%s ; %s : %s' % (username,
                                          cred['type'],

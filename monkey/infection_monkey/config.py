@@ -22,7 +22,7 @@ class Configuration(object):
         exploit_import = importlib.import_module('infection_monkey.exploit')
 
         unknown_items = []
-        for key, value in formatted_data.items():
+        for key, value in list(formatted_data.items()):
             if key.startswith('_'):
                 continue
             if key in ["name", "id", "current_server"]:

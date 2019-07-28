@@ -40,7 +40,7 @@ class TestPTHReportServiceGenerateMapNodes(IslandTestCase):
 
         map_nodes = PTHReportService.generate_map_nodes()
 
-        self.assertEquals(2, len(map_nodes))
+        self.assertEqual(2, len(map_nodes))
 
     def test_generate_map_nodes_parsing(self):
         self.fail_if_not_testing_env()
@@ -59,11 +59,11 @@ class TestPTHReportServiceGenerateMapNodes(IslandTestCase):
 
         map_nodes = PTHReportService.generate_map_nodes()
 
-        self.assertEquals(map_nodes[0]["id"], monkey_id)
-        self.assertEquals(map_nodes[0]["label"], "A_Windows_PC_1 : 1.1.1.1")
-        self.assertEquals(map_nodes[0]["group"], "critical")
-        self.assertEquals(len(map_nodes[0]["services"]), 2)
-        self.assertEquals(map_nodes[0]["hostname"], hostname)
+        self.assertEqual(map_nodes[0]["id"], monkey_id)
+        self.assertEqual(map_nodes[0]["label"], "A_Windows_PC_1 : 1.1.1.1")
+        self.assertEqual(map_nodes[0]["group"], "critical")
+        self.assertEqual(len(map_nodes[0]["services"]), 2)
+        self.assertEqual(map_nodes[0]["hostname"], hostname)
 
 
 
