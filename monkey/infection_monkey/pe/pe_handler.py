@@ -4,13 +4,12 @@ import importlib
 from infection_monkey.pe.actions import get_pe_files
 from infection_monkey.network.info import local_ips
 
-
-
 LOG = logging.getLogger(__name__)
 
 __author__ = 'D3fa1t'
 
 PATH_TO_ACTIONS = "infection_monkey.pe.actions."
+
 
 class PrivilegeEscalation(object):
     """
@@ -27,7 +26,7 @@ class PrivilegeEscalation(object):
         for pe in self.pe_list:
             if pe().try_priv_esc(self.command_line):
                 local_ip = local_ips()
-                pe.send_pe_telemetry(True, str(local_ip))
+                pe().send_pe_telemetry(True, str(local_ip))
                 return True
         return False
 

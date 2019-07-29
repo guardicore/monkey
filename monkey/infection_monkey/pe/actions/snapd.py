@@ -11,9 +11,9 @@ import socket
 import random
 import subprocess
 from logging import getLogger
-from infection_monkey.pe import HostPrivExploiter
+from infection_monkey.pe.actions import HostPrivExploiter
 from infection_monkey.model import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
-from infection_monkey.pe.tools import check_if_sudoer, shell, check_system, check_running
+from infection_monkey.pe.actions.tools import check_if_sudoer, shell, check_system, check_running
 
 LOG = getLogger(__name__)
 
@@ -236,7 +236,6 @@ class SnapdExploiter(HostPrivExploiter):
         self.file_name = ""
         self.runnableDistro = ("ubuntu", "linux")
 
-    @staticmethod
     def try_priv_esc(self, command_line):
         """
         The function takes in the command line to run the monkey as an argument
@@ -257,7 +256,6 @@ class SnapdExploiter(HostPrivExploiter):
         # Error reading off shell
         if not whoami:
             return False
-        LOG.info("Adding the current user %s to the sudoers list", whoami)
 
         # we create a temp file in /tmp as root to verify command exec as root
         alphabet = string.ascii_lowercase
