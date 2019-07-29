@@ -13,9 +13,11 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
+SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list"]
+HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
+
 
 class Configuration(object):
-
     def from_kv(self, formatted_data):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
@@ -54,9 +56,9 @@ class Configuration(object):
         return result
 
     @staticmethod
-    def filter_sensitive_info(config_dict):
-        config_dict["exploit_password_list"] = ["~REDACTED~"]
-        config_dict["exploit_user_list"] = ["~REDACTED~"]
+    def hide_sensitive_info(config_dict):
+        for field in SENSITIVE_FIELDS:
+            config_dict[field] = HIDDEN_FIELD_REPLACEMENT_CONTENT
         return config_dict
 
     def as_dict(self):
@@ -180,7 +182,7 @@ class Configuration(object):
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
-                  8008, # HTTP alternate
+                  8008,  # HTTP alternate
                   7001  # Oracle Weblogic default server port
                   ]
     tcp_target_ports = [22,
