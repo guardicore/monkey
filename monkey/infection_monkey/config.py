@@ -1,3 +1,4 @@
+import hashlib
 import os
 import json
 import sys
@@ -279,6 +280,18 @@ class Configuration(object):
     custom_PBA_windows_cmd = ""
     PBA_linux_filename = None
     PBA_windows_filename = None
+
+    @staticmethod
+    def hash_sensitive_data(sensitive_data):
+        """
+        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data plain-text, as the log is
+        saved on client machines plain-text.
+
+        :param sensitive_data: the data to hash.
+        :return: the hashed data.
+        """
+        password_hashed = hashlib.sha512(sensitive_data).hexdigest()
+        return password_hashed
 
 
 WormConfiguration = Configuration()
