@@ -68,7 +68,7 @@ def main():
     else:
         print("Config file wasn't supplied and default path: %s wasn't found, using internal default" % (config_file,))
 
-    print("Loaded Configuration: %r" % WormConfiguration.as_dict())
+    print("Loaded Configuration: %r" % WormConfiguration.filter_sensitive_info(WormConfiguration.as_dict()))
 
     # Make sure we're not in a machine that has the kill file
     kill_path = os.path.expandvars(

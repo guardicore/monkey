@@ -53,6 +53,12 @@ class Configuration(object):
         result = self.from_kv(formatted_data)
         return result
 
+    @staticmethod
+    def filter_sensitive_info(config_dict):
+        config_dict["exploit_password_list"] = ["~REDACTED~"]
+        config_dict["exploit_user_list"] = ["~REDACTED~"]
+        return config_dict
+
     def as_dict(self):
         result = {}
         for key in dir(Configuration):
