@@ -4,6 +4,7 @@ import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import '../../styles/Collapse.scss';
 import AuthComponent from '../AuthComponent';
+import {ScanStatus} from "../attack/techniques/Helpers";
 import Collapse from '@kunukn/react-collapse';
 import T1210 from '../attack/techniques/T1210';
 import T1197 from '../attack/techniques/T1197';
@@ -14,6 +15,7 @@ import T1059 from "../attack/techniques/T1059";
 import T1086 from "../attack/techniques/T1086";
 import T1082 from "../attack/techniques/T1082";
 import T1145 from "../attack/techniques/T1145";
+import T1107 from "../attack/techniques/T1107";
 import T1065 from "../attack/techniques/T1065";
 
 const tech_components = {
@@ -26,6 +28,7 @@ const tech_components = {
   'T1086': T1086,
   'T1082': T1082,
   'T1145': T1145,
+  'T1107': T1107,
   'T1065': T1065
 };
 
@@ -77,9 +80,9 @@ class AttackReportPageComponent extends AuthComponent {
 
   getComponentClass(tech_id){
     switch (this.state.report[tech_id].status) {
-      case 'SCANNED':
+      case ScanStatus.SCANNED:
         return 'collapse-info';
-      case 'USED':
+      case ScanStatus.USED:
         return 'collapse-danger';
       default:
         return 'collapse-default';

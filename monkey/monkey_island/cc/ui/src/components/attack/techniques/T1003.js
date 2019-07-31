@@ -2,6 +2,7 @@ import React from 'react';
 import '../../../styles/Collapse.scss'
 import '../../report-components/StolenPasswords'
 import StolenPasswordsComponent from "../../report-components/StolenPasswords";
+import {ScanStatus} from "./Helpers"
 
 
 class T1003 extends React.Component {
@@ -15,7 +16,7 @@ class T1003 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {this.props.data.status === 'USED' ?
+        {this.props.data.status === ScanStatus.USED ?
           <StolenPasswordsComponent data={this.props.reportData.glance.stolen_creds.concat(this.props.reportData.glance.ssh_keys)}/>
           : ""}
       </div>
