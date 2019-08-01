@@ -373,8 +373,13 @@ class ReportService:
 
     @staticmethod
     def get_exploits():
+        query = [{'$match': {'telem_category': 'exploit', 'data.result': True}},
+                 {'$group': {'_id': {'ip_address': '$data.machine.ip_addr'},
+                             'data': {'$first': '$$ROOT'},
+                             }},
+                 {"$replaceRoot": {"newRoot": "$data"}}]
         exploits = []
-        for exploit in mongo.db.telemetry.find({'telem_category': 'exploit', 'data.result': True}):
+        for exploit in mongo.db.telemetry.aggregate(query):
             new_exploit = ReportService.process_exploit(exploit)
             if new_exploit not in exploits:
                 exploits.append(new_exploit)

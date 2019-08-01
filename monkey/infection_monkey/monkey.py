@@ -179,8 +179,11 @@ class InfectionMonkey(object):
                 if monkey_tunnel:
                     monkey_tunnel.set_tunnel_for_host(machine)
                 if self._default_server:
-                    machine.set_default_server(get_interface_to_target(machine.ip_addr) +
-                                               (':'+self._default_server_port if self._default_server_port else ''))
+                    if self._network.on_island(self._default_server):
+                        machine.set_default_server(get_interface_to_target(machine.ip_addr) +
+                                                   (':'+self._default_server_port if self._default_server_port else ''))
+                    else:
+                        machine.set_default_server(self._default_server)
                     LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
 
                 # Order exploits according to their type
@@ -252,6 +255,7 @@ class InfectionMonkey(object):
         if WormConfiguration.self_delete_in_cleanup \
                 and -1 == sys.executable.find('python'):
             try:
+                status = None
                 if "win32" == sys.platform:
                     from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
                     startupinfo = subprocess.STARTUPINFO()
@@ -262,10 +266,12 @@ class InfectionMonkey(object):
                                      close_fds=True, startupinfo=startupinfo)
                 else:
                     os.remove(sys.executable)
-                    T1107Telem(ScanStatus.USED, sys.executable).send()
+                    status = ScanStatus.USED
             except Exception as exc:
                 LOG.error("Exception in self delete: %s", exc)
-                T1107Telem(ScanStatus.SCANNED, sys.executable).send()
+                status = ScanStatus.SCANNED
+            if status:
+                T1107Telem(status, sys.executable).send()
 
     def send_log(self):
         monkey_log_path = utils.get_monkey_log_path()
