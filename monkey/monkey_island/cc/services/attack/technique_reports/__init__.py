@@ -67,21 +67,21 @@ class AttackTechnique(object):
     def get_message_and_status(cls, status):
         """
         Returns a dict with attack technique's message and status.
-        :param status: Enum type value from common/attack_utils.py
+        :param status: Enum from common/attack_utils.py integer value
         :return: Dict with message and status
         """
-        return {'message': cls.get_message_by_status(status), 'status': status.value}
+        return {'message': cls.get_message_by_status(status), 'status': status}
 
     @classmethod
     def get_message_by_status(cls, status):
         """
         Picks a message to return based on status.
-        :param status: Enum type value from common/attack_utils.py
+        :param status: Enum from common/attack_utils.py integer value
         :return: message string
         """
-        if status == ScanStatus.UNSCANNED:
+        if status == ScanStatus.UNSCANNED.value:
             return cls.unscanned_msg
-        elif status == ScanStatus.SCANNED:
+        elif status == ScanStatus.SCANNED.value:
             return cls.scanned_msg
         else:
             return cls.used_msg

@@ -14,7 +14,7 @@ SCHEMA = {
                         "SmbExploiter"
                     ],
                     "title": "SMB Exploiter",
-                    "attack_techniques": ["T1110", "T1075"]
+                    "attack_techniques": ["T1110", "T1075", "T1035"]
                 },
                 {
                     "type": "string",
