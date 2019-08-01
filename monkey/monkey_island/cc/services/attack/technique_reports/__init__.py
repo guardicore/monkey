@@ -124,8 +124,8 @@ class UsageTechnique(AttackTechnique):
     def parse_usages(usage):
         """
         Parses data from database and translates usage enums into strings
-        :param usage:
-        :return:
+        :param usage: Usage telemetry that contains fields: {'usage': 'SMB', 'status': 1}
+        :return: usage string
         """
         try:
             usage['usage'] = UsageEnum[usage['usage']].value[usage['status']]
