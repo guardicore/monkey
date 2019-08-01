@@ -32,6 +32,7 @@ class Monkey(Document):
     critical_services = ListField(StringField())
     pba_results = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
+    tunnel = ReferenceField("self")
 
     # LOGIC
     @staticmethod
