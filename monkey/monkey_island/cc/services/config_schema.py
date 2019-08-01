@@ -389,7 +389,7 @@ SCHEMA = {
                         "self_delete_in_cleanup": {
                             "title": "Self delete on cleanup",
                             "type": "boolean",
-                            "default": False,
+                            "default": True,
                             "description": "Should the monkey delete its executable when going down"
                         },
                         "use_file_logging": {

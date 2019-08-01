@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachineFromSystemData, scanStatus } from "./Helpers"
+import { renderMachineFromSystemData, ScanStatus } from "./Helpers"
 
 
 class T1107 extends React.Component {
@@ -11,7 +11,7 @@ class T1107 extends React.Component {
   }
 
   static renderDelete(status){
-    if(status === scanStatus.USED){
+    if(status === ScanStatus.USED){
       return <span>Yes</span>
     } else {
       return <span>No</span>
