@@ -1,7 +1,7 @@
 import flask_restful
 
 from monkey_island.cc.auth import jwt_required
-from monkey_island.cc.services.report import ReportService
+from monkey_island.cc.services.reporting.report import ReportService
 
 __author__ = "itay.mizeretz"
 

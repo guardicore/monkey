@@ -1,7 +1,7 @@
 import uuid
 
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.pth_report import PTHReportService
+from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 

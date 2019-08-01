@@ -16,7 +16,7 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.utils import local_ip_addresses, get_subnets
-from pth_report import PTHReportService
+from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from common.network.network_range import NetworkRange
 
 __author__ = "itay.mizeretz"
