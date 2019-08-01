@@ -12,7 +12,7 @@ class T1105 extends React.Component {
 
   static getFilesColumns() {
     return ([{
-      Header: 'Files copied.',
+      Header: 'Files copied',
       columns: [
         {Header: 'Src. Machine', id: 'srcMachine', accessor: x => x.src, style: { 'whiteSpace': 'unset'}, width: 170 },
         {Header: 'Dst. Machine', id: 'dstMachine', accessor: x => x.dst, style: { 'whiteSpace': 'unset'}, width: 170},
