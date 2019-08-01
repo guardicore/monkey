@@ -47,7 +47,6 @@ class MimikatzCollector(object):
             collect_proto = ctypes.WINFUNCTYPE(ctypes.c_int)
             get_proto = ctypes.WINFUNCTYPE(MimikatzCollector.LogonData)
             get_text_output_proto = ctypes.WINFUNCTYPE(ctypes.c_wchar_p)
-            T1106Telem(ScanStatus.USED, "WinAPI was called to load mimikatz.").send()
             self._collect = collect_proto(("collect", self._dll))
             self._get = get_proto(("get", self._dll))
             self._get_text_output_proto = get_text_output_proto(("getTextOutput", self._dll))
@@ -57,7 +56,7 @@ class MimikatzCollector(object):
             LOG.exception("Error initializing mimikatz collector")
             status = ScanStatus.SCANNED
         T1129Telem(status, UsageEnum.MIMIKATZ).send()
-        T1106Telem(ScanStatus.SCANNED, "Monkey tried to call WinAPI to load mimikatz.").send()
+        T1106Telem(status, UsageEnum.MIMIKATZ_FILE_COPY).send()
 
     def get_logon_info(self):
         """
