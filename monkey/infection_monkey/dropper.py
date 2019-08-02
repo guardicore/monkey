@@ -14,6 +14,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
 from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX, MONKEY_ARG
 from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
+from infection_monkey.control import ControlClient
 from infection_monkey.pe.pe_handler import PrivilegeEscalation
 
 if "win32" == sys.platform:
@@ -44,18 +45,31 @@ class MonkeyDrops(object):
         arg_parser.add_argument('-l', '--location')
         self.monkey_args = args[1:]
         self.opts, _ = arg_parser.parse_known_args(args)
-
+        self._default_server = None
+        self._default_server_port = None
         self._config = {'source_path': os.path.abspath(sys.argv[0]),
                         'destination_path': self.opts.location}
 
     def initialize(self):
         LOG.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
+        self._default_server = self.opts.server
+        try:
+            self._default_server_port = self._default_server.split(':')[1]
+        except KeyError:
+            self._default_server_port = ''
+
+        if self._default_server:
+            if self._default_server not in WormConfiguration.current_server:
+                LOG.debug("Added current server: %s" % self._default_server)
+                WormConfiguration.current_server = self._default_server
+            else:
+                LOG.debug("Default server: %s is already in command servers list" % self._default_server)
 
     def start(self):
         if self._config['destination_path'] is None:
             LOG.error("No destination path specified")
             return False
-
+        ControlClient.wakeup()
         # we copy/move only in case path is different
         try:
             file_moved = filecmp.cmp(self._config['source_path'], self._config['destination_path'])

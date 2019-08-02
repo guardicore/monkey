@@ -44,11 +44,15 @@ class ControlClient(object):
         if has_internet_access is None:
             has_internet_access = check_internet_access(WormConfiguration.internet_services)
 
+        root = "root"
         try:
-            if os.getuid() == 0:  # won't throw an exception if it's linux
+            if os.getuid():  # won't throw an exception if it's linux
                 root = os.popen('whoami').read()[:-1]  # get the username
         except AttributeError:
-            root = ctypes.windll.shell32.IsUserAnAdmin()
+            if ctypes.windll.shell32.IsUserAnAdmin():
+                root = "Admin"
+            else:
+                root = "NotAdmin"
 
         monkey = {'guid': GUID,
                   'hostname': hostname,
