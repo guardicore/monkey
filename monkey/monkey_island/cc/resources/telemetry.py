@@ -15,9 +15,9 @@ from monkey_island.cc.services.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.services.wmi_handler import WMIHandler
+from monkey_island.cc.models.monkey import Monkey
 
 __author__ = 'Barak'
-
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +49,9 @@ class Telemetry(flask_restful.Resource):
         telemetry_json = json.loads(request.data)
         telemetry_json['timestamp'] = datetime.now()
 
+        # Monkey communicated, so it's alive. Update the TTL.
+        Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid']).renew_ttl()
+
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
 
         try:
@@ -59,7 +62,7 @@ class Telemetry(flask_restful.Resource):
             else:
                 logger.info('Got unknown type of telemetry: %s' % telem_category)
         except Exception as ex:
-            logger.error("Exception caught while processing telemetry", exc_info=True)
+            logger.error("Exception caught while processing telemetry. Info: {}".format(ex.message), exc_info=True)
 
         telem_id = mongo.db.telemetry.insert(telemetry_json)
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
@@ -188,7 +191,7 @@ class Telemetry(flask_restful.Resource):
             Telemetry.add_system_info_creds_to_config(creds)
             Telemetry.replace_user_dot_with_comma(creds)
         if 'mimikatz' in telemetry_json['data']:
-            users_secrets = mimikatz_utils.MimikatzSecrets.\
+            users_secrets = mimikatz_utils.MimikatzSecrets. \
                 extract_secrets_from_mimikatz(telemetry_json['data'].get('mimikatz', ''))
         if 'wmi' in telemetry_json['data']:
             wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
