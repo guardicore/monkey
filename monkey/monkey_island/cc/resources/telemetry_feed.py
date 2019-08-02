@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 import dateutil
@@ -8,6 +9,8 @@ import flask_pymongo
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.node import NodeService
+
+logger = logging.getLogger(__name__)
 
 __author__ = 'itay.mizeretz'
 
@@ -23,11 +26,15 @@ class TelemetryFeed(flask_restful.Resource):
 
         telemetries = telemetries.sort([('timestamp', flask_pymongo.ASCENDING)])
 
-        return \
-            {
-                'telemetries': [TelemetryFeed.get_displayed_telemetry(telem) for telem in telemetries],
-                'timestamp': datetime.now().isoformat()
-            }
+        try:
+            return \
+                {
+                    'telemetries': [TelemetryFeed.get_displayed_telemetry(telem) for telem in telemetries],
+                    'timestamp': datetime.now().isoformat()
+                }
+        except KeyError as err:
+            logger.error("Failed parsing telemetries. Error: {0}.".format(err.message))
+            return {'telemetries': [], 'timestamp': datetime.now().isoformat()}
 
     @staticmethod
     def get_displayed_telemetry(telem):

@@ -6,6 +6,6 @@ class T1129Telem(UsageTelem):
         """
         T1129 telemetry.
         :param status: ScanStatus of technique
-        :param usage: Enum name of UsageEnum
+        :param usage: Enum of UsageEnum type
         """
         super(T1129Telem, self).__init__("T1129", status, usage)
