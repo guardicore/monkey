@@ -12,7 +12,6 @@ class T1090 extends React.Component {
 
   static getProxyColumns() {
     return ([{
-      Header: "Proxies were used to communicate with:",
       columns: [
         {Header: 'Machines',
           id: 'machine',
@@ -26,12 +25,15 @@ class T1090 extends React.Component {
         <div>{this.props.data.message}</div>
         <br/>
         {this.props.data.status === scanStatus.USED ?
-          <ReactTable
-              columns={T1090.getProxyColumns()}
-              data={this.props.data.proxies}
-              showPagination={false}
-              defaultPageSize={this.props.data.proxies.length}
-          /> : ""}
+          <div>
+            <p>Proxies were used to communicate with:</p>
+            <ReactTable
+                columns={T1090.getProxyColumns()}
+                data={this.props.data.proxies}
+                showPagination={false}
+                defaultPageSize={this.props.data.proxies.length}
+            />
+          </div>: ""}
       </div>
     );
   }

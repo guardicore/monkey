@@ -9,11 +9,11 @@ from monkey_ttl import MonkeyTtl
 
 class TestMonkey(IslandTestCase):
     """
-    Make sure to set server environment to `testing` in server.json! Otherwise this will mess up your mongo instance and
+    Make sure to set server environment to `testing` in server_config.json! Otherwise this will mess up your mongo instance and
     won't work.
 
     Also, the working directory needs to be the working directory from which you usually run the island so the
-    server.json file is found and loaded.
+    server_config.json file is found and loaded.
     """
 
     def test_is_dead(self):
@@ -77,3 +77,25 @@ class TestMonkey(IslandTestCase):
         self.assertEquals(1, len(filter(lambda m: m.get_os() == "windows", Monkey.objects())))
         self.assertEquals(1, len(filter(lambda m: m.get_os() == "linux", Monkey.objects())))
         self.assertEquals(1, len(filter(lambda m: m.get_os() == "unknown", Monkey.objects())))
+
+    def test_get_tunneled_monkeys(self):
+        self.fail_if_not_testing_env()
+        self.clean_monkey_db()
+
+        linux_monkey = Monkey(guid=str(uuid.uuid4()),
+                              description="Linux shay-Virtual-Machine")
+        windows_monkey = Monkey(guid=str(uuid.uuid4()),
+                                description="Windows bla bla bla",
+                                tunneling=linux_monkey)
+        unknown_monkey = Monkey(guid=str(uuid.uuid4()),
+                                description="bla bla bla",
+                                tunneling=windows_monkey)
+        linux_monkey.save()
+        windows_monkey.save()
+        unknown_monkey.save()
+        tunneled_monkeys = Monkey.get_tunneled_monkeys()
+        test = bool(windows_monkey in tunneled_monkeys
+                    and unknown_monkey in tunneled_monkeys
+                    and linux_monkey not in tunneled_monkeys
+                    and len(tunneled_monkeys) == 2)
+        self.assertTrue(test, "Tunneling test")

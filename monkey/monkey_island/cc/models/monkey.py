@@ -68,18 +68,16 @@ class Monkey(Document):
             os = "windows"
         return os
 
+    def get_network_info(self):
+        """
+        Formats network info from monkey's model
+        :return: dictionary with an array of IP's and a hostname
+        """
+        return {'ips': self.ip_addresses, 'hostname': self.hostname}
+
     @staticmethod
     def get_tunneled_monkeys():
         return Monkey.objects(tunnel__exists=True)
-
-    @staticmethod
-    def get_network_info(monkey):
-        """
-        Formats network info from monkey's model
-        :param monkey: monkey model
-        :return: dictionary with an array of IP's and a hostname
-        """
-        return {'ips': monkey.ip_addresses, 'hostname': monkey.hostname}
 
 
 class MonkeyNotFoundError(Exception):
