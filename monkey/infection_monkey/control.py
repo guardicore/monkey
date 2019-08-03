@@ -44,15 +44,13 @@ class ControlClient(object):
         if has_internet_access is None:
             has_internet_access = check_internet_access(WormConfiguration.internet_services)
 
-        root = "root"
+        user = "Unknown standard user"
         try:
             if os.getuid():  # won't throw an exception if it's linux
-                root = os.popen('whoami').read()[:-1]  # get the username
+                user = os.popen('whoami').read()[:-1]  # get the username
         except AttributeError:
             if ctypes.windll.shell32.IsUserAnAdmin():
-                root = "Admin"
-            else:
-                root = "NotAdmin"
+                user = "Admin"
 
         monkey = {'guid': GUID,
                   'hostname': hostname,
@@ -61,7 +59,7 @@ class ControlClient(object):
                   'internet_access': has_internet_access,
                   'config': WormConfiguration.as_dict(),
                   'parent': parent,
-                  'root': root}
+                  'root': user}
 
         if ControlClient.proxies:
             monkey['tunnel'] = ControlClient.proxies.get('https')

@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from os.path import dirname, basename, isfile, join, realpath
+from os.path import dirname, basename, isfile, join
 import glob
 
 __author__ = 'D3fa1t'
@@ -9,7 +9,7 @@ class HostPrivExploiter(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def try_priv_esc(self, commad):
+    def try_priv_esc(self, command):
         raise NotImplementedError()
 
     def send_pe_telemetry(self, result, local_ip):

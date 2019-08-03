@@ -66,3 +66,8 @@ def check_running(pname):
     if shell(PGREP %{'process_name': pname}):
         return True
     return False
+
+# Commands needed for PE
+
+REMOVE_LASTLINE = "sudo sed -i '$ d' %(file_name)s"
+ADDUSER_TO_SUDOERS = "echo '%(user_name)s ALL = NOPASSWD: ALL' | sudo tee -a /etc/sudoers"
