@@ -22,7 +22,7 @@ SCHEMA = {
                         "WmiExploiter"
                     ],
                     "title": "WMI Exploiter",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": ["T1110", "T1106"]
                 },
                 {
                     "type": "string",
@@ -54,7 +54,7 @@ SCHEMA = {
                         "SSHExploiter"
                     ],
                     "title": "SSH Exploiter",
-                    "attack_techniques": ["T1110", "T1145"]
+                    "attack_techniques": ["T1110", "T1145", "T1106"]
                 },
                 {
                     "type": "string",

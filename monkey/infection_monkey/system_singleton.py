@@ -46,17 +46,14 @@ class WindowsSystemSingleton(_SystemSingleton):
         if not handle:
             LOG.error("Cannot acquire system singleton %r, unknown error %d",
                       self._mutex_name, last_error)
-
             return False
 
         if winerror.ERROR_ALREADY_EXISTS == last_error:
             LOG.debug("Cannot acquire system singleton %r, mutex already exist",
                       self._mutex_name)
-
             return False
 
         self._mutex_handle = handle
-
         LOG.debug("Global singleton mutex %r acquired",
                   self._mutex_name)
 

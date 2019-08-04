@@ -14,6 +14,8 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
 from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
 from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
+from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
+from common.utils.attack_utils import ScanStatus, UsageEnum
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -156,5 +158,6 @@ class MonkeyDrops(object):
                     else:
                         LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
                                   self._config['source_path'])
+                        T1106Telem(ScanStatus.USED, UsageEnum.DROPPER.name).send()
         except AttributeError:
             LOG.error("Invalid configuration options. Failing")

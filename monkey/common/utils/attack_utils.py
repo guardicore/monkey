@@ -15,6 +15,9 @@ class UsageEnum(Enum):
            ScanStatus.SCANNED.value: "SMB exploiter failed to run the monkey by creating a service via MS-SCMR."}
     MIMIKATZ = {ScanStatus.USED.value: "Windows module loader was used to load Mimikatz DLL.",
                 ScanStatus.SCANNED.value: "Monkey tried to load Mimikatz DLL, but failed."}
+    MIMIKATZ_WINAPI = {ScanStatus.USED.value: "WinAPI was called to load mimikatz.",
+                       ScanStatus.SCANNED.value: "Monkey tried to call WinAPI to load mimikatz."}
+    DROPPER = {ScanStatus.USED.value: "WinAPI was used to mark monkey files for deletion on next boot."}
 
 
 # Dict that describes what BITS job was used for
