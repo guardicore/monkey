@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Col} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
-import ReportHeader, { ReportTypes } from "../report-components/ReportHeader";
+import ReportHeader, { ReportTypes } from "../report-components/common/ReportHeader";
 import ZeroTrustReportPillarGrades from "../report-components/zerotrust/ZeroTrustReportPillarGrades";
 
 class ZeroTrustReportPageComponent extends AuthComponent {

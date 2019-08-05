@@ -12,7 +12,7 @@ import AuthComponent from '../AuthComponent';
 import PassTheHashMapPageComponent from "./PassTheHashMapPage";
 import StrongUsers from "components/report-components/StrongUsers";
 import AttackReport from "components/report-components/AttackReport";
-import ReportHeader, { ReportTypes } from "../report-components/ReportHeader";
+import ReportHeader, { ReportTypes } from "../report-components/common/ReportHeader";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 

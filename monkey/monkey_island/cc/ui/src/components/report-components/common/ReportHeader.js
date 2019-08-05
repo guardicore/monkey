@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Col} from "react-bootstrap";
 
-let monkeyLogoImage = require('../../images/monkey-icon.svg');
+let monkeyLogoImage = require('../../../images/monkey-icon.svg');
 
 export const ReportTypes = {
   zeroTrust: "Zero Trust",
