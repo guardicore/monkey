@@ -3,6 +3,7 @@ import {Button, Col} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, { ReportTypes } from "../report-components/common/ReportHeader";
 import ZeroTrustReportPillarGrades from "../report-components/zerotrust/ZeroTrustReportPillarGrades";
+import ZeroTrustReportFindingsTable from "../report-components/zerotrust/ZeroTrustReportFindingsTable";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -43,7 +44,10 @@ class ZeroTrustReportPageComponent extends AuthComponent {
       content = "Still empty";
     } else {
       content = <div>
+        <h2>Pillars Overview</h2>
         <ZeroTrustReportPillarGrades findings={this.state.report.findings} />
+        <h2>Findings</h2>
+        <ZeroTrustReportFindingsTable findings={this.state.report.findings} />
       </div>;
     }
 
@@ -59,6 +63,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           <ReportHeader report_type={ReportTypes.zeroTrust}/>
           <hr/>
           {content}
+          <hr/>
           THIS IS THE RAW SERVER DATA
           <pre id="json-report">
             {JSON.stringify(this.state.report, undefined, 2)}

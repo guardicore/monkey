@@ -23,9 +23,6 @@ export class ZeroTrustReportPillarGrades extends Component {
 
     return (
       <div id="pillar-grades">
-        <h2>
-          Pillars Overview
-        </h2>
         <p>
           TODO: table with conditional colouring.
         </p>
