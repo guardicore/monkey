@@ -1,16 +1,25 @@
 import React, {Component} from "react";
 import ReactTable from "react-table";
+import ZeroTrustPillars from "./ZeroTrustPillars";
+
+class PillarLabel extends Component {
+  render() {
+    return <span className="label label-primary" style={{margin: '2px'}}>{this.props.pillar}</span>
+  }
+}
 
 const columns = [
   {
     Header: 'Findings',
     columns: [
-      { Header: 'Test', accessor: 'test'},
+      { Header: 'Test', accessor: 'test',
+        style: {'white-space': 'unset'}  // This enables word wrap
+      },
       { Header: 'Pillars', id: "pillars",
         accessor: x => {
           const pillars = x.pillars;
           const listItems = pillars.map((pillar) =>
-            <li key={pillar}><span className="label label-warning" style={{margin: '2px'}}>{pillar}</span></li>
+            <li key={pillar}><PillarLabel pillar={pillar}/></li>
           );
           return <ul>{listItems}</ul>
         }
