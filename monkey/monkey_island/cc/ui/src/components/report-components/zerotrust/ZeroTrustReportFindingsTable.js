@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import ReactTable from "react-table";
-import ZeroTrustPillars from "./ZeroTrustPillars";
 
 class PillarLabel extends Component {
   render() {

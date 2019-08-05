@@ -25,6 +25,7 @@ class Report(flask_restful.Resource):
                 "findings": [
                     {
                         "test": "Monkey 8 found a machine with no AV software active.",
+                        "conclusive": False,
                         "pillars": ["Devices"],
                         "events": [
                             {
@@ -37,6 +38,7 @@ class Report(flask_restful.Resource):
                     },
                     {
                         "test": "Monkey 6 successfully exploited machine XXX with shellshock.",
+                        "conclusive": True,
                         "pillars": ["Devices", "Networks"],
                         "events": [
                             {
