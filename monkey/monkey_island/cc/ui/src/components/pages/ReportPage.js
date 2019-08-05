@@ -12,9 +12,10 @@ import AuthComponent from '../AuthComponent';
 import PassTheHashMapPageComponent from "./PassTheHashMapPage";
 import StrongUsers from "components/report-components/StrongUsers";
 import AttackReport from "components/report-components/AttackReport";
+import ReportHeader, { ReportTypes } from "../report-components/ReportHeader";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
-let monkeyLogoImage = require('../../images/monkey-icon.svg');
+
 
 class ReportPageComponent extends AuthComponent {
 
@@ -130,13 +131,16 @@ class ReportPageComponent extends AuthComponent {
   generateReportContent() {
     return (
       <div>
+        {
+          // extract to print component.
+        }
         <div className="text-center no-print" style={{marginBottom: '20px'}}>
           <Button bsSize="large" onClick={() => {
             print();
           }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
         </div>
         <div className="report-page">
-          {this.generateReportHeader()}
+          <ReportHeader report_type={ReportTypes.security}/>
           <hr/>
           {this.generateReportOverviewSection()}
           {this.generateReportFindingsSection()}
@@ -150,26 +154,6 @@ class ReportPageComponent extends AuthComponent {
             print();
           }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
         </div>
-      </div>
-    );
-  }
-
-  generateReportHeader() {
-    return (
-      <div id="header" className="row justify-content-between">
-        <Col xs={8}>
-          <div>
-            <h1 style={{marginTop: '0px', marginBottom: '5px', color: '#666666', fontFamily: 'Alegreya'}}>Security Report</h1>
-            <h1 style={{marginTop: '0px', marginBottom: '0px', color: '#ffcc00', fontFamily: 'Alegreya'}}>Infection <b>Monkey</b></h1>
-          </div>
-        </Col>
-        <Col xs={4}>
-          <img src={monkeyLogoImage}
-               style={{
-                 float: 'right',
-                 width: '80px'
-               }}/>
-        </Col>
       </div>
     );
   }
