@@ -10,7 +10,7 @@ ZERO_TRUST_REPORT_TYPE = "zero_trust"
 GENERAL_REPORT_TYPE = "general"
 REPORT_TYPES = [GENERAL_REPORT_TYPE, ZERO_TRUST_REPORT_TYPE]
 
-__author__ = "itay.mizeretz"
+__author__ = ["itay.mizeretz", "shay.nehmad"]
 
 
 class Report(flask_restful.Resource):
@@ -30,9 +30,11 @@ class Report(flask_restful.Resource):
                         "events": [
                             {
                                 "timestamp": "2019-08-01 14:48:46.112000",
+                                "title": "Monkey perform an action",
                                 "message": "log1"
                             }, {
                                 "timestamp": "2019-08-01 14:48:42.112000",
+                                "title": "Analysis",
                                 "message": "log2"
                             }]
                     },
@@ -43,6 +45,7 @@ class Report(flask_restful.Resource):
                         "events": [
                             {
                                 "timestamp": "2019-08-01 14:48:46.112000",
+                                "title": "Analysis",
                                 "message": "log3"
                             }]
                     }

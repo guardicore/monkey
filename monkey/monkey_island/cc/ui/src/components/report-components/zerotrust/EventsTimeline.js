@@ -8,7 +8,13 @@ export class EventsTimeline extends Component {
         <Timeline>
           {
             this.props["events"].map(event => (
-              <TimelineEvent key={event.timestamp} createdAt={event.timestamp} title={event.message}>{event.message}</TimelineEvent>
+              <TimelineEvent
+                key={event.timestamp}
+                createdAt={event.timestamp}
+                title={event.title}
+                icon={<i className="fa fa-circle icon-info" />}>
+                  {event.message}
+              </TimelineEvent>
             ))
           }
         </Timeline>
