@@ -1,38 +1,10 @@
 import React, {Component} from "react";
 import ReactTable from "react-table";
-import {Button, Modal} from "react-bootstrap";
+import {Button} from "react-bootstrap";
+import {EventsModal} from "./EventsModal";
 
-class PillarLabel extends Component {
-  render() {
-    return <span className="label label-primary" style={{margin: '2px'}}>{this.props.pillar}</span>
-  }
-}
-
-class EventsModal extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div>
-        <Modal show={this.props.showEvents} onHide={() => this.props.hideCallback()}>
-          <Modal.Body>
-            <h2><div className="text-center">Events</div></h2>
-
-            <pre>{JSON.stringify(this.props.events)}</pre>
-
-            <div className="text-center">
-              <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
-                      onClick={() => this.props.hideCallback()}>
-                Close
-              </button>
-            </div>
-          </Modal.Body>
-        </Modal>
-      </div>
-    );
-  }
+function PillarLabel(props) {
+  return <span className="label label-primary" style={{margin: '2px'}}>{props.pillar}</span>
 }
 
 
@@ -86,7 +58,7 @@ const columns = [
       },
       { Header: 'Events', id:"events",
         accessor: x => {
-          return <EventsAndButtonComponent events={x}/>;
+          return <EventsAndButtonComponent events={x.events}/>;
         }
       }
     ]

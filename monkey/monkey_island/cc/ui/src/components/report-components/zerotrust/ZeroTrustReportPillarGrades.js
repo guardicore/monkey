@@ -14,7 +14,6 @@ export class ZeroTrustReportPillarGrades extends Component {
 
     if (this.props.findings !== null) {
       for (const finding of this.props.findings) {
-        console.log("finding: " + JSON.stringify(finding));
         if (typeof finding === 'object' && finding !== null) {
           if (finding.hasOwnProperty("pillars") && finding.hasOwnProperty("conclusive")) {
             for (const pillar of finding["pillars"]) {

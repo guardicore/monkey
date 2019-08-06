@@ -38,8 +38,6 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   generateReportContent() {
     let content;
 
-    console.log(this.state.report.findings);
-
     if (typeof this.state.report.findings === "undefined") {
       content = "Still empty";
     } else {
