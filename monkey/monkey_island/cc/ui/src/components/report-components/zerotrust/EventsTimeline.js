@@ -1,6 +1,12 @@
 import React, {Component} from "react";
 import {Timeline, TimelineEvent} from "react-event-timeline";
 
+const eventTypeToIcon = {
+  "MonkeyAction": "fa fa-exclamation-circle fa-2x icon-warning",
+  "IslandAction": "fa fa-server fa-2x icon-info",
+  null: "fa fa-question-circle fa-2x icon-info",
+};
+
 export class EventsTimeline extends Component {
   render() {
     return (
@@ -12,7 +18,7 @@ export class EventsTimeline extends Component {
                 key={event.timestamp}
                 createdAt={event.timestamp}
                 title={event.title}
-                icon={<i className="fa fa-circle icon-info" />}>
+                icon={<i className={eventTypeToIcon[event.type]} />}>
                   {event.message}
               </TimelineEvent>
             ))

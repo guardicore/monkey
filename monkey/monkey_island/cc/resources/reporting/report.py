@@ -30,11 +30,13 @@ class Report(flask_restful.Resource):
                         "events": [
                             {
                                 "timestamp": "2019-08-01 14:48:46.112000",
-                                "title": "Monkey perform an action",
+                                "title": "Monkey performed an action",
+                                "type": "MonkeyAction",
                                 "message": "log1"
                             }, {
                                 "timestamp": "2019-08-01 14:48:42.112000",
                                 "title": "Analysis",
+                                "type": "IslandAction",
                                 "message": "log2"
                             }]
                     },
@@ -46,6 +48,7 @@ class Report(flask_restful.Resource):
                             {
                                 "timestamp": "2019-08-01 14:48:46.112000",
                                 "title": "Analysis",
+                                "type": "MonkeyAction",
                                 "message": "log3"
                             }]
                     }
