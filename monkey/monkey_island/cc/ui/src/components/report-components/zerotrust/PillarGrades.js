@@ -1,8 +1,7 @@
 import React, {Component} from "react";
 import ZeroTrustPillars from "./ZeroTrustPillars";
-import ZeroTrustReportFindingsTable from "./ZeroTrustReportFindingsTable";
 
-export class ZeroTrustReportPillarGrades extends Component {
+export class PillarGrades extends Component {
   render() {
     let pillarsCounters = {};
     for(const pillar in ZeroTrustPillars) {
@@ -41,4 +40,4 @@ export class ZeroTrustReportPillarGrades extends Component {
   }
 }
 
-export default ZeroTrustReportPillarGrades;
+export default PillarGrades;

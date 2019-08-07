@@ -2,8 +2,8 @@ import React from 'react';
 import {Button, Col} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, { ReportTypes } from "../report-components/common/ReportHeader";
-import ZeroTrustReportPillarGrades from "../report-components/zerotrust/ZeroTrustReportPillarGrades";
-import ZeroTrustReportFindingsTable from "../report-components/zerotrust/ZeroTrustReportFindingsTable";
+import PillarGrades from "../report-components/zerotrust/PillarGrades";
+import FindingsTable from "../report-components/zerotrust/FindingsTable";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -43,9 +43,9 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     } else {
       content = <div>
         <h2>Pillars Overview</h2>
-        <ZeroTrustReportPillarGrades findings={this.state.report.findings} />
+        <PillarGrades findings={this.state.report.findings} />
         <h2>Findings</h2>
-        <ZeroTrustReportFindingsTable findings={this.state.report.findings} />
+        <FindingsTable findings={this.state.report.findings} />
       </div>;
     }
 

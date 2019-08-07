@@ -67,7 +67,7 @@ const columns = [
 
 const pageSize = 10;
 
-class ZeroTrustReportFindingsTable extends Component {
+class FindingsTable extends Component {
   render() {
     let defaultPageSize = this.props.findings.length > pageSize ? pageSize : this.props.findings.length;
     let showPagination = this.props.findings.length > pageSize;
@@ -86,4 +86,4 @@ class ZeroTrustReportFindingsTable extends Component {
 }
 
 
-export default ZeroTrustReportFindingsTable;
+export default FindingsTable;
