@@ -1,10 +1,10 @@
 import React from 'react';
 import {Button, Col} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
-import ReportHeader, { ReportTypes } from "../report-components/common/ReportHeader";
+import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
 import PillarGrades from "../report-components/zerotrust/PillarGrades";
 import FindingsTable from "../report-components/zerotrust/FindingsTable";
-import RecommendationsStatusTable from "../report-components/zerotrust/RecommendationsStatus";
+import {SinglePillarRecommendationsStatus} from "../report-components/zerotrust/SinglePillarRecommendationsStatus";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -40,13 +40,29 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     if (this.stillLoadingDataFromServer()) {
       content = "Still empty";
     } else {
-      content = <div>
+      const pillarsSection = <div>
         <h2>Pillars Overview</h2>
-        <PillarGrades pillars={this.state.pillars} />
-        <h2>Recommendations Status</h2>
-        <RecommendationsStatusTable recommendationsStatus={this.state.recommendations} />
-        <h2>Findings</h2>
-        <FindingsTable findings={this.state.findings} />
+        <PillarGrades pillars={this.state.pillars}/>
+      </div>;
+
+      const recommendationsSection = <div><h2>Recommendations Status</h2>
+        {
+          this.state.recommendations.map((recommendation) =>
+            <SinglePillarRecommendationsStatus
+              key={recommendation.pillar}
+              pillar={recommendation.pillar}
+              recommendationStatus={recommendation.recommendationStatus}/>
+          )
+        }
+      </div>;
+
+      const findingSection = <div><h2>Findings</h2>
+        <FindingsTable findings={this.state.findings}/></div>;
+
+      content = <div>
+        {pillarsSection}
+        {recommendationsSection}
+        {findingSection}
       </div>;
     }
 

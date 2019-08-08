@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import PagenatedTable from "../common/PagenatedTable";
+import AuthComponent from "../../AuthComponent";
 
 const columns = [
   {
@@ -29,7 +30,7 @@ const columns = [
   }
 ];
 
-class TestsStatus extends Component {
+class TestsStatus extends AuthComponent {
   render() {
     return (
       <pre>{JSON.stringify(this.props.tests,null,2)}</pre>
@@ -37,9 +38,9 @@ class TestsStatus extends Component {
   }
 }
 
-export class RecommendationsStatusTable extends Component {
+export class RecommendationsStatusTable extends AuthComponent {
   render() {
-    return <PagenatedTable data={this.props.recommendationsStatus} columns={columns} pageSize={5}/>;
+    return <PagenatedTable data={this.props.recommendationStatus} columns={columns} pageSize={5}/>;
   }
 }
 

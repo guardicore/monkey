@@ -69,7 +69,7 @@ def get_all_findings():
 
 
 def get_recommendations_status():
-    return [
+    network_recomms = [
         {
             "Recommendation": "Do network segmentation.",
             "Status": "Positive",
@@ -82,16 +82,6 @@ def get_recommendations_status():
                     "Test": "Test A for segmentation",
                     "Status": "Positive"
                 },
-            ]
-        },
-        {
-            "Recommendation": "Install AV software.",
-            "Status": "Unexecuted",
-            "Tests": [
-                {
-                    "Test": "Search for active AV software processes",
-                    "Status": "Unexecuted"
-                }
             ]
         },
         {
@@ -121,6 +111,51 @@ def get_recommendations_status():
                     "Status": "Unexecuted"
                 }
             ]
+        },
+    ]
+
+    device_recomms = [
+        {
+            "Recommendation": "Install AV software.",
+            "Status": "Unexecuted",
+            "Tests": [
+                {
+                    "Test": "Search for active AV software processes",
+                    "Status": "Unexecuted"
+                }
+            ]
+        },
+    ]
+
+    data_recommns = [
+        {
+            "Recommendation": "Data at trasnit should be...",
+            "Status": "Conclusive",
+            "Tests": [
+                {
+                    "Test": "Scan HTTP.",
+                    "Status": "Conclusive"
+                },
+                {
+                    "Test": "Scan elastic.",
+                    "Status": "Unexecuted"
+                }
+            ]
+        },
+    ]
+
+    return [
+        {
+            "pillar": "Networks",
+            "recommendationStatus": network_recomms
+        },
+        {
+            "pillar": "Data",
+            "recommendationStatus": data_recommns
+        },
+        {
+            "pillar": "Devices",
+            "recommendationStatus": device_recomms
         },
     ]
 
