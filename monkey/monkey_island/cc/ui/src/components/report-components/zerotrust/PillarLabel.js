@@ -15,7 +15,17 @@ export class PillarLabel extends Component {
       "Automation & Orchestration": "label-zt-automation",
     };
 
+    const pillarToIcon = {
+      "Data": "fa fa-database",
+      "People": "fa fa-user",
+      "Networks": "fa fa-tty",
+      "Workloads": "fa fa-cloud",
+      "Devices": "fa fa-laptop",
+      "Visibility & Analytics": "fa fa-eye-slash",
+      "Automation & Orchestration": "fa fa-cogs",
+    };
+
     const className = "label " + pillarToColor[this.props.pillar];
-    return <span className={className} style={{margin: '2px'}}>{this.props.pillar}</span>
+    return <span className={className} style={{margin: '2px'}}><i className={pillarToIcon[this.props.pillar]}/> {this.props.pillar}</span>
   }
 }
