@@ -1,18 +1,38 @@
 import React, {Component} from "react";
-import ZeroTrustPillars from "./ZeroTrustPillars";
+import ReactTable from "react-table";
 
-export class PillarGrades extends Component {
+const columns = [
+  {
+    Header: 'Pillar Grading',
+    columns: [
+      { Header: 'Pillar', accessor: 'Pillar'},
+      { Header: 'Conclusive', accessor: 'Conclusive'},
+      { Header: 'Inconclusive', accessor: 'Inconclusive'},
+      { Header: 'Unexecuted', accessor: 'Unexecuted'},
+    ]
+  }
+];
+
+const pageSize = 10;
+
+class PillarGrades extends Component {
   render() {
-    return (
-      <div id="pillar-grades">
-        <p>
-          TODO: table with conditional colouring.
-        </p>
-        <pre>
-          {JSON.stringify(this.props.pillars, undefined, 2)}
-        </pre>
-      </div>
-    )
+    if (this.props.pillars.length > 0) {
+      let defaultPageSize = this.props.pillars.length > pageSize ? pageSize : this.props.pillars.length;
+      let showPagination = this.props.pillars.length > pageSize;
+
+      return (
+        <div>
+          <ReactTable
+            columns={columns}
+            data={this.props.pillars}
+            showPagination={showPagination}
+            defaultPageSize={defaultPageSize}
+          />
+        </div>
+      );
+    }
+    else { return (<div><pre>BAYAZ</pre></div>);}
   }
 }
 

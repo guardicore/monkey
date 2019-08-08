@@ -35,7 +35,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   generateReportContent() {
     let content;
 
-    if (typeof this.state.findings === "undefined") {
+    if (this.stillLoadingDataFromServer()) {
       content = "Still empty";
     } else {
       content = <div>
@@ -74,6 +74,10 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         </div>
       </div>
     )
+  }
+
+  stillLoadingDataFromServer() {
+    return typeof this.state.findings === "undefined" || typeof this.state.pillars === "undefined" || typeof this.state.tests === "undefined";
   }
 
   print() {
