@@ -12,7 +12,7 @@ REPORT_TYPES = [GENERAL_REPORT_TYPE, ZERO_TRUST_REPORT_TYPE]
 
 REPORT_DATA_PILLARS = "pillars"
 REPORT_DATA_FINDINGS = "findings"
-REPORT_DATA_TEST_STATUS = "tests"
+REPORT_DATA_RECOMMENDATION_STATUS = "recommendations"
 
 __author__ = ["itay.mizeretz", "shay.nehmad"]
 
@@ -28,8 +28,8 @@ class Report(flask_restful.Resource):
                 return jsonify(get_all_findings())
             elif report_data == REPORT_DATA_PILLARS:
                 return jsonify(get_pillars_grades())
-            elif report_data == REPORT_DATA_TEST_STATUS:
-                return jsonify(get_tests_status())
+            elif report_data == REPORT_DATA_RECOMMENDATION_STATUS:
+                return jsonify(get_recommendations_status())
 
         flask_restful.abort(httplib.NOT_FOUND)
 
@@ -68,18 +68,59 @@ def get_all_findings():
         ]
 
 
-def get_tests_status():
+def get_recommendations_status():
     return [
         {
-            "Test": "Segmentation",
-            "Conclusive": 6,
-            "Inconclusive": 6,
-            "Positive": 6,
-            "Unexecuted": False  # There were results meaning the test was executed.
+            "Recommendation": "Do network segmentation.",
+            "Status": "Positive",
+            "Tests": [
+                {
+                    "Test": "Test B for segmentation",
+                    "Status": "Positive"
+                },
+                {
+                    "Test": "Test A for segmentation",
+                    "Status": "Positive"
+                },
+            ]
         },
         {
-            "Exploit": "network",
-            "Unexecuted": True  # There were no results since the test wasn't executed.
+            "Recommendation": "Install AV software.",
+            "Status": "Unexecuted",
+            "Tests": [
+                {
+                    "Test": "Search for active AV software processes",
+                    "Status": "Unexecuted"
+                }
+            ]
+        },
+        {
+            "Recommendation": "Analyze malicious network traffic.",
+            "Status": "Inconclusive",
+            "Tests": [
+                {
+                    "Test": "Use exploits.",
+                    "Status": "Inconclusive"
+                },
+                {
+                    "Test": "Bruteforce passwords.",
+                    "Status": "Inconclusive"
+                }
+            ]
+        },
+        {
+            "Recommendation": "Data at trasnit should be...",
+            "Status": "Conclusive",
+            "Tests": [
+                {
+                    "Test": "Scan HTTP.",
+                    "Status": "Conclusive"
+                },
+                {
+                    "Test": "Scan elastic.",
+                    "Status": "Unexecuted"
+                }
+            ]
         },
     ]
 
