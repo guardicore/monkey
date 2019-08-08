@@ -1,9 +1,9 @@
 import React, {Component} from "react";
-import ReactTable from "react-table";
 import {Button} from "react-bootstrap";
 import {EventsModal} from "./EventsModal";
 import FileSaver from "file-saver";
 import {PillarLabel} from "./PillarLabel";
+import PagenatedTable from "../common/PagenatedTable";
 
 
 class EventsAndButtonComponent extends Component {
@@ -51,7 +51,7 @@ const columns = [
   {
     Header: 'Findings',
     columns: [
-      { Header: 'Test', accessor: 'test',
+      { Header: 'Finding', accessor: 'test',
         style: {'whiteSpace': 'unset'}  // This enables word wrap
       },
       { Header: 'Pillars', id: "pillars",
@@ -72,26 +72,11 @@ const columns = [
   }
 ];
 
-const pageSize = 10;
-
 class FindingsTable extends Component {
   render() {
-    if (this.props.findings.length > 0) {
-      let defaultPageSize = this.props.findings.length > pageSize ? pageSize : this.props.findings.length;
-      let showPagination = this.props.findings.length > pageSize;
-
-      return (
-        <div>
-          <ReactTable
-            columns={columns}
-            data={this.props.findings}
-            showPagination={showPagination}
-            defaultPageSize={defaultPageSize}
-          />
-        </div>
-      );
-    }
-    else { return (<div><pre>BAYAZ</pre></div>);}
+    return (
+      <PagenatedTable data={this.props.findings} pageSize={10} columns={columns}/>
+    );
   }
 }
 
