@@ -18,6 +18,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
   render() {
     let res;
+    // Todo move to componentDidMount
     this.getZeroTrustReportFromServer(res);
 
     const content = this.generateReportContent();

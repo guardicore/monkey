@@ -3,10 +3,7 @@ import ReactTable from "react-table";
 import {Button} from "react-bootstrap";
 import {EventsModal} from "./EventsModal";
 import FileSaver from "file-saver";
-
-function PillarLabel(props) {
-  return <span className="label label-primary" style={{margin: '2px'}}>{props.pillar}</span>
-}
+import {PillarLabel} from "./PillarLabel";
 
 
 class EventsAndButtonComponent extends Component {

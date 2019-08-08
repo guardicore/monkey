@@ -87,49 +87,49 @@ def get_tests_status():
 def get_pillars_grades():
     return [
                 {
-                    "Pillar": "data",
+                    "Pillar": "Data",
                     "Conclusive": 6,
                     "Inconclusive": 6,
                     "Positive": 6,
                     "Unexecuted": 6
                 },
                 {
-                    "Pillar": "network",
+                    "Pillar": "Networks",
                     "Conclusive": 6,
                     "Inconclusive": 6,
                     "Positive": 6,
                     "Unexecuted": 6
                 },
                 {
-                    "Pillar": "people",
+                    "Pillar": "People",
                     "Conclusive": 6,
                     "Inconclusive": 6,
                     "Positive": 6,
                     "Unexecuted": 6
                 },
                 {
-                    "Pillar": "workloads",
+                    "Pillar": "Workloads",
                     "Conclusive": 6,
                     "Inconclusive": 6,
                     "Positive": 6,
                     "Unexecuted": 6
                 },
                 {
-                    "Pillar": "devices",
+                    "Pillar": "Devices",
                     "Conclusive": 6,
                     "Inconclusive": 6,
                     "Positive": 6,
                     "Unexecuted": 6
                 },
                 {
-                    "Pillar": "visibility and analytics",
+                    "Pillar": "Visibility & Analytics",
                     "Conclusive": 6,
                     "Inconclusive": 6,
                     "Positive": 6,
                     "Unexecuted": 6
                 },
                 {
-                    "Pillar": "automation and analytics",
+                    "Pillar": "Automation & Orchestration",
                     "Conclusive": 6,
                     "Inconclusive": 6,
                     "Positive": 6,

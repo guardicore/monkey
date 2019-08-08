@@ -1,11 +1,14 @@
 import React, {Component} from "react";
 import ReactTable from "react-table";
+import {PillarLabel} from "./PillarLabel";
 
 const columns = [
   {
     Header: 'Pillar Grading',
     columns: [
-      { Header: 'Pillar', accessor: 'Pillar'},
+      { Header: 'Pillar', id: 'Pillar', accessor: x => {
+          return (<PillarLabel pillar={x.Pillar} />);
+        }},
       { Header: 'Conclusive', accessor: 'Conclusive'},
       { Header: 'Inconclusive', accessor: 'Inconclusive'},
       { Header: 'Unexecuted', accessor: 'Unexecuted'},
