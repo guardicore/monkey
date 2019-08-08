@@ -11,9 +11,6 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     super(props);
 
     this.state = {
-      report: {
-        findings: undefined
-      },
       allMonkeysAreDead: false,
       runStarted: false
     };
@@ -38,14 +35,16 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   generateReportContent() {
     let content;
 
-    if (typeof this.state.report.findings === "undefined") {
+    if (typeof this.state.findings === "undefined") {
       content = "Still empty";
     } else {
       content = <div>
         <h2>Pillars Overview</h2>
-        <PillarGrades findings={this.state.report.findings} />
+        <PillarGrades pillars={this.state.pillars} />
+        <h2>Test Status</h2>
+        TODO
         <h2>Findings</h2>
-        <FindingsTable findings={this.state.report.findings} />
+        <FindingsTable findings={this.state.findings} />
       </div>;
     }
 
@@ -63,9 +62,15 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           {content}
           <hr/>
           THIS IS THE RAW SERVER DATA
-          <pre id="json-report">
-            {JSON.stringify(this.state.report, undefined, 2)}
-          </pre>
+          <br/>
+          PILLARS:
+          <pre>{JSON.stringify(this.state.pillars, undefined, 2)}</pre>
+          <br/>
+          TESTS:
+          <pre>{JSON.stringify(this.state.tests, undefined, 2)}</pre>
+          <br/>
+          FINDINGS:
+          <pre>{JSON.stringify(this.state.findings, undefined, 2)}</pre>
         </div>
       </div>
     )
@@ -76,11 +81,26 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   }
 
   getZeroTrustReportFromServer() {
-    this.authFetch('/api/report/zero_trust')
+    let res;
+    this.authFetch('/api/report/zero_trust/findings')
       .then(res => res.json())
       .then(res => {
         this.setState({
-          report: res
+          findings: res
+        });
+      });
+    this.authFetch('/api/report/zero_trust/tests')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          tests: res
+        });
+      });
+    this.authFetch('/api/report/zero_trust/pillars')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          pillars: res
         });
       });
   }

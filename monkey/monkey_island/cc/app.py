@@ -124,7 +124,11 @@ def init_api_resources(api):
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
 
     # report_type: zero_trust or general
-    api.add_resource(Report, '/api/report/<string:report_type>')
+    api.add_resource(
+        Report,
+        '/api/report/<string:report_type>',
+        '/api/report/<string:report_type>/<string:report_data>')
+
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')

@@ -63,7 +63,7 @@ const columns = [
           const listItems = pillars.map((pillar) =>
             <li key={pillar}><PillarLabel pillar={pillar}/></li>
           );
-          return <ul>{listItems}</ul>
+          return <ul>{listItems}</ul>;
         }
       },
       { Header: 'Events', id:"events",
@@ -79,19 +79,22 @@ const pageSize = 10;
 
 class FindingsTable extends Component {
   render() {
-    let defaultPageSize = this.props.findings.length > pageSize ? pageSize : this.props.findings.length;
-    let showPagination = this.props.findings.length > pageSize;
+    if (this.props.findings.length > 0) {
+      let defaultPageSize = this.props.findings.length > pageSize ? pageSize : this.props.findings.length;
+      let showPagination = this.props.findings.length > pageSize;
 
-    return (
-      <div>
-        <ReactTable
-          columns={columns}
-          data={this.props.findings}
-          showPagination={showPagination}
-          defaultPageSize={defaultPageSize}
-        />
-      </div>
-    );
+      return (
+        <div>
+          <ReactTable
+            columns={columns}
+            data={this.props.findings}
+            showPagination={showPagination}
+            defaultPageSize={defaultPageSize}
+          />
+        </div>
+      );
+    }
+    else { return (<div><pre>BAYAZ</pre></div>);}
   }
 }
 
