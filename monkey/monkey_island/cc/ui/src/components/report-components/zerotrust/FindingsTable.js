@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import ReactTable from "react-table";
 import {Button} from "react-bootstrap";
 import {EventsModal} from "./EventsModal";
+import FileSaver from "file-saver";
 
 function PillarLabel(props) {
   return <span className="label label-primary" style={{margin: '2px'}}>{props.pillar}</span>
@@ -28,10 +29,19 @@ class EventsAndButtonComponent extends Component {
     return (
       <div>
         <EventsModal events={this.props.events} showEvents={this.state.show} hideCallback={this.hide}/>
-        <p style={{margin: '5px'}}>
-          <Button className="btn btn-danger btn-lg center-block"
+        <p style={{margin: '1px'}}>
+          <Button className="btn btn-info btn-lg center-block"
                   onClick={this.show}>
             Show Events
+          </Button>
+          <Button className="btn btn-primary btn-lg center-block"
+                  onClick={() => {
+                    const content = JSON.stringify(this.props.events, null, 2);
+                    const blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+                    FileSaver.saveAs(blob, this.props.exportFilename+".json");
+                  }}
+                >
+            Export Events
           </Button>
         </p>
       </div>
@@ -58,7 +68,7 @@ const columns = [
       },
       { Header: 'Events', id:"events",
         accessor: x => {
-          return <EventsAndButtonComponent events={x.events}/>;
+          return <EventsAndButtonComponent events={x.events} exportFilename={"Events_" + x.test}/>;
         }
       }
     ]
