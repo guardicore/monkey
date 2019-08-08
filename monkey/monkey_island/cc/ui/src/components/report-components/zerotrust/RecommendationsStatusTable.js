@@ -22,7 +22,6 @@ const columns = [
       },
       { Header: 'Tests', id:"Tests",
         accessor: x => {
-          console.log(x.Tests);
           return <TestsStatus tests={x.Tests} />;
         }
       }
@@ -32,9 +31,34 @@ const columns = [
 
 class TestsStatus extends AuthComponent {
   render() {
+    const positiveStatus = "Positive";
+    const conclusiveStatus = "Conclusive";
+    const inconclusiveStatus = "Inconclusive";
+    const unexecutedStatus = "Unexecuted";
+
     return (
-      <pre>{JSON.stringify(this.props.tests,null,2)}</pre>
+      <div>
+        {this.getTestsOfStatusIfAny(conclusiveStatus)}
+        {this.getTestsOfStatusIfAny(inconclusiveStatus)}
+        {this.getTestsOfStatusIfAny(positiveStatus)}
+        {this.getTestsOfStatusIfAny(unexecutedStatus)}
+      </div>
     );
+  }
+
+  getTestsOfStatusIfAny(statusToFilter) {
+    const filteredTests = this.props.tests.filter((test) => {
+        return (test.Status === statusToFilter);
+      }
+    );
+
+    if (filteredTests.length > 0) {
+      const listItems = filteredTests.map((test) => {
+        return (<li key={test.Test}>{test.Test}</li>)
+      });
+      return <div>{statusToFilter}<ul>{listItems}</ul></div>;
+    }
+    return <div/>;
   }
 }
 
