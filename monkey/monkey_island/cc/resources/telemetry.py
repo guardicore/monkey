@@ -7,8 +7,10 @@ import dateutil
 import flask_restful
 from flask import request
 
+from common.data.zero_trust_consts import TEST_ENDPOINT_SECURITY_EXISTS, STATUS_POSITIVE, STATUS_CONCLUSIVE
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models.finding import Finding
 from monkey_island.cc.services import mimikatz_utils
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.edge import EdgeService
@@ -176,8 +178,56 @@ class Telemetry(flask_restful.Resource):
 
     @staticmethod
     def process_system_info_telemetry(telemetry_json):
-        users_secrets = {}
+        Telemetry.process_ssh_info(telemetry_json)
+        Telemetry.process_credential_info(telemetry_json)
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
+        Telemetry.process_mimikatz_and_wmi_info(monkey_id, telemetry_json)
+        Telemetry.process_aws_data(monkey_id, telemetry_json)
+        Telemetry.test_antivirus_existance(telemetry_json)
+
+    @staticmethod
+    def test_antivirus_existance(telemetry_json):
+        anti_virus_software = [
+            "SSPService.exe"
+        ]
+        if 'process_list' in telemetry_json['data']:
+            found_av = False
+            for process in telemetry_json['data']['process_list']:
+                if process['name'] in anti_virus_software:
+                    found_av = True
+                    # TODO add event here
+            if found_av:
+                Finding.save_finding(test=TEST_ENDPOINT_SECURITY_EXISTS, status=STATUS_POSITIVE, events=[])
+            else:
+                Finding.save_finding(test=TEST_ENDPOINT_SECURITY_EXISTS, status=STATUS_CONCLUSIVE, events=[])
+
+    @staticmethod
+    def process_mimikatz_and_wmi_info(monkey_id, telemetry_json):
+        users_secrets = {}
+        if 'mimikatz' in telemetry_json['data']:
+            users_secrets = mimikatz_utils.MimikatzSecrets. \
+                extract_secrets_from_mimikatz(telemetry_json['data'].get('mimikatz', ''))
+        if 'wmi' in telemetry_json['data']:
+            wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
+            wmi_handler.process_and_handle_wmi_info()
+
+    @staticmethod
+    def process_aws_data(monkey_id, telemetry_json):
+        if 'aws' in telemetry_json['data']:
+            if 'instance_id' in telemetry_json['data']['aws']:
+                mongo.db.monkey.update_one({'_id': monkey_id},
+                                           {'$set': {'aws_instance_id': telemetry_json['data']['aws']['instance_id']}})
+
+    @staticmethod
+    def process_credential_info(telemetry_json):
+        if 'credentials' in telemetry_json['data']:
+            creds = telemetry_json['data']['credentials']
+            Telemetry.encrypt_system_info_creds(creds)
+            Telemetry.add_system_info_creds_to_config(creds)
+            Telemetry.replace_user_dot_with_comma(creds)
+
+    @staticmethod
+    def process_ssh_info(telemetry_json):
         if 'ssh_info' in telemetry_json['data']:
             ssh_info = telemetry_json['data']['ssh_info']
             Telemetry.encrypt_system_info_ssh_keys(ssh_info)
@@ -185,21 +235,6 @@ class Telemetry(flask_restful.Resource):
                 # We use user_name@machine_ip as the name of the ssh key stolen, thats why we need ip from telemetry
                 Telemetry.add_ip_to_ssh_keys(telemetry_json['data']['network_info']['networks'][0], ssh_info)
             Telemetry.add_system_info_ssh_keys_to_config(ssh_info)
-        if 'credentials' in telemetry_json['data']:
-            creds = telemetry_json['data']['credentials']
-            Telemetry.encrypt_system_info_creds(creds)
-            Telemetry.add_system_info_creds_to_config(creds)
-            Telemetry.replace_user_dot_with_comma(creds)
-        if 'mimikatz' in telemetry_json['data']:
-            users_secrets = mimikatz_utils.MimikatzSecrets. \
-                extract_secrets_from_mimikatz(telemetry_json['data'].get('mimikatz', ''))
-        if 'wmi' in telemetry_json['data']:
-            wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
-            wmi_handler.process_and_handle_wmi_info()
-        if 'aws' in telemetry_json['data']:
-            if 'instance_id' in telemetry_json['data']['aws']:
-                mongo.db.monkey.update_one({'_id': monkey_id},
-                                           {'$set': {'aws_instance_id': telemetry_json['data']['aws']['instance_id']}})
 
     @staticmethod
     def add_ip_to_ssh_keys(ip, ssh_info):
