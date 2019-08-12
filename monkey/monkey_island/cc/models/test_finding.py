@@ -2,7 +2,7 @@ from datetime import datetime
 
 from mongoengine import ValidationError
 
-from common.data.zero_trust_consts import TEST_SEGMENTATION, STATUS_CONCLUSIVE, NETWORKS
+from common.data.zero_trust_consts import TEST_SEGMENTATION, STATUS_CONCLUSIVE, NETWORKS, EVENT_TYPE_MONKEY_NETWORK
 from finding import Finding, UnknownTest
 from monkey_island.cc.models.event import Event
 
@@ -33,7 +33,8 @@ class TestFinding(IslandTestCase):
 
         self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION)), 0)
 
-        event_example = Event(timestamp=datetime.now(), title="Event Title", message="event message", event_type="monkey_network_action")
+        event_example = Event.create_event(
+            title="Event Title", message="event message", event_type=EVENT_TYPE_MONKEY_NETWORK)
         Finding.save_finding(test=TEST_SEGMENTATION, status=STATUS_CONCLUSIVE, events=[event_example])
 
         self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION)), 1)

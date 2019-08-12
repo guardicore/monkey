@@ -2,13 +2,12 @@
 Define a Document Schema for Zero Trust findings.
 """
 
-from mongoengine import Document, StringField, ListField, EmbeddedDocumentField
+from mongoengine import Document, StringField, EmbeddedDocumentListField
 
+from common.data.zero_trust_consts import TEST_STATUSES, TESTS, TESTS_MAP, EXPLANATION_KEY, PILLARS_KEY
 # Dummy import for mongoengine.
 # noinspection PyUnresolvedReferences
 from event import Event
-
-from common.data.zero_trust_consts import TEST_STATUSES, PILLARS, TESTS, TESTS_MAP, EXPLANATION_KEY, PILLARS_KEY
 
 
 class Finding(Document):
@@ -21,7 +20,7 @@ class Finding(Document):
     # SCHEMA
     test = StringField(required=True, choices=TESTS)
     status = StringField(required=True, choices=TEST_STATUSES)
-    events = ListField(field=EmbeddedDocumentField('Event'))
+    events = EmbeddedDocumentListField(document_type=Event)
 
     # LOGIC
     def get_test_explanation(self):
