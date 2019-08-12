@@ -99,6 +99,28 @@ TESTS_MAP = {
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_CONCLUSIVE, STATUS_POSITIVE]
     },
 }
+
+PILLARS_TO_TESTS = {
+    DATA: [],
+    PEOPLE: [],
+    NETWORKS: [],
+    DEVICES: [],
+    WORKLOADS: [],
+    VISIBILITY_ANALYTICS: [],
+    AUTOMATION_ORCHESTRATION: []
+}
+
+
+def populate_pillars_to_tests():
+    for pillar in PILLARS:
+        for test, test_info in TESTS_MAP.items():
+            if pillar in test_info[PILLARS_KEY]:
+                PILLARS_TO_TESTS[pillar].append(test)
+
+
+populate_pillars_to_tests()
+
+
 EVENT_TYPE_ISLAND = "island"
 EVENT_TYPE_MONKEY_NETWORK = "monkey_network"
 EVENT_TYPE_MONKEY_LOCAL = "monkey_local"

@@ -12,6 +12,7 @@ const columns = [
       { Header: 'Conclusive', accessor: 'Conclusive'},
       { Header: 'Inconclusive', accessor: 'Inconclusive'},
       { Header: 'Unexecuted', accessor: 'Unexecuted'},
+      { Header: 'Positive', accessor: 'Positive'},
     ]
   }
 ];

@@ -4,7 +4,8 @@ import json
 import flask_restful
 from flask import jsonify
 
-from common.data.zero_trust_consts import TESTS_MAP, EXPLANATION_KEY, PILLARS_KEY
+from common.data.zero_trust_consts import TESTS_MAP, EXPLANATION_KEY, PILLARS_KEY, PILLARS, STATUS_CONCLUSIVE, \
+    STATUS_INCONCLUSIVE, STATUS_POSITIVE, STATUS_UNEXECUTED, PILLARS_TO_TESTS
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.models.finding import Finding
 from monkey_island.cc.services.reporting.report import ReportService
@@ -151,55 +152,35 @@ def get_recommendations_status():
     ]
 
 
+def get_pillar_grade(pillar, all_findings):
+    pillar_grade = {
+        "Pillar": pillar,
+        STATUS_CONCLUSIVE: 0,
+        STATUS_INCONCLUSIVE: 0,
+        STATUS_POSITIVE: 0,
+        STATUS_UNEXECUTED: 0
+    }
+
+    tests_of_this_pillar = PILLARS_TO_TESTS[pillar]
+
+    test_unexecuted = {}
+    for test in tests_of_this_pillar:
+        test_unexecuted[test] = True
+
+    for finding in all_findings:
+        test_unexecuted[finding.test] = False
+        test_info = TESTS_MAP[finding.test]
+        if pillar in test_info[PILLARS_KEY]:
+            pillar_grade[finding.status] += 1
+
+    pillar_grade[STATUS_UNEXECUTED] = sum(1 for condition in test_unexecuted.values() if condition)
+
+    return pillar_grade
+
+
 def get_pillars_grades():
-    return [
-                {
-                    "Pillar": "Data",
-                    "Conclusive": 6,
-                    "Inconclusive": 6,
-                    "Positive": 6,
-                    "Unexecuted": 6
-                },
-                {
-                    "Pillar": "Networks",
-                    "Conclusive": 6,
-                    "Inconclusive": 6,
-                    "Positive": 6,
-                    "Unexecuted": 6
-                },
-                {
-                    "Pillar": "People",
-                    "Conclusive": 6,
-                    "Inconclusive": 6,
-                    "Positive": 6,
-                    "Unexecuted": 6
-                },
-                {
-                    "Pillar": "Workloads",
-                    "Conclusive": 6,
-                    "Inconclusive": 6,
-                    "Positive": 6,
-                    "Unexecuted": 6
-                },
-                {
-                    "Pillar": "Devices",
-                    "Conclusive": 6,
-                    "Inconclusive": 6,
-                    "Positive": 6,
-                    "Unexecuted": 6
-                },
-                {
-                    "Pillar": "Visibility & Analytics",
-                    "Conclusive": 6,
-                    "Inconclusive": 6,
-                    "Positive": 6,
-                    "Unexecuted": 6
-                },
-                {
-                    "Pillar": "Automation & Orchestration",
-                    "Conclusive": 6,
-                    "Inconclusive": 6,
-                    "Positive": 6,
-                    "Unexecuted": 6
-                },
-            ]
+    pillars_grades = []
+    all_findings = Finding.objects()
+    for pillar in PILLARS:
+        pillars_grades.append(get_pillar_grade(pillar, all_findings))
+    return pillars_grades
