@@ -1,9 +1,12 @@
 import httplib
+import json
 
 import flask_restful
 from flask import jsonify
 
+from common.data.zero_trust_consts import TESTS_MAP, EXPLANATION_KEY, PILLARS_KEY
 from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.models.finding import Finding
 from monkey_island.cc.services.reporting.report import ReportService
 
 ZERO_TRUST_REPORT_TYPE = "zero_trust"
@@ -35,37 +38,25 @@ class Report(flask_restful.Resource):
 
 
 def get_all_findings():
-    return [
-            {
-                "test": "Monkey 8 found a machine with no AV software active.",
-                "conclusive": False,
-                "pillars": ["Devices"],
-                "events": [
-                    {
-                        "timestamp": "2019-08-01 14:48:46.112000",
-                        "title": "Monkey performed an action",
-                        "type": "MonkeyAction",
-                        "message": "log1"
-                    }, {
-                        "timestamp": "2019-08-01 14:48:42.112000",
-                        "title": "Analysis",
-                        "type": "IslandAction",
-                        "message": "log2"
-                    }]
-            },
-            {
-                "test": "Monkey 6 successfully exploited machine XXX with shellshock.",
-                "conclusive": True,
-                "pillars": ["Devices", "Networks"],
-                "events": [
-                    {
-                        "timestamp": "2019-08-01 14:48:46.112000",
-                        "title": "Analysis",
-                        "type": "MonkeyAction",
-                        "message": "log3"
-                    }]
-            }
-        ]
+    all_findings = Finding.objects()
+    enriched_findings = [get_enriched_finding(f) for f in all_findings]
+    return enriched_findings
+
+
+def get_events_as_dict(events):
+    return [json.loads(event.to_json()) for event in events]
+
+
+def get_enriched_finding(finding):
+    test_info = TESTS_MAP[finding.test]
+    enriched_finding = {
+        # TODO add test explanation per status.
+        "test": test_info[EXPLANATION_KEY],
+        "pillars": test_info[PILLARS_KEY],
+        "status": finding.status,
+        "events": get_events_as_dict(finding.events)
+    }
+    return enriched_finding
 
 
 def get_recommendations_status():
