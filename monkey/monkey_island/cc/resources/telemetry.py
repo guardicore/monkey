@@ -7,9 +7,11 @@ import dateutil
 import flask_restful
 from flask import request
 
-from common.data.zero_trust_consts import TEST_ENDPOINT_SECURITY_EXISTS, STATUS_POSITIVE, STATUS_CONCLUSIVE
+from common.data.zero_trust_consts import TEST_ENDPOINT_SECURITY_EXISTS, STATUS_POSITIVE, STATUS_CONCLUSIVE, \
+    EVENT_TYPE_MONKEY_LOCAL, EVENT_TYPE_ISLAND
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models.event import Event
 from monkey_island.cc.models.finding import Finding
 from monkey_island.cc.services import mimikatz_utils
 from monkey_island.cc.services.config import ConfigService
@@ -183,23 +185,32 @@ class Telemetry(flask_restful.Resource):
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
         Telemetry.process_mimikatz_and_wmi_info(monkey_id, telemetry_json)
         Telemetry.process_aws_data(monkey_id, telemetry_json)
-        Telemetry.test_antivirus_existance(telemetry_json)
+        Telemetry.test_antivirus_existence(telemetry_json, monkey_id)
 
     @staticmethod
-    def test_antivirus_existance(telemetry_json):
+    def test_antivirus_existence(telemetry_json, monkey_id):
         anti_virus_software = [
             "SSPService.exe"
         ]
         if 'process_list' in telemetry_json['data']:
+            process_list_event = Event.create_event(
+                title="Process list",
+                message="Monkey {} scanned the process list".format(monkey_id),
+                event_type=EVENT_TYPE_MONKEY_LOCAL)
+            events = [process_list_event]
             found_av = False
             for process in telemetry_json['data']['process_list']:
                 if process['name'] in anti_virus_software:
                     found_av = True
-                    # TODO add event here
+                    events.append(Event.create_event(
+                        title="Found AV process",
+                        message="The process '{}' was recognized as an Anti Virus process. Process details: ".format(process['name'], str(process)),
+                        event_type=EVENT_TYPE_ISLAND
+                    ))
             if found_av:
-                Finding.save_finding(test=TEST_ENDPOINT_SECURITY_EXISTS, status=STATUS_POSITIVE, events=[])
+                Finding.save_finding(test=TEST_ENDPOINT_SECURITY_EXISTS, status=STATUS_POSITIVE, events=events)
             else:
-                Finding.save_finding(test=TEST_ENDPOINT_SECURITY_EXISTS, status=STATUS_CONCLUSIVE, events=[])
+                Finding.save_finding(test=TEST_ENDPOINT_SECURITY_EXISTS, status=STATUS_CONCLUSIVE, events=events)
 
     @staticmethod
     def process_mimikatz_and_wmi_info(monkey_id, telemetry_json):
