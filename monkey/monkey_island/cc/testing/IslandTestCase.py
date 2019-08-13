@@ -1,6 +1,7 @@
 import unittest
 from monkey_island.cc.environment.environment import env
 from monkey_island.cc.models import Monkey
+from monkey_island.cc.models.finding import Finding
 
 
 class IslandTestCase(unittest.TestCase):
@@ -10,3 +11,7 @@ class IslandTestCase(unittest.TestCase):
     @staticmethod
     def clean_monkey_db():
         Monkey.objects().delete()
+
+    @staticmethod
+    def clean_finding_db():
+        Finding.objects().delete()

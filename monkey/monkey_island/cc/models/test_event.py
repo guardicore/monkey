@@ -8,7 +8,7 @@ from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 class TestEvent(IslandTestCase):
     def test_create_event(self):
         self.fail_if_not_testing_env()
-        self.clean_monkey_db()
+        self.clean_finding_db()
 
         with self.assertRaises(ValidationError):
             Event.create_event(
@@ -27,5 +27,5 @@ class TestEvent(IslandTestCase):
         _ = Event.create_event(
             title="skjs",
             message="bla bla",
-            event_type=EVENT_TYPE_ISLAND  # Unknown event type
+            event_type=EVENT_TYPE_ISLAND
         )

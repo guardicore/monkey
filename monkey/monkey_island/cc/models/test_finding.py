@@ -1,11 +1,8 @@
-from datetime import datetime
-
 from mongoengine import ValidationError
 
-from common.data.zero_trust_consts import TEST_SEGMENTATION, STATUS_CONCLUSIVE, NETWORKS, EVENT_TYPE_MONKEY_NETWORK
-from finding import Finding, UnknownTest
+from common.data.zero_trust_consts import *
+from finding import Finding
 from monkey_island.cc.models.event import Event
-
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 
@@ -19,17 +16,17 @@ class TestFinding(IslandTestCase):
     """
     def test_save_finding_validation(self):
         self.fail_if_not_testing_env()
-        self.clean_monkey_db()
+        self.clean_finding_db()
 
         with self.assertRaises(ValidationError):
-            _ = Finding.save_finding(test="bla bla", status="Conclusive", events=[])
+            _ = Finding.save_finding(test="bla bla", status=STATUS_CONCLUSIVE, events=[])
 
         with self.assertRaises(ValidationError):
             _ = Finding.save_finding(test=TEST_SEGMENTATION, status="bla bla", events=[])
 
     def test_save_finding_sanity(self):
         self.fail_if_not_testing_env()
-        self.clean_monkey_db()
+        self.clean_finding_db()
 
         self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION)), 0)
 
