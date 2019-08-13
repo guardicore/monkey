@@ -61,7 +61,7 @@ TESTS_MAP = {
         EXPLANATION_KEY: u"The Monkeys in the network performed malicious-looking actions, like scanning and attempting exploitation.",
         FINDING_FORMAT_KEY: u"Malicious activity performed by the Monkeys. See 'events' for detailed information.",
         DIRECTIVE_KEY: DIRECTIVE_ANALYZE_NETWORK_TRAFFIC,
-        PILLARS_KEY: [NETWORKS],
+        PILLARS_KEY: [NETWORKS, VISIBILITY_ANALYTICS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_INCONCLUSIVE]
     },
     TEST_ENDPOINT_SECURITY_EXISTS: {
