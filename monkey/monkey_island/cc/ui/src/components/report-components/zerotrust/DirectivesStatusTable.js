@@ -1,28 +1,29 @@
-import React, {Component} from "react";
+import React from "react";
 import PagenatedTable from "../common/PagenatedTable";
 import AuthComponent from "../../AuthComponent";
 
+const statusToIcon = {
+  "Positive": "fa-shield alert-success",
+  "Inconclusive": "fa-question alert-info",
+  "Conclusive": "fa-unlock-alt alert-danger",
+  "Unexecuted": "fa-toggle-off",
+};
+
 const columns = [
   {
-    Header: 'Recommendations status',
+    Header: 'Directives status',
     columns: [
-      { Header: 'Recommendation', accessor: 'Recommendation',
+      { Header: 'Directive', accessor: 'directive',
         style: {'whiteSpace': 'unset'}  // This enables word wrap
       },
-      { Header: 'Status', id: "Status",
+      { Header: 'Status', id: 'status',
         accessor: x => {
-          const statusToIcon = {
-            "Positive": "fa-shield alert-success",
-            "Inconclusive": "fa-question alert-info",
-            "Conclusive": "fa-unlock-alt alert-danger",
-            "Unexecuted": "fa-toggle-off",
-          };
-          return <i className={"fa " + statusToIcon[x.Status] + " fa-2x"} />;
+          return <i className={"fa " + statusToIcon[x.status] + " fa-3x"} />;
         }
       },
-      { Header: 'Tests', id:"Tests",
+      { Header: 'Tests', id: 'tests',
         accessor: x => {
-          return <TestsStatus tests={x.Tests} />;
+          return <TestsStatus tests={x.tests} />;
         }
       }
     ]
@@ -48,24 +49,24 @@ class TestsStatus extends AuthComponent {
 
   getTestsOfStatusIfAny(statusToFilter) {
     const filteredTests = this.props.tests.filter((test) => {
-        return (test.Status === statusToFilter);
+        return (test.status === statusToFilter);
       }
     );
 
     if (filteredTests.length > 0) {
       const listItems = filteredTests.map((test) => {
-        return (<li key={test.Test}>{test.Test}</li>)
+        return (<li key={test.test}>{test.test}</li>)
       });
-      return <div>{statusToFilter}<ul>{listItems}</ul></div>;
+      return <div><i className={"fa " + statusToIcon[statusToFilter]}/> {statusToFilter}<ul>{listItems}</ul></div>;
     }
     return <div/>;
   }
 }
 
-export class RecommendationsStatusTable extends AuthComponent {
+export class DirectivesStatusTable extends AuthComponent {
   render() {
-    return <PagenatedTable data={this.props.recommendationStatus} columns={columns} pageSize={5}/>;
+    return <PagenatedTable data={this.props.directivesStatus} columns={columns} pageSize={5}/>;
   }
 }
 
-export default RecommendationsStatusTable;
+export default DirectivesStatusTable;

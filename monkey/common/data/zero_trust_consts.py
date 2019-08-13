@@ -11,7 +11,8 @@ STATUS_UNEXECUTED = u"Unexecuted"
 STATUS_POSITIVE = u"Positive"
 STATUS_INCONCLUSIVE = u"Inconclusive"
 STATUS_CONCLUSIVE = u"Conclusive"
-TEST_STATUSES = (STATUS_CONCLUSIVE, STATUS_INCONCLUSIVE, STATUS_POSITIVE, STATUS_UNEXECUTED)
+# Don't change order!
+TEST_STATUSES = [STATUS_CONCLUSIVE, STATUS_INCONCLUSIVE, STATUS_POSITIVE, STATUS_UNEXECUTED]
 
 TEST_DATA_ENDPOINT_ELASTIC = u"unencrypted_data_endpoint_elastic"
 TEST_DATA_ENDPOINT_HTTP = u"unencrypted_data_endpoint_http"
@@ -120,6 +121,31 @@ def populate_pillars_to_tests():
 
 populate_pillars_to_tests()
 
+DIRECTIVES_TO_TESTS = {}
+
+
+def populate_directives_to_tests():
+    for single_directive in DIRECTIVES:
+        DIRECTIVES_TO_TESTS[single_directive] = []
+    for test, test_info in TESTS_MAP.items():
+        DIRECTIVES_TO_TESTS[test_info[DIRECTIVE_KEY]].append(test)
+
+
+populate_directives_to_tests()
+
+DIRECTIVES_TO_PILLARS = {}
+
+
+def populate_directives_to_pillars():
+    for directive, directive_tests in DIRECTIVES_TO_TESTS.items():
+        directive_pillars = set()
+        for test in directive_tests:
+            for pillar in TESTS_MAP[test][PILLARS_KEY]:
+                directive_pillars.add(pillar)
+        DIRECTIVES_TO_PILLARS[directive] = directive_pillars
+
+
+populate_directives_to_pillars()
 
 EVENT_TYPE_ISLAND = "island"
 EVENT_TYPE_MONKEY_NETWORK = "monkey_network"

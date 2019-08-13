@@ -4,7 +4,7 @@ import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
 import PillarGrades from "../report-components/zerotrust/PillarGrades";
 import FindingsTable from "../report-components/zerotrust/FindingsTable";
-import {SinglePillarRecommendationsStatus} from "../report-components/zerotrust/SinglePillarRecommendationsStatus";
+import {SinglePillarDirectivesStatus} from "../report-components/zerotrust/SinglePillarDirectivesStatus";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -45,13 +45,13 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         <PillarGrades pillars={this.state.pillars}/>
       </div>;
 
-      const recommendationsSection = <div><h2>Recommendations Status</h2>
+      const directivesSection = <div><h2>Directives status</h2>
         {
-          this.state.recommendations.map((recommendation) =>
-            <SinglePillarRecommendationsStatus
-              key={recommendation.pillar}
-              pillar={recommendation.pillar}
-              recommendationStatus={recommendation.recommendationStatus}/>
+          Object.keys(this.state.directives).map((pillar) =>
+            <SinglePillarDirectivesStatus
+              key={pillar}
+              pillar={pillar}
+              directivesStatus={this.state.directives[pillar]}/>
           )
         }
       </div>;
@@ -61,7 +61,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
       content = <div>
         {pillarsSection}
-        {recommendationsSection}
+        {directivesSection}
         {findingSection}
       </div>;
     }
@@ -84,8 +84,8 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           PILLARS:
           <pre>{JSON.stringify(this.state.pillars, undefined, 2)}</pre>
           <br/>
-          recommendations:
-          <pre>{JSON.stringify(this.state.recommendations, undefined, 2)}</pre>
+          DIRECTIVES:
+          <pre>{JSON.stringify(this.state.directives, undefined, 2)}</pre>
           <br/>
           FINDINGS:
           <pre>{JSON.stringify(this.state.findings, undefined, 2)}</pre>
@@ -95,7 +95,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   }
 
   stillLoadingDataFromServer() {
-    return typeof this.state.findings === "undefined" || typeof this.state.pillars === "undefined" || typeof this.state.recommendations === "undefined";
+    return typeof this.state.findings === "undefined" || typeof this.state.pillars === "undefined" || typeof this.state.directives === "undefined";
   }
 
   print() {
@@ -111,11 +111,11 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           findings: res
         });
       });
-    this.authFetch('/api/report/zero_trust/recommendations')
+    this.authFetch('/api/report/zero_trust/directives')
       .then(res => res.json())
       .then(res => {
         this.setState({
-          recommendations: res
+          directives: res
         });
       });
     this.authFetch('/api/report/zero_trust/pillars')
