@@ -541,6 +541,22 @@ body {
   color: #e0ddde !important;
 }
 
+.status-success {
+  color: #24b716 !important;
+}
+
+.status-warning {
+  color: #b1a91c !important;
+}
+
+.status-danger {
+  color: #d91016 !important;
+}
+
+.status-default {
+  color: #575556 !important;
+}
+
 .attack-legend {
   text-align: center;
   margin-bottom: 20px;

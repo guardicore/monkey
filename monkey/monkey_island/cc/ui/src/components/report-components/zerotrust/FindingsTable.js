@@ -3,7 +3,7 @@ import {Button} from "react-bootstrap";
 import {EventsModal} from "./EventsModal";
 import FileSaver from "file-saver";
 import {PillarLabel} from "./PillarLabel";
-import PagenatedTable from "../common/PagenatedTable";
+import PaginatedTable from "../common/PaginatedTable";
 
 
 class EventsAndButtonComponent extends Component {
@@ -75,7 +75,7 @@ const columns = [
 class FindingsTable extends Component {
   render() {
     return (
-      <PagenatedTable data={this.props.findings} pageSize={10} columns={columns}/>
+      <PaginatedTable data={this.props.findings} pageSize={10} columns={columns}/>
     );
   }
 }

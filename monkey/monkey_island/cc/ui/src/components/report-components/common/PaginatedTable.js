@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import ReactTable from "react-table";
 
-class PagenatedTable extends Component {
+class PaginatedTable extends Component {
   render() {
     if (this.props.data.length > 0) {
       let defaultPageSize = this.props.data.length > this.props.pageSize ? this.props.pageSize : this.props.data.length;
@@ -26,4 +26,4 @@ class PagenatedTable extends Component {
   }
 }
 
-export default PagenatedTable;
+export default PaginatedTable;

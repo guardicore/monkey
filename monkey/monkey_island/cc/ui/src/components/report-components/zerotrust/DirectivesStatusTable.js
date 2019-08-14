@@ -1,12 +1,13 @@
 import React from "react";
-import PagenatedTable from "../common/PagenatedTable";
+import PaginatedTable from "../common/PaginatedTable";
 import AuthComponent from "../../AuthComponent";
+import 'styles/ZeroTrustPillars.css'
 
 const statusToIcon = {
-  "Positive": "fa-shield alert-success",
-  "Inconclusive": "fa-question alert-info",
-  "Conclusive": "fa-unlock-alt alert-danger",
-  "Unexecuted": "fa-toggle-off",
+  "Positive": "fa-clipboard-check status-success",
+  "Inconclusive": "fa-exclamation-triangle status-warning",
+  "Conclusive": "fa-bomb status-danger",
+  "Unexecuted": "fa-question status-default",
 };
 
 const columns = [
@@ -65,7 +66,7 @@ class TestsStatus extends AuthComponent {
 
 export class DirectivesStatusTable extends AuthComponent {
   render() {
-    return <PagenatedTable data={this.props.directivesStatus} columns={columns} pageSize={5}/>;
+    return <PaginatedTable data={this.props.directivesStatus} columns={columns} pageSize={5}/>;
   }
 }
 

@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {PillarLabel} from "./PillarLabel";
-import PagenatedTable from "../common/PagenatedTable";
+import PaginatedTable from "../common/PaginatedTable";
 
 const columns = [
   {
@@ -19,7 +19,7 @@ const columns = [
 
 class PillarGrades extends Component {
   render() {
-    return <PagenatedTable data={this.props.pillars} columns={columns} pageSize={10}/>;
+    return <PaginatedTable data={this.props.pillars} columns={columns} pageSize={10}/>;
   }
 }
 
