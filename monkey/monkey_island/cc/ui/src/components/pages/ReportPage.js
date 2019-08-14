@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Button, Col} from 'react-bootstrap';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
@@ -14,8 +14,11 @@ import StrongUsers from "components/report-components/security/StrongUsers";
 import AttackReport from "components/report-components/security/AttackReport";
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
 import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStillAliveWarning";
+import ReportLoader from "../report-components/common/ReportLoader";
+import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
+
 
 
 class ReportPageComponent extends AuthComponent {
@@ -70,13 +73,10 @@ class ReportPageComponent extends AuthComponent {
     let content;
     if (Object.keys(this.state.report).length === 0) {
       if (this.state.runStarted) {
-        content = (<h1>Generating Report...</h1>);
+        content = (<ReportLoader loading={true}/>);
       } else {
         content =
-          <p className="alert alert-warning">
-            <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-            You have to run a monkey before generating a report!
-          </p>;
+          <MustRunMonkeyWarning/>;
       }
     } else {
       content = this.generateReportContent();

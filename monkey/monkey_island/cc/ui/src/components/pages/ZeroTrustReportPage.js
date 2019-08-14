@@ -6,6 +6,8 @@ import PillarGrades from "../report-components/zerotrust/PillarGrades";
 import FindingsTable from "../report-components/zerotrust/FindingsTable";
 import {SinglePillarDirectivesStatus} from "../report-components/zerotrust/SinglePillarDirectivesStatus";
 import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStillAliveWarning";
+import ReportLoader from "../report-components/common/ReportLoader";
+import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -36,8 +38,11 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
   render() {
     let content;
-
-    content = this.generateReportContent();
+    if (this.state.runStarted) {
+      content = this.generateReportContent();
+    } else {
+      content = <MustRunMonkeyWarning/>;
+    }
 
     return (
       <Col xs={12} lg={10}>
@@ -53,7 +58,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     let content;
 
     if (this.stillLoadingDataFromServer()) {
-      content = "Still empty";
+      content = <ReportLoader loading={true}/>;
     } else {
       const pillarsSection = <div id="pillars-overview">
         <h2>Pillars Overview</h2>
@@ -97,17 +102,6 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           <ReportHeader report_type={ReportTypes.zeroTrust}/>
           <hr/>
           {content}
-          <hr/>
-          THIS IS THE RAW SERVER DATA
-          <br/>
-          PILLARS:
-          <pre>{JSON.stringify(this.state.pillars, undefined, 2)}</pre>
-          <br/>
-          DIRECTIVES:
-          <pre>{JSON.stringify(this.state.directives, undefined, 2)}</pre>
-          <br/>
-          FINDINGS:
-          <pre>{JSON.stringify(this.state.findings, undefined, 2)}</pre>
         </div>
       </div>
     )
