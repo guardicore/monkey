@@ -12,7 +12,8 @@ import AuthComponent from '../AuthComponent';
 import PassTheHashMapPageComponent from "./PassTheHashMapPage";
 import StrongUsers from "components/report-components/security/StrongUsers";
 import AttackReport from "components/report-components/security/AttackReport";
-import ReportHeader, { ReportTypes } from "../report-components/common/ReportHeader";
+import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
+import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStillAliveWarning";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 
@@ -175,16 +176,7 @@ class ReportPageComponent extends AuthComponent {
               No critical security issues were detected.
             </p>)
         }
-        {
-          this.state.allMonkeysAreDead ?
-            ''
-            :
-            (<p className="alert alert-warning">
-              <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-              Some monkeys are still running. To get the best report it's best to wait for all of them to finish
-              running.
-            </p>)
-        }
+        <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
         {
           this.state.report.glance.exploited.length > 0 ?
             ''

@@ -5,6 +5,7 @@ import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeade
 import PillarGrades from "../report-components/zerotrust/PillarGrades";
 import FindingsTable from "../report-components/zerotrust/FindingsTable";
 import {SinglePillarDirectivesStatus} from "../report-components/zerotrust/SinglePillarDirectivesStatus";
+import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStillAliveWarning";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -13,16 +14,30 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
     this.state = {
       allMonkeysAreDead: false,
-      runStarted: false
+      runStarted: true
     };
   }
 
-  render() {
-    let res;
-    // Todo move to componentDidMount
-    this.getZeroTrustReportFromServer(res);
+  componentDidMount() {
+    this.updateMonkeysRunning().then(res => this.getZeroTrustReportFromServer(res));
+  }
 
-    const content = this.generateReportContent();
+  updateMonkeysRunning = () => {
+    return this.authFetch('/api')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']),
+          runStarted: res['completed_steps']['run_monkey']
+        });
+        return res;
+      });
+  };
+
+  render() {
+    let content;
+
+    content = this.generateReportContent();
 
     return (
       <Col xs={12} lg={10}>
@@ -40,12 +55,13 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     if (this.stillLoadingDataFromServer()) {
       content = "Still empty";
     } else {
-      const pillarsSection = <div>
+      const pillarsSection = <div id="pillars-overview">
         <h2>Pillars Overview</h2>
         <PillarGrades pillars={this.state.pillars}/>
       </div>;
 
-      const directivesSection = <div><h2>Directives status</h2>
+      const directivesSection = <div id="directives-overview">
+        <h2>Directives status</h2>
         {
           Object.keys(this.state.directives).map((pillar) =>
             <SinglePillarDirectivesStatus
@@ -56,10 +72,13 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         }
       </div>;
 
-      const findingSection = <div><h2>Findings</h2>
-        <FindingsTable findings={this.state.findings}/></div>;
+      const findingSection = <div id="findings-overview">
+        <h2>Findings</h2>
+        <FindingsTable findings={this.state.findings}/>
+      </div>;
 
-      content = <div>
+      content = <div id="MainContentSection">
+        <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
         {pillarsSection}
         {directivesSection}
         {findingSection}
