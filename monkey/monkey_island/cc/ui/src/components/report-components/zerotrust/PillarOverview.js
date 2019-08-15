@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {PillarLabel} from "./PillarLabel";
 import PaginatedTable from "../common/PaginatedTable";
+import {PillarsSummary} from "./PillarsSummary";
 
 const columns = [
   {
@@ -17,10 +18,14 @@ const columns = [
   }
 ];
 
-class PillarGrades extends Component {
+class PillarOverview extends Component {
   render() {
-    return <PaginatedTable data={this.props.pillars} columns={columns} pageSize={10}/>;
+    return (<div id={this.constructor.name}>
+      <PillarsSummary pillars={this.props.pillars.summary}/>
+      <br/>
+      <PaginatedTable data={this.props.pillars.grades} columns={columns} pageSize={10}/>
+    </div>);
   }
 }
 
-export default PillarGrades;
+export default PillarOverview;

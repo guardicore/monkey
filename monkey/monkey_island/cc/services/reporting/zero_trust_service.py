@@ -7,13 +7,13 @@ class ZeroTrustService(object):
     @staticmethod
     def get_pillars_grades():
         pillars_grades = []
-        all_findings = Finding.objects()
         for pillar in PILLARS:
-            pillars_grades.append(ZeroTrustService.__get_pillar_grade(pillar, all_findings))
+            pillars_grades.append(ZeroTrustService.__get_pillar_grade(pillar))
         return pillars_grades
 
     @staticmethod
-    def __get_pillar_grade(pillar, all_findings):
+    def __get_pillar_grade(pillar):
+        all_findings = Finding.objects()
         pillar_grade = {
             "pillar": pillar,
             STATUS_CONCLUSIVE: 0,
@@ -66,7 +66,7 @@ class ZeroTrustService(object):
             all_statuses |= set(Finding.objects(test=test).distinct("status"))
 
         for status in all_statuses:
-            if TEST_STATUSES.index(status) < TEST_STATUSES.index(worst_status):
+            if ORDERED_TEST_STATUSES.index(status) < ORDERED_TEST_STATUSES.index(worst_status):
                 worst_status = status
 
         return worst_status
@@ -88,7 +88,7 @@ class ZeroTrustService(object):
     def __get_lcd_worst_status_for_test(all_findings_for_test):
         current_status = STATUS_UNEXECUTED
         for finding in all_findings_for_test:
-            if TEST_STATUSES.index(finding.status) < TEST_STATUSES.index(current_status):
+            if ORDERED_TEST_STATUSES.index(finding.status) < ORDERED_TEST_STATUSES.index(current_status):
                 current_status = finding.status
 
         return current_status
@@ -115,3 +115,23 @@ class ZeroTrustService(object):
     def __get_events_as_dict(events):
         return [json.loads(event.to_json()) for event in events]
 
+    @staticmethod
+    def get_pillars_summary():
+        results = {
+            STATUS_CONCLUSIVE: [],
+            STATUS_INCONCLUSIVE: [],
+            STATUS_POSITIVE: [],
+            STATUS_UNEXECUTED: []
+        }
+        for pillar in PILLARS:
+            results[ZeroTrustService.__get_status_for_pillar(pillar)].append(pillar)
+
+        return results
+
+    @staticmethod
+    def __get_status_for_pillar(pillar):
+        grade = ZeroTrustService.__get_pillar_grade(pillar)
+        for status in ORDERED_TEST_STATUSES:
+            if grade[status] > 0:
+                return status
+        return STATUS_UNEXECUTED

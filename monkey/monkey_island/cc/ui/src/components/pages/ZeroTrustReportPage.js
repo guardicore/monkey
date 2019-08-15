@@ -2,7 +2,7 @@ import React from 'react';
 import {Button, Col} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
-import PillarGrades from "../report-components/zerotrust/PillarGrades";
+import PillarsOverview from "../report-components/zerotrust/PillarOverview";
 import FindingsTable from "../report-components/zerotrust/FindingsTable";
 import {SinglePillarDirectivesStatus} from "../report-components/zerotrust/SinglePillarDirectivesStatus";
 import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStillAliveWarning";
@@ -60,9 +60,10 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     if (this.stillLoadingDataFromServer()) {
       content = <ReportLoader loading={true}/>;
     } else {
+      console.log(this.state.pillars);
       const pillarsSection = <div id="pillars-overview">
         <h2>Pillars Overview</h2>
-        <PillarGrades pillars={this.state.pillars}/>
+        <PillarsOverview pillars={this.state.pillars}/>
       </div>;
 
       const directivesSection = <div id="directives-overview">
