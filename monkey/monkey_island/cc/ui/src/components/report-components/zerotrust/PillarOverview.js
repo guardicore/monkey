@@ -21,8 +21,6 @@ const columns = [
 class PillarOverview extends Component {
   render() {
     return (<div id={this.constructor.name}>
-      <PillarsSummary pillars={this.props.pillars.summary}/>
-      <br/>
       <PaginatedTable data={this.props.pillars.grades} columns={columns} pageSize={10}/>
     </div>);
   }

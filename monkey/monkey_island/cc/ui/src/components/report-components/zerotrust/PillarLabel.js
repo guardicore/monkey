@@ -26,6 +26,6 @@ export class PillarLabel extends Component {
     };
 
     const className = "label " + pillarToColor[this.props.pillar];
-    return <span className={className} style={{margin: '2px'}}><i className={pillarToIcon[this.props.pillar]}/> {this.props.pillar}</span>
+    return <div className={className} style={{margin: '2px', display: 'inline-block'}}><i className={pillarToIcon[this.props.pillar]}/> {this.props.pillar}</div>
   }
 }

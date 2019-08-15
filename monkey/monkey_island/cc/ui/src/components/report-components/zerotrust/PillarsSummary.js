@@ -16,13 +16,13 @@ export class PillarsSummary extends Component {
     if (this.props.pillars[status].length > 0) {
       return <Fragment>
         <h3>{status}</h3>
-        <p>
+        <div>
             {
               this.props.pillars[status].map((pillar) => {
                 return <PillarLabel key={pillar} pillar={pillar}/>
               })
             }
-        </p>
+        </div>
       </Fragment>
     }
   }

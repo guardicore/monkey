@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col} from 'react-bootstrap';
+import {Button, Col, Row, Grid} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
 import PillarsOverview from "../report-components/zerotrust/PillarOverview";
@@ -8,6 +8,8 @@ import {SinglePillarDirectivesStatus} from "../report-components/zerotrust/Singl
 import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
+import {SecurityIssuesGlance} from "../report-components/common/SecurityIssuesGlance";
+import {PillarsSummary} from "../report-components/zerotrust/PillarsSummary";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -60,12 +62,6 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     if (this.stillLoadingDataFromServer()) {
       content = <ReportLoader loading={true}/>;
     } else {
-      console.log(this.state.pillars);
-      const pillarsSection = <div id="pillars-overview">
-        <h2>Pillars Overview</h2>
-        <PillarsOverview pillars={this.state.pillars}/>
-      </div>;
-
       const directivesSection = <div id="directives-overview">
         <h2>Directives status</h2>
         {
@@ -84,8 +80,19 @@ class ZeroTrustReportPageComponent extends AuthComponent {
       </div>;
 
       content = <div id="MainContentSection">
-        <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
-        {pillarsSection}
+        <h2>Overview</h2>
+        <Grid fluid={true}>
+          <Row className="show-grid">
+            <Col xs={8} sm={8} md={8} lg={8}>
+              <PillarsOverview pillars={this.state.pillars}/>
+            </Col>
+            <Col xs={4} sm={4} md={4} lg={4}>
+              <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead} />
+              <SecurityIssuesGlance issuesFound={this.anyIssuesFound()} />
+              <PillarsSummary pillars={this.state.pillars.summary}/>
+            </Col>
+          </Row>
+        </Grid>
         {directivesSection}
         {findingSection}
       </div>;
@@ -139,6 +146,14 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           pillars: res
         });
       });
+  }
+
+  anyIssuesFound() {
+    const severe = function(finding) {
+      return (finding.status === "Conclusive" || finding.status === "Inconclusive");
+    };
+
+    return this.state.findings.some(severe);
   }
 }
 
