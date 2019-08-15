@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from "react";
 import {PillarLabel} from "./PillarLabel";
+import {StatusLabel} from "./StatusLabel";
 
 export class PillarsSummary extends Component {
   render() {
@@ -15,7 +16,9 @@ export class PillarsSummary extends Component {
     console.log(this.props.pillars);
     if (this.props.pillars[status].length > 0) {
       return <Fragment>
-        <h3>{status}</h3>
+        <h3>
+          <StatusLabel showText={true} status={status}/>
+        </h3>
         <div>
             {
               this.props.pillars[status].map((pillar) => {

@@ -62,8 +62,24 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     if (this.stillLoadingDataFromServer()) {
       content = <ReportLoader loading={true}/>;
     } else {
+      const overviewSection = <div id="overview-section">
+        <h2>Overview</h2>
+        <Grid fluid={true}>
+          <Row className="show-grid">
+            <Col xs={8} sm={8} md={8} lg={8}>
+              <PillarsOverview pillars={this.state.pillars}/>
+            </Col>
+            <Col xs={4} sm={4} md={4} lg={4}>
+              <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
+              <SecurityIssuesGlance issuesFound={this.anyIssuesFound()}/>
+              <PillarsSummary pillars={this.state.pillars.summary}/>
+            </Col>
+          </Row>
+        </Grid>
+      </div>;
+
       const directivesSection = <div id="directives-overview">
-        <h2>Directives status</h2>
+        <h2>Directives</h2>
         {
           Object.keys(this.state.directives).map((pillar) =>
             <SinglePillarDirectivesStatus
@@ -80,19 +96,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
       </div>;
 
       content = <div id="MainContentSection">
-        <h2>Overview</h2>
-        <Grid fluid={true}>
-          <Row className="show-grid">
-            <Col xs={8} sm={8} md={8} lg={8}>
-              <PillarsOverview pillars={this.state.pillars}/>
-            </Col>
-            <Col xs={4} sm={4} md={4} lg={4}>
-              <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead} />
-              <SecurityIssuesGlance issuesFound={this.anyIssuesFound()} />
-              <PillarsSummary pillars={this.state.pillars.summary}/>
-            </Col>
-          </Row>
-        </Grid>
+        {overviewSection}
         {directivesSection}
         {findingSection}
       </div>;

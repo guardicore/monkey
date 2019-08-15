@@ -18,7 +18,7 @@ export class PillarLabel extends Component {
     const pillarToIcon = {
       "Data": "fa fa-database",
       "People": "fa fa-user",
-      "Networks": "fa fa-tty",
+      "Networks": "fa fa-wifi",
       "Workloads": "fa fa-cloud",
       "Devices": "fa fa-laptop",
       "Visibility & Analytics": "fa fa-eye-slash",

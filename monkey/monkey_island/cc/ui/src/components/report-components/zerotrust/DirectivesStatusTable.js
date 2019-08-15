@@ -1,14 +1,10 @@
-import React from "react";
+import React, {Fragment} from "react";
 import PaginatedTable from "../common/PaginatedTable";
 import AuthComponent from "../../AuthComponent";
 import 'styles/ZeroTrustPillars.css'
+import {StatusLabel} from "./StatusLabel";
 
-const statusToIcon = {
-  "Positive": "fa-clipboard-check status-success",
-  "Inconclusive": "fa-exclamation-triangle status-warning",
-  "Conclusive": "fa-bomb status-danger",
-  "Unexecuted": "fa-question status-default",
-};
+
 
 const columns = [
   {
@@ -19,7 +15,7 @@ const columns = [
       },
       { Header: 'Status', id: 'status',
         accessor: x => {
-          return <i className={"fa " + statusToIcon[x.status] + " fa-3x"} />;
+          return <StatusLabel status={x.status} size="fa-3x" showText={false} />;
         }
       },
       { Header: 'Tests', id: 'tests',
@@ -39,12 +35,12 @@ class TestsStatus extends AuthComponent {
     const unexecutedStatus = "Unexecuted";
 
     return (
-      <div>
+      <Fragment>
         {this.getTestsOfStatusIfAny(conclusiveStatus)}
         {this.getTestsOfStatusIfAny(inconclusiveStatus)}
         {this.getTestsOfStatusIfAny(positiveStatus)}
         {this.getTestsOfStatusIfAny(unexecutedStatus)}
-      </div>
+      </Fragment>
     );
   }
 
@@ -58,9 +54,12 @@ class TestsStatus extends AuthComponent {
       const listItems = filteredTests.map((test) => {
         return (<li key={test.test}>{test.test}</li>)
       });
-      return <div><i className={"fa " + statusToIcon[statusToFilter]}/> {statusToFilter}<ul>{listItems}</ul></div>;
+      return <Fragment>
+        <StatusLabel status={statusToFilter} showText={true}/>
+        <ul>{listItems}</ul>
+      </Fragment>;
     }
-    return <div/>;
+    return <Fragment/>;
   }
 }
 
