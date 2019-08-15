@@ -47,54 +47,73 @@ DIRECTIVES = {
 POSSIBLE_STATUSES_KEY = u"possible_statuses"
 PILLARS_KEY = u"pillars"
 DIRECTIVE_KEY = u"directive_key"
-FINDING_FORMAT_KEY = u"finding_format"
-EXPLANATION_KEY = u"explanation"
+FINDING_EXPLANATION_BY_STATUS_KEY = u"finding_explanation"
+TEST_EXPLANATION_KEY = u"explanation"
 TESTS_MAP = {
     TEST_SEGMENTATION: {
-        EXPLANATION_KEY: u"The Monkey tried to scan and find machines that it can communicate with from the machine it's running on, that belong to different network segments.",
-        FINDING_FORMAT_KEY: u"The Monkey from {ORIGIN} communicated with a machine on a different segment.",
+        TEST_EXPLANATION_KEY: u"The Monkey tried to scan and find machines that it can communicate with from the machine it's running on, that belong to different network segments.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+                STATUS_CONCLUSIVE: "Monkey performed cross-segment communication. Check firewall rules and logs.",
+                STATUS_POSITIVE: "Monkey couldn't perform cross-segment communication. If relevant, check firewall logs."
+            },
         DIRECTIVE_KEY: DIRECTIVE_SEGMENTATION,
         PILLARS_KEY: [NETWORKS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_POSITIVE, STATUS_CONCLUSIVE]
     },
     TEST_ACTIVITY_TIMELINE: {
-        EXPLANATION_KEY: u"The Monkeys in the network performed malicious-looking actions, like scanning and attempting exploitation.",
-        FINDING_FORMAT_KEY: u"Malicious activity performed by the Monkeys. See 'events' for detailed information.",
+        TEST_EXPLANATION_KEY: u"The Monkeys in the network performed malicious-looking actions, like scanning and attempting exploitation.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_INCONCLUSIVE: "Monkey performed malicious actions in the network. Check SOC logs and alerts."
+        },
         DIRECTIVE_KEY: DIRECTIVE_ANALYZE_NETWORK_TRAFFIC,
         PILLARS_KEY: [NETWORKS, VISIBILITY_ANALYTICS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_INCONCLUSIVE]
     },
     TEST_ENDPOINT_SECURITY_EXISTS: {
-        EXPLANATION_KEY: u"The Monkey checked if there is an active process of an endpoint security software.",
-        FINDING_FORMAT_KEY: u"The Monkey on {ORIGIN} found no active endpoint security processes.",
+        TEST_EXPLANATION_KEY: u"The Monkey checked if there is an active process of an endpoint security software.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_CONCLUSIVE: "Monkey didn't find ANY active endpoint security processes. Install and activate anti-virus software on endpoints.",
+            STATUS_POSITIVE: "Monkey found active endpoint security processes. Check their logs to see if Monkey was a security concern."
+        },
         DIRECTIVE_KEY: DIRECTIVE_ENDPOINT_SECURITY,
         PILLARS_KEY: [DEVICES],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_CONCLUSIVE, STATUS_POSITIVE]
     },
     TEST_MACHINE_EXPLOITED: {
-        EXPLANATION_KEY: u"The Monkey tries to exploit machines in order to breach them and propagate in the network.",
-        FINDING_FORMAT_KEY: u"The Monkey on {ORIGIN} attempted to exploit a machine on {TARGET}.",
+        TEST_EXPLANATION_KEY: u"The Monkey tries to exploit machines in order to breach them and propagate in the network.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_CONCLUSIVE: "Monkey successfully exploited endpoints. Check IDS/IPS logs to see activity recognized and see which endpoints were compromised.",
+            STATUS_INCONCLUSIVE: "Monkey tried exploiting endpoints. Check IDS/IPS logs to see activity recognized."
+        },
         DIRECTIVE_KEY: DIRECTIVE_ENDPOINT_SECURITY,
         PILLARS_KEY: [DEVICES],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_CONCLUSIVE, STATUS_INCONCLUSIVE]
     },
     TEST_SCHEDULED_EXECUTION: {
-        EXPLANATION_KEY: "The Monkey was executed in a scheduled manner.",
-        FINDING_FORMAT_KEY: "The Monkey on {ORIGIN} started running in an executed manner.",
+        TEST_EXPLANATION_KEY: "The Monkey was executed in a scheduled manner.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_INCONCLUSIVE: "Monkey was executed in a scheduled manner. Locate this activity in User-Behavior security software."
+        },
         DIRECTIVE_KEY: DIRECTIVE_USER_BEHAVIOUR,
         PILLARS_KEY: [PEOPLE, NETWORKS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_INCONCLUSIVE]
     },
     TEST_DATA_ENDPOINT_ELASTIC: {
-        EXPLANATION_KEY: u"The Monkey scanned for unencrypted access to ElasticSearch instances.",
-        FINDING_FORMAT_KEY: u"The Monkey on {ORIGIN} found an open ElasticSearch instance.",
+        TEST_EXPLANATION_KEY: u"The Monkey scanned for unencrypted access to ElasticSearch instances.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_CONCLUSIVE: "Monkey accessed ElasticSearch instances. Limit access to data by encrypting it in in-transit.",
+            STATUS_POSITIVE: "Monkey didn't find open ElasticSearch instances. If you have such instances, look for alerts that indicate attempts to access them."
+        },
         DIRECTIVE_KEY: DIRECTIVE_DATA_TRANSIT,
         PILLARS_KEY: [DATA],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_CONCLUSIVE, STATUS_POSITIVE]
     },
     TEST_DATA_ENDPOINT_HTTP: {
-        EXPLANATION_KEY: u"The Monkey scanned for unencrypted access to HTTP servers.",
-        FINDING_FORMAT_KEY: u"The Monkey on {ORIGIN} found an open HTTP server.",
+        TEST_EXPLANATION_KEY: u"The Monkey scanned for unencrypted access to HTTP servers.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_CONCLUSIVE: "Monkey accessed HTTP servers. Limit access to data by encrypting it in in-transit.",
+            STATUS_POSITIVE: "Monkey didn't find open HTTP servers. If you have such servers, look for alerts that indicate attempts to access them."
+        },
         DIRECTIVE_KEY: DIRECTIVE_DATA_TRANSIT,
         PILLARS_KEY: [DATA],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_CONCLUSIVE, STATUS_POSITIVE]

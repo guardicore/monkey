@@ -50,7 +50,7 @@ class ZeroTrustService(object):
             for pillar in DIRECTIVES_TO_PILLARS[directive]:
                 all_directive_statuses[pillar].append(
                     {
-                        "directive": directive,
+                        "directive": DIRECTIVES[directive],
                         "tests": ZeroTrustService.__get_tests_status(directive_tests),
                         "status": ZeroTrustService.__get_directive_status(directive_tests)
                     }
@@ -78,7 +78,7 @@ class ZeroTrustService(object):
             test_findings = Finding.objects(test=test)
             results.append(
                 {
-                    "test": test,
+                    "test": TESTS_MAP[test][TEST_EXPLANATION_KEY],
                     "status": ZeroTrustService.__get_lcd_worst_status_for_test(test_findings)
                 }
             )
@@ -104,7 +104,7 @@ class ZeroTrustService(object):
         test_info = TESTS_MAP[finding.test]
         enriched_finding = {
             # TODO add test explanation per status.
-            "test": test_info[EXPLANATION_KEY],
+            "test": test_info[FINDING_EXPLANATION_BY_STATUS_KEY][finding.status],
             "pillars": test_info[PILLARS_KEY],
             "status": finding.status,
             "events": ZeroTrustService.__get_events_as_dict(finding.events)

@@ -4,7 +4,7 @@ Define a Document Schema for Zero Trust findings.
 
 from mongoengine import Document, StringField, EmbeddedDocumentListField
 
-from common.data.zero_trust_consts import ORDERED_TEST_STATUSES, TESTS, TESTS_MAP, EXPLANATION_KEY, PILLARS_KEY
+from common.data.zero_trust_consts import ORDERED_TEST_STATUSES, TESTS, TESTS_MAP, TEST_EXPLANATION_KEY, PILLARS_KEY
 # Dummy import for mongoengine.
 # noinspection PyUnresolvedReferences
 from event import Event
@@ -24,7 +24,7 @@ class Finding(Document):
 
     # LOGIC
     def get_test_explanation(self):
-        return TESTS_MAP[self.test][EXPLANATION_KEY]
+        return TESTS_MAP[self.test][TEST_EXPLANATION_KEY]
 
     def get_pillars(self):
         return TESTS_MAP[self.test][PILLARS_KEY]

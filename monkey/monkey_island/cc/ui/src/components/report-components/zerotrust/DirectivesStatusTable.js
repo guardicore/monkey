@@ -19,6 +19,7 @@ const columns = [
         }
       },
       { Header: 'Tests', id: 'tests',
+        style: {'whiteSpace': 'unset'},  // This enables word wrap
         accessor: x => {
           return <TestsStatus tests={x.tests} />;
         }

@@ -110,88 +110,88 @@ class TestZeroTrustService(IslandTestCase):
             AUTOMATION_ORCHESTRATION: [],
             DATA: [
                 {
-                    "directive": DIRECTIVE_DATA_TRANSIT,
+                    "directive": DIRECTIVES[DIRECTIVE_DATA_TRANSIT],
                     "status": STATUS_CONCLUSIVE,
                     "tests": [
                         {
                             "status": STATUS_UNEXECUTED,
-                            "test": TEST_DATA_ENDPOINT_ELASTIC
+                            "test": TESTS_MAP[TEST_DATA_ENDPOINT_ELASTIC][TEST_EXPLANATION_KEY]
                         },
                         {
                             "status": STATUS_CONCLUSIVE,
-                            "test": TEST_DATA_ENDPOINT_HTTP
+                            "test": TESTS_MAP[TEST_DATA_ENDPOINT_HTTP][TEST_EXPLANATION_KEY]
                         }
                     ]
                 }
             ],
             DEVICES: [
                 {
-                    "directive": "endpoint_security",
-                    "status": "Conclusive",
+                    "directive": DIRECTIVES[DIRECTIVE_ENDPOINT_SECURITY],
+                    "status": STATUS_CONCLUSIVE,
                     "tests": [
                         {
-                            "status": "Conclusive",
-                            "test": "endpoint_security_exists"
+                            "status": STATUS_CONCLUSIVE,
+                            "test": TESTS_MAP[TEST_ENDPOINT_SECURITY_EXISTS][TEST_EXPLANATION_KEY]
                         },
                         {
-                            "status": "Unexecuted",
-                            "test": "machine_exploited"
+                            "status": STATUS_UNEXECUTED,
+                            "test": TESTS_MAP[TEST_MACHINE_EXPLOITED][TEST_EXPLANATION_KEY]
                         }
                     ]
                 }
             ],
             NETWORKS: [
                 {
-                    "directive": "segmentation",
-                    "status": "Unexecuted",
+                    "directive": DIRECTIVES[DIRECTIVE_SEGMENTATION],
+                    "status": STATUS_UNEXECUTED,
                     "tests": [
                         {
-                            "status": "Unexecuted",
-                            "test": "segmentation"
+                            "status": STATUS_UNEXECUTED,
+                            "test": TESTS_MAP[TEST_SEGMENTATION][TEST_EXPLANATION_KEY]
                         }
                     ]
                 },
                 {
-                    "directive": "user_behaviour",
+                    "directive": DIRECTIVES[DIRECTIVE_USER_BEHAVIOUR],
                     "status": STATUS_INCONCLUSIVE,
                     "tests": [
                         {
                             "status": STATUS_INCONCLUSIVE,
-                            "test": TEST_SCHEDULED_EXECUTION
+                            "test": TESTS_MAP[TEST_SCHEDULED_EXECUTION][TEST_EXPLANATION_KEY]
                         }
                     ]
                 },
                 {
-                    "directive": "analyze_network_traffic",
-                    "status": "Unexecuted",
+                    "directive": DIRECTIVES[DIRECTIVE_ANALYZE_NETWORK_TRAFFIC],
+                    "status": STATUS_UNEXECUTED,
                     "tests": [
                         {
-                            "status": "Unexecuted",
-                            "test": "malicious_activity_timeline"
+                            "status": STATUS_UNEXECUTED,
+                            "test": TESTS_MAP[TEST_ACTIVITY_TIMELINE][TEST_EXPLANATION_KEY]
                         }
                     ]
                 }
             ],
             PEOPLE: [
                 {
-                    "directive": "user_behaviour",
+                    "directive": DIRECTIVES[DIRECTIVE_USER_BEHAVIOUR],
                     "status": STATUS_INCONCLUSIVE,
                     "tests": [
                         {
                             "status": STATUS_INCONCLUSIVE,
-                            "test": TEST_SCHEDULED_EXECUTION
+                            "test": TESTS_MAP[TEST_SCHEDULED_EXECUTION][TEST_EXPLANATION_KEY]
                         }
                     ]
                 }
             ],
             "Visibility & Analytics": [
                 {
-                    "directive": DIRECTIVE_ANALYZE_NETWORK_TRAFFIC,
+                    "directive": DIRECTIVES[DIRECTIVE_ANALYZE_NETWORK_TRAFFIC],
                     "status": STATUS_UNEXECUTED,
                     "tests": [
                         {
                             "status": STATUS_UNEXECUTED,
-                            "test": TEST_ACTIVITY_TIMELINE
+                            "test": TESTS_MAP[TEST_ACTIVITY_TIMELINE][TEST_EXPLANATION_KEY]
                         }
                     ]
                 }
