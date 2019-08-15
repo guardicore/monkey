@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Button, Col} from 'react-bootstrap';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
@@ -16,9 +16,9 @@ import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeade
 import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
+import {SecurityIssuesGlance} from "../report-components/common/SecurityIssuesGlance";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
-
 
 
 class ReportPageComponent extends AuthComponent {
@@ -165,17 +165,7 @@ class ReportPageComponent extends AuthComponent {
         <h2>
           Overview
         </h2>
-        {
-          this.state.report.glance.exploited.length > 0 ?
-            (<p className="alert alert-danger">
-              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
-              Critical security issues were detected!
-            </p>) :
-            (<p className="alert alert-success">
-              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
-              No critical security issues were detected.
-            </p>)
-        }
+        <SecurityIssuesGlance issuesFound={this.state.report.glance.exploited.length > 0}/>
         <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
         {
           this.state.report.glance.exploited.length > 0 ?
