@@ -116,7 +116,7 @@ class ZeroTrustService(object):
         return [json.loads(event.to_json()) for event in events]
 
     @staticmethod
-    def get_pillars_summary():
+    def get_statuses_to_pillars():
         results = {
             STATUS_CONCLUSIVE: [],
             STATUS_INCONCLUSIVE: [],
@@ -125,6 +125,14 @@ class ZeroTrustService(object):
         }
         for pillar in PILLARS:
             results[ZeroTrustService.__get_status_for_pillar(pillar)].append(pillar)
+
+        return results
+
+    @staticmethod
+    def get_pillars_to_statuses():
+        results = {}
+        for pillar in PILLARS:
+            results[pillar] = ZeroTrustService.__get_status_for_pillar(pillar)
 
         return results
 

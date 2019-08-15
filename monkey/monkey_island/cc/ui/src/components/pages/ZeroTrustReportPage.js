@@ -9,7 +9,7 @@ import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStill
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
 import {SecurityIssuesGlance} from "../report-components/common/SecurityIssuesGlance";
-import {PillarsSummary} from "../report-components/zerotrust/PillarsSummary";
+import {StatusesToPillarsSummary} from "../report-components/zerotrust/StatusesToPillarsSummary";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -67,12 +67,12 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         <Grid fluid={true}>
           <Row className="show-grid">
             <Col xs={8} sm={8} md={8} lg={8}>
-              <PillarsOverview pillars={this.state.pillars}/>
+              <PillarsOverview pillarsToStatuses={this.state.pillars.pillarsToStatuses} grades={this.state.pillars.grades}/>
             </Col>
             <Col xs={4} sm={4} md={4} lg={4}>
               <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
               <SecurityIssuesGlance issuesFound={this.anyIssuesFound()}/>
-              <PillarsSummary pillars={this.state.pillars.summary}/>
+              <StatusesToPillarsSummary statusesToPillars={this.state.pillars.statusesToPillars} />
             </Col>
           </Row>
         </Grid>
@@ -92,7 +92,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
       const findingSection = <div id="findings-overview">
         <h2>Findings</h2>
-        <FindingsTable findings={this.state.findings}/>
+        <FindingsTable pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
       </div>;
 
       content = <div id="MainContentSection">

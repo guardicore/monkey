@@ -28,7 +28,8 @@ class Report(flask_restful.Resource):
         elif report_type == ZERO_TRUST_REPORT_TYPE:
             if report_data == REPORT_DATA_PILLARS:
                 return jsonify({
-                        "summary": ZeroTrustService.get_pillars_summary(),
+                        "statusesToPillars": ZeroTrustService.get_statuses_to_pillars(),
+                        "pillarsToStatuses": ZeroTrustService.get_pillars_to_statuses(),
                         "grades": ZeroTrustService.get_pillars_grades()
                     }
                 )

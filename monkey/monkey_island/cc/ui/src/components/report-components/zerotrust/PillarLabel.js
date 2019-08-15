@@ -1,20 +1,12 @@
 import React, {Component} from "react";
 import 'styles/ZeroTrustPillars.css'
+import {statusToLabelType} from "./StatusLabel";
 
 export class PillarLabel extends Component {
   pillar;
+  status;
 
   render() {
-    const pillarToColor = {
-      "Data": "label-zt-data",
-      "People": "label-zt-people",
-      "Networks": "label-zt-networks",
-      "Workloads": "label-zt-workloads",
-      "Devices": "label-zt-devices",
-      "Visibility & Analytics": "label-zt-analytics",
-      "Automation & Orchestration": "label-zt-automation",
-    };
-
     const pillarToIcon = {
       "Data": "fa fa-database",
       "People": "fa fa-user",
@@ -25,7 +17,7 @@ export class PillarLabel extends Component {
       "Automation & Orchestration": "fa fa-cogs",
     };
 
-    const className = "label " + pillarToColor[this.props.pillar];
+    const className = "label " + statusToLabelType[this.props.status];
     return <div className={className} style={{margin: '2px', display: 'inline-block'}}><i className={pillarToIcon[this.props.pillar]}/> {this.props.pillar}</div>
   }
 }

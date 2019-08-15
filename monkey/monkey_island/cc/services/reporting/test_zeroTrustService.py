@@ -1,3 +1,5 @@
+from unittest import TestCase
+
 from monkey_island.cc.services.reporting.zero_trust_service import ZeroTrustService
 
 from common.data.zero_trust_consts import *
@@ -198,3 +200,35 @@ class TestZeroTrustService(IslandTestCase):
         }
 
         self.assertEquals(ZeroTrustService.get_directives_status(), expected)
+
+    def test_get_pillars_to_statuses(self):
+        self.fail_if_not_testing_env()
+        self.clean_finding_db()
+
+        self.maxDiff = None
+
+        expected = {
+            AUTOMATION_ORCHESTRATION: STATUS_UNEXECUTED,
+            DEVICES: STATUS_UNEXECUTED,
+            NETWORKS: STATUS_UNEXECUTED,
+            PEOPLE: STATUS_UNEXECUTED,
+            VISIBILITY_ANALYTICS: STATUS_UNEXECUTED,
+            WORKLOADS: STATUS_UNEXECUTED,
+            DATA: STATUS_UNEXECUTED
+        }
+
+        self.assertEquals(ZeroTrustService.get_pillars_to_statuses(), expected)
+
+        save_example_findings()
+
+        expected = {
+            AUTOMATION_ORCHESTRATION: STATUS_UNEXECUTED,
+            DEVICES: STATUS_CONCLUSIVE,
+            NETWORKS: STATUS_INCONCLUSIVE,
+            PEOPLE: STATUS_INCONCLUSIVE,
+            VISIBILITY_ANALYTICS: STATUS_UNEXECUTED,
+            WORKLOADS: STATUS_UNEXECUTED,
+            DATA: STATUS_CONCLUSIVE
+        }
+
+        self.assertEquals(ZeroTrustService.get_pillars_to_statuses(), expected)

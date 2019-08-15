@@ -8,7 +8,7 @@ const statusToIcon = {
   "Unexecuted": "fa-question",
 };
 
-const statusToLabelType = {
+export const statusToLabelType = {
   "Positive": "label-success",
   "Inconclusive": "label-warning",
   "Conclusive": "label-danger",

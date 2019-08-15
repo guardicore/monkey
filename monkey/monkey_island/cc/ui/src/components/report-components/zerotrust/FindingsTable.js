@@ -58,7 +58,7 @@ const columns = [
         accessor: x => {
           const pillars = x.pillars;
           const listItems = pillars.map((pillar) =>
-            <li key={pillar}><PillarLabel pillar={pillar}/></li>
+            <li key={pillar.name}><PillarLabel pillar={pillar.name} status={pillar.status}/></li>
           );
           return <ul>{listItems}</ul>;
         }
@@ -74,6 +74,13 @@ const columns = [
 
 class FindingsTable extends Component {
   render() {
+    const data = this.props.findings.map((finding) => {
+      const newFinding = finding;
+      newFinding.pillars = finding.pillars.map((pillar) => {
+        return {name: pillar, status: this.props.pillarsToStatuses[pillar]}
+        });
+      return newFinding;
+    });
     return (
       <PaginatedTable data={this.props.findings} pageSize={10} columns={columns}/>
     );
