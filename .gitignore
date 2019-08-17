@@ -84,7 +84,6 @@ MonkeyZoo/*
 
 # vim swap files
 *.swp
-monkey/infection_monkey/venv/*
 venv/include/python2.7
 venv/local/include
 venv/local/lib

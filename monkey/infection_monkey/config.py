@@ -47,7 +47,7 @@ class Configuration(object):
                 if hasattr(self, key):
                     setattr(self, key, value)
                 else:
-                    unknown_items.append(key)           
+                    unknown_items.append(key)
         return unknown_items
 
     def from_json(self, json_data):

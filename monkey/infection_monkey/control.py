@@ -14,6 +14,7 @@ from infection_monkey.config import WormConfiguration, GUID
 from infection_monkey.network.info import local_ips, check_internet_access, TIMEOUT
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
+from infection_monkey.utils import user_token_is_admin
 
 __author__ = 'hoffer'
 
@@ -49,7 +50,7 @@ class ControlClient(object):
             if os.getuid():  # won't throw an exception if it's linux
                 user = os.popen('whoami').read()[:-1]  # get the username
         except AttributeError:
-            if ctypes.windll.shell32.IsUserAnAdmin():
+            if user_token_is_admin(0):
                 user = "Admin"
 
         monkey = {'guid': GUID,

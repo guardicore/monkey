@@ -41,5 +41,3 @@ HADOOP_LINUX_COMMAND = "! [ -f %(monkey_path)s ] " \
                     "&&  %(monkey_path)s %(monkey_type)s %(parameters)s"
 
 DOWNLOAD_TIMEOUT = 300
-
-

