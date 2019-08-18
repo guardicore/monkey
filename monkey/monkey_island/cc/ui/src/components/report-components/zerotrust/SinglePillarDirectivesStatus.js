@@ -13,7 +13,7 @@ export class SinglePillarDirectivesStatus extends AuthComponent {
     else {
       return (
         <Fragment>
-          <h3><PillarLabel pillar={this.props.pillar}/></h3>
+          <h3><PillarLabel pillar={this.props.pillar} status={this.props.pillarsToStatuses[this.props.pillar]} /></h3>
           <DirectivesStatusTable directivesStatus={this.props.directivesStatus}/>
         </Fragment>
       );

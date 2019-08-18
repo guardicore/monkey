@@ -85,7 +85,8 @@ class ZeroTrustReportPageComponent extends AuthComponent {
             <SinglePillarDirectivesStatus
               key={pillar}
               pillar={pillar}
-              directivesStatus={this.state.directives[pillar]}/>
+              directivesStatus={this.state.directives[pillar]}
+              pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
           )
         }
       </div>;
