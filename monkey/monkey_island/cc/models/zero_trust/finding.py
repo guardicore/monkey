@@ -51,7 +51,3 @@ class Finding(Document):
         finding.save()
 
         return finding
-
-
-class UnknownTest(Exception):
-    pass
