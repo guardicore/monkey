@@ -86,12 +86,17 @@ class ZeroTrustService(object):
 
     @staticmethod
     def __get_lcd_worst_status_for_test(all_findings_for_test):
-        current_status = STATUS_UNEXECUTED
+        """
+        :param all_findings_for_test:   All findings of a specific test (get this using Finding.objects(test={A_TEST}))
+        :return:    the "worst" (i.e. most severe) status out of the given findings.
+                    lcd stands for lowest common denominator.
+        """
+        current_worst_status = STATUS_UNEXECUTED
         for finding in all_findings_for_test:
-            if ORDERED_TEST_STATUSES.index(finding.status) < ORDERED_TEST_STATUSES.index(current_status):
-                current_status = finding.status
+            if ORDERED_TEST_STATUSES.index(finding.status) < ORDERED_TEST_STATUSES.index(current_worst_status):
+                current_worst_status = finding.status
 
-        return current_status
+        return current_worst_status
 
     @staticmethod
     def get_all_findings():
