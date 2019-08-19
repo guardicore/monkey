@@ -1,8 +1,8 @@
 from mongoengine import ValidationError
 
 from common.data.zero_trust_consts import *
-from finding import Finding
-from monkey_island.cc.models.event import Event
+from monkey_island.cc.models.zero_trust.finding import Finding
+from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 

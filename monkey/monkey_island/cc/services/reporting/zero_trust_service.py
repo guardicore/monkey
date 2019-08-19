@@ -1,6 +1,6 @@
 import json
 from common.data.zero_trust_consts import *
-from monkey_island.cc.models.finding import Finding
+from monkey_island.cc.models.zero_trust.finding import Finding
 
 
 class ZeroTrustService(object):

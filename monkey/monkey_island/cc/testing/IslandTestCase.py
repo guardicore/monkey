@@ -1,7 +1,7 @@
 import unittest
 from monkey_island.cc.environment.environment import env
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.models.finding import Finding
+from monkey_island.cc.models.zero_trust.finding import Finding
 
 
 class IslandTestCase(unittest.TestCase):

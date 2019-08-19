@@ -1,9 +1,7 @@
-from unittest import TestCase
-
 from monkey_island.cc.services.reporting.zero_trust_service import ZeroTrustService
 
 from common.data.zero_trust_consts import *
-from monkey_island.cc.models.finding import Finding
+from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 

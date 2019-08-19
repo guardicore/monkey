@@ -3,8 +3,8 @@ import json
 from common.data.zero_trust_consts import EVENT_TYPE_MONKEY_LOCAL, EVENT_TYPE_ISLAND, \
     STATUS_POSITIVE, STATUS_CONCLUSIVE, TEST_ENDPOINT_SECURITY_EXISTS
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.models.event import Event
-from monkey_island.cc.models.finding import Finding
+from monkey_island.cc.models.zero_trust.event import Event
+from monkey_island.cc.models.zero_trust.finding import Finding
 
 ANTI_VIRUS_KNOWN_PROCESS_NAMES = [
     u"AvastSvc.exe",
