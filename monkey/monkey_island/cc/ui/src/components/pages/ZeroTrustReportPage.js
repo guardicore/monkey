@@ -71,7 +71,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     return (
       <Fragment>
         <div style={{marginBottom: '20px'}}>
-          <PrintReportButton onClick={() => {this.print();}} />
+          <PrintReportButton onClick={() => {print();}} />
         </div>
         <div className="report-page">
           <ReportHeader report_type={ReportTypes.zeroTrust}/>
@@ -79,7 +79,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           {content}
         </div>
         <div style={{marginTop: '20px'}}>
-          <PrintReportButton onClick={() => {this.print();}} />
+          <PrintReportButton onClick={() => {print();}} />
         </div>
       </Fragment>
     )
@@ -128,10 +128,6 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
   stillLoadingDataFromServer() {
     return typeof this.state.findings === "undefined" || typeof this.state.pillars === "undefined" || typeof this.state.directives === "undefined";
-  }
-
-  print() {
-    alert("unimplemented");
   }
 
   getZeroTrustReportFromServer() {
