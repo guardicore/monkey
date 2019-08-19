@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {Button, Col, Row, Grid} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
@@ -10,6 +10,7 @@ import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
 import {SecurityIssuesGlance} from "../report-components/common/SecurityIssuesGlance";
 import {StatusesToPillarsSummary} from "../report-components/zerotrust/StatusesToPillarsSummary";
+import PrintReportButton from "../report-components/common/PrintReportButton";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -104,19 +105,19 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     }
 
     return (
-      <div>
-        <div className="text-center no-print" style={{marginBottom: '20px'}}>
-          <Button bsSize="large" onClick={() => {
-            this.print();
-          }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
+      <Fragment>
+        <div style={{marginBottom: '20px'}}>
+          <PrintReportButton onClick={() => {this.print();}} />
         </div>
-
         <div className="report-page">
           <ReportHeader report_type={ReportTypes.zeroTrust}/>
           <hr/>
           {content}
         </div>
-      </div>
+        <div style={{marginTop: '20px'}}>
+          <PrintReportButton onClick={() => {this.print();}} />
+        </div>
+      </Fragment>
     )
   }
 

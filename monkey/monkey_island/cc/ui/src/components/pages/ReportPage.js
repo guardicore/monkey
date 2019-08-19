@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {Button, Col} from 'react-bootstrap';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
@@ -17,6 +17,7 @@ import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStill
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
 import {SecurityIssuesGlance} from "../report-components/common/SecurityIssuesGlance";
+import PrintReportButton from "../report-components/common/PrintReportButton";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 
@@ -71,15 +72,11 @@ class ReportPageComponent extends AuthComponent {
 
   render() {
     let content;
-    if (Object.keys(this.state.report).length === 0) {
-      if (this.state.runStarted) {
-        content = (<ReportLoader loading={true}/>);
-      } else {
-        content =
-          <MustRunMonkeyWarning/>;
-      }
-    } else {
+
+    if (this.state.runStarted) {
       content = this.generateReportContent();
+    } else {
+      content = <MustRunMonkeyWarning/>;
     }
 
     return (
@@ -90,6 +87,10 @@ class ReportPageComponent extends AuthComponent {
         </div>
       </Col>
     );
+  }
+
+  stillLoadingDataFromServer() {
+    return Object.keys(this.state.report).length === 0;
   }
 
   updateMonkeysRunning = () => {
@@ -130,32 +131,38 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportContent() {
+    let content;
+
+    if (this.stillLoadingDataFromServer()) {
+      console.log("still loading?: " + this.stillLoadingDataFromServer());
+      content = <ReportLoader loading={true}/>;
+    } else {
+      console.log("not still loading: " + this.stillLoadingDataFromServer());
+      content =
+        <div>
+            {this.generateReportOverviewSection()}
+            {this.generateReportFindingsSection()}
+            {this.generateReportRecommendationsSection()}
+            {this.generateReportGlanceSection()}
+            {this.generateAttackSection()}
+            {this.generateReportFooter()}
+        </div>;
+    }
+
     return (
-      <div>
-        {
-          // extract to print component.
-        }
-        <div className="text-center no-print" style={{marginBottom: '20px'}}>
-          <Button bsSize="large" onClick={() => {
-            print();
-          }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
+      <Fragment>
+        <div style={{marginBottom: '20px'}}>
+          <PrintReportButton onClick={() => {print();}} />
         </div>
         <div className="report-page">
           <ReportHeader report_type={ReportTypes.security}/>
           <hr/>
-          {this.generateReportOverviewSection()}
-          {this.generateReportFindingsSection()}
-          {this.generateReportRecommendationsSection()}
-          {this.generateReportGlanceSection()}
-          {this.generateAttackSection()}
-          {this.generateReportFooter()}
+          {content}
         </div>
-        <div className="text-center no-print" style={{marginTop: '20px'}}>
-          <Button bsSize="large" onClick={() => {
-            print();
-          }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
+        <div style={{marginTop: '20px'}}>
+          <PrintReportButton onClick={() => {print();}} />
         </div>
-      </div>
+      </Fragment>
     );
   }
 
