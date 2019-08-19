@@ -55,8 +55,8 @@ class MimikatzCollector(object):
         except Exception:
             LOG.exception("Error initializing mimikatz collector")
             status = ScanStatus.SCANNED
+        T1106Telem(status, UsageEnum.MIMIKATZ_WINAPI).send()
         T1129Telem(status, UsageEnum.MIMIKATZ).send()
-        T1106Telem(status, UsageEnum.MIMIKATZ_FILE_COPY).send()
 
     def get_logon_info(self):
         """
