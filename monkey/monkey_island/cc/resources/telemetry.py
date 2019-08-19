@@ -16,7 +16,7 @@ from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.services.wmi_handler import WMIHandler
 from monkey_island.cc.models.monkey import Monkey
-from monkey_island.cc.services.zero_trust_tests.antivirus_existence import test_antivirus_existence
+from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence import test_antivirus_existence
 
 __author__ = 'Barak'
 
