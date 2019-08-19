@@ -184,7 +184,7 @@ class InfectionMonkey(object):
                                                    (':'+self._default_server_port if self._default_server_port else ''))
                     else:
                         machine.set_default_server(self._default_server)
-                    LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
+                    LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_server))
 
                 # Order exploits according to their type
                 if WormConfiguration.should_exploit:
