@@ -119,7 +119,7 @@ class ReportPageComponent extends AuthComponent {
 
   getReportFromServer(res) {
     if (res['completed_steps']['run_monkey']) {
-      this.authFetch('/api/report/general')
+      this.authFetch('/api/report/security')
         .then(res => res.json())
         .then(res => {
           this.setState({

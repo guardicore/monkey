@@ -9,8 +9,8 @@ from monkey_island.cc.services.reporting.report import ReportService
 from monkey_island.cc.services.reporting.zero_trust_service import ZeroTrustService
 
 ZERO_TRUST_REPORT_TYPE = "zero_trust"
-GENERAL_REPORT_TYPE = "general"
-REPORT_TYPES = [GENERAL_REPORT_TYPE, ZERO_TRUST_REPORT_TYPE]
+SECURITY_REPORT_TYPE = "security"
+REPORT_TYPES = [SECURITY_REPORT_TYPE, ZERO_TRUST_REPORT_TYPE]
 
 REPORT_DATA_PILLARS = "pillars"
 REPORT_DATA_FINDINGS = "findings"
@@ -22,8 +22,8 @@ __author__ = ["itay.mizeretz", "shay.nehmad"]
 class Report(flask_restful.Resource):
 
     @jwt_required()
-    def get(self, report_type=GENERAL_REPORT_TYPE, report_data=None):
-        if report_type == GENERAL_REPORT_TYPE:
+    def get(self, report_type=SECURITY_REPORT_TYPE, report_data=None):
+        if report_type == SECURITY_REPORT_TYPE:
             return ReportService.get_report()
         elif report_type == ZERO_TRUST_REPORT_TYPE:
             if report_data == REPORT_DATA_PILLARS:

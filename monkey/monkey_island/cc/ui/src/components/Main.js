@@ -148,7 +148,7 @@ class AppComponent extends AuthComponent {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/report/general">
+                  <NavLink to="/report/security">
                     <span className="number">4.</span>
                     Security Report
                     {this.state.completedSteps.report_done ?
@@ -199,7 +199,7 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/report/general', <ReportPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/report/security', <ReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/report/zero_trust', <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>

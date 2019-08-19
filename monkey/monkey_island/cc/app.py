@@ -123,7 +123,7 @@ def init_api_resources(api):
     api.add_resource(Edge, '/api/netmap/edge', '/api/netmap/edge/')
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
 
-    # report_type: zero_trust or general
+    # report_type: zero_trust or security
     api.add_resource(
         Report,
         '/api/report/<string:report_type>',
