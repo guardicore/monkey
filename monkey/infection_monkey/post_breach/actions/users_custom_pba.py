@@ -82,17 +82,22 @@ class UsersPBA(PBA):
 
         pba_file_contents = ControlClient.get_pba_file(filename)
 
+        status = None
         if not pba_file_contents or not pba_file_contents.content:
             LOG.error("Island didn't respond with post breach file.")
-            T1105Telem(ScanStatus.SCANNED,
-                       WormConfiguration.current_server.split(':')[0],
-                       get_interface_to_target(WormConfiguration.current_server.split(':')[0]),
-                       filename).send()
-            return False
-        T1105Telem(ScanStatus.USED,
+            status = ScanStatus.SCANNED
+
+        if not status:
+            status = ScanStatus.USED
+
+        T1105Telem(status,
                    WormConfiguration.current_server.split(':')[0],
                    get_interface_to_target(WormConfiguration.current_server.split(':')[0]),
                    filename).send()
+
+        if status == ScanStatus.SCANNED:
+            return False
+
         try:
             with open(os.path.join(dst_dir, filename), 'wb') as written_PBA_file:
                 written_PBA_file.write(pba_file_contents.content)

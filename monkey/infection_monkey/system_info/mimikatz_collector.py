@@ -5,7 +5,7 @@ import socket
 import zipfile
 
 import infection_monkey.config
-from common.utils.attack_utils import ScanStatus
+from common.utils.attack_utils import ScanStatus, UsageEnum
 from infection_monkey.telemetry.attack.t1129_telem import T1129Telem
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.pyinstaller_utils import get_binary_file_path, get_binaries_dir_path
@@ -47,16 +47,16 @@ class MimikatzCollector(object):
             collect_proto = ctypes.WINFUNCTYPE(ctypes.c_int)
             get_proto = ctypes.WINFUNCTYPE(MimikatzCollector.LogonData)
             get_text_output_proto = ctypes.WINFUNCTYPE(ctypes.c_wchar_p)
-            T1106Telem(ScanStatus.USED, "WinAPI was called to load mimikatz.").send()
             self._collect = collect_proto(("collect", self._dll))
             self._get = get_proto(("get", self._dll))
             self._get_text_output_proto = get_text_output_proto(("getTextOutput", self._dll))
             self._isInit = True
-            T1129Telem(ScanStatus.USED, "Windows module loader was used to load Mimikatz DLL.").send()
+            status = ScanStatus.USED
         except Exception:
             LOG.exception("Error initializing mimikatz collector")
-            T1129Telem(ScanStatus.SCANNED, "Monkey tried to load Mimikatz DLL, but failed.").send()
-            T1106Telem(ScanStatus.SCANNED, "Monkey tried to call WinAPI to load mimikatz.").send()
+            status = ScanStatus.SCANNED
+        T1106Telem(status, UsageEnum.MIMIKATZ_WINAPI).send()
+        T1129Telem(status, UsageEnum.MIMIKATZ).send()
 
     def get_logon_info(self):
         """
