@@ -86,10 +86,10 @@ class TestMonkey(IslandTestCase):
                               description="Linux shay-Virtual-Machine")
         windows_monkey = Monkey(guid=str(uuid.uuid4()),
                                 description="Windows bla bla bla",
-                                tunneling=linux_monkey)
+                                tunnel=linux_monkey)
         unknown_monkey = Monkey(guid=str(uuid.uuid4()),
                                 description="bla bla bla",
-                                tunneling=windows_monkey)
+                                tunnel=windows_monkey)
         linux_monkey.save()
         windows_monkey.save()
         unknown_monkey.save()
