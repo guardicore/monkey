@@ -40,6 +40,14 @@ SCHEMA = {
                     "necessary": False,
                     "description": "Pass the hash (PtH) is a method of authenticating as a user without "
                                    "having access to the user's cleartext password."
+                },
+                "T1105": {
+                    "title": "T1105 Remote file copy",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Files may be copied from one system to another to stage "
+                                   "adversary tools or other files over the course of an operation."
                 }
             }
         },
