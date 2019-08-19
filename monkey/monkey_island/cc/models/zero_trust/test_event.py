@@ -11,19 +11,20 @@ class TestEvent(IslandTestCase):
         self.clean_finding_db()
 
         with self.assertRaises(ValidationError):
-            Event.create_event(
+            _ = Event.create_event(
                 title=None,  # title required
                 message="bla bla",
                 event_type=EVENT_TYPE_ISLAND
             )
 
         with self.assertRaises(ValidationError):
-            Event.create_event(
+            _ = Event.create_event(
                 title="skjs",
                 message="bla bla",
                 event_type="Unknown"  # Unknown event type
             )
 
+        # Assert that nothing is raised.
         _ = Event.create_event(
             title="skjs",
             message="bla bla",
