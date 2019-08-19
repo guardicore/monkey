@@ -7,10 +7,10 @@ class UsageTelem(AttackTelem):
         """
         :param technique: Id of technique
         :param status: ScanStatus of technique
-        :param usage: Enum of UsageEnum type
+        :param usage: Usage string
         """
         super(UsageTelem, self).__init__(technique, status)
-        self.usage = usage.name
+        self.usage = usage
 
     def get_data(self):
         data = super(UsageTelem, self).get_data()

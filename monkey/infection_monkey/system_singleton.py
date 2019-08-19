@@ -59,7 +59,7 @@ class WindowsSystemSingleton(_SystemSingleton):
 
         if not status:
             status = ScanStatus.USED
-        T1106Telem(status, UsageEnum.SINGLETON_FILE_COPY).send()
+        T1106Telem(status, UsageEnum.SINGLETON_WINAPI).send()
         if status == ScanStatus.SCANNED:
             return False
 

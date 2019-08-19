@@ -158,6 +158,6 @@ class MonkeyDrops(object):
                     else:
                         LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
                                   self._config['source_path'])
-                        T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_FILE_COPY).send()
+                        T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
         except AttributeError:
             LOG.error("Invalid configuration options. Failing")

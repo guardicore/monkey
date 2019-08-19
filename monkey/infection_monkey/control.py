@@ -125,6 +125,7 @@ class ControlClient(object):
     @staticmethod
     def send_telemetry(telem_category, data):
         if not WormConfiguration.current_server:
+            LOG.error("Trying to send %s telemetry before current server is established, aborting." % telem_category)
             return
         try:
             telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': data}
