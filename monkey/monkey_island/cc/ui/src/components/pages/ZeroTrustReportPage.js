@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {Button, Col, Row, Grid} from 'react-bootstrap';
+import {Col, Grid, Row} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
 import PillarsOverview from "../report-components/zerotrust/PillarOverview";
@@ -11,6 +11,7 @@ import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarni
 import {SecurityIssuesGlance} from "../report-components/common/SecurityIssuesGlance";
 import {StatusesToPillarsSummary} from "../report-components/zerotrust/StatusesToPillarsSummary";
 import PrintReportButton from "../report-components/common/PrintReportButton";
+import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -31,10 +32,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
-        this.setState({
-          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']),
-          runStarted: res['completed_steps']['run_monkey']
-        });
+        this.setState(extractExecutionStatusFromServerResponse(res));
         return res;
       });
   };

@@ -17,6 +17,7 @@ import T1082 from "../../attack/techniques/T1082";
 import T1145 from "../../attack/techniques/T1145";
 import T1107 from "../../attack/techniques/T1107";
 import T1065 from "../../attack/techniques/T1065";
+import {extractExecutionStatusFromServerResponse} from "../common/ExecutionStatus";
 
 const tech_components = {
   'T1210': T1210,
@@ -54,11 +55,7 @@ class AttackReportPageComponent extends AuthComponent {
     return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
-        // This check is used to prevent unnecessary re-rendering
-        this.setState({
-          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']),
-          runStarted: res['completed_steps']['run_monkey']
-        });
+        this.setState(extractExecutionStatusFromServerResponse(res));
         return res;
       });
   };

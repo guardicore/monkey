@@ -18,6 +18,7 @@ import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
 import {SecurityIssuesGlance} from "../report-components/common/SecurityIssuesGlance";
 import PrintReportButton from "../report-components/common/PrintReportButton";
+import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 
@@ -97,11 +98,7 @@ class ReportPageComponent extends AuthComponent {
     return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
-        // This check is used to prevent unnecessary re-rendering
-        this.setState({
-          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']),
-          runStarted: res['completed_steps']['run_monkey']
-        });
+        this.setState(extractExecutionStatusFromServerResponse(res));
         return res;
       });
   };
@@ -134,10 +131,8 @@ class ReportPageComponent extends AuthComponent {
     let content;
 
     if (this.stillLoadingDataFromServer()) {
-      console.log("still loading?: " + this.stillLoadingDataFromServer());
       content = <ReportLoader loading={true}/>;
     } else {
-      console.log("not still loading: " + this.stillLoadingDataFromServer());
       content =
         <div>
             {this.generateReportOverviewSection()}

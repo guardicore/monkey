@@ -19,6 +19,8 @@ const columns = [
 
 class PillarOverview extends Component {
   pillarsToStatuses;
+  grades;
+
   render() {
     const data = this.props.grades.map((grade) => {
       const newGrade = grade;
