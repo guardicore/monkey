@@ -6,6 +6,7 @@ from mongoengine import Document, StringField, ListField, BooleanField, Embedded
     DateTimeField
 
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl
+from monkey_island.cc.models.command_control_channel import CommandControlChannel
 
 
 class Monkey(Document):
@@ -33,7 +34,7 @@ class Monkey(Document):
     pba_results = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
-    c2_info = EmbeddedDocumentField('C2Info')
+    command_control_channel = EmbeddedDocumentField(CommandControlChannel)
 
     # LOGIC
     @staticmethod
