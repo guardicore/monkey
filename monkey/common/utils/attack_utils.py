@@ -15,6 +15,9 @@ class UsageEnum(Enum):
            ScanStatus.SCANNED.value: "SMB exploiter failed to run the monkey by creating a service via MS-SCMR."}
     MIMIKATZ = {ScanStatus.USED.value: "Windows module loader was used to load Mimikatz DLL.",
                 ScanStatus.SCANNED.value: "Monkey tried to load Mimikatz DLL, but failed."}
+    MIMIKATZ_WINAPI = {ScanStatus.USED.value: "WinAPI was called to load mimikatz.",
+                       ScanStatus.SCANNED.value: "Monkey tried to call WinAPI to load mimikatz."}
+    DROPPER = {ScanStatus.USED.value: "WinAPI was used to mark monkey files for deletion on next boot."}
     MIMIKATZ_FILE_COPY = {ScanStatus.USED.value: "WinAPI was called to load mimikatz.",
                           ScanStatus.SCANNED.value: "Monkey tried to call WinAPI to load mimikatz, but failed."}
     SINGLETON_FILE_COPY = {ScanStatus.USED.value: "WinAPI was called to acquire system singleton for monkey's process.",
