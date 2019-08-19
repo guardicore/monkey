@@ -108,7 +108,6 @@ class ZeroTrustService(object):
     def __get_enriched_finding(finding):
         test_info = TESTS_MAP[finding.test]
         enriched_finding = {
-            # TODO add test explanation per status.
             "test": test_info[FINDING_EXPLANATION_BY_STATUS_KEY][finding.status],
             "pillars": test_info[PILLARS_KEY],
             "status": finding.status,
@@ -129,7 +128,7 @@ class ZeroTrustService(object):
             STATUS_UNEXECUTED: []
         }
         for pillar in PILLARS:
-            results[ZeroTrustService.__get_status_for_pillar(pillar)].append(pillar)
+            results[ZeroTrustService.__get_status_of_single_pillar(pillar)].append(pillar)
 
         return results
 
@@ -137,12 +136,12 @@ class ZeroTrustService(object):
     def get_pillars_to_statuses():
         results = {}
         for pillar in PILLARS:
-            results[pillar] = ZeroTrustService.__get_status_for_pillar(pillar)
+            results[pillar] = ZeroTrustService.__get_status_of_single_pillar(pillar)
 
         return results
 
     @staticmethod
-    def __get_status_for_pillar(pillar):
+    def __get_status_of_single_pillar(pillar):
         grade = ZeroTrustService.__get_pillar_grade(pillar)
         for status in ORDERED_TEST_STATUSES:
             if grade[status] > 0:
