@@ -61,44 +61,10 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     if (this.stillLoadingDataFromServer()) {
       content = <ReportLoader loading={true}/>;
     } else {
-      const overviewSection = <div id="overview-section">
-        <h2>Overview</h2>
-        <Grid fluid={true}>
-          <Row className="show-grid">
-            <Col xs={8} sm={8} md={8} lg={8}>
-              <PillarsOverview pillarsToStatuses={this.state.pillars.pillarsToStatuses} grades={this.state.pillars.grades}/>
-            </Col>
-            <Col xs={4} sm={4} md={4} lg={4}>
-              <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
-              <SecurityIssuesGlance issuesFound={this.anyIssuesFound()}/>
-              <StatusesToPillarsSummary statusesToPillars={this.state.pillars.statusesToPillars} />
-            </Col>
-          </Row>
-        </Grid>
-      </div>;
-
-      const directivesSection = <div id="directives-overview">
-        <h2>Directives</h2>
-        {
-          Object.keys(this.state.directives).map((pillar) =>
-            <SinglePillarDirectivesStatus
-              key={pillar}
-              pillar={pillar}
-              directivesStatus={this.state.directives[pillar]}
-              pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
-          )
-        }
-      </div>;
-
-      const findingSection = <div id="findings-overview">
-        <h2>Findings</h2>
-        <FindingsTable pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
-      </div>;
-
       content = <div id="MainContentSection">
-        {overviewSection}
-        {directivesSection}
-        {findingSection}
+        {this.generateOverviewSection()}
+        {this.generateDirectivesSection()}
+        {this.generateFindingsSection()}
       </div>;
     }
 
@@ -117,6 +83,47 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         </div>
       </Fragment>
     )
+  }
+
+  generateFindingsSection() {
+    return (<div id="findings-overview">
+      <h2>Findings</h2>
+      <FindingsTable pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
+    </div>);
+  }
+
+  generateDirectivesSection() {
+    return (<div id="directives-overview">
+      <h2>Directives</h2>
+      {
+        Object.keys(this.state.directives).map((pillar) =>
+          <SinglePillarDirectivesStatus
+            key={pillar}
+            pillar={pillar}
+            directivesStatus={this.state.directives[pillar]}
+            pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
+        )
+      }
+    </div>);
+  }
+
+  generateOverviewSection() {
+    return (<div id="overview-section">
+      <h2>Overview</h2>
+      <Grid fluid={true}>
+        <Row className="show-grid">
+          <Col xs={8} sm={8} md={8} lg={8}>
+            <PillarsOverview pillarsToStatuses={this.state.pillars.pillarsToStatuses}
+                             grades={this.state.pillars.grades}/>
+          </Col>
+          <Col xs={4} sm={4} md={4} lg={4}>
+            <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
+            <SecurityIssuesGlance issuesFound={this.anyIssuesFound()}/>
+            <StatusesToPillarsSummary statusesToPillars={this.state.pillars.statusesToPillars}/>
+          </Col>
+        </Row>
+      </Grid>
+    </div>);
   }
 
   stillLoadingDataFromServer() {
