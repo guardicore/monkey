@@ -1,11 +1,10 @@
 import AuthComponent from "../../AuthComponent";
-import {PillarLabel} from "./PillarLabel";
+import PillarLabel from "./PillarLabel";
 import DirectivesStatusTable from "./DirectivesStatusTable";
 import React, {Fragment} from "react";
+import * as PropTypes from "prop-types";
 
 export class SinglePillarDirectivesStatus extends AuthComponent {
-  directivesStatus;
-
   render() {
     if (this.props.directivesStatus.length === 0) {
       return null;
@@ -20,3 +19,8 @@ export class SinglePillarDirectivesStatus extends AuthComponent {
     }
   }
 }
+
+SinglePillarDirectivesStatus.propTypes = {
+  directivesStatus: PropTypes.array,
+  pillar: PropTypes.string,
+};

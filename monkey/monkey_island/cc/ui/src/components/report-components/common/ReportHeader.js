@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {Col} from "react-bootstrap";
+import * as PropTypes from "prop-types";
 
 let monkeyLogoImage = require('../../../images/monkey-icon.svg');
 
@@ -38,3 +39,7 @@ export class ReportHeader extends Component {
 }
 
 export default ReportHeader;
+
+ReportHeader.propTypes = {
+  report_type: PropTypes.string,
+};

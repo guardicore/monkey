@@ -1,6 +1,7 @@
 import {css} from "@emotion/core";
 import React, {Component} from "react";
 import {GridLoader} from "react-spinners";
+import * as PropTypes from "prop-types";
 
 const loading_css_override = css`
     display: block;
@@ -23,3 +24,5 @@ export default class ReportLoader extends Component {
     </div>
   }
 }
+
+ReportLoader.propTypes = {loading: PropTypes.bool};

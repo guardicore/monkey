@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {Timeline, TimelineEvent} from "react-event-timeline";
+import * as PropTypes from "prop-types";
 
 const eventTypeToIcon = {
   "monkey_local": "fa fa-exclamation-circle fa-2x icon-warning",
@@ -8,13 +9,13 @@ const eventTypeToIcon = {
   null: "fa fa-question-circle fa-2x icon-info",
 };
 
-export class EventsTimeline extends Component {
+export default class EventsTimeline extends Component {
   render() {
     return (
       <div>
         <Timeline>
           {
-            this.props["events"].map(event => {
+            this.props.events.map(event => {
               const event_time = new Date(event.timestamp['$date']).toString();
               return (<TimelineEvent
                 key={event.timestamp['$date']}
@@ -30,3 +31,5 @@ export class EventsTimeline extends Component {
     );
   }
 }
+
+EventsTimeline.propTypes = {events: PropTypes.array};

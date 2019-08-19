@@ -1,8 +1,9 @@
 import React, {Component, Fragment} from "react";
-import {PillarLabel} from "./PillarLabel";
-import {StatusLabel} from "./StatusLabel";
+import PillarLabel from "./PillarLabel";
+import StatusLabel from "./StatusLabel";
+import * as PropTypes from "prop-types";
 
-export class StatusesToPillarsSummary extends Component {
+export default class StatusesToPillarsSummary extends Component {
   render() {
     return (<div id="piilar-summary">
       {this.getStatusSummary("Conclusive")}
@@ -29,3 +30,7 @@ export class StatusesToPillarsSummary extends Component {
     }
   }
 }
+
+StatusesToPillarsSummary.propTypes = {
+  statusesToPillars: PropTypes.array
+};

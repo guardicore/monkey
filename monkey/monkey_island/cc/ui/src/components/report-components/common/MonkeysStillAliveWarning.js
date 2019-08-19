@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import * as PropTypes from "prop-types";
 
-export class MonkeysStillAliveWarning extends Component {
+export default class MonkeysStillAliveWarning extends Component {
   render() {
     return <div>
       {

@@ -1,8 +1,9 @@
 import React, {Component} from "react";
 import {Modal} from "react-bootstrap";
-import {EventsTimeline} from "./EventsTimeline";
+import EventsTimeline from "./EventsTimeline";
+import * as PropTypes from "prop-types";
 
-export class EventsModal extends Component {
+export default class EventsModal extends Component {
   constructor(props) {
     super(props);
   }
@@ -30,3 +31,9 @@ export class EventsModal extends Component {
     );
   }
 }
+
+EventsModal.propTypes = {
+  showEvents: PropTypes.bool,
+  events: PropTypes.array,
+  hideCallback: PropTypes.func,
+};

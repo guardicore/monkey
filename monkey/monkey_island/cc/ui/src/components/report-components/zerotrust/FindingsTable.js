@@ -1,51 +1,8 @@
 import React, {Component} from "react";
-import {Button} from "react-bootstrap";
-import {EventsModal} from "./EventsModal";
-import FileSaver from "file-saver";
-import {PillarLabel} from "./PillarLabel";
+import PillarLabel from "./PillarLabel";
 import PaginatedTable from "../common/PaginatedTable";
+import EventsAndButtonComponent from "./EventsAndButtonComponent";
 
-
-class EventsAndButtonComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: false
-    }
-  }
-
-  hide = () => {
-    this.setState({show: false});
-  };
-
-  show = () => {
-    this.setState({show: true});
-  };
-
-  render() {
-    return (
-      <div>
-        <EventsModal events={this.props.events} showEvents={this.state.show} hideCallback={this.hide}/>
-        <p style={{margin: '1px'}}>
-          <Button className="btn btn-info btn-lg center-block"
-                  onClick={this.show}>
-            Show Events
-          </Button>
-          <Button className="btn btn-primary btn-lg center-block"
-                  onClick={() => {
-                    const content = JSON.stringify(this.props.events, null, 2);
-                    const blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-                    FileSaver.saveAs(blob, this.props.exportFilename+".json");
-                  }}
-                >
-            Export Events
-          </Button>
-        </p>
-      </div>
-    );
-  }
-
-}
 
 const columns = [
   {
@@ -82,7 +39,7 @@ class FindingsTable extends Component {
       return newFinding;
     });
     return (
-      <PaginatedTable data={this.props.findings} pageSize={10} columns={columns}/>
+      <PaginatedTable data={data} pageSize={10} columns={columns}/>
     );
   }
 }

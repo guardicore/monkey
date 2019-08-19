@@ -1,6 +1,7 @@
 import React, {Component} from "react";
-import {PillarLabel} from "./PillarLabel";
+import PillarLabel from "./PillarLabel";
 import PaginatedTable from "../common/PaginatedTable";
+import * as PropTypes from "prop-types";
 
 const columns = [
   {
@@ -18,9 +19,6 @@ const columns = [
 ];
 
 class PillarOverview extends Component {
-  pillarsToStatuses;
-  grades;
-
   render() {
     const data = this.props.grades.map((grade) => {
       const newGrade = grade;
@@ -34,3 +32,8 @@ class PillarOverview extends Component {
 }
 
 export default PillarOverview;
+
+PillarOverview.propTypes = {
+  grades: PropTypes.array,
+  status: PropTypes.string,
+};

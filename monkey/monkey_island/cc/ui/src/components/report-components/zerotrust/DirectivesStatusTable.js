@@ -2,8 +2,8 @@ import React, {Fragment} from "react";
 import PaginatedTable from "../common/PaginatedTable";
 import AuthComponent from "../../AuthComponent";
 import 'styles/ZeroTrustPillars.css'
-import {StatusLabel} from "./StatusLabel";
-
+import StatusLabel from "./StatusLabel";
+import * as PropTypes from "prop-types";
 
 
 const columns = [
@@ -37,15 +37,15 @@ class TestsStatus extends AuthComponent {
 
     return (
       <Fragment>
-        {this.getTestsOfStatusIfAny(conclusiveStatus)}
-        {this.getTestsOfStatusIfAny(inconclusiveStatus)}
-        {this.getTestsOfStatusIfAny(positiveStatus)}
-        {this.getTestsOfStatusIfAny(unexecutedStatus)}
+        {this.getFilteredTestsByStatusIfAny(conclusiveStatus)}
+        {this.getFilteredTestsByStatusIfAny(inconclusiveStatus)}
+        {this.getFilteredTestsByStatusIfAny(positiveStatus)}
+        {this.getFilteredTestsByStatusIfAny(unexecutedStatus)}
       </Fragment>
     );
   }
 
-  getTestsOfStatusIfAny(statusToFilter) {
+  getFilteredTestsByStatusIfAny(statusToFilter) {
     const filteredTests = this.props.tests.filter((test) => {
         return (test.status === statusToFilter);
       }
@@ -71,3 +71,5 @@ export class DirectivesStatusTable extends AuthComponent {
 }
 
 export default DirectivesStatusTable;
+
+DirectivesStatusTable.propTypes = {directivesStatus: PropTypes.array};

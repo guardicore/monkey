@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from "react";
 import * as PropTypes from "prop-types";
 
-export class SecurityIssuesGlance extends Component {
+export default class SecurityIssuesGlance extends Component {
   render() {
     return <Fragment>
       {

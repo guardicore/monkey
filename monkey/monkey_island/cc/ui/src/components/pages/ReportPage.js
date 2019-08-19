@@ -13,10 +13,10 @@ import PassTheHashMapPageComponent from "./PassTheHashMapPage";
 import StrongUsers from "components/report-components/security/StrongUsers";
 import AttackReport from "components/report-components/security/AttackReport";
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
-import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStillAliveWarning";
+import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
-import {SecurityIssuesGlance} from "../report-components/common/SecurityIssuesGlance";
+import SecurityIssuesGlance from "../report-components/common/SecurityIssuesGlance";
 import PrintReportButton from "../report-components/common/PrintReportButton";
 import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
 

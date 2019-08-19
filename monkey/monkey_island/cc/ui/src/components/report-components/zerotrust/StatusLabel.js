@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from "react";
+import React, {Component} from "react";
 import * as PropTypes from "prop-types";
 
 const statusToIcon = {
@@ -15,7 +15,7 @@ export const statusToLabelType = {
   "Unexecuted": "label-default",
 };
 
-export class StatusLabel extends Component {
+export default class StatusLabel extends Component {
   render() {
     let text = "";
     if (this.props.showText) {
@@ -28,4 +28,8 @@ export class StatusLabel extends Component {
   }
 }
 
-StatusLabel.propTypes = {status: PropTypes.string, showText: PropTypes.bool};
+StatusLabel.propTypes = {
+  status: PropTypes.string,
+  showText: PropTypes.bool,
+  size: PropTypes.string
+};

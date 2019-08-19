@@ -5,11 +5,11 @@ import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeade
 import PillarsOverview from "../report-components/zerotrust/PillarOverview";
 import FindingsTable from "../report-components/zerotrust/FindingsTable";
 import {SinglePillarDirectivesStatus} from "../report-components/zerotrust/SinglePillarDirectivesStatus";
-import {MonkeysStillAliveWarning} from "../report-components/common/MonkeysStillAliveWarning";
+import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
-import {SecurityIssuesGlance} from "../report-components/common/SecurityIssuesGlance";
-import {StatusesToPillarsSummary} from "../report-components/zerotrust/StatusesToPillarsSummary";
+import SecurityIssuesGlance from "../report-components/common/SecurityIssuesGlance";
+import StatusesToPillarsSummary from "../report-components/zerotrust/StatusesToPillarsSummary";
 import PrintReportButton from "../report-components/common/PrintReportButton";
 import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
 
