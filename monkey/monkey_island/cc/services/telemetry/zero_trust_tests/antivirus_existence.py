@@ -86,22 +86,29 @@ def test_antivirus_existence(telemetry_json):
             event_type=EVENT_TYPE_MONKEY_LOCAL)
         events = [process_list_event]
 
-        found_av = False
-        all_processes = telemetry_json['data']['process_list'].items()
-        for process in all_processes:
-            process_name = process[1]['name']
-            # This is for case-insensitive in. Generator expression for memory savings.
-            if process_name.upper() in (known_av_name.upper() for known_av_name in ANTI_VIRUS_KNOWN_PROCESS_NAMES):
-                found_av = True
-                events.append(Event.create_event(
-                    title="Found AV process",
-                    message="The process '{}' was recognized as an Anti Virus process. Process "
-                            "details: {}".format(process_name, json.dumps(process[1])),
-                    event_type=EVENT_TYPE_ISLAND
-                ))
+        av_processes = filter_av_processes(telemetry_json)
 
-        if found_av:
+        for process in av_processes:
+            events.append(Event.create_event(
+                title="Found AV process",
+                message="The process '{}' was recognized as an Anti Virus process. Process "
+                        "details: {}".format(process[1]['name'], json.dumps(process[1])),
+                event_type=EVENT_TYPE_ISLAND
+            ))
+
+        if len(av_processes) > 0:
             test_status = STATUS_POSITIVE
         else:
             test_status = STATUS_CONCLUSIVE
         Finding.save_finding(test=TEST_ENDPOINT_SECURITY_EXISTS, status=test_status, events=events)
+
+
+def filter_av_processes(telemetry_json):
+    all_processes = telemetry_json['data']['process_list'].items()
+    av_processes = []
+    for process in all_processes:
+        process_name = process[1]['name']
+        # This is for case-insensitive `in`. Generator expression is to save memory.
+        if process_name.upper() in (known_av_name.upper() for known_av_name in ANTI_VIRUS_KNOWN_PROCESS_NAMES):
+            av_processes.append(process)
+    return av_processes
