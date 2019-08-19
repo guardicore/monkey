@@ -125,6 +125,7 @@ class ControlClient(object):
     @staticmethod
     def send_telemetry(telem_category, data):
         if not WormConfiguration.current_server:
+            LOG.error("Trying to send %s telemetry before current server is established, aborting." % telem_category)
             return
         try:
             telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': data}
@@ -168,7 +169,8 @@ class ControlClient(object):
 
         try:
             unknown_variables = WormConfiguration.from_kv(reply.json().get('config'))
-            LOG.info("New configuration was loaded from server: %r" % (WormConfiguration.as_dict(),))
+            LOG.info("New configuration was loaded from server: %r" %
+                     (WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()),))
         except Exception as exc:
             # we don't continue with default conf here because it might be dangerous
             LOG.error("Error parsing JSON reply from control server %s (%s): %s",

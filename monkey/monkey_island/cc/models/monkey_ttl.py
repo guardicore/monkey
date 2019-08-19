@@ -38,3 +38,16 @@ class MonkeyTtl(Document):
     }
 
     expire_at = DateTimeField()
+
+
+def create_monkey_ttl_document(expiry_duration_in_seconds):
+    """
+    Create a new Monkey TTL document and save it as a document.
+    :param expiry_duration_in_seconds:  How long should the TTL last for. THIS IS A LOWER BOUND - depends on mongodb
+    performance.
+    :return: The TTL document. To get its ID use `.id`.
+    """
+    # The TTL data uses the new `models` module which depends on mongoengine.
+    current_ttl = MonkeyTtl.create_ttl_expire_in(expiry_duration_in_seconds)
+    current_ttl.save()
+    return current_ttl

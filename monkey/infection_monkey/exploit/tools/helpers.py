@@ -19,6 +19,7 @@ def get_interface_to_target(dst):
             s.connect((dst, 1))
             ip_to_dst = s.getsockname()[0]
         except KeyError:
+            LOG.debug("Couldn't get an interface to the target, presuming that target is localhost.")
             ip_to_dst = '127.0.0.1'
         finally:
             s.close()

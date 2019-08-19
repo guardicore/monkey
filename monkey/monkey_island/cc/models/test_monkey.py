@@ -46,6 +46,19 @@ class TestMonkey(IslandTestCase):
         self.assertTrue(mia_monkey.is_dead())
         self.assertFalse(alive_monkey.is_dead())
 
+    def test_ttl_renewal(self):
+        self.fail_if_not_testing_env()
+        self.clean_monkey_db()
+
+        # Arrange
+        monkey = Monkey(guid=str(uuid.uuid4()))
+        monkey.save()
+        self.assertIsNone(monkey.ttl_ref)
+
+        # act + assert
+        monkey.renew_ttl()
+        self.assertIsNotNone(monkey.ttl_ref)
+
     def test_get_single_monkey_by_id(self):
         self.fail_if_not_testing_env()
         self.clean_monkey_db()
