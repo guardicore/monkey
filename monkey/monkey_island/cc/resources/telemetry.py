@@ -9,7 +9,7 @@ from flask import request
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.hooks import TELEMETRY_CATEGORY_TO_PROCESSING_FUNC
+from monkey_island.cc.services.telemetry.processing.hooks import process_telemetry
 from monkey_island.cc.models.monkey import Monkey
 
 __author__ = 'Barak'
@@ -48,16 +48,9 @@ class Telemetry(flask_restful.Resource):
         Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid']).renew_ttl()
 
         monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
+        NodeService.update_monkey_modify_time(monkey["_id"])
 
-        try:
-            NodeService.update_monkey_modify_time(monkey["_id"])
-            telem_category = telemetry_json.get('telem_category')
-            if telem_category in TELEMETRY_CATEGORY_TO_PROCESSING_FUNC:
-                TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[telem_category](telemetry_json)
-            else:
-                logger.info('Got unknown type of telemetry: %s' % telem_category)
-        except Exception as ex:
-            logger.error("Exception caught while processing telemetry. Info: {}".format(ex.message), exc_info=True)
+        process_telemetry(telemetry_json)
 
         telem_id = mongo.db.telemetry.insert(telemetry_json)
         return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
