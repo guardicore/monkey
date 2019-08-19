@@ -1,3 +1,11 @@
+"""
+This file contains all the static data relating to Zero Trust. It is mostly used in the zero trust report generation and
+in creating findings.
+
+This file contains static mappings between zero trust components such as: pillars, directives, tests, statuses. Some of
+the mappings are computed when this module is loaded.
+"""
+
 AUTOMATION_ORCHESTRATION = u"Automation & Orchestration"
 VISIBILITY_ANALYTICS = u"Visibility & Analytics"
 WORKLOADS = u"Workloads"
@@ -11,7 +19,7 @@ STATUS_UNEXECUTED = u"Unexecuted"
 STATUS_POSITIVE = u"Positive"
 STATUS_INCONCLUSIVE = u"Inconclusive"
 STATUS_CONCLUSIVE = u"Conclusive"
-# Don't change order!
+# Don't change order! The statuses are ordered by importance/severity.
 ORDERED_TEST_STATUSES = [STATUS_CONCLUSIVE, STATUS_INCONCLUSIVE, STATUS_POSITIVE, STATUS_UNEXECUTED]
 
 TEST_DATA_ENDPOINT_ELASTIC = u"unencrypted_data_endpoint_elastic"
@@ -170,8 +178,3 @@ EVENT_TYPE_ISLAND = "island"
 EVENT_TYPE_MONKEY_NETWORK = "monkey_network"
 EVENT_TYPE_MONKEY_LOCAL = "monkey_local"
 EVENT_TYPES = (EVENT_TYPE_MONKEY_LOCAL, EVENT_TYPE_MONKEY_NETWORK, EVENT_TYPE_ISLAND)
-
-ANTI_VIRUS_KNOWN_PROCESS_NAMES = [
-    u"SSPService.exe",
-    u"ipython.exe"
-]

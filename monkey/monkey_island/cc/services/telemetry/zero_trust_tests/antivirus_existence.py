@@ -1,10 +1,80 @@
 import json
 
-from common.data.zero_trust_consts import EVENT_TYPE_MONKEY_LOCAL, ANTI_VIRUS_KNOWN_PROCESS_NAMES, EVENT_TYPE_ISLAND, \
+from common.data.zero_trust_consts import EVENT_TYPE_MONKEY_LOCAL, EVENT_TYPE_ISLAND, \
     STATUS_POSITIVE, STATUS_CONCLUSIVE, TEST_ENDPOINT_SECURITY_EXISTS
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.event import Event
 from monkey_island.cc.models.finding import Finding
+
+ANTI_VIRUS_KNOWN_PROCESS_NAMES = [
+    u"AvastSvc.exe",
+    u"AvastUI.exe",
+    u"avcenter.exe",
+    u"avconfig.exe",
+    u"avgcsrvx.exe",
+    u"avgidsagent.exe",
+    u"avgnt.exe",
+    u"avgrsx.exe",
+    u"avguard.exe",
+    u"avgui.exe",
+    u"avgwdsvc.exe",
+    u"avp.exe",
+    u"avscan.exe",
+    u"bdagent.exe",
+    u"ccuac.exe",
+    u"egui.exe",
+    u"hijackthis.exe",
+    u"instup.exe",
+    u"keyscrambler.exe",
+    u"mbam.exe",
+    u"mbamgui.exe",
+    u"mbampt.exe",
+    u"mbamscheduler.exe",
+    u"mbamservice.exe",
+    u"MpCmdRun.exe",
+    u"MSASCui.exe",
+    u"MsMpEng.exe",
+    u"rstrui.exe",
+    u"spybotsd.exe",
+    u"zlclient.exe",
+    u"SymCorpUI.exe",
+    u"ccSvcHst.exe",
+    u"ccApp.exe",
+    u"LUALL.exe",
+    u"SMC.exe",
+    u"SMCgui.exe",
+    u"Rtvscan.exe",
+    u"LuComServer.exe",
+    u"ProtectionUtilSurrogate.exe",
+    u"ClientRemote.exe",
+    u"SemSvc.exe",
+    u"SemLaunchSvc.exe",
+    u"sesmcontinst.exe",
+    u"LuCatalog.exe",
+    u"LUALL.exe",
+    u"LuCallbackProxy.exe",
+    u"LuComServer_3_3.exe",
+    u"httpd.exe",
+    u"dbisqlc.exe",
+    u"dbsrv16.exe",
+    u"semapisrv.exe",
+    u"snac64.exe",
+    u"AutoExcl.exe",
+    u"DoScan.exe",
+    u"nlnhook.exe",
+    u"SavUI.exe",
+    u"SepLiveUpdate.exe",
+    u"Smc.exe",
+    u"SmcGui.exe",
+    u"SymCorpUI.exe",
+    u"symerr.exe",
+    u"ccSvcHst.exe",
+    u"DevViewer.exe",
+    u"DWHWizrd.exe",
+    u"RtvStart.exe",
+    u"roru.exe",
+    u"WSCSAvNotifier"
+]
 
 
 def test_antivirus_existence(telemetry_json):
@@ -20,7 +90,8 @@ def test_antivirus_existence(telemetry_json):
         all_processes = telemetry_json['data']['process_list'].items()
         for process in all_processes:
             process_name = process[1]['name']
-            if process_name in ANTI_VIRUS_KNOWN_PROCESS_NAMES:
+            # This is for case-insensitive in. Generator expression for memory savings.
+            if process_name.upper() in (known_av_name.upper() for known_av_name in ANTI_VIRUS_KNOWN_PROCESS_NAMES):
                 found_av = True
                 events.append(Event.create_event(
                     title="Found AV process",
