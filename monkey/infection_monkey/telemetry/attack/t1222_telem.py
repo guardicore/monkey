@@ -7,6 +7,7 @@ class T1222Telem(VictimHostTelem):
         T1222 telemetry.
         :param status: ScanStatus of technique
         :param command: command used to change permissions
+        :param machine: VictimHost type object
         """
         super(T1222Telem, self).__init__('T1222', status, machine)
         self.command = command

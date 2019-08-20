@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { scanStatus } from "./Helpers"
+import { ScanStatus } from "./Helpers"
 
 
 class T1105 extends React.Component {
@@ -12,7 +12,7 @@ class T1105 extends React.Component {
 
   static getFilesColumns() {
     return ([{
-      Header: 'Files copied.',
+      Header: 'Files copied',
       columns: [
         {Header: 'Src. Machine', id: 'srcMachine', accessor: x => x.src, style: { 'whiteSpace': 'unset'}, width: 170 },
         {Header: 'Dst. Machine', id: 'dstMachine', accessor: x => x.dst, style: { 'whiteSpace': 'unset'}, width: 170},
@@ -25,7 +25,7 @@ class T1105 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {this.props.data.status !== scanStatus.UNSCANNED ?
+        {this.props.data.status !== ScanStatus.UNSCANNED ?
           <ReactTable
               columns={T1105.getFilesColumns()}
               data={this.props.data.files}

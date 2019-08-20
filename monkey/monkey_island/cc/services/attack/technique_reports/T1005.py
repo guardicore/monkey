@@ -19,12 +19,12 @@ class T1005(AttackTechnique):
                           'as': 'monkey'}},
              {'$project': {'monkey': {'$arrayElemAt': ['$monkey', 0]},
                            'status': '$data.status',
-                           'type': '$data.type',
+                           'gathered_data_type': '$data.gathered_data_type',
                            'info': '$data.info'}},
              {'$addFields': {'_id': 0,
                              'machine': {'hostname': '$monkey.hostname', 'ips': '$monkey.ip_addresses'},
                              'monkey': 0}},
-             {'$group': {'_id': {'machine': '$machine', 'type': '$type', 'info': '$info'}}},
+             {'$group': {'_id': {'machine': '$machine', 'gathered_data_type': '$gathered_data_type', 'info': '$info'}}},
              {"$replaceRoot": {"newRoot": "$_id"}}]
 
     @staticmethod

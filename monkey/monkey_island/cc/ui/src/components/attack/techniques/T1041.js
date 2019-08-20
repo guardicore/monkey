@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import {scanStatus} from "./Helpers";
+import {ScanStatus} from "./Helpers";
 
 class T1041 extends React.Component {
 
@@ -22,12 +22,12 @@ class T1041 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {this.props.data.status === scanStatus.USED ?
+        {this.props.data.status === ScanStatus.USED ?
           <ReactTable
               columns={T1041.getC2Columns()}
-              data={this.props.data.c2_info}
+              data={this.props.data.command_control_channel}
               showPagination={false}
-              defaultPageSize={this.props.data.c2_info.length}
+              defaultPageSize={this.props.data.command_control_channel.length}
           /> : ""}
       </div>
     );

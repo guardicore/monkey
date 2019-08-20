@@ -18,6 +18,10 @@ class UsageEnum(Enum):
     MIMIKATZ_WINAPI = {ScanStatus.USED.value: "WinAPI was called to load mimikatz.",
                        ScanStatus.SCANNED.value: "Monkey tried to call WinAPI to load mimikatz."}
     DROPPER = {ScanStatus.USED.value: "WinAPI was used to mark monkey files for deletion on next boot."}
+    SINGLETON_WINAPI = {ScanStatus.USED.value: "WinAPI was called to acquire system singleton for monkey's process.",
+                        ScanStatus.SCANNED.value: "WinAPI call to acquire system singleton"
+                                                  " for monkey process wasn't successful."}
+    DROPPER_WINAPI = {ScanStatus.USED.value: "WinAPI was used to mark monkey files for deletion on next boot."}
 
 
 # Dict that describes what BITS job was used for
