@@ -12,12 +12,13 @@ export function renderMachineFromSystemData(data) {
     let machineStr = data['hostname'] + " ( ";
     data['ips'].forEach(function(ipInfo){
       if(typeof ipInfo === "object"){
-        machineStr += ipInfo['addr'] + " ";
+        machineStr += ipInfo['addr'] + ", ";
       } else {
-         machineStr += ipInfo + " ";
+         machineStr += ipInfo + ", ";
       }
     });
-    return machineStr + ")"
+    // Replaces " ," with " )" to finish a list of IP's
+    return machineStr.slice(0, -2) + " )"
 }
 
 /* Formats telemetry data that contains _id.machine and _id.usage fields into columns

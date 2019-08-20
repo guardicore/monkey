@@ -1,7 +1,8 @@
 import logging
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110, T1075, T1003, T1059, T1086, T1082
-from monkey_island.cc.services.attack.technique_reports import T1145, T1105, T1065, T1035, T1129, T1106, T1107
+from monkey_island.cc.services.attack.technique_reports import T1145, T1105, T1065, T1035, T1129, T1106, T1107, T1188
+from monkey_island.cc.services.attack.technique_reports import T1090
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
 
@@ -24,7 +25,9 @@ TECHNIQUES = {'T1210': T1210.T1210,
               'T1035': T1035.T1035,
               'T1129': T1129.T1129,
               'T1106': T1106.T1106,
-              'T1107': T1107.T1107}
+              'T1107': T1107.T1107,
+              'T1188': T1188.T1188,
+              'T1090': T1090.T1090}
 
 REPORT_NAME = 'new_report'
 
