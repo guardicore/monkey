@@ -5,12 +5,12 @@ class UsageTelem(AttackTelem):
 
     def __init__(self, technique, status, usage):
         """
-        T1035 telemetry.
+        :param technique: Id of technique
         :param status: ScanStatus of technique
-        :param usage: Usage string
+        :param usage: Enum of UsageEnum type
         """
         super(UsageTelem, self).__init__(technique, status)
-        self.usage = usage
+        self.usage = usage.name
 
     def get_data(self):
         data = super(UsageTelem, self).get_data()

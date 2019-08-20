@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import {renderMachineFromSystemData, scanStatus} from "./Helpers";
+import {renderMachineFromSystemData, ScanStatus} from "./Helpers";
 
 class T1005 extends React.Component {
 
@@ -11,10 +11,10 @@ class T1005 extends React.Component {
 
   static getDataColumns() {
     return ([{
-      Header: "Data gathered from local systems",
+      Header: "Sensitive data",
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => renderMachineFromSystemData(x.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Type', id: 'type', accessor: x => x.type, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Type', id: 'type', accessor: x => x.gathered_data_type, style: { 'whiteSpace': 'unset' }},
         {Header: 'Info', id: 'info', accessor: x => x.info, style: { 'whiteSpace': 'unset' }},
         ]}])};
 
@@ -23,7 +23,7 @@ class T1005 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {this.props.data.status === scanStatus.USED ?
+        {this.props.data.status === ScanStatus.USED ?
           <ReactTable
               columns={T1005.getDataColumns()}
               data={this.props.data.collected_data}
