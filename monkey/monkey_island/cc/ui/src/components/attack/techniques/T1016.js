@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachineFromSystemData, renderCollections, scanStatus } from "./Helpers"
+import { renderMachineFromSystemData, renderUsageFields, ScanStatus } from "./Helpers"
 
 
 class T1016 extends React.Component {
@@ -15,7 +15,7 @@ class T1016 extends React.Component {
       Header: "Network configuration info gathered",
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => renderMachineFromSystemData(x.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Network info', id: 'info', accessor: x => renderCollections(x.info), style: { 'whiteSpace': 'unset' }},
+        {Header: 'Network info', id: 'info', accessor: x => renderUsageFields(x.info), style: { 'whiteSpace': 'unset' }},
         ]
     }])};
 
@@ -24,7 +24,7 @@ class T1016 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {this.props.data.status === scanStatus.USED ?
+        {this.props.data.status === ScanStatus.USED ?
           <ReactTable
               columns={T1016.getNetworkInfoColumns()}
               data={this.props.data.network_info}

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachineFromSystemData, renderCollections, ScanStatus } from "./Helpers"
+import { renderMachineFromSystemData, renderUsageFields, ScanStatus } from "./Helpers"
 
 
 class T1082 extends React.Component {
@@ -14,7 +14,7 @@ class T1082 extends React.Component {
     return ([{
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => renderMachineFromSystemData(x.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Gathered info', id: 'info', accessor: x => renderCollections(x.collections), style: { 'whiteSpace': 'unset' }},
+        {Header: 'Gathered info', id: 'info', accessor: x => renderUsageFields(x.collections), style: { 'whiteSpace': 'unset' }},
         ]
     }])};
 
