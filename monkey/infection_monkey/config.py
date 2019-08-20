@@ -40,9 +40,6 @@ class Configuration(object):
             elif key == 'exploiter_classes':
                 class_objects = [getattr(exploit_import, val) for val in value]
                 setattr(self, key, class_objects)
-            elif key == 'pe_classes':
-                class_objects = [getattr(pe_import, val) for val in value]
-                setattr(self, key, class_objects)
             else:
                 if hasattr(self, key):
                     setattr(self, key, value)
@@ -143,7 +140,7 @@ class Configuration(object):
 
     finger_classes = []
     exploiter_classes = []
-    pe_classes = []
+
     # how many victims to look for in a single scan iteration
     victims_max_find = 30
 

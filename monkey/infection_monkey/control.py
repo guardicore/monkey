@@ -1,6 +1,6 @@
 import os
-import ctypes
 import json
+import getpass
 import logging
 import platform
 from socket import gethostname
@@ -48,9 +48,9 @@ class ControlClient(object):
         user = "Unknown standard user"
         try:
             if os.getuid():  # won't throw an exception if it's linux
-                user = os.popen('whoami').read()[:-1]  # get the username
+                user = getpass.getuser()  # get the username
         except AttributeError:
-            if user_token_is_admin(0):
+            if user_token_is_admin(0):  # user_token_is_admin returns true if the running thread has admin privileges
                 user = "Admin"
 
         monkey = {'guid': GUID,
@@ -60,7 +60,7 @@ class ControlClient(object):
                   'internet_access': has_internet_access,
                   'config': WormConfiguration.as_dict(),
                   'parent': parent,
-                  'root': user}
+                  'running_as_username': user}
 
         if ControlClient.proxies:
             monkey['tunnel'] = ControlClient.proxies.get('https')

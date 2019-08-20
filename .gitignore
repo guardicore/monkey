@@ -84,9 +84,3 @@ MonkeyZoo/*
 
 # vim swap files
 *.swp
-venv/include/python2.7
-venv/local/include
-venv/local/lib
-venv/readme.txt
-venv/share/doc/impacket/LICENSE
-venv/share/doc/impacket/README.md

