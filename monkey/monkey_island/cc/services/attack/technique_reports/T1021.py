@@ -1,7 +1,8 @@
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.services.attack.technique_reports.T1110 import T1110
+from monkey_island.cc.services.attack.technique_reports.technique_report_tools import parse_creds
+
 
 __author__ = "VakarisZ"
 
@@ -44,7 +45,7 @@ class T1021(AttackTechnique):
                 for result in attempts:
                     result['successful_creds'] = []
                     for attempt in result['attempts']:
-                        result['successful_creds'].append(T1110.parse_creds(attempt))
+                        result['successful_creds'].append(parse_creds(attempt))
             else:
                 status = ScanStatus.SCANNED.value
         else:

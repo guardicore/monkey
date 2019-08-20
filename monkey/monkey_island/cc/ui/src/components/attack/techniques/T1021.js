@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachine, scanStatus } from "./Helpers"
+import { renderMachine, ScanStatus } from "./Helpers"
 
 
 class T1021 extends React.Component {
@@ -29,7 +29,7 @@ class T1021 extends React.Component {
       <div>
         <div>{this.props.data.message}</div>
         <br/>
-        {this.props.data.status === scanStatus.USED ?
+        {this.props.data.status === ScanStatus.USED ?
           <ReactTable
             columns={T1021.getServiceColumns()}
             data={this.props.data.services}
