@@ -2,21 +2,21 @@ from infection_monkey.telemetry.attack.attack_telem import AttackTelem
 
 
 class T1005Telem(AttackTelem):
-    def __init__(self, status, _type, info=""):
+    def __init__(self, status, gathered_data_type, info=""):
         """
         T1005 telemetry.
         :param status: ScanStatus of technique
-        :param _type: Type of data collected
+        :param gathered_data_type: Type of data collected from local system
         :param info: Additional info about data
         """
         super(T1005Telem, self).__init__('T1005', status)
-        self._type = _type
+        self.gathered_data_type = gathered_data_type
         self.info = info
 
     def get_data(self):
         data = super(T1005Telem, self).get_data()
         data.update({
-            'type': self._type,
+            'gathered_data_type': self.gathered_data_type,
             'info': self.info
         })
         return data

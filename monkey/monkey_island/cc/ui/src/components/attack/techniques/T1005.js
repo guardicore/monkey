@@ -11,10 +11,10 @@ class T1005 extends React.Component {
 
   static getDataColumns() {
     return ([{
-      Header: "Data gathered from local systems",
+      Header: "Sensitive data",
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => renderMachineFromSystemData(x.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Type', id: 'type', accessor: x => x.type, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Type', id: 'type', accessor: x => x.gathered_data_type, style: { 'whiteSpace': 'unset' }},
         {Header: 'Info', id: 'info', accessor: x => x.info, style: { 'whiteSpace': 'unset' }},
         ]}])};
 
