@@ -250,7 +250,7 @@ class NodeService:
     @staticmethod
     def add_communication_info(monkey, info):
         mongo.db.monkey.update({"guid": monkey["guid"]},
-                               {"$set": {'c2_info': info}},
+                               {"$set": {'command_control_channel': info}},
                                upsert=False)
 
     @staticmethod

@@ -15,13 +15,13 @@ class T1041(AttackTechnique):
     @staticmethod
     def get_report_data():
         monkeys = list(Monkey.objects())
-        info = [{'src': monkey['c2_info']['src'],
-                 'dst': monkey['c2_info']['dst']}
-                for monkey in monkeys if monkey['c2_info']]
+        info = [{'src': monkey['command_control_channel']['src'],
+                 'dst': monkey['command_control_channel']['dst']}
+                for monkey in monkeys if monkey['command_control_channel']]
         if info:
             status = ScanStatus.USED.value
         else:
             status = ScanStatus.UNSCANNED.value
         data = T1041.get_base_data_by_status(status)
-        data.update({'c2_info': info})
+        data.update({'command_control_channel': info})
         return data
