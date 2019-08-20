@@ -16,5 +16,5 @@ from config import Config
 from creds import Creds
 from monkey_ttl import MonkeyTtl
 from pba_results import PbaResults
-from c2_info import C2Info
+from command_control_channel import CommandControlChannel
 from monkey import Monkey
