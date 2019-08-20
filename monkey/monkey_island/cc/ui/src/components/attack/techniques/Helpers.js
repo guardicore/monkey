@@ -27,29 +27,29 @@ export function getUsageColumns() {
       columns: [
         {Header: 'Machine',
           id: 'machine',
-          accessor: x => renderMachineFromSystemData(x._id.machine),
+          accessor: x => renderMachineFromSystemData(x.machine),
           style: { 'whiteSpace': 'unset' },
           width: 300},
         {Header: 'Usage',
           id: 'usage',
-          accessor: x => x._id.usage,
+          accessor: x => x.usage,
           style: { 'whiteSpace': 'unset' }}]
     }])}
 
-/* Renders fields that contains 'used' boolean value and 'name' string value.
+/* Renders table fields that contains 'used' boolean value and 'name' string value.
 'Used' value determines if 'name' value will be shown.
  */
-export function renderCollections(info){
+export function renderUsageFields(usages){
     let output = [];
-    info.forEach(function(collection){
-      if(collection['used']){
-        output.push(<div key={collection['name']}>{collection['name']}</div>)
+    usages.forEach(function(usage){
+      if(usage['used']){
+        output.push(<div key={usage['name']}>{usage['name']}</div>)
       }
     });
     return (<div>{output}</div>);
   }
 
-export const scanStatus = {
+export const ScanStatus = {
     UNSCANNED: 0,
     SCANNED: 1,
     USED: 2

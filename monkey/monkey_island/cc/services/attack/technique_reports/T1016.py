@@ -21,7 +21,7 @@ class T1016(AttackTechnique):
                              'networks': 0,
                              'info': [
                                  {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$gt': ['$netstat', {}]}]},
-                                  'name': {'$literal': 'Network connections (via netstat command)'}},
+                                  'name': {'$literal': 'Network connections (netstat)'}},
                                  {'used': {'$and': [{'$ifNull': ['$networks', False]}, {'$gt': ['$networks', {}]}]},
                                   'name': {'$literal': 'Network interface info'}},
                              ]}}]
@@ -29,10 +29,7 @@ class T1016(AttackTechnique):
     @staticmethod
     def get_report_data():
         network_info = list(mongo.db.telemetry.aggregate(T1016.query))
-        if network_info:
-            status = ScanStatus.USED.value
-        else:
-            status = ScanStatus.UNSCANNED.value
+        status = ScanStatus.USED.value if network_info else ScanStatus.UNSCANNED.value
         data = T1016.get_base_data_by_status(status)
         data.update({'network_info': network_info})
         return data
