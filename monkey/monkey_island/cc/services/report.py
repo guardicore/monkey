@@ -34,7 +34,6 @@ class ReportService:
             'SmbExploiter': 'SMB Exploiter',
             'WmiExploiter': 'WMI Exploiter',
             'SSHExploiter': 'SSH Exploiter',
-            'RdpExploiter': 'RDP Exploiter',
             'SambaCryExploiter': 'SambaCry Exploiter',
             'ElasticGroovyExploiter': 'Elastic Groovy Exploiter',
             'Ms08_067_Exploiter': 'Conficker Exploiter',
@@ -288,12 +287,6 @@ class ReportService:
             return processed_exploit
 
     @staticmethod
-    def process_rdp_exploit(exploit):
-        processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        processed_exploit['type'] = 'rdp'
-        return processed_exploit
-
-    @staticmethod
     def process_vsftpd_exploit(exploit):
         processed_exploit = ReportService.process_general_creds_exploit(exploit)
         processed_exploit['type'] = 'vsftp'
@@ -357,7 +350,6 @@ class ReportService:
             'SmbExploiter': ReportService.process_smb_exploit,
             'WmiExploiter': ReportService.process_wmi_exploit,
             'SSHExploiter': ReportService.process_ssh_exploit,
-            'RdpExploiter': ReportService.process_rdp_exploit,
             'SambaCryExploiter': ReportService.process_sambacry_exploit,
             'ElasticGroovyExploiter': ReportService.process_elastic_exploit,
             'Ms08_067_Exploiter': ReportService.process_conficker_exploit,
