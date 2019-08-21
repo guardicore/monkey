@@ -43,6 +43,7 @@ class Telemetry(flask_restful.Resource):
     def post(self):
         telemetry_json = json.loads(request.data)
         telemetry_json['timestamp'] = datetime.now()
+        telemetry_json['command_control_channel'] = {'src': request.remote_addr, 'dst': request.host}
 
         # Monkey communicated, so it's alive. Update the TTL.
         Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid']).renew_ttl()

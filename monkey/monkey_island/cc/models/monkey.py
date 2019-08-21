@@ -6,6 +6,7 @@ from mongoengine import Document, StringField, ListField, BooleanField, Embedded
 
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
 from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
+from monkey_island.cc.models.command_control_channel import CommandControlChannel
 
 
 class Monkey(Document):
@@ -36,6 +37,7 @@ class Monkey(Document):
     pba_results = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
+    command_control_channel = EmbeddedDocumentField(CommandControlChannel)
 
     # LOGIC
     @staticmethod
@@ -79,6 +81,17 @@ class Monkey(Document):
         elif self.description.lower().find("windows") != -1:
             os = "windows"
         return os
+
+    def get_network_info(self):
+        """
+        Formats network info from monkey's model
+        :return: dictionary with an array of IP's and a hostname
+        """
+        return {'ips': self.ip_addresses, 'hostname': self.hostname}
+
+    @staticmethod
+    def get_tunneled_monkeys():
+        return Monkey.objects(tunnel__exists=True)
 
     def renew_ttl(self, duration=DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS):
         self.ttl_ref = create_monkey_ttl_document(duration)

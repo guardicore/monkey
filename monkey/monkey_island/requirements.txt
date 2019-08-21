@@ -25,3 +25,4 @@ wheel
 mongoengine
 mongomock
 requests
+dpath

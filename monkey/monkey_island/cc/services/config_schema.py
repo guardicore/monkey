@@ -14,7 +14,7 @@ SCHEMA = {
                         "SmbExploiter"
                     ],
                     "title": "SMB Exploiter",
-                    "attack_techniques": ["T1110", "T1075"]
+                    "attack_techniques": ["T1110", "T1075", "T1035"]
                 },
                 {
                     "type": "string",
@@ -22,7 +22,7 @@ SCHEMA = {
                         "WmiExploiter"
                     ],
                     "title": "WMI Exploiter",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": ["T1110", "T1106"]
                 },
                 {
                     "type": "string",
@@ -54,7 +54,7 @@ SCHEMA = {
                         "SSHExploiter"
                     ],
                     "title": "SSH Exploiter",
-                    "attack_techniques": ["T1110", "T1145"]
+                    "attack_techniques": ["T1110", "T1145", "T1106"]
                 },
                 {
                     "type": "string",
@@ -422,7 +422,7 @@ SCHEMA = {
                             "title": "Collect system info",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1082"],
+                            "attack_techniques": ["T1082", "T1005", "T1016"],
                             "description": "Determines whether to collect system info"
                         },
                         "should_use_mimikatz": {

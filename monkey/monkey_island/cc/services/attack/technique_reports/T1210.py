@@ -18,11 +18,11 @@ class T1210(AttackTechnique):
         scanned_services = T1210.get_scanned_services()
         exploited_services = T1210.get_exploited_services()
         if exploited_services:
-            status = ScanStatus.USED
+            status = ScanStatus.USED.value
         elif scanned_services:
-            status = ScanStatus.SCANNED
+            status = ScanStatus.SCANNED.value
         else:
-            status = ScanStatus.UNSCANNED
+            status = ScanStatus.UNSCANNED.value
         data.update(T1210.get_message_and_status(status))
         data.update({'scanned_services': scanned_services, 'exploited_services': exploited_services})
         return data
