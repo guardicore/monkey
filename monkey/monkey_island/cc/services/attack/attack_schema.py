@@ -179,6 +179,14 @@ SCHEMA = {
                     "description": "An adversary may attempt to get detailed information about the "
                                    "operating system and hardware, including version, patches, hotfixes, "
                                    "service packs, and architecture."
+                },
+                "T1018": {
+                    "title": "T1018 Remote System Discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries will likely attempt to get a listing of other systems by IP address, "
+                                   "hostname, or other logical identifier on a network for lateral movement."
                 }
             }
         },
