@@ -12,7 +12,6 @@ class T1090 extends React.Component {
 
   static getProxyColumns() {
     return ([{
-      Header: "Proxies were used to communicate with:",
       columns: [
         {Header: 'Machines',
           id: 'machine',
