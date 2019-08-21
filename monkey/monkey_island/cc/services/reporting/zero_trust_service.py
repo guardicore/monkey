@@ -109,6 +109,7 @@ class ZeroTrustService(object):
         test_info = TESTS_MAP[finding.test]
         enriched_finding = {
             "test": test_info[FINDING_EXPLANATION_BY_STATUS_KEY][finding.status],
+            "test_key": finding.test,
             "pillars": test_info[PILLARS_KEY],
             "status": finding.status,
             "events": ZeroTrustService.__get_events_as_dict(finding.events)

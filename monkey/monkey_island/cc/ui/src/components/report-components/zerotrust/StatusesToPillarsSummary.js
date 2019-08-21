@@ -32,5 +32,5 @@ export default class StatusesToPillarsSummary extends Component {
 }
 
 StatusesToPillarsSummary.propTypes = {
-  statusesToPillars: PropTypes.array
+  statusesToPillars: PropTypes.object
 };

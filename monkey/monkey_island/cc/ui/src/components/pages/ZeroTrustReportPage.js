@@ -4,7 +4,7 @@ import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
 import PillarsOverview from "../report-components/zerotrust/PillarOverview";
 import FindingsTable from "../report-components/zerotrust/FindingsTable";
-import {SinglePillarDirectivesStatus} from "../report-components/zerotrust/SinglePillarDirectivesStatus";
+import SinglePillarDirectivesStatus from "../report-components/zerotrust/SinglePillarDirectivesStatus";
 import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";

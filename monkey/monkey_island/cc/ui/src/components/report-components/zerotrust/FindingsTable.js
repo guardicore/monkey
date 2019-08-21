@@ -22,7 +22,7 @@ const columns = [
       },
       { Header: 'Events', id:"events",
         accessor: x => {
-          return <EventsAndButtonComponent events={x.events} exportFilename={"Events_" + x.test}/>;
+          return <EventsAndButtonComponent events={x.events} exportFilename={"Events_" + x.test_key}/>;
         }
       }
     ]

@@ -4,7 +4,7 @@ import DirectivesStatusTable from "./DirectivesStatusTable";
 import React, {Fragment} from "react";
 import * as PropTypes from "prop-types";
 
-export class SinglePillarDirectivesStatus extends AuthComponent {
+export default class SinglePillarDirectivesStatus extends AuthComponent {
   render() {
     if (this.props.directivesStatus.length === 0) {
       return null;

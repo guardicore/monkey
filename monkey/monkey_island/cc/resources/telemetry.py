@@ -9,7 +9,7 @@ from flask import request
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.hooks import process_telemetry
+from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
 from monkey_island.cc.models.monkey import Monkey
 
 __author__ = 'Barak'
