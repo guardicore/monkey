@@ -67,10 +67,7 @@ class InfectionMonkey(object):
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
         self._default_server = self._opts.server
-        try:
-            self._default_server_port = self._default_server.split(':')[1]
-        except KeyError:
-            self._default_server_port = ''
+
         if self._opts.depth:
             WormConfiguration._depth_from_commandline = True
         self._keep_running = True
@@ -87,9 +84,10 @@ class InfectionMonkey(object):
     def start(self):
         LOG.info("Monkey is running...")
 
-        if not ControlClient.find_server(default_tunnel=self._default_tunnel):
-            LOG.info("Monkey couldn't find server. Going down.")
+        # Sets island's IP and port for monkey to communicate to
+        if not self.set_default_server():
             return
+        self.set_default_port()
 
         # Create a dir for monkey files if there isn't one
         utils.create_monkey_dir()
@@ -116,9 +114,6 @@ class InfectionMonkey(object):
             monkey_tunnel.start()
 
         StateTelem(False).send()
-
-        self._default_server = WormConfiguration.current_server
-        LOG.debug("default server: %s" % self._default_server)
         TunnelTelem().send()
 
         if WormConfiguration.collect_system_info:
@@ -329,3 +324,17 @@ class InfectionMonkey(object):
             self._keep_running = False
 
             LOG.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)
+
+    def set_default_port(self):
+        try:
+            self._default_server_port = self._default_server.split(':')[1]
+        except KeyError:
+            self._default_server_port = ''
+
+    def set_default_server(self):
+        if not ControlClient.find_server(default_tunnel=self._default_tunnel):
+            LOG.info("Monkey couldn't find server. Going down.")
+            return False
+        self._default_server = WormConfiguration.current_server
+        LOG.debug("default server set to: %s" % self._default_server)
+        return True
