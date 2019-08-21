@@ -37,6 +37,19 @@ export function getUsageColumns() {
           style: { 'whiteSpace': 'unset' }}]
     }])}
 
+/* Renders table fields that contains 'used' boolean value and 'name' string value.
+'Used' value determines if 'name' value will be shown.
+ */
+export function renderUsageFields(usages){
+    let output = [];
+    usages.forEach(function(usage){
+      if(usage['used']){
+        output.push(<div key={usage['name']}>{usage['name']}</div>)
+      }
+    });
+    return (<div>{output}</div>);
+  }
+
 export const ScanStatus = {
     UNSCANNED: 0,
     SCANNED: 1,

@@ -422,7 +422,7 @@ SCHEMA = {
                             "title": "Collect system info",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1082", "T1005"],
+                            "attack_techniques": ["T1082", "T1005", "T1016"],
                             "description": "Determines whether to collect system info"
                         },
                         "should_use_mimikatz": {

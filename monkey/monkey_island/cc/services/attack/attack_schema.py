@@ -176,6 +176,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "depends_on": ["T1016", "T1005"],
                     "description": "An adversary may attempt to get detailed information about the "
                                    "operating system and hardware, including version, patches, hotfixes, "
                                    "service packs, and architecture."
@@ -187,6 +188,16 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Adversaries will likely attempt to get a listing of other systems by IP address, "
                                    "hostname, or other logical identifier on a network for lateral movement."
+                },
+                "T1016": {
+                    "title": "T1016 System network configuration discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "depends_on": ["T1005", "T1082"],
+                    "description": "Adversaries will likely look for details about the network configuration "
+                                   "and settings of systems they access or through information discovery"
+                                   " of remote systems."
                 }
             }
         },
@@ -199,6 +210,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "depends_on": ["T1016", "T1082"],
                     "description": "Sensitive data can be collected from local system sources, such as the file system "
                                    "or databases of information residing on the system prior to Exfiltration."
                 }
