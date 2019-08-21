@@ -15,11 +15,8 @@ class T1090(AttackTechnique):
     @staticmethod
     def get_report_data():
         monkeys = Monkey.get_tunneled_monkeys()
-        monkeys = [Monkey.get_network_info(monkey) for monkey in monkeys]
-        if monkeys:
-            status = ScanStatus.USED.value
-        else:
-            status = ScanStatus.UNSCANNED.value
+        monkeys = [monkey.get_network_info() for monkey in monkeys]
+        status = ScanStatus.USED.value if monkeys else ScanStatus.UNSCANNED.value
         data = T1090.get_base_data_by_status(status)
         data.update({'proxies': monkeys})
         return data
