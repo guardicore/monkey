@@ -12,7 +12,7 @@ class T1188 extends React.Component {
 
   static getHopColumns() {
     return ([{
-      Header: "Communications trough multi-hop proxies",
+      Header: "Communications through multi-hop proxies",
       columns: [
         {Header: 'From',
           id: 'from',
