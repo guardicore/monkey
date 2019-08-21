@@ -108,6 +108,13 @@ SCHEMA = {
                     "description": "Adversaries may remove files over the course of an intrusion "
                                    "to keep their footprint low or remove them at the end as part "
                                    "of the post-intrusion cleanup process."
+                },
+                "T1222": {
+                    "title": "T1222 File permissions modification",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may modify file permissions/attributes to evade intended DACLs."
                 }
             }
         },
