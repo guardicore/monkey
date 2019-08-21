@@ -23,6 +23,7 @@ import T1129 from "../attack/techniques/T1129";
 import T1106 from "../attack/techniques/T1106";
 import T1188 from "../attack/techniques/T1188";
 import T1090 from "../attack/techniques/T1090";
+import T1041 from "../attack/techniques/T1041";
 
 const tech_components = {
   'T1210': T1210,
@@ -41,7 +42,8 @@ const tech_components = {
   'T1106': T1106,
   'T1107': T1107,
   'T1188': T1188,
-  'T1090': T1090
+  'T1090': T1090,
+  'T1041': T1041
 };
 
 const classNames = require('classnames');
@@ -158,7 +160,7 @@ class AttackReportPageComponent extends AuthComponent {
     return (
       <div>
         {this.renderLegend()}
-        <section className="app">{content}</section>
+        <section className="attack-report">{content}</section>
       </div>
     )
   }

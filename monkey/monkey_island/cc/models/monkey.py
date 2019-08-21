@@ -6,6 +6,7 @@ from mongoengine import Document, StringField, ListField, BooleanField, Embedded
 
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
 from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
+from monkey_island.cc.models.command_control_channel import CommandControlChannel
 
 
 class Monkey(Document):
@@ -36,6 +37,7 @@ class Monkey(Document):
     pba_results = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
+    command_control_channel = EmbeddedDocumentField(CommandControlChannel)
 
     # LOGIC
     @staticmethod
