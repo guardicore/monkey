@@ -17,6 +17,7 @@ export function renderMachineFromSystemData(data) {
          machineStr += ipInfo + ", ";
       }
     });
+    // Replaces " ," with " )" to finish a list of IP's
     return machineStr.slice(0, -2) + " )"
 }
 
