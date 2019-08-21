@@ -23,13 +23,10 @@ class T1188(AttackTechnique):
                 proxy_count += 1
                 proxy = proxy.tunnel
             if proxy_count > 1:
-                hops.append({'from': Monkey.get_network_info(initial),
-                             'to': Monkey.get_network_info(proxy),
+                hops.append({'from': initial.get_network_info(),
+                             'to': proxy.get_network_info(),
                              'count': proxy_count})
-        if hops:
-            status = ScanStatus.USED.value
-        else:
-            status = ScanStatus.UNSCANNED.value
+        status = ScanStatus.USED.value if hops else ScanStatus.UNSCANNED.value
         data = T1188.get_base_data_by_status(status)
         data.update({'hops': hops})
         return data
