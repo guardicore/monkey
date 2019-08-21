@@ -61,9 +61,9 @@ TESTS_MAP = {
     TEST_SEGMENTATION: {
         TEST_EXPLANATION_KEY: u"The Monkey tried to scan and find machines that it can communicate with from the machine it's running on, that belong to different network segments.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
-                STATUS_CONCLUSIVE: "Monkey performed cross-segment communication. Check firewall rules and logs.",
-                STATUS_POSITIVE: "Monkey couldn't perform cross-segment communication. If relevant, check firewall logs."
-            },
+            STATUS_CONCLUSIVE: "Monkey performed cross-segment communication. Check firewall rules and logs.",
+            STATUS_POSITIVE: "Monkey couldn't perform cross-segment communication. If relevant, check firewall logs."
+        },
         DIRECTIVE_KEY: DIRECTIVE_SEGMENTATION,
         PILLARS_KEY: [NETWORKS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_POSITIVE, STATUS_CONCLUSIVE]
@@ -128,6 +128,11 @@ TESTS_MAP = {
     },
 }
 
+EVENT_TYPE_ISLAND = "island"
+EVENT_TYPE_MONKEY_NETWORK = "monkey_network"
+EVENT_TYPE_MONKEY_LOCAL = "monkey_local"
+EVENT_TYPES = (EVENT_TYPE_MONKEY_LOCAL, EVENT_TYPE_MONKEY_NETWORK, EVENT_TYPE_ISLAND)
+
 PILLARS_TO_TESTS = {
     DATA: [],
     PEOPLE: [],
@@ -138,17 +143,22 @@ PILLARS_TO_TESTS = {
     AUTOMATION_ORCHESTRATION: []
 }
 
+DIRECTIVES_TO_TESTS = {}
+
+DIRECTIVES_TO_PILLARS = {}
+
+
+def populate_mappings():
+    populate_pillars_to_tests()
+    populate_directives_to_tests()
+    populate_directives_to_pillars()
+
 
 def populate_pillars_to_tests():
     for pillar in PILLARS:
         for test, test_info in TESTS_MAP.items():
             if pillar in test_info[PILLARS_KEY]:
                 PILLARS_TO_TESTS[pillar].append(test)
-
-
-populate_pillars_to_tests()
-
-DIRECTIVES_TO_TESTS = {}
 
 
 def populate_directives_to_tests():
@@ -158,11 +168,6 @@ def populate_directives_to_tests():
         DIRECTIVES_TO_TESTS[test_info[DIRECTIVE_KEY]].append(test)
 
 
-populate_directives_to_tests()
-
-DIRECTIVES_TO_PILLARS = {}
-
-
 def populate_directives_to_pillars():
     for directive, directive_tests in DIRECTIVES_TO_TESTS.items():
         directive_pillars = set()
@@ -170,11 +175,3 @@ def populate_directives_to_pillars():
             for pillar in TESTS_MAP[test][PILLARS_KEY]:
                 directive_pillars.add(pillar)
         DIRECTIVES_TO_PILLARS[directive] = directive_pillars
-
-
-populate_directives_to_pillars()
-
-EVENT_TYPE_ISLAND = "island"
-EVENT_TYPE_MONKEY_NETWORK = "monkey_network"
-EVENT_TYPE_MONKEY_LOCAL = "monkey_local"
-EVENT_TYPES = (EVENT_TYPE_MONKEY_LOCAL, EVENT_TYPE_MONKEY_NETWORK, EVENT_TYPE_ISLAND)
