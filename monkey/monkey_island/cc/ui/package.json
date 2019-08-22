@@ -70,6 +70,7 @@
     "bootstrap": "3.4.1",
     "classnames": "^2.2.6",
     "core-js": "^2.5.7",
+    "d3": "^5.11.0",
     "downloadjs": "^1.4.7",
     "fetch": "^1.1.0",
     "file-saver": "^2.0.2",
