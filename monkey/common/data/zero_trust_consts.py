@@ -27,11 +27,11 @@ TEST_DATA_ENDPOINT_HTTP = u"unencrypted_data_endpoint_http"
 TEST_MACHINE_EXPLOITED = u"machine_exploited"
 TEST_ENDPOINT_SECURITY_EXISTS = u"endpoint_security_exists"
 TEST_SCHEDULED_EXECUTION = u"scheduled_execution"
-TEST_ACTIVITY_TIMELINE = u"malicious_activity_timeline"
+TEST_MALICIOUS_ACTIVITY_TIMELINE = u"malicious_activity_timeline"
 TEST_SEGMENTATION = u"segmentation"
 TESTS = (
     TEST_SEGMENTATION,
-    TEST_ACTIVITY_TIMELINE,
+    TEST_MALICIOUS_ACTIVITY_TIMELINE,
     TEST_SCHEDULED_EXECUTION,
     TEST_ENDPOINT_SECURITY_EXISTS,
     TEST_MACHINE_EXPLOITED,
@@ -68,7 +68,7 @@ TESTS_MAP = {
         PILLARS_KEY: [NETWORKS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_POSITIVE, STATUS_CONCLUSIVE]
     },
-    TEST_ACTIVITY_TIMELINE: {
+    TEST_MALICIOUS_ACTIVITY_TIMELINE: {
         TEST_EXPLANATION_KEY: u"The Monkeys in the network performed malicious-looking actions, like scanning and attempting exploitation.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_INCONCLUSIVE: "Monkey performed malicious actions in the network. Check SOC logs and alerts."
