@@ -1,10 +1,7 @@
 enum34
 impacket
 pycryptodome
-pyasn1
 cffi
-twisted
-rdpy
 requests
 odict
 paramiko

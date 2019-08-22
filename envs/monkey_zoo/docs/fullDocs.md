@@ -606,20 +606,16 @@ fullTest.conf is a good config to start, because it covers all machines.
 <td>2}p}aR]&amp;=M</td>
 </tr>
 <tr class="odd">
-<td>Scan results:</td>
-<td>Machine exploited using RDP grinder</td>
-</tr>
-<tr class="even">
 <td>Server’s config:</td>
 <td><p>Remote desktop enabled</p>
 <p>Admin user’s credentials:</p>
 <p>m0nk3y, 2}p}aR]&amp;=M</p></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Notes:</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td></td>
 <td></td>
 </tr>
@@ -649,7 +645,7 @@ fullTest.conf is a good config to start, because it covers all machines.
 </tr>
 <tr class="even">
 <td>Server’s config:</td>
-<td><p>Has cashed mimikatz-15 RDP credentials</p>
+<td><p>Has cached mimikatz-15 RDP credentials</p>
 <p><a href="https://social.technet.microsoft.com/Forums/windows/en-US/8160d62b-0f5d-48a3-9fe9-5cd319837917/how-te-reenable-smb1-in-windows1o?forum=win10itprogeneral">SMB</a> turned on</p></td>
 </tr>
 <tr class="odd">

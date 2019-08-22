@@ -216,9 +216,6 @@ class Configuration(object):
     user_to_add = "Monkey_IUSER_SUPPORT"
     remote_user_pass = "Password1!"
 
-    # rdp exploiter
-    rdp_use_vbs_download = True
-
     # User and password dictionaries for exploits.
 
     def get_exploit_user_password_pairs(self):
