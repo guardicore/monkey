@@ -91,7 +91,7 @@ TESTS_MAP = {
         TEST_EXPLANATION_KEY: u"The Monkey tries to exploit machines in order to breach them and propagate in the network.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_CONCLUSIVE: "Monkey successfully exploited endpoints. Check IDS/IPS logs to see activity recognized and see which endpoints were compromised.",
-            STATUS_INCONCLUSIVE: "Monkey tried exploiting endpoints. Check IDS/IPS logs to see activity recognized."
+            STATUS_POSITIVE: "Monkey didn't manage to exploit an endpoint."
         },
         DIRECTIVE_KEY: DIRECTIVE_ENDPOINT_SECURITY,
         PILLARS_KEY: [DEVICES],
