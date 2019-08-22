@@ -22,18 +22,14 @@ class T1021(AttackTechnique):
                            'attempt_cnt': {'$size': '$data.attempts'},
                            'attempts': {'$filter': {'input': '$data.attempts',
                                                     'as': 'attempt',
-                                                    'cond': {'$and': [{'$eq': ['$$attempt.result', True]},
-                                                                      {'$or': [{'$ne': ['$$attempt.password', '']},
-                                                                               {'$ne': ['$$attempt.ssh_key', '']}]}]
-                                                             }
+                                                    'cond': {'$eq': ['$$attempt.result', True]}
                                                     }
                                         }
                            }
               }]
 
     scanned_query = {'telem_category': 'exploit',
-                     'data.attempts': {'$elemMatch': {'$or': [{'password': {'$ne': ''}},
-                                                              {'ssh_key': {'$ne': ''}}]}}}
+                     'data.attempts': {'$elemMatch': {'result': True}}}
 
     @staticmethod
     def get_report_data():
