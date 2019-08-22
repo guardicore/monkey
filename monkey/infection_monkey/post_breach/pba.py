@@ -47,20 +47,25 @@ class PBA(object):
         """
         exec_funct = self._execute_default
         result = exec_funct()
-        if self.scripts_were_used(result):
-            T1064Telem(ScanStatus.USED, "Scripts used to execute %s post breach action." % self.name).send()
+        if self.scripts_were_used_successfully(result):
+            T1064Telem(ScanStatus.USED, "Scripts were used to execute %s post breach action." % self.name).send()
         PostBreachTelem(self, result).send()
 
-    def scripts_were_used(self, pba_execution_result):
+    def is_script(self):
         """
-        Determines if scripts were used to execute PBA
+        Determines if PBA is a script (PBA might be a single command)
+        :return: True if PBA is a script(series of OS commands)
+        """
+        return isinstance(self.command, list) and len(self.command) > 1
+
+    def scripts_were_used_successfully(self, pba_execution_result):
+        """
+        Determines if scripts were used to execute PBA and if they succeeded
         :param pba_execution_result: result of execution function. e.g. self._execute_default
         :return: True if scripts were used, False otherwise
         """
         pba_execution_succeeded = pba_execution_result[1]
-        if pba_execution_succeeded and isinstance(self.command, list) and len(self.command) > 1:
-            return True
-        return False
+        return pba_execution_succeeded and self.is_script()
 
     def _execute_default(self):
         """
