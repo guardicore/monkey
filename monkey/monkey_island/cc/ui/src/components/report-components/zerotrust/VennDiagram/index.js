@@ -134,7 +134,7 @@ UPDATED [20.08.2019]
 
 */
 
-const VENN_MIN_WIDTH = 256;
+const VENN_MIN_WIDTH = '300px';
 
 class ResponsiveVennDiagram extends React.Component {
     
@@ -149,8 +149,8 @@ class ResponsiveVennDiagram extends React.Component {
 
     return ( 
         
-            <div ref={this.divElement}> 
-                <VennDiagram width={Math.max(childrenWidth, VENN_MIN_WIDTH)} height={Math.max(childrenHeight, VENN_MIN_WIDTH)} pillarsGrades={pillarsGrades} />
+            <div ref={this.divElement} style={{textAlign: 'center'}}> 
+                <VennDiagram style={{minWidth: VENN_MIN_WIDTH, minHeight: VENN_MIN_WIDTH}} pillarsGrades={pillarsGrades} />
             </div> )
 
   }
@@ -173,17 +173,19 @@ class VennDiagram extends React.Component{
         
         this.state = { tooltip: { top: 0, left: 0, display: 'none', html: '' } }
         
+        this.width = this.height = 512, this.zOrder = [];
+        
         this.colors = ['#777777', '#D9534F', '#F0AD4E', '#5CB85C'];
         this.prefix = 'vennDiagram';
         this.suffices = ['', '|tests are|conclusive', '|tests were|inconclusive', '|tests|performed'];
-        this.fontStyles = [{size: Math.max(9, this.props.width / 32), color: 'white'}, {size: Math.max(6, this.props.width / 52), color: 'black'}];
-        this.offset = this.props.width / 16;
+        this.fontStyles = [{size: Math.max(9, this.width / 32), color: 'white'}, {size: Math.max(6, this.width / 52), color: 'black'}];
+        this.offset = this.width / 16;
         
-        this.thirdWidth = this.props.width / 3; 
-        this.sixthWidth = this.props.width / 6;
-        this.width2By7 = 2 * this.props.width / 7
-        this.width1By11 = this.props.width / 11;
-        this.width1By28 = this.props.width / 28;
+        this.thirdWidth = this.width / 3; 
+        this.sixthWidth = this.width / 6;
+        this.width2By7 = 2 * this.width / 7
+        this.width1By11 = this.width / 11;
+        this.width1By28 = this.width / 28;
         
         this.toggle = false;
         
@@ -207,8 +209,10 @@ class VennDiagram extends React.Component{
         
     }
 
-     _onMouseMove(e) {
+    _onMouseMove(e) {
          
+        let self = this;
+    
         if(!this.toggle){
             
             let hidden = 'none';
@@ -218,17 +222,22 @@ class VennDiagram extends React.Component{
             e.stopPropagation();
 
             document.querySelectorAll('circle, path').forEach((d_, i_) => { d_.setAttribute('opacity', 0.8)});
-
+            
             if(e.target.id.includes('Node')) { 
 
                 html = e.target.dataset.tooltip;
                 this.divElement.style.cursor = 'pointer';
-                hidden = 'block'; e.target.setAttribute('opacity', 1.0); 
+                hidden = 'block'; e.target.setAttribute('opacity', 0.95); 
                 bcolor = e.target.getAttribute('fill');
+                //set highest z-index
+                e.target.parentNode.parentNode.appendChild(e.target.parentNode);
 
             }else{
 
                 this.divElement.style.cursor = 'default';
+                
+                //return z indices to default
+                Object.keys(this.layout).forEach(function(d_, i_){ document.querySelector('#' + self.prefix).appendChild(document.querySelector('#' + self.prefix + 'Node_' + i_).parentNode); })
 
             }
 
@@ -237,6 +246,13 @@ class VennDiagram extends React.Component{
         }
     }
     
+    _onMouseLeave(e){
+        
+        let hidden = 'none';
+        
+        this.setState({target: null, tooltip: { target: null, bcolor: 'none', top: 0, left: 0, display: hidden, html: '' } });
+        
+    }
     _onClick(e) {
 
         if(this.state.tooltip.target === e.target) { this.toggle = true; } else { this.toggle = false; }
@@ -263,7 +279,7 @@ class VennDiagram extends React.Component{
         
         this.props.pillarsGrades.forEach((d_, i_) => {
             
-            let params = omit('pillar', d_);
+            let params = omit('Unexpected', omit('pillar', d_));
             let sum = Object.keys(params).reduce((sum_, key_) => sum_ + parseFloat(params[key_]||0), 0); 
             let key = TypographicUtilities.removeAmpersand(d_.pillar);
             let html = self.buildTooltipHtmlContent(d_);
@@ -302,8 +318,9 @@ class VennDiagram extends React.Component{
         if(this.state.data === undefined) { return null; }
         else { 
 
-            let { width, height } = this.props;
-            let translate = 'translate(' + width /2 + ',' + height/2 + ')';
+            //equivalent to center translate (width/2, height/2)
+            let viewPortParameters = (-this.width / 2) + ' ' + (-this.height / 2) + ' ' + this.width + ' ' + this.height;
+            let translate = 'translate(' + this.width /2 + ',' + this.height/2 + ')';
 
             let nodes = Object.values(this.layout).map((d_, i_) =>{
 
@@ -343,11 +360,9 @@ class VennDiagram extends React.Component{
             
             return ( 
 
-                <div id={this.prefix} ref={ (divElement) => this.divElement = divElement} onMouseMove={this._onMouseMove.bind(this)} onClick={this._onClick.bind(this)}>
-                <svg width={width} height={height} xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink'>
-                    <g id={this.prefix + 'TransformGroup'} ref={'vennDiagram'} transform={translate}>
-                        {nodes}
-                    </g>
+                <div ref={ (divElement) => this.divElement = divElement} onMouseMove={this._onMouseMove.bind(this)} onMouseLeave={this._onMouseLeave.bind(this)} onClick={this._onClick.bind(this)}>
+                <svg id={this.prefix} viewBox={viewPortParameters} width={'100%'} height={'100%'} xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink'>
+                    {nodes}
                 </svg>
                 <Tooltip id={this.prefix + 'Tooltip'} prefix={this.prefix} {...this.state.tooltip} />
                 </div> 
@@ -362,8 +377,6 @@ class VennDiagram extends React.Component{
 
 VennDiagram.propTypes = {
         
-      pillarsGrades: PropTypes.array,
-      width: PropTypes.number,
-      height: PropTypes.number
+      pillarsGrades: PropTypes.array
         
 }
