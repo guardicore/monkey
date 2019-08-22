@@ -165,7 +165,7 @@ class TestZeroTrustService(IslandTestCase):
                     "tests": [
                         {
                             "status": STATUS_UNEXECUTED,
-                            "test": TESTS_MAP[TEST_ACTIVITY_TIMELINE][TEST_EXPLANATION_KEY]
+                            "test": TESTS_MAP[TEST_MALICIOUS_ACTIVITY_TIMELINE][TEST_EXPLANATION_KEY]
                         }
                     ]
                 }
@@ -189,7 +189,7 @@ class TestZeroTrustService(IslandTestCase):
                     "tests": [
                         {
                             "status": STATUS_UNEXECUTED,
-                            "test": TESTS_MAP[TEST_ACTIVITY_TIMELINE][TEST_EXPLANATION_KEY]
+                            "test": TESTS_MAP[TEST_MALICIOUS_ACTIVITY_TIMELINE][TEST_EXPLANATION_KEY]
                         }
                     ]
                 }
