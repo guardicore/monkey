@@ -52,7 +52,7 @@ UPDATED [20.08.2019]
 
           useLayoutEffect(() => { checkForDimensionsUpdate(); }, []);
 
-          window.addEventListener("resize", () => {  clearInterval(movement_timer); movement_timer = setTimeout(checkForDimensionsUpdate, RESET_TIMEOUT); });
+          window.addEventListener('resize', () => {  clearInterval(movement_timer); movement_timer = setTimeout(checkForDimensionsUpdate, RESET_TIMEOUT); });
 
           return (
 
@@ -200,12 +200,15 @@ class VennDiagram extends React.Component{
             AutomationAndOrchestration: { inner: this.thirdWidth - this.width1By28 * 2, outer: this.thirdWidth - this.width1By28 }
 
         };
+        
+        this._onScroll = this._onScroll.bind(this);
     
     }
     
     componentDidMount() {
 
         this.parseData();
+        window.addEventListener('scroll', this._onScroll);
         
     }
 
@@ -218,9 +221,7 @@ class VennDiagram extends React.Component{
             let hidden = 'none';
             let html = '';
             let bcolor = '#DEDEDE';
-
-            e.stopPropagation();
-
+ 
             document.querySelectorAll('circle, path').forEach((d_, i_) => { d_.setAttribute('opacity', 0.8)});
             
             if(e.target.id.includes('Node')) { 
@@ -229,6 +230,7 @@ class VennDiagram extends React.Component{
                 this.divElement.style.cursor = 'pointer';
                 hidden = 'block'; e.target.setAttribute('opacity', 0.95); 
                 bcolor = e.target.getAttribute('fill');
+                
                 //set highest z-index
                 e.target.parentNode.parentNode.appendChild(e.target.parentNode);
 
@@ -245,14 +247,13 @@ class VennDiagram extends React.Component{
     
         }
     }
+    _onScroll(e){
+
+         this.divElement.style.cursor = 'default';
+         this.setState({target: e, tooltip: { target: null, bcolor: 'none', top: 0, left: 0, display: 'none', html: '' } });
     
-    _onMouseLeave(e){
-        
-        let hidden = 'none';
-        
-        this.setState({target: null, tooltip: { target: null, bcolor: 'none', top: 0, left: 0, display: hidden, html: '' } });
-        
     }
+
     _onClick(e) {
 
         if(this.state.tooltip.target === e.target) { this.toggle = true; } else { this.toggle = false; }
@@ -360,7 +361,7 @@ class VennDiagram extends React.Component{
             
             return ( 
 
-                <div ref={ (divElement) => this.divElement = divElement} onMouseMove={this._onMouseMove.bind(this)} onMouseLeave={this._onMouseLeave.bind(this)} onClick={this._onClick.bind(this)}>
+                <div ref={ (divElement) => this.divElement = divElement} onMouseMove={this._onMouseMove.bind(this)} onClick={this._onClick.bind(this)} >
                 <svg id={this.prefix} viewBox={viewPortParameters} width={'100%'} height={'100%'} xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink'>
                     {nodes}
                 </svg>
