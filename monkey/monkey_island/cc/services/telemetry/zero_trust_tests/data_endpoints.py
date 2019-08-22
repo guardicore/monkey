@@ -12,6 +12,7 @@ def test_open_data_endpoints(telemetry_json):
     services = telemetry_json["data"]["machine"]["services"]
     current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid'])
     found_http_server_status = STATUS_POSITIVE
+    found_elastic_search_server = STATUS_POSITIVE
 
     events = [
         Event.create_event(
@@ -41,10 +42,27 @@ def test_open_data_endpoints(telemetry_json):
                 ),
                 event_type=EVENT_TYPE_ISLAND
             ))
+        if service_name in 'elastic-search-9200':
+            found_elastic_search_server = STATUS_CONCLUSIVE
+            events.append(Event.create_event(
+                title="Scan telemetry analysis",
+                message="Service {} on {} recognized as an open data endpoint! Service details: {}".format(
+                    service_data["display_name"],
+                    telemetry_json["data"]["machine"]["ip_addr"],
+                    json.dumps(service_data)
+                ),
+                event_type=EVENT_TYPE_ISLAND
+            ))
 
     Finding.save_finding(
         test=TEST_DATA_ENDPOINT_HTTP,
         status=found_http_server_status,
+        events=events
+    )
+
+    Finding.save_finding(
+        test=TEST_DATA_ENDPOINT_ELASTIC,
+        status=found_elastic_search_server,
         events=events
     )
 
