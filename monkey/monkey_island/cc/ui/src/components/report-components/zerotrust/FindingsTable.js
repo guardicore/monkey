@@ -32,8 +32,8 @@ const columns = [
 class FindingsTable extends Component {
   render() {
     const data = this.props.findings.map((finding) => {
-      const newFinding = finding;
-      newFinding.pillars = finding.pillars.map((pillar) => {
+      const newFinding = JSON.parse(JSON.stringify(finding));
+      newFinding.pillars = newFinding.pillars.map((pillar) => {
         return {name: pillar, status: this.props.pillarsToStatuses[pillar]}
         });
       return newFinding;
