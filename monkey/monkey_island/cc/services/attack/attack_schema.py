@@ -48,6 +48,15 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Files may be copied from one system to another to stage "
                                    "adversary tools or other files over the course of an operation."
+                },
+                "T1021": {
+                    "title": "T1021 Remote services",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "depends_on": ["T1110"],
+                    "description": "An adversary may use Valid Accounts to log into a service"
+                                   " specifically designed to accept remote connections."
                 }
             }
         },
@@ -62,7 +71,7 @@ SCHEMA = {
                     "necessary": False,
                     "description": "Adversaries may use brute force techniques to attempt access to accounts "
                                    "when passwords are unknown or when password hashes are obtained.",
-                    "depends_on": ["T1210"]
+                    "depends_on": ["T1210", "T1021"]
                 },
                 "T1003": {
                     "title": "T1003 Credential dumping",
