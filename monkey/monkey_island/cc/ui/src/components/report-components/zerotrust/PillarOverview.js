@@ -21,7 +21,7 @@ const columns = [
 class PillarOverview extends Component {
   render() {
     const data = this.props.grades.map((grade) => {
-      const newGrade = grade;
+      const newGrade = JSON.parse(JSON.stringify(grade));
       newGrade.pillar = {name: grade.pillar, status: this.props.pillarsToStatuses[grade.pillar]};
       return newGrade;
     });

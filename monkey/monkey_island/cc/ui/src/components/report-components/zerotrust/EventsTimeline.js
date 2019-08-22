@@ -15,10 +15,10 @@ export default class EventsTimeline extends Component {
       <div>
         <Timeline>
           {
-            this.props.events.map(event => {
+            this.props.events.map((event, index) => {
               const event_time = new Date(event.timestamp['$date']).toString();
               return (<TimelineEvent
-                key={event.timestamp['$date']}
+                key={index}
                 createdAt={event_time}
                 title={event.title}
                 icon={<i className={eventTypeToIcon[event.event_type]} />}>
