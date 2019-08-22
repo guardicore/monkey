@@ -25,7 +25,8 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   }
 
   componentDidMount() {
-    this.updateMonkeysRunning().then(res => this.getZeroTrustReportFromServer(res));
+    this.updatePageState();
+    setInterval(this.updatePageState, 8000)
   }
 
   updateMonkeysRunning = () => {
@@ -35,6 +36,10 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         this.setState(extractExecutionStatusFromServerResponse(res));
         return res;
       });
+  };
+
+  updatePageState = () => {
+    this.updateMonkeysRunning().then(res => this.getZeroTrustReportFromServer(res));
   };
 
   render() {
