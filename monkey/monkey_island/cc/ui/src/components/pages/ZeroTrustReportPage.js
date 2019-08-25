@@ -1,17 +1,64 @@
-import React, {Fragment} from 'react';
-import {Col, Grid, Row} from 'react-bootstrap';
+import React from 'react';
+import {Button, Col} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
-import PillarsOverview from "../report-components/zerotrust/PillarOverview";
+import PillarGrades from "../report-components/zerotrust/PillarGrades";
+import PillarLabel from "../report-components/zerotrust/PillarLabel";
+import ResponsiveVennDiagram from "../report-components/zerotrust/venn-components/ResponsiveVennDiagram";
 import FindingsTable from "../report-components/zerotrust/FindingsTable";
-import SinglePillarDirectivesStatus from "../report-components/zerotrust/SinglePillarDirectivesStatus";
-import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
-import ReportLoader from "../report-components/common/ReportLoader";
-import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
-import SecurityIssuesGlance from "../report-components/common/SecurityIssuesGlance";
-import StatusesToPillarsSummary from "../report-components/zerotrust/StatusesToPillarsSummary";
-import PrintReportButton from "../report-components/common/PrintReportButton";
-import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
+import {SinglePillarRecommendationsStatus} from "../report-components/zerotrust/SinglePillarRecommendationsStatus";
+
+let mockup = [
+    {
+        "Conclusive": 4,
+        "Inconclusive": 0,
+        "Positive": 1,
+        "Unexecuted": 2,
+        "pillar": "Data"
+    },
+    {
+        "Conclusive": 0,
+        "Inconclusive": 5,
+        "Positive": 0,
+        "Unexecuted": 2,
+        "pillar": "People"
+    },
+    {
+        "Conclusive": 0,
+        "Inconclusive": 0,
+        "Positive": 6,
+        "Unexecuted": 3,
+        "pillar": "Networks"
+    },
+    {
+        "Conclusive": 2,
+        "Inconclusive": 0,
+        "Positive": 1,
+        "Unexecuted": 1,
+        "pillar": "Devices"
+    },
+    {
+        "Conclusive": 0,
+        "Inconclusive": 0,
+        "Positive": 0,
+        "Unexecuted": 0,
+        "pillar": "Workloads"
+    },
+    {
+        "Conclusive": 0,
+        "Inconclusive": 2,
+        "Positive": 0,
+        "Unexecuted": 0,
+        "pillar": "Visibility & Analytics"
+    },
+    {
+        "Conclusive": 0,
+        "Inconclusive": 0,
+        "Positive": 0,
+        "Unexecuted": 0,
+        "pillar": "Automation & Orchestration"
+    }
+];
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -20,30 +67,16 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
     this.state = {
       allMonkeysAreDead: false,
-      runStarted: true
+      runStarted: false
     };
   }
 
-  componentDidMount() {
-    this.updateMonkeysRunning().then(res => this.getZeroTrustReportFromServer(res));
-  }
-
-  updateMonkeysRunning = () => {
-    return this.authFetch('/api')
-      .then(res => res.json())
-      .then(res => {
-        this.setState(extractExecutionStatusFromServerResponse(res));
-        return res;
-      });
-  };
-
   render() {
-    let content;
-    if (this.state.runStarted) {
-      content = this.generateReportContent();
-    } else {
-      content = <MustRunMonkeyWarning/>;
-    }
+    let res;
+    // Todo move to componentDidMount
+    this.getZeroTrustReportFromServer(res);
+
+    const content = this.generateReportContent();
 
     return (
       <Col xs={12} lg={10}>
@@ -59,75 +92,63 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     let content;
 
     if (this.stillLoadingDataFromServer()) {
-      content = <ReportLoader loading={true}/>;
+      content = "Still empty";
     } else {
-      content = <div id="MainContentSection">
-        {this.generateOverviewSection()}
-        {this.generateDirectivesSection()}
-        {this.generateFindingsSection()}
+      const pillarsSection = <div>
+        <h2>Pillars Overview</h2>
+        <PillarGrades pillars={this.state.pillars}/>
+      </div>;
+
+      const recommendationsSection = <div><h2>Recommendations Status</h2>
+        {
+          this.state.recommendations.map((recommendation) =>
+            <SinglePillarRecommendationsStatus
+              key={recommendation.pillar}
+              pillar={recommendation.pillar}
+              recommendationStatus={recommendation.recommendationStatus}/>
+          )
+        }
+      </div>;
+
+      const findingSection = <div><h2>Findings</h2>
+        <FindingsTable findings={this.state.findings}/></div>;
+
+      content = <div>
+        {pillarsSection}
+        {recommendationsSection}
+        {findingSection}
       </div>;
     }
 
     return (
-      <Fragment>
-        <div style={{marginBottom: '20px'}}>
-          <PrintReportButton onClick={() => {print();}} />
+      <div>
+        <div className="text-center no-print" style={{marginBottom: '20px'}}>
+          <Button bsSize="large" onClick={() => {
+            this.print();
+          }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
         </div>
         <div className="report-page">
           <ReportHeader report_type={ReportTypes.zeroTrust}/>
           <hr/>
           {content}
+          <hr/>
+          <pre>{JSON.stringify(this.state.pillars, undefined, 2)}</pre>
+          <br/>
+          <ResponsiveVennDiagram pillarsGrades={mockup} />
+          <pre>{JSON.stringify(this.state.recommendations, undefined, 2)}</pre>
+          <br/>
+          <pre>{JSON.stringify(this.state.findings, undefined, 2)}</pre>
         </div>
-        <div style={{marginTop: '20px'}}>
-          <PrintReportButton onClick={() => {print();}} />
-        </div>
-      </Fragment>
+      </div>
     )
   }
 
-  generateFindingsSection() {
-    return (<div id="findings-overview">
-      <h2>Findings</h2>
-      <FindingsTable pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
-    </div>);
-  }
-
-  generateDirectivesSection() {
-    return (<div id="directives-overview">
-      <h2>Directives</h2>
-      {
-        Object.keys(this.state.directives).map((pillar) =>
-          <SinglePillarDirectivesStatus
-            key={pillar}
-            pillar={pillar}
-            directivesStatus={this.state.directives[pillar]}
-            pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
-        )
-      }
-    </div>);
-  }
-
-  generateOverviewSection() {
-    return (<div id="overview-section">
-      <h2>Overview</h2>
-      <Grid fluid={true}>
-        <Row className="show-grid">
-          <Col xs={8} sm={8} md={8} lg={8}>
-            <PillarsOverview pillarsToStatuses={this.state.pillars.pillarsToStatuses}
-                             grades={this.state.pillars.grades}/>
-          </Col>
-          <Col xs={4} sm={4} md={4} lg={4}>
-            <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
-            <SecurityIssuesGlance issuesFound={this.anyIssuesFound()}/>
-            <StatusesToPillarsSummary statusesToPillars={this.state.pillars.statusesToPillars}/>
-          </Col>
-        </Row>
-      </Grid>
-    </div>);
-  }
-
   stillLoadingDataFromServer() {
-    return typeof this.state.findings === "undefined" || typeof this.state.pillars === "undefined" || typeof this.state.directives === "undefined";
+    return typeof this.state.findings === "undefined" || typeof this.state.pillars === "undefined" || typeof this.state.recommendations === "undefined";
+  }
+
+  print() {
+    alert("unimplemented");
   }
 
   getZeroTrustReportFromServer() {
@@ -139,11 +160,11 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           findings: res
         });
       });
-    this.authFetch('/api/report/zero_trust/directives')
+    this.authFetch('/api/report/zero_trust/recommendations')
       .then(res => res.json())
       .then(res => {
         this.setState({
-          directives: res
+          recommendations: res
         });
       });
     this.authFetch('/api/report/zero_trust/pillars')
@@ -153,14 +174,6 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           pillars: res
         });
       });
-  }
-
-  anyIssuesFound() {
-    const severe = function(finding) {
-      return (finding.status === "Conclusive" || finding.status === "Inconclusive");
-    };
-
-    return this.state.findings.some(severe);
   }
 }
 

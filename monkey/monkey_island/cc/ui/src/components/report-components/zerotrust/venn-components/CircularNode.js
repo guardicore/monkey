@@ -5,7 +5,7 @@ class CircularNode extends React.Component{
            
     render() {
 
-        let {prefix, ref, index, data} = this.props;
+        let {prefix, index, data} = this.props;
 
         let tspans = data.label.split("|").map((d_, i_) =>{
             
@@ -21,23 +21,23 @@ class CircularNode extends React.Component{
         })
         
         let translate = 'translate(' + data.cx + ',' + data.cy + ')';
-
+        
         return ( 
             
             <g transform={translate} id={data.node.pillar}>
-            <circle
+                <circle
             
-                id={this._reactInternalFiber.key}
-                className={'circularNode'}
-                data-tooltip={data.tooltip}
-                r={data.r}
-                opacity={0.8}
-                fill={data.hex}
+                    id={prefix + 'Node_' + index}
+                    className={'circularNode'}
+                    data-tooltip={data.tooltip}
+                    r={data.r}
+                    opacity={0.8}
+                    fill={data.hex}
     
-            />
-            <text textAnchor='middle' fill={data.fontStyle.color} dominantBaseline={'middle'} fontSize={data.fontStyle.size + 'px'} pointerEvents={'none'}>
-            {tspans}
-            </text>
+                />
+                <text textAnchor='middle' fill={data.fontStyle.color} dominantBaseline={'middle'} fontSize={data.fontStyle.size + 'px'} pointerEvents={'none'}>
+                    {tspans}
+                </text>
             </g>
             
         )
@@ -48,7 +48,6 @@ class CircularNode extends React.Component{
 
 CircularNode.propTypes = {
         
-      prefix: PropTypes.string,
       index: PropTypes.number,
       data: PropTypes.object
         
