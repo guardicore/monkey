@@ -26,23 +26,27 @@ data "google_compute_image" "shellshock-8" {
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "tunneling-9" {
-  name = "tunneling-9-v2"
+  name = "tunneling-9"
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "tunneling-10" {
-  name = "tunneling-10-v2"
+  name = "tunneling-10"
+  project = "${local.monkeyzoo_project}"
+}
+data "google_compute_image" "tunneling-11" {
+  name = "tunneling-11"
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "sshkeys-11" {
-  name = "sshkeys-11-v2"
+  name = "sshkeys-11"
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "sshkeys-12" {
-  name = "sshkeys-12-v2"
+  name = "sshkeys-12"
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "mimikatz-14" {
-  name = "mimikatz-14-v2"
+  name = "mimikatz-14"
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "mimikatz-15" {
@@ -58,7 +62,7 @@ data "google_compute_image" "weblogic-18" {
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "weblogic-19" {
-  name = "weblogic-19-v2"
+  name = "weblogic-19"
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "smb-20" {
@@ -78,7 +82,7 @@ data "google_compute_image" "struts2-23" {
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "struts2-24" {
-  name = "struts-24-v2"
+  name = "struts2-24"
   project = "${local.monkeyzoo_project}"
 }
 data "google_compute_image" "island-linux-250" {

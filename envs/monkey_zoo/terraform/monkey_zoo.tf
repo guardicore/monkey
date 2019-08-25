@@ -15,6 +15,11 @@ resource "google_compute_network" "tunneling" {
   auto_create_subnetworks = false
 }
 
+resource "google_compute_network" "tunneling2" {
+  name                    = "tunneling2"
+  auto_create_subnetworks = false
+}
+
 resource "google_compute_subnetwork" "monkeyzoo-main" {
   name            = "monkeyzoo-main"
   ip_cidr_range   = "10.2.2.0/24"
@@ -25,6 +30,12 @@ resource "google_compute_subnetwork" "tunneling-main" {
   name            = "tunneling-main"
   ip_cidr_range   = "10.2.1.0/28"
   network         = "${google_compute_network.tunneling.self_link}"
+}
+
+resource "google_compute_subnetwork" "tunneling2-main" {
+  name            = "tunneling2-main"
+  ip_cidr_range   = "10.2.0.0/27"
+  network         = "${google_compute_network.tunneling2.self_link}"
 }
 
 resource "google_compute_instance_from_template" "hadoop-2" {
@@ -149,7 +160,6 @@ resource "google_compute_instance_from_template" "tunneling-9" {
   network_interface{
     subnetwork="tunneling-main"
     network_ip="10.2.1.9"
-    
   }
   network_interface{
     subnetwork="monkeyzoo-main"
@@ -169,6 +179,25 @@ resource "google_compute_instance_from_template" "tunneling-10" {
   network_interface{
     subnetwork="tunneling-main"
     network_ip="10.2.1.10"
+  }
+  network_interface{
+    subnetwork="tunneling2-main"
+    network_ip="10.2.0.10"
+  }
+}
+
+resource "google_compute_instance_from_template" "tunneling-11" {
+  name         = "tunneling-11"
+  source_instance_template = "${local.default_ubuntu}"
+  boot_disk{
+    initialize_params {
+      image = "${data.google_compute_image.tunneling-11.self_link}"
+    }
+    auto_delete = true
+  }
+  network_interface{
+    subnetwork="tunneling2-main"
+    network_ip="10.2.0.11"
   }
 }
 

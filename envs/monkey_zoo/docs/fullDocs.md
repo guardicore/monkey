@@ -503,6 +503,42 @@ fullTest.conf is a good config to start, because it covers all machines.
 <table>
 <thead>
 <tr class="header">
+<th><p><span id="_Toc536021463" class="anchor"></span>Nr. <strong>11</strong> Tunneling M3</p>
+<p>(10.2.0.11)</p></th>
+<th>(Exploitable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 16.04.05 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>OpenSSL</td>
+</tr>
+<tr class="odd">
+<td>Default service’s port:</td>
+<td>22</td>
+</tr>
+<tr class="even">
+<td>Root password:</td>
+<td>3Q=(Ge(+&w]*</td>
+</tr>
+<tr class="odd">
+<td>Server’s config:</td>
+<td>Default</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>Accessible only trough Nr.10</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
 <th><p><span id="_Toc526517190" class="anchor"></span>Nr. <strong>11</strong> SSH key steal.</p>
 <p>(10.2.2.11)</p></th>
 <th>(Vulnerable)</th>
