@@ -32,6 +32,8 @@ class Finding(Document):
     test = StringField(required=True, choices=TESTS)
     status = StringField(required=True, choices=ORDERED_TEST_STATUSES)
     events = EmbeddedDocumentListField(document_type=Event)
+    # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
+    meta = {'allow_inheritance': True}
 
     # LOGIC
     def get_test_explanation(self):
