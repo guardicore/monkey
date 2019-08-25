@@ -85,7 +85,6 @@ class VennDiagram extends React.Component{
             document.querySelectorAll('circle, path').forEach((d_, i_) => { d_.setAttribute('opacity', 0.8)});
 
             if(e.target.id.includes('Node')) {
-
                 html = e.target.dataset.tooltip;
                 this.divElement.style.cursor = 'pointer';
                 hidden = 'block'; e.target.setAttribute('opacity', 0.95);
@@ -93,14 +92,11 @@ class VennDiagram extends React.Component{
 
                 // Set highest z-index
                 e.target.parentNode.parentNode.appendChild(e.target.parentNode);
-
-            }else{
-
+            } else {
                 this.divElement.style.cursor = 'default';
 
                 // Return z indices to default
                 Object.keys(this.layout).forEach(function(d_, i_){ document.querySelector('#' + self.prefix).appendChild(document.querySelector('#' + self.prefix + 'Node_' + i_).parentNode); })
-
             }
 
             this.setState({target: e, tooltip: { target: e.target, bcolor: bcolor, top: e.clientY + 8, left: e.clientX + 8, display: hidden, html: html } });
@@ -145,8 +141,7 @@ class VennDiagram extends React.Component{
 
     buildTooltipHtmlContent(object_){ return Object.keys(object_).reduce((out_, key_) => out_ + TypographicUtilities.setTitle(key_) + ': ' + object_[key_] + '\n', ''); }
 
-    setLayoutElement(rule_, key_, html_, d_){
-        console.log(rule_, key_, html_, d_);
+    setLayoutElement(rule_, key_, html_, d_) {
         if(rule_ == null) { throw Error('The node scores are invalid'); }
 
         if(key_ === 'Data'){ this.layout[key_].fontStyle = this.fontStyles[0]; }
