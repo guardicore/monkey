@@ -66,3 +66,7 @@ def get_segmentation_violation_event(current_monkey, source_subnet, target_ip, t
         event_type=EVENT_TYPE_MONKEY_NETWORK
     )
 
+
+def test_positive_findings_for_unreached_segments(telemetry_json):
+    current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid'])
+    subnet_groups = get_config_network_segments_as_subnet_groups()
