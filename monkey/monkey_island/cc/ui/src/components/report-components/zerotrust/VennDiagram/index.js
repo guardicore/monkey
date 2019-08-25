@@ -201,6 +201,34 @@ class VennDiagram extends React.Component{
 
         };
         
+        /*
+
+        RULE #1: All scores have to be equal 0, except Unexecuted [U] which could be also a negative integer
+                 sum(C, I, P, U) has to be <=0
+
+        RULE #2: Conclusive [C] has to be > 0, 
+                 sum(C) > 0
+
+        RULE #3: Inconclusive [I] has to be > 0 while Conclusive has to be 0,
+                 sum(C, I) > 0 and C * I = 0, while C has to be 0
+
+        RULE #4: Positive [P] and Unexecuted have to be positive
+                 sum(P, U) >= 2 and P * U = positive integer, while
+                 if the P is bigger by 2 then negative U, first conditional
+                 would be true.
+
+        */
+
+        this.rules = [
+
+            { id: 'Rule #1', f: function(d_){ return d_['Conclusive'] + d_['Inconclusive'] + d_['Positive'] + d_['Unexecuted'] <= 0; } },
+            { id: 'Rule #2', f: function(d_){ return d_['Conclusive'] > 0; } },
+            { id: 'Rule #3', f: function(d_){ return d_['Conclusive'] === 0 && d_['Inconclusive'] > 0; } },
+            { id: 'Rule #4', f: function(d_){ return d_['Positive'] + d_['Unexecuted'] >= 2 && d_['Positive'] * d_['Unexecuted'] > 0; } }
+
+        ];
+        
+        
         this._onScroll = this._onScroll.bind(this);
     
     }
@@ -213,7 +241,7 @@ class VennDiagram extends React.Component{
     }
 
     _onMouseMove(e) {
-         
+        
         let self = this;
     
         if(!this.toggle){
@@ -247,11 +275,12 @@ class VennDiagram extends React.Component{
     
         }
     }
+
     _onScroll(e){
 
-         this.divElement.style.cursor = 'default';
-         this.setState({target: e, tooltip: { target: null, bcolor: 'none', top: 0, left: 0, display: 'none', html: '' } });
-    
+        this.divElement.style.cursor = 'default';
+        this.setState({target: null, tooltip: { target: null, bcolor: 'none', top: 0, left: 0, display: 'none', html: '' } });
+
     }
 
     _onClick(e) {
@@ -277,19 +306,17 @@ class VennDiagram extends React.Component{
         let self = this;
         let data = [];
         const omit = (prop, { [prop]: _, ...rest }) => rest;
-        
+
         this.props.pillarsGrades.forEach((d_, i_) => {
             
-            let params = omit('Unexpected', omit('pillar', d_));
+            let params = omit('pillar', d_);
             let sum = Object.keys(params).reduce((sum_, key_) => sum_ + parseFloat(params[key_]||0), 0); 
             let key = TypographicUtilities.removeAmpersand(d_.pillar);
             let html = self.buildTooltipHtmlContent(d_);
-            let rule = 3;
+            let rule = null;
             
-            if(sum === 0){ rule = 0 }
-            else if(d_['Conclusive'] > 0){ rule = 1 }
-            else if(d_['Conclusive'] === 0 && d_['Inconclusive'] > 0) { rule = 2 }   
-           
+            for(let j = 0; j < self.rules.length; j++){ if(self.rules[j].f(d_)) { rule = j; break; }}
+
             self.setLayoutElement(rule, key, html, d_);
             data.push(this.layout[key])
             
@@ -303,6 +330,8 @@ class VennDiagram extends React.Component{
     buildTooltipHtmlContent(object_){ return Object.keys(object_).reduce((out_, key_) => out_ + TypographicUtilities.setTitle(key_) + ': ' + object_[key_] + '\n', ''); }
 
     setLayoutElement(rule_, key_, html_, d_){
+        
+        if(rule_ == null) { throw Error('The node scores are invalid'); }
         
         if(key_ === 'Data'){ this.layout[key_].fontStyle = this.fontStyles[0]; }
         else {this.layout[key_].fontStyle = this.fontStyles[1]; }
@@ -361,7 +390,7 @@ class VennDiagram extends React.Component{
             
             return ( 
 
-                <div ref={ (divElement) => this.divElement = divElement} onMouseMove={this._onMouseMove.bind(this)} onClick={this._onClick.bind(this)} >
+                <div  ref={ (divElement) => this.divElement = divElement} onMouseMove={this._onMouseMove.bind(this)} onClick={this._onClick.bind(this)} >
                 <svg id={this.prefix} viewBox={viewPortParameters} width={'100%'} height={'100%'} xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink'>
                     {nodes}
                 </svg>
