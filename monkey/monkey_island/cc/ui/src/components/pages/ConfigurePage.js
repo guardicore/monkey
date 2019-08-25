@@ -295,13 +295,12 @@ class ConfigurePageComponent extends AuthComponent {
     this.setState({PBAlinuxFile: [], PBAwinFile: []});
   }
 
-  onReadFile = (event) => {
+  setConfigOnImport = (event) => {
     try {
       this.setState({
         configuration: JSON.parse(event.target.result),
         lastAction: 'import_success'
       }, () => {this.sendConfig(); this.setInitialConfig(JSON.parse(event.target.result))});
-      this.currentSection = 'basic';
       this.currentFormData = {};
     } catch(SyntaxError) {
       this.setState({lastAction: 'import_failure'});
@@ -335,7 +334,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   importConfig = (event) => {
     let reader = new FileReader();
-    reader.onload = this.onReadFile;
+    reader.onload = this.setConfigOnImport;
     reader.readAsText(event.target.files[0]);
     event.target.value = null;
   };
@@ -494,7 +493,6 @@ class ConfigurePageComponent extends AuthComponent {
     } else if(this.state.selectedSection !== 'attack') {
       content = this.renderConfigContent(displayedSchema)
     }
-
     return (
       <Col xs={12} lg={10}>
         {this.renderAttackAlertModal()}
