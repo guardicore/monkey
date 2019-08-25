@@ -9,6 +9,7 @@ from enum import Enum
 
 from six import text_type
 
+from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.report_exporter_manager import ReportExporterManager
@@ -425,23 +426,6 @@ class ReportService:
         return issues
 
     @staticmethod
-    def get_ip_in_src_and_not_in_dst(ip_addresses, source_subnet, target_subnet):
-        """
-        Finds an IP address in ip_addresses which is in source_subnet but not in target_subnet.
-        :param ip_addresses:    List of IP addresses to test.
-        :param source_subnet:   Subnet to want an IP to not be in.
-        :param target_subnet:   Subnet we want an IP to be in.
-        :return:
-        """
-        for ip_address in ip_addresses:
-            if target_subnet.is_in_range(ip_address):
-                return None
-        for ip_address in ip_addresses:
-            if source_subnet.is_in_range(ip_address):
-                return ip_address
-        return None
-
-    @staticmethod
     def get_cross_segment_issues_of_single_machine(source_subnet_range, target_subnet_range):
         """
         Gets list of cross segment issues of a single machine. Meaning a machine has an interface for each of the
@@ -503,9 +487,9 @@ class ReportService:
             target_ip = scan['data']['machine']['ip_addr']
             if target_subnet_range.is_in_range(text_type(target_ip)):
                 monkey = NodeService.get_monkey_by_guid(scan['monkey_guid'])
-                cross_segment_ip = ReportService.get_ip_in_src_and_not_in_dst(monkey['ip_addresses'],
-                                                                              source_subnet_range,
-                                                                              target_subnet_range)
+                cross_segment_ip = get_ip_in_src_and_not_in_dst(monkey['ip_addresses'],
+                                                                source_subnet_range,
+                                                                target_subnet_range)
 
                 if cross_segment_ip is not None:
                     cross_segment_issues.append(
