@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import PillarLabel from "./PillarLabel";
 import * as PropTypes from "prop-types";
-import ResponsiveVennDiagram from "./VennDiagram";
+import ResponsiveVennDiagram from "./venn-components/ResponsiveVennDiagram";
 
 const columns = [
   {
