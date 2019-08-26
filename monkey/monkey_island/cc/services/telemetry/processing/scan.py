@@ -3,11 +3,13 @@ import copy
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.telemetry.processing.utils import get_edge_by_scan_or_exploit_telemetry
 from monkey_island.cc.services.telemetry.zero_trust_tests.data_endpoints import test_open_data_endpoints
+from monkey_island.cc.services.telemetry.zero_trust_tests.segmentation import test_segmentation_violation
 
 
 def process_scan_telemetry(telemetry_json):
     update_edges_and_nodes_based_on_scan_telemetry(telemetry_json)
     test_open_data_endpoints(telemetry_json)
+    test_segmentation_violation(telemetry_json)
 
 
 def update_edges_and_nodes_based_on_scan_telemetry(telemetry_json):

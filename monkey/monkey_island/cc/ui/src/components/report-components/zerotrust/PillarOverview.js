@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import PillarLabel from "./PillarLabel";
-import PaginatedTable from "../common/PaginatedTable";
 import * as PropTypes from "prop-types";
+import ResponsiveVennDiagram from "./venn-components/ResponsiveVennDiagram";
 
 const columns = [
   {
@@ -20,13 +20,8 @@ const columns = [
 
 class PillarOverview extends Component {
   render() {
-    const data = this.props.grades.map((grade) => {
-      const newGrade = JSON.parse(JSON.stringify(grade));
-      newGrade.pillar = {name: grade.pillar, status: this.props.pillarsToStatuses[grade.pillar]};
-      return newGrade;
-    });
     return (<div id={this.constructor.name}>
-      <PaginatedTable data={data} columns={columns} pageSize={10}/>
+        <ResponsiveVennDiagram pillarsGrades={this.props.grades} />
     </div>);
   }
 }
@@ -35,5 +30,4 @@ export default PillarOverview;
 
 PillarOverview.propTypes = {
   grades: PropTypes.array,
-  status: PropTypes.string,
 };
