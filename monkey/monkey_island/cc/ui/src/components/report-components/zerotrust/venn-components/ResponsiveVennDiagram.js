@@ -12,13 +12,6 @@ class ResponsiveVennDiagram extends React.Component {
 
   render() {
     const {pillarsGrades} = this.props;
-    let childrenWidth = this.props.containerWidth, childrenHeight = this.props.containerHeight;
-
-    if (childrenHeight === 0 || isNaN(childrenHeight)) {
-      childrenHeight = childrenWidth;
-    } else {
-      childrenWidth = Math.min(childrenWidth, childrenHeight)
-    }
 
     return (
       <div ref={this.divElement} style={{textAlign: 'center'}}>
