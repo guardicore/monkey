@@ -13,7 +13,6 @@ class VennDiagram extends React.Component {
     this.state = {tooltip: {top: 0, left: 0, display: 'none', html: ''}};
 
     this.width = this.height = 512;
-    this.zOrder = [];
 
     this.colors = ['#777777', '#D9534F', '#F0AD4E', '#5CB85C'];
     this.prefix = 'vennDiagram';
@@ -208,7 +207,6 @@ class VennDiagram extends React.Component {
     } else {
       // equivalent to center translate (width/2, height/2)
       let viewPortParameters = (-this.width / 2) + ' ' + (-this.height / 2) + ' ' + this.width + ' ' + this.height;
-      let translate = 'translate(' + this.width / 2 + ',' + this.height / 2 + ')';
 
       let nodes = Object.values(this.layout).map((d_, i_) => {
         if (d_.hasOwnProperty('cx')) {
