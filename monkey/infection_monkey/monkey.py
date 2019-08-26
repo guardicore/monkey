@@ -113,7 +113,7 @@ class InfectionMonkey(object):
         if monkey_tunnel:
             monkey_tunnel.start()
 
-        StateTelem(False).send()
+        StateTelem(is_done=False).send()
         TunnelTelem().send()
 
         if WormConfiguration.collect_system_info:
@@ -225,7 +225,7 @@ class InfectionMonkey(object):
             InfectionMonkey.close_tunnel()
             firewall.close()
         else:
-            StateTelem(False).send()  # Signal the server (before closing the tunnel)
+            StateTelem(is_done=True).send()  # Signal the server (before closing the tunnel)
             InfectionMonkey.close_tunnel()
             firewall.close()
             if WormConfiguration.send_log_to_server:
