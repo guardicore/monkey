@@ -9,13 +9,14 @@ class ArcNode extends React.Component{
         let {prefix, index, data} = this.props;
 
         let arc = d3.arc().innerRadius(data.inner).outerRadius(data.outer).startAngle(0).endAngle(Math.PI * 2.0);
+        let id = prefix + 'Node_' + index;
         
         return ( 
             
             <g transform={'rotate(180)'} id={data.node.pillar}>
                 <path
             
-                    id={prefix + 'Node_' + index}
+                    id={id}
                     className={'arcNode'}
                     data-tooltip={data.tooltip}
                     d={arc()}
@@ -23,7 +24,7 @@ class ArcNode extends React.Component{
 
                 />
                 <text x={0} dy={data.fontStyle.size * 1.2} fontSize={data.fontStyle.size} textAnchor='middle' pointerEvents={'none'}>
-                    <textPath href={'#' + this._reactInternalFiber.key} startOffset={'26.4%'}>
+                    <textPath href={'#' + id} startOffset={'26.4%'}>  
                         {data.label}
                     </textPath>
                 </text>
