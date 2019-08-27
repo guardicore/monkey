@@ -13,7 +13,7 @@ class ZeroTrustReportLegend extends Component {
       <Panel>
         <Panel.Heading>
           <Panel.Title toggle>
-            <h3>🔽 Legend</h3>
+            <h3><i className="fa fa-chevron-down" /> Legend</h3>
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>

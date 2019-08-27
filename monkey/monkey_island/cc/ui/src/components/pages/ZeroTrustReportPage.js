@@ -4,7 +4,7 @@ import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
 import PillarsOverview from "../report-components/zerotrust/PillarOverview";
 import FindingsTable from "../report-components/zerotrust/FindingsTable";
-import SinglePillarDirectivesStatus from "../report-components/zerotrust/SinglePillarDirectivesStatus";
+import SinglePillarRecommendationsStatus from "../report-components/zerotrust/SinglePillarRecommendationsStatus";
 import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
@@ -103,18 +103,18 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   }
 
   generateDirectivesSection() {
-    return (<div id="directives-overview">
-      <h2>Directives</h2>
+    return (<div id="recommendations-overview">
+      <h2>Recommendations</h2>
       <p>
         Analyze each zero trust recommendation by pillar, and see if you've followed through with it. See test results
         to understand how the monkey tested your adherence to that recommendation.
       </p>
       {
         Object.keys(this.state.directives).map((pillar) =>
-          <SinglePillarDirectivesStatus
+          <SinglePillarRecommendationsStatus
             key={pillar}
             pillar={pillar}
-            directivesStatus={this.state.directives[pillar]}
+            recommendationsStatus={this.state.directives[pillar]}
             pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
         )
       }
@@ -126,14 +126,11 @@ class ZeroTrustReportPageComponent extends AuthComponent {
       <h2>Summary</h2>
       <Grid fluid={true}>
         <Row>
-          <Col xs={6} sm={6} md={6} lg={6}>
+          <Col xs={12} sm={12} md={12} lg={12}>
             <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
             <p>
               Get a quick glance of the status for each of Zero Trust's seven pillars.
             </p>
-          </Col>
-          <Col xs={6} sm={6} md={6} lg={6}>
-            <ZeroTrustReportLegend />
           </Col>
         </Row>
         <Row className="show-grid">
@@ -143,6 +140,11 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           </Col>
           <Col xs={4} sm={4} md={4} lg={4}>
             <StatusesToPillarsSummary statusesToPillars={this.state.pillars.statusesToPillars}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} sm={12} md={12} lg={12}>
+            <ZeroTrustReportLegend />
           </Col>
         </Row>
       </Grid>

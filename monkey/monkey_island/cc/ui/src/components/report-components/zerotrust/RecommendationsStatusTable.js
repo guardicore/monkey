@@ -15,7 +15,7 @@ const columns = [
         },
         maxWidth: 80
       },
-      { Header: 'Directive', accessor: 'directive',
+      { Header: 'Recommendation', accessor: 'directive',
         style: {'whiteSpace': 'unset'}  // This enables word wrap
       },
       { Header: 'Tests', id: 'tests',
@@ -64,12 +64,12 @@ class TestsStatus extends AuthComponent {
   }
 }
 
-export class DirectivesStatusTable extends AuthComponent {
+export class RecommendationsStatusTable extends AuthComponent {
   render() {
     return <PaginatedTable data={this.props.directivesStatus} columns={columns} pageSize={5}/>;
   }
 }
 
-export default DirectivesStatusTable;
+export default RecommendationsStatusTable;
 
-DirectivesStatusTable.propTypes = {directivesStatus: PropTypes.array};
+RecommendationsStatusTable.propTypes = {directivesStatus: PropTypes.array};
