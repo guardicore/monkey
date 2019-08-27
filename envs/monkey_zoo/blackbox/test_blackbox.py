@@ -1,4 +1,5 @@
 import unittest
+from .gcp_machine_handlers import GCPHandler
 
 import requests
 
@@ -6,12 +7,15 @@ from config import *
 
 
 class TestMonkeyBlackbox(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
+        GCPHandler().start_machines("elastic-4")
         print("Setting up all GCP machines...")
 
     @classmethod
     def tearDownClass(cls):
+        GCPHandler().stop_machines("elastic-4")
         print("Killing all GCP machines...")
 
     def generic_blackbox_test_case(self, config_file_path, analyzers):
