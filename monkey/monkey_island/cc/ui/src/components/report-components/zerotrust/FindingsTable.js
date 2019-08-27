@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, Fragment} from "react";
 import PillarLabel from "./PillarLabel";
 import PaginatedTable from "../common/PaginatedTable";
 import EventsAndButtonComponent from "./EventsAndButtonComponent";
@@ -6,24 +6,27 @@ import EventsAndButtonComponent from "./EventsAndButtonComponent";
 
 const columns = [
   {
-    Header: 'Findings',
     columns: [
-      { Header: 'Finding', accessor: 'test',
-        style: {'whiteSpace': 'unset'}  // This enables word wrap
-      },
       { Header: 'Pillars', id: "pillars",
         accessor: x => {
           const pillars = x.pillars;
-          const listItems = pillars.map((pillar) =>
-            <li key={pillar.name}><PillarLabel pillar={pillar.name} status={pillar.status}/></li>
+          const pillarLabels = pillars.map((pillar) =>
+            <PillarLabel key={pillar.name} pillar={pillar.name} status={pillar.status}/>
           );
-          return <ul>{listItems}</ul>;
-        }
+          return <Fragment>{pillarLabels}</Fragment>;
+        },
+        maxWidth: 200,
+        style: {'whiteSpace': 'unset'}
       },
+      { Header: 'Finding', accessor: 'test',
+        style: {'whiteSpace': 'unset'}  // This enables word wrap
+      },
+
       { Header: 'Events', id:"events",
         accessor: x => {
           return <EventsAndButtonComponent events={x.events} exportFilename={"Events_" + x.test_key}/>;
-        }
+        },
+        maxWidth: 160,
       }
     ]
   }

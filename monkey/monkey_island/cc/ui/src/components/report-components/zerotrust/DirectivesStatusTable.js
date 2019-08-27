@@ -8,15 +8,15 @@ import * as PropTypes from "prop-types";
 
 const columns = [
   {
-    Header: 'Directives status',
     columns: [
-      { Header: 'Directive', accessor: 'directive',
-        style: {'whiteSpace': 'unset'}  // This enables word wrap
-      },
       { Header: 'Status', id: 'status',
         accessor: x => {
           return <StatusLabel status={x.status} size="fa-3x" showText={false} />;
-        }
+        },
+        maxWidth: 80
+      },
+      { Header: 'Directive', accessor: 'directive',
+        style: {'whiteSpace': 'unset'}  // This enables word wrap
       },
       { Header: 'Tests', id: 'tests',
         style: {'whiteSpace': 'unset'},  // This enables word wrap
@@ -56,7 +56,7 @@ class TestsStatus extends AuthComponent {
         return (<li key={test.test}>{test.test}</li>)
       });
       return <Fragment>
-        <StatusLabel status={statusToFilter} showText={true}/>
+        <StatusLabel status={statusToFilter} showText={false}/>
         <ul>{listItems}</ul>
       </Fragment>;
     }

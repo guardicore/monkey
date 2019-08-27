@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import {Modal} from "react-bootstrap";
 import EventsTimeline from "./EventsTimeline";
 import * as PropTypes from "prop-types";
+import FileSaver from "file-saver";
+import ExportEventsButton from "./ExportEventsButton";
 
 export default class EventsModal extends Component {
   constructor(props) {
@@ -24,6 +26,11 @@ export default class EventsModal extends Component {
                       onClick={() => this.props.hideCallback()}>
                 Close
               </button>
+              <ExportEventsButton onClick={() => {
+                const content = JSON.stringify(this.props.events, null, 2);
+                const blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+                FileSaver.saveAs(blob, this.props.exportFilename + ".json");
+              }}/>
             </div>
           </Modal.Body>
         </Modal>

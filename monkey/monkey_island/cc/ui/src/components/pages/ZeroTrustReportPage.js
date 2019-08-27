@@ -8,7 +8,6 @@ import SinglePillarDirectivesStatus from "../report-components/zerotrust/SingleP
 import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
-import SecurityIssuesGlance from "../report-components/common/SecurityIssuesGlance";
 import StatusesToPillarsSummary from "../report-components/zerotrust/StatusesToPillarsSummary";
 import PrintReportButton from "../report-components/common/PrintReportButton";
 import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
@@ -94,6 +93,11 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   generateFindingsSection() {
     return (<div id="findings-overview">
       <h2>Findings</h2>
+      <p>
+        Deep-dive into the details of each test, and see the explicit events and exact timestamps in which things
+        happened in your network. This will enable you to match up with your SOC logs and alerts and to gain deeper
+        insight as to what exactly happened during this test.
+      </p>
       <FindingsTable pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
     </div>);
   }
@@ -101,6 +105,10 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   generateDirectivesSection() {
     return (<div id="directives-overview">
       <h2>Directives</h2>
+      <p>
+        Analyze each zero trust recommendation by pillar, and see if you've followed through with it. See test results
+        to understand how the monkey tested your adherence to that recommendation.
+      </p>
       {
         Object.keys(this.state.directives).map((pillar) =>
           <SinglePillarDirectivesStatus
