@@ -12,6 +12,7 @@ import SecurityIssuesGlance from "../report-components/common/SecurityIssuesGlan
 import StatusesToPillarsSummary from "../report-components/zerotrust/StatusesToPillarsSummary";
 import PrintReportButton from "../report-components/common/PrintReportButton";
 import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
+import ZeroTrustReportLegend from "../report-components/zerotrust/ReportLegend";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -114,16 +115,25 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
   generateOverviewSection() {
     return (<div id="overview-section">
-      <h2>Overview</h2>
+      <h2>Summary</h2>
       <Grid fluid={true}>
+        <Row>
+          <Col xs={6} sm={6} md={6} lg={6}>
+            <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
+            <p>
+              Get a quick glance of the status for each of Zero Trust's seven pillars.
+            </p>
+          </Col>
+          <Col xs={6} sm={6} md={6} lg={6}>
+            <ZeroTrustReportLegend />
+          </Col>
+        </Row>
         <Row className="show-grid">
           <Col xs={8} sm={8} md={8} lg={8}>
             <PillarsOverview pillarsToStatuses={this.state.pillars.pillarsToStatuses}
                              grades={this.state.pillars.grades}/>
           </Col>
           <Col xs={4} sm={4} md={4} lg={4}>
-            <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
-            <SecurityIssuesGlance issuesFound={this.anyIssuesFound()}/>
             <StatusesToPillarsSummary statusesToPillars={this.state.pillars.statusesToPillars}/>
           </Col>
         </Row>

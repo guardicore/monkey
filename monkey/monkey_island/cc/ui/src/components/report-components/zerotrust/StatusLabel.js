@@ -22,9 +22,11 @@ export default class StatusLabel extends Component {
       text = " " + this.props.status;
     }
 
-    return (<div className={"label " + statusToLabelType[this.props.status]} style={{display: "flow-root"}}>
-      <i className={"fa " + statusToIcon[this.props.status] + " " + this.props.size}/>{text}
-    </div>);
+    return (
+      <div className={"label " + statusToLabelType[this.props.status]} style={{display: "flow-root"}}>
+        <i className={"fa " + statusToIcon[this.props.status] + " " + this.props.size}/>{text}
+      </div>
+    );
   }
 }
 

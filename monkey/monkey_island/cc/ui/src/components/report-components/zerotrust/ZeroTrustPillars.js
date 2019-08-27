@@ -8,4 +8,11 @@ export const ZeroTrustPillars = {
   automation: "Automation & Orchestration"
 };
 
+export const ZeroTrustStatuses = {
+  conclusive: "Conclusive",
+  inconclusive: "Inconclusive",
+  positive: "Positive",
+  unexecuted: "Unexecuted"
+};
+
 export default ZeroTrustPillars;
