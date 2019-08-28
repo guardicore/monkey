@@ -9,12 +9,11 @@ class CircularNode extends React.Component {
 
     let translate = 'translate(' + data.cx + ',' + data.cy + ')';
     return (
-      <OverlayTrigger key={prefix + 'CircularOverlayTrigger' + index} trigger={['hover', 'focus']}
-                      placement={data.popover}
-                      overlay={<Popover key={prefix + 'CircularTooltip' + index} id={prefix + 'Popover'}
+      <OverlayTrigger key={prefix + 'circularGroup' + index} trigger={['hover', 'focus']} placement={data.popover}
+                      overlay={<Popover key={prefix + 'CircularTooltip' + index} id={prefix + 'Popover' + index}
                                         style={{backgroundColor: data.hex}}
                                         title={data.node.pillar}>{data.tooltip}</Popover>}>
-        <g transform={translate} id={data.node.pillar}>
+        <g transform={translate} id={data.node.pillar} key={prefix + 'circularGroup' + index}>
           <circle
             id={prefix + 'Node_' + index}
             className={'circularNode'}
