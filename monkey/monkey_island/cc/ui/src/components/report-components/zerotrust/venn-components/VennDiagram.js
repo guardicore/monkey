@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Tooltip from './Tooltip'
 import CircularNode from './CircularNode'
 import ArcNode from './ArcNode'
 import {TypographicUtilities} from './Utility.js'
@@ -14,7 +13,6 @@ class VennDiagram extends React.Component {
 
     this.width = this.height = 512;
 
-    this.colors = ['#777777', '#D9534F', '#F0AD4E', '#5CB85C'];
     this.prefix = 'vennDiagram';
     this.suffices = ['', '|tests are|conclusive', '|tests were|inconclusive', '|tests|performed'];
     this.fontStyles = [{size: Math.max(9, this.width / 32), color: 'white'}, {
@@ -28,19 +26,27 @@ class VennDiagram extends React.Component {
     this.width2By7 = 2 * this.width / 7;
     this.width1By11 = this.width / 11;
     this.width1By28 = this.width / 28;
+    this.arcNodesGap = 4;
 
     this.toggle = false;
 
     this.layout = {
-      Data: {cx: 0, cy: 0, r: this.thirdWidth - this.offset * 2, offset: {x: 0, y: 0}},
-      People: {cx: -this.width2By7, cy: 0, r: this.sixthWidth, offset: {x: this.width1By11, y: 0}},
-      Networks: {cx: this.width2By7, cy: 0, r: this.sixthWidth, offset: {x: -this.width1By11, y: 0}},
-      Devices: {cx: 0, cy: this.width2By7, r: this.sixthWidth, offset: {x: 0, y: -this.width1By11}},
-      Workloads: {cx: 0, cy: -this.width2By7, r: this.sixthWidth, offset: {x: 0, y: this.width1By11}},
-      VisibilityAndAnalytics: {inner: this.thirdWidth - this.width1By28, outer: this.thirdWidth},
+      Data: {cx: 0, cy: 0, r: this.sixthWidth, offset: {x: 0, y: 0}, popover: 'top'},
+      People: {cx: -this.width2By7, cy: 0, r: this.sixthWidth, offset: {x: this.width1By11, y: 0}, popover: 'right'},
+      Networks: {cx: this.width2By7, cy: 0, r: this.sixthWidth, offset: {x: -this.width1By11, y: 0}, popover: 'left'},
+      Devices: {cx: 0, cy: this.width2By7, r: this.sixthWidth, offset: {x: 0, y: -this.width1By11}, popover: 'top'},
+      Workloads: {
+        cx: 0,
+        cy: -this.width2By7,
+        r: this.sixthWidth,
+        offset: {x: 0, y: this.width1By11},
+        popover: 'bottom'
+      },
+      VisibilityAndAnalytics: {inner: this.thirdWidth - this.width1By28, outer: this.thirdWidth, popover: 'left'},
       AutomationAndOrchestration: {
-        inner: this.thirdWidth - this.width1By28 * 2,
-        outer: this.thirdWidth - this.width1By28
+        inner: this.thirdWidth - this.width1By28 * 2 - this.arcNodesGap,
+        outer: this.thirdWidth - this.width1By28 - this.arcNodesGap,
+        popover: 'right'
       }
     };
 
@@ -65,37 +71,36 @@ class VennDiagram extends React.Component {
     this.rules = [
 
       {
-        id: 'Rule #1', f: function (d_) {
+        id: 'Rule #1', status: 'Unexecuted', hex: '#777777', f: function (d_) {
           return d_['Conclusive'] + d_['Inconclusive'] + d_['Positive'] === 0;
         }
       },
       {
-        id: 'Rule #2', f: function (d_) {
+        id: 'Rule #2', status: 'Conclusive', hex: '#D9534F', f: function (d_) {
           return d_['Conclusive'] > 0;
         }
       },
       {
-        id: 'Rule #3', f: function (d_) {
+        id: 'Rule #3', status: 'Inconclusive', hex: '#F0AD4E', f: function (d_) {
           return d_['Conclusive'] === 0 && d_['Inconclusive'] > 0;
         }
       },
       {
-        id: 'Rule #4', f: function (d_) {
+        id: 'Rule #4', status: 'Positive', hex: '#5CB85C', f: function (d_) {
           return d_['Positive'] + d_['Unexecuted'] >= 2 && d_['Positive'] * d_['Unexecuted'] > 0;
         }
       }
 
     ];
 
-    this._onScroll = this._onScroll.bind(this);
   }
 
   componentDidMount() {
     this.parseData();
-    window.addEventListener('scroll', this._onScroll);
   }
 
   _onMouseMove(e) {
+
     let self = this;
 
     if (!this.toggle) {
@@ -108,16 +113,12 @@ class VennDiagram extends React.Component {
       });
 
       if (e.target.id.includes('Node')) {
-        html = e.target.dataset.tooltip;
-        this.divElement.style.cursor = 'pointer';
-        hidden = 'block';
+
         e.target.setAttribute('opacity', 0.95);
-        bcolor = e.target.getAttribute('fill');
 
         // Set highest z-index
         e.target.parentNode.parentNode.appendChild(e.target.parentNode);
       } else {
-        this.divElement.style.cursor = 'default';
 
         // Return z indices to default
         Object.keys(this.layout).forEach(function (d_, i_) {
@@ -125,23 +126,7 @@ class VennDiagram extends React.Component {
         })
       }
 
-      this.setState({
-        target: e,
-        tooltip: {
-          target: e.target,
-          bcolor: bcolor,
-          top: e.clientY + 8,
-          left: e.clientX + 8,
-          display: hidden,
-          html: html
-        }
-      });
     }
-  }
-
-  _onScroll(e) {
-    this.divElement.style.cursor = 'default';
-    this.setState({target: null, tooltip: {target: null, bcolor: 'none', top: 0, left: 0, display: 'none', html: ''}});
   }
 
   _onClick(e) {
@@ -152,6 +137,7 @@ class VennDiagram extends React.Component {
   }
 
   parseData() {
+
     let self = this;
     let data = [];
     const omit = (prop, {[prop]: _, ...rest}) => rest;
@@ -159,9 +145,8 @@ class VennDiagram extends React.Component {
     this.props.pillarsGrades.forEach((d_, i_) => {
 
       let params = omit('pillar', d_);
-      let sum = Object.keys(params).reduce((sum_, key_) => sum_ + parseFloat(params[key_] || 0), 0);
       let key = TypographicUtilities.removeAmpersand(d_.pillar);
-      let html = self.buildTooltipHtmlContent(d_);
+      let html = self.buildTooltipHtmlContent(params);
       let rule = null;
 
       for (let j = 0; j < self.rules.length; j++) {
@@ -181,7 +166,13 @@ class VennDiagram extends React.Component {
   }
 
   buildTooltipHtmlContent(object_) {
-    return Object.keys(object_).reduce((out_, key_) => out_ + TypographicUtilities.setTitle(key_) + ': ' + object_[key_] + '\n', '');
+
+    var out = [];
+    Object.keys(object_).forEach(function (d_) {
+      out.push([d_ + ': ' + object_[d_], <br/>]);
+    });
+    return out;
+
   }
 
   setLayoutElement(rule_, key_, html_, d_) {
@@ -195,7 +186,8 @@ class VennDiagram extends React.Component {
       this.layout[key_].fontStyle = this.fontStyles[1];
     }
 
-    this.layout[key_].hex = this.colors[rule_];
+    this.layout[key_].hex = this.rules[rule_].hex;
+    this.layout[key_].status = this.rules[rule_].status;
     this.layout[key_].label = d_.pillar + this.suffices[rule_];
     this.layout[key_].node = d_;
     this.layout[key_].tooltip = html_;
@@ -220,7 +212,6 @@ class VennDiagram extends React.Component {
           );
         } else {
           d_.label = TypographicUtilities.removeBrokenBar(d_.label);
-
           return (
             <ArcNode
               prefix={this.prefix}
@@ -239,7 +230,6 @@ class VennDiagram extends React.Component {
                xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink'>
             {nodes}
           </svg>
-          <Tooltip id={this.prefix + 'Tooltip'} prefix={this.prefix} {...this.state.tooltip} />
         </div>
       )
     }
