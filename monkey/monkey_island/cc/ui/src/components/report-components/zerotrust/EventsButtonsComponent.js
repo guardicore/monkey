@@ -5,7 +5,7 @@ import FileSaver from "file-saver";
 import * as PropTypes from "prop-types";
 import ExportEventsButton from "./ExportEventsButton";
 
-export default class EventsAndButtonComponent extends Component {
+export default class EventsButtonsComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +26,7 @@ export default class EventsAndButtonComponent extends Component {
       <div>
         <EventsModal events={this.props.events} showEvents={this.state.isShow} hideCallback={this.hide} exportFilename={this.props.exportFilename} />
         <div className="text-center" style={{"display": "grid"}}>
-          <Button className="btn btn-info" onClick={this.show}>
+          <Button className="btn btn-info btn-lg" onClick={this.show}>
             Show Events
           </Button>
           <ExportEventsButton onClick={() => {
@@ -41,7 +41,7 @@ export default class EventsAndButtonComponent extends Component {
 
 }
 
-EventsAndButtonComponent.propTypes = {
+EventsButtonsComponent.propTypes = {
   events: PropTypes.array,
   exportFilename: PropTypes.string,
 };

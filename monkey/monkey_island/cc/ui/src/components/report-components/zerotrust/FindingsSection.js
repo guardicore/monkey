@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react";
 import PillarLabel from "./PillarLabel";
-import EventsAndButtonComponent from "./EventsAndButtonComponent";
+import EventsButtonsComponent from "./EventsButtonsComponent";
 import {ZeroTrustStatuses} from "./ZeroTrustPillars";
 import {FindingsTable} from "./FindingsTable";
 

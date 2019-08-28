@@ -3,7 +3,7 @@ import StatusLabel from "./StatusLabel";
 import PaginatedTable from "../common/PaginatedTable";
 import * as PropTypes from "prop-types";
 import PillarLabel from "./PillarLabel";
-import EventsAndButtonComponent from "./EventsAndButtonComponent";
+import EventsButtonsComponent from "./EventsButtonsComponent";
 
 const columns = [
   {
@@ -16,7 +16,7 @@ const columns = [
       {
         Header: 'Events', id: "events",
         accessor: x => {
-          return <EventsAndButtonComponent events={x.events} exportFilename={"Events_" + x.test_key}/>;
+          return <EventsButtonsComponent events={x.events} exportFilename={"Events_" + x.test_key}/>;
         },
         maxWidth: 160,
       },
