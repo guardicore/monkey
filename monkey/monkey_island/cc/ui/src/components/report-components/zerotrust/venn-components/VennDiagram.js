@@ -35,8 +35,19 @@ class VennDiagram extends React.Component {
       People: {cx: -this.width2By7, cy: 0, r: this.sixthWidth, offset: {x: this.width1By11, y: 0}, popover: 'right'},
       Networks: {cx: this.width2By7, cy: 0, r: this.sixthWidth, offset: {x: -this.width1By11, y: 0}, popover: 'left'},
       Devices: {cx: 0, cy: this.width2By7, r: this.sixthWidth, offset: {x: 0, y: -this.width1By11}, popover: 'top'},
-      Workloads: {cx: 0, cy: -this.width2By7, r: this.sixthWidth, offset: {x: 0, y: this.width1By11}, popover: 'bottom' },
-      VisibilityAndAnalytics: {inner: this.thirdWidth - this.width1By28, outer: this.thirdWidth, icon: '\uf070', popover: 'left'},
+      Workloads: {
+        cx: 0,
+        cy: -this.width2By7,
+        r: this.sixthWidth,
+        offset: {x: 0, y: this.width1By11},
+        popover: 'bottom'
+      },
+      VisibilityAndAnalytics: {
+        inner: this.thirdWidth - this.width1By28,
+        outer: this.thirdWidth,
+        icon: '\uf070',
+        popover: 'right'
+      },
       AutomationAndOrchestration: {
         inner: this.thirdWidth - this.width1By28 * 2 - this.arcNodesGap,
         outer: this.thirdWidth - this.width1By28 - this.arcNodesGap,
@@ -123,9 +134,9 @@ class VennDiagram extends React.Component {
 
     }
   }
-    
+
   parseData() {
-      
+
     let self = this;
     let data = [];
     const omit = (prop, {[prop]: _, ...rest}) => rest;
@@ -153,13 +164,15 @@ class VennDiagram extends React.Component {
     this.setState({data: data});
     this.render();
   }
-    
+
   buildTooltipHtmlContent(object_) {
 
     var out = [];
-    Object.keys(object_).forEach(function(d_){ out.push([d_ + ': ' + object_[d_], <br />]); });
-    return out;                                                     
-                                                         
+    Object.keys(object_).forEach(function (d_) {
+      out.push([d_ + ': ' + object_[d_], <br/>]);
+    });
+    return out;
+
   }
 
   setLayoutElement(rule_, key_, html_, d_) {
@@ -212,10 +225,10 @@ class VennDiagram extends React.Component {
 
       return (
         <div ref={(divElement) => this.divElement = divElement} onMouseMove={this._onMouseMove.bind(this)}>
-            <svg id={this.prefix} viewBox={viewPortParameters} width={'100%'} height={'100%'}
+          <svg id={this.prefix} viewBox={viewPortParameters} width={'100%'} height={'100%'}
                xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink'>
             {nodes}
-            </svg>
+          </svg>
         </div>
       )
     }
