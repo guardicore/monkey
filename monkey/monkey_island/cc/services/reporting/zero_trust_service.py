@@ -39,30 +39,30 @@ class ZeroTrustService(object):
         return pillar_grade
 
     @staticmethod
-    def get_directives_status():
-        all_directive_statuses = {}
+    def get_recommendations_status():
+        all_recommendations_statuses = {}
 
         # init with empty lists
         for pillar in PILLARS:
-            all_directive_statuses[pillar] = []
+            all_recommendations_statuses[pillar] = []
 
-        for directive, directive_tests in DIRECTIVES_TO_TESTS.items():
-            for pillar in DIRECTIVES_TO_PILLARS[directive]:
-                all_directive_statuses[pillar].append(
+        for recommendation, recommendation_tests in RECOMMENDATIONS_TO_TESTS.items():
+            for pillar in RECOMMENDATIONS_TO_PILLARS[recommendation]:
+                all_recommendations_statuses[pillar].append(
                     {
-                        "directive": DIRECTIVES[directive],
-                        "tests": ZeroTrustService.__get_tests_status(directive_tests),
-                        "status": ZeroTrustService.__get_directive_status(directive_tests)
+                        "recommendation": RECOMMENDATIONS[recommendation],
+                        "tests": ZeroTrustService.__get_tests_status(recommendation_tests),
+                        "status": ZeroTrustService.__get_recommendation_status(recommendation_tests)
                     }
                 )
 
-        return all_directive_statuses
+        return all_recommendations_statuses
 
     @staticmethod
-    def __get_directive_status(directive_tests):
+    def __get_recommendation_status(recommendation_tests):
         worst_status = STATUS_UNEXECUTED
         all_statuses = set()
-        for test in directive_tests:
+        for test in recommendation_tests:
             all_statuses |= set(Finding.objects(test=test).distinct("status"))
 
         for status in all_statuses:
@@ -72,9 +72,9 @@ class ZeroTrustService(object):
         return worst_status
 
     @staticmethod
-    def __get_tests_status(directive_tests):
+    def __get_tests_status(recommendation_tests):
         results = []
-        for test in directive_tests:
+        for test in recommendation_tests:
             test_findings = Finding.objects(test=test)
             results.append(
                 {

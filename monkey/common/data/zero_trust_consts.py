@@ -2,8 +2,8 @@
 This file contains all the static data relating to Zero Trust. It is mostly used in the zero trust report generation and
 in creating findings.
 
-This file contains static mappings between zero trust components such as: pillars, directives, tests, statuses. Some of
-the mappings are computed when this module is loaded.
+This file contains static mappings between zero trust components such as: pillars, recommendations, tests, statuses.
+Some of the mappings are computed when this module is loaded.
 """
 
 AUTOMATION_ORCHESTRATION = u"Automation & Orchestration"
@@ -39,22 +39,22 @@ TESTS = (
     TEST_DATA_ENDPOINT_ELASTIC
 )
 
-DIRECTIVE_DATA_TRANSIT = u"data_transit"
-DIRECTIVE_ENDPOINT_SECURITY = u"endpoint_security"
-DIRECTIVE_USER_BEHAVIOUR = u"user_behaviour"
-DIRECTIVE_ANALYZE_NETWORK_TRAFFIC = u"analyze_network_traffic"
-DIRECTIVE_SEGMENTATION = u"segmentation"
-DIRECTIVES = {
-    DIRECTIVE_SEGMENTATION: u"Apply segmentation and micro-segmentation inside your network.",
-    DIRECTIVE_ANALYZE_NETWORK_TRAFFIC: u"Analyze network traffic for malicious activity.",
-    DIRECTIVE_USER_BEHAVIOUR: u"Adopt security user behavior analytics.",
-    DIRECTIVE_ENDPOINT_SECURITY: u"Use anti-virus and other traditional endpoint security solutions.",
-    DIRECTIVE_DATA_TRANSIT: u"Secure data at transit by encrypting it."
+RECOMMENDATION_DATA_TRANSIT = u"data_transit"
+RECOMMENDATION_ENDPOINT_SECURITY = u"endpoint_security"
+RECOMMENDATION_USER_BEHAVIOUR = u"user_behaviour"
+RECOMMENDATION_ANALYZE_NETWORK_TRAFFIC = u"analyze_network_traffic"
+RECOMMENDATION_SEGMENTATION = u"segmentation"
+RECOMMENDATIONS = {
+    RECOMMENDATION_SEGMENTATION: u"Apply segmentation and micro-segmentation inside your network.",
+    RECOMMENDATION_ANALYZE_NETWORK_TRAFFIC: u"Analyze network traffic for malicious activity.",
+    RECOMMENDATION_USER_BEHAVIOUR: u"Adopt security user behavior analytics.",
+    RECOMMENDATION_ENDPOINT_SECURITY: u"Use anti-virus and other traditional endpoint security solutions.",
+    RECOMMENDATION_DATA_TRANSIT: u"Secure data at transit by encrypting it."
 }
 
 POSSIBLE_STATUSES_KEY = u"possible_statuses"
 PILLARS_KEY = u"pillars"
-DIRECTIVE_KEY = u"directive_key"
+RECOMMENDATION_KEY = u"recommendation_key"
 FINDING_EXPLANATION_BY_STATUS_KEY = u"finding_explanation"
 TEST_EXPLANATION_KEY = u"explanation"
 TESTS_MAP = {
@@ -64,7 +64,7 @@ TESTS_MAP = {
             STATUS_CONCLUSIVE: "Monkey performed cross-segment communication. Check firewall rules and logs.",
             STATUS_POSITIVE: "Monkey couldn't perform cross-segment communication. If relevant, check firewall logs."
         },
-        DIRECTIVE_KEY: DIRECTIVE_SEGMENTATION,
+        RECOMMENDATION_KEY: RECOMMENDATION_SEGMENTATION,
         PILLARS_KEY: [NETWORKS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_POSITIVE, STATUS_CONCLUSIVE]
     },
@@ -73,7 +73,7 @@ TESTS_MAP = {
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_INCONCLUSIVE: "Monkey performed malicious actions in the network. Check SOC logs and alerts."
         },
-        DIRECTIVE_KEY: DIRECTIVE_ANALYZE_NETWORK_TRAFFIC,
+        RECOMMENDATION_KEY: RECOMMENDATION_ANALYZE_NETWORK_TRAFFIC,
         PILLARS_KEY: [NETWORKS, VISIBILITY_ANALYTICS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_INCONCLUSIVE]
     },
@@ -83,7 +83,7 @@ TESTS_MAP = {
             STATUS_CONCLUSIVE: "Monkey didn't find ANY active endpoint security processes. Install and activate anti-virus software on endpoints.",
             STATUS_POSITIVE: "Monkey found active endpoint security processes. Check their logs to see if Monkey was a security concern."
         },
-        DIRECTIVE_KEY: DIRECTIVE_ENDPOINT_SECURITY,
+        RECOMMENDATION_KEY: RECOMMENDATION_ENDPOINT_SECURITY,
         PILLARS_KEY: [DEVICES],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_CONCLUSIVE, STATUS_POSITIVE]
     },
@@ -93,7 +93,7 @@ TESTS_MAP = {
             STATUS_CONCLUSIVE: "Monkey successfully exploited endpoints. Check IDS/IPS logs to see activity recognized and see which endpoints were compromised.",
             STATUS_POSITIVE: "Monkey didn't manage to exploit an endpoint."
         },
-        DIRECTIVE_KEY: DIRECTIVE_ENDPOINT_SECURITY,
+        RECOMMENDATION_KEY: RECOMMENDATION_ENDPOINT_SECURITY,
         PILLARS_KEY: [DEVICES],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_CONCLUSIVE, STATUS_INCONCLUSIVE]
     },
@@ -102,7 +102,7 @@ TESTS_MAP = {
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_INCONCLUSIVE: "Monkey was executed in a scheduled manner. Locate this activity in User-Behavior security software."
         },
-        DIRECTIVE_KEY: DIRECTIVE_USER_BEHAVIOUR,
+        RECOMMENDATION_KEY: RECOMMENDATION_USER_BEHAVIOUR,
         PILLARS_KEY: [PEOPLE, NETWORKS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_INCONCLUSIVE]
     },
@@ -112,7 +112,7 @@ TESTS_MAP = {
             STATUS_CONCLUSIVE: "Monkey accessed ElasticSearch instances. Limit access to data by encrypting it in in-transit.",
             STATUS_POSITIVE: "Monkey didn't find open ElasticSearch instances. If you have such instances, look for alerts that indicate attempts to access them."
         },
-        DIRECTIVE_KEY: DIRECTIVE_DATA_TRANSIT,
+        RECOMMENDATION_KEY: RECOMMENDATION_DATA_TRANSIT,
         PILLARS_KEY: [DATA],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_CONCLUSIVE, STATUS_POSITIVE]
     },
@@ -122,7 +122,7 @@ TESTS_MAP = {
             STATUS_CONCLUSIVE: "Monkey accessed HTTP servers. Limit access to data by encrypting it in in-transit.",
             STATUS_POSITIVE: "Monkey didn't find open HTTP servers. If you have such servers, look for alerts that indicate attempts to access them."
         },
-        DIRECTIVE_KEY: DIRECTIVE_DATA_TRANSIT,
+        RECOMMENDATION_KEY: RECOMMENDATION_DATA_TRANSIT,
         PILLARS_KEY: [DATA],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_CONCLUSIVE, STATUS_POSITIVE]
     },
@@ -143,15 +143,15 @@ PILLARS_TO_TESTS = {
     AUTOMATION_ORCHESTRATION: []
 }
 
-DIRECTIVES_TO_TESTS = {}
+RECOMMENDATIONS_TO_TESTS = {}
 
-DIRECTIVES_TO_PILLARS = {}
+RECOMMENDATIONS_TO_PILLARS = {}
 
 
 def populate_mappings():
     populate_pillars_to_tests()
-    populate_directives_to_tests()
-    populate_directives_to_pillars()
+    populate_recommendations_to_tests()
+    populate_recommendations_to_pillars()
 
 
 def populate_pillars_to_tests():
@@ -161,17 +161,17 @@ def populate_pillars_to_tests():
                 PILLARS_TO_TESTS[pillar].append(test)
 
 
-def populate_directives_to_tests():
-    for single_directive in DIRECTIVES:
-        DIRECTIVES_TO_TESTS[single_directive] = []
+def populate_recommendations_to_tests():
+    for single_recommendation in RECOMMENDATIONS:
+        RECOMMENDATIONS_TO_TESTS[single_recommendation] = []
     for test, test_info in TESTS_MAP.items():
-        DIRECTIVES_TO_TESTS[test_info[DIRECTIVE_KEY]].append(test)
+        RECOMMENDATIONS_TO_TESTS[test_info[RECOMMENDATION_KEY]].append(test)
 
 
-def populate_directives_to_pillars():
-    for directive, directive_tests in DIRECTIVES_TO_TESTS.items():
-        directive_pillars = set()
-        for test in directive_tests:
+def populate_recommendations_to_pillars():
+    for recommendation, recommendation_tests in RECOMMENDATIONS_TO_TESTS.items():
+        recommendations_pillars = set()
+        for test in recommendation_tests:
             for pillar in TESTS_MAP[test][PILLARS_KEY]:
-                directive_pillars.add(pillar)
-        DIRECTIVES_TO_PILLARS[directive] = directive_pillars
+                recommendations_pillars.add(pillar)
+        RECOMMENDATIONS_TO_PILLARS[recommendation] = recommendations_pillars

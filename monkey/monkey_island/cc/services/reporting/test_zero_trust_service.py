@@ -98,7 +98,7 @@ class TestZeroTrustService(IslandTestCase):
 
         self.assertEquals(result, expected)
 
-    def test_get_directives_status(self):
+    def test_get_recommendations_status(self):
         self.fail_if_not_testing_env()
         self.clean_finding_db()
 
@@ -108,7 +108,7 @@ class TestZeroTrustService(IslandTestCase):
             AUTOMATION_ORCHESTRATION: [],
             DATA: [
                 {
-                    "directive": DIRECTIVES[DIRECTIVE_DATA_TRANSIT],
+                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_DATA_TRANSIT],
                     "status": STATUS_CONCLUSIVE,
                     "tests": [
                         {
@@ -124,7 +124,7 @@ class TestZeroTrustService(IslandTestCase):
             ],
             DEVICES: [
                 {
-                    "directive": DIRECTIVES[DIRECTIVE_ENDPOINT_SECURITY],
+                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_ENDPOINT_SECURITY],
                     "status": STATUS_CONCLUSIVE,
                     "tests": [
                         {
@@ -140,7 +140,7 @@ class TestZeroTrustService(IslandTestCase):
             ],
             NETWORKS: [
                 {
-                    "directive": DIRECTIVES[DIRECTIVE_SEGMENTATION],
+                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_SEGMENTATION],
                     "status": STATUS_UNEXECUTED,
                     "tests": [
                         {
@@ -150,7 +150,7 @@ class TestZeroTrustService(IslandTestCase):
                     ]
                 },
                 {
-                    "directive": DIRECTIVES[DIRECTIVE_USER_BEHAVIOUR],
+                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_USER_BEHAVIOUR],
                     "status": STATUS_INCONCLUSIVE,
                     "tests": [
                         {
@@ -160,7 +160,7 @@ class TestZeroTrustService(IslandTestCase):
                     ]
                 },
                 {
-                    "directive": DIRECTIVES[DIRECTIVE_ANALYZE_NETWORK_TRAFFIC],
+                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_ANALYZE_NETWORK_TRAFFIC],
                     "status": STATUS_UNEXECUTED,
                     "tests": [
                         {
@@ -172,7 +172,7 @@ class TestZeroTrustService(IslandTestCase):
             ],
             PEOPLE: [
                 {
-                    "directive": DIRECTIVES[DIRECTIVE_USER_BEHAVIOUR],
+                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_USER_BEHAVIOUR],
                     "status": STATUS_INCONCLUSIVE,
                     "tests": [
                         {
@@ -184,7 +184,7 @@ class TestZeroTrustService(IslandTestCase):
             ],
             "Visibility & Analytics": [
                 {
-                    "directive": DIRECTIVES[DIRECTIVE_ANALYZE_NETWORK_TRAFFIC],
+                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_ANALYZE_NETWORK_TRAFFIC],
                     "status": STATUS_UNEXECUTED,
                     "tests": [
                         {
@@ -197,7 +197,7 @@ class TestZeroTrustService(IslandTestCase):
             "Workloads": []
         }
 
-        self.assertEquals(ZeroTrustService.get_directives_status(), expected)
+        self.assertEquals(ZeroTrustService.get_recommendations_status(), expected)
 
     def test_get_pillars_to_statuses(self):
         self.fail_if_not_testing_env()

@@ -22,7 +22,7 @@ export default class SinglePillarRecommendationsStatus extends AuthComponent {
           </Panel.Heading>
           <Panel.Collapse>
             <Panel.Body>
-              <RecommendationsStatusTable directivesStatus={this.props.recommendationsStatus}/>
+              <RecommendationsStatusTable recommendationsStatus={this.props.recommendationsStatus}/>
             </Panel.Body>
           </Panel.Collapse>
         </Panel>

@@ -68,7 +68,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     } else {
       content = <div id="MainContentSection">
         {this.generateOverviewSection()}
-        {this.generateDirectivesSection()}
+        {this.generateRecommendationsSection()}
         {this.generateFindingsSection()}
       </div>;
     }
@@ -102,7 +102,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     </div>);
   }
 
-  generateDirectivesSection() {
+  generateRecommendationsSection() {
     return (<div id="recommendations-overview">
       <h2>Recommendations</h2>
       <p>
@@ -110,11 +110,11 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         to understand how the monkey tested your adherence to that recommendation.
       </p>
       {
-        Object.keys(this.state.directives).map((pillar) =>
+        Object.keys(this.state.recommendations).map((pillar) =>
           <SinglePillarRecommendationsStatus
             key={pillar}
             pillar={pillar}
-            recommendationsStatus={this.state.directives[pillar]}
+            recommendationsStatus={this.state.recommendations[pillar]}
             pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
         )
       }
@@ -152,7 +152,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   }
 
   stillLoadingDataFromServer() {
-    return typeof this.state.findings === "undefined" || typeof this.state.pillars === "undefined" || typeof this.state.directives === "undefined";
+    return typeof this.state.findings === "undefined" || typeof this.state.pillars === "undefined" || typeof this.state.recommendations === "undefined";
   }
 
   getZeroTrustReportFromServer() {
@@ -164,11 +164,11 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           findings: res
         });
       });
-    this.authFetch('/api/report/zero_trust/directives')
+    this.authFetch('/api/report/zero_trust/recommendations')
       .then(res => res.json())
       .then(res => {
         this.setState({
-          directives: res
+          recommendations: res
         });
       });
     this.authFetch('/api/report/zero_trust/pillars')

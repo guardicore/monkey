@@ -14,7 +14,7 @@ from monkey_island.cc.models.zero_trust.event import Event
 class Finding(Document):
     """
     This model represents a Zero-Trust finding: A result of a test the monkey/island might perform to see if a
-    specific directive of zero trust is upheld or broken.
+    specific recommendation of zero trust is upheld or broken.
 
     Findings might be
         Negative ❌
