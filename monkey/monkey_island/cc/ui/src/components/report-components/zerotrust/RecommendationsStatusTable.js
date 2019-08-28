@@ -16,10 +16,10 @@ const columns = [
         },
         maxWidth: 80
       },
-      { Header: 'Recommendation', accessor: 'recommendation',
+      { Header: 'ZT Recommendation', accessor: 'recommendation',
         style: {'whiteSpace': 'unset'}  // This enables word wrap
       },
-      { Header: 'Tests', id: 'tests',
+      { Header: 'Monkey Tests', id: 'tests',
         style: {'whiteSpace': 'unset'},  // This enables word wrap
         accessor: x => {
           return <TestsStatus tests={x.tests} />;

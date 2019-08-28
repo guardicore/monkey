@@ -4,7 +4,7 @@ import * as PropTypes from "prop-types";
 
 export default class ExportEventsButton extends Component {
   render() {
-    return <Button className="btn btn-primary btn-lg"
+    return <Button className="btn btn-primary"
                    onClick={this.props.onClick}
     >
       Export Events

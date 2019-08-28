@@ -26,7 +26,7 @@ export default class EventsAndButtonComponent extends Component {
       <div>
         <EventsModal events={this.props.events} showEvents={this.state.isShow} hideCallback={this.hide} exportFilename={this.props.exportFilename} />
         <div className="text-center" style={{"display": "grid"}}>
-          <Button className="btn btn-info btn-lg" onClick={this.show}>
+          <Button className="btn btn-info" onClick={this.show}>
             Show Events
           </Button>
           <ExportEventsButton onClick={() => {

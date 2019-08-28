@@ -3,7 +3,7 @@ import {Col, Grid, Row} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
 import PillarsOverview from "../report-components/zerotrust/PillarOverview";
-import FindingsTable from "../report-components/zerotrust/FindingsTable";
+import FindingsSection from "../report-components/zerotrust/FindingsSection";
 import SinglePillarRecommendationsStatus from "../report-components/zerotrust/SinglePillarRecommendationsStatus";
 import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
@@ -99,7 +99,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         happened in your network. This will enable you to match up with your SOC logs and alerts and to gain deeper
         insight as to what exactly happened during this test.
       </p>
-      <FindingsTable pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
+      <FindingsSection pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
     </div>);
   }
 
