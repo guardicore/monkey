@@ -35,14 +35,8 @@ class VennDiagram extends React.Component {
       People: {cx: -this.width2By7, cy: 0, r: this.sixthWidth, offset: {x: this.width1By11, y: 0}, popover: 'right'},
       Networks: {cx: this.width2By7, cy: 0, r: this.sixthWidth, offset: {x: -this.width1By11, y: 0}, popover: 'left'},
       Devices: {cx: 0, cy: this.width2By7, r: this.sixthWidth, offset: {x: 0, y: -this.width1By11}, popover: 'top'},
-      Workloads: {
-        cx: 0,
-        cy: -this.width2By7,
-        r: this.sixthWidth,
-        offset: {x: 0, y: this.width1By11},
-        popover: 'bottom'
-      },
-      VisibilityAndAnalytics: {inner: this.thirdWidth - this.width1By28, outer: this.thirdWidth, popover: 'left'},
+      Workloads: {cx: 0, cy: -this.width2By7, r: this.sixthWidth, offset: {x: 0, y: this.width1By11}, popover: 'bottom'},
+      VisibilityAndAnalytics: {inner: this.thirdWidth - this.width1By28, outer: this.thirdWidth, popover: 'right'},
       AutomationAndOrchestration: {
         inner: this.thirdWidth - this.width1By28 * 2 - this.arcNodesGap,
         outer: this.thirdWidth - this.width1By28 - this.arcNodesGap,

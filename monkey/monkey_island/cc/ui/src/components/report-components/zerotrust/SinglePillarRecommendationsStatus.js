@@ -15,7 +15,7 @@ export default class SinglePillarRecommendationsStatus extends AuthComponent {
         <Panel>
           <Panel.Heading>
             <Panel.Title toggle>
-              <h3 style={{"text-align": "center", "margin-top": "1px", "margin-bottom": "1px"}}>
+              <h3 style={{textAlign: "center", marginTop: "1px", marginBottom: "1px"}}>
                 <i className="fa fa-chevron-down" /> <PillarLabel pillar={this.props.pillar} status={this.props.pillarsToStatuses[this.props.pillar]} />
               </h3>
             </Panel.Title>

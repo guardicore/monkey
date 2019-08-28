@@ -13,7 +13,7 @@ const columns = [
           const pillarLabels = pillars.map((pillar) =>
             <PillarLabel key={pillar.name} pillar={pillar.name} status={pillar.status}/>
           );
-          return <div style={{"text-align": "center"}}>{pillarLabels}</div>;
+          return <div style={{textAlign: "center"}}>{pillarLabels}</div>;
         },
         maxWidth: 200,
         style: {'whiteSpace': 'unset'}

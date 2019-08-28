@@ -35,7 +35,7 @@ class ZeroTrustReportLegend extends Component {
         with the tests results.
       </p>
       <h4>Statuses</h4>
-      <ul style={{"list-style": "none"}}>
+      <ul style={{listStyle: "none"}}>
         <li>
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.conclusive}/>
