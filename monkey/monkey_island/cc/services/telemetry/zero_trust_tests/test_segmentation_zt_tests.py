@@ -1,6 +1,6 @@
 import uuid
 
-from common.data.zero_trust_consts import TEST_SEGMENTATION, STATUS_POSITIVE, STATUS_CONCLUSIVE, \
+from common.data.zero_trust_consts import TEST_SEGMENTATION, STATUS_PASSED, STATUS_FAILED, \
     EVENT_TYPE_MONKEY_NETWORK
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
@@ -32,20 +32,15 @@ class TestSegmentationTests(IslandTestCase):
         create_or_add_findings_for_all_pairs(all_subnets, monkey)
 
         # There are 2 subnets in which the monkey is NOT
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_POSITIVE)), 2)
+        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_PASSED)), 2)
 
         # This is a monkey from 2nd subnet communicated with 1st subnet.
         SegmentationFinding.create_or_add_to_existing_finding(
             [FIRST_SUBNET, SECOND_SUBNET],
-            STATUS_CONCLUSIVE,
+            STATUS_FAILED,
             Event.create_event(title="sdf", message="asd", event_type=EVENT_TYPE_MONKEY_NETWORK)
         )
 
-        print("Printing all segmentation findings")
-        all_findings = Finding.objects(test=TEST_SEGMENTATION)
-        for f in all_findings:
-            print(f.to_json())
-
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_POSITIVE)), 1)
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_CONCLUSIVE)), 1)
+        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_PASSED)), 1)
+        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_FAILED)), 1)
         self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION)), 2)

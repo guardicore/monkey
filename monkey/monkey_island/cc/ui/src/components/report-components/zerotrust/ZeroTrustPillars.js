@@ -9,9 +9,9 @@ export const ZeroTrustPillars = {
 };
 
 export const ZeroTrustStatuses = {
-  conclusive: "Conclusive",
+  failed: "Failed",
   inconclusive: "Inconclusive",
-  positive: "Positive",
+  passed: "Passed",
   unexecuted: "Unexecuted"
 };
 

@@ -1,30 +1,34 @@
 from mongoengine import StringField
 
-from common.data.zero_trust_consts import TEST_SEGMENTATION, STATUS_CONCLUSIVE, STATUS_POSITIVE
+from common.data.zero_trust_consts import TEST_SEGMENTATION, STATUS_FAILED, STATUS_PASSED
 from monkey_island.cc.models.zero_trust.finding import Finding
 
 
 def need_to_overwrite_status(saved_status, new_status):
-    return (saved_status == STATUS_POSITIVE) and (new_status == STATUS_CONCLUSIVE)
+    return (saved_status == STATUS_PASSED) and (new_status == STATUS_FAILED)
 
 
 class SegmentationFinding(Finding):
-    """
-    trying to add conclusive:
-    If the finding doesn't exist at all: create conclusive
-    else:
-        if positive, turn to conclusive
-    add event
-
-    trying to add positive:
-    If the finding doesn't exist at all: create positive
-    else: add event
-    """
     first_subnet = StringField()
     second_subnet = StringField()
 
     @staticmethod
     def create_or_add_to_existing_finding(subnets, status, segmentation_event):
+        """
+        If you're trying to add a Failed finding:
+        If the finding doesn't exist at all: create failed
+        else:
+            if pass, turn to fail
+        add event
+
+        If you're trying to add a Passed finding:
+        If the finding doesn't exist at all: create Passed
+        else: add event
+
+        :param subnets: the 2 subnets of this finding.
+        :param status: STATUS_PASSED or STATUS_FAILED
+        :param segmentation_event: The specific event
+        """
         assert len(subnets) == 2
 
         # Sort them so A -> B and B -> A segmentation findings will be the same one.

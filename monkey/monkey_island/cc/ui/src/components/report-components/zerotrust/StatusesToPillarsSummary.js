@@ -2,14 +2,15 @@ import React, {Component, Fragment} from "react";
 import PillarLabel from "./PillarLabel";
 import StatusLabel from "./StatusLabel";
 import * as PropTypes from "prop-types";
+import {ZeroTrustStatuses} from "./ZeroTrustPillars";
 
 export default class StatusesToPillarsSummary extends Component {
   render() {
     return (<div id="piilar-summary">
-      {this.getStatusSummary("Conclusive")}
-      {this.getStatusSummary("Inconclusive")}
-      {this.getStatusSummary("Positive")}
-      {this.getStatusSummary("Unexecuted")}
+      {this.getStatusSummary(ZeroTrustStatuses.failed)}
+      {this.getStatusSummary(ZeroTrustStatuses.inconclusive)}
+      {this.getStatusSummary(ZeroTrustStatuses.passed)}
+      {this.getStatusSummary(ZeroTrustStatuses.unexecuted)}
     </div>);
   }
 

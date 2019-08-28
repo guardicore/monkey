@@ -1,7 +1,7 @@
 import itertools
 from six import text_type
 
-from common.data.zero_trust_consts import STATUS_CONCLUSIVE, EVENT_TYPE_MONKEY_NETWORK, STATUS_POSITIVE, \
+from common.data.zero_trust_consts import STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK, STATUS_PASSED, \
     EVENT_TYPE_ISLAND
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst, get_ip_if_in_subnet
@@ -45,7 +45,7 @@ def test_segmentation_violation(scan_telemetry_json):
                 event = get_segmentation_violation_event(current_monkey, source_subnet, target_ip, target_subnet)
                 SegmentationFinding.create_or_add_to_existing_finding(
                     subnets=[source_subnet, target_subnet],
-                    status=STATUS_CONCLUSIVE,
+                    status=STATUS_FAILED,
                     segmentation_event=event
                 )
 
@@ -64,7 +64,7 @@ def get_segmentation_violation_event(current_monkey, source_subnet, target_ip, t
     )
 
 
-def test_positive_findings_for_unreached_segments(state_telemetry_json):
+def test_passed_findings_for_unreached_segments(state_telemetry_json):
     flat_all_subnets = [item for sublist in get_config_network_segments_as_subnet_groups() for item in sublist]
     current_monkey = Monkey.get_single_monkey_by_guid(state_telemetry_json['monkey_guid'])
     create_or_add_findings_for_all_pairs(flat_all_subnets, current_monkey)
@@ -87,7 +87,7 @@ def create_or_add_findings_for_all_pairs(all_subnets, current_monkey):
     for subnet_pair in all_subnets_pairs_for_this_monkey:
         SegmentationFinding.create_or_add_to_existing_finding(
             subnets=list(subnet_pair),
-            status=STATUS_POSITIVE,
+            status=STATUS_PASSED,
             segmentation_event=Event.create_event(
                 "Segmentation test done",
                 message="Monkey on {hostname} is done attempting cross-segment communications from `{src_seg}` "

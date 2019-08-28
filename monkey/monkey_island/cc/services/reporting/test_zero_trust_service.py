@@ -7,9 +7,9 @@ from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 def save_example_findings():
     # arrange
-    Finding.save_finding(TEST_ENDPOINT_SECURITY_EXISTS, STATUS_POSITIVE, [])  # devices positive = 1
-    Finding.save_finding(TEST_ENDPOINT_SECURITY_EXISTS, STATUS_POSITIVE, [])  # devices positive = 2
-    Finding.save_finding(TEST_ENDPOINT_SECURITY_EXISTS, STATUS_CONCLUSIVE, [])  # devices conclusive = 1
+    Finding.save_finding(TEST_ENDPOINT_SECURITY_EXISTS, STATUS_PASSED, [])  # devices passed = 1
+    Finding.save_finding(TEST_ENDPOINT_SECURITY_EXISTS, STATUS_PASSED, [])  # devices passed = 2
+    Finding.save_finding(TEST_ENDPOINT_SECURITY_EXISTS, STATUS_FAILED, [])  # devices failed = 1
     # devices unexecuted = 1
     # people inconclusive = 1
     # networks inconclusive = 1
@@ -17,22 +17,22 @@ def save_example_findings():
     # people inconclusive = 2
     # networks inconclusive = 2
     Finding.save_finding(TEST_SCHEDULED_EXECUTION, STATUS_INCONCLUSIVE, [])
-    # data conclusive 1
-    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_CONCLUSIVE, [])
-    # data conclusive 2
-    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_CONCLUSIVE, [])
-    # data conclusive 3
-    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_CONCLUSIVE, [])
-    # data conclusive 4
-    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_CONCLUSIVE, [])
-    # data conclusive 5
-    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_CONCLUSIVE, [])
+    # data failed 1
+    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_FAILED, [])
+    # data failed 2
+    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_FAILED, [])
+    # data failed 3
+    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_FAILED, [])
+    # data failed 4
+    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_FAILED, [])
+    # data failed 5
+    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_FAILED, [])
     # data inconclusive 1
     Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_INCONCLUSIVE, [])
     # data inconclusive 2
     Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_INCONCLUSIVE, [])
-    # data positive 1
-    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_POSITIVE, [])
+    # data passed 1
+    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_PASSED, [])
 
 
 class TestZeroTrustService(IslandTestCase):
@@ -44,52 +44,52 @@ class TestZeroTrustService(IslandTestCase):
 
         expected = [
             {
-                "Conclusive": 5,
-                "Inconclusive": 2,
-                "Positive": 1,
-                "Unexecuted": 1,
+                STATUS_FAILED: 5,
+                STATUS_INCONCLUSIVE: 2,
+                STATUS_PASSED: 1,
+                STATUS_UNEXECUTED: 1,
                 "pillar": "Data"
             },
             {
-                "Conclusive": 0,
-                "Inconclusive": 2,
-                "Positive": 0,
-                "Unexecuted": 0,
+                STATUS_FAILED: 0,
+                STATUS_INCONCLUSIVE: 2,
+                STATUS_PASSED: 0,
+                STATUS_UNEXECUTED: 0,
                 "pillar": "People"
             },
             {
-                "Conclusive": 0,
-                "Inconclusive": 2,
-                "Positive": 0,
-                "Unexecuted": 2,
+                STATUS_FAILED: 0,
+                STATUS_INCONCLUSIVE: 2,
+                STATUS_PASSED: 0,
+                STATUS_UNEXECUTED: 2,
                 "pillar": "Networks"
             },
             {
-                "Conclusive": 1,
-                "Inconclusive": 0,
-                "Positive": 2,
-                "Unexecuted": 1,
+                STATUS_FAILED: 1,
+                STATUS_INCONCLUSIVE: 0,
+                STATUS_PASSED: 2,
+                STATUS_UNEXECUTED: 1,
                 "pillar": "Devices"
             },
             {
-                "Conclusive": 0,
-                "Inconclusive": 0,
-                "Positive": 0,
-                "Unexecuted": 0,
+                STATUS_FAILED: 0,
+                STATUS_INCONCLUSIVE: 0,
+                STATUS_PASSED: 0,
+                STATUS_UNEXECUTED: 0,
                 "pillar": "Workloads"
             },
             {
-                "Conclusive": 0,
-                "Inconclusive": 0,
-                "Positive": 0,
-                "Unexecuted": 1,
+                STATUS_FAILED: 0,
+                STATUS_INCONCLUSIVE: 0,
+                STATUS_PASSED: 0,
+                STATUS_UNEXECUTED: 1,
                 "pillar": "Visibility & Analytics"
             },
             {
-                "Conclusive": 0,
-                "Inconclusive": 0,
-                "Positive": 0,
-                "Unexecuted": 0,
+                STATUS_FAILED: 0,
+                STATUS_INCONCLUSIVE: 0,
+                STATUS_PASSED: 0,
+                STATUS_UNEXECUTED: 0,
                 "pillar": "Automation & Orchestration"
             }
         ]
@@ -109,14 +109,14 @@ class TestZeroTrustService(IslandTestCase):
             DATA: [
                 {
                     "recommendation": RECOMMENDATIONS[RECOMMENDATION_DATA_TRANSIT],
-                    "status": STATUS_CONCLUSIVE,
+                    "status": STATUS_FAILED,
                     "tests": [
                         {
                             "status": STATUS_UNEXECUTED,
                             "test": TESTS_MAP[TEST_DATA_ENDPOINT_ELASTIC][TEST_EXPLANATION_KEY]
                         },
                         {
-                            "status": STATUS_CONCLUSIVE,
+                            "status": STATUS_FAILED,
                             "test": TESTS_MAP[TEST_DATA_ENDPOINT_HTTP][TEST_EXPLANATION_KEY]
                         }
                     ]
@@ -125,10 +125,10 @@ class TestZeroTrustService(IslandTestCase):
             DEVICES: [
                 {
                     "recommendation": RECOMMENDATIONS[RECOMMENDATION_ENDPOINT_SECURITY],
-                    "status": STATUS_CONCLUSIVE,
+                    "status": STATUS_FAILED,
                     "tests": [
                         {
-                            "status": STATUS_CONCLUSIVE,
+                            "status": STATUS_FAILED,
                             "test": TESTS_MAP[TEST_ENDPOINT_SECURITY_EXISTS][TEST_EXPLANATION_KEY]
                         },
                         {
@@ -221,12 +221,12 @@ class TestZeroTrustService(IslandTestCase):
 
         expected = {
             AUTOMATION_ORCHESTRATION: STATUS_UNEXECUTED,
-            DEVICES: STATUS_CONCLUSIVE,
+            DEVICES: STATUS_FAILED,
             NETWORKS: STATUS_INCONCLUSIVE,
             PEOPLE: STATUS_INCONCLUSIVE,
             VISIBILITY_ANALYTICS: STATUS_UNEXECUTED,
             WORKLOADS: STATUS_UNEXECUTED,
-            DATA: STATUS_CONCLUSIVE
+            DATA: STATUS_FAILED
         }
 
         self.assertEquals(ZeroTrustService.get_pillars_to_statuses(), expected)

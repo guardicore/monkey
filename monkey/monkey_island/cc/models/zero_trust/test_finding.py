@@ -19,7 +19,7 @@ class TestFinding(IslandTestCase):
         self.clean_finding_db()
 
         with self.assertRaises(ValidationError):
-            _ = Finding.save_finding(test="bla bla", status=STATUS_CONCLUSIVE, events=[])
+            _ = Finding.save_finding(test="bla bla", status=STATUS_FAILED, events=[])
 
         with self.assertRaises(ValidationError):
             _ = Finding.save_finding(test=TEST_SEGMENTATION, status="bla bla", events=[])
@@ -32,7 +32,7 @@ class TestFinding(IslandTestCase):
 
         event_example = Event.create_event(
             title="Event Title", message="event message", event_type=EVENT_TYPE_MONKEY_NETWORK)
-        Finding.save_finding(test=TEST_SEGMENTATION, status=STATUS_CONCLUSIVE, events=[event_example])
+        Finding.save_finding(test=TEST_SEGMENTATION, status=STATUS_FAILED, events=[event_example])
 
         self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION)), 1)
-        self.assertEquals(len(Finding.objects(status=STATUS_CONCLUSIVE)), 1)
+        self.assertEquals(len(Finding.objects(status=STATUS_FAILED)), 1)

@@ -12,6 +12,7 @@ import StatusesToPillarsSummary from "../report-components/zerotrust/StatusesToP
 import PrintReportButton from "../report-components/common/PrintReportButton";
 import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
 import ZeroTrustReportLegend from "../report-components/zerotrust/ReportLegend";
+import {ZeroTrustStatuses} from "../report-components/zerotrust/ZeroTrustPillars";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -178,14 +179,6 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           pillars: res
         });
       });
-  }
-
-  anyIssuesFound() {
-    const severe = function(finding) {
-      return (finding.status === "Conclusive" || finding.status === "Inconclusive");
-    };
-
-    return this.state.findings.some(severe);
   }
 }
 

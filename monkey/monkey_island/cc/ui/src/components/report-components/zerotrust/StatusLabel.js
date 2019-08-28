@@ -2,16 +2,16 @@ import React, {Component} from "react";
 import * as PropTypes from "prop-types";
 
 const statusToIcon = {
-  "Positive": "fa-check",
+  "Passed": "fa-check",
   "Inconclusive": "fa-exclamation-triangle",
-  "Conclusive": "fa-bomb",
+  "Failed": "fa-bomb",
   "Unexecuted": "fa-question",
 };
 
 export const statusToLabelType = {
-  "Positive": "label-success",
+  "Passed": "label-success",
   "Inconclusive": "label-warning",
-  "Conclusive": "label-danger",
+  "Failed": "label-danger",
   "Unexecuted": "label-default",
 };
 

@@ -1,4 +1,4 @@
-from common.data.zero_trust_consts import STATUS_CONCLUSIVE, EVENT_TYPE_MONKEY_NETWORK
+from common.data.zero_trust_consts import STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 from monkey_island.cc.models.zero_trust.segmentation_finding import SegmentationFinding
@@ -16,7 +16,7 @@ class TestSegmentationFinding(IslandTestCase):
 
         SegmentationFinding.create_or_add_to_existing_finding(
             subnets=[first_segment, second_segment],
-            status=STATUS_CONCLUSIVE,
+            status=STATUS_FAILED,
             segmentation_event=event
         )
 
@@ -26,7 +26,7 @@ class TestSegmentationFinding(IslandTestCase):
         SegmentationFinding.create_or_add_to_existing_finding(
             # !!! REVERSE ORDER
             subnets=[second_segment, first_segment],
-            status=STATUS_CONCLUSIVE,
+            status=STATUS_FAILED,
             segmentation_event=event
         )
 
@@ -36,7 +36,7 @@ class TestSegmentationFinding(IslandTestCase):
         SegmentationFinding.create_or_add_to_existing_finding(
             # !!! REVERSE ORDER
             subnets=[first_segment, third_segment],
-            status=STATUS_CONCLUSIVE,
+            status=STATUS_FAILED,
             segmentation_event=event
         )
 
@@ -45,7 +45,7 @@ class TestSegmentationFinding(IslandTestCase):
         SegmentationFinding.create_or_add_to_existing_finding(
             # !!! REVERSE ORDER
             subnets=[second_segment, third_segment],
-            status=STATUS_CONCLUSIVE,
+            status=STATUS_FAILED,
             segmentation_event=event
         )
 

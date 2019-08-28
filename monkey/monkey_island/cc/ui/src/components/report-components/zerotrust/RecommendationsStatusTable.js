@@ -4,6 +4,7 @@ import AuthComponent from "../../AuthComponent";
 import 'styles/ZeroTrustPillars.css'
 import StatusLabel from "./StatusLabel";
 import * as PropTypes from "prop-types";
+import {ZeroTrustStatuses} from "./ZeroTrustPillars";
 
 
 const columns = [
@@ -30,17 +31,12 @@ const columns = [
 
 class TestsStatus extends AuthComponent {
   render() {
-    const positiveStatus = "Positive";
-    const conclusiveStatus = "Conclusive";
-    const inconclusiveStatus = "Inconclusive";
-    const unexecutedStatus = "Unexecuted";
-
     return (
       <Fragment>
-        {this.getFilteredTestsByStatusIfAny(conclusiveStatus)}
-        {this.getFilteredTestsByStatusIfAny(inconclusiveStatus)}
-        {this.getFilteredTestsByStatusIfAny(positiveStatus)}
-        {this.getFilteredTestsByStatusIfAny(unexecutedStatus)}
+        {this.getFilteredTestsByStatusIfAny(ZeroTrustStatuses.failed)}
+        {this.getFilteredTestsByStatusIfAny(ZeroTrustStatuses.inconclusive)}
+        {this.getFilteredTestsByStatusIfAny(ZeroTrustStatuses.passed)}
+        {this.getFilteredTestsByStatusIfAny(ZeroTrustStatuses.unexecuted)}
       </Fragment>
     );
   }

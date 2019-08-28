@@ -16,9 +16,9 @@ class ZeroTrustService(object):
         all_findings = Finding.objects()
         pillar_grade = {
             "pillar": pillar,
-            STATUS_CONCLUSIVE: 0,
+            STATUS_FAILED: 0,
             STATUS_INCONCLUSIVE: 0,
-            STATUS_POSITIVE: 0,
+            STATUS_PASSED: 0,
             STATUS_UNEXECUTED: 0
         }
 
@@ -123,9 +123,9 @@ class ZeroTrustService(object):
     @staticmethod
     def get_statuses_to_pillars():
         results = {
-            STATUS_CONCLUSIVE: [],
+            STATUS_FAILED: [],
             STATUS_INCONCLUSIVE: [],
-            STATUS_POSITIVE: [],
+            STATUS_PASSED: [],
             STATUS_UNEXECUTED: []
         }
         for pillar in PILLARS:

@@ -4,6 +4,7 @@ import CircularNode from './CircularNode'
 import ArcNode from './ArcNode'
 import {TypographicUtilities} from './Utility.js'
 import './VennDiagram.css'
+import {ZeroTrustStatuses} from "../ZeroTrustPillars";
 
 class VennDiagram extends React.Component {
   constructor(props_) {
@@ -14,7 +15,7 @@ class VennDiagram extends React.Component {
     this.width = this.height = 512;
 
     this.prefix = 'vennDiagram';
-    this.suffices = ['', '|tests are|conclusive', '|tests were|inconclusive', '|tests|performed'];
+    this.suffices = ['', '|tests are|failed', '|tests were|inconclusive', '|tests|performed'];
     this.fontStyles = [{size: Math.max(9, this.width / 32), color: 'white'}, {
       size: Math.max(6, this.width / 52),
       color: 'black'
@@ -65,23 +66,23 @@ class VennDiagram extends React.Component {
     this.rules = [
 
       {
-        id: 'Rule #1', status: 'Unexecuted', hex: '#777777', f: function (d_) {
-          return d_['Conclusive'] + d_['Inconclusive'] + d_['Positive'] === 0;
+        id: 'Rule #1', status: ZeroTrustStatuses.unexecuted, hex: '#777777', f: function (d_) {
+          return d_[ZeroTrustStatuses.failed] + d_[ZeroTrustStatuses.inconclusive] + d_[ZeroTrustStatuses.passed] === 0;
         }
       },
       {
-        id: 'Rule #2', status: 'Conclusive', hex: '#D9534F', f: function (d_) {
-          return d_['Conclusive'] > 0;
+        id: 'Rule #2', status: ZeroTrustStatuses.failed, hex: '#D9534F', f: function (d_) {
+          return d_[ZeroTrustStatuses.failed] > 0;
         }
       },
       {
         id: 'Rule #3', status: 'Inconclusive', hex: '#F0AD4E', f: function (d_) {
-          return d_['Conclusive'] === 0 && d_['Inconclusive'] > 0;
+          return d_[ZeroTrustStatuses.failed] === 0 && d_['Inconclusive'] > 0;
         }
       },
       {
-        id: 'Rule #4', status: 'Positive', hex: '#5CB85C', f: function (d_) {
-          return d_['Positive'] + d_['Unexecuted'] >= 2 && d_['Positive'] * d_['Unexecuted'] > 0;
+        id: 'Rule #4', status: ZeroTrustStatuses.passed, hex: '#5CB85C', f: function (d_) {
+          return d_[ZeroTrustStatuses.passed] + d_[ZeroTrustStatuses.unexecuted] >= 2 && d_[ZeroTrustStatuses.passed] * d_[ZeroTrustStatuses.unexecuted] > 0;
         }
       }
 

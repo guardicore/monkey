@@ -38,7 +38,7 @@ class ZeroTrustReportLegend extends Component {
       <ul style={{listStyle: "none"}}>
         <li>
           <div style={{display: "inline-block"}}>
-            <StatusLabel showText={true} status={ZeroTrustStatuses.conclusive}/>
+            <StatusLabel showText={true} status={ZeroTrustStatuses.failed}/>
           </div>
           {"\t"}The test failed; the monkeys found something wrong.
         </li>
@@ -50,7 +50,7 @@ class ZeroTrustReportLegend extends Component {
         </li>
         <li>
           <div style={{display: "inline-block"}}>
-            <StatusLabel showText={true} status={ZeroTrustStatuses.positive}/>
+            <StatusLabel showText={true} status={ZeroTrustStatuses.passed}/>
           </div>
           {"\t"}This status means the test passed 🙂
         </li>

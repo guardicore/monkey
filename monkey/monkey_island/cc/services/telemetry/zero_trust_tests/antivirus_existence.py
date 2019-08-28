@@ -1,7 +1,7 @@
 import json
 
 from common.data.zero_trust_consts import EVENT_TYPE_MONKEY_LOCAL, EVENT_TYPE_ISLAND, \
-    STATUS_POSITIVE, STATUS_CONCLUSIVE, TEST_ENDPOINT_SECURITY_EXISTS
+    STATUS_PASSED, STATUS_FAILED, TEST_ENDPOINT_SECURITY_EXISTS
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
@@ -28,9 +28,9 @@ def test_antivirus_existence(telemetry_json):
             ))
 
         if len(av_processes) > 0:
-            test_status = STATUS_POSITIVE
+            test_status = STATUS_PASSED
         else:
-            test_status = STATUS_CONCLUSIVE
+            test_status = STATUS_FAILED
         Finding.save_finding(test=TEST_ENDPOINT_SECURITY_EXISTS, status=test_status, events=events)
 
 

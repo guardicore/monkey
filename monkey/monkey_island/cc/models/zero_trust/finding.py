@@ -16,12 +16,13 @@ class Finding(Document):
     This model represents a Zero-Trust finding: A result of a test the monkey/island might perform to see if a
     specific recommendation of zero trust is upheld or broken.
 
-    Findings might be
-        Negative ❌
-            Conclusive, meaning that we are sure that something is wrong (example: segmentation issue).
-            Inconclusive, meaning that we need the user to check something himself (example: 2FA logs, AV missing).
-        Positive ✔
-            Conclusive, meaning that we are sure that something is correct (example: Monkey failed exploiting).
+    Findings might have the following statuses:
+        Failed ❌
+            Meaning that we are sure that something is wrong (example: segmentation issue).
+        Inconclusive ⁉
+            Meaning that we need the user to check something himself (example: 2FA logs, AV missing).
+        Passed ✔
+            Meaning that we are sure that something is correct (example: Monkey failed exploiting).
 
     This class has 2 main section:
         *   The schema section defines the DB fields in the document. This is the data of the object.
