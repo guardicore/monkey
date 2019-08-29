@@ -4,6 +4,7 @@ import unittest
 import pytest
 
 from envs.monkey_zoo.blackbox.monkey_island_client import MonkeyIslandClient
+from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 
 
 def generic_blackbox_test_case(client, config_file_path, analyzers):
@@ -34,7 +35,8 @@ class TestMonkeyBlackbox(unittest.TestCase):
     def test_ssh_exec(self):
         client = MonkeyIslandClient(self.island)
         conf_file_name = "SSH.conf"
-        generic_blackbox_test_case(client, get_conf_file_path(conf_file_name), [])
+        generic_blackbox_test_case(client, get_conf_file_path(conf_file_name),
+                                   [CommunicationAnalyzer(client, ["10.2.2.41", "10.2.2.42"])])
 
 
 def get_conf_file_path(conf_file_name):

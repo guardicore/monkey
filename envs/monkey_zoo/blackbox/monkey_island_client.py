@@ -49,3 +49,10 @@ class MonkeyIslandClient(object):
     def run_monkey_local(self):
         resp = self.request_json("api/local-monkey", dict_data={"action": "run"})
         print(resp.text)
+
+    def send_get_request(self, endpoint, data):
+        resp = requests.get(self.addr + endpoint,
+                            headers={"Authorization": "JWT " + self.token},
+                            params=data,
+                            verify=False)
+        return resp
