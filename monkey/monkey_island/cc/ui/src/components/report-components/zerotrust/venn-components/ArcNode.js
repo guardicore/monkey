@@ -1,9 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types';
-import {Popover, OverlayTrigger} from 'react-bootstrap';
+import { Popover, OverlayTrigger } from 'react-bootstrap';
 import * as d3 from 'd3'
 
 class ArcNode extends React.Component {
+    
+  handleClick(e_) { this.props.disableHover(this.refs.overlay); }
+  handleOver(e_) { if(this.props.hover) { this.refs.overlay.show(); }  }
+  handleOut(e_) { if(this.props.hover){ this.refs.overlay.hide(); }  }
+    
   render() {
     let {prefix, index, data} = this.props;
 
@@ -11,29 +16,29 @@ class ArcNode extends React.Component {
     let id = prefix + 'Node_' + index;
 
     return (
-      <OverlayTrigger key={prefix + 'arcGroup' + index} trigger={['hover', 'focus']} placement={data.popover}
-                      overlay={<Popover key={prefix + 'ArcTooltip' + index} id={prefix + 'Popover' + index}
-                                        style={{backgroundColor: data.hex}}
-                                        title={data.node.pillar}>{data.tooltip}</Popover>}>
-        <g transform={'rotate(180)'} id={data.node.pillar} key={prefix + 'arcGroup' + index}>
-          <path
+          <g transform={'rotate(180)'} id={data.node.pillar} key={prefix + 'arcGroup' + index}>
+              <OverlayTrigger ref={'overlay'} key={prefix + 'arcOverlayTrigger' + index} trigger={null} placement={data.popover} overlay={<Popover id={prefix + 'ArcPopover' + index} style={{backgroundColor: data.hex}} title={data.node.pillar}>{data.tooltip}</Popover>} rootClose>
+                <path
 
-            id={prefix + 'Node_' + index}
-            className={'arcNode'}
-            data-tooltip={data.tooltip}
-            d={arc()}
-            fill={data.hex}
+                  id={prefix + 'Node_' + index}
+                  className={'arcNode'}
+                  data-tooltip={data.tooltip}
+                  d={arc()}
+                  fill={data.hex}
+                  onClick={this.handleClick.bind(this)}
+                  onMouseEnter={this.handleOver.bind(this)}
+                  onMouseLeave={this.handleOut.bind(this)}
 
-          />
-          <text x={0} dy={data.fontStyle.size * 1.75} fontSize={data.fontStyle.size} fill={'white'} textAnchor='middle'
-                pointerEvents={'none'}>
-            <textPath href={'#' + id} startOffset={'26.4%'}>
-              <tspan fontFamily={'FontAwesome'}>{data.icon + '\u2000'}</tspan>
-              <tspan>{data.label}</tspan>
-            </textPath>
-          </text>
-        </g>
-      </OverlayTrigger>
+                />
+                </OverlayTrigger>
+            <text x={0} dy={data.fontStyle.size * 1.2} fontSize={data.fontStyle.size} fill={'white'} textAnchor='middle'
+                  pointerEvents={'none'}>
+              <textPath href={'#' + id} startOffset={'26.4%'}>
+                <tspan fontFamily={'FontAwesome'}>{data.icon + '\u2000'}</tspan>  
+                <tspan>{data.label}</tspan>
+              </textPath>
+            </text>
+          </g>
     );
   }
 }
