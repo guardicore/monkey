@@ -77,7 +77,9 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     return (
       <Fragment>
         <div style={{marginBottom: '20px'}}>
-          <PrintReportButton onClick={() => {print();}} />
+          <PrintReportButton onClick={() => {
+            print();
+          }}/>
         </div>
         <div className="report-page">
           <ReportHeader report_type={ReportTypes.zeroTrust}/>
@@ -85,41 +87,12 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           {content}
         </div>
         <div style={{marginTop: '20px'}}>
-          <PrintReportButton onClick={() => {print();}} />
+          <PrintReportButton onClick={() => {
+            print();
+          }}/>
         </div>
       </Fragment>
     )
-  }
-
-  generateFindingsSection() {
-    return (<div id="findings-overview">
-      <h2>Findings</h2>
-      <p>
-        Deep-dive into the details of each test, and see the explicit events and exact timestamps in which things
-        happened in your network. This will enable you to match up with your SOC logs and alerts and to gain deeper
-        insight as to what exactly happened during this test.
-      </p>
-      <FindingsSection pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
-    </div>);
-  }
-
-  generateRecommendationsSection() {
-    return (<div id="recommendations-overview">
-      <h2>Recommendations</h2>
-      <p>
-        Analyze each zero trust recommendation by pillar, and see if you've followed through with it. See test results
-        to understand how the monkey tested your adherence to that recommendation.
-      </p>
-      {
-        Object.keys(this.state.recommendations).map((pillar) =>
-          <SinglePillarRecommendationsStatus
-            key={pillar}
-            pillar={pillar}
-            recommendationsStatus={this.state.recommendations[pillar]}
-            pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
-        )
-      }
-    </div>);
   }
 
   generateOverviewSection() {
@@ -145,10 +118,41 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         </Row>
         <Row>
           <Col xs={12} sm={12} md={12} lg={12}>
-            <ZeroTrustReportLegend />
+            <ZeroTrustReportLegend/>
           </Col>
         </Row>
       </Grid>
+    </div>);
+  }
+
+  generateRecommendationsSection() {
+    return (<div id="recommendations-overview">
+      <h2>Recommendations</h2>
+      <p>
+        Analyze each zero trust recommendation by pillar, and see if you've followed through with it. See test results
+        to understand how the monkey tested your adherence to that recommendation.
+      </p>
+      {
+        Object.keys(this.state.recommendations).map((pillar) =>
+          <SinglePillarRecommendationsStatus
+            key={pillar}
+            pillar={pillar}
+            recommendationsStatus={this.state.recommendations[pillar]}
+            pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
+        )
+      }
+    </div>);
+  }
+
+  generateFindingsSection() {
+    return (<div id="findings-overview">
+      <h2>Findings</h2>
+      <p>
+        Deep-dive into the details of each test, and see the explicit events and exact timestamps in which things
+        happened in your network. This will enable you to match up with your SOC logs and alerts and to gain deeper
+        insight as to what exactly happened during this test.
+      </p>
+      <FindingsSection pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
     </div>);
   }
 

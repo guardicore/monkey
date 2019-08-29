@@ -12,11 +12,14 @@ class VennDiagram extends React.Component {
 
     this.state = {hover: true, currentPopover: undefined};
     this._disableHover = this._disableHover.bind(this);
-      
+
     this.width = this.height = 512;
 
     this.prefix = 'vennDiagram';
-    this.fontStyles = [{size: Math.max(9, this.width / 28), color: 'white'}, { size: Math.max(6, this.width / 38), color: 'white'}, { size: Math.max(6, this.width / 48), color: 'white'} ];
+    this.fontStyles = [{size: Math.max(9, this.width / 28), color: 'white'}, {
+      size: Math.max(6, this.width / 38),
+      color: 'white'
+    }, {size: Math.max(6, this.width / 48), color: 'white'}];
     this.offset = this.width / 16;
 
     this.thirdWidth = this.width / 3;
@@ -25,14 +28,43 @@ class VennDiagram extends React.Component {
     this.width1By11 = this.width / 11;
     this.width1By28 = this.width / 28;
     this.arcNodesGap = 4;
-      
+
     this.layout = {
       Data: {cx: 0, cy: 0, r: this.width11By2, offset: {x: 0, y: 0}, popover: 'top'},
-      People: {cx: -this.width2By7, cy: 0, r: this.width11By2, offset: {x: this.width1By11 + this.fontStyles[1].size / 5 * 3, y: 0}, popover: 'right'},
-      Networks: {cx: this.width2By7, cy: 0, r: this.width11By2, offset: {x: -this.width1By11 - this.fontStyles[1].size / 5 * 3, y: 0}, popover: 'left'},
-      Devices: {cx: 0, cy: this.width2By7, r: this.width11By2, offset: {x: 0, y: -this.width1By11 + this.fontStyles[1].size / 6 * 3}, popover: 'top'},
-      Workloads: {cx: 0, cy: -this.width2By7, r: this.width11By2, offset: {x: 0, y: this.width1By11}, popover: 'bottom' },
-      VisibilityAndAnalytics: {inner: this.thirdWidth - this.width1By28, outer: this.thirdWidth, icon: '\uf070', popover: 'left'},
+      People: {
+        cx: -this.width2By7,
+        cy: 0,
+        r: this.width11By2,
+        offset: {x: this.width1By11 + this.fontStyles[1].size / 5 * 3, y: 0},
+        popover: 'right'
+      },
+      Networks: {
+        cx: this.width2By7,
+        cy: 0,
+        r: this.width11By2,
+        offset: {x: -this.width1By11 - this.fontStyles[1].size / 5 * 3, y: 0},
+        popover: 'left'
+      },
+      Devices: {
+        cx: 0,
+        cy: this.width2By7,
+        r: this.width11By2,
+        offset: {x: 0, y: -this.width1By11 + this.fontStyles[1].size / 6 * 3},
+        popover: 'top'
+      },
+      Workloads: {
+        cx: 0,
+        cy: -this.width2By7,
+        r: this.width11By2,
+        offset: {x: 0, y: this.width1By11},
+        popover: 'bottom'
+      },
+      VisibilityAndAnalytics: {
+        inner: this.thirdWidth - this.width1By28,
+        outer: this.thirdWidth,
+        icon: '\uf070',
+        popover: 'right'
+      },
       AutomationAndOrchestration: {
         inner: this.thirdWidth - this.width1By28 * 2 - this.arcNodesGap,
         outer: this.thirdWidth - this.width1By28 - this.arcNodesGap,
@@ -85,51 +117,61 @@ class VennDiagram extends React.Component {
 
   }
 
-  componentDidMount() { this.parseData(); if(this.state.currentPopover !== undefined) { this.state.currentPopover.show(); } }
-    
-  _disableHover(ref_) { this.setState({hover: false, currentPopover: ref_, data: this.state.data });  }
-    
+  componentDidMount() {
+    this.parseData();
+    if (this.state.currentPopover !== undefined) {
+      this.state.currentPopover.show();
+    }
+  }
+
+  _disableHover(ref_) {
+    this.setState({hover: false, currentPopover: ref_, data: this.state.data});
+  }
+
   _onMouseMove(e) {
-      
+
     let self = this;
-    
+
     let hidden = 'none';
     let html = '';
     let bcolor = '#DEDEDE';
-      
-    if(this.state.currentPopover !== undefined) { this.state.currentPopover.show(); } 
+
+    if (this.state.currentPopover !== undefined) {
+      this.state.currentPopover.show();
+    }
 
     document.querySelectorAll('circle, path').forEach((d_, i_) => {
-    d_.setAttribute('opacity', "0.8");
+      d_.setAttribute('opacity', "0.8");
     });
 
     if (e.target.id.includes('Node')) {
 
-        e.target.setAttribute('opacity', 0.95);
+      e.target.setAttribute('opacity', 0.95);
 
-        // Set highest z-index
-        e.target.parentNode.parentNode.appendChild(e.target.parentNode);
-        
+      // Set highest z-index
+      e.target.parentNode.parentNode.appendChild(e.target.parentNode);
+
     } else {
 
-        // Return z indices to default
-        Object.keys(this.layout).forEach(function (d_, i_) {
-          document.querySelector('#' + self.prefix).appendChild(document.querySelector('#' + self.prefix + 'Node_' + i_).parentNode); })
+      // Return z indices to default
+      Object.keys(this.layout).forEach(function (d_, i_) {
+        document.querySelector('#' + self.prefix).appendChild(document.querySelector('#' + self.prefix + 'Node_' + i_).parentNode);
+      })
     }
 
   }
-    
+
   _onClick(e) {
-      
-      if (!e.target.id.includes('Node')) {
-            
-          this.state.currentPopover.hide();
-          this.setState({hover: true, currentPopover: undefined, data: this.state.data });
-      } 
+
+    if (!e.target.id.includes('Node')) {
+
+      this.state.currentPopover.hide();
+      this.setState({hover: true, currentPopover: undefined, data: this.state.data});
+    }
   }
-    
+
   parseData() {
-      
+
     let self = this;
     let data = [];
     const omit = (prop, {[prop]: _, ...rest}) => rest;
@@ -157,23 +199,25 @@ class VennDiagram extends React.Component {
     this.setState({hover: true, activePopover: undefined, data: data});
     this.render();
   }
-    
+
   buildTooltipHtmlContent(object_) {
 
-    return Object.keys(object_).map((key_, i_) => { return ( <p key={this.prefix + key_ + i_}>{key_}: {object_[key_]}</p> ) })                                                                              
+    return Object.keys(object_).map((key_, i_) => {
+      return (<p key={this.prefix + key_ + i_}>{key_}: {object_[key_]}</p>)
+    })
   }
 
   setLayoutElement(rule_, key_, html_, d_) {
-   
-    if(rule_ === null) { console.log(Error('The node scores are invalid, please check the data or the rules set.')); }
+
+    if (rule_ === null) {
+      console.log(Error('The node scores are invalid, please check the data or the rules set.'));
+    }
 
     if (key_ === 'Data') {
       this.layout[key_].fontStyle = this.fontStyles[0];
-    }
-    else if(this.layout[key_].hasOwnProperty('cx')){
+    } else if (this.layout[key_].hasOwnProperty('cx')) {
       this.layout[key_].fontStyle = this.fontStyles[1];
-    }
-    else {
+    } else {
       this.layout[key_].fontStyle = this.fontStyles[2];
     }
 
@@ -218,11 +262,12 @@ class VennDiagram extends React.Component {
       });
 
       return (
-        <div ref={(divElement) => this.divElement = divElement} onMouseMove={this._onMouseMove.bind(this)} onClick={this._onClick.bind(this)}>
-            <svg id={this.prefix} viewBox={viewPortParameters} width={'100%'} height={'100%'}
+        <div ref={(divElement) => this.divElement = divElement} onMouseMove={this._onMouseMove.bind(this)}
+             onClick={this._onClick.bind(this)}>
+          <svg id={this.prefix} viewBox={viewPortParameters} width={'100%'} height={'100%'}
                xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink'>
             {nodes}
-            </svg>
+          </svg>
         </div>
       )
     }

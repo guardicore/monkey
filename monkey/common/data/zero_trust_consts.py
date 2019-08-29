@@ -100,7 +100,8 @@ TESTS_MAP = {
     TEST_SCHEDULED_EXECUTION: {
         TEST_EXPLANATION_KEY: "The Monkey was executed in a scheduled manner.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
-            STATUS_INCONCLUSIVE: "Monkey was executed in a scheduled manner. Locate this activity in User-Behavior security software."
+            STATUS_INCONCLUSIVE: "Monkey was executed in a scheduled manner. Locate this activity in User-Behavior security software.",
+            STATUS_PASSED: "Monkey failed to execute in a scheduled manner."
         },
         RECOMMENDATION_KEY: RECOMMENDATION_USER_BEHAVIOUR,
         PILLARS_KEY: [PEOPLE, NETWORKS],
