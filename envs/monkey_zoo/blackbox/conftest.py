@@ -1,10 +1,11 @@
+import pytest
+
+
 def pytest_addoption(parser):
-    parser.addoption("--island", action="store", default="default name")
+    parser.addoption("--island", action="store", default="",
+                     help="Specify the Monkey Island address (host+port).")
 
 
-def pytest_generate_tests(metafunc):
-    # This is called for every test. Only get/set command line arguments
-    # if the argument is specified in the list of test "fixturenames".
-    option_value = metafunc.config.option.name
-    if 'name' in metafunc.fixturenames and option_value is not None:
-        metafunc.parametrize("island", [option_value])
+@pytest.fixture
+def island(request):
+    request.cls.island = request.config.getoption("--island")
