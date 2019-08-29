@@ -9,7 +9,7 @@ from envs.monkey_zoo.blackbox.monkey_island_client import MonkeyIslandClient
 def generic_blackbox_test_case(client, config_file_path, analyzers):
     with open(config_file_path, "r") as config_file:
         client.import_config(config_file.read())
-    # run_local_monkey_on_island()
+    client.run_monkey_local()
     for analyzer in analyzers:
         assert analyzer.analyze_test_results()
 

@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 # SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
@@ -15,13 +17,35 @@ class MonkeyIslandClient(object):
                              verify=False)
         return resp.json()["access_token"]
 
+    def request_get(self, url):
+        return requests.get(
+            self.addr + url,
+            headers={"Authorization": "JWT " + self.token},
+            verify=False
+        )
+
+    def request_post(self, url, data):
+        return requests.post(
+            self.addr + url,
+            data=data,
+            headers={"Authorization": "JWT " + self.token},
+            verify=False
+        )
+
+    def request_json(self, url, dict_data):
+        return requests.post(
+            self.addr + url,
+            json=dict_data,
+            headers={"Authorization": "JWT " + self.token},
+            verify=False
+        )
+
     def get_api_status(self):
-        return requests.get(self.addr + "api", headers={"Authorization": "JWT " + self.token}, verify=False)
+        return self.request_get("api")
 
     def import_config(self, config_contents):
-        resp = requests.post(
-            self.addr + "api/configuration/island",
-            headers={"Authorization": "JWT " + self.token},
-            data=config_contents,
-            verify=False)
+        _ = self.request_post("api/configuration/island", data=config_contents)
+
+    def run_monkey_local(self):
+        resp = self.request_json("api/local-monkey", dict_data={"action": "run"})
         print(resp.text)
