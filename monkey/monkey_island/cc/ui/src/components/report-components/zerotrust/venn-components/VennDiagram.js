@@ -67,10 +67,7 @@ class VennDiagram extends React.Component {
     RULE #3: Inconclusive [I] has to be > 0 while Conclusive has to be 0,
              sum(C, I) > 0 and C * I = 0, while C has to be 0
 
-    RULE #4: Positive [P] and Unexecuted have to be positive
-             sum(P, U) >= 2 and P * U = positive integer, while
-             if the P is bigger by 2 then negative U, first conditional
-             would be true.
+    RULE #4: By process of elimination, passed.
 
     */
 
@@ -88,12 +85,12 @@ class VennDiagram extends React.Component {
       },
       {
         id: 'Rule #3', status: 'Inconclusive', hex: '#F0AD4E', f: function (d_) {
-          return d_[ZeroTrustStatuses.failed] === 0 && d_['Inconclusive'] > 0;
+          return d_[ZeroTrustStatuses.failed] === 0 && d_[ZeroTrustStatuses.inconclusive] > 0;
         }
       },
       {
         id: 'Rule #4', status: ZeroTrustStatuses.passed, hex: '#5CB85C', f: function (d_) {
-          return d_[ZeroTrustStatuses.passed] + d_[ZeroTrustStatuses.unexecuted] >= 2 && d_[ZeroTrustStatuses.passed] * d_[ZeroTrustStatuses.unexecuted] > 0;
+          return d_[ZeroTrustStatuses.passed] > 0;
         }
       }
 
