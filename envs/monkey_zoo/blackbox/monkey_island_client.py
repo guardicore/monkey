@@ -25,3 +25,10 @@ class MonkeyIslandClient(object):
             data=config_contents,
             verify=False)
         print(resp.text)
+
+    def send_get_request(self, endpoint, data):
+        resp = requests.get(self.addr + endpoint,
+                            headers={"Authorization": "JWT " + self.token},
+                            params=data,
+                            verify=False)
+        return resp
