@@ -1,9 +1,7 @@
-import React, {Component} from "react";
+import React, {Component, Fragment} from "react";
 import EventsModal from "./EventsModal";
-import {Button} from "react-bootstrap";
-import FileSaver from "file-saver";
+import {Badge, Button} from "react-bootstrap";
 import * as PropTypes from "prop-types";
-import ExportEventsButton from "./ExportEventsButton";
 
 export default class EventsButton extends Component {
   constructor(props) {
@@ -22,16 +20,21 @@ export default class EventsButton extends Component {
   };
 
   render() {
-    return (
-      <div>
-        <EventsModal events={this.props.events} showEvents={this.state.isShow} hideCallback={this.hide} exportFilename={this.props.exportFilename} />
+    let eventsAmountBadge;
+    if (this.props.events.length > 10) {
+      eventsAmountBadge = <Badge>9+</Badge>;
+    } else {
+      eventsAmountBadge = <Badge>{this.props.events.length}</Badge>;
+    }
+    return <Fragment>
+        <EventsModal events={this.props.events} showEvents={this.state.isShow} hideCallback={this.hide}
+                     exportFilename={this.props.exportFilename}/>
         <div className="text-center" style={{"display": "grid"}}>
           <Button className="btn btn-primary btn-lg" onClick={this.show}>
-            <i className="fa fa-list"/> Events
+            <i className="fa fa-list"/> Events {eventsAmountBadge}
           </Button>
         </div>
-      </div>
-    );
+    </Fragment>;
   }
 
 }
