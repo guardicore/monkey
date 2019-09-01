@@ -7,7 +7,7 @@ export default class ExportEventsButton extends Component {
     return <Button className="btn btn-primary btn-lg"
                    onClick={this.props.onClick}
     >
-      Export Events
+      <i className="fa fa-download"/> Export
     </Button>
   }
 }

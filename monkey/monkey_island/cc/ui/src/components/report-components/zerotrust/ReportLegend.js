@@ -27,41 +27,35 @@ class ZeroTrustReportLegend extends Component {
 
   getLegendContent() {
     return <div id={this.constructor.name}>
-      <h4>What is this?</h4>
-      <p>
-        The Zero Trust eXtended framework categorizes its <b>recommendations</b> into 7 <b>pillars</b>. Infection Monkey
-        Zero Trust edition tests some of those recommendations. The <b>tests</b> that the monkey executes
-        produce <b>findings</b>. The tests, recommendations and pillars are then granted a <b>status</b> in accordance
-        with the tests results.
-      </p>
       <h4>Statuses</h4>
       <ul style={{listStyle: "none"}}>
         <li>
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.failed}/>
           </div>
-          {"\t"}The test failed; the monkeys found something wrong.
+          {"\t"}Some tests failed; the monkeys found something wrong.
         </li>
         <li>
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.inconclusive}/>
           </div>
-          {"\t"}The test was executed, but manual verification is required to determine the results.
+          {"\t"}The test ran; manual verification is required to determine the results.
         </li>
         <li>
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.passed}/>
           </div>
-          {"\t"}This status means the test passed 🙂
+          {"\t"}The test passed, so this is OK 🙂
         </li>
         <li>
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.unexecuted}/>
           </div>
-          {"\t"}This status means the test wasn't executed. Some of the tests can be activated or deactivated using
-          the <NavLink to="/configuration">configuration</NavLink>.
+          {"\t"}This status means the test wasn't executed.
         </li>
       </ul>
+      <hr />
+      Some of the tests can be activated using the <NavLink to="/configuration"><u>configuration</u></NavLink>.
     </div>;
   }
 }
