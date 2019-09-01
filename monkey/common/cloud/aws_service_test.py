@@ -7,7 +7,7 @@ import json
 __author__ = 'shay.nehmad'
 
 
-class TestFilter_instance_data_from_aws_response(TestCase):
+class TestFilterInstanceDataFromAwsResponse(TestCase):
     def test_filter_instance_data_from_aws_response(self):
         json_response_full = """
         {
