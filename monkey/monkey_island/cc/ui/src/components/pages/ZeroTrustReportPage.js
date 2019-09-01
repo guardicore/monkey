@@ -8,11 +8,9 @@ import SinglePillarRecommendationsStatus from "../report-components/zerotrust/Si
 import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
-import StatusesToPillarsSummary from "../report-components/zerotrust/StatusesToPillarsSummary";
 import PrintReportButton from "../report-components/common/PrintReportButton";
 import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
 import ZeroTrustReportLegend from "../report-components/zerotrust/ReportLegend";
-import {ZeroTrustStatuses} from "../report-components/zerotrust/ZeroTrustPillars";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -27,7 +25,14 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.updatePageState();
-    setInterval(this.updatePageState, 8000)
+    const refreshInterval = setInterval(this.updatePageState, 8000)
+    this.setState(
+      {refreshDataIntervalHandler: refreshInterval}
+    )
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.refreshDataIntervalHandler);
   }
 
   updateMonkeysRunning = () => {
