@@ -29,6 +29,7 @@ TEST_ENDPOINT_SECURITY_EXISTS = u"endpoint_security_exists"
 TEST_SCHEDULED_EXECUTION = u"scheduled_execution"
 TEST_MALICIOUS_ACTIVITY_TIMELINE = u"malicious_activity_timeline"
 TEST_SEGMENTATION = u"segmentation"
+TEST_TUNNELING = u"tunneling"
 TESTS = (
     TEST_SEGMENTATION,
     TEST_MALICIOUS_ACTIVITY_TIMELINE,
@@ -36,7 +37,8 @@ TESTS = (
     TEST_ENDPOINT_SECURITY_EXISTS,
     TEST_MACHINE_EXPLOITED,
     TEST_DATA_ENDPOINT_HTTP,
-    TEST_DATA_ENDPOINT_ELASTIC
+    TEST_DATA_ENDPOINT_ELASTIC,
+    TEST_TUNNELING
 )
 
 RECOMMENDATION_DATA_TRANSIT = u"data_transit"
@@ -44,12 +46,14 @@ RECOMMENDATION_ENDPOINT_SECURITY = u"endpoint_security"
 RECOMMENDATION_USER_BEHAVIOUR = u"user_behaviour"
 RECOMMENDATION_ANALYZE_NETWORK_TRAFFIC = u"analyze_network_traffic"
 RECOMMENDATION_SEGMENTATION = u"segmentation"
+RECOMMENDATION_RESTRICTIVE_NETWORK_POLICIES = u"network_policies"
 RECOMMENDATIONS = {
     RECOMMENDATION_SEGMENTATION: u"Apply segmentation and micro-segmentation inside your network.",
     RECOMMENDATION_ANALYZE_NETWORK_TRAFFIC: u"Analyze network traffic for malicious activity.",
     RECOMMENDATION_USER_BEHAVIOUR: u"Adopt security user behavior analytics.",
     RECOMMENDATION_ENDPOINT_SECURITY: u"Use anti-virus and other traditional endpoint security solutions.",
-    RECOMMENDATION_DATA_TRANSIT: u"Secure data at transit by encrypting it."
+    RECOMMENDATION_DATA_TRANSIT: u"Secure data at transit by encrypting it.",
+    RECOMMENDATION_RESTRICTIVE_NETWORK_POLICIES: u"Configure network policies to be as restrictive as possible."
 }
 
 POSSIBLE_STATUSES_KEY = u"possible_statuses"
@@ -126,6 +130,15 @@ TESTS_MAP = {
         RECOMMENDATION_KEY: RECOMMENDATION_DATA_TRANSIT,
         PILLARS_KEY: [DATA],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
+    },
+    TEST_TUNNELING: {
+        TEST_EXPLANATION_KEY: u"The Monkey tried to tunnel traffic using other monkeys.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_FAILED: "Monkey was tunneled its traffic using other monkeys. Your network policies are too permissive - restrict them."
+        },
+        RECOMMENDATION_KEY: RECOMMENDATION_RESTRICTIVE_NETWORK_POLICIES,
+        PILLARS_KEY: [NETWORKS, VISIBILITY_ANALYTICS],
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED]
     },
 }
 
