@@ -26,7 +26,7 @@ Also, please submit PRs to the `develop` branch.
 
 #### Unit tests
 **Do** add unit tests if you think it fits. We place our unit tests in the same folder as the code, with the same 
-filename, followed by the _test prefix. So for example: `somefile.py` will be tested by `somefile_test.py`.
+filename, followed by the _test suffix. So for example: `somefile.py` will be tested by `somefile_test.py`.
 
 Please try to read some of the existing unit testing code, so you can see some examples.
 
