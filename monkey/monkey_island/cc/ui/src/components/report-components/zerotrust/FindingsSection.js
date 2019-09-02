@@ -1,12 +1,30 @@
 import React, {Component, Fragment} from "react";
 import PillarLabel from "./PillarLabel";
 import EventsButton from "./EventsButton";
-import {ZeroTrustStatuses} from "./ZeroTrustPillars";
+import ZeroTrustPillars, {ZeroTrustStatuses} from "./ZeroTrustPillars";
 import {FindingsTable} from "./FindingsTable";
 
 
 class FindingsSection extends Component {
+  mapFindingsByStatus() {
+    const statusToFindings = {};
+    for (const key in ZeroTrustStatuses) {
+      statusToFindings[ZeroTrustStatuses[key]] = [];
+    }
+
+    this.props.findings.map((finding) => {
+      // Deep copy
+      const newFinding = JSON.parse(JSON.stringify(finding));
+      newFinding.pillars = newFinding.pillars.map((pillar) => {
+        return {name: pillar, status: this.props.pillarsToStatuses[pillar]}
+      });
+      statusToFindings[newFinding.status].push(newFinding);
+    });
+    return statusToFindings;
+  }
+
   render() {
+    const findingsByStatus = this.mapFindingsByStatus();
     return (
       <div id="findings-section">
         <h2>Findings</h2>
@@ -15,9 +33,10 @@ class FindingsSection extends Component {
           happened in your network. This will enable you to match up with your SOC logs and alerts and to gain deeper
           insight as to what exactly happened during this test.
         </p>
-        <FindingsTable data={this.getFilteredFindings(ZeroTrustStatuses.failed)} status={ZeroTrustStatuses.failed}/>
-        <FindingsTable data={this.getFilteredFindings(ZeroTrustStatuses.inconclusive)} status={ZeroTrustStatuses.inconclusive}/>
-        <FindingsTable data={this.getFilteredFindings(ZeroTrustStatuses.passed)} status={ZeroTrustStatuses.passed}/>
+
+        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.failed]} status={ZeroTrustStatuses.failed}/>
+        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.inconclusive]} status={ZeroTrustStatuses.inconclusive}/>
+        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.passed]} status={ZeroTrustStatuses.passed}/>
       </div>
     );
   }
