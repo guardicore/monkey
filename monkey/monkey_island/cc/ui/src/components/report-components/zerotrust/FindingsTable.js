@@ -5,6 +5,8 @@ import * as PropTypes from "prop-types";
 import PillarLabel from "./PillarLabel";
 import EventsButton from "./EventsButton";
 
+const EVENTS_COLUMN_MAX_WIDTH = 160;
+const PILLARS_COLUMN_MAX_WIDTH = 200;
 const columns = [
   {
     columns: [
@@ -18,7 +20,7 @@ const columns = [
         accessor: x => {
           return <EventsButton events={x.events} exportFilename={"Events_" + x.test_key}/>;
         },
-        maxWidth: 160,
+        maxWidth: EVENTS_COLUMN_MAX_WIDTH,
       },
 
       {
@@ -30,7 +32,7 @@ const columns = [
           );
           return <div style={{textAlign: "center"}}>{pillarLabels}</div>;
         },
-        maxWidth: 200,
+        maxWidth: PILLARS_COLUMN_MAX_WIDTH,
         style: {'whiteSpace': 'unset'}
       },
     ]
@@ -41,8 +43,8 @@ const columns = [
 export class FindingsTable extends Component {
   render() {
     return <Fragment>
-      <h3>{<div style={{display: "inline-block"}}><StatusLabel status={this.props.status} showText={true}/>
-      </div>} tests' findings</h3>
+      <h3>{<span style={{display: "inline-block"}}><StatusLabel status={this.props.status} showText={true}/>
+      </span>} tests' findings</h3>
       <PaginatedTable data={this.props.data} pageSize={10} columns={columns}/>
     </Fragment>
   }

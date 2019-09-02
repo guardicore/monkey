@@ -1,12 +1,12 @@
 import React, {Fragment} from "react";
 import PaginatedTable from "../common/PaginatedTable";
 import AuthComponent from "../../AuthComponent";
-import 'styles/ZeroTrustPillars.css'
 import StatusLabel from "./StatusLabel";
 import * as PropTypes from "prop-types";
 import {ZeroTrustStatuses} from "./ZeroTrustPillars";
 
 
+const MAX_WIDTH_STATUS_COLUMN = 80;
 const columns = [
   {
     columns: [
@@ -14,7 +14,7 @@ const columns = [
         accessor: x => {
           return <StatusLabel status={x.status} size="fa-3x" showText={false} />;
         },
-        maxWidth: 80
+        maxWidth: MAX_WIDTH_STATUS_COLUMN
       },
       { Header: 'ZT Recommendation', accessor: 'recommendation',
         style: {'whiteSpace': 'unset'}  // This enables word wrap
