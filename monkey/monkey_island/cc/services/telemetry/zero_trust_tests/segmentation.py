@@ -1,8 +1,7 @@
 import itertools
 from six import text_type
 
-from common.data.zero_trust_consts import STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK, STATUS_PASSED, \
-    EVENT_TYPE_ISLAND
+from common.data.zero_trust_consts import STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK, STATUS_PASSED
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst, get_ip_if_in_subnet
 from monkey_island.cc.models import Monkey
@@ -107,5 +106,5 @@ def get_segmentation_done_event(current_monkey, subnet_pair):
                     hostname=current_monkey.hostname,
                     src_seg=subnet_pair[0],
                     dst_seg=subnet_pair[1]),
-        event_type=EVENT_TYPE_ISLAND
+        event_type=EVENT_TYPE_MONKEY_NETWORK
     )

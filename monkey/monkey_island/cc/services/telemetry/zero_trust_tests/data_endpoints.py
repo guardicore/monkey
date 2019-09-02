@@ -30,7 +30,7 @@ def test_open_data_endpoints(telemetry_json):
         events.append(Event.create_event(
             title="Scan telemetry analysis",
             message="Scanned service: {}.".format(service_name),
-            event_type=EVENT_TYPE_ISLAND
+            event_type=EVENT_TYPE_MONKEY_NETWORK
         ))
         if service_name in HTTP_SERVERS_SERVICES_NAMES:
             found_http_server_status = STATUS_FAILED
@@ -41,7 +41,7 @@ def test_open_data_endpoints(telemetry_json):
                     telemetry_json["data"]["machine"]["ip_addr"],
                     json.dumps(service_data)
                 ),
-                event_type=EVENT_TYPE_ISLAND
+                event_type=EVENT_TYPE_MONKEY_NETWORK
             ))
         if service_name == ES_SERVICE:
             found_elastic_search_server = STATUS_FAILED
@@ -52,7 +52,7 @@ def test_open_data_endpoints(telemetry_json):
                     telemetry_json["data"]["machine"]["ip_addr"],
                     json.dumps(service_data)
                 ),
-                event_type=EVENT_TYPE_ISLAND
+                event_type=EVENT_TYPE_MONKEY_NETWORK
             ))
 
     Finding.save_finding(
