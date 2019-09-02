@@ -15,7 +15,7 @@ def get_ip_if_in_subnet(ip_addresses, subnet):
     """
     :param ip_addresses: IP address list.
     :param subnet: Subnet to check if one of ip_addresses is in there. This is common.network.network_range.NetworkRange
-    :return: The first IP in ip_addresses which is in the subnet.
+    :return: The first IP in ip_addresses which is in the subnet if there is one, otherwise returns None.
     """
     for ip_address in ip_addresses:
         if subnet.is_in_range(ip_address):
