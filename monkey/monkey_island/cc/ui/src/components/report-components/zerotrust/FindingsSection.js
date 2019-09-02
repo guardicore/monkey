@@ -8,7 +8,7 @@ import {FindingsTable} from "./FindingsTable";
 class FindingsSection extends Component {
   render() {
     return (
-      <div id="findings-overview">
+      <div id="findings-section">
         <h2>Findings</h2>
         <p>
           Deep-dive into the details of each test, and see the explicit events and exact timestamps in which things

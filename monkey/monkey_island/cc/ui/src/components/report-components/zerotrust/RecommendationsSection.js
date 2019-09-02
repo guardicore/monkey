@@ -4,8 +4,7 @@ import * as PropTypes from "prop-types";
 
 export default class RecommendationsSection extends Component {
   render() {
-
-    return <div id="recommendations-overview">
+    return <div id="recommendations-section">
       <h2>Recommendations</h2>
       <p>
         Analyze each zero trust recommendation by pillar, and see if you've followed through with it. See test results
