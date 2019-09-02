@@ -39,11 +39,9 @@ def is_segmentation_violation(current_monkey, target_ip, source_subnet, target_s
         return cross_segment_ip is not None
 
 
-def test_segmentation_violation(scan_telemetry_json):
+def test_segmentation_violation(current_monkey, target_ip):
     # TODO - lower code duplication between this and report.py.
     # TODO - single machine
-    current_monkey = Monkey.get_single_monkey_by_guid(scan_telemetry_json['monkey_guid'])
-    target_ip = scan_telemetry_json['data']['machine']['ip_addr']
     subnet_groups = get_config_network_segments_as_subnet_groups()
     for subnet_group in subnet_groups:
         subnet_pairs = itertools.product(subnet_group, subnet_group)
