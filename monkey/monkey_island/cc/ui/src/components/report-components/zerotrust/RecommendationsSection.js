@@ -25,6 +25,6 @@ export default class RecommendationsSection extends Component {
 }
 
 RecommendationsSection.propTypes = {
-  recommendations: PropTypes.any,
-  pillarsToStatuses: PropTypes.any
+  recommendations: PropTypes.object,
+  pillarsToStatuses: PropTypes.object
 };
