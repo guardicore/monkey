@@ -22,6 +22,7 @@ export default class EventsTimeline extends Component {
                 key={index}
                 createdAt={event_time}
                 title={event.title}
+
                 icon={<img src={eventTypeToIcon[event.event_type]} alt="icon" style={{width: '24px'}} />}>
                   {event.message}
               </TimelineEvent>)
