@@ -11,8 +11,13 @@ def get_ip_in_src_and_not_in_dst(ip_addresses, source_subnet, target_subnet):
     return get_ip_if_in_subnet(ip_addresses, source_subnet)
 
 
-def get_ip_if_in_subnet(ip_addresses, source_subnet):
+def get_ip_if_in_subnet(ip_addresses, subnet):
+    """
+    :param ip_addresses: IP address list.
+    :param subnet: Subnet to check if one of ip_addresses is in there. This is common.network.network_range.NetworkRange
+    :return: The first IP in ip_addresses which is in the subnet.
+    """
     for ip_address in ip_addresses:
-        if source_subnet.is_in_range(ip_address):
+        if subnet.is_in_range(ip_address):
             return ip_address
     return None
