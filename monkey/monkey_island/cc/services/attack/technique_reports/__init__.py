@@ -2,7 +2,7 @@ import abc
 import logging
 
 from monkey_island.cc.database import mongo
-from common.utils.attack_utils import ScanStatus, UsageEnum
+from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from common.utils.code_utils import abstractstatic
 
@@ -115,47 +115,3 @@ class AttackTechnique(object):
         data = cls.get_message_and_status(status)
         data.update({'title': cls.technique_title()})
         return data
-
-
-class UsageTechnique(AttackTechnique):
-    __metaclass__ = abc.ABCMeta
-
-    @staticmethod
-    def parse_usages(usage):
-        """
-        Parses data from database and translates usage enums into strings
-        :param usage: Usage telemetry that contains fields: {'usage': 'SMB', 'status': 1}
-        :return: usage string
-        """
-        try:
-            usage['usage'] = UsageEnum[usage['usage']].value[usage['status']]
-        except KeyError:
-            logger.error("Error translating usage enum. into string. "
-                         "Check if usage enum field exists and covers all telem. statuses.")
-        return usage
-
-    @classmethod
-    def get_usage_data(cls):
-        data = list(mongo.db.telemetry.aggregate(cls.get_usage_query()))
-        return list(map(cls.parse_usages, data))
-
-    @classmethod
-    def get_usage_query(cls):
-        """
-        :return: Query that parses attack telems for simple report component
-        (gets machines and attack technique usage).
-        """
-        return [{'$match': {'telem_category': 'attack',
-                            'data.technique': cls.tech_id}},
-                {'$lookup': {'from': 'monkey',
-                             'localField': 'monkey_guid',
-                             'foreignField': 'guid',
-                             'as': 'monkey'}},
-                {'$project': {'monkey': {'$arrayElemAt': ['$monkey', 0]},
-                              'status': '$data.status',
-                              'usage': '$data.usage'}},
-                {'$addFields': {'_id': 0,
-                                'machine': {'hostname': '$monkey.hostname', 'ips': '$monkey.ip_addresses'},
-                                'monkey': 0}},
-                {'$group': {'_id': {'machine': '$machine', 'status': '$status', 'usage': '$usage'}}},
-                {"$replaceRoot": {"newRoot": "$_id"}}]

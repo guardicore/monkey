@@ -10,7 +10,7 @@ class T1090(AttackTechnique):
     tech_id = "T1090"
     unscanned_msg = "Monkey didn't use connection proxy."
     scanned_msg = ""
-    used_msg = "Monkey used connection proxy."
+    used_msg = "Monkey used connection proxy to communicate with machines on the network."
 
     @staticmethod
     def get_report_data():

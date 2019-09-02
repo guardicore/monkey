@@ -1,10 +1,11 @@
 import logging
 import subprocess
-import socket
-from infection_monkey.control import ControlClient
+
+from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils import is_windows_os
 from infection_monkey.config import WormConfiguration
+from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 
 
 LOG = logging.getLogger(__name__)
@@ -46,7 +47,25 @@ class PBA(object):
         """
         exec_funct = self._execute_default
         result = exec_funct()
+        if self.scripts_were_used_successfully(result):
+            T1064Telem(ScanStatus.USED, "Scripts were used to execute %s post breach action." % self.name).send()
         PostBreachTelem(self, result).send()
+
+    def is_script(self):
+        """
+        Determines if PBA is a script (PBA might be a single command)
+        :return: True if PBA is a script(series of OS commands)
+        """
+        return isinstance(self.command, list) and len(self.command) > 1
+
+    def scripts_were_used_successfully(self, pba_execution_result):
+        """
+        Determines if scripts were used to execute PBA and if they succeeded
+        :param pba_execution_result: result of execution function. e.g. self._execute_default
+        :return: True if scripts were used, False otherwise
+        """
+        pba_execution_succeeded = pba_execution_result[1]
+        return pba_execution_succeeded and self.is_script()
 
     def _execute_default(self):
         """

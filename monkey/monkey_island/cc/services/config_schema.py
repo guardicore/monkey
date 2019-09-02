@@ -35,14 +35,6 @@ SCHEMA = {
                 {
                     "type": "string",
                     "enum": [
-                        "RdpExploiter"
-                    ],
-                    "title": "RDP Exploiter (UNSAFE)",
-                    "attack_techniques": []
-                },
-                {
-                    "type": "string",
-                    "enum": [
                         "Ms08_067_Exploiter"
                     ],
                     "title": "MS08-067 Exploiter (UNSAFE)",
@@ -788,19 +780,6 @@ SCHEMA = {
                             "type": "string",
                             "default": "Password1!",
                             "description": "Password to use for created user"
-                        }
-                    }
-                },
-                "rdp_grinder": {
-                    "title": "RDP grinder",
-                    "type": "object",
-                    "properties": {
-                        "rdp_use_vbs_download": {
-                            "title": "Use VBS download",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether to use VBS or BITS to download monkey to remote machine"
-                                           " (true=VBS, false=BITS)"
                         }
                     }
                 },

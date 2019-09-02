@@ -633,22 +633,6 @@ class ReportPageComponent extends AuthComponent {
       );
   }
 
-  generateRdpIssue(issue) {
-    return (
-      <li>
-        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
-        that is not shared with other computers on the network.
-        <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">RDP</span> attack.
-          <br/>
-          The Monkey authenticated over the RDP protocol with user <span
-          className="label label-success">{issue.username}</span> and its password.
-        </CollapsibleWellComponent>
-      </li>
-    );
-  }
 
   generateSambaCryIssue(issue) {
     return (
@@ -926,9 +910,6 @@ generateMSSQLIssue(issue) {
         break;
       case 'ssh_key':
         data = this.generateSshKeysIssue(issue);
-        break;
-      case 'rdp':
-        data = this.generateRdpIssue(issue);
         break;
       case 'sambacry':
         data = this.generateSambaCryIssue(issue);

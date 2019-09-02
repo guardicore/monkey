@@ -7,6 +7,7 @@ import subprocess
 
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
+from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 
 __author__ = 'danielg'
 
@@ -58,6 +59,7 @@ class AzureCollector(object):
             decrypt_raw = decrypt_proc.communicate(input=b64_result)[0]
             decrypt_data = json.loads(decrypt_raw)
             T1005Telem(ScanStatus.USED, 'Azure credentials', "Path: %s" % filepath).send()
+            T1064Telem(ScanStatus.USED, 'Bash scripts used to extract azure credentials.').send()
             return decrypt_data['username'], decrypt_data['password']
         except IOError:
             LOG.warning("Failed to parse VM Access plugin file. Could not open file")
@@ -97,6 +99,7 @@ class AzureCollector(object):
             password_raw = ps_out.split('\n')[-2].split(">")[1].split("$utf8content")[1]
             password = json.loads(password_raw)["Password"]
             T1005Telem(ScanStatus.USED, 'Azure credentials', "Path: %s" % filepath).send()
+            T1064Telem(ScanStatus.USED, 'Powershell scripts used to extract azure credentials.').send()
             return username, password
         except IOError:
             LOG.warning("Failed to parse VM Access plugin file. Could not open file")
