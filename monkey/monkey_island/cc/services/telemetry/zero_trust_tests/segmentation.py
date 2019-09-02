@@ -16,6 +16,15 @@ SEGMENTATION_VIOLATION_EVENT_TEXT = \
 
 
 def is_segmentation_violation(current_monkey, target_ip, source_subnet, target_subnet):
+    # type: (Monkey, str, str, str) -> bool
+    """
+    Checks is a specific communication is a segmentation violation.
+    :param current_monkey:  The source monkey which originated the communication.
+    :param target_ip:       The target with which the current monkey communicated with.
+    :param source_subnet:   The segment the monkey belongs to.
+    :param target_subnet:   Another segment which the monkey isn't supposed to communicate with.
+    :return:    True if this is a violation of segmentation between source_subnet and target_subnet; Otherwise, False.
+    """
     if source_subnet == target_subnet:
         return False
     source_subnet_range = NetworkRange.get_range_obj(source_subnet)
