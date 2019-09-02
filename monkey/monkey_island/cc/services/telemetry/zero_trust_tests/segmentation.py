@@ -41,7 +41,6 @@ def is_segmentation_violation(current_monkey, target_ip, source_subnet, target_s
 
 def test_segmentation_violation(current_monkey, target_ip):
     # TODO - lower code duplication between this and report.py.
-    # TODO - single machine
     subnet_groups = get_config_network_segments_as_subnet_groups()
     for subnet_group in subnet_groups:
         subnet_pairs = itertools.product(subnet_group, subnet_group)
@@ -71,9 +70,8 @@ def get_segmentation_violation_event(current_monkey, source_subnet, target_ip, t
     )
 
 
-def test_passed_findings_for_unreached_segments(state_telemetry_json):
+def test_passed_findings_for_unreached_segments(current_monkey):
     flat_all_subnets = [item for sublist in get_config_network_segments_as_subnet_groups() for item in sublist]
-    current_monkey = Monkey.get_single_monkey_by_guid(state_telemetry_json['monkey_guid'])
     create_or_add_findings_for_all_pairs(flat_all_subnets, current_monkey)
 
 
