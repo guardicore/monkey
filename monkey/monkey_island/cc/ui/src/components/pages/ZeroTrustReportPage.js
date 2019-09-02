@@ -1,16 +1,14 @@
 import React, {Fragment} from 'react';
-import {Col, Grid, Row} from 'react-bootstrap';
+import {Col} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
-import PillarsOverview from "../report-components/zerotrust/PillarOverview";
-import FindingsSection from "../report-components/zerotrust/FindingsSection";
-import SinglePillarRecommendationsStatus from "../report-components/zerotrust/SinglePillarRecommendationsStatus";
-import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
 import ReportLoader from "../report-components/common/ReportLoader";
 import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
 import PrintReportButton from "../report-components/common/PrintReportButton";
 import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
-import ZeroTrustReportLegend from "../report-components/zerotrust/ReportLegend";
+import SummarySection from "../report-components/zerotrust/SummarySection";
+import FindingsSection from "../report-components/zerotrust/FindingsSection";
+import RecommendationsSection from "../report-components/zerotrust/RecommendationsSection";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -25,7 +23,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.updatePageState();
-    const refreshInterval = setInterval(this.updatePageState, 8000)
+    const refreshInterval = setInterval(this.updatePageState, 8000);
     this.setState(
       {refreshDataIntervalHandler: refreshInterval}
     )
@@ -73,9 +71,10 @@ class ZeroTrustReportPageComponent extends AuthComponent {
       content = <ReportLoader loading={true}/>;
     } else {
       content = <div id="MainContentSection">
-        {this.generateOverviewSection()}
-        {this.generateRecommendationsSection()}
-        {this.generateFindingsSection()}
+        <SummarySection allMonkeysAreDead={this.state.allMonkeysAreDead} pillars={this.state.pillars}/>
+        <RecommendationsSection recommendations={this.state.recommendations}
+                                pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
+        <FindingsSection pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
       </div>;
     }
 
@@ -100,75 +99,10 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     )
   }
 
-  generateOverviewSection() {
-    return (<div id="overview-section">
-      <h2>Summary</h2>
-      <Grid fluid={true}>
-        <Row>
-          <Col xs={12} sm={12} md={12} lg={12}>
-            <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
-            <p>
-              Get a quick glance of the status for each of Zero Trust's seven pillars.
-            </p>
-          </Col>
-        </Row>
-        <Row className="show-grid">
-          <Col xs={8} sm={8} md={8} lg={8}>
-            <PillarsOverview pillarsToStatuses={this.state.pillars.pillarsToStatuses}
-                             grades={this.state.pillars.grades}/>
-          </Col>
-          <Col xs={4} sm={4} md={4} lg={4}>
-            <ZeroTrustReportLegend/>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} sm={12} md={12} lg={12}>
-            <h4>What am I seeing?</h4>
-            <p>
-              The <a href="https://www.forrester.com/report/The+Zero+Trust+eXtended+ZTX+Ecosystem/-/E-RES137210">Zero Trust eXtended framework</a> categorizes its <b>recommendations</b> into 7 <b>pillars</b>. Infection Monkey
-              Zero Trust edition tests some of those recommendations. The <b>tests</b> that the monkey executes
-              produce <b>findings</b>. The tests, recommendations and pillars are then granted a <b>status</b> in accordance
-              with the tests results.
-            </p>
-          </Col>
-        </Row>
-      </Grid>
-    </div>);
-  }
-
-  generateRecommendationsSection() {
-    return (<div id="recommendations-overview">
-      <h2>Recommendations</h2>
-      <p>
-        Analyze each zero trust recommendation by pillar, and see if you've followed through with it. See test results
-        to understand how the monkey tested your adherence to that recommendation.
-      </p>
-      {
-        Object.keys(this.state.recommendations).map((pillar) =>
-          <SinglePillarRecommendationsStatus
-            key={pillar}
-            pillar={pillar}
-            recommendationsStatus={this.state.recommendations[pillar]}
-            pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
-        )
-      }
-    </div>);
-  }
-
-  generateFindingsSection() {
-    return (<div id="findings-overview">
-      <h2>Findings</h2>
-      <p>
-        Deep-dive into the details of each test, and see the explicit events and exact timestamps in which things
-        happened in your network. This will enable you to match up with your SOC logs and alerts and to gain deeper
-        insight as to what exactly happened during this test.
-      </p>
-      <FindingsSection pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
-    </div>);
-  }
-
   stillLoadingDataFromServer() {
-    return typeof this.state.findings === "undefined" || typeof this.state.pillars === "undefined" || typeof this.state.recommendations === "undefined";
+    return typeof this.state.findings === "undefined"
+      || typeof this.state.pillars === "undefined"
+      || typeof this.state.recommendations === "undefined";
   }
 
   getZeroTrustReportFromServer() {

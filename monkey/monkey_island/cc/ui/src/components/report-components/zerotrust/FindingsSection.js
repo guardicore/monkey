@@ -8,11 +8,17 @@ import {FindingsTable} from "./FindingsTable";
 class FindingsSection extends Component {
   render() {
     return (
-      <Fragment>
+      <div id="findings-overview">
+        <h2>Findings</h2>
+        <p>
+          Deep-dive into the details of each test, and see the explicit events and exact timestamps in which things
+          happened in your network. This will enable you to match up with your SOC logs and alerts and to gain deeper
+          insight as to what exactly happened during this test.
+        </p>
         <FindingsTable data={this.getFilteredFindings(ZeroTrustStatuses.failed)} status={ZeroTrustStatuses.failed}/>
         <FindingsTable data={this.getFilteredFindings(ZeroTrustStatuses.inconclusive)} status={ZeroTrustStatuses.inconclusive}/>
         <FindingsTable data={this.getFilteredFindings(ZeroTrustStatuses.passed)} status={ZeroTrustStatuses.passed}/>
-      </Fragment>
+      </div>
     );
   }
 
