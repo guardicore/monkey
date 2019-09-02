@@ -1,7 +1,6 @@
 import os
 import logging
 
-from common.data.post_breach_consts import POST_BREACH_FILE_EXECUTION
 from infection_monkey.utils import is_windows_os
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.control import ControlClient
@@ -28,7 +27,7 @@ class UsersPBA(PBA):
     Defines user's configured post breach action.
     """
     def __init__(self):
-        super(UsersPBA, self).__init__(POST_BREACH_FILE_EXECUTION)
+        super(UsersPBA, self).__init__("File execution")
         self.filename = ''
         if not is_windows_os():
             # Add linux commands to PBA's
