@@ -1,5 +1,6 @@
 import json
 
+from common.data.network_consts import ES_SERVICE
 from common.data.zero_trust_consts import *
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
@@ -42,7 +43,7 @@ def test_open_data_endpoints(telemetry_json):
                 ),
                 event_type=EVENT_TYPE_ISLAND
             ))
-        if service_name in 'elastic-search-9200':
+        if service_name == ES_SERVICE:
             found_elastic_search_server = STATUS_FAILED
             events.append(Event.create_event(
                 title="Scan telemetry analysis",
