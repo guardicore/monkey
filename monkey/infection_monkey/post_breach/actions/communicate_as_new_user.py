@@ -4,7 +4,6 @@ import random
 import string
 import subprocess
 
-import win32api
 import win32con
 import win32process
 import win32security
@@ -14,6 +13,9 @@ from infection_monkey.post_breach.actions.add_user import BackdoorUser
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils import is_windows_os
+
+CREATED_PROCESS_AS_USER_WINDOWS_FORMAT = "Created process '{}' as user '{}'."
+CREATED_PROCESS_AS_USER_LINUX_FORMAT = "Created process '{}' as user '{}'. Some of the output was '{}'."
 
 USERNAME = "somenewuser"
 PASSWORD = "N3WPa55W0rD!1"
@@ -60,12 +62,11 @@ class CommunicateAsNewUser(PBA):
             try:
                 # Open process as that user:
                 # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera
-                return_value_create_process = win32process.CreateProcessAsUser(
+                commandline = "{} {}".format(ping_app_path, "google.com")
+                _ = win32process.CreateProcessAsUser(
                     new_user_logon_token_handle,  # A handle to the primary token that represents a user.
-                    # If both lpApplicationName and lpCommandLine are non-NULL, *lpApplicationName specifies the module
-                    # to execute, and *lpCommandLine specifies the command line.
-                    ping_app_path,  # The name of the module to be executed.
-                    "google.com",  # The command line to be executed.
+                    None,  # The name of the module to be executed.
+                    commandline,  # The command line to be executed.
                     None,  # Process attributes
                     None,  # Thread attributes
                     True,  # Should inherit handles
@@ -77,18 +78,27 @@ class CommunicateAsNewUser(PBA):
                     win32process.STARTUPINFO()  # STARTUPINFO structure.
                     # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
                 )
+
+                PostBreachTelem(self, (
+                    CREATED_PROCESS_AS_USER_WINDOWS_FORMAT.format(commandline, username), True)).send()
+                return
             except Exception as e:
-                # TODO: if failed on 1314, try to add elevate the rights of the current user with the "Replace a
-                #  process level token" right, using Local Security Policy editing (need to find how to do this using
-                #  python...
+                # TODO: if failed on 1314, we can try to add elevate the rights of the current user with the "Replace a
+                #  process level token" right, using Local Security Policy editing. Worked, but only after reboot. So:
+                #  1. need to decide if worth it, and then
+                #  2. need to find how to do this using python...
                 PostBreachTelem(self, (
                     "Failed to open process as user {}. Error: {}".format(username, str(e)), False)).send()
                 return
         else:
             try:
                 linux_cmds = BackdoorUser.get_linux_commands_to_add_user(username)
-                linux_cmds.extend([";", "sudo", "-", username, "-c", "'ping -c 2 google.com'"])
-                subprocess.check_output(linux_cmds, stderr=subprocess.STDOUT, shell=True)
+                commandline = "'ping -c 2 google.com'"
+                linux_cmds.extend([";", "sudo", "-", username, "-c", commandline])
+                output = subprocess.check_output(linux_cmds, stderr=subprocess.STDOUT, shell=True)
+                PostBreachTelem(self, (
+                    CREATED_PROCESS_AS_USER_LINUX_FORMAT.format(commandline, username, output[:50]), True)).send()
+                return
             except subprocess.CalledProcessError as e:
                 PostBreachTelem(self, (e.output, False)).send()
                 return
