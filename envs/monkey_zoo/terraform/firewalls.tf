@@ -1,5 +1,5 @@
 resource "google_compute_firewall" "islands-in" {
-  name    = "islands-in"
+  name    = "${local.resource_prefix}islands-in"
   network = "${google_compute_network.monkeyzoo.name}"
 
   allow {
@@ -13,7 +13,7 @@ resource "google_compute_firewall" "islands-in" {
 }
 
 resource "google_compute_firewall" "islands-out" {
-  name    = "islands-out"
+  name    = "${local.resource_prefix}islands-out"
   network = "${google_compute_network.monkeyzoo.name}"
 
   allow {
@@ -26,7 +26,7 @@ resource "google_compute_firewall" "islands-out" {
 }
 
 resource "google_compute_firewall" "monkeyzoo-in" {
-  name    = "monkeyzoo-in"
+  name    = "${local.resource_prefix}monkeyzoo-in"
   network = "${google_compute_network.monkeyzoo.name}"
 
   allow {
@@ -39,7 +39,7 @@ resource "google_compute_firewall" "monkeyzoo-in" {
 }
 
 resource "google_compute_firewall" "monkeyzoo-out" {
-  name    = "monkeyzoo-out"
+  name    = "${local.resource_prefix}monkeyzoo-out"
   network = "${google_compute_network.monkeyzoo.name}"
 
   allow {
@@ -52,7 +52,7 @@ resource "google_compute_firewall" "monkeyzoo-out" {
 }
 
 resource "google_compute_firewall" "tunneling-in" {
-  name    = "tunneling-in"
+  name    = "${local.resource_prefix}tunneling-in"
   network = "${google_compute_network.tunneling.name}"
 
   allow {
@@ -64,7 +64,7 @@ resource "google_compute_firewall" "tunneling-in" {
 }
 
 resource "google_compute_firewall" "tunneling-out" {
-  name    = "tunneling-out"
+  name    = "${local.resource_prefix}tunneling-out"
   network = "${google_compute_network.tunneling.name}"
 
   allow {

@@ -5,6 +5,7 @@ provider "google" {
   credentials = "${file("testproject-000000-0c0b000b00c0.json")}"
 }
 locals {
+  resource_prefix = ""
   service_account_email="tester-monkeyZoo-user@testproject-000000.iam.gserviceaccount.com"
   monkeyzoo_project="guardicore-22050661"
 }

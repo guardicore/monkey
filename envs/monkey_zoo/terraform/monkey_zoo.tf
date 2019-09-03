@@ -6,40 +6,40 @@ locals {
 }
 
 resource "google_compute_network" "monkeyzoo" {
-  name                    = "monkeyzoo"
+  name = "${local.resource_prefix}monkeyzoo"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "tunneling" {
-  name                    = "tunneling"
+  name = "${local.resource_prefix}tunneling"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_network" "tunneling2" {
-  name                    = "tunneling2"
+  name = "${local.resource_prefix}tunneling2"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "monkeyzoo-main" {
-  name            = "monkeyzoo-main"
+  name = "${local.resource_prefix}monkeyzoo-main"
   ip_cidr_range   = "10.2.2.0/24"
   network         = "${google_compute_network.monkeyzoo.self_link}"
 }
 
 resource "google_compute_subnetwork" "tunneling-main" {
-  name            = "tunneling-main"
+  name = "${local.resource_prefix}tunneling-main"
   ip_cidr_range   = "10.2.1.0/28"
   network         = "${google_compute_network.tunneling.self_link}"
 }
 
 resource "google_compute_subnetwork" "tunneling2-main" {
-  name            = "tunneling2-main"
+  name = "${local.resource_prefix}tunneling2-main"
   ip_cidr_range   = "10.2.0.0/27"
   network         = "${google_compute_network.tunneling2.self_link}"
 }
 
 resource "google_compute_instance_from_template" "hadoop-2" {
-  name         = "hadoop-2"
+  name = "${local.resource_prefix}hadoop-2"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -56,7 +56,7 @@ resource "google_compute_instance_from_template" "hadoop-2" {
 }
 
 resource "google_compute_instance_from_template" "hadoop-3" {
-  name         = "hadoop-3"
+  name = "${local.resource_prefix}hadoop-3"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -71,7 +71,7 @@ resource "google_compute_instance_from_template" "hadoop-3" {
 }
 
 resource "google_compute_instance_from_template" "elastic-4" {
-  name         = "elastic-4"
+  name = "${local.resource_prefix}elastic-4"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -86,7 +86,7 @@ resource "google_compute_instance_from_template" "elastic-4" {
 }
 
 resource "google_compute_instance_from_template" "elastic-5" {
-  name         = "elastic-5"
+  name = "${local.resource_prefix}elastic-5"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -102,7 +102,7 @@ resource "google_compute_instance_from_template" "elastic-5" {
 
 /* Couldn't find ubuntu packages for required samba version (too old).
 resource "google_compute_instance_from_template" "sambacry-6" {
-  name         = "sambacry-6"
+  name = "${local.resource_prefix}sambacry-6"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -118,7 +118,7 @@ resource "google_compute_instance_from_template" "sambacry-6" {
 
 /* We need custom 32 bit Ubuntu machine for this (there are no 32 bit ubuntu machines in GCP).
 resource "google_compute_instance_from_template" "sambacry-7" {
-  name         = "sambacry-7"
+  name = "${local.resource_prefix}sambacry-7"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk {
     initialize_params {
@@ -134,7 +134,7 @@ resource "google_compute_instance_from_template" "sambacry-7" {
 */
 
 resource "google_compute_instance_from_template" "shellshock-8" {
-  name         = "shellshock-8"
+  name = "${local.resource_prefix}shellshock-8"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -149,7 +149,7 @@ resource "google_compute_instance_from_template" "shellshock-8" {
 }
 
 resource "google_compute_instance_from_template" "tunneling-9" {
-  name         = "tunneling-9"
+  name = "${local.resource_prefix}tunneling-9"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -168,7 +168,7 @@ resource "google_compute_instance_from_template" "tunneling-9" {
 }
 
 resource "google_compute_instance_from_template" "tunneling-10" {
-  name         = "tunneling-10"
+  name = "${local.resource_prefix}tunneling-10"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -187,7 +187,7 @@ resource "google_compute_instance_from_template" "tunneling-10" {
 }
 
 resource "google_compute_instance_from_template" "tunneling-11" {
-  name         = "tunneling-11"
+  name = "${local.resource_prefix}tunneling-11"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -202,7 +202,7 @@ resource "google_compute_instance_from_template" "tunneling-11" {
 }
 
 resource "google_compute_instance_from_template" "sshkeys-11" {
-  name         = "sshkeys-11"
+  name = "${local.resource_prefix}sshkeys-11"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -217,7 +217,7 @@ resource "google_compute_instance_from_template" "sshkeys-11" {
 }
 
 resource "google_compute_instance_from_template" "sshkeys-12" {
-  name         = "sshkeys-12"
+  name = "${local.resource_prefix}sshkeys-12"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -233,7 +233,7 @@ resource "google_compute_instance_from_template" "sshkeys-12" {
 
 /*
 resource "google_compute_instance_from_template" "rdpgrinder-13" {
-  name         = "rdpgrinder-13"
+  name = "${local.resource_prefix}rdpgrinder-13"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -248,7 +248,7 @@ resource "google_compute_instance_from_template" "rdpgrinder-13" {
 */
 
 resource "google_compute_instance_from_template" "mimikatz-14" {
-  name         = "mimikatz-14"
+  name = "${local.resource_prefix}mimikatz-14"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -263,7 +263,7 @@ resource "google_compute_instance_from_template" "mimikatz-14" {
 }
 
 resource "google_compute_instance_from_template" "mimikatz-15" {
-  name         = "mimikatz-15"
+  name = "${local.resource_prefix}mimikatz-15"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -278,7 +278,7 @@ resource "google_compute_instance_from_template" "mimikatz-15" {
 }
 
 resource "google_compute_instance_from_template" "mssql-16" {
-  name         = "mssql-16"
+  name = "${local.resource_prefix}mssql-16"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -294,7 +294,7 @@ resource "google_compute_instance_from_template" "mssql-16" {
 
 /* We need to alter monkey's behavior for this to upload 32-bit monkey instead of 64-bit (not yet developed)
 resource "google_compute_instance_from_template" "upgrader-17" {
-  name         = "upgrader-17"
+  name = "${local.resource_prefix}upgrader-17"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -313,7 +313,7 @@ resource "google_compute_instance_from_template" "upgrader-17" {
 */
 
 resource "google_compute_instance_from_template" "weblogic-18" {
-  name         = "weblogic-18"
+  name = "${local.resource_prefix}weblogic-18"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -328,7 +328,7 @@ resource "google_compute_instance_from_template" "weblogic-18" {
 }
 
 resource "google_compute_instance_from_template" "weblogic-19" {
-  name         = "weblogic-19"
+  name = "${local.resource_prefix}weblogic-19"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -343,7 +343,7 @@ resource "google_compute_instance_from_template" "weblogic-19" {
 }
 
 resource "google_compute_instance_from_template" "smb-20" {
-  name         = "smb-20"
+  name = "${local.resource_prefix}smb-20"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -358,7 +358,7 @@ resource "google_compute_instance_from_template" "smb-20" {
 }
 
 resource "google_compute_instance_from_template" "scan-21" {
-  name         = "scan-21"
+  name = "${local.resource_prefix}scan-21"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -373,7 +373,7 @@ resource "google_compute_instance_from_template" "scan-21" {
 }
 
 resource "google_compute_instance_from_template" "scan-22" {
-  name         = "scan-22"
+  name = "${local.resource_prefix}scan-22"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -388,7 +388,7 @@ resource "google_compute_instance_from_template" "scan-22" {
 }
 
 resource "google_compute_instance_from_template" "struts2-23" {
-  name         = "struts2-23"
+  name = "${local.resource_prefix}struts2-23"
   source_instance_template = "${local.default_ubuntu}"
   boot_disk{
     initialize_params {
@@ -403,7 +403,7 @@ resource "google_compute_instance_from_template" "struts2-23" {
 }
 
 resource "google_compute_instance_from_template" "struts2-24" {
-  name         = "struts2-24"
+  name = "${local.resource_prefix}struts2-24"
   source_instance_template = "${local.default_windows}"
   boot_disk{
     initialize_params {
@@ -418,7 +418,7 @@ resource "google_compute_instance_from_template" "struts2-24" {
 }
 
 resource "google_compute_instance_from_template" "island-linux-250" {
-  name         = "island-linux-250"
+  name = "${local.resource_prefix}island-linux-250"
   machine_type         = "n1-standard-2"
   tags = ["island", "linux", "ubuntu16"]
   source_instance_template = "${local.default_ubuntu}"
@@ -439,7 +439,7 @@ resource "google_compute_instance_from_template" "island-linux-250" {
 }
 
 resource "google_compute_instance_from_template" "island-windows-251" {
-  name         = "island-windows-251"
+  name = "${local.resource_prefix}island-windows-251"
   machine_type         = "n1-standard-2"
   tags = ["island", "windows", "windowsserver2016"]
   source_instance_template = "${local.default_windows}"
