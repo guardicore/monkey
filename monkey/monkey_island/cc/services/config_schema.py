@@ -119,6 +119,14 @@ SCHEMA = {
                     "title": "Back door user",
                     "attack_techniques": []
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "CommunicateAsNewUser"
+                    ],
+                    "title": "Communicate as new user",
+                    "attack_techniques": []
+                },
             ],
         },
         "finger_classes": {

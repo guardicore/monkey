@@ -19,7 +19,8 @@ class PBA(object):
     def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
         """
         :param name: Name of post breach action.
-        :param command: Command that will be executed on breached machine
+        :param linux_cmd: Command that will be executed on breached machine
+        :param windows_cmd: Command that will be executed on breached machine
         """
         self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name

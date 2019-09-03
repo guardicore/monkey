@@ -25,8 +25,9 @@ class PostBreach(object):
         Executes all post breach actions.
         """
         for pba in self.pba_list:
+            LOG.debug("Executing PBA: '{}'".format(pba.name))
             pba.run()
-        LOG.info("Post breach actions executed")
+        LOG.info("All PBAs executed. Total {} executed.".format(len(self.pba_list)))
 
     @staticmethod
     def config_to_pba_list():

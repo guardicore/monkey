@@ -17,6 +17,40 @@ WINDOWS_COMMANDS = ['net', 'user', WormConfiguration.user_to_add,
 
 class BackdoorUser(PBA):
     def __init__(self):
-        super(BackdoorUser, self).__init__(POST_BREACH_BACKDOOR_USER,
-                                           linux_cmd=' '.join(LINUX_COMMANDS),
-                                           windows_cmd=WINDOWS_COMMANDS)
+        linux_cmds, windows_cmds = BackdoorUser.get_commands_to_add_user(
+            WormConfiguration.user_to_add, WormConfiguration.remote_user_pass)
+        super(BackdoorUser, self).__init__(
+            POST_BREACH_BACKDOOR_USER,
+            linux_cmd=' '.join(linux_cmds),
+            windows_cmd=windows_cmds)
+
+    @staticmethod
+    def get_commands_to_add_user(username, password):
+        linux_cmds = BackdoorUser.get_linux_commands_to_add_user(username)
+        windows_cmds = BackdoorUser.get_windows_commands_to_add_user(password, username)
+        return linux_cmds, windows_cmds
+
+    @staticmethod
+    def get_linux_commands_to_add_user(username):
+        linux_cmds = [
+            'useradd',
+            '-M',
+            '--expiredate',
+            datetime.datetime.today().strftime('%Y-%m-%d'),
+            '--inactive',
+            '0',
+            '-c',
+            'MONKEY_USER',
+            username]
+        return linux_cmds
+
+    @staticmethod
+    def get_windows_commands_to_add_user(password, username):
+        windows_cmds = [
+            'net',
+            'user',
+            username,
+            password,
+            '/add',
+            '/ACTIVE:NO']
+        return windows_cmds
