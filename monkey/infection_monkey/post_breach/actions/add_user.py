@@ -27,7 +27,7 @@ class BackdoorUser(PBA):
     @staticmethod
     def get_commands_to_add_user(username, password):
         linux_cmds = BackdoorUser.get_linux_commands_to_add_user(username)
-        windows_cmds = BackdoorUser.get_windows_commands_to_add_user(password, username)
+        windows_cmds = BackdoorUser.get_windows_commands_to_add_user(username, password)
         return linux_cmds, windows_cmds
 
     @staticmethod
@@ -45,12 +45,13 @@ class BackdoorUser(PBA):
         return linux_cmds
 
     @staticmethod
-    def get_windows_commands_to_add_user(password, username):
+    def get_windows_commands_to_add_user(username, password, should_be_active=False):
         windows_cmds = [
             'net',
             'user',
             username,
             password,
-            '/add',
-            '/ACTIVE:NO']
+            '/add']
+        if not should_be_active:
+            windows_cmds.append('/ACTIVE:NO')
         return windows_cmds
