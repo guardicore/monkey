@@ -78,8 +78,11 @@ class CommunicateAsNewUser(PBA):
                     # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
                 )
             except Exception as e:
+                # TODO: if failed on 1314, try to add elevate the rights of the current user with the "Replace a
+                #  process level token" right, using Local Security Policy editing (need to find how to do this using
+                #  python...
                 PostBreachTelem(self, (
-                    "Failed to open process as user {}. Error: {}".format(username, e.message), False)).send()
+                    "Failed to open process as user {}. Error: {}".format(username, str(e)), False)).send()
                 return
         else:
             try:
