@@ -1,5 +1,5 @@
 resource "google_compute_instance_template" "ubuntu16" {
-  name        = "ubuntu16"
+  name        = "${local.resource_prefix}ubuntu16"
   description = "Creates ubuntu 16.04 LTS servers at europe-west3-a."
 
   tags = ["test-machine", "ubuntu16", "linux"]
@@ -24,7 +24,7 @@ resource "google_compute_instance_template" "ubuntu16" {
 }
 
 resource "google_compute_instance_template" "windows2016" {
-  name        = "windows2016"
+  name        = "${local.resource_prefix}windows2016"
   description = "Creates windows 2016 core servers at europe-west3-a."
 
   tags = ["test-machine", "windowsserver2016", "windows"]

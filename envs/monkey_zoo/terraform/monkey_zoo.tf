@@ -48,7 +48,7 @@ resource "google_compute_instance_from_template" "hadoop-2" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.2"
   }
   // Add required ssh keys for hadoop service and restart it
@@ -65,7 +65,7 @@ resource "google_compute_instance_from_template" "hadoop-3" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.3"
   }
 }
@@ -80,7 +80,7 @@ resource "google_compute_instance_from_template" "elastic-4" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.4"
   }
 }
@@ -95,7 +95,7 @@ resource "google_compute_instance_from_template" "elastic-5" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.5"
   }
 }
@@ -110,7 +110,7 @@ resource "google_compute_instance_from_template" "sambacry-6" {
     }
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.6"
   }
 }
@@ -127,7 +127,7 @@ resource "google_compute_instance_from_template" "sambacry-7" {
     }
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.7"
   }
 }
@@ -143,7 +143,7 @@ resource "google_compute_instance_from_template" "shellshock-8" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.8"
   }
 }
@@ -158,11 +158,11 @@ resource "google_compute_instance_from_template" "tunneling-9" {
     auto_delete = true
   }
   network_interface{
-    subnetwork="tunneling-main"
+    subnetwork="${local.resource_prefix}tunneling-main"
     network_ip="10.2.1.9"
   }
   network_interface{
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.9"
   }
 }
@@ -177,11 +177,11 @@ resource "google_compute_instance_from_template" "tunneling-10" {
     auto_delete = true
   }
   network_interface{
-    subnetwork="tunneling-main"
+    subnetwork="${local.resource_prefix}tunneling-main"
     network_ip="10.2.1.10"
   }
   network_interface{
-    subnetwork="tunneling2-main"
+    subnetwork="${local.resource_prefix}tunneling2-main"
     network_ip="10.2.0.10"
   }
 }
@@ -196,7 +196,7 @@ resource "google_compute_instance_from_template" "tunneling-11" {
     auto_delete = true
   }
   network_interface{
-    subnetwork="tunneling2-main"
+    subnetwork="${local.resource_prefix}tunneling2-main"
     network_ip="10.2.0.11"
   }
 }
@@ -211,7 +211,7 @@ resource "google_compute_instance_from_template" "sshkeys-11" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.11"
   }
 }
@@ -226,7 +226,7 @@ resource "google_compute_instance_from_template" "sshkeys-12" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.12"
   }
 }
@@ -241,7 +241,7 @@ resource "google_compute_instance_from_template" "rdpgrinder-13" {
     }
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.13"
   }
 }
@@ -257,7 +257,7 @@ resource "google_compute_instance_from_template" "mimikatz-14" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.14"
   }
 }
@@ -272,7 +272,7 @@ resource "google_compute_instance_from_template" "mimikatz-15" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.15"
   }
 }
@@ -287,7 +287,7 @@ resource "google_compute_instance_from_template" "mssql-16" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.16"
   }
 }
@@ -302,7 +302,7 @@ resource "google_compute_instance_from_template" "upgrader-17" {
     }
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.17"
     access_config {
       // Cheaper, non-premium routing
@@ -322,7 +322,7 @@ resource "google_compute_instance_from_template" "weblogic-18" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.18"
   }
 }
@@ -337,7 +337,7 @@ resource "google_compute_instance_from_template" "weblogic-19" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.19"
   }
 }
@@ -352,7 +352,7 @@ resource "google_compute_instance_from_template" "smb-20" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.20"
   }
 }
@@ -367,7 +367,7 @@ resource "google_compute_instance_from_template" "scan-21" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.21"
   }
 }
@@ -382,7 +382,7 @@ resource "google_compute_instance_from_template" "scan-22" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.22"
   }
 }
@@ -397,7 +397,7 @@ resource "google_compute_instance_from_template" "struts2-23" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.23"
   }
 }
@@ -412,7 +412,7 @@ resource "google_compute_instance_from_template" "struts2-24" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.24"
   }
 }
@@ -429,7 +429,7 @@ resource "google_compute_instance_from_template" "island-linux-250" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.250"
     access_config {
       // Cheaper, non-premium routing (not available in some regions)
@@ -450,7 +450,7 @@ resource "google_compute_instance_from_template" "island-windows-251" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.251"
     access_config {
       // Cheaper, non-premium routing (not available in some regions)

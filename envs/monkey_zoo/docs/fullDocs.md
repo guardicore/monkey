@@ -58,7 +58,7 @@ Requirements:
 To deploy:
 1.  Configure service account for your project:
 
-    a. Create a service account and name it “your\_name-monkeyZoo-user” 
+    a. Create a service account (GCP website -> IAM -> service accounts) and name it “your\_name-monkeyZoo-user” 
     
     b. Give these permissions to your service account:
     
@@ -74,7 +74,7 @@ To deploy:
     
     **Project -> Owner**
     
-    c. Download its **Service account key**. Select JSON format.
+    c. Download its **Service account key** in JSON and place it in **/gcp_keys** as **gcp_key.json**.
 2.  Get these permissions in monkeyZoo project for your service account (ask monkey developers to add them):
 
     a.  **Compute Engine -\> Compute image user**
@@ -82,20 +82,30 @@ To deploy:
     ../monkey/envs/monkey\_zoo/terraform/config.tf file (don’t forget to
     link to your service account key file):
 
-    > provider "google" {
-    > 
-    > project = "project-28054666"
-    > 
-    > region = "europe-west3"
-    > 
-    > zone = "europe-west3-b"
-    > 
-    > credentials = "${file("project-92050661-9dae6c5a02fc.json")}"
-    > 
-    > }
-    > 
-    > service\_account\_email="test@project-925243.iam.gserviceaccount.com"
-
+         provider "google" {
+         
+         project = "test-000000" // Change to your project id
+           
+           region  = "europe-west3" // Change to your desired region or leave default
+           
+           zone    = "europe-west3-b" // Change to your desired zone or leave default
+           
+           credentials = "${file("../gcp_keys/gcp_key.json")}" // Change to the location and name of the service key. 
+                                                               // If you followed instruction above leave it as is
+         
+         }
+         
+         locals {
+         
+           resource_prefix = "" // All of the resources will have this prefix.
+                                // Only change if you want to have multiple zoo's in the same project
+           
+           service_account_email="tester-monkeyZoo-user@testproject-000000.iam.gserviceaccount.com" // Service account email
+           
+           monkeyzoo_project="guardicore-22050661" // Project where monkeyzoo images are kept. Leave as is.
+         
+         }
+    
 4.  Run terraform init
 
 To deploy the network run:<br>
