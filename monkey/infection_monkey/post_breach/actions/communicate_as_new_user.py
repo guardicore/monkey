@@ -4,10 +4,6 @@ import random
 import string
 import subprocess
 
-import win32con
-import win32process
-import win32security
-
 from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
 from infection_monkey.post_breach.actions.add_user import BackdoorUser
 from infection_monkey.post_breach.pba import PBA
@@ -39,6 +35,10 @@ class CommunicateAsNewUser(PBA):
                 return  # no point to continue if failed creating the user.
 
             try:
+                # Importing these only on windows, as they won't exist on linux.
+                import win32con
+                import win32process
+                import win32security
                 # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-logonusera
                 new_user_logon_token_handle = win32security.LogonUser(
                     username,
