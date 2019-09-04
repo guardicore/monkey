@@ -31,14 +31,15 @@ class CommunicateAsNewUser(PBA):
     def run(self):
         username = USERNAME + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
         if is_windows_os():
+            # Importing these only on windows, as they won't exist on linux.
+            import win32con
+            import win32process
+            import win32security
+
             if not self.try_to_create_user_windows(username, PASSWORD):
                 return  # no point to continue if failed creating the user.
 
             try:
-                # Importing these only on windows, as they won't exist on linux.
-                import win32con
-                import win32process
-                import win32security
                 # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-logonusera
                 new_user_logon_token_handle = win32security.LogonUser(
                     username,
@@ -99,7 +100,7 @@ class CommunicateAsNewUser(PBA):
                 logger.debug("Trying to execute these commands: {}".format(final_command))
                 output = subprocess.check_output(final_command, stderr=subprocess.STDOUT, shell=True)
                 PostBreachTelem(self, (
-                    CREATED_PROCESS_AS_USER_LINUX_FORMAT.format(commandline, username, output[:50]), True)).send()
+                    CREATED_PROCESS_AS_USER_LINUX_FORMAT.format(commandline, username, output[:150]), True)).send()
                 return
             except subprocess.CalledProcessError as e:
                 PostBreachTelem(self, (e.output, False)).send()
