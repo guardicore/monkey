@@ -1,6 +1,6 @@
 from mongoengine import ValidationError
 
-from common.data.zero_trust_consts import EVENT_TYPE_ISLAND
+from common.data.zero_trust_consts import EVENT_TYPE_MONKEY_NETWORK
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
@@ -14,7 +14,7 @@ class TestEvent(IslandTestCase):
             _ = Event.create_event(
                 title=None,  # title required
                 message="bla bla",
-                event_type=EVENT_TYPE_ISLAND
+                event_type=EVENT_TYPE_MONKEY_NETWORK
             )
 
         with self.assertRaises(ValidationError):
@@ -28,5 +28,5 @@ class TestEvent(IslandTestCase):
         _ = Event.create_event(
             title="skjs",
             message="bla bla",
-            event_type=EVENT_TYPE_ISLAND
+            event_type=EVENT_TYPE_MONKEY_NETWORK
         )

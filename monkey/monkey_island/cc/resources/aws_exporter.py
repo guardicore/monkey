@@ -58,7 +58,6 @@ class AWSExporter(Exporter):
             'wmi_password': AWSExporter._handle_wmi_password_issue,
             'wmi_pth': AWSExporter._handle_wmi_pth_issue,
             'ssh_key': AWSExporter._handle_ssh_key_issue,
-            'rdp': AWSExporter._handle_rdp_issue,
             'shared_passwords_domain': AWSExporter._handle_shared_passwords_domain_issue,
             'shared_admins_domain': AWSExporter._handle_shared_admins_domain_issue,
             'strong_users_on_crit': AWSExporter._handle_strong_users_on_crit_issue,
@@ -300,20 +299,6 @@ class AWSExporter(Exporter):
             description="Change {0}'s password to a complex one-use password that is not shared with other computers on the network.".format(
                 issue['username']),
             recommendation="The machine machine ({ip_address}) is vulnerable to a WMI attack. The Monkey used a pass-the-hash attack over WMI protocol with user {username}".format(
-                machine=issue['machine'], ip_address=issue['ip_address'], username=issue['username']),
-            instance_arn=instance_arn,
-            instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
-        )
-
-    @staticmethod
-    def _handle_rdp_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=1,
-            title="Machines are accessible using passwords supplied by the user during the Monkey's configuration.",
-            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the network.".format(
-                issue['username']),
-            recommendation="The machine machine ({ip_address}) is vulnerable to a RDP attack. The Monkey authenticated over the RDP protocol with user {username} and its password.".format(
                 machine=issue['machine'], ip_address=issue['ip_address'], username=issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None

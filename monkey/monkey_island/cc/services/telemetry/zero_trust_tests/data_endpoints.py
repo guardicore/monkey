@@ -1,5 +1,6 @@
 import json
 
+from common.data.network_consts import ES_SERVICE
 from common.data.zero_trust_consts import *
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
@@ -29,7 +30,7 @@ def test_open_data_endpoints(telemetry_json):
         events.append(Event.create_event(
             title="Scan telemetry analysis",
             message="Scanned service: {}.".format(service_name),
-            event_type=EVENT_TYPE_ISLAND
+            event_type=EVENT_TYPE_MONKEY_NETWORK
         ))
         if service_name in HTTP_SERVERS_SERVICES_NAMES:
             found_http_server_status = STATUS_FAILED
@@ -40,9 +41,9 @@ def test_open_data_endpoints(telemetry_json):
                     telemetry_json["data"]["machine"]["ip_addr"],
                     json.dumps(service_data)
                 ),
-                event_type=EVENT_TYPE_ISLAND
+                event_type=EVENT_TYPE_MONKEY_NETWORK
             ))
-        if service_name in 'elastic-search-9200':
+        if service_name == ES_SERVICE:
             found_elastic_search_server = STATUS_FAILED
             events.append(Event.create_event(
                 title="Scan telemetry analysis",
@@ -51,7 +52,7 @@ def test_open_data_endpoints(telemetry_json):
                     telemetry_json["data"]["machine"]["ip_addr"],
                     json.dumps(service_data)
                 ),
-                event_type=EVENT_TYPE_ISLAND
+                event_type=EVENT_TYPE_MONKEY_NETWORK
             ))
 
     AggregateFinding.create_or_add_to_existing(

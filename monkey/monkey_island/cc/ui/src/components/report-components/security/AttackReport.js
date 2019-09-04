@@ -6,6 +6,7 @@ import '../../../styles/Collapse.scss';
 import AuthComponent from '../../AuthComponent';
 import {ScanStatus} from "../../attack/techniques/Helpers";
 import Collapse from '@kunukn/react-collapse';
+
 import T1210 from '../../attack/techniques/T1210';
 import T1197 from '../../attack/techniques/T1197';
 import T1110 from '../../attack/techniques/T1110';
@@ -28,6 +29,8 @@ import T1222 from "../../attack/techniques/T1222";
 import T1005 from "../../attack/techniques/T1005";
 import T1018 from "../../attack/techniques/T1018";
 import T1016 from "../../attack/techniques/T1016";
+import T1021 from "../../attack/techniques/T1021";
+import T1064 from "../../attack/techniques/T1064";
 import {extractExecutionStatusFromServerResponse} from "../common/ExecutionStatus";
 
 const tech_components = {
@@ -52,7 +55,9 @@ const tech_components = {
   'T1222': T1222,
   'T1005': T1005,
   'T1018': T1018,
-  'T1016': T1016
+  'T1016': T1016,
+  'T1021': T1021,
+  'T1064': T1064
 };
 
 const classNames = require('classnames');

@@ -1,6 +1,6 @@
 import json
 
-from common.data.zero_trust_consts import EVENT_TYPE_MONKEY_LOCAL, EVENT_TYPE_ISLAND, \
+from common.data.zero_trust_consts import EVENT_TYPE_MONKEY_LOCAL, \
     STATUS_PASSED, STATUS_FAILED, TEST_ENDPOINT_SECURITY_EXISTS
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
@@ -24,7 +24,7 @@ def test_antivirus_existence(telemetry_json):
                 title="Found AV process",
                 message="The process '{}' was recognized as an Anti Virus process. Process "
                         "details: {}".format(process[1]['name'], json.dumps(process[1])),
-                event_type=EVENT_TYPE_ISLAND
+                event_type=EVENT_TYPE_MONKEY_LOCAL
             ))
 
         if len(av_processes) > 0:

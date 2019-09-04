@@ -15,15 +15,9 @@ class SegmentationFinding(Finding):
     @staticmethod
     def create_or_add_to_existing_finding(subnets, status, segmentation_event):
         """
-        If you're trying to add a Failed finding:
-        If the finding doesn't exist at all: create failed
-        else:
-            if pass, turn to fail
-        add event
-
-        If you're trying to add a Passed finding:
-        If the finding doesn't exist at all: create Passed
-        else: add event
+        Creates a segmentation finding. If a segmentation finding with the relevant subnets already exists, adds the
+        event to the existing finding, and the "worst" status is chosen (i.e. if the existing one is "Failed" it will
+        remain so).   
 
         :param subnets: the 2 subnets of this finding.
         :param status: STATUS_PASSED or STATUS_FAILED

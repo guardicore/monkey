@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import 'styles/ZeroTrustPillars.css'
 import {statusToLabelType} from "./StatusLabel";
 import * as PropTypes from "prop-types";
 
