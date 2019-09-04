@@ -4,16 +4,6 @@ from common.data.post_breach_consts import POST_BREACH_BACKDOOR_USER
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.config import WormConfiguration
 
-__author__ = 'danielg'
-
-LINUX_COMMANDS = ['useradd', '-M', '--expiredate',
-                  datetime.datetime.today().strftime('%Y-%m-%d'), '--inactive', '0', '-c', 'MONKEY_USER',
-                  WormConfiguration.user_to_add]
-
-WINDOWS_COMMANDS = ['net', 'user', WormConfiguration.user_to_add,
-                    WormConfiguration.remote_user_pass,
-                    '/add', '/ACTIVE:NO']
-
 
 class BackdoorUser(PBA):
     def __init__(self):
@@ -34,13 +24,13 @@ class BackdoorUser(PBA):
     def get_linux_commands_to_add_user(username):
         linux_cmds = [
             'useradd',
-            '-M',
+            '-M',  # Do not create homedir
             '--expiredate',
             datetime.datetime.today().strftime('%Y-%m-%d'),
             '--inactive',
             '0',
-            '-c',
-            'MONKEY_USER',
+            '-c',  # Comment
+            'MONKEY_USER',  # Comment
             username]
         return linux_cmds
 

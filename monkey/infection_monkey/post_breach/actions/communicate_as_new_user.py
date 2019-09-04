@@ -95,8 +95,9 @@ class CommunicateAsNewUser(PBA):
                 linux_cmds = BackdoorUser.get_linux_commands_to_add_user(username)
                 commandline = "'ping -c 2 google.com'"
                 linux_cmds.extend([";", "sudo", "-u", username, commandline])
-                logger.debug("Trying these commands: {}".format(str(linux_cmds)))
-                output = subprocess.check_output(linux_cmds, stderr=subprocess.STDOUT, shell=True)
+                final_command = ' '.join(linux_cmds)
+                logger.debug("Trying to execute these commands: {}".format(final_command))
+                output = subprocess.check_output(final_command, stderr=subprocess.STDOUT, shell=True)
                 PostBreachTelem(self, (
                     CREATED_PROCESS_AS_USER_LINUX_FORMAT.format(commandline, username, output[:50]), True)).send()
                 return
