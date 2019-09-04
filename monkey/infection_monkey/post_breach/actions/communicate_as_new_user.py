@@ -93,7 +93,7 @@ class CommunicateAsNewUser(PBA):
         else:
             try:
                 linux_cmds = BackdoorUser.get_linux_commands_to_add_user(username)
-                commandline = "'ping -c 2 google.com'"
+                commandline = "ping -c 2 google.com"
                 linux_cmds.extend([";", "sudo", "-u", username, commandline])
                 final_command = ' '.join(linux_cmds)
                 logger.debug("Trying to execute these commands: {}".format(final_command))
