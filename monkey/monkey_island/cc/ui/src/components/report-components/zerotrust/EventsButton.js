@@ -33,7 +33,7 @@ export default class EventsButton extends Component {
 
   createEventsAmountBadge() {
     let eventsAmountBadge;
-    if (this.props.events.length > 10) {
+    if (this.props.events.length > 9) {
       eventsAmountBadge = <Badge>9+</Badge>;
     } else {
       eventsAmountBadge = <Badge>{this.props.events.length}</Badge>;
