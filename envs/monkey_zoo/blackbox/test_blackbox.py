@@ -1,16 +1,15 @@
-import os
 import unittest
 
 import pytest
 
 from envs.monkey_zoo.blackbox.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
+from envs.monkey_zoo.blackbox.island_config_parser import IslandConfigParser
 
 
-def generic_blackbox_test_case(client, config_file_path, analyzers):
-    with open(config_file_path, "r") as config_file:
-        client.import_config(config_file.read())
-    client.run_monkey_local()
+def generic_blackbox_test_case(client, raw_config, analyzers):
+    client.import_config(raw_config)
+    # client.run_monkey_local()
     for analyzer in analyzers:
         assert analyzer.analyze_test_results()
 
@@ -33,11 +32,10 @@ class TestMonkeyBlackbox(unittest.TestCase):
         assert client.get_api_status() is not None
 
     def test_ssh_exec(self):
+        conf_file_name = 'SSH.conf'
         client = MonkeyIslandClient(self.island)
-        conf_file_name = "SSH.conf"
-        generic_blackbox_test_case(client, get_conf_file_path(conf_file_name),
-                                   [CommunicationAnalyzer(client, ["10.2.2.41", "10.2.2.42"])])
+        config_parser = IslandConfigParser(conf_file_name)
+        analyzer = CommunicationAnalyzer(client, config_parser.get_ips_of_targets())
+        generic_blackbox_test_case(client, config_parser.config_raw, [analyzer])
 
 
-def get_conf_file_path(conf_file_name):
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "island_configs", conf_file_name)
