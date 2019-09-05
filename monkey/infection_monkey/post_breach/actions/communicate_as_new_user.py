@@ -38,14 +38,17 @@ class CommunicateAsNewUser(PBA):
 
     def communicate_as_new_user_linux(self, username):
         try:
+            # add user + ping
             linux_cmds = BackdoorUser.get_linux_commands_to_add_user(username)
             commandline = "ping -c 2 google.com"
             linux_cmds.extend([";", "sudo", "-u", username, commandline])
             final_command = ' '.join(linux_cmds)
-            logger.debug("Trying to execute these commands: {}".format(final_command))
             output = subprocess.check_output(final_command, stderr=subprocess.STDOUT, shell=True)
             PostBreachTelem(self, (
                 CREATED_PROCESS_AS_USER_LINUX_FORMAT.format(commandline, username, output[:150]), True)).send()
+            # delete the user
+            _ = subprocess.check_output(
+                BackdoorUser.get_linux_commands_to_delete_user(username), stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as e:
             PostBreachTelem(self, (e.output, False)).send()
 

@@ -22,7 +22,7 @@ class BackdoorUser(PBA):
 
     @staticmethod
     def get_linux_commands_to_add_user(username):
-        linux_cmds = [
+        return [
             'useradd',
             '-M',  # Do not create homedir
             '--expiredate',
@@ -32,7 +32,13 @@ class BackdoorUser(PBA):
             '-c',  # Comment
             'MONKEY_USER',  # Comment
             username]
-        return linux_cmds
+
+    @staticmethod
+    def get_linux_commands_to_delete_user(username):
+        return [
+            'deluser',
+            username
+        ]
 
     @staticmethod
     def get_windows_commands_to_add_user(username, password, should_be_active=False):
@@ -45,3 +51,11 @@ class BackdoorUser(PBA):
         if not should_be_active:
             windows_cmds.append('/ACTIVE:NO')
         return windows_cmds
+
+    @staticmethod
+    def get_windows_commands_to_delete_user(username):
+        return [
+            'net',
+            'user',
+            username,
+            '/delete']

@@ -2,7 +2,6 @@ import logging
 import subprocess
 
 from infection_monkey.post_breach.actions.add_user import BackdoorUser
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 
 
 logger = logging.getLogger(__name__)
@@ -17,14 +16,14 @@ class NewUser(object):
     RAII object to use for creating and using a new user in Windows. Use with `with`.
     User will be created when the instance is instantiated.
     User will log on start of `with` scope.
-    User will log off on end of `with` scope.
+    User will log off and get deleted on end of `with` scope.
 
     Example:
              # Created                           # Logged on
         with NewUser("user", "pass") as new_user:
             ...
             ...
-        # Logged off
+        # Logged off and deleted
         ...
     """
     def __init__(self, username, password):
@@ -36,7 +35,6 @@ class NewUser(object):
         self.password = password
 
         windows_cmds = BackdoorUser.get_windows_commands_to_add_user(self.username, self.password, True)
-        logger.debug("Trying these commands: {}".format(str(windows_cmds)))
         _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT, shell=True)
 
     def __enter__(self):
@@ -60,5 +58,12 @@ class NewUser(object):
         return self.logon_handle
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        # Logoff
         self.logon_handle.Close()
-        # TODO Delete user
+
+        # Try to delete user
+        try:
+            _ = subprocess.check_output(
+                BackdoorUser.get_windows_commands_to_delete_user(self.username), stderr=subprocess.STDOUT, shell=True)
+        except Exception as err:
+            raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))
