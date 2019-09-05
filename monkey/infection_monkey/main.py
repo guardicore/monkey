@@ -127,8 +127,8 @@ def main():
                 json.dump(json_dict, config_fo, skipkeys=True, sort_keys=True, indent=4, separators=(',', ': '))
 
         return True
-    except Exception:
-        LOG.exception("Exception thrown from monkey's start function")
+    except Exception as e:
+        LOG.exception("Exception thrown from monkey's start function. More info: {}".format(e))
     finally:
         monkey.cleanup()
 
