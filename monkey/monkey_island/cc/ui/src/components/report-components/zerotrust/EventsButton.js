@@ -20,23 +20,26 @@ export default class EventsButton extends Component {
   };
 
   render() {
+    return <Fragment>
+        <EventsModal events={this.props.events} showEvents={this.state.isShow} hideCallback={this.hide}
+                     exportFilename={this.props.exportFilename}/>
+        <div className="text-center" style={{"display": "grid"}}>
+          <Button className="btn btn-primary btn-lg" onClick={this.show}>
+            <i className="fa fa-list"/> Events {this.createEventsAmountBadge()}
+          </Button>
+        </div>
+    </Fragment>;
+  }
+
+  createEventsAmountBadge() {
     let eventsAmountBadge;
     if (this.props.events.length > 10) {
       eventsAmountBadge = <Badge>9+</Badge>;
     } else {
       eventsAmountBadge = <Badge>{this.props.events.length}</Badge>;
     }
-    return <Fragment>
-        <EventsModal events={this.props.events} showEvents={this.state.isShow} hideCallback={this.hide}
-                     exportFilename={this.props.exportFilename}/>
-        <div className="text-center" style={{"display": "grid"}}>
-          <Button className="btn btn-primary btn-lg" onClick={this.show}>
-            <i className="fa fa-list"/> Events {eventsAmountBadge}
-          </Button>
-        </div>
-    </Fragment>;
+    return eventsAmountBadge;
   }
-
 }
 
 EventsButton.propTypes = {
