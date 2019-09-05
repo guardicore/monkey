@@ -21,7 +21,7 @@ json_setup_logging(default_path=os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'isla
 logger = logging.getLogger(__name__)
 
 from monkey_island.cc.app import init_app
-from cc.services.reporting.exporter_init import populate_exporter_list
+from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list
 from monkey_island.cc.utils import local_ip_addresses
 from monkey_island.cc.environment.environment import env
 from monkey_island.cc.database import is_db_server_up, get_db_version
