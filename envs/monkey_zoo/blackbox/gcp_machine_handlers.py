@@ -22,6 +22,7 @@ class GCPHandler(object):
             print("GCP Handler failed to initialize: %s." % e)
 
     def start_machines(self, machine_list):
+        print("Setting up all GCP machines...")
         try:
             subprocess.call((GCPHandler.MACHINE_STARTING_COMMAND % (machine_list, self.zone)), shell=True)
             print("GCP machines successfully started.")
