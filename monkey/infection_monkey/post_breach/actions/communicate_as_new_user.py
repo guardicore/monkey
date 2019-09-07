@@ -70,7 +70,7 @@ class CommunicateAsNewUser(PBA):
                     # Open process as that user:
                     # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera
                     commandline = "{} {} {} {}".format(ping_app_path, "google.com", "-n", "2")
-                    process_handle = win32process.CreateProcessAsUser(
+                    process_info = win32process.CreateProcessAsUser(
                         new_user.get_logon_handle(),  # A handle to the primary token that represents a user.
                         None,  # The name of the module to be executed.
                         commandline,  # The command line to be executed.
@@ -89,8 +89,8 @@ class CommunicateAsNewUser(PBA):
                     PostBreachTelem(self,
                                     (CREATED_PROCESS_AS_USER_WINDOWS_FORMAT.format(commandline, username), True)).send()
 
-                    win32api.CloseHandle(process_handle[0])  # Process handle
-                    win32api.CloseHandle(process_handle[1])  # Thread handle
+                    win32api.CloseHandle(process_info[0])  # Process handle
+                    win32api.CloseHandle(process_info[1])  # Thread handle
 
                 except Exception as e:
                     # TODO: if failed on 1314, we can try to add elevate the rights of the current user with the
@@ -100,8 +100,6 @@ class CommunicateAsNewUser(PBA):
                     #  2. need to find how to do this using python...
                     PostBreachTelem(self, (
                         "Failed to open process as user {}. Error: {}".format(username, str(e)), False)).send()
-
-                    # Nothing more we can do. Leak the process handle.
         except subprocess.CalledProcessError as err:
             PostBreachTelem(self, (
                 "Couldn't create the user '{}'. Error output is: '{}'".format(username, str(err)),
