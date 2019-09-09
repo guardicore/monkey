@@ -215,8 +215,7 @@ class AppComponent extends AuthComponent {
     if (this.state.completedSteps.infection_done) {
       const hostname = window.location.hostname;
       const port = window.location.port;
-      let url = `https://${hostname}:${port}/${reportZeroTrustPath}`;
-      console.log("Trying to show notification. URL: " + url + " | icon: " + notificationIcon);
+      let url = `https://${hostname}:${port}${reportZeroTrustPath}`;
 
       Notifier.start(
         "Monkey Island",
