@@ -212,20 +212,22 @@ class AppComponent extends AuthComponent {
   }
 
   showInfectionDoneNotification() {
-    if (this.state.completedSteps.infection_done) {
-      // No need to show the notification to redirect to the report if we're already in the report page
-      if (!window.location.href.includes("report")) {
-        const hostname = window.location.hostname;
-        const port = window.location.port;
-        let url = `https://${hostname}:${port}${reportZeroTrustRoute}`;
+    if (this.shouldShowNotification()) {
+      const hostname = window.location.hostname;
+      const port = window.location.port;
+      const url = `https://${hostname}:${port}${reportZeroTrustRoute}`;
 
-        Notifier.start(
-          "Monkey Island",
-          "Infection is done! Click here to go to the report page.",
-          url,
-          notificationIcon);
-      }
+      Notifier.start(
+        "Monkey Island",
+        "Infection is done! Click here to go to the report page.",
+        url,
+        notificationIcon);
     }
+  }
+
+  shouldShowNotification() {
+    // No need to show the notification to redirect to the report if we're already in the report page
+    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith("/report"));
   }
 }
 
