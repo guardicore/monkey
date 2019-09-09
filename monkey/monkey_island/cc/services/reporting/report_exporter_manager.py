@@ -27,9 +27,9 @@ class ReportExporterManager(object):
         self._exporters_set.add(exporter)
 
     def export(self, report):
-        try:
-            for exporter in self._exporters_set:
-                logger.debug("Trying to export using " + repr(exporter))
+        for exporter in self._exporters_set:
+            logger.debug("Trying to export using " + repr(exporter))
+            try:
                 exporter().handle_report(report)
-        except Exception as e:
-            logger.exception('Failed to export report, error: ' + e.message)
+            except Exception as e:
+                logger.exception('Failed to export report, error: ' + e.message)
