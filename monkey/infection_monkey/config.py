@@ -199,7 +199,7 @@ class Configuration(object):
                         9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
-    tcp_scan_interval = 0
+    tcp_scan_interval = 0  # in milliseconds
     tcp_scan_get_banner = True
 
     # Ping Scanner
