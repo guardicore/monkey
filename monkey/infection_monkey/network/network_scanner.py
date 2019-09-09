@@ -1,3 +1,4 @@
+import itertools
 import time
 
 from common.network.network_range import *
@@ -11,6 +12,22 @@ __author__ = 'itamar'
 LOG = logging.getLogger(__name__)
 
 SCAN_DELAY = 0
+ITERATION_BLOCK_SIZE = 5
+
+
+def _grouper(iterables, chunk_size):
+    """
+    Goes over an iterable using chunks
+    :param iterables: a sequence of iterable objects
+    :param chunk_size:  Chunk size, last chunk may be smaller
+    :return:
+    """
+    iterable = itertools.chain(*iterables)
+    while True:
+        group = tuple(itertools.islice(iterable, chunk_size))
+        if not group:
+            break
+        yield group
 
 
 class NetworkScanner(object):
@@ -69,35 +86,37 @@ class NetworkScanner(object):
         :return: yields a sequence of VictimHost instances
         """
 
-        TCPscan = TcpScanner()
-        Pinger = PingScanner()
+        tcp_scan = TcpScanner()
+        ping_scan = PingScanner()
         victims_count = 0
+        for network_chunk in _grouper(self._ranges, ITERATION_BLOCK_SIZE):
+            LOG.debug("Scanning for potential victims in chunk %r", network_chunk)
+            victim_chunk = []
+            for address in network_chunk:
+                #if hasattr(net_range, 'domain_name'):
+                #    victim = VictimHost(address, net_range.domain_name)
+                #else:
+                victim = VictimHost(address)
 
-        for net_range in self._ranges:
-            LOG.debug("Scanning for potential victims in the network %r", net_range)
-            for ip_addr in net_range:
-                if hasattr(net_range, 'domain_name'):
-                    victim = VictimHost(ip_addr, net_range.domain_name)
-                else:
-                    victim = VictimHost(ip_addr)
-                if stop_callback and stop_callback():
-                    LOG.debug("Got stop signal")
-                    break
+                victim_chunk.append(victim)
+            # skip self IP addresses
+            victim_chunk = [x for x in victim_chunk if x.ip_addr not in self._ip_addresses]
+            # skip IPs marked as blocked
 
-                # skip self IP address
-                if victim.ip_addr in self._ip_addresses:
-                    continue
+            bad_victims = [x for x in victim_chunk if x.ip_addr in WormConfiguration.blocked_ips]
+            for victim in bad_victims:
+                LOG.info("Skipping %s due to blacklist" % victim)
+            victim_chunk = [x for x in victim_chunk if x.ip_addr not in WormConfiguration.blocked_ips]
 
-                # skip IPs marked as blocked
-                if victim.ip_addr in WormConfiguration.blocked_ips:
-                    LOG.info("Skipping %s due to blacklist" % victim)
-                    continue
+            # check before running scans
+            if stop_callback and stop_callback():
+                LOG.debug("Got stop signal")
+                break
 
+            for victim in victim_chunk:
                 LOG.debug("Scanning %r...", victim)
-                pingAlive = Pinger.is_host_alive(victim)
-                tcpAlive = TCPscan.is_host_alive(victim)
-
-                # if scanner detect machine is up, add it to victims list
+                pingAlive = ping_scan.is_host_alive(victim)
+                tcpAlive = tcp_scan.is_host_alive(victim)
                 if pingAlive or tcpAlive:
                     LOG.debug("Found potential victim: %r", victim)
                     victims_count += 1
@@ -107,10 +126,9 @@ class NetworkScanner(object):
                         LOG.debug("Found max needed victims (%d), stopping scan", max_find)
 
                         break
-
-                if WormConfiguration.tcp_scan_interval:
-                    # time.sleep uses seconds, while config is in milliseconds
-                    time.sleep(WormConfiguration.tcp_scan_interval/float(1000))
+            if WormConfiguration.tcp_scan_interval:
+                # time.sleep uses seconds, while config is in milliseconds
+                time.sleep(WormConfiguration.tcp_scan_interval / float(1000))
 
     @staticmethod
     def _is_any_ip_in_subnet(ip_addresses, subnet_str):
