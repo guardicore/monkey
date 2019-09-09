@@ -57,7 +57,8 @@ RECOMMENDATIONS = {
     RECOMMENDATION_ENDPOINT_SECURITY: u"Use anti-virus and other traditional endpoint security solutions.",
     RECOMMENDATION_DATA_TRANSIT: u"Secure data at transit by encrypting it.",
     RECOMMENDATION_RESTRICTIVE_NETWORK_POLICIES: u"Configure network policies to be as restrictive as possible.",
-    RECOMMENDATION_USERS_MAC_POLICIES: u"Users' permissions to the network and to resources should be MAC only.",
+    RECOMMENDATION_USERS_MAC_POLICIES: u"Users' permissions to the network and to resources should be MAC (Mandetory "
+                                       u"Access Control) only.",
 }
 
 POSSIBLE_STATUSES_KEY = u"possible_statuses"

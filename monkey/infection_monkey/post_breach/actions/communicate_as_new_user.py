@@ -3,6 +3,7 @@ import os
 import random
 import string
 import subprocess
+import time
 
 from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
 from infection_monkey.monkey_utils.windows.new_user import NewUser, NewUserError
@@ -11,8 +12,12 @@ from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils import is_windows_os
 
-CREATED_PROCESS_AS_USER_WINDOWS_FORMAT = "Created process '{}' as user '{}'."
-CREATED_PROCESS_AS_USER_LINUX_FORMAT = "Created process '{}' as user '{}'. Some of the output was '{}'."
+PING_TEST_DOMAIN = "google.com"
+
+PING_WAIT_TIMEOUT_IN_SECONDS = 20
+
+CREATED_PROCESS_AS_USER_PING_SUCCESS_FORMAT = "Created process '{}' as user '{}', and successfully pinged."
+CREATED_PROCESS_AS_USER_PING_FAILED_FORMAT = "Created process '{}' as user '{}', but failed to ping (exit status {})."
 
 USERNAME = "somenewuser"
 PASSWORD = "N3WPa55W0rD!1"
@@ -40,12 +45,11 @@ class CommunicateAsNewUser(PBA):
         try:
             # add user + ping
             linux_cmds = BackdoorUser.get_linux_commands_to_add_user(username)
-            commandline = "ping -c 2 google.com"
+            commandline = "ping -c 1 {}".format(PING_TEST_DOMAIN)
             linux_cmds.extend([";", "sudo", "-u", username, commandline])
             final_command = ' '.join(linux_cmds)
-            output = subprocess.check_output(final_command, stderr=subprocess.STDOUT, shell=True)
-            PostBreachTelem(self, (
-                CREATED_PROCESS_AS_USER_LINUX_FORMAT.format(commandline, username, output[:150]), True)).send()
+            exit_status = os.system(final_command)
+            self.send_ping_result_telemetry(exit_status, commandline, username)
             # delete the user
             _ = subprocess.check_output(
                 BackdoorUser.get_linux_commands_to_delete_user(username), stderr=subprocess.STDOUT, shell=True)
@@ -69,7 +73,7 @@ class CommunicateAsNewUser(PBA):
                 try:
                     # Open process as that user:
                     # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera
-                    commandline = "{} {} {} {}".format(ping_app_path, "google.com", "-n", "2")
+                    commandline = "{} {} {} {}".format(ping_app_path, PING_TEST_DOMAIN, "-n", "1")
                     process_info = win32process.CreateProcessAsUser(
                         new_user.get_logon_handle(),  # A handle to the primary token that represents a user.
                         None,  # The name of the module to be executed.
@@ -86,8 +90,15 @@ class CommunicateAsNewUser(PBA):
                         # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
                     )
 
-                    PostBreachTelem(self,
-                                    (CREATED_PROCESS_AS_USER_WINDOWS_FORMAT.format(commandline, username), True)).send()
+                    ping_exit_code = win32process.GetExitCodeProcess(process_info[0])
+                    counter = 0
+                    while ping_exit_code == win32con.STILL_ACTIVE and counter < PING_WAIT_TIMEOUT_IN_SECONDS:
+                        ping_exit_code = win32process.GetExitCodeProcess(process_info[0])
+                        counter += 1
+                        logger.debug("Waiting for ping to finish, round {}. Exit code: {}".format(counter, ping_exit_code))
+                        time.sleep(1)
+
+                    self.send_ping_result_telemetry(ping_exit_code, commandline, username)
 
                     win32api.CloseHandle(process_info[0])  # Process handle
                     win32api.CloseHandle(process_info[1])  # Thread handle
@@ -106,3 +117,11 @@ class CommunicateAsNewUser(PBA):
                 False)).send()
         except NewUserError as e:
             PostBreachTelem(self, (str(e), False)).send()
+
+    def send_ping_result_telemetry(self, exit_status, commandline, username):
+        if exit_status == 0:
+            PostBreachTelem(self, (
+                CREATED_PROCESS_AS_USER_PING_SUCCESS_FORMAT.format(commandline, username), True)).send()
+        else:
+            PostBreachTelem(self, (
+                CREATED_PROCESS_AS_USER_PING_FAILED_FORMAT.format(commandline, username, exit_status), False)).send()
