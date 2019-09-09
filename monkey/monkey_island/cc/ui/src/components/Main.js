@@ -29,7 +29,7 @@ let infectionMonkeyImage = require('../images/infection-monkey.svg');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
-const reportZeroTrustPath = '/report/zero_trust';
+const reportZeroTrustRoute = '/report/zero_trust';
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
@@ -202,7 +202,7 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/report/security', <ReportPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute(reportZeroTrustPath, <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute(reportZeroTrustRoute, <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>
@@ -213,15 +213,18 @@ class AppComponent extends AuthComponent {
 
   showInfectionDoneNotification() {
     if (this.state.completedSteps.infection_done) {
-      const hostname = window.location.hostname;
-      const port = window.location.port;
-      let url = `https://${hostname}:${port}${reportZeroTrustPath}`;
+      // No need to show the notification to redirect to the report if we're already in the report page
+      if (!window.location.href.includes("report")) {
+        const hostname = window.location.hostname;
+        const port = window.location.port;
+        let url = `https://${hostname}:${port}${reportZeroTrustRoute}`;
 
-      Notifier.start(
-        "Monkey Island",
-        "Infection is done! Click here to go to the report page.",
-        url,
-        notificationIcon);
+        Notifier.start(
+          "Monkey Island",
+          "Infection is done! Click here to go to the report page.",
+          url,
+          notificationIcon);
+      }
     }
   }
 }
