@@ -1,11 +1,13 @@
 import sys
 import itertools
 import time
+import logging
+
 if sys.platform.startswith("win"):
     from multiprocessing.dummy import Pool
 else:
     from multiprocessing import Pool
-from common.network.network_range import *
+from common.network.network_range import NetworkRange
 from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
 from infection_monkey.model import VictimHost
