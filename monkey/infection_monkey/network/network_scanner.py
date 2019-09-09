@@ -1,6 +1,10 @@
+import sys
 import itertools
 import time
-
+if sys.platform.startswith("win"):
+    from multiprocessing.dummy import Pool
+else:
+    from multiprocessing import Pool
 from common.network.network_range import *
 from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
@@ -34,6 +38,7 @@ class NetworkScanner(object):
     def __init__(self):
         self._ip_addresses = None
         self._ranges = None
+        self.scanners = [TcpScanner(), PingScanner()]
 
     def initialize(self):
         """
@@ -85,17 +90,15 @@ class NetworkScanner(object):
         :param stop_callback: A callback to check at any point if we should stop scanning
         :return: yields a sequence of VictimHost instances
         """
-
-        tcp_scan = TcpScanner()
-        ping_scan = PingScanner()
+        pool = Pool()
         victims_count = 0
         for network_chunk in _grouper(self._ranges, ITERATION_BLOCK_SIZE):
             LOG.debug("Scanning for potential victims in chunk %r", network_chunk)
             victim_chunk = []
             for address in network_chunk:
-                #if hasattr(net_range, 'domain_name'):
+                # if hasattr(net_range, 'domain_name'):
                 #    victim = VictimHost(address, net_range.domain_name)
-                #else:
+                # else:
                 victim = VictimHost(address)
 
                 victim_chunk.append(victim)
@@ -113,19 +116,17 @@ class NetworkScanner(object):
                 LOG.debug("Got stop signal")
                 break
 
-            for victim in victim_chunk:
-                LOG.debug("Scanning %r...", victim)
-                pingAlive = ping_scan.is_host_alive(victim)
-                tcpAlive = tcp_scan.is_host_alive(victim)
-                if pingAlive or tcpAlive:
-                    LOG.debug("Found potential victim: %r", victim)
-                    victims_count += 1
-                    yield victim
+            results = pool.map(self.scan_machine, victim_chunk)
+            resulting_victims = [x for x in results if x]  # filter out dead addresses
+            for victim in resulting_victims:
+                LOG.debug("Found potential victim: %r", victim)
+                victims_count += 1
+                yield victim
 
-                    if victims_count >= max_find:
-                        LOG.debug("Found max needed victims (%d), stopping scan", max_find)
+                if victims_count >= max_find:
+                    LOG.debug("Found max needed victims (%d), stopping scan", max_find)
 
-                        break
+                    break
             if WormConfiguration.tcp_scan_interval:
                 # time.sleep uses seconds, while config is in milliseconds
                 time.sleep(WormConfiguration.tcp_scan_interval / float(1000))
@@ -136,6 +137,19 @@ class NetworkScanner(object):
             if NetworkRange.get_range_obj(subnet_str).is_in_range(ip_address):
                 return True
         return False
+
+    def scan_machine(self, victim):
+        """
+        Scans specific machine using given scanner
+        :param victim: VictimHost machine
+        :return: Victim or None if victim isn't alive
+        """
+        LOG.debug("Scanning target address: %r", victim)
+        if any([scanner.is_host_alive(victim.ip_addr) for scanner in self.scanners]):
+            LOG.debug("Found potential target_ip: %r", victim)
+            return victim
+        else:
+            return None
 
     def on_island(self, server):
         return bool([x for x in self._ip_addresses if x in server])
