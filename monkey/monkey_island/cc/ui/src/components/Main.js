@@ -29,6 +29,8 @@ let infectionMonkeyImage = require('../images/infection-monkey.svg');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
+const reportZeroTrustPath = '/report/zero_trust';
+
 class AppComponent extends AuthComponent {
   updateStatus = () => {
     this.auth.loggedIn()
@@ -200,7 +202,7 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/report/security', <ReportPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/report/zero_trust', <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute(reportZeroTrustPath, <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>
@@ -211,8 +213,9 @@ class AppComponent extends AuthComponent {
 
   showInfectionDoneNotification() {
     if (this.state.completedSteps.infection_done) {
-      let hostname = window.location.hostname;
-      let url = `https://${hostname}:5000/report`;
+      const hostname = window.location.hostname;
+      const port = window.location.port;
+      let url = `https://${hostname}:${port}/${reportZeroTrustPath}`;
       console.log("Trying to show notification. URL: " + url + " | icon: " + notificationIcon);
 
       Notifier.start(
