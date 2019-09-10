@@ -35,7 +35,7 @@ class FindingsSection extends Component {
         </p>
 
         <FindingsTable data={findingsByStatus[ZeroTrustStatuses.failed]} status={ZeroTrustStatuses.failed}/>
-        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.inconclusive]} status={ZeroTrustStatuses.inconclusive}/>
+        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.verify]} status={ZeroTrustStatuses.verify}/>
         <FindingsTable data={findingsByStatus[ZeroTrustStatuses.passed]} status={ZeroTrustStatuses.passed}/>
       </div>
     );

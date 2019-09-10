@@ -69,6 +69,6 @@ def test_open_data_endpoints(telemetry_json):
 
     AggregateFinding.create_or_add_to_existing(
         test=TEST_MALICIOUS_ACTIVITY_TIMELINE,
-        status=STATUS_INCONCLUSIVE,
+        status=STATUS_VERIFY,
         events=events
     )

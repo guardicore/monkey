@@ -1,4 +1,4 @@
-from common.data.zero_trust_consts import TEST_TUNNELING, STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK, STATUS_INCONCLUSIVE, \
+from common.data.zero_trust_consts import TEST_TUNNELING, STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK, STATUS_VERIFY, \
     TEST_MALICIOUS_ACTIVITY_TIMELINE
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
@@ -26,6 +26,6 @@ def test_tunneling_violation(tunnel_telemetry_json):
 
         AggregateFinding.create_or_add_to_existing(
             test=TEST_MALICIOUS_ACTIVITY_TIMELINE,
-            status=STATUS_INCONCLUSIVE,
+            status=STATUS_VERIFY,
             events=tunneling_events
         )

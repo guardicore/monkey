@@ -36,7 +36,7 @@ class ZeroTrustReportLegend extends Component {
         </li>
         <li>
           <div style={{display: "inline-block"}}>
-            <StatusLabel showText={true} status={ZeroTrustStatuses.inconclusive}/>
+            <StatusLabel showText={true} status={ZeroTrustStatuses.verify}/>
           </div>
           {"\t"}At least one of the tests’ results related to this component requires further manual verification.
         </li>
@@ -50,11 +50,10 @@ class ZeroTrustReportLegend extends Component {
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.unexecuted}/>
           </div>
-          {"\t"}This status means the test wasn't executed.
+          {"\t"}This status means the test wasn't executed.To activate more tests, refer to the Monkey <NavLink to="/configuration"><u>configuration</u></NavLink> page.
         </li>
       </ul>
       <hr />
-      To activate more tests, go to the Monkey <NavLink to="/configuration"><u>configuration</u></NavLink> page.n
     </div>;
   }
 }

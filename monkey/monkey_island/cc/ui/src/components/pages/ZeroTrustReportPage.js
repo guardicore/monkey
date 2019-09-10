@@ -8,7 +8,7 @@ import PrintReportButton from "../report-components/common/PrintReportButton";
 import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
 import SummarySection from "../report-components/zerotrust/SummarySection";
 import FindingsSection from "../report-components/zerotrust/FindingsSection";
-import RecommendationsSection from "../report-components/zerotrust/RecommendationsSection";
+import PrinciplesSection from "../report-components/zerotrust/PrinciplesSection";
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -72,8 +72,8 @@ class ZeroTrustReportPageComponent extends AuthComponent {
     } else {
       content = <div id="MainContentSection">
         <SummarySection allMonkeysAreDead={this.state.allMonkeysAreDead} pillars={this.state.pillars}/>
-        <RecommendationsSection recommendations={this.state.recommendations}
-                                pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
+        <PrinciplesSection principles={this.state.principles}
+                           pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
         <FindingsSection pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
       </div>;
     }
@@ -102,7 +102,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   stillLoadingDataFromServer() {
     return typeof this.state.findings === "undefined"
       || typeof this.state.pillars === "undefined"
-      || typeof this.state.recommendations === "undefined";
+      || typeof this.state.principles === "undefined";
   }
 
   getZeroTrustReportFromServer() {
@@ -114,11 +114,11 @@ class ZeroTrustReportPageComponent extends AuthComponent {
           findings: res
         });
       });
-    this.authFetch('/api/report/zero_trust/recommendations')
+    this.authFetch('/api/report/zero_trust/principles')
       .then(res => res.json())
       .then(res => {
         this.setState({
-          recommendations: res
+          principles: res
         });
       });
     this.authFetch('/api/report/zero_trust/pillars')

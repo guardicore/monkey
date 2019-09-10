@@ -3,14 +3,14 @@ import * as PropTypes from "prop-types";
 
 const statusToIcon = {
   "Passed": "fa-check",
-  "Inconclusive": "fa-exclamation-triangle",
+  "Verify": "fa-exclamation-triangle",
   "Failed": "fa-bomb",
   "Unexecuted": "fa-question",
 };
 
 export const statusToLabelType = {
   "Passed": "label-success",
-  "Inconclusive": "label-warning",
+  "Verify": "label-warning",
   "Failed": "label-danger",
   "Unexecuted": "label-default",
 };

@@ -11,12 +11,12 @@ def save_example_findings():
     Finding.save_finding(TEST_ENDPOINT_SECURITY_EXISTS, STATUS_PASSED, [])  # devices passed = 2
     Finding.save_finding(TEST_ENDPOINT_SECURITY_EXISTS, STATUS_FAILED, [])  # devices failed = 1
     # devices unexecuted = 1
-    # people inconclusive = 1
-    # networks inconclusive = 1
-    Finding.save_finding(TEST_SCHEDULED_EXECUTION, STATUS_INCONCLUSIVE, [])
-    # people inconclusive = 2
-    # networks inconclusive = 2
-    Finding.save_finding(TEST_SCHEDULED_EXECUTION, STATUS_INCONCLUSIVE, [])
+    # people verify = 1
+    # networks verify = 1
+    Finding.save_finding(TEST_SCHEDULED_EXECUTION, STATUS_VERIFY, [])
+    # people verify = 2
+    # networks verify = 2
+    Finding.save_finding(TEST_SCHEDULED_EXECUTION, STATUS_VERIFY, [])
     # data failed 1
     Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_FAILED, [])
     # data failed 2
@@ -27,10 +27,10 @@ def save_example_findings():
     Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_FAILED, [])
     # data failed 5
     Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_FAILED, [])
-    # data inconclusive 1
-    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_INCONCLUSIVE, [])
-    # data inconclusive 2
-    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_INCONCLUSIVE, [])
+    # data verify 1
+    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_VERIFY, [])
+    # data verify 2
+    Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_VERIFY, [])
     # data passed 1
     Finding.save_finding(TEST_DATA_ENDPOINT_HTTP, STATUS_PASSED, [])
 
@@ -45,49 +45,49 @@ class TestZeroTrustService(IslandTestCase):
         expected = [
             {
                 STATUS_FAILED: 5,
-                STATUS_INCONCLUSIVE: 2,
+                STATUS_VERIFY: 2,
                 STATUS_PASSED: 1,
                 STATUS_UNEXECUTED: 1,
                 "pillar": "Data"
             },
             {
                 STATUS_FAILED: 0,
-                STATUS_INCONCLUSIVE: 2,
+                STATUS_VERIFY: 2,
                 STATUS_PASSED: 0,
                 STATUS_UNEXECUTED: 0,
                 "pillar": "People"
             },
             {
                 STATUS_FAILED: 0,
-                STATUS_INCONCLUSIVE: 2,
+                STATUS_VERIFY: 2,
                 STATUS_PASSED: 0,
                 STATUS_UNEXECUTED: 2,
                 "pillar": "Networks"
             },
             {
                 STATUS_FAILED: 1,
-                STATUS_INCONCLUSIVE: 0,
+                STATUS_VERIFY: 0,
                 STATUS_PASSED: 2,
                 STATUS_UNEXECUTED: 1,
                 "pillar": "Devices"
             },
             {
                 STATUS_FAILED: 0,
-                STATUS_INCONCLUSIVE: 0,
+                STATUS_VERIFY: 0,
                 STATUS_PASSED: 0,
                 STATUS_UNEXECUTED: 0,
                 "pillar": "Workloads"
             },
             {
                 STATUS_FAILED: 0,
-                STATUS_INCONCLUSIVE: 0,
+                STATUS_VERIFY: 0,
                 STATUS_PASSED: 0,
                 STATUS_UNEXECUTED: 1,
                 "pillar": "Visibility & Analytics"
             },
             {
                 STATUS_FAILED: 0,
-                STATUS_INCONCLUSIVE: 0,
+                STATUS_VERIFY: 0,
                 STATUS_PASSED: 0,
                 STATUS_UNEXECUTED: 0,
                 "pillar": "Automation & Orchestration"
@@ -98,7 +98,7 @@ class TestZeroTrustService(IslandTestCase):
 
         self.assertEquals(result, expected)
 
-    def test_get_recommendations_status(self):
+    def test_get_principles_status(self):
         self.fail_if_not_testing_env()
         self.clean_finding_db()
 
@@ -108,7 +108,7 @@ class TestZeroTrustService(IslandTestCase):
             AUTOMATION_ORCHESTRATION: [],
             DATA: [
                 {
-                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_DATA_TRANSIT],
+                    "principle": PRINCIPLES[PRINCIPLE_DATA_TRANSIT],
                     "status": STATUS_FAILED,
                     "tests": [
                         {
@@ -124,7 +124,7 @@ class TestZeroTrustService(IslandTestCase):
             ],
             DEVICES: [
                 {
-                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_ENDPOINT_SECURITY],
+                    "principle": PRINCIPLES[PRINCIPLE_ENDPOINT_SECURITY],
                     "status": STATUS_FAILED,
                     "tests": [
                         {
@@ -140,7 +140,7 @@ class TestZeroTrustService(IslandTestCase):
             ],
             NETWORKS: [
                 {
-                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_SEGMENTATION],
+                    "principle": PRINCIPLES[PRINCIPLE_SEGMENTATION],
                     "status": STATUS_UNEXECUTED,
                     "tests": [
                         {
@@ -150,17 +150,17 @@ class TestZeroTrustService(IslandTestCase):
                     ]
                 },
                 {
-                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_USER_BEHAVIOUR],
-                    "status": STATUS_INCONCLUSIVE,
+                    "principle": PRINCIPLES[PRINCIPLE_USER_BEHAVIOUR],
+                    "status": STATUS_VERIFY,
                     "tests": [
                         {
-                            "status": STATUS_INCONCLUSIVE,
+                            "status": STATUS_VERIFY,
                             "test": TESTS_MAP[TEST_SCHEDULED_EXECUTION][TEST_EXPLANATION_KEY]
                         }
                     ]
                 },
                 {
-                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_ANALYZE_NETWORK_TRAFFIC],
+                    "principle": PRINCIPLES[PRINCIPLE_ANALYZE_NETWORK_TRAFFIC],
                     "status": STATUS_UNEXECUTED,
                     "tests": [
                         {
@@ -172,11 +172,11 @@ class TestZeroTrustService(IslandTestCase):
             ],
             PEOPLE: [
                 {
-                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_USER_BEHAVIOUR],
-                    "status": STATUS_INCONCLUSIVE,
+                    "principle": PRINCIPLES[PRINCIPLE_USER_BEHAVIOUR],
+                    "status": STATUS_VERIFY,
                     "tests": [
                         {
-                            "status": STATUS_INCONCLUSIVE,
+                            "status": STATUS_VERIFY,
                             "test": TESTS_MAP[TEST_SCHEDULED_EXECUTION][TEST_EXPLANATION_KEY]
                         }
                     ]
@@ -184,7 +184,7 @@ class TestZeroTrustService(IslandTestCase):
             ],
             "Visibility & Analytics": [
                 {
-                    "recommendation": RECOMMENDATIONS[RECOMMENDATION_ANALYZE_NETWORK_TRAFFIC],
+                    "principle": PRINCIPLES[PRINCIPLE_ANALYZE_NETWORK_TRAFFIC],
                     "status": STATUS_UNEXECUTED,
                     "tests": [
                         {
@@ -197,7 +197,7 @@ class TestZeroTrustService(IslandTestCase):
             "Workloads": []
         }
 
-        self.assertEquals(ZeroTrustService.get_recommendations_status(), expected)
+        self.assertEquals(ZeroTrustService.get_principles_status(), expected)
 
     def test_get_pillars_to_statuses(self):
         self.fail_if_not_testing_env()
@@ -222,8 +222,8 @@ class TestZeroTrustService(IslandTestCase):
         expected = {
             AUTOMATION_ORCHESTRATION: STATUS_UNEXECUTED,
             DEVICES: STATUS_FAILED,
-            NETWORKS: STATUS_INCONCLUSIVE,
-            PEOPLE: STATUS_INCONCLUSIVE,
+            NETWORKS: STATUS_VERIFY,
+            PEOPLE: STATUS_VERIFY,
             VISIBILITY_ANALYTICS: STATUS_UNEXECUTED,
             WORKLOADS: STATUS_UNEXECUTED,
             DATA: STATUS_FAILED

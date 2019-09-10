@@ -11,7 +11,7 @@ class TestAggregateFinding(IslandTestCase):
         self.clean_finding_db()
 
         test = TEST_MALICIOUS_ACTIVITY_TIMELINE
-        status = STATUS_INCONCLUSIVE
+        status = STATUS_VERIFY
         events = [Event.create_event("t", "t", EVENT_TYPE_ISLAND)]
         self.assertEquals(len(Finding.objects(test=test, status=status)), 0)
 
@@ -30,7 +30,7 @@ class TestAggregateFinding(IslandTestCase):
         self.clean_finding_db()
 
         test = TEST_MALICIOUS_ACTIVITY_TIMELINE
-        status = STATUS_INCONCLUSIVE
+        status = STATUS_VERIFY
         event = Event.create_event("t", "t", EVENT_TYPE_ISLAND)
         events = [event]
         self.assertEquals(len(Finding.objects(test=test, status=status)), 0)
