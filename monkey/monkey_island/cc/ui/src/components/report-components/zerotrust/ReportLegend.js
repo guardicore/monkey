@@ -44,7 +44,7 @@ class ZeroTrustReportLegend extends Component {
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.passed}/>
           </div>
-          {"\t"}The test passed, so this is OK 🙂
+          {"\t"}All Tests related to this pillar passed. No violation of a Zero Trust guiding principle was detected.
         </li>
         <li>
           <div style={{display: "inline-block"}}>
@@ -53,7 +53,6 @@ class ZeroTrustReportLegend extends Component {
           {"\t"}This status means the test wasn't executed.To activate more tests, refer to the Monkey <NavLink to="/configuration"><u>configuration</u></NavLink> page.
         </li>
       </ul>
-      <hr />
     </div>;
   }
 }

@@ -14,8 +14,9 @@ export default class SummarySection extends Component {
           <Col xs={12} sm={12} md={12} lg={12}>
             <MonkeysStillAliveWarning allMonkeysAreDead={this.props.allMonkeysAreDead}/>
             <p>
-              Get a quick glance at how your network aligns with the <a href="https://www.forrester.com/report/The+Zero+Trust+eXtended+ZTX+Ecosystem/-/E-RES137210">Zero
-              Trust eXtended (ZTX) framework</a>.
+              Get a quick glance at how your network aligns with the <a href="https://www.forrester.com/report/The+Zero+Trust+eXtended+ZTX+Ecosystem/-/E-RES137210">
+                Zero Trust eXtended (ZTX) framework
+              </a>.
             </p>
           </Col>
         </Row>

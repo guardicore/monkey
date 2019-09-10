@@ -7,7 +7,9 @@ export default class PrinciplesSection extends Component {
     return <div id="principles-section">
       <h2>Test Results</h2>
       <p>
-        The Zero Trust eXtended (ZTX) framework is composed of 7 pillars. Each pillar is built of
+        The <a href="https://www.forrester.com/report/The+Zero+Trust+eXtended+ZTX+Ecosystem/-/E-RES137210">
+        Zero Trust eXtended (ZTX) framework
+      </a> is composed of 7 pillars. Each pillar is built of
         several guiding principles tested by the Infection Monkey.
       </p>
       {
