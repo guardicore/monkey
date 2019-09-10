@@ -63,7 +63,7 @@ class NewUser(object):
 
         # Try to delete user
         try:
-            _ = subprocess.check_output(
+            _ = subprocess.Popen(
                 BackdoorUser.get_windows_commands_to_delete_user(self.username), stderr=subprocess.STDOUT, shell=True)
         except Exception as err:
             raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))
