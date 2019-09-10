@@ -65,5 +65,23 @@ ANTI_VIRUS_KNOWN_PROCESS_NAMES = [
     u"DWHWizrd.exe",
     u"RtvStart.exe",
     u"roru.exe",
-    u"WSCSAvNotifier"
+    u"WSCSAvNotifier",
+    # Guardicore Centra
+    # Linux
+    u"gc-agents-service",
+    u"gc-guest-agent",
+    u"gc-guardig",
+    u"gc-digger",
+    u"gc-fastpath",
+    u"gc-enforcement-agent",
+    u"gc-enforcement-channel",
+    u"gc-detection-agent",
+    # Windows
+    u"gc-guest-agent.exe",
+    u"gc-windig.exe",
+    u"gc-digger.exe",
+    u"gc-fastpath.exe",
+    u"gc-enforcement-channel.exe",
+    u"gc-enforcement-agent.exe",
+    u"gc-agent-ui.exe"
 ]
