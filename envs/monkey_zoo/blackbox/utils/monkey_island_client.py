@@ -1,10 +1,17 @@
 import json
+from time import sleep
 
 import requests
 
 # SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
 NO_AUTH_CREDS = '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062' \
                 '8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557'
+SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
+
+
+def avoid_race_condition(func):
+    sleep(SLEEP_BETWEEN_REQUESTS_SECONDS)
+    return func
 
 
 class MonkeyIslandClient(object):
@@ -46,9 +53,11 @@ class MonkeyIslandClient(object):
     def get_api_status(self):
         return self.request_get("api")
 
+    @avoid_race_condition
     def import_config(self, config_contents):
         _ = self.request_post("api/configuration/island", data=config_contents)
 
+    @avoid_race_condition
     def run_monkey_local(self):
         response = self.request_post_json("api/local-monkey", dict_data={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
@@ -61,6 +70,7 @@ class MonkeyIslandClient(object):
     def monkey_ran_successfully(response):
         return response.ok and json.loads(response.content)['is_running']
 
+    @avoid_race_condition
     def kill_all_monkeys(self):
         if self.request_get("api", {"action": "killall"}).ok:
             print("Killing all monkeys after the test.")
@@ -68,6 +78,7 @@ class MonkeyIslandClient(object):
             print("Failed to kill all monkeys.")
             assert False
 
+    @avoid_race_condition
     def reset_env(self):
         if self.request_get("api", {"action": "reset"}).ok:
             print("Resetting environment after the test.")

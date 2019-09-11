@@ -29,7 +29,6 @@ class BasicTest(object):
             if self.all_analyzers_pass():
                 self.log_success(timer)
                 return
-            sleep(DELAY_BETWEEN_ANALYSIS)
         self.log_failure(timer)
         assert False
 

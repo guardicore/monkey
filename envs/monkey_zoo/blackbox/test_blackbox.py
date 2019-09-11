@@ -8,8 +8,8 @@ from envs.monkey_zoo.blackbox.utils.island_config_parser import IslandConfigPars
 from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
 from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
 
-DEFAULT_TIMEOUT_SECONDS = 4 * 60 # 4 minutes
-DELAY_BETWEEN_TESTS = 10
+DEFAULT_TIMEOUT_SECONDS = 3 * 60
+DELAY_BETWEEN_TESTS = 30
 GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'haddop-2-v3', 'hadoop-3', 'mssql-16',
                          'mimikatz-14', 'mimikatz-15', 'final-test-struts2-23', 'final-test-struts2-24',
                          'tunneling-9', 'tunneling-10', 'tunneling-11', 'weblogic-18', 'weblogic-19', 'shellshock-8']
@@ -52,7 +52,6 @@ class TestMonkeyBlackbox(object):
         print("Waiting for ({:.0f} seconds) for old monkey's to die or GCP machines to boot up.".format(DELAY_BETWEEN_TESTS))
         sleep(DELAY_BETWEEN_TESTS)
 
-    """
     def test_server_online(self, island_client):
         assert island_client.get_api_status() is not None
 
@@ -62,15 +61,18 @@ class TestMonkeyBlackbox(object):
     def test_hadoop_exploiter(self, island_client):
         self.run_basic_test(island_client, "HADOOP.conf", "Hadoop exploiter")
 
-    def test_mssql_exploiter(self, island_client):
-        self.run_basic_test(island_client, "MSSQL.conf", "MSSQL exploiter")
     """
+    def test_mssql_exploiter(self, island_client):
+        self.run_basic_test(island_client, "MSSQL.conf", "MSSQL exploiter") 
+    """
+
     def test_smb_and_mimikatz_exploiters(self, island_client):
         self.run_basic_test(island_client, "SMB_MIMIKATZ.conf", "SMB exploiter, mimikatz")
+
     """
     def test_elastic_exploiter(self, island_client):
-        self.run_basic_test(island_client, "ELASTIC.conf", "Elastic exploiter", 180)
-    
+        self.run_basic_test(island_client, "ELASTIC.conf", "Elastic exploiter")
+    """
 
     def test_struts_exploiter(self, island_client):
         self.run_basic_test(island_client, "STRUTS2.conf", "Strtuts2 exploiter")
@@ -86,4 +88,3 @@ class TestMonkeyBlackbox(object):
 
     def test_wmi_exploiter(self, island_client):
         self.run_basic_test(island_client, "WMI_MIMIKATZ.conf", "WMI exploiter, mimikatz")
-    """
