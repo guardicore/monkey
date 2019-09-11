@@ -6,6 +6,6 @@ def pytest_addoption(parser):
                      help="Specify the Monkey Island address (host+port).")
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def island(request):
-    request.cls.island = request.config.getoption("--island")
+    return request.config.getoption("--island")

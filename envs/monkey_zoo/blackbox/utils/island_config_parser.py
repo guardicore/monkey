@@ -13,4 +13,6 @@ class IslandConfigParser(object):
 
     @staticmethod
     def get_conf_file_path(conf_file_name):
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), "island_configs", conf_file_name)
+        return os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                            "island_configs",
+                            conf_file_name)

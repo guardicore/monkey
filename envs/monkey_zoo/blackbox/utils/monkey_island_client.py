@@ -10,7 +10,14 @@ NO_AUTH_CREDS = '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d206
 class MonkeyIslandClient(object):
     def __init__(self, server_address):
         self.addr = "https://{IP}/".format(IP=server_address)
-        self.token = self.get_jwt_from_server()
+        self.token = self.try_get_jwt_from_server()
+
+    def try_get_jwt_from_server(self):
+        try:
+            return self.get_jwt_from_server()
+        except requests.ConnectionError:
+            print("Unable to connect to island, aborting!")
+            assert False
 
     def get_jwt_from_server(self):
         resp = requests.post(self.addr + "api/auth",
@@ -43,10 +50,22 @@ class MonkeyIslandClient(object):
         _ = self.request_post("api/configuration/island", data=config_contents)
 
     def run_monkey_local(self):
-        if self.request_post_json("api/local-monkey", dict_data={"action": "run"}).ok:
+        response = self.request_post_json("api/local-monkey", dict_data={"action": "run"})
+        if MonkeyIslandClient.monkey_ran_successfully(response):
             print("Running the monkey.")
         else:
             print("Failed to run the monkey.")
+            assert False
+
+    @staticmethod
+    def monkey_ran_successfully(response):
+        return response.ok and json.loads(response.content)['is_running']
+
+    def kill_all_monkeys(self):
+        if self.request_get("api", {"action": "killall"}).ok:
+            print("Killing all monkeys after the test.")
+        else:
+            print("Failed to kill all monkeys.")
             assert False
 
     def reset_env(self):
