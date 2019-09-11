@@ -12,6 +12,7 @@ LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
 
+EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
 class PBA(object):
     """
@@ -73,7 +74,10 @@ class PBA(object):
         :return: Tuple of command's output string and boolean, indicating if it succeeded
         """
         try:
-            return subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True), True
+            output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True)
+            if not output:
+                output = EXECUTION_WITHOUT_OUTPUT
+            return output, True
         except subprocess.CalledProcessError as e:
             # Return error output of the command
             return e.output, False

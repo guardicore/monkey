@@ -27,7 +27,7 @@ class UsersPBA(PBA):
     Defines user's configured post breach action.
     """
     def __init__(self):
-        super(UsersPBA, self).__init__("File execution")
+        super(UsersPBA, self).__init__("Custom post breach action")
         self.filename = ''
         if not is_windows_os():
             # Add linux commands to PBA's
