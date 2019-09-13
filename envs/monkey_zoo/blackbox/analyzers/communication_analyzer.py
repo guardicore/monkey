@@ -1,5 +1,3 @@
-import json
-
 LOG_INIT_MESSAGE = "Analysis didn't run."
 
 
@@ -20,9 +18,8 @@ class CommunicationAnalyzer(object):
         return True
 
     def did_monkey_communicate_back(self, machine_ip):
-        query = json.dumps({'ip_addresses': {'$elemMatch': {'$eq': machine_ip}}})
-        response = self.island_client.request_get("api/test/monkey", {'find_query': query})
-        return len(json.loads(response.content)['results']) > 0
+        query = {'ip_addresses': {'$elemMatch': {'$eq': machine_ip}}}
+        return len(self.island_client.find_monkeys_in_db(query)) > 0
 
 
 class AnalyzerLog(object):

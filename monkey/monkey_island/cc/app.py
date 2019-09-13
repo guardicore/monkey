@@ -35,7 +35,9 @@ from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
+
 from monkey_island.cc.resources.test.monkey_test import MonkeyTest
+from monkey_island.cc.resources.test.log_test import LogTest
 
 __author__ = 'Barak'
 
@@ -135,7 +137,9 @@ def init_api_resources(api):
     api.add_resource(AttackConfiguration, '/api/attack')
     api.add_resource(AttackReport, '/api/attack/report')
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
+
     api.add_resource(MonkeyTest, '/api/test/monkey')
+    api.add_resource(LogTest, '/api/test/log')
 
 
 def init_app(mongo_url):
