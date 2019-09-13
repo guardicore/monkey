@@ -66,18 +66,14 @@ class TestMonkeyBlackbox(object):
     def test_hadoop_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "HADOOP.conf", "Hadoop_exploiter", 6*60)
 
-    """
     def test_mssql_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "MSSQL.conf", "MSSQL_exploiter") 
-    """
+        TestMonkeyBlackbox.run_basic_test(island_client, "MSSQL.conf", "MSSQL_exploiter")
 
     def test_smb_and_mimikatz_exploiters(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "SMB_MIMIKATZ.conf", "SMB_exploiter_mimikatz")
 
-    """
     def test_elastic_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "ELASTIC.conf", "Elastic_exploiter")
-    """
 
     def test_struts_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "STRUTS2.conf", "Strtuts2_exploiter")
