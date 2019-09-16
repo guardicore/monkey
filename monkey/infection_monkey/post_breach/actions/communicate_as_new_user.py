@@ -45,7 +45,7 @@ class CommunicateAsNewUser(PBA):
 
     @staticmethod
     def get_random_new_user_name():
-        return USERNAME + "_" + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
+        return USERNAME + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
 
     def communicate_as_new_user_linux(self, username):
         try:

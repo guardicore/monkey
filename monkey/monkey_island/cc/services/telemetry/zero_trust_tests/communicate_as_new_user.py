@@ -11,7 +11,8 @@ COMM_AS_NEW_USER_SUCCEEDED_FORMAT = \
 def test_new_user_communication(current_monkey, success, message):
     AggregateFinding.create_or_add_to_existing(
         test=TEST_COMMUNICATE_AS_NEW_USER,
-        status=STATUS_PASSED if success else STATUS_FAILED,
+        # If the monkey succeeded to create a user, then the test failed.
+        status=STATUS_FAILED if success else STATUS_PASSED,
         events=[
             get_attempt_event(current_monkey),
             get_result_event(current_monkey, message, success)

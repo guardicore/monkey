@@ -2,7 +2,7 @@ import logging
 import subprocess
 
 from infection_monkey.post_breach.actions.add_user import BackdoorUser
-from infection_monkey.utils.windows.users import get_windows_commands_to_delete_user
+from infection_monkey.utils.windows.users import get_windows_commands_to_delete_user, get_windows_commands_to_add_user
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class AutoNewUser(object):
         self.username = username
         self.password = password
 
-        windows_cmds = BackdoorUser.get_windows_commands_to_add_user(self.username, self.password, True)
+        windows_cmds = get_windows_commands_to_add_user(self.username, self.password, True)
         _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT, shell=True)
 
     def __enter__(self):
