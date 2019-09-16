@@ -215,7 +215,8 @@ class AppComponent extends AuthComponent {
     if (this.shouldShowNotification()) {
       const hostname = window.location.hostname;
       const port = window.location.port;
-      const url = `https://${hostname}:${port}${reportZeroTrustRoute}`;
+      const protocol = window.location.protocol;
+      const url = `${protocol}//${hostname}:${port}${reportZeroTrustRoute}`;
 
       Notifier.start(
         "Monkey Island",
