@@ -35,11 +35,15 @@ class CommunicateAsNewUser(PBA):
         super(CommunicateAsNewUser, self).__init__(name=POST_BREACH_COMMUNICATE_AS_NEW_USER)
 
     def run(self):
-        username = USERNAME + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
+        username = self.get_random_new_user_name()
         if is_windows_os():
             self.communicate_as_new_user_windows(username)
         else:
             self.communicate_as_new_user_linux(username)
+
+    @staticmethod
+    def get_random_new_user_name():
+        return USERNAME + "_" + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
 
     def communicate_as_new_user_linux(self, username):
         try:
