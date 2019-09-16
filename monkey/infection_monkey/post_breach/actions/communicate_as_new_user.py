@@ -5,6 +5,8 @@ import string
 import subprocess
 import time
 
+import win32event
+
 from infection_monkey.utils.windows.auto_new_user import AutoNewUser, NewUserError
 from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
 from infection_monkey.post_breach.pba import PBA
@@ -14,7 +16,7 @@ from infection_monkey.utils.linux.users import get_linux_commands_to_delete_user
 
 PING_TEST_DOMAIN = "google.com"
 
-PING_WAIT_TIMEOUT_IN_SECONDS = 20
+PING_WAIT_TIMEOUT_IN_MILLISECONDS = 20 * 1000
 
 CREATED_PROCESS_AS_USER_PING_SUCCESS_FORMAT = "Created process '{}' as user '{}', and successfully pinged."
 CREATED_PROCESS_AS_USER_PING_FAILED_FORMAT = "Created process '{}' as user '{}', but failed to ping (exit status {})."
@@ -95,15 +97,16 @@ class CommunicateAsNewUser(PBA):
                         # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
                     )
 
+                    logger.debug(
+                        "Waiting for ping process to finish. Timeout: {}ms".format(PING_WAIT_TIMEOUT_IN_MILLISECONDS))
+
+                    # Ignoring return code, as we'll use `GetExitCode` to determine the state of the process later.
+                    _ = win32event.WaitForSingleObject(  # Waits until the specified object is signaled, or time-out.
+                        process_handle,  # Ping process handle
+                        PING_WAIT_TIMEOUT_IN_MILLISECONDS  # Timeout in milliseconds
+                    )
+
                     ping_exit_code = win32process.GetExitCodeProcess(process_handle)
-                    counter = 0
-                    while ping_exit_code == win32con.STILL_ACTIVE and counter < PING_WAIT_TIMEOUT_IN_SECONDS:
-                        ping_exit_code = win32process.GetExitCodeProcess(process_handle)
-                        counter += 1
-                        logger.debug("Waiting for ping to finish, round {}. Exit code: {}".format(
-                            counter,
-                            ping_exit_code))
-                        time.sleep(1)
 
                     self.send_ping_result_telemetry(ping_exit_code, commandline, username)
                 except Exception as e:
@@ -125,6 +128,13 @@ class CommunicateAsNewUser(PBA):
             PostBreachTelem(self, (str(e), False)).send()
 
     def send_ping_result_telemetry(self, exit_status, commandline, username):
+        """
+        Parses the result of ping and sends telemetry accordingly.
+
+        :param exit_status: In both Windows and Linux, 0 exit code from Ping indicates success.
+        :param commandline: Exact commandline which was executed, for reporting back.
+        :param username: Username from which the command was executed, for reporting back.
+        """
         if exit_status == 0:
             PostBreachTelem(self, (
                 CREATED_PROCESS_AS_USER_PING_SUCCESS_FORMAT.format(commandline, username), True)).send()
