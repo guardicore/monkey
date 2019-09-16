@@ -5,12 +5,12 @@ import string
 import subprocess
 import time
 
+from infection_monkey.utils.windows.auto_new_user import AutoNewUser, NewUserError
 from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
-from infection_monkey.utils.windows.new_user import NewUser, NewUserError
-from infection_monkey.post_breach.actions.add_user import BackdoorUser
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.linux.users import get_linux_commands_to_delete_user, get_linux_commands_to_add_user
 
 PING_TEST_DOMAIN = "google.com"
 
@@ -44,7 +44,7 @@ class CommunicateAsNewUser(PBA):
     def communicate_as_new_user_linux(self, username):
         try:
             # add user + ping
-            linux_cmds = BackdoorUser.get_linux_commands_to_add_user(username)
+            linux_cmds = get_linux_commands_to_add_user(username)
             commandline = "ping -c 1 {}".format(PING_TEST_DOMAIN)
             linux_cmds.extend([";", "sudo", "-u", username, commandline])
             final_command = ' '.join(linux_cmds)
@@ -52,7 +52,7 @@ class CommunicateAsNewUser(PBA):
             self.send_ping_result_telemetry(exit_status, commandline, username)
             # delete the user, async in case it gets stuck.
             _ = subprocess.Popen(
-                BackdoorUser.get_linux_commands_to_delete_user(username), stderr=subprocess.STDOUT, shell=True)
+                get_linux_commands_to_delete_user(username), stderr=subprocess.STDOUT, shell=True)
             # Leaking the process on purpose - nothing we can do if it's stuck.
         except subprocess.CalledProcessError as e:
             PostBreachTelem(self, (e.output, False)).send()
@@ -64,7 +64,7 @@ class CommunicateAsNewUser(PBA):
         import win32api
 
         try:
-            with NewUser(username, PASSWORD) as new_user:
+            with AutoNewUser(username, PASSWORD) as new_user:
                 # Using os.path is OK, as this is on windows for sure
                 ping_app_path = os.path.join(os.environ["WINDIR"], "system32", "PING.exe")
                 if not os.path.exists(ping_app_path):

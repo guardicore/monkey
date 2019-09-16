@@ -2,7 +2,7 @@ import logging
 import subprocess
 
 from infection_monkey.post_breach.actions.add_user import BackdoorUser
-
+from infection_monkey.utils.windows.users import get_windows_commands_to_delete_user
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +11,7 @@ class NewUserError(Exception):
     pass
 
 
-class NewUser(object):
+class AutoNewUser(object):
     """
     RAII object to use for creating and using a new user in Windows. Use with `with`.
     User will be created when the instance is instantiated.
@@ -20,7 +20,7 @@ class NewUser(object):
 
     Example:
              # Created                           # Logged on
-        with NewUser("user", "pass") as new_user:
+        with AutoNewUser("user", "pass") as new_user:
             ...
             ...
         # Logged off and deleted
@@ -64,6 +64,6 @@ class NewUser(object):
         # Try to delete user
         try:
             _ = subprocess.Popen(
-                BackdoorUser.get_windows_commands_to_delete_user(self.username), stderr=subprocess.STDOUT, shell=True)
+                get_windows_commands_to_delete_user(self.username), stderr=subprocess.STDOUT, shell=True)
         except Exception as err:
             raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))
