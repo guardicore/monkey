@@ -105,6 +105,6 @@
     "redux": "^4.0.0",
     "sass-loader": "^7.1.0",
     "sha3": "^2.0.0",
-    "pluralize": "latest"
+    "pluralize": "^7.0.0"
   }
 }
