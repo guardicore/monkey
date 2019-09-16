@@ -108,7 +108,7 @@ class CommunicateAsNewUser(PBA):
                     self.send_ping_result_telemetry(ping_exit_code, commandline, username)
                 except Exception as e:
                     # If failed on 1314, it's possible to try to elevate the rights of the current user with the
-                    #  "Replace a process level token" right, using Local Security Policy editing. 
+                    #  "Replace a process level token" right, using Local Security Policy editing.
                     PostBreachTelem(self, (
                         "Failed to open process as user {}. Error: {}".format(username, str(e)), False)).send()
                 finally:
