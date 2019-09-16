@@ -79,7 +79,7 @@ class CommunicateAsNewUser(PBA):
                     # Open process as that user:
                     # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera
                     commandline = "{} {} {} {}".format(ping_app_path, PING_TEST_DOMAIN, "-n", "1")
-                    process_info = win32process.CreateProcessAsUser(
+                    process_handle, thread_handle, _, _ = win32process.CreateProcessAsUser(
                         new_user.get_logon_handle(),  # A handle to the primary token that represents a user.
                         None,  # The name of the module to be executed.
                         commandline,  # The command line to be executed.
@@ -95,18 +95,20 @@ class CommunicateAsNewUser(PBA):
                         # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
                     )
 
-                    ping_exit_code = win32process.GetExitCodeProcess(process_info[0])
+                    ping_exit_code = win32process.GetExitCodeProcess(process_handle)
                     counter = 0
                     while ping_exit_code == win32con.STILL_ACTIVE and counter < PING_WAIT_TIMEOUT_IN_SECONDS:
-                        ping_exit_code = win32process.GetExitCodeProcess(process_info[0])
+                        ping_exit_code = win32process.GetExitCodeProcess(process_handle)
                         counter += 1
-                        logger.debug("Waiting for ping to finish, round {}. Exit code: {}".format(counter, ping_exit_code))
+                        logger.debug("Waiting for ping to finish, round {}. Exit code: {}".format(
+                            counter,
+                            ping_exit_code))
                         time.sleep(1)
 
                     self.send_ping_result_telemetry(ping_exit_code, commandline, username)
 
-                    win32api.CloseHandle(process_info[0])  # Process handle
-                    win32api.CloseHandle(process_info[1])  # Thread handle
+                    win32api.CloseHandle(process_handle)  # Process handle
+                    win32api.CloseHandle(thread_handle)  # Thread handle
 
                 except Exception as e:
                     # TODO: if failed on 1314, we can try to add elevate the rights of the current user with the
