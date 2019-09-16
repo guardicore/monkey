@@ -21,19 +21,24 @@ SCAN_DELAY = 0
 ITERATION_BLOCK_SIZE = 5
 
 
-def _grouper(iterables, chunk_size):
+def generate_victims(net_ranges, chunk_size):
     """
-    Goes over an iterable using chunks
-    :param iterables: a sequence of iterable objects
-    :param chunk_size:  Chunk size, last chunk may be smaller
+    Generates VictimHosts in chunks from all the netranges
+    :param net_ranges: Iterable of network ranges
+    :param chunk_size: Maximum size of each chunk
     :return:
     """
-    iterable = itertools.chain(*iterables)
-    while True:
-        group = tuple(itertools.islice(iterable, chunk_size))
-        if not group:
-            break
-        yield group
+    chunk = []
+    for net_range in net_ranges:
+        for address in net_range:
+            if hasattr(net_range, 'domain_name'):
+                victim = VictimHost(address, net_range.domain_name)
+            else:
+                victim = VictimHost(address)
+            chunk.append(victim)
+            if len(chunk) == chunk_size:
+                yield chunk
+    yield chunk
 
 
 class NetworkScanner(object):
@@ -94,16 +99,9 @@ class NetworkScanner(object):
         """
         pool = Pool()
         victims_count = 0
-        for network_chunk in _grouper(self._ranges, ITERATION_BLOCK_SIZE):
-            LOG.debug("Scanning for potential victims in chunk %r", network_chunk)
-            victim_chunk = []
-            for address in network_chunk:
-                # if hasattr(net_range, 'domain_name'):
-                #    victim = VictimHost(address, net_range.domain_name)
-                # else:
-                victim = VictimHost(address)
+        for victim_chunk in generate_victims(self._ranges, ITERATION_BLOCK_SIZE):
+            LOG.debug("Scanning for potential victims in chunk %r", victim_chunk)
 
-                victim_chunk.append(victim)
             # skip self IP addresses
             victim_chunk = [x for x in victim_chunk if x.ip_addr not in self._ip_addresses]
             # skip IPs marked as blocked
@@ -133,12 +131,14 @@ class NetworkScanner(object):
                 # time.sleep uses seconds, while config is in milliseconds
                 time.sleep(WormConfiguration.tcp_scan_interval / float(1000))
 
+
     @staticmethod
     def _is_any_ip_in_subnet(ip_addresses, subnet_str):
         for ip_address in ip_addresses:
             if NetworkRange.get_range_obj(subnet_str).is_in_range(ip_address):
                 return True
         return False
+
 
     def scan_machine(self, victim):
         """
@@ -152,6 +152,7 @@ class NetworkScanner(object):
             return victim
         else:
             return None
+
 
     def on_island(self, server):
         return bool([x for x in self._ip_addresses if x in server])
