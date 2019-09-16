@@ -1,3 +1,4 @@
+from common.data.zero_trust_consts import TEST_MALICIOUS_ACTIVITY_TIMELINE, STATUS_VERIFY
 from monkey_island.cc.models.zero_trust.finding import Finding
 
 
@@ -21,3 +22,11 @@ class AggregateFinding(Finding):
             orig_finding = existing_findings[0]
             orig_finding.add_events(events)
             orig_finding.save()
+
+
+def add_malicious_activity_to_timeline(events):
+    AggregateFinding.create_or_add_to_existing(
+        test=TEST_MALICIOUS_ACTIVITY_TIMELINE,
+        status=STATUS_VERIFY,
+        events=events
+    )

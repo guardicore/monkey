@@ -1,7 +1,6 @@
-from common.data.zero_trust_consts import TEST_TUNNELING, STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK, STATUS_VERIFY, \
-    TEST_MALICIOUS_ACTIVITY_TIMELINE
+from common.data.zero_trust_consts import TEST_TUNNELING, STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
+from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding, add_malicious_activity_to_timeline
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.services.telemetry.processing.utils import get_tunnel_host_ip_from_proxy_field
 
@@ -18,14 +17,11 @@ def test_tunneling_violation(tunnel_telemetry_json):
             event_type=EVENT_TYPE_MONKEY_NETWORK,
             timestamp=tunnel_telemetry_json['timestamp']
         )]
+
         AggregateFinding.create_or_add_to_existing(
             test=TEST_TUNNELING,
             status=STATUS_FAILED,
             events=tunneling_events
         )
 
-        AggregateFinding.create_or_add_to_existing(
-            test=TEST_MALICIOUS_ACTIVITY_TIMELINE,
-            status=STATUS_VERIFY,
-            events=tunneling_events
-        )
+        add_malicious_activity_to_timeline(tunneling_events)

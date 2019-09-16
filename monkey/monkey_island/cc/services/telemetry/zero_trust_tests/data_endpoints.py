@@ -3,7 +3,7 @@ import json
 from common.data.network_consts import ES_SERVICE
 from common.data.zero_trust_consts import *
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
+from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding, add_malicious_activity_to_timeline
 from monkey_island.cc.models.zero_trust.event import Event
 
 HTTP_SERVERS_SERVICES_NAMES = ['tcp-80']
@@ -67,8 +67,4 @@ def test_open_data_endpoints(telemetry_json):
         events=events
     )
 
-    AggregateFinding.create_or_add_to_existing(
-        test=TEST_MALICIOUS_ACTIVITY_TIMELINE,
-        status=STATUS_VERIFY,
-        events=events
-    )
+    add_malicious_activity_to_timeline(events)
