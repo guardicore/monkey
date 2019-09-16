@@ -106,10 +106,6 @@ class CommunicateAsNewUser(PBA):
                         time.sleep(1)
 
                     self.send_ping_result_telemetry(ping_exit_code, commandline, username)
-
-                    win32api.CloseHandle(process_handle)  # Process handle
-                    win32api.CloseHandle(thread_handle)  # Thread handle
-
                 except Exception as e:
                     # TODO: if failed on 1314, we can try to add elevate the rights of the current user with the
                     #  "Replace a process level token" right, using Local Security Policy editing. Worked, but only
@@ -118,6 +114,12 @@ class CommunicateAsNewUser(PBA):
                     #  2. need to find how to do this using python...
                     PostBreachTelem(self, (
                         "Failed to open process as user {}. Error: {}".format(username, str(e)), False)).send()
+                finally:
+                    try:
+                        win32api.CloseHandle(process_handle)
+                        win32api.CloseHandle(thread_handle)
+                    except Exception as err:
+                        logger.error("Close handle error: " + str(err))
         except subprocess.CalledProcessError as err:
             PostBreachTelem(self, (
                 "Couldn't create the user '{}'. Error output is: '{}'".format(username, str(err)),
