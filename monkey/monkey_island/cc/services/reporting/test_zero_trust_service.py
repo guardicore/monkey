@@ -54,14 +54,14 @@ class TestZeroTrustService(IslandTestCase):
                 STATUS_FAILED: 0,
                 STATUS_VERIFY: 2,
                 STATUS_PASSED: 0,
-                STATUS_UNEXECUTED: 0,
+                STATUS_UNEXECUTED: 1,
                 "pillar": "People"
             },
             {
                 STATUS_FAILED: 0,
                 STATUS_VERIFY: 2,
                 STATUS_PASSED: 0,
-                STATUS_UNEXECUTED: 2,
+                STATUS_UNEXECUTED: 4,
                 "pillar": "Networks"
             },
             {
@@ -82,7 +82,7 @@ class TestZeroTrustService(IslandTestCase):
                 STATUS_FAILED: 0,
                 STATUS_VERIFY: 0,
                 STATUS_PASSED: 0,
-                STATUS_UNEXECUTED: 1,
+                STATUS_UNEXECUTED: 3,
                 "pillar": "Visibility & Analytics"
             },
             {
@@ -102,6 +102,8 @@ class TestZeroTrustService(IslandTestCase):
         self.fail_if_not_testing_env()
         self.clean_finding_db()
 
+        self.maxDiff = None
+
         save_example_findings()
 
         expected = {
@@ -112,13 +114,13 @@ class TestZeroTrustService(IslandTestCase):
                     "status": STATUS_FAILED,
                     "tests": [
                         {
+                            "status": STATUS_FAILED,
+                            "test": TESTS_MAP[TEST_DATA_ENDPOINT_HTTP][TEST_EXPLANATION_KEY]
+                        },
+                        {
                             "status": STATUS_UNEXECUTED,
                             "test": TESTS_MAP[TEST_DATA_ENDPOINT_ELASTIC][TEST_EXPLANATION_KEY]
                         },
-                        {
-                            "status": STATUS_FAILED,
-                            "test": TESTS_MAP[TEST_DATA_ENDPOINT_HTTP][TEST_EXPLANATION_KEY]
-                        }
                     ]
                 }
             ],
@@ -128,13 +130,13 @@ class TestZeroTrustService(IslandTestCase):
                     "status": STATUS_FAILED,
                     "tests": [
                         {
+                            "status": STATUS_UNEXECUTED,
+                            "test": TESTS_MAP[TEST_MACHINE_EXPLOITED][TEST_EXPLANATION_KEY]
+                        },
+                        {
                             "status": STATUS_FAILED,
                             "test": TESTS_MAP[TEST_ENDPOINT_SECURITY_EXISTS][TEST_EXPLANATION_KEY]
                         },
-                        {
-                            "status": STATUS_UNEXECUTED,
-                            "test": TESTS_MAP[TEST_MACHINE_EXPLOITED][TEST_EXPLANATION_KEY]
-                        }
                     ]
                 }
             ],
@@ -160,6 +162,16 @@ class TestZeroTrustService(IslandTestCase):
                     ]
                 },
                 {
+                    "principle": PRINCIPLES[PRINCIPLE_USERS_MAC_POLICIES],
+                    "status": STATUS_UNEXECUTED,
+                    "tests": [
+                        {
+                            "status": STATUS_UNEXECUTED,
+                            "test": TESTS_MAP[TEST_COMMUNICATE_AS_NEW_USER][TEST_EXPLANATION_KEY]
+                        }
+                    ]
+                },
+                {
                     "principle": PRINCIPLES[PRINCIPLE_ANALYZE_NETWORK_TRAFFIC],
                     "status": STATUS_UNEXECUTED,
                     "tests": [
@@ -168,7 +180,17 @@ class TestZeroTrustService(IslandTestCase):
                             "test": TESTS_MAP[TEST_MALICIOUS_ACTIVITY_TIMELINE][TEST_EXPLANATION_KEY]
                         }
                     ]
-                }
+                },
+                {
+                    "principle": PRINCIPLES[PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES],
+                    "status": STATUS_UNEXECUTED,
+                    "tests": [
+                        {
+                            "status": STATUS_UNEXECUTED,
+                            "test": TESTS_MAP[TEST_TUNNELING][TEST_EXPLANATION_KEY]
+                        }
+                    ]
+                },
             ],
             PEOPLE: [
                 {
@@ -180,9 +202,29 @@ class TestZeroTrustService(IslandTestCase):
                             "test": TESTS_MAP[TEST_SCHEDULED_EXECUTION][TEST_EXPLANATION_KEY]
                         }
                     ]
+                },
+                {
+                    "principle": PRINCIPLES[PRINCIPLE_USERS_MAC_POLICIES],
+                    "status": STATUS_UNEXECUTED,
+                    "tests": [
+                        {
+                            "status": STATUS_UNEXECUTED,
+                            "test": TESTS_MAP[TEST_COMMUNICATE_AS_NEW_USER][TEST_EXPLANATION_KEY]
+                        }
+                    ]
                 }
             ],
-            "Visibility & Analytics": [
+            VISIBILITY_ANALYTICS: [
+                {
+                    "principle": PRINCIPLES[PRINCIPLE_USERS_MAC_POLICIES],
+                    "status": STATUS_UNEXECUTED,
+                    "tests": [
+                        {
+                            "status": STATUS_UNEXECUTED,
+                            "test": TESTS_MAP[TEST_COMMUNICATE_AS_NEW_USER][TEST_EXPLANATION_KEY]
+                        }
+                    ]
+                },
                 {
                     "principle": PRINCIPLES[PRINCIPLE_ANALYZE_NETWORK_TRAFFIC],
                     "status": STATUS_UNEXECUTED,
@@ -192,12 +234,23 @@ class TestZeroTrustService(IslandTestCase):
                             "test": TESTS_MAP[TEST_MALICIOUS_ACTIVITY_TIMELINE][TEST_EXPLANATION_KEY]
                         }
                     ]
-                }
+                },
+                {
+                    "principle": PRINCIPLES[PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES],
+                    "status": STATUS_UNEXECUTED,
+                    "tests": [
+                        {
+                            "status": STATUS_UNEXECUTED,
+                            "test": TESTS_MAP[TEST_TUNNELING][TEST_EXPLANATION_KEY]
+                        }
+                    ]
+                },
             ],
-            "Workloads": []
+            WORKLOADS: []
         }
 
-        self.assertEquals(ZeroTrustService.get_principles_status(), expected)
+        result = ZeroTrustService.get_principles_status()
+        self.assertEquals(result, expected)
 
     def test_get_pillars_to_statuses(self):
         self.fail_if_not_testing_env()
