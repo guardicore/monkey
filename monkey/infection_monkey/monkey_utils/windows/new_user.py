@@ -15,8 +15,8 @@ class NewUser(object):
     """
     RAII object to use for creating and using a new user in Windows. Use with `with`.
     User will be created when the instance is instantiated.
-    User will log on start of `with` scope.
-    User will log off and get deleted on end of `with` scope.
+    User will log on at the start of the `with` scope.
+    User will log off and get deleted at the end of said `with` scope.
 
     Example:
              # Created                           # Logged on

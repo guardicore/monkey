@@ -139,16 +139,16 @@ TESTS_MAP = {
     TEST_TUNNELING: {
         TEST_EXPLANATION_KEY: u"The Monkey tried to tunnel traffic using other monkeys.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
-            STATUS_FAILED: "Monkey was tunneled its traffic using other monkeys. Your network policies are too permissive - restrict them."
+            STATUS_FAILED: "Monkey tunneled its traffic using other monkeys. Your network policies are too permissive - restrict them."
         },
         PRINCIPLE_KEY: PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES,
         PILLARS_KEY: [NETWORKS, VISIBILITY_ANALYTICS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED]
     },
     TEST_COMMUNICATE_AS_NEW_USER: {
-        TEST_EXPLANATION_KEY: u"The Monkey tried create a new user and communicate with the internet from it.",
+        TEST_EXPLANATION_KEY: u"The Monkey tried to create a new user and communicate with the internet from it.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
-            STATUS_FAILED: "Monkey was able to cause a new user to access the network. Your network policies are too permissive - restrict them to MAC only.",
+            STATUS_FAILED: "Monkey caused a new user to access the network. Your network policies are too permissive - restrict them to MAC only.",
             STATUS_PASSED: "Monkey wasn't able to cause a new user to access the network."
         },
         PRINCIPLE_KEY: PRINCIPLE_USERS_MAC_POLICIES,
