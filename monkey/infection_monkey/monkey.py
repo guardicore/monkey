@@ -7,7 +7,8 @@ import time
 from six.moves import xrange
 
 import infection_monkey.tunnel as tunnel
-import infection_monkey.utils as utils
+from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
+from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.model import DELAY_DELETE_CMD
@@ -90,7 +91,7 @@ class InfectionMonkey(object):
         self.set_default_port()
 
         # Create a dir for monkey files if there isn't one
-        utils.create_monkey_dir()
+        create_monkey_dir()
 
         if WindowsUpgrader.should_upgrade():
             self._upgrading_to_64 = True
@@ -244,8 +245,8 @@ class InfectionMonkey(object):
 
     @staticmethod
     def self_delete():
-        status = ScanStatus.USED if utils.remove_monkey_dir() else ScanStatus.SCANNED
-        T1107Telem(status, utils.get_monkey_dir_path()).send()
+        status = ScanStatus.USED if remove_monkey_dir() else ScanStatus.SCANNED
+        T1107Telem(status, get_monkey_dir_path()).send()
 
         if WormConfiguration.self_delete_in_cleanup \
                 and -1 == sys.executable.find('python'):
@@ -269,7 +270,7 @@ class InfectionMonkey(object):
                 T1107Telem(status, sys.executable).send()
 
     def send_log(self):
-        monkey_log_path = utils.get_monkey_log_path()
+        monkey_log_path = get_monkey_log_path()
         if os.path.exists(monkey_log_path):
             with open(monkey_log_path, 'r') as f:
                 log = f.read()

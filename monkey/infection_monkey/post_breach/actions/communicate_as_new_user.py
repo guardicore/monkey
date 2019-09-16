@@ -6,11 +6,11 @@ import subprocess
 import time
 
 from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
-from infection_monkey.monkey_utils.windows.new_user import NewUser, NewUserError
+from infection_monkey.utils.windows.new_user import NewUser, NewUserError
 from infection_monkey.post_breach.actions.add_user import BackdoorUser
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
-from infection_monkey.utils import is_windows_os
+from infection_monkey.utils.environment import is_windows_os
 
 PING_TEST_DOMAIN = "google.com"
 

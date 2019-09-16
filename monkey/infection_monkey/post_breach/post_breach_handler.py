@@ -3,7 +3,7 @@ import inspect
 import importlib
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.actions import get_pba_files
-from infection_monkey.utils import is_windows_os
+from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
 

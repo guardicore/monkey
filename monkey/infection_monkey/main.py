@@ -8,7 +8,7 @@ import os
 import sys
 import traceback
 
-import infection_monkey.utils as utils
+from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
 from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
@@ -79,10 +79,10 @@ def main():
 
     try:
         if MONKEY_ARG == monkey_mode:
-            log_path = utils.get_monkey_log_path()
+            log_path = get_monkey_log_path()
             monkey_cls = InfectionMonkey
         elif DROPPER_ARG == monkey_mode:
-            log_path = utils.get_dropper_log_path()
+            log_path = get_dropper_log_path()
             monkey_cls = MonkeyDrops
         else:
             return True
