@@ -37,7 +37,7 @@ class CommunicateAsNewUser(PBA):
         super(CommunicateAsNewUser, self).__init__(name=POST_BREACH_COMMUNICATE_AS_NEW_USER)
 
     def run(self):
-        username = self.get_random_new_user_name()
+        username = CommunicateAsNewUser.get_random_new_user_name()
         if is_windows_os():
             self.communicate_as_new_user_windows(username)
         else:
