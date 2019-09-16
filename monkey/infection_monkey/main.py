@@ -44,7 +44,7 @@ def main():
 
     if 2 > len(sys.argv):
         return True
-    freeze_support() # required for multiprocessing + pyinstaller on windows
+    freeze_support()  # required for multiprocessing + pyinstaller on windows
     monkey_mode = sys.argv[1]
 
     if not (monkey_mode in [MONKEY_ARG, DROPPER_ARG]):
