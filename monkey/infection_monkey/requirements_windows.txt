@@ -4,11 +4,10 @@ pycryptodome
 pyasn1
 cffi
 twisted
-rdpy
 requests
 odict
 paramiko
-psutil==3.4.2
+psutil
 PyInstaller
 six
 ecdsa
