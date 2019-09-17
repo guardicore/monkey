@@ -82,5 +82,5 @@ class MonkeyIslandClient(object):
         return json.loads(response.content)['results']
 
     def is_all_monkeys_dead(self):
-        query = {'dead': 'false'}
+        query = {'dead': False}
         return len(self.find_monkeys_in_db(query)) == 0

@@ -6,7 +6,7 @@ from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import Communicat
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
 from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
 from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
-from envs.monkey_zoo.blackbox.log_handlers.test_logs import TestLogsHandler
+from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 
 DEFAULT_TIMEOUT_SECONDS = 4*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
@@ -53,7 +53,7 @@ class TestMonkeyBlackbox(object):
         analyzer = CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets())
         BasicTest(test_name,
                   island_client,
-                  config_parser.config_raw,
+                  config_parser,
                   [analyzer],
                   timeout_in_seconds).run()
 

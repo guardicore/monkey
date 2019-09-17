@@ -1,7 +1,8 @@
 import os
 import shutil
 
-from envs.monkey_zoo.blackbox.log_handlers.monkey_log import MonkeyLog
+from envs.monkey_zoo.blackbox.log_handlers.log_parser import LogParser
+from envs.monkey_zoo.blackbox.log_handlers.logs_downloader import LogsDownloader
 
 LOG_DIR_NAME = 'logs'
 
@@ -12,12 +13,18 @@ class TestLogsHandler(object):
         self.island_client = island_client
         self.log_dir_path = os.path.join(TestLogsHandler.get_log_dir_path(), self.test_name)
 
+    def parse_test_logs(self):
+        log_paths = self.download_logs()
+        if not log_paths:
+            print("No logs were downloaded, maybe no monkeys were ran?")
+            return
+        TestLogsHandler.parse_logs(log_paths)
+
     def download_logs(self):
         self.try_create_log_dir_for_test()
-        print("Downloading logs")
-        all_monkeys = self.island_client.find_monkeys_in_db(None)
-        for monkey in all_monkeys:
-            MonkeyLog(monkey, self.log_dir_path).download_log(self.island_client)
+        downloader = LogsDownloader(self.island_client, self.log_dir_path)
+        downloader.download_monkey_logs()
+        return downloader.monkey_log_paths
 
     def try_create_log_dir_for_test(self):
         try:
@@ -33,3 +40,11 @@ class TestLogsHandler(object):
     def delete_log_folder_contents():
         shutil.rmtree(TestLogsHandler.get_log_dir_path(), ignore_errors=True)
         os.mkdir(TestLogsHandler.get_log_dir_path())
+
+    @staticmethod
+    def parse_logs(log_paths):
+        for log_path in log_paths:
+            print("Info from log at {}".format(log_path))
+            log_parser = LogParser(log_path)
+            log_parser.print_errors()
+            log_parser.print_warnings()

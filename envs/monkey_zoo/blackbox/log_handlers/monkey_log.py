@@ -12,8 +12,10 @@ class MonkeyLog(object):
         log = island_client.find_log_in_db({'monkey_id': ObjectId(self.monkey['id'])})
         if not log:
             print("Log for monkey {} not found".format(self.monkey['ip_addresses'][0]))
+            return False
         else:
             self.write_log_to_file(log)
+            return True
 
     def write_log_to_file(self, log):
         with open(self.get_log_path_for_monkey(self.monkey), 'w') as log_file:

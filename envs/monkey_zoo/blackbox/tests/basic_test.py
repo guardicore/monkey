@@ -1,34 +1,41 @@
 from time import sleep
 
 from envs.monkey_zoo.blackbox.utils.test_timer import TestTimer
-from envs.monkey_zoo.blackbox.log_handlers.test_logs import TestLogsHandler
+from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 
 MAX_TIME_FOR_MONKEYS_TO_DIE = 5*60
 WAIT_TIME_BETWEEN_REQUESTS = 10
+TIME_FOR_MONKEY_PROCESS_TO_FINISH = 20
 
 
 class BasicTest(object):
 
-    def __init__(self, name, island_client, island_config, analyzers, timeout):
+    def __init__(self, name, island_client, config_parser, analyzers, timeout):
         self.name = name
         self.island_client = island_client
-        self.island_config = island_config
+        self.config_parser = config_parser
         self.analyzers = analyzers
         self.timeout = timeout
 
     def run(self):
-        self.island_client.import_config(self.island_config)
+        self.island_client.import_config(self.config_parser.config_raw)
+        self.print_test_starting_info()
         try:
             self.island_client.run_monkey_local()
             self.test_until_timeout()
-        except AssertionError:
-            print("Test {} failed. Downloading logs of all monkeys.".format(self.name))
-            TestLogsHandler(self.name, self.island_client).download_logs()
-            raise
         finally:
             self.island_client.kill_all_monkeys()
             self.wait_until_monkeys_die()
+            self.wait_for_monkey_process_to_finish()
+            self.parse_logs()
             self.island_client.reset_env()
+
+    def print_test_starting_info(self):
+        print("Started {} test".format(self.name))
+        print("Machines participating in test:")
+        for target_ip in self.config_parser.get_ips_of_targets():
+            print("  "+target_ip)
+        print("")
 
     def test_until_timeout(self):
         timer = TestTimer(self.timeout)
@@ -68,3 +75,11 @@ class BasicTest(object):
         if time_passed > MAX_TIME_FOR_MONKEYS_TO_DIE:
             print("Some monkeys didn't die after the test, passing")
             assert False
+
+    def parse_logs(self):
+        print("\nParsing test logs:")
+        TestLogsHandler(self.name, self.island_client).parse_test_logs()
+
+    @staticmethod
+    def wait_for_monkey_process_to_finish():
+        sleep(TIME_FOR_MONKEY_PROCESS_TO_FINISH)
