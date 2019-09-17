@@ -47,6 +47,13 @@ def get_interface_to_target(dst):
         return ret[1]
 
 
+def try_get_target_monkey(host):
+    src_path = get_target_monkey(host)
+    if not src_path:
+        raise Exception("Can't find suitable monkey executable for host %r", host)
+    return src_path
+
+
 def get_target_monkey(host):
     from infection_monkey.control import ControlClient
     import platform
