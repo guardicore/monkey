@@ -129,7 +129,7 @@ python -m pip install --user -r requirements_linux.txt || handle_error
 # Build samba
 log_message "Building samba binaries"
 sudo apt-get install gcc-multilib
-cd ${monkey_home}/monkey/infection_monkey/monkey_utils/sambacry_monkey_runner
+cd ${monkey_home}/monkey/infection_monkey/exploit/sambacry_monkey_runner
 sudo chmod +x ./build.sh || handle_error
 ./build.sh
 

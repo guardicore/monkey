@@ -7,7 +7,8 @@ import time
 from six.moves import xrange
 
 import infection_monkey.tunnel as tunnel
-import infection_monkey.utils as utils
+from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
+from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.model import DELAY_DELETE_CMD
@@ -24,9 +25,10 @@ from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from common.utils.attack_utils import ScanStatus
 from infection_monkey.exploit.tools.helpers import get_interface_to_target
 from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError
+from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
+from common.utils.attack_utils import ScanStatus, UsageEnum
 
 __author__ = 'itamar'
 
@@ -91,7 +93,7 @@ class InfectionMonkey(object):
         self.set_default_port()
 
         # Create a dir for monkey files if there isn't one
-        utils.create_monkey_dir()
+        create_monkey_dir()
 
         if WindowsUpgrader.should_upgrade():
             self._upgrading_to_64 = True
@@ -102,6 +104,9 @@ class InfectionMonkey(object):
 
         ControlClient.wakeup(parent=self._parent)
         ControlClient.load_control_config()
+
+        if utils.is_windows_os():
+            T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
         if not WormConfiguration.alive:
             LOG.info("Marked not alive from configuration")
@@ -114,7 +119,7 @@ class InfectionMonkey(object):
         if monkey_tunnel:
             monkey_tunnel.start()
 
-        StateTelem(False).send()
+        StateTelem(is_done=False).send()
         TunnelTelem().send()
 
         if WormConfiguration.collect_system_info:
@@ -226,7 +231,7 @@ class InfectionMonkey(object):
             InfectionMonkey.close_tunnel()
             firewall.close()
         else:
-            StateTelem(True).send()  # Signal the server (before closing the tunnel)
+            StateTelem(is_done=True).send()  # Signal the server (before closing the tunnel)
             InfectionMonkey.close_tunnel()
             firewall.close()
             if WormConfiguration.send_log_to_server:
@@ -245,8 +250,8 @@ class InfectionMonkey(object):
 
     @staticmethod
     def self_delete():
-        status = ScanStatus.USED if utils.remove_monkey_dir() else ScanStatus.SCANNED
-        T1107Telem(status, utils.get_monkey_dir_path()).send()
+        status = ScanStatus.USED if remove_monkey_dir() else ScanStatus.SCANNED
+        T1107Telem(status, get_monkey_dir_path()).send()
 
         if WormConfiguration.self_delete_in_cleanup \
                 and -1 == sys.executable.find('python'):
@@ -270,7 +275,7 @@ class InfectionMonkey(object):
                 T1107Telem(status, sys.executable).send()
 
     def send_log(self):
-        monkey_log_path = utils.get_monkey_log_path()
+        monkey_log_path = get_monkey_log_path()
         if os.path.exists(monkey_log_path):
             with open(monkey_log_path, 'r') as f:
                 log = f.read()

@@ -2,34 +2,36 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
-import '../../styles/Collapse.scss';
-import AuthComponent from '../AuthComponent';
-import {ScanStatus} from "../attack/techniques/Helpers";
+import '../../../styles/Collapse.scss';
+import AuthComponent from '../../AuthComponent';
+import {ScanStatus} from "../../attack/techniques/Helpers";
 import Collapse from '@kunukn/react-collapse';
-import T1210 from '../attack/techniques/T1210';
-import T1197 from '../attack/techniques/T1197';
-import T1110 from '../attack/techniques/T1110';
-import T1075 from "../attack/techniques/T1075";
-import T1003 from "../attack/techniques/T1003";
-import T1059 from "../attack/techniques/T1059";
-import T1086 from "../attack/techniques/T1086";
-import T1082 from "../attack/techniques/T1082";
-import T1145 from "../attack/techniques/T1145";
-import T1105 from "../attack/techniques/T1105";
-import T1107 from "../attack/techniques/T1107";
-import T1065 from "../attack/techniques/T1065";
-import T1035 from "../attack/techniques/T1035";
-import T1129 from "../attack/techniques/T1129";
-import T1106 from "../attack/techniques/T1106";
-import T1188 from "../attack/techniques/T1188";
-import T1090 from "../attack/techniques/T1090";
-import T1041 from "../attack/techniques/T1041";
-import T1222 from "../attack/techniques/T1222";
-import T1005 from "../attack/techniques/T1005";
-import T1018 from "../attack/techniques/T1018";
-import T1016 from "../attack/techniques/T1016";
-import T1021 from "../attack/techniques/T1021";
-import T1064 from "../attack/techniques/T1064";
+
+import T1210 from '../../attack/techniques/T1210';
+import T1197 from '../../attack/techniques/T1197';
+import T1110 from '../../attack/techniques/T1110';
+import T1075 from "../../attack/techniques/T1075";
+import T1003 from "../../attack/techniques/T1003";
+import T1059 from "../../attack/techniques/T1059";
+import T1086 from "../../attack/techniques/T1086";
+import T1082 from "../../attack/techniques/T1082";
+import T1145 from "../../attack/techniques/T1145";
+import T1105 from "../../attack/techniques/T1105";
+import T1107 from "../../attack/techniques/T1107";
+import T1065 from "../../attack/techniques/T1065";
+import T1035 from "../../attack/techniques/T1035";
+import T1129 from "../../attack/techniques/T1129";
+import T1106 from "../../attack/techniques/T1106";
+import T1188 from "../../attack/techniques/T1188";
+import T1090 from "../../attack/techniques/T1090";
+import T1041 from "../../attack/techniques/T1041";
+import T1222 from "../../attack/techniques/T1222";
+import T1005 from "../../attack/techniques/T1005";
+import T1018 from "../../attack/techniques/T1018";
+import T1016 from "../../attack/techniques/T1016";
+import T1021 from "../../attack/techniques/T1021";
+import T1064 from "../../attack/techniques/T1064";
+import {extractExecutionStatusFromServerResponse} from "../common/ExecutionStatus";
 
 const tech_components = {
   'T1210': T1210,
@@ -80,11 +82,7 @@ class AttackReportPageComponent extends AuthComponent {
     return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
-        // This check is used to prevent unnecessary re-rendering
-        this.setState({
-          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']),
-          runStarted: res['completed_steps']['run_monkey']
-        });
+        this.setState(extractExecutionStatusFromServerResponse(res));
         return res;
       });
   };
