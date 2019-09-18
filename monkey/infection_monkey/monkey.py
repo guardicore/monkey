@@ -27,6 +27,7 @@ from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.exploit.tools.helpers import get_interface_to_target
+from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError
 
 __author__ = 'itamar'
 
@@ -301,7 +302,11 @@ class InfectionMonkey(object):
                 return True
             else:
                 LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
-
+        except ExploitingVulnerableMachineError as exc:
+            LOG.error("Exception while attacking %s using %s: %s",
+                      machine, exploiter.__class__.__name__, exc)
+            self.successfully_exploited(machine, exploiter)
+            return True
         except Exception as exc:
             LOG.exception("Exception while attacking %s using %s: %s",
                           machine, exploiter.__class__.__name__, exc)

@@ -415,7 +415,7 @@ SCHEMA = {
                             "title": "Harvest Azure Credentials",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1003", "T1078"],
+                            "attack_techniques": ["T1003"],
                             "description":
                                 "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         },
@@ -430,7 +430,7 @@ SCHEMA = {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1003", "T1078"],
+                            "attack_techniques": ["T1003"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }
