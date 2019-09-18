@@ -1,11 +1,12 @@
 import os
 import logging
 
-from infection_monkey.utils import is_windows_os
+from common.data.post_breach_consts import POST_BREACH_FILE_EXECUTION
+from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.control import ControlClient
 from infection_monkey.config import WormConfiguration
-from infection_monkey.utils import get_monkey_dir_path
+from infection_monkey.utils.monkey_dir import get_monkey_dir_path
 from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.exploit.tools.helpers import get_interface_to_target
@@ -27,7 +28,7 @@ class UsersPBA(PBA):
     Defines user's configured post breach action.
     """
     def __init__(self):
-        super(UsersPBA, self).__init__("Custom post breach action")
+        super(UsersPBA, self).__init__(POST_BREACH_FILE_EXECUTION)
         self.filename = ''
         if not is_windows_os():
             # Add linux commands to PBA's

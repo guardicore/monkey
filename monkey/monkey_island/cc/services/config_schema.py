@@ -111,6 +111,14 @@ SCHEMA = {
                     "title": "Back door user",
                     "attack_techniques": []
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "CommunicateAsNewUser"
+                    ],
+                    "title": "Communicate as new user",
+                    "attack_techniques": []
+                },
             ],
         },
         "finger_classes": {
@@ -329,6 +337,7 @@ SCHEMA = {
                                 "$ref": "#/definitions/post_breach_acts"
                             },
                             "default": [
+                                "CommunicateAsNewUser"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
