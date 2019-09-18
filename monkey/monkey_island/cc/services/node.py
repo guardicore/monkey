@@ -248,6 +248,12 @@ class NodeService:
                                upsert=False)
 
     @staticmethod
+    def add_communication_info(monkey, info):
+        mongo.db.monkey.update({"guid": monkey["guid"]},
+                               {"$set": {'command_control_channel': info}},
+                               upsert=False)
+
+    @staticmethod
     def get_monkey_island_monkey():
         ip_addresses = local_ip_addresses()
         for ip_address in ip_addresses:

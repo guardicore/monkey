@@ -12,7 +12,7 @@ class T1145(AttackTechnique):
     used_msg = "Monkey found ssh keys on machines in the network."
 
     # Gets data about ssh keys found
-    query = [{'$match': {'telem_category': 'system_info_collection',
+    query = [{'$match': {'telem_category': 'system_info',
                          'data.ssh_info': {'$elemMatch': {'private_key': {'$exists': True}}}}},
              {'$project': {'_id': 0,
                            'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
@@ -23,9 +23,9 @@ class T1145(AttackTechnique):
         ssh_info = list(mongo.db.telemetry.aggregate(T1145.query))
 
         if ssh_info:
-            status = ScanStatus.USED
+            status = ScanStatus.USED.value
         else:
-            status = ScanStatus.UNSCANNED
+            status = ScanStatus.UNSCANNED.value
         data = T1145.get_base_data_by_status(status)
         data.update({'ssh_info': ssh_info})
         return data

@@ -23,7 +23,7 @@ from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.remote_run import RemoteRun
-from monkey_island.cc.resources.report import Report
+from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
@@ -122,7 +122,13 @@ def init_api_resources(api):
     api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
     api.add_resource(Edge, '/api/netmap/edge', '/api/netmap/edge/')
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
-    api.add_resource(Report, '/api/report', '/api/report/')
+
+    # report_type: zero_trust or security
+    api.add_resource(
+        Report,
+        '/api/report/<string:report_type>',
+        '/api/report/<string:report_type>/<string:report_data>')
+
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')

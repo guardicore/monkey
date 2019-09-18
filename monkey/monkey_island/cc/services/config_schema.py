@@ -14,7 +14,7 @@ SCHEMA = {
                         "SmbExploiter"
                     ],
                     "title": "SMB Exploiter",
-                    "attack_techniques": ["T1110", "T1075"]
+                    "attack_techniques": ["T1110", "T1075", "T1035"]
                 },
                 {
                     "type": "string",
@@ -22,7 +22,7 @@ SCHEMA = {
                         "WmiExploiter"
                     ],
                     "title": "WMI Exploiter",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": ["T1110", "T1106"]
                 },
                 {
                     "type": "string",
@@ -31,14 +31,6 @@ SCHEMA = {
                     ],
                     "title": "MSSQL Exploiter",
                     "attack_techniques": ["T1110"]
-                },
-                {
-                    "type": "string",
-                    "enum": [
-                        "RdpExploiter"
-                    ],
-                    "title": "RDP Exploiter (UNSAFE)",
-                    "attack_techniques": []
                 },
                 {
                     "type": "string",
@@ -54,7 +46,7 @@ SCHEMA = {
                         "SSHExploiter"
                     ],
                     "title": "SSH Exploiter",
-                    "attack_techniques": ["T1110", "T1145"]
+                    "attack_techniques": ["T1110", "T1145", "T1106"]
                 },
                 {
                     "type": "string",
@@ -117,6 +109,14 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "CommunicateAsNewUser"
+                    ],
+                    "title": "Communicate as new user",
                     "attack_techniques": []
                 },
             ],
@@ -337,6 +337,7 @@ SCHEMA = {
                                 "$ref": "#/definitions/post_breach_acts"
                             },
                             "default": [
+                                "CommunicateAsNewUser"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
@@ -414,7 +415,7 @@ SCHEMA = {
                             "title": "Harvest Azure Credentials",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1003", "T1078"],
+                            "attack_techniques": ["T1003"],
                             "description":
                                 "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         },
@@ -422,14 +423,14 @@ SCHEMA = {
                             "title": "Collect system info",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1082"],
+                            "attack_techniques": ["T1082", "T1005", "T1016"],
                             "description": "Determines whether to collect system info"
                         },
                         "should_use_mimikatz": {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1003", "T1078"],
+                            "attack_techniques": ["T1003"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }
@@ -788,19 +789,6 @@ SCHEMA = {
                             "type": "string",
                             "default": "Password1!",
                             "description": "Password to use for created user"
-                        }
-                    }
-                },
-                "rdp_grinder": {
-                    "title": "RDP grinder",
-                    "type": "object",
-                    "properties": {
-                        "rdp_use_vbs_download": {
-                            "title": "Use VBS download",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether to use VBS or BITS to download monkey to remote machine"
-                                           " (true=VBS, false=BITS)"
                         }
                     }
                 },

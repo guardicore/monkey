@@ -1,3 +1,4 @@
+import hashlib
 import os
 import json
 import sys
@@ -13,9 +14,11 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
+SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list"]
+HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
+
 
 class Configuration(object):
-
     def from_kv(self, formatted_data):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
@@ -52,6 +55,12 @@ class Configuration(object):
         formatted_data = json.loads(json_data)
         result = self.from_kv(formatted_data)
         return result
+
+    @staticmethod
+    def hide_sensitive_info(config_dict):
+        for field in SENSITIVE_FIELDS:
+            config_dict[field] = HIDDEN_FIELD_REPLACEMENT_CONTENT
+        return config_dict
 
     def as_dict(self):
         result = {}
@@ -174,7 +183,7 @@ class Configuration(object):
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
-                  8008, # HTTP alternate
+                  8008,  # HTTP alternate
                   7001  # Oracle Weblogic default server port
                   ]
     tcp_target_ports = [22,
@@ -206,9 +215,6 @@ class Configuration(object):
     ms08_067_exploit_attempts = 5
     user_to_add = "Monkey_IUSER_SUPPORT"
     remote_user_pass = "Password1!"
-
-    # rdp exploiter
-    rdp_use_vbs_download = True
 
     # User and password dictionaries for exploits.
 
@@ -271,6 +277,18 @@ class Configuration(object):
     custom_PBA_windows_cmd = ""
     PBA_linux_filename = None
     PBA_windows_filename = None
+
+    @staticmethod
+    def hash_sensitive_data(sensitive_data):
+        """
+        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data plain-text, as the log is
+        saved on client machines plain-text.
+
+        :param sensitive_data: the data to hash.
+        :return: the hashed data.
+        """
+        password_hashed = hashlib.sha512(sensitive_data).hexdigest()
+        return password_hashed
 
 
 WormConfiguration = Configuration()

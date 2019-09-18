@@ -1,6 +1,10 @@
 import abc
+import json
+import logging
 
 from infection_monkey.control import ControlClient
+
+logger = logging.getLogger(__name__)
 
 __author__ = 'itay.mizeretz'
 
@@ -17,7 +21,9 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
         """
         Sends telemetry to island
         """
-        ControlClient.send_telemetry(self.telem_category, self.get_data())
+        data = self.get_data()
+        logger.debug("Sending {} telemetry. Data: {}".format(self.telem_category, json.dumps(data)))
+        ControlClient.send_telemetry(self.telem_category, data)
 
     @abc.abstractproperty
     def telem_category(self):

@@ -525,6 +525,14 @@ body {
   margin-bottom: 30px;
 }
 
+.attack-matrix {
+  margin-bottom: 20px;
+}
+
+.attack-report .btn-collapse span:nth-of-type(2){
+  flex: 0;
+}
+
 .icon-info {
   color: #ade3eb !important;
 }
@@ -539,6 +547,22 @@ body {
 
 .icon-default {
   color: #e0ddde !important;
+}
+
+.status-success {
+  color: #24b716 !important;
+}
+
+.status-warning {
+  color: #b1a91c !important;
+}
+
+.status-danger {
+  color: #d91016 !important;
+}
+
+.status-default {
+  color: #575556 !important;
 }
 
 .attack-legend {

@@ -1,22 +1,22 @@
-import http.server
+import BaseHTTPServer
 import os.path
 import select
 import socket
 import threading
-import urllib.request, urllib.parse, urllib.error
+import urllib
 from logging import getLogger
-from urllib.parse import urlsplit
-from threading import Lock
+from urlparse import urlsplit
 
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
+from infection_monkey.exploit.tools.helpers import get_interface_to_target
 
 __author__ = 'hoffer'
 
 LOG = getLogger(__name__)
 
 
-class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
+class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     filename = ""
 
@@ -61,7 +61,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             f.close()
 
     def send_head(self):
-        if self.path != '/' + urllib.parse.quote(os.path.basename(self.filename)):
+        if self.path != '/' + urllib.quote(os.path.basename(self.filename)):
             self.send_error(500, "")
             return None, 0, 0
         f = None
@@ -106,7 +106,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                                                                   format % args))
 
 
-class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
+class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     timeout = 30  # timeout with clients, set to None not to make persistent connection
     proxy_via = None  # pseudonym of the proxy in Via header, set to None not to modify original Via header
     protocol_version = "HTTP/1.1"
@@ -165,17 +165,24 @@ class HTTPServer(threading.Thread):
 
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
+            from common.utils.attack_utils import ScanStatus
+            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
+
             filename = self._filename
 
             @staticmethod
             def report_download(dest=None):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
+                TempHandler.T1105Telem(TempHandler.ScanStatus.USED,
+                                       get_interface_to_target(dest[0]),
+                                       dest[0],
+                                       self._filename).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
                     return True
                 return False
 
-        httpd = http.server.HTTPServer((self._local_ip, self._local_port), TempHandler)
+        httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
         httpd.timeout = 0.5  # this is irrelevant?
 
         while not self._stopped and self.downloads < self.max_downloads:
@@ -212,17 +219,23 @@ class LockedHTTPServer(threading.Thread):
 
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
+            from common.utils.attack_utils import ScanStatus
+            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
             filename = self._filename
 
             @staticmethod
             def report_download(dest=None):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
+                TempHandler.T1105Telem(TempHandler.ScanStatus.USED,
+                                       get_interface_to_target(dest[0]),
+                                       dest[0],
+                                       self._filename).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
                     return True
                 return False
 
-        httpd = http.server.HTTPServer((self._local_ip, self._local_port), TempHandler)
+        httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
         self.lock.release()
         while not self._stopped and self.downloads < self.max_downloads:
             httpd.handle_request()
@@ -236,7 +249,7 @@ class LockedHTTPServer(threading.Thread):
 
 class HTTPConnectProxy(TransportProxyBase):
     def run(self):
-        httpd = http.server.HTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
+        httpd = BaseHTTPServer.HTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
         httpd.timeout = 30
         while not self._stopped:
             httpd.handle_request()

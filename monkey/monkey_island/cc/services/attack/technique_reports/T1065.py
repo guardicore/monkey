@@ -17,4 +17,4 @@ class T1065(AttackTechnique):
     def get_report_data():
         port = ConfigService.get_config_value(['cnc', 'servers', 'current_server']).split(':')[1]
         T1065.used_msg = T1065.message % port
-        return T1065.get_base_data_by_status(ScanStatus.USED)
+        return T1065.get_base_data_by_status(ScanStatus.USED.value)

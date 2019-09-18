@@ -10,7 +10,7 @@ import re
 from six.moves import range
 
 from infection_monkey.pyinstaller_utils import get_binary_file_path
-from infection_monkey.utils import is_64bit_python
+from infection_monkey.utils.environment import is_64bit_python
 
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
