@@ -16,7 +16,7 @@ const columns = [
         },
         maxWidth: MAX_WIDTH_STATUS_COLUMN
       },
-      { Header: 'ZT Recommendation', accessor: 'recommendation',
+      { Header: 'Zero Trust Principle', accessor: 'principle',
         style: {'whiteSpace': 'unset'}  // This enables word wrap
       },
       { Header: 'Monkey Tests', id: 'tests',
@@ -34,7 +34,7 @@ class TestsStatus extends AuthComponent {
     return (
       <Fragment>
         {this.getFilteredTestsByStatusIfAny(ZeroTrustStatuses.failed)}
-        {this.getFilteredTestsByStatusIfAny(ZeroTrustStatuses.inconclusive)}
+        {this.getFilteredTestsByStatusIfAny(ZeroTrustStatuses.verify)}
         {this.getFilteredTestsByStatusIfAny(ZeroTrustStatuses.passed)}
         {this.getFilteredTestsByStatusIfAny(ZeroTrustStatuses.unexecuted)}
       </Fragment>
@@ -60,12 +60,12 @@ class TestsStatus extends AuthComponent {
   }
 }
 
-export class RecommendationsStatusTable extends AuthComponent {
+export class PrinciplesStatusTable extends AuthComponent {
   render() {
-    return <PaginatedTable data={this.props.recommendationsStatus} columns={columns} pageSize={5}/>;
+    return <PaginatedTable data={this.props.principlesStatus} columns={columns} pageSize={5}/>;
   }
 }
 
-export default RecommendationsStatusTable;
+export default PrinciplesStatusTable;
 
-RecommendationsStatusTable.propTypes = {recommendationsStatus: PropTypes.array};
+PrinciplesStatusTable.propTypes = {principlesStatus: PropTypes.array};

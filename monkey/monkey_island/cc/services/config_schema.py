@@ -111,6 +111,14 @@ SCHEMA = {
                     "title": "Back door user",
                     "attack_techniques": []
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "CommunicateAsNewUser"
+                    ],
+                    "title": "Communicate as new user",
+                    "attack_techniques": []
+                },
             ],
         },
         "finger_classes": {
@@ -329,6 +337,7 @@ SCHEMA = {
                                 "$ref": "#/definitions/post_breach_acts"
                             },
                             "default": [
+                                "CommunicateAsNewUser"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
@@ -406,7 +415,7 @@ SCHEMA = {
                             "title": "Harvest Azure Credentials",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1003", "T1078"],
+                            "attack_techniques": ["T1003"],
                             "description":
                                 "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         },
@@ -421,7 +430,7 @@ SCHEMA = {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1003", "T1078"],
+                            "attack_techniques": ["T1003"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }

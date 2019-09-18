@@ -8,7 +8,7 @@ export default class StatusesToPillarsSummary extends Component {
   render() {
     return (<div id="piilar-summary">
       {this.getStatusSummary(ZeroTrustStatuses.failed)}
-      {this.getStatusSummary(ZeroTrustStatuses.inconclusive)}
+      {this.getStatusSummary(ZeroTrustStatuses.verify)}
       {this.getStatusSummary(ZeroTrustStatuses.passed)}
       {this.getStatusSummary(ZeroTrustStatuses.unexecuted)}
     </div>);

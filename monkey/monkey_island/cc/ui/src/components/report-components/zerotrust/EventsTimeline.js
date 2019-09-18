@@ -14,7 +14,7 @@ export default class EventsTimeline extends Component {
   render() {
     return (
       <div>
-        <Timeline>
+        <Timeline style={{fontSize: '100%'}}>
           {
             this.props.events.map((event, index) => {
               const event_time = new Date(event.timestamp['$date']).toString();
@@ -22,7 +22,6 @@ export default class EventsTimeline extends Component {
                 key={index}
                 createdAt={event_time}
                 title={event.title}
-
                 icon={<img src={eventTypeToIcon[event.event_type]} alt="icon" style={{width: '24px'}} />}>
                   {event.message}
               </TimelineEvent>)

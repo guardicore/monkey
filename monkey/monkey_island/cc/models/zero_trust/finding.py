@@ -14,12 +14,12 @@ from monkey_island.cc.models.zero_trust.event import Event
 class Finding(Document):
     """
     This model represents a Zero-Trust finding: A result of a test the monkey/island might perform to see if a
-    specific recommendation of zero trust is upheld or broken.
+    specific principle of zero trust is upheld or broken.
 
     Findings might have the following statuses:
         Failed ❌
             Meaning that we are sure that something is wrong (example: segmentation issue).
-        Inconclusive ⁉
+        Verify ⁉
             Meaning that we need the user to check something himself (example: 2FA logs, AV missing).
         Passed ✔
             Meaning that we are sure that something is correct (example: Monkey failed exploiting).
@@ -54,3 +54,7 @@ class Finding(Document):
         finding.save()
 
         return finding
+
+    def add_events(self, events):
+        # type: (list) -> None
+        self.events.extend(events)

@@ -10,7 +10,7 @@ export const ZeroTrustPillars = {
 
 export const ZeroTrustStatuses = {
   failed: "Failed",
-  inconclusive: "Inconclusive",
+  verify: "Verify",
   passed: "Passed",
   unexecuted: "Unexecuted"
 };

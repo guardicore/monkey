@@ -27,35 +27,32 @@ class ZeroTrustReportLegend extends Component {
 
   getLegendContent() {
     return <div id={this.constructor.name}>
-      <h4>Statuses</h4>
       <ul style={{listStyle: "none"}}>
         <li>
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.failed}/>
           </div>
-          {"\t"}Some tests failed; the monkeys found something wrong.
+          {"\t"}At least one of the tests related to this component failed. This means that the Infection Monkey detected an unmet Zero Trust requirement.
         </li>
         <li>
           <div style={{display: "inline-block"}}>
-            <StatusLabel showText={true} status={ZeroTrustStatuses.inconclusive}/>
+            <StatusLabel showText={true} status={ZeroTrustStatuses.verify}/>
           </div>
-          {"\t"}The test ran; manual verification is required to determine the results.
+          {"\t"}At least one of the tests’ results related to this component requires further manual verification.
         </li>
         <li>
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.passed}/>
           </div>
-          {"\t"}The test passed, so this is OK 🙂
+          {"\t"}All Tests related to this pillar passed. No violation of a Zero Trust guiding principle was detected.
         </li>
         <li>
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.unexecuted}/>
           </div>
-          {"\t"}This status means the test wasn't executed.
+          {"\t"}This status means the test wasn't executed.To activate more tests, refer to the Monkey <NavLink to="/configuration"><u>configuration</u></NavLink> page.
         </li>
       </ul>
-      <hr />
-      Some of the tests can be activated using the <NavLink to="/configuration"><u>configuration</u></NavLink>.
     </div>;
   }
 }

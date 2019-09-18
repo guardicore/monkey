@@ -11,3 +11,8 @@ def get_edge_by_scan_or_exploit_telemetry(telemetry_json):
         dst_node = NodeService.get_or_create_node(dst_ip, dst_domain_name)
 
     return EdgeService.get_or_create_edge(src_monkey["_id"], dst_node["_id"])
+
+
+def get_tunnel_host_ip_from_proxy_field(telemetry_json):
+    tunnel_host_ip = telemetry_json['data']['proxy'].split(":")[-2].replace("//", "")
+    return tunnel_host_ip

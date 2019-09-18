@@ -78,23 +78,22 @@ class VennDiagram extends React.Component {
     RULE #1: All scores have to be equal 0, except Unexecuted [U] which could be also a negative integer
              sum(C, I, P) has to be <=0
 
-    RULE #2: Conclusive [C] has to be > 0,
+    RULE #2: Failed [C] has to be > 0,
              sum(C) > 0
 
-    RULE #3: Inconclusive [I] has to be > 0 while Conclusive has to be 0,
+    RULE #3: Verify [I] has to be > 0 while Failed has to be 0,
              sum(C, I) > 0 and C * I = 0, while C has to be 0
 
     RULE #4: By process of elimination, passed.
              if the P is bigger by 2 then negative U, first conditional
              would be true.
-
     */
 
     this.rules = [
 
       {
         id: 'Rule #1', status: ZeroTrustStatuses.unexecuted, hex: '#777777', f: function (d_) {
-          return d_[ZeroTrustStatuses.failed] + d_[ZeroTrustStatuses.inconclusive] + d_[ZeroTrustStatuses.passed] === 0;
+          return d_[ZeroTrustStatuses.failed] + d_[ZeroTrustStatuses.verify] + d_[ZeroTrustStatuses.passed] === 0;
         }
       },
       {
@@ -103,8 +102,8 @@ class VennDiagram extends React.Component {
         }
       },
       {
-        id: 'Rule #3', status: 'Inconclusive', hex: '#F0AD4E', f: function (d_) {
-          return d_[ZeroTrustStatuses.failed] === 0 && d_[ZeroTrustStatuses.inconclusive] > 0;
+        id: 'Rule #3', status: ZeroTrustStatuses.verify, hex: '#F0AD4E', f: function (d_) {
+          return d_[ZeroTrustStatuses.failed] === 0 && d_[ZeroTrustStatuses.verify] > 0;
         }
       },
       {

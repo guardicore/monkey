@@ -14,7 +14,7 @@ REPORT_TYPES = [SECURITY_REPORT_TYPE, ZERO_TRUST_REPORT_TYPE]
 
 REPORT_DATA_PILLARS = "pillars"
 REPORT_DATA_FINDINGS = "findings"
-REPORT_DATA_RECOMMENDATIONS_STATUS = "recommendations"
+REPORT_DATA_PRINCIPLES_STATUS = "principles"
 
 __author__ = ["itay.mizeretz", "shay.nehmad"]
 
@@ -33,8 +33,8 @@ class Report(flask_restful.Resource):
                         "grades": ZeroTrustService.get_pillars_grades()
                     }
                 )
-            elif report_data == REPORT_DATA_RECOMMENDATIONS_STATUS:
-                return jsonify(ZeroTrustService.get_recommendations_status())
+            elif report_data == REPORT_DATA_PRINCIPLES_STATUS:
+                return jsonify(ZeroTrustService.get_principles_status())
             elif report_data == REPORT_DATA_FINDINGS:
                 return jsonify(ZeroTrustService.get_all_findings())
 

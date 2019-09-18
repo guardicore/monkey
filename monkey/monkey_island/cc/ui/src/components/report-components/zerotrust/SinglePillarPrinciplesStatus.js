@@ -1,13 +1,13 @@
 import AuthComponent from "../../AuthComponent";
 import PillarLabel from "./PillarLabel";
-import RecommendationsStatusTable from "./RecommendationsStatusTable";
+import PrinciplesStatusTable from "./PrinciplesStatusTable";
 import React from "react";
 import * as PropTypes from "prop-types";
 import {Panel} from "react-bootstrap";
 
-export default class SinglePillarRecommendationsStatus extends AuthComponent {
+export default class SinglePillarPrinciplesStatus extends AuthComponent {
   render() {
-    if (this.props.recommendationsStatus.length === 0) {
+    if (this.props.principlesStatus.length === 0) {
       return null;
     }
     else {
@@ -22,7 +22,7 @@ export default class SinglePillarRecommendationsStatus extends AuthComponent {
           </Panel.Heading>
           <Panel.Collapse>
             <Panel.Body>
-              <RecommendationsStatusTable recommendationsStatus={this.props.recommendationsStatus}/>
+              <PrinciplesStatusTable principlesStatus={this.props.principlesStatus}/>
             </Panel.Body>
           </Panel.Collapse>
         </Panel>
@@ -31,7 +31,7 @@ export default class SinglePillarRecommendationsStatus extends AuthComponent {
   }
 }
 
-SinglePillarRecommendationsStatus.propTypes = {
-  recommendationsStatus: PropTypes.array,
+SinglePillarPrinciplesStatus.propTypes = {
+  principlesStatus: PropTypes.array,
   pillar: PropTypes.string,
 };

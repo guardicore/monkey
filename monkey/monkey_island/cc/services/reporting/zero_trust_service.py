@@ -17,7 +17,7 @@ class ZeroTrustService(object):
         pillar_grade = {
             "pillar": pillar,
             STATUS_FAILED: 0,
-            STATUS_INCONCLUSIVE: 0,
+            STATUS_VERIFY: 0,
             STATUS_PASSED: 0,
             STATUS_UNEXECUTED: 0
         }
@@ -39,30 +39,30 @@ class ZeroTrustService(object):
         return pillar_grade
 
     @staticmethod
-    def get_recommendations_status():
-        all_recommendations_statuses = {}
+    def get_principles_status():
+        all_principles_statuses = {}
 
         # init with empty lists
         for pillar in PILLARS:
-            all_recommendations_statuses[pillar] = []
+            all_principles_statuses[pillar] = []
 
-        for recommendation, recommendation_tests in RECOMMENDATIONS_TO_TESTS.items():
-            for pillar in RECOMMENDATIONS_TO_PILLARS[recommendation]:
-                all_recommendations_statuses[pillar].append(
+        for principle, principle_tests in PRINCIPLES_TO_TESTS.items():
+            for pillar in PRINCIPLES_TO_PILLARS[principle]:
+                all_principles_statuses[pillar].append(
                     {
-                        "recommendation": RECOMMENDATIONS[recommendation],
-                        "tests": ZeroTrustService.__get_tests_status(recommendation_tests),
-                        "status": ZeroTrustService.__get_recommendation_status(recommendation_tests)
+                        "principle": PRINCIPLES[principle],
+                        "tests": ZeroTrustService.__get_tests_status(principle_tests),
+                        "status": ZeroTrustService.__get_principle_status(principle_tests)
                     }
                 )
 
-        return all_recommendations_statuses
+        return all_principles_statuses
 
     @staticmethod
-    def __get_recommendation_status(recommendation_tests):
+    def __get_principle_status(principle_tests):
         worst_status = STATUS_UNEXECUTED
         all_statuses = set()
-        for test in recommendation_tests:
+        for test in principle_tests:
             all_statuses |= set(Finding.objects(test=test).distinct("status"))
 
         for status in all_statuses:
@@ -72,9 +72,9 @@ class ZeroTrustService(object):
         return worst_status
 
     @staticmethod
-    def __get_tests_status(recommendation_tests):
+    def __get_tests_status(principle_tests):
         results = []
-        for test in recommendation_tests:
+        for test in principle_tests:
             test_findings = Finding.objects(test=test)
             results.append(
                 {
@@ -124,7 +124,7 @@ class ZeroTrustService(object):
     def get_statuses_to_pillars():
         results = {
             STATUS_FAILED: [],
-            STATUS_INCONCLUSIVE: [],
+            STATUS_VERIFY: [],
             STATUS_PASSED: [],
             STATUS_UNEXECUTED: []
         }

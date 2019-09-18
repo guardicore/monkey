@@ -12,7 +12,7 @@ from six import text_type
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.report_exporter_manager import ReportExporterManager
+from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.edge import EdgeService
