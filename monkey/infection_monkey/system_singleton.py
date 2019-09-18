@@ -4,8 +4,7 @@ import sys
 from abc import ABCMeta, abstractmethod
 
 from infection_monkey.config import WormConfiguration
-from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
-from common.utils.attack_utils import ScanStatus, UsageEnum
+
 
 __author__ = 'itamar'
 
@@ -46,21 +45,13 @@ class WindowsSystemSingleton(_SystemSingleton):
                                                      ctypes.c_char_p(self._mutex_name))
         last_error = ctypes.windll.kernel32.GetLastError()
 
-        status = None
         if not handle:
             LOG.error("Cannot acquire system singleton %r, unknown error %d",
                       self._mutex_name, last_error)
-            status = ScanStatus.SCANNED
-
+            return False
         if winerror.ERROR_ALREADY_EXISTS == last_error:
-            status = ScanStatus.SCANNED
             LOG.debug("Cannot acquire system singleton %r, mutex already exist",
                       self._mutex_name)
-
-        if not status:
-            status = ScanStatus.USED
-        T1106Telem(status, UsageEnum.SINGLETON_WINAPI).send()
-        if status == ScanStatus.SCANNED:
             return False
 
         self._mutex_handle = handle
@@ -71,7 +62,6 @@ class WindowsSystemSingleton(_SystemSingleton):
 
     def unlock(self):
         assert self._mutex_handle is not None, "Singleton not locked"
-
         ctypes.windll.kernel32.CloseHandle(self._mutex_handle)
         self._mutex_handle = None
 
