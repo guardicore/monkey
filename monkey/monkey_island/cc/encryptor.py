@@ -41,7 +41,7 @@ class Encryptor:
     def enc(self, message):
         cipher_iv = Random.new().read(AES.block_size)
         cipher = AES.new(self._cipher_key, AES.MODE_CBC, cipher_iv)
-        return base64.b64encode(cipher_iv + cipher.encrypt(str(self._pad(message))))  # ciper.encrypt expects str
+        return base64.b64encode(cipher_iv + cipher.encrypt(self._pad(message).encode()))
 
     def dec(self, enc_message):
         enc_message = base64.b64decode(enc_message)

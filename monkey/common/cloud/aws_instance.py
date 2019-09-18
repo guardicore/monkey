@@ -30,14 +30,14 @@ class AwsInstance(object):
             self.region = self._parse_region(
                 urllib.request.urlopen(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read())
         except urllib.error.URLError as e:
-            logger.warning("Failed init of AwsInstance while getting metadata: {}".format(e.message))
+            logger.warning("Failed init of AwsInstance while getting metadata: {}".format(e))
 
         try:
             self.account_id = self._extract_account_id(
                 urllib.request.urlopen(
                     AWS_LATEST_METADATA_URI_PREFIX + 'dynamic/instance-identity/document', timeout=2).read())
         except urllib.error.URLError as e:
-            logger.warning("Failed init of AwsInstance while getting dynamic instance data: {}".format(e.message))
+            logger.warning("Failed init of AwsInstance while getting dynamic instance data: {}".format(e))
 
     @staticmethod
     def _parse_region(region_url_response):
