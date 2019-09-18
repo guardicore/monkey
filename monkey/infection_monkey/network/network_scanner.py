@@ -38,7 +38,7 @@ def generate_victims(net_ranges, chunk_size):
             chunk.append(victim)
             if len(chunk) == chunk_size:
                 yield chunk
-    yield chunk
+                chunk = []
 
 
 class NetworkScanner(object):
