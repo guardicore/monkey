@@ -26,13 +26,13 @@ class TestSegmentationTests(IslandTestCase):
             ip_addresses=[FIRST_SUBNET])
 
         # no findings
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION)), 0)
+        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION)), 0)
 
         # This is like the monkey is done and sent done telem
         create_or_add_findings_for_all_pairs(all_subnets, monkey)
 
         # There are 2 subnets in which the monkey is NOT
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_PASSED)), 2)
+        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_PASSED)), 2)
 
         # This is a monkey from 2nd subnet communicated with 1st subnet.
         SegmentationFinding.create_or_add_to_existing_finding(
@@ -41,6 +41,6 @@ class TestSegmentationTests(IslandTestCase):
             Event.create_event(title="sdf", message="asd", event_type=EVENT_TYPE_MONKEY_NETWORK)
         )
 
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_PASSED)), 1)
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_FAILED)), 1)
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION)), 2)
+        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_PASSED)), 1)
+        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_FAILED)), 1)
+        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION)), 2)

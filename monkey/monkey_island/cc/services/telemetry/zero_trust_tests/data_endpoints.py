@@ -26,7 +26,7 @@ def test_open_data_endpoints(telemetry_json):
         )
     ]
 
-    for service_name, service_data in services.items():
+    for service_name, service_data in list(services.items()):
         events.append(Event.create_event(
             title="Scan telemetry analysis",
             message="Scanned service: {}.".format(service_name),

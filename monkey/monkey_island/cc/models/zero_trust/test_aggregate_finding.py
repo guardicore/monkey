@@ -13,17 +13,17 @@ class TestAggregateFinding(IslandTestCase):
         test = TEST_MALICIOUS_ACTIVITY_TIMELINE
         status = STATUS_VERIFY
         events = [Event.create_event("t", "t", EVENT_TYPE_MONKEY_NETWORK)]
-        self.assertEquals(len(Finding.objects(test=test, status=status)), 0)
+        self.assertEqual(len(Finding.objects(test=test, status=status)), 0)
 
         AggregateFinding.create_or_add_to_existing(test, status, events)
 
-        self.assertEquals(len(Finding.objects(test=test, status=status)), 1)
-        self.assertEquals(len(Finding.objects(test=test, status=status)[0].events), 1)
+        self.assertEqual(len(Finding.objects(test=test, status=status)), 1)
+        self.assertEqual(len(Finding.objects(test=test, status=status)[0].events), 1)
 
         AggregateFinding.create_or_add_to_existing(test, status, events)
 
-        self.assertEquals(len(Finding.objects(test=test, status=status)), 1)
-        self.assertEquals(len(Finding.objects(test=test, status=status)[0].events), 2)
+        self.assertEqual(len(Finding.objects(test=test, status=status)), 1)
+        self.assertEqual(len(Finding.objects(test=test, status=status)[0].events), 2)
 
     def test_create_or_add_to_existing_2_tests_already_exist(self):
         self.fail_if_not_testing_env()
@@ -33,21 +33,21 @@ class TestAggregateFinding(IslandTestCase):
         status = STATUS_VERIFY
         event = Event.create_event("t", "t", EVENT_TYPE_MONKEY_NETWORK)
         events = [event]
-        self.assertEquals(len(Finding.objects(test=test, status=status)), 0)
+        self.assertEqual(len(Finding.objects(test=test, status=status)), 0)
 
         Finding.save_finding(test, status, events)
 
-        self.assertEquals(len(Finding.objects(test=test, status=status)), 1)
-        self.assertEquals(len(Finding.objects(test=test, status=status)[0].events), 1)
+        self.assertEqual(len(Finding.objects(test=test, status=status)), 1)
+        self.assertEqual(len(Finding.objects(test=test, status=status)[0].events), 1)
 
         AggregateFinding.create_or_add_to_existing(test, status, events)
 
-        self.assertEquals(len(Finding.objects(test=test, status=status)), 1)
-        self.assertEquals(len(Finding.objects(test=test, status=status)[0].events), 2)
+        self.assertEqual(len(Finding.objects(test=test, status=status)), 1)
+        self.assertEqual(len(Finding.objects(test=test, status=status)[0].events), 2)
 
         Finding.save_finding(test, status, events)
 
-        self.assertEquals(len(Finding.objects(test=test, status=status)), 2)
+        self.assertEqual(len(Finding.objects(test=test, status=status)), 2)
 
         with self.assertRaises(AssertionError):
             AggregateFinding.create_or_add_to_existing(test, status, events)

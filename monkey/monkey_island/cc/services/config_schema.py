@@ -1,4 +1,4 @@
-WARNING_SIGN = " \u26A0"
+WARNING_SIGN = " \\u26A0"
 
 SCHEMA = {
     "title": "Monkey",

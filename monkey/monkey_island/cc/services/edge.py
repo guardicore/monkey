@@ -151,7 +151,7 @@ class EdgeService:
             else:
                 to_label = NodeService.get_monkey_label(to_id)
 
-        RIGHT_ARROW = "\u2192"
+        RIGHT_ARROW = "\\u2192"
         return "%s %s %s" % (from_label, RIGHT_ARROW, to_label)
 
 

@@ -96,7 +96,7 @@ class TestZeroTrustService(IslandTestCase):
 
         result = ZeroTrustService.get_pillars_grades()
 
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
     def test_get_principles_status(self):
         self.fail_if_not_testing_env()
@@ -250,7 +250,7 @@ class TestZeroTrustService(IslandTestCase):
         }
 
         result = ZeroTrustService.get_principles_status()
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
 
     def test_get_pillars_to_statuses(self):
         self.fail_if_not_testing_env()
@@ -268,7 +268,7 @@ class TestZeroTrustService(IslandTestCase):
             DATA: STATUS_UNEXECUTED
         }
 
-        self.assertEquals(ZeroTrustService.get_pillars_to_statuses(), expected)
+        self.assertEqual(ZeroTrustService.get_pillars_to_statuses(), expected)
 
         save_example_findings()
 
@@ -282,4 +282,4 @@ class TestZeroTrustService(IslandTestCase):
             DATA: STATUS_FAILED
         }
 
-        self.assertEquals(ZeroTrustService.get_pillars_to_statuses(), expected)
+        self.assertEqual(ZeroTrustService.get_pillars_to_statuses(), expected)

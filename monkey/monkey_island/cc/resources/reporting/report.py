@@ -1,4 +1,4 @@
-import httplib
+import http.client
 
 
 import flask_restful
@@ -38,4 +38,4 @@ class Report(flask_restful.Resource):
             elif report_data == REPORT_DATA_FINDINGS:
                 return jsonify(ZeroTrustService.get_all_findings())
 
-        flask_restful.abort(httplib.NOT_FOUND)
+        flask_restful.abort(http.client.NOT_FOUND)

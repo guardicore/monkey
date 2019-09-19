@@ -20,8 +20,8 @@ class TestSegmentationFinding(IslandTestCase):
             segmentation_event=event
         )
 
-        self.assertEquals(len(SegmentationFinding.objects()), 1)
-        self.assertEquals(len(SegmentationFinding.objects()[0].events), 1)
+        self.assertEqual(len(SegmentationFinding.objects()), 1)
+        self.assertEqual(len(SegmentationFinding.objects()[0].events), 1)
 
         SegmentationFinding.create_or_add_to_existing_finding(
             # !!! REVERSE ORDER
@@ -30,8 +30,8 @@ class TestSegmentationFinding(IslandTestCase):
             segmentation_event=event
         )
 
-        self.assertEquals(len(SegmentationFinding.objects()), 1)
-        self.assertEquals(len(SegmentationFinding.objects()[0].events), 2)
+        self.assertEqual(len(SegmentationFinding.objects()), 1)
+        self.assertEqual(len(SegmentationFinding.objects()[0].events), 2)
 
         SegmentationFinding.create_or_add_to_existing_finding(
             # !!! REVERSE ORDER
@@ -40,7 +40,7 @@ class TestSegmentationFinding(IslandTestCase):
             segmentation_event=event
         )
 
-        self.assertEquals(len(SegmentationFinding.objects()), 2)
+        self.assertEqual(len(SegmentationFinding.objects()), 2)
 
         SegmentationFinding.create_or_add_to_existing_finding(
             # !!! REVERSE ORDER
@@ -49,4 +49,4 @@ class TestSegmentationFinding(IslandTestCase):
             segmentation_event=event
         )
 
-        self.assertEquals(len(SegmentationFinding.objects()), 3)
+        self.assertEqual(len(SegmentationFinding.objects()), 3)

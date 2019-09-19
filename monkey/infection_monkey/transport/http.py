@@ -1,11 +1,11 @@
-import BaseHTTPServer
+import http.server
 import os.path
 import select
 import socket
 import threading
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from logging import getLogger
-from urlparse import urlsplit
+from urllib.parse import urlsplit
 
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
@@ -16,7 +16,7 @@ __author__ = 'hoffer'
 LOG = getLogger(__name__)
 
 
-class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     filename = ""
 
@@ -61,7 +61,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             f.close()
 
     def send_head(self):
-        if self.path != '/' + urllib.quote(os.path.basename(self.filename)):
+        if self.path != '/' + urllib.parse.quote(os.path.basename(self.filename)):
             self.send_error(500, "")
             return None, 0, 0
         f = None
@@ -106,7 +106,7 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                                                                   format % args))
 
 
-class HTTPConnectProxyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     timeout = 30  # timeout with clients, set to None not to make persistent connection
     proxy_via = None  # pseudonym of the proxy in Via header, set to None not to modify original Via header
     protocol_version = "HTTP/1.1"
@@ -182,7 +182,7 @@ class HTTPServer(threading.Thread):
                     return True
                 return False
 
-        httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
+        httpd = http.server.HTTPServer((self._local_ip, self._local_port), TempHandler)
         httpd.timeout = 0.5  # this is irrelevant?
 
         while not self._stopped and self.downloads < self.max_downloads:
@@ -235,7 +235,7 @@ class LockedHTTPServer(threading.Thread):
                     return True
                 return False
 
-        httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
+        httpd = http.server.HTTPServer((self._local_ip, self._local_port), TempHandler)
         self.lock.release()
         while not self._stopped and self.downloads < self.max_downloads:
             httpd.handle_request()
@@ -249,7 +249,7 @@ class LockedHTTPServer(threading.Thread):
 
 class HTTPConnectProxy(TransportProxyBase):
     def run(self):
-        httpd = BaseHTTPServer.HTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
+        httpd = http.server.HTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
         httpd.timeout = 30
         while not self._stopped:
             httpd.handle_request()

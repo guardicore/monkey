@@ -37,7 +37,7 @@ def test_antivirus_existence(telemetry_json):
 
 
 def filter_av_processes(telemetry_json):
-    all_processes = telemetry_json['data']['process_list'].items()
+    all_processes = list(telemetry_json['data']['process_list'].items())
     av_processes = []
     for process in all_processes:
         process_name = process[1]['name']

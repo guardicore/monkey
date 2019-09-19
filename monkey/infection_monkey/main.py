@@ -58,17 +58,17 @@ def main():
         config_file = opts.config
     if os.path.isfile(config_file):
         # using print because config can also change log locations
-        print("Loading config from %s." % config_file)
+        print(("Loading config from %s." % config_file))
         try:
             with open(config_file) as config_fo:
                 json_dict = json.load(config_fo)
                 WormConfiguration.from_kv(json_dict)
         except ValueError as e:
-            print("Error loading config: %s, using default" % (e,))
+            print(("Error loading config: %s, using default" % (e,)))
     else:
-        print("Config file wasn't supplied and default path: %s wasn't found, using internal default" % (config_file,))
+        print(("Config file wasn't supplied and default path: %s wasn't found, using internal default" % (config_file,)))
 
-    print("Loaded Configuration: %r" % WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()))
+    print(("Loaded Configuration: %r" % WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict())))
 
     # Make sure we're not in a machine that has the kill file
     kill_path = os.path.expandvars(

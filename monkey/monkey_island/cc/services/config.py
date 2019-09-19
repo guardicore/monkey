@@ -203,11 +203,11 @@ class ConfigService:
             # Do it only for root.
             if instance != {}:
                 return
-            for property, subschema in properties.items():
+            for property, subschema in list(properties.items()):
                 main_dict = {}
-                for property2, subschema2 in subschema["properties"].items():
+                for property2, subschema2 in list(subschema["properties"].items()):
                     sub_dict = {}
-                    for property3, subschema3 in subschema2["properties"].items():
+                    for property3, subschema3 in list(subschema2["properties"].items()):
                         if "default" in subschema3:
                             sub_dict[property3] = subschema3["default"]
                     main_dict[property2] = sub_dict

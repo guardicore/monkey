@@ -34,7 +34,7 @@ class ZeroTrustService(object):
             if pillar in test_info[PILLARS_KEY]:
                 pillar_grade[finding.status] += 1
 
-        pillar_grade[STATUS_UNEXECUTED] = sum(1 for condition in test_unexecuted.values() if condition)
+        pillar_grade[STATUS_UNEXECUTED] = sum(1 for condition in list(test_unexecuted.values()) if condition)
 
         return pillar_grade
 
@@ -46,7 +46,7 @@ class ZeroTrustService(object):
         for pillar in PILLARS:
             all_principles_statuses[pillar] = []
 
-        for principle, principle_tests in PRINCIPLES_TO_TESTS.items():
+        for principle, principle_tests in list(PRINCIPLES_TO_TESTS.items()):
             for pillar in PRINCIPLES_TO_PILLARS[principle]:
                 all_principles_statuses[pillar].append(
                     {

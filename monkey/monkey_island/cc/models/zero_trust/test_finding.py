@@ -28,11 +28,11 @@ class TestFinding(IslandTestCase):
         self.fail_if_not_testing_env()
         self.clean_finding_db()
 
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION)), 0)
+        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION)), 0)
 
         event_example = Event.create_event(
             title="Event Title", message="event message", event_type=EVENT_TYPE_MONKEY_NETWORK)
         Finding.save_finding(test=TEST_SEGMENTATION, status=STATUS_FAILED, events=[event_example])
 
-        self.assertEquals(len(Finding.objects(test=TEST_SEGMENTATION)), 1)
-        self.assertEquals(len(Finding.objects(status=STATUS_FAILED)), 1)
+        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION)), 1)
+        self.assertEqual(len(Finding.objects(status=STATUS_FAILED)), 1)
