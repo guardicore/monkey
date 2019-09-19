@@ -7,6 +7,7 @@ import time
 from six.moves import xrange
 
 import infection_monkey.tunnel as tunnel
+from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.config import WormConfiguration
@@ -105,7 +106,7 @@ class InfectionMonkey(object):
         ControlClient.wakeup(parent=self._parent)
         ControlClient.load_control_config()
 
-        if utils.is_windows_os():
+        if is_windows_os():
             T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
         if not WormConfiguration.alive:
