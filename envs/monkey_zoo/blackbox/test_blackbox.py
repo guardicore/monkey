@@ -40,6 +40,7 @@ def wait_machine_bootup():
 @pytest.fixture(scope='class')
 def island_client(island):
     island_client_object = MonkeyIslandClient(island)
+    island_client_object.reset_env()
     yield island_client_object
 
 
