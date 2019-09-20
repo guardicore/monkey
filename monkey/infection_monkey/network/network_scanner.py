@@ -3,8 +3,8 @@ import logging
 
 from common.network.network_range import NetworkRange
 from infection_monkey.config import WormConfiguration
+from infection_monkey.model.host import generate_victims_from_range
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
-from infection_monkey.model import VictimHost
 from infection_monkey.network import TcpScanner, PingScanner
 from infection_monkey.utils import is_windows_os
 
@@ -27,15 +27,13 @@ def generate_victims(net_ranges, chunk_size):
     """
     chunk = []
     for net_range in net_ranges:
-        for address in net_range:
-            if hasattr(net_range, 'domain_name'):
-                victim = VictimHost(address, net_range.domain_name)
-            else:
-                victim = VictimHost(address)
+        for victim in generate_victims_from_range(net_range):
             chunk.append(victim)
             if len(chunk) == chunk_size:
                 yield chunk
                 chunk = []
+    if chunk:  # finished with number of victims < chunk_size
+        yield chunk
 
 
 class NetworkScanner(object):
