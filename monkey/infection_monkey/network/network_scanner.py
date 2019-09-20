@@ -1,4 +1,3 @@
-import sys
 import time
 import logging
 
@@ -13,8 +12,6 @@ if is_windows_os():
     from multiprocessing.dummy import Pool
 else:
     from multiprocessing import Pool
-
-__author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)
 
