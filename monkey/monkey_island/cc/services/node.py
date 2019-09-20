@@ -52,7 +52,7 @@ class NodeService:
                 exploit["origin"] = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
                 exploits.append(exploit)
 
-        exploits.sort(cmp=NodeService._cmp_exploits_by_timestamp)
+        exploits.sort(key=NodeService._cmp_exploits_by_timestamp)
 
         new_node["exploits"] = exploits
         new_node["accessible_from_nodes"] = accessible_from_nodes

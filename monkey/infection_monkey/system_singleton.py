@@ -40,7 +40,7 @@ class WindowsSystemSingleton(_SystemSingleton):
 
         handle = ctypes.windll.kernel32.CreateMutexA(None,
                                                      ctypes.c_bool(True),
-                                                     ctypes.c_char_p(self._mutex_name))
+                                                     ctypes.c_char_p(self._mutex_name.encode()))
         last_error = ctypes.windll.kernel32.GetLastError()
 
         if not handle:

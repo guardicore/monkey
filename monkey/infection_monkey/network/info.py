@@ -1,4 +1,3 @@
-import os
 import sys
 import socket
 import struct
@@ -13,6 +12,7 @@ import requests
 from requests import ConnectionError
 
 from common.network.network_range import CidrRange
+from infection_monkey.utils.environment import is_windows_os
 
 
 # Timeout for monkey connections
@@ -39,11 +39,11 @@ def get_host_subnets():
         if 'broadcast' in network:
             network.pop('broadcast')
         for attr in network:
-            network[attr] = network[attr].encode('utf-8').strip()
+            network[attr] = network[attr]
     return ipv4_nets
 
 
-if sys.platform == "win32":
+if is_windows_os():
 
     def local_ips():
         local_hostname = socket.gethostname()
@@ -159,7 +159,7 @@ def get_interfaces_ranges():
     return res
 
 
-if sys.platform == "win32":
+if is_windows_os():
     def get_ip_for_connection(target_ip):
         return None
 else:

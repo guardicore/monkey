@@ -33,7 +33,7 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def get_data(self):
+    def get_data(self) -> dict:
         """
         :return: Data of telemetry (should be dict)
         """

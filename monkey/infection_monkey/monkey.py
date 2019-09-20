@@ -4,11 +4,11 @@ import os
 import subprocess
 import sys
 import time
-from six.moves import xrange
 
 import infection_monkey.tunnel as tunnel
 from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
+from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.model import DELAY_DELETE_CMD
@@ -105,7 +105,7 @@ class InfectionMonkey(object):
         ControlClient.wakeup(parent=self._parent)
         ControlClient.load_control_config()
 
-        if utils.is_windows_os():
+        if is_windows_os():
             T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
         if not WormConfiguration.alive:
@@ -258,7 +258,7 @@ class InfectionMonkey(object):
             try:
                 status = None
                 if "win32" == sys.platform:
-                    from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
+                    from subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = SW_HIDE
