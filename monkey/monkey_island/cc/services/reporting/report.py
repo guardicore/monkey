@@ -122,6 +122,7 @@ class ReportService:
 
         formatted_nodes = []
 
+        # TODO Figure out and improve
         nodes = \
             [NodeService.get_displayed_node_by_id(node['_id'], True) for node in mongo.db.node.find({}, {'_id': 1})] \
             + [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
