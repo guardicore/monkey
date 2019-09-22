@@ -15,7 +15,6 @@ else:
 
 LOG = logging.getLogger(__name__)
 
-SCAN_DELAY = 0
 ITERATION_BLOCK_SIZE = 5
 
 
