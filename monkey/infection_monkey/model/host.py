@@ -46,17 +46,3 @@ class VictimHost(object):
 
     def set_default_server(self, default_server):
         self.default_server = default_server
-
-
-def generate_victims_from_range(net_range):
-    """
-    Generates VictimHosts from a given netrange
-    :param net_range: Network range object
-    :return: Generator of VictimHost objects
-    """
-    for address in net_range:
-        if hasattr(net_range, 'domain_name'):
-            victim = VictimHost(address, net_range.domain_name)
-        else:
-            victim = VictimHost(address)
-        yield victim

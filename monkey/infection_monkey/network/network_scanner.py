@@ -3,7 +3,7 @@ import logging
 
 from common.network.network_range import NetworkRange
 from infection_monkey.config import WormConfiguration
-from infection_monkey.model.host import generate_victims_from_range
+from infection_monkey.model.victim_host_generator import VictimHostGenerator
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
 from infection_monkey.network import TcpScanner, PingScanner
 from infection_monkey.utils import is_windows_os
@@ -16,23 +16,6 @@ else:
 LOG = logging.getLogger(__name__)
 
 ITERATION_BLOCK_SIZE = 5
-
-
-def generate_victims(net_ranges, chunk_size):
-    """
-    Generates VictimHosts in chunks from all the netranges
-    :param net_ranges: Iterable of network ranges
-    :param chunk_size: Maximum size of each chunk
-    """
-    chunk = []
-    for net_range in net_ranges:
-        for victim in generate_victims_from_range(net_range):
-            chunk.append(victim)
-            if len(chunk) == chunk_size:
-                yield chunk
-                chunk = []
-    if chunk:  # finished with number of victims < chunk_size
-        yield chunk
 
 
 class NetworkScanner(object):
@@ -95,19 +78,11 @@ class NetworkScanner(object):
         # Because we are using this to spread out IO heavy tasks, we can probably go a lot higher than CPU core size
         # But again, balance
         pool = Pool(ITERATION_BLOCK_SIZE)
+        victim_generator = VictimHostGenerator(self._ranges, WormConfiguration.blocked_ips)
 
         victims_count = 0
-        for victim_chunk in generate_victims(self._ranges, ITERATION_BLOCK_SIZE):
+        for victim_chunk in victim_generator.generate_victims(ITERATION_BLOCK_SIZE):
             LOG.debug("Scanning for potential victims in chunk %r", victim_chunk)
-
-            # skip self IP addresses
-            victim_chunk = [x for x in victim_chunk if x.ip_addr not in self._ip_addresses]
-            # skip IPs marked as blocked
-
-            bad_victims = [x for x in victim_chunk if x.ip_addr in WormConfiguration.blocked_ips]
-            for victim in bad_victims:
-                LOG.info("Skipping %s due to blacklist" % victim)
-            victim_chunk = [x for x in victim_chunk if x.ip_addr not in WormConfiguration.blocked_ips]
 
             # check before running scans
             if stop_callback and stop_callback():
