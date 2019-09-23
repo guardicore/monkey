@@ -112,7 +112,7 @@ class NetworkScanner(object):
             # check before running scans
             if stop_callback and stop_callback():
                 LOG.debug("Got stop signal")
-                break
+                return
 
             results = pool.map(self.scan_machine, victim_chunk)
             resulting_victims = [x for x in results if x]  # filter out dead addresses
@@ -123,8 +123,7 @@ class NetworkScanner(object):
 
                 if victims_count >= max_find:
                     LOG.debug("Found max needed victims (%d), stopping scan", max_find)
-
-                    break
+                    return
             if WormConfiguration.tcp_scan_interval:
                 # time.sleep uses seconds, while config is in milliseconds
                 time.sleep(WormConfiguration.tcp_scan_interval / float(1000))
