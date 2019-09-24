@@ -287,7 +287,7 @@ class Configuration(object):
         :param sensitive_data: the data to hash.
         :return: the hashed data.
         """
-        password_hashed = hashlib.sha512(sensitive_data).hexdigest()
+        password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
         return password_hashed
 
 

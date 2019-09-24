@@ -52,7 +52,7 @@ class NodeService:
                 exploit["origin"] = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
                 exploits.append(exploit)
 
-        exploits.sort(key=NodeService._cmp_exploits_by_timestamp)
+        exploits = sorted(exploits, key=lambda exploit: exploit['timestamp'])
 
         new_node["exploits"] = exploits
         new_node["accessible_from_nodes"] = accessible_from_nodes
@@ -70,14 +70,6 @@ class NodeService:
         if node["domain_name"]:
             domain_name = " (" + node["domain_name"] + ")"
         return node["os"]["version"] + " : " + node["ip_addresses"][0] + domain_name
-
-    @staticmethod
-    def _cmp_exploits_by_timestamp(exploit_1, exploit_2):
-        if exploit_1["timestamp"] == exploit_2["timestamp"]:
-            return 0
-        if exploit_1["timestamp"] > exploit_2["timestamp"]:
-            return 1
-        return -1
 
     @staticmethod
     def get_monkey_os(monkey):

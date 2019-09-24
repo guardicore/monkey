@@ -55,7 +55,8 @@ class PingScanner(HostScanner, HostFinger):
                                      PING_TIMEOUT_FLAG,
                                      str(timeout), host.ip_addr],
                                     stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
+                                    stderr=subprocess.PIPE,
+                                    text=True)
 
         output = " ".join(sub_proc.communicate())
         regex_result = self._ttl_regex.search(output)
