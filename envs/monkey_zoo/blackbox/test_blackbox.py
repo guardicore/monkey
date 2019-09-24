@@ -8,7 +8,7 @@ from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
 from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 
-DEFAULT_TIMEOUT_SECONDS = 4*60
+DEFAULT_TIMEOUT_SECONDS = 5*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'haddop-2-v3', 'hadoop-3', 'mssql-16',
                          'mimikatz-14', 'mimikatz-15', 'final-test-struts2-23', 'final-test-struts2-24',
@@ -73,6 +73,9 @@ class TestMonkeyBlackbox(object):
     def test_smb_and_mimikatz_exploiters(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "SMB_MIMIKATZ.conf", "SMB_exploiter_mimikatz")
 
+    def test_smb_pth(self, island_client):
+        TestMonkeyBlackbox.run_basic_test(island_client, "SMB_PTH.conf", "SMB_PTH")
+        
     def test_elastic_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "ELASTIC.conf", "Elastic_exploiter")
 
@@ -86,7 +89,10 @@ class TestMonkeyBlackbox(object):
         TestMonkeyBlackbox.run_basic_test(island_client, "SHELLSHOCK.conf", "Shellschock_exploiter")
 
     def test_tunneling(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "TUNNELING.conf", "Tunneling_exploiter")
+        TestMonkeyBlackbox.run_basic_test(island_client, "TUNNELING.conf", "Tunneling_exploiter", 10*60)
 
-    def test_wmi_exploiter(self, island_client):
+    def test_wmi_and_mimikatz_exploiters(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "WMI_MIMIKATZ.conf", "WMI_exploiter,_mimikatz")
+
+    def test_wmi_pth(self, island_client):
+        TestMonkeyBlackbox.run_basic_test(island_client, "WMI_PTH.conf", "WMI_PTH")

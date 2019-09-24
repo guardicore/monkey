@@ -5,7 +5,7 @@ from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHand
 
 MAX_TIME_FOR_MONKEYS_TO_DIE = 5*60
 WAIT_TIME_BETWEEN_REQUESTS = 10
-TIME_FOR_MONKEY_PROCESS_TO_FINISH = 20
+TIME_FOR_MONKEY_PROCESS_TO_FINISH = 40
 
 
 class BasicTest(object):
