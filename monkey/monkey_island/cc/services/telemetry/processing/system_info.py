@@ -43,7 +43,7 @@ def encrypt_system_info_ssh_keys(ssh_info):
     for idx, user in enumerate(ssh_info):
         for field in ['public_key', 'private_key', 'known_hosts']:
             if ssh_info[idx][field]:
-                ssh_info[idx][field] = encryptor.enc(ssh_info[idx][field].encode('utf-8'))
+                ssh_info[idx][field] = encryptor.enc(ssh_info[idx][field])
 
 
 def process_credential_info(telemetry_json):
@@ -77,7 +77,7 @@ def encrypt_system_info_creds(creds):
         for field in ['password', 'lm_hash', 'ntlm_hash']:
             if field in creds[user]:
                 # this encoding is because we might run into passwords which are not pure ASCII
-                creds[user][field] = encryptor.enc(creds[user][field].encode('utf-8'))
+                creds[user][field] = encryptor.enc(creds[user][field])
 
 
 def process_mimikatz_and_wmi_info(telemetry_json):

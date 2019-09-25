@@ -38,10 +38,10 @@ class Encryptor:
     def _unpad(self, message: str):
         return message[0:-ord(message[len(message) - 1])]
 
-    def enc(self, message):
+    def enc(self, message: str):
         cipher_iv = Random.new().read(AES.block_size)
         cipher = AES.new(self._cipher_key, AES.MODE_CBC, cipher_iv)
-        return base64.b64encode(cipher_iv + cipher.encrypt(self._pad(message).encode()))
+        return base64.b64encode(cipher_iv + cipher.encrypt(self._pad(message).encode())).decode()
 
     def dec(self, enc_message):
         enc_message = base64.b64decode(enc_message)

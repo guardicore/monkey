@@ -26,4 +26,4 @@ def process_telemetry(telemetry_json):
         else:
             logger.info('Got unknown type of telemetry: %s' % telem_category)
     except Exception as ex:
-        logger.error("Exception caught while processing telemetry. Info: {}".format(ex.message), exc_info=True)
+        logger.error("Exception caught while processing telemetry. Info: {}".format(ex), exc_info=True)

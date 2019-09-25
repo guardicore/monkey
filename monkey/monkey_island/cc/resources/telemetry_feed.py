@@ -33,7 +33,7 @@ class TelemetryFeed(flask_restful.Resource):
                     'timestamp': datetime.now().isoformat()
                 }
         except KeyError as err:
-            logger.error("Failed parsing telemetries. Error: {0}.".format(err.message))
+            logger.error("Failed parsing telemetries. Error: {0}.".format(err))
             return {'telemetries': [], 'timestamp': datetime.now().isoformat()}
 
     @staticmethod
