@@ -44,15 +44,15 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     try
     {
         $version = cmd.exe /c '"python" --version  2>&1'
-        if ( $version -like 'Python 2.7.*' ) {
-            "Python 2.7.* was found, installing dependancies"
+        if ( $version -like 'Python 3.*' ) {
+            "Python 3.* was found, installing dependencies"
         } else {
             throw System.Management.Automation.CommandNotFoundException
         }
     }
     catch [System.Management.Automation.CommandNotFoundException]
     {
-        "Downloading python 2.7 ..."
+        "Downloading python 3 ..."
         $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
         Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
@@ -69,7 +69,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     $PYTHON_PATH = Split-Path -Path (Get-Command python | Select-Object -ExpandProperty Source)
 
     # Get vcforpython27 before installing requirements
-    "Downloading Visual C++ Compiler for Python 2.7 ..."
+    "Downloading Visual C++ Compiler for Python 3 ..."
     $webClient.DownloadFile($VC_FOR_PYTHON27_URL, $TEMP_VC_FOR_PYTHON27_INSTALLER)
     Start-Process -Wait $TEMP_VC_FOR_PYTHON27_INSTALLER -ErrorAction Stop
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
@@ -115,11 +115,6 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     "Removing zip file"
     Remove-Item $TEMP_OPEN_SSL_ZIP
 
-    # Download and install C++ redistributable
-    "Downloading C++ redistributable ..."
-    $webClient.DownloadFile($CPP_URL, $TEMP_CPP_INSTALLER)
-    Start-Process -Wait $TEMP_CPP_INSTALLER -ErrorAction Stop
-    Remove-Item $TEMP_CPP_INSTALLER
 
     # Generate ssl certificate
     "Generating ssl certificate"
