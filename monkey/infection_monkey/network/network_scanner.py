@@ -90,7 +90,7 @@ class NetworkScanner(object):
                 return
 
             results = pool.map(self.scan_machine, victim_chunk)
-            resulting_victims = [x for x in results if x]  # filter out dead addresses
+            resulting_victims = filter(lambda x: x is not None, results)
             for victim in resulting_victims:
                 LOG.debug("Found potential victim: %r", victim)
                 victims_count += 1
