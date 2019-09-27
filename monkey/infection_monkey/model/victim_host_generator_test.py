@@ -3,15 +3,24 @@ from infection_monkey.model.victim_host_generator import VictimHostGenerator
 from common.network.network_range import CidrRange, SingleIpRange
 
 
-class TestPayload(TestCase):
+class VictimHostGeneratorTester(TestCase):
 
     def setUp(self):
-        self.test_ranges = [CidrRange("10.0.0.0/28", False),
+        self.test_ranges = [CidrRange("10.0.0.0/28", False),  # this gives us 15 hosts
                             SingleIpRange('41.50.13.37'),
                             SingleIpRange('localhost')
                             ]
         self.generator = VictimHostGenerator(self.test_ranges, '10.0.0.1')
         self.generator._ip_addresses = []  # test later on
+
+    def test_chunking(self):
+        chunk_size = 3
+        # current test setup is 15+1+1-1 hosts
+        victims = self.generator.generate_victims(chunk_size)
+        for i in range(5):  # quickly check the equally sided chunks
+            self.assertEqual(len(victims.next()), chunk_size)
+        victim_chunk_last = victims.next()
+        self.assertEqual(len(victim_chunk_last), 1)
 
     def test_remove_blocked_ip(self):
         victims = list(self.generator.generate_victims_from_range(self.test_ranges[0]))
