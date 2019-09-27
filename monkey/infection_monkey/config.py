@@ -141,10 +141,10 @@ class Configuration(object):
     exploiter_classes = []
 
     # how many victims to look for in a single scan iteration
-    victims_max_find = 30
+    victims_max_find = 100
 
     # how many victims to exploit before stopping
-    victims_max_exploit = 7
+    victims_max_exploit = 15
 
     # depth of propagation
     depth = 2

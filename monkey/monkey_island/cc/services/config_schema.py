@@ -447,13 +447,13 @@ SCHEMA = {
                         "victims_max_find": {
                             "title": "Max victims to find",
                             "type": "integer",
-                            "default": 30,
+                            "default": 100,
                             "description": "Determines the maximum number of machines the monkey is allowed to scan"
                         },
                         "victims_max_exploit": {
                             "title": "Max victims to exploit",
                             "type": "integer",
-                            "default": 7,
+                            "default": 15,
                             "description":
                                 "Determines the maximum number of machines the monkey"
                                 " is allowed to successfully exploit. " + WARNING_SIGN
