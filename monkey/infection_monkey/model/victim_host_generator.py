@@ -1,12 +1,11 @@
 from infection_monkey.model.host import VictimHost
-from infection_monkey.network.info import local_ips
 
 
 class VictimHostGenerator(object):
-    def __init__(self, network_ranges, blocked_ips):
-        self._ip_addresses = local_ips()
+    def __init__(self, network_ranges, blocked_ips, same_machine_ips):
         self.blocked_ips = blocked_ips
         self.ranges = network_ranges
+        self.local_addresses = same_machine_ips
 
     def generate_victims(self, chunk_size):
         """
@@ -39,7 +38,7 @@ class VictimHostGenerator(object):
             yield victim
 
     def is_ip_scannable(self, ip_address):
-        if ip_address in self._ip_addresses:
+        if ip_address in self.local_addresses:
             return False
         if ip_address in self.blocked_ips:
             return False

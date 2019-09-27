@@ -78,7 +78,7 @@ class NetworkScanner(object):
         # Because we are using this to spread out IO heavy tasks, we can probably go a lot higher than CPU core size
         # But again, balance
         pool = Pool(ITERATION_BLOCK_SIZE)
-        victim_generator = VictimHostGenerator(self._ranges, WormConfiguration.blocked_ips)
+        victim_generator = VictimHostGenerator(self._ranges, WormConfiguration.blocked_ips, local_ips())
 
         victims_count = 0
         for victim_chunk in victim_generator.generate_victims(ITERATION_BLOCK_SIZE):
