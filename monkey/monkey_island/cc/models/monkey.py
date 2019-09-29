@@ -88,17 +88,17 @@ class Monkey(Document):
         return os
 
     # TODO This is not a field therefore cache shouldn't be here
-    @ring.lru()
     @staticmethod
+    @ring.lru(coder=ring.coder.JsonCoder())
     def get_label_by_id(object_id):
         print("Actually in get_label_by_id - not cached for {}".format(str(object_id)))
         current_monkey = Monkey.get_single_monkey_by_id(object_id)
         return Monkey.get_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
 
-
-    @ring.lru()
     @staticmethod
+    @ring.lru(coder=ring.coder.JsonCoder())
     def get_hostname_by_id(object_id):
+        print("Actually in get_hostname_by_id - not cached for {}".format(str(object_id)))
         return Monkey.get_single_monkey_by_id(object_id).hostname
 
     def set_hostname(self, hostname):
