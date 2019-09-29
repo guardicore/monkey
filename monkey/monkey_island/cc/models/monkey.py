@@ -3,10 +3,13 @@ Define a Document Schema for the Monkey document.
 """
 from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, ReferenceField, \
     DateTimeField, DynamicField, DoesNotExist
+import ring
 
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
 from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.models.command_control_channel import CommandControlChannel
+
+MAX_MONKEYS_AMOUNT_TO_CACHE = 100
 
 
 class Monkey(Document):
@@ -83,6 +86,28 @@ class Monkey(Document):
         elif self.description.lower().find("windows") != -1:
             os = "windows"
         return os
+
+    # TODO This is not a field therefore cache shouldn't be here
+    @ring.lru()
+    @staticmethod
+    def get_label_by_id(object_id):
+        print("Actually in get_label_by_id - not cached for {}".format(str(object_id)))
+        current_monkey = Monkey.get_single_monkey_by_id(object_id)
+        return Monkey.get_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
+
+
+    @ring.lru()
+    @staticmethod
+    def get_hostname_by_id(object_id):
+        return Monkey.get_single_monkey_by_id(object_id).hostname
+
+    def set_hostname(self, hostname):
+        """
+        Need this to clear the cache
+        """
+        self.hostname = hostname
+        self.save()
+        Monkey.get_hostname_by_id.delete(self.id)
 
     def get_network_info(self):
         """

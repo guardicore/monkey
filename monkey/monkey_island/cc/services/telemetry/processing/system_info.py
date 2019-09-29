@@ -1,4 +1,5 @@
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models import Monkey
 from monkey_island.cc.services import mimikatz_utils
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.config import ConfigService
@@ -12,6 +13,7 @@ def process_system_info_telemetry(telemetry_json):
     process_credential_info(telemetry_json)
     process_mimikatz_and_wmi_info(telemetry_json)
     process_aws_data(telemetry_json)
+    update_db_with_new_hostname(telemetry_json)
     test_antivirus_existence(telemetry_json)
 
 
@@ -97,3 +99,7 @@ def process_aws_data(telemetry_json):
             monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
             mongo.db.monkey.update_one({'_id': monkey_id},
                                        {'$set': {'aws_instance_id': telemetry_json['data']['aws']['instance_id']}})
+
+
+def update_db_with_new_hostname(telemetry_json):
+    Monkey.get_single_monkey_by_id(telemetry_json['_id']).set_hostname(telemetry_json['data']['hostname'])

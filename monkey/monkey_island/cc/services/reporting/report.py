@@ -23,7 +23,6 @@ from common.network.network_range import NetworkRange
 
 __author__ = "itay.mizeretz"
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -123,19 +122,20 @@ class ReportService:
         formatted_nodes = []
 
         # TODO Figure out and improve
-        nodes = \
-            [NodeService.get_displayed_node_by_id(node['_id'], True) for node in mongo.db.node.find({}, {'_id': 1})] \
-            + [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
-               mongo.db.monkey.find({}, {'_id': 1})]
+        # This part collects all the nodes in the DB. 2 accesses to the DB for getting all DB nodes and then
+        # get_displayed_node_by_id on all of them.
+        nodes = ReportService.get_all_displayed_nodes()
+
+        print("2")
+
+        # for each node (n*...
         for node in nodes:
+            nodes_that_can_access_current_node = node['accessible_from_nodes_hostnames']
             formatted_nodes.append(
                 {
                     'label': node['label'],
                     'ip_addresses': node['ip_addresses'],
-                    'accessible_from_nodes':
-                        list((x['hostname'] for x in
-                         (NodeService.get_displayed_node_by_id(edge['from'], True)
-                          for edge in EdgeService.get_displayed_edges_by_to(node['id'], True)))),
+                    'accessible_from_nodes': nodes_that_can_access_current_node,
                     'services': node['services'],
                     'domain_name': node['domain_name'],
                     'pba_results': node['pba_results'] if 'pba_results' in node else 'None'
@@ -144,6 +144,15 @@ class ReportService:
         logger.info('Scanned nodes generated for reporting')
 
         return formatted_nodes
+
+    @staticmethod
+    def get_all_displayed_nodes():
+        nodes_without_monkeys = [NodeService.get_displayed_node_by_id(node['_id'], True) for node in
+                                 mongo.db.node.find({}, {'_id': 1})]
+        nodes_with_monkeys = [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
+                              mongo.db.monkey.find({}, {'_id': 1})]
+        nodes = nodes_without_monkeys + nodes_with_monkeys
+        return nodes
 
     @staticmethod
     def get_exploited():
@@ -210,8 +219,9 @@ class ReportService:
                 # Pick out all ssh keys not yet included in creds
                 ssh_keys = [{'username': key_pair['name'], 'type': 'Clear SSH private key',
                              'origin': origin} for key_pair in telem['data']['ssh_info']
-                            if key_pair['private_key'] and {'username': key_pair['name'], 'type': 'Clear SSH private key',
-                            'origin': origin} not in creds]
+                            if
+                            key_pair['private_key'] and {'username': key_pair['name'], 'type': 'Clear SSH private key',
+                                                         'origin': origin} not in creds]
                 creds.extend(ssh_keys)
         return creds
 
@@ -700,6 +710,7 @@ class ReportService:
         cross_segment_issues = ReportService.get_cross_segment_issues()
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
 
+        scanned_nodes = ReportService.get_scanned()
         report = \
             {
                 'overview':
@@ -718,7 +729,7 @@ class ReportService:
                     },
                 'glance':
                     {
-                        'scanned': ReportService.get_scanned(),
+                        'scanned': scanned_nodes,
                         'exploited': ReportService.get_exploited(),
                         'stolen_creds': ReportService.get_stolen_creds(),
                         'azure_passwords': ReportService.get_azure_creds(),
@@ -751,7 +762,6 @@ class ReportService:
         """
         report_as_json = json_util.dumps(report_dict).replace('.', ',,,')
         return json_util.loads(report_as_json)
-
 
     @staticmethod
     def is_latest_report_exists():

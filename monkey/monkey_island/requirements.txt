@@ -26,4 +26,5 @@ mongoengine
 mongomock
 requests
 dpath
-backports
+backports.functools-lru-cache
+ring

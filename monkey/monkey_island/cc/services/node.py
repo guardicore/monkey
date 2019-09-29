@@ -24,6 +24,7 @@ class NodeService:
 
         edges = EdgeService.get_displayed_edges_by_to(node_id, for_report)
         accessible_from_nodes = []
+        accessible_from_nodes_hostnames = []
         exploits = []
 
         new_node = {"id": node_id}
@@ -47,15 +48,21 @@ class NodeService:
             new_node["domain_name"] = node["domain_name"]
 
         for edge in edges:
-            accessible_from_nodes.append(NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"])))
+            from_node_id = edge["from"]
+            # from_node_label = NodeService.get_monkey_label(NodeService.get_monkey_by_id(from_node_id))
+            from_node_label = Monkey.get_label_by_id(from_node_id)
+            from_node_hostname = Monkey.get_hostname_by_id(from_node_id)
+            accessible_from_nodes.append(from_node_label)
+            accessible_from_nodes_hostnames.append(from_node_hostname)
             for exploit in edge["exploits"]:
-                exploit["origin"] = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
+                exploit["origin"] = from_node_label
                 exploits.append(exploit)
 
         exploits.sort(cmp=NodeService._cmp_exploits_by_timestamp)
 
         new_node["exploits"] = exploits
         new_node["accessible_from_nodes"] = accessible_from_nodes
+        new_node["accessible_from_nodes_hostnames"] = accessible_from_nodes_hostnames
         if len(edges) > 0:
             new_node["services"] = edges[-1]["services"]
         else:
@@ -112,6 +119,7 @@ class NodeService:
 
     @staticmethod
     def get_monkey_label(monkey):
+        # todo
         label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]
         ip_addresses = local_ip_addresses()
         if len(set(monkey["ip_addresses"]).intersection(ip_addresses)) > 0:
@@ -349,3 +357,7 @@ class NodeService:
     @staticmethod
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))
+
+    @staticmethod
+    def extract_hostname_from_monkey_label(monkey_label):
+        return monkey_label.split(" ")[0]
