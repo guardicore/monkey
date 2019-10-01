@@ -6,7 +6,7 @@ class TestTimer(object):
         self.timeout_time = TestTimer.get_timeout_time(timeout)
         self.start_time = time()
 
-    def timed_out(self):
+    def is_timed_out(self):
         return time() > self.timeout_time
 
     def get_time_taken(self):

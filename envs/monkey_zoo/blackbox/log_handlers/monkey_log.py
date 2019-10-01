@@ -1,5 +1,6 @@
 import os
 
+import logging
 from bson import ObjectId
 
 
@@ -11,7 +12,7 @@ class MonkeyLog(object):
     def download_log(self, island_client):
         log = island_client.find_log_in_db({'monkey_id': ObjectId(self.monkey['id'])})
         if not log:
-            print("Log for monkey {} not found".format(self.monkey['ip_addresses'][0]))
+            logging.error("Log for monkey {} not found".format(self.monkey['ip_addresses'][0]))
             return False
         else:
             self.write_log_to_file(log)

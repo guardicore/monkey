@@ -1,6 +1,7 @@
 from time import sleep
 import json
 
+import logging
 from bson import json_util
 
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
@@ -30,9 +31,9 @@ class MonkeyIslandClient(object):
     def run_monkey_local(self):
         response = self.requests.post_json("api/local-monkey", dict_data={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
-            print("Running the monkey.")
+            logging.info("Running the monkey.")
         else:
-            print("Failed to run the monkey.")
+            logging.error("Failed to run the monkey.")
             assert False
 
     @staticmethod
@@ -42,36 +43,35 @@ class MonkeyIslandClient(object):
     @avoid_race_condition
     def kill_all_monkeys(self):
         if self.requests.get("api", {"action": "killall"}).ok:
-            print("Killing all monkeys after the test.")
+            logging.info("Killing all monkeys after the test.")
         else:
-            print("Failed to kill all monkeys.")
+            logging.error("Failed to kill all monkeys.")
             assert False
 
     @avoid_race_condition
     def reset_env(self):
         if self.requests.get("api", {"action": "reset"}).ok:
-            print("Resetting environment after the test.")
+            logging.info("Resetting environment after the test.")
         else:
-            print("Failed to reset the environment.")
+            logging.error("Failed to reset the environment.")
             assert False
 
     def find_monkeys_in_db(self, query):
+        if query is None:
+            raise TypeError
         response = self.requests.get(MONKEY_TEST_ENDPOINT,
                                      MonkeyIslandClient.form_find_query_for_request(query))
-        try:
-            return MonkeyIslandClient.get_test_query_results(response)
-        except Exception:
-            print("Ran into trouble parsing response for monkey query")
-            raise
+        return MonkeyIslandClient.get_test_query_results(response)
+
+    def get_all_monkeys_from_db(self):
+        response = self.requests.get(MONKEY_TEST_ENDPOINT,
+                                     MonkeyIslandClient.form_find_query_for_request(None))
+        return MonkeyIslandClient.get_test_query_results(response)
 
     def find_log_in_db(self, query):
         response = self.requests.get(LOG_TEST_ENDPOINT,
                                      MonkeyIslandClient.form_find_query_for_request(query))
-        try:
-            return MonkeyIslandClient.get_test_query_results(response)
-        except Exception:
-            print("Ran into trouble parsing response for log query")
-            raise
+        return MonkeyIslandClient.get_test_query_results(response)
 
     @staticmethod
     def form_find_query_for_request(query):

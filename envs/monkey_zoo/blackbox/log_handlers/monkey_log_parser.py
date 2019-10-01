@@ -1,7 +1,7 @@
 import re
 
 
-class LogParser(object):
+class MonkeyLogParser(object):
 
     def __init__(self, log_path):
         self.log_path = log_path
@@ -13,7 +13,7 @@ class LogParser(object):
 
     def print_errors(self):
         print("Errors:")
-        for error_line in LogParser.get_errors(self.log_contents):
+        for error_line in MonkeyLogParser.get_errors(self.log_contents):
             print(error_line)
 
     @staticmethod
@@ -23,7 +23,7 @@ class LogParser(object):
 
     def print_warnings(self):
         print("Warnings:")
-        for warning_line in LogParser.get_warnings(self.log_contents):
+        for warning_line in MonkeyLogParser.get_warnings(self.log_contents):
             print(warning_line)
 
     @staticmethod

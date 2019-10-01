@@ -1,2 +1,3 @@
 pytest
 unittest
+pytest-random-order

@@ -1,5 +1,7 @@
 import subprocess
 
+import logging
+
 
 class GCPHandler(object):
 
@@ -13,28 +15,28 @@ class GCPHandler(object):
         try:
             # pass the key file to gcp
             subprocess.call(GCPHandler.get_auth_command(key_path), shell=True)
-            print("GCP Handler passed key")
+            logging.info("GCP Handler passed key")
             # set project
             subprocess.call(GCPHandler.get_set_project_command(project_id), shell=True)
-            print("GCP Handler set project")
-            print("GCP Handler initialized successfully")
+            logging.info("GCP Handler set project")
+            logging.info("GCP Handler initialized successfully")
         except Exception as e:
-            print("GCP Handler failed to initialize: %s." % e)
+            logging.error("GCP Handler failed to initialize: %s." % e)
 
     def start_machines(self, machine_list):
-        print("Setting up all GCP machines...")
+        logging.info("Setting up all GCP machines...")
         try:
             subprocess.call((GCPHandler.MACHINE_STARTING_COMMAND % (machine_list, self.zone)), shell=True)
-            print("GCP machines successfully started.")
+            logging.info("GCP machines successfully started.")
         except Exception as e:
-            print("GCP Handler failed to start GCP machines: %s" % e)
+            logging.error("GCP Handler failed to start GCP machines: %s" % e)
 
     def stop_machines(self, machine_list):
         try:
             subprocess.call((GCPHandler.MACHINE_STOPPING_COMMAND % (machine_list, self.zone)), shell=True)
-            print("GCP machines stopped successfully.")
+            logging.info("GCP machines stopped successfully.")
         except Exception as e:
-            print("GCP Handler failed to stop network machines: %s" % e)
+            logging.error("GCP Handler failed to stop network machines: %s" % e)
 
     @staticmethod
     def get_auth_command(key_path):

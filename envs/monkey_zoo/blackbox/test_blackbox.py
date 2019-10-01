@@ -1,3 +1,6 @@
+import os
+import logging
+
 import pytest
 from time import sleep
 
@@ -13,6 +16,7 @@ MACHINE_BOOTUP_WAIT_SECONDS = 30
 GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'haddop-2-v3', 'hadoop-3', 'mssql-16',
                          'mimikatz-14', 'mimikatz-15', 'final-test-struts2-23', 'final-test-struts2-24',
                          'tunneling-9', 'tunneling-10', 'tunneling-11', 'weblogic-18', 'weblogic-19', 'shellshock-8']
+LOG_DIR_PATH = "./logs"
 
 
 @pytest.fixture(autouse=True, scope='session')
@@ -29,8 +33,8 @@ def GCPHandler(request):
 
 @pytest.fixture(autouse=True, scope='session')
 def delete_logs():
-    print("Deleting monkey logs before new tests.")
-    TestLogsHandler.delete_log_folder_contents()
+    logging.info("Deleting monkey logs before new tests.")
+    TestLogsHandler.delete_log_folder_contents(TestMonkeyBlackbox.get_log_dir_path())
 
 
 def wait_machine_bootup():
@@ -52,11 +56,17 @@ class TestMonkeyBlackbox(object):
     def run_basic_test(island_client, conf_filename, test_name, timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS):
         config_parser = IslandConfigParser(conf_filename)
         analyzer = CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets())
+        log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
         BasicTest(test_name,
                   island_client,
                   config_parser,
                   [analyzer],
-                  timeout_in_seconds).run()
+                  timeout_in_seconds,
+                  log_handler).run()
+
+    @staticmethod
+    def get_log_dir_path():
+        return os.path.abspath(LOG_DIR_PATH)
 
     def test_server_online(self, island_client):
         assert island_client.get_api_status() is not None
@@ -75,7 +85,7 @@ class TestMonkeyBlackbox(object):
 
     def test_smb_pth(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "SMB_PTH.conf", "SMB_PTH")
-        
+
     def test_elastic_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "ELASTIC.conf", "Elastic_exploiter")
 

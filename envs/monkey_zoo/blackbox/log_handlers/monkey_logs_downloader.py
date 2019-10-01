@@ -1,7 +1,9 @@
+import logging
+
 from envs.monkey_zoo.blackbox.log_handlers.monkey_log import MonkeyLog
 
 
-class LogsDownloader(object):
+class MonkeyLogsDownloader(object):
 
     def __init__(self, island_client, log_dir_path):
         self.island_client = island_client
@@ -9,8 +11,8 @@ class LogsDownloader(object):
         self.monkey_log_paths = []
 
     def download_monkey_logs(self):
-        print("Downloading each monkey log.")
-        all_monkeys = self.island_client.find_monkeys_in_db(None)
+        logging.info("Downloading each monkey log.")
+        all_monkeys = self.island_client.get_all_monkeys_from_db()
         for monkey in all_monkeys:
             downloaded_log_path = self._download_monkey_log(monkey)
             if downloaded_log_path:
