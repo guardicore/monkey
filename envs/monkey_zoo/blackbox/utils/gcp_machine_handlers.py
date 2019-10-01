@@ -2,6 +2,8 @@ import subprocess
 
 import logging
 
+LOGGER = logging.getLogger(__name__)
+
 
 class GCPHandler(object):
 
@@ -15,28 +17,28 @@ class GCPHandler(object):
         try:
             # pass the key file to gcp
             subprocess.call(GCPHandler.get_auth_command(key_path), shell=True)
-            logging.info("GCP Handler passed key")
+            LOGGER.info("GCP Handler passed key")
             # set project
             subprocess.call(GCPHandler.get_set_project_command(project_id), shell=True)
-            logging.info("GCP Handler set project")
-            logging.info("GCP Handler initialized successfully")
+            LOGGER.info("GCP Handler set project")
+            LOGGER.info("GCP Handler initialized successfully")
         except Exception as e:
-            logging.error("GCP Handler failed to initialize: %s." % e)
+            LOGGER.error("GCP Handler failed to initialize: %s." % e)
 
     def start_machines(self, machine_list):
-        logging.info("Setting up all GCP machines...")
+        LOGGER.info("Setting up all GCP machines...")
         try:
             subprocess.call((GCPHandler.MACHINE_STARTING_COMMAND % (machine_list, self.zone)), shell=True)
-            logging.info("GCP machines successfully started.")
+            LOGGER.info("GCP machines successfully started.")
         except Exception as e:
-            logging.error("GCP Handler failed to start GCP machines: %s" % e)
+            LOGGER.error("GCP Handler failed to start GCP machines: %s" % e)
 
     def stop_machines(self, machine_list):
         try:
             subprocess.call((GCPHandler.MACHINE_STOPPING_COMMAND % (machine_list, self.zone)), shell=True)
-            logging.info("GCP machines stopped successfully.")
+            LOGGER.info("GCP machines stopped successfully.")
         except Exception as e:
-            logging.error("GCP Handler failed to stop network machines: %s" % e)
+            LOGGER.error("GCP Handler failed to stop network machines: %s" % e)
 
     @staticmethod
     def get_auth_command(key_path):

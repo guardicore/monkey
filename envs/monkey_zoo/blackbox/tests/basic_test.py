@@ -3,12 +3,12 @@ from time import sleep
 import logging
 
 from envs.monkey_zoo.blackbox.utils.test_timer import TestTimer
-from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 
-MAX_TIME_FOR_MONKEYS_TO_DIE = 5*60
+MAX_TIME_FOR_MONKEYS_TO_DIE = 5 * 60
 WAIT_TIME_BETWEEN_REQUESTS = 10
 TIME_FOR_MONKEY_PROCESS_TO_FINISH = 40
 DELAY_BETWEEN_ANALYSIS = 3
+LOGGER = logging.getLogger(__name__)
 
 
 class BasicTest(object):
@@ -35,10 +35,10 @@ class BasicTest(object):
             self.island_client.reset_env()
 
     def print_test_starting_info(self):
-        logging.info("Started {} test".format(self.name))
-        logging.info("Machines participating in test:")
-        logging.info("  ".join(self.config_parser.get_ips_of_targets()))
-        logging.info("")
+        LOGGER.info("Started {} test".format(self.name))
+        LOGGER.info("Machines participating in test:")
+        LOGGER.info("  ".join(self.config_parser.get_ips_of_targets()))
+        print("")
 
     def test_until_timeout(self):
         timer = TestTimer(self.timeout)
@@ -51,13 +51,13 @@ class BasicTest(object):
         assert False
 
     def log_success(self, timer):
-        logging.info(self.get_analyzer_logs())
-        logging.info("{} test passed, time taken: {:.1f} seconds.".format(self.name, timer.get_time_taken()))
+        LOGGER.info(self.get_analyzer_logs())
+        LOGGER.info("{} test passed, time taken: {:.1f} seconds.".format(self.name, timer.get_time_taken()))
 
     def log_failure(self, timer):
-        logging.info(self.get_analyzer_logs())
-        logging.error("{} test failed because of timeout. Time taken: {:.1f} seconds.".format(self.name,
-                                                                                              timer.get_time_taken()))
+        LOGGER.info(self.get_analyzer_logs())
+        LOGGER.error("{} test failed because of timeout. Time taken: {:.1f} seconds.".format(self.name,
+                                                                                             timer.get_time_taken()))
 
     def all_analyzers_pass(self):
         for analyzer in self.analyzers:
@@ -68,7 +68,7 @@ class BasicTest(object):
     def get_analyzer_logs(self):
         log = ""
         for analyzer in self.analyzers:
-            log += "\n"+analyzer.log.get_contents()
+            log += "\n" + analyzer.log.get_contents()
         return log
 
     def wait_until_monkeys_die(self):
@@ -77,11 +77,11 @@ class BasicTest(object):
             sleep(WAIT_TIME_BETWEEN_REQUESTS)
             time_passed += WAIT_TIME_BETWEEN_REQUESTS
         if time_passed > MAX_TIME_FOR_MONKEYS_TO_DIE:
-            logging.error("Some monkeys didn't die after the test, failing")
+            LOGGER.error("Some monkeys didn't die after the test, failing")
             assert False
 
     def parse_logs(self):
-        logging.info("\nParsing test logs:")
+        LOGGER.info("\nParsing test logs:")
         self.log_handler.parse_test_logs()
 
     @staticmethod

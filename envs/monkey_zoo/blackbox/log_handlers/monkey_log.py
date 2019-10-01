@@ -3,6 +3,8 @@ import os
 import logging
 from bson import ObjectId
 
+LOGGER = logging.getLogger(__name__)
+
 
 class MonkeyLog(object):
     def __init__(self, monkey, log_dir_path):
@@ -12,7 +14,7 @@ class MonkeyLog(object):
     def download_log(self, island_client):
         log = island_client.find_log_in_db({'monkey_id': ObjectId(self.monkey['id'])})
         if not log:
-            logging.error("Log for monkey {} not found".format(self.monkey['ip_addresses'][0]))
+            LOGGER.error("Log for monkey {} not found".format(self.monkey['ip_addresses'][0]))
             return False
         else:
             self.write_log_to_file(log)

@@ -5,6 +5,7 @@ import logging
 
 NO_AUTH_CREDS = '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062' \
                 '8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557'
+LOGGER = logging.getLogger(__name__)
 
 
 class MonkeyIslandRequests(object):
@@ -16,7 +17,7 @@ class MonkeyIslandRequests(object):
         try:
             return self.get_jwt_from_server()
         except requests.ConnectionError:
-            logging.error("Unable to connect to island, aborting!")
+            LOGGER.error("Unable to connect to island, aborting!")
             assert False
 
     def get_jwt_from_server(self):

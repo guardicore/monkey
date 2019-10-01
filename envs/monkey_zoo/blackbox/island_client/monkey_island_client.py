@@ -9,6 +9,7 @@ from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import Monkey
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 MONKEY_TEST_ENDPOINT = 'api/test/monkey'
 LOG_TEST_ENDPOINT = 'api/test/log'
+LOGGER = logging.getLogger(__name__)
 
 
 def avoid_race_condition(func):
@@ -31,9 +32,9 @@ class MonkeyIslandClient(object):
     def run_monkey_local(self):
         response = self.requests.post_json("api/local-monkey", dict_data={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
-            logging.info("Running the monkey.")
+            LOGGER.info("Running the monkey.")
         else:
-            logging.error("Failed to run the monkey.")
+            LOGGER.error("Failed to run the monkey.")
             assert False
 
     @staticmethod
@@ -43,17 +44,17 @@ class MonkeyIslandClient(object):
     @avoid_race_condition
     def kill_all_monkeys(self):
         if self.requests.get("api", {"action": "killall"}).ok:
-            logging.info("Killing all monkeys after the test.")
+            LOGGER.info("Killing all monkeys after the test.")
         else:
-            logging.error("Failed to kill all monkeys.")
+            LOGGER.error("Failed to kill all monkeys.")
             assert False
 
     @avoid_race_condition
     def reset_env(self):
         if self.requests.get("api", {"action": "reset"}).ok:
-            logging.info("Resetting environment after the test.")
+            LOGGER.info("Resetting environment after the test.")
         else:
-            logging.error("Failed to reset the environment.")
+            LOGGER.error("Failed to reset the environment.")
             assert False
 
     def find_monkeys_in_db(self, query):
