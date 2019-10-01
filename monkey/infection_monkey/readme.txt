@@ -62,7 +62,7 @@ a. Build sambacry binaries yourself
 	a.1. Install gcc-multilib if it's not installed
 		 sudo apt-get install gcc-multilib
 	a.2. Build the binaries
-		 cd [code location]/infection_monkey/monkey_utils/sambacry_monkey_runner
+		 cd [code location]/infection_monkey/exploit/sambacry_monkey_runner
 		 ./build.sh
 
 b. Download our pre-built sambacry binaries
