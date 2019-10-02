@@ -8,6 +8,7 @@ import ring
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
 from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.models.command_control_channel import CommandControlChannel
+from monkey_island.cc.utils import local_ip_addresses
 
 MAX_MONKEYS_AMOUNT_TO_CACHE = 100
 
@@ -87,13 +88,14 @@ class Monkey(Document):
             os = "windows"
         return os
 
-    # TODO This is not really a field, therefore cache shouldn't be here - we should cache the IP addresses and this
-    # should be a regular method.
     @staticmethod
     @ring.lru()
     def get_label_by_id(object_id):
         current_monkey = Monkey.get_single_monkey_by_id(object_id)
-        return Monkey.get_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
+        label = Monkey.get_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
+        if len(set(current_monkey.ip_addresses).intersection(local_ip_addresses())) > 0:
+            label = "MonkeyIsland - " + label
+        return label
 
     @staticmethod
     @ring.lru()
@@ -108,7 +110,7 @@ class Monkey(Document):
     def set_hostname(self, hostname):
         """
         Sets a new hostname for a machine and clears the cache for getting it.
-        :param hostname: The new hostname for the machine. 
+        :param hostname: The new hostname for the machine.
         """
         self.hostname = hostname
         self.save()
