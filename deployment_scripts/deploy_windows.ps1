@@ -53,6 +53,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     catch [System.Management.Automation.CommandNotFoundException]
     {
         "Downloading python 3 ..."
+        "Select 'add to PATH' when installing"
         $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
         Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
@@ -60,23 +61,12 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         # Check if installed correctly
         $version = cmd.exe /c '"python" --version  2>&1'
         if ( $version -like '* is not recognized*' ) {
-            "Python is not found in PATH. Add it manually or reinstall python."
+            "Python is not found in PATH. If you just installed python you need to restart cmd.
+            Else, add it manually or reinstall python."
             return
         }
     }
 
-    # Set python home dir
-    $PYTHON_PATH = Split-Path -Path (Get-Command python | Select-Object -ExpandProperty Source)
-
-    # Get vcforpython27 before installing requirements
-    "Downloading Visual C++ Compiler for Python 3 ..."
-    $webClient.DownloadFile($VC_FOR_PYTHON27_URL, $TEMP_VC_FOR_PYTHON27_INSTALLER)
-    Start-Process -Wait $TEMP_VC_FOR_PYTHON27_INSTALLER -ErrorAction Stop
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
-    Remove-Item $TEMP_VC_FOR_PYTHON27_INSTALLER
-
-    # Install requirements for island
-    $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
     "Upgrading pip..."
     $output = cmd.exe /c 'python -m pip install --user --upgrade pip 2>&1'
     $output
@@ -84,8 +74,11 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         "Make sure pip module is installed and re-run this script."
         return
     }
+
+    "Installing python packages for island"
+     $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
     & python -m pip install --user -r $islandRequirements
-    # Install requirements for monkey
+    "Installing python packages for monkey"
     $monkeyRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\requirements_windows.txt"
     & python -m pip install --user -r $monkeyRequirements
 
@@ -114,7 +107,6 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     Expand-Archive $TEMP_OPEN_SSL_ZIP -DestinationPath (Join-Path -Path $binDir -ChildPath "openssl") -ErrorAction SilentlyContinue
     "Removing zip file"
     Remove-Item $TEMP_OPEN_SSL_ZIP
-
 
     # Generate ssl certificate
     "Generating ssl certificate"
@@ -166,19 +158,6 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     # Create infection_monkey/bin directory if not already present
     $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\bin")
     New-Item -ItemType directory -path $binaries -ErrorAction SilentlyContinue
-
-    # Download upx
-    if(!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "upx.exe") )){
-        "Downloading upx ..."
-        $webClient.DownloadFile($UPX_URL, $TEMP_UPX_ZIP)
-        "Unzipping upx"
-        Expand-Archive $TEMP_UPX_ZIP -DestinationPath $binDir -ErrorAction SilentlyContinue
-        Move-Item -Path (Join-Path -Path $binDir -ChildPath $UPX_FOLDER | Join-Path -ChildPath "upx.exe") -Destination $binDir
-        # Remove unnecessary files
-        Remove-Item -Recurse -Force (Join-Path -Path $binDir -ChildPath $UPX_FOLDER)
-        "Removing zip file"
-        Remove-Item $TEMP_UPX_ZIP
-    }
 
     # Download mimikatz binaries
     $mk32_path = Join-Path -Path $binDir -ChildPath $MK32_DLL
