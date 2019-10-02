@@ -16,8 +16,7 @@ def parse_creds(attempt):
         if attempt[key]:
             return '%s ; %s : %s' % (username,
                                      cred['type'],
-                                     # TODO Figure out why this is causing an exception with Vakaris
-                                     "cred['output']")
+                                     cred['output'])
 
 
 def censor_password(password, plain_chars=3, secret_chars=5):
