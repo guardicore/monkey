@@ -1,6 +1,6 @@
 bson
 python-dateutil
-tornado==5.1.1
+tornado
 werkzeug
 jinja2
 markupsafe
@@ -10,7 +10,7 @@ flask
 Flask-Pymongo
 Flask-Restful
 Flask-JWT
-jsonschema==2.6.0
+jsonschema
 netifaces
 ipaddress
 enum34
