@@ -149,7 +149,6 @@ class TestMonkey(IslandTestCase):
         self.assertEquals(cache_info_after_second_query.hits, 1)
         self.assertEquals(cache_info_after_second_query.misses, 2)
 
-
     def test_is_monkey(self):
         self.fail_if_not_testing_env()
         self.clean_monkey_db()
