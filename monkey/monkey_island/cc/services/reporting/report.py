@@ -118,17 +118,10 @@ class ReportService:
 
     @staticmethod
     def get_scanned():
-
         formatted_nodes = []
 
-        # TODO Figure out and improve
-        # This part collects all the nodes in the DB. 2 accesses to the DB for getting all DB nodes and then
-        # get_displayed_node_by_id on all of them.
         nodes = ReportService.get_all_displayed_nodes()
 
-        print("2")
-
-        # for each node (n*...
         for node in nodes:
             nodes_that_can_access_current_node = node['accessible_from_nodes_hostnames']
             formatted_nodes.append(
@@ -156,23 +149,26 @@ class ReportService:
 
     @staticmethod
     def get_exploited():
-        exploited = \
+        exploited_with_monkeys = \
             [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
-             mongo.db.monkey.find({}, {'_id': 1})
-             if not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey['_id']))] \
-            + [NodeService.get_displayed_node_by_id(node['_id'], True)
-               for node in mongo.db.node.find({'exploited': True}, {'_id': 1})]
+             mongo.db.monkey.find({}, {'_id': 1}) if
+             not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey['_id']))]
+
+        exploited_without_monkeys = [NodeService.get_displayed_node_by_id(node['_id'], True) for node in
+                                     mongo.db.node.find({'exploited': True}, {'_id': 1})]
+
+        exploited = exploited_with_monkeys + exploited_without_monkeys
 
         exploited = [
             {
-                'label': monkey['label'],
-                'ip_addresses': monkey['ip_addresses'],
-                'domain_name': monkey['domain_name'],
+                'label': exploited_node['label'],
+                'ip_addresses': exploited_node['ip_addresses'],
+                'domain_name': exploited_node['domain_name'],
                 'exploits': list(set(
-                    [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in monkey['exploits'] if
-                     exploit['result']]))
+                    [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in exploited_node['exploits']
+                     if exploit['result']]))
             }
-            for monkey in exploited]
+            for exploited_node in exploited]
 
         logger.info('Exploited nodes generated for reporting')
 
@@ -711,6 +707,7 @@ class ReportService:
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
 
         scanned_nodes = ReportService.get_scanned()
+        exploited_nodes = ReportService.get_exploited()
         report = \
             {
                 'overview':
@@ -730,7 +727,7 @@ class ReportService:
                 'glance':
                     {
                         'scanned': scanned_nodes,
-                        'exploited': ReportService.get_exploited(),
+                        'exploited': exploited_nodes,
                         'stolen_creds': ReportService.get_stolen_creds(),
                         'azure_passwords': ReportService.get_azure_creds(),
                         'ssh_keys': ReportService.get_ssh_keys(),
