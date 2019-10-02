@@ -139,3 +139,26 @@ class TestMonkey(IslandTestCase):
         _ = Monkey.get_label_by_id(linux_monkey.id)
         cache_info_after_query = Monkey.get_label_by_id.storage.backend.cache_info()
         self.assertEquals(cache_info_after_query.hits, 1)
+
+    def test_is_monkey(self):
+        self.fail_if_not_testing_env()
+        self.clean_monkey_db()
+
+        a_monkey = Monkey(guid=str(uuid.uuid4()))
+        a_monkey.save()
+
+        cache_info_before_query = Monkey.is_monkey.storage.backend.cache_info()
+        self.assertEquals(cache_info_before_query.hits, 0)
+
+        # not cached
+        self.assertTrue(Monkey.is_monkey(a_monkey.id))
+        fake_id = "123456789012"
+        self.assertFalse(Monkey.is_monkey(fake_id))
+
+        # should be cached
+        self.assertTrue(Monkey.is_monkey(a_monkey.id))
+        self.assertFalse(Monkey.is_monkey(fake_id))
+
+        cache_info_after_query = Monkey.is_monkey.storage.backend.cache_info()
+        self.assertEquals(cache_info_after_query.hits, 2)
+

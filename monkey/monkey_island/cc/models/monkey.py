@@ -124,6 +124,17 @@ class Monkey(Document):
         return {'ips': self.ip_addresses, 'hostname': self.hostname}
 
     @staticmethod
+    @ring.lru(
+        expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.
+    )
+    def is_monkey(object_id):
+        try:
+            _ = Monkey.get_single_monkey_by_id(object_id)
+            return True
+        except:
+            return False
+
+    @staticmethod
     def get_tunneled_monkeys():
         return Monkey.objects(tunnel__exists=True)
 
