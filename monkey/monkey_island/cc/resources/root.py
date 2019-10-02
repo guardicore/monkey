@@ -10,6 +10,7 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.report import ReportService
 from monkey_island.cc.services.attack.attack_report import AttackReportService
+from monkey_island.cc.services.reporting.report_generation_synchronisation import is_report_being_generated, safe_generate_reports
 from monkey_island.cc.utils import local_ip_addresses
 from monkey_island.cc.services.database import Database
 
@@ -20,9 +21,6 @@ logger = logging.getLogger(__name__)
 
 class Root(flask_restful.Resource):
     def __init__(self):
-        # This lock will allow only one thread to generate a report at a time. Report generation can be quite
-        # slow if there is a lot of data, and the UI queries the Root service often; without the lock, these requests
-        # would accumulate, overload the server, eventually causing it to crash.
         self.report_generating_lock = threading.Event()
 
     def get(self, action=None):
@@ -62,8 +60,10 @@ class Root(flask_restful.Resource):
         infection_done = NodeService.is_monkey_finished_running()
 
         if infection_done:
-            if self.should_generate_report():
-                self.generate_report()
+            # Checking is_report_being_generated here, because we don't want to wait to generate a report; rather,
+            # we want to skip and reply.
+            if not is_report_being_generated() and not ReportService.is_latest_report_exists():
+                safe_generate_reports()
             report_done = ReportService.is_report_generated()
         else:  # Infection is not done
             report_done = False
@@ -73,18 +73,3 @@ class Root(flask_restful.Resource):
             run_monkey=is_any_exists,
             infection_done=infection_done,
             report_done=report_done)
-
-    def generate_report(self):
-        # Set the event when entering the critical section
-        self.report_generating_lock.set()
-        # Not using the return value, as the get_report function also saves the report in the DB for later.
-        _ = ReportService.get_report()
-        _ = AttackReportService.get_latest_report()
-        # Clear the event when leaving the critical section
-        self.report_generating_lock.clear()
-
-    def should_generate_report(self):
-        # If the lock is not set, that means no one is generating a report right now.
-        is_any_thread_generating_a_report_right_now = not self.report_generating_lock.is_set()
-        is_there_a_need_for_a_new_report = not ReportService.is_latest_report_exists()
-        return is_any_thread_generating_a_report_right_now and is_there_a_need_for_a_new_report
