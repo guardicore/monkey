@@ -87,7 +87,8 @@ class Monkey(Document):
             os = "windows"
         return os
 
-    # TODO This is not a field therefore cache shouldn't be here
+    # TODO This is not really a field, therefore cache shouldn't be here - we should cache the IP addresses and this
+    # should be a regular method.
     @staticmethod
     @ring.lru()
     def get_label_by_id(object_id):
@@ -97,11 +98,17 @@ class Monkey(Document):
     @staticmethod
     @ring.lru()
     def get_hostname_by_id(object_id):
+        """
+        :param object_id: the object ID of a Monkey in the database.
+        :return: The hostname of that machine.
+        :note: Use this and not monkey.hostname for performance - this is lru-cached.
+        """
         return Monkey.get_single_monkey_by_id(object_id).hostname
 
     def set_hostname(self, hostname):
         """
-        Need this to clear the cache
+        Sets a new hostname for a machine and clears the cache for getting it.
+        :param hostname: The new hostname for the machine. 
         """
         self.hostname = hostname
         self.save()
