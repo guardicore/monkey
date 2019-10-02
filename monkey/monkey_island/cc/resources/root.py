@@ -20,6 +20,9 @@ logger = logging.getLogger(__name__)
 
 class Root(flask_restful.Resource):
     def __init__(self):
+        # This lock will allow only one thread to generate a report at a time. Report generation can be quite
+        # slow if there is a lot of data, and the UI queries the Root service often; without the lock, these requests
+        # would accumulate, overload the server, eventually causing it to crash.
         self.report_generating_lock = threading.Event()
 
     def get(self, action=None):
@@ -39,8 +42,10 @@ class Root(flask_restful.Resource):
 
     @jwt_required()
     def get_server_info(self):
-        return jsonify(ip_addresses=local_ip_addresses(), mongo=str(mongo.db),
-                       completed_steps=self.get_completed_steps())
+        return jsonify(
+            ip_addresses=local_ip_addresses(),
+            mongo=str(mongo.db),
+            completed_steps=self.get_completed_steps())
 
     @staticmethod
     @jwt_required()
@@ -70,15 +75,16 @@ class Root(flask_restful.Resource):
             report_done=report_done)
 
     def generate_report(self):
-        # Set the event - enter the critical section
+        # Set the event when entering the critical section
         self.report_generating_lock.set()
         # Not using the return value, as the get_report function also saves the report in the DB for later.
         _ = ReportService.get_report()
         _ = AttackReportService.get_latest_report()
-        # Clear the event - exit the critical section
+        # Clear the event when leaving the critical section
         self.report_generating_lock.clear()
 
     def should_generate_report(self):
         # If the lock is not set, that means no one is generating a report right now.
         is_any_thread_generating_a_report_right_now = not self.report_generating_lock.is_set()
-        return is_any_thread_generating_a_report_right_now and not ReportService.is_latest_report_exists()
+        is_there_a_need_for_a_new_report = not ReportService.is_latest_report_exists()
+        return is_any_thread_generating_a_report_right_now and is_there_a_need_for_a_new_report
