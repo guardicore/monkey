@@ -6,7 +6,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.model.victim_host_generator import VictimHostGenerator
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
 from infection_monkey.network import TcpScanner, PingScanner
-from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils import is_windows_os
 
 if is_windows_os():
     from multiprocessing.dummy import Pool
