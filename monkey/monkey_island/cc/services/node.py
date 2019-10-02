@@ -22,11 +22,6 @@ class NodeService:
         if ObjectId(node_id) == NodeService.get_monkey_island_pseudo_id():
             return NodeService.get_monkey_island_node()
 
-        edges = EdgeService.get_displayed_edges_by_to(node_id, for_report)
-        accessible_from_nodes = []
-        accessible_from_nodes_hostnames = []
-        exploits = []
-
         new_node = {"id": node_id}
 
         node = NodeService.get_node_by_id(node_id)
@@ -47,13 +42,20 @@ class NodeService:
             new_node["ip_addresses"] = node["ip_addresses"]
             new_node["domain_name"] = node["domain_name"]
 
+        accessible_from_nodes = []
+        accessible_from_nodes_hostnames = []
+        exploits = []
+
+        edges = EdgeService.get_displayed_edges_by_to(node_id, for_report)
+
         for edge in edges:
             from_node_id = edge["from"]
-            # from_node_label = NodeService.get_monkey_label(NodeService.get_monkey_by_id(from_node_id))
             from_node_label = Monkey.get_label_by_id(from_node_id)
             from_node_hostname = Monkey.get_hostname_by_id(from_node_id)
+
             accessible_from_nodes.append(from_node_label)
             accessible_from_nodes_hostnames.append(from_node_hostname)
+
             for exploit in edge["exploits"]:
                 exploit["origin"] = from_node_label
                 exploits.append(exploit)
@@ -360,7 +362,3 @@ class NodeService:
     @staticmethod
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))
-
-    @staticmethod
-    def extract_hostname_from_monkey_label(monkey_label):
-        return monkey_label.split(" ")[0]
