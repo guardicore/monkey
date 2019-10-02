@@ -145,15 +145,18 @@ class NodeService:
 
     @staticmethod
     def monkey_to_net_node(monkey, for_report=False):
-        label = monkey['hostname'] if for_report else NodeService.get_monkey_label(monkey)
-        is_monkey_dead = Monkey.get_single_monkey_by_id(monkey["_id"]).is_dead()
+        monkey_id = monkey["_id"]
+        label = Monkey.get_hostname_by_id(monkey_id) if for_report else Monkey.get_label_by_id(monkey_id)
+        monkey_group = NodeService.get_monkey_group(monkey)
         return \
             {
-                "id": monkey["_id"],
+                "id": monkey_id,
                 "label": label,
-                "group": NodeService.get_monkey_group(monkey),
+                "group": monkey_group,
                 "os": NodeService.get_monkey_os(monkey),
-                "dead": is_monkey_dead,
+                # The monkey is running IFF the group contains "_running". Therefore it's dead IFF the group does NOT
+                # contain "_running". This is a small optimisation, to not call "is_dead" twice.
+                "dead": "_running" not in monkey_group,
                 "domain_name": "",
                 "pba_results": monkey["pba_results"] if "pba_results" in monkey else []
             }
