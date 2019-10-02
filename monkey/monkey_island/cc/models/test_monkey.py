@@ -140,6 +140,16 @@ class TestMonkey(IslandTestCase):
         cache_info_after_query = Monkey.get_label_by_id.storage.backend.cache_info()
         self.assertEquals(cache_info_after_query.hits, 1)
 
+        linux_monkey.set_hostname("Another hostname")
+
+        # should be a miss
+        label = Monkey.get_label_by_id(linux_monkey.id)
+        cache_info_after_second_query = Monkey.get_label_by_id.storage.backend.cache_info()
+        # still 1 hit only
+        self.assertEquals(cache_info_after_second_query.hits, 1)
+        self.assertEquals(cache_info_after_second_query.misses, 2)
+
+
     def test_is_monkey(self):
         self.fail_if_not_testing_env()
         self.clean_monkey_db()

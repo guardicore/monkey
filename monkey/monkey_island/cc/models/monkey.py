@@ -115,6 +115,7 @@ class Monkey(Document):
         self.hostname = hostname
         self.save()
         Monkey.get_hostname_by_id.delete(self.id)
+        Monkey.get_label_by_id.delete(self.id)
 
     def get_network_info(self):
         """
