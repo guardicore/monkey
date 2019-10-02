@@ -1,7 +1,6 @@
 import functools
 import itertools
 import logging
-import time
 
 import ipaddress
 from bson import json_util
@@ -692,7 +691,6 @@ class ReportService:
 
     @staticmethod
     def generate_report():
-        time.sleep(40)
         domain_issues = ReportService.get_domain_issues()
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
