@@ -6,11 +6,7 @@ import array
 import struct
 import ipaddress
 from netifaces import interfaces, ifaddresses, AF_INET
-
-try:
-    from functools import lru_cache
-except ImportError:
-    from backports.functools_lru_cache import lru_cache
+from ring import lru
 
 __author__ = 'Barak'
 
@@ -56,8 +52,8 @@ else:
 # The local IP addresses list should not change often. Therefore, we can cache the result and never call this function
 # more than once. This stopgap measure is here since this function is called a lot of times during the report
 # generation.
-# This means that if the interfaces of the Island machines change, the Island process needs to be restarted.
-@lru_cache(maxsize=1)
+# This means that if the interfaces of the Island machine change, the Island process needs to be restarted.
+@lru(maxsize=1)
 def local_ip_addresses():
     ip_list = []
     for interface in interfaces():
@@ -66,7 +62,11 @@ def local_ip_addresses():
     return ip_list
 
 
-@lru_cache(maxsize=1)
+# The subnets list should not change often. Therefore, we can cache the result and never call this function
+# more than once. This stopgap measure is here since this function is called a lot of times during the report
+# generation.
+# This means that if the interfaces or subnets  of the Island machine change, the Island process needs to be restarted.
+@lru(maxsize=1)
 def get_subnets():
     subnets = []
     for interface in interfaces():
