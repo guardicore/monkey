@@ -47,12 +47,12 @@ class CommunicateAsNewUser(PBA):
 
     def communicate_as_new_user_linux(self, username):
         try:
-            with create_auto_new_user(username, PASSWORD, False) as new_user:
+            with create_auto_new_user(username, PASSWORD, False) as _:
                 commandline = "sudo -u {username} ping -c 1 {domain}".format(
-                    username=new_user.username,
+                    username=username,
                     domain=PING_TEST_DOMAIN)
                 exit_status = os.system(commandline)
-                self.send_ping_result_telemetry(exit_status, commandline, new_user.username)
+                self.send_ping_result_telemetry(exit_status, commandline, username)
         except subprocess.CalledProcessError as e:
             PostBreachTelem(self, (e.output, False)).send()
 
