@@ -5,8 +5,6 @@ import string
 import subprocess
 import time
 
-import win32event
-
 from infection_monkey.utils.windows.auto_new_user import AutoNewUser, NewUserError
 from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
 from infection_monkey.post_breach.pba import PBA
@@ -68,6 +66,7 @@ class CommunicateAsNewUser(PBA):
         import win32con
         import win32process
         import win32api
+        import win32event
 
         try:
             with AutoNewUser(username, PASSWORD) as new_user:
