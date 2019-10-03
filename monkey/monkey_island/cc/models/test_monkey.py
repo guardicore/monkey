@@ -112,3 +112,62 @@ class TestMonkey(IslandTestCase):
                     and linux_monkey not in tunneled_monkeys
                     and len(tunneled_monkeys) == 2)
         self.assertTrue(test, "Tunneling test")
+
+    def test_get_label_by_id(self):
+        self.fail_if_not_testing_env()
+        self.clean_monkey_db()
+
+        hostname_example = "a_hostname"
+        ip_example = "1.1.1.1"
+        linux_monkey = Monkey(guid=str(uuid.uuid4()),
+                              description="Linux shay-Virtual-Machine",
+                              hostname=hostname_example,
+                              ip_addresses=[ip_example])
+        linux_monkey.save()
+
+        cache_info_before_query = Monkey.get_label_by_id.storage.backend.cache_info()
+        self.assertEquals(cache_info_before_query.hits, 0)
+
+        # not cached
+        label = Monkey.get_label_by_id(linux_monkey.id)
+
+        self.assertIsNotNone(label)
+        self.assertIn(hostname_example, label)
+        self.assertIn(ip_example, label)
+
+        # should be cached
+        _ = Monkey.get_label_by_id(linux_monkey.id)
+        cache_info_after_query = Monkey.get_label_by_id.storage.backend.cache_info()
+        self.assertEquals(cache_info_after_query.hits, 1)
+
+        linux_monkey.set_hostname("Another hostname")
+
+        # should be a miss
+        label = Monkey.get_label_by_id(linux_monkey.id)
+        cache_info_after_second_query = Monkey.get_label_by_id.storage.backend.cache_info()
+        # still 1 hit only
+        self.assertEquals(cache_info_after_second_query.hits, 1)
+        self.assertEquals(cache_info_after_second_query.misses, 2)
+
+    def test_is_monkey(self):
+        self.fail_if_not_testing_env()
+        self.clean_monkey_db()
+
+        a_monkey = Monkey(guid=str(uuid.uuid4()))
+        a_monkey.save()
+
+        cache_info_before_query = Monkey.is_monkey.storage.backend.cache_info()
+        self.assertEquals(cache_info_before_query.hits, 0)
+
+        # not cached
+        self.assertTrue(Monkey.is_monkey(a_monkey.id))
+        fake_id = "123456789012"
+        self.assertFalse(Monkey.is_monkey(fake_id))
+
+        # should be cached
+        self.assertTrue(Monkey.is_monkey(a_monkey.id))
+        self.assertFalse(Monkey.is_monkey(fake_id))
+
+        cache_info_after_query = Monkey.is_monkey.storage.backend.cache_info()
+        self.assertEquals(cache_info_after_query.hits, 2)
+

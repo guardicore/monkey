@@ -3,10 +3,14 @@ Define a Document Schema for the Monkey document.
 """
 from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, ReferenceField, \
     DateTimeField, DynamicField, DoesNotExist
+import ring
 
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
 from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.models.command_control_channel import CommandControlChannel
+from monkey_island.cc.utils import local_ip_addresses
+
+MAX_MONKEYS_AMOUNT_TO_CACHE = 100
 
 
 class Monkey(Document):
@@ -84,12 +88,52 @@ class Monkey(Document):
             os = "windows"
         return os
 
+    @staticmethod
+    @ring.lru()
+    def get_label_by_id(object_id):
+        current_monkey = Monkey.get_single_monkey_by_id(object_id)
+        label = Monkey.get_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
+        if len(set(current_monkey.ip_addresses).intersection(local_ip_addresses())) > 0:
+            label = "MonkeyIsland - " + label
+        return label
+
+    @staticmethod
+    @ring.lru()
+    def get_hostname_by_id(object_id):
+        """
+        :param object_id: the object ID of a Monkey in the database.
+        :return: The hostname of that machine.
+        :note: Use this and not monkey.hostname for performance - this is lru-cached.
+        """
+        return Monkey.get_single_monkey_by_id(object_id).hostname
+
+    def set_hostname(self, hostname):
+        """
+        Sets a new hostname for a machine and clears the cache for getting it.
+        :param hostname: The new hostname for the machine.
+        """
+        self.hostname = hostname
+        self.save()
+        Monkey.get_hostname_by_id.delete(self.id)
+        Monkey.get_label_by_id.delete(self.id)
+
     def get_network_info(self):
         """
         Formats network info from monkey's model
         :return: dictionary with an array of IP's and a hostname
         """
         return {'ips': self.ip_addresses, 'hostname': self.hostname}
+
+    @staticmethod
+    @ring.lru(
+        expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.
+    )
+    def is_monkey(object_id):
+        try:
+            _ = Monkey.get_single_monkey_by_id(object_id)
+            return True
+        except:
+            return False
 
     @staticmethod
     def get_tunneled_monkeys():
