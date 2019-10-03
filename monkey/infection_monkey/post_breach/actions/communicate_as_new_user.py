@@ -54,10 +54,11 @@ class CommunicateAsNewUser(PBA):
             final_command = ' '.join(linux_cmds)
             exit_status = os.system(final_command)
             self.send_ping_result_telemetry(exit_status, commandline, username)
-            # delete the user, async in case it gets stuck.
+            # delete the user.
             commands_to_delete_user = get_linux_commands_to_delete_user(username)
             logger.debug("Trying to delete the user {} with commands {}".format(username, str(commands_to_delete_user)))
-            _ = subprocess.Popen(commands_to_delete_user, stderr=subprocess.STDOUT, shell=True)
+            delete_user_output = subprocess.check_output(" ".join(commands_to_delete_user), stderr=subprocess.STDOUT, shell=True)
+            logger.debug("Deletion output: {}".format(delete_user_output))
             # Leaking the process on purpose - nothing we can do if it's stuck.
         except subprocess.CalledProcessError as e:
             PostBreachTelem(self, (e.output, False)).send()
