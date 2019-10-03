@@ -1,6 +1,7 @@
 import subprocess
 
-from infection_monkey.utils.auto_new_user import AutoNewUser, NewUserError
+from infection_monkey.utils.auto_new_user import AutoNewUser
+from infection_monkey.utils.new_user_error import NewUserError
 
 ACTIVE_NO_NET_USER = '/ACTIVE:NO'
 
