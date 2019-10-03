@@ -1,7 +1,10 @@
 import datetime
+import logging
 import subprocess
 
-from infection_monkey.utils.auto_new_user import AutoNewUser, logger
+from infection_monkey.utils.auto_new_user import AutoNewUser
+
+logger = logging.getLogger(__name__)
 
 
 def get_linux_commands_to_add_user(username):

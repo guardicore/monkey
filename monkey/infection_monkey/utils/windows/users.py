@@ -1,3 +1,4 @@
+import logging
 import subprocess
 
 from infection_monkey.utils.auto_new_user import AutoNewUser
@@ -5,6 +6,7 @@ from infection_monkey.utils.new_user_error import NewUserError
 
 ACTIVE_NO_NET_USER = '/ACTIVE:NO'
 
+logger = logging.getLogger(__name__)
 
 def get_windows_commands_to_add_user(username, password, should_be_active=False):
     windows_cmds = [
@@ -46,6 +48,7 @@ class AutoNewWindowsUser(AutoNewUser):
         super(AutoNewWindowsUser, self).__init__(username, password)
 
         windows_cmds = get_windows_commands_to_add_user(self.username, self.password, True)
+        logger.debug("Trying to add {} with commands {}".format(self.username, str(windows_cmds)))
         _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT, shell=True)
 
     def __enter__(self):
@@ -79,14 +82,20 @@ class AutoNewWindowsUser(AutoNewUser):
 
     def try_deactivate_user(self):
         try:
+            commands_to_deactivate_user = get_windows_commands_to_deactivate_user(self.username)
+            logger.debug(
+                "Trying to deactivate {} with commands {}".format(self.username, str(commands_to_deactivate_user)))
             _ = subprocess.check_output(
-                get_windows_commands_to_deactivate_user(self.username), stderr=subprocess.STDOUT, shell=True)
+                commands_to_deactivate_user, stderr=subprocess.STDOUT, shell=True)
         except Exception as err:
             raise NewUserError("Can't deactivate user {}. Info: {}".format(self.username, err))
 
     def try_delete_user(self):
         try:
+            commands_to_delete_user = get_windows_commands_to_delete_user(self.username)
+            logger.debug(
+                "Trying to deactivate {} with commands {}".format(self.username, str(commands_to_delete_user)))
             _ = subprocess.check_output(
-                get_windows_commands_to_delete_user(self.username), stderr=subprocess.STDOUT, shell=True)
+                commands_to_delete_user, stderr=subprocess.STDOUT, shell=True)
         except Exception as err:
             raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))
