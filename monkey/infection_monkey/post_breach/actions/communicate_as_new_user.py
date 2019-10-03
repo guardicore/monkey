@@ -3,14 +3,12 @@ import os
 import random
 import string
 import subprocess
-import time
 
-from infection_monkey.utils.windows.auto_new_user import NewUserError, create_auto_new_user
+from infection_monkey.utils.auto_new_user import NewUserError, create_auto_new_user
 from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.linux.users import get_linux_commands_to_delete_user, get_linux_commands_to_add_user
 
 PING_TEST_DOMAIN = "google.com"
 
@@ -47,7 +45,7 @@ class CommunicateAsNewUser(PBA):
 
     def communicate_as_new_user_linux(self, username):
         try:
-            with create_auto_new_user(username, PASSWORD, False) as _:
+            with create_auto_new_user(username, PASSWORD, is_windows=False) as _:
                 commandline = "sudo -u {username} ping -c 1 {domain}".format(
                     username=username,
                     domain=PING_TEST_DOMAIN)
@@ -64,7 +62,7 @@ class CommunicateAsNewUser(PBA):
         import win32event
 
         try:
-            with create_auto_new_user(username, PASSWORD, True) as new_user:
+            with create_auto_new_user(username, PASSWORD, is_windows=True) as new_user:
                 # Using os.path is OK, as this is on windows for sure
                 ping_app_path = os.path.join(os.environ["WINDIR"], "system32", "PING.exe")
                 if not os.path.exists(ping_app_path):

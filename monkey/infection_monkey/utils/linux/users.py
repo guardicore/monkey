@@ -1,4 +1,7 @@
 import datetime
+import subprocess
+
+from infection_monkey.utils.auto_new_user import AutoNewUser, logger
 
 
 def get_linux_commands_to_add_user(username):
@@ -19,3 +22,28 @@ def get_linux_commands_to_delete_user(username):
         'deluser',
         username
     ]
+
+
+class AutoNewLinuxUser(AutoNewUser):
+    """
+    See AutoNewUser's documentation for details.
+    """
+    def __init__(self, username, password):
+        """
+        Creates a user with the username + password.
+        :raises: subprocess.CalledProcessError if failed to add the user.
+        """
+        super(AutoNewLinuxUser, self).__init__(username, password)
+
+        commands_to_add_user = get_linux_commands_to_add_user(username)
+        logger.debug("Trying to add {} with commands {}".format(self.username, str(commands_to_add_user)))
+        _ = subprocess.check_output(' '.join(commands_to_add_user), stderr=subprocess.STDOUT, shell=True)
+
+    def __enter__(self):
+        pass  # No initialization/logging on needed in Linux
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # delete the user.
+        commands_to_delete_user = get_linux_commands_to_delete_user(self.username)
+        logger.debug("Trying to delete {} with commands {}".format(self.username, str(commands_to_delete_user)))
+        _ = subprocess.check_output(" ".join(commands_to_delete_user), stderr=subprocess.STDOUT, shell=True)
