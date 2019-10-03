@@ -5,7 +5,7 @@ import string
 import subprocess
 import time
 
-from infection_monkey.utils.windows.auto_new_user import AutoNewUser, NewUserError
+from infection_monkey.utils.windows.auto_new_user import NewUserError, create_auto_new_user
 from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
@@ -47,19 +47,12 @@ class CommunicateAsNewUser(PBA):
 
     def communicate_as_new_user_linux(self, username):
         try:
-            # add user + ping
-            linux_cmds = get_linux_commands_to_add_user(username)
-            commandline = "ping -c 1 {}".format(PING_TEST_DOMAIN)
-            linux_cmds.extend([";", "sudo", "-u", username, commandline])
-            final_command = ' '.join(linux_cmds)
-            exit_status = os.system(final_command)
-            self.send_ping_result_telemetry(exit_status, commandline, username)
-            # delete the user.
-            commands_to_delete_user = get_linux_commands_to_delete_user(username)
-            logger.debug("Trying to delete the user {} with commands {}".format(username, str(commands_to_delete_user)))
-            delete_user_output = subprocess.check_output(" ".join(commands_to_delete_user), stderr=subprocess.STDOUT, shell=True)
-            logger.debug("Deletion output: {}".format(delete_user_output))
-            # Leaking the process on purpose - nothing we can do if it's stuck.
+            with create_auto_new_user(username, PASSWORD) as new_user:
+                commandline = "sudo -u {username} ping -c 1 {domain}".format(
+                    username=new_user.username,
+                    domain=PING_TEST_DOMAIN)
+                exit_status = os.system(commandline)
+                self.send_ping_result_telemetry(exit_status, commandline, new_user.username)
         except subprocess.CalledProcessError as e:
             PostBreachTelem(self, (e.output, False)).send()
 
@@ -71,7 +64,7 @@ class CommunicateAsNewUser(PBA):
         import win32event
 
         try:
-            with AutoNewUser(username, PASSWORD) as new_user:
+            with create_auto_new_user(username, PASSWORD) as new_user:
                 # Using os.path is OK, as this is on windows for sure
                 ping_app_path = os.path.join(os.environ["WINDIR"], "system32", "PING.exe")
                 if not os.path.exists(ping_app_path):

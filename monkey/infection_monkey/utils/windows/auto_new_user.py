@@ -1,7 +1,9 @@
 import logging
 import subprocess
+import abc
 
-from infection_monkey.post_breach.actions.add_user import BackdoorUser
+from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.linux.users import get_linux_commands_to_add_user, get_linux_commands_to_delete_user
 from infection_monkey.utils.windows.users import get_windows_commands_to_delete_user, get_windows_commands_to_add_user, \
     get_windows_commands_to_deactivate_user
 
@@ -12,26 +14,79 @@ class NewUserError(Exception):
     pass
 
 
-class AutoNewUser(object):
+class AutoNewUser:
     """
-    RAII object to use for creating and using a new user in Windows. Use with `with`.
+    RAII object to use for creating and using a new user. Use with `with`.
     User will be created when the instance is instantiated.
-    User will log on at the start of the `with` scope.
-    User will log off and get deleted at the end of said `with` scope.
+    User will be available for use (log on for Windows, for example) at the start of the `with` scope.
+    User will be removed (deactivated and deleted for Windows, for example) at the end of said `with` scope.
 
     Example:
-             # Created                           # Logged on
-        with AutoNewUser("user", "pass") as new_user:
+             # Created                                                 # Logged on
+        with AutoNewUser("user", "pass", is_on_windows()) as new_user:
             ...
             ...
         # Logged off and deleted
         ...
+        """
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, username, password):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def __enter__(self):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        raise NotImplementedError()
+
+
+def create_auto_new_user(username, password, is_windows=is_windows_os()):
+    if is_windows:
+        return AutoNewWindowsUser(username, password)
+    else:
+        return AutoNewLinuxUser(username, password)
+
+
+class AutoNewLinuxUser(AutoNewUser):
+    """
+    See AutoNewUser's documentation for details.
     """
     def __init__(self, username, password):
         """
         Creates a user with the username + password.
         :raises: subprocess.CalledProcessError if failed to add the user.
         """
+        super(AutoNewLinuxUser, self).__init__(username, password)
+        self.username = username
+        self.password = password
+
+        commands_to_add_user = get_linux_commands_to_add_user(username)
+        logger.debug("Trying to add {} with commands {}".format(self.username, str(commands_to_add_user)))
+        _ = subprocess.check_output(' '.join(commands_to_add_user), stderr=subprocess.STDOUT, shell=True)
+
+    def __enter__(self):
+        pass  # No initialization/logging on needed in Linux
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # delete the user.
+        commands_to_delete_user = get_linux_commands_to_delete_user(self.username)
+        logger.debug("Trying to delete {} with commands {}".format(self.username, str(commands_to_delete_user)))
+        _ = subprocess.check_output(" ".join(commands_to_delete_user), stderr=subprocess.STDOUT, shell=True)
+
+
+class AutoNewWindowsUser(AutoNewUser):
+    """
+    See AutoNewUser's documentation for details.
+    """
+    def __init__(self, username, password):
+        """
+        Creates a user with the username + password.
+        :raises: subprocess.CalledProcessError if failed to add the user.
+        """
+        super(AutoNewWindowsUser, self).__init__(username, password)
         self.username = username
         self.password = password
 
@@ -65,14 +120,7 @@ class AutoNewUser(object):
 
         # Try to disable and then delete the user.
         self.try_deactivate_user()
-        self.try_disable_user()
-
-    def try_disable_user(self):
-        try:
-            _ = subprocess.check_output(
-                get_windows_commands_to_delete_user(self.username), stderr=subprocess.STDOUT, shell=True)
-        except Exception as err:
-            raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))
+        self.try_delete_user()
 
     def try_deactivate_user(self):
         try:
@@ -80,3 +128,10 @@ class AutoNewUser(object):
                 get_windows_commands_to_deactivate_user(self.username), stderr=subprocess.STDOUT, shell=True)
         except Exception as err:
             raise NewUserError("Can't deactivate user {}. Info: {}".format(self.username, err))
+
+    def try_delete_user(self):
+        try:
+            _ = subprocess.check_output(
+                get_windows_commands_to_delete_user(self.username), stderr=subprocess.STDOUT, shell=True)
+        except Exception as err:
+            raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))
