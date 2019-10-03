@@ -2,24 +2,6 @@ SCHEMA = {
     "title": "ATT&CK configuration",
     "type": "object",
     "properties": {
-        "initial_access": {
-            "title": "Initial access",
-            "type": "object",
-            "properties": {
-                "T1078": {
-                    "title": "T1078 Valid accounts",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": False,
-                    "description": "Mapped with T1003 Credential dumping because both techniques "
-                                   "require same credential harvesting modules. "
-                                   "Adversaries may steal the credentials of a specific user or service account using "
-                                   "Credential Access techniques or capture credentials earlier in their "
-                                   "reconnaissance process.",
-                    "depends_on": ["T1003"]
-                }
-            }
-        },
         "lateral_movement": {
             "title": "Lateral movement",
             "type": "object",
