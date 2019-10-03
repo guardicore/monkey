@@ -93,8 +93,6 @@ class InfectionMonkey(object):
             return
         self.set_default_port()
 
-        fbts
-
         # Create a dir for monkey files if there isn't one
         create_monkey_dir()
 
