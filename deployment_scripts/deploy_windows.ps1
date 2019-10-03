@@ -56,13 +56,12 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         "Select 'add to PATH' when installing"
         $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
         Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
         Remove-Item $TEMP_PYTHON_INSTALLER
         # Check if installed correctly
         $version = cmd.exe /c '"python" --version  2>&1'
         if ( $version -like '* is not recognized*' ) {
-            "Python is not found in PATH. If you just installed python you need to restart cmd.
-            Else, add it manually or reinstall python."
+            "Python is not found in PATH. Add it to PATH and relaunch the script."
             return
         }
     }
