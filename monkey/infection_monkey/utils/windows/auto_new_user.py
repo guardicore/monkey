@@ -32,7 +32,8 @@ class AutoNewUser:
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, username, password):
-        raise NotImplementedError()
+        self.username = username
+        self.password = password
 
     @abc.abstractmethod
     def __enter__(self):
@@ -60,8 +61,6 @@ class AutoNewLinuxUser(AutoNewUser):
         :raises: subprocess.CalledProcessError if failed to add the user.
         """
         super(AutoNewLinuxUser, self).__init__(username, password)
-        self.username = username
-        self.password = password
 
         commands_to_add_user = get_linux_commands_to_add_user(username)
         logger.debug("Trying to add {} with commands {}".format(self.username, str(commands_to_add_user)))
@@ -87,8 +86,6 @@ class AutoNewWindowsUser(AutoNewUser):
         :raises: subprocess.CalledProcessError if failed to add the user.
         """
         super(AutoNewWindowsUser, self).__init__(username, password)
-        self.username = username
-        self.password = password
 
         windows_cmds = get_windows_commands_to_add_user(self.username, self.password, True)
         _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT, shell=True)

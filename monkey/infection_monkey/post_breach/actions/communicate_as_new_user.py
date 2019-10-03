@@ -47,7 +47,7 @@ class CommunicateAsNewUser(PBA):
 
     def communicate_as_new_user_linux(self, username):
         try:
-            with create_auto_new_user(username, PASSWORD) as new_user:
+            with create_auto_new_user(username, PASSWORD, False) as new_user:
                 commandline = "sudo -u {username} ping -c 1 {domain}".format(
                     username=new_user.username,
                     domain=PING_TEST_DOMAIN)
@@ -64,7 +64,7 @@ class CommunicateAsNewUser(PBA):
         import win32event
 
         try:
-            with create_auto_new_user(username, PASSWORD) as new_user:
+            with create_auto_new_user(username, PASSWORD, True) as new_user:
                 # Using os.path is OK, as this is on windows for sure
                 ping_app_path = os.path.join(os.environ["WINDIR"], "system32", "PING.exe")
                 if not os.path.exists(ping_app_path):
