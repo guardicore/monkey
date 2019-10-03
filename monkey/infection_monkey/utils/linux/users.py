@@ -3,7 +3,7 @@ import datetime
 
 def get_linux_commands_to_add_user(username):
     return [
-        'adduser',  # https://linux.die.net/man/8/adduser
+        'useradd',  # https://linux.die.net/man/8/useradd
         '-M',  # Do not create homedir
         '--expiredate',  # The date on which the user account will be disabled.
         datetime.datetime.today().strftime('%Y-%m-%d'),
