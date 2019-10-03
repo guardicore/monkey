@@ -9,6 +9,7 @@ WAIT_TIMEOUT_IN_MILLISECONDS = 20 * 1000
 
 logger = logging.getLogger(__name__)
 
+
 def get_windows_commands_to_add_user(username, password, should_be_active=False):
     windows_cmds = [
         'net',
@@ -41,6 +42,7 @@ class AutoNewWindowsUser(AutoNewUser):
     """
     See AutoNewUser's documentation for details.
     """
+
     def __init__(self, username, password):
         """
         Creates a user with the username + password.
@@ -64,7 +66,7 @@ class AutoNewWindowsUser(AutoNewUser):
                 ".",  # Use current domain.
                 self.password,
                 win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user). Need this to open ping
-                                                     # using a shell.
+                # using a shell.
                 win32con.LOGON32_PROVIDER_DEFAULT)  # Which logon provider to use - whatever Windows offers.
         except Exception as err:
             raise NewUserError("Can't logon as {}. Error: {}".format(self.username, str(err)))

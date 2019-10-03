@@ -35,4 +35,8 @@ class AutoNewUser:
 
     @abc.abstractmethod
     def run_as(self, command):
+        """
+        Run the given command as the new user that was created.
+        :param command: The command to run - give as shell commandline (e.g. "ping google.com -n 1")
+        """
         raise NotImplementedError()
