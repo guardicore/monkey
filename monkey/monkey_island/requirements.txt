@@ -13,7 +13,6 @@ Flask-JWT
 jsonschema
 netifaces
 ipaddress
-enum34
 pycryptodome
 boto3
 botocore
