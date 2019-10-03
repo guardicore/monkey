@@ -41,6 +41,34 @@ class AutoNewWindowsUser(AutoNewUser):
     """
     See AutoNewUser's documentation for details.
     """
+    def __init__(self, username, password):
+        """
+        Creates a user with the username + password.
+        :raises: subprocess.CalledProcessError if failed to add the user.
+        """
+        super(AutoNewWindowsUser, self).__init__(username, password)
+
+        windows_cmds = get_windows_commands_to_add_user(self.username, self.password, True)
+        logger.debug("Trying to add {} with commands {}".format(self.username, str(windows_cmds)))
+        _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT, shell=True)
+
+    def __enter__(self):
+        # Importing these only on windows, as they won't exist on linux.
+        import win32security
+        import win32con
+
+        try:
+            # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-logonusera
+            self.logon_handle = win32security.LogonUser(
+                self.username,
+                ".",  # Use current domain.
+                self.password,
+                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user). Need this to open ping
+                                                     # using a shell.
+                win32con.LOGON32_PROVIDER_DEFAULT)  # Which logon provider to use - whatever Windows offers.
+        except Exception as err:
+            raise NewUserError("Can't logon as {}. Error: {}".format(self.username, str(err)))
+        return self
 
     def run_as(self, command):
         # Importing these only on windows, as they won't exist on linux.
@@ -92,35 +120,6 @@ class AutoNewWindowsUser(AutoNewUser):
                 logger.error("Close handle error: " + str(err))
 
         return exit_code
-
-    def __init__(self, username, password):
-        """
-        Creates a user with the username + password.
-        :raises: subprocess.CalledProcessError if failed to add the user.
-        """
-        super(AutoNewWindowsUser, self).__init__(username, password)
-
-        windows_cmds = get_windows_commands_to_add_user(self.username, self.password, True)
-        logger.debug("Trying to add {} with commands {}".format(self.username, str(windows_cmds)))
-        _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT, shell=True)
-
-    def __enter__(self):
-        # Importing these only on windows, as they won't exist on linux.
-        import win32security
-        import win32con
-
-        try:
-            # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-logonusera
-            self.logon_handle = win32security.LogonUser(
-                self.username,
-                ".",  # Use current domain.
-                self.password,
-                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user). Need this to open ping
-                                                     # using a shell.
-                win32con.LOGON32_PROVIDER_DEFAULT)  # Which logon provider to use - whatever Windows offers.
-        except Exception as err:
-            raise NewUserError("Can't logon as {}. Error: {}".format(self.username, str(err)))
-        return self
 
     def get_logon_handle(self):
         return self.logon_handle

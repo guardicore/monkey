@@ -45,7 +45,7 @@ class AutoNewLinuxUser(AutoNewUser):
         _ = subprocess.check_output(' '.join(commands_to_add_user), stderr=subprocess.STDOUT, shell=True)
 
     def __enter__(self):
-        pass  # No initialization/logging on needed in Linux
+        return self  # No initialization/logging on needed in Linux
 
     def run_as(self, command):
         command_as_new_user = "sudo -u {username} {command}".format(username=self.username, command=command)
