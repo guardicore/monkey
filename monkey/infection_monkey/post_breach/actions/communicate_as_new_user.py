@@ -50,7 +50,7 @@ class CommunicateAsNewUser(PBA):
     @staticmethod
     def get_commandline_for_ping(domain=PING_TEST_DOMAIN, is_windows=is_windows_os()):
         format_string = "PING.exe {domain} -n 1" if is_windows else "ping -c 1 {domain}"
-        format_string.format(domain=domain)
+        return format_string.format(domain=domain)
 
     def send_ping_result_telemetry(self, exit_status, commandline, username):
         """
