@@ -2,7 +2,8 @@ import logging
 import subprocess
 
 from infection_monkey.post_breach.actions.add_user import BackdoorUser
-from infection_monkey.utils.windows.users import get_windows_commands_to_delete_user, get_windows_commands_to_add_user
+from infection_monkey.utils.windows.users import get_windows_commands_to_delete_user, get_windows_commands_to_add_user, \
+    get_windows_commands_to_deactivate_user
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,8 @@ class AutoNewUser(object):
                 self.username,
                 ".",  # Use current domain.
                 self.password,
-                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user).
+                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user). Need this to open ping
+                                                     # using a shell.
                 win32con.LOGON32_PROVIDER_DEFAULT)  # Which logon provider to use - whatever Windows offers.
         except Exception as err:
             raise NewUserError("Can't logon as {}. Error: {}".format(self.username, str(err)))
@@ -61,9 +63,20 @@ class AutoNewUser(object):
         # Logoff
         self.logon_handle.Close()
 
-        # Try to delete user
+        # Try to disable and then delete the user.
+        self.try_deactivate_user()
+        self.try_disable_user()
+
+    def try_disable_user(self):
         try:
-            _ = subprocess.Popen(
+            _ = subprocess.check_output(
                 get_windows_commands_to_delete_user(self.username), stderr=subprocess.STDOUT, shell=True)
         except Exception as err:
             raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))
+
+    def try_deactivate_user(self):
+        try:
+            _ = subprocess.check_output(
+                get_windows_commands_to_deactivate_user(self.username), stderr=subprocess.STDOUT, shell=True)
+        except Exception as err:
+            raise NewUserError("Can't deactivate user {}. Info: {}".format(self.username, err))
