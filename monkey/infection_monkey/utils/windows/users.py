@@ -5,6 +5,7 @@ from infection_monkey.utils.auto_new_user import AutoNewUser
 from infection_monkey.utils.new_user_error import NewUserError
 
 ACTIVE_NO_NET_USER = '/ACTIVE:NO'
+WAIT_TIMEOUT_IN_MILLISECONDS = 20 * 1000
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,58 @@ class AutoNewWindowsUser(AutoNewUser):
     """
     See AutoNewUser's documentation for details.
     """
+
+    def run_as(self, command):
+        # Importing these only on windows, as they won't exist on linux.
+        import win32con
+        import win32process
+        import win32api
+        import win32event
+
+        exit_code = -1
+        process_handle = None
+        thread_handle = None
+
+        try:
+            # Open process as that user:
+            # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera
+            process_handle, thread_handle, _, _ = win32process.CreateProcessAsUser(
+                self.get_logon_handle(),  # A handle to the primary token that represents a user.
+                None,  # The name of the module to be executed.
+                command,  # The command line to be executed.
+                None,  # Process attributes
+                None,  # Thread attributes
+                True,  # Should inherit handles
+                win32con.NORMAL_PRIORITY_CLASS,  # The priority class and the creation of the process.
+                None,  # An environment block for the new process. If this parameter is NULL, the new process
+                # uses the environment of the calling process.
+                None,  # CWD. If this parameter is NULL, the new process will have the same current drive and
+                # directory as the calling process.
+                win32process.STARTUPINFO()  # STARTUPINFO structure.
+                # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
+            )
+
+            logger.debug(
+                "Waiting for process to finish. Timeout: {}ms".format(WAIT_TIMEOUT_IN_MILLISECONDS))
+
+            # Ignoring return code, as we'll use `GetExitCode` to determine the state of the process later.
+            _ = win32event.WaitForSingleObject(  # Waits until the specified object is signaled, or time-out.
+                process_handle,  # Ping process handle
+                WAIT_TIMEOUT_IN_MILLISECONDS  # Timeout in milliseconds
+            )
+
+            exit_code = win32process.GetExitCodeProcess(process_handle)
+        finally:
+            try:
+                if process_handle is not None:
+                    win32api.CloseHandle(process_handle)
+                if thread_handle is not None:
+                    win32api.CloseHandle(thread_handle)
+            except Exception as err:
+                logger.error("Close handle error: " + str(err))
+
+        return exit_code
+
     def __init__(self, username, password):
         """
         Creates a user with the username + password.
@@ -94,7 +147,7 @@ class AutoNewWindowsUser(AutoNewUser):
         try:
             commands_to_delete_user = get_windows_commands_to_delete_user(self.username)
             logger.debug(
-                "Trying to deactivate {} with commands {}".format(self.username, str(commands_to_delete_user)))
+                "Trying to delete {} with commands {}".format(self.username, str(commands_to_delete_user)))
             _ = subprocess.check_output(
                 commands_to_delete_user, stderr=subprocess.STDOUT, shell=True)
         except Exception as err:

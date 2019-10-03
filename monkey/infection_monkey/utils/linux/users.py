@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 import subprocess
 
 from infection_monkey.utils.auto_new_user import AutoNewUser
@@ -31,6 +32,7 @@ class AutoNewLinuxUser(AutoNewUser):
     """
     See AutoNewUser's documentation for details.
     """
+
     def __init__(self, username, password):
         """
         Creates a user with the username + password.
@@ -44,6 +46,10 @@ class AutoNewLinuxUser(AutoNewUser):
 
     def __enter__(self):
         pass  # No initialization/logging on needed in Linux
+
+    def run_as(self, command):
+        command_as_new_user = "sudo -u {username} {command}".format(username=self.username, command=command)
+        return os.system(command_as_new_user)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # delete the user.
