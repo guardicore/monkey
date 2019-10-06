@@ -27,7 +27,7 @@ class Environment(object):
     def testing(self, value):
         self._testing = value
 
-    _MONKEY_VERSION = "1.6.3"
+    _MONKEY_VERSION = "1.7.0"
 
 
     def __init__(self):
