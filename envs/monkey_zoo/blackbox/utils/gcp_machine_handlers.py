@@ -26,6 +26,11 @@ class GCPHandler(object):
             LOGGER.error("GCP Handler failed to initialize: %s." % e)
 
     def start_machines(self, machine_list):
+        """
+        Start all the machines in the list.
+        :param machine_list: A space-separated string with all the machine names. Example:
+        start_machines(`" ".join(["elastic-3", "mssql-16"])`)
+        """
         LOGGER.info("Setting up all GCP machines...")
         try:
             subprocess.call((GCPHandler.MACHINE_STARTING_COMMAND % (machine_list, self.zone)), shell=True)
