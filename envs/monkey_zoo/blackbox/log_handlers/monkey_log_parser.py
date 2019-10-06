@@ -13,9 +13,12 @@ class MonkeyLogParser(object):
 
     def print_errors(self):
         errors = MonkeyLogParser.get_errors(self.log_contents)
-        print("Found {} errors:".format(len(errors)))
-        for error_line in errors:
-            print(error_line)
+        if len(errors) > 0:
+            print("Found {} errors:".format(len(errors)))
+            for error_line in errors:
+                print(error_line)
+        else:
+            print("No errors!")
 
     @staticmethod
     def get_errors(log_contents):
@@ -24,9 +27,12 @@ class MonkeyLogParser(object):
 
     def print_warnings(self):
         warnings = MonkeyLogParser.get_warnings(self.log_contents)
-        print("Found {} warnings:".format(len(warnings)))
-        for warning_line in warnings:
-            print(warning_line)
+        if len(warnings) > 0:
+            print("Found {} warnings:".format(len(warnings)))
+            for warning_line in warnings:
+                print(warning_line)
+        else:
+            print("No warnings!")
 
     @staticmethod
     def get_warnings(log_contents):
