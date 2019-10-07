@@ -1,1 +1,1 @@
-pyinstaller -F --log-level=DEBUG --clean --noupx monkey.spec
+pyinstaller -F --log-level=DEBUG --clean --upx-dir=.\bin monkey.spec
