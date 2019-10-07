@@ -107,6 +107,12 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     "Removing zip file"
     Remove-Item $TEMP_OPEN_SSL_ZIP
 
+    # Download and install C++ redistributable
+    "Downloading C++ redistributable ..."
+    $webClient.DownloadFile($CPP_URL, $TEMP_CPP_INSTALLER)
+    Start-Process -Wait $TEMP_CPP_INSTALLER -ErrorAction Stop
+    Remove-Item $TEMP_CPP_INSTALLER
+
     # Generate ssl certificate
     "Generating ssl certificate"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR)
@@ -157,6 +163,19 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     # Create infection_monkey/bin directory if not already present
     $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\bin")
     New-Item -ItemType directory -path $binaries -ErrorAction SilentlyContinue
+
+    # Download upx
+    if(!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "upx.exe") )){
+        "Downloading upx ..."
+        $webClient.DownloadFile($UPX_URL, $TEMP_UPX_ZIP)
+        "Unzipping upx"
+        Expand-Archive $TEMP_UPX_ZIP -DestinationPath $binDir -ErrorAction SilentlyContinue
+        Move-Item -Path (Join-Path -Path $binDir -ChildPath $UPX_FOLDER | Join-Path -ChildPath "upx.exe") -Destination $binDir
+        # Remove unnecessary files
+        Remove-Item -Recurse -Force (Join-Path -Path $binDir -ChildPath $UPX_FOLDER)
+        "Removing zip file"
+        Remove-Item $TEMP_UPX_ZIP
+    }
 
     # Download mimikatz binaries
     $mk32_path = Join-Path -Path $binDir -ChildPath $MK32_DLL
