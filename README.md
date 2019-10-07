@@ -30,7 +30,6 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
 * Multiple exploit methods:
   * SSH
   * SMB
-  * RDP
   * WMI
   * Shellshock
   * Conficker

@@ -23,17 +23,21 @@ from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.remote_run import RemoteRun
-from monkey_island.cc.resources.report import Report
+from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.version_update import VersionUpdate
-from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.database import Database
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.resources.pba_file_upload import FileUpload
-from monkey_island.cc.resources.attack_telem import AttackTelem
+from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
+from monkey_island.cc.resources.attack.attack_report import AttackReport
+
+from monkey_island.cc.resources.test.monkey_test import MonkeyTest
+from monkey_island.cc.resources.test.log_test import LogTest
 
 __author__ = 'Barak'
 
@@ -97,7 +101,7 @@ def init_app_services(app):
 
     with app.app_context():
         database.init()
-        ConfigService.init_config()
+        Database.init_db()
 
     # If running on AWS, this will initialize the instance data, which is used "later" in the execution of the island.
     RemoteRunAwsService.init()
@@ -121,7 +125,13 @@ def init_api_resources(api):
     api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
     api.add_resource(Edge, '/api/netmap/edge', '/api/netmap/edge/')
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
-    api.add_resource(Report, '/api/report', '/api/report/')
+
+    # report_type: zero_trust or security
+    api.add_resource(
+        Report,
+        '/api/report/<string:report_type>',
+        '/api/report/<string:report_type>/<string:report_data>')
+
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')
@@ -130,8 +140,12 @@ def init_api_resources(api):
                      '/api/fileUpload/<string:file_type>?load=<string:filename>',
                      '/api/fileUpload/<string:file_type>?restore=<string:filename>')
     api.add_resource(RemoteRun, '/api/remote-monkey', '/api/remote-monkey/')
-    api.add_resource(AttackTelem, '/api/attack/<string:technique>')
+    api.add_resource(AttackConfiguration, '/api/attack')
+    api.add_resource(AttackReport, '/api/attack/report')
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
+
+    api.add_resource(MonkeyTest, '/api/test/monkey')
+    api.add_resource(LogTest, '/api/test/log')
 
 
 def init_app(mongo_url):

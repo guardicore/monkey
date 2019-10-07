@@ -6,10 +6,10 @@ import threading
 import urllib
 from logging import getLogger
 from urlparse import urlsplit
-from threading import Lock
 
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
+from infection_monkey.exploit.tools.helpers import get_interface_to_target
 
 __author__ = 'hoffer'
 
@@ -49,7 +49,8 @@ class FileServHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 start_range += chunk
 
             if f.tell() == monkeyfs.getsize(self.filename):
-                self.report_download(self.client_address)
+                if self.report_download(self.client_address):
+                    self.close_connection = 1
 
             f.close()
 
@@ -164,12 +165,22 @@ class HTTPServer(threading.Thread):
 
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
+            from common.utils.attack_utils import ScanStatus
+            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
+
             filename = self._filename
 
             @staticmethod
             def report_download(dest=None):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
+                TempHandler.T1105Telem(TempHandler.ScanStatus.USED,
+                                       get_interface_to_target(dest[0]),
+                                       dest[0],
+                                       self._filename).send()
                 self.downloads += 1
+                if not self.downloads < self.max_downloads:
+                    return True
+                return False
 
         httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
         httpd.timeout = 0.5  # this is irrelevant?
@@ -208,12 +219,21 @@ class LockedHTTPServer(threading.Thread):
 
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
+            from common.utils.attack_utils import ScanStatus
+            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
             filename = self._filename
 
             @staticmethod
             def report_download(dest=None):
                 LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
+                TempHandler.T1105Telem(TempHandler.ScanStatus.USED,
+                                       get_interface_to_target(dest[0]),
+                                       dest[0],
+                                       self._filename).send()
                 self.downloads += 1
+                if not self.downloads < self.max_downloads:
+                    return True
+                return False
 
         httpd = BaseHTTPServer.HTTPServer((self._local_ip, self._local_port), TempHandler)
         self.lock.release()

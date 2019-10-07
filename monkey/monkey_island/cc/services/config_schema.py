@@ -13,42 +13,40 @@ SCHEMA = {
                     "enum": [
                         "SmbExploiter"
                     ],
-                    "title": "SMB Exploiter"
+                    "title": "SMB Exploiter",
+                    "attack_techniques": ["T1110", "T1075", "T1035"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "WmiExploiter"
                     ],
-                    "title": "WMI Exploiter"
+                    "title": "WMI Exploiter",
+                    "attack_techniques": ["T1110", "T1106"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "MSSQLExploiter"
                     ],
-                    "title": "MSSQL Exploiter"
-                },
-                {
-                    "type": "string",
-                    "enum": [
-                        "RdpExploiter"
-                    ],
-                    "title": "RDP Exploiter (UNSAFE)"
+                    "title": "MSSQL Exploiter",
+                    "attack_techniques": ["T1110"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "Ms08_067_Exploiter"
                     ],
-                    "title": "MS08-067 Exploiter (UNSAFE)"
+                    "title": "MS08-067 Exploiter (UNSAFE)",
+                    "attack_techniques": []
                 },
                 {
                     "type": "string",
                     "enum": [
                         "SSHExploiter"
                     ],
-                    "title": "SSH Exploiter"
+                    "title": "SSH Exploiter",
+                    "attack_techniques": ["T1110", "T1145", "T1106"]
                 },
                 {
                     "type": "string",
@@ -83,7 +81,7 @@ SCHEMA = {
                     "enum": [
                         "WebLogicExploiter"
                     ],
-                    "title": "Oracle Web Logic Exploiter"
+                    "title": "WebLogic Exploiter"
                 },
                 {
                     "type": "string",
@@ -91,6 +89,13 @@ SCHEMA = {
                         "HadoopExploiter"
                     ],
                     "title": "Hadoop/Yarn Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "VSFTPDExploiter"
+                    ],
+                    "title": "VSFTPD Exploiter"
                 }
             ]
         },
@@ -104,6 +109,15 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "CommunicateAsNewUser"
+                    ],
+                    "title": "Communicate as new user",
+                    "attack_techniques": []
                 },
             ],
         },
@@ -116,14 +130,16 @@ SCHEMA = {
                     "enum": [
                         "SMBFinger"
                     ],
-                    "title": "SMBFinger"
+                    "title": "SMBFinger",
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "SSHFinger"
                     ],
-                    "title": "SSHFinger"
+                    "title": "SSHFinger",
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
@@ -144,14 +160,16 @@ SCHEMA = {
                     "enum": [
                         "MySQLFinger"
                     ],
-                    "title": "MySQLFinger"
+                    "title": "MySQLFinger",
+                    "attack_techniques": ["T1210"]
                 },
                 {
                     "type": "string",
                     "enum": [
                         "MSSQLFinger"
                     ],
-                    "title": "MSSQLFinger"
+                    "title": "MSSQLFinger",
+                    "attack_techniques": ["T1210"]
                 },
 
                 {
@@ -159,16 +177,30 @@ SCHEMA = {
                     "enum": [
                         "ElasticFinger"
                     ],
-                    "title": "ElasticFinger"
+                    "title": "ElasticFinger",
+                    "attack_techniques": ["T1210"]
                 }
             ]
         }
     },
     "properties": {
         "basic": {
-            "title": "Basic - Credentials",
+            "title": "Basic - Exploits",
             "type": "object",
             "properties": {
+                "general": {
+                    "title": "General",
+                    "type": "object",
+                    "properties": {
+                        "should_exploit": {
+                            "title": "Exploit network machines",
+                            "type": "boolean",
+                            "default": True,
+                            "attack_techniques": ["T1210"],
+                            "description": "Determines if monkey should try to safely exploit machines on the network"
+                        }
+                    }
+                },
                 "credentials": {
                     "title": "Credentials",
                     "type": "object",
@@ -305,6 +337,7 @@ SCHEMA = {
                                 "$ref": "#/definitions/post_breach_acts"
                             },
                             "default": [
+                                "CommunicateAsNewUser"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
@@ -357,7 +390,7 @@ SCHEMA = {
                         "self_delete_in_cleanup": {
                             "title": "Self delete on cleanup",
                             "type": "boolean",
-                            "default": False,
+                            "default": True,
                             "description": "Should the monkey delete its executable when going down"
                         },
                         "use_file_logging": {
@@ -382,6 +415,7 @@ SCHEMA = {
                             "title": "Harvest Azure Credentials",
                             "type": "boolean",
                             "default": True,
+                            "attack_techniques": ["T1003"],
                             "description":
                                 "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         },
@@ -389,12 +423,14 @@ SCHEMA = {
                             "title": "Collect system info",
                             "type": "boolean",
                             "default": True,
+                            "attack_techniques": ["T1082", "T1005", "T1016"],
                             "description": "Determines whether to collect system info"
                         },
                         "should_use_mimikatz": {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
+                            "attack_techniques": ["T1003"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }
@@ -412,13 +448,13 @@ SCHEMA = {
                         "victims_max_find": {
                             "title": "Max victims to find",
                             "type": "integer",
-                            "default": 30,
+                            "default": 100,
                             "description": "Determines the maximum number of machines the monkey is allowed to scan"
                         },
                         "victims_max_exploit": {
                             "title": "Max victims to exploit",
                             "type": "integer",
-                            "default": 7,
+                            "default": 15,
                             "description":
                                 "Determines the maximum number of machines the monkey"
                                 " is allowed to successfully exploit. " + WARNING_SIGN
@@ -465,17 +501,11 @@ SCHEMA = {
                             "default": 60,
                             "description": "Time to keep tunnel open before going down after last exploit (in seconds)"
                         },
-                        "monkey_dir_windows": {
-                            "title": "Monkey's windows directory",
+                        "monkey_dir_name": {
+                            "title": "Monkey's directory name",
                             "type": "string",
-                            "default": r"C:\Windows\temp\monkey_dir",
-                            "description": "Directory containing all monkey files on windows"
-                        },
-                        "monkey_dir_linux": {
-                            "title": "Monkey's linux directory",
-                            "type": "string",
-                            "default": "/tmp/monkey_dir",
-                            "description": "Directory containing all monkey files on linux"
+                            "default": r"monkey_dir",
+                            "description": "Directory name for the directory which will contain all of the monkey files"
                         },
                     }
                 },
@@ -558,14 +588,14 @@ SCHEMA = {
                         "dropper_target_path_win_32": {
                             "title": "Dropper target path on Windows (32bit)",
                             "type": "string",
-                            "default": "C:\\Windows\\monkey32.exe",
+                            "default": "C:\\Windows\\temp\\monkey32.exe",
                             "description": "Determines where should the dropper place the monkey on a Windows machine "
                                            "(32bit)"
                         },
                         "dropper_target_path_win_64": {
                             "title": "Dropper target path on Windows (64bit)",
                             "type": "string",
-                            "default": "C:\\Windows\\monkey64.exe",
+                            "default": "C:\\Windows\\temp\\monkey64.exe",
                             "description": "Determines where should the dropper place the monkey on a Windows machine "
                                            "(64 bit)"
                         },
@@ -722,7 +752,8 @@ SCHEMA = {
                                 "ElasticGroovyExploiter",
                                 "Struts2Exploiter",
                                 "WebLogicExploiter",
-                                "HadoopExploiter"
+                                "HadoopExploiter",
+                                "VSFTPDExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
@@ -758,19 +789,6 @@ SCHEMA = {
                             "type": "string",
                             "default": "Password1!",
                             "description": "Password to use for created user"
-                        }
-                    }
-                },
-                "rdp_grinder": {
-                    "title": "RDP grinder",
-                    "type": "object",
-                    "properties": {
-                        "rdp_use_vbs_download": {
-                            "title": "Use VBS download",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether to use VBS or BITS to download monkey to remote machine"
-                                           " (true=VBS, false=BITS)"
                         }
                     }
                 },

@@ -22,4 +22,8 @@ awscli
 cffi
 virtualenv
 wheel
+mongoengine
+mongomock
 requests
+dpath
+ring

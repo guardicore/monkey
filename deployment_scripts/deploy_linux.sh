@@ -81,8 +81,7 @@ wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_64_BINARY_URL}
 # Allow them to be executed
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
-chmod a+x "$ISLAND_BINARIES_PATH/$WINDOWS_32_BINARY_NAME"
-chmod a+x "$ISLAND_BINARIES_PATH/$WINDOWS_64_BINARY_NAME"
+
 
 # Get machine type/kernel version
 kernel=`uname -m`
@@ -130,7 +129,7 @@ python -m pip install --user -r requirements_linux.txt || handle_error
 # Build samba
 log_message "Building samba binaries"
 sudo apt-get install gcc-multilib
-cd ${monkey_home}/monkey/infection_monkey/monkey_utils/sambacry_monkey_runner
+cd ${monkey_home}/monkey/infection_monkey/exploit/sambacry_monkey_runner
 sudo chmod +x ./build.sh || handle_error
 ./build.sh
 

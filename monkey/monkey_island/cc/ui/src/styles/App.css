@@ -186,6 +186,10 @@ body {
 .nav-tabs > li > a {
   height: 63px
 }
+
+.nav > li > a:focus {
+  background-color: transparent !important;
+}
 /*
  * Run Monkey Page
  */
@@ -516,6 +520,56 @@ body {
 
 }
 
+/* Attack pages */
+.attack-matrix .messages {
+  margin-bottom: 30px;
+}
+
+.attack-matrix {
+  margin-bottom: 20px;
+}
+
+.attack-report .btn-collapse span:nth-of-type(2){
+  flex: 0;
+}
+
+.icon-info {
+  color: #ade3eb !important;
+}
+
+.icon-warning {
+  color: #f0ad4e !important;
+}
+
+.icon-danger {
+  color: #d9acac !important;
+}
+
+.icon-default {
+  color: #e0ddde !important;
+}
+
+.status-success {
+  color: #24b716 !important;
+}
+
+.status-warning {
+  color: #b1a91c !important;
+}
+
+.status-danger {
+  color: #d91016 !important;
+}
+
+.status-default {
+  color: #575556 !important;
+}
+
+.attack-legend {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .version-text {
   font-size: 0.9em;
   position: absolute;
@@ -524,4 +578,10 @@ body {
   right: 0;
   margin-left: auto;
   margin-right: auto;
+}
+
+.attack-report.footer-text{
+  text-align: right;
+  font-size: 0.8em;
+  margin-top: 20px;
 }

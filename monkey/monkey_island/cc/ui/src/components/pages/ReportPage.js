@@ -1,19 +1,27 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {Button, Col} from 'react-bootstrap';
-import BreachedServers from 'components/report-components/BreachedServers';
-import ScannedServers from 'components/report-components/ScannedServers';
-import PostBreach from 'components/report-components/PostBreach';
+import BreachedServers from 'components/report-components/security/BreachedServers';
+import ScannedServers from 'components/report-components/security/ScannedServers';
+import PostBreach from 'components/report-components/security/PostBreach';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
-import StolenPasswords from 'components/report-components/StolenPasswords';
-import CollapsibleWellComponent from 'components/report-components/CollapsibleWell';
+import StolenPasswords from 'components/report-components/security/StolenPasswords';
+import CollapsibleWellComponent from 'components/report-components/security/CollapsibleWell';
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
 import PassTheHashMapPageComponent from "./PassTheHashMapPage";
-import StrongUsers from "components/report-components/StrongUsers";
+import StrongUsers from "components/report-components/security/StrongUsers";
+import AttackReport from "components/report-components/security/AttackReport";
+import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
+import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
+import ReportLoader from "../report-components/common/ReportLoader";
+import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
+import SecurityIssuesGlance from "../report-components/common/SecurityIssuesGlance";
+import PrintReportButton from "../report-components/common/PrintReportButton";
+import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
-let monkeyLogoImage = require('../../images/monkey-icon.svg');
+
 
 class ReportPageComponent extends AuthComponent {
 
@@ -31,7 +39,8 @@ class ReportPageComponent extends AuthComponent {
       WEBLOGIC: 9,
       HADOOP: 10,
       PTH_CRIT_SERVICES_ACCESS: 11,
-      MSSQL: 12
+      MSSQL: 12,
+      VSFTPD: 13
     };
 
   Warning =
@@ -64,22 +73,15 @@ class ReportPageComponent extends AuthComponent {
 
   render() {
     let content;
-    if (Object.keys(this.state.report).length === 0) {
-      if (this.state.runStarted) {
-        content = (<h1>Generating Report...</h1>);
-      } else {
-        content =
-          <p className="alert alert-warning">
-            <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-            You have to run a monkey before generating a report!
-          </p>;
-      }
-    } else {
+
+    if (this.state.runStarted) {
       content = this.generateReportContent();
+    } else {
+      content = <MustRunMonkeyWarning/>;
     }
 
     return (
-      <Col xs={12} lg={8}>
+      <Col xs={12} lg={10}>
         <h1 className="page-title no-print">4. Security Report</h1>
         <div style={{'fontSize': '1.2em'}}>
           {content}
@@ -88,15 +90,15 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  stillLoadingDataFromServer() {
+    return Object.keys(this.state.report).length === 0;
+  }
+
   updateMonkeysRunning = () => {
     return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
-        // This check is used to prevent unnecessary re-rendering
-        this.setState({
-          allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']),
-          runStarted: res['completed_steps']['run_monkey']
-        });
+        this.setState(extractExecutionStatusFromServerResponse(res));
         return res;
       });
   };
@@ -115,7 +117,7 @@ class ReportPageComponent extends AuthComponent {
 
   getReportFromServer(res) {
     if (res['completed_steps']['run_monkey']) {
-      this.authFetch('/api/report')
+      this.authFetch('/api/report/security')
         .then(res => res.json())
         .then(res => {
           this.setState({
@@ -126,48 +128,36 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportContent() {
+    let content;
+
+    if (this.stillLoadingDataFromServer()) {
+      content = <ReportLoader loading={true}/>;
+    } else {
+      content =
+        <div>
+            {this.generateReportOverviewSection()}
+            {this.generateReportFindingsSection()}
+            {this.generateReportRecommendationsSection()}
+            {this.generateReportGlanceSection()}
+            {this.generateAttackSection()}
+            {this.generateReportFooter()}
+        </div>;
+    }
+
     return (
-      <div>
-        <div className="text-center no-print" style={{marginBottom: '20px'}}>
-          <Button bsSize="large" onClick={() => {
-            print();
-          }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
+      <Fragment>
+        <div style={{marginBottom: '20px'}}>
+          <PrintReportButton onClick={() => {print();}} />
         </div>
         <div className="report-page">
-          {this.generateReportHeader()}
+          <ReportHeader report_type={ReportTypes.security}/>
           <hr/>
-          {this.generateReportOverviewSection()}
-          {this.generateReportFindingsSection()}
-          {this.generateReportRecommendationsSection()}
-          {this.generateReportGlanceSection()}
-          {this.generateReportFooter()}
+          {content}
         </div>
-        <div className="text-center no-print" style={{marginTop: '20px'}}>
-          <Button bsSize="large" onClick={() => {
-            print();
-          }}><i className="glyphicon glyphicon-print"/> Print Report</Button>
+        <div style={{marginTop: '20px'}}>
+          <PrintReportButton onClick={() => {print();}} />
         </div>
-      </div>
-    );
-  }
-
-  generateReportHeader() {
-    return (
-      <div id="header" className="row justify-content-between">
-        <Col xs={8}>
-          <div>
-            <h1 style={{marginTop: '0px', marginBottom: '5px', color: '#666666', fontFamily: 'Alegreya'}}>Security Report</h1>
-            <h1 style={{marginTop: '0px', marginBottom: '0px', color: '#ffcc00', fontFamily: 'Alegreya'}}>Infection <b>Monkey</b></h1>
-          </div>
-        </Col>
-        <Col xs={4}>
-          <img src={monkeyLogoImage}
-               style={{
-                 float: 'right',
-                 width: '80px'
-               }}/>
-        </Col>
-      </div>
+      </Fragment>
     );
   }
 
@@ -177,27 +167,8 @@ class ReportPageComponent extends AuthComponent {
         <h2>
           Overview
         </h2>
-        {
-          this.state.report.glance.exploited.length > 0 ?
-            (<p className="alert alert-danger">
-              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
-              Critical security issues were detected!
-            </p>) :
-            (<p className="alert alert-success">
-              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
-              No critical security issues were detected.
-            </p>)
-        }
-        {
-          this.state.allMonkeysAreDead ?
-            ''
-            :
-            (<p className="alert alert-warning">
-              <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-              Some monkeys are still running. To get the best report it's best to wait for all of them to finish
-              running.
-            </p>)
-        }
+        <SecurityIssuesGlance issuesFound={this.state.report.glance.exploited.length > 0}/>
+        <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
         {
           this.state.report.glance.exploited.length > 0 ?
             ''
@@ -298,7 +269,7 @@ class ReportPageComponent extends AuthComponent {
               return x === true;
             }).length > 0 ?
               <div>
-                During this simulated attack the Monkey uncovered <span
+                During this simulated attack the Monkey uncovered  <span
                 className="label label-warning">
                     {this.state.report.overview.issues.filter(function (x) {
                       return x === true;
@@ -311,6 +282,10 @@ class ReportPageComponent extends AuthComponent {
                   {this.state.report.overview.issues[this.Issue.ELASTIC] ?
                     <li>Elasticsearch servers are vulnerable to <a
                       href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
+                    </li> : null}
+                  {this.state.report.overview.issues[this.Issue.VSFTPD] ?
+                    <li>VSFTPD is vulnerable to <a
+                      href="https://www.rapid7.com/db/modules/exploit/unix/ftp/vsftpd_234_backdoor">CVE-2011-2523</a>.
                     </li> : null}
                   {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
                     <li>Samba servers are vulnerable to ‘SambaCry’ (<a
@@ -336,9 +311,7 @@ class ReportPageComponent extends AuthComponent {
                       href="https://cwiki.apache.org/confluence/display/WW/S2-045">
                       CVE-2017-5638</a>)</li> : null }
                   {this.state.report.overview.issues[this.Issue.WEBLOGIC] ?
-                    <li>Oracle WebLogic servers are vulnerable to remote code execution. (<a
-                      href="https://nvd.nist.gov/vuln/detail/CVE-2017-10271">
-                      CVE-2017-10271</a>)</li> : null }
+                    <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li> : null }
                   {this.state.report.overview.issues[this.Issue.HADOOP] ?
                     <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
                   {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] ?
@@ -422,6 +395,7 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+
   generateReportGlanceSection() {
     let exploitPercentage =
       (100 * this.state.report.glance.exploited.length) / this.state.report.glance.scanned.length;
@@ -501,6 +475,21 @@ class ReportPageComponent extends AuthComponent {
         <br />
       </div>
     );
+  }
+
+  generateAttackSection() {
+    return (<div id="attack">
+              <h3>
+                ATT&CK report
+              </h3>
+              <p>
+                This report shows information about ATT&CK techniques used by Infection Monkey.
+              </p>
+              <div>
+                <AttackReport reportData={this.state.report}/>
+              </div>
+              <br />
+            </div>)
   }
 
   generateReportFooter() {
@@ -644,22 +633,6 @@ class ReportPageComponent extends AuthComponent {
       );
   }
 
-  generateRdpIssue(issue) {
-    return (
-      <li>
-        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
-        that is not shared with other computers on the network.
-        <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">RDP</span> attack.
-          <br/>
-          The Monkey authenticated over the RDP protocol with user <span
-          className="label label-success">{issue.username}</span> and its password.
-        </CollapsibleWellComponent>
-      </li>
-    );
-  }
 
   generateSambaCryIssue(issue) {
     return (
@@ -676,6 +649,28 @@ class ReportPageComponent extends AuthComponent {
           The Monkey authenticated over the SMB protocol with user <span
           className="label label-success">{issue.username}</span> and its password, and used the SambaCry
           vulnerability.
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateVsftpdBackdoorIssue(issue) {
+    return (
+      <li>
+        Update your VSFTPD server to the latest version vsftpd-3.0.3.
+        <CollapsibleWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) has a backdoor running at port  <span
+          className="label label-danger">6200</span>.
+          <br/>
+          The attack was made possible because the VSFTPD server was not patched against CVE-2011-2523.
+          <br/><br/>In July 2011, it was discovered that vsftpd version 2.3.4 downloadable from the master site had been compromised.
+          Users logging into a compromised vsftpd-2.3.4 server may issue a ":)" smileyface as the username and gain a command shell on port 6200.
+          <br/><br/>
+          The Monkey executed commands by first logging in with ":)" in the username and then sending commands to the backdoor at port 6200.
+          <br/><br/>Read more about the security issue and remediation <a
+                      href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2523"
+                    >here</a>.
         </CollapsibleWellComponent>
       </li>
     );
@@ -844,16 +839,15 @@ class ReportPageComponent extends AuthComponent {
   generateWebLogicIssue(issue) {
     return (
       <li>
-        Install Oracle <a href="http://www.oracle.com/technetwork/security-advisory/cpuoct2017-3236626.html">
-        critical patch updates.</a> Or update to the latest version. Vulnerable versions are
-        10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.
+        Update Oracle WebLogic server to the latest supported version.
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
-          className="label label-danger">remote code execution</span> attack.
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to one of <span
+          className="label label-danger">remote code execution</span> attacks.
           <br/>
-          The attack was made possible due to incorrect permission assignment in Oracle Fusion Middleware
-          (subcomponent: WLS Security).
+          The attack was made possible due to one of the following vulnerabilities:
+          <a href={"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10271"}> CVE-2017-10271</a> or
+          <a href={"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-2725"}> CVE-2019-2725</a>
         </CollapsibleWellComponent>
       </li>
     );
@@ -896,6 +890,9 @@ generateMSSQLIssue(issue) {
   generateIssue = (issue) => {
     let data;
     switch (issue.type) {
+      case 'vsftp':
+        data = this.generateVsftpdBackdoorIssue(issue);
+        break;
       case 'smb_password':
         data = this.generateSmbPasswordIssue(issue);
         break;
@@ -913,9 +910,6 @@ generateMSSQLIssue(issue) {
         break;
       case 'ssh_key':
         data = this.generateSshKeysIssue(issue);
-        break;
-      case 'rdp':
-        data = this.generateRdpIssue(issue);
         break;
       case 'sambacry':
         data = this.generateSambaCryIssue(issue);

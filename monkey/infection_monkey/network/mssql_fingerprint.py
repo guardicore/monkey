@@ -16,7 +16,7 @@ class MSSQLFinger(HostFinger):
     SQL_BROWSER_DEFAULT_PORT = 1434
     BUFFER_SIZE = 4096
     TIMEOUT = 5
-    SERVICE_NAME = 'MSSQL'
+    _SCANNED_SERVICE = 'MSSQL'
 
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
@@ -63,7 +63,7 @@ class MSSQLFinger(HostFinger):
             sock.close()
             return False
 
-        host.services[self.SERVICE_NAME] = {}
+        self.init_service(host.services, self._SCANNED_SERVICE, MSSQLFinger.SQL_BROWSER_DEFAULT_PORT)
 
         # Loop through the server data
         instances_list = data[3:].decode().split(';;')
@@ -71,12 +71,11 @@ class MSSQLFinger(HostFinger):
         for instance in instances_list:
             instance_info = instance.split(';')
             if len(instance_info) > 1:
-                host.services[self.SERVICE_NAME][instance_info[1]] = {}
+                host.services[self._SCANNED_SERVICE][instance_info[1]] = {}
                 for i in range(1, len(instance_info), 2):
                     # Each instance's info is nested under its own name, if there are multiple instances
                     # each will appear under its own name
-                    host.services[self.SERVICE_NAME][instance_info[1]][instance_info[i - 1]] = instance_info[i]
-
+                    host.services[self._SCANNED_SERVICE][instance_info[1]][instance_info[i - 1]] = instance_info[i]
         # Close the socket
         sock.close()
 

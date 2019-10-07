@@ -1,68 +1,94 @@
 import logging
-from infection_monkey.control import ControlClient
 import subprocess
-import socket
+
+from common.utils.attack_utils import ScanStatus
+from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
+from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.config import WormConfiguration
+from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
+
 
 LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
 
+EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
 class PBA(object):
     """
     Post breach action object. Can be extended to support more than command execution on target machine.
     """
-    def __init__(self, name="unknown", linux_command="", windows_command=""):
+    def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
         """
         :param name: Name of post breach action.
-        :param linux_command: Command that will be executed on linux machine
-        :param windows_command: Command that will be executed on windows machine
+        :param linux_cmd: Command that will be executed on breached machine
+        :param windows_cmd: Command that will be executed on breached machine
         """
-        self.linux_command = linux_command
-        self.windows_command = windows_command
+        self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
 
-    def run(self, is_linux):
+    def get_pba(self):
         """
-        Runs post breach action command
-        :param is_linux: boolean that indicates on which os monkey is running
+        This method returns a PBA object based on a worm's configuration.
+        Return None or False if you don't want the pba to be executed.
+        :return: A pba object.
         """
-        if is_linux:
-            command = self.linux_command
-            exec_funct = self._execute_linux
-        else:
-            command = self.windows_command
-            exec_funct = self._execute_win
-        if command:
-            hostname = socket.gethostname()
-            ControlClient.send_telemetry('post_breach', {'command': command,
-                                                         'result': exec_funct(),
-                                                         'name': self.name,
-                                                         'hostname': hostname,
-                                                         'ip': socket.gethostbyname(hostname)
-                                                         })
-
-    def _execute_linux(self):
-        """
-        Default linux PBA execution function. Override it if additional functionality is needed
-        """
-        return self._execute_default(self.linux_command)
-
-    def _execute_win(self):
-        """
-        Default linux PBA execution function. Override it if additional functionality is needed
-        """
-        return self._execute_default(self.windows_command)
+        return self
 
     @staticmethod
-    def _execute_default(command):
+    def should_run(class_name):
+        """
+        Decides if post breach action is enabled in config
+        :return: True if it needs to be ran, false otherwise
+        """
+        return class_name in WormConfiguration.post_breach_actions
+
+    def run(self):
+        """
+        Runs post breach action command
+        """
+        exec_funct = self._execute_default
+        result = exec_funct()
+        if self.scripts_were_used_successfully(result):
+            T1064Telem(ScanStatus.USED, "Scripts were used to execute %s post breach action." % self.name).send()
+        PostBreachTelem(self, result).send()
+
+    def is_script(self):
+        """
+        Determines if PBA is a script (PBA might be a single command)
+        :return: True if PBA is a script(series of OS commands)
+        """
+        return isinstance(self.command, list) and len(self.command) > 1
+
+    def scripts_were_used_successfully(self, pba_execution_result):
+        """
+        Determines if scripts were used to execute PBA and if they succeeded
+        :param pba_execution_result: result of execution function. e.g. self._execute_default
+        :return: True if scripts were used, False otherwise
+        """
+        pba_execution_succeeded = pba_execution_result[1]
+        return pba_execution_succeeded and self.is_script()
+
+    def _execute_default(self):
         """
         Default post breach command execution routine
-        :param command: What command to execute
         :return: Tuple of command's output string and boolean, indicating if it succeeded
         """
         try:
-            return subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True), True
+            output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True)
+            if not output:
+                output = EXECUTION_WITHOUT_OUTPUT
+            return output, True
         except subprocess.CalledProcessError as e:
             # Return error output of the command
             return e.output, False
+
+    @staticmethod
+    def choose_command(linux_cmd, windows_cmd):
+        """
+        Helper method that chooses between linux and windows commands.
+        :param linux_cmd:
+        :param windows_cmd:
+        :return: Command for current os
+        """
+        return windows_cmd if is_windows_os() else linux_cmd

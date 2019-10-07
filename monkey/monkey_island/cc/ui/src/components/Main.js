@@ -7,13 +7,15 @@ import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
 import RunMonkeyPage from 'components/pages/RunMonkeyPage';
 import MapPage from 'components/pages/MapPage';
-import PassTheHashMapPage from 'components/pages/PassTheHashMapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
 import ReportPage from 'components/pages/ReportPage';
+import ZeroTrustReportPage from 'components/pages/ZeroTrustReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
+import Notifier from "react-desktop-notification"
+
 
 import 'normalize.css/normalize.css';
 import 'react-data-components/css/table-twbs.css';
@@ -25,6 +27,9 @@ import VersionComponent from "./side-menu/VersionComponent";
 let logoImage = require('../images/monkey-icon.svg');
 let infectionMonkeyImage = require('../images/infection-monkey.svg');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
+let notificationIcon = require('../images/notification-logo-512x512.png');
+
+const reportZeroTrustRoute = '/report/zero_trust';
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
@@ -50,6 +55,7 @@ class AppComponent extends AuthComponent {
               }
               if (isChanged) {
                 this.setState({completedSteps: res['completed_steps']});
+                this.showInfectionDoneNotification();
               }
             });
         }
@@ -144,9 +150,18 @@ class AppComponent extends AuthComponent {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/report">
+                  <NavLink to="/report/security">
                     <span className="number">4.</span>
                     Security Report
+                    {this.state.completedSteps.report_done ?
+                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      : ''}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/report/zero_trust">
+                    <span className="number">5.</span>
+                    Zero Trust Report
                     {this.state.completedSteps.report_done ?
                       <Icon name="check" className="pull-right checkmark text-success"/>
                       : ''}
@@ -186,13 +201,34 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/report', <ReportPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/report/security', <ReportPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute(reportZeroTrustRoute, <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>
         </Grid>
       </Router>
     );
+  }
+
+  showInfectionDoneNotification() {
+    if (this.shouldShowNotification()) {
+      const hostname = window.location.hostname;
+      const port = window.location.port;
+      const protocol = window.location.protocol;
+      const url = `${protocol}//${hostname}:${port}${reportZeroTrustRoute}`;
+
+      Notifier.start(
+        "Monkey Island",
+        "Infection is done! Click here to go to the report page.",
+        url,
+        notificationIcon);
+    }
+  }
+
+  shouldShowNotification() {
+    // No need to show the notification to redirect to the report if we're already in the report page
+    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith("/report"));
   }
 }
 

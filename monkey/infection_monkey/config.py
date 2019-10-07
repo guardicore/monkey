@@ -1,3 +1,4 @@
+import hashlib
 import os
 import json
 import sys
@@ -13,14 +14,15 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
+SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list"]
+HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
+
 
 class Configuration(object):
-
     def from_kv(self, formatted_data):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
         exploit_import = importlib.import_module('infection_monkey.exploit')
-        post_breach_import = importlib.import_module('infection_monkey.post_breach')
 
         unknown_items = []
         for key, value in formatted_data.items():
@@ -36,9 +38,6 @@ class Configuration(object):
                 setattr(self, key, class_objects)
             elif key == 'exploiter_classes':
                 class_objects = [getattr(exploit_import, val) for val in value]
-                setattr(self, key, class_objects)
-            elif key == 'post_breach_actions':
-                class_objects = [getattr(post_breach_import, val) for val in value]
                 setattr(self, key, class_objects)
             else:
                 if hasattr(self, key):
@@ -56,6 +55,12 @@ class Configuration(object):
         formatted_data = json.loads(json_data)
         result = self.from_kv(formatted_data)
         return result
+
+    @staticmethod
+    def hide_sensitive_info(config_dict):
+        for field in SENSITIVE_FIELDS:
+            config_dict[field] = HIDDEN_FIELD_REPLACEMENT_CONTENT
+        return config_dict
 
     def as_dict(self):
         result = {}
@@ -104,8 +109,8 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = '/bin/sh'
-    dropper_target_path_win_32 = r"C:\Windows\monkey32.exe"
-    dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
+    dropper_target_path_win_32 = r"C:\Windows\temp\monkey32.exe"
+    dropper_target_path_win_64 = r"C:\Windows\temp\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
     ###########################
@@ -136,10 +141,10 @@ class Configuration(object):
     exploiter_classes = []
 
     # how many victims to look for in a single scan iteration
-    victims_max_find = 30
+    victims_max_find = 100
 
     # how many victims to exploit before stopping
-    victims_max_exploit = 7
+    victims_max_exploit = 15
 
     # depth of propagation
     depth = 2
@@ -161,9 +166,8 @@ class Configuration(object):
 
     keep_tunnel_open_time = 60
 
-    # Monkey files directories
-    monkey_dir_linux = '/tmp/monkey_dir'
-    monkey_dir_windows = r'C:\Windows\Temp\monkey_dir'
+    # Monkey files directory name
+    monkey_dir_name = 'monkey_dir'
 
     ###########################
     # scanners config
@@ -179,7 +183,7 @@ class Configuration(object):
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
-                  8008, # HTTP alternate
+                  8008,  # HTTP alternate
                   7001  # Oracle Weblogic default server port
                   ]
     tcp_target_ports = [22,
@@ -195,7 +199,7 @@ class Configuration(object):
                         9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
-    tcp_scan_interval = 0
+    tcp_scan_interval = 0  # in milliseconds
     tcp_scan_get_banner = True
 
     # Ping Scanner
@@ -205,14 +209,12 @@ class Configuration(object):
     # exploiters config
     ###########################
 
+    should_exploit = True
     skip_exploit_if_file_exist = False
 
     ms08_067_exploit_attempts = 5
     user_to_add = "Monkey_IUSER_SUPPORT"
     remote_user_pass = "Password1!"
-
-    # rdp exploiter
-    rdp_use_vbs_download = True
 
     # User and password dictionaries for exploits.
 
@@ -275,6 +277,18 @@ class Configuration(object):
     custom_PBA_windows_cmd = ""
     PBA_linux_filename = None
     PBA_windows_filename = None
+
+    @staticmethod
+    def hash_sensitive_data(sensitive_data):
+        """
+        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data plain-text, as the log is
+        saved on client machines plain-text.
+
+        :param sensitive_data: the data to hash.
+        :return: the hashed data.
+        """
+        password_hashed = hashlib.sha512(sensitive_data).hexdigest()
+        return password_hashed
 
 
 WormConfiguration = Configuration()

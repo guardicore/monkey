@@ -7,8 +7,9 @@ import logging.config
 import os
 import sys
 import traceback
+from multiprocessing import freeze_support
 
-import infection_monkey.utils as utils
+from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
 from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
@@ -43,7 +44,7 @@ def main():
 
     if 2 > len(sys.argv):
         return True
-
+    freeze_support()  # required for multiprocessing + pyinstaller on windows
     monkey_mode = sys.argv[1]
 
     if not (monkey_mode in [MONKEY_ARG, DROPPER_ARG]):
@@ -68,7 +69,7 @@ def main():
     else:
         print("Config file wasn't supplied and default path: %s wasn't found, using internal default" % (config_file,))
 
-    print("Loaded Configuration: %r" % WormConfiguration.as_dict())
+    print("Loaded Configuration: %r" % WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()))
 
     # Make sure we're not in a machine that has the kill file
     kill_path = os.path.expandvars(
@@ -79,10 +80,10 @@ def main():
 
     try:
         if MONKEY_ARG == monkey_mode:
-            log_path = utils.get_monkey_log_path()
+            log_path = get_monkey_log_path()
             monkey_cls = InfectionMonkey
         elif DROPPER_ARG == monkey_mode:
-            log_path = utils.get_dropper_log_path()
+            log_path = get_dropper_log_path()
             monkey_cls = MonkeyDrops
         else:
             return True
@@ -98,6 +99,7 @@ def main():
             except OSError:
                 pass
         LOG_CONFIG['handlers']['file']['filename'] = log_path
+        # noinspection PyUnresolvedReferences
         LOG_CONFIG['root']['handlers'].append('file')
     else:
         del LOG_CONFIG['handlers']['file']
@@ -126,8 +128,8 @@ def main():
                 json.dump(json_dict, config_fo, skipkeys=True, sort_keys=True, indent=4, separators=(',', ': '))
 
         return True
-    except Exception:
-        LOG.exception("Exception thrown from monkey's start function")
+    except Exception as e:
+        LOG.exception("Exception thrown from monkey's start function. More info: {}".format(e))
     finally:
         monkey.cleanup()
 
