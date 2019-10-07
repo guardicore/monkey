@@ -99,6 +99,7 @@ class TestMonkeyBlackbox(object):
     def test_shellshock_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "SHELLSHOCK.conf", "Shellschock_exploiter")
 
+    @pytest.mark.xfail(reason="Test fails randomly - still investigating.")
     def test_tunneling(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "TUNNELING.conf", "Tunneling_exploiter", 10*60)
 
