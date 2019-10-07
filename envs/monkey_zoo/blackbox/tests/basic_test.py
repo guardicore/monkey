@@ -78,12 +78,13 @@ class BasicTest(object):
         while not self.island_client.is_all_monkeys_dead() and time_passed < MAX_TIME_FOR_MONKEYS_TO_DIE:
             sleep(WAIT_TIME_BETWEEN_REQUESTS)
             time_passed += WAIT_TIME_BETWEEN_REQUESTS
+            LOGGER.debug("Waiting for all monkeys to die. Time passed: {}".format(time_passed))
         if time_passed > MAX_TIME_FOR_MONKEYS_TO_DIE:
             LOGGER.error("Some monkeys didn't die after the test, failing")
             assert False
 
     def parse_logs(self):
-        LOGGER.info("\nParsing test logs:")
+        LOGGER.info("Parsing test logs:")
         self.log_handler.parse_test_logs()
 
     @staticmethod

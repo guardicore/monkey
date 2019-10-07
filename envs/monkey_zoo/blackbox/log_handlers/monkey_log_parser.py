@@ -1,4 +1,7 @@
+import logging
 import re
+
+LOGGER = logging.getLogger(__name__)
 
 
 class MonkeyLogParser(object):
@@ -14,11 +17,11 @@ class MonkeyLogParser(object):
     def print_errors(self):
         errors = MonkeyLogParser.get_errors(self.log_contents)
         if len(errors) > 0:
-            print("Found {} errors:".format(len(errors)))
-            for error_line in errors:
-                print(error_line)
+            LOGGER.info("Found {} errors:".format(len(errors)))
+            for index, error_line in enumerate(errors):
+                LOGGER.info("Err #{}: {}".format(index, error_line))
         else:
-            print("No errors!")
+            LOGGER.info("No errors!")
 
     @staticmethod
     def get_errors(log_contents):
@@ -28,11 +31,11 @@ class MonkeyLogParser(object):
     def print_warnings(self):
         warnings = MonkeyLogParser.get_warnings(self.log_contents)
         if len(warnings) > 0:
-            print("Found {} warnings:".format(len(warnings)))
-            for warning_line in warnings:
-                print(warning_line)
+            LOGGER.info("Found {} warnings:".format(len(warnings)))
+            for index, warning_line in enumerate(warnings):
+                LOGGER.info("Warn #{}: {}".format(index, warning_line))
         else:
-            print("No warnings!")
+            LOGGER.info("No warnings!")
 
     @staticmethod
     def get_warnings(log_contents):
