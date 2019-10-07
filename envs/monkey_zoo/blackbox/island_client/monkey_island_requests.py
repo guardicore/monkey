@@ -16,8 +16,9 @@ class MonkeyIslandRequests(object):
     def try_get_jwt_from_server(self):
         try:
             return self.get_jwt_from_server()
-        except requests.ConnectionError:
-            LOGGER.error("Unable to connect to island, aborting!")
+        except requests.ConnectionError as err:
+            LOGGER.error(
+                "Unable to connect to island, aborting! Error information: {}. Server: {}".format(err, self.addr))
             assert False
 
     def get_jwt_from_server(self):

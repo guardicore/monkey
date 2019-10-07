@@ -1,3 +1,4 @@
+import json
 from time import sleep
 
 import logging
@@ -22,6 +23,7 @@ class BasicTest(object):
         self.log_handler = log_handler
 
     def run(self):
+        LOGGER.info("Uploading configuration:\n{}".format(json.dumps(self.config_parser.config_json, indent=2)))
         self.island_client.import_config(self.config_parser.config_raw)
         self.print_test_starting_info()
         try:
@@ -47,6 +49,7 @@ class BasicTest(object):
                 self.log_success(timer)
                 return
             sleep(DELAY_BETWEEN_ANALYSIS)
+            LOGGER.debug("Waiting until all analyzers passed. Time passed: {}".format(timer.get_time_taken()))
         self.log_failure(timer)
         assert False
 
@@ -76,12 +79,13 @@ class BasicTest(object):
         while not self.island_client.is_all_monkeys_dead() and time_passed < MAX_TIME_FOR_MONKEYS_TO_DIE:
             sleep(WAIT_TIME_BETWEEN_REQUESTS)
             time_passed += WAIT_TIME_BETWEEN_REQUESTS
+            LOGGER.debug("Waiting for all monkeys to die. Time passed: {}".format(time_passed))
         if time_passed > MAX_TIME_FOR_MONKEYS_TO_DIE:
             LOGGER.error("Some monkeys didn't die after the test, failing")
             assert False
 
     def parse_logs(self):
-        LOGGER.info("\nParsing test logs:")
+        LOGGER.info("Parsing test logs:")
         self.log_handler.parse_test_logs()
 
     @staticmethod

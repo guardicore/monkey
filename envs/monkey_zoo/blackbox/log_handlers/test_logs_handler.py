@@ -44,7 +44,7 @@ class TestLogsHandler(object):
     @staticmethod
     def parse_logs(log_paths):
         for log_path in log_paths:
-            print("Info from log at {}".format(log_path))
+            LOGGER.info("Info from log at {}".format(log_path))
             log_parser = MonkeyLogParser(log_path)
             log_parser.print_errors()
             log_parser.print_warnings()
