@@ -108,9 +108,8 @@ class MonkeyDownload(flask_restful.Resource):
             if os.path.isfile(filepath):
                 with open(filepath, 'rb') as monkey_exec_file:
                     file_contents = monkey_exec_file.read()
-                    logger.debug("{} hashes:\nSHA-512 {}\nSHA-256 {}".format(
+                    logger.debug("{} hashes:\nSHA-256 {}".format(
                         filename,
-                        hashlib.sha512(file_contents).hexdigest(),
                         hashlib.sha256(file_contents).hexdigest()
                     ))
             else:
