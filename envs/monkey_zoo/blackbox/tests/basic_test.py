@@ -1,3 +1,4 @@
+import json
 from time import sleep
 
 import logging
@@ -22,6 +23,7 @@ class BasicTest(object):
         self.log_handler = log_handler
 
     def run(self):
+        LOGGER.info("Uploading configuration:\n{}".format(json.dumps(self.config_parser.config_json, indent=2)))
         self.island_client.import_config(self.config_parser.config_raw)
         self.print_test_starting_info()
         try:
