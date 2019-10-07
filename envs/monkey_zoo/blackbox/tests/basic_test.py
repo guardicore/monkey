@@ -49,6 +49,7 @@ class BasicTest(object):
                 self.log_success(timer)
                 return
             sleep(DELAY_BETWEEN_ANALYSIS)
+            LOGGER.debug("Waiting until all analyzers passed. Time passed: {}".format(timer.get_time_taken()))
         self.log_failure(timer)
         assert False
 
