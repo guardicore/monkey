@@ -75,11 +75,19 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
 
     "Installing python packages for island"
-     $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
+    $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
     & python -m pip install --user -r $islandRequirements
     "Installing python packages for monkey"
     $monkeyRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\requirements_windows.txt"
     & python -m pip install --user -r $monkeyRequirements
+
+    $user_python_dir = cmd.exe /c 'py -m site --user-site'
+    $user_python_dir = Join-Path (Split-Path $user_python_dir) -ChildPath "\Scripts"
+    if(!($ENV:PATH | Select-String -SimpleMatch $user_python_dir)){
+        "Adding python scripts path to user's env"
+        $env:Path += ";"+$user_python_dir
+        [Environment]::SetEnvironmentVariable("Path",$env:Path,"User")
+    }
 
     # Download mongodb
     if(!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "mongodb") )){
