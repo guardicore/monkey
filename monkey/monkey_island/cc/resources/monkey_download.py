@@ -107,9 +107,11 @@ class MonkeyDownload(flask_restful.Resource):
             filepath = MonkeyDownload.get_executable_full_path(filename)
             if os.path.isfile(filepath):
                 with open(filepath, 'rb') as monkey_exec_file:
-                    logger.debug("{} (SHA-512): {}".format(
-                        filepath,
-                        hashlib.sha512(monkey_exec_file.read()).hexdigest())
-                    )
+                    file_contents = monkey_exec_file.read()
+                    logger.debug("{} hashes:\nSHA-512 {}\nSHA-256 {}".format(
+                        filename,
+                        hashlib.sha512(file_contents).hexdigest(),
+                        hashlib.sha256(file_contents).hexdigest()
+                    ))
             else:
                 logger.debug("No monkey executable for {}.".format(filepath))
