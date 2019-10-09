@@ -11,9 +11,9 @@ fi
 ISLAND_PATH="$monkey_home/monkey/monkey_island"
 MONKEY_COMMON_PATH="$monkey_home/monkey/common/"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
-MONGO_BIN_PATH="$MONGO_PATH/bin"
-ISLAND_DB_PATH="$ISLAND_PATH/db"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
+INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
+MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
 
 handle_error () {
     echo "Fix the errors above and rerun the script"
@@ -52,25 +52,39 @@ fi
 
 # Create folders
 log_message "Creating island dirs under $ISLAND_PATH"
-mkdir -p ${MONGO_BIN_PATH}
-mkdir -p ${ISLAND_DB_PATH}
+mkdir -p ${MONGO_PATH}
 mkdir -p ${ISLAND_BINARIES_PATH} || handle_error
 
-python_version=`python --version 2>&1`
-if [[ ${python_version} == *"command not found"* ]] || [[ ${python_version} != *"Python 2.7"* ]]; then
-    echo "Python 2.7 is not found or is not a default interpreter for 'python' command..."
-    exit 1
+# Detecting command that calls python 3.7
+python_cmd=""
+if [[ `python --version 2>&1` == *"Python 3.7"* ]]; then
+  python_cmd="python"
+fi
+if [[ `python37 --version 2>&1` == *"Python 3.7"* ]]; then
+  python_cmd="python37"
+fi
+if [[ `python3.7 --version 2>&1` == *"Python 3.7"* ]]; then
+  python_cmd="python3.7"
+fi
+
+if [[ ${python_cmd} == "" ]]; then
+  log_message "Python 3.7 command not found. Installing python 3.7."
+  sudo add-apt-repository ppa:deadsnakes/ppa
+  sudo apt install python3.7
+  log_message "Python 3.7 is now available with command 'python3.7'."
+  python_cmd="python3.7"
 fi
 
 log_message "Updating package list"
 sudo apt-get update
 
 log_message "Installing pip"
-sudo apt-get install python-pip
+sudo apt install python3-pip
+${python_cmd} -m pip install pip
 
 log_message "Installing island requirements"
 requirements="$ISLAND_PATH/requirements.txt"
-python -m pip install --user -r ${requirements} || handle_error
+${python_cmd} -m pip install --user --upgrade -r ${requirements} || handle_error
 
 # Download binaries
 log_message "Downloading binaries"
@@ -89,7 +103,7 @@ linux_dist=`lsb_release -a 2> /dev/null`
 
 # If a user haven't installed mongo manually check if we can install it with our script
 log_message "Installing MongoDB"
-${ISLAND_PATH}/linux/install_mongo.sh ${MONGO_BIN_PATH} || handle_error
+${ISLAND_PATH}/linux/install_mongo.sh ${MONGO_PATH} || handle_error
 
 log_message "Installing openssl"
 sudo apt-get install openssl
@@ -106,32 +120,38 @@ openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/ser
 sudo chmod +x ${ISLAND_PATH}/linux/create_certificate.sh || handle_error
 ${ISLAND_PATH}/linux/create_certificate.sh || handle_error
 
+# Update node
+log_message "Installing nodejs"
+sudo apt-get install -y nodejs
+
 # Install npm
 log_message "Installing npm"
 sudo apt-get install npm
-
-# Update node
-log_message "Updating node"
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-sudo apt-get install -y nodejs
+npm update
 
 log_message "Generating front end"
 cd "$ISLAND_PATH/cc/ui" || handle_error
-npm update
 npm run dist
 
 # Monkey setup
 log_message "Installing monkey requirements"
-sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev libc++1
+sudo apt-get install python-dev libffi-dev upx libssl-dev libc++1
 cd ${monkey_home}/monkey/infection_monkey || handle_error
-python -m pip install --user -r requirements_linux.txt || handle_error
+${python_cmd} -m pip install -r requirements_linux.txt --user --upgrade || handle_error
 
-# Build samba
-log_message "Building samba binaries"
-sudo apt-get install gcc-multilib
-cd ${monkey_home}/monkey/infection_monkey/exploit/sambacry_monkey_runner
-sudo chmod +x ./build.sh || handle_error
-./build.sh
+# Making dir for binaries
+mkdir ${MONKEY_BIN_DIR}
+
+# Download sambacry binaries
+log_message "Downloading sambacry binaries"
+wget -c -N -P ${MONKEY_BIN_DIR} ${SAMBACRY_64_BINARY_URL}
+wget -c -N -P ${MONKEY_BIN_DIR} ${SAMBACRY_32_BINARY_URL}
+
+# Download traceroute binaries
+log_message "Downloading tracerout binaries"
+wget -c -N -P ${MONKEY_BIN_DIR} ${TRACEROUTE_64_BINARY_URL}
+wget -c -N -P ${MONKEY_BIN_DIR} ${TRACEROUTE_32_BINARY_URL}
+
 
 sudo chmod +x ${monkey_home}/monkey/infection_monkey/build_linux.sh
 
