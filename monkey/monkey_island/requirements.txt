@@ -1,4 +1,3 @@
-bson
 python-dateutil
 tornado
 werkzeug
