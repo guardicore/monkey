@@ -16,7 +16,7 @@ def main():
 
     h = SHA3_512.new()
     h.update(args.string_to_sha)
-    print((h.hexdigest()))
+    print(h.hexdigest())
 
 
 if __name__ == '__main__':
