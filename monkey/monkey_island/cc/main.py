@@ -23,6 +23,7 @@ from monkey_island.cc.services.reporting.exporter_init import populate_exporter_
 from monkey_island.cc.utils import local_ip_addresses
 from monkey_island.cc.environment.environment import env
 from monkey_island.cc.database import is_db_server_up, get_db_version
+from monkey_island.cc.resources.monkey_download import MonkeyDownload
 
 
 def main():
@@ -47,10 +48,17 @@ def main():
                                  ssl_options={'certfile': os.environ.get('SERVER_CRT', crt_path),
                                               'keyfile': os.environ.get('SERVER_KEY', key_path)})
         http_server.listen(env.get_island_port())
-        logger.info(
-            'Monkey Island Server is running on https://{}:{}'.format(local_ip_addresses()[0], env.get_island_port()))
-
+        log_init_info()
         IOLoop.instance().start()
+
+
+def log_init_info():
+    logger.info(
+        'Monkey Island Server is running. Listening on the following URLs: {}'.format(
+            ", ".join(["https://{}:{}".format(x, env.get_island_port()) for x in local_ip_addresses()])
+        )
+    )
+    MonkeyDownload.log_executable_hashes()
 
 
 def wait_for_mongo_db_server(mongo_url):

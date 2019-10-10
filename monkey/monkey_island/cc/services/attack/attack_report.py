@@ -6,6 +6,7 @@ from monkey_island.cc.services.attack.technique_reports import T1145, T1105, T10
 from monkey_island.cc.services.attack.technique_reports import T1090, T1041, T1222, T1005, T1018, T1016, T1021, T1064
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
+from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_attack_report
 
 __author__ = "VakarisZ"
 
@@ -88,7 +89,8 @@ class AttackReportService:
             report_modifytime = latest_report['meta']['latest_monkey_modifytime']
             if monkey_modifytime and report_modifytime and monkey_modifytime == report_modifytime:
                 return latest_report
-        return AttackReportService.generate_new_report()
+
+        return safe_generate_attack_report()
 
     @staticmethod
     def is_report_generated():

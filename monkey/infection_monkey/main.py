@@ -7,6 +7,7 @@ import logging.config
 import os
 import sys
 import traceback
+from multiprocessing import freeze_support
 
 from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
 from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
@@ -43,7 +44,7 @@ def main():
 
     if 2 > len(sys.argv):
         return True
-
+    freeze_support()  # required for multiprocessing + pyinstaller on windows
     monkey_mode = sys.argv[1]
 
     if not (monkey_mode in [MONKEY_ARG, DROPPER_ARG]):

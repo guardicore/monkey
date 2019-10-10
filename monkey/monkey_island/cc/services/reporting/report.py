@@ -1,28 +1,26 @@
-import itertools
 import functools
-
-import ipaddress
+import itertools
 import logging
 
+import ipaddress
 from bson import json_util
 from enum import Enum
-
 from six import text_type
 
+from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.utils import local_ip_addresses, get_subnets
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
-from common.network.network_range import NetworkRange
+from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
+from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_regular_report
+from monkey_island.cc.utils import local_ip_addresses, get_subnets
 
 __author__ = "itay.mizeretz"
-
 
 logger = logging.getLogger(__name__)
 
@@ -119,22 +117,17 @@ class ReportService:
 
     @staticmethod
     def get_scanned():
-
         formatted_nodes = []
 
-        nodes = \
-            [NodeService.get_displayed_node_by_id(node['_id'], True) for node in mongo.db.node.find({}, {'_id': 1})] \
-            + [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
-               mongo.db.monkey.find({}, {'_id': 1})]
+        nodes = ReportService.get_all_displayed_nodes()
+
         for node in nodes:
+            nodes_that_can_access_current_node = node['accessible_from_nodes_hostnames']
             formatted_nodes.append(
                 {
                     'label': node['label'],
                     'ip_addresses': node['ip_addresses'],
-                    'accessible_from_nodes':
-                        list((x['hostname'] for x in
-                         (NodeService.get_displayed_node_by_id(edge['from'], True)
-                          for edge in EdgeService.get_displayed_edges_by_to(node['id'], True)))),
+                    'accessible_from_nodes': nodes_that_can_access_current_node,
                     'services': node['services'],
                     'domain_name': node['domain_name'],
                     'pba_results': node['pba_results'] if 'pba_results' in node else 'None'
@@ -145,24 +138,36 @@ class ReportService:
         return formatted_nodes
 
     @staticmethod
+    def get_all_displayed_nodes():
+        nodes_without_monkeys = [NodeService.get_displayed_node_by_id(node['_id'], True) for node in
+                                 mongo.db.node.find({}, {'_id': 1})]
+        nodes_with_monkeys = [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
+                              mongo.db.monkey.find({}, {'_id': 1})]
+        nodes = nodes_without_monkeys + nodes_with_monkeys
+        return nodes
+
+    @staticmethod
     def get_exploited():
-        exploited = \
+        exploited_with_monkeys = \
             [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
-             mongo.db.monkey.find({}, {'_id': 1})
-             if not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey['_id']))] \
-            + [NodeService.get_displayed_node_by_id(node['_id'], True)
-               for node in mongo.db.node.find({'exploited': True}, {'_id': 1})]
+             mongo.db.monkey.find({}, {'_id': 1}) if
+             not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey['_id']))]
+
+        exploited_without_monkeys = [NodeService.get_displayed_node_by_id(node['_id'], True) for node in
+                                     mongo.db.node.find({'exploited': True}, {'_id': 1})]
+
+        exploited = exploited_with_monkeys + exploited_without_monkeys
 
         exploited = [
             {
-                'label': monkey['label'],
-                'ip_addresses': monkey['ip_addresses'],
-                'domain_name': monkey['domain_name'],
+                'label': exploited_node['label'],
+                'ip_addresses': exploited_node['ip_addresses'],
+                'domain_name': exploited_node['domain_name'],
                 'exploits': list(set(
-                    [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in monkey['exploits'] if
-                     exploit['result']]))
+                    [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in exploited_node['exploits']
+                     if exploit['result']]))
             }
-            for monkey in exploited]
+            for exploited_node in exploited]
 
         logger.info('Exploited nodes generated for reporting')
 
@@ -209,8 +214,9 @@ class ReportService:
                 # Pick out all ssh keys not yet included in creds
                 ssh_keys = [{'username': key_pair['name'], 'type': 'Clear SSH private key',
                              'origin': origin} for key_pair in telem['data']['ssh_info']
-                            if key_pair['private_key'] and {'username': key_pair['name'], 'type': 'Clear SSH private key',
-                            'origin': origin} not in creds]
+                            if
+                            key_pair['private_key'] and {'username': key_pair['name'], 'type': 'Clear SSH private key',
+                                                         'origin': origin} not in creds]
                 creds.extend(ssh_keys)
         return creds
 
@@ -699,6 +705,8 @@ class ReportService:
         cross_segment_issues = ReportService.get_cross_segment_issues()
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
 
+        scanned_nodes = ReportService.get_scanned()
+        exploited_nodes = ReportService.get_exploited()
         report = \
             {
                 'overview':
@@ -717,8 +725,8 @@ class ReportService:
                     },
                 'glance':
                     {
-                        'scanned': ReportService.get_scanned(),
-                        'exploited': ReportService.get_exploited(),
+                        'scanned': scanned_nodes,
+                        'exploited': exploited_nodes,
                         'stolen_creds': ReportService.get_stolen_creds(),
                         'azure_passwords': ReportService.get_azure_creds(),
                         'ssh_keys': ReportService.get_ssh_keys(),
@@ -751,7 +759,6 @@ class ReportService:
         report_as_json = json_util.dumps(report_dict).replace('.', ',,,')
         return json_util.loads(report_as_json)
 
-
     @staticmethod
     def is_latest_report_exists():
         """
@@ -780,7 +787,7 @@ class ReportService:
     def get_report():
         if ReportService.is_latest_report_exists():
             return ReportService.decode_dot_char_before_mongo_insert(mongo.db.report.find_one())
-        return ReportService.generate_report()
+        return safe_generate_regular_report()
 
     @staticmethod
     def did_exploit_type_succeed(exploit_type):

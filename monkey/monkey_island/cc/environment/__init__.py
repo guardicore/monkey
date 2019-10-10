@@ -11,7 +11,8 @@ class Environment(object, metaclass=ABCMeta):
     _MONGO_DB_NAME = "monkeyisland"
     _MONGO_DB_HOST = "localhost"
     _MONGO_DB_PORT = 27017
-    _MONGO_URL = os.environ.get("MONKEY_MONGO_URL", "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)))
+    _MONGO_URL = os.environ.get("MONKEY_MONGO_URL",
+                                "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)))
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(hours=1)
 
@@ -25,8 +26,7 @@ class Environment(object, metaclass=ABCMeta):
     def testing(self, value):
         self._testing = value
 
-    _MONKEY_VERSION = "1.6.3"
-
+    _MONKEY_VERSION = "1.7.0"
 
     def __init__(self):
         self.config = None

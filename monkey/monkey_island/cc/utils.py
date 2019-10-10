@@ -6,6 +6,7 @@ import array
 import struct
 import ipaddress
 from netifaces import interfaces, ifaddresses, AF_INET
+from ring import lru
 
 __author__ = 'Barak'
 
@@ -46,9 +47,13 @@ else:
                     # name of interface is (namestr[i:i+16].split('\0', 1)[0]
         finally:
             return result
-# End of local ips function
 
 
+# The local IP addresses list should not change often. Therefore, we can cache the result and never call this function
+# more than once. This stopgap measure is here since this function is called a lot of times during the report
+# generation.
+# This means that if the interfaces of the Island machine change, the Island process needs to be restarted.
+@lru(maxsize=1)
 def local_ip_addresses():
     ip_list = []
     for interface in interfaces():
@@ -57,6 +62,11 @@ def local_ip_addresses():
     return ip_list
 
 
+# The subnets list should not change often. Therefore, we can cache the result and never call this function
+# more than once. This stopgap measure is here since this function is called a lot of times during the report
+# generation.
+# This means that if the interfaces or subnets  of the Island machine change, the Island process needs to be restarted.
+@lru(maxsize=1)
 def get_subnets():
     subnets = []
     for interface in interfaces():

@@ -29,7 +29,7 @@ class TelemetryFeed(flask_restful.Resource):
         try:
             return \
                 {
-                    'telemetries': [TelemetryFeed.get_displayed_telemetry(telem) for telem in telemetries],
+                    'telemetries': [TelemetryFeed.get_displayed_telemetry(telem) for telem in telemetries if TelemetryFeed],
                     'timestamp': datetime.now().isoformat()
                 }
         except KeyError as err:
@@ -45,8 +45,17 @@ class TelemetryFeed(flask_restful.Resource):
                 'id': telem['_id'],
                 'timestamp': telem['timestamp'].strftime('%d/%m/%Y %H:%M:%S'),
                 'hostname': monkey.get('hostname', default_hostname) if monkey else default_hostname,
-                'brief': TELEM_PROCESS_DICT[telem['telem_category']](telem)
+                'brief': TelemetryFeed.get_telem_brief(telem)
             }
+
+    @staticmethod
+    def get_telem_brief(telem):
+        telem_brief_parser = TelemetryFeed.get_telem_brief_parser_by_category(telem['telem_category'])
+        return telem_brief_parser(telem)
+
+    @staticmethod
+    def get_telem_brief_parser_by_category(telem_category):
+        return TELEM_PROCESS_DICT[telem_category]
 
     @staticmethod
     def get_tunnel_telem_brief(telem):
@@ -94,8 +103,8 @@ class TelemetryFeed(flask_restful.Resource):
                                                                        telem['data']['ip'])
 
     @staticmethod
-    def get_attack_telem_brief(telem):
-        return 'Monkey collected MITRE ATT&CK info.'
+    def should_show_brief(telem):
+        return telem['telem_category'] in TELEM_PROCESS_DICT
 
 
 TELEM_PROCESS_DICT = \
@@ -106,6 +115,5 @@ TELEM_PROCESS_DICT = \
         'scan': TelemetryFeed.get_scan_telem_brief,
         'system_info': TelemetryFeed.get_systeminfo_telem_brief,
         'trace': TelemetryFeed.get_trace_telem_brief,
-        'post_breach': TelemetryFeed.get_post_breach_telem_brief,
-        'attack': TelemetryFeed.get_attack_telem_brief
+        'post_breach': TelemetryFeed.get_post_breach_telem_brief
     }
