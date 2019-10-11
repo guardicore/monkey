@@ -1,3 +1,5 @@
+import logging
+
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services import mimikatz_utils
@@ -7,14 +9,32 @@ from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence im
 from monkey_island.cc.services.wmi_handler import WMIHandler
 from monkey_island.cc.encryptor import encryptor
 
+logger = logging.getLogger(__name__)
+
 
 def process_system_info_telemetry(telemetry_json):
-    process_ssh_info(telemetry_json)
-    process_credential_info(telemetry_json)
-    process_mimikatz_and_wmi_info(telemetry_json)
-    process_aws_data(telemetry_json)
-    update_db_with_new_hostname(telemetry_json)
-    test_antivirus_existence(telemetry_json)
+    telemetry_processing_stages = [
+        process_ssh_info,
+        process_credential_info,
+        process_mimikatz_and_wmi_info,
+        process_aws_data,
+        update_db_with_new_hostname,
+        test_antivirus_existence,
+    ]
+
+    # Calling safe_process_telemetry so if one of the stages fail, we log and move on instead of failing the rest of
+    # them, as they are independent.
+    for stage in telemetry_processing_stages:
+        safe_process_telemetry(stage, telemetry_json)
+
+
+def safe_process_telemetry(processing_function, telemetry_json):
+    # noinspection PyBroadException
+    try:
+        processing_function(telemetry_json)
+    except Exception as err:
+        logger.error("Error while in {} stage of processing telemetry.".format(processing_function.func_name),
+                     exc_info=True)
 
 
 def process_ssh_info(telemetry_json):
