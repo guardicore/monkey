@@ -17,8 +17,8 @@ class VictimHostGeneratorTester(TestCase):
         generator = VictimHostGenerator(test_ranges, '10.0.0.1', [])
         victims = generator.generate_victims(chunk_size)
         for i in range(5):  # quickly check the equally sided chunks
-            self.assertEqual(len(victims.next()), chunk_size)
-        victim_chunk_last = victims.next()
+            self.assertEqual(len(next(victims)), chunk_size)
+        victim_chunk_last = next(victims)
         self.assertEqual(len(victim_chunk_last), 1)
 
     def test_remove_blocked_ip(self):

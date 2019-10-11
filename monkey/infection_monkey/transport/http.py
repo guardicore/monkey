@@ -3,7 +3,7 @@ import os.path
 import select
 import socket
 import threading
-import urllib.request, urllib.parse, urllib.error
+import urllib
 from logging import getLogger
 from urllib.parse import urlsplit
 

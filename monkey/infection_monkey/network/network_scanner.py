@@ -85,7 +85,7 @@ class NetworkScanner(object):
                 return
 
             results = pool.map(self.scan_machine, victim_chunk)
-            resulting_victims = filter(lambda x: x is not None, results)
+            resulting_victims = [x for x in results if x is not None]
             for victim in resulting_victims:
                 LOG.debug("Found potential victim: %r", victim)
                 victims_count += 1

@@ -4,7 +4,7 @@ import abc
 logger = logging.getLogger(__name__)
 
 
-class AutoNewUser:
+class AutoNewUser(metaclass=abc.ABCMeta):
     """
     RAII object to use for creating and using a new user. Use with `with`.
     User will be created when the instance is instantiated.
@@ -19,7 +19,6 @@ class AutoNewUser:
         # Logged off and deleted
         ...
         """
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, username, password):
         self.username = username
