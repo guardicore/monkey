@@ -102,4 +102,4 @@ def process_aws_data(telemetry_json):
 
 
 def update_db_with_new_hostname(telemetry_json):
-    Monkey.get_single_monkey_by_id(telemetry_json['_id']).set_hostname(telemetry_json['data']['hostname'])
+    Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid']).set_hostname(telemetry_json['data']['hostname'])
