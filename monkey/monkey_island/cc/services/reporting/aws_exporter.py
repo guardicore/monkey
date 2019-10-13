@@ -24,6 +24,7 @@ class AWSExporter(Exporter):
             logger.info('No issues were found by the monkey, no need to send anything')
             return True
 
+        # Not suppressing error here on purpose.
         current_aws_region = AwsInstance().get_region()
 
         for machine in issues_list:
@@ -70,6 +71,7 @@ class AWSExporter(Exporter):
         configured_product_arn = load_server_configuration_from_file()['aws'].get('sec_hub_product_arn', '')
         product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region=region, arn=configured_product_arn)
         instance_arn = 'arn:aws:ec2:' + str(region) + ':instance:{instance_id}'
+        # Not suppressing error here on purpose.
         account_id = AwsInstance().get_account_id()
         logger.debug("aws account id acquired: {}".format(account_id))
 
