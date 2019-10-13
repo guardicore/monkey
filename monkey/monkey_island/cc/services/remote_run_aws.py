@@ -1,3 +1,5 @@
+import logging
+
 from monkey_island.cc.services.config import ConfigService
 from common.cloud.aws_instance import AwsInstance
 from common.cloud.aws_service import AwsService
@@ -6,6 +8,8 @@ from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner
 
 __author__ = "itay.mizeretz"
+
+logger = logging.getLogger(__name__)
 
 
 class RemoteRunAwsService:
@@ -23,7 +27,15 @@ class RemoteRunAwsService:
         :return: None
         """
         if RemoteRunAwsService.aws_instance is None:
+            RemoteRunAwsService.try_init_aws_instance()
+
+    @staticmethod
+    def try_init_aws_instance():
+        # noinspection PyBroadException
+        try:
             RemoteRunAwsService.aws_instance = AwsInstance()
+        except Exception:
+            logger.error("Failed init aws instance. Exception info: ", exc_info=True)
 
     @staticmethod
     def run_aws_monkeys(instances, island_ip):
@@ -119,7 +131,7 @@ class RemoteRunAwsService:
         return r"[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {" \
                r"$true}; (New-Object System.Net.WebClient).DownloadFile('https://" + island_ip + \
                r":5000/api/monkey/download/monkey-windows-" + bit_text + r".exe','.\\monkey.exe'); " \
-               r";Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s " + island_ip + r":5000'; "
+                                                                         r";Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s " + island_ip + r":5000'; "
 
     @staticmethod
     def _get_run_monkey_cmd_line(is_linux, is_64bit, island_ip):

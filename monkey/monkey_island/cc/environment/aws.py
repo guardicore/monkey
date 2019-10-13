@@ -9,6 +9,7 @@ __author__ = 'itay.mizeretz'
 class AwsEnvironment(Environment):
     def __init__(self):
         super(AwsEnvironment, self).__init__()
+        # Not suppressing error here on purpose. This is critical if we're on AWS env.
         self.aws_info = AwsInstance()
         self._instance_id = self._get_instance_id()
         self.region = self._get_region()
