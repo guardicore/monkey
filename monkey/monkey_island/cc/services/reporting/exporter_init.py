@@ -22,5 +22,5 @@ def try_add_aws_exporter_to_manager(manager):
         RemoteRunAwsService.init()
         if RemoteRunAwsService.is_running_on_aws() and ('aws' == env.get_deployment()):
             manager.add_exporter_to_list(AWSExporter)
-    except Exception as err:
-        logger.error("Failed adding aws exporter to manager.", exc_info=True)
+    except Exception:
+        logger.error("Failed adding aws exporter to manager. Exception info:", exc_info=True)
