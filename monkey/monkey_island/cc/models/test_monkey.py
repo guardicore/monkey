@@ -126,7 +126,7 @@ class TestMonkey(IslandTestCase):
         linux_monkey.save()
 
         cache_info_before_query = Monkey.get_label_by_id.storage.backend.cache_info()
-        self.assertEquals(cache_info_before_query.hits, 0)
+        self.assertEqual(cache_info_before_query.hits, 0)
 
         # not cached
         label = Monkey.get_label_by_id(linux_monkey.id)
@@ -138,7 +138,7 @@ class TestMonkey(IslandTestCase):
         # should be cached
         _ = Monkey.get_label_by_id(linux_monkey.id)
         cache_info_after_query = Monkey.get_label_by_id.storage.backend.cache_info()
-        self.assertEquals(cache_info_after_query.hits, 1)
+        self.assertEqual(cache_info_after_query.hits, 1)
 
         linux_monkey.set_hostname("Another hostname")
 
@@ -146,8 +146,8 @@ class TestMonkey(IslandTestCase):
         label = Monkey.get_label_by_id(linux_monkey.id)
         cache_info_after_second_query = Monkey.get_label_by_id.storage.backend.cache_info()
         # still 1 hit only
-        self.assertEquals(cache_info_after_second_query.hits, 1)
-        self.assertEquals(cache_info_after_second_query.misses, 2)
+        self.assertEqual(cache_info_after_second_query.hits, 1)
+        self.assertEqual(cache_info_after_second_query.misses, 2)
 
     def test_is_monkey(self):
         self.fail_if_not_testing_env()
@@ -157,7 +157,7 @@ class TestMonkey(IslandTestCase):
         a_monkey.save()
 
         cache_info_before_query = Monkey.is_monkey.storage.backend.cache_info()
-        self.assertEquals(cache_info_before_query.hits, 0)
+        self.assertEqual(cache_info_before_query.hits, 0)
 
         # not cached
         self.assertTrue(Monkey.is_monkey(a_monkey.id))
@@ -169,5 +169,5 @@ class TestMonkey(IslandTestCase):
         self.assertFalse(Monkey.is_monkey(fake_id))
 
         cache_info_after_query = Monkey.is_monkey.storage.backend.cache_info()
-        self.assertEquals(cache_info_after_query.hits, 2)
+        self.assertEqual(cache_info_after_query.hits, 2)
 
