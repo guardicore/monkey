@@ -753,7 +753,8 @@ SCHEMA = {
                                 "Struts2Exploiter",
                                 "WebLogicExploiter",
                                 "HadoopExploiter",
-                                "VSFTPDExploiter"
+                                "VSFTPDExploiter",
+                                "MSSQLExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
@@ -899,7 +900,8 @@ SCHEMA = {
                                 8008,
                                 3306,
                                 9200,
-                                7001
+                                7001,
+                                8088
                             ],
                             "description": "List of TCP ports the monkey will check whether they're open"
                         },
