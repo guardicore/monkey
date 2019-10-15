@@ -29,7 +29,8 @@ class TelemetryFeed(flask_restful.Resource):
         try:
             return \
                 {
-                    'telemetries': [TelemetryFeed.get_displayed_telemetry(telem) for telem in telemetries if TelemetryFeed],
+                    'telemetries': [TelemetryFeed.get_displayed_telemetry(telem) for telem in telemetries
+                                    if TelemetryFeed.should_show_brief(telem)],
                     'timestamp': datetime.now().isoformat()
                 }
         except KeyError as err:
