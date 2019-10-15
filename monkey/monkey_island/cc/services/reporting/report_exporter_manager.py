@@ -30,4 +30,4 @@ class ReportExporterManager(object, metaclass=Singleton):
             try:
                 exporter().handle_report(report)
             except Exception as e:
-                logger.exception('Failed to export report, error: ' + e.message)
+                logger.exception('Failed to export report, error: ' + e)
