@@ -31,7 +31,7 @@ class AwsInstance(object):
             self.region = self._parse_region(
                 urllib.request.urlopen(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read())
         except (urllib.error.URLError, IOError) as e:
-            logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e), exc_info=True)
+            logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e))
 
         try:
             self.account_id = self._extract_account_id(
