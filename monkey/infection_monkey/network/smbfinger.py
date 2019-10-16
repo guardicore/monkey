@@ -120,27 +120,26 @@ class SMBFinger(HostFinger):
             n = SMBNego(data=SMBNegoFingerData())
             n.calculate()
 
-            Packet = str(h) + str(n)
-            Buffer = struct.pack(">i", len(''.join(Packet))) + Packet
-            s.send(Buffer)
+            packet_ = str(h) + str(n)
+            buffer = struct.pack(">i", len(packet_)) + packet_.encode()
+            s.send(buffer)
             data = s.recv(2048)
 
             if data[8:10] == "\x72\x00":
-                Header = SMBHeader(cmd="\x73", flag1="\x18", flag2="\x17\xc8", uid="\x00\x00")
-                Body = SMBSessionFingerData()
-                Body.calculate()
+                header = SMBHeader(cmd="\x73", flag1="\x18", flag2="\x17\xc8", uid="\x00\x00")
+                body = SMBSessionFingerData()
+                body.calculate()
 
-                Packet = str(Header) + str(Body)
-                Buffer = struct.pack(">i", len(''.join(Packet))) + Packet
+                packet_ = str(header) + str(body)
+                buffer = struct.pack(">i", len(packet_)) + packet_.encode()
 
-                s.send(Buffer)
+                s.send(buffer)
                 data = s.recv(2048)
 
             if data[8:10] == "\x73\x16":
                 length = struct.unpack('<H', data[43:45])[0]
-                pack = tuple(data[47 + length:].split('\x00\x00\x00'))[:2]
                 os_version, service_client = tuple(
-                    [e.replace('\x00', '') for e in data[47 + length:].split('\x00\x00\x00')[:2]])
+                    [e.replace(b'\x00', b'') for e in data[47 + length:].split(b'\x00\x00\x00')[:2]])
 
                 if os_version.lower() != 'unix':
                     host.os['type'] = 'windows'
