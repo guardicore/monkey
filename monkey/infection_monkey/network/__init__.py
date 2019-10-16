@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 
 __author__ = 'itamar'
 
@@ -10,7 +10,8 @@ class HostScanner(object, metaclass=ABCMeta):
 
 
 class HostFinger(object, metaclass=ABCMeta):
-    @abstractproperty
+    @property
+    @abstractmethod
     def _SCANNED_SERVICE(self):
         pass
 
