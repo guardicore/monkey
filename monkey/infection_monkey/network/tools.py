@@ -7,8 +7,6 @@ import struct
 import time
 import re
 
-from six.moves import range
-
 from infection_monkey.pyinstaller_utils import get_binary_file_path
 from infection_monkey.utils.environment import is_64bit_python
 

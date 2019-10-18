@@ -3,7 +3,6 @@ import collections
 import functools
 import logging
 from jsonschema import Draft4Validator, validators
-from six import string_types
 import monkey_island.cc.services.post_breach_files
 
 from monkey_island.cc.database import mongo
@@ -236,7 +235,7 @@ class ConfigService:
         keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
 
         for key in keys:
-            if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], string_types):
+            if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], str):
                 # Check if we are decrypting ssh key pair
                 if flat_config[key] and isinstance(flat_config[key][0], dict) and 'public_key' in flat_config[key][0]:
                     flat_config[key] = [ConfigService.decrypt_ssh_key_pair(item) for item in flat_config[key]]
@@ -257,7 +256,7 @@ class ConfigService:
                 parent_config_arr = config_arr
                 config_arr = config_arr[config_key_part]
 
-            if isinstance(config_arr, collections.Sequence) and not isinstance(config_arr, string_types):
+            if isinstance(config_arr, collections.Sequence) and not isinstance(config_arr, str):
                 for i in range(len(config_arr)):
                     # Check if array of shh key pairs and then decrypt
                     if isinstance(config_arr[i], dict) and 'public_key' in config_arr[i]:

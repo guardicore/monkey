@@ -5,7 +5,6 @@ import logging
 import ipaddress
 from bson import json_util
 from enum import Enum
-from six import text_type
 
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
@@ -396,7 +395,7 @@ class ReportService:
 
         return \
             [
-                ipaddress.ip_interface(text_type(network['addr'] + '/' + network['netmask'])).network
+                ipaddress.ip_interface(str(network['addr'] + '/' + network['netmask'])).network
                 for network in network_info['data']['network_info']['networks']
             ]
 
@@ -409,7 +408,7 @@ class ReportService:
             monkey_subnets = ReportService.get_monkey_subnets(monkey['guid'])
             for subnet in monkey_subnets:
                 for ip in island_ips:
-                    if ipaddress.ip_address(text_type(ip)) in subnet:
+                    if ipaddress.ip_address(str(ip)) in subnet:
                         found_good_ip = True
                         break
                 if found_good_ip:
@@ -438,7 +437,7 @@ class ReportService:
             ip_in_src = None
             ip_in_dst = None
             for ip_addr in monkey['ip_addresses']:
-                if source_subnet_range.is_in_range(text_type(ip_addr)):
+                if source_subnet_range.is_in_range(str(ip_addr)):
                     ip_in_src = ip_addr
                     break
 
@@ -447,7 +446,7 @@ class ReportService:
                 continue
 
             for ip_addr in monkey['ip_addresses']:
-                if target_subnet_range.is_in_range(text_type(ip_addr)):
+                if target_subnet_range.is_in_range(str(ip_addr)):
                     ip_in_dst = ip_addr
                     break
 
@@ -483,7 +482,7 @@ class ReportService:
         scans.rewind()  # If we iterated over scans already we need to rewind.
         for scan in scans:
             target_ip = scan['data']['machine']['ip_addr']
-            if target_subnet_range.is_in_range(text_type(target_ip)):
+            if target_subnet_range.is_in_range(str(target_ip)):
                 monkey = NodeService.get_monkey_by_guid(scan['monkey_guid'])
                 cross_segment_ip = get_ip_in_src_and_not_in_dst(monkey['ip_addresses'],
                                                                 source_subnet_range,

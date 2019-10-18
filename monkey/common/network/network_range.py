@@ -4,7 +4,6 @@ import struct
 from abc import ABCMeta, abstractmethod
 
 import ipaddress
-from six import text_type
 import logging
 
 __author__ = 'itamar'
@@ -78,7 +77,7 @@ class CidrRange(NetworkRange):
     def __init__(self, cidr_range, shuffle=True):
         super(CidrRange, self).__init__(shuffle=shuffle)
         self._cidr_range = cidr_range.strip()
-        self._ip_network = ipaddress.ip_network(text_type(self._cidr_range), strict=False)
+        self._ip_network = ipaddress.ip_network(str(self._cidr_range), strict=False)
 
     def __repr__(self):
         return "<CidrRange %s>" % (self._cidr_range,)
