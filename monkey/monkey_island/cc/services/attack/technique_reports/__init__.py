@@ -12,28 +12,32 @@ logger = logging.getLogger(__name__)
 class AttackTechnique(object, metaclass=abc.ABCMeta):
     """ Abstract class for ATT&CK report components """
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def unscanned_msg(self):
         """
         :return: Message that will be displayed in case attack technique was not scanned.
         """
         pass
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def scanned_msg(self):
         """
         :return: Message that will be displayed in case attack technique was scanned.
         """
         pass
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def used_msg(self):
         """
         :return: Message that will be displayed in case attack technique was used by the scanner.
         """
         pass
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def tech_id(self):
         """
         :return: Message that will be displayed in case of attack technique not being scanned.

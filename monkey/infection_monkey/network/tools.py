@@ -71,7 +71,7 @@ def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
         if get_banner:
             read_ready, _, _ = select.select([sock], [], [], timeout)
             if len(read_ready) > 0:
-                banner = sock.recv(BANNER_READ)
+                banner = sock.recv(BANNER_READ).decode()
     except socket.error:
         pass
 
