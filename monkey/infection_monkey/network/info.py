@@ -1,4 +1,3 @@
-import sys
 import socket
 import struct
 import psutil
@@ -63,7 +62,7 @@ else:
 
 
     def get_routes():  # based on scapy implementation for route parsing
-        LOOPBACK_NAME = "lo"
+        LOOPBACK_NAME = b"lo"
         SIOCGIFADDR = 0x8915  # get PA address
         SIOCGIFNETMASK = 0x891b  # get network PA mask
         RTF_UP = 0x0001  # Route usable
@@ -85,7 +84,7 @@ else:
             routes.append((dst, msk, "0.0.0.0", LOOPBACK_NAME, ifaddr))
 
         for l in f.readlines()[1:]:
-            iff, dst, gw, flags, x, x, x, msk, x, x, x = l.split()
+            iff, dst, gw, flags, x, x, x, msk, x, x, x = [var.encode() for var in l.split()]
             flags = int(flags, 16)
             if flags & RTF_UP == 0:
                 continue

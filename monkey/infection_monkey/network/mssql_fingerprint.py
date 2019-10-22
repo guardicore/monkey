@@ -1,3 +1,4 @@
+import errno
 import logging
 import socket
 
@@ -54,7 +55,7 @@ class MSSQLFinger(HostFinger):
             sock.close()
             return False
         except socket.error as e:
-            if e.errno == socket.errno.ECONNRESET:
+            if e.errno == errno.ECONNRESET:
                 LOG.info('Connection was forcibly closed by the remote host. The host: {0} is rejecting the packet.'
                          .format(host))
             else:

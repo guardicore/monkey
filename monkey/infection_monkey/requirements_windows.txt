@@ -7,7 +7,6 @@ odict
 paramiko
 psutil
 PyInstaller
-six
 ecdsa
 netifaces
 ipaddress

@@ -13,9 +13,9 @@ from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHand
 
 DEFAULT_TIMEOUT_SECONDS = 5*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
-GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'haddop-2-v3', 'hadoop-3', 'mssql-16',
-                         'mimikatz-14', 'mimikatz-15', 'final-test-struts2-23', 'final-test-struts2-24',
-                         'tunneling-9', 'tunneling-10', 'tunneling-11', 'weblogic-18', 'weblogic-19', 'shellshock-8']
+GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'haddop-2', 'hadoop-3', 'mssql-16',
+                         'mimikatz-14', 'mimikatz-15', 'struts2-23', 'struts2-24', 'tunneling-9', 'tunneling-10',
+                         'tunneling-11', 'weblogic-18', 'weblogic-19', 'shellshock-8']
 LOG_DIR_PATH = "./logs"
 LOGGER = logging.getLogger(__name__)
 

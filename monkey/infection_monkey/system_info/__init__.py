@@ -16,7 +16,7 @@ LOG = logging.getLogger(__name__)
 try:
     WindowsError
 except NameError:
-    WindowsError = None
+    WindowsError = psutil.AccessDenied
 
 __author__ = 'uri'
 

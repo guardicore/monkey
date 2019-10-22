@@ -7,8 +7,6 @@ import struct
 import time
 import re
 
-from six.moves import range
-
 from infection_monkey.pyinstaller_utils import get_binary_file_path
 from infection_monkey.utils.environment import is_64bit_python
 
@@ -73,7 +71,7 @@ def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
         if get_banner:
             read_ready, _, _ = select.select([sock], [], [], timeout)
             if len(read_ready) > 0:
-                banner = sock.recv(BANNER_READ)
+                banner = sock.recv(BANNER_READ).decode()
     except socket.error:
         pass
 
@@ -96,7 +94,7 @@ def check_udp_port(ip, port, timeout=DEFAULT_TIMEOUT):
     is_open = False
 
     try:
-        sock.sendto("-", (ip, port))
+        sock.sendto(b"-", (ip, port))
         data, _ = sock.recvfrom(BANNER_READ)
         is_open = True
     except socket.error:
@@ -116,7 +114,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
     :return: list of open ports. If get_banner=True, then a matching list of banners.
     """
     sockets = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for _ in range(len(ports))]
-    [s.setblocking(0) for s in sockets]
+    [s.setblocking(False) for s in sockets]
     possible_ports = []
     connected_ports_sockets = []
     try:

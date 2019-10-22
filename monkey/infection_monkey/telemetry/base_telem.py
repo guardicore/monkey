@@ -25,7 +25,8 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
         logger.debug("Sending {} telemetry. Data: {}".format(self.telem_category, json.dumps(data)))
         ControlClient.send_telemetry(self.telem_category, data)
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def telem_category(self):
         """
         :return: Telemetry type

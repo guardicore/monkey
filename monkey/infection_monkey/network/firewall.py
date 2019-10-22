@@ -92,7 +92,7 @@ class WinAdvFirewall(FirewallApp):
     def close(self):
         try:
             for rule in list(self._rules.keys()):
-                self.remove_firewall_rule({'name': rule})
+                self.remove_firewall_rule(name=rule)
         except:
             pass
 

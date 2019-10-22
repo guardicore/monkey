@@ -6,7 +6,6 @@ import sys
 import time
 
 import infection_monkey.tunnel as tunnel
-from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.utils.environment import is_windows_os

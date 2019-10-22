@@ -155,7 +155,7 @@ class EdgeService:
             else:
                 to_label = NodeService.get_node_label(NodeService.get_node_by_id(to_id))
 
-        RIGHT_ARROW = "\\u2192"
+        RIGHT_ARROW = "\u2192"
         return "%s %s %s" % (from_label, RIGHT_ARROW, to_label)
 
 

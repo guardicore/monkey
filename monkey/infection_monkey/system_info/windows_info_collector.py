@@ -1,15 +1,13 @@
 import os
 import logging
 import sys
+sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 
 import infection_monkey.config
 from infection_monkey.system_info.mimikatz_collector import MimikatzCollector
 from infection_monkey.system_info import InfoCollector
 from infection_monkey.system_info.wmi_consts import WMI_CLASSES
 from common.utils.wmi_utils import WMIUtils
-
-
-sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 
 LOG = logging.getLogger(__name__)
 LOG.info('started windows info collector')

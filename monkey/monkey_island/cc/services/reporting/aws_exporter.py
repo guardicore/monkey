@@ -107,10 +107,10 @@ class AWSExporter(Exporter):
             else:
                 return False
         except UnknownServiceError as e:
-            logger.warning('AWS exporter called but AWS-CLI securityhub service is not installed. Error: ' + e.message)
+            logger.warning('AWS exporter called but AWS-CLI securityhub service is not installed. Error: ' + e)
             return False
         except Exception as e:
-            logger.exception('AWS security hub findings failed to send. Error: ' + e.message)
+            logger.exception('AWS security hub findings failed to send. Error: ' + e)
             return False
 
     @staticmethod
