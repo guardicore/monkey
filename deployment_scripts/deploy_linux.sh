@@ -90,6 +90,11 @@ log_message "Installing island requirements"
 requirements="$ISLAND_PATH/requirements.txt"
 ${python_cmd} -m pip install --user --upgrade -r ${requirements} || handle_error
 
+log_message "Installing monkey requirements"
+sudo apt-get install libffi-dev upx libssl-dev libc++1
+cd ${monkey_home}/monkey/infection_monkey || handle_error
+${python_cmd} -m pip install -r requirements_linux.txt --user --upgrade || handle_error
+
 # Download binaries
 log_message "Downloading binaries"
 wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_32_BINARY_URL}
@@ -136,12 +141,6 @@ npm update
 log_message "Generating front end"
 cd "$ISLAND_PATH/cc/ui" || handle_error
 npm run dist
-
-# Monkey setup
-log_message "Installing monkey requirements"
-sudo apt-get install python-dev libffi-dev upx libssl-dev libc++1
-cd ${monkey_home}/monkey/infection_monkey || handle_error
-${python_cmd} -m pip install -r requirements_linux.txt --user --upgrade || handle_error
 
 # Making dir for binaries
 mkdir ${MONKEY_BIN_DIR}
