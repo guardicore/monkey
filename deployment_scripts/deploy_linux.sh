@@ -69,9 +69,8 @@ fi
 
 if [[ ${python_cmd} == "" ]]; then
   log_message "Python 3.7 command not found. Installing python 3.7."
-  sudo add-apt-repository ppa:deadsnakes/ppa
-  sudo apt update
-  sudo apt install python3.7
+  sudo apt-get update
+  sudo apt-get install python3.7
   log_message "Python 3.7 is now available with command 'python3.7'."
   python_cmd="python3.7"
 fi
@@ -119,13 +118,6 @@ sudo apt-get install openssl
 
 # Generate SSL certificate
 log_message "Generating certificate"
-cd ${ISLAND_PATH} || handle_error
-openssl genrsa -out cc/server.key 1024 || handle_error
-openssl req -new -key cc/server.key -out cc/server.csr \
--subj "/C=GB/ST=London/L=London/O=Global Security/OU=Monkey Department/CN=monkey.com" || handle_error
-openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/server.crt || handle_error
-
-
 sudo chmod +x ${ISLAND_PATH}/linux/create_certificate.sh || handle_error
 ${ISLAND_PATH}/linux/create_certificate.sh || handle_error
 
@@ -151,7 +143,7 @@ wget -c -N -P ${MONKEY_BIN_DIR} ${SAMBACRY_64_BINARY_URL}
 wget -c -N -P ${MONKEY_BIN_DIR} ${SAMBACRY_32_BINARY_URL}
 
 # Download traceroute binaries
-log_message "Downloading tracerout binaries"
+log_message "Downloading traceroute binaries"
 wget -c -N -P ${MONKEY_BIN_DIR} ${TRACEROUTE_64_BINARY_URL}
 wget -c -N -P ${MONKEY_BIN_DIR} ${TRACEROUTE_32_BINARY_URL}
 

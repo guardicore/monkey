@@ -22,7 +22,7 @@ How to set up the Monkey Island server:
 	OR
     3.b. Use already running instance of mongodb
 		3.b.1. Run 'set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkeyisland"'. Replace '<SERVER ADDR>' with address of mongo server
-        
+
 4. Place portable version of OpenSSL
 	4.1. Download from: https://indy.fulgan.com/SSL/Archive/openssl-1.0.2l-i386-win32.zip
 	4.2. Extract content from bin folder to monkey_island\bin\openssl
@@ -56,7 +56,7 @@ How to run:
 2. Install the packages from monkey_island/requirements.txt:
 	sudo python -m pip install -r /var/monkey_island/requirements.txt
 	If pip is not installed, install the python-pip package. Make sure the server is running Python 2.7 and not Python 3+.
-	
+
 3. put monkey binaries in /var/monkey_island/cc/binaries
     monkey-linux-64 - monkey binary for linux 64bit
 	monkey-linux-32 - monkey binary for linux 32bit
@@ -81,11 +81,11 @@ How to run:
 
 8. Install npm
 	8.1. Download and install from: https://www.npmjs.com/get-npm
-	
+
 9. Build Monkey Island frontend
 	9.1. cd to 'monkey_island/cc/ui'
 	9.2. run 'npm update'
 	9.3. run 'npm run dist'
-	
+
 How to run:
-1. run run.sh (located under /linux)
+1. When your current working directory is monkey, run run.sh (located under /linux)

@@ -12,5 +12,5 @@ if [[ `python3.7 --version 2>&1` == *"Python 3.7"* ]]; then
   python_cmd="python3.7"
 fi
 
-./bin/mongodb/bin/mongod --dbpath ./bin/mongodb/db
-${python_cmd} monkey_island.py
+./monkey_island/bin/mongodb/bin/mongod --dbpath ./monkey_island/bin/mongodb/db
+${python_cmd} ./monkey_island.py

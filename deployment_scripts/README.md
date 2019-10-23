@@ -16,7 +16,7 @@ Don't forget to add python to PATH or do so while installing it via this script.
 You must have root permissions, but don't run the script as root.<br>
 Launch deploy_linux.sh from scripts directory.<br>
 First argument should be an empty directory (script can create one, default is ./infection_monkey) and second is the branch you want to clone (develop by default).
-Choose a directory where you have all the relevant permissions, for e.g. /home/your_username
+Choose a directory where you have all the relevant permissions and give it's absolute path, for e.g. /home/your_username
 Example usages:<br>
 ./deploy_linux.sh (deploys under ./infection_monkey)<br>
 ./deploy_linux.sh "/home/test/monkey" (deploys under /home/test/monkey)<br>
