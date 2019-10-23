@@ -1,5 +1,4 @@
 import itertools
-from six import text_type
 
 from common.data.zero_trust_consts import STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK, STATUS_PASSED
 from common.network.network_range import NetworkRange
@@ -34,8 +33,7 @@ def test_segmentation_violation(current_monkey, target_ip):
                 )
 
 
-def is_segmentation_violation(current_monkey, target_ip, source_subnet, target_subnet):
-    # type: (Monkey, str, str, str) -> bool
+def is_segmentation_violation(current_monkey: Monkey, target_ip: str, source_subnet: str, target_subnet: str) -> bool:
     """
     Checks is a specific communication is a segmentation violation.
     :param current_monkey:  The source monkey which originated the communication.
@@ -49,7 +47,7 @@ def is_segmentation_violation(current_monkey, target_ip, source_subnet, target_s
     source_subnet_range = NetworkRange.get_range_obj(source_subnet)
     target_subnet_range = NetworkRange.get_range_obj(target_subnet)
 
-    if target_subnet_range.is_in_range(text_type(target_ip)):
+    if target_subnet_range.is_in_range(str(target_ip)):
         cross_segment_ip = get_ip_in_src_and_not_in_dst(
             current_monkey.ip_addresses,
             source_subnet_range,

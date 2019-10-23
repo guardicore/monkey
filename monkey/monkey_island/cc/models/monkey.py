@@ -48,7 +48,7 @@ class Monkey(Document):
     @staticmethod
     def __ring_key__():
         """
-        Cash key representation
+        Cache key representation
         https://ring-cache.readthedocs.io/en/stable/quickstart.html#method-classmethod-staticmethod-property
         :return:
         """

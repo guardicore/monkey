@@ -1,5 +1,4 @@
 import logging
-import os
 import random
 import string
 import subprocess
@@ -39,7 +38,7 @@ class CommunicateAsNewUser(PBA):
                 exit_status = new_user.run_as(ping_commandline)
                 self.send_ping_result_telemetry(exit_status, ping_commandline, username)
         except subprocess.CalledProcessError as e:
-            PostBreachTelem(self, (e.output, False)).send()
+            PostBreachTelem(self, (e.output.decode(), False)).send()
         except NewUserError as e:
             PostBreachTelem(self, (str(e), False)).send()
 
