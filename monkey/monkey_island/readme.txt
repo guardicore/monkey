@@ -88,4 +88,4 @@ How to run:
 	9.3. run 'npm run dist'
 
 How to run:
-1. When your current working directory is monkey, run run.sh (located under /linux)
+1. When your current working directory is monkey, run ./monkey_island/linux/run.sh (located under /linux)

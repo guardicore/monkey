@@ -124,13 +124,11 @@ openssl req -new -key cc/server.key -out cc/server.csr -subj "/C=GB/ST=London/L=
 openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/server.crt
 
 # Update node
-cd "$ISLAND_PATH/cc/ui" || handle_error
 log_message "Installing nodejs"
+cd "$ISLAND_PATH/cc/ui" || handle_error
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs
-
-# Install npm
-log_message "Installing npm"
-sudo apt-get install npm
+npm install sass-loader node-sass webpack --save-dev
 npm update
 
 log_message "Generating front end"
