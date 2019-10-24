@@ -13,10 +13,11 @@ Don't forget to add python to PATH or do so while installing it via this script.
 
 ## Linux
 
+Linux deployment script is meant for Ubuntu 16.x machines.
 You must have root permissions, but don't run the script as root.<br>
 Launch deploy_linux.sh from scripts directory.<br>
-First argument should be an empty directory (script can create one, default is ./infection_monkey) and second is the branch you want to clone (develop by default).
-Choose a directory where you have all the relevant permissions and give it's absolute path, for e.g. /home/your_username
+First argument should be an absolute path of an empty directory (script will create one if doesn't exist, default is ./infection_monkey).
+Second parameter is the branch you want to clone (develop by default).
 Example usages:<br>
 ./deploy_linux.sh (deploys under ./infection_monkey)<br>
 ./deploy_linux.sh "/home/test/monkey" (deploys under /home/test/monkey)<br>
