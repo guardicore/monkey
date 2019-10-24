@@ -118,10 +118,13 @@ sudo apt-get install openssl
 
 # Generate SSL certificate
 log_message "Generating certificate"
-sudo chmod +x ${ISLAND_PATH}/linux/create_certificate.sh || handle_error
-${ISLAND_PATH}/linux/create_certificate.sh || handle_error
+cd ${ISLAND_PATH}
+openssl genrsa -out cc/server.key 2048
+openssl req -new -key cc/server.key -out cc/server.csr -subj "/C=GB/ST=London/L=London/O=Global Security/OU=Monkey Department/CN=monkey.com"
+openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/server.crt
 
 # Update node
+cd "$ISLAND_PATH/cc/ui" || handle_error
 log_message "Installing nodejs"
 sudo apt-get install -y nodejs
 
@@ -131,7 +134,6 @@ sudo apt-get install npm
 npm update
 
 log_message "Generating front end"
-cd "$ISLAND_PATH/cc/ui" || handle_error
 npm run dist
 
 # Making dir for binaries
