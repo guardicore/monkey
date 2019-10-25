@@ -20,7 +20,7 @@ class LogService:
             return \
                 {
                     'monkey_label': monkey_label,
-                    'log': log_file.read(),
+                    'log': log_file.read().decode(),
                     'timestamp': log['timestamp']
                 }
 
