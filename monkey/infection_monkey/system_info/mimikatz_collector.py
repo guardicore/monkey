@@ -27,7 +27,7 @@ class MimikatzCollector(object):
     MIMIKATZ_ZIP_NAME = 'tmpzipfile123456.zip'
 
     # Password to Mimikatz zip file
-    MIMIKATZ_ZIP_PASSWORD = r'VTQpsJPXgZuXhX6x3V84G'
+    MIMIKATZ_ZIP_PASSWORD = b'VTQpsJPXgZuXhX6x3V84G'
 
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
