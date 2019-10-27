@@ -2,17 +2,20 @@ group: travis_latest
 language: python
 cache: pip
 python:
-    - 2.7
+- 3.7
 install:
-    #- pip install -r requirements.txt
-    - pip install flake8  # pytest  # add another testing frameworks later
+- pip install -r monkey/monkey_island/requirements.txt
+- pip install flake8 pytest dlint
 before_script:
-    # stop the build if there are Python syntax errors or undefined names
-    - flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
-    # exit-zero treats all errors as warnings.  The GitHub editor is 127 chars wide
-    - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+- flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
+- flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 script:
-    - true  # pytest --capture=sys  # add other tests here
+- pytest --capture=sys
 notifications:
+  on_success: change
+  on_failure: always
+  slack:
+    rooms:
+      secure: wFddByqGGfwpjuisZhXQGAI7Y/7yZ+ON58R19D2ff+p1lT26BIdE+gSWQFWTbSNcyjVhAMCkbKgRblL2o0WcuiCyYjlcIoT/fEMuypxNTnlC1FtHlmEO/1JAyDVskzRWvu7q98szcDP+yKjUZSjUrLMnzUYtdB7hhAp8iRvEUTgtKQi27kmgBX9lLqAf93WO1Ocp2+fmDkNmegx2bBa9PQS4FYOtqN7DYZ0cHM7wLffyHZmSXZkwCcq+u7mSONrfQZprCvzQu9kntx/zEnjTuNHUZ8L0SNu035Yg2MtxnKDY1GPSox5ax5rZJID4aN+f7vDkIgIskMwVcjFoMS4bvp8xH1liWleR/VdOYhTP1bx5GcLvkUFC/xAwW730AZnU9Ihn3iSLK8iiowf7UMOYLB371KDlZWj2gwRvccRb7VwismLzcYt/So/5/xDa4IgDNNUu/fb9J+TPc+3jKPt3E6KSHseBcyk2ov7iC14pUz/AWEcWga2s5cRiWqBibUuiJUXZf0zExyEnj9dic5jF/UW8EVpDygy5TaAVq9VD30zslzPcIDbl1slEh2Nd6LXQWCiz9UMDN85OHkuXSgNyuSpna6W0+/qNv3SQLrcwTKTNj/ZSLTj5lZIyQ7l11xW36H+uyx4D8rYOpHw8HxrGXnh5hyWhOa4GCGzgSgFZlU8=
     on_success: change
-    on_failure: change # `always` will be the setting once code changes slow down
+    on_failure: always
