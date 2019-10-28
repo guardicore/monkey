@@ -1,12 +1,17 @@
 Infection Monkey
 ====================
+[![Build Status](https://travis-ci.com/guardicore/monkey.svg?branch=develop)](https://travis-ci.com/guardicore/monkey)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/guardicore/monkey)](https://github.com/guardicore/monkey/releases)
+![GitHub stars](https://img.shields.io/github/stars/guardicore/monkey)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/guardicore/monkey)
 
-### Data center Security Testing Tool
+## Data center Security Testing Tool
 ------------------------
 
 Welcome to the Infection Monkey! 
 
 The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island server.
+
 
 <img src=".github/map-full.png" >
 
@@ -49,6 +54,12 @@ To deploy development version of monkey you should refer to readme in the [deplo
 If you only want to build the monkey from source, see [Setup](https://github.com/guardicore/monkey/wiki/Setup#compile-it-yourself)
 and follow the instructions at the readme files under [infection_monkey](infection_monkey) and [monkey_island](monkey_island). 
 
+
+### Build status
+| Branch | Status |
+| ------ | :----: |
+| Develop | [![Build Status](https://travis-ci.com/guardicore/monkey.svg?branch=develop)](https://travis-ci.com/guardicore/monkey) |
+| Master | [![Build Status](https://travis-ci.com/guardicore/monkey.svg?branch=master)](https://travis-ci.com/guardicore/monkey) | 
 
 License
 =======

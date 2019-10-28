@@ -1,3 +1,4 @@
+pytest
 bson
 python-dateutil
 tornado
