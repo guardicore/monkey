@@ -2,12 +2,14 @@ import json
 from datetime import datetime
 
 import dateutil.parser
-from flask import request
 import flask_restful
+from flask import request
 
-from cc.database import mongo
-from cc.services.config import ConfigService
-from cc.services.node import NodeService
+from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
+from monkey_island.cc.database import mongo
+from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
+from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.node import NodeService
 
 __author__ = 'Barak'
 
@@ -47,6 +49,9 @@ class Monkey(flask_restful.Resource):
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
 
+        ttl = create_monkey_ttl_document(DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
+        update['$set']['ttl_ref'] = ttl.id
+
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
     # Used by monkey. can't secure.
@@ -81,16 +86,16 @@ class Monkey(flask_restful.Resource):
         parent_to_add = (monkey_json.get('guid'), None)  # default values in case of manual run
         if parent and parent != monkey_json.get('guid'):  # current parent is known
             exploit_telem = [x for x in
-                             mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
+                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']},
                                                       'monkey_guid': {'$eq': parent}})]
             if 1 == len(exploit_telem):
                 parent_to_add = (exploit_telem[0].get('monkey_guid'), exploit_telem[0].get('data').get('exploiter'))
             else:
                 parent_to_add = (parent, None)
-        elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in  monkey_json:
+        elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in monkey_json:
             exploit_telem = [x for x in
-                             mongo.db.telemetry.find({'telem_type': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
+                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}})]
 
             if 1 == len(exploit_telem):
@@ -105,6 +110,9 @@ class Monkey(flask_restful.Resource):
         if 'tunnel' in monkey_json:
             tunnel_host_ip = monkey_json['tunnel'].split(":")[-2].replace("//", "")
             monkey_json.pop('tunnel')
+
+        ttl = create_monkey_ttl_document(DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
+        monkey_json['ttl_ref'] = ttl.id
 
         mongo.db.monkey.update({"guid": monkey_json["guid"]},
                                {"$set": monkey_json},

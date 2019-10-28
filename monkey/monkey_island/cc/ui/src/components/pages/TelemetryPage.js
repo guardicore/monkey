@@ -11,7 +11,7 @@ const renderTime = (val) => val.split('.')[0];
 const columns = [
   { title: 'Time', prop: 'timestamp', render: renderTime},
   { title: 'Monkey', prop: 'monkey'},
-  { title: 'Type', prop: 'telem_type'},
+  { title: 'Type', prop: 'telem_catagory'},
   { title: 'Details', prop: 'data', render: renderJson, width: '40%' }
 ];
 

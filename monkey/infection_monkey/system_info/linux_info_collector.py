@@ -23,10 +23,7 @@ class LinuxInfoCollector(InfoCollector):
         :return: Dict of system information
         """
         LOG.debug("Running Linux collector")
-        self.get_hostname()
-        self.get_process_list()
-        self.get_network_info()
-        self.get_azure_info()
+        super(LinuxInfoCollector, self).get_info()
         self.info['ssh_info'] = SSHCollector.get_info()
         return self.info
 

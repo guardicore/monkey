@@ -20,6 +20,9 @@ LOG = logging.getLogger(__name__)
 
 
 class PingScanner(HostScanner, HostFinger):
+
+    _SCANNED_SERVICE = ''
+
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
         self._devnull = open(os.devnull, "w")
@@ -59,9 +62,9 @@ class PingScanner(HostScanner, HostFinger):
         if regex_result:
             try:
                 ttl = int(regex_result.group(0))
-                if LINUX_TTL == ttl:
+                if ttl <= LINUX_TTL:
                     host.os['type'] = 'linux'
-                elif WINDOWS_TTL == ttl:
+                else:  # as far we we know, could also be OSX/BSD but lets handle that when it comes up.
                     host.os['type'] = 'windows'
                 return True
             except Exception as exc:

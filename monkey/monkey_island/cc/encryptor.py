@@ -4,12 +4,14 @@ import os
 from Crypto import Random
 from Crypto.Cipher import AES
 
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+
 __author__ = "itay.mizeretz"
 
 
 class Encryptor:
     _BLOCK_SIZE = 32
-    _DB_PASSWORD_FILENAME = "monkey_island/cc/mongo_key.bin"
+    _DB_PASSWORD_FILENAME = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc/mongo_key.bin')
 
     def __init__(self):
         self._load_key()
@@ -39,7 +41,7 @@ class Encryptor:
     def enc(self, message):
         cipher_iv = Random.new().read(AES.block_size)
         cipher = AES.new(self._cipher_key, AES.MODE_CBC, cipher_iv)
-        return base64.b64encode(cipher_iv + cipher.encrypt(self._pad(message)))
+        return base64.b64encode(cipher_iv + cipher.encrypt(str(self._pad(message))))  # ciper.encrypt expects str
 
     def dec(self, enc_message):
         enc_message = base64.b64decode(enc_message)

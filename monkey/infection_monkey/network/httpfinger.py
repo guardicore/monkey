@@ -10,6 +10,7 @@ class HTTPFinger(HostFinger):
     """
     Goal is to recognise HTTP servers, where what we currently care about is apache.
     """
+    _SCANNED_SERVICE = 'HTTP'
 
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
@@ -36,7 +37,7 @@ class HTTPFinger(HostFinger):
                     with closing(head(url, verify=False, timeout=1)) as req:
                         server = req.headers.get('Server')
                         ssl = True if 'https://' in url else False
-                        host.services['tcp-' + port[1]] = {}
+                        self.init_service(host.services, ('tcp-' + port[1]), port[0])
                         host.services['tcp-' + port[1]]['name'] = 'http'
                         host.services['tcp-' + port[1]]['data'] = (server,ssl)
                         LOG.info("Port %d is open on host %s " % (port[0], host))

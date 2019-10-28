@@ -1,24 +1,31 @@
+import { SHA3 } from 'sha3';
 import decode from 'jwt-decode';
-import {SERVER_CONFIG} from '../server_config/ServerConfig';
 
 export default class AuthService {
-  AUTH_ENABLED = SERVER_CONFIG.isAuthEnabled();
+  // SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
+  NO_AUTH_CREDS =
+    "55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062" +
+    "8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557";
 
   login = (username, password) => {
-    if (this.AUTH_ENABLED) {
-      return this._login(username, password);
-    } else {
-      return {result: true};
-    }
+    return this._login(username, this.hashSha3(password));
   };
 
   authFetch = (url, options) => {
-    if (this.AUTH_ENABLED) {
-      return this._authFetch(url, options);
-    } else {
-      return fetch(url, options);
+    return this._authFetch(url, options);
+  };
+
+  jwtHeader = () => {
+    if (this._loggedIn()) {
+      return 'JWT ' + this._getToken();
     }
   };
+
+  hashSha3(text) {
+    let hash = new SHA3(512);
+    hash.update(text);
+    return this._toHexStr(hash.digest());
+  }
 
   _login = (username, password) => {
     return this._authFetch('/api/auth', {
@@ -36,7 +43,6 @@ export default class AuthService {
           this._removeToken();
           return {result: false};
         }
-
       })
   };
 
@@ -46,7 +52,7 @@ export default class AuthService {
       'Content-Type': 'application/json'
     };
 
-    if (this.loggedIn()) {
+    if (this._loggedIn()) {
       headers['Authorization'] = 'JWT ' + this._getToken();
     }
 
@@ -67,20 +73,26 @@ export default class AuthService {
       });
   };
 
-  loggedIn() {
-    if (!this.AUTH_ENABLED) {
-      return true;
+  async loggedIn() {
+    let token = this._getToken();
+    if ((token === null) || (this._isTokenExpired(token))) {
+      await this.attemptNoAuthLogin();
     }
+    return this._loggedIn();
+  }
 
+  attemptNoAuthLogin() {
+    return this._login(this.NO_AUTH_CREDS, this.NO_AUTH_CREDS);
+  }
+
+  _loggedIn() {
     const token = this._getToken();
     return ((token !== null) && !this._isTokenExpired(token));
   }
 
-  logout() {
-    if (this.AUTH_ENABLED) {
-      this._removeToken();
-    }
-  }
+  logout = () => {
+    this._removeToken();
+  };
 
   _isTokenExpired(token) {
     try {
@@ -102,5 +114,10 @@ export default class AuthService {
   _getToken() {
     return localStorage.getItem('jwt')
   }
+
+  _toHexStr(byteArr) {
+    return byteArr.reduce((acc, x) => (acc + ('0' + x.toString(0x10)).slice(-2)), '');
+  }
+
 
 }

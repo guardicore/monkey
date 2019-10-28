@@ -1,29 +1,28 @@
-import logging
 import time
+import logging
+from multiprocessing.dummy import Pool
 
-from common.network.network_range import *
+from common.network.network_range import NetworkRange
 from infection_monkey.config import WormConfiguration
+from infection_monkey.model.victim_host_generator import VictimHostGenerator
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
-from infection_monkey.model import VictimHost
-from infection_monkey.network import HostScanner
-
-__author__ = 'itamar'
+from infection_monkey.network import TcpScanner, PingScanner
 
 LOG = logging.getLogger(__name__)
 
-SCAN_DELAY = 0
+ITERATION_BLOCK_SIZE = 5
 
 
 class NetworkScanner(object):
     def __init__(self):
         self._ip_addresses = None
         self._ranges = None
+        self.scanners = [TcpScanner(), PingScanner()]
 
     def initialize(self):
         """
         Set up scanning.
         based on configuration: scans local network and/or scans fixed list of IPs/subnets.
-        :return:
         """
         # get local ip addresses
         self._ip_addresses = local_ips()
@@ -62,52 +61,42 @@ class NetworkScanner(object):
 
         return subnets_to_scan
 
-    def get_victim_machines(self, scan_type, max_find=5, stop_callback=None):
+    def get_victim_machines(self, max_find=5, stop_callback=None):
         """
         Finds machines according to the ranges specified in the object
-        :param scan_type: A hostscanner class, will be instanced and used to scan for new machines
         :param max_find: Max number of victims to find regardless of ranges
         :param stop_callback: A callback to check at any point if we should stop scanning
         :return: yields a sequence of VictimHost instances
         """
-        if not scan_type:
-            return
+        # We currently use the ITERATION_BLOCK_SIZE as the pool size, however, this may not be the best decision
+        # However, the decision what ITERATION_BLOCK_SIZE also requires balancing network usage (pps and bw)
+        # Because we are using this to spread out IO heavy tasks, we can probably go a lot higher than CPU core size
+        # But again, balance
+        pool = Pool(ITERATION_BLOCK_SIZE)
+        victim_generator = VictimHostGenerator(self._ranges, WormConfiguration.blocked_ips, local_ips())
 
-        scanner = scan_type()
         victims_count = 0
+        for victim_chunk in victim_generator.generate_victims(ITERATION_BLOCK_SIZE):
+            LOG.debug("Scanning for potential victims in chunk %r", victim_chunk)
 
-        for net_range in self._ranges:
-            LOG.debug("Scanning for potential victims in the network %r", net_range)
-            for ip_addr in net_range:
-                victim = VictimHost(ip_addr)
-                if stop_callback and stop_callback():
-                    LOG.debug("Got stop signal")
-                    break
+            # check before running scans
+            if stop_callback and stop_callback():
+                LOG.debug("Got stop signal")
+                return
 
-                # skip self IP address
-                if victim.ip_addr in self._ip_addresses:
-                    continue
+            results = pool.map(self.scan_machine, victim_chunk)
+            resulting_victims = filter(lambda x: x is not None, results)
+            for victim in resulting_victims:
+                LOG.debug("Found potential victim: %r", victim)
+                victims_count += 1
+                yield victim
 
-                # skip IPs marked as blocked
-                if victim.ip_addr in WormConfiguration.blocked_ips:
-                    LOG.info("Skipping %s due to blacklist" % victim)
-                    continue
-
-                LOG.debug("Scanning %r...", victim)
-
-                # if scanner detect machine is up, add it to victims list
-                if scanner.is_host_alive(victim):
-                    LOG.debug("Found potential victim: %r", victim)
-                    victims_count += 1
-                    yield victim
-
-                    if victims_count >= max_find:
-                        LOG.debug("Found max needed victims (%d), stopping scan", max_find)
-
-                        break
-
-                if SCAN_DELAY:
-                    time.sleep(SCAN_DELAY)
+                if victims_count >= max_find:
+                    LOG.debug("Found max needed victims (%d), stopping scan", max_find)
+                    return
+            if WormConfiguration.tcp_scan_interval:
+                # time.sleep uses seconds, while config is in milliseconds
+                time.sleep(WormConfiguration.tcp_scan_interval / float(1000))
 
     @staticmethod
     def _is_any_ip_in_subnet(ip_addresses, subnet_str):
@@ -115,3 +104,19 @@ class NetworkScanner(object):
             if NetworkRange.get_range_obj(subnet_str).is_in_range(ip_address):
                 return True
         return False
+
+    def scan_machine(self, victim):
+        """
+        Scans specific machine using instance scanners
+        :param victim: VictimHost machine
+        :return: Victim or None if victim isn't alive
+        """
+        LOG.debug("Scanning target address: %r", victim)
+        if any([scanner.is_host_alive(victim) for scanner in self.scanners]):
+            LOG.debug("Found potential target_ip: %r", victim)
+            return victim
+        else:
+            return None
+
+    def on_island(self, server):
+        return bool([x for x in self._ip_addresses if x in server])

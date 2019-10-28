@@ -1,0 +1,11 @@
+#!/bin/sh
+
+service monkey-island stop || true
+service monkey-mongo stop || true
+
+[ -f "/lib/systemd/system/monkey-island.service" ] && rm -f /lib/systemd/system/monkey-island.service
+[ -f "/lib/systemd/system/monkey-mongo.service" ] && rm -f /lib/systemd/system/monkey-mongo.service
+
+rm -r -f /var/monkey
+
+exit 0

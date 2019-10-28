@@ -9,7 +9,7 @@ from requests.exceptions import ConnectionError
 import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
 from infection_monkey.config import WormConfiguration, GUID
-from infection_monkey.network.info import local_ips, check_internet_access
+from infection_monkey.network.info import local_ips, check_internet_access, TIMEOUT
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
 
@@ -19,9 +19,12 @@ requests.packages.urllib3.disable_warnings()
 
 LOG = logging.getLogger(__name__)
 DOWNLOAD_CHUNK = 1024
+
+PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
+
 # random number greater than 5,
 # to prevent the monkey from just waiting forever to try and connect to an island before going elsewhere.
-TIMEOUT = 15
+TIMEOUT_IN_SECONDS = 15
 
 
 class ControlClient(object):
@@ -76,7 +79,7 @@ class ControlClient(object):
                 requests.get("https://%s/api?action=is-up" % (server,),
                              verify=False,
                              proxies=ControlClient.proxies,
-                             timeout=TIMEOUT)
+                             timeout=TIMEOUT_IN_SECONDS)
                 WormConfiguration.current_server = current_server
                 break
 
@@ -120,11 +123,12 @@ class ControlClient(object):
             return {}
 
     @staticmethod
-    def send_telemetry(telem_type, data):
+    def send_telemetry(telem_category, data):
         if not WormConfiguration.current_server:
+            LOG.error("Trying to send %s telemetry before current server is established, aborting." % telem_category)
             return
         try:
-            telemetry = {'monkey_guid': GUID, 'telem_type': telem_type, 'data': data}
+            telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': data}
             reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
                                   data=json.dumps(telemetry),
                                   headers={'content-type': 'application/json'},
@@ -165,7 +169,8 @@ class ControlClient(object):
 
         try:
             unknown_variables = WormConfiguration.from_kv(reply.json().get('config'))
-            LOG.info("New configuration was loaded from server: %r" % (WormConfiguration.as_dict(),))
+            LOG.info("New configuration was loaded from server: %r" %
+                     (WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()),))
         except Exception as exc:
             # we don't continue with default conf here because it might be dangerous
             LOG.error("Error parsing JSON reply from control server %s (%s): %s",
@@ -306,3 +311,13 @@ class ControlClient(object):
             target_addr, target_port = None, None
 
         return tunnel.MonkeyTunnel(proxy_class, target_addr=target_addr, target_port=target_port)
+
+    @staticmethod
+    def get_pba_file(filename):
+        try:
+            return requests.get(PBA_FILE_DOWNLOAD %
+                                (WormConfiguration.current_server, filename),
+                                verify=False,
+                                proxies=ControlClient.proxies)
+        except requests.exceptions.RequestException:
+            return False

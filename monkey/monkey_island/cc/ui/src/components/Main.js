@@ -7,51 +7,71 @@ import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
 import RunMonkeyPage from 'components/pages/RunMonkeyPage';
 import MapPage from 'components/pages/MapPage';
-import PassTheHashMapPage from 'components/pages/PassTheHashMapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
 import ReportPage from 'components/pages/ReportPage';
+import ZeroTrustReportPage from 'components/pages/ZeroTrustReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
+import Notifier from "react-desktop-notification"
+
 
 import 'normalize.css/normalize.css';
 import 'react-data-components/css/table-twbs.css';
 import 'styles/App.css';
 import 'react-toggle/style.css';
 import 'react-table/react-table.css';
+import VersionComponent from "./side-menu/VersionComponent";
 
 let logoImage = require('../images/monkey-icon.svg');
 let infectionMonkeyImage = require('../images/infection-monkey.svg');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
+let notificationIcon = require('../images/notification-logo-512x512.png');
+
+const reportZeroTrustRoute = '/report/zero_trust';
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
-    if (this.auth.loggedIn()){
-      this.authFetch('/api')
-        .then(res => res.json())
-        .then(res => {
-          // This check is used to prevent unnecessary re-rendering
-          let isChanged = false;
-          for (let step in this.state.completedSteps) {
-            if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
-              isChanged = true;
-              break;
-            }
-          }
-          if (isChanged) {
-            this.setState({completedSteps: res['completed_steps']});
-          }
-        });
-    }
+    this.auth.loggedIn()
+      .then(res => {
+        if (this.state.isLoggedIn !== res) {
+          this.setState({
+            isLoggedIn: res
+          });
+        }
+
+        if (res) {
+          this.authFetch('/api')
+            .then(res => res.json())
+            .then(res => {
+              // This check is used to prevent unnecessary re-rendering
+              let isChanged = false;
+              for (let step in this.state.completedSteps) {
+                if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
+                  isChanged = true;
+                  break;
+                }
+              }
+              if (isChanged) {
+                this.setState({completedSteps: res['completed_steps']});
+                this.showInfectionDoneNotification();
+              }
+            });
+        }
+      });
   };
 
   renderRoute = (route_path, page_component, is_exact_path = false) => {
     let render_func = (props) => {
-      if (this.auth.loggedIn()) {
-        return page_component;
-      } else {
-        return <Redirect to={{pathname: '/login'}}/>;
+      switch (this.state.isLoggedIn) {
+        case true:
+          return page_component;
+        case false:
+          return <Redirect to={{pathname: '/login'}}/>;
+        default:
+          return page_component;
+
       }
     };
 
@@ -65,14 +85,21 @@ class AppComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
+      removePBAfiles: false,
       completedSteps: {
         run_server: true,
         run_monkey: false,
         infection_done: false,
-        report_done: false
-      }
+        report_done: false,
+        isLoggedIn: undefined
+      },
     };
   }
+
+  // Sets the property that indicates if we need to remove PBA files from state or not
+  setRemovePBAfiles = (rmFiles) => {
+    this.setState({removePBAfiles: rmFiles});
+  };
 
   componentDidMount() {
     this.updateStatus();
@@ -123,9 +150,18 @@ class AppComponent extends AuthComponent {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/report">
+                  <NavLink to="/report/security">
                     <span className="number">4.</span>
                     Security Report
+                    {this.state.completedSteps.report_done ?
+                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      : ''}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/report/zero_trust">
+                    <span className="number">5.</span>
+                    Zero Trust Report
                     {this.state.completedSteps.report_done ?
                       <Icon name="check" className="pull-right checkmark text-success"/>
                       : ''}
@@ -155,6 +191,7 @@ class AppComponent extends AuthComponent {
               <div className="license-link text-center">
                 <NavLink to="/license">License</NavLink>
               </div>
+              <VersionComponent/>
             </Col>
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className="main">
               <Route path='/login' render={(props) => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
@@ -164,13 +201,34 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/report', <ReportPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/report/security', <ReportPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute(reportZeroTrustRoute, <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>
         </Grid>
       </Router>
     );
+  }
+
+  showInfectionDoneNotification() {
+    if (this.shouldShowNotification()) {
+      const hostname = window.location.hostname;
+      const port = window.location.port;
+      const protocol = window.location.protocol;
+      const url = `${protocol}//${hostname}:${port}${reportZeroTrustRoute}`;
+
+      Notifier.start(
+        "Monkey Island",
+        "Infection is done! Click here to go to the report page.",
+        url,
+        notificationIcon);
+    }
+  }
+
+  shouldShowNotification() {
+    // No need to show the notification to redirect to the report if we're already in the report page
+    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith("/report"));
   }
 }
 

@@ -1,0 +1,105 @@
+// colors
+$light-grey: #EAF4F4;
+$medium-grey: #7B9EA8;
+$dark-green: #007d02;
+$green: #44CF6C;
+$black: #000000;
+
+.ui-checkbox-btn {
+	position: relative;
+	display: inline-block;
+	background-color: rgba(red, .6);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+
+	input { display: none; }
+
+	.icon,
+	.text {
+		display: inline-block;
+		color: inherit;
+	}
+
+	.text {
+    padding-top: 4px;
+		font-size: 14px;
+	}
+
+	// color states
+	&.is-unchecked {
+		background-color: transparent;
+		color: $black;
+		fill: $black;
+	}
+
+  &.blocked {
+    background-color: $dark-green;
+		color: $light-grey;
+		fill: $light-grey;
+  }
+
+	&.is-checked {
+		background-color: $green;
+		color: white;
+		fill: white;
+	}
+}
+
+.icon {
+	position: relative;
+	display: inline-block;
+
+	svg {
+		position: absolute;
+		top: 0; right: 0; bottom: 0; left: 0;
+		margin: auto;
+		width: 16px;
+		height: auto;
+		fill: inherit;
+	}
+
+	.is-checked & {
+		color: white;
+		fill: white;
+	}
+}
+
+// ping animation magic
+.ui-btn-ping {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100%;
+	transform: translate3d(-50%, -50%, 0); // center center by default
+
+	// set the square
+	&:before {
+		content: '';
+		transform: scale(0, 0); // center center by default
+		transition-property: background-color transform;
+		transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+		display: block;
+		padding-bottom: 100%;
+		border-radius: 50%;
+		background-color: rgba(white, .84);;
+	}
+
+	.do-ping &:before {
+		transform: scale(2.5, 2.5);
+		transition-duration: .35s;
+		background-color: rgba(white, .08);
+	}
+}
+
+.icon-checked{
+  color:$green
+}
+
+.icon-mandatory{
+  color:$dark-green
+}
+
+.icon-unchecked{
+  color:$black;
+}

@@ -1,7 +1,7 @@
 from flask import request
 import flask_restful
 
-from cc.services.edge import EdgeService
+from monkey_island.cc.services.edge import EdgeService
 
 __author__ = 'Barak'
 

@@ -8,7 +8,6 @@ from infection_monkey.network.tools import struct_unpack_tracker, struct_unpack_
 
 MYSQL_PORT = 3306
 SQL_SERVICE = 'mysqld-3306'
-
 LOG = logging.getLogger(__name__)
 
 
@@ -16,7 +15,7 @@ class MySQLFinger(HostFinger):
     """
         Fingerprints mysql databases, only on port 3306
     """
-
+    _SCANNED_SERVICE = 'MySQL'
     SOCKET_TIMEOUT = 0.5
     HEADER_SIZE = 4  # in bytes
 
@@ -52,14 +51,13 @@ class MySQLFinger(HostFinger):
 
             version, curpos = struct_unpack_tracker_string(data, curpos)  # special coded to solve string parsing
             version = version[0]
-            host.services[SQL_SERVICE] = {}
+            self.init_service(host.services, SQL_SERVICE, MYSQL_PORT)
             host.services[SQL_SERVICE]['version'] = version
             version = version.split('-')[0].split('.')
             host.services[SQL_SERVICE]['major_version'] = version[0]
             host.services[SQL_SERVICE]['minor_version'] = version[1]
             host.services[SQL_SERVICE]['build_version'] = version[2]
             thread_id, curpos = struct_unpack_tracker(data, curpos, "<I")  # ignore thread id
-
             # protocol parsing taken from
             # https://nmap.org/nsedoc/scripts/mysql-info.html
             if protocol == 10:
