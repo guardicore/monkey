@@ -58,7 +58,7 @@ PRINCIPLES = {
     PRINCIPLE_DATA_TRANSIT: "Secure data at transit by encrypting it.",
     PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES: "Configure network policies to be as restrictive as possible.",
     PRINCIPLE_USERS_MAC_POLICIES: "Users' permissions to the network and to resources should be MAC (Mandetory "
-                                       "Access Control) only.",
+                                  "Access Control) only.",
 }
 
 POSSIBLE_STATUSES_KEY = "possible_statuses"

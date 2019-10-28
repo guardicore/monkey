@@ -1,6 +1,5 @@
 from common.cmd.cmd_result import CmdResult
 
-
 __author__ = 'itay.mizeretz'
 
 

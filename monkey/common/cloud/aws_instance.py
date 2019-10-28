@@ -4,13 +4,11 @@ import urllib.request
 import urllib.error
 import logging
 
-
 __author__ = 'itay.mizeretz'
 
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
 AWS_LATEST_METADATA_URI_PREFIX = 'http://{0}/latest/'.format(AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS)
 ACCOUNT_ID_KEY = "accountId"
-
 
 logger = logging.getLogger(__name__)
 

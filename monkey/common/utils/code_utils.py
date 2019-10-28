@@ -1,5 +1,3 @@
-
-
 # abstract, static method decorator
 # noinspection PyPep8Naming
 class abstractstatic(staticmethod):
