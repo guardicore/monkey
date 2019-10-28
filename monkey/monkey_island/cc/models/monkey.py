@@ -97,6 +97,25 @@ class Monkey(Document):
             os = "windows"
         return os
 
+    @ring.lru()
+    @staticmethod
+    def get_label_by_id(object_id):
+        current_monkey = Monkey.get_single_monkey_by_id(object_id)
+        label = Monkey.get_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
+        if len(set(current_monkey.ip_addresses).intersection(local_ip_addresses())) > 0:
+            label = "MonkeyIsland - " + label
+        return label
+
+    @ring.lru()
+    @staticmethod
+    def get_hostname_by_id(object_id):
+        """
+        :param object_id: the object ID of a Monkey in the database.
+        :return: The hostname of that machine.
+        :note: Use this and not monkey.hostname for performance - this is lru-cached.
+        """
+        return Monkey.get_single_monkey_by_id(object_id).hostname
+
     def set_hostname(self, hostname):
         """
         Sets a new hostname for a machine and clears the cache for getting it.
@@ -104,8 +123,8 @@ class Monkey(Document):
         """
         self.hostname = hostname
         self.save()
-        get_monkey_hostname_by_id.delete(self.id)
-        get_monkey_label_by_id.delete(self.id)
+        Monkey.get_hostname_by_id.delete(self.id)
+        Monkey.get_label_by_id.delete(self.id)
 
     def get_network_info(self):
         """
@@ -114,6 +133,17 @@ class Monkey(Document):
         """
         return {'ips': self.ip_addresses, 'hostname': self.hostname}
 
+    @ring.lru(
+        expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.
+    )
+    @staticmethod
+    def is_monkey(object_id):
+        try:
+            _ = Monkey.get_single_monkey_by_id(object_id)
+            return True
+        except:
+            return False
+
     @staticmethod
     def get_tunneled_monkeys():
         return Monkey.objects(tunnel__exists=True)
@@ -121,38 +151,6 @@ class Monkey(Document):
     def renew_ttl(self, duration=DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS):
         self.ttl_ref = create_monkey_ttl_document(duration)
         self.save()
-
-
-# TODO Can't make following methods static under Monkey class due to ring bug. When ring will support static methods, we
-# should move to static methods in the Monkey class.
-@ring.lru(
-    expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.
-)
-def is_monkey(object_id):
-    try:
-        _ = Monkey.get_single_monkey_by_id(object_id)
-        return True
-    except:
-        return False
-
-
-@ring.lru()
-def get_monkey_label_by_id(object_id):
-    current_monkey = Monkey.get_single_monkey_by_id(object_id)
-    label = get_monkey_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
-    if len(set(current_monkey.ip_addresses).intersection(local_ip_addresses())) > 0:
-        label = "MonkeyIsland - " + label
-    return label
-
-
-@ring.lru()
-def get_monkey_hostname_by_id(object_id):
-    """
-    :param object_id: the object ID of a Monkey in the database.
-    :return: The hostname of that machine.
-    :note: Use this and not monkey.hostname for performance - this is lru-cached.
-    """
-    return Monkey.get_single_monkey_by_id(object_id).hostname
 
 
 class MonkeyNotFoundError(Exception):

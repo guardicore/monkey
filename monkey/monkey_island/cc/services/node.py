@@ -4,7 +4,7 @@ from bson import ObjectId
 
 import monkey_island.cc.services.log
 from monkey_island.cc.database import mongo
-from monkey_island.cc.models.monkey import Monkey, get_monkey_hostname_by_id, get_monkey_label_by_id
+from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.edge import EdgeService
 from monkey_island.cc.utils import local_ip_addresses
 import socket
@@ -50,8 +50,8 @@ class NodeService:
 
         for edge in edges:
             from_node_id = edge["from"]
-            from_node_label = get_monkey_label_by_id(from_node_id)
-            from_node_hostname = get_monkey_hostname_by_id(from_node_id)
+            from_node_label = Monkey.get_label_by_id(from_node_id)
+            from_node_hostname = Monkey.get_hostname_by_id(from_node_id)
 
             accessible_from_nodes.append(from_node_label)
             accessible_from_nodes_hostnames.append(from_node_hostname)
@@ -140,7 +140,7 @@ class NodeService:
     @staticmethod
     def monkey_to_net_node(monkey, for_report=False):
         monkey_id = monkey["_id"]
-        label = get_monkey_hostname_by_id(monkey_id) if for_report else get_monkey_label_by_id(monkey_id)
+        label = Monkey.get_hostname_by_id(monkey_id) if for_report else Monkey.get_label_by_id(monkey_id)
         monkey_group = NodeService.get_monkey_group(monkey)
         return \
             {

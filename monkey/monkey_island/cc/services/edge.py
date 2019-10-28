@@ -2,7 +2,7 @@ from bson import ObjectId
 
 from monkey_island.cc.database import mongo
 import monkey_island.cc.services.node
-from monkey_island.cc.models.monkey import get_monkey_label_by_id, is_monkey
+from monkey_island.cc.models import Monkey
 
 __author__ = "itay.mizeretz"
 
@@ -145,13 +145,13 @@ class EdgeService:
         from_id = edge["from"]
         to_id = edge["to"]
 
-        from_label = get_monkey_label_by_id(from_id)
+        from_label = Monkey.get_label_by_id(from_id)
 
         if to_id == ObjectId("000000000000000000000000"):
             to_label = 'MonkeyIsland'
         else:
-            if is_monkey(to_id):
-                to_label = get_monkey_label_by_id(to_id)
+            if Monkey.is_monkey(to_id):
+                to_label = Monkey.get_label_by_id(to_id)
             else:
                 to_label = NodeService.get_node_label(NodeService.get_node_by_id(to_id))
 
