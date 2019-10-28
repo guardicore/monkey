@@ -1,6 +1,9 @@
 Infection Monkey
 ====================
 [![Build Status](https://travis-ci.com/guardicore/monkey.svg?branch=develop)](https://travis-ci.com/guardicore/monkey)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/guardicore/monkey)](https://github.com/guardicore/monkey/releases)
+![GitHub stars](https://img.shields.io/github/stars/guardicore/monkey)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/guardicore/monkey)
 
 ## Data center Security Testing Tool
 ------------------------
