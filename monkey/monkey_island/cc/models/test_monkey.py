@@ -131,14 +131,15 @@ class TestMonkey(IslandTestCase):
                               ip_addresses=[ip_example])
         linux_monkey.save()
 
+        logger.debug(id(Monkey.get_label_by_id))
+
         cache_info_before_query = Monkey.get_label_by_id.storage.backend.cache_info()
         self.assertEqual(cache_info_before_query.hits, 0)
         self.assertEqual(cache_info_before_query.misses, 0)
 
         # not cached
         label = Monkey.get_label_by_id(linux_monkey.id)
-        label = get_monkey_label_by_id(linux_monkey.id)
-        cache_info_after_query_1 = get_monkey_label_by_id.storage.backend.cache_info()
+        cache_info_after_query_1 = Monkey.get_label_by_id.storage.backend.cache_info()
         self.assertEqual(cache_info_after_query_1.hits, 0)
         self.assertEqual(cache_info_after_query_1.misses, 1)
         logger.info("1) ID: {} label: {}".format(linux_monkey.id, label))
@@ -148,23 +149,23 @@ class TestMonkey(IslandTestCase):
         self.assertIn(ip_example, label)
 
         # should be cached
-        _ = Monkey.get_label_by_id(linux_monkey.id)
-        cache_info_after_query = Monkey.get_label_by_id.storage.backend.cache_info()
-        self.assertEqual(cache_info_after_query.hits, 1)
-        label = get_monkey_label_by_id(linux_monkey.id)
+        label = Monkey.get_label_by_id(linux_monkey.id)
         logger.info("2) ID: {} label: {}".format(linux_monkey.id, label))
-        cache_info_after_query_2 = get_monkey_label_by_id.storage.backend.cache_info()
+        cache_info_after_query_2 = Monkey.get_label_by_id.storage.backend.cache_info()
         self.assertEqual(cache_info_after_query_2.hits, 1)
         self.assertEqual(cache_info_after_query_2.misses, 1)
 
+        # set hostname deletes the id from the cache.
         linux_monkey.set_hostname("Another hostname")
 
         # should be a miss
         label = Monkey.get_label_by_id(linux_monkey.id)
-        cache_info_after_second_query = Monkey.get_label_by_id.storage.backend.cache_info()
+        logger.info("3) ID: {} label: {}".format(linux_monkey.id, label))
+        cache_info_after_query_3 = Monkey.get_label_by_id.storage.backend.cache_info()
+        logger.debug("Cache info: {}".format(str(cache_info_after_query_3)))
         # still 1 hit only
-        self.assertEqual(cache_info_after_second_query.hits, 1)
-        self.assertEqual(cache_info_after_second_query.misses, 2)
+        self.assertEqual(cache_info_after_query_3.hits, 1)
+        self.assertEqual(cache_info_after_query_3.misses, 2)
 
     def test_is_monkey(self):
         self.fail_if_not_testing_env()
