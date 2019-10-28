@@ -1,6 +1,5 @@
 import http.client
 
-
 import flask_restful
 from flask import jsonify
 
@@ -28,10 +27,10 @@ class Report(flask_restful.Resource):
         elif report_type == ZERO_TRUST_REPORT_TYPE:
             if report_data == REPORT_DATA_PILLARS:
                 return jsonify({
-                        "statusesToPillars": ZeroTrustService.get_statuses_to_pillars(),
-                        "pillarsToStatuses": ZeroTrustService.get_pillars_to_statuses(),
-                        "grades": ZeroTrustService.get_pillars_grades()
-                    }
+                    "statusesToPillars": ZeroTrustService.get_statuses_to_pillars(),
+                    "pillarsToStatuses": ZeroTrustService.get_pillars_to_statuses(),
+                    "grades": ZeroTrustService.get_pillars_grades()
+                }
                 )
             elif report_data == REPORT_DATA_PRINCIPLES_STATUS:
                 return jsonify(ZeroTrustService.get_principles_status())

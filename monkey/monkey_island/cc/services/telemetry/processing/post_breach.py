@@ -24,4 +24,3 @@ def process_post_breach_telemetry(telemetry_json):
     post_breach_action_name = telemetry_json["data"]["name"]
     if post_breach_action_name in POST_BREACH_TELEMETRY_PROCESSING_FUNCS:
         POST_BREACH_TELEMETRY_PROCESSING_FUNCS[post_breach_action_name](telemetry_json)
-

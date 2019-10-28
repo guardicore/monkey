@@ -37,12 +37,12 @@ class TestJsonRepresentations(TestCase):
 
         # dicts and lists
         self.assertEqual({
-                "a": [
-                    {"ba": obj_id_str,
-                     "bb": obj_id_str}
-                ],
-                "b": {"id": obj_id_str}
-            },
+            "a": [
+                {"ba": obj_id_str,
+                 "bb": obj_id_str}
+            ],
+            "b": {"id": obj_id_str}
+        },
             normalize_obj({
                 "a": [
                     {"ba": bson.objectid.ObjectId(obj_id_str),

@@ -15,7 +15,6 @@ __author__ = "itay.mizeretz"
 
 logger = logging.getLogger(__name__)
 
-
 # This should be used for config values of array type (array of strings only)
 ENCRYPTED_CONFIG_ARRAYS = \
     [
@@ -266,11 +265,11 @@ class ConfigService:
                     # Check if array of shh key pairs and then decrypt
                     if isinstance(config_arr[i], dict) and 'public_key' in config_arr[i]:
                         config_arr[i] = ConfigService.decrypt_ssh_key_pair(config_arr[i]) if is_decrypt else \
-                                        ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
+                            ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
                     else:
                         config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
             else:
-                parent_config_arr[config_arr_as_array[-1]] =\
+                parent_config_arr[config_arr_as_array[-1]] = \
                     encryptor.dec(config_arr) if is_decrypt else encryptor.enc(config_arr)
 
     @staticmethod

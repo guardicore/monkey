@@ -135,19 +135,21 @@ class ReportPageComponent extends AuthComponent {
     } else {
       content =
         <div>
-            {this.generateReportOverviewSection()}
-            {this.generateReportFindingsSection()}
-            {this.generateReportRecommendationsSection()}
-            {this.generateReportGlanceSection()}
-            {this.generateAttackSection()}
-            {this.generateReportFooter()}
+          {this.generateReportOverviewSection()}
+          {this.generateReportFindingsSection()}
+          {this.generateReportRecommendationsSection()}
+          {this.generateReportGlanceSection()}
+          {this.generateAttackSection()}
+          {this.generateReportFooter()}
         </div>;
     }
 
     return (
       <Fragment>
         <div style={{marginBottom: '20px'}}>
-          <PrintReportButton onClick={() => {print();}} />
+          <PrintReportButton onClick={() => {
+            print();
+          }}/>
         </div>
         <div className="report-page">
           <ReportHeader report_type={ReportTypes.security}/>
@@ -155,7 +157,9 @@ class ReportPageComponent extends AuthComponent {
           {content}
         </div>
         <div style={{marginTop: '20px'}}>
-          <PrintReportButton onClick={() => {print();}} />
+          <PrintReportButton onClick={() => {
+            print();
+          }}/>
         </div>
       </Fragment>
     );
@@ -269,14 +273,14 @@ class ReportPageComponent extends AuthComponent {
               return x === true;
             }).length > 0 ?
               <div>
-                During this simulated attack the Monkey uncovered  <span
+                During this simulated attack the Monkey uncovered <span
                 className="label label-warning">
                     {this.state.report.overview.issues.filter(function (x) {
                       return x === true;
                     }).length} threats</span>:
                 <ul>
                   {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] ?
-                    <li>Stolen SSH keys are used to exploit other machines.</li> : null }
+                    <li>Stolen SSH keys are used to exploit other machines.</li> : null}
                   {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
                     <li>Stolen credentials are used to exploit other machines.</li> : null}
                   {this.state.report.overview.issues[this.Issue.ELASTIC] ?
@@ -309,15 +313,16 @@ class ReportPageComponent extends AuthComponent {
                   {this.state.report.overview.issues[this.Issue.STRUTS2] ?
                     <li>Struts2 servers are vulnerable to remote code execution. (<a
                       href="https://cwiki.apache.org/confluence/display/WW/S2-045">
-                      CVE-2017-5638</a>)</li> : null }
+                      CVE-2017-5638</a>)</li> : null}
                   {this.state.report.overview.issues[this.Issue.WEBLOGIC] ?
-                    <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li> : null }
+                    <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li> : null}
                   {this.state.report.overview.issues[this.Issue.HADOOP] ?
-                    <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null }
+                    <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null}
                   {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] ?
-                    <li>Mimikatz found login credentials of a user who has admin access to a server defined as critical.</li>: null }
+                    <li>Mimikatz found login credentials of a user who has admin access to a server defined as
+                      critical.</li> : null}
                   {this.state.report.overview.issues[this.Issue.MSSQL] ?
-                  <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li> : null }
+                    <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li> : null}
                 </ul>
               </div>
               :
@@ -344,7 +349,8 @@ class ReportPageComponent extends AuthComponent {
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
                     <li>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_LOCAL_ADMIN] ?
-                    <li>Shared local administrator account - Different machines have the same account as a local administrator.</li> : null}
+                    <li>Shared local administrator account - Different machines have the same account as a local
+                      administrator.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS] ?
                     <li>Multiple users have the same password</li> : null}
                 </ul>
@@ -355,7 +361,7 @@ class ReportPageComponent extends AuthComponent {
               </div>
           }
         </div>
-        { this.state.report.overview.cross_segment_issues.length > 0 ?
+        {this.state.report.overview.cross_segment_issues.length > 0 ?
           <div>
             <h3>
               Segmentation Issues
@@ -380,14 +386,14 @@ class ReportPageComponent extends AuthComponent {
         {/* Checks if there are any domain issues. If there are more then one: render the title. Otherwise,
          * don't render it (since the issues themselves will be empty. */}
         {Object.keys(this.state.report.recommendations.domain_issues).length !== 0 ?
-                     <h3>Domain related recommendations</h3> : null }
+          <h3>Domain related recommendations</h3> : null}
         <div>
           {this.generateIssues(this.state.report.recommendations.domain_issues)}
         </div>
         {/* Checks if there are any issues. If there are more then one: render the title. Otherwise,
          * don't render it (since the issues themselves will be empty. */}
         {Object.keys(this.state.report.recommendations.issues).length !== 0 ?
-          <h3>Machine related recommendations</h3> : null }
+          <h3>Machine related recommendations</h3> : null}
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
         </div>
@@ -444,13 +450,13 @@ class ReportPageComponent extends AuthComponent {
           <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
         <div style={{position: 'relative', height: '80vh'}}>
-        {this.generateReportPthMap()}
+          {this.generateReportPthMap()}
         </div>
         <div style={{marginBottom: '20px'}}>
           <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>
         <div>
-          <StrongUsers data = {this.state.report.glance.strong_users} />
+          <StrongUsers data={this.state.report.glance.strong_users}/>
         </div>
       </div>
     );
@@ -463,33 +469,35 @@ class ReportPageComponent extends AuthComponent {
           Credentials Map
         </h3>
         <p>
-          This map visualizes possible attack paths through the network using credential compromise. Paths represent lateral movement opportunities by attackers.
+          This map visualizes possible attack paths through the network using credential compromise. Paths represent lateral
+          movement opportunities by attackers.
         </p>
         <div className="map-legend">
           <b>Legend: </b>
-          <span>Access credentials <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span> <b style={{color: '#aeaeae'}}> | </b>
+          <span>Access credentials <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span> <b
+          style={{color: '#aeaeae'}}> | </b>
         </div>
         <div>
-          <PassTheHashMapPageComponent graph={this.state.report.glance.pth_map} />
+          <PassTheHashMapPageComponent graph={this.state.report.glance.pth_map}/>
         </div>
-        <br />
+        <br/>
       </div>
     );
   }
 
   generateAttackSection() {
     return (<div id="attack">
-              <h3>
-                ATT&CK report
-              </h3>
-              <p>
-                This report shows information about ATT&CK techniques used by Infection Monkey.
-              </p>
-              <div>
-                <AttackReport reportData={this.state.report}/>
-              </div>
-              <br />
-            </div>)
+      <h3>
+        ATT&CK report
+      </h3>
+      <p>
+        This report shows information about ATT&CK techniques used by Infection Monkey.
+      </p>
+      <div>
+        <AttackReport reportData={this.state.report}/>
+      </div>
+      <br/>
+    </div>)
   }
 
   generateReportFooter() {
@@ -510,22 +518,22 @@ class ReportPageComponent extends AuthComponent {
   generateCrossSegmentIssue(crossSegmentIssue) {
     return <li>
       {'Communication possible from ' + crossSegmentIssue['source_subnet'] + ' to ' + crossSegmentIssue['target_subnet']}
-        <CollapsibleWellComponent>
-          <ul>
-            {crossSegmentIssue['issues'].map(x =>
-              x['is_self'] ?
-                <li>
-                  {'Machine ' + x['hostname'] + ' has both ips: ' + x['source'] + ' and ' + x['target']}
-                </li>
-                :
-                <li>
-                  {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
-                  + ' using the services: ' + Object.keys(x['services']).join(', ')}
-                </li>
-            )}
-          </ul>
-        </CollapsibleWellComponent>
-      </li>;
+      <CollapsibleWellComponent>
+        <ul>
+          {crossSegmentIssue['issues'].map(x =>
+            x['is_self'] ?
+              <li>
+                {'Machine ' + x['hostname'] + ' has both ips: ' + x['source'] + ' and ' + x['target']}
+              </li>
+              :
+              <li>
+                {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
+                + ' using the services: ' + Object.keys(x['services']).join(', ')}
+              </li>
+          )}
+        </ul>
+      </CollapsibleWellComponent>
+    </li>;
   }
 
   generateShellshockPathListBadges(paths) {
@@ -619,18 +627,18 @@ class ReportPageComponent extends AuthComponent {
 
   generateSshKeysIssue(issue) {
     return (
-        <li>
-          Protect <span className="label label-success">{issue.ssh_key}</span> private key with a pass phrase.
-          <CollapsibleWellComponent>
-            The machine <span className="label label-primary">{issue.machine}</span> (<span
-            className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-            className="label label-danger">SSH</span> attack.
-            <br/>
-            The Monkey authenticated over the SSH protocol with private key <span
-            className="label label-success">{issue.ssh_key}</span>.
-          </CollapsibleWellComponent>
-        </li>
-      );
+      <li>
+        Protect <span className="label label-success">{issue.ssh_key}</span> private key with a pass phrase.
+        <CollapsibleWellComponent>
+          The machine <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="label label-danger">SSH</span> attack.
+          <br/>
+          The Monkey authenticated over the SSH protocol with private key <span
+          className="label label-success">{issue.ssh_key}</span>.
+        </CollapsibleWellComponent>
+      </li>
+    );
   }
 
 
@@ -660,17 +668,20 @@ class ReportPageComponent extends AuthComponent {
         Update your VSFTPD server to the latest version vsftpd-3.0.3.
         <CollapsibleWellComponent>
           The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) has a backdoor running at port  <span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) has a backdoor running at port <span
           className="label label-danger">6200</span>.
           <br/>
           The attack was made possible because the VSFTPD server was not patched against CVE-2011-2523.
-          <br/><br/>In July 2011, it was discovered that vsftpd version 2.3.4 downloadable from the master site had been compromised.
-          Users logging into a compromised vsftpd-2.3.4 server may issue a ":)" smileyface as the username and gain a command shell on port 6200.
+          <br/><br/>In July 2011, it was discovered that vsftpd version 2.3.4 downloadable from the master site had been
+          compromised.
+          Users logging into a compromised vsftpd-2.3.4 server may issue a ":)" smileyface as the username and gain a command
+          shell on port 6200.
           <br/><br/>
-          The Monkey executed commands by first logging in with ":)" in the username and then sending commands to the backdoor at port 6200.
+          The Monkey executed commands by first logging in with ":)" in the username and then sending commands to the backdoor
+          at port 6200.
           <br/><br/>Read more about the security issue and remediation <a
-                      href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2523"
-                    >here</a>.
+          href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2523"
+        >here</a>.
         </CollapsibleWellComponent>
       </li>
     );
@@ -716,8 +727,8 @@ class ReportPageComponent extends AuthComponent {
           Credentials could be stolen from <span
           className="label label-primary">{issue.machine}</span> for the following users <span
           className="label label-primary">{issue.users}</span>. Read more about the security issue and remediation <a
-                      href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
-                    >here</a>.
+          href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
+        >here</a>.
         </CollapsibleWellComponent>
       </li>
     );
@@ -756,11 +767,11 @@ class ReportPageComponent extends AuthComponent {
 
   generateSharedCredsDomainIssue(issue) {
     return (
-    <li>
+      <li>
         Some domain users are sharing passwords, this should be fixed by changing passwords.
         <CollapsibleWellComponent>
           These users are sharing access password:
-           {this.generateInfoBadges(issue.shared_with)}.
+          {this.generateInfoBadges(issue.shared_with)}.
         </CollapsibleWellComponent>
       </li>
     );
@@ -768,11 +779,11 @@ class ReportPageComponent extends AuthComponent {
 
   generateSharedCredsIssue(issue) {
     return (
-    <li>
+      <li>
         Some users are sharing passwords, this should be fixed by changing passwords.
         <CollapsibleWellComponent>
           These users are sharing access password:
-           {this.generateInfoBadges(issue.shared_with)}.
+          {this.generateInfoBadges(issue.shared_with)}.
         </CollapsibleWellComponent>
       </li>
     );
@@ -780,8 +791,9 @@ class ReportPageComponent extends AuthComponent {
 
   generateSharedLocalAdminsIssue(issue) {
     return (
-    <li>
-        Make sure the right administrator accounts are managing the right machines, and that there isn’t an unintentional local admin sharing.
+      <li>
+        Make sure the right administrator accounts are managing the right machines, and that there isn’t an unintentional local
+        admin sharing.
         <CollapsibleWellComponent>
           Here is a list of machines which the account <span
           className="label label-primary">{issue.username}</span> is defined as an administrator:
@@ -793,13 +805,13 @@ class ReportPageComponent extends AuthComponent {
 
   generateStrongUsersOnCritIssue(issue) {
     return (
-    <li>
+      <li>
         This critical machine is open to attacks via strong users with access to it.
         <CollapsibleWellComponent>
           The services: {this.generateInfoBadges(issue.services)} have been found on the machine
           thus classifying it as a critical machine.
           These users has access to it:
-           {this.generateInfoBadges(issue.threatening_users)}.
+          {this.generateInfoBadges(issue.threatening_users)}.
         </CollapsibleWellComponent>
       </li>
     );
@@ -829,8 +841,8 @@ class ReportPageComponent extends AuthComponent {
           <br/>
           The attack was made possible because the server is using an old version of Jakarta based file upload
           Multipart parser. For possible work-arounds and more info read <a
-                      href="https://cwiki.apache.org/confluence/display/WW/S2-045"
-                    >here</a>.
+          href="https://cwiki.apache.org/confluence/display/WW/S2-045"
+        >here</a>.
         </CollapsibleWellComponent>
       </li>
     );
@@ -856,7 +868,8 @@ class ReportPageComponent extends AuthComponent {
   generateHadoopIssue(issue) {
     return (
       <li>
-        Run Hadoop in secure mode (<a href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
+        Run Hadoop in secure mode (<a
+        href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
         add Kerberos authentication</a>).
         <CollapsibleWellComponent>
           The Hadoop server at <span className="label label-primary">{issue.machine}</span> (<span
@@ -869,8 +882,8 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-generateMSSQLIssue(issue) {
-    return(
+  generateMSSQLIssue(issue) {
+    return (
       <li>
         Disable the xp_cmdshell option.
         <CollapsibleWellComponent>
@@ -880,8 +893,8 @@ generateMSSQLIssue(issue) {
           <br/>
           The attack was made possible because the target machine used an outdated MSSQL server configuration allowing
           the usage of the xp_cmdshell command. To learn more about how to disable this feature, read <a
-           href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017">
-            Microsoft's documentation. </a>
+          href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017">
+          Microsoft's documentation. </a>
         </CollapsibleWellComponent>
       </li>
     );

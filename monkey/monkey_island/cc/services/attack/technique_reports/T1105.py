@@ -5,7 +5,6 @@ __author__ = "VakarisZ"
 
 
 class T1105(AttackTechnique):
-
     tech_id = "T1105"
     unscanned_msg = "Monkey didn't try to copy files to any systems."
     scanned_msg = "Monkey tried to copy files, but failed."

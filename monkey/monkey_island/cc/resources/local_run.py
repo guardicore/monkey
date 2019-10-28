@@ -16,6 +16,7 @@ from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 __author__ = 'Barak'
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 

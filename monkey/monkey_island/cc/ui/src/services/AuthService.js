@@ -1,4 +1,4 @@
-import { SHA3 } from 'sha3';
+import {SHA3} from 'sha3';
 import decode from 'jwt-decode';
 
 export default class AuthService {
@@ -97,8 +97,7 @@ export default class AuthService {
   _isTokenExpired(token) {
     try {
       return decode(token)['exp'] < Date.now() / 1000;
-    }
-    catch (err) {
+    } catch (err) {
       return false;
     }
   }

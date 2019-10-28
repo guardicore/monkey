@@ -114,7 +114,7 @@ class MonkeyDrops(object):
                 except OSError:
                     LOG.warning("Cannot set reference date to destination file")
 
-        monkey_options =\
+        monkey_options = \
             build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():

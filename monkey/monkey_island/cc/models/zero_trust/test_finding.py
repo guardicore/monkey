@@ -14,6 +14,7 @@ class TestFinding(IslandTestCase):
     Also, the working directory needs to be the working directory from which you usually run the island so the
     server.json file is found and loaded.
     """
+
     def test_save_finding_validation(self):
         self.fail_if_not_testing_env()
         self.clean_finding_db()

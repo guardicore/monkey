@@ -39,7 +39,6 @@ from monkey_island.cc.resources.test.log_test import LogTest
 
 __author__ = 'Barak'
 
-
 HOME_FILE = 'index.html'
 
 

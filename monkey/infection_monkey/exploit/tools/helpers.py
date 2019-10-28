@@ -74,7 +74,7 @@ def get_target_monkey(host):
         if host.os.get('type') == platform.system().lower():
             # if exe not found, and we have the same arch or arch is unknown and we are 32bit, use our exe
             if (not host.os.get('machine') and sys.maxsize < 2 ** 32) or \
-                            host.os.get('machine', '').lower() == platform.machine().lower():
+                    host.os.get('machine', '').lower() == platform.machine().lower():
                 monkey_path = sys.executable
 
     return monkey_path

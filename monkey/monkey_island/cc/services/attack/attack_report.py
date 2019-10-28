@@ -10,7 +10,6 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
 
 __author__ = "VakarisZ"
 
-
 LOG = logging.getLogger(__name__)
 
 TECHNIQUES = {'T1210': T1210.T1210,
@@ -52,7 +51,7 @@ class AttackReportService:
         Generates new report based on telemetries, replaces old report in db with new one.
         :return: Report object
         """
-        report =\
+        report = \
             {
                 'techniques': {},
                 'meta': {'latest_monkey_modifytime': Monkey.get_latest_modifytime()},

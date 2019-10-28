@@ -188,4 +188,3 @@ class TestMonkey(IslandTestCase):
 
         cache_info_after_query = Monkey.is_monkey.storage.backend.cache_info()
         self.assertEqual(cache_info_after_query.hits, 2)
-

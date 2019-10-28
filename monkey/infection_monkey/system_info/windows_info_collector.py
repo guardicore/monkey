@@ -1,6 +1,7 @@
 import os
 import logging
 import sys
+
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 
 import infection_monkey.config

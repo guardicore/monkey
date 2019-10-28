@@ -64,6 +64,3 @@ class TestPTHReportServiceGenerateMapNodes(IslandTestCase):
         self.assertEqual(map_nodes[0]["group"], "critical")
         self.assertEqual(len(map_nodes[0]["services"]), 2)
         self.assertEqual(map_nodes[0]["hostname"], hostname)
-
-
-

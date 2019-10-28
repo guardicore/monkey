@@ -6,7 +6,6 @@ __author__ = "VakarisZ"
 
 
 class T1090(AttackTechnique):
-
     tech_id = "T1090"
     unscanned_msg = "Monkey didn't use connection proxy."
     scanned_msg = ""
@@ -20,5 +19,3 @@ class T1090(AttackTechnique):
         data = T1090.get_base_data_by_status(status)
         data.update({'proxies': monkeys})
         return data
-
-

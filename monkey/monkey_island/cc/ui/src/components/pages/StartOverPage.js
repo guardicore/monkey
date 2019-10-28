@@ -29,7 +29,9 @@ class StartOverPageComponent extends AuthComponent {
     return (
       <Modal show={this.state.showCleanDialog} onHide={() => this.setState({showCleanDialog: false})}>
         <Modal.Body>
-          <h2><div className="text-center">Reset environment</div></h2>
+          <h2>
+            <div className="text-center">Reset environment</div>
+          </h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
             Are you sure you want to reset the environment?
           </p>
@@ -40,7 +42,7 @@ class StartOverPageComponent extends AuthComponent {
                 Some monkeys are still running. It's advised to kill all monkeys before resetting.
               </div>
               :
-              <div />
+              <div/>
           }
           <div className="text-center">
             <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
@@ -75,7 +77,8 @@ class StartOverPageComponent extends AuthComponent {
             <button className="btn btn-danger btn-lg center-block"
                     onClick={() => {
                       this.setState({showCleanDialog: true});
-                      this.updateMonkeysRunning();}
+                      this.updateMonkeysRunning();
+                    }
                     }>
               Reset the Environment
             </button>
@@ -86,7 +89,7 @@ class StartOverPageComponent extends AuthComponent {
             You can continue and <Link to="/run-monkey">Run More Monkeys</Link> as you wish,
             and see the results on the <Link to="/infection/map">Infection Map</Link> without deleting anything.
           </div>
-          { this.state.cleaned ?
+          {this.state.cleaned ?
             <div className="alert alert-success">
               <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
               Environment was reset successfully
@@ -106,8 +109,8 @@ class StartOverPageComponent extends AuthComponent {
       .then(res => {
         if (res['status'] === 'OK') {
           this.setState({
-              cleaned: true
-            });
+            cleaned: true
+          });
         }
       });
   }

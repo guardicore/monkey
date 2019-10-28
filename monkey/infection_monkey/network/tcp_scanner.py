@@ -11,7 +11,6 @@ BANNER_READ = 1024
 
 
 class TcpScanner(HostScanner, HostFinger):
-
     _SCANNED_SERVICE = 'unknown(TCP)'
 
     def __init__(self):

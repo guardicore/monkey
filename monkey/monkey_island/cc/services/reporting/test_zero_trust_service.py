@@ -306,7 +306,7 @@ class TestZeroTrustService(IslandTestCase):
 
 
 def compare_lists_no_order(s, t):
-    t = list(t)   # make a mutable copy
+    t = list(t)  # make a mutable copy
     try:
         for elem in s:
             t.remove(elem)

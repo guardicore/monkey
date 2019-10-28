@@ -10,7 +10,6 @@ from ring import lru
 
 __author__ = 'Barak'
 
-
 # Local ips function
 if sys.platform == "win32":
     def local_ips():
@@ -18,6 +17,7 @@ if sys.platform == "win32":
         return socket.gethostbyname_ex(local_hostname)[2]
 else:
     import fcntl
+
 
     def local_ips():
         result = []

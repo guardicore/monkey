@@ -9,7 +9,7 @@ from monkey_island.cc.models.zero_trust.segmentation_finding import Segmentation
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 
 SEGMENTATION_DONE_EVENT_TEXT = "Monkey on {hostname} is done attempting cross-segment communications " \
-                       "from `{src_seg}` segments to `{dst_seg}` segments."
+                               "from `{src_seg}` segments to `{dst_seg}` segments."
 
 SEGMENTATION_VIOLATION_EVENT_TEXT = \
     "Segmentation violation! Monkey on '{hostname}', with the {source_ip} IP address (in segment {source_seg}) " \
@@ -101,8 +101,8 @@ def get_segmentation_done_event(current_monkey, subnet_pair):
     return Event.create_event(
         title="Segmentation test done",
         message=SEGMENTATION_DONE_EVENT_TEXT.format(
-                    hostname=current_monkey.hostname,
-                    src_seg=subnet_pair[0],
-                    dst_seg=subnet_pair[1]),
+            hostname=current_monkey.hostname,
+            src_seg=subnet_pair[0],
+            dst_seg=subnet_pair[1]),
         event_type=EVENT_TYPE_MONKEY_NETWORK
     )

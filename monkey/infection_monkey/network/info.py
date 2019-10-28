@@ -13,7 +13,6 @@ from requests import ConnectionError
 from common.network.network_range import CidrRange
 from infection_monkey.utils.environment import is_windows_os
 
-
 # Timeout for monkey connections
 TIMEOUT = 15
 LOOPBACK_NAME = b"lo"

@@ -7,7 +7,6 @@ from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 
-
 LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
@@ -19,6 +18,7 @@ class PBA(object):
     """
     Post breach action object. Can be extended to support more than command execution on target machine.
     """
+
     def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
         """
         :param name: Name of post breach action.
