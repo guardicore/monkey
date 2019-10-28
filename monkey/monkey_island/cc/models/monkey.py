@@ -123,7 +123,8 @@ class Monkey(Document):
         self.save()
 
 
-# Can't make following methods static under Monkey class due to ring bug
+# TODO Can't make following methods static under Monkey class due to ring bug. When ring will support static methods, we
+# should move to static methods in the Monkey class.
 @ring.lru(
     expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.
 )
