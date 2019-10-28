@@ -1,6 +1,6 @@
 from mongoengine import ValidationError
 
-from common.data.zero_trust_consts import *
+from common.data.zero_trust_consts import STATUS_FAILED, TEST_SEGMENTATION, EVENT_TYPE_MONKEY_NETWORK
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase

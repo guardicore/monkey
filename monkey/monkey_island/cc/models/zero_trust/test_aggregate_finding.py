@@ -1,4 +1,4 @@
-from common.data.zero_trust_consts import *
+from common.data.zero_trust_consts import TEST_MALICIOUS_ACTIVITY_TIMELINE, STATUS_VERIFY, EVENT_TYPE_MONKEY_NETWORK
 from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding

@@ -1,7 +1,8 @@
 import json
 
 from common.data.network_consts import ES_SERVICE
-from common.data.zero_trust_consts import *
+from common.data.zero_trust_consts import STATUS_PASSED, EVENT_TYPE_MONKEY_NETWORK, STATUS_FAILED, TEST_DATA_ENDPOINT_HTTP, \
+    TEST_DATA_ENDPOINT_ELASTIC
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding, add_malicious_activity_to_timeline
 from monkey_island.cc.models.zero_trust.event import Event

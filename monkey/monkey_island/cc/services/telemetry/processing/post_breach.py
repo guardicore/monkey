@@ -1,5 +1,5 @@
+from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
 from monkey_island.cc.database import mongo
-from common.data.post_breach_consts import *
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.telemetry.zero_trust_tests.communicate_as_new_user import test_new_user_communication
 

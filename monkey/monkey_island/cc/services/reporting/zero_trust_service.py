@@ -1,5 +1,8 @@
 import json
-from common.data.zero_trust_consts import *
+
+from common.data.zero_trust_consts import PILLARS, STATUS_FAILED, STATUS_VERIFY, STATUS_PASSED, STATUS_UNEXECUTED, \
+    PILLARS_TO_TESTS, TESTS_MAP, PILLARS_KEY, PRINCIPLES_TO_TESTS, PRINCIPLES_TO_PILLARS, PRINCIPLES, ORDERED_TEST_STATUSES, \
+    TEST_EXPLANATION_KEY, FINDING_EXPLANATION_BY_STATUS_KEY
 from monkey_island.cc.models.zero_trust.finding import Finding
 
 
