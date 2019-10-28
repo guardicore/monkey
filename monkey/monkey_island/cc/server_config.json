@@ -1,4 +1,4 @@
 {
-  "server_config": "testing",
-  "deployment": "develop"
+    "server_config": "standard",
+    "deployment": "develop"
 }
