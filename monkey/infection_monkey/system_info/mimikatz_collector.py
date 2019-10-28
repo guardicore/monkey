@@ -78,11 +78,11 @@ class MimikatzCollector(object):
 
             for i in range(entry_count):
                 entry = self._get()
-                username = entry.username.encode('utf-8').strip()
+                username = entry.username
 
-                password = entry.password.encode('utf-8').strip()
-                lm_hash = binascii.hexlify(bytearray(entry.lm_hash))
-                ntlm_hash = binascii.hexlify(bytearray(entry.ntlm_hash))
+                password = entry.password
+                lm_hash = binascii.hexlify(bytearray(entry.lm_hash)).decode()
+                ntlm_hash = binascii.hexlify(bytearray(entry.ntlm_hash)).decode()
 
                 if 0 == len(password):
                     has_password = False
