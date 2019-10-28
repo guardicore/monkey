@@ -35,7 +35,7 @@ class WindowsInfoCollector(InfoCollector):
         """
         LOG.debug("Running Windows collector")
         super(WindowsInfoCollector, self).get_info()
-        #self.get_wmi_info()
+        # TODO: Think about returning self.get_wmi_info()
         self.get_installed_packages()
         from infection_monkey.config import WormConfiguration
         if WormConfiguration.should_use_mimikatz:
