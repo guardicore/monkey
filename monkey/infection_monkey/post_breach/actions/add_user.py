@@ -13,4 +13,3 @@ class BackdoorUser(PBA):
             POST_BREACH_BACKDOOR_USER,
             linux_cmd=' '.join(linux_cmds),
             windows_cmd=windows_cmds)
-

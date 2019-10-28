@@ -1,6 +1,5 @@
 import logging
 
-from monkey_island.cc.services.config import ConfigService
 from common.cloud.aws_instance import AwsInstance
 from common.cloud.aws_service import AwsService
 from common.cmd.aws.aws_cmd_runner import AwsCmdRunner

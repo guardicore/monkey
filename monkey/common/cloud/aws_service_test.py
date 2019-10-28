@@ -3,7 +3,6 @@ from .aws_service import filter_instance_data_from_aws_response
 
 import json
 
-
 __author__ = 'shay.nehmad'
 
 
