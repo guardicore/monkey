@@ -8,6 +8,7 @@ def _run_netsh_cmd(command, args):
                                                                if value])), stdout=subprocess.PIPE)
     return cmd.stdout.read().strip().lower().endswith('ok.')
 
+
 class FirewallApp(object):
     def is_enabled(self, **kwargs):
         return False
@@ -83,9 +84,9 @@ class WinAdvFirewall(FirewallApp):
 
         for rule in list(self._rules.values()):
             if rule.get('program') == sys.executable and \
-                            'in' == rule.get('dir') and \
-                            'allow' == rule.get('action') and \
-                            4 == len(list(rule.keys())):
+                    'in' == rule.get('dir') and \
+                    'allow' == rule.get('action') and \
+                    4 == len(list(rule.keys())):
                 return True
         return False
 

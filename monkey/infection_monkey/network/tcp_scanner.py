@@ -25,7 +25,8 @@ class TcpScanner(HostScanner, HostFinger):
         Scans a target host to see if it's alive using the tcp_target_ports specified in the configuration.
         :param host: VictimHost structure
         :param only_one_port: Currently unused.
-        :return: T/F if there is at least one open port. In addition, the host object is updated to mark those services as alive.
+        :return: T/F if there is at least one open port.
+        In addition, the host object is updated to mark those services as alive.
         """
 
         # maybe hide under really bad detection systems

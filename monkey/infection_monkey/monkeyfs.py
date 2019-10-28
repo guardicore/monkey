@@ -34,7 +34,6 @@ class VirtualFile(BytesIO):
         return path in VirtualFile._vfs
 
 
-
 def getsize(path):
     if path.startswith(MONKEYFS_PREFIX):
         return VirtualFile.getsize(path)

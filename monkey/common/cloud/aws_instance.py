@@ -29,8 +29,8 @@ class AwsInstance(object):
             self.instance_id = urllib.request.urlopen(
                 AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2).read().decode()
             self.region = self._parse_region(
-                urllib.request.urlopen(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read().
-                    decode())
+                urllib.request.urlopen(
+                    AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read().decode())
         except (urllib.error.URLError, IOError) as e:
             logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e))
 

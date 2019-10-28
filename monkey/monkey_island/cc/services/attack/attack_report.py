@@ -75,7 +75,10 @@ class AttackReportService:
         Gets timestamp of latest attack telem
         :return: timestamp of latest attack telem
         """
-        return [x['timestamp'] for x in mongo.db.telemetry.find({'telem_category': 'attack'}).sort('timestamp', -1).limit(1)][0]
+        return [
+            x['timestamp'] for x in
+            mongo.db.telemetry.find({'telem_category': 'attack'}).sort('timestamp', -1).limit(1)
+        ][0]
 
     @staticmethod
     def get_latest_report():

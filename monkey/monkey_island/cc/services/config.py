@@ -122,11 +122,16 @@ class ConfigService:
 
     @staticmethod
     def ssh_add_keys(public_key, private_key, user, ip):
-        if not ConfigService.ssh_key_exists(ConfigService.get_config_value(['internal', 'exploits', 'exploit_ssh_keys'],
-                                                                           False, False), user, ip):
-            ConfigService.add_item_to_config_set('internal.exploits.exploit_ssh_keys',
-                                             {"public_key": public_key, "private_key": private_key,
-                                              "user": user, "ip": ip})
+        if not ConfigService.ssh_key_exists(
+                ConfigService.get_config_value(['internal', 'exploits', 'exploit_ssh_keys'], False, False), user, ip):
+            ConfigService.add_item_to_config_set(
+                'internal.exploits.exploit_ssh_keys',
+                {
+                    "public_key": public_key,
+                    "private_key": private_key,
+                    "user": user, "ip": ip
+                }
+            )
 
     @staticmethod
     def ssh_key_exists(keys, user, ip):

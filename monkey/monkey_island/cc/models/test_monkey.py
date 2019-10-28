@@ -84,7 +84,7 @@ class TestMonkey(IslandTestCase):
         self.clean_monkey_db()
 
         linux_monkey = Monkey(guid=str(uuid.uuid4()),
-                              description="Linux shay-Virtual-Machine 4.15.0-50-generic #54-Ubuntu SMP Mon May 6 18:46:08 UTC 2019 x86_64 x86_64")
+                              description="Linux shay-Virtual-Machine 4.15.0-50-generic #54-Ubuntu")
         windows_monkey = Monkey(guid=str(uuid.uuid4()),
                                 description="Windows bla bla bla")
         unknown_monkey = Monkey(guid=str(uuid.uuid4()),
