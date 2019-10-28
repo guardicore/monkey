@@ -208,9 +208,9 @@ class AWSExporter(Exporter):
             description="Protect {ssh_key} private key with a pass phrase.".format(ssh_key=issue['ssh_key']),
             recommendation="The machine {machine} ({ip_address}) is vulnerable to a SSH attack. The Monkey authenticated "
                            "over the SSH protocol with private key {ssh_key}.".format(
-                machine=issue['machine'],
-                ip_address=issue['ip_address'],
-                ssh_key=issue['ssh_key']),
+                                machine=issue['machine'],
+                                ip_address=issue['ip_address'],
+                                ssh_key=issue['ssh_key']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -224,8 +224,8 @@ class AWSExporter(Exporter):
             description="Update your Elastic Search server to version 1.4.3 and up.",
             recommendation="The machine {0}({1}) is vulnerable to an Elastic Groovy attack. The attack was made "
                            "possible because the Elastic Search server was not patched against CVE-2015-1427.".format(
-                issue['machine'],
-                issue['ip_address']),
+                            issue['machine'],
+                            issue['ip_address']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -269,7 +269,7 @@ class AWSExporter(Exporter):
             recommendation="The machine {0} ({1}) is vulnerable to a ShellShock attack. "
                            "The attack was made possible because the HTTP server running on TCP port {2} was vulnerable to a "
                            "shell injection attack on the paths: {3}.".format(
-                issue['machine'], issue['ip_address'], issue['port'], issue['paths']),
+                            issue['machine'], issue['ip_address'], issue['port'], issue['paths']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -284,9 +284,9 @@ class AWSExporter(Exporter):
                         "network.".format(issue['username']),
             recommendation="The machine {0} ({1}) is vulnerable to a SMB attack. The Monkey authenticated over the SMB "
                            "protocol with user {2} and its password.".format(
-                issue['machine'],
-                issue['ip_address'],
-                issue['username']),
+                            issue['machine'],
+                            issue['ip_address'],
+                            issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -301,9 +301,9 @@ class AWSExporter(Exporter):
                         "network.",
             recommendation="The machine machine ({ip_address}) is vulnerable to a WMI attack. The Monkey authenticated over "
                            "the WMI protocol with user {username} and its password.".format(
-                machine=issue['machine'],
-                ip_address=issue['ip_address'],
-                username=issue['username']),
+                            machine=issue['machine'],
+                            ip_address=issue['ip_address'],
+                            username=issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -318,9 +318,9 @@ class AWSExporter(Exporter):
                         "network.".format(issue['username']),
             recommendation="The machine machine ({ip_address}) is vulnerable to a WMI attack. The Monkey used a "
                            "pass-the-hash attack over WMI protocol with user {username}".format(
-                machine=issue['machine'],
-                ip_address=issue['ip_address'],
-                username=issue['username']),
+                            machine=issue['machine'],
+                            ip_address=issue['ip_address'],
+                            username=issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -361,7 +361,7 @@ class AWSExporter(Exporter):
             description="This critical machine is open to attacks via strong users with access to it.",
             recommendation="The services: {services} have been found on the machine thus classifying it as a critical "
                            "machine. These users has access to it:{threatening_users}.".format(
-                services=issue['services'], threatening_users=issue['threatening_users']),
+                            services=issue['services'], threatening_users=issue['threatening_users']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -386,7 +386,7 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=10,
             title="Oracle WebLogic servers are vulnerable to remote code execution.",
-            description="Install Oracle critical patch updates. Or update to the latest version. " \
+            description="Install Oracle critical patch updates. Or update to the latest version. "
                         "Vulnerable versions are 10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.",
             recommendation="Oracle WebLogic server at {machine} ({ip_address}) is vulnerable to remote code execution attack."
                            "The attack was made possible due to incorrect permission assignment in Oracle Fusion Middleware "
