@@ -1,11 +1,8 @@
 import os
 import uuid
-from datetime import datetime
 
-import bson
 import flask_restful
-from bson.json_util import dumps
-from flask import Flask, send_from_directory, make_response, Response
+from flask import Flask, send_from_directory, Response
 from werkzeug.exceptions import NotFound
 
 from monkey_island.cc.auth import init_jwt
@@ -24,6 +21,7 @@ from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
+from monkey_island.cc.resources.representations import output_json
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
@@ -60,32 +58,6 @@ def serve_static_file(static_path):
 
 def serve_home():
     return serve_static_file(HOME_FILE)
-
-
-def normalize_obj(obj):
-    if '_id' in obj and not 'id' in obj:
-        obj['id'] = obj['_id']
-        del obj['_id']
-
-    for key, value in list(obj.items()):
-        if isinstance(value, bson.objectid.ObjectId):
-            obj[key] = str(value)
-        if isinstance(value, datetime):
-            obj[key] = str(value)
-        if isinstance(value, dict):
-            obj[key] = normalize_obj(value)
-        if isinstance(value, list):
-            for i in range(0, len(value)):
-                if isinstance(value[i], dict):
-                    value[i] = normalize_obj(value[i])
-    return obj
-
-
-def output_json(obj, code, headers=None):
-    obj = normalize_obj(obj)
-    resp = make_response(dumps(obj), code)
-    resp.headers.extend(headers or {})
-    return resp
 
 
 def init_app_config(app, mongo_url):
