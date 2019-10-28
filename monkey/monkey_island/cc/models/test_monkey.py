@@ -142,7 +142,7 @@ class TestMonkey(IslandTestCase):
         cache_info_after_query_1 = Monkey.get_label_by_id.storage.backend.cache_info()
         self.assertEqual(cache_info_after_query_1.hits, 0)
         self.assertEqual(cache_info_after_query_1.misses, 1)
-        logger.info("1) ID: {} label: {}".format(linux_monkey.id, label))
+        logger.debug("1) ID: {} label: {}".format(linux_monkey.id, label))
 
         self.assertIsNotNone(label)
         self.assertIn(hostname_example, label)
@@ -150,7 +150,7 @@ class TestMonkey(IslandTestCase):
 
         # should be cached
         label = Monkey.get_label_by_id(linux_monkey.id)
-        logger.info("2) ID: {} label: {}".format(linux_monkey.id, label))
+        logger.debug("2) ID: {} label: {}".format(linux_monkey.id, label))
         cache_info_after_query_2 = Monkey.get_label_by_id.storage.backend.cache_info()
         self.assertEqual(cache_info_after_query_2.hits, 1)
         self.assertEqual(cache_info_after_query_2.misses, 1)
@@ -160,7 +160,7 @@ class TestMonkey(IslandTestCase):
 
         # should be a miss
         label = Monkey.get_label_by_id(linux_monkey.id)
-        logger.info("3) ID: {} label: {}".format(linux_monkey.id, label))
+        logger.debug("3) ID: {} label: {}".format(linux_monkey.id, label))
         cache_info_after_query_3 = Monkey.get_label_by_id.storage.backend.cache_info()
         logger.debug("Cache info: {}".format(str(cache_info_after_query_3)))
         # still 1 hit only
