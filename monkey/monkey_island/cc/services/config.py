@@ -144,7 +144,7 @@ class ConfigService:
         if should_encrypt:
             try:
                 ConfigService.encrypt_config(config_json)
-            except KeyError as e:
+            except KeyError:
                 logger.error('Bad configuration file was submitted.')
                 return False
         mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
@@ -154,9 +154,9 @@ class ConfigService:
     @staticmethod
     def init_default_config():
         if ConfigService.default_config is None:
-            defaultValidatingDraft4Validator = ConfigService._extend_config_with_default(Draft4Validator)
+            default_validating_draft4_validator = ConfigService._extend_config_with_default(Draft4Validator)
             config = {}
-            defaultValidatingDraft4Validator(SCHEMA).validate(config)
+            default_validating_draft4_validator(SCHEMA).validate(config)
             ConfigService.default_config = config
 
     @staticmethod
@@ -207,15 +207,15 @@ class ConfigService:
             # Do it only for root.
             if instance != {}:
                 return
-            for property, subschema in list(properties.items()):
+            for property1, subschema1 in list(properties.items()):
                 main_dict = {}
-                for property2, subschema2 in list(subschema["properties"].items()):
+                for property2, subschema2 in list(subschema1["properties"].items()):
                     sub_dict = {}
                     for property3, subschema3 in list(subschema2["properties"].items()):
                         if "default" in subschema3:
                             sub_dict[property3] = subschema3["default"]
                     main_dict[property2] = sub_dict
-                instance.setdefault(property, main_dict)
+                instance.setdefault(property1, main_dict)
 
             for error in validate_properties(validator, properties, instance, schema):
                 yield error

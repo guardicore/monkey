@@ -132,7 +132,7 @@ def is_monkey(object_id):
     try:
         _ = Monkey.get_single_monkey_by_id(object_id)
         return True
-    except:
+    except MonkeyNotFoundError:
         return False
 
 

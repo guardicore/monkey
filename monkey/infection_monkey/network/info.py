@@ -16,6 +16,11 @@ from infection_monkey.utils.environment import is_windows_os
 
 # Timeout for monkey connections
 TIMEOUT = 15
+LOOPBACK_NAME = b"lo"
+SIOCGIFADDR = 0x8915  # get PA address
+SIOCGIFNETMASK = 0x891b  # get network PA mask
+RTF_UP = 0x0001  # Route usable
+RTF_REJECT = 0x0200
 
 
 def get_host_subnets():
@@ -62,12 +67,6 @@ else:
 
 
     def get_routes():  # based on scapy implementation for route parsing
-        LOOPBACK_NAME = b"lo"
-        SIOCGIFADDR = 0x8915  # get PA address
-        SIOCGIFNETMASK = 0x891b  # get network PA mask
-        RTF_UP = 0x0001  # Route usable
-        RTF_REJECT = 0x0200
-
         try:
             f = open("/proc/net/route", "r")
         except IOError:

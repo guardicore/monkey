@@ -56,9 +56,9 @@ class NodeService:
             accessible_from_nodes.append(from_node_label)
             accessible_from_nodes_hostnames.append(from_node_hostname)
 
-            for exploit in edge["exploits"]:
-                exploit["origin"] = from_node_label
-                exploits.append(exploit)
+            for edge_exploit in edge["exploits"]:
+                edge_exploit["origin"] = from_node_label
+                exploits.append(edge_exploit)
 
         exploits = sorted(exploits, key=lambda exploit: exploit['timestamp'])
 

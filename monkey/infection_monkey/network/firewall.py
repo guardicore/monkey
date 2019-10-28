@@ -25,7 +25,7 @@ class FirewallApp(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exc_type, value, traceback):
         self.close()
 
     def close(self):
@@ -49,9 +49,9 @@ class WinAdvFirewall(FirewallApp):
         except:
             return None
 
-    def add_firewall_rule(self, name="Firewall", dir="in", action="allow", program=sys.executable, **kwargs):
+    def add_firewall_rule(self, name="Firewall", direction="in", action="allow", program=sys.executable, **kwargs):
         netsh_args = {'name': name,
-                      'dir': dir,
+                      'dir': direction,
                       'action': action,
                       'program': program}
         netsh_args.update(kwargs)
