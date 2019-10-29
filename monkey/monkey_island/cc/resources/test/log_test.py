@@ -15,4 +15,4 @@ class LogTest(flask_restful.Resource):
         if not log:
             return {'results': None}
         log_file = database.gridfs.get(log['file_id'])
-        return {'results': log_file.read()}
+        return {'results': log_file.read().decode()}
