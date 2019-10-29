@@ -72,29 +72,29 @@ class TestMonkeyBlackbox(object):
     def test_server_online(self, island_client):
         assert island_client.get_api_status() is not None
 
-    #def test_ssh_exploiter(self, island_client):
-    #    TestMonkeyBlackbox.run_basic_test(island_client, "SSH.conf", "SSH_exploiter_and_keys")
+    def test_ssh_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_basic_test(island_client, "SSH.conf", "SSH_exploiter_and_keys")
 
     def test_hadoop_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "HADOOP.conf", "Hadoop_exploiter", 6*60)
 
-    #def test_mssql_exploiter(self, island_client):
-    #    TestMonkeyBlackbox.run_basic_test(island_client, "MSSQL.conf", "MSSQL_exploiter")
-#
-    #def test_smb_and_mimikatz_exploiters(self, island_client):
-    #    TestMonkeyBlackbox.run_basic_test(island_client, "SMB_MIMIKATZ.conf", "SMB_exploiter_mimikatz")
-#
-    #def test_smb_pth(self, island_client):
-    #    TestMonkeyBlackbox.run_basic_test(island_client, "SMB_PTH.conf", "SMB_PTH")
-#
-    #def test_elastic_exploiter(self, island_client):
-    #    TestMonkeyBlackbox.run_basic_test(island_client, "ELASTIC.conf", "Elastic_exploiter")
-#
+    def test_mssql_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_basic_test(island_client, "MSSQL.conf", "MSSQL_exploiter")
+
+    def test_smb_and_mimikatz_exploiters(self, island_client):
+        TestMonkeyBlackbox.run_basic_test(island_client, "SMB_MIMIKATZ.conf", "SMB_exploiter_mimikatz")
+
+    def test_smb_pth(self, island_client):
+        TestMonkeyBlackbox.run_basic_test(island_client, "SMB_PTH.conf", "SMB_PTH")
+
+    def test_elastic_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_basic_test(island_client, "ELASTIC.conf", "Elastic_exploiter")
+
     def test_struts_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "STRUTS2.conf", "Strtuts2_exploiter")
 
-    #def test_weblogic_exploiter(self, island_client):
-    #    TestMonkeyBlackbox.run_basic_test(island_client, "WEBLOGIC.conf", "Weblogic_exploiter")
+    def test_weblogic_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_basic_test(island_client, "WEBLOGIC.conf", "Weblogic_exploiter")
 
     def test_shellshock_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "SHELLSHOCK.conf", "Shellschock_exploiter")
