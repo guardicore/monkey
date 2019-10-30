@@ -26,7 +26,7 @@ def get_instances(base_package_name, base_package_file, parent_class):
     # Go through all of files
     for file in candidate_files:
         # Import module from that file
-        module = importlib.import_module(base_package_name + '.' + file)
+        module = importlib.import_module('.' + file, base_package_name)
         # Get all classes in a module
         # m[1] because return object is (name,class)
         classes = [m[1] for m in inspect.getmembers(module, inspect.isclass)
