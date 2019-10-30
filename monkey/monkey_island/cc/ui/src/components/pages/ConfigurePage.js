@@ -1,7 +1,7 @@
 import React from 'react';
 import Form from 'react-jsonschema-form';
 import {Col, Modal, Nav, NavItem} from 'react-bootstrap';
-import fileDownload from 'js-file-download';
+import FileSaver from 'file-saver';
 import AuthComponent from '../AuthComponent';
 import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
@@ -309,7 +309,10 @@ class ConfigurePageComponent extends AuthComponent {
 
   exportConfig = () => {
     this.updateConfigSection();
-    fileDownload(JSON.stringify(this.state.configuration, null, 2), 'monkey.conf');
+    const configAsJson = JSON.stringify(this.state.configuration, null, 2);
+    const configAsBinary = new Blob([configAsJson], {type: "text/plain;charset=utf-8"});
+    
+    FileSaver.saveAs(configAsBinary, 'monkey.conf');
   };
 
   sendConfig() {
