@@ -5,8 +5,10 @@ import subprocess
 import sys
 
 import infection_monkey.config
+import infection_monkey.network.HostFinger
+import infection_monkey.network.HostScanner
 from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostScanner, HostFinger
+import infection_monkey.network
 
 __author__ = 'itamar'
 
@@ -19,7 +21,7 @@ WINDOWS_TTL = 128
 LOG = logging.getLogger(__name__)
 
 
-class PingScanner(HostScanner, HostFinger):
+class PingScanner(infection_monkey.network.HostScanner.HostScanner, infection_monkey.network.HostFinger.HostFinger):
 
     _SCANNED_SERVICE = ''
 

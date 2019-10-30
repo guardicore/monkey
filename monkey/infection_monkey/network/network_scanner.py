@@ -6,7 +6,8 @@ from common.network.network_range import NetworkRange
 from infection_monkey.config import WormConfiguration
 from infection_monkey.model.victim_host_generator import VictimHostGenerator
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
-from infection_monkey.network import TcpScanner, PingScanner
+from infection_monkey.network.tcp_scanner import TcpScanner
+from infection_monkey.network.ping_scanner import PingScanner
 
 LOG = logging.getLogger(__name__)
 

@@ -6,9 +6,10 @@ import requests
 from requests.exceptions import Timeout, ConnectionError
 
 import infection_monkey.config
+import infection_monkey.network.HostFinger
 from common.data.network_consts import ES_SERVICE
 from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
+import infection_monkey.network
 
 ES_PORT = 9200
 ES_HTTP_TIMEOUT = 5
@@ -16,7 +17,7 @@ LOG = logging.getLogger(__name__)
 __author__ = 'danielg'
 
 
-class ElasticFinger(HostFinger):
+class ElasticFinger(infection_monkey.network.HostFinger.HostFinger):
     """
         Fingerprints elastic search clusters, only on port 9200
     """

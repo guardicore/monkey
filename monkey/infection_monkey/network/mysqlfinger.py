@@ -2,8 +2,9 @@ import logging
 import socket
 
 import infection_monkey.config
+import infection_monkey.network.HostFinger
 from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
+import infection_monkey.network
 from infection_monkey.network.tools import struct_unpack_tracker, struct_unpack_tracker_string
 
 MYSQL_PORT = 3306
@@ -11,7 +12,7 @@ SQL_SERVICE = 'mysqld-3306'
 LOG = logging.getLogger(__name__)
 
 
-class MySQLFinger(HostFinger):
+class MySQLFinger(infection_monkey.network.HostFinger.HostFinger):
     """
         Fingerprints mysql databases, only on port 3306
     """

@@ -2,8 +2,9 @@ import errno
 import logging
 import socket
 
+import infection_monkey.network.HostFinger
 from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
+import infection_monkey.network
 import infection_monkey.config
 
 __author__ = 'Maor Rayzin'
@@ -11,7 +12,7 @@ __author__ = 'Maor Rayzin'
 LOG = logging.getLogger(__name__)
 
 
-class MSSQLFinger(HostFinger):
+class MSSQLFinger(infection_monkey.network.HostFinger.HostFinger):
 
     # Class related consts
     SQL_BROWSER_DEFAULT_PORT = 1434

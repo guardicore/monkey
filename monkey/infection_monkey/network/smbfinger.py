@@ -3,7 +3,8 @@ import struct
 import logging
 from odict import odict
 
-from infection_monkey.network import HostFinger
+import infection_monkey.network
+import infection_monkey.network.HostFinger
 from infection_monkey.model.host import VictimHost
 
 SMB_PORT = 445
@@ -100,7 +101,7 @@ class SMBSessionFingerData(Packet):
         self.fields["bcc1"] = struct.pack("<i", len(self.fields["Data"]))[:2]
 
 
-class SMBFinger(HostFinger):
+class SMBFinger(infection_monkey.network.HostFinger.HostFinger):
     _SCANNED_SERVICE = 'SMB'
 
     def __init__(self):
