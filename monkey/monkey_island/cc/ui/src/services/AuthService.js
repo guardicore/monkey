@@ -98,7 +98,7 @@ export default class AuthService {
 
   _isTokenExpired(token) {
     try {
-      return decode(token)['exp'] + this.SECONDS_BEFORE_JWT_EXPIRES < Date.now() / 1000;
+      return decode(token)['exp'] - this.SECONDS_BEFORE_JWT_EXPIRES < Date.now() / 1000;
     }
     catch (err) {
       return false;
