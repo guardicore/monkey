@@ -12,6 +12,7 @@ from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.model import DELAY_DELETE_CMD
+from infection_monkey.network.fingerprinter_manager import get_fingerprint_instances
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
@@ -145,7 +146,7 @@ class InfectionMonkey(object):
 
             self._exploiters = WormConfiguration.exploiter_classes
 
-            self._fingerprint = [fingerprint() for fingerprint in WormConfiguration.finger_classes]
+            self._fingerprint = get_fingerprint_instances()
 
             if not self._keep_running or not WormConfiguration.alive:
                 break
@@ -182,7 +183,8 @@ class InfectionMonkey(object):
                 if self._default_server:
                     if self._network.on_island(self._default_server):
                         machine.set_default_server(get_interface_to_target(machine.ip_addr) +
-                                                   (':'+self._default_server_port if self._default_server_port else ''))
+                                                   (
+                                                       ':' + self._default_server_port if self._default_server_port else ''))
                     else:
                         machine.set_default_server(self._default_server)
                     LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_server))
