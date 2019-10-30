@@ -25,7 +25,7 @@ from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.exploit.tools.helpers import get_interface_to_target
+from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
