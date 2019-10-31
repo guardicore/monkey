@@ -3,7 +3,7 @@ import inspect
 import importlib
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.actions import get_pba_files
-from infection_monkey.utils import is_windows_os
+from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
 
@@ -25,8 +25,12 @@ class PostBreach(object):
         Executes all post breach actions.
         """
         for pba in self.pba_list:
-            pba.run()
-        LOG.info("Post breach actions executed")
+            try:
+                LOG.debug("Executing PBA: '{}'".format(pba.name))
+                pba.run()
+            except Exception as e:
+                LOG.error("PBA {} failed. Error info: {}".format(pba.name, e))
+        LOG.info("All PBAs executed. Total {} executed.".format(len(self.pba_list)))
 
     @staticmethod
     def config_to_pba_list():
@@ -45,7 +49,9 @@ class PostBreach(object):
                            if ((m[1].__module__ == module.__name__) and issubclass(m[1], PBA))]
             # Get post breach action object from class
             for pba_class in pba_classes:
+                LOG.debug("Checking if should run PBA {}".format(pba_class.__name__))
                 if pba_class.should_run(pba_class.__name__):
                     pba = pba_class()
                     pba_list.append(pba)
+                    LOG.debug("Added PBA {} to PBA list".format(pba_class.__name__))
         return pba_list

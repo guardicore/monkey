@@ -34,10 +34,10 @@ class RemoteRun(flask_restful.Resource):
                 try:
                     resp['instances'] = AwsService.get_instances()
                 except NoCredentialsError as e:
-                    resp['error'] = NO_CREDS_ERROR_FORMAT.format(e.message)
+                    resp['error'] = NO_CREDS_ERROR_FORMAT.format(e)
                     return jsonify(resp)
                 except ClientError as e:
-                    resp['error'] = CLIENT_ERROR_FORMAT.format(e.message)
+                    resp['error'] = CLIENT_ERROR_FORMAT.format(e)
                     return jsonify(resp)
             return jsonify(resp)
 

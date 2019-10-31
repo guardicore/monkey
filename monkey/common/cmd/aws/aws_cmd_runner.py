@@ -28,9 +28,9 @@ class AwsCmdRunner(CmdRunner):
         return AwsCmdResult(command_info)
 
     def get_command_status(self, command_info):
-        if command_info[u'Status'] == u'InProgress':
+        if command_info['Status'] == 'InProgress':
             return CmdStatus.IN_PROGRESS
-        elif command_info[u'Status'] == u'Success':
+        elif command_info['Status'] == 'Success':
             return CmdStatus.SUCCESS
         else:
             return CmdStatus.FAILURE

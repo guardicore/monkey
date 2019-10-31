@@ -1,7 +1,6 @@
 import os
 import logging
 import sys
-
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 
 import infection_monkey.config
@@ -63,5 +62,6 @@ class WindowsInfoCollector(InfoCollector):
             if "credentials" in self.info:
                 self.info["credentials"].update(mimikatz_info)
             self.info["mimikatz"] = mimikatz_collector.get_mimikatz_text()
+            LOG.info('Mimikatz info gathered successfully')
         else:
             LOG.info('No mimikatz info was gathered')

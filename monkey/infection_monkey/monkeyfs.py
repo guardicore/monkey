@@ -19,7 +19,7 @@ class VirtualFile(BytesIO):
         if name in VirtualFile._vfs:
             super(VirtualFile, self).__init__(self._vfs[name])
         else:
-            super(VirtualFile, self).__init__('')
+            super(VirtualFile, self).__init__()
 
     def flush(self):
         super(VirtualFile, self).flush()

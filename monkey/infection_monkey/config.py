@@ -26,7 +26,7 @@ class Configuration(object):
         pe_import = importlib.import_module('infection_monkey.pe')
         
         unknown_items = []
-        for key, value in formatted_data.items():
+        for key, value in list(formatted_data.items()):
             if key.startswith('_'):
                 continue
             if key in ["name", "id", "current_server"]:
@@ -142,10 +142,10 @@ class Configuration(object):
     exploiter_classes = []
 
     # how many victims to look for in a single scan iteration
-    victims_max_find = 30
+    victims_max_find = 100
 
     # how many victims to exploit before stopping
-    victims_max_exploit = 7
+    victims_max_exploit = 15
 
     # depth of propagation
     depth = 2
@@ -200,7 +200,7 @@ class Configuration(object):
                         9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
-    tcp_scan_interval = 0
+    tcp_scan_interval = 0  # in milliseconds
     tcp_scan_get_banner = True
 
     # Ping Scanner
@@ -216,9 +216,6 @@ class Configuration(object):
     ms08_067_exploit_attempts = 5
     user_to_add = "Monkey_IUSER_SUPPORT"
     remote_user_pass = "Password1!"
-
-    # rdp exploiter
-    rdp_use_vbs_download = True
 
     # User and password dictionaries for exploits.
 
@@ -291,7 +288,7 @@ class Configuration(object):
         :param sensitive_data: the data to hash.
         :return: the hashed data.
         """
-        password_hashed = hashlib.sha512(sensitive_data).hexdigest()
+        password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
         return password_hashed
 
 

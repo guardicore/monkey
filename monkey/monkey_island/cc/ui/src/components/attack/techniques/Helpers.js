@@ -12,12 +12,13 @@ export function renderMachineFromSystemData(data) {
     let machineStr = data['hostname'] + " ( ";
     data['ips'].forEach(function(ipInfo){
       if(typeof ipInfo === "object"){
-        machineStr += ipInfo['addr'] + " ";
+        machineStr += ipInfo['addr'] + ", ";
       } else {
-         machineStr += ipInfo + " ";
+         machineStr += ipInfo + ", ";
       }
     });
-    return machineStr + ")"
+    // Replaces " ," with " )" to finish a list of IP's
+    return machineStr.slice(0, -2) + " )"
 }
 
 /* Formats telemetry data that contains _id.machine and _id.usage fields into columns
@@ -35,6 +36,19 @@ export function getUsageColumns() {
           accessor: x => x.usage,
           style: { 'whiteSpace': 'unset' }}]
     }])}
+
+/* Renders table fields that contains 'used' boolean value and 'name' string value.
+'Used' value determines if 'name' value will be shown.
+ */
+export function renderUsageFields(usages){
+    let output = [];
+    usages.forEach(function(usage){
+      if(usage['used']){
+        output.push(<div key={usage['name']}>{usage['name']}</div>)
+      }
+    });
+    return (<div>{output}</div>);
+  }
 
 export const ScanStatus = {
     UNSCANNED: 0,

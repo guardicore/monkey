@@ -61,7 +61,7 @@ class CmdRunner(object):
             command_instance_dict[command] = instance
 
         instance_results = {}
-        command_result_pairs = CmdRunner.wait_commands(command_instance_dict.keys())
+        command_result_pairs = CmdRunner.wait_commands(list(command_instance_dict.keys()))
         for command, result in command_result_pairs:
             instance = command_instance_dict[command]
             instance_results[instance['instance_id']] = inst_n_cmd_res_to_res(instance, result)

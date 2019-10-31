@@ -22,10 +22,6 @@ class NodeService:
         if ObjectId(node_id) == NodeService.get_monkey_island_pseudo_id():
             return NodeService.get_monkey_island_node()
 
-        edges = EdgeService.get_displayed_edges_by_to(node_id, for_report)
-        accessible_from_nodes = []
-        exploits = []
-
         new_node = {"id": node_id}
 
         node = NodeService.get_node_by_id(node_id)
@@ -46,16 +42,29 @@ class NodeService:
             new_node["ip_addresses"] = node["ip_addresses"]
             new_node["domain_name"] = node["domain_name"]
 
+        accessible_from_nodes = []
+        accessible_from_nodes_hostnames = []
+        exploits = []
+
+        edges = EdgeService.get_displayed_edges_by_to(node_id, for_report)
+
         for edge in edges:
-            accessible_from_nodes.append(NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"])))
+            from_node_id = edge["from"]
+            from_node_label = Monkey.get_label_by_id(from_node_id)
+            from_node_hostname = Monkey.get_hostname_by_id(from_node_id)
+
+            accessible_from_nodes.append(from_node_label)
+            accessible_from_nodes_hostnames.append(from_node_hostname)
+
             for exploit in edge["exploits"]:
-                exploit["origin"] = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
+                exploit["origin"] = from_node_label
                 exploits.append(exploit)
 
-        exploits.sort(cmp=NodeService._cmp_exploits_by_timestamp)
+        exploits = sorted(exploits, key=lambda exploit: exploit['timestamp'])
 
         new_node["exploits"] = exploits
         new_node["accessible_from_nodes"] = accessible_from_nodes
+        new_node["accessible_from_nodes_hostnames"] = accessible_from_nodes_hostnames
         if len(edges) > 0:
             new_node["services"] = edges[-1]["services"]
         else:
@@ -70,14 +79,6 @@ class NodeService:
         if node["domain_name"]:
             domain_name = " (" + node["domain_name"] + ")"
         return node["os"]["version"] + " : " + node["ip_addresses"][0] + domain_name
-
-    @staticmethod
-    def _cmp_exploits_by_timestamp(exploit_1, exploit_2):
-        if exploit_1["timestamp"] == exploit_2["timestamp"]:
-            return 0
-        if exploit_1["timestamp"] > exploit_2["timestamp"]:
-            return 1
-        return -1
 
     @staticmethod
     def get_monkey_os(monkey):
@@ -112,6 +113,7 @@ class NodeService:
 
     @staticmethod
     def get_monkey_label(monkey):
+        # todo
         label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]
         ip_addresses = local_ip_addresses()
         if len(set(monkey["ip_addresses"]).intersection(ip_addresses)) > 0:
@@ -137,15 +139,18 @@ class NodeService:
 
     @staticmethod
     def monkey_to_net_node(monkey, for_report=False):
-        label = monkey['hostname'] if for_report else NodeService.get_monkey_label(monkey)
-        is_monkey_dead = Monkey.get_single_monkey_by_id(monkey["_id"]).is_dead()
+        monkey_id = monkey["_id"]
+        label = Monkey.get_hostname_by_id(monkey_id) if for_report else Monkey.get_label_by_id(monkey_id)
+        monkey_group = NodeService.get_monkey_group(monkey)
         return \
             {
-                "id": monkey["_id"],
+                "id": monkey_id,
                 "label": label,
-                "group": NodeService.get_monkey_group(monkey),
+                "group": monkey_group,
                 "os": NodeService.get_monkey_os(monkey),
-                "dead": is_monkey_dead,
+                # The monkey is running IFF the group contains "_running". Therefore it's dead IFF the group does NOT
+                # contain "_running". This is a small optimisation, to not call "is_dead" twice.
+                "dead": "_running" not in monkey_group,
                 "domain_name": "",
                 "pba_results": monkey["pba_results"] if "pba_results" in monkey else []
             }
@@ -245,6 +250,12 @@ class NodeService:
 
         mongo.db.monkey.update({"guid": monkey['guid']},
                                {'$set': props_to_set},
+                               upsert=False)
+
+    @staticmethod
+    def add_communication_info(monkey, info):
+        mongo.db.monkey.update({"guid": monkey["guid"]},
+                               {"$set": {'command_control_channel': info}},
                                upsert=False)
 
     @staticmethod

@@ -1,15 +1,18 @@
 import logging
 import subprocess
-import socket
-from infection_monkey.control import ControlClient
+
+from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
-from infection_monkey.utils import is_windows_os
+from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
+from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 
 
 LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
+
+EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
 
 class PBA(object):
@@ -19,7 +22,8 @@ class PBA(object):
     def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
         """
         :param name: Name of post breach action.
-        :param command: Command that will be executed on breached machine
+        :param linux_cmd: Command that will be executed on breached machine
+        :param windows_cmd: Command that will be executed on breached machine
         """
         self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
@@ -46,7 +50,25 @@ class PBA(object):
         """
         exec_funct = self._execute_default
         result = exec_funct()
+        if self.scripts_were_used_successfully(result):
+            T1064Telem(ScanStatus.USED, "Scripts were used to execute %s post breach action." % self.name).send()
         PostBreachTelem(self, result).send()
+
+    def is_script(self):
+        """
+        Determines if PBA is a script (PBA might be a single command)
+        :return: True if PBA is a script(series of OS commands)
+        """
+        return isinstance(self.command, list) and len(self.command) > 1
+
+    def scripts_were_used_successfully(self, pba_execution_result):
+        """
+        Determines if scripts were used to execute PBA and if they succeeded
+        :param pba_execution_result: result of execution function. e.g. self._execute_default
+        :return: True if scripts were used, False otherwise
+        """
+        pba_execution_succeeded = pba_execution_result[1]
+        return pba_execution_succeeded and self.is_script()
 
     def _execute_default(self):
         """
@@ -54,10 +76,13 @@ class PBA(object):
         :return: Tuple of command's output string and boolean, indicating if it succeeded
         """
         try:
-            return subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True), True
+            output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True).decode()
+            if not output:
+                output = EXECUTION_WITHOUT_OUTPUT
+            return output, True
         except subprocess.CalledProcessError as e:
             # Return error output of the command
-            return e.output, False
+            return e.output.decode(), False
 
     @staticmethod
     def choose_command(linux_cmd, windows_cmd):

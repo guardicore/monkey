@@ -5,14 +5,13 @@ from abc import ABCMeta, abstractmethod
 
 from infection_monkey.config import WormConfiguration
 
+
 __author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)
 
 
-class _SystemSingleton(object):
-    __metaclass__ = ABCMeta
-
+class _SystemSingleton(object, metaclass=ABCMeta):
     @property
     @abstractmethod
     def locked(self):
@@ -41,13 +40,13 @@ class WindowsSystemSingleton(_SystemSingleton):
 
         handle = ctypes.windll.kernel32.CreateMutexA(None,
                                                      ctypes.c_bool(True),
-                                                     ctypes.c_char_p(self._mutex_name))
+                                                     ctypes.c_char_p(self._mutex_name.encode()))
         last_error = ctypes.windll.kernel32.GetLastError()
+
         if not handle:
             LOG.error("Cannot acquire system singleton %r, unknown error %d",
                       self._mutex_name, last_error)
             return False
-
         if winerror.ERROR_ALREADY_EXISTS == last_error:
             LOG.debug("Cannot acquire system singleton %r, mutex already exist",
                       self._mutex_name)
@@ -61,7 +60,6 @@ class WindowsSystemSingleton(_SystemSingleton):
 
     def unlock(self):
         assert self._mutex_handle is not None, "Singleton not locked"
-
         ctypes.windll.kernel32.CloseHandle(self._mutex_handle)
         self._mutex_handle = None
 

@@ -23,7 +23,7 @@ from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.remote_run import RemoteRun
-from monkey_island.cc.resources.report import Report
+from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
@@ -35,6 +35,9 @@ from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
+
+from monkey_island.cc.resources.test.monkey_test import MonkeyTest
+from monkey_island.cc.resources.test.log_test import LogTest
 
 __author__ = 'Barak'
 
@@ -64,16 +67,16 @@ def normalize_obj(obj):
         obj['id'] = obj['_id']
         del obj['_id']
 
-    for key, value in obj.items():
-        if type(value) is bson.objectid.ObjectId:
+    for key, value in list(obj.items()):
+        if isinstance(value, bson.objectid.ObjectId):
             obj[key] = str(value)
-        if type(value) is datetime:
+        if isinstance(value, datetime):
             obj[key] = str(value)
-        if type(value) is dict:
+        if isinstance(value, dict):
             obj[key] = normalize_obj(value)
-        if type(value) is list:
+        if isinstance(value, list):
             for i in range(0, len(value)):
-                if type(value[i]) is dict:
+                if isinstance(value[i], dict):
                     value[i] = normalize_obj(value[i])
     return obj
 
@@ -122,7 +125,13 @@ def init_api_resources(api):
     api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
     api.add_resource(Edge, '/api/netmap/edge', '/api/netmap/edge/')
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
-    api.add_resource(Report, '/api/report', '/api/report/')
+
+    # report_type: zero_trust or security
+    api.add_resource(
+        Report,
+        '/api/report/<string:report_type>',
+        '/api/report/<string:report_type>/<string:report_data>')
+
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')
@@ -134,6 +143,9 @@ def init_api_resources(api):
     api.add_resource(AttackConfiguration, '/api/attack')
     api.add_resource(AttackReport, '/api/attack/report')
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
+
+    api.add_resource(MonkeyTest, '/api/test/monkey')
+    api.add_resource(LogTest, '/api/test/log')
 
 
 def init_app(mongo_url):

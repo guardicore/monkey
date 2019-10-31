@@ -35,10 +35,10 @@ class VictimHost(object):
     def __str__(self):
         victim = "Victim Host %s: " % self.ip_addr
         victim += "OS - ["
-        for k, v in self.os.items():
+        for k, v in list(self.os.items()):
             victim += "%s-%s " % (k, v)
         victim += "] Services - ["
-        for k, v in self.services.items():
+        for k, v in list(self.services.items()):
             victim += "%s-%s " % (k, v)
         victim += '] '
         victim += "target monkey: %s" % self.monkey_exe

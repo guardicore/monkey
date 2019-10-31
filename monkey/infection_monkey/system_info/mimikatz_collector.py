@@ -27,7 +27,7 @@ class MimikatzCollector(object):
     MIMIKATZ_ZIP_NAME = 'tmpzipfile123456.zip'
 
     # Password to Mimikatz zip file
-    MIMIKATZ_ZIP_PASSWORD = r'VTQpsJPXgZuXhX6x3V84G'
+    MIMIKATZ_ZIP_PASSWORD = b'VTQpsJPXgZuXhX6x3V84G'
 
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
@@ -55,9 +55,8 @@ class MimikatzCollector(object):
         except Exception:
             LOG.exception("Error initializing mimikatz collector")
             status = ScanStatus.SCANNED
-        T1106Telem(status, UsageEnum.MIMIKATZ_WINAPI.name).send()
-        T1129Telem(status, UsageEnum.MIMIKATZ.name).send()
-
+        T1106Telem(status, UsageEnum.MIMIKATZ_WINAPI).send()
+        T1129Telem(status, UsageEnum.MIMIKATZ).send()
 
     def get_logon_info(self):
         """
@@ -79,11 +78,11 @@ class MimikatzCollector(object):
 
             for i in range(entry_count):
                 entry = self._get()
-                username = entry.username.encode('utf-8').strip()
+                username = entry.username
 
-                password = entry.password.encode('utf-8').strip()
-                lm_hash = binascii.hexlify(bytearray(entry.lm_hash))
-                ntlm_hash = binascii.hexlify(bytearray(entry.ntlm_hash))
+                password = entry.password
+                lm_hash = binascii.hexlify(bytearray(entry.lm_hash)).decode()
+                ntlm_hash = binascii.hexlify(bytearray(entry.ntlm_hash)).decode()
 
                 if 0 == len(password):
                     has_password = False

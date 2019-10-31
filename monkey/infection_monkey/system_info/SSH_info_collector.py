@@ -3,6 +3,9 @@ import pwd
 import os
 import glob
 
+from common.utils.attack_utils import ScanStatus
+from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
+
 __author__ = 'VakarisZ'
 
 LOG = logging.getLogger(__name__)
@@ -71,6 +74,7 @@ class SSHCollector(object):
                                             if private_key.find('ENCRYPTED') == -1:
                                                 info['private_key'] = private_key
                                                 LOG.info("Found private key in %s" % private)
+                                                T1005Telem(ScanStatus.USED, 'SSH key', "Path: %s" % private).send()
                                             else:
                                                 continue
                                     except (IOError, OSError):

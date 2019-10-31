@@ -2,24 +2,6 @@ SCHEMA = {
     "title": "ATT&CK configuration",
     "type": "object",
     "properties": {
-        "initial_access": {
-            "title": "Initial access",
-            "type": "object",
-            "properties": {
-                "T1078": {
-                    "title": "T1078 Valid accounts",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": False,
-                    "description": "Mapped with T1003 Credential dumping because both techniques "
-                                   "require same credential harvesting modules. "
-                                   "Adversaries may steal the credentials of a specific user or service account using "
-                                   "Credential Access techniques or capture credentials earlier in their "
-                                   "reconnaissance process.",
-                    "depends_on": ["T1003"]
-                }
-            }
-        },
         "lateral_movement": {
             "title": "Lateral movement",
             "type": "object",
@@ -40,6 +22,23 @@ SCHEMA = {
                     "necessary": False,
                     "description": "Pass the hash (PtH) is a method of authenticating as a user without "
                                    "having access to the user's cleartext password."
+                },
+                "T1105": {
+                    "title": "T1105 Remote file copy",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Files may be copied from one system to another to stage "
+                                   "adversary tools or other files over the course of an operation."
+                },
+                "T1021": {
+                    "title": "T1021 Remote services",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "depends_on": ["T1110"],
+                    "description": "An adversary may use Valid Accounts to log into a service"
+                                   " specifically designed to accept remote connections."
                 }
             }
         },
@@ -54,7 +53,7 @@ SCHEMA = {
                     "necessary": False,
                     "description": "Adversaries may use brute force techniques to attempt access to accounts "
                                    "when passwords are unknown or when password hashes are obtained.",
-                    "depends_on": ["T1210"]
+                    "depends_on": ["T1210", "T1021"]
                 },
                 "T1003": {
                     "title": "T1003 Credential dumping",
@@ -100,6 +99,13 @@ SCHEMA = {
                     "description": "Adversaries may remove files over the course of an intrusion "
                                    "to keep their footprint low or remove them at the end as part "
                                    "of the post-intrusion cleanup process."
+                },
+                "T1222": {
+                    "title": "T1222 File permissions modification",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may modify file permissions/attributes to evade intended DACLs."
                 }
             }
         },
@@ -149,6 +155,14 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Adversaries can use PowerShell to perform a number of actions,"
                                    " including discovery of information and execution of code.",
+                },
+                "T1064": {
+                    "title": "T1064 Scripting",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may use scripts to aid in operations and "
+                                   "perform multiple actions that would otherwise be manual.",
                 }
             }
         },
@@ -161,9 +175,43 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "depends_on": ["T1016", "T1005"],
                     "description": "An adversary may attempt to get detailed information about the "
                                    "operating system and hardware, including version, patches, hotfixes, "
                                    "service packs, and architecture."
+                },
+                "T1018": {
+                    "title": "T1018 Remote System Discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries will likely attempt to get a listing of other systems by IP address, "
+                                   "hostname, or other logical identifier on a network for lateral movement."
+                },
+                "T1016": {
+                    "title": "T1016 System network configuration discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "depends_on": ["T1005", "T1082"],
+                    "description": "Adversaries will likely look for details about the network configuration "
+                                   "and settings of systems they access or through information discovery"
+                                   " of remote systems."
+                }
+            }
+        },
+        "collection": {
+            "title": "Collection",
+            "type": "object",
+            "properties": {
+                "T1005": {
+                    "title": "T1005 Data from local system",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "depends_on": ["T1016", "T1082"],
+                    "description": "Sensitive data can be collected from local system sources, such as the file system "
+                                   "or databases of information residing on the system prior to Exfiltration."
                 }
             }
         },
@@ -178,8 +226,37 @@ SCHEMA = {
                     "necessary": True,
                     "description": "Adversaries may conduct C2 communications over a non-standard "
                                    "port to bypass proxies and firewalls that have been improperly configured."
+                },
+                "T1090": {
+                    "title": "T1090 Connection proxy",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "A connection proxy is used to direct network traffic between systems "
+                                   "or act as an intermediary for network communications."
+                },
+                "T1188": {
+                    "title": "T1188 Multi-hop proxy",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "To disguise the source of malicious traffic, "
+                                   "adversaries may chain together multiple proxies."
                 }
             }
         },
+        "exfiltration": {
+            "title": "Exfiltration",
+            "type": "object",
+            "properties": {
+                "T1041": {
+                    "title": "T1041 Exfiltration Over Command and Control Channel",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Data exfiltration is performed over the Command and Control channel."
+                }
+            }
+        }
     }
 }

@@ -11,7 +11,7 @@ from requests.exceptions import ConnectionError
 import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
 from infection_monkey.config import WormConfiguration, GUID
-from infection_monkey.network.info import local_ips, check_internet_access, TIMEOUT
+from infection_monkey.network.info import local_ips, check_internet_access
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
 from infection_monkey.utils import user_token_is_admin
@@ -97,7 +97,7 @@ class ControlClient(object):
 
             except ConnectionError as exc:
                 current_server = ""
-                LOG.warn("Error connecting to control server %s: %s", server, exc)
+                LOG.warning("Error connecting to control server %s: %s", server, exc)
 
         if current_server:
             return True
@@ -124,14 +124,14 @@ class ControlClient(object):
             monkey = {}
             if ControlClient.proxies:
                 monkey['tunnel'] = ControlClient.proxies.get('https')
-            reply = requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
-                                   data=json.dumps(monkey),
-                                   headers={'content-type': 'application/json'},
-                                   verify=False,
-                                   proxies=ControlClient.proxies)
+            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+                           data=json.dumps(monkey),
+                           headers={'content-type': 'application/json'},
+                           verify=False,
+                           proxies=ControlClient.proxies)
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
             return {}
 
     @staticmethod
@@ -141,14 +141,14 @@ class ControlClient(object):
             return
         try:
             telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': data}
-            reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
-                                  data=json.dumps(telemetry),
-                                  headers={'content-type': 'application/json'},
-                                  verify=False,
-                                  proxies=ControlClient.proxies)
+            requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
+                          data=json.dumps(telemetry),
+                          headers={'content-type': 'application/json'},
+                          verify=False,
+                          proxies=ControlClient.proxies)
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
 
     @staticmethod
     def send_log(log):
@@ -156,14 +156,14 @@ class ControlClient(object):
             return
         try:
             telemetry = {'monkey_guid': GUID, 'log': json.dumps(log)}
-            reply = requests.post("https://%s/api/log" % (WormConfiguration.current_server,),
-                                  data=json.dumps(telemetry),
-                                  headers={'content-type': 'application/json'},
-                                  verify=False,
-                                  proxies=ControlClient.proxies)
+            requests.post("https://%s/api/log" % (WormConfiguration.current_server,),
+                          data=json.dumps(telemetry),
+                          headers={'content-type': 'application/json'},
+                          verify=False,
+                          proxies=ControlClient.proxies)
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
 
     @staticmethod
     def load_control_config():
@@ -175,8 +175,8 @@ class ControlClient(object):
                                  proxies=ControlClient.proxies)
 
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
             return
 
         try:
@@ -203,7 +203,7 @@ class ControlClient(object):
                            verify=False,
                            proxies=ControlClient.proxies)
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s", WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s", WormConfiguration.current_server, exc)
             return {}
 
     @staticmethod
@@ -273,8 +273,8 @@ class ControlClient(object):
                     return dest_file
 
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
 
     @staticmethod
     def get_monkey_exe_filename_and_size_by_host(host):
@@ -300,8 +300,8 @@ class ControlClient(object):
                 return None, None
 
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
 
         return None, None
 

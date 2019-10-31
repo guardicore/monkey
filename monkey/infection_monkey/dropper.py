@@ -11,7 +11,7 @@ from ctypes import c_char_p
 
 import filecmp
 from infection_monkey.config import WormConfiguration
-from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
+from infection_monkey.exploit.tools.helpers import build_monkey_commandline_explicitly
 from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX, MONKEY_ARG
 from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
 from infection_monkey.control import ControlClient
@@ -28,7 +28,7 @@ else:
 try:
     WindowsError
 except NameError:
-    WindowsError = None
+    WindowsError = IOError
 
 __author__ = 'itamar'
 
@@ -119,14 +119,14 @@ class MonkeyDrops(object):
             try:
                 ref_stat = os.stat(dropper_date_reference_path)
             except OSError as exc:
-                LOG.warn("Cannot set reference date using '%s', file not found",
-                         dropper_date_reference_path)
+                LOG.warning("Cannot set reference date using '%s', file not found",
+                            dropper_date_reference_path)
             else:
                 try:
                     os.utime(self._config['destination_path'],
                              (ref_stat.st_atime, ref_stat.st_mtime))
                 except:
-                    LOG.warn("Cannot set reference date to destination file")
+                    LOG.warning("Cannot set reference date to destination file")
 
         monkey_options =\
             build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
@@ -153,12 +153,12 @@ class MonkeyDrops(object):
                                               stdin=None, stdout=None, stderr=None,
                                               close_fds=True, creationflags=DETACHED_PROCESS)
 
-            LOG.info("Executed monkey process (PID=%d) with command line: %s",
-                     monkey_process.pid, monkey_cmdline)
+        LOG.info("Executed monkey process (PID=%d) with command line: %s",
+                 monkey_process.pid, monkey_cmdline)
 
-            time.sleep(3)
-            if monkey_process.poll() is not None:
-                LOG.warn("Seems like monkey died too soon")
+        time.sleep(3)
+        if monkey_process.poll() is not None:
+            LOG.warning("Seems like monkey died too soon")
 
     def cleanup(self):
         try:
@@ -181,6 +181,6 @@ class MonkeyDrops(object):
                     else:
                         LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
                                   self._config['source_path'])
-                        T1106Telem(ScanStatus.USED, UsageEnum.DROPPER.name).send()
+                        T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
         except AttributeError:
             LOG.error("Invalid configuration options. Failing")

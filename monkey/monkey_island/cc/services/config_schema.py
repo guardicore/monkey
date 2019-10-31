@@ -1,4 +1,4 @@
-WARNING_SIGN = u" \u26A0"
+WARNING_SIGN = " \u26A0"
 
 SCHEMA = {
     "title": "Monkey",
@@ -31,14 +31,6 @@ SCHEMA = {
                     ],
                     "title": "MSSQL Exploiter",
                     "attack_techniques": ["T1110"]
-                },
-                {
-                    "type": "string",
-                    "enum": [
-                        "RdpExploiter"
-                    ],
-                    "title": "RDP Exploiter (UNSAFE)",
-                    "attack_techniques": []
                 },
                 {
                     "type": "string",
@@ -117,6 +109,14 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "CommunicateAsNewUser"
+                    ],
+                    "title": "Communicate as new user",
                     "attack_techniques": []
                 },
             ],
@@ -337,6 +337,7 @@ SCHEMA = {
                                 "$ref": "#/definitions/post_breach_acts"
                             },
                             "default": [
+                                "CommunicateAsNewUser"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
@@ -414,7 +415,7 @@ SCHEMA = {
                             "title": "Harvest Azure Credentials",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1003", "T1078"],
+                            "attack_techniques": ["T1003"],
                             "description":
                                 "Determine if the Monkey should try to harvest password credentials from Azure VMs"
                         },
@@ -422,14 +423,14 @@ SCHEMA = {
                             "title": "Collect system info",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1082"],
+                            "attack_techniques": ["T1082", "T1005", "T1016"],
                             "description": "Determines whether to collect system info"
                         },
                         "should_use_mimikatz": {
                             "title": "Should use Mimikatz",
                             "type": "boolean",
                             "default": True,
-                            "attack_techniques": ["T1003", "T1078"],
+                            "attack_techniques": ["T1003"],
                             "description": "Determines whether to use Mimikatz"
                         },
                     }
@@ -447,13 +448,13 @@ SCHEMA = {
                         "victims_max_find": {
                             "title": "Max victims to find",
                             "type": "integer",
-                            "default": 30,
+                            "default": 100,
                             "description": "Determines the maximum number of machines the monkey is allowed to scan"
                         },
                         "victims_max_exploit": {
                             "title": "Max victims to exploit",
                             "type": "integer",
-                            "default": 7,
+                            "default": 15,
                             "description":
                                 "Determines the maximum number of machines the monkey"
                                 " is allowed to successfully exploit. " + WARNING_SIGN
@@ -752,7 +753,8 @@ SCHEMA = {
                                 "Struts2Exploiter",
                                 "WebLogicExploiter",
                                 "HadoopExploiter",
-                                "VSFTPDExploiter"
+                                "VSFTPDExploiter",
+                                "MSSQLExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
@@ -788,19 +790,6 @@ SCHEMA = {
                             "type": "string",
                             "default": "Password1!",
                             "description": "Password to use for created user"
-                        }
-                    }
-                },
-                "rdp_grinder": {
-                    "title": "RDP grinder",
-                    "type": "object",
-                    "properties": {
-                        "rdp_use_vbs_download": {
-                            "title": "Use VBS download",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether to use VBS or BITS to download monkey to remote machine"
-                                           " (true=VBS, false=BITS)"
                         }
                     }
                 },
@@ -911,7 +900,8 @@ SCHEMA = {
                                 8008,
                                 3306,
                                 9200,
-                                7001
+                                7001,
+                                8088
                             ],
                             "description": "List of TCP ports the monkey will check whether they're open"
                         },

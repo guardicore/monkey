@@ -12,8 +12,9 @@ else:
     connect(db=env.mongo_db_name, host=env.mongo_db_host, port=env.mongo_db_port)
 
 # Order of importing matters here, for registering the embedded and referenced documents before using them.
-from config import Config
-from creds import Creds
-from monkey_ttl import MonkeyTtl
-from pba_results import PbaResults
-from monkey import Monkey
+from .config import Config
+from .creds import Creds
+from .monkey_ttl import MonkeyTtl
+from .pba_results import PbaResults
+from .command_control_channel import CommandControlChannel
+from .monkey import Monkey

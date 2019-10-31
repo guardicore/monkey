@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import '../../report-components/StolenPasswords'
-import StolenPasswordsComponent from "../../report-components/StolenPasswords";
+import '../../report-components/security/StolenPasswords'
+import StolenPasswordsComponent from "../../report-components/security/StolenPasswords";
 import {ScanStatus} from "./Helpers"
 
 

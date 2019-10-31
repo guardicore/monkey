@@ -12,22 +12,25 @@ class T1210 extends React.Component {
 
   static getScanColumns() {
     return ([{
+      Header: "Found services",
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
           style: { 'whiteSpace': 'unset' }, width: 200},
-        {Header: 'Time', id: 'time', accessor: x => x.time, style: { 'whiteSpace': 'unset' }, width: 170},
-        {Header: 'Port', id: 'port', accessor: x =>x.service.port, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Time', id: 'time', accessor: x => x.time, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Port', id: 'port', accessor: x =>x.service.port, style: { 'whiteSpace': 'unset' }, width: 100},
         {Header: 'Service', id: 'service', accessor: x => x.service.display_name, style: { 'whiteSpace': 'unset' }}
         ]
   }])}
 
   static getExploitColumns() {
     return ([{
+      Header: "Exploited services",
       columns: [
         {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
           style: { 'whiteSpace': 'unset' }, width: 200},
-        {Header: 'Time', id: 'time', accessor: x => x.time, style: { 'whiteSpace': 'unset' }, width: 170},
-        {Header: 'Port/url', id: 'port', accessor: x =>this.renderEndpoint(x.service), style: { 'whiteSpace': 'unset' }},
+        {Header: 'Time', id: 'time', accessor: x => x.time, style: { 'whiteSpace': 'unset' }},
+        {Header: 'Port/url', id: 'port', accessor: x =>this.renderEndpoint(x.service), style: { 'whiteSpace': 'unset' },
+        width: 170},
         {Header: 'Service', id: 'service', accessor: x => x.service.display_name, style: { 'whiteSpace': 'unset' }}
         ]
     }])};
@@ -54,7 +57,6 @@ class T1210 extends React.Component {
     return (
       <div>
         <br/>
-        <div>Found services: </div>
         <ReactTable
             columns={T1210.getScanColumns()}
             data={data}
@@ -68,7 +70,6 @@ class T1210 extends React.Component {
     return (
       <div>
         <br/>
-        <div>Exploited services: </div>
         <ReactTable
             columns={T1210.getExploitColumns()}
             data={data}
