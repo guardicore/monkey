@@ -3,8 +3,9 @@ from abc import ABCMeta, abstractproperty, abstractmethod
 from infection_monkey.config import WormConfiguration
 
 
-class HostFinger(object, metaclass=ABCMeta):
-    @abstractproperty
+class HostFinger(metaclass=ABCMeta):
+    @property
+    @abstractmethod
     def _SCANNED_SERVICE(self):
         pass
 
@@ -18,9 +19,5 @@ class HostFinger(object, metaclass=ABCMeta):
         raise NotImplementedError()
 
     @staticmethod
-    def should_run(class_name):
-        """
-        Decides if post breach action is enabled in config
-        :return: True if it needs to be ran, false otherwise
-        """
+    def should_run(class_name: str) -> bool:
         return class_name in WormConfiguration.finger_classes
