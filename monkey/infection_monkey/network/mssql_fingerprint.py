@@ -3,8 +3,6 @@ import logging
 import socket
 
 import infection_monkey.network.HostFinger
-from infection_monkey.model.host import VictimHost
-import infection_monkey.network
 import infection_monkey.config
 
 __author__ = 'Maor Rayzin'
@@ -32,7 +30,6 @@ class MSSQLFinger(infection_monkey.network.HostFinger.HostFinger):
                 Discovered server information written to the Host info struct.
                 True if success, False otherwise.
         """
-        assert isinstance(host, VictimHost)
 
         # Create a UDP socket and sets a timeout
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

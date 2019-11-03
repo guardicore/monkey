@@ -7,8 +7,6 @@ import sys
 import infection_monkey.config
 import infection_monkey.network.HostFinger
 import infection_monkey.network.HostScanner
-from infection_monkey.model.host import VictimHost
-import infection_monkey.network
 
 __author__ = 'itamar'
 
@@ -31,7 +29,6 @@ class PingScanner(infection_monkey.network.HostScanner.HostScanner, infection_mo
         self._ttl_regex = re.compile(TTL_REGEX_STR, re.IGNORECASE)
 
     def is_host_alive(self, host):
-        assert isinstance(host, VictimHost)
 
         timeout = self._config.ping_scan_timeout
         if not "win32" == sys.platform:
@@ -45,7 +42,6 @@ class PingScanner(infection_monkey.network.HostScanner.HostScanner, infection_mo
                                     stderr=self._devnull)
 
     def get_host_fingerprint(self, host):
-        assert isinstance(host, VictimHost)
 
         timeout = self._config.ping_scan_timeout
         if not "win32" == sys.platform:
