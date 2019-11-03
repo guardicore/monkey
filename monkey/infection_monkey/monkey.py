@@ -182,9 +182,8 @@ class InfectionMonkey(object):
                     monkey_tunnel.set_tunnel_for_host(machine)
                 if self._default_server:
                     if self._network.on_island(self._default_server):
-                        machine.set_default_server(get_interface_to_target(machine.ip_addr) +
-                                                   (
-                                                       ':' + self._default_server_port if self._default_server_port else ''))
+                        machine.set_default_server(get_interface_to_target(machine.ip_addr) + (
+                            ':' + self._default_server_port if self._default_server_port else ''))
                     else:
                         machine.set_default_server(self._default_server)
                     LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_server))
