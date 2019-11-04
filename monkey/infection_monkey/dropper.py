@@ -15,7 +15,7 @@ from infection_monkey.exploit.tools.helpers import build_monkey_commandline_expl
 from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX, MONKEY_ARG
 from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
 from infection_monkey.control import ControlClient
-from infection_monkey.pe.pe_handler import PrivilegeEscalation
+from infection_monkey.privilege_escalation.pe_handler import PrivilegeEscalation
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
 

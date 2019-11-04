@@ -12,9 +12,11 @@ import random
 import getpass
 import subprocess
 from logging import getLogger
-from infection_monkey.pe.actions import HostPrivExploiter
-from infection_monkey.pe.actions.tools import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
-from infection_monkey.pe.actions.tools import check_if_sudoer, shell, check_system, run_monkey_as_root
+
+from infection_monkey.utils.environment import Distribution
+from infection_monkey.privilege_escalation.actions import HostPrivExploiter
+from infection_monkey.privilege_escalation.actions.tools import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
+from infection_monkey.privilege_escalation.actions.tools import check_if_sudoer, shell, check_system, run_monkey_as_root
 LOG = getLogger(__name__)
 
 __author__ = "D3fa1t"
@@ -232,11 +234,11 @@ class SnapdExploiter(HostPrivExploiter):
         :return: True if the pe is successful
         """
         # Check if the exploit can be tried on this distro
-        if not check_system(self.runnableDistro):
+        if not check_system(self.runnableEnv):
             return False
 
         self.file_path = command_line.split(' ')[0]
-        self.file_name = os.path.basename(self.file_path);
+        self.file_name = os.path.basename(self.file_path)
 
         # get the current user name
         whoami = getpass.getuser()

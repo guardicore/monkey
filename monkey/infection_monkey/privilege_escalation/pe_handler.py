@@ -1,14 +1,14 @@
 import logging
 import inspect
 import importlib
-from infection_monkey.pe.actions import get_pe_files
+from infection_monkey.privilege_escalation.actions import get_pe_files
 from infection_monkey.network.info import local_ips
 
 LOG = logging.getLogger(__name__)
 
 __author__ = 'D3fa1t'
 
-PATH_TO_ACTIONS = "infection_monkey.pe.actions."
+PATH_TO_ACTIONS = "infection_monkey.privilege_escalation.actions."
 
 
 class PrivilegeEscalation(object):

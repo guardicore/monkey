@@ -108,7 +108,7 @@ SCHEMA = {
                     "enum": [
                         "SnapdExploiter"
                     ],
-                    "title": "Snap dirty sock exploiter"
+                    "title": "Snapd dirty sock exploiter"
                 }
             ]
         },

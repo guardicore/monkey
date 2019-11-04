@@ -14,7 +14,7 @@ from infection_monkey.config import WormConfiguration, GUID
 from infection_monkey.network.info import local_ips, check_internet_access
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
-from infection_monkey.utils import user_token_is_admin
+from infection_monkey.utils.users import user_token_is_admin_windows
 
 __author__ = 'hoffer'
 
@@ -50,7 +50,7 @@ class ControlClient(object):
             if os.getuid():  # won't throw an exception if it's linux
                 user = getpass.getuser()  # get the username
         except AttributeError:
-            if user_token_is_admin(0):  # user_token_is_admin returns true if the running thread has admin privileges
+            if user_token_is_admin_windows(0):  # user_token_is_admin returns true if the running thread has admin privileges
                 user = "Admin"
 
         monkey = {'guid': GUID,

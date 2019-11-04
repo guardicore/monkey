@@ -31,18 +31,6 @@ def check_if_sudoer(file):
     return False
 
 
-def check_system(properties):
-    """
-    Returns whether if the exploit can be run on the system
-    :param properties: list containing (distro, os)
-    :return:
-    """
-    uname = [x.lower() for x in platform.uname()]
-    if set(properties).issubset(set(uname)):
-        return True
-    return False
-
-
 def shell(cmd):
     """
     To run the command on the shell and to read the output.

@@ -23,7 +23,7 @@ class Configuration(object):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
         exploit_import = importlib.import_module('infection_monkey.exploit')
-        pe_import = importlib.import_module('infection_monkey.pe')
+        pe_import = importlib.import_module('infection_monkey.privilege_escalation')
         
         unknown_items = []
         for key, value in list(formatted_data.items()):
