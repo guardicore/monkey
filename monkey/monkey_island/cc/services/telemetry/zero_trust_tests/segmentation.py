@@ -1,6 +1,6 @@
 import itertools
 
-from common.data.zero_trust_consts import STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK, STATUS_PASSED
+import common.data.zero_trust_consts as zero_trust_consts
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst, get_ip_if_in_subnet
 from monkey_island.cc.models import Monkey
@@ -28,7 +28,7 @@ def test_segmentation_violation(current_monkey, target_ip):
                 event = get_segmentation_violation_event(current_monkey, source_subnet, target_ip, target_subnet)
                 SegmentationFinding.create_or_add_to_existing_finding(
                     subnets=[source_subnet, target_subnet],
-                    status=STATUS_FAILED,
+                    status=zero_trust_consts.STATUS_FAILED,
                     segmentation_event=event
                 )
 
@@ -66,7 +66,7 @@ def get_segmentation_violation_event(current_monkey, source_subnet, target_ip, t
             target_ip=target_ip,
             target_seg=target_subnet
         ),
-        event_type=EVENT_TYPE_MONKEY_NETWORK
+        event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK
     )
 
 
@@ -92,7 +92,7 @@ def create_or_add_findings_for_all_pairs(all_subnets, current_monkey):
     for subnet_pair in all_subnets_pairs_for_this_monkey:
         SegmentationFinding.create_or_add_to_existing_finding(
             subnets=list(subnet_pair),
-            status=STATUS_PASSED,
+            status=zero_trust_consts.STATUS_PASSED,
             segmentation_event=get_segmentation_done_event(current_monkey, subnet_pair)
         )
 
@@ -104,5 +104,5 @@ def get_segmentation_done_event(current_monkey, subnet_pair):
             hostname=current_monkey.hostname,
             src_seg=subnet_pair[0],
             dst_seg=subnet_pair[1]),
-        event_type=EVENT_TYPE_MONKEY_NETWORK
+        event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK
     )

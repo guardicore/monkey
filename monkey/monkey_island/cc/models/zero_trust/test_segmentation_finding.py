@@ -1,4 +1,4 @@
-from common.data.zero_trust_consts import STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK
+import common.data.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 from monkey_island.cc.models.zero_trust.segmentation_finding import SegmentationFinding
@@ -12,11 +12,11 @@ class TestSegmentationFinding(IslandTestCase):
         first_segment = "1.1.1.0/24"
         second_segment = "2.2.2.0-2.2.2.254"
         third_segment = "3.3.3.3"
-        event = Event.create_event("bla", "bla", EVENT_TYPE_MONKEY_NETWORK)
+        event = Event.create_event("bla", "bla", zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK)
 
         SegmentationFinding.create_or_add_to_existing_finding(
             subnets=[first_segment, second_segment],
-            status=STATUS_FAILED,
+            status=zero_trust_consts.STATUS_FAILED,
             segmentation_event=event
         )
 
@@ -26,7 +26,7 @@ class TestSegmentationFinding(IslandTestCase):
         SegmentationFinding.create_or_add_to_existing_finding(
             # !!! REVERSE ORDER
             subnets=[second_segment, first_segment],
-            status=STATUS_FAILED,
+            status=zero_trust_consts.STATUS_FAILED,
             segmentation_event=event
         )
 
@@ -36,7 +36,7 @@ class TestSegmentationFinding(IslandTestCase):
         SegmentationFinding.create_or_add_to_existing_finding(
             # !!! REVERSE ORDER
             subnets=[first_segment, third_segment],
-            status=STATUS_FAILED,
+            status=zero_trust_consts.STATUS_FAILED,
             segmentation_event=event
         )
 
@@ -45,7 +45,7 @@ class TestSegmentationFinding(IslandTestCase):
         SegmentationFinding.create_or_add_to_existing_finding(
             # !!! REVERSE ORDER
             subnets=[second_segment, third_segment],
-            status=STATUS_FAILED,
+            status=zero_trust_consts.STATUS_FAILED,
             segmentation_event=event
         )
 
