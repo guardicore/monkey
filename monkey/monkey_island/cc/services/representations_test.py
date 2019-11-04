@@ -1,6 +1,6 @@
 from unittest import TestCase
 from datetime import datetime
-from .representations import normalize_obj
+from monkey_island.cc.services.representations import normalize_obj
 
 import bson
 
