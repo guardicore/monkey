@@ -6,7 +6,6 @@ __author__ = "VakarisZ"
 
 
 class T1188(AttackTechnique):
-
     tech_id = "T1188"
     unscanned_msg = "Monkey didn't use multi-hop proxy."
     scanned_msg = ""

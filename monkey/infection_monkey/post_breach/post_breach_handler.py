@@ -16,6 +16,7 @@ class PostBreach(object):
     """
     This class handles post breach actions execution
     """
+
     def __init__(self):
         self.os_is_linux = not is_windows_os()
         self.pba_list = self.config_to_pba_list()

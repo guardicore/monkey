@@ -2,7 +2,6 @@ import flask_restful
 import logging
 
 from monkey_island.cc.environment.environment import env
-from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.services.version_update import VersionUpdateService
 
 __author__ = 'itay.mizeretz'

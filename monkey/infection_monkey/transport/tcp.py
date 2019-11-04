@@ -41,13 +41,13 @@ class SocketsPipe(Thread):
                     except:
                         break
                     self._keep_connection = True
-        
+
         self.source.close()
         self.dest.close()
 
 
 class TcpProxy(TransportProxyBase):
-    
+
     def run(self):
         pipes = []
         l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

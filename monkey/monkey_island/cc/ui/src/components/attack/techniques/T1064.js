@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { getUsageColumns } from "./Helpers"
+import {getUsageColumns} from "./Helpers"
 
 
 class T1064 extends React.Component {
@@ -17,10 +17,10 @@ class T1064 extends React.Component {
         <br/>
         {this.props.data.scripts.length !== 0 ?
           <ReactTable
-              columns={getUsageColumns()}
-              data={this.props.data.scripts}
-              showPagination={false}
-              defaultPageSize={this.props.data.scripts.length}
+            columns={getUsageColumns()}
+            data={this.props.data.scripts}
+            showPagination={false}
+            defaultPageSize={this.props.data.scripts.length}
           /> : ""}
       </div>
     );

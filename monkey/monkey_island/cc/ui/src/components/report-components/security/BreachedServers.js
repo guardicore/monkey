@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table'
 
-let renderArray = function(val) {
+let renderArray = function (val) {
   return <div>{val.map(x => <div>{x}</div>)}</div>;
 };
 
@@ -14,10 +14,12 @@ const columns = [
     Header: 'Breached Servers',
     columns: [
       {Header: 'Machine', accessor: 'label'},
-      {Header: 'IP Addresses', id: 'ip_addresses',
-       accessor: x => renderIpAddresses(x)},
+      {
+        Header: 'IP Addresses', id: 'ip_addresses',
+        accessor: x => renderIpAddresses(x)
+      },
       {Header: 'Exploits', id: 'exploits', accessor: x => renderArray(x.exploits)}
-      ]
+    ]
   }
 ];
 

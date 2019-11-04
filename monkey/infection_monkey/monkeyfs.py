@@ -34,7 +34,6 @@ class VirtualFile(BytesIO):
         return path in VirtualFile._vfs
 
 
-
 def getsize(path):
     if path.startswith(MONKEYFS_PREFIX):
         return VirtualFile.getsize(path)
@@ -53,6 +52,7 @@ def virtual_path(name):
     return "%s%s" % (MONKEYFS_PREFIX, name)
 
 
+# noinspection PyShadowingBuiltins
 def open(name, mode='r', buffering=-1):
     # use normal open for regular paths, and our "virtual" open for monkeyfs:// paths
     if name.startswith(MONKEYFS_PREFIX):

@@ -5,7 +5,6 @@ __author__ = 'maor.rayzin'
 
 
 class WMIHandler(object):
-
     ADMINISTRATORS_GROUP_KNOWN_SID = '1-5-32-544'
 
     def __init__(self, monkey_id, wmi_info, user_secrets):
@@ -160,4 +159,3 @@ class WMIHandler(object):
                                                               {'type': USERTYPE, 'entities_list': 1})
             if entity_details.get('type') == GROUPTYPE:
                 self.add_admin(entity_details, machine_id)
-

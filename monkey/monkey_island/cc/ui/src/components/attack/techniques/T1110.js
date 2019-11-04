@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachine, ScanStatus } from "./Helpers"
+import {renderMachine, ScanStatus} from "./Helpers"
 
 
 class T1110 extends React.Component {
@@ -13,15 +13,23 @@ class T1110 extends React.Component {
   static getServiceColumns() {
     return ([{
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
-          style: { 'whiteSpace': 'unset' }, width: 160},
-        {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: { 'whiteSpace': 'unset' }, width: 100},
-        {Header: 'Started', id: 'started', accessor: x => x.info.started, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Finished', id: 'finished', accessor: x => x.info.finished, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Attempts', id: 'attempts', accessor: x => x.attempt_cnt, style: { 'whiteSpace': 'unset' }, width: 160},
-        {Header: 'Successful credentials', id: 'credentials', accessor: x => this.renderCreds(x.successful_creds), style: { 'whiteSpace': 'unset' }},
-        ]
-    }])};
+        {
+          Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
+          style: {'whiteSpace': 'unset'}, width: 160
+        },
+        {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: {'whiteSpace': 'unset'}, width: 100},
+        {Header: 'Started', id: 'started', accessor: x => x.info.started, style: {'whiteSpace': 'unset'}},
+        {Header: 'Finished', id: 'finished', accessor: x => x.info.finished, style: {'whiteSpace': 'unset'}},
+        {Header: 'Attempts', id: 'attempts', accessor: x => x.attempt_cnt, style: {'whiteSpace': 'unset'}, width: 160},
+        {
+          Header: 'Successful credentials',
+          id: 'credentials',
+          accessor: x => this.renderCreds(x.successful_creds),
+          style: {'whiteSpace': 'unset'}
+        },
+      ]
+    }])
+  };
 
   static renderCreds(creds) {
     return <span>{creds.map(cred => <div key={cred}>{cred}</div>)}</span>

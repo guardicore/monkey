@@ -1,4 +1,10 @@
 {
-  "presets": ["es2015", "stage-0", "react"],
-  "plugins": ["emotion"]
+  "presets": [
+    "es2015",
+    "stage-0",
+    "react"
+  ],
+  "plugins": [
+    "emotion"
+  ]
 }

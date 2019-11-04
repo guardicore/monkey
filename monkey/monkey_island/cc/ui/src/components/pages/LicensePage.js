@@ -18,8 +18,8 @@ class LicensePageComponent extends React.Component {
         <h1 className="page-title">License</h1>
         <div style={{'fontSize': '1.2em'}}>
           <p>
-            Copyright <i className="glyphicon glyphicon-copyright-mark" /> 2017 Guardicore Ltd.
-            <br />
+            Copyright <i className="glyphicon glyphicon-copyright-mark"/> 2017 Guardicore Ltd.
+            <br/>
             Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPLv3</a>.
           </p>
           <p>

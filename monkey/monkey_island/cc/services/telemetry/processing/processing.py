@@ -1,6 +1,7 @@
 import logging
 
-from monkey_island.cc.services.telemetry.processing import *
+from monkey_island.cc.services.telemetry.processing import process_tunnel_telemetry, process_state_telemetry, \
+    process_exploit_telemetry, process_scan_telemetry, process_system_info_telemetry, process_post_breach_telemetry
 
 logger = logging.getLogger(__name__)
 

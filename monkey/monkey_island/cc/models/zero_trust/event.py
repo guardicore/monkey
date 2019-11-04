@@ -2,7 +2,7 @@ from datetime import datetime
 
 from mongoengine import EmbeddedDocument, DateTimeField, StringField
 
-from common.data.zero_trust_consts import EVENT_TYPES
+import common.data.zero_trust_consts as zero_trust_consts
 
 
 class Event(EmbeddedDocument):
@@ -19,7 +19,7 @@ class Event(EmbeddedDocument):
     timestamp = DateTimeField(required=True)
     title = StringField(required=True)
     message = StringField()
-    event_type = StringField(required=True, choices=EVENT_TYPES)
+    event_type = StringField(required=True, choices=zero_trust_consts.EVENT_TYPES)
 
     # LOGIC
     @staticmethod
