@@ -1,3 +1,5 @@
+pytest
+bson
 python-dateutil
 tornado
 werkzeug
