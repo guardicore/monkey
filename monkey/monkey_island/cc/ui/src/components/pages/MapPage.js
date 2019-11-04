@@ -43,11 +43,13 @@ class MapPageComponent extends AuthComponent {
     this.authFetch('/api/netmap')
       .then(res => res.json())
       .then(res => {
-        res.edges.forEach(edge => {
-          edge.color = {'color': edgeGroupToColor(edge.group)};
-        });
-        this.setState({graph: res});
-        this.props.onStatusChange();
+        if (res.hasOwnProperty("edges")) {
+          res.edges.forEach(edge => {
+            edge.color = {'color': edgeGroupToColor(edge.group)};
+          });
+          this.setState({graph: res});
+          this.props.onStatusChange();
+        }
       });
   };
 
@@ -55,14 +57,16 @@ class MapPageComponent extends AuthComponent {
     this.authFetch('/api/telemetry-feed?timestamp=' + this.state.telemetryLastTimestamp)
       .then(res => res.json())
       .then(res => {
-        let newTelem = this.state.telemetry.concat(res['telemetries']);
+        if ('telemetries' in res) {
+          let newTelem = this.state.telemetry.concat(res['telemetries']);
 
-        this.setState(
-          {
-            telemetry: newTelem,
-            telemetryLastTimestamp: res['timestamp']
-          });
-        this.props.onStatusChange();
+          this.setState(
+            {
+              telemetry: newTelem,
+              telemetryLastTimestamp: res['timestamp']
+            });
+          this.props.onStatusChange();
+        }
       });
   };
 
