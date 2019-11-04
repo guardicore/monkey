@@ -99,6 +99,19 @@ SCHEMA = {
                 }
             ]
         },
+        "privilege_escalator_classes": {
+            "title": "Privilege escalation exploiters",
+            "type": "string",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        "SnapdExploiter"
+                    ],
+                    "title": "Snap dirty sock exploiter"
+                }
+            ]
+        },
         "post_breach_acts": {
             "title": "Post breach actions",
             "type": "string",
@@ -759,6 +772,19 @@ SCHEMA = {
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
                                 + " Note that using unsafe exploits may cause crashes of the exploited machine/service"
+                        },
+                        "privilege_escalator_classes": {
+                            "title": "Privilege escalation exploiters",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "$ref": "#/definitions/privilege_escalator_classes"
+                            },
+                            "default": [
+                                "Snap",
+                            ],
+                            "description":
+                                "Determines which privilege escalation exploiters to use."
                         },
                         "skip_exploit_if_file_exist": {
                             "title": "Skip exploit if file exists",
