@@ -28,7 +28,7 @@ before_script:
 - cat flake8_warnings.txt
 # Make sure that we haven't increased the amount of warnings.
 - WARNINGS_AMOUNT_UPPER_LIMIT=180
-- if (test $(tail -n 1 flake8_warnings.txt) -gt $WARNINGS_AMOUNT_UPPER_LIMIT); echo "Too many warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
+- if [ $(tail -n 1 flake8_warnings.txt) -gt $WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
 # Set the server config to `testing`, for the UTs to use mongomaock and pass.
 - python monkey/monkey_island/cc/set_server_config.py testing
