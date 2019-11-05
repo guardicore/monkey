@@ -158,7 +158,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
             banners = []
             if get_banner and (len(connected_ports_sockets) != 0):
                 readable_sockets, _, _ = select.select([s[1] for s in connected_ports_sockets], [], [], 0)
-                # read first BANNER_READ bytes
+                # read first BANNER_READ bytes. We ignore errors because service might not send a decodable byte string.
                 banners = [sock.recv(BANNER_READ).decode(errors='ignore') if sock in readable_sockets else ""
                            for port, sock in connected_ports_sockets]
                 pass
