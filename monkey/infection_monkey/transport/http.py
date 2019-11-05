@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
-from infection_monkey.exploit.tools.helpers import get_interface_to_target
+from infection_monkey.network.tools import get_interface_to_target
 
 __author__ = 'hoffer'
 
@@ -64,7 +64,6 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         if self.path != '/' + urllib.parse.quote(os.path.basename(self.filename)):
             self.send_error(500, "")
             return None, 0, 0
-        f = None
         try:
             f = monkeyfs.open(self.filename, 'rb')
         except IOError:
@@ -100,10 +99,10 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         return f, start_range, end_range
 
-    def log_message(self, format, *args):
+    def log_message(self, format_string, *args):
         LOG.debug("FileServHTTPRequestHandler: %s - - [%s] %s" % (self.address_string(),
                                                                   self.log_date_time_string(),
-                                                                  format % args))
+                                                                  format_string % args))
 
 
 class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
@@ -117,7 +116,6 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     def do_CONNECT(self):
         # just provide a tunnel, transfer the data with no modification
         req = self
-        reqbody = None
         req.path = "https://%s/" % req.path.replace(':443', '')
 
         u = urlsplit(req.path)
@@ -148,9 +146,9 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
                     update_last_serve_time()
         conn.close()
 
-    def log_message(self, format, *args):
+    def log_message(self, format_string, *args):
         LOG.debug("HTTPConnectProxyHandler: %s - [%s] %s" %
-                  (self.address_string(), self.log_date_time_string(), format % args))
+                  (self.address_string(), self.log_date_time_string(), format_string % args))
 
 
 class HTTPServer(threading.Thread):

@@ -15,7 +15,6 @@ __author__ = "itay.mizeretz"
 
 logger = logging.getLogger(__name__)
 
-
 # This should be used for config values of array type (array of strings only)
 ENCRYPTED_CONFIG_ARRAYS = \
     [
@@ -122,11 +121,16 @@ class ConfigService:
 
     @staticmethod
     def ssh_add_keys(public_key, private_key, user, ip):
-        if not ConfigService.ssh_key_exists(ConfigService.get_config_value(['internal', 'exploits', 'exploit_ssh_keys'],
-                                                                           False, False), user, ip):
-            ConfigService.add_item_to_config_set('internal.exploits.exploit_ssh_keys',
-                                             {"public_key": public_key, "private_key": private_key,
-                                              "user": user, "ip": ip})
+        if not ConfigService.ssh_key_exists(
+                ConfigService.get_config_value(['internal', 'exploits', 'exploit_ssh_keys'], False, False), user, ip):
+            ConfigService.add_item_to_config_set(
+                'internal.exploits.exploit_ssh_keys',
+                {
+                    "public_key": public_key,
+                    "private_key": private_key,
+                    "user": user, "ip": ip
+                }
+            )
 
     @staticmethod
     def ssh_key_exists(keys, user, ip):
@@ -139,7 +143,7 @@ class ConfigService:
         if should_encrypt:
             try:
                 ConfigService.encrypt_config(config_json)
-            except KeyError as e:
+            except KeyError:
                 logger.error('Bad configuration file was submitted.')
                 return False
         mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
@@ -149,9 +153,9 @@ class ConfigService:
     @staticmethod
     def init_default_config():
         if ConfigService.default_config is None:
-            defaultValidatingDraft4Validator = ConfigService._extend_config_with_default(Draft4Validator)
+            default_validating_draft4_validator = ConfigService._extend_config_with_default(Draft4Validator)
             config = {}
-            defaultValidatingDraft4Validator(SCHEMA).validate(config)
+            default_validating_draft4_validator(SCHEMA).validate(config)
             ConfigService.default_config = config
 
     @staticmethod
@@ -202,15 +206,15 @@ class ConfigService:
             # Do it only for root.
             if instance != {}:
                 return
-            for property, subschema in list(properties.items()):
+            for property1, subschema1 in list(properties.items()):
                 main_dict = {}
-                for property2, subschema2 in list(subschema["properties"].items()):
+                for property2, subschema2 in list(subschema1["properties"].items()):
                     sub_dict = {}
                     for property3, subschema3 in list(subschema2["properties"].items()):
                         if "default" in subschema3:
                             sub_dict[property3] = subschema3["default"]
                     main_dict[property2] = sub_dict
-                instance.setdefault(property, main_dict)
+                instance.setdefault(property1, main_dict)
 
             for error in validate_properties(validator, properties, instance, schema):
                 yield error
@@ -261,11 +265,11 @@ class ConfigService:
                     # Check if array of shh key pairs and then decrypt
                     if isinstance(config_arr[i], dict) and 'public_key' in config_arr[i]:
                         config_arr[i] = ConfigService.decrypt_ssh_key_pair(config_arr[i]) if is_decrypt else \
-                                        ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
+                            ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
                     else:
                         config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
             else:
-                parent_config_arr[config_arr_as_array[-1]] =\
+                parent_config_arr[config_arr_as_array[-1]] = \
                     encryptor.dec(config_arr) if is_decrypt else encryptor.enc(config_arr)
 
     @staticmethod

@@ -26,8 +26,8 @@ from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.exploit.tools.helpers import get_interface_to_target
-from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError
+from infection_monkey.network.tools import get_interface_to_target
+from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
 
@@ -182,8 +182,8 @@ class InfectionMonkey(object):
                     monkey_tunnel.set_tunnel_for_host(machine)
                 if self._default_server:
                     if self._network.on_island(self._default_server):
-                        machine.set_default_server(get_interface_to_target(machine.ip_addr) + (
-                            ':' + self._default_server_port if self._default_server_port else ''))
+                        machine.set_default_server(get_interface_to_target(machine.ip_addr) +
+                                                   (':' + self._default_server_port if self._default_server_port else ''))
                     else:
                         machine.set_default_server(self._default_server)
                     LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_server))
@@ -312,6 +312,8 @@ class InfectionMonkey(object):
                       machine, exploiter.__class__.__name__, exc)
             self.successfully_exploited(machine, exploiter)
             return True
+        except FailedExploitationError as e:
+            LOG.info("Failed exploiting %r with exploiter %s, %s", machine, exploiter.__class__.__name__, e)
         except Exception as exc:
             LOG.exception("Exception while attacking %s using %s: %s",
                           machine, exploiter.__class__.__name__, exc)

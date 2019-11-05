@@ -59,7 +59,7 @@ class NetworkRange(object, metaclass=ABCMeta):
             ips = address_str.split('-')
             try:
                 ipaddress.ip_address(ips[0]) and ipaddress.ip_address(ips[1])
-            except ValueError as e:
+            except ValueError:
                 return False
             return True
         return False
@@ -173,4 +173,3 @@ class SingleIpRange(NetworkRange):
                 return None, string_
         # If a string_ was entered instead of IP we presume that it was domain name and translate it
         return ip, domain_name
-

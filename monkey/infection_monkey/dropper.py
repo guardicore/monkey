@@ -26,6 +26,7 @@ else:
 try:
     WindowsError
 except NameError:
+    # noinspection PyShadowingBuiltins
     WindowsError = IOError
 
 __author__ = 'itamar'
@@ -103,17 +104,17 @@ class MonkeyDrops(object):
                 dropper_date_reference_path = WormConfiguration.dropper_date_reference_path_linux
             try:
                 ref_stat = os.stat(dropper_date_reference_path)
-            except OSError as exc:
+            except OSError:
                 LOG.warning("Cannot set reference date using '%s', file not found",
                             dropper_date_reference_path)
             else:
                 try:
                     os.utime(self._config['destination_path'],
                              (ref_stat.st_atime, ref_stat.st_mtime))
-                except:
+                except OSError:
                     LOG.warning("Cannot set reference date to destination file")
 
-        monkey_options =\
+        monkey_options = \
             build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():

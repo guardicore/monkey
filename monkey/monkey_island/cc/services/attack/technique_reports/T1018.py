@@ -6,7 +6,6 @@ __author__ = "VakarisZ"
 
 
 class T1018(AttackTechnique):
-
     tech_id = "T1018"
     unscanned_msg = "Monkey didn't find any machines on the network."
     scanned_msg = ""

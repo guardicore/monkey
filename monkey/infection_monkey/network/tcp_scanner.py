@@ -3,7 +3,7 @@ from random import shuffle
 
 import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
-import infection_monkey.network.HostScanner
+from infection_monkey.network.HostScanner import HostScanner
 from infection_monkey.network.tools import check_tcp_ports, tcp_port_to_service
 
 __author__ = 'itamar'
@@ -11,7 +11,7 @@ __author__ = 'itamar'
 BANNER_READ = 1024
 
 
-class TcpScanner(infection_monkey.network.HostScanner.HostScanner, HostFinger):
+class TcpScanner(HostScanner, HostFinger):
     _SCANNED_SERVICE = 'unknown(TCP)'
 
     def __init__(self):
@@ -25,7 +25,8 @@ class TcpScanner(infection_monkey.network.HostScanner.HostScanner, HostFinger):
         Scans a target host to see if it's alive using the tcp_target_ports specified in the configuration.
         :param host: VictimHost structure
         :param only_one_port: Currently unused.
-        :return: T/F if there is at least one open port. In addition, the host object is updated to mark those services as alive.
+        :return: T/F if there is at least one open port.
+        In addition, the host object is updated to mark those services as alive.
         """
 
         # maybe hide under really bad detection systems

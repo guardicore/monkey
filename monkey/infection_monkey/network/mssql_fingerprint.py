@@ -11,7 +11,6 @@ LOG = logging.getLogger(__name__)
 
 
 class MSSQLFinger(HostFinger):
-
     # Class related consts
     SQL_BROWSER_DEFAULT_PORT = 1434
     BUFFER_SIZE = 4096

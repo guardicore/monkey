@@ -5,7 +5,6 @@ from abc import ABCMeta, abstractmethod
 
 from infection_monkey.config import WormConfiguration
 
-
 __author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)

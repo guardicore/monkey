@@ -13,9 +13,13 @@ from requests import ConnectionError
 from common.network.network_range import CidrRange
 from infection_monkey.utils.environment import is_windows_os
 
-
 # Timeout for monkey connections
 TIMEOUT = 15
+LOOPBACK_NAME = b"lo"
+SIOCGIFADDR = 0x8915  # get PA address
+SIOCGIFNETMASK = 0x891b  # get network PA mask
+RTF_UP = 0x0001  # Route usable
+RTF_REJECT = 0x0200
 
 
 def get_host_subnets():
@@ -43,31 +47,20 @@ def get_host_subnets():
 
 
 if is_windows_os():
-
     def local_ips():
         local_hostname = socket.gethostname()
         return socket.gethostbyname_ex(local_hostname)[2]
 
-
     def get_routes():
         raise NotImplementedError()
-
 else:
     from fcntl import ioctl
-
 
     def local_ips():
         valid_ips = [network['addr'] for network in get_host_subnets()]
         return valid_ips
 
-
     def get_routes():  # based on scapy implementation for route parsing
-        LOOPBACK_NAME = b"lo"
-        SIOCGIFADDR = 0x8915  # get PA address
-        SIOCGIFNETMASK = 0x891b  # get network PA mask
-        RTF_UP = 0x0001  # Route usable
-        RTF_REJECT = 0x0200
-
         try:
             f = open("/proc/net/route", "r")
         except IOError:

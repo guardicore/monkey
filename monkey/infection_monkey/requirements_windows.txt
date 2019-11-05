@@ -1,4 +1,3 @@
-enum34
 impacket
 pycryptodome
 cffi
@@ -14,4 +13,3 @@ wmi
 pywin32
 pymssql
 pyftpdlib
-enum34

@@ -12,7 +12,6 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
-from monkey_island.cc.services.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachineFromSystemData, renderUsageFields, ScanStatus } from "./Helpers"
+import {renderMachineFromSystemData, renderUsageFields, ScanStatus} from "./Helpers"
 
 
 class T1016 extends React.Component {
@@ -14,10 +14,16 @@ class T1016 extends React.Component {
     return ([{
       Header: "Network configuration info gathered",
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => renderMachineFromSystemData(x.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Network info', id: 'info', accessor: x => renderUsageFields(x.info), style: { 'whiteSpace': 'unset' }},
-        ]
-    }])};
+        {
+          Header: 'Machine',
+          id: 'machine',
+          accessor: x => renderMachineFromSystemData(x.machine),
+          style: {'whiteSpace': 'unset'}
+        },
+        {Header: 'Network info', id: 'info', accessor: x => renderUsageFields(x.info), style: {'whiteSpace': 'unset'}},
+      ]
+    }])
+  };
 
   render() {
     return (
@@ -26,10 +32,10 @@ class T1016 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
-              columns={T1016.getNetworkInfoColumns()}
-              data={this.props.data.network_info}
-              showPagination={false}
-              defaultPageSize={this.props.data.network_info.length}
+            columns={T1016.getNetworkInfoColumns()}
+            data={this.props.data.network_info}
+            showPagination={false}
+            defaultPageSize={this.props.data.network_info.length}
           /> : ""}
       </div>
     );
