@@ -1,11 +1,11 @@
 import infection_monkey.config
-import infection_monkey.network.HostFinger
+from infection_monkey.network.HostFinger import HostFinger
 import logging
 
 LOG = logging.getLogger(__name__)
 
 
-class HTTPFinger(infection_monkey.network.HostFinger.HostFinger):
+class HTTPFinger(HostFinger):
     """
     Goal is to recognise HTTP servers, where what we currently care about is apache.
     """

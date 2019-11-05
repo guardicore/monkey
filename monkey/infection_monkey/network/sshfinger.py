@@ -1,7 +1,7 @@
 import re
 
 import infection_monkey.config
-import infection_monkey.network.HostFinger
+from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.tools import check_tcp_port
 
 SSH_PORT = 22
@@ -12,7 +12,7 @@ BANNER_READ = 1024
 LINUX_DIST_SSH = ['ubuntu', 'debian']
 
 
-class SSHFinger(infection_monkey.network.HostFinger.HostFinger):
+class SSHFinger(HostFinger):
     _SCANNED_SERVICE = 'SSH'
 
     def __init__(self):

@@ -2,7 +2,7 @@ from itertools import zip_longest
 from random import shuffle
 
 import infection_monkey.config
-import infection_monkey.network.HostFinger
+from infection_monkey.network.HostFinger import HostFinger
 import infection_monkey.network.HostScanner
 from infection_monkey.network.tools import check_tcp_ports, tcp_port_to_service
 
@@ -11,7 +11,7 @@ __author__ = 'itamar'
 BANNER_READ = 1024
 
 
-class TcpScanner(infection_monkey.network.HostScanner.HostScanner, infection_monkey.network.HostFinger.HostFinger):
+class TcpScanner(infection_monkey.network.HostScanner.HostScanner, HostFinger):
     _SCANNED_SERVICE = 'unknown(TCP)'
 
     def __init__(self):
