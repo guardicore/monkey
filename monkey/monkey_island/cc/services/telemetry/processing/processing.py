@@ -1,7 +1,11 @@
 import logging
 
-from monkey_island.cc.services.telemetry.processing import process_tunnel_telemetry, process_state_telemetry, \
-    process_exploit_telemetry, process_scan_telemetry, process_system_info_telemetry, process_post_breach_telemetry
+from monkey_island.cc.services.telemetry.processing.exploit import process_exploit_telemetry
+from monkey_island.cc.services.telemetry.processing.post_breach import process_post_breach_telemetry
+from monkey_island.cc.services.telemetry.processing.scan import process_scan_telemetry
+from monkey_island.cc.services.telemetry.processing.state import process_state_telemetry
+from monkey_island.cc.services.telemetry.processing.system_info import process_system_info_telemetry
+from monkey_island.cc.services.telemetry.processing.tunnel import process_tunnel_telemetry
 
 logger = logging.getLogger(__name__)
 
