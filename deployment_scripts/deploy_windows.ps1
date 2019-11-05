@@ -44,39 +44,28 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     try
     {
         $version = cmd.exe /c '"python" --version  2>&1'
-        if ( $version -like 'Python 2.7.*' ) {
-            "Python 2.7.* was found, installing dependancies"
+        if ( $version -like 'Python 3.*' ) {
+            "Python 3.* was found, installing dependencies"
         } else {
             throw System.Management.Automation.CommandNotFoundException
         }
     }
     catch [System.Management.Automation.CommandNotFoundException]
     {
-        "Downloading python 2.7 ..."
+        "Downloading python 3 ..."
+        "Select 'add to PATH' when installing"
         $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
         Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
         Remove-Item $TEMP_PYTHON_INSTALLER
         # Check if installed correctly
         $version = cmd.exe /c '"python" --version  2>&1'
         if ( $version -like '* is not recognized*' ) {
-            "Python is not found in PATH. Add it manually or reinstall python."
+            "Python is not found in PATH. Add it to PATH and relaunch the script."
             return
         }
     }
 
-    # Set python home dir
-    $PYTHON_PATH = Split-Path -Path (Get-Command python | Select-Object -ExpandProperty Source)
-
-    # Get vcforpython27 before installing requirements
-    "Downloading Visual C++ Compiler for Python 2.7 ..."
-    $webClient.DownloadFile($VC_FOR_PYTHON27_URL, $TEMP_VC_FOR_PYTHON27_INSTALLER)
-    Start-Process -Wait $TEMP_VC_FOR_PYTHON27_INSTALLER -ErrorAction Stop
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
-    Remove-Item $TEMP_VC_FOR_PYTHON27_INSTALLER
-
-    # Install requirements for island
-    $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
     "Upgrading pip..."
     $output = cmd.exe /c 'python -m pip install --user --upgrade pip 2>&1'
     $output
@@ -84,10 +73,21 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         "Make sure pip module is installed and re-run this script."
         return
     }
+
+    "Installing python packages for island"
+    $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
     & python -m pip install --user -r $islandRequirements
-    # Install requirements for monkey
+    "Installing python packages for monkey"
     $monkeyRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\requirements_windows.txt"
     & python -m pip install --user -r $monkeyRequirements
+
+    $user_python_dir = cmd.exe /c 'py -m site --user-site'
+    $user_python_dir = Join-Path (Split-Path $user_python_dir) -ChildPath "\Scripts"
+    if(!($ENV:PATH | Select-String -SimpleMatch $user_python_dir)){
+        "Adding python scripts path to user's env"
+        $env:Path += ";"+$user_python_dir
+        [Environment]::SetEnvironmentVariable("Path",$env:Path,"User")
+    }
 
     # Download mongodb
     if(!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "mongodb") )){

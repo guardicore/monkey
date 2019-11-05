@@ -1,4 +1,4 @@
-from common.data.zero_trust_consts import TEST_TUNNELING, STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK
+import common.data.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding, add_malicious_activity_to_timeline
 from monkey_island.cc.models.zero_trust.event import Event
@@ -14,13 +14,13 @@ def test_tunneling_violation(tunnel_telemetry_json):
             title="Tunneling event",
             message="Monkey on {hostname} tunneled traffic through {proxy}.".format(
                 hostname=current_monkey.hostname, proxy=tunnel_host_ip),
-            event_type=EVENT_TYPE_MONKEY_NETWORK,
+            event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
             timestamp=tunnel_telemetry_json['timestamp']
         )]
 
         AggregateFinding.create_or_add_to_existing(
-            test=TEST_TUNNELING,
-            status=STATUS_FAILED,
+            test=zero_trust_consts.TEST_TUNNELING,
+            status=zero_trust_consts.STATUS_FAILED,
             events=tunneling_events
         )
 

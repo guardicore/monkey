@@ -3,7 +3,6 @@ from .aws_service import filter_instance_data_from_aws_response
 
 import json
 
-
 __author__ = 'shay.nehmad'
 
 
@@ -11,14 +10,14 @@ class TestFilterInstanceDataFromAwsResponse(TestCase):
     def test_filter_instance_data_from_aws_response(self):
         json_response_full = """
         {
-            "InstanceInformationList": [ 
-                { 
+            "InstanceInformationList": [
+                {
                      "ActivationId": "string",
                      "AgentVersion": "string",
-                     "AssociationOverview": { 
+                     "AssociationOverview": {
                         "DetailedStatus": "string",
-                        "InstanceAssociationStatusAggregatedCount": { 
-                           "string" : 6 
+                        "InstanceAssociationStatusAggregatedCount": {
+                           "string" : 6
                         }
                      },
                      "AssociationStatus": "string",

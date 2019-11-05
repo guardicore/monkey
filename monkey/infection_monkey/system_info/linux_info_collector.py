@@ -26,4 +26,3 @@ class LinuxInfoCollector(InfoCollector):
         super(LinuxInfoCollector, self).get_info()
         self.info['ssh_info'] = SSHCollector.get_info()
         return self.info
-

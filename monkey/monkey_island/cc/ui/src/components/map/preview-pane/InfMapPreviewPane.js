@@ -84,14 +84,14 @@ class InfMapPreviewPaneComponent extends PreviewPaneComponent {
 
   unescapeLog(st) {
     return st.substr(1, st.length - 2) // remove quotation marks on beginning and end of string.
-        .replace(/\\n/g, "\n")
-        .replace(/\\r/g, "\r")
-        .replace(/\\t/g, "\t")
-        .replace(/\\b/g, "\b")
-        .replace(/\\f/g, "\f")
-        .replace(/\\"/g, '\"')
-        .replace(/\\'/g, "\'")
-        .replace(/\\&/g, "\&");
+      .replace(/\\n/g, "\n")
+      .replace(/\\r/g, "\r")
+      .replace(/\\t/g, "\t")
+      .replace(/\\b/g, "\b")
+      .replace(/\\f/g, "\f")
+      .replace(/\\"/g, '\"')
+      .replace(/\\'/g, "\'")
+      .replace(/\\&/g, "\&");
   }
 
   downloadLog(asset) {

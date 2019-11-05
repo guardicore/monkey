@@ -80,4 +80,3 @@ class MongoUtils:
                 continue
 
         return row
-

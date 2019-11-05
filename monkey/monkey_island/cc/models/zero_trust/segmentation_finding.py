@@ -1,11 +1,11 @@
 from mongoengine import StringField
 
-from common.data.zero_trust_consts import TEST_SEGMENTATION, STATUS_FAILED, STATUS_PASSED
+import common.data.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
 
 
 def need_to_overwrite_status(saved_status, new_status):
-    return (saved_status == STATUS_PASSED) and (new_status == STATUS_FAILED)
+    return (saved_status == zero_trust_consts.STATUS_PASSED) and (new_status == zero_trust_consts.STATUS_FAILED)
 
 
 class SegmentationFinding(Finding):
@@ -35,7 +35,7 @@ class SegmentationFinding(Finding):
             new_finding = SegmentationFinding(
                 first_subnet=subnets[0],
                 second_subnet=subnets[1],
-                test=TEST_SEGMENTATION,
+                test=zero_trust_consts.TEST_SEGMENTATION,
                 status=status,
                 events=[segmentation_event]
             )

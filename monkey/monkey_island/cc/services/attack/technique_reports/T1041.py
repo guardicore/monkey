@@ -6,7 +6,6 @@ __author__ = "VakarisZ"
 
 
 class T1041(AttackTechnique):
-
     tech_id = "T1041"
     unscanned_msg = "Monkey didn't exfiltrate any info trough command and control channel."
     scanned_msg = ""

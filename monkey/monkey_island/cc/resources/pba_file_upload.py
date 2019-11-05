@@ -21,6 +21,7 @@ class FileUpload(flask_restful.Resource):
     """
     File upload endpoint used to exchange files with filepond component on the front-end
     """
+
     @jwt_required()
     def get(self, file_type):
         """

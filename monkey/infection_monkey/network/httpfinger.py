@@ -39,7 +39,7 @@ class HTTPFinger(HostFinger):
                         ssl = True if 'https://' in url else False
                         self.init_service(host.services, ('tcp-' + port[1]), port[0])
                         host.services['tcp-' + port[1]]['name'] = 'http'
-                        host.services['tcp-' + port[1]]['data'] = (server,ssl)
+                        host.services['tcp-' + port[1]]['data'] = (server, ssl)
                         LOG.info("Port %d is open on host %s " % (port[0], host))
                         break  # https will be the same on the same port
                 except Timeout:

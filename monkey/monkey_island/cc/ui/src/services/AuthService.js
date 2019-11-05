@@ -1,4 +1,4 @@
-import { SHA3 } from 'sha3';
+import {SHA3} from 'sha3';
 import decode from 'jwt-decode';
 
 export default class AuthService {

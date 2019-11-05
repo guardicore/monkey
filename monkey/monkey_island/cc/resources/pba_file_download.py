@@ -9,6 +9,7 @@ class PBAFileDownload(flask_restful.Resource):
     """
     File download endpoint used by monkey to download user's PBA file
     """
+
     # Used by monkey. can't secure.
     def get(self, path):
         return send_from_directory(GET_FILE_DIR, path)

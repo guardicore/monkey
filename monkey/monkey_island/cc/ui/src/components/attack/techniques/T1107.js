@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachineFromSystemData, ScanStatus } from "./Helpers"
+import {renderMachineFromSystemData, ScanStatus} from "./Helpers"
 
 
 class T1107 extends React.Component {
@@ -10,8 +10,8 @@ class T1107 extends React.Component {
     super(props);
   }
 
-  static renderDelete(status){
-    if(status === ScanStatus.USED){
+  static renderDelete(status) {
+    if (status === ScanStatus.USED) {
       return <span>Yes</span>
     } else {
       return <span>No</span>
@@ -21,11 +21,19 @@ class T1107 extends React.Component {
   static getDeletedFileColumns() {
     return ([{
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => renderMachineFromSystemData(x._id.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Path', id: 'path', accessor: x => x._id.path, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Deleted?', id: 'deleted', accessor: x => this.renderDelete(x._id.status),
-          style: { 'whiteSpace': 'unset' }, width: 160}]
-    }])};
+        {
+          Header: 'Machine',
+          id: 'machine',
+          accessor: x => renderMachineFromSystemData(x._id.machine),
+          style: {'whiteSpace': 'unset'}
+        },
+        {Header: 'Path', id: 'path', accessor: x => x._id.path, style: {'whiteSpace': 'unset'}},
+        {
+          Header: 'Deleted?', id: 'deleted', accessor: x => this.renderDelete(x._id.status),
+          style: {'whiteSpace': 'unset'}, width: 160
+        }]
+    }])
+  };
 
   render() {
     return (
@@ -34,10 +42,10 @@ class T1107 extends React.Component {
         <br/>
         {this.props.data.deleted_files.length !== 0 ?
           <ReactTable
-              columns={T1107.getDeletedFileColumns()}
-              data={this.props.data.deleted_files}
-              showPagination={false}
-              defaultPageSize={this.props.data.deleted_files.length}
+            columns={T1107.getDeletedFileColumns()}
+            data={this.props.data.deleted_files}
+            showPagination={false}
+            defaultPageSize={this.props.data.deleted_files.length}
           /> : ""}
       </div>
     );

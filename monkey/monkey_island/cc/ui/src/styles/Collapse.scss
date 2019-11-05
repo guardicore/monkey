@@ -14,8 +14,8 @@ $default-color: #e0ddde;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-.collapse-item button span:first-child{
-  text-align:left;
+.collapse-item button span:first-child {
+  text-align: left;
 }
 
 .collapse-item button {
@@ -25,7 +25,8 @@ $default-color: #e0ddde;
   transition: background-color $transition;
   display: flex;
   font-family: inherit;
-    > span {
+
+  > span {
     display: inline-block;
     flex: 4;
     text-align: right;
@@ -50,6 +51,7 @@ $default-color: #e0ddde;
 
 .collapse-item {
   padding: 0.5rem;
+
   &--active {
     .btn-collapse {
       background-color: #f7f7f7;
@@ -61,7 +63,7 @@ $default-color: #e0ddde;
   padding: 0 7px 7px 7px;
   border: 2px solid rgb(232, 228, 228);
   border-top: 0;
-  display:block !important;
+  display: block !important;
   transition: height $transition;
   overflow: hidden;
 }
@@ -75,12 +77,15 @@ $default-color: #e0ddde;
   &.collapsing {
     transform: translateY(-$offset);
   }
+
   &.collapse-comp {
     transform: translateY(-$offset);
   }
+
   &.expanding {
     transform: translateX(0px);
   }
+
   &.expanded {
     transform: translateX(0px);
   }

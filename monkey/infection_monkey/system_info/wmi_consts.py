@@ -29,4 +29,3 @@ WMI_LDAP_CLASSES = {"ds_user": ("DS_sAMAccountName", "DS_userPrincipalName",
                                     "DS_sAMAccountType", "DS_servicePrincipalName", "DS_userAccountControl",
                                     "DS_whenChanged", "DS_whenCreated"),
                     }
-

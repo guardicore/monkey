@@ -29,15 +29,13 @@ class PassTheHashMapPageComponent extends AuthComponent {
           return node['id'] === event.nodes[0];
         });
       this.setState({selected: displayedNode, selectedType: 'node'})
-    }
-    else if (event.edges.length === 1) {
+    } else if (event.edges.length === 1) {
       let displayedEdge = this.state.graph.edges.find(
         function (edge) {
           return edge['id'] === event.edges[0];
         });
-        this.setState({selected: displayedEdge, selectedType: 'edge'});
-    }
-    else {
+      this.setState({selected: displayedEdge, selectedType: 'edge'});
+    } else {
       this.setState({selected: null, selectedType: null});
     }
   }

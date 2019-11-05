@@ -13,9 +13,11 @@ class T1041 extends React.Component {
     return ([{
       Header: "Data exfiltration channels",
       columns: [
-        {Header: 'Source', id: 'src', accessor: x => x.src, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Destination', id: 'dst', accessor: x => x.dst, style: { 'whiteSpace': 'unset' }}
-        ]}])};
+        {Header: 'Source', id: 'src', accessor: x => x.src, style: {'whiteSpace': 'unset'}},
+        {Header: 'Destination', id: 'dst', accessor: x => x.dst, style: {'whiteSpace': 'unset'}}
+      ]
+    }])
+  };
 
   render() {
     return (
@@ -24,10 +26,10 @@ class T1041 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
-              columns={T1041.getC2Columns()}
-              data={this.props.data.command_control_channel}
-              showPagination={false}
-              defaultPageSize={this.props.data.command_control_channel.length}
+            columns={T1041.getC2Columns()}
+            data={this.props.data.command_control_channel}
+            showPagination={false}
+            defaultPageSize={this.props.data.command_control_channel.length}
           /> : ""}
       </div>
     );
