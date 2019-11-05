@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
-from infection_monkey.exploit.tools.helpers import get_interface_to_target
+from infection_monkey.network.tools import get_interface_to_target
 
 __author__ = 'hoffer'
 
