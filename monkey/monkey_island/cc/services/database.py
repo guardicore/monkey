@@ -6,7 +6,6 @@ from monkey_island.cc.services.post_breach_files import remove_PBA_files
 from flask import jsonify
 from monkey_island.cc.database import mongo
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -28,4 +27,3 @@ class Database(object):
     def init_db():
         if not mongo.db.collection_names():
             Database.reset_db()
-

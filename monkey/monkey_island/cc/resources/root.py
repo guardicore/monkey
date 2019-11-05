@@ -1,18 +1,18 @@
-from datetime import datetime
 import logging
 import threading
+from datetime import datetime
 
 import flask_restful
 from flask import request, make_response, jsonify
 
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
+from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.report import ReportService
-from monkey_island.cc.services.attack.attack_report import AttackReportService
-from monkey_island.cc.services.reporting.report_generation_synchronisation import is_report_being_generated, safe_generate_reports
+from monkey_island.cc.services.reporting.report_generation_synchronisation import is_report_being_generated, \
+    safe_generate_reports
 from monkey_island.cc.utils import local_ip_addresses
-from monkey_island.cc.services.database import Database
 
 __author__ = 'Barak'
 

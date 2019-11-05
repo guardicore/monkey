@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table'
 
-let renderArray = function(val) {
+let renderArray = function (val) {
   return <span>{val.map(x => <span key={x}> {x}</span>)}</span>;
 };
 
@@ -15,36 +15,36 @@ let renderMachine = function (data) {
 
 let renderPbaResults = function (results) {
   let pbaClass = "";
-  if (results[1]){
-    pbaClass="pba-success"
+  if (results[1]) {
+    pbaClass = "pba-success"
   } else {
-    pbaClass="pba-danger"
+    pbaClass = "pba-danger"
   }
   return <div className={pbaClass}> {results[0]} </div>
 };
 
 const subColumns = [
-  {id: 'pba_name', Header: "Name", accessor: x => x.name, style: { 'whiteSpace': 'unset' }, width: 160},
-  {id: 'pba_output', Header: "Output", accessor: x => renderPbaResults(x.result), style: { 'whiteSpace': 'unset' }}
+  {id: 'pba_name', Header: "Name", accessor: x => x.name, style: {'whiteSpace': 'unset'}, width: 160},
+  {id: 'pba_output', Header: "Output", accessor: x => renderPbaResults(x.result), style: {'whiteSpace': 'unset'}}
 ];
 
 let renderDetails = function (data) {
   let defaultPageSize = data.length > pageSize ? pageSize : data.length;
   let showPagination = data.length > pageSize;
   return <ReactTable
-                  data={data}
-                  columns={subColumns}
-                  defaultPageSize={defaultPageSize}
-                  showPagination={showPagination}
-                  style={{"backgroundColor": "#ededed"}}
-                />
+    data={data}
+    columns={subColumns}
+    defaultPageSize={defaultPageSize}
+    showPagination={showPagination}
+    style={{"backgroundColor": "#ededed"}}
+  />
 };
 
 const columns = [
   {
     Header: 'Post breach actions',
     columns: [
-      {id: 'pba_machine', Header:'Machine', accessor: x => renderMachine(x)}
+      {id: 'pba_machine', Header: 'Machine', accessor: x => renderMachine(x)}
     ]
   }
 ];
@@ -57,8 +57,8 @@ class PostBreachComponent extends React.Component {
   }
 
   render() {
-    let pbaMachines = this.props.data.filter(function(value, index, arr){
-        return ( value.pba_results !== "None" && value.pba_results.length > 0);
+    let pbaMachines = this.props.data.filter(function (value, index, arr) {
+      return (value.pba_results !== "None" && value.pba_results.length > 0);
     });
     let defaultPageSize = pbaMachines.length > pageSize ? pageSize : pbaMachines.length;
     let showPagination = pbaMachines > pageSize;

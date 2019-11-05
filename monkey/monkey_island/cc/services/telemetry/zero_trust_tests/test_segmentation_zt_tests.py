@@ -1,7 +1,6 @@
 import uuid
 
-from common.data.zero_trust_consts import TEST_SEGMENTATION, STATUS_PASSED, STATUS_FAILED, \
-    EVENT_TYPE_MONKEY_NETWORK
+import common.data.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
@@ -26,21 +25,29 @@ class TestSegmentationTests(IslandTestCase):
             ip_addresses=[FIRST_SUBNET])
 
         # no findings
-        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION)), 0)
+        self.assertEqual(len(Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION)), 0)
 
         # This is like the monkey is done and sent done telem
         create_or_add_findings_for_all_pairs(all_subnets, monkey)
 
         # There are 2 subnets in which the monkey is NOT
-        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_PASSED)), 2)
+        self.assertEqual(
+            len(Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION, status=zero_trust_consts.STATUS_PASSED)),
+            2)
 
         # This is a monkey from 2nd subnet communicated with 1st subnet.
         SegmentationFinding.create_or_add_to_existing_finding(
             [FIRST_SUBNET, SECOND_SUBNET],
-            STATUS_FAILED,
-            Event.create_event(title="sdf", message="asd", event_type=EVENT_TYPE_MONKEY_NETWORK)
+            zero_trust_consts.STATUS_FAILED,
+            Event.create_event(title="sdf", message="asd", event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK)
         )
 
-        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_PASSED)), 1)
-        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION, status=STATUS_FAILED)), 1)
-        self.assertEqual(len(Finding.objects(test=TEST_SEGMENTATION)), 2)
+        self.assertEqual(
+            len(Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION, status=zero_trust_consts.STATUS_PASSED)),
+            1)
+        self.assertEqual(
+            len(Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION, status=zero_trust_consts.STATUS_FAILED)),
+            1)
+        self.assertEqual(
+            len(Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION)),
+            2)

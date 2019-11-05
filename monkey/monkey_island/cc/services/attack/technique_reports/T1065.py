@@ -6,7 +6,6 @@ __author__ = "VakarisZ"
 
 
 class T1065(AttackTechnique):
-
     tech_id = "T1065"
     unscanned_msg = ""
     scanned_msg = ""

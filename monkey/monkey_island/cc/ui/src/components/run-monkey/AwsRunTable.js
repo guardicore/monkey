@@ -8,10 +8,10 @@ const columns = [
   {
     Header: 'Machines',
     columns: [
-      { Header: 'Machine', accessor: 'name'},
-      { Header: 'Instance ID', accessor: 'instance_id'},
-      { Header: 'IP Address', accessor: 'ip_address'},
-      { Header: 'OS', accessor: 'os'}
+      {Header: 'Machine', accessor: 'name'},
+      {Header: 'Instance ID', accessor: 'instance_id'},
+      {Header: 'IP Address', accessor: 'ip_address'},
+      {Header: 'OS', accessor: 'os'}
     ]
   }
 ];
@@ -44,7 +44,7 @@ class AwsRunTableComponent extends React.Component {
       selection.push(key);
     }
     // update the state
-    this.setState({ selection });
+    this.setState({selection});
   };
 
   isSelected = key => {
@@ -64,7 +64,7 @@ class AwsRunTableComponent extends React.Component {
         selection.push(item._original.instance_id);
       });
     }
-    this.setState({ selectAll, selection });
+    this.setState({selectAll, selection});
   };
 
   getTrProps = (s, r) => {

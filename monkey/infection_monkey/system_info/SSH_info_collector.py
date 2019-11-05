@@ -63,7 +63,7 @@ class SSHCollector(object):
                             LOG.info("Found public key in %s" % public)
                             try:
                                 with open(public) as f:
-                                        info['public_key'] = f.read()
+                                    info['public_key'] = f.read()
                                 # By default private key has the same name as public, only without .pub
                                 private = os.path.splitext(public)[0]
                                 if os.path.exists(private):

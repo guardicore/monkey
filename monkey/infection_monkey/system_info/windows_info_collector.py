@@ -1,6 +1,7 @@
 import os
 import logging
 import sys
+
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 
 import infection_monkey.config
@@ -35,7 +36,7 @@ class WindowsInfoCollector(InfoCollector):
         """
         LOG.debug("Running Windows collector")
         super(WindowsInfoCollector, self).get_info()
-        #self.get_wmi_info()
+        # TODO: Think about returning self.get_wmi_info()
         self.get_installed_packages()
         from infection_monkey.config import WormConfiguration
         if WormConfiguration.should_use_mimikatz:

@@ -27,6 +27,7 @@ class UsersPBA(PBA):
     """
     Defines user's configured post breach action.
     """
+
     def __init__(self):
         super(UsersPBA, self).__init__(POST_BREACH_FILE_EXECUTION)
         self.filename = ''

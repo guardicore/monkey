@@ -20,7 +20,6 @@ LOG = logging.getLogger(__name__)
 
 
 class PingScanner(HostScanner, HostFinger):
-
     _SCANNED_SERVICE = ''
 
     def __init__(self):
@@ -49,14 +48,12 @@ class PingScanner(HostScanner, HostFinger):
         if not "win32" == sys.platform:
             timeout /= 1000
 
-        sub_proc = subprocess.Popen(["ping",
-                                     PING_COUNT_FLAG,
-                                     "1",
-                                     PING_TIMEOUT_FLAG,
-                                     str(timeout), host.ip_addr],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE,
-                                    text=True)
+        sub_proc = subprocess.Popen(
+            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
 
         output = " ".join(sub_proc.communicate())
         regex_result = self._ttl_regex.search(output)

@@ -1,6 +1,6 @@
 import BaseConfig from './BaseConfig';
 
-class PasswordConfig extends BaseConfig{
+class PasswordConfig extends BaseConfig {
   isAuthEnabled() {
     return true;
   }

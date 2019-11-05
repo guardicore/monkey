@@ -16,6 +16,7 @@ LOG = logging.getLogger(__name__)
 try:
     WindowsError
 except NameError:
+    # noinspection PyShadowingBuiltins
     WindowsError = psutil.AccessDenied
 
 __author__ = 'uri'

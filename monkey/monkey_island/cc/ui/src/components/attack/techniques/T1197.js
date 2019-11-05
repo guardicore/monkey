@@ -1,37 +1,43 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachine } from "./Helpers"
+import {renderMachine} from "./Helpers"
 
 
 class T1210 extends React.Component {
 
   constructor(props) {
     super(props);
-    this.columns = [ {Header: 'Machine',
-                      id: 'machine', accessor: x => renderMachine(x),
-                      style: { 'whiteSpace': 'unset' },
-                      width: 200},
-                    {Header: 'Time',
-                      id: 'time', accessor: x => x.time,
-                      style: { 'whiteSpace': 'unset' },
-                      width: 170},
-                    {Header: 'Usage',
-                      id: 'usage', accessor: x => x.usage,
-                      style: { 'whiteSpace': 'unset' }}
-      ]
+    this.columns = [{
+      Header: 'Machine',
+      id: 'machine', accessor: x => renderMachine(x),
+      style: {'whiteSpace': 'unset'},
+      width: 200
+    },
+      {
+        Header: 'Time',
+        id: 'time', accessor: x => x.time,
+        style: {'whiteSpace': 'unset'},
+        width: 170
+      },
+      {
+        Header: 'Usage',
+        id: 'usage', accessor: x => x.usage,
+        style: {'whiteSpace': 'unset'}
+      }
+    ]
   }
 
-  renderExploitedMachines(){
-    if (this.props.data.bits_jobs.length === 0){
-      return (<div />)
+  renderExploitedMachines() {
+    if (this.props.data.bits_jobs.length === 0) {
+      return (<div/>)
     } else {
       return (<ReactTable
-                columns={this.columns}
-                data={this.props.data.bits_jobs}
-                showPagination={false}
-                defaultPageSize={this.props.data.bits_jobs.length}
-              />)
+        columns={this.columns}
+        data={this.props.data.bits_jobs}
+        showPagination={false}
+        defaultPageSize={this.props.data.bits_jobs.length}
+      />)
     }
   }
 

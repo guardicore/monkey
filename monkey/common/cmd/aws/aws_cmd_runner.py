@@ -15,7 +15,7 @@ class AwsCmdRunner(CmdRunner):
     Class for running commands on a remote AWS machine
     """
 
-    def __init__(self, is_linux, instance_id, region = None):
+    def __init__(self, is_linux, instance_id, region=None):
         super(AwsCmdRunner, self).__init__(is_linux)
         self.instance_id = instance_id
         self.region = region

@@ -34,8 +34,8 @@ def load_server_configuration_from_file():
 
 
 def load_env_from_file():
-    config_json = load_server_configuration_from_file()
-    return config_json['server_config']
+    loaded_config_json = load_server_configuration_from_file()
+    return loaded_config_json['server_config']
 
 
 try:

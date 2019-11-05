@@ -4,13 +4,11 @@ import urllib.request
 import urllib.error
 import logging
 
-
 __author__ = 'itay.mizeretz'
 
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
 AWS_LATEST_METADATA_URI_PREFIX = 'http://{0}/latest/'.format(AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS)
 ACCOUNT_ID_KEY = "accountId"
-
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +27,8 @@ class AwsInstance(object):
             self.instance_id = urllib.request.urlopen(
                 AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2).read().decode()
             self.region = self._parse_region(
-                urllib.request.urlopen(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read().
-                    decode())
+                urllib.request.urlopen(
+                    AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read().decode())
         except (urllib.error.URLError, IOError) as e:
             logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e))
 

@@ -4,6 +4,7 @@ from monkey_island.cc.services.reporting.report_exporter_manager import ReportEx
 from monkey_island.cc.services.reporting.aws_exporter import AWSExporter
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.environment.environment import env
+
 logger = logging.getLogger(__name__)
 
 

@@ -304,7 +304,7 @@ class ControlClient(object):
             try:
                 target_addr, target_port = my_proxy.split(':', 1)
                 target_port = int(target_port)
-            except:
+            except ValueError:
                 return None
         else:
             proxy_class = HTTPConnectProxy

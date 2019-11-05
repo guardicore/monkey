@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { renderMachine, ScanStatus } from "./Helpers"
+import {renderMachine, ScanStatus} from "./Helpers"
 
 
 class T1222 extends React.Component {
@@ -14,10 +14,11 @@ class T1222 extends React.Component {
     return ([{
       Header: "Permission modification commands",
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Command', id: 'command', accessor: x => x.command, style: { 'whiteSpace': 'unset' }},
-        ]
-    }])};
+        {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine), style: {'whiteSpace': 'unset'}},
+        {Header: 'Command', id: 'command', accessor: x => x.command, style: {'whiteSpace': 'unset'}},
+      ]
+    }])
+  };
 
   render() {
     return (
@@ -26,10 +27,10 @@ class T1222 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
-              columns={T1222.getCommandColumns()}
-              data={this.props.data.commands}
-              showPagination={false}
-              defaultPageSize={this.props.data.commands.length}
+            columns={T1222.getCommandColumns()}
+            data={this.props.data.commands}
+            showPagination={false}
+            defaultPageSize={this.props.data.commands.length}
           /> : ""}
       </div>
     );
