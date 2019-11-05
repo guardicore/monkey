@@ -40,7 +40,7 @@ def struct_unpack_tracker_string(data, index):
     :param index: Position index
     :return: (Data, new index)
     """
-    ascii_len = data[index:].find('\0')
+    ascii_len = data[index:].find(b'\0')
     fmt = "%ds" % ascii_len
     return struct_unpack_tracker(data, index, fmt)
 
@@ -159,7 +159,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
             if get_banner and (len(connected_ports_sockets) != 0):
                 readable_sockets, _, _ = select.select([s[1] for s in connected_ports_sockets], [], [], 0)
                 # read first BANNER_READ bytes
-                banners = [sock.recv(BANNER_READ).decode() if sock in readable_sockets else ""
+                banners = [sock.recv(BANNER_READ).decode(errors='ignore') if sock in readable_sockets else ""
                            for port, sock in connected_ports_sockets]
                 pass
             # try to cleanup
