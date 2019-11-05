@@ -12,7 +12,7 @@ from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.model import DELAY_DELETE_CMD
-from infection_monkey.network.fingerprinter_manager import get_fingerprint_instances
+from infection_monkey.network.fingerprinters_collector import get_fingerprint_instances
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
