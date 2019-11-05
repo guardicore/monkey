@@ -10,7 +10,7 @@ then
 elif [[ ${os_version_monkey} == "Ubuntu 18.04"* ]] ;
 then
 	echo Detected Ubuntu 18.04
-	export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.0.8.tgz"
+	export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.2.0.tgz"
 elif [[ ${os_version_monkey} == "Debian GNU/Linux 8"* ]] ;
 then
 	echo Detected Debian 8
@@ -31,6 +31,7 @@ tar -xf mongodb.tgz
 popd
 
 mkdir -p ${MONGODB_DIR}/bin
+mkdir -p ${MONGODB_DIR}/db
 cp ${TEMP_MONGO}/mongodb-*/bin/mongod ${MONGODB_DIR}/bin/mongod
 cp ${TEMP_MONGO}/mongodb-*/LICENSE-Community.txt ${MONGODB_DIR}/
 chmod a+x ${MONGODB_DIR}/bin/mongod
