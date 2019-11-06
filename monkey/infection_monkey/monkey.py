@@ -41,8 +41,6 @@ class InfectionMonkey(object):
         self._exploited_machines = set()
         self._fail_exploitation_machines = set()
         self._singleton = SystemSingleton()
-        self._parent = None
-        self._default_tunnel = None
         self._args = args
         self._network = None
         self._dropper_path = None
@@ -62,8 +60,6 @@ class InfectionMonkey(object):
 
         self._flags = FlagAnalyzer.get_flags(self._args)
 
-        self._parent = self._flags.parent
-        self._default_tunnel = self._flags.tunnel
         self._default_server = self._flags.server
 
         if self._flags.depth:
@@ -97,7 +93,7 @@ class InfectionMonkey(object):
             WindowsUpgrader.upgrade(self._flags)
             return
 
-        ControlClient.wakeup(parent=self._parent)
+        ControlClient.wakeup(parent=self._flags.parent)
         ControlClient.load_control_config()
 
         if is_windows_os():
@@ -337,7 +333,7 @@ class InfectionMonkey(object):
             self._default_server_port = ''
 
     def set_default_server(self):
-        if not ControlClient.find_server(default_tunnel=self._default_tunnel):
+        if not ControlClient.find_server(default_tunnel=self._flags.tunnel):
             LOG.info("Monkey couldn't find server. Going down.")
             return False
         self._default_server = WormConfiguration.current_server
