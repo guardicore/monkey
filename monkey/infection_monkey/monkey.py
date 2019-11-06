@@ -1,4 +1,3 @@
-import argparse
 import logging
 import os
 import subprocess
@@ -28,6 +27,7 @@ from infection_monkey.post_breach.post_breach_handler import PostBreach
 from infection_monkey.exploit.tools.helpers import get_interface_to_target
 from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
+from infection_monkey.startup.flag_analyzer import FlagAnalyzer
 from common.utils.attack_utils import ScanStatus, UsageEnum
 
 __author__ = 'itamar'
@@ -51,7 +51,7 @@ class InfectionMonkey(object):
         self._default_server = None
         self._default_server_port = None
         self._depth = 0
-        self._opts = None
+        self._flags = None
         self._upgrading_to_64 = False
 
     def initialize(self):
@@ -60,18 +60,13 @@ class InfectionMonkey(object):
         if not self._singleton.try_lock():
             raise Exception("Another instance of the monkey is already running")
 
-        arg_parser = argparse.ArgumentParser()
-        arg_parser.add_argument('-p', '--parent')
-        arg_parser.add_argument('-t', '--tunnel')
-        arg_parser.add_argument('-s', '--server')
-        arg_parser.add_argument('-d', '--depth', type=int)
-        self._opts, self._args = arg_parser.parse_known_args(self._args)
+        self._flags = FlagAnalyzer.get_flags(self._args)
 
-        self._parent = self._opts.parent
-        self._default_tunnel = self._opts.tunnel
-        self._default_server = self._opts.server
+        self._parent = self._flags.parent
+        self._default_tunnel = self._flags.tunnel
+        self._default_server = self._flags.server
 
-        if self._opts.depth:
+        if self._flags.depth:
             WormConfiguration._depth_from_commandline = True
         self._keep_running = True
         self._network = NetworkScanner()
@@ -99,7 +94,7 @@ class InfectionMonkey(object):
             self._upgrading_to_64 = True
             self._singleton.unlock()
             LOG.info("32bit monkey running on 64bit Windows. Upgrading.")
-            WindowsUpgrader.upgrade(self._opts)
+            WindowsUpgrader.upgrade(self._flags)
             return
 
         ControlClient.wakeup(parent=self._parent)

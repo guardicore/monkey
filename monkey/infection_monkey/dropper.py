@@ -1,4 +1,3 @@
-import argparse
 import ctypes
 import logging
 import os
@@ -18,6 +17,7 @@ from infection_monkey.control import ControlClient
 from infection_monkey.privilege_escalation.pe_handler import PrivilegeEscalation
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
+from infection_monkey.startup.flag_analyzer import FlagAnalyzer
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -39,22 +39,15 @@ MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
 class MonkeyDrops(object):
     def __init__(self, args):
-        arg_parser = argparse.ArgumentParser()
-        arg_parser.add_argument('-p', '--parent')
-        arg_parser.add_argument('-t', '--tunnel')
-        arg_parser.add_argument('-s', '--server')
-        arg_parser.add_argument('-d', '--depth', type=int)
-        arg_parser.add_argument('-l', '--location')
-        self.monkey_args = args[1:]
-        self.opts, _ = arg_parser.parse_known_args(args)
+        self._flags = FlagAnalyzer.get_flags(args)
         self._default_server = None
         self._default_server_port = None
         self._config = {'source_path': os.path.abspath(sys.argv[0]),
-                        'destination_path': self.opts.location}
+                        'destination_path': self._flags.location}
 
     def initialize(self):
         LOG.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
-        self._default_server = self.opts.server
+        self._default_server = self._flags.server
         try:
             self._default_server_port = self._default_server.split(':')[1]
         except KeyError:
@@ -129,7 +122,7 @@ class MonkeyDrops(object):
                     LOG.warning("Cannot set reference date to destination file")
 
         monkey_options =\
-            build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
+            build_monkey_commandline_explicitly(self._flags.parent, self._flags.tunnel, self._flags.server, self._flags.depth)
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._config['destination_path']} + monkey_options
