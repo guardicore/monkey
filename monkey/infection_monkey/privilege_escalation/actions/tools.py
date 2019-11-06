@@ -1,19 +1,19 @@
-'''
-Contains functions helpful for pe module
-'''
-
 import logging
-import platform
 import subprocess
 import os
-from pwd import getpwuid
+
 __author__ = 'D3fa1t'
 
 LOG = logging.getLogger(__name__)
 PGREP = "pgrep %(process_name)s -u 0"
 
+# Commands needed for PE
+REMOVE_LASTLINE = "sudo sed -i '$ d' %(file_name)s"
+ADDUSER_TO_SUDOERS = "echo '%(user_name)s ALL = NOPASSWD: ALL' | sudo tee -a /etc/sudoers"
+
 
 def check_if_sudoer(file):
+    from pwd import getpwuid
     """
     see if the current user is a sudoers by checking if they are a part of the group monkey .
 
@@ -40,7 +40,7 @@ def shell(cmd):
     try:
         result = subprocess.check_output(cmd)[:-1]
         return result
-    except OSError as e:
+    except OSError:
         LOG.error("Can't read from the shell!")
         return False
 
@@ -69,8 +69,3 @@ def run_monkey_as_root(command_line):
 
     LOG.info("Executed monkey process as root with (PID=%d) with command line: %s",
              monkey_process.pid, command_line)
-
-
-# Commands needed for PE
-REMOVE_LASTLINE = "sudo sed -i '$ d' %(file_name)s"
-ADDUSER_TO_SUDOERS = "echo '%(user_name)s ALL = NOPASSWD: ALL' | sudo tee -a /etc/sudoers"

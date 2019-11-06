@@ -1,7 +1,8 @@
 """
     Implementation is based on snapd < 2.37 (Ubuntu) - 'dirty_sock' Local Privilege Escalation (2)
     https://github.com/Dhayalanb/Snapd-V2
-    Vulnerable snapd versions <=2.37 and If your snapd version has a reference to something like an Ubuntu version number appended to it (example: 2.34.2ubuntu0.1 or 2.35.5+18.10.1), then it might be patched
+    Vulnerable snapd versions <=2.37 and If your snapd version has a reference to something like an Ubuntu
+    version number appended to it (example: 2.34.2ubuntu0.1 or 2.35.5+18.10.1), then it might be patched
 """
 import os
 import time
