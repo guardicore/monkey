@@ -1,6 +1,6 @@
 import logging
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.load_plugins import get_instances
+from infection_monkey.utils.plugins.load_plugins import get_instances
 from infection_monkey.post_breach.pba import PBA
 import infection_monkey.post_breach.actions
 

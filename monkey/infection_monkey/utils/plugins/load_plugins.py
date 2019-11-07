@@ -4,6 +4,8 @@ import logging
 from os.path import dirname, basename, isfile, join
 import glob
 
+from infection_monkey.utils.plugins.plugin import Plugin
+
 LOG = logging.getLogger(__name__)
 
 
@@ -12,9 +14,11 @@ def _get_candidate_files(base_package_file):
     return [basename(f)[:-3] for f in files if isfile(f) and not f.endswith('__init__.py')]
 
 
-def get_instances(base_package_name, base_package_file, parent_class):
+def get_instances(base_package_name, base_package_file, parent_class: Plugin):
     """
-    Returns the parent_class type objects from base_package_spec according to configuration
+    Returns the parent_class type objects from base_package_spec.
+    parent_class must be a class object that inherits from Plugin
+    base_package name and file must refer to the same package otherwise bad results
     :return: A list of parent_class objects.
     """
     objects = []

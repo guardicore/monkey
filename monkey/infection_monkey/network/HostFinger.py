@@ -1,9 +1,10 @@
 from abc import ABCMeta, abstractproperty, abstractmethod
 
 from infection_monkey.config import WormConfiguration
+from infection_monkey.utils.plugins.plugin import Plugin
 
 
-class HostFinger(metaclass=ABCMeta):
+class HostFinger(Plugin, metaclass=ABCMeta):
     @property
     @abstractmethod
     def _SCANNED_SERVICE(self):

@@ -1,6 +1,6 @@
 import logging
 from typing import Sequence
-from infection_monkey.utils.load_plugins import get_instances
+from infection_monkey.utils.plugins.load_plugins import get_instances
 from infection_monkey.network.HostFinger import HostFinger
 
 LOG = logging.getLogger(__name__)
