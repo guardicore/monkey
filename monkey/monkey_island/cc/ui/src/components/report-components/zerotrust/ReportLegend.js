@@ -13,7 +13,7 @@ class ZeroTrustReportLegend extends Component {
       <Panel>
         <Panel.Heading>
           <Panel.Title toggle>
-            <h3><i className="fa fa-chevron-down" /> Legend</h3>
+            <h3><i className="fa fa-chevron-down"/> Legend</h3>
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
@@ -32,7 +32,8 @@ class ZeroTrustReportLegend extends Component {
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.failed}/>
           </div>
-          {"\t"}At least one of the tests related to this component failed. This means that the Infection Monkey detected an unmet Zero Trust requirement.
+          {"\t"}At least one of the tests related to this component failed. This means that the Infection Monkey detected an
+          unmet Zero Trust requirement.
         </li>
         <li>
           <div style={{display: "inline-block"}}>
@@ -50,7 +51,8 @@ class ZeroTrustReportLegend extends Component {
           <div style={{display: "inline-block"}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.unexecuted}/>
           </div>
-          {"\t"}This status means the test wasn't executed.To activate more tests, refer to the Monkey <NavLink to="/configuration"><u>configuration</u></NavLink> page.
+          {"\t"}This status means the test wasn't executed.To activate more tests, refer to the Monkey <NavLink
+          to="/configuration"><u>configuration</u></NavLink> page.
         </li>
       </ul>
     </div>;

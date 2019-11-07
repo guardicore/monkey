@@ -18,6 +18,7 @@ from infection_monkey.utils.startup.process_detacher import MonkeyProcessDetache
 try:
     WindowsError
 except NameError:
+    # noinspection PyShadowingBuiltins
     WindowsError = IOError
 
 __author__ = 'itamar'

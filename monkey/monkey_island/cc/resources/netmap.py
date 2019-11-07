@@ -27,5 +27,3 @@ class NetMap(flask_restful.Resource):
                 "nodes": monkeys + nodes + monkey_island,
                 "edges": edges
             }
-
-

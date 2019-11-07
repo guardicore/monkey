@@ -8,6 +8,7 @@ def _run_netsh_cmd(command, args):
                                                                if value])), stdout=subprocess.PIPE)
     return cmd.stdout.read().strip().lower().endswith('ok.')
 
+
 class FirewallApp(object):
     def is_enabled(self, **kwargs):
         return False
@@ -24,7 +25,7 @@ class FirewallApp(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exc_type, value, traceback):
         self.close()
 
     def close(self):
@@ -48,9 +49,9 @@ class WinAdvFirewall(FirewallApp):
         except:
             return None
 
-    def add_firewall_rule(self, name="Firewall", dir="in", action="allow", program=sys.executable, **kwargs):
+    def add_firewall_rule(self, name="Firewall", direction="in", action="allow", program=sys.executable, **kwargs):
         netsh_args = {'name': name,
-                      'dir': dir,
+                      'dir': direction,
                       'action': action,
                       'program': program}
         netsh_args.update(kwargs)
@@ -83,9 +84,9 @@ class WinAdvFirewall(FirewallApp):
 
         for rule in list(self._rules.values()):
             if rule.get('program') == sys.executable and \
-                            'in' == rule.get('dir') and \
-                            'allow' == rule.get('action') and \
-                            4 == len(list(rule.keys())):
+                    'in' == rule.get('dir') and \
+                    'allow' == rule.get('action') and \
+                    4 == len(list(rule.keys())):
                 return True
         return False
 

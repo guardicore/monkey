@@ -10,7 +10,6 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
 
 __author__ = "VakarisZ"
 
-
 LOG = logging.getLogger(__name__)
 
 TECHNIQUES = {'T1210': T1210.T1210,
@@ -52,7 +51,7 @@ class AttackReportService:
         Generates new report based on telemetries, replaces old report in db with new one.
         :return: Report object
         """
-        report =\
+        report = \
             {
                 'techniques': {},
                 'meta': {'latest_monkey_modifytime': Monkey.get_latest_modifytime()},
@@ -75,7 +74,10 @@ class AttackReportService:
         Gets timestamp of latest attack telem
         :return: timestamp of latest attack telem
         """
-        return [x['timestamp'] for x in mongo.db.telemetry.find({'telem_category': 'attack'}).sort('timestamp', -1).limit(1)][0]
+        return [
+            x['timestamp'] for x in
+            mongo.db.telemetry.find({'telem_category': 'attack'}).sort('timestamp', -1).limit(1)
+        ][0]
 
     @staticmethod
     def get_latest_report():

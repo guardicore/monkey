@@ -1,4 +1,4 @@
-from common.network.network_range import *
+from common.network.network_range import CidrRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 

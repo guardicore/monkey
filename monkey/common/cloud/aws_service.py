@@ -14,7 +14,6 @@ COMPUTER_NAME_KEY = 'ComputerName'
 PLATFORM_TYPE_KEY = 'PlatformType'
 IP_ADDRESS_KEY = 'IPAddress'
 
-
 logger = logging.getLogger(__name__)
 
 

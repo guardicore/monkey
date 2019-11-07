@@ -27,4 +27,3 @@ class AttackConfiguration(flask_restful.Resource):
             AttackConfig.update_config({'properties': json.loads(request.data)})
             AttackConfig.apply_to_monkey_config()
             return {}
-

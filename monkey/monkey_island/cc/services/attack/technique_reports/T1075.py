@@ -6,7 +6,6 @@ __author__ = "VakarisZ"
 
 
 class T1075(AttackTechnique):
-
     tech_id = "T1075"
     unscanned_msg = "Monkey didn't try to use pass the hash attack."
     scanned_msg = "Monkey tried to use hashes while logging in but didn't succeed."

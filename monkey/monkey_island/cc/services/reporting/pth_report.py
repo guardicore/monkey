@@ -30,7 +30,6 @@ class PTHReportService(object):
             }
         """
 
-
         pipeline = [
             {"$match": {
                 'NTLM_secret': {
@@ -55,7 +54,7 @@ class PTHReportService(object):
         :param admin_on_machines: A list of "monkey" documents "_id"s
         :param domain_name: The admins' domain name
         :return:
-        A list of formatted machines names *domain*\*hostname*, to use in shared admins issues.
+        A list of formatted machines names *domain*/*hostname*, to use in shared admins issues.
         """
         machines = mongo.db.monkey.find({'_id': {'$in': admin_on_machines}}, {'hostname': 1})
         return [domain_name + '\\' + i['hostname'] for i in list(machines)]
@@ -108,7 +107,7 @@ class PTHReportService(object):
                     'username': user['name'],
                     'domain_name': user['domain_name'],
                     'hostname': NodeService.get_hostname_by_id(ObjectId(user['machine_id'])) if user['machine_id'] else None
-                 } for user in doc['Docs']
+                } for user in doc['Docs']
             ]
             users_cred_groups.append({'cred_groups': users_list})
 
@@ -144,7 +143,8 @@ class PTHReportService(object):
             {
                 'name': admin['name'],
                 'domain_name': admin['domain_name'],
-                'admin_on_machines': PTHReportService.__get_admin_on_machines_format(admin['admin_on_machines'], admin['domain_name'])
+                'admin_on_machines': PTHReportService.__get_admin_on_machines_format(admin['admin_on_machines'],
+                                                                                     admin['domain_name'])
             } for admin in admins
         ]
 
@@ -153,11 +153,11 @@ class PTHReportService(object):
         admins_info = PTHReportService.get_shared_admins_nodes()
         return [
             {
-                    'is_local': False,
-                    'type': 'shared_admins_domain',
-                    'machine': admin['domain_name'],
-                    'username': admin['domain_name'] + '\\' + admin['name'],
-                    'shared_machines': admin['admin_on_machines'],
+                'is_local': False,
+                'type': 'shared_admins_domain',
+                'machine': admin['domain_name'],
+                'username': admin['domain_name'] + '\\' + admin['name'],
+                'shared_machines': admin['admin_on_machines'],
             }
             for admin in admins_info]
 
@@ -262,7 +262,7 @@ class PTHReportService(object):
         return {
             'nodes': PTHReportService.generate_map_nodes(),
             'edges': PTHReportService.generate_edges()
-            }
+        }
 
     @staticmethod
     def get_report():
@@ -283,4 +283,3 @@ class PTHReportService(object):
             }
 
         return report
-

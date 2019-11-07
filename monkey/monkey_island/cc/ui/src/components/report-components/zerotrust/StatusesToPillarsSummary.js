@@ -21,11 +21,11 @@ export default class StatusesToPillarsSummary extends Component {
           <StatusLabel showText={true} status={status}/>
         </h3>
         <div>
-            {
-              this.props.statusesToPillars[status].map((pillar) => {
-                return <PillarLabel key={pillar} pillar={pillar} status={status} />
-              })
-            }
+          {
+            this.props.statusesToPillars[status].map((pillar) => {
+              return <PillarLabel key={pillar} pillar={pillar} status={status}/>
+            })
+          }
         </div>
       </Fragment>
     }

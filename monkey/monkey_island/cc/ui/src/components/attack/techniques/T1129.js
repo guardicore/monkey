@@ -16,10 +16,10 @@ class T1129 extends React.Component {
         <br/>
         {this.props.data.dlls.length !== 0 ?
           <ReactTable
-              columns={getUsageColumns()}
-              data={this.props.data.dlls}
-              showPagination={false}
-              defaultPageSize={this.props.data.dlls.length}
+            columns={getUsageColumns()}
+            data={this.props.data.dlls}
+            showPagination={false}
+            defaultPageSize={this.props.data.dlls.length}
           /> : ""}
       </div>
     );

@@ -14,10 +14,10 @@ class MatrixComponent extends AuthComponent {
   };
 
   // Finds which attack type has most techniques and returns that number
-  static findMaxTechniques(data){
+  static findMaxTechniques(data) {
     let maxLen = 0;
-    data.forEach(function(techType) {
-      if (Object.keys(techType.properties).length > maxLen){
+    data.forEach(function (techType) {
+      if (Object.keys(techType.properties).length > maxLen) {
         maxLen = Object.keys(techType.properties).length
       }
     });
@@ -25,18 +25,18 @@ class MatrixComponent extends AuthComponent {
   };
 
   // Parses ATT&CK config schema into data suitable for react-table (ATT&CK matrix)
-  static parseTechniques (data, maxLen) {
+  static parseTechniques(data, maxLen) {
     let techniques = [];
     // Create rows with attack techniques
     for (let i = 0; i < maxLen; i++) {
       let row = {};
-      data.forEach(function(techType){
+      data.forEach(function (techType) {
         let rowColumn = {};
         rowColumn.techName = techType.title;
 
         if (i <= Object.keys(techType.properties).length) {
           rowColumn.technique = Object.values(techType.properties)[i];
-          if (rowColumn.technique){
+          if (rowColumn.technique) {
             rowColumn.technique.name = Object.keys(techType.properties)[i]
           }
         } else {
@@ -50,28 +50,28 @@ class MatrixComponent extends AuthComponent {
   };
 
   getColumns(matrixData) {
-    return Object.keys(matrixData[0]).map((key)=>{
+    return Object.keys(matrixData[0]).map((key) => {
       return {
         Header: key,
         id: key,
         accessor: x => this.renderTechnique(x[key].technique),
-        style: { 'whiteSpace': 'unset' }
+        style: {'whiteSpace': 'unset'}
       };
     });
   }
 
   renderTechnique(technique) {
-    if (technique == null){
-      return (<div />)
+    if (technique == null) {
+      return (<div/>)
     } else {
       return (<Tooltip content={technique.description} direction="down">
-                <Checkbox checked={technique.value}
-                          necessary={technique.necessary}
-                          name={technique.name}
-                          changeHandler={this.props.change}>
-                  {technique.title}
-                </Checkbox>
-              </Tooltip>)
+        <Checkbox checked={technique.value}
+                  necessary={technique.necessary}
+                  name={technique.name}
+                  changeHandler={this.props.change}>
+          {technique.title}
+        </Checkbox>
+      </Tooltip>)
     }
   };
 
@@ -85,20 +85,20 @@ class MatrixComponent extends AuthComponent {
 
   renderLegend = () => {
     return (
-    <div id="header" className="row justify-content-between attack-legend">
-      <Col xs={4}>
-        <i className="fa fa-circle-thin icon-unchecked"></i>
-        <span> - Dissabled</span>
-      </Col>
-      <Col xs={4}>
-        <i className="fa fa-circle icon-checked"></i>
-        <span> - Enabled</span>
-      </Col>
-      <Col xs={4}>
-        <i className="fa fa-circle icon-mandatory"></i>
-        <span> - Mandatory</span>
-      </Col>
-    </div>)
+      <div id="header" className="row justify-content-between attack-legend">
+        <Col xs={4}>
+          <i className="fa fa-circle-thin icon-unchecked"></i>
+          <span> - Dissabled</span>
+        </Col>
+        <Col xs={4}>
+          <i className="fa fa-circle icon-checked"></i>
+          <span> - Enabled</span>
+        </Col>
+        <Col xs={4}>
+          <i className="fa fa-circle icon-mandatory"></i>
+          <span> - Mandatory</span>
+        </Col>
+      </div>)
   };
 
   render() {
@@ -110,7 +110,7 @@ class MatrixComponent extends AuthComponent {
           <ReactTable columns={tableData['columns']}
                       data={tableData['matrixTableData']}
                       showPagination={false}
-                      defaultPageSize={tableData['maxTechniques']} />
+                      defaultPageSize={tableData['maxTechniques']}/>
         </div>
       </div>);
   }
