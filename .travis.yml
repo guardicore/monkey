@@ -18,7 +18,10 @@ install:
 - pip install -r monkey/infection_monkey/requirements_linux.txt  # for unit tests
 
 # JS
+- cd monkey/monkey_island/cc/ui
+- npm i
 - npm i -g eslint
+- cd -
 
 before_script:
 # Set the server config to `testing`, for the UTs to use mongomaock and pass.
