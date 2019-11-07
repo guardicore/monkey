@@ -1,10 +1,11 @@
 # Infection Monkey travis.yml. See Travis documentation for information about this file structure.
-group: travis_latest
-
 jobs:
   include:
     # The python job
-    - language: python
+    -
+      group: travis_latest
+
+      language: python
 
       cache: pip
 
@@ -52,7 +53,9 @@ jobs:
             on_failure: always
 
   # The JS job
-  - language: node_js
+  -
+    group: travis_latest
+    language: node_js
     cache:
       directories:
         - "node_modules"
