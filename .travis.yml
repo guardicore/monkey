@@ -17,12 +17,6 @@ install:
 - pip install flake8 pytest dlint  # for next stages
 - pip install -r monkey/infection_monkey/requirements_linux.txt  # for unit tests
 
-# JS
-- cd monkey/monkey_island/cc/ui
-- npm i
-- npm i -g eslint
-- cd -
-
 before_script:
 # Set the server config to `testing`, for the UTs to use mongomaock and pass.
 - python monkey/monkey_island/cc/set_server_config.py testing
@@ -47,7 +41,11 @@ script:
 - cd monkey  # This is our source dir
 - python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
-# Check JS code
+# Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.  
+- cd monkey_island/cc/ui
+- npm i
+- npm i -g eslint
+- cd -
 - cd monkey_island/cc/ui
 - eslint ./src --quiet
 - eslint ./src --max-warnings 100
