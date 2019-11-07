@@ -24,6 +24,7 @@ from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
+from infection_monkey.privilege_escalation.pe_handler import PrivilegeEscalation
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
@@ -102,6 +103,11 @@ class InfectionMonkey(object):
         if not WormConfiguration.alive:
             LOG.info("Marked not alive from configuration")
             return
+
+        if not self._flags.escalated:
+            if PrivilegeEscalation(self._flags).execute():
+                return
+
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()

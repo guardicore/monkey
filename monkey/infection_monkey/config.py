@@ -2,7 +2,6 @@ import hashlib
 import os
 import json
 import sys
-import types
 import uuid
 from abc import ABCMeta
 from itertools import product
@@ -23,8 +22,7 @@ class Configuration(object):
         # now we won't work at <2.7 for sure
         network_import = importlib.import_module('infection_monkey.network')
         exploit_import = importlib.import_module('infection_monkey.exploit')
-        pe_import = importlib.import_module('infection_monkey.privilege_escalation')
-        
+
         unknown_items = []
         for key, value in list(formatted_data.items()):
             if key.startswith('_'):

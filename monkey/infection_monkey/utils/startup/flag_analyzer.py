@@ -11,6 +11,8 @@ class MonkeyFlags(Enum):
     # Dropper flag, used to determine new monkey file location
     LOCATION = ('-l', '--location', 'str')
     CONFIGURATION = ('-c', '--config', 'str')
+    # Flag that launches monkey without privilege escalation
+    ESCALATED = ('-e', '--escalated', 'str')
 
 
 class FlagAnalyzer:

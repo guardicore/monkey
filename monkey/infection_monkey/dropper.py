@@ -62,7 +62,7 @@ class MonkeyDrops(object):
         if WormConfiguration.dropper_set_date:
             self._set_date()
 
-        monkey_process = MonkeyProcessDetacher(self._flags, self._config['destination_path'])
+        monkey_process = MonkeyProcessDetacher(self._flags, self._config['destination_path']).detach_process()
 
         time.sleep(DELAY_BEFORE_EXITING)
         if monkey_process.poll() is not None:
@@ -76,7 +76,8 @@ class MonkeyDrops(object):
 
                 # try removing the file first
                 try:
-                    os.remove(self._config['source_path'])
+                    # TODO uncomment os.remove(self._config['source_path'])
+                    print()
                 except Exception as exc:
                     LOG.debug("Error removing source file '%s': %s", self._config['source_path'], exc)
 

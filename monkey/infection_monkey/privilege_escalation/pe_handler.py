@@ -1,6 +1,8 @@
 import logging
 import inspect
 import importlib
+
+from infection_monkey.exploit.tools.helpers import build_monkey_commandline_from_flags
 from infection_monkey.privilege_escalation.actions import get_pe_files
 from infection_monkey.network.info import local_ips
 
@@ -15,9 +17,9 @@ class PrivilegeEscalation(object):
     """
     This class handles privilege escalation execution
     """
-    def __init__(self, command_line):
+    def __init__(self, flags):
         self.pe_list = self.get_pe_list()
-        self.command_line = command_line
+        self.command_line = build_monkey_commandline_from_flags(flags) + ' -e'
 
     def execute(self):
         """
