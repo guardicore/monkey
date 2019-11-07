@@ -1,48 +1,66 @@
 # Infection Monkey travis.yml. See Travis documentation for information about this file structure.
-
 group: travis_latest
 
-language: python
+jobs:
+  include:
+    # The python job
+    - language: python
 
-cache: pip
+      cache: pip
 
-python:
-- 3.7
+      python:
+      - 3.7
 
-install:
-- pip install -r monkey/monkey_island/requirements.txt  # for unit tests
-- pip install flake8 pytest dlint  # for next stages
-- pip install -r monkey/infection_monkey/requirements_linux.txt  # for unit tests
+      os: linux
 
-before_script:
-# Check syntax errors and fail the build if any are found.
-- flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
+      install:
+      - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
+      - pip install flake8 pytest dlint  # for next stages
+      - pip install -r monkey/infection_monkey/requirements_linux.txt  # for unit tests
 
-# Warn about linter issues.
-# --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
-# --count will print the total number of errors.
-# --statistics Count the number of occurrences of each error/warning code and print a report.
-# The output is redirected to a file.
-- flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics > flake8_warnings.txt
-# Display the linter issues
-- cat flake8_warnings.txt
-# Make sure that we haven't increased the amount of warnings.
-- WARNINGS_AMOUNT_UPPER_LIMIT=190
-- if [ $(tail -n 1 flake8_warnings.txt) -gt $WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
+      before_script:
+      # Check syntax errors and fail the build if any are found.
+      - flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
 
-# Set the server config to `testing`, for the UTs to use mongomaock and pass.
-- python monkey/monkey_island/cc/set_server_config.py testing
+      # Warn about linter issues.
+      # --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
+      # --count will print the total number of errors.
+      # --statistics Count the number of occurrences of each error/warning code and print a report.
+      # The output is redirected to a file.
+      - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics > flake8_warnings.txt
+      # Display the linter issues
+      - cat flake8_warnings.txt
+      # Make sure that we haven't increased the amount of warnings.
+      - WARNINGS_AMOUNT_UPPER_LIMIT=190
+      - if [ $(tail -n 1 flake8_warnings.txt) -gt $WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
-script:
-- cd monkey  # This is our source dir
-- python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+      # Set the server config to `testing`, for the UTs to use mongomaock and pass.
+      - python monkey/monkey_island/cc/set_server_config.py testing
 
-notifications:
-  slack:  # Notify to slack
-      rooms:
-      - infectionmonkey:QaXbsx4g7tHFJW0lhtiBmoAg#ci  # room: #ci
-      on_success: change
-      on_failure: always
-  email:
-      on_success: change
-      on_failure: always
+      script:
+      - cd monkey  # This is our source dir
+      - python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+
+      notifications:
+        slack:  # Notify to slack
+            rooms:
+            - infectionmonkey:QaXbsx4g7tHFJW0lhtiBmoAg#ci  # room: #ci
+            on_success: change
+            on_failure: always
+        email:
+            on_success: change
+            on_failure: always
+
+  # The JS job
+  - language: node_js
+    cache:
+      directories:
+        - "node_modules"
+    sudo: false
+    script:
+      - pwd
+      - cd monkey_island/cc/ui
+      - pwd
+      - npm i -g eslint
+      - eslint ./src --quiet
+      - eslint ./src --max-warnings 100
