@@ -1,6 +1,3 @@
-
-
-import argparse
 import json
 import logging
 import logging.config
@@ -14,6 +11,7 @@ from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
 from infection_monkey.monkey import InfectionMonkey
+from infection_monkey.utils.startup.flag_analyzer import FlagAnalyzer
 # noinspection PyUnresolvedReferences
 import infection_monkey.post_breach  # dummy import for pyinstaller
 
@@ -52,9 +50,9 @@ def main():
 
     config_file = EXTERNAL_CONFIG_FILE
 
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('-c', '--config')
-    opts, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
+    monkey_args = sys.argv[2:]
+    opts = FlagAnalyzer.get_flags(monkey_args)
+
     if opts.config:
         config_file = opts.config
     if os.path.isfile(config_file):

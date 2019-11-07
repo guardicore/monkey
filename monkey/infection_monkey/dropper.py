@@ -2,26 +2,17 @@ import ctypes
 import logging
 import os
 import pprint
-import subprocess
 import sys
 import time
 from ctypes import c_char_p
 
 from infection_monkey.config import WormConfiguration
-from infection_monkey.exploit.tools.helpers import build_monkey_commandline_explicitly
-from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX, MONKEY_ARG
-from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
-from infection_monkey.control import ControlClient
-from infection_monkey.privilege_escalation.pe_handler import PrivilegeEscalation
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
-from infection_monkey.startup.flag_analyzer import FlagAnalyzer
-from infection_monkey.startup.file_mover import FileMover
+from infection_monkey.utils.startup.flag_analyzer import FlagAnalyzer
+from infection_monkey.utils.startup.file_mover import FileMover
+from infection_monkey.utils.startup.process_detacher import MonkeyProcessDetacher
 
-if "win32" == sys.platform:
-    from win32process import DETACHED_PROCESS
-else:
-    DETACHED_PROCESS = 0
 
 # Linux doesn't have WindowsError
 try:
@@ -64,45 +55,17 @@ class MonkeyDrops(object):
         if self._config['destination_path'] is None:
             LOG.error("No destination path specified")
             return False
-        ControlClient.wakeup()
 
         FileMover.move_file(self._config['source_path'], self._config['destination_path'])
 
         if WormConfiguration.dropper_set_date:
             self._set_date()
 
-        monkey_options = build_monkey_commandline_explicitly(self._flags.parent,
-                                                             self._flags.tunnel,
-                                                             self._flags.server,
-                                                             self._flags.depth)
+        monkey_process = MonkeyProcessDetacher(self._flags, self._config['destination_path'])
 
-        if OperatingSystem.Windows == SystemInfoCollector.get_os():
-            monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._config['destination_path']} + monkey_options
-        else:
-            dst_path = self._config['destination_path']
-            # In linux we have a more complex commandline. There's a general outer one, and the inner one which actually
-            # runs the monkey
-            inner_monkey_cmdline = MONKEY_CMDLINE_LINUX % {'monkey_filename': dst_path.split("/")[-1]} + monkey_options
-            monkey_cmdline = GENERAL_CMDLINE_LINUX % {'monkey_directory': dst_path[0:dst_path.rfind("/")],
-                                                      'monkey_commandline': inner_monkey_cmdline}
-
-        pe_exploited = False
-        dst_path = self._config['destination_path']
-        cmdline = dst_path + " " + MONKEY_ARG + " " + monkey_options
-        privilege_escalation = PrivilegeEscalation(cmdline)
-
-        if privilege_escalation.execute():
-            pe_exploited = True
-
-        if not pe_exploited:
-            monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
-                                              stdin=None, stdout=None, stderr=None,
-                                              close_fds=True, creationflags=DETACHED_PROCESS)
-            LOG.info("Executed monkey process (PID=%d) with command line: %s", monkey_process.pid, monkey_cmdline)
-
-            time.sleep(DELAY_BEFORE_EXITING)
-            if monkey_process.poll() is not None:
-                LOG.warning("Seems like monkey died too soon")
+        time.sleep(DELAY_BEFORE_EXITING)
+        if monkey_process.poll() is not None:
+            LOG.warning("Seems like monkey died too soon")
 
     def cleanup(self):
         try:
