@@ -43,7 +43,17 @@ class Monkey(Document):
     tunnel = ReferenceField("self")
     command_control_channel = EmbeddedDocumentField(CommandControlChannel)
     aws_instance_id = StringField(required=False)  # This field only exists when the monkey is running on an AWS
+
     # instance. See https://github.com/guardicore/monkey/issues/426.
+
+    @staticmethod
+    def __ring_key__():
+        """
+        Cache key representation
+        https://ring-cache.readthedocs.io/en/stable/quickstart.html#method-classmethod-staticmethod-property
+        :return:
+        """
+        return Monkey.guid
 
     # LOGIC
     @staticmethod
@@ -51,14 +61,14 @@ class Monkey(Document):
         try:
             return Monkey.objects.get(id=db_id)
         except DoesNotExist as ex:
-            raise MonkeyNotFoundError("info: {0} | id: {1}".format(ex.message, str(db_id)))
+            raise MonkeyNotFoundError("info: {0} | id: {1}".format(ex, str(db_id)))
 
     @staticmethod
     def get_single_monkey_by_guid(monkey_guid):
         try:
             return Monkey.objects.get(guid=monkey_guid)
         except DoesNotExist as ex:
-            raise MonkeyNotFoundError("info: {0} | guid: {1}".format(ex.message, str(monkey_guid)))
+            raise MonkeyNotFoundError("info: {0} | guid: {1}".format(ex, str(monkey_guid)))
 
     @staticmethod
     def get_latest_modifytime():
@@ -88,8 +98,8 @@ class Monkey(Document):
             os = "windows"
         return os
 
-    @staticmethod
     @ring.lru()
+    @staticmethod
     def get_label_by_id(object_id):
         current_monkey = Monkey.get_single_monkey_by_id(object_id)
         label = Monkey.get_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
@@ -97,8 +107,8 @@ class Monkey(Document):
             label = "MonkeyIsland - " + label
         return label
 
-    @staticmethod
     @ring.lru()
+    @staticmethod
     def get_hostname_by_id(object_id):
         """
         :param object_id: the object ID of a Monkey in the database.
@@ -124,10 +134,10 @@ class Monkey(Document):
         """
         return {'ips': self.ip_addresses, 'hostname': self.hostname}
 
-    @staticmethod
     @ring.lru(
         expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.
     )
+    @staticmethod
     def is_monkey(object_id):
         try:
             _ = Monkey.get_single_monkey_by_id(object_id)

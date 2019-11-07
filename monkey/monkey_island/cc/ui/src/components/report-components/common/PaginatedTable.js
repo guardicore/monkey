@@ -18,8 +18,7 @@ class PaginatedTable extends Component {
           />
         </div>
       );
-    }
-    else {
+    } else {
       return (
         <div/>
       );

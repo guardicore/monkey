@@ -2,7 +2,7 @@ import BaseConfig from './BaseConfig';
 
 class StandardConfig extends BaseConfig {
 
-  isAuthEnabled () {
+  isAuthEnabled() {
     return false;
   }
 }

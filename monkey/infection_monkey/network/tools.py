@@ -7,8 +7,7 @@ import struct
 import time
 import re
 
-from six.moves import range
-
+from infection_monkey.network.info import get_routes
 from infection_monkey.pyinstaller_utils import get_binary_file_path
 from infection_monkey.utils.environment import is_64bit_python
 
@@ -42,7 +41,7 @@ def struct_unpack_tracker_string(data, index):
     :param index: Position index
     :return: (Data, new index)
     """
-    ascii_len = data[index:].find('\0')
+    ascii_len = data[index:].find(b'\0')
     fmt = "%ds" % ascii_len
     return struct_unpack_tracker(data, index, fmt)
 
@@ -73,7 +72,7 @@ def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
         if get_banner:
             read_ready, _, _ = select.select([sock], [], [], timeout)
             if len(read_ready) > 0:
-                banner = sock.recv(BANNER_READ)
+                banner = sock.recv(BANNER_READ).decode()
     except socket.error:
         pass
 
@@ -96,7 +95,7 @@ def check_udp_port(ip, port, timeout=DEFAULT_TIMEOUT):
     is_open = False
 
     try:
-        sock.sendto("-", (ip, port))
+        sock.sendto(b"-", (ip, port))
         data, _ = sock.recvfrom(BANNER_READ)
         is_open = True
     except socket.error:
@@ -116,7 +115,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
     :return: list of open ports. If get_banner=True, then a matching list of banners.
     """
     sockets = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for _ in range(len(ports))]
-    [s.setblocking(0) for s in sockets]
+    [s.setblocking(False) for s in sockets]
     possible_ports = []
     connected_ports_sockets = []
     try:
@@ -160,8 +159,8 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
             banners = []
             if get_banner and (len(connected_ports_sockets) != 0):
                 readable_sockets, _, _ = select.select([s[1] for s in connected_ports_sockets], [], [], 0)
-                # read first BANNER_READ bytes
-                banners = [sock.recv(BANNER_READ) if sock in readable_sockets else ""
+                # read first BANNER_READ bytes. We ignore errors because service might not send a decodable byte string.
+                banners = [sock.recv(BANNER_READ).decode(errors='ignore') if sock in readable_sockets else ""
                            for port, sock in connected_ports_sockets]
                 pass
             # try to cleanup
@@ -271,3 +270,42 @@ def _traceroute_linux(target_ip, ttl):
     lines = [x[1:-1] if x else None  # Removes parenthesis
              for x in lines]
     return lines
+
+
+def get_interface_to_target(dst):
+    """
+    :param dst: destination IP address string without port. E.G. '192.168.1.1.'
+    :return: IP address string of an interface that can connect to the target. E.G. '192.168.1.4.'
+    """
+    if sys.platform == "win32":
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.connect((dst, 1))
+            ip_to_dst = s.getsockname()[0]
+        except KeyError:
+            LOG.debug("Couldn't get an interface to the target, presuming that target is localhost.")
+            ip_to_dst = '127.0.0.1'
+        finally:
+            s.close()
+        return ip_to_dst
+    else:
+        # based on scapy implementation
+
+        def atol(x):
+            ip = socket.inet_aton(x)
+            return struct.unpack("!I", ip)[0]
+
+        routes = get_routes()
+        dst = atol(dst)
+        paths = []
+        for d, m, gw, i, a in routes:
+            aa = atol(a)
+            if aa == dst:
+                paths.append((0xffffffff, ("lo", a, "0.0.0.0")))
+            if (dst & m) == (d & m):
+                paths.append((m, (i, a, gw)))
+        if not paths:
+            return None
+        paths.sort()
+        ret = paths[-1][1]
+        return ret[1]

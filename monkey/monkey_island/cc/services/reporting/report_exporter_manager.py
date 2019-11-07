@@ -14,9 +14,7 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class ReportExporterManager(object):
-    __metaclass__ = Singleton
-
+class ReportExporterManager(object, metaclass=Singleton):
     def __init__(self):
         self._exporters_set = set()
 
@@ -32,4 +30,4 @@ class ReportExporterManager(object):
             try:
                 exporter().handle_report(report)
             except Exception as e:
-                logger.exception('Failed to export report, error: ' + e.message)
+                logger.exception('Failed to export report, error: ' + e)

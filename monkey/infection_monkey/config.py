@@ -25,7 +25,7 @@ class Configuration(object):
         exploit_import = importlib.import_module('infection_monkey.exploit')
 
         unknown_items = []
-        for key, value in formatted_data.items():
+        for key, value in list(formatted_data.items()):
             if key.startswith('_'):
                 continue
             if key in ["name", "id", "current_server"]:
@@ -74,7 +74,7 @@ class Configuration(object):
 
             val_type = type(value)
 
-            if val_type is types.FunctionType or val_type is types.MethodType:
+            if isinstance(val_type, types.FunctionType) or isinstance(val_type, types.MethodType):
                 continue
 
             if val_type in (type, ABCMeta):
@@ -287,7 +287,7 @@ class Configuration(object):
         :param sensitive_data: the data to hash.
         :return: the hashed data.
         """
-        password_hashed = hashlib.sha512(sensitive_data).hexdigest()
+        password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
         return password_hashed
 
 

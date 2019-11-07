@@ -1,6 +1,11 @@
 import logging
 
-from monkey_island.cc.services.telemetry.processing import *
+from monkey_island.cc.services.telemetry.processing.exploit import process_exploit_telemetry
+from monkey_island.cc.services.telemetry.processing.post_breach import process_post_breach_telemetry
+from monkey_island.cc.services.telemetry.processing.scan import process_scan_telemetry
+from monkey_island.cc.services.telemetry.processing.state import process_state_telemetry
+from monkey_island.cc.services.telemetry.processing.system_info import process_system_info_telemetry
+from monkey_island.cc.services.telemetry.processing.tunnel import process_tunnel_telemetry
 
 logger = logging.getLogger(__name__)
 
@@ -26,4 +31,4 @@ def process_telemetry(telemetry_json):
         else:
             logger.info('Got unknown type of telemetry: %s' % telem_category)
     except Exception as ex:
-        logger.error("Exception caught while processing telemetry. Info: {}".format(ex.message), exc_info=True)
+        logger.error("Exception caught while processing telemetry. Info: {}".format(ex), exc_info=True)

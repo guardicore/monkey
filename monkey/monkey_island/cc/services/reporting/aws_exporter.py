@@ -107,10 +107,10 @@ class AWSExporter(Exporter):
             else:
                 return False
         except UnknownServiceError as e:
-            logger.warning('AWS exporter called but AWS-CLI securityhub service is not installed. Error: ' + e.message)
+            logger.warning('AWS exporter called but AWS-CLI security hub service is not installed. Error: {}'.format(e))
             return False
         except Exception as e:
-            logger.exception('AWS security hub findings failed to send. Error: ' + e.message)
+            logger.exception('AWS security hub findings failed to send. Error: {}'.format(e))
             return False
 
     @staticmethod
@@ -148,8 +148,8 @@ class AWSExporter(Exporter):
             severity=5,
             title="Weak segmentation - Machines were able to communicate over unused ports.",
             description="Use micro-segmentation policies to disable communication other than the required.",
-            recommendation="Machines are not locked down at port level. Network tunnel was set up from {0} to {1}"
-                .format(issue['machine'], issue['dest']),
+            recommendation="Machines are not locked down at port level. "
+                           "Network tunnel was set up from {0} to {1}".format(issue['machine'], issue['dest']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -160,10 +160,12 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=10,
             title="Samba servers are vulnerable to 'SambaCry'",
-            description="Change {0} password to a complex one-use password that is not shared with other computers on the network. Update your Samba server to 4.4.14 and up, 4.5.10 and up, or 4.6.4 and up." \
-                .format(issue['username']),
-            recommendation="The machine {0} ({1}) is vulnerable to a SambaCry attack. The Monkey authenticated over the SMB protocol with user {2} and its password, and used the SambaCry vulnerability.".format(
-                issue['machine'], issue['ip_address'], issue['username']),
+            description="Change {0} password to a complex one-use password that is not shared with other computers on the "
+                        "network. Update your Samba server to 4.4.14 and up, "
+                        "4.5.10 and up, or 4.6.4 and up.".format(issue['username']),
+            recommendation="The machine {0} ({1}) is vulnerable to a SambaCry attack. The Monkey authenticated over the SMB "
+                           "protocol with user {2} and its password, and used the SambaCry "
+                           "vulnerability.".format(issue['machine'], issue['ip_address'], issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -174,10 +176,10 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=5,
             title="Machines are accessible using passwords supplied by the user during the Monkey's configuration.",
-            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the network.".format(
-                issue['username']),
-            recommendation="The machine {0}({1}) is vulnerable to a SMB attack. The Monkey used a pass-the-hash attack over SMB protocol with user {2}.".format(
-                issue['machine'], issue['ip_address'], issue['username']),
+            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the "
+                        "network.".format(issue['username']),
+            recommendation="The machine {0}({1}) is vulnerable to a SMB attack. The Monkey used a pass-the-hash attack over "
+                           "SMB protocol with user {2}.".format(issue['machine'], issue['ip_address'], issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -188,10 +190,11 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=1,
             title="Machines are accessible using SSH passwords supplied by the user during the Monkey's configuration.",
-            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the network.".format(
-                issue['username']),
-            recommendation="The machine {0} ({1}) is vulnerable to a SSH attack. The Monkey authenticated over the SSH protocol with user {2} and its password.".format(
-                issue['machine'], issue['ip_address'], issue['username']),
+            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the "
+                        "network.".format(issue['username']),
+            recommendation="The machine {0} ({1}) is vulnerable to a SSH attack. The Monkey authenticated over the SSH"
+                           " protocol with user {2} and its "
+                           "password.".format(issue['machine'], issue['ip_address'], issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -203,8 +206,11 @@ class AWSExporter(Exporter):
             severity=1,
             title="Machines are accessible using SSH passwords supplied by the user during the Monkey's configuration.",
             description="Protect {ssh_key} private key with a pass phrase.".format(ssh_key=issue['ssh_key']),
-            recommendation="The machine {machine} ({ip_address}) is vulnerable to a SSH attack. The Monkey authenticated over the SSH protocol with private key {ssh_key}.".format(
-                machine=issue['machine'], ip_address=issue['ip_address'], ssh_key=issue['ssh_key']),
+            recommendation="The machine {machine} ({ip_address}) is vulnerable to a SSH attack. The Monkey authenticated "
+                           "over the SSH protocol with private key {ssh_key}.".format(
+                                machine=issue['machine'],
+                                ip_address=issue['ip_address'],
+                                ssh_key=issue['ssh_key']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -216,8 +222,10 @@ class AWSExporter(Exporter):
             severity=10,
             title="Elastic Search servers are vulnerable to CVE-2015-1427",
             description="Update your Elastic Search server to version 1.4.3 and up.",
-            recommendation="The machine {0}({1}) is vulnerable to an Elastic Groovy attack. The attack was made possible because the Elastic Search server was not patched against CVE-2015-1427.".format(
-                issue['machine'], issue['ip_address']),
+            recommendation="The machine {0}({1}) is vulnerable to an Elastic Groovy attack. The attack was made "
+                           "possible because the Elastic Search server was not patched against CVE-2015-1427.".format(
+                            issue['machine'],
+                            issue['ip_address']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -228,13 +236,13 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=1,
             title="Weak segmentation - Machines from different segments are able to communicate.",
-            description="Segment your network and make sure there is no communication between machines from different segments.",
+            description="Segment your network and make sure there is no communication between machines from different "
+                        "segments.",
             recommendation="The network can probably be segmented. A monkey instance on \
                         {0} in the networks {1} \
                         could directly access the Monkey Island server in the networks {2}.".format(issue['machine'],
                                                                                                     issue['networks'],
-                                                                                                    issue[
-                                                                                                                                   'server_networks']),
+                                                                                                    issue['server_networks']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -259,8 +267,9 @@ class AWSExporter(Exporter):
             title="Machines are vulnerable to 'Shellshock'",
             description="Update your Bash to a ShellShock-patched version.",
             recommendation="The machine {0} ({1}) is vulnerable to a ShellShock attack. "
-                           "The attack was made possible because the HTTP server running on TCP port {2} was vulnerable to a shell injection attack on the paths: {3}.".format(
-                issue['machine'], issue['ip_address'], issue['port'], issue['paths']),
+                           "The attack was made possible because the HTTP server running on TCP port {2} was vulnerable to a "
+                           "shell injection attack on the paths: {3}.".format(
+                            issue['machine'], issue['ip_address'], issue['port'], issue['paths']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -271,10 +280,13 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=1,
             title="Machines are accessible using passwords supplied by the user during the Monkey's configuration.",
-            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the network.".format(
-                issue['username']),
-            recommendation="The machine {0} ({1}) is vulnerable to a SMB attack. The Monkey authenticated over the SMB protocol with user {2} and its password.".format(
-                issue['machine'], issue['ip_address'], issue['username']),
+            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the "
+                        "network.".format(issue['username']),
+            recommendation="The machine {0} ({1}) is vulnerable to a SMB attack. The Monkey authenticated over the SMB "
+                           "protocol with user {2} and its password.".format(
+                            issue['machine'],
+                            issue['ip_address'],
+                            issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -285,9 +297,13 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=1,
             title="Machines are accessible using passwords supplied by the user during the Monkey's configuration.",
-            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the network.",
-            recommendation="The machine machine ({ip_address}) is vulnerable to a WMI attack. The Monkey authenticated over the WMI protocol with user {username} and its password.".format(
-                machine=issue['machine'], ip_address=issue['ip_address'], username=issue['username']),
+            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the "
+                        "network.",
+            recommendation="The machine machine ({ip_address}) is vulnerable to a WMI attack. The Monkey authenticated over "
+                           "the WMI protocol with user {username} and its password.".format(
+                            machine=issue['machine'],
+                            ip_address=issue['ip_address'],
+                            username=issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -298,10 +314,13 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=1,
             title="Machines are accessible using passwords supplied by the user during the Monkey's configuration.",
-            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the network.".format(
-                issue['username']),
-            recommendation="The machine machine ({ip_address}) is vulnerable to a WMI attack. The Monkey used a pass-the-hash attack over WMI protocol with user {username}".format(
-                machine=issue['machine'], ip_address=issue['ip_address'], username=issue['username']),
+            description="Change {0}'s password to a complex one-use password that is not shared with other computers on the "
+                        "network.".format(issue['username']),
+            recommendation="The machine machine ({ip_address}) is vulnerable to a WMI attack. The Monkey used a "
+                           "pass-the-hash attack over WMI protocol with user {username}".format(
+                            machine=issue['machine'],
+                            ip_address=issue['ip_address'],
+                            username=issue['username']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -325,9 +344,10 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=1,
             title="Shared local administrator account - Different machines have the same account as a local administrator.",
-            description="Make sure the right administrator accounts are managing the right machines, and that there isn\'t an unintentional local admin sharing.",
-            recommendation="Here is a list of machines which the account {username} is defined as an administrator: {shared_machines}".format(
-                username=issue['username'], shared_machines=issue['shared_machines']),
+            description="Make sure the right administrator accounts are managing the right machines, and that there isn\'t "
+                        "an unintentional local admin sharing.",
+            recommendation="Here is a list of machines which the account {username} is defined as an administrator: "
+                           "{shared_machines}".format(username=issue['username'], shared_machines=issue['shared_machines']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -339,8 +359,9 @@ class AWSExporter(Exporter):
             severity=1,
             title="Mimikatz found login credentials of a user who has admin access to a server defined as critical.",
             description="This critical machine is open to attacks via strong users with access to it.",
-            recommendation="The services: {services} have been found on the machine thus classifying it as a critical machine. These users has access to it:{threatening_users}.".format(
-                services=issue['services'], threatening_users=issue['threatening_users']),
+            recommendation="The services: {services} have been found on the machine thus classifying it as a critical "
+                           "machine. These users has access to it:{threatening_users}.".format(
+                            services=issue['services'], threatening_users=issue['threatening_users']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -353,8 +374,8 @@ class AWSExporter(Exporter):
             title="Struts2 servers are vulnerable to remote code execution.",
             description="Upgrade Struts2 to version 2.3.32 or 2.5.10.1 or any later versions.",
             recommendation="Struts2 server at {machine} ({ip_address}) is vulnerable to remote code execution attack."
-                           " The attack was made possible because the server is using an old version of Jakarta based file upload Multipart parser.".format(
-                machine=issue['machine'], ip_address=issue['ip_address']),
+                           "The attack was made possible because the server is using an old version of Jakarta based file "
+                           "upload Multipart parser.".format(machine=issue['machine'], ip_address=issue['ip_address']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )
@@ -365,11 +386,11 @@ class AWSExporter(Exporter):
         return AWSExporter._build_generic_finding(
             severity=10,
             title="Oracle WebLogic servers are vulnerable to remote code execution.",
-            description="Install Oracle critical patch updates. Or update to the latest version. " \
+            description="Install Oracle critical patch updates. Or update to the latest version. "
                         "Vulnerable versions are 10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0.",
             recommendation="Oracle WebLogic server at {machine} ({ip_address}) is vulnerable to remote code execution attack."
-                           " The attack was made possible due to incorrect permission assignment in Oracle Fusion Middleware (subcomponent: WLS Security).".format(
-                machine=issue['machine'], ip_address=issue['ip_address']),
+                           "The attack was made possible due to incorrect permission assignment in Oracle Fusion Middleware "
+                           "(subcomponent: WLS Security).".format(machine=issue['machine'], ip_address=issue['ip_address']),
             instance_arn=instance_arn,
             instance_id=issue['aws_instance_id'] if 'aws_instance_id' in issue else None
         )

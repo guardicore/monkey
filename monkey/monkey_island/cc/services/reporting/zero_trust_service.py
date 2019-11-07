@@ -1,5 +1,7 @@
 import json
-from common.data.zero_trust_consts import *
+
+import common.data.zero_trust_consts as zero_trust_consts
+
 from monkey_island.cc.models.zero_trust.finding import Finding
 
 
@@ -7,7 +9,7 @@ class ZeroTrustService(object):
     @staticmethod
     def get_pillars_grades():
         pillars_grades = []
-        for pillar in PILLARS:
+        for pillar in zero_trust_consts.PILLARS:
             pillars_grades.append(ZeroTrustService.__get_pillar_grade(pillar))
         return pillars_grades
 
@@ -16,13 +18,13 @@ class ZeroTrustService(object):
         all_findings = Finding.objects()
         pillar_grade = {
             "pillar": pillar,
-            STATUS_FAILED: 0,
-            STATUS_VERIFY: 0,
-            STATUS_PASSED: 0,
-            STATUS_UNEXECUTED: 0
+            zero_trust_consts.STATUS_FAILED: 0,
+            zero_trust_consts.STATUS_VERIFY: 0,
+            zero_trust_consts.STATUS_PASSED: 0,
+            zero_trust_consts.STATUS_UNEXECUTED: 0
         }
 
-        tests_of_this_pillar = PILLARS_TO_TESTS[pillar]
+        tests_of_this_pillar = zero_trust_consts.PILLARS_TO_TESTS[pillar]
 
         test_unexecuted = {}
         for test in tests_of_this_pillar:
@@ -30,11 +32,11 @@ class ZeroTrustService(object):
 
         for finding in all_findings:
             test_unexecuted[finding.test] = False
-            test_info = TESTS_MAP[finding.test]
-            if pillar in test_info[PILLARS_KEY]:
+            test_info = zero_trust_consts.TESTS_MAP[finding.test]
+            if pillar in test_info[zero_trust_consts.PILLARS_KEY]:
                 pillar_grade[finding.status] += 1
 
-        pillar_grade[STATUS_UNEXECUTED] = sum(1 for condition in test_unexecuted.values() if condition)
+        pillar_grade[zero_trust_consts.STATUS_UNEXECUTED] = sum(1 for condition in list(test_unexecuted.values()) if condition)
 
         return pillar_grade
 
@@ -43,14 +45,14 @@ class ZeroTrustService(object):
         all_principles_statuses = {}
 
         # init with empty lists
-        for pillar in PILLARS:
+        for pillar in zero_trust_consts.PILLARS:
             all_principles_statuses[pillar] = []
 
-        for principle, principle_tests in PRINCIPLES_TO_TESTS.items():
-            for pillar in PRINCIPLES_TO_PILLARS[principle]:
+        for principle, principle_tests in list(zero_trust_consts.PRINCIPLES_TO_TESTS.items()):
+            for pillar in zero_trust_consts.PRINCIPLES_TO_PILLARS[principle]:
                 all_principles_statuses[pillar].append(
                     {
-                        "principle": PRINCIPLES[principle],
+                        "principle": zero_trust_consts.PRINCIPLES[principle],
                         "tests": ZeroTrustService.__get_tests_status(principle_tests),
                         "status": ZeroTrustService.__get_principle_status(principle_tests)
                     }
@@ -60,13 +62,13 @@ class ZeroTrustService(object):
 
     @staticmethod
     def __get_principle_status(principle_tests):
-        worst_status = STATUS_UNEXECUTED
+        worst_status = zero_trust_consts.STATUS_UNEXECUTED
         all_statuses = set()
         for test in principle_tests:
             all_statuses |= set(Finding.objects(test=test).distinct("status"))
 
         for status in all_statuses:
-            if ORDERED_TEST_STATUSES.index(status) < ORDERED_TEST_STATUSES.index(worst_status):
+            if zero_trust_consts.ORDERED_TEST_STATUSES.index(status) < zero_trust_consts.ORDERED_TEST_STATUSES.index(worst_status):
                 worst_status = status
 
         return worst_status
@@ -78,7 +80,7 @@ class ZeroTrustService(object):
             test_findings = Finding.objects(test=test)
             results.append(
                 {
-                    "test": TESTS_MAP[test][TEST_EXPLANATION_KEY],
+                    "test": zero_trust_consts.TESTS_MAP[test][zero_trust_consts.TEST_EXPLANATION_KEY],
                     "status": ZeroTrustService.__get_lcd_worst_status_for_test(test_findings)
                 }
             )
@@ -91,9 +93,9 @@ class ZeroTrustService(object):
         :return:    the "worst" (i.e. most severe) status out of the given findings.
                     lcd stands for lowest common denominator.
         """
-        current_worst_status = STATUS_UNEXECUTED
+        current_worst_status = zero_trust_consts.STATUS_UNEXECUTED
         for finding in all_findings_for_test:
-            if ORDERED_TEST_STATUSES.index(finding.status) < ORDERED_TEST_STATUSES.index(current_worst_status):
+            if zero_trust_consts.ORDERED_TEST_STATUSES.index(finding.status) < zero_trust_consts.ORDERED_TEST_STATUSES.index(current_worst_status):
                 current_worst_status = finding.status
 
         return current_worst_status
@@ -106,11 +108,11 @@ class ZeroTrustService(object):
 
     @staticmethod
     def __get_enriched_finding(finding):
-        test_info = TESTS_MAP[finding.test]
+        test_info = zero_trust_consts.TESTS_MAP[finding.test]
         enriched_finding = {
-            "test": test_info[FINDING_EXPLANATION_BY_STATUS_KEY][finding.status],
+            "test": test_info[zero_trust_consts.FINDING_EXPLANATION_BY_STATUS_KEY][finding.status],
             "test_key": finding.test,
-            "pillars": test_info[PILLARS_KEY],
+            "pillars": test_info[zero_trust_consts.PILLARS_KEY],
             "status": finding.status,
             "events": ZeroTrustService.__get_events_as_dict(finding.events)
         }
@@ -123,12 +125,12 @@ class ZeroTrustService(object):
     @staticmethod
     def get_statuses_to_pillars():
         results = {
-            STATUS_FAILED: [],
-            STATUS_VERIFY: [],
-            STATUS_PASSED: [],
-            STATUS_UNEXECUTED: []
+            zero_trust_consts.STATUS_FAILED: [],
+            zero_trust_consts.STATUS_VERIFY: [],
+            zero_trust_consts.STATUS_PASSED: [],
+            zero_trust_consts.STATUS_UNEXECUTED: []
         }
-        for pillar in PILLARS:
+        for pillar in zero_trust_consts.PILLARS:
             results[ZeroTrustService.__get_status_of_single_pillar(pillar)].append(pillar)
 
         return results
@@ -136,7 +138,7 @@ class ZeroTrustService(object):
     @staticmethod
     def get_pillars_to_statuses():
         results = {}
-        for pillar in PILLARS:
+        for pillar in zero_trust_consts.PILLARS:
             results[pillar] = ZeroTrustService.__get_status_of_single_pillar(pillar)
 
         return results
@@ -144,7 +146,7 @@ class ZeroTrustService(object):
     @staticmethod
     def __get_status_of_single_pillar(pillar):
         grade = ZeroTrustService.__get_pillar_grade(pillar)
-        for status in ORDERED_TEST_STATUSES:
+        for status in zero_trust_consts.ORDERED_TEST_STATUSES:
             if grade[status] > 0:
                 return status
-        return STATUS_UNEXECUTED
+        return zero_trust_consts.STATUS_UNEXECUTED

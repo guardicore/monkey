@@ -1,4 +1,4 @@
-import monkey_island.cc.main
+from monkey_island.cc.main import main
 
 if "__main__" == __name__:
-    monkey_island.cc.main.main()
+    main()

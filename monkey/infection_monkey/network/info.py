@@ -1,5 +1,3 @@
-import os
-import sys
 import socket
 import struct
 import psutil
@@ -13,15 +11,15 @@ import requests
 from requests import ConnectionError
 
 from common.network.network_range import CidrRange
-
-try:
-    long        # Python 2
-except NameError:
-    long = int  # Python 3
-
+from infection_monkey.utils.environment import is_windows_os
 
 # Timeout for monkey connections
 TIMEOUT = 15
+LOOPBACK_NAME = b"lo"
+SIOCGIFADDR = 0x8915  # get PA address
+SIOCGIFNETMASK = 0x891b  # get network PA mask
+RTF_UP = 0x0001  # Route usable
+RTF_REJECT = 0x0200
 
 
 def get_host_subnets():
@@ -44,36 +42,25 @@ def get_host_subnets():
         if 'broadcast' in network:
             network.pop('broadcast')
         for attr in network:
-            network[attr] = network[attr].encode('utf-8').strip()
+            network[attr] = network[attr]
     return ipv4_nets
 
 
-if sys.platform == "win32":
-
+if is_windows_os():
     def local_ips():
         local_hostname = socket.gethostname()
         return socket.gethostbyname_ex(local_hostname)[2]
 
-
     def get_routes():
         raise NotImplementedError()
-
 else:
     from fcntl import ioctl
-
 
     def local_ips():
         valid_ips = [network['addr'] for network in get_host_subnets()]
         return valid_ips
 
-
     def get_routes():  # based on scapy implementation for route parsing
-        LOOPBACK_NAME = "lo"
-        SIOCGIFADDR = 0x8915  # get PA address
-        SIOCGIFNETMASK = 0x891b  # get network PA mask
-        RTF_UP = 0x0001  # Route usable
-        RTF_REJECT = 0x0200
-
         try:
             f = open("/proc/net/route", "r")
         except IOError:
@@ -90,7 +77,7 @@ else:
             routes.append((dst, msk, "0.0.0.0", LOOPBACK_NAME, ifaddr))
 
         for l in f.readlines()[1:]:
-            iff, dst, gw, flags, x, x, x, msk, x, x, x = l.split()
+            iff, dst, gw, flags, x, x, x, msk, x, x, x = [var.encode() for var in l.split()]
             flags = int(flags, 16)
             if flags & RTF_UP == 0:
                 continue
@@ -106,9 +93,9 @@ else:
                     ifaddr = socket.inet_ntoa(ifreq[20:24])
                 else:
                     continue
-            routes.append((socket.htonl(long(dst, 16)) & 0xffffffff,
-                           socket.htonl(long(msk, 16)) & 0xffffffff,
-                           socket.inet_ntoa(struct.pack("I", long(gw, 16))),
+            routes.append((socket.htonl(int(dst, 16)) & 0xffffffff,
+                           socket.htonl(int(msk, 16)) & 0xffffffff,
+                           socket.inet_ntoa(struct.pack("I", int(gw, 16))),
                            iff, ifaddr))
 
         f.close()
@@ -158,13 +145,13 @@ def get_interfaces_ranges():
     for net_interface in ifs:
         address_str = net_interface['addr']
         netmask_str = net_interface['netmask']
-        ip_interface = ipaddress.ip_interface(u"%s/%s" % (address_str, netmask_str))
+        ip_interface = ipaddress.ip_interface("%s/%s" % (address_str, netmask_str))
         # limit subnet scans to class C only
         res.append(CidrRange(cidr_range="%s/%s" % (address_str, netmask_str)))
     return res
 
 
-if sys.platform == "win32":
+if is_windows_os():
     def get_ip_for_connection(target_ip):
         return None
 else:

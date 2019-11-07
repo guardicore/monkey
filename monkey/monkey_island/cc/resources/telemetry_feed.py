@@ -22,9 +22,8 @@ class TelemetryFeed(flask_restful.Resource):
         if "null" == timestamp or timestamp is None:  # special case to avoid ugly JS code...
             telemetries = mongo.db.telemetry.find({})
         else:
-            telemetries = mongo.db.telemetry.find({'timestamp': {'$gt': dateutil.parser.parse(timestamp)}})\
-
-        telemetries = telemetries.sort([('timestamp', flask_pymongo.ASCENDING)])
+            telemetries = mongo.db.telemetry.find({'timestamp': {'$gt': dateutil.parser.parse(timestamp)}})
+            telemetries = telemetries.sort([('timestamp', flask_pymongo.ASCENDING)])
 
         try:
             return \
@@ -34,7 +33,7 @@ class TelemetryFeed(flask_restful.Resource):
                     'timestamp': datetime.now().isoformat()
                 }
         except KeyError as err:
-            logger.error("Failed parsing telemetries. Error: {0}.".format(err.message))
+            logger.error("Failed parsing telemetries. Error: {0}.".format(err))
             return {'telemetries': [], 'timestamp': datetime.now().isoformat()}
 
     @staticmethod

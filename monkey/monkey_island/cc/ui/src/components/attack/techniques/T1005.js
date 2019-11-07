@@ -13,10 +13,17 @@ class T1005 extends React.Component {
     return ([{
       Header: "Sensitive data",
       columns: [
-        {Header: 'Machine', id: 'machine', accessor: x => renderMachineFromSystemData(x.machine), style: { 'whiteSpace': 'unset' }},
-        {Header: 'Type', id: 'type', accessor: x => x.gathered_data_type, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Info', id: 'info', accessor: x => x.info, style: { 'whiteSpace': 'unset' }},
-        ]}])};
+        {
+          Header: 'Machine',
+          id: 'machine',
+          accessor: x => renderMachineFromSystemData(x.machine),
+          style: {'whiteSpace': 'unset'}
+        },
+        {Header: 'Type', id: 'type', accessor: x => x.gathered_data_type, style: {'whiteSpace': 'unset'}},
+        {Header: 'Info', id: 'info', accessor: x => x.info, style: {'whiteSpace': 'unset'}},
+      ]
+    }])
+  };
 
   render() {
     return (
@@ -25,10 +32,10 @@ class T1005 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
-              columns={T1005.getDataColumns()}
-              data={this.props.data.collected_data}
-              showPagination={false}
-              defaultPageSize={this.props.data.collected_data.length}
+            columns={T1005.getDataColumns()}
+            data={this.props.data.collected_data}
+            showPagination={false}
+            defaultPageSize={this.props.data.collected_data.length}
           /> : ""}
       </div>
     );

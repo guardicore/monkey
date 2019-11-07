@@ -1,4 +1,4 @@
-import { SHA3 } from 'sha3';
+import {SHA3} from 'sha3';
 import decode from 'jwt-decode';
 
 export default class AuthService {
@@ -6,6 +6,8 @@ export default class AuthService {
   NO_AUTH_CREDS =
     "55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062" +
     "8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557";
+
+  SECONDS_BEFORE_JWT_EXPIRES = 20;
 
   login = (username, password) => {
     return this._login(username, this.hashSha3(password));
@@ -96,7 +98,7 @@ export default class AuthService {
 
   _isTokenExpired(token) {
     try {
-      return decode(token)['exp'] < Date.now() / 1000;
+      return decode(token)['exp'] - this.SECONDS_BEFORE_JWT_EXPIRES < Date.now() / 1000;
     }
     catch (err) {
       return false;

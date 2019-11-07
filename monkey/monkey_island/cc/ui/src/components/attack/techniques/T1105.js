@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
 import ReactTable from "react-table";
-import { ScanStatus } from "./Helpers"
+import {ScanStatus} from "./Helpers"
 
 
 class T1105 extends React.Component {
@@ -14,11 +14,12 @@ class T1105 extends React.Component {
     return ([{
       Header: 'Files copied',
       columns: [
-        {Header: 'Src. Machine', id: 'srcMachine', accessor: x => x.src, style: { 'whiteSpace': 'unset'}, width: 170 },
-        {Header: 'Dst. Machine', id: 'dstMachine', accessor: x => x.dst, style: { 'whiteSpace': 'unset'}, width: 170},
-        {Header: 'Filename', id: 'filename', accessor: x => x.filename, style: { 'whiteSpace': 'unset'}},
-        ]
-    }])};
+        {Header: 'Src. Machine', id: 'srcMachine', accessor: x => x.src, style: {'whiteSpace': 'unset'}, width: 170},
+        {Header: 'Dst. Machine', id: 'dstMachine', accessor: x => x.dst, style: {'whiteSpace': 'unset'}, width: 170},
+        {Header: 'Filename', id: 'filename', accessor: x => x.filename, style: {'whiteSpace': 'unset'}},
+      ]
+    }])
+  };
 
   render() {
     return (
@@ -27,10 +28,10 @@ class T1105 extends React.Component {
         <br/>
         {this.props.data.status !== ScanStatus.UNSCANNED ?
           <ReactTable
-              columns={T1105.getFilesColumns()}
-              data={this.props.data.files}
-              showPagination={false}
-              defaultPageSize={this.props.data.files.length}
+            columns={T1105.getFilesColumns()}
+            data={this.props.data.files}
+            showPagination={false}
+            defaultPageSize={this.props.data.files.length}
           /> : ""}
       </div>
     );

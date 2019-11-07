@@ -1,8 +1,7 @@
 from unittest import TestCase
-from aws_service import filter_instance_data_from_aws_response
+from .aws_service import filter_instance_data_from_aws_response
 
 import json
-
 
 __author__ = 'shay.nehmad'
 
@@ -11,14 +10,14 @@ class TestFilterInstanceDataFromAwsResponse(TestCase):
     def test_filter_instance_data_from_aws_response(self):
         json_response_full = """
         {
-            "InstanceInformationList": [ 
-                { 
+            "InstanceInformationList": [
+                {
                      "ActivationId": "string",
                      "AgentVersion": "string",
-                     "AssociationOverview": { 
+                     "AssociationOverview": {
                         "DetailedStatus": "string",
-                        "InstanceAssociationStatusAggregatedCount": { 
-                           "string" : 6 
+                        "InstanceAssociationStatusAggregatedCount": {
+                           "string" : 6
                         }
                      },
                      "AssociationStatus": "string",
@@ -53,7 +52,7 @@ class TestFilterInstanceDataFromAwsResponse(TestCase):
         self.assertEqual(filter_instance_data_from_aws_response(json.loads(json_response_empty)), [])
         self.assertEqual(
             filter_instance_data_from_aws_response(json.loads(json_response_full)),
-            [{'instance_id': u'string',
-              'ip_address': u'string',
-              'name': u'string',
-              'os': u'string'}])
+            [{'instance_id': 'string',
+              'ip_address': 'string',
+              'name': 'string',
+              'os': 'string'}])

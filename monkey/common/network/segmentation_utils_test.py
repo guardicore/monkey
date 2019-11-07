@@ -1,4 +1,4 @@
-from common.network.network_range import *
+from common.network.network_range import CidrRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
@@ -11,20 +11,20 @@ class TestSegmentationUtils(IslandTestCase):
 
         # IP not in both
         self.assertIsNone(get_ip_in_src_and_not_in_dst(
-            [text_type("3.3.3.3"), text_type("4.4.4.4")], source, target
+            ["3.3.3.3", "4.4.4.4"], source, target
         ))
 
         # IP not in source, in target
         self.assertIsNone(get_ip_in_src_and_not_in_dst(
-            [text_type("2.2.2.2")], source, target
+            ["2.2.2.2"], source, target
         ))
 
         # IP in source, not in target
         self.assertIsNotNone(get_ip_in_src_and_not_in_dst(
-            [text_type("8.8.8.8"), text_type("1.1.1.1")], source, target
+            ["8.8.8.8", "1.1.1.1"], source, target
         ))
 
         # IP in both subnets
         self.assertIsNone(get_ip_in_src_and_not_in_dst(
-            [text_type("8.8.8.8"), text_type("1.1.1.1")], source, source
+            ["8.8.8.8", "1.1.1.1"], source, source
         ))

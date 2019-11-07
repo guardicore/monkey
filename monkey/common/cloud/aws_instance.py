@@ -1,15 +1,14 @@
 import json
 import re
-import urllib2
+import urllib.request
+import urllib.error
 import logging
-
 
 __author__ = 'itay.mizeretz'
 
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
 AWS_LATEST_METADATA_URI_PREFIX = 'http://{0}/latest/'.format(AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS)
 ACCOUNT_ID_KEY = "accountId"
-
 
 logger = logging.getLogger(__name__)
 
@@ -25,19 +24,20 @@ class AwsInstance(object):
         self.account_id = None
 
         try:
-            self.instance_id = urllib2.urlopen(
-                AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2).read()
+            self.instance_id = urllib.request.urlopen(
+                AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2).read().decode()
             self.region = self._parse_region(
-                urllib2.urlopen(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read())
-        except (urllib2.URLError, IOError) as e:
-            logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e.message), exc_info=True)
+                urllib.request.urlopen(
+                    AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read().decode())
+        except (urllib.error.URLError, IOError) as e:
+            logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e))
 
         try:
             self.account_id = self._extract_account_id(
-                urllib2.urlopen(
-                    AWS_LATEST_METADATA_URI_PREFIX + 'dynamic/instance-identity/document', timeout=2).read())
-        except (urllib2.URLError, IOError) as e:
-            logger.debug("Failed init of AwsInstance while getting dynamic instance data: {}".format(e.message))
+                urllib.request.urlopen(
+                    AWS_LATEST_METADATA_URI_PREFIX + 'dynamic/instance-identity/document', timeout=2).read().decode())
+        except (urllib.error.URLError, IOError) as e:
+            logger.debug("Failed init of AwsInstance while getting dynamic instance data: {}".format(e))
 
     @staticmethod
     def _parse_region(region_url_response):

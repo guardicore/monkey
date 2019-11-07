@@ -1,20 +1,17 @@
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 
 __author__ = 'itamar'
 
 
-class HostScanner(object):
-    __metaclass__ = ABCMeta
-
+class HostScanner(object, metaclass=ABCMeta):
     @abstractmethod
     def is_host_alive(self, host):
         raise NotImplementedError()
 
 
-class HostFinger(object):
-    __metaclass__ = ABCMeta
-
-    @abstractproperty
+class HostFinger(object, metaclass=ABCMeta):
+    @property
+    @abstractmethod
     def _SCANNED_SERVICE(self):
         pass
 

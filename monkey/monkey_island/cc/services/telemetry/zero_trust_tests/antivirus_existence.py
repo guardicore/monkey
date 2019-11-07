@@ -1,7 +1,6 @@
 import json
 
-from common.data.zero_trust_consts import EVENT_TYPE_MONKEY_LOCAL, \
-    STATUS_PASSED, STATUS_FAILED, TEST_ENDPOINT_SECURITY_EXISTS
+import common.data.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
 from monkey_island.cc.models.zero_trust.event import Event
@@ -14,7 +13,7 @@ def test_antivirus_existence(telemetry_json):
         process_list_event = Event.create_event(
             title="Process list",
             message="Monkey on {} scanned the process list".format(current_monkey.hostname),
-            event_type=EVENT_TYPE_MONKEY_LOCAL)
+            event_type=zero_trust_consts.EVENT_TYPE_MONKEY_LOCAL)
         events = [process_list_event]
 
         av_processes = filter_av_processes(telemetry_json)
@@ -24,20 +23,20 @@ def test_antivirus_existence(telemetry_json):
                 title="Found AV process",
                 message="The process '{}' was recognized as an Anti Virus process. Process "
                         "details: {}".format(process[1]['name'], json.dumps(process[1])),
-                event_type=EVENT_TYPE_MONKEY_LOCAL
+                event_type=zero_trust_consts.EVENT_TYPE_MONKEY_LOCAL
             ))
 
         if len(av_processes) > 0:
-            test_status = STATUS_PASSED
+            test_status = zero_trust_consts.STATUS_PASSED
         else:
-            test_status = STATUS_FAILED
+            test_status = zero_trust_consts.STATUS_FAILED
         AggregateFinding.create_or_add_to_existing(
-            test=TEST_ENDPOINT_SECURITY_EXISTS, status=test_status, events=events
+            test=zero_trust_consts.TEST_ENDPOINT_SECURITY_EXISTS, status=test_status, events=events
         )
 
 
 def filter_av_processes(telemetry_json):
-    all_processes = telemetry_json['data']['process_list'].items()
+    all_processes = list(telemetry_json['data']['process_list'].items())
     av_processes = []
     for process in all_processes:
         process_name = process[1]['name']

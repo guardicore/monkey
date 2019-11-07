@@ -1,13 +1,11 @@
-enum34
 impacket
 pycryptodome
 cffi
 requests
 odict
 paramiko
-psutil==3.4.2
+psutil
 PyInstaller
-six
 ecdsa
 netifaces
 ipaddress
@@ -15,4 +13,3 @@ wmi
 pywin32
 pymssql
 pyftpdlib
-enum34

@@ -54,4 +54,3 @@ class VersionUpdateService:
     @staticmethod
     def get_download_link():
         return VersionUpdateService.VERSION_SERVER_DOWNLOAD_URL % (env.get_deployment(), env.get_version())
-

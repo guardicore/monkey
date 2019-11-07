@@ -14,7 +14,6 @@ COMPUTER_NAME_KEY = 'ComputerName'
 PLATFORM_TYPE_KEY = 'PlatformType'
 IP_ADDRESS_KEY = 'IPAddress'
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -84,5 +83,5 @@ class AwsService(object):
             filtered_instances_data = filter_instance_data_from_aws_response(response)
             return filtered_instances_data
         except botocore.exceptions.ClientError as e:
-            logger.warning("AWS client error while trying to get instances: " + e.message)
+            logger.warning("AWS client error while trying to get instances: " + e)
             raise e

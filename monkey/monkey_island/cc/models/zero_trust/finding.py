@@ -5,7 +5,7 @@ Define a Document Schema for Zero Trust findings.
 
 from mongoengine import Document, StringField, EmbeddedDocumentListField
 
-from common.data.zero_trust_consts import ORDERED_TEST_STATUSES, TESTS, TESTS_MAP, TEST_EXPLANATION_KEY, PILLARS_KEY
+import common.data.zero_trust_consts as zero_trust_consts
 # Dummy import for mongoengine.
 # noinspection PyUnresolvedReferences
 from monkey_island.cc.models.zero_trust.event import Event
@@ -30,18 +30,18 @@ class Finding(Document):
             times, or complex action we will perform - somewhat like an API.
     """
     # SCHEMA
-    test = StringField(required=True, choices=TESTS)
-    status = StringField(required=True, choices=ORDERED_TEST_STATUSES)
+    test = StringField(required=True, choices=zero_trust_consts.TESTS)
+    status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)
     events = EmbeddedDocumentListField(document_type=Event)
     # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
     meta = {'allow_inheritance': True}
 
     # LOGIC
     def get_test_explanation(self):
-        return TESTS_MAP[self.test][TEST_EXPLANATION_KEY]
+        return zero_trust_consts.TESTS_MAP[self.test][zero_trust_consts.TEST_EXPLANATION_KEY]
 
     def get_pillars(self):
-        return TESTS_MAP[self.test][PILLARS_KEY]
+        return zero_trust_consts.TESTS_MAP[self.test][zero_trust_consts.PILLARS_KEY]
 
     # Creation methods
     @staticmethod

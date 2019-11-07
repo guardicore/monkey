@@ -46,5 +46,3 @@ class T1110(AttackTechnique):
 
         data.update({'services': attempts})
         return data
-
-

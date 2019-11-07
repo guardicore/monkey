@@ -20,9 +20,11 @@ export default class EventsModal extends Component {
             <h3>
               <div className="text-center">Events</div>
             </h3>
-            <hr />
+            <hr/>
             <p>
-              There {Pluralize('is', this.props.events.length)} {<div className={"label label-primary"}>{this.props.events.length}</div>} {Pluralize('event', this.props.events.length)} associated with this finding.
+              There {Pluralize('is', this.props.events.length)} {<div
+              className={"label label-primary"}>{this.props.events.length}</div>} {Pluralize('event', this.props.events.length)} associated
+              with this finding.
             </p>
             {this.props.events.length > 5 ? this.renderButtons() : null}
             <EventsTimeline events={this.props.events}/>

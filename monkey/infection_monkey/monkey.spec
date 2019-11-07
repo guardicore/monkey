@@ -38,6 +38,7 @@ def main():
               debug=False,
               strip=get_exe_strip(),
               upx=True,
+              upx_exclude=['vcruntime140.dll'],
               console=True,
               icon=get_exe_icon())
 
@@ -67,14 +68,8 @@ def process_datas(orig_datas):
 
 
 def get_binaries():
-    binaries = get_windows_only_binaries() if is_windows() else get_linux_only_binaries()
+    binaries = [] if is_windows() else get_linux_only_binaries()
     binaries += get_sc_binaries()
-    return binaries
-
-
-def get_windows_only_binaries():
-    binaries = []
-    binaries += get_msvcr()
     return binaries
 
 
@@ -90,10 +85,6 @@ def get_hidden_imports():
 
 def get_sc_binaries():
     return [(x, get_bin_file_path(x), 'BINARY') for x in ['sc_monkey_runner32.so', 'sc_monkey_runner64.so']]
-
-
-def get_msvcr():
-    return [('msvcr100.dll', os.environ['WINDIR'] + '\\system32\\msvcr100.dll', 'BINARY')]
 
 
 def get_traceroute_binaries():

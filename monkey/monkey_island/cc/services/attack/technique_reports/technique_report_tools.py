@@ -12,7 +12,7 @@ def parse_creds(attempt):
              'ntlm_hash': {'type': 'NTLM hash', 'output': censor_hash(attempt['ntlm_hash'], 20)},
              'ssh_key': {'type': 'SSH key', 'output': attempt['ssh_key']},
              'password': {'type': 'Plaintext password', 'output': censor_password(attempt['password'])}}
-    for key, cred in creds.items():
+    for key, cred in list(creds.items()):
         if attempt[key]:
             return '%s ; %s : %s' % (username,
                                      cred['type'],

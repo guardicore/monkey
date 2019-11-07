@@ -1,11 +1,8 @@
 import os
 import uuid
-from datetime import datetime
 
-import bson
 import flask_restful
-from bson.json_util import dumps
-from flask import Flask, send_from_directory, make_response, Response
+from flask import Flask, send_from_directory, Response
 from werkzeug.exceptions import NotFound
 
 from monkey_island.cc.auth import init_jwt
@@ -29,18 +26,18 @@ from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.version_update import VersionUpdate
-from monkey_island.cc.services.database import Database
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
+from monkey_island.cc.services.database import Database
+from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
+from monkey_island.cc.services.representations import output_json
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 from monkey_island.cc.resources.test.monkey_test import MonkeyTest
 from monkey_island.cc.resources.test.log_test import LogTest
 
 __author__ = 'Barak'
-
 
 HOME_FILE = 'index.html'
 
@@ -60,32 +57,6 @@ def serve_static_file(static_path):
 
 def serve_home():
     return serve_static_file(HOME_FILE)
-
-
-def normalize_obj(obj):
-    if '_id' in obj and not 'id' in obj:
-        obj['id'] = obj['_id']
-        del obj['_id']
-
-    for key, value in obj.items():
-        if type(value) is bson.objectid.ObjectId:
-            obj[key] = str(value)
-        if type(value) is datetime:
-            obj[key] = str(value)
-        if type(value) is dict:
-            obj[key] = normalize_obj(value)
-        if type(value) is list:
-            for i in range(0, len(value)):
-                if type(value[i]) is dict:
-                    value[i] = normalize_obj(value[i])
-    return obj
-
-
-def output_json(obj, code, headers=None):
-    obj = normalize_obj(obj)
-    resp = make_response(dumps(obj), code)
-    resp.headers.extend(headers or {})
-    return resp
 
 
 def init_app_config(app, mongo_url):

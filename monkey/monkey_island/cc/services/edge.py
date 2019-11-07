@@ -141,7 +141,7 @@ class EdgeService:
 
     @staticmethod
     def get_edge_label(edge):
-        NodeService = monkey_island.cc.services.node.NodeService
+        node_service = monkey_island.cc.services.node.NodeService
         from_id = edge["from"]
         to_id = edge["to"]
 
@@ -153,9 +153,9 @@ class EdgeService:
             if Monkey.is_monkey(to_id):
                 to_label = Monkey.get_label_by_id(to_id)
             else:
-                to_label = NodeService.get_node_label(NodeService.get_node_by_id(to_id))
+                to_label = node_service.get_node_label(node_service.get_node_by_id(to_id))
 
-        RIGHT_ARROW = u"\u2192"
         return "%s %s %s" % (from_label, RIGHT_ARROW, to_label)
 
 
+RIGHT_ARROW = "\u2192"
