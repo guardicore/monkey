@@ -46,15 +46,6 @@ class Monkey(Document):
 
     # instance. See https://github.com/guardicore/monkey/issues/426.
 
-    @staticmethod
-    def __ring_key__():
-        """
-        Cache key representation
-        https://ring-cache.readthedocs.io/en/stable/quickstart.html#method-classmethod-staticmethod-property
-        :return:
-        """
-        return Monkey.guid
-
     # LOGIC
     @staticmethod
     def get_single_monkey_by_id(db_id):
