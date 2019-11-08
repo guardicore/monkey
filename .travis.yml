@@ -18,7 +18,7 @@ install:
 - pip install -r monkey/infection_monkey/requirements_linux.txt  # for unit tests
 
 before_script:
-# Set the server config to `testing`, for the UTs to use mongomaock and pass.
+# Set the server config to `testing`. This is required for for the UTs to pass.
 - python monkey/monkey_island/cc/set_server_config.py testing
 
 script:
