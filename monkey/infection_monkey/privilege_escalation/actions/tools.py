@@ -12,23 +12,8 @@ REMOVE_LASTLINE = "sudo sed -i '$ d' %(file_name)s"
 ADDUSER_TO_SUDOERS = "echo '%(user_name)s ALL = NOPASSWD: ALL' | sudo tee -a /etc/sudoers"
 
 
-def check_if_sudoer(file):
-    from pwd import getpwuid
-    """
-    see if the current user is a sudoers by checking if they are a part of the group monkey .
-
-    :return: True if he is a sudoer, false if not
-    """
-    try:
-        uname = getpwuid(os.stat(file).st_uid).pw_name
-    except:
-        LOG.info("The file was not created!")
-        return False
-
-    if "root" in uname:
-        return True
-
-    return False
+def is_sudo_paswordless():
+    return b'sudo_test' in subprocess.check_output('echo ""| sudo -S echo "sudo_test"', shell=True)
 
 
 def shell(cmd):
@@ -45,15 +30,8 @@ def shell(cmd):
         return False
 
 
-def check_if_running_as_root(pname):
-    """
-    Returns true if the monkey process is running as root
-    :param pname: name of the monkey process
-    :return:
-    """
-    if shell(PGREP % {'process_name': pname}):
-        return True
-    return False
+def is_current_process_root():
+    return os.geteuid() == 0
 
 
 def run_monkey_as_root(command_line):

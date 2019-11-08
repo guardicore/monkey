@@ -108,7 +108,6 @@ class InfectionMonkey(object):
             if PrivilegeEscalation(self._flags).execute():
                 return
 
-
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 

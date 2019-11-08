@@ -2,7 +2,10 @@ import logging
 import inspect
 import importlib
 
+
 from infection_monkey.exploit.tools.helpers import build_monkey_commandline_from_flags
+from infection_monkey.privilege_escalation.actions.tools import is_current_process_root, is_sudo_paswordless, \
+    run_monkey_as_root
 from infection_monkey.privilege_escalation.actions import get_pe_files
 from infection_monkey.network.info import local_ips
 
@@ -22,9 +25,14 @@ class PrivilegeEscalation(object):
         self.command_line = build_monkey_commandline_from_flags(flags) + ' -e'
 
     def execute(self):
-        """
-        Execute all pe classes one by one and if any succeeds then sends the telem data and returns true
-        """
+        if is_sudo_paswordless() and not is_current_process_root():
+            return run_monkey_as_root(self.command_line)
+        elif not is_current_process_root():
+            return self._execute_all_exploiters()
+        else:
+            return False
+
+    def _execute_all_exploiters(self):
         for pe in self.pe_list:
             if pe().try_priv_esc(self.command_line):
                 local_ip = local_ips()
@@ -49,5 +57,7 @@ class PrivilegeEscalation(object):
                 pe_list.append(pe_class)
 
         return pe_list
+
+
 
 
