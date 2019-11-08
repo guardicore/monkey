@@ -83,6 +83,7 @@
     "npm": "^6.11.3",
     "pluralize": "^7.0.0",
     "prop-types": "^15.7.2",
+    "rainge": "^1.0.1",
     "rc-progress": "^2.5.2",
     "react": "^16.10.1",
     "react-bootstrap": "^0.32.4",
