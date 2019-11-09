@@ -35,8 +35,11 @@ def get_instances(base_package_name, base_package_file, parent_class: Plugin):
         # Get object from class
         for class_object in classes:
             LOG.debug("Checking if should run object {}".format(class_object.__name__))
-            if class_object.should_run(class_object.__name__):
-                instance = class_object()
-                objects.append(instance)
-                LOG.debug("Added {} to list".format(class_object.__name__))
+            try:
+                if class_object.should_run(class_object.__name__):
+                    instance = class_object()
+                    objects.append(instance)
+                    LOG.debug("Added {} to list".format(class_object.__name__))
+            except Exception as e:
+                LOG.warning("Exception {} when checking if {} should run".format(str(e), class_object.__name__))
     return objects
