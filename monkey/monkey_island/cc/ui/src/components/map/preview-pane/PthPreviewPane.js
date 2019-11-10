@@ -1,8 +1,4 @@
 import React from 'react';
-import {Icon} from 'react-fa';
-import Toggle from 'react-toggle';
-import {OverlayTrigger, Tooltip} from 'react-bootstrap';
-import download from 'downloadjs'
 import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 
 class PthPreviewPaneComponent extends PreviewPaneComponent {
