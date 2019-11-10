@@ -1,6 +1,6 @@
-import React, {Component} from "react";
-import * as PropTypes from "prop-types";
-import ResponsiveVennDiagram from "./venn-components/ResponsiveVennDiagram";
+import React, {Component} from 'react';
+import * as PropTypes from 'prop-types';
+import ResponsiveVennDiagram from './venn-components/ResponsiveVennDiagram';
 
 class PillarOverview extends Component {
   render() {
@@ -13,5 +13,5 @@ class PillarOverview extends Component {
 export default PillarOverview;
 
 PillarOverview.propTypes = {
-  grades: PropTypes.array,
+  grades: PropTypes.array
 };

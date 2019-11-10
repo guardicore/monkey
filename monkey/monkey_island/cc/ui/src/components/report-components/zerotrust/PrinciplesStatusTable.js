@@ -1,9 +1,9 @@
-import React, {Fragment} from "react";
-import PaginatedTable from "../common/PaginatedTable";
-import AuthComponent from "../../AuthComponent";
-import StatusLabel from "./StatusLabel";
-import * as PropTypes from "prop-types";
-import {ZeroTrustStatuses} from "./ZeroTrustPillars";
+import React, {Fragment} from 'react';
+import PaginatedTable from '../common/PaginatedTable';
+import AuthComponent from '../../AuthComponent';
+import StatusLabel from './StatusLabel';
+import * as PropTypes from 'prop-types';
+import {ZeroTrustStatuses} from './ZeroTrustPillars';
 
 
 const MAX_WIDTH_STATUS_COLUMN = 80;

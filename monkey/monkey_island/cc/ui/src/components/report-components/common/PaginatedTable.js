@@ -1,6 +1,6 @@
-import React, {Component} from "react";
-import ReactTable from "react-table";
-import * as PropTypes from "prop-types";
+import React, {Component} from 'react';
+import ReactTable from 'react-table';
+import * as PropTypes from 'prop-types';
 
 class PaginatedTable extends Component {
   render() {
@@ -31,5 +31,5 @@ export default PaginatedTable;
 PaginatedTable.propTypes = {
   data: PropTypes.array,
   columns: PropTypes.array,
-  pageSize: PropTypes.number,
+  pageSize: PropTypes.number
 };

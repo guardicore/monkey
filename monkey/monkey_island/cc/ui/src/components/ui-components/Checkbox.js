@@ -34,7 +34,7 @@ class CheckboxComponent extends React.PureComponent {
     }
     this.setState({
       checked: !this.state.checked,
-      isAnimating: true,
+      isAnimating: true
     }, () => {
       this.props.changeHandler ? this.props.changeHandler(this.props.name, this.state.checked) : null
     });

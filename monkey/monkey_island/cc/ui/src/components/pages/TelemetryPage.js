@@ -33,7 +33,7 @@ class TelemetryPageComponent extends AuthComponent {
     this.authFetch('/api/log/island/download')
       .then(res => res.json())
       .then(res => {
-        let filename = 'Island_log'
+        let filename = 'Island_log';
         let logContent = (res['log_file']);
         download(logContent, filename, 'text/plain');
       });

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachine} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachine} from './Helpers'
 
 
 class T1210 extends React.Component {
@@ -12,7 +12,7 @@ class T1210 extends React.Component {
 
   static getScanColumns() {
     return ([{
-      Header: "Found services",
+      Header: 'Found services',
       columns: [
         {
           Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
@@ -27,7 +27,7 @@ class T1210 extends React.Component {
 
   static getExploitColumns() {
     return ([{
-      Header: "Exploited services",
+      Header: 'Exploited services',
       columns: [
         {
           Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
@@ -41,13 +41,13 @@ class T1210 extends React.Component {
         {Header: 'Service', id: 'service', accessor: x => x.service.display_name, style: {'whiteSpace': 'unset'}}
       ]
     }])
-  };
+  }
 
   static renderEndpoint(val) {
     return (
       <span>{(val.vulnerable_urls.length !== 0 ? val.vulnerable_urls[0] : val.vulnerable_ports[0])}</span>
     )
-  };
+  }
 
   static formatScanned(data) {
     let result = [];
@@ -63,7 +63,7 @@ class T1210 extends React.Component {
       result.push(scanned_service)
     }
     return result
-  };
+  }
 
   renderScannedServices(data) {
     return (

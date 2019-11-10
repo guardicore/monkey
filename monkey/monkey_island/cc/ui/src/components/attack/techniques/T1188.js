@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachineFromSystemData, ScanStatus} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachineFromSystemData, ScanStatus} from './Helpers'
 
 
 class T1188 extends React.Component {
@@ -12,7 +12,7 @@ class T1188 extends React.Component {
 
   static getHopColumns() {
     return ([{
-      Header: "Communications through multi-hop proxies",
+      Header: 'Communications through multi-hop proxies',
       columns: [
         {
           Header: 'From',
@@ -31,10 +31,10 @@ class T1188 extends React.Component {
           id: 'hops',
           accessor: x => x.count,
           style: {'whiteSpace': 'unset'}
-        },
+        }
       ]
     }])
-  };
+  }
 
   render() {
     return (
@@ -47,7 +47,7 @@ class T1188 extends React.Component {
             data={this.props.data.hops}
             showPagination={false}
             defaultPageSize={this.props.data.hops.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }

@@ -6,7 +6,7 @@ let renderArray = function (val) {
 };
 
 let renderIpAddresses = function (val) {
-  return <div>{renderArray(val.ip_addresses)} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")} </div>;
+  return <div>{renderArray(val.ip_addresses)} {(val.domain_name ? ' ('.concat(val.domain_name, ')') : '')} </div>;
 };
 
 const columns = [

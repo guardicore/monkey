@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachine} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachine} from './Helpers'
 
 
 class T1210 extends React.Component {

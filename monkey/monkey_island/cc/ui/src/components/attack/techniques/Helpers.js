@@ -1,24 +1,24 @@
-import React from "react";
+import React from 'react';
 
 export function renderMachine(val) {
   return (
-    <span>{val.ip_addr} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")}</span>
+    <span>{val.ip_addr} {(val.domain_name ? ' ('.concat(val.domain_name, ')') : '')}</span>
   )
 }
 
 /* Function takes data gathered from system info collector and creates a
    string representation of machine from that data. */
 export function renderMachineFromSystemData(data) {
-  let machineStr = data['hostname'] + " ( ";
+  let machineStr = data['hostname'] + ' ( ';
   data['ips'].forEach(function (ipInfo) {
-    if (typeof ipInfo === "object") {
-      machineStr += ipInfo['addr'] + ", ";
+    if (typeof ipInfo === 'object') {
+      machineStr += ipInfo['addr'] + ', ';
     } else {
-      machineStr += ipInfo + ", ";
+      machineStr += ipInfo + ', ';
     }
   });
   // Replaces " ," with " )" to finish a list of IP's
-  return machineStr.slice(0, -2) + " )"
+  return machineStr.slice(0, -2) + ' )'
 }
 
 /* Formats telemetry data that contains _id.machine and _id.usage fields into columns

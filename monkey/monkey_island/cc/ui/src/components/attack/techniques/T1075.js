@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachine, ScanStatus} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachine, ScanStatus} from './Helpers'
 
 
 class T1075 extends React.Component {
@@ -12,9 +12,9 @@ class T1075 extends React.Component {
   }
 
   setLoginHashType(login) {
-    if (login.attempts[0].ntlm_hash !== "") {
+    if (login.attempts[0].ntlm_hash !== '') {
       login.attempts[0].hashType = 'NTLM';
-    } else if (login.attempts[0].lm_hash !== "") {
+    } else if (login.attempts[0].lm_hash !== '') {
       login.attempts[0].hashType = 'LM';
     }
   }
@@ -25,10 +25,10 @@ class T1075 extends React.Component {
         {Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine), style: {'whiteSpace': 'unset'}},
         {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: {'whiteSpace': 'unset'}},
         {Header: 'Username', id: 'username', accessor: x => x.attempts[0].user, style: {'whiteSpace': 'unset'}},
-        {Header: 'Hash type', id: 'hash', accessor: x => x.attempts[0].hashType, style: {'whiteSpace': 'unset'}},
+        {Header: 'Hash type', id: 'hash', accessor: x => x.attempts[0].hashType, style: {'whiteSpace': 'unset'}}
       ]
     }])
-  };
+  }
 
   render() {
     return (
@@ -41,7 +41,7 @@ class T1075 extends React.Component {
             data={this.props.data.successful_logins}
             showPagination={false}
             defaultPageSize={this.props.data.successful_logins.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }

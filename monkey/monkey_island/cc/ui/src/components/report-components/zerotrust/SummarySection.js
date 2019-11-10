@@ -1,9 +1,9 @@
-import React, {Component} from "react";
-import {Col, Grid, Row} from "react-bootstrap";
-import MonkeysStillAliveWarning from "../common/MonkeysStillAliveWarning";
-import PillarsOverview from "./PillarOverview";
-import ZeroTrustReportLegend from "./ReportLegend";
-import * as PropTypes from "prop-types";
+import React, {Component} from 'react';
+import {Col, Grid, Row} from 'react-bootstrap';
+import MonkeysStillAliveWarning from '../common/MonkeysStillAliveWarning';
+import PillarsOverview from './PillarOverview';
+import ZeroTrustReportLegend from './ReportLegend';
+import * as PropTypes from 'prop-types';
 
 export default class SummarySection extends Component {
   render() {

@@ -4,8 +4,8 @@ import decode from 'jwt-decode';
 export default class AuthService {
   // SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
   NO_AUTH_CREDS =
-    "55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062" +
-    "8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557";
+    '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062' +
+    '8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557';
 
   SECONDS_BEFORE_JWT_EXPIRES = 20;
 

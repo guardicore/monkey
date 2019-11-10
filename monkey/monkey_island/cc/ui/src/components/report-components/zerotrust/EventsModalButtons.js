@@ -1,6 +1,6 @@
-import React, {Component} from "react";
-import ExportEventsButton from "./ExportEventsButton";
-import * as PropTypes from "prop-types";
+import React, {Component} from 'react';
+import ExportEventsButton from './ExportEventsButton';
+import * as PropTypes from 'prop-types';
 
 export default class EventsModalButtons extends Component {
   render() {

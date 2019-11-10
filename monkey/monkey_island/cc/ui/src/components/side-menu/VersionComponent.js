@@ -18,7 +18,7 @@ class VersionComponent extends React.Component {
         this.setState({
           currentVersion: res['current_version'],
           newerVersion: res['newer_version'],
-          downloadLink: res['download_link'],
+          downloadLink: res['download_link']
         });
       });
   }

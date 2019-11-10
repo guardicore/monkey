@@ -1,5 +1,5 @@
-import React, {Component, Fragment} from "react";
-import * as PropTypes from "prop-types";
+import React, {Component, Fragment} from 'react';
+import * as PropTypes from 'prop-types';
 
 export default class SecurityIssuesGlance extends Component {
   render() {

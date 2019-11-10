@@ -1,6 +1,6 @@
-import React, {Component} from "react";
-import {Button} from "react-bootstrap";
-import * as PropTypes from "prop-types";
+import React, {Component} from 'react';
+import {Button} from 'react-bootstrap';
+import * as PropTypes from 'prop-types';
 
 export default class PrintReportButton extends Component {
   render() {

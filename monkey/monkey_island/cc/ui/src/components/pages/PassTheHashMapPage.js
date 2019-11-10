@@ -1,12 +1,8 @@
 import React from 'react';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import AuthComponent from '../AuthComponent';
-import {optionsPth, edgeGroupToColorPth, options} from '../map/MapOptions';
-import PreviewPane from "../map/preview-pane/PreviewPane";
-import {Col} from "react-bootstrap";
-import {Link} from 'react-router-dom';
-import {Icon} from 'react-fa';
-import PthPreviewPaneComponent from "../map/preview-pane/PthPreviewPane";
+import {optionsPth} from '../map/MapOptions';
+import {Col} from 'react-bootstrap';
 
 class PassTheHashMapPageComponent extends AuthComponent {
   constructor(props) {

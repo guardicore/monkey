@@ -1,8 +1,8 @@
-import React, {Component, Fragment} from "react";
-import PillarLabel from "./PillarLabel";
-import StatusLabel from "./StatusLabel";
-import * as PropTypes from "prop-types";
-import {ZeroTrustStatuses} from "./ZeroTrustPillars";
+import React, {Component, Fragment} from 'react';
+import PillarLabel from './PillarLabel';
+import StatusLabel from './StatusLabel';
+import * as PropTypes from 'prop-types';
+import {ZeroTrustStatuses} from './ZeroTrustPillars';
 
 export default class StatusesToPillarsSummary extends Component {
   render() {

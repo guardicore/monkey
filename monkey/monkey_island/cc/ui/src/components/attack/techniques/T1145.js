@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachineFromSystemData, ScanStatus} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachineFromSystemData, ScanStatus} from './Helpers'
 
 
 class T1145 extends React.Component {
@@ -33,10 +33,10 @@ class T1145 extends React.Component {
           id: 'keys',
           accessor: x => T1145.renderSSHKeys(x.ssh_info),
           style: {'whiteSpace': 'unset'}
-        },
+        }
       ]
     }])
-  };
+  }
 
   render() {
     return (
@@ -49,7 +49,7 @@ class T1145 extends React.Component {
             data={this.props.data.ssh_info}
             showPagination={false}
             defaultPageSize={this.props.data.ssh_info.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }
