@@ -5,8 +5,8 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "copy": "copyfiles -f ./src/index.html ./src/favicon.ico ./dist",
-    "dist": "webpack --mode production",
-    "dev": "webpack --mode development",
+    "dist": "webpack --mode production && copyfiles -f ./src/favicon.ico ./dist",
+    "dev": "webpack --mode development && copyfiles -f ./src/favicon.ico ./dist",
     "lint": "eslint ./src",
     "posttest": "npm run lint",
     "release:major": "npm version major && npm publish && git push --follow-tags",
@@ -14,7 +14,7 @@
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "serve": "node server.js --env=dev",
     "serve:dist": "node server.js --env=dist",
-    "start": "webpack-dev-server --mode development --open --history-api-fallback --port 8000",
+    "start": "webpack-dev-server --verbose --mode development --open --history-api-fallback --port 8000",
     "test": "karma start",
     "test:watch": "karma start --autoWatch=true --singleRun=false"
   },
