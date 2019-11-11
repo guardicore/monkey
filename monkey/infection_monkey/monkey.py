@@ -105,7 +105,7 @@ class InfectionMonkey(object):
             return
 
         if not self._flags.escalated:
-            if PrivilegeEscalation(self._flags).execute():
+            if PrivilegeEscalation(self._dropper_path, self._flags).execute():
                 return
 
         if firewall.is_enabled():

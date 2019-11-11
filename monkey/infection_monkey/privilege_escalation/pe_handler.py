@@ -3,7 +3,7 @@ import inspect
 import importlib
 
 
-from infection_monkey.exploit.tools.helpers import build_monkey_commandline_from_flags
+from infection_monkey.exploit.tools.helpers import build_full_monkey_command_from_flags
 from infection_monkey.privilege_escalation.actions.tools import is_current_process_root, is_sudo_paswordless, \
     run_monkey_as_root
 from infection_monkey.privilege_escalation.actions import get_pe_files
@@ -20,12 +20,14 @@ class PrivilegeEscalation(object):
     """
     This class handles privilege escalation execution
     """
-    def __init__(self, flags):
+    def __init__(self, monkey_path, flags):
         self.pe_list = self.get_pe_list()
-        self.command_line = build_monkey_commandline_from_flags(flags) + ' -e'
+        self.command_line = build_full_monkey_command_from_flags(monkey_path, flags) + ' --escalated'
 
     def execute(self):
+        LOG.info("Attempting privilege escalation.")
         if is_sudo_paswordless() and not is_current_process_root():
+            LOG.info("Monkey already can be ran as root by current user.")
             return run_monkey_as_root(self.command_line)
         elif not is_current_process_root():
             return self._execute_all_exploiters()

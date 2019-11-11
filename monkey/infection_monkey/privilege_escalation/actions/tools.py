@@ -7,13 +7,16 @@ __author__ = 'D3fa1t'
 LOG = logging.getLogger(__name__)
 PGREP = "pgrep %(process_name)s -u 0"
 
-# Commands needed for PE
-REMOVE_LASTLINE = "sudo sed -i '$ d' %(file_name)s"
-ADDUSER_TO_SUDOERS = "echo '%(user_name)s ALL = NOPASSWD: ALL' | sudo tee -a /etc/sudoers"
-
 
 def is_sudo_paswordless():
-    return b'sudo_test' in subprocess.check_output('echo ""| sudo -S echo "sudo_test"', shell=True)
+    LOG.info("Checking if monkey can execute paswordless sudo:")
+    try:
+        if b'sudo_test' in subprocess.check_output('echo ""| sudo -S echo "sudo_test"', shell=True):
+            LOG.info("Monkey can run sudo without providing password!")
+            return True
+    except subprocess.CalledProcessError:
+        LOG.info("Paswordless sudo not configured for current user.")
+        return False
 
 
 def shell(cmd):
@@ -34,12 +37,7 @@ def is_current_process_root():
     return os.geteuid() == 0
 
 
-def run_monkey_as_root(command_line):
-    """"
-    This function runs the monkey with the command line with root privilege
-    :param command_line: monkey command line
-    :return:
-    """
+def run_monkey_as_root(command_line: str) -> bool:
     command_line = "sudo " + command_line
     monkey_process = subprocess.Popen(command_line, shell=True,
                                       stdin=None, stdout=None, stderr=None,
@@ -47,3 +45,4 @@ def run_monkey_as_root(command_line):
 
     LOG.info("Executed monkey process as root with (PID=%d) with command line: %s",
              monkey_process.pid, command_line)
+    return True
