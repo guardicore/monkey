@@ -4,7 +4,7 @@ import logging
 from abc import ABCMeta, abstractmethod
 from os.path import dirname, basename, isfile, join
 import glob
-from typing import Sequence
+from typing import Sequence, TypeVar, Type
 
 LOG = logging.getLogger(__name__)
 
@@ -12,6 +12,9 @@ LOG = logging.getLogger(__name__)
 def _get_candidate_files(base_package_file):
     files = glob.glob(join(dirname(base_package_file), "*.py"))
     return [basename(f)[:-3] for f in files if isfile(f) and not f.endswith('__init__.py')]
+
+
+Plugin_type = TypeVar('Plugin_type', bound='Plugin')
 
 
 class Plugin(metaclass=ABCMeta):
@@ -22,7 +25,7 @@ class Plugin(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @classmethod
-    def get_instances(cls) -> Sequence[object]:
+    def get_instances(cls) -> Sequence[Type[Plugin_type]]:
         """
         Returns the type objects from base_package_spec.
         base_package name and file must refer to the same package otherwise bad results
