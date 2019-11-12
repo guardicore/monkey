@@ -1,8 +1,8 @@
 import logging
+from typing import Sequence
+
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.plugins.load_plugins import get_instances
 from infection_monkey.post_breach.pba import PBA
-import infection_monkey.post_breach.actions
 
 LOG = logging.getLogger(__name__)
 
@@ -33,10 +33,8 @@ class PostBreach(object):
         LOG.info("All PBAs executed. Total {} executed.".format(len(self.pba_list)))
 
     @staticmethod
-    def config_to_pba_list():
+    def config_to_pba_list() -> Sequence[PBA]:
         """
-        Passes config to each post breach action class and aggregates results into a list.
         :return: A list of PBA objects.
         """
-        return get_instances(infection_monkey.post_breach.actions.__package__,
-                             infection_monkey.post_breach.actions.__file__, PBA)
+        return PBA.get_instances()
