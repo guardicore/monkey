@@ -1,10 +1,20 @@
-from abc import ABCMeta, abstractproperty, abstractmethod
+from abc import abstractmethod
 
 from infection_monkey.config import WormConfiguration
 from infection_monkey.utils.plugins.plugin import Plugin
 
 
-class HostFinger(Plugin, metaclass=ABCMeta):
+class HostFinger(Plugin):
+    @staticmethod
+    def base_package_file():
+        import infection_monkey.network  # avoid circular imports
+        return infection_monkey.network.__file__
+
+    @staticmethod
+    def base_package_name():
+        import infection_monkey.network  # avoid circular imports
+        return infection_monkey.network.__package__
+
     @property
     @abstractmethod
     def _SCANNED_SERVICE(self):

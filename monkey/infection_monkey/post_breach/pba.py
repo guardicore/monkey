@@ -20,6 +20,16 @@ class PBA(Plugin):
     Post breach action object. Can be extended to support more than command execution on target machine.
     """
 
+    @staticmethod
+    def base_package_name():
+        import infection_monkey.post_breach.actions  # avoid circular imports
+        return infection_monkey.post_breach.actions.__package__
+
+    @staticmethod
+    def base_package_file():
+        import infection_monkey.post_breach.actions
+        return infection_monkey.post_breach.actions.__file__
+
     def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
         """
         :param name: Name of post breach action.

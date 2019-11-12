@@ -6,13 +6,13 @@ import sys
 import time
 
 import infection_monkey.tunnel as tunnel
+from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.model import DELAY_DELETE_CMD
-from infection_monkey.network.fingerprinters_collector import get_fingerprint_instances
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
@@ -146,7 +146,7 @@ class InfectionMonkey(object):
 
             self._exploiters = WormConfiguration.exploiter_classes
 
-            self._fingerprint = get_fingerprint_instances()
+            self._fingerprint = HostFinger.get_instances()
 
             if not self._keep_running or not WormConfiguration.alive:
                 break
