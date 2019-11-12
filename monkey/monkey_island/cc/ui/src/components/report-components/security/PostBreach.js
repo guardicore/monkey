@@ -6,7 +6,7 @@ let renderArray = function (val) {
 };
 
 let renderIpAddresses = function (val) {
-  return <span> {renderArray(val.ip_addresses)} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")} </span>;
+  return <span> {renderArray(val.ip_addresses)} {(val.domain_name ? ' ('.concat(val.domain_name, ')') : '')} </span>;
 };
 
 let renderMachine = function (data) {
@@ -14,18 +14,18 @@ let renderMachine = function (data) {
 };
 
 let renderPbaResults = function (results) {
-  let pbaClass = "";
+  let pbaClass = '';
   if (results[1]) {
-    pbaClass = "pba-success"
+    pbaClass = 'pba-success'
   } else {
-    pbaClass = "pba-danger"
+    pbaClass = 'pba-danger'
   }
   return <div className={pbaClass}> {results[0]} </div>
 };
 
 const subColumns = [
-  {id: 'pba_name', Header: "Name", accessor: x => x.name, style: {'whiteSpace': 'unset'}, width: 160},
-  {id: 'pba_output', Header: "Output", accessor: x => renderPbaResults(x.result), style: {'whiteSpace': 'unset'}}
+  {id: 'pba_name', Header: 'Name', accessor: x => x.name, style: {'whiteSpace': 'unset'}, width: 160},
+  {id: 'pba_output', Header: 'Output', accessor: x => renderPbaResults(x.result), style: {'whiteSpace': 'unset'}}
 ];
 
 let renderDetails = function (data) {
@@ -36,7 +36,7 @@ let renderDetails = function (data) {
     columns={subColumns}
     defaultPageSize={defaultPageSize}
     showPagination={showPagination}
-    style={{"backgroundColor": "#ededed"}}
+    style={{'backgroundColor': '#ededed'}}
   />
 };
 
@@ -57,8 +57,8 @@ class PostBreachComponent extends React.Component {
   }
 
   render() {
-    let pbaMachines = this.props.data.filter(function (value, index, arr) {
-      return (value.pba_results !== "None" && value.pba_results.length > 0);
+    let pbaMachines = this.props.data.filter(function (value) {
+      return (value.pba_results !== 'None' && value.pba_results.length > 0);
     });
     let defaultPageSize = pbaMachines.length > pageSize ? pageSize : pbaMachines.length;
     let showPagination = pbaMachines > pageSize;

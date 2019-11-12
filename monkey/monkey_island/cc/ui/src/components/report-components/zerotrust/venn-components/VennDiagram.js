@@ -4,7 +4,7 @@ import CircularNode from './CircularNode'
 import ArcNode from './ArcNode'
 import {TypographicUtilities} from './Utility.js'
 import './VennDiagram.css'
-import {ZeroTrustStatuses} from "../ZeroTrustPillars";
+import {ZeroTrustStatuses} from '../ZeroTrustPillars';
 
 class VennDiagram extends React.Component {
   constructor(props_) {
@@ -131,16 +131,12 @@ class VennDiagram extends React.Component {
 
     let self = this;
 
-    let hidden = 'none';
-    let html = '';
-    let bcolor = '#DEDEDE';
-
     if (this.state.currentPopover !== undefined) {
       this.state.currentPopover.show();
     }
 
-    document.querySelectorAll('circle, path').forEach((d_, i_) => {
-      d_.setAttribute('opacity', "0.8");
+    document.querySelectorAll('circle, path').forEach((d_) => {
+      d_.setAttribute('opacity', '0.8');
     });
 
     if (e.target.id.includes('Node')) {
@@ -175,10 +171,9 @@ class VennDiagram extends React.Component {
     let data = [];
     const omit = (prop, {[prop]: _, ...rest}) => rest;
 
-    this.props.pillarsGrades.forEach((d_, i_) => {
+    this.props.pillarsGrades.forEach((d_) => {
 
       let params = omit('pillar', d_);
-      let sum = Object.keys(params).reduce((sum_, key_) => sum_ + parseFloat(params[key_] || 0), 0);
       let key = TypographicUtilities.removeAmpersand(d_.pillar);
       let html = self.buildTooltipHtmlContent(params);
       let rule = null;

@@ -68,7 +68,8 @@ class ZeroTrustService(object):
             all_statuses |= set(Finding.objects(test=test).distinct("status"))
 
         for status in all_statuses:
-            if zero_trust_consts.ORDERED_TEST_STATUSES.index(status) < zero_trust_consts.ORDERED_TEST_STATUSES.index(worst_status):
+            if zero_trust_consts.ORDERED_TEST_STATUSES.index(status) \
+                    < zero_trust_consts.ORDERED_TEST_STATUSES.index(worst_status):
                 worst_status = status
 
         return worst_status
@@ -95,7 +96,8 @@ class ZeroTrustService(object):
         """
         current_worst_status = zero_trust_consts.STATUS_UNEXECUTED
         for finding in all_findings_for_test:
-            if zero_trust_consts.ORDERED_TEST_STATUSES.index(finding.status) < zero_trust_consts.ORDERED_TEST_STATUSES.index(current_worst_status):
+            if zero_trust_consts.ORDERED_TEST_STATUSES.index(finding.status) \
+                    < zero_trust_consts.ORDERED_TEST_STATUSES.index(current_worst_status):
                 current_worst_status = finding.status
 
         return current_worst_status

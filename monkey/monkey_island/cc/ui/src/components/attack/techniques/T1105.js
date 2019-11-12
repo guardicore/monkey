@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {ScanStatus} from "./Helpers"
+import ReactTable from 'react-table';
+import {ScanStatus} from './Helpers'
 
 
 class T1105 extends React.Component {
@@ -16,10 +16,10 @@ class T1105 extends React.Component {
       columns: [
         {Header: 'Src. Machine', id: 'srcMachine', accessor: x => x.src, style: {'whiteSpace': 'unset'}, width: 170},
         {Header: 'Dst. Machine', id: 'dstMachine', accessor: x => x.dst, style: {'whiteSpace': 'unset'}, width: 170},
-        {Header: 'Filename', id: 'filename', accessor: x => x.filename, style: {'whiteSpace': 'unset'}},
+        {Header: 'Filename', id: 'filename', accessor: x => x.filename, style: {'whiteSpace': 'unset'}}
       ]
     }])
-  };
+  }
 
   render() {
     return (
@@ -32,7 +32,7 @@ class T1105 extends React.Component {
             data={this.props.data.files}
             showPagination={false}
             defaultPageSize={this.props.data.files.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }

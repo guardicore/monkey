@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachine, ScanStatus} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachine, ScanStatus} from './Helpers'
 
 
 class T1110 extends React.Component {
@@ -26,14 +26,14 @@ class T1110 extends React.Component {
           id: 'credentials',
           accessor: x => this.renderCreds(x.successful_creds),
           style: {'whiteSpace': 'unset'}
-        },
+        }
       ]
     }])
-  };
+  }
 
   static renderCreds(creds) {
     return <span>{creds.map(cred => <div key={cred}>{cred}</div>)}</span>
-  };
+  }
 
   render() {
     return (
@@ -46,7 +46,7 @@ class T1110 extends React.Component {
             data={this.props.data.services}
             showPagination={false}
             defaultPageSize={this.props.data.services.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }

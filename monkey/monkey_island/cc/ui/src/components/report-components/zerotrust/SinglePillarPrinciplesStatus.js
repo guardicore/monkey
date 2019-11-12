@@ -1,9 +1,9 @@
-import AuthComponent from "../../AuthComponent";
-import PillarLabel from "./PillarLabel";
-import PrinciplesStatusTable from "./PrinciplesStatusTable";
-import React from "react";
-import * as PropTypes from "prop-types";
-import {Panel} from "react-bootstrap";
+import AuthComponent from '../../AuthComponent';
+import PillarLabel from './PillarLabel';
+import PrinciplesStatusTable from './PrinciplesStatusTable';
+import React from 'react';
+import * as PropTypes from 'prop-types';
+import {Panel} from 'react-bootstrap';
 
 export default class SinglePillarPrinciplesStatus extends AuthComponent {
   render() {
@@ -14,7 +14,7 @@ export default class SinglePillarPrinciplesStatus extends AuthComponent {
         <Panel>
           <Panel.Heading>
             <Panel.Title toggle>
-              <h3 style={{textAlign: "center", marginTop: "1px", marginBottom: "1px"}}>
+              <h3 style={{textAlign: 'center', marginTop: '1px', marginBottom: '1px'}}>
                 <i className="fa fa-chevron-down"/> <PillarLabel pillar={this.props.pillar}
                                                                  status={this.props.pillarsToStatuses[this.props.pillar]}/>
               </h3>
@@ -33,5 +33,5 @@ export default class SinglePillarPrinciplesStatus extends AuthComponent {
 
 SinglePillarPrinciplesStatus.propTypes = {
   principlesStatus: PropTypes.array,
-  pillar: PropTypes.string,
+  pillar: PropTypes.string
 };

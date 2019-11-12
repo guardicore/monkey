@@ -1,6 +1,6 @@
 import StandardConfig from './StandardConfig';
 import AwsConfig from './AwsConfig';
-import PasswordConfig from "./PasswordConfig";
+import PasswordConfig from './PasswordConfig';
 
 const SERVER_CONFIG_JSON = require('../../../server_config.json');
 

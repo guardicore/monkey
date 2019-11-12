@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachineFromSystemData, renderMachine, ScanStatus} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachineFromSystemData, renderMachine, ScanStatus} from './Helpers'
 
 
 class T1018 extends React.Component {
@@ -34,10 +34,10 @@ class T1018 extends React.Component {
           id: 'systems',
           accessor: x => T1018.renderMachines(x.machines),
           style: {'whiteSpace': 'unset'}
-        },
+        }
       ]
     }])
-  };
+  }
 
   render() {
     return (
@@ -50,7 +50,7 @@ class T1018 extends React.Component {
             data={this.props.data.scan_info}
             showPagination={false}
             defaultPageSize={this.props.data.scan_info.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }

@@ -9,16 +9,16 @@ import StolenPasswords from 'components/report-components/security/StolenPasswor
 import CollapsibleWellComponent from 'components/report-components/security/CollapsibleWell';
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
-import PassTheHashMapPageComponent from "./PassTheHashMapPage";
-import StrongUsers from "components/report-components/security/StrongUsers";
-import AttackReport from "components/report-components/security/AttackReport";
-import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
-import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
-import ReportLoader from "../report-components/common/ReportLoader";
-import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
-import SecurityIssuesGlance from "../report-components/common/SecurityIssuesGlance";
-import PrintReportButton from "../report-components/common/PrintReportButton";
-import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
+import PassTheHashMapPageComponent from './PassTheHashMapPage';
+import StrongUsers from 'components/report-components/security/StrongUsers';
+import AttackReport from 'components/report-components/security/AttackReport';
+import ReportHeader, {ReportTypes} from '../report-components/common/ReportHeader';
+import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
+import ReportLoader from '../report-components/common/ReportLoader';
+import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarning';
+import SecurityIssuesGlance from '../report-components/common/SecurityIssuesGlance';
+import PrintReportButton from '../report-components/common/PrintReportButton';
+import {extractExecutionStatusFromServerResponse} from '../report-components/common/ExecutionStatus';
 
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 
@@ -858,8 +858,8 @@ class ReportPageComponent extends AuthComponent {
           className="label label-danger">remote code execution</span> attacks.
           <br/>
           The attack was made possible due to one of the following vulnerabilities:
-          <a href={"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10271"}> CVE-2017-10271</a> or
-          <a href={"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-2725"}> CVE-2019-2725</a>
+          <a href={'https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10271'}> CVE-2017-10271</a> or
+          <a href={'https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-2725'}> CVE-2019-2725</a>
         </CollapsibleWellComponent>
       </li>
     );

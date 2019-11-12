@@ -5,7 +5,7 @@ import FileSaver from 'file-saver';
 import AuthComponent from '../AuthComponent';
 import {FilePond} from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
-import MatrixComponent from "../attack/MatrixComponent";
+import MatrixComponent from '../attack/MatrixComponent';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -39,31 +39,31 @@ class ConfigurePageComponent extends AuthComponent {
 
   getUiSchemas() {
     return ({
-      basic: {"ui:order": ["general", "credentials"]},
+      basic: {'ui:order': ['general', 'credentials']},
       basic_network: {},
       monkey: {
         behaviour: {
           custom_PBA_linux_cmd: {
-            "ui:widget": "textarea",
-            "ui:emptyValue": ""
+            'ui:widget': 'textarea',
+            'ui:emptyValue': ''
           },
           PBA_linux_file: {
-            "ui:widget": this.PBAlinux
+            'ui:widget': this.PBAlinux
           },
           custom_PBA_windows_cmd: {
-            "ui:widget": "textarea",
-            "ui:emptyValue": ""
+            'ui:widget': 'textarea',
+            'ui:emptyValue': ''
           },
           PBA_windows_file: {
-            "ui:widget": this.PBAwindows
+            'ui:widget': this.PBAwindows
           },
           PBA_linux_filename: {
-            classNames: "linux-pba-file-info",
-            "ui:emptyValue": ""
+            classNames: 'linux-pba-file-info',
+            'ui:emptyValue': ''
           },
           PBA_windows_filename: {
-            classNames: "windows-pba-file-info",
-            "ui:emptyValue": ""
+            classNames: 'windows-pba-file-info',
+            'ui:emptyValue': ''
           }
         }
       },
@@ -95,7 +95,7 @@ class ConfigurePageComponent extends AuthComponent {
         this.setInitialAttackConfig(attackConfig.configuration);
         for (let sectionKey of this.sectionsOrder) {
           if (sectionKey === 'attack') {
-            sections.push({key: sectionKey, title: "ATT&CK"})
+            sections.push({key: sectionKey, title: 'ATT&CK'})
           } else {
             sections.push({key: sectionKey, title: monkeyConfig.schema.properties[sectionKey].title});
           }
@@ -148,6 +148,7 @@ class ConfigurePageComponent extends AuthComponent {
       .then(this.updateConfig())
       .then(this.setState({lastAction: 'saved'}))
       .catch(error => {
+        console.log('Bad configuration: ' + error.toString());
         this.setState({lastAction: 'invalid_configuration'});
       });
   };
@@ -166,8 +167,8 @@ class ConfigurePageComponent extends AuthComponent {
         this.setInitialConfig(res.configuration);
         this.props.onStatusChange();
       }).catch(error => {
-      console.log('bad configuration');
-      this.setState({lastAction: 'invalid_configuration'});
+        console.log('Bad configuration: ' + error.toString());
+        this.setState({lastAction: 'invalid_configuration'});
     });
   };
 
@@ -327,8 +328,8 @@ class ConfigurePageComponent extends AuthComponent {
   exportConfig = () => {
     this.updateConfigSection();
     const configAsJson = JSON.stringify(this.state.configuration, null, 2);
-    const configAsBinary = new Blob([configAsJson], {type: "text/plain;charset=utf-8"});
-    
+    const configAsBinary = new Blob([configAsJson], {type: 'text/plain;charset=utf-8'});
+
     FileSaver.saveAs(configAsBinary, 'monkey.conf');
   };
 
@@ -349,7 +350,7 @@ class ConfigurePageComponent extends AuthComponent {
         console.log('bad configuration');
         this.setState({lastAction: 'invalid_configuration'});
       }));
-  };
+  }
 
   importConfig = (event) => {
     let reader = new FileReader();
@@ -464,7 +465,7 @@ class ConfigurePageComponent extends AuthComponent {
             formData={this.state.configuration[this.state.selectedSection]}
             onChange={this.onChange}
             noValidate={true}>
-        <button type="submit" className={"hidden"}>Submit</button>
+        <button type="submit" className={'hidden'}>Submit</button>
       </Form>
     </div>)
   };

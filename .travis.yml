@@ -9,12 +9,20 @@ cache: pip
 python:
 - 3.7
 
+os: linux
+
 install:
+# Python
 - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
 - pip install flake8 pytest dlint  # for next stages
 - pip install -r monkey/infection_monkey/requirements_linux.txt  # for unit tests
 
 before_script:
+# Set the server config to `testing`. This is required for for the UTs to pass.
+- python monkey/monkey_island/cc/set_server_config.py testing
+
+script:
+# Check Python code
 # Check syntax errors and fail the build if any are found.
 - flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
 
@@ -27,15 +35,21 @@ before_script:
 # Display the linter issues
 - cat flake8_warnings.txt
 # Make sure that we haven't increased the amount of warnings.
-- WARNINGS_AMOUNT_UPPER_LIMIT=190
-- if [ $(tail -n 1 flake8_warnings.txt) -gt $WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
+- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=190
+- if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
-# Set the server config to `testing`, for the UTs to use mongomaock and pass.
-- python monkey/monkey_island/cc/set_server_config.py testing
-
-script:
 - cd monkey  # This is our source dir
 - python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+
+# Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
+- cd monkey_island/cc/ui
+- npm i
+- npm i -g eslint
+- cd -
+- cd monkey_island/cc/ui
+- eslint ./src --quiet
+- JS_WARNINGS_AMOUNT_UPPER_LIMIT=29
+- eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT
 
 notifications:
   slack:  # Notify to slack

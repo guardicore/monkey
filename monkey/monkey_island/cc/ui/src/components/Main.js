@@ -14,7 +14,7 @@ import ZeroTrustReportPage from 'components/pages/ZeroTrustReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
-import Notifier from "react-desktop-notification"
+import Notifier from 'react-desktop-notification'
 
 
 import 'normalize.css/normalize.css';
@@ -22,7 +22,7 @@ import 'react-data-components/css/table-twbs.css';
 import 'styles/App.css';
 import 'react-toggle/style.css';
 import 'react-table/react-table.css';
-import VersionComponent from "./side-menu/VersionComponent";
+import VersionComponent from './side-menu/VersionComponent';
 
 let logoImage = require('../images/monkey-icon.svg');
 let infectionMonkeyImage = require('../images/infection-monkey.svg');
@@ -63,7 +63,7 @@ class AppComponent extends AuthComponent {
   };
 
   renderRoute = (route_path, page_component, is_exact_path = false) => {
-    let render_func = (props) => {
+    let render_func = () => {
       switch (this.state.isLoggedIn) {
         case true:
           return page_component;
@@ -92,7 +92,7 @@ class AppComponent extends AuthComponent {
         infection_done: false,
         report_done: false,
         isLoggedIn: undefined
-      },
+      }
     };
   }
 
@@ -194,7 +194,7 @@ class AppComponent extends AuthComponent {
               <VersionComponent/>
             </Col>
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className="main">
-              <Route path='/login' render={(props) => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
+              <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
               {this.renderRoute('/', <RunServerPage onStatusChange={this.updateStatus}/>, true)}
               {this.renderRoute('/configure', <ConfigurePage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/run-monkey', <RunMonkeyPage onStatusChange={this.updateStatus}/>)}
@@ -219,8 +219,8 @@ class AppComponent extends AuthComponent {
       const url = `${protocol}//${hostname}:${port}${reportZeroTrustRoute}`;
 
       Notifier.start(
-        "Monkey Island",
-        "Infection is done! Click here to go to the report page.",
+        'Monkey Island',
+        'Infection is done! Click here to go to the report page.',
         url,
         notificationIcon);
     }
@@ -228,7 +228,7 @@ class AppComponent extends AuthComponent {
 
   shouldShowNotification() {
     // No need to show the notification to redirect to the report if we're already in the report page
-    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith("/report"));
+    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith('/report'));
   }
 }
 

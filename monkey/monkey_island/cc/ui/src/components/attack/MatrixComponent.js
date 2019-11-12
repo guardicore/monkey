@@ -2,16 +2,16 @@ import React from 'react';
 import Checkbox from '../ui-components/Checkbox'
 import Tooltip from 'react-tooltip-lite'
 import AuthComponent from '../AuthComponent';
-import ReactTable from "react-table";
+import ReactTable from 'react-table';
 import 'filepond/dist/filepond.min.css';
 import '../../styles/Tooltip.scss';
-import {Col} from "react-bootstrap";
+import {Col} from 'react-bootstrap';
 
 class MatrixComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {lastAction: 'none'}
-  };
+  }
 
   // Finds which attack type has most techniques and returns that number
   static findMaxTechniques(data) {
@@ -22,7 +22,7 @@ class MatrixComponent extends AuthComponent {
       }
     });
     return maxLen
-  };
+  }
 
   // Parses ATT&CK config schema into data suitable for react-table (ATT&CK matrix)
   static parseTechniques(data, maxLen) {
@@ -47,7 +47,7 @@ class MatrixComponent extends AuthComponent {
       techniques.push(row)
     }
     return techniques;
-  };
+  }
 
   getColumns(matrixData) {
     return Object.keys(matrixData[0]).map((key) => {
@@ -73,7 +73,7 @@ class MatrixComponent extends AuthComponent {
         </Checkbox>
       </Tooltip>)
     }
-  };
+  }
 
   getTableData = (config) => {
     let configCopy = JSON.parse(JSON.stringify(config));
@@ -106,7 +106,7 @@ class MatrixComponent extends AuthComponent {
     return (
       <div>
         {this.renderLegend()}
-        <div className={"attack-matrix"}>
+        <div className={'attack-matrix'}>
           <ReactTable columns={tableData['columns']}
                       data={tableData['matrixTableData']}
                       showPagination={false}

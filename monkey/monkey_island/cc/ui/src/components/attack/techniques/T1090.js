@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachineFromSystemData, ScanStatus} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachineFromSystemData, ScanStatus} from './Helpers'
 
 
 class T1090 extends React.Component {
@@ -20,7 +20,7 @@ class T1090 extends React.Component {
           style: {'whiteSpace': 'unset', textAlign: 'center'}
         }]
     }])
-  };
+  }
 
   render() {
     return (
@@ -33,7 +33,7 @@ class T1090 extends React.Component {
             data={this.props.data.proxies}
             showPagination={false}
             defaultPageSize={this.props.data.proxies.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }

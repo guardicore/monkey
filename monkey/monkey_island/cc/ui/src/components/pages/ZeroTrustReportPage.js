@@ -1,14 +1,14 @@
 import React, {Fragment} from 'react';
 import {Col} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
-import ReportHeader, {ReportTypes} from "../report-components/common/ReportHeader";
-import ReportLoader from "../report-components/common/ReportLoader";
-import MustRunMonkeyWarning from "../report-components/common/MustRunMonkeyWarning";
-import PrintReportButton from "../report-components/common/PrintReportButton";
-import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
-import SummarySection from "../report-components/zerotrust/SummarySection";
-import FindingsSection from "../report-components/zerotrust/FindingsSection";
-import PrinciplesSection from "../report-components/zerotrust/PrinciplesSection";
+import ReportHeader, {ReportTypes} from '../report-components/common/ReportHeader';
+import ReportLoader from '../report-components/common/ReportLoader';
+import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarning';
+import PrintReportButton from '../report-components/common/PrintReportButton';
+import {extractExecutionStatusFromServerResponse} from '../report-components/common/ExecutionStatus';
+import SummarySection from '../report-components/zerotrust/SummarySection';
+import FindingsSection from '../report-components/zerotrust/FindingsSection';
+import PrinciplesSection from '../report-components/zerotrust/PrinciplesSection';
 
 class ZeroTrustReportPageComponent extends AuthComponent {
 
@@ -100,13 +100,12 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   }
 
   stillLoadingDataFromServer() {
-    return typeof this.state.findings === "undefined"
-      || typeof this.state.pillars === "undefined"
-      || typeof this.state.principles === "undefined";
+    return typeof this.state.findings === 'undefined'
+      || typeof this.state.pillars === 'undefined'
+      || typeof this.state.principles === 'undefined';
   }
 
   getZeroTrustReportFromServer() {
-    let res;
     this.authFetch('/api/report/zero_trust/findings')
       .then(res => res.json())
       .then(res => {

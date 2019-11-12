@@ -1,6 +1,6 @@
-import React, {Component} from "react";
-import SinglePillarPrinciplesStatus from "./SinglePillarPrinciplesStatus";
-import * as PropTypes from "prop-types";
+import React, {Component} from 'react';
+import SinglePillarPrinciplesStatus from './SinglePillarPrinciplesStatus';
+import * as PropTypes from 'prop-types';
 
 export default class PrinciplesSection extends Component {
   render() {

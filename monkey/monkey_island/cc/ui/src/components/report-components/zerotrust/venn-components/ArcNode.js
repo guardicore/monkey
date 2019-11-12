@@ -41,17 +41,17 @@ class ArcNode extends React.Component {
   }
 
 
-  handleClick(e_) {
+  handleClick() {
     this.props.disableHover(this.refs.overlay);
   }
 
-  handleOver(e_) {
+  handleOver() {
     if (this.props.hover) {
       this.refs.overlay.show();
     }
   }
 
-  handleOut(e_) {
+  handleOut() {
     if (this.props.hover) {
       this.refs.overlay.hide();
     }

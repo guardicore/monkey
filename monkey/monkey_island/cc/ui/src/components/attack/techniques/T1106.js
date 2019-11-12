@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {getUsageColumns} from "./Helpers"
+import ReactTable from 'react-table';
+import {getUsageColumns} from './Helpers'
 
 
 class T1106 extends React.Component {
@@ -21,7 +21,7 @@ class T1106 extends React.Component {
             data={this.props.data.api_uses}
             showPagination={false}
             defaultPageSize={this.props.data.api_uses.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }

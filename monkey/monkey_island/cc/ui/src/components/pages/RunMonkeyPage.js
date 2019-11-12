@@ -7,7 +7,7 @@ import GridLoader from 'react-spinners/GridLoader';
 import {Icon} from 'react-fa';
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
-import AwsRunTable from "../run-monkey/AwsRunTable";
+import AwsRunTable from '../run-monkey/AwsRunTable';
 
 const loading_css_override = css`
     display: block;
@@ -348,7 +348,7 @@ class RunMonkeyPageComponent extends AuthComponent {
               <div className='sweet-loading'>
                 <GridLoader
                   css={loading_css_override}
-                  sizeUnit={"px"}
+                  sizeUnit={'px'}
                   size={30}
                   color={'#ffcc00'}
                   loading={this.state.loading}

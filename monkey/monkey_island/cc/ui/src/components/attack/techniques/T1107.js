@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachineFromSystemData, ScanStatus} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachineFromSystemData, ScanStatus} from './Helpers'
 
 
 class T1107 extends React.Component {
@@ -33,7 +33,7 @@ class T1107 extends React.Component {
           style: {'whiteSpace': 'unset'}, width: 160
         }]
     }])
-  };
+  }
 
   render() {
     return (
@@ -46,7 +46,7 @@ class T1107 extends React.Component {
             data={this.props.data.deleted_files}
             showPagination={false}
             defaultPageSize={this.props.data.deleted_files.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {renderMachineFromSystemData, renderUsageFields, ScanStatus} from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachineFromSystemData, renderUsageFields, ScanStatus} from './Helpers'
 
 
 class T1082 extends React.Component {
@@ -19,10 +19,10 @@ class T1082 extends React.Component {
           accessor: x => renderMachineFromSystemData(x.machine),
           style: {'whiteSpace': 'unset'}
         },
-        {Header: 'Gathered info', id: 'info', accessor: x => renderUsageFields(x.collections), style: {'whiteSpace': 'unset'}},
+        {Header: 'Gathered info', id: 'info', accessor: x => renderUsageFields(x.collections), style: {'whiteSpace': 'unset'}}
       ]
     }])
-  };
+  }
 
   render() {
     return (
@@ -35,7 +35,7 @@ class T1082 extends React.Component {
             data={this.props.data.system_info}
             showPagination={false}
             defaultPageSize={this.props.data.system_info.length}
-          /> : ""}
+          /> : ''}
       </div>
     );
   }
