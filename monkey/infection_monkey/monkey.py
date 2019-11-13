@@ -124,7 +124,7 @@ class InfectionMonkey(object):
             system_info = system_info_collector.get_info()
             SystemInfoTelem(system_info).send()
 
-        # Executes post breach actions
+        # Executes post breach exploiters
         PostBreach().execute()
 
         if 0 == WormConfiguration.depth:

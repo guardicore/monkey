@@ -108,12 +108,12 @@ SCHEMA = {
                     "enum": [
                         "SnapdExploiter"
                     ],
-                    "title": "Snapd dirty sock exploiter"
+                    "title": "Snapd dirty sock exploiter (Warning! Might update snapd package)"
                 }
             ]
         },
         "post_breach_acts": {
-            "title": "Post breach actions",
+            "title": "Post breach exploiters",
             "type": "string",
             "anyOf": [
                 {
@@ -343,7 +343,7 @@ SCHEMA = {
                             "description": "Is the monkey alive"
                         },
                         "post_breach_actions": {
-                            "title": "Post breach actions",
+                            "title": "Post breach exploiters",
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
@@ -352,7 +352,7 @@ SCHEMA = {
                             "default": [
                                 "CommunicateAsNewUser"
                             ],
-                            "description": "List of actions the Monkey will run post breach"
+                            "description": "List of exploiters the Monkey will run post breach"
                         },
                     }
                 },
@@ -780,9 +780,7 @@ SCHEMA = {
                             "items": {
                                 "$ref": "#/definitions/privilege_escalator_classes"
                             },
-                            "default": [
-                                "Snap",
-                            ],
+                            "default": [],
                             "description":
                                 "Determines which privilege escalation exploiters to use."
                         },

@@ -138,6 +138,7 @@ class Configuration(object):
 
     finger_classes = []
     exploiter_classes = []
+    privilege_escalator_classes = []
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 100

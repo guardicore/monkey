@@ -334,6 +334,22 @@ class NodeService:
         )
 
     @staticmethod
+    def add_privilege_escalation(telemetry_json):
+        priv_esc_query = ({'_id': telemetry_json['monkey_guid']},
+                          {'$push': {'privilege_escalations': {'exploiter': telemetry_json['exploiter'],
+                                                               'result': telemetry_json['result'],
+                                                               'info': telemetry_json['info']}}})
+        if telemetry_json['result']:
+            priv_esc_query += {'exploited': True}
+        mongo.db.node.update(
+            {'_id': telemetry_json['monkey_guid']},
+            {'$push': {'privilege_escalations': {'exploiter': telemetry_json['exploiter'],
+                                                 'result': telemetry_json['result'],
+                                                 'info': telemetry_json['info']}}}
+        )
+
+
+    @staticmethod
     def get_node_or_monkey_by_ip(ip_address):
         node = NodeService.get_node_by_ip(ip_address)
         if node is not None:

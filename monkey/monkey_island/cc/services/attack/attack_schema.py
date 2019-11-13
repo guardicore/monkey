@@ -153,7 +153,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
-                    "description": "Adversaries can use PowerShell to perform a number of actions,"
+                    "description": "Adversaries can use PowerShell to perform a number of exploiters,"
                                    " including discovery of information and execution of code.",
                 },
                 "T1064": {
@@ -162,7 +162,7 @@ SCHEMA = {
                     "value": True,
                     "necessary": True,
                     "description": "Adversaries may use scripts to aid in operations and "
-                                   "perform multiple actions that would otherwise be manual.",
+                                   "perform multiple exploiters that would otherwise be manual.",
                 }
             }
         },
