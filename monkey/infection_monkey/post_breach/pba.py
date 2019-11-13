@@ -7,7 +7,7 @@ from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 from infection_monkey.utils.plugins.plugin import Plugin
-
+import infection_monkey.post_breach.actions
 LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
@@ -22,12 +22,10 @@ class PBA(Plugin):
 
     @staticmethod
     def base_package_name():
-        import infection_monkey.post_breach.actions  # avoid circular imports
         return infection_monkey.post_breach.actions.__package__
 
     @staticmethod
     def base_package_file():
-        import infection_monkey.post_breach.actions
         return infection_monkey.post_breach.actions.__file__
 
     def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):

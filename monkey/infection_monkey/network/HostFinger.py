@@ -2,17 +2,16 @@ from abc import abstractmethod
 
 from infection_monkey.config import WormConfiguration
 from infection_monkey.utils.plugins.plugin import Plugin
+import infection_monkey.network
 
 
 class HostFinger(Plugin):
     @staticmethod
     def base_package_file():
-        import infection_monkey.network  # avoid circular imports
         return infection_monkey.network.__file__
 
     @staticmethod
     def base_package_name():
-        import infection_monkey.network  # avoid circular imports
         return infection_monkey.network.__package__
 
     @property
