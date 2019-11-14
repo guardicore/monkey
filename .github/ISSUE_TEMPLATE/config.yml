@@ -4,7 +4,7 @@ contact_links:
     url: https://join.slack.com/t/infectionmonkey/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU
     about: Our community Slack channel - you can ask questions or suggest things here.
   - name: Support Email
-    url: mailto:support@infectionMonkey.com
+    url: mailto://support@infectionMonkey.com
     about: Support E-mail to contact us in a private manner.
   - name: FAQs
     url: https://www.guardicore.com/infectionmonkey/faq/
