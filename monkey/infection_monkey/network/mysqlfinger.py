@@ -2,8 +2,7 @@ import logging
 import socket
 
 import infection_monkey.config
-from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
+from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.tools import struct_unpack_tracker, struct_unpack_tracker_string
 
 MYSQL_PORT = 3306
@@ -28,7 +27,6 @@ class MySQLFinger(HostFinger):
         :param host:
         :return: Success/failure, data is saved in the host struct
         """
-        assert isinstance(host, VictimHost)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(self.SOCKET_TIMEOUT)
 

@@ -3,8 +3,7 @@ import struct
 import logging
 from odict import odict
 
-from infection_monkey.network import HostFinger
-from infection_monkey.model.host import VictimHost
+from infection_monkey.network.HostFinger import HostFinger
 
 SMB_PORT = 445
 SMB_SERVICE = 'tcp-445'
@@ -114,7 +113,6 @@ class SMBFinger(HostFinger):
         self._config = WormConfiguration
 
     def get_host_fingerprint(self, host):
-        assert isinstance(host, VictimHost)
 
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

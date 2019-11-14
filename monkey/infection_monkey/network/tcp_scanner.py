@@ -2,7 +2,8 @@ from itertools import zip_longest
 from random import shuffle
 
 import infection_monkey.config
-from infection_monkey.network import HostScanner, HostFinger
+from infection_monkey.network.HostFinger import HostFinger
+from infection_monkey.network.HostScanner import HostScanner
 from infection_monkey.network.tools import check_tcp_ports, tcp_port_to_service
 
 __author__ = 'itamar'

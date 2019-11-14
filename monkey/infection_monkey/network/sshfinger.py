@@ -1,8 +1,7 @@
 import re
 
 import infection_monkey.config
-from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
+from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.tools import check_tcp_port
 
 SSH_PORT = 22
@@ -34,7 +33,6 @@ class SSHFinger(HostFinger):
                 break
 
     def get_host_fingerprint(self, host):
-        assert isinstance(host, VictimHost)
 
         for name, data in list(host.services.items()):
             banner = data.get('banner', '')

@@ -1,6 +1,5 @@
 import infection_monkey.config
-from infection_monkey.network import HostFinger
-from infection_monkey.model.host import VictimHost
+from infection_monkey.network.HostFinger import HostFinger
 import logging
 
 LOG = logging.getLogger(__name__)
@@ -21,7 +20,6 @@ class HTTPFinger(HostFinger):
         pass
 
     def get_host_fingerprint(self, host):
-        assert isinstance(host, VictimHost)
         from requests import head
         from requests.exceptions import Timeout, ConnectionError
         from contextlib import closing

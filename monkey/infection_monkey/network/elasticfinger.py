@@ -6,9 +6,8 @@ import requests
 from requests.exceptions import Timeout, ConnectionError
 
 import infection_monkey.config
+from infection_monkey.network.HostFinger import HostFinger
 from common.data.network_consts import ES_SERVICE
-from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
 
 ES_PORT = 9200
 ES_HTTP_TIMEOUT = 5
@@ -31,7 +30,6 @@ class ElasticFinger(HostFinger):
         :param host:
         :return: Success/failure, data is saved in the host struct
         """
-        assert isinstance(host, VictimHost)
         try:
             url = 'http://%s:%s/' % (host.ip_addr, ES_PORT)
             with closing(requests.get(url, timeout=ES_HTTP_TIMEOUT)) as req:

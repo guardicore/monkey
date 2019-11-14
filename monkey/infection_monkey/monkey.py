@@ -6,6 +6,7 @@ import sys
 import time
 
 import infection_monkey.tunnel as tunnel
+from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.utils.environment import is_windows_os
@@ -145,7 +146,7 @@ class InfectionMonkey(object):
 
             self._exploiters = WormConfiguration.exploiter_classes
 
-            self._fingerprint = [fingerprint() for fingerprint in WormConfiguration.finger_classes]
+            self._fingerprint = HostFinger.get_instances()
 
             if not self._keep_running or not WormConfiguration.alive:
                 break
@@ -192,9 +193,7 @@ class InfectionMonkey(object):
                     self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
                     host_exploited = False
                     for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
-
                         if self.try_exploiting(machine, exploiter):
-
                             host_exploited = True
                             VictimHostTelem('T1210', ScanStatus.USED, machine=machine).send()
                             break

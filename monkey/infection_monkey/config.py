@@ -33,9 +33,6 @@ class Configuration(object):
             if self._depth_from_commandline and key == "depth":
                 continue
             # handle in cases
-            if key == 'finger_classes':
-                class_objects = [getattr(network_import, val) for val in value]
-                setattr(self, key, class_objects)
             elif key == 'exploiter_classes':
                 class_objects = [getattr(exploit_import, val) for val in value]
                 setattr(self, key, class_objects)
