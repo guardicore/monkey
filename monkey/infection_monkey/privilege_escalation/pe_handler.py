@@ -8,7 +8,7 @@ from infection_monkey.privilege_escalation.exploiters.tools import is_current_pr
     run_monkey_as_root
 from infection_monkey.privilege_escalation.exploiters import get_pe_files
 from infection_monkey.config import WormConfiguration
-from infection_monkey.exploit.tools.exceptions import FailedExploitationError
+from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
 
@@ -27,23 +27,21 @@ class PrivilegeEscalation(object):
 
     def execute(self):
         LOG.info("Attempting privilege escalation.")
-        if is_sudo_paswordless() and not is_current_process_root():
+        if not is_windows_os() and is_sudo_paswordless() and not is_current_process_root():
             LOG.info("Monkey already can be ran as root by current user.")
             return run_monkey_as_root(self.command_line)
         elif not is_current_process_root():
             return self._execute_all_exploiters()
         else:
+            LOG.info("Privilege escalation not required, process already running as root.")
             return False
 
     def _execute_all_exploiters(self):
         for pe in self.pe_list:
-            try:
-                pe().try_priv_esc(self.command_line)
+            if pe().try_priv_esc(self.command_line):
+                LOG.info("Privilege escalation successful!")
                 return True
-            except FailedExploitationError as e:
-                if str(e):
-                    LOG.info(str(e))
-                LOG.info("{} failed.".format(pe.__name__))
+        LOG.info("Privilege escalation failed.")
         return False
 
     @staticmethod

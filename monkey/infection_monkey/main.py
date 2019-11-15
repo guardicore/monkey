@@ -5,12 +5,12 @@ import os
 import sys
 import traceback
 from multiprocessing import freeze_support
+import argparse
 
 from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
 from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
-from infection_monkey.monkey import InfectionMonkey
 from infection_monkey.utils.startup.flag_analyzer import FlagAnalyzer
 # noinspection PyUnresolvedReferences
 import infection_monkey.post_breach  # dummy import for pyinstaller
@@ -46,14 +46,10 @@ def main():
     if 2 > len(sys.argv):
         return True
     freeze_support()  # required for multiprocessing + pyinstaller on windows
-    monkey_mode = sys.argv[1]
-
-    if not (monkey_mode in [MONKEY_ARG, DROPPER_ARG]):
-        return True
 
     config_file = EXTERNAL_CONFIG_FILE
 
-    monkey_args = sys.argv[2:]
+    monkey_args = sys.argv[1:]
     opts = FlagAnalyzer.get_flags(monkey_args)
 
     if opts.config:
@@ -79,17 +75,7 @@ def main():
         print("Kill path found, finished run")
         return True
 
-    try:
-        if MONKEY_ARG == monkey_mode:
-            log_path = get_monkey_log_path()
-            monkey_cls = InfectionMonkey
-        elif DROPPER_ARG == monkey_mode:
-            log_path = get_dropper_log_path()
-            monkey_cls = MonkeyDrops
-        else:
-            return True
-    except ValueError:
-        return True
+    log_path = get_log_path_by_flags(opts)
 
     if WormConfiguration.use_file_logging:
         if os.path.exists(log_path):
@@ -114,11 +100,9 @@ def main():
 
     sys.excepthook = log_uncaught_exceptions
 
-    LOG.info(">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<",
-             monkey_cls.__name__, os.getpid())
+    LOG.info(">>>>>>>>>> Initializing monkey: PID %s <<<<<<<<<<", os.getpid())
 
-    monkey = monkey_cls(monkey_args)
-    monkey.initialize()
+    monkey = MonkeyDrops(monkey_args)
 
     try:
         monkey.start()
@@ -131,8 +115,13 @@ def main():
         return True
     except Exception as e:
         LOG.exception("Exception thrown from monkey's start function. More info: {}".format(e))
-    finally:
-        monkey.cleanup()
+
+
+def get_log_path_by_flags(flags: argparse.Namespace):
+    if MONKEY_ARG == flags.mode:
+        return get_monkey_log_path()
+    elif DROPPER_ARG == flags.mode:
+        return get_dropper_log_path()
 
 
 if "__main__" == __name__:

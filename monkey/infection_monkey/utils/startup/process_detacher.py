@@ -16,22 +16,25 @@ LOG = logging.getLogger(__name__)
 
 class MonkeyProcessDetacher:
 
-    def __init__(self, flags: argparse.Namespace, destination_path):
+    def __init__(self, flags: argparse.Namespace, path):
         self._flags = flags
-        self._destination_path = destination_path
+        self._monkey_path = path
 
     def detach_process(self) -> subprocess.Popen:
+        LOG.info("Trying to detach monkey process.")
         monkey_options = build_monkey_commandline_explicitly(self._flags.parent,
                                                              self._flags.tunnel,
                                                              self._flags.server,
-                                                             self._flags.depth)
+                                                             self._flags.depth,
+                                                             self._flags.location,
+                                                             escalated=False)
 
         if is_windows_os():
-            monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._destination_path} + monkey_options
+            monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._monkey_path} + monkey_options
         else:
             # In linux we have a more complex commandline. There's a general outer one, and the inner one which actually
             # runs the monkey
-            inner_monkey_cmdline = MONKEY_CMDLINE_LINUX % {'monkey_filename': self._destination_path.split("/")[-1]} + \
+            inner_monkey_cmdline = MONKEY_CMDLINE_LINUX % {'monkey_filename': self._monkey_path.split("/")[-1]} + \
                                    monkey_options
             monkey_cmdline = GENERAL_CMDLINE_LINUX % {'monkey_directory': self._form_monkey_directory_path(),
                                                       'monkey_commandline': inner_monkey_cmdline}
@@ -43,4 +46,4 @@ class MonkeyProcessDetacher:
         return monkey_process
 
     def _form_monkey_directory_path(self):
-        return self._destination_path[0:self._destination_path.rfind("/")]
+        return self._monkey_path[0:self._monkey_path.rfind("/")]

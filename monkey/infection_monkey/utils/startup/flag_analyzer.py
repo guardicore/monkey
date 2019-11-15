@@ -1,6 +1,7 @@
 from enum import Enum
-
 import argparse
+
+from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 
 
 class MonkeyFlags(Enum):
@@ -15,6 +16,9 @@ class MonkeyFlags(Enum):
     ESCALATED = ('-e', '--escalated', 'str')
 
 
+MODE = ('mode', [DROPPER_ARG, MONKEY_ARG])
+
+
 class FlagAnalyzer:
 
     @staticmethod
@@ -26,6 +30,8 @@ class FlagAnalyzer:
     def _get_flag_parser():
         flag_parser = argparse.ArgumentParser()
         for flag in MonkeyFlags:
-            flag_type = str if flag.value[2] == 'str' else int
+            flag_type = str if flag.value[-1] == 'str' else int
             flag_parser.add_argument(flag.value[0], flag.value[1], type=flag_type)
+        flag_parser.add_argument(MODE[0], choices=MODE[1])
+
         return flag_parser

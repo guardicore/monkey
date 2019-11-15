@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import time
+import argparse
 
 import infection_monkey.tunnel as tunnel
 from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
@@ -24,65 +25,41 @@ from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.privilege_escalation.pe_handler import PrivilegeEscalation
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
-from infection_monkey.utils.startup.flag_analyzer import FlagAnalyzer
 from common.utils.attack_utils import ScanStatus, UsageEnum
+from infection_monkey.utils.startup.island_communicator import CommunicatorWithIsland
 
 __author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)
 
 
-class InfectionMonkey(object):
-    def __init__(self, args):
-        self._keep_running = False
+class InfectionMonkey(CommunicatorWithIsland):
+
+    def __init__(self, flags: argparse.Namespace):
+        LOG.info("Monkey is initializing...")
+
+        super().__init__(default_server=flags.server, tunnel=flags.tunnel)
+        self._keep_running = True
         self._exploited_machines = set()
         self._fail_exploitation_machines = set()
         self._singleton = SystemSingleton()
-        self._args = args
-        self._network = None
-        self._dropper_path = None
+        self._network = NetworkScanner()
         self._exploiters = None
         self._fingerprint = None
-        self._default_server = None
-        self._default_server_port = None
         self._depth = 0
-        self._flags = None
+        self._flags = flags
         self._upgrading_to_64 = False
-
-    def initialize(self):
-        LOG.info("Monkey is initializing...")
-
         if not self._singleton.try_lock():
             raise Exception("Another instance of the monkey is already running")
 
-        self._flags = FlagAnalyzer.get_flags(self._args)
-
-        self._default_server = self._flags.server
-
         if self._flags.depth:
             WormConfiguration._depth_from_commandline = True
-        self._keep_running = True
-        self._network = NetworkScanner()
-        self._dropper_path = sys.argv[0]
-
-        if self._default_server:
-            if self._default_server not in WormConfiguration.command_servers:
-                LOG.debug("Added default server: %s" % self._default_server)
-                WormConfiguration.command_servers.insert(0, self._default_server)
-            else:
-                LOG.debug("Default server: %s is already in command servers list" % self._default_server)
 
     def start(self):
         LOG.info("Monkey is running...")
-
-        # Sets island's IP and port for monkey to communicate to
-        if not self.set_default_server():
-            return
-        self.set_default_port()
 
         # Create a dir for monkey files if there isn't one
         create_monkey_dir()
@@ -94,19 +71,12 @@ class InfectionMonkey(object):
             WindowsUpgrader.upgrade(self._flags)
             return
 
-        ControlClient.wakeup(parent=self._flags.parent)
-        ControlClient.load_control_config()
-
         if is_windows_os():
             T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
         if not WormConfiguration.alive:
             LOG.info("Marked not alive from configuration")
             return
-
-        if not self._flags.escalated:
-            if PrivilegeEscalation(self._dropper_path, self._flags).execute():
-                return
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
@@ -335,16 +305,4 @@ class InfectionMonkey(object):
 
             LOG.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)
 
-    def set_default_port(self):
-        try:
-            self._default_server_port = self._default_server.split(':')[1]
-        except KeyError:
-            self._default_server_port = ''
 
-    def set_default_server(self):
-        if not ControlClient.find_server(default_tunnel=self._flags.tunnel):
-            LOG.info("Monkey couldn't find server. Going down.")
-            return False
-        self._default_server = WormConfiguration.current_server
-        LOG.debug("default server set to: %s" % self._default_server)
-        return True
