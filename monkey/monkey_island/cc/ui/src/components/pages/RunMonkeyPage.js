@@ -314,7 +314,7 @@ class RunMonkeyPageComponent extends AuthComponent {
         <p style={this.state.showManual || !this.state.isOnAws ? {'marginBottom': '2em'} : {}}>
           <button onClick={this.toggleManual}
                   className={'btn btn-default btn-lg center-block' + (this.state.showManual ? ' active' : '')}>
-            Run on machine of your choice
+            Run on a machine of your choice
           </button>
         </p>
         <Collapse in={this.state.showManual}>
