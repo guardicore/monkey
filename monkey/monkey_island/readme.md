@@ -1,4 +1,4 @@
->To easily setup development environment for Monkey Island and the Monkey look into deployment scripts folder.
+>To easily setup development environment for Monkey Island and the Monkey look into [deployment scripts](../../deployment_scripts) folder.
 
 >If you want to setup dev. env. for Island manually, refer to the instructions below.
 
