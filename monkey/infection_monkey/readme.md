@@ -1,5 +1,7 @@
-To get development versions of Monkey Island and Monkey look into deployment scripts folder.
-If you only want to build monkey from scratch you may reference instructions below.
+>To easily setup development environment for Monkey Island and the Monkey look into deployment scripts folder.
+
+>If you want to setup dev. env. for the Monkey manually, refer to the instructions below.
+
 
 The monkey is composed of three separate parts.
 * The Infection Monkey itself - PyInstaller compressed python archives
@@ -7,20 +9,18 @@ The monkey is composed of three separate parts.
 * Mimikatz binaries - Two windows binaries, 32/64 bit.
 * Traceroute binaries - Two linux binaries, 32/64bit.
 
---- Windows ---
+##Windows
 
-1. Install python 2.7.15
-    Download and install from: https://www.python.org/downloads/release/python-2715/
-2.	Add python directories to PATH environment variable (if you didn't install ActiveState Python)
-	a. Run the following command on a cmd console (Replace C:\Python27 with your python directory if it's different)
-		setx /M PATH "%PATH%;C:\Python27;C:\Python27\Scripts
-	b. Close the console, make sure you execute all commands in a new cmd console from now on.
-3.	Install further dependencies
-	a. install VCForPython27.msi
-		https://aka.ms/vcpython27
-	b. if not installed, install Microsoft Visual C++ 2010 SP1 Redistributable Package
-		32bit: http://www.microsoft.com/en-us/download/details.aspx?id=8328
-		64bit: http://www.microsoft.com/en-us/download/details.aspx?id=13523
+1. Install python 3.7.4
+    Download and install from: https://www.python.org/ftp/python/3.7.4/
+2. Add python directories to PATH environment variable
+    1. Run the following command on a cmd console (Replace C:\Python37 with your python directory if it's different) 
+    `setx /M PATH "%PATH%;C:\Python37;C:\Python37\Scripts`
+    2. Close the console, make sure you execute all commands in a new cmd console from now on.
+3. Install further dependencies
+	1. if not installed, install Microsoft Visual C++ 2017 SP1 Redistributable Package
+		32bit: https://aka.ms/vs/16/release/vc_redist.x86.exe
+		64bit: https://go.microsoft.com/fwlink/?LinkId=746572
 4.	Download the dependent python packages using 
 		pip install -r requirements_windows.txt
 5.	Download and extract UPX binary to [source-path]\monkey\infection_monkey\bin\upx.exe:
@@ -35,14 +35,20 @@ The monkey is composed of three separate parts.
 
 --- Linux ---
 
-Tested on Ubuntu 16.04 and 17.04.
-
-1.	Install dependencies by running:
-		sudo apt-get update
-		sudo apt-get install python-pip python-dev libffi-dev upx libssl-dev libc++1
+Tested on Ubuntu 16.04.
+0. On older distributions of Ubuntu (16.04) you'll need to download python3.7 via ppa:
+    1. `sudo add-apt-repository ppa:deadsnakes/ppa`
+    2. `sudo apt-get update`
+    3. `sudo apt install python3.7`
+1. Install dependencies by running:
+	1. `sudo apt install python3-pip`
+    2. `python3.7 -m pip install pip`
+    3. `sudo apt-get install python3.7-dev`
+    4. `sudo apt-get install libffi-dev upx libssl-dev libc++1`
+    
     Install the python packages listed in requirements.txt using pip
-        cd [code location]/infection_monkey
-		pip install -r requirements_linux.txt
+        `cd [code location]/infection_monkey`
+		`python3.7 -m pip install -r requirements_linux.txt`
 2.	Build Sambacry binaries
 	a. Build/Download according to sections at the end of this readme.
 	b. Place the binaries under [code location]\infection_monkey\bin, under the names 'sc_monkey_runner32.so', 'sc_monkey_runner64.so'
