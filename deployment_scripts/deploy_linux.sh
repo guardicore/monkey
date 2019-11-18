@@ -70,6 +70,7 @@ fi
 if [[ ${python_cmd} == "" ]]; then
   log_message "Python 3.7 command not found. Installing python 3.7."
   sudo add-apt-repository ppa:deadsnakes/ppa
+  sudo apt-get update
   sudo apt install python3.7
   log_message "Python 3.7 is now available with command 'python3.7'."
   python_cmd="python3.7"
@@ -126,6 +127,7 @@ openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/ser
 # Update node
 log_message "Installing nodejs"
 cd "$ISLAND_PATH/cc/ui" || handle_error
+sudo apt-get install curl
 curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs
 npm install sass-loader node-sass webpack --save-dev
