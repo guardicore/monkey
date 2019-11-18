@@ -2,9 +2,9 @@
 
 >If you want to setup dev. env. for Island manually, refer to the instructions below.
 
-##How to set up the Monkey Island server:
+## How to set up the Monkey Island server:
 
-## On Windows:
+### On Windows:
 0. Exclude the folder you are planning to install the Monkey in from your AV software, as it might block or delete files from the installation.
 1. Create folder "bin" under monkey_island
 2. Place portable version of Python 3.7.4
@@ -44,10 +44,10 @@
 	2. run 'npm update'
 	3. run 'npm run dist'
 
-###How to run:
+#### How to run:
 1. When your current working directory is monkey_island, run monkey_island\windows\run_server.bat
 
-##On Linux:
+### On Linux:
 0. Get python 3.7 and pip if your linux distribution doesn't have it built in (following steps are for Ubuntu 16):
     1. `sudo add-apt-repository ppa:deadsnakes/ppa`
     2. `sudo apt-get update`
@@ -94,5 +94,5 @@
     5. `npm update`
 	3. `npm run dist`
 
-###How to run:
+#### How to run:
 1. When your current working directory is monkey, run ./monkey_island/linux/run.sh (located under /linux)

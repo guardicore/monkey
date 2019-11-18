@@ -9,7 +9,7 @@ The monkey is composed of three separate parts.
 * Mimikatz binaries - Two windows binaries, 32/64 bit.
 * Traceroute binaries - Two linux binaries, 32/64bit.
 
-##Windows
+## Windows
 
 1. Install python 3.7.4
     Download and install from: https://www.python.org/ftp/python/3.7.4/
@@ -33,7 +33,7 @@ The monkey is composed of three separate parts.
 		build_windows.bat 
 		output is placed under dist\monkey.exe
 
---- Linux ---
+## Linux
 
 Tested on Ubuntu 16.04.
 0. On older distributions of Ubuntu (16.04) you'll need to download python3.7 via ppa:
@@ -61,7 +61,7 @@ Tested on Ubuntu 16.04.
 		./build_linux.sh
 	output is placed under dist/monkey
 
--- Sambacry --
+### Sambacry
 
 Sambacry requires two standalone binaries to execute remotely.
 a. Build sambacry binaries yourself
@@ -76,7 +76,7 @@ b. Download our pre-built sambacry binaries
 		32bit: https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner32.so
 		64bit: https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner64.so
 
--- Mimikatz --
+### Mimikatz
 
 Mimikatz is required for the Monkey to be able to steal credentials on Windows. It's possible to either compile binaries from source (requires Visual Studio 2013 and up) or download them from our repository.
 a. Build Mimikatz yourself
@@ -93,7 +93,7 @@ b. Download our pre-built mimikatz binaries
 	b.1. Download both 32 and 64 bit zipped DLLs from https://github.com/guardicore/mimikatz/releases/tag/1.1.0
 	b.2. Place them under [code location]\infection_monkey\bin
 
--- Traceroute --
+### Traceroute
 
 Traceroute requires two standalone binaries to execute remotely.
 The monkey carries the standalone binaries since traceroute isn't built in all Linux distributions.
