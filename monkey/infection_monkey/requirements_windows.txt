@@ -11,5 +11,5 @@ netifaces
 ipaddress
 wmi
 pywin32
-pymssql
+pymssql<3.0
 pyftpdlib
