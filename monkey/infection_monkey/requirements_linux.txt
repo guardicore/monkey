@@ -10,5 +10,5 @@ ecdsa
 netifaces
 ipaddress
 wmi
-pymssql
+pymssql<3.0
 pyftpdlib
