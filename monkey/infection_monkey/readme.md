@@ -12,25 +12,27 @@ The monkey is composed of three separate parts.
 
 ## Windows
 
-1. Install python 3.7.4
+1. Install python 3.7.4 and choose **ADD to PATH** option when installing.
+
     Download and install from: <https://www.python.org/ftp/python/3.7.4/>
-2. Add python directories to PATH environment variable
-    1. Run the following command on a cmd console (Replace C:\Python37 with your python directory if it's different) 
+    
+    In case you still need to add python directories to path:
+    - Run the following command on a cmd console (Replace C:\Python37 with your python directory if it's different) 
     `setx /M PATH "%PATH%;C:\Python37;C:\Python37\Scripts`
-    2. Close the console, make sure you execute all commands in a new cmd console from now on.
-3. Install further dependencies
-    1. if not installed, install Microsoft Visual C++ 2017 SP1 Redistributable Package
-        32bit: <https://aka.ms/vs/16/release/vc_redist.x86.exe>
-        64bit: <https://go.microsoft.com/fwlink/?LinkId=746572>
-4. Download the dependent python packages using 
-        pip install -r requirements_windows.txt
-5. Download and extract UPX binary to [source-path]\monkey\infection_monkey\bin\upx.exe:
+    - Close the console, make sure you execute all commands in a new cmd console from now on.
+2. Install further dependencies
+    - if not installed, install Microsoft Visual C++ 2017 SP1 Redistributable Package
+        - 32bit: <https://aka.ms/vs/16/release/vc_redist.x86.exe>
+        - 64bit: <https://go.microsoft.com/fwlink/?LinkId=746572>
+3. Download the dependent python packages using 
+        `pip install -r requirements_windows.txt`
+4. Download and extract UPX binary to monkey\infection_monkey\bin\upx.exe:
         <https://github.com/upx/upx/releases/download/v3.94/upx394w.zip>
-6. Build/Download Sambacry and Mimikatz binaries
+5. Build/Download Sambacry and Mimikatz binaries
     - Build/Download according to sections at the end of this readme.
-    - Place the binaries under [code location]\infection_monkey\bin
-7. To build the final exe:
-    - `cd [code location]/infection_monkey`
+    - Place the binaries under monkey\infection_monkey\bin
+6. To build the final exe:
+    - `cd monkey\infection_monkey`
     - `build_windows.bat`
     - `output is placed under dist\monkey.exe`
 
@@ -45,8 +47,7 @@ Tested on Ubuntu 16.04.
 1. Install dependencies by running:
     - `sudo apt install python3-pip`
     - `python3.7 -m pip install pip`
-    - `sudo apt-get install python3.7-dev`
-    - `sudo apt-get install libffi-dev upx libssl-dev libc++1`
+    - `sudo apt-get install python3.7-dev libffi-dev upx libssl-dev libc++1`
 
 2. Install the python packages listed in requirements.txt using pip
     - `cd [code location]/infection_monkey`
@@ -61,10 +62,11 @@ Tested on Ubuntu 16.04.
     - Place the binaries under [code location]\infection_monkey\bin, under the names 'traceroute32', 'traceroute64'
 
 5. To build, run in terminal:
-    `cd [code location]/infection_monkey`
-    `chmod +x build_linux.sh`
-    `./build_linux.sh`
-    `output is placed under dist/monkey`
+    - `cd [code location]/infection_monkey`
+    - `chmod +x build_linux.sh`
+    - `./build_linux.sh`
+    
+    output is placed under dist/monkey
 
 ### Sambacry
 

@@ -11,16 +11,12 @@
 2. Create folder "bin" under monkey_island
 3. Place portable version of Python 3.7.4
     - Download and install from: <https://www.python.org/ftp/python/3.7.4/>
-    - Install virtualenv using "python -m pip install virtualenv"
-    - Create a virtualenv using "python -m virtualenv --always-copy <PATH TO BIN>\Python37" Where <PATH TO BIN> is the path to the bin folder created on step 1.
-    - Run "python -m virtualenv --relocatable <PATH TO BIN>\Python37"
-    - Install the required python libraries using "<PATH TO BIN>\Python37\Scripts\python -m pip install -r monkey_island\requirements.txt"
-    - Copy DLLs from installation path (Usually C:\Python27\DLLs) to <PATH TO BIN>\Python37\DLLs
-    - (Optional) You may uninstall Python3.7 if you like.
+4. Install Island's requirements
+    - `python -m pip install -r monkey_island\requirements.txt`
 4. Setup mongodb (Use one of the following two options):
     - Place portable version of mongodb
        1. Download from: <https://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip>
-       2. Extract contents from bin folder to monkey_island\bin\mongodb.
+       2. Extract contents of bin folder to monkey_island\bin\mongodb.
        3. Create monkey_island\db folder.
 
     OR
@@ -29,12 +25,12 @@
 
 5. Place portable version of OpenSSL
     - Download from: <https://indy.fulgan.com/SSL/Archive/openssl-1.0.2l-i386-win32.zip>
-    - Extract content from bin folder to monkey_island\bin\openssl
+    - Extract contents to monkey_island\bin\openssl
 6. Download and install Microsoft Visual C++ redistributable for Visual Studio 2017
     - Download and install from: <https://go.microsoft.com/fwlink/?LinkId=746572>
 7. Generate SSL Certificate
-    - run create_certificate.bat when your current working directory is monkey_island
-8. Create the monkey_island\cc\binaries folder and put Infection Monkey binaries inside (binaries can be found in releases on github)
+    - run `./windows/create_certificate.bat` when your current working directory is monkey_island
+8. Put Infection Monkey binaries inside monkey_island/cc/binaries (binaries can be found in releases on github or build from source)
     monkey-linux-64 - monkey binary for linux 64bit
     monkey-linux-32 - monkey binary for linux 32bit
     monkey-windows-32.exe - monkey binary for windows 32bit
@@ -48,7 +44,7 @@
 
 #### How to run
 
-1. When your current working directory is monkey_island, run monkey_island\windows\run_server.bat
+1. When your current working directory is monkey_island, run monkey_island\windows\run_server_py.bat
 
 ### On Linux
 
@@ -73,7 +69,10 @@
     monkey-linux-64 - monkey binary for linux 64bit
     monkey-linux-32 - monkey binary for linux 32bit
     monkey-windows-32.exe - monkey binary for windows 32bit
-    monkey-windows-64.exe - monkey binary for windows 64bi
+    monkey-windows-64.exe - monkey binary for windows 64bit
+    Also, if you're going to run monkeys on local machine execute:
+    - `chmod 755 ./monkey_island/cc/binaries/monkey-linux-64`
+    - `chmod 755 ./monkey_island/cc/binaries/monkey-linux-32`
 
 6. Setup MongoDB (Use one of the two following options):
     - Download MongoDB and extract it to /var/monkey_island/bin/mongodb:
