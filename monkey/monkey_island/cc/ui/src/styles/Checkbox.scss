@@ -97,6 +97,31 @@ $black: #000000;
   }
 }
 
+.attack-matrix .ui-checkbox-btn label {
+  padding-top: 0;
+  position: relative;
+  float: left;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.attack-matrix div.rt-td>div {
+  height: 100%;
+  padding: 0;
+}
+
+.attack-matrix div.rt-td {
+  padding: 0;
+  border-right: 3px solid rgba(0,0,0,0) !important;
+}
+
+.rt-tr-group {
+  border-bottom: 3px solid rgba(0,0,0,0) !important;
+}
+
 .icon-checked {
   color: $green
 }
