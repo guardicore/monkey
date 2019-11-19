@@ -8,15 +8,15 @@
 ### On Windows
 
 1. Exclude the folder you are planning to install the Monkey in from your AV software, as it might block or delete files from the installation.
-2. Create folder "bin" under monkey_island
+2. Create folder "bin" under monkey\monkey_island
 3. Place portable version of Python 3.7.4
     - Download and install from: <https://www.python.org/ftp/python/3.7.4/>
 4. Install Island's requirements
-    - `python -m pip install -r monkey_island\requirements.txt`
+    - `python -m pip install -r monkey\monkey_island\requirements.txt`
 4. Setup mongodb (Use one of the following two options):
     - Place portable version of mongodb
        1. Download from: <https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.1.zip>
-       2. Extract contents of bin folder to monkey_island\bin\mongodb.
+       2. Extract contents of bin folder to \monkey\monkey_island\bin\mongodb.
        3. Create monkey_island\db folder.
 
     OR
@@ -63,17 +63,22 @@
 4. Install the packages from monkey_island/requirements.txt:
     - `sudo python3.7 -m pip install -r ./monkey_island/requirements.txt`
 
-5. Put monkey binaries in /monkey_island/cc/binaries (binaries can be found in releases on github)
+5. Put monkey binaries in /monkey_island/cc/binaries (binaries can be found in releases on github).
+    
     monkey-linux-64 - monkey binary for linux 64bit
+    
     monkey-linux-32 - monkey binary for linux 32bit
+    
     monkey-windows-32.exe - monkey binary for windows 32bit
+    
     monkey-windows-64.exe - monkey binary for windows 64bit
+    
     Also, if you're going to run monkeys on local machine execute:
     - `chmod 755 ./monkey_island/cc/binaries/monkey-linux-64`
     - `chmod 755 ./monkey_island/cc/binaries/monkey-linux-32`
 
 6. Setup MongoDB (Use one of the two following options):
-    - Download MongoDB and extract it to /var/monkey_island/bin/mongodb:
+    - Download MongoDB and extract it to monkey/monkey_island/bin/mongodb:
         1. Run `./monkey_island/linux/install_mongo.sh ./monkey_island/bin/mongodb`. This will download and extract the relevant mongoDB for your OS.
 
     OR
@@ -82,6 +87,7 @@
 
 7. Generate SSL Certificate:
     - `cd ./monkey_island`
+    - `chmod 755 ./linux/create_certificate.sh`
     - `./linux/create_certificate.sh`
 
 8. Install npm and node by running:
