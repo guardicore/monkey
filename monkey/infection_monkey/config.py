@@ -71,7 +71,7 @@ class Configuration(object):
 
             val_type = type(value)
 
-            if isinstance(val_type, types.FunctionType) or isinstance(val_type, types.MethodType):
+            if callable(value):
                 continue
 
             if val_type in (type, ABCMeta):
