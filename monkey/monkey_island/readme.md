@@ -15,7 +15,7 @@
     - `python -m pip install -r monkey_island\requirements.txt`
 4. Setup mongodb (Use one of the following two options):
     - Place portable version of mongodb
-       1. Download from: <https://downloads.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-latest.zip>
+       1. Download from: <https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.1.zip>
        2. Extract contents of bin folder to monkey_island\bin\mongodb.
        3. Create monkey_island\db folder.
 
@@ -24,7 +24,7 @@
         1. Run 'set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkeyisland"'. Replace '<SERVER ADDR>' with address of mongo server
 
 5. Place portable version of OpenSSL
-    - Download from: <https://indy.fulgan.com/SSL/Archive/openssl-1.0.2l-i386-win32.zip>
+    - Download from: <https://indy.fulgan.com/SSL/Archive/openssl-1.0.2p-i386-win32.zip>
     - Extract contents to monkey_island\bin\openssl
 6. Download and install Microsoft Visual C++ redistributable for Visual Studio 2017
     - Download and install from: <https://go.microsoft.com/fwlink/?LinkId=746572>
@@ -51,10 +51,8 @@
 1. Get python 3.7 and pip if your linux distribution doesn't have it built in (following steps are for Ubuntu 16):
     - `sudo add-apt-repository ppa:deadsnakes/ppa`
     - `sudo apt-get update`
-    - `sudo apt install python3.7`
-    - `sudo apt install python3-pip`
+    - `sudo apt install python3.7 python3-pip python3.7-dev`
     - `python3.7 -m pip install pip`
-    - `sudo apt-get install python3.7-dev`
 2. Install required packages:
     - `sudo apt-get install libffi-dev upx libssl-dev libc++1 openssl`
 3. Create the following directories in monkey island folder (execute from ./monkey):
