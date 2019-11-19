@@ -23,7 +23,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.updatePageState();
-    const refreshInterval = setInterval(this.updatePageState, 8000);
+    const refreshInterval = setInterval(this.updatePageState, 60000);
     this.setState(
       {refreshDataIntervalHandler: refreshInterval}
     )
