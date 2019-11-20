@@ -1,6 +1,5 @@
 import flask_restful
-import json
-from flask import jsonify, request
+from flask import jsonify, request, json, current_app
 
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.services.attack.attack_config import AttackConfig
@@ -11,7 +10,11 @@ __author__ = "VakarisZ"
 class AttackConfiguration(flask_restful.Resource):
     @jwt_required()
     def get(self):
-        return jsonify(configuration=AttackConfig.get_config()['properties'])
+        return current_app.response_class(json.dumps({"configuration": AttackConfig.get_config()},
+                                                     indent=None,
+                                                     separators=(",", ":"),
+                                                     sort_keys=False) + "\n",
+                                          mimetype=current_app.config['JSONIFY_MIMETYPE'])
 
     @jwt_required()
     def post(self):

@@ -37,12 +37,12 @@ class MatrixComponent extends AuthComponent {
         if (i <= Object.keys(techType.properties).length) {
           rowColumn.technique = Object.values(techType.properties)[i];
           if (rowColumn.technique) {
-            rowColumn.technique.name = Object.keys(techType.properties)[i]
+            rowColumn.technique.name = Object.keys(techType.properties)[i];
           }
         } else {
-          rowColumn.technique = null
+          rowColumn.technique = null;
         }
-        row[rowColumn.techName] = rowColumn
+        row[rowColumn.techName] = rowColumn;
       });
       techniques.push(row)
     }

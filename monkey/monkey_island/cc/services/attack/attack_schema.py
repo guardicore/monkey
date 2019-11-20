@@ -2,43 +2,90 @@ SCHEMA = {
     "title": "ATT&CK configuration",
     "type": "object",
     "properties": {
-        "lateral_movement": {
-            "title": "Lateral movement",
+        "execution": {
+            "title": "Execution",
             "type": "object",
             "properties": {
-                "T1210": {
-                    "title": "T1210 Exploitation of Remote services",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": False,
-                    "description": "Exploitation of a software vulnerability occurs when an adversary "
-                                   "takes advantage of a programming error in a program, service, or within the "
-                                   "operating system software or kernel itself to execute adversary-controlled code."
-                },
-                "T1075": {
-                    "title": "T1075 Pass the hash",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": False,
-                    "description": "Pass the hash (PtH) is a method of authenticating as a user without "
-                                   "having access to the user's cleartext password."
-                },
-                "T1105": {
-                    "title": "T1105 Remote file copy",
+                "T1059": {
+                    "title": "T1059 Command line interface",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
-                    "description": "Files may be copied from one system to another to stage "
-                                   "adversary tools or other files over the course of an operation."
+                    "description": "Adversaries may use command-line interfaces to interact with systems "
+                                   "and execute other software during the course of an operation.",
                 },
-                "T1021": {
-                    "title": "T1021 Remote services",
+                "T1129": {
+                    "title": "T1129 Execution through module load",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
-                    "depends_on": ["T1110"],
-                    "description": "An adversary may use Valid Accounts to log into a service"
-                                   " specifically designed to accept remote connections."
+                    "description": "The Windows module loader can be instructed to load DLLs from arbitrary "
+                                   "local paths and arbitrary Universal Naming Convention (UNC) network paths.",
+                    "depends_on": ["T1078", "T1003"]
+                },
+                "T1106": {
+                    "title": "T1106 Execution through API",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Adversary tools may directly use the Windows application "
+                                   "programming interface (API) to execute binaries.",
+                    "depends_on": ["T1210"]
+                },
+                "T1086": {
+                    "title": "T1086 Powershell",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries can use PowerShell to perform a number of actions,"
+                                   " including discovery of information and execution of code.",
+                },
+                "T1064": {
+                    "title": "T1064 Scripting",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may use scripts to aid in operations and "
+                                   "perform multiple actions that would otherwise be manual.",
+                },
+                "T1035": {
+                    "title": "T1035 Service execution",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Adversaries may execute a binary, command, or script via a method "
+                                   "that interacts with Windows services, such as the Service Control Manager.",
+                    "depends_on": ["T1210"]
+                }
+            }
+        },
+        "defence_evasion": {
+            "title": "Defence evasion",
+            "type": "object",
+            "properties": {
+                "T1197": {
+                    "title": "T1197 BITS jobs",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may abuse BITS to download, execute, "
+                                   "and even clean up after running malicious code."
+                },
+                "T1107": {
+                    "title": "T1107 File Deletion",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may remove files over the course of an intrusion "
+                                   "to keep their footprint low or remove them at the end as part "
+                                   "of the post-intrusion cleanup process."
+                },
+                "T1222": {
+                    "title": "T1222 File permissions modification",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may modify file permissions/attributes to evade intended DACLs."
                 }
             }
         },
@@ -79,97 +126,18 @@ SCHEMA = {
                 }
             }
         },
-        "defence_evasion": {
-            "title": "Defence evasion",
-            "type": "object",
-            "properties": {
-                "T1197": {
-                    "title": "T1197 BITS jobs",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": True,
-                    "description": "Adversaries may abuse BITS to download, execute, "
-                                   "and even clean up after running malicious code."
-                },
-                "T1107": {
-                    "title": "T1107 File Deletion",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": True,
-                    "description": "Adversaries may remove files over the course of an intrusion "
-                                   "to keep their footprint low or remove them at the end as part "
-                                   "of the post-intrusion cleanup process."
-                },
-                "T1222": {
-                    "title": "T1222 File permissions modification",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": True,
-                    "description": "Adversaries may modify file permissions/attributes to evade intended DACLs."
-                }
-            }
-        },
-        "execution": {
-            "title": "Execution",
-            "type": "object",
-            "properties": {
-                "T1035": {
-                    "title": "T1035 Service execution",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": False,
-                    "description": "Adversaries may execute a binary, command, or script via a method "
-                                   "that interacts with Windows services, such as the Service Control Manager.",
-                    "depends_on": ["T1210"]
-                },
-                "T1129": {
-                    "title": "T1129 Execution through module load",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": False,
-                    "description": "The Windows module loader can be instructed to load DLLs from arbitrary "
-                                   "local paths and arbitrary Universal Naming Convention (UNC) network paths.",
-                    "depends_on": ["T1078", "T1003"]
-                },
-                "T1106": {
-                    "title": "T1106 Execution through API",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": False,
-                    "description": "Adversary tools may directly use the Windows application "
-                                   "programming interface (API) to execute binaries.",
-                    "depends_on": ["T1210"]
-                },
-                "T1059": {
-                    "title": "T1059 Command line interface",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": True,
-                    "description": "Adversaries may use command-line interfaces to interact with systems "
-                                   "and execute other software during the course of an operation.",
-                },
-                "T1086": {
-                    "title": "T1086 Powershell",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": True,
-                    "description": "Adversaries can use PowerShell to perform a number of actions,"
-                                   " including discovery of information and execution of code.",
-                },
-                "T1064": {
-                    "title": "T1064 Scripting",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": True,
-                    "description": "Adversaries may use scripts to aid in operations and "
-                                   "perform multiple actions that would otherwise be manual.",
-                }
-            }
-        },
         "discovery": {
             "title": "Discovery",
             "type": "object",
             "properties": {
+                "T1018": {
+                    "title": "T1018 Remote System Discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries will likely attempt to get a listing of other systems by IP address, "
+                                   "hostname, or other logical identifier on a network for lateral movement."
+                },
                 "T1082": {
                     "title": "T1082 System information discovery",
                     "type": "bool",
@@ -180,14 +148,6 @@ SCHEMA = {
                                    "operating system and hardware, including version, patches, hotfixes, "
                                    "service packs, and architecture."
                 },
-                "T1018": {
-                    "title": "T1018 Remote System Discovery",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": True,
-                    "description": "Adversaries will likely attempt to get a listing of other systems by IP address, "
-                                   "hostname, or other logical identifier on a network for lateral movement."
-                },
                 "T1016": {
                     "title": "T1016 System network configuration discovery",
                     "type": "bool",
@@ -197,6 +157,46 @@ SCHEMA = {
                     "description": "Adversaries will likely look for details about the network configuration "
                                    "and settings of systems they access or through information discovery"
                                    " of remote systems."
+                }
+            }
+        },
+        "lateral_movement": {
+            "title": "Lateral movement",
+            "type": "object",
+            "properties": {
+                "T1210": {
+                    "title": "T1210 Exploitation of Remote services",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Exploitation of a software vulnerability occurs when an adversary "
+                                   "takes advantage of a programming error in a program, service, or within the "
+                                   "operating system software or kernel itself to execute adversary-controlled code."
+                },
+                "T1075": {
+                    "title": "T1075 Pass the hash",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "description": "Pass the hash (PtH) is a method of authenticating as a user without "
+                                   "having access to the user's cleartext password."
+                },
+                "T1105": {
+                    "title": "T1105 Remote file copy",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Files may be copied from one system to another to stage "
+                                   "adversary tools or other files over the course of an operation."
+                },
+                "T1021": {
+                    "title": "T1021 Remote services",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "depends_on": ["T1110"],
+                    "description": "An adversary may use Valid Accounts to log into a service"
+                                   " specifically designed to accept remote connections."
                 }
             }
         },
@@ -219,14 +219,6 @@ SCHEMA = {
             "title": "Command and Control",
             "type": "object",
             "properties": {
-                "T1065": {
-                    "title": "T1065 Uncommonly used port",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": True,
-                    "description": "Adversaries may conduct C2 communications over a non-standard "
-                                   "port to bypass proxies and firewalls that have been improperly configured."
-                },
                 "T1090": {
                     "title": "T1090 Connection proxy",
                     "type": "bool",
@@ -234,6 +226,14 @@ SCHEMA = {
                     "necessary": True,
                     "description": "A connection proxy is used to direct network traffic between systems "
                                    "or act as an intermediary for network communications."
+                },
+                "T1065": {
+                    "title": "T1065 Uncommonly used port",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": True,
+                    "description": "Adversaries may conduct C2 communications over a non-standard "
+                                   "port to bypass proxies and firewalls that have been improperly configured."
                 },
                 "T1188": {
                     "title": "T1188 Multi-hop proxy",

@@ -15,7 +15,7 @@ class AttackConfig(object):
 
     @staticmethod
     def get_config():
-        config = mongo.db.attack.find_one({'name': 'newconfig'})
+        config = mongo.db.attack.find_one({'name': 'newconfig'})['properties']
         return config
 
     @staticmethod
