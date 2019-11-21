@@ -105,8 +105,7 @@ class ReportPageComponent extends AuthComponent {
   getReportContent(){
     switch(this.state.selectedSection){
       case 'security':
-        return (<SecurityReport report={this.state.securityReport}
-                                onStatusChange={this.props.onStatusChange}/>);
+        return (<SecurityReport report={this.state.securityReport}/>);
       case 'attack':
         return (<AttackReport report={this.state.attackReport}/>);
       case 'zeroTrust':
