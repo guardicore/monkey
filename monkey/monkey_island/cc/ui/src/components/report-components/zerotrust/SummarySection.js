@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Col, Grid, Row} from 'react-bootstrap';
-import MonkeysStillAliveWarning from '../common/MonkeysStillAliveWarning';
 import PillarsOverview from './PillarOverview';
 import ZeroTrustReportLegend from './ReportLegend';
 import * as PropTypes from 'prop-types';
@@ -12,7 +11,6 @@ export default class SummarySection extends Component {
       <Grid fluid={true}>
         <Row>
           <Col xs={12} sm={12} md={12} lg={12}>
-            <MonkeysStillAliveWarning allMonkeysAreDead={this.props.allMonkeysAreDead}/>
             <p>
               Get a quick glance at how your network aligns with the <a
               href="https://www.forrester.com/report/The+Zero+Trust+eXtended+ZTX+Ecosystem/-/E-RES137210">
@@ -36,6 +34,5 @@ export default class SummarySection extends Component {
 }
 
 SummarySection.propTypes = {
-  allMonkeysAreDead: PropTypes.bool,
   pillars: PropTypes.object
 };

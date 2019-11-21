@@ -25,7 +25,7 @@ class AttackConfiguration(flask_restful.Resource):
         config_json = json.loads(request.data)
         if 'reset_attack_matrix' in config_json:
             AttackConfig.reset_config()
-            return jsonify(configuration=AttackConfig.get_config()['properties'])
+            return jsonify(configuration=AttackConfig.get_config())
         else:
             AttackConfig.update_config({'properties': json.loads(request.data)})
             AttackConfig.apply_to_monkey_config()

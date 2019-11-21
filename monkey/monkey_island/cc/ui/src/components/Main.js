@@ -10,7 +10,7 @@ import MapPage from 'components/pages/MapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
 import ReportPage from 'components/pages/ReportPage';
-import ZeroTrustReportPage from 'components/pages/ZeroTrustReportPage';
+import ZeroTrustReportPage from 'components/report-components/ZeroTrustReport';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
@@ -152,16 +152,7 @@ class AppComponent extends AuthComponent {
                 <li>
                   <NavLink to="/report/security">
                     <span className="number">4.</span>
-                    Security Report
-                    {this.state.completedSteps.report_done ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
-                      : ''}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/report/zero_trust">
-                    <span className="number">5.</span>
-                    Zero Trust Report
+                    Security Reports
                     {this.state.completedSteps.report_done ?
                       <Icon name="check" className="pull-right checkmark text-success"/>
                       : ''}
@@ -201,7 +192,7 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/report/security', <ReportPage onStatusChange={this.updateStatus}/>)}
+              {this.renderRoute('/report/security', <ReportPage/>)}
               {this.renderRoute(reportZeroTrustRoute, <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
