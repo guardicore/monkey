@@ -14,10 +14,18 @@ class CheckboxComponent extends React.PureComponent {
 	changeHandler(name, checked) function will be called with these parameters:
 	this.props.name (the name of this component) and
 	this.state.checked (boolean indicating if this component is checked or not)
+	this.props.status (int) adds a class "status-x" to this checkbox. Used for styling.
   */
   constructor(props) {
     super(props);
+    if (this.props.hasOwnProperty("status")){
+      this.status = this.props.status;
+    } else {
+      this.status = false
+    }
+    console.log(this.props);
     this.state = {
+      status: this.status,
       checked: this.props.checked,
       necessary: this.props.necessary,
       isAnimating: false
@@ -48,6 +56,9 @@ class CheckboxComponent extends React.PureComponent {
   // Creates class string for component
   composeStateClasses(core) {
     let result = core;
+    if (this.state.status) {
+      result += ' status-'+this.state.status;
+    }
     if (this.state.necessary) {
       return result + ' blocked'
     }
@@ -56,7 +67,6 @@ class CheckboxComponent extends React.PureComponent {
     } else {
       result += ' is-unchecked'
     }
-
     if (this.state.isAnimating) {
       result += ' do-ping';
     }

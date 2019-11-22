@@ -6,6 +6,7 @@ import '../../styles/Collapse.scss';
 import AuthComponent from '../AuthComponent';
 import {ScanStatus} from '../attack/techniques/Helpers';
 import Collapse from '@kunukn/react-collapse';
+import Matrix from './attack/Matrix';
 
 import T1210 from '../attack/techniques/T1210';
 import T1197 from '../attack/techniques/T1197';
@@ -66,7 +67,8 @@ class AttackReportPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
-      report: this.props.report,
+      techniques: this.props.report['techniques'],
+      schema: this.props.report['schema'],
       collapseOpen: ''
     };
   }
@@ -81,7 +83,7 @@ class AttackReportPageComponent extends AuthComponent {
     this.setState(state => ({collapseOpen: state.collapseOpen === technique ? null : technique}));
 
   getComponentClass(tech_id) {
-    switch (this.state.report[tech_id].status) {
+    switch (this.state.techniques[tech_id].status) {
       case ScanStatus.SCANNED:
         return 'collapse-info';
       case ScanStatus.USED:
@@ -95,7 +97,7 @@ class AttackReportPageComponent extends AuthComponent {
     return (
       <div key={tech_id} className={classNames('collapse-item', {'item--active': this.state.collapseOpen === tech_id})}>
         <button className={classNames('btn-collapse', this.getComponentClass(tech_id))} onClick={() => this.onToggle(tech_id)}>
-          <span>{this.state.report[tech_id].title}</span>
+          <span>{this.state.techniques[tech_id].title}</span>
           <span>
               <i className={classNames('fa', this.state.collapseOpen === tech_id ? 'fa-chevron-down' : 'fa-chevron-up')}></i>
           </span>
@@ -118,22 +120,26 @@ class AttackReportPageComponent extends AuthComponent {
     const TechniqueComponent = tech_components[technique];
     return (
       <div className={`content ${collapseState}`}>
-        <TechniqueComponent data={this.state.report[technique]} reportData={this.props.reportData}/>
+        <TechniqueComponent data={this.state.techniques[technique]}/>
       </div>
     );
   }
 
   renderLegend() {
     return (<div id="header" className="row justify-content-between attack-legend">
-      <Col xs={4}>
+      <Col xs={3}>
+          <i className="fa fa-circle-thin icon-unchecked"></i>
+          <span> - Dissabled</span>
+      </Col>
+      <Col xs={3}>
         <i className="fa fa-circle icon-default"></i>
         <span> - Unscanned</span>
       </Col>
-      <Col xs={4}>
+      <Col xs={3}>
         <i className="fa fa-circle icon-info"></i>
         <span> - Scanned</span>
       </Col>
-      <Col xs={4}>
+      <Col xs={3}>
         <i className="fa fa-circle icon-danger"></i>
         <span> - Used</span>
       </Col>
@@ -142,7 +148,7 @@ class AttackReportPageComponent extends AuthComponent {
 
   generateReportContent() {
     let content = [];
-    Object.keys(this.state.report).forEach((tech_id) => {
+    Object.keys(this.state.techniques).forEach((tech_id) => {
       content.push(this.getTechniqueCollapse(tech_id))
     });
     return (
@@ -153,8 +159,9 @@ class AttackReportPageComponent extends AuthComponent {
       <p>
         This report shows information about ATT&CK techniques used by Infection Monkey.
       </p>
+      {this.renderLegend()}
+      <Matrix techniques={this.state.techniques} schema={this.state.schema}/>
       <div>
-        {this.renderLegend()}
         <section className="attack-report">{content}</section>
       </div>
       <br/>
@@ -163,7 +170,7 @@ class AttackReportPageComponent extends AuthComponent {
   }
 
   render() {
-    if (Object.keys(this.state.report).length === 0 && this.state.runStarted) {
+    if (Object.keys(this.state.techniques).length === 0 && this.state.runStarted) {
         return (<h1>No techniques were scanned</h1>);
     } else {
       return (<div> {this.generateReportContent()}</div>);

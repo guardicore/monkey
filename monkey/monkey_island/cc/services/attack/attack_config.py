@@ -173,3 +173,15 @@ class AttackConfig(object):
             for key, technique in list(attack_type['properties'].items()):
                 techniques[key] = technique['value']
         return techniques
+
+    @staticmethod
+    def get_techniques_for_report():
+        """
+        :return: Format: {"T1110": {"selected": True, "type": "Credential Access", "T1075": ...}
+        """
+        attack_config = AttackConfig.get_config()
+        techniques = {}
+        for type_name, attack_type in list(attack_config.items()):
+            for key, technique in list(attack_type['properties'].items()):
+                    techniques[key] = {'selected': technique['value'], 'type': SCHEMA['properties'][type_name]['title']}
+        return techniques
