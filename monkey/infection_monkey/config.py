@@ -2,11 +2,9 @@ import hashlib
 import os
 import json
 import sys
-import types
 import uuid
 from abc import ABCMeta
 from itertools import product
-import importlib
 
 __author__ = 'itamar'
 
