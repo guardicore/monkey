@@ -14,6 +14,7 @@ class CheckboxComponent extends React.PureComponent {
 	changeHandler(name, checked) function will be called with these parameters:
 	this.props.name (the name of this component) and
 	this.state.checked (boolean indicating if this component is checked or not)
+
 	this.props.status (int) adds a class "status-x" to this checkbox. Used for styling.
   */
   constructor(props) {

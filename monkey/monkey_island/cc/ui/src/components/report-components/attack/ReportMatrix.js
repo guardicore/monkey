@@ -8,7 +8,7 @@ class MatrixComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {techniques: this.props.techniques,
-                  schema: this.props.schema}
+                  schema: this.props.schema};
   }
 
   getColumns() {
@@ -21,7 +21,7 @@ class MatrixComponent extends React.Component {
       columns.push({
         Header: () => (<a href={tech_type.link}>{tech_type.title}</a>),
         id: type_key,
-        accessor: x => MatrixComponent.renderTechnique(x[tech_type.title]),
+        accessor: x => this.renderTechnique(x[tech_type.title]),
         style: {'whiteSpace': 'unset'}
       });
     }
@@ -51,15 +51,15 @@ class MatrixComponent extends React.Component {
     return rows;
   }
 
-  static renderTechnique(technique) {
+  renderTechnique(technique) {
     if (technique == null || typeof technique === undefined) {
       return (<div/>)
     } else {
       return (
         <Checkbox checked={technique.selected}
-                  necessary={true}
+                  necessary={false}
                   name={technique.title}
-                  changeHandler={function(){}}
+                  changeHandler={this.props.onClick}
                   status={technique.status}>
           {technique.title}
         </Checkbox>)

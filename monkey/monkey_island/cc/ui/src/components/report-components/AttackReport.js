@@ -8,6 +8,7 @@ import AuthComponent from '../AuthComponent';
 import {ScanStatus} from '../attack/techniques/Helpers';
 import Collapse from '@kunukn/react-collapse';
 import Matrix from './attack/ReportMatrix';
+import SelectedTechnique from './attack/SelectedTechnique';
 
 import T1210 from '../attack/techniques/T1210';
 import T1197 from '../attack/techniques/T1197';
@@ -34,7 +35,7 @@ import T1016 from '../attack/techniques/T1016';
 import T1021 from '../attack/techniques/T1021';
 import T1064 from '../attack/techniques/T1064';
 
-const tech_components = {
+const techComponents = {
   'T1210': T1210,
   'T1197': T1197,
   'T1110': T1110,
@@ -63,14 +64,15 @@ const tech_components = {
 
 const classNames = require('classnames');
 
-class AttackReportPageComponent extends AuthComponent {
+class AttackReport extends AuthComponent {
 
   constructor(props) {
     super(props);
     this.state = {
       techniques: this.props.report['techniques'],
       schema: this.props.report['schema'],
-      collapseOpen: ''
+      selectedTechnique: false,
+      collapseOpen: '',
     };
   }
 
@@ -83,8 +85,17 @@ class AttackReportPageComponent extends AuthComponent {
   onToggle = technique =>
     this.setState(state => ({collapseOpen: state.collapseOpen === technique ? null : technique}));
 
-  getComponentClass(tech_id) {
-    switch (this.state.techniques[tech_id].status) {
+  onTechniqueSelect = (technique, value, mapped = false) => {
+    //this.setState({selectedTechnique: technique});
+    let selectedTechnique = this.getTechniqueByTitle(technique);
+    if (selectedTechnique === false){
+      return;
+    }
+    this.setState({selectedTechnique: selectedTechnique.tech_id})
+  };
+
+  static getComponentClass(tech_id, techniques) {
+    switch (techniques[tech_id].status) {
       case ScanStatus.SCANNED:
         return 'collapse-info';
       case ScanStatus.USED:
@@ -97,7 +108,8 @@ class AttackReportPageComponent extends AuthComponent {
   getTechniqueCollapse(tech_id) {
     return (
       <div key={tech_id} className={classNames('collapse-item', {'item--active': this.state.collapseOpen === tech_id})}>
-        <button className={classNames('btn-collapse', this.getComponentClass(tech_id))} onClick={() => this.onToggle(tech_id)}>
+        <button className={classNames('btn-collapse', AttackReport.getComponentClass(tech_id, this.state.techniques))}
+                onClick={() => this.onToggle(tech_id)}>
           <span>{this.state.techniques[tech_id].title}</span>
           <span>
               <i className={classNames('fa', this.state.collapseOpen === tech_id ? 'fa-chevron-down' : 'fa-chevron-up')}></i>
@@ -118,7 +130,7 @@ class AttackReportPageComponent extends AuthComponent {
   }
 
   createTechniqueContent(collapseState, technique) {
-    const TechniqueComponent = tech_components[technique];
+    const TechniqueComponent = techComponents[technique];
     return (
       <div className={`content ${collapseState}`}>
         <TechniqueComponent data={this.state.techniques[technique]}/>
@@ -161,13 +173,27 @@ class AttackReportPageComponent extends AuthComponent {
         This report shows information about ATT&CK techniques used by Infection Monkey.
       </p>
       {this.renderLegend()}
-      <Matrix techniques={this.state.techniques} schema={this.state.schema}/>
+      <Matrix techniques={this.state.techniques} schema={this.state.schema} onClick={this.onTechniqueSelect}/>
+      <SelectedTechnique techComponents={techComponents}
+                         techniques={this.state.techniques}
+                         selected={this.state.selectedTechnique}/>
       <div>
         <section className="attack-report">{content}</section>
       </div>
       <br/>
     </div>
     )
+  }
+
+  getTechniqueByTitle(title){
+    for (let tech_id in this.state.techniques){
+      let technique = this.state.techniques[tech_id];
+      if (technique.title === title){
+        technique['tech_id'] = tech_id;
+        return technique
+      }
+    }
+    return false;
   }
 
   render() {
@@ -179,4 +205,4 @@ class AttackReportPageComponent extends AuthComponent {
   }
 }
 
-export default AttackReportPageComponent;
+export default AttackReport;
