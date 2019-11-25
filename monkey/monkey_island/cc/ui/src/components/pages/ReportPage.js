@@ -40,7 +40,8 @@ class ReportPageComponent extends AuthComponent {
       HADOOP: 10,
       PTH_CRIT_SERVICES_ACCESS: 11,
       MSSQL: 12,
-      VSFTPD: 13
+      VSFTPD: 13,
+      SNAP: 14
     };
 
   Warning =
@@ -882,6 +883,22 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateSnapIssue(issue) {
+    return (
+      <li>
+        Update Snap Ubuntu package to the latest version.
+        <CollapsibleWellComponent>
+          Snap package at <span className="label label-primary">{issue.machine}</span> (<span
+          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="label label-danger">Privilege escalation</span> attack.
+          <br/>
+          The attack was made possible due to the following vulnerability:
+          <a href={"https://nvd.nist.gov/vuln/detail/CVE-2019-7304"}>CVE-2019-7304</a>
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
   generateMSSQLIssue(issue) {
     return (
       <li>
@@ -968,6 +985,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'mssql':
         data = this.generateMSSQLIssue(issue);
+        break;
+      case 'SnapdExploiter':
+        data = this.generateSnapIssue(issue);
         break;
     }
     return data;

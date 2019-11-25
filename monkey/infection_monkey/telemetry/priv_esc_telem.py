@@ -6,7 +6,7 @@ from infection_monkey.telemetry.base_telem import BaseTelem
 class PrivEscTelem(BaseTelem):
 
     def __init__(self, exploiter: "HostPrivExploiter", result: bool, info: List[object]=None):
-        self.exploiter = exploiter
+        self.exploiter = exploiter.__class__.__name__
         self.result = result
         self.info = info
         super().__init__()

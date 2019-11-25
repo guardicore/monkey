@@ -17,6 +17,7 @@ from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_regular_report
 from monkey_island.cc.utils import local_ip_addresses, get_subnets
+from monkey_island.cc.services.privilege_escalation import get_successful_privilege_escalations
 
 __author__ = "itay.mizeretz"
 
@@ -40,7 +41,7 @@ class ReportService:
             'WebLogicExploiter': 'Oracle WebLogic Exploiter',
             'HadoopExploiter': 'Hadoop/Yarn Exploiter',
             'MSSQLExploiter': 'MSSQL Exploiter',
-            'VSFTPDExploiter': 'VSFTPD Backdoor Exploited'
+            'VSFTPDExploiter': 'VSFTPD Backdoor Exploiter',
         }
 
     class ISSUES_DICT(Enum):
@@ -58,6 +59,7 @@ class ReportService:
         PTH_CRIT_SERVICES_ACCESS = 11
         MSSQL = 12
         VSFTPD = 13
+        SNAP = 14
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -573,6 +575,7 @@ class ReportService:
     @staticmethod
     def get_issues():
         ISSUE_GENERATORS = [
+            get_successful_privilege_escalations,
             ReportService.get_exploits,
             ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
@@ -659,6 +662,9 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.MSSQL.value] = True
                 elif issue['type'] == 'hadoop':
                     issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
+                if issue['type'] == 'SnapdExploiter':
+                    issues_byte_array[ReportService.ISSUES_DICT.SNAP.value] = True
+                    continue
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
@@ -783,8 +789,9 @@ class ReportService:
 
     @staticmethod
     def get_report():
-        if ReportService.is_latest_report_exists():
-            return ReportService.decode_dot_char_before_mongo_insert(mongo.db.report.find_one())
+        # TODO change back
+        # if ReportService.is_latest_report_exists():
+            # return ReportService.decode_dot_char_before_mongo_insert(mongo.db.report.find_one())
         return safe_generate_regular_report()
 
     @staticmethod

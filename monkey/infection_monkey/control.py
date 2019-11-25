@@ -65,7 +65,7 @@ class ControlClient(object):
         if ControlClient.proxies:
             monkey['tunnel'] = ControlClient.proxies.get('https')
 
-        requests.post("https://%s/api/monkey" % (WormConfiguration.current_server,),
+        requests.post("https://{}/api/monkey".format(WormConfiguration.current_server),
                       data=json.dumps(monkey),
                       headers={'content-type': 'application/json'},
                       verify=False,
