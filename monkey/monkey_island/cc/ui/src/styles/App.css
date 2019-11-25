@@ -525,7 +525,6 @@ body {
   .label-danger {
     background-color: #d9534f !important;
   }
-
 }
 
 /* Attack pages */
@@ -535,10 +534,6 @@ body {
 
 .attack-matrix {
   margin-bottom: 20px;
-}
-
-.attack-report .btn-collapse span:nth-of-type(2) {
-  flex: 0;
 }
 
 .icon-info {
@@ -588,8 +583,3 @@ body {
   margin-right: auto;
 }
 
-.attack-report.footer-text {
-  text-align: right;
-  font-size: 0.8em;
-  margin-top: 20px;
-}

@@ -3,6 +3,7 @@ import {Col} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import '../../styles/Collapse.scss';
+import '../../styles/report/AttackReport.scss'
 import AuthComponent from '../AuthComponent';
 import {ScanStatus} from '../attack/techniques/Helpers';
 import Collapse from '@kunukn/react-collapse';
@@ -152,7 +153,7 @@ class AttackReportPageComponent extends AuthComponent {
       content.push(this.getTechniqueCollapse(tech_id))
     });
     return (
-      <div id="attack">
+      <div id="attack" className="attack-report">
       <h3>
         ATT&CK report
       </h3>

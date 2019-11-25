@@ -23,7 +23,6 @@ class CheckboxComponent extends React.PureComponent {
     } else {
       this.status = false
     }
-    console.log(this.props);
     this.state = {
       status: this.status,
       checked: this.props.checked,
@@ -56,7 +55,7 @@ class CheckboxComponent extends React.PureComponent {
   // Creates class string for component
   composeStateClasses(core) {
     let result = core;
-    if (this.state.status) {
+    if (this.state.status !== false) {
       result += ' status-'+this.state.status;
     }
     if (this.state.necessary) {

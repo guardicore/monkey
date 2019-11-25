@@ -2,6 +2,7 @@ import React from 'react';
 import Checkbox from '../../ui-components/Checkbox';
 import ReactTable from 'react-table';
 import 'filepond/dist/filepond.min.css';
+import '../../../styles/report/ReportAttackMatrix.scss';
 
 class MatrixComponent extends React.Component {
   constructor(props) {
