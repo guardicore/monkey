@@ -7,7 +7,7 @@ import '../../styles/report/AttackReport.scss'
 import AuthComponent from '../AuthComponent';
 import {ScanStatus} from '../attack/techniques/Helpers';
 import Collapse from '@kunukn/react-collapse';
-import Matrix from './attack/Matrix';
+import Matrix from './attack/ReportMatrix';
 
 import T1210 from '../attack/techniques/T1210';
 import T1197 from '../attack/techniques/T1197';

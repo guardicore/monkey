@@ -5,6 +5,7 @@ SCHEMA = {
         "execution": {
             "title": "Execution",
             "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0002/",
             "properties": {
                 "T1059": {
                     "title": "T1059 Command line interface",
@@ -62,6 +63,7 @@ SCHEMA = {
         "defence_evasion": {
             "title": "Defence evasion",
             "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0005/",
             "properties": {
                 "T1197": {
                     "title": "T1197 BITS jobs",
@@ -92,6 +94,7 @@ SCHEMA = {
         "credential_access": {
             "title": "Credential access",
             "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0006/",
             "properties": {
                 "T1110": {
                     "title": "T1110 Brute force",
@@ -129,6 +132,7 @@ SCHEMA = {
         "discovery": {
             "title": "Discovery",
             "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0007/",
             "properties": {
                 "T1018": {
                     "title": "T1018 Remote System Discovery",
@@ -163,6 +167,7 @@ SCHEMA = {
         "lateral_movement": {
             "title": "Lateral movement",
             "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0008/",
             "properties": {
                 "T1210": {
                     "title": "T1210 Exploitation of Remote services",
@@ -203,6 +208,7 @@ SCHEMA = {
         "collection": {
             "title": "Collection",
             "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0009/",
             "properties": {
                 "T1005": {
                     "title": "T1005 Data from local system",
@@ -218,6 +224,7 @@ SCHEMA = {
         "command_and_control": {
             "title": "Command and Control",
             "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0011/",
             "properties": {
                 "T1090": {
                     "title": "T1090 Connection proxy",
@@ -248,6 +255,7 @@ SCHEMA = {
         "exfiltration": {
             "title": "Exfiltration",
             "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0010/",
             "properties": {
                 "T1041": {
                     "title": "T1041 Exfiltration Over Command and Control Channel",

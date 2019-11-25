@@ -19,7 +19,7 @@ class MatrixComponent extends React.Component {
       }
       let tech_type = this.state.schema.properties[type_key];
       columns.push({
-        Header: tech_type.title,
+        Header: () => (<a href={tech_type.link}>{tech_type.title}</a>),
         id: type_key,
         accessor: x => MatrixComponent.renderTechnique(x[tech_type.title]),
         style: {'whiteSpace': 'unset'}
