@@ -4,7 +4,7 @@ import logging
 from abc import ABCMeta, abstractmethod
 from os.path import dirname, basename, isfile, join
 import glob
-from typing import Sequence, TypeVar, Type
+from typing import Sequence, TypeVar, Type, Callable
 
 LOG = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ def _get_candidate_files(base_package_file):
     return [basename(f)[:-3] for f in files if isfile(f) and not f.endswith('__init__.py')]
 
 
-Plugin_type = TypeVar('Plugin_type', bound='Plugin')
+PluginType = TypeVar('PluginType', bound='Plugin')
 
 
 class Plugin(metaclass=ABCMeta):
@@ -25,11 +25,11 @@ class Plugin(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @classmethod
-    def get_instances(cls) -> Sequence[Type[Plugin_type]]:
+    def get_classes(cls) -> Sequence[Callable]:
         """
-        Returns the type objects from base_package_spec.
+        Returns the class objects from base_package_spec
         base_package name and file must refer to the same package otherwise bad results
-        :return: A list of parent_class objects.
+        :return: A list of parent_class classes.
         """
         objects = []
         candidate_files = _get_candidate_files(cls.base_package_file())
@@ -47,12 +47,28 @@ class Plugin(metaclass=ABCMeta):
                 LOG.debug("Checking if should run object {}".format(class_object.__name__))
                 try:
                     if class_object.should_run(class_object.__name__):
-                        instance = class_object()
-                        objects.append(instance)
+                        objects.append(class_object)
                         LOG.debug("Added {} to list".format(class_object.__name__))
                 except Exception as e:
                     LOG.warning("Exception {} when checking if {} should run".format(str(e), class_object.__name__))
         return objects
+
+    @classmethod
+    def get_instances(cls) -> Sequence[Type[PluginType]]:
+        """
+        Returns the type objects from base_package_spec.
+        base_package name and file must refer to the same package otherwise bad results
+        :return: A list of parent_class objects.
+        """
+        class_objects = cls.get_classes()
+        instances = []
+        for class_object in class_objects:
+            try:
+                instance = class_object()
+                instances.append(instance)
+            except Exception as e:
+                LOG.warning("Exception {} when initializing {}".format(str(e), class_object.__name__))
+        return instances
 
     @staticmethod
     @abstractmethod

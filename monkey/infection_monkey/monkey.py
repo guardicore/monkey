@@ -30,6 +30,7 @@ from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
+from infection_monkey.exploit.HostExploiter import HostExploiter
 
 __author__ = 'itamar'
 
@@ -144,9 +145,9 @@ class InfectionMonkey(object):
 
             self._network.initialize()
 
-            self._exploiters = WormConfiguration.exploiter_classes
-
             self._fingerprint = HostFinger.get_instances()
+
+            self._exploiters = HostExploiter.get_classes()
 
             if not self._keep_running or not WormConfiguration.alive:
                 break
