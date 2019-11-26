@@ -15,6 +15,9 @@ import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMinus } from '@fortawesome/free-solid-svg-icons';
+
 let guardicoreLogoImage = require('../../images/guardicore-logo.png');
 
 
@@ -384,13 +387,13 @@ class ReportPageComponent extends AuthComponent {
         </p>
         <div className="map-legend">
           <b>Legend: </b>
-          <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}}/></span>
+          <span>Exploit <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#cc0200'}}/></span>
           <b style={{color: '#aeaeae'}}> | </b>
-          <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}}/></span>
+          <span>Scan <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#ff9900'}}/></span>
           <b style={{color: '#aeaeae'}}> | </b>
-          <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span>
+          <span>Tunnel <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#0158aa'}}/></span>
           <b style={{color: '#aeaeae'}}> | </b>
-          <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}}/></span>
+          <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg"  style={{color: '#a9aaa9'}}/></span>
         </div>
         <div style={{position: 'relative', height: '80vh'}}>
           <ReactiveGraph graph={this.state.graph} options={options}/>
@@ -429,7 +432,7 @@ class ReportPageComponent extends AuthComponent {
         </p>
         <div className="map-legend">
           <b>Legend: </b>
-          <span>Access credentials <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span> <b
+          <span>Access credentials <FontAwesomeIcon icon={faMinus} size="lg"  style={{color: '#0158aa'}}/></span> <b
           style={{color: '#aeaeae'}}> | </b>
         </div>
         <div>

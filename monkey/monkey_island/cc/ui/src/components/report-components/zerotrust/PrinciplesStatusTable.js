@@ -13,7 +13,7 @@ const columns = [
       {
         Header: 'Status', id: 'status',
         accessor: x => {
-          return <StatusLabel status={x.status} size="fa-3x" showText={false}/>;
+          return <StatusLabel status={x.status} size="3x" showText={false}/>;
         },
         maxWidth: MAX_WIDTH_STATUS_COLUMN
       },

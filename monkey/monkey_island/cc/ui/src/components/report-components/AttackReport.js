@@ -3,6 +3,9 @@ import React from 'react';
 import {Col} from 'react-bootstrap';
 import '../../styles/Collapse.scss';
 import '../../styles/report/AttackReport.scss'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircle as faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
 
 import {ScanStatus} from '../attack/techniques/Helpers';
 import Matrix from './attack/ReportMatrix';
@@ -67,8 +70,8 @@ class AttackReport extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      techniques: this.props.report['techniques'],
       schema: this.props.report['schema'],
+      techniques: AttackReport.addLinksToTechniques(this.props.report['schema'], this.props.report['techniques']),
       selectedTechnique: false,
       collapseOpen: '',
     };
@@ -76,7 +79,8 @@ class AttackReport extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.report !== prevProps.report) {
-     this.setState({ report: this.props.report })
+     this.setState({schema: this.props.report['schema'],
+      techniques: AttackReport.addLinksToTechniques(this.props.report['schema'], this.props.report['techniques'])})
     }
   }
 
@@ -103,19 +107,19 @@ class AttackReport extends React.Component {
   renderLegend() {
     return (<div id="header" className="row justify-content-between attack-legend">
       <Col xs={3}>
-          <i className="fa fa-circle-thin icon-unchecked"></i>
-          <span> - Dissabled</span>
+        <FontAwesomeIcon icon={faCircleThin} className="icon-unchecked"/>
+        <span> - Dissabled</span>
       </Col>
       <Col xs={3}>
-        <i className="fa fa-circle icon-default"></i>
+        <FontAwesomeIcon icon={faCircle} className="icon-default"/>
         <span> - Unscanned</span>
       </Col>
       <Col xs={3}>
-        <i className="fa fa-circle icon-info"></i>
+        <FontAwesomeIcon icon={faCircle} className="icon-info"/>
         <span> - Scanned</span>
       </Col>
       <Col xs={3}>
-        <i className="fa fa-circle icon-danger"></i>
+        <FontAwesomeIcon icon={faCircle} className="icon-danger"/>
         <span> - Used</span>
       </Col>
     </div>)
@@ -151,6 +155,19 @@ class AttackReport extends React.Component {
       }
     }
     return false;
+  }
+
+  static addLinksToTechniques(schema, techniques){
+    schema = schema.properties;
+    for(let type in schema){
+      let typeTechniques = schema[type].properties;
+      for(let tech_id in typeTechniques){
+        if (typeTechniques[tech_id] !== undefined){
+          techniques[tech_id]['link'] = typeTechniques[tech_id].link
+        }
+      }
+    }
+    return techniques
   }
 
   render() {

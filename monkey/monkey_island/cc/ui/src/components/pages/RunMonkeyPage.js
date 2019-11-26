@@ -4,7 +4,8 @@ import {Button, Col, Well, Nav, NavItem, Collapse} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import GridLoader from 'react-spinners/GridLoader';
 
-import {Icon} from 'react-fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClipboard, faCheck, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import AwsRunTable from '../run-monkey/AwsRunTable';
@@ -147,7 +148,7 @@ class RunMonkeyPageComponent extends AuthComponent {
         <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
           <CopyToClipboard text={cmdText} className="pull-right btn-sm">
             <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
-              <Icon name="clipboard"/>
+              <FontAwesomeIcon icon={faClipboard}/>
             </Button>
           </CopyToClipboard>
           <code>{cmdText}</code>
@@ -170,9 +171,9 @@ class RunMonkeyPageComponent extends AuthComponent {
 
   static renderIconByState(state) {
     if (state === 'running') {
-      return <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
+      return <FontAwesomeIcon icon={faCheck} className="text-success" style={{'marginLeft': '5px'}}/>
     } else if (state === 'installing') {
-      return <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/>
+      return <FontAwesomeIcon icon={faRefresh} className="text-success" style={{'marginLeft': '5px'}}/>
     } else {
       return '';
     }
@@ -272,7 +273,7 @@ class RunMonkeyPageComponent extends AuthComponent {
             className={'btn btn-default btn-md center-block'}
             disabled={this.state.awsClicked}>
             Run on selected machines
-            {this.state.awsClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null}
+            {this.state.awsClicked ? <FontAwesomeIcon icon={faRefresh} className="text-success" style={{'marginLeft': '5px'}}/> : null}
           </button>
         </div>
       </div>

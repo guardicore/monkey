@@ -1,7 +1,8 @@
 import React from 'react';
 import {BrowserRouter as Router, NavLink, Redirect, Route} from 'react-router-dom';
 import {Col, Grid, Row} from 'react-bootstrap';
-import {Icon} from 'react-fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCheck, faUndo } from '@fortawesome/free-solid-svg-icons'
 
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
@@ -127,7 +128,7 @@ class AppComponent extends AuthComponent {
                     <span className="number">1.</span>
                     Run Monkey Island Server
                     {this.state.completedSteps.run_server ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      <FontAwesomeIcon icon={faCheck} className="pull-right checkmark text-success"/>
                       : ''}
                   </NavLink>
                 </li>
@@ -136,7 +137,7 @@ class AppComponent extends AuthComponent {
                     <span className="number">2.</span>
                     Run Monkey
                     {this.state.completedSteps.run_monkey ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      <FontAwesomeIcon icon={faCheck} className="pull-right checkmark text-success"/>
                       : ''}
                   </NavLink>
                 </li>
@@ -145,7 +146,7 @@ class AppComponent extends AuthComponent {
                     <span className="number">3.</span>
                     Infection Map
                     {this.state.completedSteps.infection_done ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      <FontAwesomeIcon icon={faCheck} className="pull-right checkmark text-success"/>
                       : ''}
                   </NavLink>
                 </li>
@@ -154,13 +155,13 @@ class AppComponent extends AuthComponent {
                     <span className="number">4.</span>
                     Security Reports
                     {this.state.completedSteps.report_done ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      <FontAwesomeIcon icon={faCheck} className="pull-right checkmark text-success"/>
                       : ''}
                   </NavLink>
                 </li>
                 <li>
                   <NavLink to="/start-over">
-                    <span className="number"><i className="fa fa-undo" style={{'marginLeft': '-1px'}}/></span>
+                    <span className="number"><FontAwesomeIcon icon={faUndo} style={{'marginLeft': '-1px'}}/></span>
                     Start Over
                   </NavLink>
                 </li>

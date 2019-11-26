@@ -7,6 +7,10 @@ import 'filepond/dist/filepond.min.css';
 import '../../styles/Tooltip.scss';
 import {Col} from 'react-bootstrap';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircle as faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
+
 class MatrixComponent extends AuthComponent {
   constructor(props) {
     super(props);
@@ -87,15 +91,15 @@ class MatrixComponent extends AuthComponent {
     return (
       <div id="header" className="row justify-content-between attack-legend">
         <Col xs={4}>
-          <i className="fa fa-circle-thin icon-unchecked"></i>
+          <FontAwesomeIcon icon={faCircleThin} className="icon-unchecked"/>
           <span> - Dissabled</span>
         </Col>
         <Col xs={4}>
-          <i className="fa fa-circle icon-checked"></i>
+          <FontAwesomeIcon icon={faCircle} className="icon-checked"/>
           <span> - Enabled</span>
         </Col>
         <Col xs={4}>
-          <i className="fa fa-circle icon-mandatory"></i>
+          <FontAwesomeIcon icon={faCircle} className="icon-mandatory"/>
           <span> - Mandatory</span>
         </Col>
       </div>)

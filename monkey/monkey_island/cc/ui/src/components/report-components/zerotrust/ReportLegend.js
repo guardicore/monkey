@@ -4,6 +4,9 @@ import {ZeroTrustStatuses} from './ZeroTrustPillars';
 import {NavLink} from 'react-router-dom';
 import {Panel} from 'react-bootstrap';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+
 
 class ZeroTrustReportLegend extends Component {
   render() {
@@ -13,7 +16,7 @@ class ZeroTrustReportLegend extends Component {
       <Panel>
         <Panel.Heading>
           <Panel.Title toggle>
-            <h3><i className="fa fa-chevron-down"/> Legend</h3>
+            <h3><FontAwesomeIcon icon={faChevronDown} /> Legend</h3>
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>

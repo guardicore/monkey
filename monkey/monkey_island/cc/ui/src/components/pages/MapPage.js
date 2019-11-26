@@ -1,7 +1,8 @@
 import React from 'react';
 import {Col, Modal} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import {Icon} from 'react-fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStopCircle, faMinus } from '@fortawesome/free-solid-svg-icons'
 import InfMapPreviewPaneComponent from 'components/map/preview-pane/InfMapPreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {options, edgeGroupToColor} from 'components/map/MapOptions';
@@ -157,13 +158,13 @@ class MapPageComponent extends AuthComponent {
         <Col xs={8}>
           <div className="map-legend">
             <b>Legend: </b>
-            <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}}/></span>
+            <span>Exploit <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#cc0200'}}/></span>
             <b style={{color: '#aeaeae'}}> | </b>
-            <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}}/></span>
+            <span>Scan <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#ff9900'}}/></span>
             <b style={{color: '#aeaeae'}}> | </b>
-            <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}}/></span>
+            <span>Tunnel <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#0158aa'}}/></span>
             <b style={{color: '#aeaeae'}}> | </b>
-            <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}}/></span>
+            <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#a9aaa9'}}/></span>
           </div>
           {this.renderTelemetryConsole()}
           <div style={{height: '80vh'}}>
@@ -180,7 +181,7 @@ class MapPageComponent extends AuthComponent {
               Telemetry</Link>
             <button onClick={() => this.setState({showKillDialog: true})} className="btn btn-danger pull-right"
                     style={{'width': '48%'}}>
-              <Icon name="stop-circle" style={{'marginRight': '0.5em'}}/>
+              <FontAwesomeIcon icon={faStopCircle} style={{'marginRight': '0.5em'}}/>
               Kill All Monkeys
             </button>
           </div>

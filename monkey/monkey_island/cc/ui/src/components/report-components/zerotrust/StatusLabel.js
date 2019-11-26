@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
 import * as PropTypes from 'prop-types';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faExclamationTriangle, faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
+
 const statusToIcon = {
-  'Passed': 'fa-check',
-  'Verify': 'fa-exclamation-triangle',
-  'Failed': 'fa-bomb',
-  'Unexecuted': 'fa-question'
+  'Passed': faCheck,
+  'Verify': faExclamationTriangle,
+  'Failed': faBomb,
+  'Unexecuted': faQuestion
 };
 
 export const statusToLabelType = {
@@ -24,7 +27,7 @@ export default class StatusLabel extends Component {
 
     return (
       <div className={'label ' + statusToLabelType[this.props.status]} style={{display: 'flow-root'}}>
-        <i className={'fa ' + statusToIcon[this.props.status] + ' ' + this.props.size}/>{text}
+        <FontAwesomeIcon icon={statusToIcon[this.props.status]} size={this.props.size}/>{text}
       </div>
     );
   }

@@ -12,6 +12,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1059",
                     "description": "Adversaries may use command-line interfaces to interact with systems "
                                    "and execute other software during the course of an operation.",
                 },
@@ -20,6 +21,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1129",
                     "description": "The Windows module loader can be instructed to load DLLs from arbitrary "
                                    "local paths and arbitrary Universal Naming Convention (UNC) network paths.",
                     "depends_on": ["T1078", "T1003"]
@@ -29,6 +31,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1106",
                     "description": "Adversary tools may directly use the Windows application "
                                    "programming interface (API) to execute binaries.",
                     "depends_on": ["T1210"]
@@ -38,6 +41,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1086",
                     "description": "Adversaries can use PowerShell to perform a number of actions,"
                                    " including discovery of information and execution of code.",
                 },
@@ -46,6 +50,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1064",
                     "description": "Adversaries may use scripts to aid in operations and "
                                    "perform multiple actions that would otherwise be manual.",
                 },
@@ -54,6 +59,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1035",
                     "description": "Adversaries may execute a binary, command, or script via a method "
                                    "that interacts with Windows services, such as the Service Control Manager.",
                     "depends_on": ["T1210"]
@@ -70,6 +76,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1197",
                     "description": "Adversaries may abuse BITS to download, execute, "
                                    "and even clean up after running malicious code."
                 },
@@ -78,6 +85,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1107",
                     "description": "Adversaries may remove files over the course of an intrusion "
                                    "to keep their footprint low or remove them at the end as part "
                                    "of the post-intrusion cleanup process."
@@ -87,6 +95,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1222",
                     "description": "Adversaries may modify file permissions/attributes to evade intended DACLs."
                 }
             }
@@ -101,6 +110,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1110",
                     "description": "Adversaries may use brute force techniques to attempt access to accounts "
                                    "when passwords are unknown or when password hashes are obtained.",
                     "depends_on": ["T1210", "T1021"]
@@ -110,6 +120,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1003",
                     "description": "Mapped with T1078 Valid Accounts because both techniques require"
                                    " same credential harvesting modules. "
                                    "Credential dumping is the process of obtaining account login and password "
@@ -122,6 +133,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1145",
                     "description": "Adversaries may gather private keys from compromised systems for use in "
                                    "authenticating to Remote Services like SSH or for use in decrypting "
                                    "other collected files such as email.",
@@ -139,6 +151,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1018",
                     "description": "Adversaries will likely attempt to get a listing of other systems by IP address, "
                                    "hostname, or other logical identifier on a network for lateral movement."
                 },
@@ -147,6 +160,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1082",
                     "depends_on": ["T1016", "T1005"],
                     "description": "An adversary may attempt to get detailed information about the "
                                    "operating system and hardware, including version, patches, hotfixes, "
@@ -157,6 +171,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1016",
                     "depends_on": ["T1005", "T1082"],
                     "description": "Adversaries will likely look for details about the network configuration "
                                    "and settings of systems they access or through information discovery"
@@ -174,6 +189,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1210",
                     "description": "Exploitation of a software vulnerability occurs when an adversary "
                                    "takes advantage of a programming error in a program, service, or within the "
                                    "operating system software or kernel itself to execute adversary-controlled code."
@@ -183,6 +199,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1075",
                     "description": "Pass the hash (PtH) is a method of authenticating as a user without "
                                    "having access to the user's cleartext password."
                 },
@@ -191,6 +208,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1105",
                     "description": "Files may be copied from one system to another to stage "
                                    "adversary tools or other files over the course of an operation."
                 },
@@ -199,6 +217,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1021",
                     "depends_on": ["T1110"],
                     "description": "An adversary may use Valid Accounts to log into a service"
                                    " specifically designed to accept remote connections."
@@ -215,6 +234,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1005",
                     "depends_on": ["T1016", "T1082"],
                     "description": "Sensitive data can be collected from local system sources, such as the file system "
                                    "or databases of information residing on the system prior to Exfiltration."
@@ -231,6 +251,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1090",
                     "description": "A connection proxy is used to direct network traffic between systems "
                                    "or act as an intermediary for network communications."
                 },
@@ -239,6 +260,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1065",
                     "description": "Adversaries may conduct C2 communications over a non-standard "
                                    "port to bypass proxies and firewalls that have been improperly configured."
                 },
@@ -247,6 +269,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1188",
                     "description": "To disguise the source of malicious traffic, "
                                    "adversaries may chain together multiple proxies."
                 }
@@ -262,6 +285,7 @@ SCHEMA = {
                     "type": "bool",
                     "value": True,
                     "necessary": True,
+                    "link": "https://attack.mitre.org/techniques/T1041",
                     "description": "Data exfiltration is performed over the Command and Control channel."
                 }
             }

@@ -1,5 +1,6 @@
 import React from 'react';
-import {Icon} from 'react-fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'
 import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import download from 'downloadjs'
@@ -273,7 +274,7 @@ class PreviewPaneComponent extends AuthComponent {
       <div className="preview-pane">
         {!info ?
           <span>
-            <Icon name="hand-o-left" style={{'marginRight': '0.5em'}}/>
+            <FontAwesomeIcon icon={faHandPointLeft} style={{'marginRight': '0.5em'}}/>
             Select an item on the map for a detailed look
           </span>
           :

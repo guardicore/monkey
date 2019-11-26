@@ -1,5 +1,7 @@
 import React from 'react';
-import {Icon} from 'react-fa';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 class VersionComponent extends React.Component {
   constructor(props) {
@@ -32,7 +34,7 @@ class VersionComponent extends React.Component {
             <div>
               <b>Newer version available!</b>
               <br/>
-              <b><a target="_blank" href={this.state.downloadLink}>Download here <Icon name="download"/></a></b>
+              <b><a target="_blank" href={this.state.downloadLink}>Download here <FontAwesomeIcon icon={faDownload}/></a></b>
             </div>
             :
             undefined

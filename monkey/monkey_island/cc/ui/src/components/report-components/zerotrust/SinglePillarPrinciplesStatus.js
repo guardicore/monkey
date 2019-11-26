@@ -5,6 +5,9 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 import {Panel} from 'react-bootstrap';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+
 export default class SinglePillarPrinciplesStatus extends AuthComponent {
   render() {
     if (this.props.principlesStatus.length === 0) {
@@ -15,7 +18,7 @@ export default class SinglePillarPrinciplesStatus extends AuthComponent {
           <Panel.Heading>
             <Panel.Title toggle>
               <h3 style={{textAlign: 'center', marginTop: '1px', marginBottom: '1px'}}>
-                <i className="fa fa-chevron-down"/> <PillarLabel pillar={this.props.pillar}
+                <FontAwesomeIcon icon={faChevronDown}/> <PillarLabel pillar={this.props.pillar}
                                                                  status={this.props.pillarsToStatuses[this.props.pillar]}/>
               </h3>
             </Panel.Title>
