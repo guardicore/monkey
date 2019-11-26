@@ -17,8 +17,9 @@ class SelectedTechnique extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.selected !== prevProps.selected) {
-     this.setState({ selectedTechnique: this.props.selected })
+    if (this.props.selected !== prevProps.selected || this.props.techniques !== prevProps.techniques) {
+     this.setState({ selectedTechnique: this.props.selected,
+                     techniques: this.props.techniques})
     }
   }
 
@@ -41,13 +42,11 @@ class SelectedTechnique extends React.Component {
     );
   }
 
-
-
   render(){
     let content = {};
     let selectedTechId = this.state.selectedTechnique;
     if(selectedTechId === false){
-      content = "Select a technique from attack matrix";
+      content = "None. Select a technique from ATT&CK matrix above.";
     } else {
       content = this.getSelectedTechniqueComponent(selectedTechId)
     }

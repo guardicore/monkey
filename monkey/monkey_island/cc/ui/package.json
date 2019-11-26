@@ -67,7 +67,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.22",
     "@kunukn/react-collapse": "^1.2.7",
-    "bootstrap": "3.4.1",
+    "bootstrap": "^3.4.1",
     "classnames": "^2.2.6",
     "core-js": "^2.6.10",
     "d3": "^5.14.1",
