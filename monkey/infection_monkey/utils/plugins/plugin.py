@@ -14,7 +14,7 @@ def _get_candidate_files(base_package_file):
     return [basename(f)[:-3] for f in files if isfile(f) and not f.endswith('__init__.py')]
 
 
-Plugin_type = TypeVar('Plugin_type', bound='Plugin')
+PluginType = TypeVar('PluginType', bound='Plugin')
 
 
 class Plugin(metaclass=ABCMeta):
@@ -54,7 +54,7 @@ class Plugin(metaclass=ABCMeta):
         return objects
 
     @classmethod
-    def get_instances(cls) -> Sequence[Type[Plugin_type]]:
+    def get_instances(cls) -> Sequence[Type[PluginType]]:
         """
         Returns the type objects from base_package_spec.
         base_package name and file must refer to the same package otherwise bad results
