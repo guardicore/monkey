@@ -15,7 +15,7 @@ install:
 # Python
 - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
 - pip install flake8 pytest dlint  # for next stages
-- pip install -r monkey/infection_monkey/requirements_linux.txt  # for unit tests
+- pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
 
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.

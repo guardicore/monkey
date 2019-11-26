@@ -93,7 +93,7 @@ ${python_cmd} -m pip install --user --upgrade -r ${requirements} || handle_error
 log_message "Installing monkey requirements"
 sudo apt-get install libffi-dev upx libssl-dev libc++1
 cd ${monkey_home}/monkey/infection_monkey || handle_error
-${python_cmd} -m pip install -r requirements_linux.txt --user --upgrade || handle_error
+${python_cmd} -m pip install -r requirements.txt --user --upgrade || handle_error
 
 # Download binaries
 log_message "Downloading binaries"

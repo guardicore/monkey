@@ -25,7 +25,7 @@ The monkey is composed of three separate parts.
         - 32bit: <https://aka.ms/vs/16/release/vc_redist.x86.exe>
         - 64bit: <https://go.microsoft.com/fwlink/?LinkId=746572>
 3. Download the dependent python packages using 
-        `pip install -r requirements_windows.txt`
+        `pip install -r requirements.txt`
 4. Download and extract UPX binary to monkey\infection_monkey\bin\upx.exe:
         <https://github.com/upx/upx/releases/download/v3.94/upx394w.zip>
 5. Build/Download Sambacry and Mimikatz binaries
@@ -51,7 +51,7 @@ Tested on Ubuntu 16.04.
 
 2. Install the python packages listed in requirements.txt using pip
     - `cd [code location]/infection_monkey`
-    - `python3.7 -m pip install -r requirements_linux.txt`
+    - `python3.7 -m pip install -r requirements.txt`
 
 3. Build Sambacry binaries
     - Build/Download according to sections at the end of this readme.
