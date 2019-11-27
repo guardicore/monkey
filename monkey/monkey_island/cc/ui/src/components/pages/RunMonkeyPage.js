@@ -5,7 +5,8 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import GridLoader from 'react-spinners/GridLoader';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboard, faCheck, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard, faCheck, faSync } from '@fortawesome/free-solid-svg-icons';
+
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import AwsRunTable from '../run-monkey/AwsRunTable';
@@ -171,9 +172,9 @@ class RunMonkeyPageComponent extends AuthComponent {
 
   static renderIconByState(state) {
     if (state === 'running') {
-      return <FontAwesomeIcon icon={faCheck} className="text-success" style={{'marginLeft': '5px'}}/>
+      return (<FontAwesomeIcon icon={faCheck} className="text-success" style={{'marginLeft': '5px'}}/>)
     } else if (state === 'installing') {
-      return <FontAwesomeIcon icon={faRefresh} className="text-success" style={{'marginLeft': '5px'}}/>
+      return (<FontAwesomeIcon icon={faSync} className="text-success" style={{'marginLeft': '5px'}}/>)
     } else {
       return '';
     }
@@ -273,7 +274,7 @@ class RunMonkeyPageComponent extends AuthComponent {
             className={'btn btn-default btn-md center-block'}
             disabled={this.state.awsClicked}>
             Run on selected machines
-            {this.state.awsClicked ? <FontAwesomeIcon icon={faRefresh} className="text-success" style={{'marginLeft': '5px'}}/> : null}
+            {this.state.awsClicked ? <FontAwesomeIcon icon={faSync} className="text-success" style={{'marginLeft': '5px'}}/> : null}
           </button>
         </div>
       </div>
