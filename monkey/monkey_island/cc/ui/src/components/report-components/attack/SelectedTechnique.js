@@ -2,6 +2,8 @@ import React from "react";
 import Collapse from '@kunukn/react-collapse';
 
 import AttackReport from '../AttackReport';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faQuestionCircle} from "@fortawesome/free-solid-svg-icons";
 
 const classNames = require('classnames');
 
@@ -27,8 +29,15 @@ class SelectedTechnique extends React.Component {
     const TechniqueComponent = this.state.techComponents[tech_id];
     return (
       <div key={tech_id} className={classNames('collapse-item', {'item--active': true})}>
-        <button className={classNames('btn-collapse', AttackReport.getComponentClass(tech_id, this.state.techniques))}>
+        <button className={classNames('btn-collapse',
+                                      'selected-technique',
+                                      AttackReport.getComponentClass(tech_id, this.state.techniques))}>
           <span>{this.state.techniques[tech_id].title}</span>
+          <span>
+            <a href={this.state.techniques[tech_id].link} target="_blank" className={"link-to-technique"}>
+              <FontAwesomeIcon icon={faQuestionCircle}/>
+            </a>
+          </span>
         </button>
         <Collapse
           className="collapse-comp"

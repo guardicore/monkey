@@ -4,10 +4,6 @@
   margin-top: 20px;
 }
 
-.attack-report .btn-collapse span:nth-of-type(2) {
-  flex: 0;
-}
-
 .attack-report div.attack-legend {
   margin-top: 30px;
 }
@@ -20,4 +16,12 @@
   margin-top: 30px;
   margin-bottom: 20px;
   padding: 0;
+}
+
+.attack-report .link-to-technique {
+  margin-right: 10px;
+}
+
+.attack-report .selected-technique {
+  cursor: default;
 }
