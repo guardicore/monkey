@@ -27,10 +27,11 @@ class MonkeyIslandRequests(object):
         @classmethod
         def refresh_jwt_token(cls, request_function):
             @functools.wraps(request_function)
-            def request_function_wrapper(self, *args,**kwargs):
+            def request_function_wrapper(self, *args, **kwargs):
                 self.token = self.try_get_jwt_from_server()
                 # noinspection PyArgumentList
                 return request_function(self, *args, **kwargs)
+
             return request_function_wrapper
 
     def get_jwt_from_server(self):
