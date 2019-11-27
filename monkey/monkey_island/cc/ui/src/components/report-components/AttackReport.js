@@ -11,6 +11,7 @@ import {ScanStatus} from '../attack/techniques/Helpers';
 import Matrix from './attack/ReportMatrix';
 import SelectedTechnique from './attack/SelectedTechnique';
 import TechniqueDropdowns from './attack/TechniqueDropdowns';
+import ReportLoader from './common/ReportLoader';
 
 import T1210 from '../attack/techniques/T1210';
 import T1197 from '../attack/techniques/T1197';
@@ -70,11 +71,13 @@ class AttackReport extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      schema: this.props.report['schema'],
-      techniques: AttackReport.addLinksToTechniques(this.props.report['schema'], this.props.report['techniques']),
-      selectedTechnique: false,
-      collapseOpen: '',
+        selectedTechnique: false,
+        collapseOpen: '',
     };
+    if (typeof this.props.report.schema !== 'undefined' && typeof this.props.report.techniques !== 'undefined'){
+      this.state['schema'] = this.props.report['schema'];
+      this.state['techniques'] = AttackReport.addLinksToTechniques(this.props.report['schema'], this.props.report['techniques']);
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -171,8 +174,8 @@ class AttackReport extends React.Component {
   }
 
   render() {
-    if (Object.keys(this.state.techniques).length === 0 && this.state.runStarted) {
-        return (<h1>No techniques were scanned</h1>);
+    if (typeof this.state.schema === 'undefined' || typeof this.state.techniques === 'undefined') {
+      return (<ReportLoader/>);
     } else {
       return (<div> {this.generateReportContent()}</div>);
     }
