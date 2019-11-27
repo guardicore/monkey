@@ -8,7 +8,7 @@ SCHEMA = {
             "link": "https://attack.mitre.org/tactics/TA0002/",
             "properties": {
                 "T1059": {
-                    "title": "T1059 Command line interface",
+                    "title": "Command line interface",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -17,7 +17,7 @@ SCHEMA = {
                                    "and execute other software during the course of an operation.",
                 },
                 "T1129": {
-                    "title": "T1129 Execution through module load",
+                    "title": "Execution through module load",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -27,7 +27,7 @@ SCHEMA = {
                     "depends_on": ["T1078", "T1003"]
                 },
                 "T1106": {
-                    "title": "T1106 Execution through API",
+                    "title": "Execution through API",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -37,7 +37,7 @@ SCHEMA = {
                     "depends_on": ["T1210"]
                 },
                 "T1086": {
-                    "title": "T1086 Powershell",
+                    "title": "Powershell",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -46,7 +46,7 @@ SCHEMA = {
                                    " including discovery of information and execution of code.",
                 },
                 "T1064": {
-                    "title": "T1064 Scripting",
+                    "title": "Scripting",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -55,7 +55,7 @@ SCHEMA = {
                                    "perform multiple actions that would otherwise be manual.",
                 },
                 "T1035": {
-                    "title": "T1035 Service execution",
+                    "title": "Service execution",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -72,7 +72,7 @@ SCHEMA = {
             "link": "https://attack.mitre.org/tactics/TA0005/",
             "properties": {
                 "T1197": {
-                    "title": "T1197 BITS jobs",
+                    "title": "BITS jobs",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -81,7 +81,7 @@ SCHEMA = {
                                    "and even clean up after running malicious code."
                 },
                 "T1107": {
-                    "title": "T1107 File Deletion",
+                    "title": "File Deletion",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -91,7 +91,7 @@ SCHEMA = {
                                    "of the post-intrusion cleanup process."
                 },
                 "T1222": {
-                    "title": "T1222 File permissions modification",
+                    "title": "File permissions modification",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -106,7 +106,7 @@ SCHEMA = {
             "link": "https://attack.mitre.org/tactics/TA0006/",
             "properties": {
                 "T1110": {
-                    "title": "T1110 Brute force",
+                    "title": "Brute force",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -116,7 +116,7 @@ SCHEMA = {
                     "depends_on": ["T1210", "T1021"]
                 },
                 "T1003": {
-                    "title": "T1003 Credential dumping",
+                    "title": "Credential dumping",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -129,7 +129,7 @@ SCHEMA = {
                     "depends_on": ["T1078"]
                 },
                 "T1145": {
-                    "title": "T1145 Private keys",
+                    "title": "Private keys",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -147,7 +147,7 @@ SCHEMA = {
             "link": "https://attack.mitre.org/tactics/TA0007/",
             "properties": {
                 "T1018": {
-                    "title": "T1018 Remote System Discovery",
+                    "title": "Remote System Discovery",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -156,7 +156,7 @@ SCHEMA = {
                                    "hostname, or other logical identifier on a network for lateral movement."
                 },
                 "T1082": {
-                    "title": "T1082 System information discovery",
+                    "title": "System information discovery",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -167,7 +167,7 @@ SCHEMA = {
                                    "service packs, and architecture."
                 },
                 "T1016": {
-                    "title": "T1016 System network configuration discovery",
+                    "title": "System network configuration discovery",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -185,7 +185,7 @@ SCHEMA = {
             "link": "https://attack.mitre.org/tactics/TA0008/",
             "properties": {
                 "T1210": {
-                    "title": "T1210 Exploitation of Remote services",
+                    "title": "Exploitation of Remote services",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -195,7 +195,7 @@ SCHEMA = {
                                    "operating system software or kernel itself to execute adversary-controlled code."
                 },
                 "T1075": {
-                    "title": "T1075 Pass the hash",
+                    "title": "Pass the hash",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -204,7 +204,7 @@ SCHEMA = {
                                    "having access to the user's cleartext password."
                 },
                 "T1105": {
-                    "title": "T1105 Remote file copy",
+                    "title": "Remote file copy",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -213,7 +213,7 @@ SCHEMA = {
                                    "adversary tools or other files over the course of an operation."
                 },
                 "T1021": {
-                    "title": "T1021 Remote services",
+                    "title": "Remote services",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -230,7 +230,7 @@ SCHEMA = {
             "link": "https://attack.mitre.org/tactics/TA0009/",
             "properties": {
                 "T1005": {
-                    "title": "T1005 Data from local system",
+                    "title": "Data from local system",
                     "type": "bool",
                     "value": True,
                     "necessary": False,
@@ -247,7 +247,7 @@ SCHEMA = {
             "link": "https://attack.mitre.org/tactics/TA0011/",
             "properties": {
                 "T1090": {
-                    "title": "T1090 Connection proxy",
+                    "title": "Connection proxy",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -256,7 +256,7 @@ SCHEMA = {
                                    "or act as an intermediary for network communications."
                 },
                 "T1065": {
-                    "title": "T1065 Uncommonly used port",
+                    "title": "Uncommonly used port",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -265,7 +265,7 @@ SCHEMA = {
                                    "port to bypass proxies and firewalls that have been improperly configured."
                 },
                 "T1188": {
-                    "title": "T1188 Multi-hop proxy",
+                    "title": "Multi-hop proxy",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
@@ -281,7 +281,7 @@ SCHEMA = {
             "link": "https://attack.mitre.org/tactics/TA0010/",
             "properties": {
                 "T1041": {
-                    "title": "T1041 Exfiltration Over Command and Control Channel",
+                    "title": "Exfiltration Over Command and Control Channel",
                     "type": "bool",
                     "value": True,
                     "necessary": True,
