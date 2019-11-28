@@ -97,11 +97,6 @@ class AppComponent extends AuthComponent {
     };
   }
 
-  static isReportUrl(){
-    let url = window.location.href;
-    return ( url.endsWith('/report/security') || url.endsWith('/report/attack') || url.endsWith('/report/zeroTrust'))
-  }
-
   // Sets the property that indicates if we need to remove PBA files from state or not
   setRemovePBAfiles = (rmFiles) => {
     this.setState({removePBAfiles: rmFiles});
@@ -156,7 +151,12 @@ class AppComponent extends AuthComponent {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/report/security" className={AppComponent.isReportUrl() ? "active" : ""}>
+                  <NavLink to="/report/security"
+                           isActive={(match, location) => {
+                             return (location.pathname === '/report/attack'
+                               || location.pathname === '/report/zeroTrust'
+                               || location.pathname === '/report/security')
+                           }}>
                     <span className="number">4.</span>
                     Security Reports
                     {this.state.completedSteps.report_done ?
