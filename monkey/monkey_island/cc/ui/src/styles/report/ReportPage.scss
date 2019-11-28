@@ -9,3 +9,7 @@
 .report-nav > li > a{
   height: 50px !important;
 }
+
+.report-nav > li.active{
+  font-weight: bold;
+}

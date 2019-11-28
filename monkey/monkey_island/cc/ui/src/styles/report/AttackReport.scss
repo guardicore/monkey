@@ -36,7 +36,8 @@
   padding: 2em 2em 0 2em;
 }
 
-.ReactTable .rt-td{
-   white-space: pre-line !important;
+.ReactTable .rt-td,.rt-resizable-header-content{
+  white-space: pre-line !important;
   word-wrap: break-word;
 }
+

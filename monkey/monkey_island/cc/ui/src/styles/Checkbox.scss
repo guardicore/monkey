@@ -12,6 +12,7 @@ $black: #000000;
   text-align: center;
   width: 100%;
   height: 100%;
+  cursor: pointer;
 
   input {
     display: none;
@@ -39,6 +40,7 @@ $black: #000000;
     background-color: $dark-green;
     color: $light-grey;
     fill: $light-grey;
+    cursor: default;
   }
 
   &.is-checked {
@@ -127,7 +129,7 @@ $black: #000000;
 }
 
 .icon-mandatory {
-  color: $dark-green
+  color: $dark-green;
 }
 
 .icon-unchecked {

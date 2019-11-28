@@ -18,3 +18,9 @@ $black: #3a3a3a;
   background-color: $light-red !important;
   color: $black;
 }
+
+.attack-matrix div.rt-td:hover {
+    transform: scale(1.08);
+    filter: brightness(110%);
+}
+
