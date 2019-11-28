@@ -125,7 +125,7 @@ def check_internet_access(services):
     """
     for host in services:
         try:
-            requests.get("https://%s" % (host,), timeout=TIMEOUT, verify=False)
+            requests.get("https://%s" % (host,), timeout=TIMEOUT, verify=False) # noqa: DUO123
             return True
         except ConnectionError:
             # Failed connecting
