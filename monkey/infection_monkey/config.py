@@ -2,11 +2,9 @@ import hashlib
 import os
 import json
 import sys
-import types
 import uuid
 from abc import ABCMeta
 from itertools import product
-import importlib
 
 __author__ = 'itamar'
 
@@ -20,10 +18,6 @@ HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
 
 class Configuration(object):
     def from_kv(self, formatted_data):
-        # now we won't work at <2.7 for sure
-        network_import = importlib.import_module('infection_monkey.network')
-        exploit_import = importlib.import_module('infection_monkey.exploit')
-
         unknown_items = []
         for key, value in list(formatted_data.items()):
             if key.startswith('_'):
@@ -32,15 +26,10 @@ class Configuration(object):
                 continue
             if self._depth_from_commandline and key == "depth":
                 continue
-            # handle in cases
-            elif key == 'exploiter_classes':
-                class_objects = [getattr(exploit_import, val) for val in value]
-                setattr(self, key, class_objects)
+            if hasattr(self, key):
+                setattr(self, key, value)
             else:
-                if hasattr(self, key):
-                    setattr(self, key, value)
-                else:
-                    unknown_items.append(key)
+                unknown_items.append(key)
         return unknown_items
 
     def from_json(self, json_data):
