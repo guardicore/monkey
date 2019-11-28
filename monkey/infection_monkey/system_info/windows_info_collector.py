@@ -3,11 +3,15 @@ import logging
 import sys
 
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
-
+# noinspection PyPep8
 import infection_monkey.config
+# noinspection PyPep8
 from infection_monkey.system_info.mimikatz_collector import MimikatzCollector
+# noinspection PyPep8
 from infection_monkey.system_info import InfoCollector
+# noinspection PyPep8
 from infection_monkey.system_info.wmi_consts import WMI_CLASSES
+# noinspection PyPep8
 from common.utils.wmi_utils import WMIUtils
 
 LOG = logging.getLogger(__name__)

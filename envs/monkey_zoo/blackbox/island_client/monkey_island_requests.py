@@ -27,35 +27,36 @@ class MonkeyIslandRequests(object):
         @classmethod
         def refresh_jwt_token(cls, request_function):
             @functools.wraps(request_function)
-            def request_function_wrapper(self, *args,**kwargs):
+            def request_function_wrapper(self, *args, **kwargs):
                 self.token = self.try_get_jwt_from_server()
                 # noinspection PyArgumentList
                 return request_function(self, *args, **kwargs)
+
             return request_function_wrapper
 
     def get_jwt_from_server(self):
-        resp = requests.post(self.addr + "api/auth",
+        resp = requests.post(self.addr + "api/auth",  # noqa: DUO123
                              json={"username": NO_AUTH_CREDS, "password": NO_AUTH_CREDS},
                              verify=False)
         return resp.json()["access_token"]
 
     @_Decorators.refresh_jwt_token
     def get(self, url, data=None):
-        return requests.get(self.addr + url,
+        return requests.get(self.addr + url,  # noqa: DUO123
                             headers=self.get_jwt_header(),
                             params=data,
                             verify=False)
 
     @_Decorators.refresh_jwt_token
     def post(self, url, data):
-        return requests.post(self.addr + url,
+        return requests.post(self.addr + url,  # noqa: DUO123
                              data=data,
                              headers=self.get_jwt_header(),
                              verify=False)
 
     @_Decorators.refresh_jwt_token
     def post_json(self, url, dict_data):
-        return requests.post(self.addr + url,
+        return requests.post(self.addr + url,  # noqa: DUO123
                              json=dict_data,
                              headers=self.get_jwt_header(),
                              verify=False)

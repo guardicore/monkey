@@ -17,7 +17,7 @@ class SegmentationFinding(Finding):
         """
         Creates a segmentation finding. If a segmentation finding with the relevant subnets already exists, adds the
         event to the existing finding, and the "worst" status is chosen (i.e. if the existing one is "Failed" it will
-        remain so).   
+        remain so).
 
         :param subnets: the 2 subnets of this finding.
         :param status: STATUS_PASSED or STATUS_FAILED

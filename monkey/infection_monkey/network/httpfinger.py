@@ -32,7 +32,7 @@ class HTTPFinger(HostFinger):
             # try http, we don't optimise for 443
             for url in (https, http):  # start with https and downgrade
                 try:
-                    with closing(head(url, verify=False, timeout=1)) as req:
+                    with closing(head(url, verify=False, timeout=1)) as req:  # noqa: DUO123
                         server = req.headers.get('Server')
                         ssl = True if 'https://' in url else False
                         self.init_service(host.services, ('tcp-' + port[1]), port[0])
