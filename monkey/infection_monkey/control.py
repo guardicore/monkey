@@ -144,7 +144,7 @@ class ControlClient(object):
             return
         try:
             telemetry = {'monkey_guid': GUID, 'log': json.dumps(log)}
-            requests.post("https://%s/api/log" % (WormConfiguration.current_server,), # noqa: DUO123
+            requests.post("https://%s/api/log" % (WormConfiguration.current_server,),  # noqa: DUO123
                           data=json.dumps(telemetry),
                           headers={'content-type': 'application/json'},
                           verify=False,
@@ -158,7 +158,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return
         try:
-            reply = requests.get("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID), # noqa: DUO123
+            reply = requests.get("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),  # noqa: DUO123
                                  verify=False,
                                  proxies=ControlClient.proxies)
 
@@ -185,7 +185,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return
         try:
-            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID), # noqa: DUO123
+            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),  # noqa: DUO123
                            data=json.dumps({'config_error': True}),
                            headers={'content-type': 'application/json'},
                            verify=False,
@@ -247,7 +247,7 @@ class ControlClient(object):
             if (monkeyfs.isfile(dest_file)) and (size == monkeyfs.getsize(dest_file)):
                 return dest_file
             else:
-                download = requests.get("https://%s/api/monkey/download/%s" % # noqa: DUO123
+                download = requests.get("https://%s/api/monkey/download/%s" %  # noqa: DUO123
                                         (WormConfiguration.current_server, filename),
                                         verify=False,
                                         proxies=ControlClient.proxies)
@@ -273,7 +273,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return None, None
         try:
-            reply = requests.post("https://%s/api/monkey/download" % (WormConfiguration.current_server,), # noqa: DUO123
+            reply = requests.post("https://%s/api/monkey/download" % (WormConfiguration.current_server,),  # noqa: DUO123
                                   data=json.dumps(host_dict),
                                   headers={'content-type': 'application/json'},
                                   verify=False, proxies=ControlClient.proxies)
