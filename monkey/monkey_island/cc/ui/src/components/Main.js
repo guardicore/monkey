@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, NavLink, Redirect, Route} from 'react-router-dom';
+import {BrowserRouter as Router, NavLink, Redirect, Route, Switch} from 'react-router-dom';
 import {Col, Grid, Row} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faUndo } from '@fortawesome/free-solid-svg-icons'
@@ -97,6 +97,11 @@ class AppComponent extends AuthComponent {
     };
   }
 
+  static isReportUrl(){
+    let url = window.location.href;
+    return ( url.endsWith('/report/security') || url.endsWith('/report/attack') || url.endsWith('/report/zeroTrust'))
+  }
+
   // Sets the property that indicates if we need to remove PBA files from state or not
   setRemovePBAfiles = (rmFiles) => {
     this.setState({removePBAfiles: rmFiles});
@@ -151,7 +156,7 @@ class AppComponent extends AuthComponent {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/report/security">
+                  <NavLink to="/report/security" className={AppComponent.isReportUrl() ? "active" : ""}>
                     <span className="number">4.</span>
                     Security Reports
                     {this.state.completedSteps.report_done ?
@@ -193,7 +198,11 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
+              <Switch>
               {this.renderRoute('/report/security', <ReportPage/>)}
+              {this.renderRoute('/report/attack', <ReportPage/>)}
+              {this.renderRoute('/report/zeroTrust', <ReportPage/>)}
+              </Switch>
               {this.renderRoute(reportZeroTrustRoute, <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
