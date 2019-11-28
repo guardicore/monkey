@@ -1,10 +1,9 @@
 import React from 'react';
-import {Col} from 'react-bootstrap';
+import {Col, Button} from 'react-bootstrap';
 import '../../styles/Collapse.scss';
 import '../../styles/report/AttackReport.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle as faCircle } from '@fortawesome/free-solid-svg-icons';
-import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import {ScanStatus} from '../attack/techniques/Helpers';
@@ -109,19 +108,15 @@ class AttackReport extends React.Component {
 
   renderLegend() {
     return (<div id="header" className="row justify-content-between attack-legend">
-      <Col xs={3}>
-        <FontAwesomeIcon icon={faCircleThin} className="icon-unchecked"/>
-        <span> - Dissabled</span>
-      </Col>
-      <Col xs={3}>
+      <Col xs={4}>
         <FontAwesomeIcon icon={faCircle} className="icon-default"/>
-        <span> - Unscanned</span>
+        <span> - Not scanned</span>
       </Col>
-      <Col xs={3}>
+      <Col xs={4}>
         <FontAwesomeIcon icon={faCircle} className="icon-info"/>
         <span> - Scanned</span>
       </Col>
-      <Col xs={3}>
+      <Col xs={4}>
         <FontAwesomeIcon icon={faCircle} className="icon-danger"/>
         <span> - Used</span>
       </Col>
@@ -134,7 +129,9 @@ class AttackReport extends React.Component {
           <ReportHeader report_type={ReportTypes.attack}/>
           <hr/>
           <p>
-            This report shows information about ATT&CK techniques used by Infection Monkey.
+            This report shows information about
+            <Button bsStyle={"link"} href={"https://attack.mitre.org/"} bsSize={"lg"} className={"attack-link"}>ATT&CK </Button>
+            techniques used by Infection Monkey.
           </p>
           {this.renderLegend()}
           <Matrix techniques={this.state.techniques} schema={this.state.schema} onClick={this.onTechniqueSelect}/>

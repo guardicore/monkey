@@ -92,7 +92,7 @@ class MatrixComponent extends AuthComponent {
       <div id="header" className="row justify-content-between attack-legend">
         <Col xs={4}>
           <FontAwesomeIcon icon={faCircleThin} className="icon-unchecked"/>
-          <span> - Dissabled</span>
+          <span> - Disabled</span>
         </Col>
         <Col xs={4}>
           <FontAwesomeIcon icon={faCircle} className="icon-checked"/>
