@@ -25,3 +25,18 @@
 .attack-report .selected-technique {
   cursor: default;
 }
+
+.attack-report {
+  padding: 0 !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.attack-report .padded{
+  padding: 2em 2em 0 2em;
+}
+
+.ReactTable .rt-td{
+   white-space: pre-line !important;
+  word-wrap: break-word;
+}

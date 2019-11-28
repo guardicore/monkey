@@ -1,3 +1,5 @@
+import '../../styles/report/ReportPage.scss';
+
 import React from 'react';
 import {Col, Nav, NavItem} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
@@ -97,7 +99,7 @@ class ReportPageComponent extends AuthComponent {
   renderNav = () => {
     return (<Nav bsStyle="tabs" justified
                  activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
-                 style={{'marginBottom': '2em'}}>
+                 className={"report-nav"}>
       {this.state.sections.map(section => <NavItem key={section.key} eventKey={section.key}>{section.title}</NavItem>)}
     </Nav>)
   };

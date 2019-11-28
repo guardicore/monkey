@@ -62,7 +62,7 @@ class SelectedTechnique extends React.Component {
 
     return (
       <div>
-        <h4 className="selected-technique-title">Selected technique:</h4>
+        <h3 className="selected-technique-title">Selected technique:</h3>
         <section className="attack-report selected-technique">
           {content}
         </section>

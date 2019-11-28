@@ -1,12 +1,12 @@
 import React from 'react';
-
 import {Col} from 'react-bootstrap';
 import '../../styles/Collapse.scss';
-import '../../styles/report/AttackReport.scss'
+import '../../styles/report/AttackReport.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle as faCircle } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
 
+import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import {ScanStatus} from '../attack/techniques/Helpers';
 import Matrix from './attack/ReportMatrix';
 import SelectedTechnique from './attack/SelectedTechnique';
@@ -130,22 +130,21 @@ class AttackReport extends React.Component {
 
   generateReportContent() {
     return (
-      <div id="attack" className="attack-report">
-      <h3>
-        ATT&CK report
-      </h3>
-      <p>
-        This report shows information about ATT&CK techniques used by Infection Monkey.
-      </p>
-      {this.renderLegend()}
-      <Matrix techniques={this.state.techniques} schema={this.state.schema} onClick={this.onTechniqueSelect}/>
-      <SelectedTechnique techComponents={techComponents}
-                         techniques={this.state.techniques}
-                         selected={this.state.selectedTechnique}/>
-      <TechniqueDropdowns techniques={this.state.techniques}
-                          techComponents={techComponents}/>
-      <br/>
-    </div>
+        <div id="attack" className="attack-report report-page">
+          <ReportHeader report_type={ReportTypes.attack}/>
+          <hr/>
+          <p>
+            This report shows information about ATT&CK techniques used by Infection Monkey.
+          </p>
+          {this.renderLegend()}
+          <Matrix techniques={this.state.techniques} schema={this.state.schema} onClick={this.onTechniqueSelect}/>
+          <SelectedTechnique techComponents={techComponents}
+                             techniques={this.state.techniques}
+                             selected={this.state.selectedTechnique}/>
+          <TechniqueDropdowns techniques={this.state.techniques}
+                              techComponents={techComponents}/>
+          <br/>
+        </div>
     )
   }
 

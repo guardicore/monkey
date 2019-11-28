@@ -1,0 +1,11 @@
+.report-nav {
+  margin-bottom: 2em !important;
+  position: sticky;
+  top: 0;
+  z-index: 1000000;
+  background-color: #ffffff;
+}
+
+.report-nav > li > a{
+  height: 50px !important;
+}
