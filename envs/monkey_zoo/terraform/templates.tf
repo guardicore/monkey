@@ -18,7 +18,7 @@ resource "google_compute_instance_template" "ubuntu16" {
     }
   }
   service_account {
-    email ="${local.service_account_email}"
+    email =local.service_account_email
     scopes=["cloud-platform"]
   }
 }
@@ -39,7 +39,7 @@ resource "google_compute_instance_template" "windows2016" {
     subnetwork="monkeyzoo-main"
   }
   service_account {
-    email="${local.service_account_email}"
+    email=local.service_account_email
     scopes=["cloud-platform"]
   }
 }

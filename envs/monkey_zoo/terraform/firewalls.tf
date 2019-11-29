@@ -1,6 +1,6 @@
 resource "google_compute_firewall" "islands-in" {
   name    = "${local.resource_prefix}islands-in"
-  network = "${google_compute_network.monkeyzoo.name}"
+  network = google_compute_network.monkeyzoo.name
 
   allow {
     protocol = "tcp"
@@ -14,7 +14,7 @@ resource "google_compute_firewall" "islands-in" {
 
 resource "google_compute_firewall" "islands-out" {
   name    = "${local.resource_prefix}islands-out"
-  network = "${google_compute_network.monkeyzoo.name}"
+  network = google_compute_network.monkeyzoo.name
 
   allow {
     protocol = "tcp"
@@ -27,7 +27,7 @@ resource "google_compute_firewall" "islands-out" {
 
 resource "google_compute_firewall" "monkeyzoo-in" {
   name    = "${local.resource_prefix}monkeyzoo-in"
-  network = "${google_compute_network.monkeyzoo.name}"
+  network = google_compute_network.monkeyzoo.name
 
   allow {
     protocol = "all"
@@ -40,7 +40,7 @@ resource "google_compute_firewall" "monkeyzoo-in" {
 
 resource "google_compute_firewall" "monkeyzoo-out" {
   name    = "${local.resource_prefix}monkeyzoo-out"
-  network = "${google_compute_network.monkeyzoo.name}"
+  network = google_compute_network.monkeyzoo.name
 
   allow {
     protocol = "all"
@@ -53,7 +53,7 @@ resource "google_compute_firewall" "monkeyzoo-out" {
 
 resource "google_compute_firewall" "tunneling-in" {
   name    = "${local.resource_prefix}tunneling-in"
-  network = "${google_compute_network.tunneling.name}"
+  network = google_compute_network.tunneling.name
 
   allow {
     protocol = "all"
@@ -65,7 +65,7 @@ resource "google_compute_firewall" "tunneling-in" {
 
 resource "google_compute_firewall" "tunneling-out" {
   name    = "${local.resource_prefix}tunneling-out"
-  network = "${google_compute_network.tunneling.name}"
+  network = google_compute_network.tunneling.name
 
   allow {
     protocol = "all"
@@ -77,7 +77,7 @@ resource "google_compute_firewall" "tunneling-out" {
 
 resource "google_compute_firewall" "tunneling2-in" {
   name    = "${local.resource_prefix}tunneling2-in"
-  network = "${google_compute_network.tunneling2.name}"
+  network = google_compute_network.tunneling2.name
 
   allow {
     protocol = "all"
@@ -89,7 +89,7 @@ resource "google_compute_firewall" "tunneling2-in" {
 
 resource "google_compute_firewall" "tunneling2-out" {
   name    = "${local.resource_prefix}tunneling2-out"
-  network = "${google_compute_network.tunneling2.name}"
+  network = google_compute_network.tunneling2.name
 
   allow {
     protocol = "all"

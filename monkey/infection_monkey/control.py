@@ -53,7 +53,7 @@ class ControlClient(object):
         if ControlClient.proxies:
             monkey['tunnel'] = ControlClient.proxies.get('https')
 
-        requests.post("https://%s/api/monkey" % (WormConfiguration.current_server,),
+        requests.post("https://%s/api/monkey" % (WormConfiguration.current_server,),  # noqa: DUO123
                       data=json.dumps(monkey),
                       headers={'content-type': 'application/json'},
                       verify=False,
@@ -76,7 +76,7 @@ class ControlClient(object):
                 if ControlClient.proxies:
                     debug_message += " through proxies: %s" % ControlClient.proxies
                 LOG.debug(debug_message)
-                requests.get("https://%s/api?action=is-up" % (server,),
+                requests.get("https://%s/api?action=is-up" % (server,),  # noqa: DUO123
                              verify=False,
                              proxies=ControlClient.proxies,
                              timeout=TIMEOUT_IN_SECONDS)
@@ -112,7 +112,7 @@ class ControlClient(object):
             monkey = {}
             if ControlClient.proxies:
                 monkey['tunnel'] = ControlClient.proxies.get('https')
-            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),  # noqa: DUO123
                            data=json.dumps(monkey),
                            headers={'content-type': 'application/json'},
                            verify=False,
@@ -129,7 +129,7 @@ class ControlClient(object):
             return
         try:
             telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': data}
-            requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
+            requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),  # noqa: DUO123
                           data=json.dumps(telemetry),
                           headers={'content-type': 'application/json'},
                           verify=False,
@@ -144,7 +144,7 @@ class ControlClient(object):
             return
         try:
             telemetry = {'monkey_guid': GUID, 'log': json.dumps(log)}
-            requests.post("https://%s/api/log" % (WormConfiguration.current_server,),
+            requests.post("https://%s/api/log" % (WormConfiguration.current_server,),  # noqa: DUO123
                           data=json.dumps(telemetry),
                           headers={'content-type': 'application/json'},
                           verify=False,
@@ -158,7 +158,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return
         try:
-            reply = requests.get("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+            reply = requests.get("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),  # noqa: DUO123
                                  verify=False,
                                  proxies=ControlClient.proxies)
 
@@ -185,7 +185,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return
         try:
-            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),  # noqa: DUO123
                            data=json.dumps({'config_error': True}),
                            headers={'content-type': 'application/json'},
                            verify=False,
@@ -247,7 +247,7 @@ class ControlClient(object):
             if (monkeyfs.isfile(dest_file)) and (size == monkeyfs.getsize(dest_file)):
                 return dest_file
             else:
-                download = requests.get("https://%s/api/monkey/download/%s" %
+                download = requests.get("https://%s/api/monkey/download/%s" %  # noqa: DUO123
                                         (WormConfiguration.current_server, filename),
                                         verify=False,
                                         proxies=ControlClient.proxies)
@@ -273,7 +273,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return None, None
         try:
-            reply = requests.post("https://%s/api/monkey/download" % (WormConfiguration.current_server,),
+            reply = requests.post("https://%s/api/monkey/download" % (WormConfiguration.current_server,),  # noqa: DUO123
                                   data=json.dumps(host_dict),
                                   headers={'content-type': 'application/json'},
                                   verify=False, proxies=ControlClient.proxies)
@@ -315,7 +315,7 @@ class ControlClient(object):
     @staticmethod
     def get_pba_file(filename):
         try:
-            return requests.get(PBA_FILE_DOWNLOAD %
+            return requests.get(PBA_FILE_DOWNLOAD %  # noqa: DUO123
                                 (WormConfiguration.current_server, filename),
                                 verify=False,
                                 proxies=ControlClient.proxies)

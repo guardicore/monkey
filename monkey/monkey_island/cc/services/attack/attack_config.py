@@ -26,9 +26,9 @@ class AttackConfig(object):
         :return: Technique object or None if technique is not found
         """
         attack_config = AttackConfig.get_config()
-        for key, attack_type in list(attack_config.items()):
-            for key, technique in list(attack_type['properties'].items()):
-                if key == technique_id:
+        for config_key, attack_type in list(attack_config.items()):
+            for type_key, technique in list(attack_type['properties'].items()):
+                if type_key == technique_id:
                     return technique
         return None
 

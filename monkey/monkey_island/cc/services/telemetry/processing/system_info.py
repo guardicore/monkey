@@ -33,8 +33,9 @@ def safe_process_telemetry(processing_function, telemetry_json):
     try:
         processing_function(telemetry_json)
     except Exception as err:
-        logger.error("Error while in {} stage of processing telemetry.".format(processing_function.func_name),
-                     exc_info=True)
+        logger.error(
+            "Error {} while in {} stage of processing telemetry.".format(str(err), processing_function.func_name),
+            exc_info=True)
 
 
 def process_ssh_info(telemetry_json):
