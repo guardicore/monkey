@@ -1,7 +1,7 @@
 import '../../styles/report/ReportPage.scss';
 
 import React from 'react';
-import {Route} from "react-router-dom";
+import {Route} from 'react-router-dom';
 import {Col, Nav, NavItem} from 'react-bootstrap';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, options} from 'components/map/MapOptions';
@@ -10,8 +10,8 @@ import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarni
 import AttackReport from '../report-components/AttackReport'
 import SecurityReport from '../report-components/SecurityReport'
 import ZeroTrustReport from '../report-components/ZeroTrustReport'
-import {extractExecutionStatusFromServerResponse} from "../report-components/common/ExecutionStatus";
-import MonkeysStillAliveWarning from "../report-components/common/MonkeysStillAliveWarning";
+import {extractExecutionStatusFromServerResponse} from '../report-components/common/ExecutionStatus';
+import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -110,10 +110,10 @@ class ReportPageComponent extends AuthComponent {
   renderNav = () => {
     return (
       <Route render={({history}) => (
-      <Nav bsStyle="tabs" justified
+      <Nav bsStyle='tabs' justified
                  activeKey={this.state.selectedSection}
                  onSelect={(key) => {this.setSelectedSection(key); history.push(key)}}
-                 className={"report-nav"}>
+                 className={'report-nav'}>
       {this.state.sections.map(section => this.renderNavButton(section))}
       </Nav>)}/>)
   };
@@ -147,7 +147,7 @@ class ReportPageComponent extends AuthComponent {
     }
     return (
       <Col xs={12} lg={10}>
-        <h1 className="page-title no-print">4. Security Reports</h1>
+        <h1 className='page-title no-print'>4. Security Reports</h1>
         {this.renderNav()}
         <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
         <div style={{'fontSize': '1.2em'}}>

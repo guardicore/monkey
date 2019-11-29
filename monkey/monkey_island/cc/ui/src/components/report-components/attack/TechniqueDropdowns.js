@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import Collapse from '@kunukn/react-collapse';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons'
@@ -36,14 +36,14 @@ class TechniqueDropdowns extends React.Component{
                 onClick={() => this.onToggle(tech_id)}>
           <span>{this.state.techniques[tech_id].title}</span>
           <span>
-            <a href={this.state.techniques[tech_id].link} target="_blank" className={"link-to-technique"}>
+            <a href={this.state.techniques[tech_id].link} target='_blank' className={'link-to-technique'}>
               <FontAwesomeIcon icon={faQuestionCircle}/>
             </a>
               <FontAwesomeIcon icon={this.state.collapseOpen === tech_id ? faChevronDown : faChevronUp}/>
           </span>
         </button>
         <Collapse
-          className="collapse-comp"
+          className='collapse-comp'
           isOpen={this.state.collapseOpen === tech_id}
           onChange={({collapseState}) => {
             this.setState({tech_id: collapseState});
@@ -73,18 +73,18 @@ class TechniqueDropdowns extends React.Component{
     let listClass = '';
     let content = [];
     if (this.state.techniquesHidden){
-      listClass = "hidden-list"
+      listClass = 'hidden-list'
     } else {
       Object.keys(this.state.techniques).forEach((tech_id) => {
         content.push(this.getTechniqueCollapse(tech_id))
       });
     }
     return (
-      <div className="dropdown-list">
-        <Button bsStyle="link"
-                bsSize="large"
+      <div className='dropdown-list'>
+        <Button bsStyle='link'
+                bsSize='large'
                 onClick={() => this.toggleTechList()}>
-          {this.state.techniquesHidden ? "Show all" : "Hide all"}
+          {this.state.techniquesHidden ? 'Show all' : 'Hide all'}
         </Button>
         <section className={`attack-report ${listClass}`}>{content}</section>
       </div>);

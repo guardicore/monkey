@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 import Collapse from '@kunukn/react-collapse';
 
 import AttackReport from '../AttackReport';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faQuestionCircle} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 
 const classNames = require('classnames');
 
@@ -34,13 +34,13 @@ class SelectedTechnique extends React.Component {
                                       AttackReport.getComponentClass(tech_id, this.state.techniques))}>
           <span>{this.state.techniques[tech_id].title}</span>
           <span>
-            <a href={this.state.techniques[tech_id].link} target="_blank" className={"link-to-technique"}>
+            <a href={this.state.techniques[tech_id].link} target='_blank' className={'link-to-technique'}>
               <FontAwesomeIcon icon={faQuestionCircle}/>
             </a>
           </span>
         </button>
         <Collapse
-          className="collapse-comp"
+          className='collapse-comp'
           isOpen={true}
           render={() => {
             return (<div className={`content ${tech_id}`}>
@@ -55,15 +55,15 @@ class SelectedTechnique extends React.Component {
     let content = {};
     let selectedTechId = this.state.selectedTechnique;
     if(selectedTechId === false){
-      content = "None. Select a technique from ATT&CK matrix above.";
+      content = 'None. Select a technique from ATT&CK matrix above.';
     } else {
       content = this.getSelectedTechniqueComponent(selectedTechId)
     }
 
     return (
       <div>
-        <h3 className="selected-technique-title">Selected technique:</h3>
-        <section className="attack-report selected-technique">
+        <h3 className='selected-technique-title'>Selected technique:</h3>
+        <section className='attack-report selected-technique'>
           {content}
         </section>
       </div>

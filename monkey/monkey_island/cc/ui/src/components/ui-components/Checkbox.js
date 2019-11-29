@@ -19,7 +19,7 @@ class CheckboxComponent extends React.PureComponent {
   */
   constructor(props) {
     super(props);
-    if (this.props.hasOwnProperty("status")){
+    if (this.props.hasOwnProperty('status')){
       this.status = this.props.status;
     } else {
       this.status = false
@@ -79,11 +79,11 @@ class CheckboxComponent extends React.PureComponent {
       <div
         className={cl}
         onClick={this.state.necessary ? void (0) : this.toggleChecked}>
-        <input className="ui ui-checkbox"
-               type="checkbox" value={this.state.checked}
+        <input className='ui ui-checkbox'
+               type='checkbox' value={this.state.checked}
                name={this.props.name}/>
-        <label className="text">{this.props.children}</label>
-        <div className="ui-btn-ping" onTransitionEnd={this.stopAnimation}></div>
+        <label className='text'>{this.props.children}</label>
+        <div className='ui-btn-ping' onTransitionEnd={this.stopAnimation}></div>
       </div>
     )
   }

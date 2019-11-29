@@ -71,7 +71,7 @@ class AttackReport extends React.Component {
     super(props);
     this.state = {
         selectedTechnique: false,
-        collapseOpen: '',
+        collapseOpen: ''
     };
     if (typeof this.props.report.schema !== 'undefined' && typeof this.props.report.techniques !== 'undefined'){
       this.state['schema'] = this.props.report['schema'];
@@ -87,7 +87,6 @@ class AttackReport extends React.Component {
   }
 
   onTechniqueSelect = (technique, value, mapped = false) => {
-    //this.setState({selectedTechnique: technique});
     let selectedTechnique = this.getTechniqueByTitle(technique);
     if (selectedTechnique === false){
       return;
@@ -107,17 +106,17 @@ class AttackReport extends React.Component {
   }
 
   renderLegend() {
-    return (<div id="header" className="row justify-content-between attack-legend">
+    return (<div id='header' className='row justify-content-between attack-legend'>
       <Col xs={4}>
-        <FontAwesomeIcon icon={faCircle} className="icon-default"/>
+        <FontAwesomeIcon icon={faCircle} className='icon-default'/>
         <span> - Not scanned</span>
       </Col>
       <Col xs={4}>
-        <FontAwesomeIcon icon={faCircle} className="icon-info"/>
+        <FontAwesomeIcon icon={faCircle} className='icon-info'/>
         <span> - Scanned</span>
       </Col>
       <Col xs={4}>
-        <FontAwesomeIcon icon={faCircle} className="icon-danger"/>
+        <FontAwesomeIcon icon={faCircle} className='icon-danger'/>
         <span> - Used</span>
       </Col>
     </div>)
@@ -125,12 +124,12 @@ class AttackReport extends React.Component {
 
   generateReportContent() {
     return (
-        <div id="attack" className="attack-report report-page">
+        <div id='attack' className='attack-report report-page'>
           <ReportHeader report_type={ReportTypes.attack}/>
           <hr/>
           <p>
             This report shows information about
-            <Button bsStyle={"link"} href={"https://attack.mitre.org/"} bsSize={"lg"} className={"attack-link"}>ATT&CK </Button>
+            <Button bsStyle={'link'} href={'https://attack.mitre.org/'} bsSize={'lg'} className={'attack-link'}>ATT&CK </Button>
             techniques used by Infection Monkey.
           </p>
           {this.renderLegend()}
@@ -147,6 +146,7 @@ class AttackReport extends React.Component {
 
   getTechniqueByTitle(title){
     for (let tech_id in this.state.techniques){
+      if (! this.state.techniques.hasOwnProperty(tech_id)) {return false;}
       let technique = this.state.techniques[tech_id];
       if (technique.title === title){
         technique['tech_id'] = tech_id;
@@ -159,8 +159,10 @@ class AttackReport extends React.Component {
   static addLinksToTechniques(schema, techniques){
     schema = schema.properties;
     for(let type in schema){
+      if (! schema.hasOwnProperty(type)) {return false;}
       let typeTechniques = schema[type].properties;
       for(let tech_id in typeTechniques){
+        if (! typeTechniques.hasOwnProperty(tech_id)) {return false;}
         if (typeTechniques[tech_id] !== undefined){
           techniques[tech_id]['link'] = typeTechniques[tech_id].link
         }
