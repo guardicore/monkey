@@ -12,58 +12,18 @@ import SelectedTechnique from './attack/SelectedTechnique';
 import TechniqueDropdowns from './attack/TechniqueDropdowns';
 import ReportLoader from './common/ReportLoader';
 
-import T1210 from '../attack/techniques/T1210';
-import T1197 from '../attack/techniques/T1197';
-import T1110 from '../attack/techniques/T1110';
-import T1075 from '../attack/techniques/T1075';
-import T1003 from '../attack/techniques/T1003';
-import T1059 from '../attack/techniques/T1059';
-import T1086 from '../attack/techniques/T1086';
-import T1082 from '../attack/techniques/T1082';
-import T1145 from '../attack/techniques/T1145';
-import T1105 from '../attack/techniques/T1105';
-import T1107 from '../attack/techniques/T1107';
-import T1065 from '../attack/techniques/T1065';
-import T1035 from '../attack/techniques/T1035';
-import T1129 from '../attack/techniques/T1129';
-import T1106 from '../attack/techniques/T1106';
-import T1188 from '../attack/techniques/T1188';
-import T1090 from '../attack/techniques/T1090';
-import T1041 from '../attack/techniques/T1041';
-import T1222 from '../attack/techniques/T1222';
-import T1005 from '../attack/techniques/T1005';
-import T1018 from '../attack/techniques/T1018';
-import T1016 from '../attack/techniques/T1016';
-import T1021 from '../attack/techniques/T1021';
-import T1064 from '../attack/techniques/T1064';
+const techComponents = getAllAttackModules();
 
-const techComponents = {
-  'T1210': T1210,
-  'T1197': T1197,
-  'T1110': T1110,
-  'T1075': T1075,
-  'T1003': T1003,
-  'T1059': T1059,
-  'T1086': T1086,
-  'T1082': T1082,
-  'T1145': T1145,
-  'T1065': T1065,
-  'T1105': T1105,
-  'T1035': T1035,
-  'T1129': T1129,
-  'T1106': T1106,
-  'T1107': T1107,
-  'T1188': T1188,
-  'T1090': T1090,
-  'T1041': T1041,
-  'T1222': T1222,
-  'T1005': T1005,
-  'T1018': T1018,
-  'T1016': T1016,
-  'T1021': T1021,
-  'T1064': T1064
-};
-
+function getAllAttackModules() {
+  let context = require.context("../attack/techniques/", false, /\.js$/);
+  let obj = {};
+  context.keys().forEach(function (key) {
+    let techName = key.replace(/\.js/, '');
+    techName = String(techName.replace(/\.\//, ''));
+    obj[techName] = context(key).default;
+  });
+  return obj;
+}
 
 class AttackReport extends React.Component {
 
