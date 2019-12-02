@@ -120,8 +120,14 @@ $black: #000000;
   border-right: 3px solid rgba(0,0,0,0) !important;
 }
 
+.attack-matrix .rt-tr-group div.rt-td:first-child {
+  border-left: 3px solid rgba(0,0,0,0) !important;
+}
+
+
 .rt-tr-group {
-  border-bottom: 3px solid rgba(0,0,0,0) !important;
+  border-top: 3px solid white !important;
+  border-bottom: none !important;
 }
 
 .icon-checked {

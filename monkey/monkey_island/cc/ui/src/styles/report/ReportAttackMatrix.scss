@@ -22,5 +22,10 @@ $black: #3a3a3a;
 .attack-matrix div.rt-td:hover {
     transform: scale(1.08);
     filter: brightness(110%);
+    z-index: 10000;
+}
+
+.attack-matrix .rt-thead,.-header {
+  border-bottom: 1px solid #0000000f;
 }
 
