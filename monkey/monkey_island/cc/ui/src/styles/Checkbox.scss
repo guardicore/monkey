@@ -125,9 +125,13 @@ $black: #000000;
 }
 
 
-.rt-tr-group {
+.attack-matrix .rt-tr-group {
   border-top: 3px solid white !important;
   border-bottom: none !important;
+}
+
+.attack-matrix .rt-tr-group:last-child {
+  margin-bottom: 3px !important;
 }
 
 .icon-checked {
