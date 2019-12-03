@@ -15,6 +15,7 @@ class TechniqueDropdowns extends React.Component{
     this.state = {
       techniques: this.props.techniques,
       techComponents: this.props.techComponents,
+      schema: this.props.schema,
       collapseOpen: '',
       techniquesHidden: true
     };
@@ -72,15 +73,34 @@ class TechniqueDropdowns extends React.Component{
     this.setState({techniquesHidden: (! this.state.techniquesHidden)})
   }
 
-  render(){
-    let listClass = '';
+  getOrderedTechniqueList(){
     let content = [];
+    for(const type_key in this.state.schema.properties){
+      if (! this.state.schema.properties.hasOwnProperty(type_key)){
+        continue;
+      }
+      let tech_type = this.state.schema.properties[type_key];
+      content.push(<h2>{tech_type.title}</h2>);
+      for(const tech_id in this.state.techniques){
+        if (! this.state.techniques.hasOwnProperty(tech_id)){
+          continue;
+        }
+        let technique = this.state.techniques[tech_id];
+        if(technique.type === tech_type.title){
+          content.push(this.getTechniqueCollapse(tech_id))
+        }
+      }
+    }
+    return content
+  }
+
+  render(){
+    let content = [];
+    let listClass = '';
     if (this.state.techniquesHidden){
       listClass = 'hidden-list'
     } else {
-      Object.keys(this.state.techniques).forEach((tech_id) => {
-        content.push(this.getTechniqueCollapse(tech_id))
-      });
+      content = this.getOrderedTechniqueList()
     }
     return (
       <div className='attack-technique-list-component'>

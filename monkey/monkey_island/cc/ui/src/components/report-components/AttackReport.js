@@ -109,7 +109,8 @@ class AttackReport extends React.Component {
                              techniques={this.state.techniques}
                              selected={this.state.selectedTechnique}/>
           <TechniqueDropdowns techniques={this.state.techniques}
-                              techComponents={techComponents}/>
+                              techComponents={techComponents}
+                              schema={this.state.schema}/>
           <br/>
         </div>
     )
