@@ -15,7 +15,7 @@ import ReportLoader from './common/ReportLoader';
 const techComponents = getAllAttackModules();
 
 function getAllAttackModules() {
-  let context = require.context("../attack/techniques/", false, /\.js$/);
+  let context = require.context('../attack/techniques/', false, /\.js$/);
   let obj = {};
   context.keys().forEach(function (key) {
     let techName = key.replace(/\.js/, '');
@@ -68,11 +68,11 @@ class AttackReport extends React.Component {
   static getStatusIcon(tech_id, techniques){
     switch (techniques[tech_id].status){
       case ScanStatus.SCANNED:
-        return <FontAwesomeIcon icon={faEye} className={"technique-status-icon"}/>;
+        return <FontAwesomeIcon icon={faEye} className={'technique-status-icon'}/>;
       case ScanStatus.USED:
-        return <FontAwesomeIcon icon={faRadiation} className={"technique-status-icon"}/>;
+        return <FontAwesomeIcon icon={faRadiation} className={'technique-status-icon'}/>;
       default:
-        return <FontAwesomeIcon icon={faEyeSlash} className={"technique-status-icon"}/>;
+        return <FontAwesomeIcon icon={faEyeSlash} className={'technique-status-icon'}/>;
     }
   }
 

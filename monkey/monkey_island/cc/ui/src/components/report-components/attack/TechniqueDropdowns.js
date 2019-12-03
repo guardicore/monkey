@@ -112,8 +112,8 @@ class TechniqueDropdowns extends React.Component{
                   className={classNames({'toggle-btn': true,
                                          'toggled-off' : this.state.techniquesHidden,
                                          'toggled-on': !this.state.techniquesHidden})}>
-            <FontAwesomeIcon icon={faToggleOn} className={'switch-on'} size={"2x"}/>
-            <FontAwesomeIcon icon={faToggleOn} className={'switch-off'} size={"2x"}/>
+            <FontAwesomeIcon icon={faToggleOn} className={'switch-on'} size={'2x'}/>
+            <FontAwesomeIcon icon={faToggleOn} className={'switch-off'} size={'2x'}/>
           </Button>
         </h3>
         <section className={`dropdown-list ${listClass}`}>{content}</section>
