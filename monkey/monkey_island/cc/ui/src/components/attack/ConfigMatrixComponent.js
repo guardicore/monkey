@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle as faCircle } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
 
-class MatrixComponent extends AuthComponent {
+class ConfigMatrixComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {lastAction: 'none'}
@@ -81,8 +81,8 @@ class MatrixComponent extends AuthComponent {
 
   getTableData = (config) => {
     let configCopy = JSON.parse(JSON.stringify(config));
-    let maxTechniques = MatrixComponent.findMaxTechniques(Object.values(configCopy));
-    let matrixTableData = MatrixComponent.parseTechniques(Object.values(configCopy), maxTechniques);
+    let maxTechniques = ConfigMatrixComponent.findMaxTechniques(Object.values(configCopy));
+    let matrixTableData = ConfigMatrixComponent.parseTechniques(Object.values(configCopy), maxTechniques);
     let columns = this.getColumns(matrixTableData);
     return {'columns': columns, 'matrixTableData': matrixTableData, 'maxTechniques': maxTechniques}
   };
@@ -120,4 +120,4 @@ class MatrixComponent extends AuthComponent {
   }
 }
 
-export default MatrixComponent;
+export default ConfigMatrixComponent;

@@ -5,7 +5,7 @@ import FileSaver from 'file-saver';
 import AuthComponent from '../AuthComponent';
 import {FilePond} from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
-import MatrixComponent from '../attack/MatrixComponent';
+import ConfigMatrixComponent from '../attack/ConfigMatrixComponent';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -450,10 +450,10 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   renderMatrix = () => {
-    return (<MatrixComponent configuration={this.state.attackConfig}
-                             submit={this.componentDidMount}
-                             reset={this.resetConfig}
-                             change={this.attackTechniqueChange}/>)
+    return (<ConfigMatrixComponent configuration={this.state.attackConfig}
+                                   submit={this.componentDidMount}
+                                   reset={this.resetConfig}
+                                   change={this.attackTechniqueChange}/>)
   };
 
 

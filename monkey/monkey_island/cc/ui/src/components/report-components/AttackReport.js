@@ -7,7 +7,7 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import {ScanStatus} from '../attack/techniques/Helpers';
-import Matrix from './attack/ReportMatrix';
+import Matrix from './attack/ReportMatrixComponent';
 import SelectedTechnique from './attack/SelectedTechnique';
 import TechniqueDropdowns from './attack/TechniqueDropdowns';
 import ReportLoader from './common/ReportLoader';
@@ -46,7 +46,7 @@ class AttackReport extends React.Component {
     }
   }
 
-  onTechniqueSelect = (technique, value, mapped = false) => {
+  onTechniqueSelect = (technique, value) => {
     let selectedTechnique = this.getTechniqueByTitle(technique);
     if (selectedTechnique === false){
       return;
@@ -89,7 +89,7 @@ class AttackReport extends React.Component {
           <hr/>
           <p>
             This report shows information about
-            <Button bsStyle={'link'} href={'https://attack.mitre.org/'} bsSize={'lg'} className={'attack-link'}>ATT&CK </Button>
+            <Button bsStyle={'link'} href={'https://attack.mitre.org/'} bsSize={'lg'} className={'attack-link'}>Mitre ATT&CK™</Button>
             techniques used by Infection Monkey.
           </p>
           {this.renderLegend()}
@@ -105,7 +105,7 @@ class AttackReport extends React.Component {
   }
 
   getTechniqueByTitle(title){
-    for (let tech_id in this.state.techniques){
+    for (const tech_id in this.state.techniques){
       if (! this.state.techniques.hasOwnProperty(tech_id)) {return false;}
       let technique = this.state.techniques[tech_id];
       if (technique.title === title){
@@ -118,10 +118,10 @@ class AttackReport extends React.Component {
 
   static addLinksToTechniques(schema, techniques){
     schema = schema.properties;
-    for(let type in schema){
+    for(const type in schema){
       if (! schema.hasOwnProperty(type)) {return false;}
       let typeTechniques = schema[type].properties;
-      for(let tech_id in typeTechniques){
+      for(const tech_id in typeTechniques){
         if (! typeTechniques.hasOwnProperty(tech_id)) {return false;}
         if (typeTechniques[tech_id] !== undefined){
           techniques[tech_id]['link'] = typeTechniques[tech_id].link

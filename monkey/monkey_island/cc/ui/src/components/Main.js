@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, NavLink, Redirect, Route, Switch} from 'react-router-dom';
+import {BrowserRouter as Router, NavLink, Redirect, Route, Switch, withRouter} from 'react-router-dom';
 import {Col, Grid, Row} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faUndo } from '@fortawesome/free-solid-svg-icons'
@@ -80,6 +80,13 @@ class AppComponent extends AuthComponent {
       return <Route exact path={route_path} render={render_func}/>;
     } else {
       return <Route path={route_path} render={render_func}/>;
+    }
+  };
+
+  redirectTo = (userPath, targetPath) => {
+    let pathQuery = new RegExp(userPath+"[\/]?$", "g");
+    if(window.location.pathname.match(pathQuery)){
+      return <Redirect to={{pathname: targetPath}}/>
     }
   };
 
@@ -198,12 +205,12 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
+              {this.redirectTo('/report', '/report/security')}
               <Switch>
               {this.renderRoute('/report/security', <ReportPage/>)}
               {this.renderRoute('/report/attack', <ReportPage/>)}
               {this.renderRoute('/report/zeroTrust', <ReportPage/>)}
               </Switch>
-              {this.renderRoute(reportZeroTrustRoute, <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>

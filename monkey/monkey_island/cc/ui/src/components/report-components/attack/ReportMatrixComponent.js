@@ -5,7 +5,7 @@ import ReactTable from 'react-table';
 import 'filepond/dist/filepond.min.css';
 import '../../../styles/report/ReportAttackMatrix.scss';
 
-class MatrixComponent extends React.Component {
+class ReportMatrixComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {techniques: this.props.techniques,
@@ -14,7 +14,7 @@ class MatrixComponent extends React.Component {
 
   getColumns() {
     let columns = [];
-    for(let type_key in this.state.schema.properties){
+    for(const type_key in this.state.schema.properties){
       if (! this.state.schema.properties.hasOwnProperty(type_key)){
         continue;
       }
@@ -31,11 +31,11 @@ class MatrixComponent extends React.Component {
 
   getTableRows() {
     let rows = [];
-    for (let tech_id in this.state.techniques) {
+    for (const tech_id in this.state.techniques) {
       if (this.state.techniques.hasOwnProperty(tech_id)){
         let technique_added = false;
         let technique = this.state.techniques[tech_id];
-        for(let row of rows){
+        for(const row of rows){
           if (! row.hasOwnProperty(technique.type)){
             row[technique.type] = technique;
             technique_added = true;
@@ -81,4 +81,4 @@ class MatrixComponent extends React.Component {
   }
 }
 
-export default MatrixComponent;
+export default ReportMatrixComponent;
