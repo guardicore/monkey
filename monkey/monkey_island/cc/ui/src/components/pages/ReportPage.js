@@ -57,11 +57,13 @@ class ReportPageComponent extends AuthComponent {
             attackReport: res
           });
         });
-      this.updateZeroTrustReportFromServer();
+      this.getZeroTrustReportFromServer().then((ztReport) => {
+        this.setState({zeroTrustReport: ztReport})
+      });
     }
   }
 
-  updateZeroTrustReportFromServer = async () => {
+  getZeroTrustReportFromServer = async () => {
     let ztReport = {findings: {}, principles: {}, pillars: {}};
     await this.authFetch('/api/report/zero_trust/findings')
       .then(res => res.json())
@@ -77,9 +79,8 @@ class ReportPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         ztReport.pillars = res;
-      }).then(() => {
-        this.setState({zeroTrustReport: ztReport})
-      })
+      });
+    return ztReport
   };
 
   componentWillUnmount() {
