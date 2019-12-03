@@ -146,7 +146,7 @@ class ReportPageComponent extends AuthComponent {
       content = <MustRunMonkeyWarning/>;
     }
     return (
-      <Col xs={12} lg={10}>
+      <Col xs={12} lg={12}>
         <h1 className='page-title no-print'>4. Security Reports</h1>
         {this.renderNav()}
         <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>

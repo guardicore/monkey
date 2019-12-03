@@ -32,7 +32,10 @@ class SelectedTechnique extends React.Component {
         <button className={classNames('btn-collapse',
                                       'selected-technique',
                                       AttackReport.getComponentClass(tech_id, this.state.techniques))}>
-          <span>{this.state.techniques[tech_id].title}</span>
+          <span>
+            {AttackReport.getStatusIcon(tech_id, this.state.techniques)}
+            {this.state.techniques[tech_id].title}
+          </span>
           <span>
             <a href={this.state.techniques[tech_id].link} target='_blank' className={'link-to-technique'}>
               <FontAwesomeIcon icon={faQuestionCircle}/>

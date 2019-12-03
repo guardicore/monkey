@@ -3,7 +3,7 @@ import {Col, Button} from 'react-bootstrap';
 import '../../styles/Collapse.scss';
 import '../../styles/report/AttackReport.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import {faCircle, faEye, faEyeSlash, faRadiation} from '@fortawesome/free-solid-svg-icons';
 
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import {ScanStatus} from '../attack/techniques/Helpers';
@@ -62,6 +62,17 @@ class AttackReport extends React.Component {
         return 'collapse-danger';
       default:
         return 'collapse-default';
+    }
+  }
+
+  static getStatusIcon(tech_id, techniques){
+    switch (techniques[tech_id].status){
+      case ScanStatus.SCANNED:
+        return <FontAwesomeIcon icon={faEye} className={"technique-status-icon"}/>;
+      case ScanStatus.USED:
+        return <FontAwesomeIcon icon={faRadiation} className={"technique-status-icon"}/>;
+      default:
+        return <FontAwesomeIcon icon={faEyeSlash} className={"technique-status-icon"}/>;
     }
   }
 

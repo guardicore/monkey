@@ -26,12 +26,6 @@
   cursor: default;
 }
 
-.attack-report {
-  padding: 0 !important;
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important;
-}
-
 .attack-report .padded{
   padding: 2em 2em 0 2em;
 }
@@ -53,7 +47,7 @@
 
 .attack-report .toggle-btn {
   padding: 0;
-  margin-bottom: 33px;
+  margin-bottom: 30px;
   margin-left: 6px;
   outline: none !important;
   font-size: 15px;
@@ -80,4 +74,9 @@
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   color: gray;
+}
+
+.technique-status-icon {
+  padding-right:5px;
+  margin-bottom: 1px;
 }
