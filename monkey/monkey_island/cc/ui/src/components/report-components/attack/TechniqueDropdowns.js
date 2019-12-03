@@ -80,7 +80,7 @@ class TechniqueDropdowns extends React.Component{
         continue;
       }
       let tech_type = this.state.schema.properties[type_key];
-      content.push(<h2>{tech_type.title}</h2>);
+      content.push(<h3>{tech_type.title}</h3>);
       for(const tech_id in this.state.techniques){
         if (! this.state.techniques.hasOwnProperty(tech_id)){
           continue;
@@ -104,17 +104,18 @@ class TechniqueDropdowns extends React.Component{
     }
     return (
       <div className='attack-technique-list-component'>
-        List of all techniques
-        <Button bsStyle='link'
-                bsSize='large'
-                onClick={() => this.toggleTechList()}
-                className={classNames({'toggle-btn': true,
-                                       'toggled-off' : this.state.techniquesHidden,
-                                       'toggled-on': !this.state.techniquesHidden})}>
-
-          <FontAwesomeIcon icon={faToggleOn} className={'switch-on'} size={"2x"}/>
-          <FontAwesomeIcon icon={faToggleOn} className={'switch-off'} size={"2x"}/>
-        </Button>
+        <h3>
+          List of all techniques
+          <Button bsStyle='link'
+                  bsSize='large'
+                  onClick={() => this.toggleTechList()}
+                  className={classNames({'toggle-btn': true,
+                                         'toggled-off' : this.state.techniquesHidden,
+                                         'toggled-on': !this.state.techniquesHidden})}>
+            <FontAwesomeIcon icon={faToggleOn} className={'switch-on'} size={"2x"}/>
+            <FontAwesomeIcon icon={faToggleOn} className={'switch-off'} size={"2x"}/>
+          </Button>
+        </h3>
         <section className={`dropdown-list ${listClass}`}>{content}</section>
       </div>);
   }
