@@ -12,7 +12,7 @@
   display: none;
 }
 
-.attack-report .dropdown-list .btn-lg {
+.attack-technique-list-component .dropdown-list .btn-lg {
   margin-top: 30px;
   margin-bottom: 20px;
   padding: 0;
@@ -43,4 +43,41 @@
 
 .attack-link{
   padding: 0 7px 3px 7px !important;
+}
+
+.attack-report .toggle-btn{
+  position:relative;
+  height:30px;
+  width:30px;
+}
+
+.attack-report .toggle-btn {
+  padding: 0;
+  margin-bottom: 33px;
+  margin-left: 6px;
+  outline: none !important;
+  font-size: 15px;
+}
+
+.attack-report .toggle-btn svg {
+  position:absolute;
+  left:0;
+  -webkit-transition: opacity 0.15s ease-in-out;
+  -moz-transition: opacity 0.15s ease-in-out;
+  -o-transition: opacity 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.attack-report .toggle-btn.toggled-on .switch-off{
+  opacity:0;
+}
+
+.attack-report .toggle-btn.toggled-off .switch-on{
+  opacity:0;
+}
+
+.attack-report .switch-off {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  color: gray;
 }

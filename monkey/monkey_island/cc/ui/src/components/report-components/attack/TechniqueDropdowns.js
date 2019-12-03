@@ -1,7 +1,7 @@
 import React from 'react';
 import Collapse from '@kunukn/react-collapse';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faQuestionCircle, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faQuestionCircle, faChevronUp, faChevronDown, faToggleOn } from '@fortawesome/free-solid-svg-icons'
 
 import {Button} from 'react-bootstrap';
 import AttackReport from '../AttackReport';
@@ -80,13 +80,19 @@ class TechniqueDropdowns extends React.Component{
       });
     }
     return (
-      <div className='dropdown-list'>
+      <div className='attack-technique-list-component'>
+        List of all techniques
         <Button bsStyle='link'
                 bsSize='large'
-                onClick={() => this.toggleTechList()}>
-          {this.state.techniquesHidden ? 'Show all' : 'Hide all'}
+                onClick={() => this.toggleTechList()}
+                className={classNames({'toggle-btn': true,
+                                       'toggled-off' : this.state.techniquesHidden,
+                                       'toggled-on': !this.state.techniquesHidden})}>
+
+          <FontAwesomeIcon icon={faToggleOn} className={'switch-on'} size={"2x"}/>
+          <FontAwesomeIcon icon={faToggleOn} className={'switch-off'} size={"2x"}/>
         </Button>
-        <section className={`attack-report ${listClass}`}>{content}</section>
+        <section className={`dropdown-list ${listClass}`}>{content}</section>
       </div>);
   }
 }
