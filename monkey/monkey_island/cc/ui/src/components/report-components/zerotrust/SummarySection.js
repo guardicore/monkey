@@ -20,11 +20,11 @@ export default class SummarySection extends Component {
           </Col>
         </Row>
         <Row className="show-grid">
-          <Col xs={8} sm={8} md={8} lg={8}>
+          <Col xs={8} sm={8} md={7} lg={7}>
             <PillarsOverview pillarsToStatuses={this.props.pillars.pillarsToStatuses}
                              grades={this.props.pillars.grades}/>
           </Col>
-          <Col xs={4} sm={4} md={4} lg={4}>
+          <Col xs={4} sm={4} md={5} lg={5}>
             <ZeroTrustReportLegend/>
           </Col>
         </Row>
