@@ -95,12 +95,16 @@ class AttackReport extends React.Component {
 
   generateReportContent() {
     return (
-        <div id='attack' className='attack-report report-page'>
-          <ReportHeader report_type={ReportTypes.attack}/>
-          <hr/>
+        <div>
           <p>
             This report shows information about
-            <Button bsStyle={'link'} href={'https://attack.mitre.org/'} bsSize={'lg'} className={'attack-link'}>Mitre ATT&CK™</Button>
+            <Button bsStyle={'link'}
+                    href={'https://attack.mitre.org/'}
+                    bsSize={'lg'}
+                    className={'attack-link'}
+                    target={"_blank"}>
+              Mitre ATT&CK™
+            </Button>
             techniques used by Infection Monkey.
           </p>
           {this.renderLegend()}
@@ -144,11 +148,18 @@ class AttackReport extends React.Component {
   }
 
   render() {
+    let content = {};
     if (typeof this.state.schema === 'undefined' || typeof this.state.techniques === 'undefined') {
-      return (<ReportLoader/>);
+      content = <ReportLoader/>;
     } else {
-      return (<div> {this.generateReportContent()}</div>);
+      content = <div> {this.generateReportContent()}</div>;
     }
+    return (
+    <div id='attack' className='attack-report report-page'>
+      <ReportHeader report_type={ReportTypes.attack}/>
+      <hr/>
+      {content}
+     </div>)
   }
 }
 
