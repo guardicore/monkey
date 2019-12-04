@@ -59,9 +59,9 @@ class NodeService:
             for edge_exploit in edge["exploits"]:
                 edge_exploit["origin"] = from_node_label
                 exploits.append(edge_exploit)
-
         exploits = sorted(exploits, key=lambda exploit: exploit['timestamp'])
-
+        if 'privilege_escalations' in new_node:
+            exploits.extend(new_node['privilege_escalations'])
         new_node["exploits"] = exploits
         new_node["accessible_from_nodes"] = accessible_from_nodes
         new_node["accessible_from_nodes_hostnames"] = accessible_from_nodes_hostnames
@@ -152,7 +152,8 @@ class NodeService:
                 # contain "_running". This is a small optimisation, to not call "is_dead" twice.
                 "dead": "_running" not in monkey_group,
                 "domain_name": "",
-                "pba_results": monkey["pba_results"] if "pba_results" in monkey else []
+                "pba_results": monkey["pba_results"] if "pba_results" in monkey else [],
+                "privilege_escalations": monkey["privilege_escalations"] if "privilege_escalations" in monkey else []
             }
 
     @staticmethod
@@ -332,16 +333,6 @@ class NodeService:
             {'_id': node_id},
             {'$push': {'creds': creds}}
         )
-
-    @staticmethod
-    def add_privilege_escalation(telemetry_json):
-        priv_esc_query = ({'_id': telemetry_json['monkey_guid']},
-                          {'$push': {'privilege_escalations': {'exploiter': telemetry_json['data']['exploiter'],
-                                                               'result': telemetry_json['data']['result'],
-                                                               'info': telemetry_json['data']['info']}}})
-        if telemetry_json['data']['result']:
-            priv_esc_query += {'$set': {'exploited': True}}
-        mongo.db.node.update(*priv_esc_query)
 
     @staticmethod
     def get_node_or_monkey_by_ip(ip_address):

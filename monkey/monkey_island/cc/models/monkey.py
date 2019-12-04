@@ -40,6 +40,7 @@ class Monkey(Document):
     config_error = BooleanField()
     critical_services = ListField(StringField())
     pba_results = ListField()
+    privilege_escalations = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
     command_control_channel = EmbeddedDocumentField(CommandControlChannel)

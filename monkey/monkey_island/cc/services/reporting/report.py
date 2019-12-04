@@ -42,6 +42,7 @@ class ReportService:
             'HadoopExploiter': 'Hadoop/Yarn Exploiter',
             'MSSQLExploiter': 'MSSQL Exploiter',
             'VSFTPDExploiter': 'VSFTPD Backdoor Exploiter',
+            'SnapdExploiter': 'Snap Exploiter'
         }
 
     class ISSUES_DICT(Enum):
@@ -130,7 +131,9 @@ class ReportService:
                     'accessible_from_nodes': nodes_that_can_access_current_node,
                     'services': node['services'],
                     'domain_name': node['domain_name'],
-                    'pba_results': node['pba_results'] if 'pba_results' in node else 'None'
+                    'pba_results': node['pba_results'] if 'pba_results' in node else 'None',
+                    'privilege_escalations': node['privilege_escalations']
+                    if 'privilege_escalations' in node else 'None',
                 })
 
         logger.info('Scanned nodes generated for reporting')
@@ -150,8 +153,8 @@ class ReportService:
     def get_exploited():
         exploited_with_monkeys = \
             [NodeService.get_displayed_node_by_id(monkey['_id'], True) for monkey in
-             mongo.db.monkey.find({}, {'_id': 1}) if
-             not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey['_id']))]
+             mongo.db.monkey.find({}, {'_id': 1})]
+             # if not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey['_id']))]
 
         exploited_without_monkeys = [NodeService.get_displayed_node_by_id(node['_id'], True) for node in
                                      mongo.db.node.find({'exploited': True}, {'_id': 1})]
@@ -662,9 +665,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.MSSQL.value] = True
                 elif issue['type'] == 'hadoop':
                     issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
-                if issue['type'] == 'SnapdExploiter':
+                elif issue['type'] == 'SnapdExploiter':
                     issues_byte_array[ReportService.ISSUES_DICT.SNAP.value] = True
-                    continue
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
