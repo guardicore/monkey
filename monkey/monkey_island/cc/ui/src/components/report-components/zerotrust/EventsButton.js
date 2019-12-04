@@ -3,6 +3,9 @@ import EventsModal from './EventsModal';
 import {Badge, Button} from 'react-bootstrap';
 import * as PropTypes from 'prop-types';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faList } from '@fortawesome/free-solid-svg-icons';
+
 export default class EventsButton extends Component {
   constructor(props) {
     super(props);
@@ -25,7 +28,7 @@ export default class EventsButton extends Component {
                    exportFilename={this.props.exportFilename}/>
       <div className="text-center" style={{'display': 'grid'}}>
         <Button className="btn btn-primary btn-lg" onClick={this.show}>
-          <i className="fa fa-list"/> Events {this.createEventsAmountBadge()}
+          <FontAwesomeIcon icon={faList}/> Events {this.createEventsAmountBadge()}
         </Button>
       </div>
     </Fragment>;

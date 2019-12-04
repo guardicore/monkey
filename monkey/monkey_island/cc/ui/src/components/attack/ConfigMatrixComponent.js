@@ -7,7 +7,11 @@ import 'filepond/dist/filepond.min.css';
 import '../../styles/Tooltip.scss';
 import {Col} from 'react-bootstrap';
 
-class MatrixComponent extends AuthComponent {
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircle as faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
+
+class ConfigMatrixComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {lastAction: 'none'}
@@ -37,12 +41,12 @@ class MatrixComponent extends AuthComponent {
         if (i <= Object.keys(techType.properties).length) {
           rowColumn.technique = Object.values(techType.properties)[i];
           if (rowColumn.technique) {
-            rowColumn.technique.name = Object.keys(techType.properties)[i]
+            rowColumn.technique.name = Object.keys(techType.properties)[i];
           }
         } else {
-          rowColumn.technique = null
+          rowColumn.technique = null;
         }
-        row[rowColumn.techName] = rowColumn
+        row[rowColumn.techName] = rowColumn;
       });
       techniques.push(row)
     }
@@ -77,8 +81,8 @@ class MatrixComponent extends AuthComponent {
 
   getTableData = (config) => {
     let configCopy = JSON.parse(JSON.stringify(config));
-    let maxTechniques = MatrixComponent.findMaxTechniques(Object.values(configCopy));
-    let matrixTableData = MatrixComponent.parseTechniques(Object.values(configCopy), maxTechniques);
+    let maxTechniques = ConfigMatrixComponent.findMaxTechniques(Object.values(configCopy));
+    let matrixTableData = ConfigMatrixComponent.parseTechniques(Object.values(configCopy), maxTechniques);
     let columns = this.getColumns(matrixTableData);
     return {'columns': columns, 'matrixTableData': matrixTableData, 'maxTechniques': maxTechniques}
   };
@@ -87,15 +91,15 @@ class MatrixComponent extends AuthComponent {
     return (
       <div id="header" className="row justify-content-between attack-legend">
         <Col xs={4}>
-          <i className="fa fa-circle-thin icon-unchecked"></i>
-          <span> - Dissabled</span>
+          <FontAwesomeIcon icon={faCircleThin} className="icon-unchecked"/>
+          <span> - Disabled</span>
         </Col>
         <Col xs={4}>
-          <i className="fa fa-circle icon-checked"></i>
+          <FontAwesomeIcon icon={faCircle} className="icon-checked"/>
           <span> - Enabled</span>
         </Col>
         <Col xs={4}>
-          <i className="fa fa-circle icon-mandatory"></i>
+          <FontAwesomeIcon icon={faCircle} className="icon-mandatory"/>
           <span> - Mandatory</span>
         </Col>
       </div>)
@@ -116,4 +120,4 @@ class MatrixComponent extends AuthComponent {
   }
 }
 
-export default MatrixComponent;
+export default ConfigMatrixComponent;

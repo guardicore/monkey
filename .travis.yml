@@ -48,7 +48,7 @@ script:
 - cd -
 - cd monkey_island/cc/ui
 - eslint ./src --quiet
-- JS_WARNINGS_AMOUNT_UPPER_LIMIT=29
+- JS_WARNINGS_AMOUNT_UPPER_LIMIT=37
 - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT
 
 notifications:

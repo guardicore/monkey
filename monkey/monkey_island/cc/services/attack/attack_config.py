@@ -15,7 +15,7 @@ class AttackConfig(object):
 
     @staticmethod
     def get_config():
-        config = mongo.db.attack.find_one({'name': 'newconfig'})
+        config = mongo.db.attack.find_one({'name': 'newconfig'})['properties']
         return config
 
     @staticmethod
@@ -26,7 +26,7 @@ class AttackConfig(object):
         :return: Technique object or None if technique is not found
         """
         attack_config = AttackConfig.get_config()
-        for config_key, attack_type in list(attack_config['properties'].items()):
+        for config_key, attack_type in list(attack_config.items()):
             for type_key, technique in list(attack_type['properties'].items()):
                 if type_key == technique_id:
                     return technique
@@ -169,7 +169,19 @@ class AttackConfig(object):
         """
         attack_config = AttackConfig.get_config()
         techniques = {}
-        for type_name, attack_type in list(attack_config['properties'].items()):
+        for type_name, attack_type in list(attack_config.items()):
             for key, technique in list(attack_type['properties'].items()):
                 techniques[key] = technique['value']
+        return techniques
+
+    @staticmethod
+    def get_techniques_for_report():
+        """
+        :return: Format: {"T1110": {"selected": True, "type": "Credential Access", "T1075": ...}
+        """
+        attack_config = AttackConfig.get_config()
+        techniques = {}
+        for type_name, attack_type in list(attack_config.items()):
+            for key, technique in list(attack_type['properties'].items()):
+                    techniques[key] = {'selected': technique['value'], 'type': SCHEMA['properties'][type_name]['title']}
         return techniques

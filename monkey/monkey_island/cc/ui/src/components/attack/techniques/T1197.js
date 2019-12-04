@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../../styles/Collapse.scss'
 import ReactTable from 'react-table';
 import {renderMachine} from './Helpers'
 

@@ -7,6 +7,7 @@ let monkeyLogoImage = require('../../../images/monkey-icon.svg');
 export const ReportTypes = {
   zeroTrust: 'Zero Trust',
   security: 'Security',
+  attack: 'ATT&CK',
   null: ''
 };
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../../styles/Collapse.scss'
 
 
 class T1065 extends React.Component {

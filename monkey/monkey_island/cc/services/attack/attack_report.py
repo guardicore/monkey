@@ -58,13 +58,14 @@ class AttackReportService:
                 'name': REPORT_NAME
             }
 
-        for tech_id, value in list(AttackConfig.get_technique_values().items()):
-            if value:
-                try:
-                    report['techniques'].update({tech_id: TECHNIQUES[tech_id].get_report_data()})
-                except KeyError as e:
-                    LOG.error("Attack technique does not have it's report component added "
-                              "to attack report service. %s" % e)
+        for tech_id, tech_info in list(AttackConfig.get_techniques_for_report().items()):
+            try:
+                technique_report_data = TECHNIQUES[tech_id].get_report_data()
+                technique_report_data.update(tech_info)
+                report['techniques'].update({tech_id: technique_report_data})
+            except KeyError as e:
+                LOG.error("Attack technique does not have it's report component added "
+                          "to attack report service. %s" % e)
         mongo.db.attack_report.replace_one({'name': REPORT_NAME}, report, upsert=True)
         return report
 

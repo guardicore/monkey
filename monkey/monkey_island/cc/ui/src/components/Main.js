@@ -1,7 +1,8 @@
 import React from 'react';
-import {BrowserRouter as Router, NavLink, Redirect, Route} from 'react-router-dom';
+import {BrowserRouter as Router, NavLink, Redirect, Route, Switch} from 'react-router-dom';
 import {Col, Grid, Row} from 'react-bootstrap';
-import {Icon} from 'react-fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCheck, faUndo } from '@fortawesome/free-solid-svg-icons'
 
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
@@ -10,7 +11,6 @@ import MapPage from 'components/pages/MapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
 import ReportPage from 'components/pages/ReportPage';
-import ZeroTrustReportPage from 'components/pages/ZeroTrustReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
@@ -82,6 +82,13 @@ class AppComponent extends AuthComponent {
     }
   };
 
+  redirectTo = (userPath, targetPath) => {
+    let pathQuery = new RegExp(userPath+'[\/]?$', 'g');
+    if(window.location.pathname.match(pathQuery)){
+      return <Redirect to={{pathname: targetPath}}/>
+    }
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -115,61 +122,57 @@ class AppComponent extends AuthComponent {
       <Router>
         <Grid fluid={true}>
           <Row>
-            <Col sm={3} md={2} className="sidebar">
-              <div className="header">
+            <Col sm={3} md={2} className='sidebar'>
+              <div className='header'>
                 <img src={logoImage} style={{width: '5vw', margin: '15px'}}/>
-                <img src={infectionMonkeyImage} style={{width: '15vw'}} alt="Infection Monkey"/>
+                <img src={infectionMonkeyImage} style={{width: '15vw'}} alt='Infection Monkey'/>
               </div>
 
-              <ul className="navigation">
+              <ul className='navigation'>
                 <li>
-                  <NavLink to="/" exact={true}>
-                    <span className="number">1.</span>
+                  <NavLink to='/' exact={true}>
+                    <span className='number'>1.</span>
                     Run Monkey Island Server
                     {this.state.completedSteps.run_server ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
                       : ''}
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/run-monkey">
-                    <span className="number">2.</span>
+                  <NavLink to='/run-monkey'>
+                    <span className='number'>2.</span>
                     Run Monkey
                     {this.state.completedSteps.run_monkey ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
                       : ''}
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/infection/map">
-                    <span className="number">3.</span>
+                  <NavLink to='/infection/map'>
+                    <span className='number'>3.</span>
                     Infection Map
                     {this.state.completedSteps.infection_done ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
                       : ''}
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/report/security">
-                    <span className="number">4.</span>
-                    Security Report
+                  <NavLink to='/report/security'
+                           isActive={(match, location) => {
+                             return (location.pathname === '/report/attack'
+                               || location.pathname === '/report/zeroTrust'
+                               || location.pathname === '/report/security')
+                           }}>
+                    <span className='number'>4.</span>
+                    Security Reports
                     {this.state.completedSteps.report_done ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
+                      <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
                       : ''}
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/report/zero_trust">
-                    <span className="number">5.</span>
-                    Zero Trust Report
-                    {this.state.completedSteps.report_done ?
-                      <Icon name="check" className="pull-right checkmark text-success"/>
-                      : ''}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/start-over">
-                    <span className="number"><i className="fa fa-undo" style={{'marginLeft': '-1px'}}/></span>
+                  <NavLink to='/start-over'>
+                    <span className='number'><FontAwesomeIcon icon={faUndo} style={{'marginLeft': '-1px'}}/></span>
                     Start Over
                   </NavLink>
                 </li>
@@ -177,23 +180,23 @@ class AppComponent extends AuthComponent {
 
               <hr/>
               <ul>
-                <li><NavLink to="/configure">Configuration</NavLink></li>
-                <li><NavLink to="/infection/telemetry">Log</NavLink></li>
+                <li><NavLink to='/configure'>Configuration</NavLink></li>
+                <li><NavLink to='/infection/telemetry'>Log</NavLink></li>
               </ul>
 
               <hr/>
-              <div className="guardicore-link text-center" style={{'marginBottom': '0.5em'}}>
+              <div className='guardicore-link text-center' style={{'marginBottom': '0.5em'}}>
                 <span>Powered by</span>
-                <a href="http://www.guardicore.com" target="_blank">
-                  <img src={guardicoreLogoImage} alt="GuardiCore"/>
+                <a href='http://www.guardicore.com' target='_blank'>
+                  <img src={guardicoreLogoImage} alt='GuardiCore'/>
                 </a>
               </div>
-              <div className="license-link text-center">
-                <NavLink to="/license">License</NavLink>
+              <div className='license-link text-center'>
+                <NavLink to='/license'>License</NavLink>
               </div>
               <VersionComponent/>
             </Col>
-            <Col sm={9} md={10} smOffset={3} mdOffset={2} className="main">
+            <Col sm={9} md={10} smOffset={3} mdOffset={2} className='main'>
               <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
               {this.renderRoute('/', <RunServerPage onStatusChange={this.updateStatus}/>, true)}
               {this.renderRoute('/configure', <ConfigurePage onStatusChange={this.updateStatus}/>)}
@@ -201,8 +204,12 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/report/security', <ReportPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute(reportZeroTrustRoute, <ZeroTrustReportPage onStatusChange={this.updateStatus}/>)}
+              {this.redirectTo('/report', '/report/security')}
+              <Switch>
+              {this.renderRoute('/report/security', <ReportPage/>)}
+              {this.renderRoute('/report/attack', <ReportPage/>)}
+              {this.renderRoute('/report/zeroTrust', <ReportPage/>)}
+              </Switch>
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
             </Col>
           </Row>
