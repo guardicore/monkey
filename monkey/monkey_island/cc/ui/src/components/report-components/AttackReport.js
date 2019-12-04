@@ -102,7 +102,7 @@ class AttackReport extends React.Component {
                     href={'https://attack.mitre.org/'}
                     bsSize={'lg'}
                     className={'attack-link'}
-                    target={"_blank"}>
+                    target={'_blank'}>
               Mitre ATT&CK™
             </Button>
             techniques used by Infection Monkey.
