@@ -1,10 +1,14 @@
 variable "ami" {type=string}
 variable "ip" {type=string}
 variable "name" {type=string}
+variable "user_data" {
+  type=string
+  default=""
+}
 variable "env_vars" {
   type = object({
     subnet_id = string
-    security_group_id = string
+    vpc_security_group_ids = string
   })
 }
 
@@ -13,5 +17,5 @@ data "aws_subnet" "main" {
 }
 
 data "aws_security_group" "os_compat_instance" {
-  id = "${var.env_vars.security_group_id}"
+  id = "${var.env_vars.vpc_security_group_ids}"
 }

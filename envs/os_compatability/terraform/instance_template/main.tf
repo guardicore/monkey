@@ -7,6 +7,7 @@ resource "aws_instance" "os_test_machine" {
   tags = {
     Name = "${var.name}"
   }
-  security_groups = ["${data.aws_security_group.os_compat_instance.id}"]
-  associate_public_ip_address = false
+  vpc_security_group_ids = ["${data.aws_security_group.os_compat_instance.id}"]
+  associate_public_ip_address = true
+  user_data = "${var.user_data}"
 }
