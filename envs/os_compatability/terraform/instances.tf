@@ -49,6 +49,32 @@ chmod +x ./monkey-linux-64
 --//
 EOF
 
+  user_data_linux_32 = <<EOF
+Content-Type: multipart/mixed; boundary="//"
+MIME-Version: 1.0
+
+--//
+Content-Type: text/cloud-config; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="cloud-config.txt"
+
+#cloud-config
+cloud_final_modules:
+- [scripts-user, always]
+
+--//
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="userdata.txt"
+#!/bin/bash
+wget --no-check-certificate https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 -k -o monkey-linux-32
+chmod +x ./monkey-linux-32
+./monkey-linux-32 m0nk3y -s 10.0.0.251:5000
+--//
+EOF
+
   user_data_windows_64 = <<EOF
 <powershell>
 add-type @"
@@ -90,15 +116,51 @@ C:\windows\temp\monkey-windows-32.exe m0nk3y -s 10.0.0.251:5000
 </powershell>
 <persist>true</persist>
 EOF
+}
 
-user_data_windows_bits_32 = <<EOF
-<script>
-bitsadmin /transfer Update /download /priority high https://10.0.0.251:5000/api/monkey/download/monkey-windows-32.exe C:\windows\temp\monkey-windows-32.exe
-powershell -Command "(New-Object Net.WebClient).DownloadFile('https://github.com/guardicore/monkey/releases/download/1.6/monkey-linux-32', 'package.zip')"
-C:\windows\temp\monkey-windows-32.exe m0nk3y -s 10.0.0.251:5000
-</script>
-<persist>true</persist>
-EOF
+module "centos_6" {
+  source = "./instance_template"
+  name = "centos_6"
+  ami = "ami-07fa74e425f2abf29"
+  ip = "10.0.0.36"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
+module "centos_7" {
+  source = "./instance_template"
+  name = "centos_7"
+  ami = "ami-0034b52a39b9fb0e8"
+  ip = "10.0.0.37"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
+module "centos_8" {
+  source = "./instance_template"
+  name = "centos_8"
+  ami = "ami-0034c84e4e9c557bd"
+  ip = "10.0.0.38"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
+module "suse_12" {
+  source = "./instance_template"
+  name = "suse_12"
+  ami = "ami-07b12b913a7e36b08"
+  ip = "10.0.0.42"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
+module "suse_11" {
+  source = "./instance_template"
+  name = "suse_11"
+  ami = "ami-0083986c"
+  ip = "10.0.0.41"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
 }
 
 module "kali_2019" {
@@ -106,6 +168,34 @@ module "kali_2019" {
   name = "kali_2019"
   ami = "ami-05d64b1d0f967d4bf"
   ip = "10.0.0.99"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+// Requires m3.medium
+//module "rhel_5" {
+//  source = "./instance_template"
+//  name = "rhel_5"
+//  ami = "ami-a48cbfb9"
+//  type = "m3.medium"
+//  ip = "10.0.0.85"
+//  env_vars = "${local.env_vars}"
+//  user_data = "${local.user_data_linux_64}"
+//}
+
+module "rhel_6" {
+  source = "./instance_template"
+  name = "rhel_6"
+  ami = "ami-0af3f0e0918f47bcf"
+  ip = "10.0.0.86"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
+module "rhel_7" {
+  source = "./instance_template"
+  name = "rhel_7"
+  ami = "ami-0b5edb134b768706c"
+  ip = "10.0.0.87"
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_linux_64}"
 }
@@ -119,6 +209,51 @@ module "rhel_8" {
   user_data = "${local.user_data_linux_64}"
 }
 
+module "debian_7" {
+  source = "./instance_template"
+  name = "debian_7"
+  ami = "ami-0badcc5b522737046"
+  ip = "10.0.0.77"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
+module "debian_8" {
+  source = "./instance_template"
+  name = "debian_8"
+  ami = "ami-0badcc5b522737046"
+  ip = "10.0.0.78"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
+module "debian_9" {
+  source = "./instance_template"
+  name = "debian_9"
+  ami = "ami-0badcc5b522737046"
+  ip = "10.0.0.79"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
+module "oracle_6" {
+  source = "./instance_template"
+  name = "oracle_6"
+  ami = "ami-0f9b69f34108a3770"
+  ip = "10.0.0.66"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
+module "oracle_7" {
+  source = "./instance_template"
+  name = "oracle_7"
+  ami = "ami-001e494dc0f3372bc"
+  ip = "10.0.0.67"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_linux_64}"
+}
+
 module "ubuntu_12" {
   source = "./instance_template"
   name = "ubuntu_12"
@@ -127,6 +262,16 @@ module "ubuntu_12" {
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_linux_64}"
 }
+
+// Requires m3.medium instance
+// module "ubuntu_12_32" {
+//   source = "./instance_template"
+//   name = "ubuntu_12_32"
+//   ami = "ami-06003c1b"
+//   ip = "10.0.0.23"
+//   env_vars = "${local.env_vars}"
+//   user_data = "${local.user_data_linux_32}"
+// }
 
 module "ubuntu_14" {
   source = "./instance_template"
@@ -146,21 +291,20 @@ module "ubuntu_19" {
   user_data = "${local.user_data_linux_64}"
 }
 
-module "centos" {
-  source = "./instance_template"
-  name = "centos_8"
-  ami = "ami-0034c84e4e9c557bd"
-  ip = "10.0.0.33"
-  env_vars = "${local.env_vars}"
-  user_data = "${local.user_data_linux_64}"
-}
-
-
 module "windows_2003_r2_32" {
   source = "./instance_template"
   name = "windows_2003_r2_32"
   ami = "ami-01e4fa6d"
   ip = "10.0.0.4"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_windows_64}"
+}
+
+module "windows_2003" {
+  source = "./instance_template"
+  name = "windows_2003"
+  ami = "ami-9e023183"
+  ip = "10.0.0.5"
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_windows_64}"
 }
@@ -172,6 +316,15 @@ module "windows_2008" {
   ip = "10.0.0.8"
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_windows_64}"
+}
+
+module "windows_2008_32" {
+  source = "./instance_template"
+  name = "windows_2008"
+  ami = "ami-0acaec54bac5cbb8f"
+  ip = "10.0.0.6"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_windows_32}"
 }
 
 module "windows_2008_r2" {
@@ -197,6 +350,15 @@ module "windows_2012_r2" {
   name = "windows_2012_r2"
   ami = "ami-08dcceb529e70f875"
   ip = "10.0.0.11"
+  env_vars = "${local.env_vars}"
+  user_data = "${local.user_data_windows_64}"
+}
+
+module "windows_2016" {
+  source = "./instance_template"
+  name = "windows_2016"
+  ami = "ami-02a6791b44938cfcd"
+  ip = "10.0.0.16"
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_windows_64}"
 }

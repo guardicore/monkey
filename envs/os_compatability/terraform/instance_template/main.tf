@@ -1,6 +1,6 @@
 resource "aws_instance" "os_test_machine" {
   ami           = "${var.ami}"
-  instance_type = "t2.micro"
+  instance_type = "${var.type}"
   private_ip = "${var.ip}"
   subnet_id = "${data.aws_subnet.main.id}"
   key_name = "os_compat"

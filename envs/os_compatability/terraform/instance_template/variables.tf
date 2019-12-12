@@ -1,6 +1,10 @@
 variable "ami" {type=string}
 variable "ip" {type=string}
 variable "name" {type=string}
+variable "type" {
+  type=string
+  default="t2.micro"
+}
 variable "user_data" {
   type=string
   default=""
