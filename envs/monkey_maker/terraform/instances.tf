@@ -1,5 +1,5 @@
 resource "aws_instance" "island_windows" {
-  ami           = "ami-09fe2745618d2af42"
+  ami           = "ami-086f705bf43f47ae7"
   instance_type = "t2.micro"
   private_ip = "10.0.0.251"
   subnet_id = "${aws_subnet.main.id}"

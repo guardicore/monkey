@@ -320,7 +320,7 @@ module "windows_2008" {
 
 module "windows_2008_32" {
   source = "./instance_template"
-  name = "windows_2008"
+  name = "windows_2008_32"
   ami = "ami-0acaec54bac5cbb8f"
   ip = "10.0.0.6"
   env_vars = "${local.env_vars}"
