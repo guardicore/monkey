@@ -19,7 +19,7 @@ class VirtualFile(BytesIO):
         if name in VirtualFile._vfs:
             super(VirtualFile, self).__init__(self._vfs[name])
         else:
-            super(VirtualFile, self).__init__('')
+            super(VirtualFile, self).__init__()
 
     def flush(self):
         super(VirtualFile, self).flush()
@@ -32,7 +32,6 @@ class VirtualFile(BytesIO):
     @staticmethod
     def isfile(path):
         return path in VirtualFile._vfs
-
 
 
 def getsize(path):
@@ -53,6 +52,7 @@ def virtual_path(name):
     return "%s%s" % (MONKEYFS_PREFIX, name)
 
 
+# noinspection PyShadowingBuiltins
 def open(name, mode='r', buffering=-1):
     # use normal open for regular paths, and our "virtual" open for monkeyfs:// paths
     if name.startswith(MONKEYFS_PREFIX):

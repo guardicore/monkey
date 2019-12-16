@@ -1,11 +1,10 @@
-from cc.database import mongo
-from cc.services.groups_and_users_consts import USERTYPE, GROUPTYPE
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.groups_and_users_consts import USERTYPE, GROUPTYPE
 
 __author__ = 'maor.rayzin'
 
 
 class WMIHandler(object):
-
     ADMINISTRATORS_GROUP_KNOWN_SID = '1-5-32-544'
 
     def __init__(self, monkey_id, wmi_info, user_secrets):
@@ -13,11 +12,18 @@ class WMIHandler(object):
         self.monkey_id = monkey_id
         self.info_for_mongo = {}
         self.users_secrets = user_secrets
-        self.users_info = wmi_info['Win32_UserAccount']
-        self.groups_info = wmi_info['Win32_Group']
-        self.groups_and_users = wmi_info['Win32_GroupUser']
-        self.services = wmi_info['Win32_Service']
-        self.products = wmi_info['Win32_Product']
+        if not wmi_info:
+            self.users_info = ""
+            self.groups_info = ""
+            self.groups_and_users = ""
+            self.services = ""
+            self.products = ""
+        else:
+            self.users_info = wmi_info['Win32_UserAccount']
+            self.groups_info = wmi_info['Win32_Group']
+            self.groups_and_users = wmi_info['Win32_GroupUser']
+            self.services = wmi_info['Win32_Service']
+            self.products = wmi_info['Win32_Product']
 
     def process_and_handle_wmi_info(self):
 
@@ -25,7 +31,8 @@ class WMIHandler(object):
         self.add_users_to_collection()
         self.create_group_user_connection()
         self.insert_info_to_mongo()
-        self.add_admin(self.info_for_mongo[self.ADMINISTRATORS_GROUP_KNOWN_SID], self.monkey_id)
+        if self.info_for_mongo:
+            self.add_admin(self.info_for_mongo[self.ADMINISTRATORS_GROUP_KNOWN_SID], self.monkey_id)
         self.update_admins_retrospective()
         self.update_critical_services()
 
@@ -87,7 +94,7 @@ class WMIHandler(object):
             groups_entities_list = self.info_for_mongo[group_sid]['entities_list']
             child_sid = ''
 
-            if type(child_part) in (unicode, str):
+            if isinstance(child_part, str):
                 child_part = str(child_part)
                 name = None
                 domain_name = None
@@ -116,7 +123,7 @@ class WMIHandler(object):
                     self.info_for_mongo[child_sid]['member_of'].append(group_sid)
 
     def insert_info_to_mongo(self):
-        for entity in self.info_for_mongo.values():
+        for entity in list(self.info_for_mongo.values()):
             if entity['machine_id']:
                 # Handling for local entities.
                 mongo.db.groupsandusers.update({'SID': entity['SID'],
@@ -152,4 +159,3 @@ class WMIHandler(object):
                                                               {'type': USERTYPE, 'entities_list': 1})
             if entity_details.get('type') == GROUPTYPE:
                 self.add_admin(entity_details, machine_id)
-

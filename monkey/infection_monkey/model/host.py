@@ -2,8 +2,9 @@ __author__ = 'itamar'
 
 
 class VictimHost(object):
-    def __init__(self, ip_addr):
+    def __init__(self, ip_addr, domain_name=''):
         self.ip_addr = ip_addr
+        self.domain_name = str(domain_name)
         self.os = {}
         self.services = {}
         self.monkey_exe = None
@@ -34,10 +35,10 @@ class VictimHost(object):
     def __str__(self):
         victim = "Victim Host %s: " % self.ip_addr
         victim += "OS - ["
-        for k, v in self.os.items():
+        for k, v in list(self.os.items()):
             victim += "%s-%s " % (k, v)
         victim += "] Services - ["
-        for k, v in self.services.items():
+        for k, v in list(self.services.items()):
             victim += "%s-%s " % (k, v)
         victim += '] '
         victim += "target monkey: %s" % self.monkey_exe

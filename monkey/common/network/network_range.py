@@ -4,14 +4,14 @@ import struct
 from abc import ABCMeta, abstractmethod
 
 import ipaddress
-from six import text_type
+import logging
 
 __author__ = 'itamar'
 
+LOG = logging.getLogger(__name__)
 
-class NetworkRange(object):
-    __metaclass__ = ABCMeta
 
+class NetworkRange(object, metaclass=ABCMeta):
     def __init__(self, shuffle=True):
         self._shuffle = shuffle
 
@@ -47,11 +47,22 @@ class NetworkRange(object):
         address_str = address_str.strip()
         if not address_str:  # Empty string
             return None
-        if -1 != address_str.find('-'):
+        if NetworkRange.check_if_range(address_str):
             return IpRange(ip_range=address_str)
         if -1 != address_str.find('/'):
             return CidrRange(cidr_range=address_str)
         return SingleIpRange(ip_address=address_str)
+
+    @staticmethod
+    def check_if_range(address_str):
+        if -1 != address_str.find('-'):
+            ips = address_str.split('-')
+            try:
+                ipaddress.ip_address(ips[0]) and ipaddress.ip_address(ips[1])
+            except ValueError:
+                return False
+            return True
+        return False
 
     @staticmethod
     def _ip_to_number(address):
@@ -66,7 +77,7 @@ class CidrRange(NetworkRange):
     def __init__(self, cidr_range, shuffle=True):
         super(CidrRange, self).__init__(shuffle=shuffle)
         self._cidr_range = cidr_range.strip()
-        self._ip_network = ipaddress.ip_network(text_type(self._cidr_range), strict=False)
+        self._ip_network = ipaddress.ip_network(str(self._cidr_range), strict=False)
 
     def __repr__(self):
         return "<CidrRange %s>" % (self._cidr_range,)
@@ -105,19 +116,60 @@ class IpRange(NetworkRange):
         return self._lower_end_ip_num <= self._ip_to_number(ip_address) <= self._higher_end_ip_num
 
     def _get_range(self):
-        return range(self._lower_end_ip_num, self._higher_end_ip_num + 1)
+        return list(range(self._lower_end_ip_num, self._higher_end_ip_num + 1))
 
 
 class SingleIpRange(NetworkRange):
     def __init__(self, ip_address, shuffle=True):
         super(SingleIpRange, self).__init__(shuffle=shuffle)
-        self._ip_address = ip_address
+        self._ip_address, self.domain_name = self.string_to_host(ip_address)
 
     def __repr__(self):
         return "<SingleIpRange %s>" % (self._ip_address,)
+
+    def __iter__(self):
+        """
+        We have to check if we have an IP to return, because user could have entered invalid
+        domain name and no IP was found
+        :return: IP if there is one
+        """
+        if self.ip_found():
+            yield self._number_to_ip(self.get_range()[0])
 
     def is_in_range(self, ip_address):
         return self._ip_address == ip_address
 
     def _get_range(self):
         return [SingleIpRange._ip_to_number(self._ip_address)]
+
+    def ip_found(self):
+        """
+        Checks if we could translate domain name entered into IP address
+        :return: True if dns found domain name and false otherwise
+        """
+        return self._ip_address
+
+    @staticmethod
+    def string_to_host(string_):
+        """
+        Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name and ip
+        :param string_: String that was entered in "Scan IP/subnet list"
+        :return: A tuple in format (IP, domain_name). Eg. (192.168.55.1, www.google.com)
+        """
+        # The most common use case is to enter ip/range into "Scan IP/subnet list"
+        domain_name = ''
+
+        # Try casting user's input as IP
+        try:
+            ip = ipaddress.ip_address(string_).exploded
+        except ValueError:
+            # Exception means that it's a domain name
+            try:
+                ip = socket.gethostbyname(string_)
+                domain_name = string_
+            except socket.error:
+                LOG.error("Your specified host: {} is not found as a domain name and"
+                          " it's not an IP address".format(string_))
+                return None, string_
+        # If a string_ was entered instead of IP we presume that it was domain name and translate it
+        return ip, domain_name

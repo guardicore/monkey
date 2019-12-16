@@ -1,8 +1,7 @@
 import re
 
 import infection_monkey.config
-from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
+from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.tools import check_tcp_port
 
 SSH_PORT = 22
@@ -14,6 +13,8 @@ LINUX_DIST_SSH = ['ubuntu', 'debian']
 
 
 class SSHFinger(HostFinger):
+    _SCANNED_SERVICE = 'SSH'
+
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
         self._banner_regex = re.compile(SSH_REGEX, re.IGNORECASE)
@@ -32,18 +33,18 @@ class SSHFinger(HostFinger):
                 break
 
     def get_host_fingerprint(self, host):
-        assert isinstance(host, VictimHost)
 
-        for name, data in host.services.items():
+        for name, data in list(host.services.items()):
             banner = data.get('banner', '')
             if self._banner_regex.search(banner):
                 self._banner_match(name, host, banner)
+                host.services[SSH_SERVICE_DEFAULT]['display_name'] = self._SCANNED_SERVICE
                 return
 
         is_open, banner = check_tcp_port(host.ip_addr, SSH_PORT, TIMEOUT, True)
 
         if is_open:
-            host.services[SSH_SERVICE_DEFAULT] = {}
+            self.init_service(host.services, SSH_SERVICE_DEFAULT, SSH_PORT)
 
             if banner:
                 host.services[SSH_SERVICE_DEFAULT]['banner'] = banner

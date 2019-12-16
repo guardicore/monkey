@@ -1,9 +1,9 @@
 import flask_restful
 
-from cc.auth import jwt_required
-from cc.services.edge import EdgeService
-from cc.services.node import NodeService
-from cc.database import mongo
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.services.edge import EdgeService
+from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.database import mongo
 
 __author__ = 'Barak'
 
@@ -27,5 +27,3 @@ class NetMap(flask_restful.Resource):
                 "nodes": monkeys + nodes + monkey_island,
                 "edges": edges
             }
-
-

@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 import dateutil
@@ -5,9 +6,11 @@ import flask_restful
 from flask import request
 import flask_pymongo
 
-from cc.auth import jwt_required
-from cc.database import mongo
-from cc.services.node import NodeService
+from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.node import NodeService
+
+logger = logging.getLogger(__name__)
 
 __author__ = 'itay.mizeretz'
 
@@ -19,25 +22,40 @@ class TelemetryFeed(flask_restful.Resource):
         if "null" == timestamp or timestamp is None:  # special case to avoid ugly JS code...
             telemetries = mongo.db.telemetry.find({})
         else:
-            telemetries = mongo.db.telemetry.find({'timestamp': {'$gt': dateutil.parser.parse(timestamp)}})\
+            telemetries = mongo.db.telemetry.find({'timestamp': {'$gt': dateutil.parser.parse(timestamp)}})
+            telemetries = telemetries.sort([('timestamp', flask_pymongo.ASCENDING)])
 
-        telemetries = telemetries.sort([('timestamp', flask_pymongo.ASCENDING)])
-
-        return \
-            {
-                'telemetries': [TelemetryFeed.get_displayed_telemetry(telem) for telem in telemetries],
-                'timestamp': datetime.now().isoformat()
-            }
+        try:
+            return \
+                {
+                    'telemetries': [TelemetryFeed.get_displayed_telemetry(telem) for telem in telemetries
+                                    if TelemetryFeed.should_show_brief(telem)],
+                    'timestamp': datetime.now().isoformat()
+                }
+        except KeyError as err:
+            logger.error("Failed parsing telemetries. Error: {0}.".format(err))
+            return {'telemetries': [], 'timestamp': datetime.now().isoformat()}
 
     @staticmethod
     def get_displayed_telemetry(telem):
+        monkey = NodeService.get_monkey_by_guid(telem['monkey_guid'])
+        default_hostname = "GUID-" + telem['monkey_guid']
         return \
             {
                 'id': telem['_id'],
                 'timestamp': telem['timestamp'].strftime('%d/%m/%Y %H:%M:%S'),
-                'hostname': NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname'],
-                'brief': TELEM_PROCESS_DICT[telem['telem_type']](telem)
+                'hostname': monkey.get('hostname', default_hostname) if monkey else default_hostname,
+                'brief': TelemetryFeed.get_telem_brief(telem)
             }
+
+    @staticmethod
+    def get_telem_brief(telem):
+        telem_brief_parser = TelemetryFeed.get_telem_brief_parser_by_category(telem['telem_category'])
+        return telem_brief_parser(telem)
+
+    @staticmethod
+    def get_telem_brief_parser_by_category(telem_category):
+        return TELEM_PROCESS_DICT[telem_category]
 
     @staticmethod
     def get_tunnel_telem_brief(telem):
@@ -52,7 +70,7 @@ class TelemetryFeed(flask_restful.Resource):
     @staticmethod
     def get_state_telem_brief(telem):
         if telem['data']['done']:
-            return 'Monkey died.'
+            return '''Monkey finishing its execution.'''
         else:
             return 'Monkey started.'
 
@@ -76,7 +94,17 @@ class TelemetryFeed(flask_restful.Resource):
 
     @staticmethod
     def get_trace_telem_brief(telem):
-        return 'Monkey reached max depth.'
+        return 'Trace: %s' % telem['data']['msg']
+
+    @staticmethod
+    def get_post_breach_telem_brief(telem):
+        return '%s post breach action executed on %s (%s) machine.' % (telem['data']['name'],
+                                                                       telem['data']['hostname'],
+                                                                       telem['data']['ip'])
+
+    @staticmethod
+    def should_show_brief(telem):
+        return telem['telem_category'] in TELEM_PROCESS_DICT
 
 
 TELEM_PROCESS_DICT = \
@@ -85,6 +113,7 @@ TELEM_PROCESS_DICT = \
         'state': TelemetryFeed.get_state_telem_brief,
         'exploit': TelemetryFeed.get_exploit_telem_brief,
         'scan': TelemetryFeed.get_scan_telem_brief,
-        'system_info_collection': TelemetryFeed.get_systeminfo_telem_brief,
-        'trace': TelemetryFeed.get_trace_telem_brief
+        'system_info': TelemetryFeed.get_systeminfo_telem_brief,
+        'trace': TelemetryFeed.get_trace_telem_brief,
+        'post_breach': TelemetryFeed.get_post_breach_telem_brief
     }

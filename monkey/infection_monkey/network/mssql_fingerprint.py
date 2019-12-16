@@ -1,8 +1,8 @@
+import errno
 import logging
 import socket
 
-from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
+from infection_monkey.network.HostFinger import HostFinger
 import infection_monkey.config
 
 __author__ = 'Maor Rayzin'
@@ -11,12 +11,11 @@ LOG = logging.getLogger(__name__)
 
 
 class MSSQLFinger(HostFinger):
-
     # Class related consts
     SQL_BROWSER_DEFAULT_PORT = 1434
     BUFFER_SIZE = 4096
     TIMEOUT = 5
-    SERVICE_NAME = 'MSSQL'
+    _SCANNED_SERVICE = 'MSSQL'
 
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
@@ -30,7 +29,6 @@ class MSSQLFinger(HostFinger):
                 Discovered server information written to the Host info struct.
                 True if success, False otherwise.
         """
-        assert isinstance(host, VictimHost)
 
         # Create a UDP socket and sets a timeout
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -54,7 +52,7 @@ class MSSQLFinger(HostFinger):
             sock.close()
             return False
         except socket.error as e:
-            if e.errno == socket.errno.ECONNRESET:
+            if e.errno == errno.ECONNRESET:
                 LOG.info('Connection was forcibly closed by the remote host. The host: {0} is rejecting the packet.'
                          .format(host))
             else:
@@ -63,7 +61,7 @@ class MSSQLFinger(HostFinger):
             sock.close()
             return False
 
-        host.services[self.SERVICE_NAME] = {}
+        self.init_service(host.services, self._SCANNED_SERVICE, MSSQLFinger.SQL_BROWSER_DEFAULT_PORT)
 
         # Loop through the server data
         instances_list = data[3:].decode().split(';;')
@@ -71,12 +69,11 @@ class MSSQLFinger(HostFinger):
         for instance in instances_list:
             instance_info = instance.split(';')
             if len(instance_info) > 1:
-                host.services[self.SERVICE_NAME][instance_info[1]] = {}
+                host.services[self._SCANNED_SERVICE][instance_info[1]] = {}
                 for i in range(1, len(instance_info), 2):
                     # Each instance's info is nested under its own name, if there are multiple instances
                     # each will appear under its own name
-                    host.services[self.SERVICE_NAME][instance_info[1]][instance_info[i - 1]] = instance_info[i]
-
+                    host.services[self._SCANNED_SERVICE][instance_info[1]][instance_info[i - 1]] = instance_info[i]
         # Close the socket
         sock.close()
 

@@ -1,3 +1,5 @@
+pytest
+bson
 python-dateutil
 tornado
 werkzeug
@@ -12,5 +14,16 @@ Flask-JWT
 jsonschema
 netifaces
 ipaddress
-enum34
-PyCrypto
+pycryptodome
+boto3
+botocore
+PyInstaller
+awscli
+cffi
+virtualenv
+wheel
+mongoengine
+mongomock
+requests
+dpath
+ring

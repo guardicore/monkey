@@ -1,13 +1,10 @@
+import hashlib
 import os
 import json
 import sys
-import types
 import uuid
 from abc import ABCMeta
 from itertools import product
-import importlib
-
-importlib.import_module('infection_monkey', 'network')
 
 __author__ = 'itamar'
 
@@ -15,37 +12,24 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
+SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list"]
+HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
+
 
 class Configuration(object):
-
     def from_kv(self, formatted_data):
-        # now we won't work at <2.7 for sure
-        network_import = importlib.import_module('infection_monkey.network')
-        exploit_import = importlib.import_module('infection_monkey.exploit')
-
         unknown_items = []
-        for key, value in formatted_data.items():
+        for key, value in list(formatted_data.items()):
             if key.startswith('_'):
                 continue
             if key in ["name", "id", "current_server"]:
                 continue
             if self._depth_from_commandline and key == "depth":
                 continue
-            # handle in cases
-            if key == 'finger_classes':
-                class_objects = [getattr(network_import, val) for val in value]
-                setattr(self, key, class_objects)
-            elif key == 'scanner_class':
-                scanner_object = getattr(network_import, value)
-                setattr(self, key, scanner_object)
-            elif key == 'exploiter_classes':
-                class_objects = [getattr(exploit_import, val) for val in value]
-                setattr(self, key, class_objects)
+            if hasattr(self, key):
+                setattr(self, key, value)
             else:
-                if hasattr(self, key):
-                    setattr(self, key, value)
-                else:
-                    unknown_items.append(key)
+                unknown_items.append(key)
         return unknown_items
 
     def from_json(self, json_data):
@@ -57,6 +41,12 @@ class Configuration(object):
         formatted_data = json.loads(json_data)
         result = self.from_kv(formatted_data)
         return result
+
+    @staticmethod
+    def hide_sensitive_info(config_dict):
+        for field in SENSITIVE_FIELDS:
+            config_dict[field] = HIDDEN_FIELD_REPLACEMENT_CONTENT
+        return config_dict
 
     def as_dict(self):
         result = {}
@@ -70,7 +60,7 @@ class Configuration(object):
 
             val_type = type(value)
 
-            if val_type is types.FunctionType or val_type is types.MethodType:
+            if callable(value):
                 continue
 
             if val_type in (type, ABCMeta):
@@ -105,8 +95,8 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = '/bin/sh'
-    dropper_target_path_win_32 = r"C:\Windows\monkey32.exe"
-    dropper_target_path_win_64 = r"C:\Windows\monkey64.exe"
+    dropper_target_path_win_32 = r"C:\Windows\temp\monkey32.exe"
+    dropper_target_path_win_64 = r"C:\Windows\temp\monkey64.exe"
     dropper_target_path_linux = '/tmp/monkey'
 
     ###########################
@@ -133,15 +123,14 @@ class Configuration(object):
     # how many scan iterations to perform on each run
     max_iterations = 1
 
-    scanner_class = None
     finger_classes = []
     exploiter_classes = []
 
     # how many victims to look for in a single scan iteration
-    victims_max_find = 30
+    victims_max_find = 100
 
     # how many victims to exploit before stopping
-    victims_max_exploit = 7
+    victims_max_exploit = 15
 
     # depth of propagation
     depth = 2
@@ -159,9 +148,12 @@ class Configuration(object):
     retry_failed_explotation = True
 
     # addresses of internet servers to ping and check if the monkey has internet acccess.
-    internet_services = ["monkey.guardicore.com", "www.google.com"]
+    internet_services = ["updates.infectionmonkey.com", "www.google.com"]
 
     keep_tunnel_open_time = 60
+
+    # Monkey files directory name
+    monkey_dir_name = 'monkey_dir'
 
     ###########################
     # scanners config
@@ -177,7 +169,7 @@ class Configuration(object):
 
     # TCP Scanner
     HTTP_PORTS = [80, 8080, 443,
-                  8008, # HTTP alternate
+                  8008,  # HTTP alternate
                   7001  # Oracle Weblogic default server port
                   ]
     tcp_target_ports = [22,
@@ -193,7 +185,7 @@ class Configuration(object):
                         9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
-    tcp_scan_interval = 200
+    tcp_scan_interval = 0  # in milliseconds
     tcp_scan_get_banner = True
 
     # Ping Scanner
@@ -203,14 +195,12 @@ class Configuration(object):
     # exploiters config
     ###########################
 
+    should_exploit = True
     skip_exploit_if_file_exist = False
 
     ms08_067_exploit_attempts = 5
-    ms08_067_remote_user_add = "Monkey_IUSER_SUPPORT"
-    ms08_067_remote_user_pass = "Password1!"
-
-    # rdp exploiter
-    rdp_use_vbs_download = True
+    user_to_add = "Monkey_IUSER_SUPPORT"
+    remote_user_pass = "Password1!"
 
     # User and password dictionaries for exploits.
 
@@ -267,6 +257,24 @@ class Configuration(object):
     ###########################
 
     extract_azure_creds = True
+
+    post_breach_actions = []
+    custom_PBA_linux_cmd = ""
+    custom_PBA_windows_cmd = ""
+    PBA_linux_filename = None
+    PBA_windows_filename = None
+
+    @staticmethod
+    def hash_sensitive_data(sensitive_data):
+        """
+        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data plain-text, as the log is
+        saved on client machines plain-text.
+
+        :param sensitive_data: the data to hash.
+        :return: the hashed data.
+        """
+        password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
+        return password_hashed
 
 
 WormConfiguration = Configuration()

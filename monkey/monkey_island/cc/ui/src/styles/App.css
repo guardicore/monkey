@@ -74,14 +74,17 @@ body {
     background: #e9e9e9;
     text-decoration: none;
   }
+
   li a.active {
     background: #333333;
     text-decoration: none;
     color: #ffcc00;
   }
+
   li a.active:hover {
     color: #ffcc00;
   }
+
   li a.disabled {
     color: #666;
     cursor: auto;
@@ -105,10 +108,11 @@ body {
   .guardicore-link span {
     color: #999;
     vertical-align: middle;
+    font-size: 1.7em;
   }
 
   .guardicore-link img {
-    height: 24px;
+    height: 38px;
     margin-left: 8px;
     vertical-align: middle;
   }
@@ -138,11 +142,10 @@ body {
     padding-left: 40px;
   }
 }
+
 .main .page-header {
   margin-top: 0;
 }
-
-
 
 .index img {
   margin: 40px auto;
@@ -164,12 +167,32 @@ body {
  * Configuration Page
  */
 
+.linux-pba-file-info, .windows-pba-file-info {
+  display: none
+}
+
+.filepond--root li {
+  overflow: visible;
+}
+
+.filepond--root * {
+  font-size: 1.04em;
+}
+
 .rjsf .form-group .form-group {
   margin-left: 2em;
 }
 
 .rjsf #root__title {
   display: none;
+}
+
+.nav-tabs > li > a {
+  height: 63px
+}
+
+.nav > li > a:focus {
+  background-color: transparent !important;
 }
 
 /*
@@ -208,13 +231,16 @@ body {
   font-size: 20px;
 
 }
+
 .preview-pane h3 small {
   margin-top: 0.5em;
   display: block;
 }
+
 .preview-pane h3 .fa {
   margin-right: 5px;
 }
+
 .preview-pane h4 {
   text-transform: uppercase;
   color: #999;
@@ -222,7 +248,7 @@ body {
   margin-top: 0;
 }
 
-.preview-pane .table tr:first-child th , .preview-pane .table tr:first-child td {
+.preview-pane .table tr:first-child th, .preview-pane .table tr:first-child td {
   border-top: 0;
 }
 
@@ -281,7 +307,7 @@ body {
   left: 0;
   right: 0;
   height: 130px;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 5px;
   border: 3px solid #aaa;
   padding: 0.5em;
@@ -311,7 +337,7 @@ body {
   padding: 0;
 }
 
-.data-table-container > .container th , .data-table-container > .container td {
+.data-table-container > .container th, .data-table-container > .container td {
   padding: 15px 8px;
 }
 
@@ -323,7 +349,7 @@ body {
   margin-left: 1em;
 }
 
-#search-field , #page-menu {
+#search-field, #page-menu {
   margin-left: 0.5em;
   margin-bottom: 1em;
   height: 34px;
@@ -410,6 +436,14 @@ body {
   top: 30%;
 }
 
+.pba-danger {
+  background-color: #ffc7af;
+}
+
+.pba-success {
+  background-color: #afd2a2;
+}
+
 /* Print report styling */
 
 @media print {
@@ -451,21 +485,21 @@ body {
   }
 
   .alert-danger {
-    color:#a94442 !important;
-    background-color:#f2dede !important;
-    border-color:#ebccd1 !important;
+    color: #a94442 !important;
+    background-color: #f2dede !important;
+    border-color: #ebccd1 !important;
   }
 
   .alert-success {
-    color:#3c763d !important;
-    background-color:#dff0d8 !important;
-    border-color:#d6e9c6 !important;
+    color: #3c763d !important;
+    background-color: #dff0d8 !important;
+    border-color: #d6e9c6 !important;
   }
 
   .alert-info {
-    color:#31708f !important;
-    background-color:#d9edf7 !important;
-    border-color:#bce8f1 !important;
+    color: #31708f !important;
+    background-color: #d9edf7 !important;
+    border-color: #bce8f1 !important;
   }
 
   .label-default {
@@ -492,3 +526,60 @@ body {
     background-color: #d9534f !important;
   }
 }
+
+/* Attack pages */
+.attack-matrix .messages {
+  margin-bottom: 30px;
+}
+
+.attack-matrix {
+  margin-bottom: 20px;
+}
+
+.icon-info {
+  color: #ade3eb !important;
+}
+
+.icon-warning {
+  color: #f0ad4e !important;
+}
+
+.icon-danger {
+  color: #d9acac !important;
+}
+
+.icon-default {
+  color: #e0ddde !important;
+}
+
+.status-success {
+  color: #24b716 !important;
+}
+
+.status-warning {
+  color: #b1a91c !important;
+}
+
+.status-danger {
+  color: #d91016 !important;
+}
+
+.status-default {
+  color: #575556 !important;
+}
+
+.attack-legend {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.version-text {
+  font-size: 0.9em;
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+

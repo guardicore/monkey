@@ -1,7 +1,8 @@
 from bson import ObjectId
 
-from cc.database import mongo
-import cc.services.node
+from monkey_island.cc.database import mongo
+import monkey_island.cc.services.node
+from monkey_island.cc.models import Monkey
 
 __author__ = "itay.mizeretz"
 
@@ -87,7 +88,7 @@ class EdgeService:
 
     @staticmethod
     def get_infected_monkey_island_pseudo_edges():
-        monkey = cc.services.node.NodeService.get_monkey_island_monkey()
+        monkey = monkey_island.cc.services.node.NodeService.get_monkey_island_monkey()
         existing_ids = [x["from"] for x in mongo.db.edge.find({"to": monkey["_id"]})]
         monkey_ids = [x["_id"] for x in mongo.db.monkey.find({})
                       if ("tunnel" not in x) and (x["_id"] not in existing_ids) and (x["_id"] != monkey["_id"])]
@@ -136,22 +137,25 @@ class EdgeService:
             {"_id": edge["_id"]},
             {"$set": {"exploited": True}}
         )
-        cc.services.node.NodeService.set_node_exploited(edge["to"])
+        monkey_island.cc.services.node.NodeService.set_node_exploited(edge["to"])
 
     @staticmethod
     def get_edge_label(edge):
-        NodeService = cc.services.node.NodeService
-        from_label = NodeService.get_monkey_label(NodeService.get_monkey_by_id(edge["from"]))
-        if edge["to"] == ObjectId("000000000000000000000000"):
+        node_service = monkey_island.cc.services.node.NodeService
+        from_id = edge["from"]
+        to_id = edge["to"]
+
+        from_label = Monkey.get_label_by_id(from_id)
+
+        if to_id == ObjectId("000000000000000000000000"):
             to_label = 'MonkeyIsland'
         else:
-            to_id = NodeService.get_monkey_by_id(edge["to"])
-            if to_id is None:
-                to_label = NodeService.get_node_label(NodeService.get_node_by_id(edge["to"]))
+            if Monkey.is_monkey(to_id):
+                to_label = Monkey.get_label_by_id(to_id)
             else:
-                to_label = NodeService.get_monkey_label(to_id)
+                to_label = node_service.get_node_label(node_service.get_node_by_id(to_id))
 
-        RIGHT_ARROW = u"\u2192"
         return "%s %s %s" % (from_label, RIGHT_ARROW, to_label)
 
 
+RIGHT_ARROW = "\u2192"

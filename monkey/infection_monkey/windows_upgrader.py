@@ -8,9 +8,9 @@ import time
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
-from infection_monkey.exploit.tools import build_monkey_commandline_explicitly
+from infection_monkey.exploit.tools.helpers import build_monkey_commandline_explicitly
 from infection_monkey.model import MONKEY_CMDLINE_WINDOWS
-from infection_monkey.utils import is_windows_os, is_64bit_windows_os, is_64bit_python
+from infection_monkey.utils.environment import is_windows_os, is_64bit_windows_os, is_64bit_python
 
 __author__ = 'itay.mizeretz'
 
@@ -37,8 +37,8 @@ class WindowsUpgrader(object):
             with monkeyfs.open(monkey_64_path, "rb") as downloaded_monkey_file:
                 with open(WormConfiguration.dropper_target_path_win_64, 'wb') as written_monkey_file:
                     shutil.copyfileobj(downloaded_monkey_file, written_monkey_file)
-        except (IOError, AttributeError):
-            LOG.error("Failed to download the Monkey to the target path.")
+        except (IOError, AttributeError) as e:
+            LOG.error("Failed to download the Monkey to the target path: %s." % e)
             return
 
         monkey_options = build_monkey_commandline_explicitly(opts.parent, opts.tunnel, opts.server, opts.depth)

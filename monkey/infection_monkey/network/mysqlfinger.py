@@ -2,13 +2,11 @@ import logging
 import socket
 
 import infection_monkey.config
-from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
+from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.tools import struct_unpack_tracker, struct_unpack_tracker_string
 
 MYSQL_PORT = 3306
 SQL_SERVICE = 'mysqld-3306'
-
 LOG = logging.getLogger(__name__)
 
 
@@ -16,7 +14,7 @@ class MySQLFinger(HostFinger):
     """
         Fingerprints mysql databases, only on port 3306
     """
-
+    _SCANNED_SERVICE = 'MySQL'
     SOCKET_TIMEOUT = 0.5
     HEADER_SIZE = 4  # in bytes
 
@@ -29,7 +27,6 @@ class MySQLFinger(HostFinger):
         :param host:
         :return: Success/failure, data is saved in the host struct
         """
-        assert isinstance(host, VictimHost)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(self.SOCKET_TIMEOUT)
 
@@ -51,15 +48,14 @@ class MySQLFinger(HostFinger):
                 return False
 
             version, curpos = struct_unpack_tracker_string(data, curpos)  # special coded to solve string parsing
-            version = version[0]
-            host.services[SQL_SERVICE] = {}
+            version = version[0].decode()
+            self.init_service(host.services, SQL_SERVICE, MYSQL_PORT)
             host.services[SQL_SERVICE]['version'] = version
             version = version.split('-')[0].split('.')
             host.services[SQL_SERVICE]['major_version'] = version[0]
             host.services[SQL_SERVICE]['minor_version'] = version[1]
             host.services[SQL_SERVICE]['build_version'] = version[2]
             thread_id, curpos = struct_unpack_tracker(data, curpos, "<I")  # ignore thread id
-
             # protocol parsing taken from
             # https://nmap.org/nsedoc/scripts/mysql-info.html
             if protocol == 10:

@@ -1,27 +1,48 @@
 import json
 import logging
-import standard
-import aws
+import os
+
+env = None
+
+from monkey_island.cc.environment import standard
+from monkey_island.cc.environment import testing
+from monkey_island.cc.environment import aws
+from monkey_island.cc.environment import password
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+
+__author__ = 'itay.mizeretz'
 
 logger = logging.getLogger(__name__)
 
+AWS = 'aws'
+STANDARD = 'standard'
+PASSWORD = 'password'
+TESTING = 'testing'
 
 ENV_DICT = {
-    'standard': standard.StandardEnvironment,
-    'aws': aws.AwsEnvironment
+    STANDARD: standard.StandardEnvironment,
+    AWS: aws.AwsEnvironment,
+    PASSWORD: password.PasswordEnvironment,
+    TESTING: testing.TestingEnvironment
 }
 
 
-def load_env_from_file():
-    with open('monkey_island/cc/server_config.json', 'r') as f:
+def load_server_configuration_from_file():
+    with open(os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc/server_config.json'), 'r') as f:
         config_content = f.read()
-    config_json = json.loads(config_content)
-    return config_json['server_config']
+    return json.loads(config_content)
+
+
+def load_env_from_file():
+    loaded_config_json = load_server_configuration_from_file()
+    return loaded_config_json['server_config']
 
 
 try:
-    __env_type = load_env_from_file()
+    config_json = load_server_configuration_from_file()
+    __env_type = config_json['server_config']
     env = ENV_DICT[__env_type]()
+    env.set_config(config_json)
     logger.info('Monkey\'s env is: {0}'.format(env.__class__.__name__))
 except Exception:
     logger.error('Failed initializing environment', exc_info=True)

@@ -1,12 +1,9 @@
 #!/bin/sh
 
 service monkey-island stop || true
-service monkey-mongo stop || true
 
 rm -f /etc/init/monkey-island.conf
-rm -f /etc/init/monkey-mongo.conf
 [ -f "/lib/systemd/system/monkey-island.service" ] && rm -f /lib/systemd/system/monkey-island.service
-[ -f "/lib/systemd/system/monkey-mongo.service" ] && rm -f /lib/systemd/system/monkey-mongo.service
 
 rm -r -f /var/monkey
 

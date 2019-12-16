@@ -4,14 +4,14 @@ from flask import current_app, abort
 from flask_jwt import JWT, _jwt_required, JWTError
 from werkzeug.security import safe_str_cmp
 
-from cc.environment.environment import env
+from monkey_island.cc.environment.environment import env
 
 __author__ = 'itay.mizeretz'
 
 
 class User(object):
-    def __init__(self, id, username, secret):
-        self.id = id
+    def __init__(self, user_id, username, secret):
+        self.id = user_id
         self.username = username
         self.secret = secret
 
@@ -33,20 +33,18 @@ def init_jwt(app):
         user_id = payload['identity']
         return userid_table.get(user_id, None)
 
-    if env.is_auth_enabled():
-        JWT(app, authenticate, identity)
+    JWT(app, authenticate, identity)
 
 
 def jwt_required(realm=None):
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
-            if env.is_auth_enabled():
-                try:
-                    _jwt_required(realm or current_app.config['JWT_DEFAULT_REALM'])
-                except JWTError:
-                    abort(401)
-            return fn(*args, **kwargs)
+            try:
+                _jwt_required(realm or current_app.config['JWT_DEFAULT_REALM'])
+                return fn(*args, **kwargs)
+            except JWTError:
+                abort(401)
 
         return decorator
 

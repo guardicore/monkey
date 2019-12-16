@@ -4,12 +4,14 @@ import os
 from Crypto import Random
 from Crypto.Cipher import AES
 
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+
 __author__ = "itay.mizeretz"
 
 
 class Encryptor:
     _BLOCK_SIZE = 32
-    _DB_PASSWORD_FILENAME = "monkey_island/cc/mongo_key.bin"
+    _DB_PASSWORD_FILENAME = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc/mongo_key.bin')
 
     def __init__(self):
         self._load_key()
@@ -33,19 +35,19 @@ class Encryptor:
         return message + (self._BLOCK_SIZE - (len(message) % self._BLOCK_SIZE)) * chr(
             self._BLOCK_SIZE - (len(message) % self._BLOCK_SIZE))
 
-    def _unpad(self, message):
+    def _unpad(self, message: str):
         return message[0:-ord(message[len(message) - 1])]
 
-    def enc(self, message):
+    def enc(self, message: str):
         cipher_iv = Random.new().read(AES.block_size)
         cipher = AES.new(self._cipher_key, AES.MODE_CBC, cipher_iv)
-        return base64.b64encode(cipher_iv + cipher.encrypt(self._pad(message)))
+        return base64.b64encode(cipher_iv + cipher.encrypt(self._pad(message).encode())).decode()
 
     def dec(self, enc_message):
         enc_message = base64.b64decode(enc_message)
         cipher_iv = enc_message[0:AES.block_size]
         cipher = AES.new(self._cipher_key, AES.MODE_CBC, cipher_iv)
-        return self._unpad(cipher.decrypt(enc_message[AES.block_size:]))
+        return self._unpad(cipher.decrypt(enc_message[AES.block_size:]).decode())
 
 
 encryptor = Encryptor()

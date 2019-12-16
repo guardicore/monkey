@@ -1,4 +1,3 @@
-
 __author__ = 'maor.rayzin'
 
 
@@ -16,8 +15,8 @@ class MimikatzSecrets(object):
             return {}
 
         for sam_user_txt in users_secrets:
-            sam_user = dict([map(unicode.strip, line.split(":")) for line in
-                             filter(lambda l: l.count(":") == 1, sam_user_txt.splitlines())])
+            sam_user = dict([list(map(str.strip, line.split(":"))) for line in
+                             [l for l in sam_user_txt.splitlines() if l.count(":") == 1]])
             username = sam_user.get("User")
             users_dict[username] = {}
 

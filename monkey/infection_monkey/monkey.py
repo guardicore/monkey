@@ -4,10 +4,12 @@ import os
 import subprocess
 import sys
 import time
-from six.moves import xrange
 
 import infection_monkey.tunnel as tunnel
-import infection_monkey.utils as utils
+from infection_monkey.network.HostFinger import HostFinger
+from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
+from infection_monkey.utils.monkey_log_path import get_monkey_log_path
+from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.model import DELAY_DELETE_CMD
@@ -15,7 +17,20 @@ from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
+from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
+from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
+from infection_monkey.telemetry.scan_telem import ScanTelem
+from infection_monkey.telemetry.state_telem import StateTelem
+from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
+from infection_monkey.telemetry.trace_telem import TraceTelem
+from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
+from infection_monkey.post_breach.post_breach_handler import PostBreach
+from infection_monkey.network.tools import get_interface_to_target
+from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
+from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
+from common.utils.attack_utils import ScanStatus, UsageEnum
+from infection_monkey.exploit.HostExploiter import HostExploiter
 
 __author__ = 'itamar'
 
@@ -36,6 +51,7 @@ class InfectionMonkey(object):
         self._exploiters = None
         self._fingerprint = None
         self._default_server = None
+        self._default_server_port = None
         self._depth = 0
         self._opts = None
         self._upgrading_to_64 = False
@@ -56,6 +72,7 @@ class InfectionMonkey(object):
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
         self._default_server = self._opts.server
+
         if self._opts.depth:
             WormConfiguration._depth_from_commandline = True
         self._keep_running = True
@@ -72,9 +89,13 @@ class InfectionMonkey(object):
     def start(self):
         LOG.info("Monkey is running...")
 
-        if not ControlClient.find_server(default_tunnel=self._default_tunnel):
-            LOG.info("Monkey couldn't find server. Going down.")
+        # Sets island's IP and port for monkey to communicate to
+        if not self.set_default_server():
             return
+        self.set_default_port()
+
+        # Create a dir for monkey files if there isn't one
+        create_monkey_dir()
 
         if WindowsUpgrader.should_upgrade():
             self._upgrading_to_64 = True
@@ -85,6 +106,9 @@ class InfectionMonkey(object):
 
         ControlClient.wakeup(parent=self._parent)
         ControlClient.load_control_config()
+
+        if is_windows_os():
+            T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
         if not WormConfiguration.alive:
             LOG.info("Marked not alive from configuration")
@@ -97,43 +121,38 @@ class InfectionMonkey(object):
         if monkey_tunnel:
             monkey_tunnel.start()
 
-        ControlClient.send_telemetry("state", {'done': False})
-
-        self._default_server = WormConfiguration.current_server
-        LOG.debug("default server: %s" % self._default_server)
-        ControlClient.send_telemetry("tunnel", {'proxy': ControlClient.proxies.get('https')})
+        StateTelem(is_done=False).send()
+        TunnelTelem().send()
 
         if WormConfiguration.collect_system_info:
             LOG.debug("Calling system info collection")
             system_info_collector = SystemInfoCollector()
             system_info = system_info_collector.get_info()
-            ControlClient.send_telemetry("system_info_collection", system_info)
+            SystemInfoTelem(system_info).send()
+
+        # Executes post breach actions
+        PostBreach().execute()
 
         if 0 == WormConfiguration.depth:
-            LOG.debug("Reached max depth, shutting down")
-            ControlClient.send_telemetry("trace", "Reached max depth, shutting down")
+            TraceTelem("Reached max depth, shutting down").send()
             return
         else:
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
-        for iteration_index in xrange(WormConfiguration.max_iterations):
+        for iteration_index in range(WormConfiguration.max_iterations):
             ControlClient.keepalive()
             ControlClient.load_control_config()
 
-            LOG.debug("Users to try: %s" % str(WormConfiguration.exploit_user_list))
-            LOG.debug("Passwords to try: %s" % str(WormConfiguration.exploit_password_list))
-
             self._network.initialize()
 
-            self._exploiters = WormConfiguration.exploiter_classes
+            self._fingerprint = HostFinger.get_instances()
 
-            self._fingerprint = [fingerprint() for fingerprint in WormConfiguration.finger_classes]
+            self._exploiters = HostExploiter.get_classes()
 
             if not self._keep_running or not WormConfiguration.alive:
                 break
 
-            machines = self._network.get_victim_machines(WormConfiguration.scanner_class,
-                                                         max_find=WormConfiguration.victims_max_find,
+            machines = self._network.get_victim_machines(max_find=WormConfiguration.victims_max_find,
                                                          stop_callback=ControlClient.check_for_stop)
             is_empty = True
             for machine in machines:
@@ -146,8 +165,7 @@ class InfectionMonkey(object):
                              machine, finger.__class__.__name__)
                     finger.get_host_fingerprint(machine)
 
-                ControlClient.send_telemetry('scan', {'machine': machine.as_dict(),
-                                                      'scanner': WormConfiguration.scanner_class.__name__})
+                ScanTelem(machine).send()
 
                 # skip machines that we've already exploited
                 if machine in self._exploited_machines:
@@ -164,47 +182,27 @@ class InfectionMonkey(object):
                 if monkey_tunnel:
                     monkey_tunnel.set_tunnel_for_host(machine)
                 if self._default_server:
-                    LOG.debug("Default server: %s set to machine: %r" % (self._default_server, machine))
-                    machine.set_default_server(self._default_server)
+                    if self._network.on_island(self._default_server):
+                        machine.set_default_server(get_interface_to_target(machine.ip_addr) +
+                                                   (':' + self._default_server_port if self._default_server_port else ''))
+                    else:
+                        machine.set_default_server(self._default_server)
+                    LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_server))
 
-                successful_exploiter = None
-                for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
-                    if not exploiter.is_os_supported():
-                        LOG.info("Skipping exploiter %s host:%r, os is not supported",
-                                 exploiter.__class__.__name__, machine)
-                        continue
-
-                    LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
-
-                    result = False
-                    try:
-                        result = exploiter.exploit_host()
-                        if result:
-                            successful_exploiter = exploiter
+                # Order exploits according to their type
+                if WormConfiguration.should_exploit:
+                    self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
+                    host_exploited = False
+                    for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
+                        if self.try_exploiting(machine, exploiter):
+                            host_exploited = True
+                            VictimHostTelem('T1210', ScanStatus.USED, machine=machine).send()
                             break
-                        else:
-                            LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
-
-                    except Exception as exc:
-                        LOG.exception("Exception while attacking %s using %s: %s",
-                                      machine, exploiter.__class__.__name__, exc)
-                    finally:
-                        exploiter.send_exploit_telemetry(result)
-
-                if successful_exploiter:
-                    self._exploited_machines.add(machine)
-
-                    LOG.info("Successfully propagated to %s using %s",
-                             machine, successful_exploiter.__class__.__name__)
-
-                    # check if max-exploitation limit is reached
-                    if WormConfiguration.victims_max_exploit <= len(self._exploited_machines):
-                        self._keep_running = False
-
-                        LOG.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)
-                        break
-                else:
-                    self._fail_exploitation_machines.add(machine)
+                    if not host_exploited:
+                        self._fail_exploitation_machines.add(machine)
+                        VictimHostTelem('T1210', ScanStatus.SCANNED, machine=machine).send()
+                if not self._keep_running:
+                    break
 
             if (not is_empty) and (WormConfiguration.max_iterations > iteration_index + 1):
                 time_to_sleep = WormConfiguration.timeout_between_iterations
@@ -235,7 +233,7 @@ class InfectionMonkey(object):
             InfectionMonkey.close_tunnel()
             firewall.close()
         else:
-            ControlClient.send_telemetry("state", {'done': True})  # Signal the server (before closing the tunnel)
+            StateTelem(is_done=True).send()  # Signal the server (before closing the tunnel)
             InfectionMonkey.close_tunnel()
             firewall.close()
             if WormConfiguration.send_log_to_server:
@@ -254,11 +252,15 @@ class InfectionMonkey(object):
 
     @staticmethod
     def self_delete():
+        status = ScanStatus.USED if remove_monkey_dir() else ScanStatus.SCANNED
+        T1107Telem(status, get_monkey_dir_path()).send()
+
         if WormConfiguration.self_delete_in_cleanup \
                 and -1 == sys.executable.find('python'):
             try:
+                status = None
                 if "win32" == sys.platform:
-                    from _subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
+                    from subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = SW_HIDE
@@ -267,11 +269,15 @@ class InfectionMonkey(object):
                                      close_fds=True, startupinfo=startupinfo)
                 else:
                     os.remove(sys.executable)
+                    status = ScanStatus.USED
             except Exception as exc:
                 LOG.error("Exception in self delete: %s", exc)
+                status = ScanStatus.SCANNED
+            if status:
+                T1107Telem(status, sys.executable).send()
 
     def send_log(self):
-        monkey_log_path = utils.get_monkey_log_path()
+        monkey_log_path = get_monkey_log_path()
         if os.path.exists(monkey_log_path):
             with open(monkey_log_path, 'r') as f:
                 log = f.read()
@@ -279,3 +285,70 @@ class InfectionMonkey(object):
             log = ''
 
         ControlClient.send_log(log)
+
+    def try_exploiting(self, machine, exploiter):
+        """
+        Workflow of exploiting one machine with one exploiter
+        :param machine: Machine monkey tries to exploit
+        :param exploiter: Exploiter to use on that machine
+        :return: True if successfully exploited, False otherwise
+        """
+        if not exploiter.is_os_supported():
+            LOG.info("Skipping exploiter %s host:%r, os is not supported",
+                     exploiter.__class__.__name__, machine)
+            return False
+
+        LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
+
+        result = False
+        try:
+            result = exploiter.exploit_host()
+            if result:
+                self.successfully_exploited(machine, exploiter)
+                return True
+            else:
+                LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
+        except ExploitingVulnerableMachineError as exc:
+            LOG.error("Exception while attacking %s using %s: %s",
+                      machine, exploiter.__class__.__name__, exc)
+            self.successfully_exploited(machine, exploiter)
+            return True
+        except FailedExploitationError as e:
+            LOG.info("Failed exploiting %r with exploiter %s, %s", machine, exploiter.__class__.__name__, e)
+        except Exception as exc:
+            LOG.exception("Exception while attacking %s using %s: %s",
+                          machine, exploiter.__class__.__name__, exc)
+        finally:
+            exploiter.send_exploit_telemetry(result)
+        return False
+
+    def successfully_exploited(self, machine, exploiter):
+        """
+        Workflow of registering successfully exploited machine
+        :param machine: machine that was exploited
+        :param exploiter: exploiter that succeeded
+        """
+        self._exploited_machines.add(machine)
+
+        LOG.info("Successfully propagated to %s using %s",
+                 machine, exploiter.__class__.__name__)
+
+        # check if max-exploitation limit is reached
+        if WormConfiguration.victims_max_exploit <= len(self._exploited_machines):
+            self._keep_running = False
+
+            LOG.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)
+
+    def set_default_port(self):
+        try:
+            self._default_server_port = self._default_server.split(':')[1]
+        except KeyError:
+            self._default_server_port = ''
+
+    def set_default_server(self):
+        if not ControlClient.find_server(default_tunnel=self._default_tunnel):
+            LOG.info("Monkey couldn't find server. Going down.")
+            return False
+        self._default_server = WormConfiguration.current_server
+        LOG.debug("default server set to: %s" % self._default_server)
+        return True

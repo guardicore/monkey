@@ -1,9 +1,12 @@
+import hashlib
 import json
 import logging
 import os
 
 import flask_restful
 from flask import request, send_from_directory
+
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = 'Barak'
 
@@ -70,7 +73,7 @@ class MonkeyDownload(flask_restful.Resource):
 
     # Used by monkey. can't secure.
     def get(self, path):
-        return send_from_directory('binaries', path)
+        return send_from_directory(os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'binaries'), path)
 
     # Used by monkey. can't secure.
     def post(self):
@@ -81,9 +84,33 @@ class MonkeyDownload(flask_restful.Resource):
 
             if result:
                 # change resulting from new base path
-                real_path = os.path.join("monkey_island", "cc", 'binaries', result['filename'])
+                executable_filename = result['filename']
+                real_path = MonkeyDownload.get_executable_full_path(executable_filename)
                 if os.path.isfile(real_path):
                     result['size'] = os.path.getsize(real_path)
                     return result
 
         return {}
+
+    @staticmethod
+    def get_executable_full_path(executable_filename):
+        real_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", 'binaries', executable_filename)
+        return real_path
+
+    @staticmethod
+    def log_executable_hashes():
+        """
+        Logs all the hashes of the monkey executables for debugging ease (can check what Monkey version you have etc.).
+        """
+        filenames = set([x['filename'] for x in MONKEY_DOWNLOADS])
+        for filename in filenames:
+            filepath = MonkeyDownload.get_executable_full_path(filename)
+            if os.path.isfile(filepath):
+                with open(filepath, 'rb') as monkey_exec_file:
+                    file_contents = monkey_exec_file.read()
+                    logger.debug("{} hashes:\nSHA-256 {}".format(
+                        filename,
+                        hashlib.sha256(file_contents).hexdigest()
+                    ))
+            else:
+                logger.debug("No monkey executable for {}.".format(filepath))

@@ -1,17 +1,15 @@
-enum34
 impacket
-PyCrypto
-pyasn1
+pycryptodome
 cffi
-twisted
-rdpy
 requests
 odict
 paramiko
-psutil==3.4.2
+psutil
 PyInstaller
-six
 ecdsa
 netifaces
 ipaddress
 wmi
+pywin32 ; sys_platform == 'win32'
+pymssql<3.0
+pyftpdlib

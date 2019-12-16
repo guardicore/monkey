@@ -1,0 +1,11 @@
+[Unit]
+Description=Monkey Island Service
+Wants=monkey-mongo.service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/var/monkey/monkey_island/service/systemd/start_server.sh
+
+[Install]
+WantedBy=multi-user.target

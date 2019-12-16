@@ -41,13 +41,13 @@ class SocketsPipe(Thread):
                     except:
                         break
                     self._keep_connection = True
-        
+
         self.source.close()
         self.dest.close()
 
 
 class TcpProxy(TransportProxyBase):
-    
+
     def run(self):
         pipes = []
         l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -61,8 +61,8 @@ class TcpProxy(TransportProxyBase):
             except socket.timeout:
                 continue
 
+            dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
-                dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 dest.connect((self.dest_host, self.dest_port))
             except socket.error as ex:
                 source.close()
