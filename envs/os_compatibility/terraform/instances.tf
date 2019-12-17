@@ -1,3 +1,7 @@
+// Instances of machines in os_compat environment
+// !!! Don't forget to add machines to test_compatibility.py if you add here !!!
+
+
 resource "aws_instance" "island" {
   ami           = "ami-01cc9554aa0b4c00e"
   instance_type = "t2.micro"
