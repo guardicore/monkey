@@ -14,7 +14,8 @@ import ReportPage from 'components/pages/ReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
-import Notifier from 'react-desktop-notification'
+import Notifier from 'react-desktop-notification';
+import NotFoundPage from 'components/pages/NotFoundPage';
 
 
 import 'normalize.css/normalize.css';
@@ -197,6 +198,8 @@ class AppComponent extends AuthComponent {
               <VersionComponent/>
             </Col>
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className='main'>
+
+              <Switch>
               <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
               {this.renderRoute('/', <RunServerPage onStatusChange={this.updateStatus}/>, true)}
               {this.renderRoute('/configure', <ConfigurePage onStatusChange={this.updateStatus}/>)}
@@ -205,12 +208,12 @@ class AppComponent extends AuthComponent {
               {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
               {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
               {this.redirectTo('/report', '/report/security')}
-              <Switch>
               {this.renderRoute('/report/security', <ReportPage/>)}
               {this.renderRoute('/report/attack', <ReportPage/>)}
               {this.renderRoute('/report/zeroTrust', <ReportPage/>)}
-              </Switch>
               {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
+              <Route component={NotFoundPage} />
+              </Switch>
             </Col>
           </Row>
         </Grid>
