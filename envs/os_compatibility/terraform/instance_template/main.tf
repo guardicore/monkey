@@ -6,6 +6,7 @@ resource "aws_instance" "os_test_machine" {
   key_name = "os_compat"
   tags = {
     Name = "os_compat_${var.name}"
+    Purpose = "os_compat_instance"
   }
   vpc_security_group_ids = ["${data.aws_security_group.os_compat_instance.id}"]
   associate_public_ip_address = true

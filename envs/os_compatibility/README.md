@@ -28,8 +28,8 @@ terraform apply
 ```
 
 ## Usage
-1. Launch os_compat_ISLAND machine and upload your binaries/update island
-2. Launch/Reboot all other os_compat test machines
+1. Launch os_compat_ISLAND machine and upload your binaries/update island. Reset island environment.
+2. Launch/Reboot all other os_compat test machines (Can be filtered with tag "Puropose: os_compat_instance")
 3. Wait until machines boot and run monkey
 4. Launch `test_compatibility.py` pytest script with island ip parameter 
 (e.g. `test_compatibility.py --island 111.111.111.111:5000`)
