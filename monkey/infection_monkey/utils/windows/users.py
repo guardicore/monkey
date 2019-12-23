@@ -65,7 +65,7 @@ class AutoNewWindowsUser(AutoNewUser):
                 self.username,
                 ".",  # Use current domain.
                 self.password,
-                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user). Need this to open ping
+                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user).
                 # using a shell.
                 win32con.LOGON32_PROVIDER_DEFAULT)  # Which logon provider to use - whatever Windows offers.
         except Exception as err:
