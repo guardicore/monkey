@@ -10,10 +10,10 @@ from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 
-INFECTION_MONKEY_WEBSITE_URL = "https://infectionmonkey.com"
+INFECTION_MONKEY_WEBSITE_URL = "https://infectionmonkey.com/"
 
 CREATED_PROCESS_AS_USER_SUCCESS_FORMAT = "Created process '{}' as user '{}' and the process succeeded."
-CREATED_PROCESS_AS_USER_FAILED_FORMAT = "Created process '{}' as user '{}', but the process failed (exit status {})."
+CREATED_PROCESS_AS_USER_FAILED_FORMAT = "Created process '{}' as user '{}', but the process failed (exit status {}:{})."
 
 USERNAME_PREFIX = "somenewuser"
 PASSWORD = "N3WPa55W0rD!1"
@@ -49,7 +49,7 @@ class CommunicateAsNewUser(PBA):
     @staticmethod
     def get_commandline_for_http_request(url, is_windows=is_windows_os()):
         if is_windows:
-            format_string = "powershell -command \"Invoke-WebRequest {url}\""
+            format_string = 'powershell.exe -command "Invoke-WebRequest {url}" -UseBasicParsing'
         else:
             # true || false -> 0.  false || true -> 0.  false || false -> 1. So:
             # if curl works, we're good.
@@ -71,4 +71,9 @@ class CommunicateAsNewUser(PBA):
                 CREATED_PROCESS_AS_USER_SUCCESS_FORMAT.format(commandline, username), True)).send()
         else:
             PostBreachTelem(self, (
-                CREATED_PROCESS_AS_USER_FAILED_FORMAT.format(commandline, username, exit_status), False)).send()
+                CREATED_PROCESS_AS_USER_FAILED_FORMAT.format(
+                    commandline, username, exit_status, twos_complement(exit_status)), False)).send()
+
+
+def twos_complement(exit_status):
+    return hex(exit_status & (2 ** 32 - 1))

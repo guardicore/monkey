@@ -13,3 +13,4 @@ wmi
 pywin32 ; sys_platform == 'win32'
 pymssql<3.0
 pyftpdlib
+WinSys-3.x
