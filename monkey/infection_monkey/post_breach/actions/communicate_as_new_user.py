@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 class CommunicateAsNewUser(PBA):
     """
-    This PBA creates a new user, and then creates HTTP/S requests as that user. This is used for a Zero Trust test of the
+    This PBA creates a new user, and then creates HTTPS requests as that user. This is used for a Zero Trust test of the
     People pillar. See the relevant telemetry processing to see what findings are created.
     """
 
