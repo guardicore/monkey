@@ -49,7 +49,9 @@ class CommunicateAsNewUser(PBA):
     @staticmethod
     def get_commandline_for_http_request(url, is_windows=is_windows_os()):
         if is_windows:
-            format_string = 'powershell.exe -command "Invoke-WebRequest {url}" -UseBasicParsing'
+            format_string = \
+                'powershell.exe -command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; ' \
+                'Invoke-WebRequest {url} -UseBasicParsing"'
         else:
             # true || false -> 0.  false || true -> 0.  false || false -> 1. So:
             # if curl works, we're good.
