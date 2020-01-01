@@ -20,7 +20,7 @@ class PostBreach(object):
         self.os_is_linux = not is_windows_os()
         self.pba_list = self.config_to_pba_list()
 
-    def execute(self):
+    def execute_all_configured(self):
         """
         Executes all post breach actions.
         """
