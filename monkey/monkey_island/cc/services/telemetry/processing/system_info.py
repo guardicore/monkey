@@ -72,7 +72,6 @@ def encrypt_system_info_ssh_keys(ssh_info):
 def process_credential_info(telemetry_json):
     if 'credentials' in telemetry_json['data']:
         creds = telemetry_json['data']['credentials']
-        encrypt_system_info_creds(creds)
         add_system_info_creds_to_config(creds)
         replace_user_dot_with_comma(creds)
 
@@ -93,14 +92,6 @@ def add_system_info_creds_to_config(creds):
             ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
         if 'ntlm_hash' in creds[user]:
             ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
-
-
-def encrypt_system_info_creds(creds):
-    for user in creds:
-        for field in ['password', 'lm_hash', 'ntlm_hash']:
-            if field in creds[user]:
-                # this encoding is because we might run into passwords which are not pure ASCII
-                creds[user][field] = encryptor.enc(creds[user][field])
 
 
 def process_mimikatz_and_wmi_info(telemetry_json):
