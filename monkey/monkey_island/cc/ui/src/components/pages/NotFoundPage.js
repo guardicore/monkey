@@ -7,7 +7,7 @@ let monkeyDetective = require('../../images/detective-monkey.svg');
 class ConfigurePageComponent extends React.Component{
   constructor(props) {
     super(props);
-    };
+    }
 
   render(){
     return(
