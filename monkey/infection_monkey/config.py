@@ -12,7 +12,7 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
-SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list"]
+SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list", "exploit_ssh_keys"]
 HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
 
 
