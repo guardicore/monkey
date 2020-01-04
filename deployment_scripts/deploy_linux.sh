@@ -1,9 +1,30 @@
 #!/bin/bash
-source config
 
 exists() {
   command -v "$1" >/dev/null 2>&1
 }
+
+is_root() {
+  return $(id -u)
+}
+
+has_sudo() {
+  # 0 true, 1 false
+  timeout 1 sudo id && return 0 || return 1
+}
+
+config_branch=${2:-"develop"}
+config_url="https://raw.githubusercontent.com/guardicore/monkey/"$config_branch"/deployment_scripts/config"
+
+if exists curl; then
+  file=$(mktemp)
+  curl -s -o $file "$config_url"
+  source $file
+  rm $file
+else
+  echo 'Your system does not have curl, exiting'
+  exit 1
+fi
 
 # Setup monkey either in dir required or current dir
 monkey_home=${1:-$(pwd)}
@@ -30,8 +51,13 @@ log_message() {
   echo -e "-------------------------------------------\n"
 }
 
-sudo -v
-if [[ $? != 0 ]]; then
+if is_root; then
+  echo "Please don't runt this script as root"
+  exit 1
+fi
+
+HAS_SUDO=$(has_sudo)
+if [[ ! $HAS_SUDO ]]; then
   echo "You need root permissions for some of this script operations. Quiting."
   exit 1
 fi
@@ -46,8 +72,8 @@ if ! exists git; then
 fi
 
 if ! exists wget; then
-    echo 'Your system does have wget, please install and re-run this script'
-    exit 1
+  echo 'Your system does have wget, please install and re-run this script'
+  exit 1
 fi
 
 log_message "Cloning files from git"

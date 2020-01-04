@@ -15,7 +15,9 @@ Don't forget to add python to PATH or do so while installing it via this script.
 
 Linux deployment script is meant for Ubuntu 16.x machines.
 You must have root permissions, but don't run the script as root.<br>
-Launch deploy_linux.sh from scripts directory.<br>
+`wget https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/deploy_linux.sh`
+
+Then execute the resulting script with your shell. 
 First argument should be an absolute path of an empty directory (script will create one if doesn't exist, default is ./infection_monkey).
 Second parameter is the branch you want to clone (develop by default).
 Example usages:<br>
