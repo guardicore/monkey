@@ -26,7 +26,10 @@ else
 fi
 
 TEMP_MONGO=$(mktemp -d)
-pushd "${TEMP_MONGO}"
+pushd "${TEMP_MONGO}" || {
+  echo "Pushd failed"
+  exit 1
+}
 
 if exists bash; then
   wget ${tgz_url} -O mongodb.tgz
@@ -40,7 +43,10 @@ else
 fi
 
 tar -xf mongodb.tgz
-popd
+popd || {
+  echo "popd failed"
+  exit 1
+}
 
 mkdir -p "${MONGODB_DIR}"/bin
 mkdir -p "${MONGODB_DIR}"/db
