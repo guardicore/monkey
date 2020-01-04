@@ -53,7 +53,6 @@ mkdir -p "${MONGODB_DIR}"/db
 cp "${TEMP_MONGO}"/mongodb-*/bin/mongod "${MONGODB_DIR}"/bin/mongod
 cp "${TEMP_MONGO}"/mongodb-*/LICENSE-Community.txt "${MONGODB_DIR}"/
 chmod a+x "${MONGODB_DIR}"/bin/mongod
-# shellcheck disable=SC2086
-rm -r ${TEMP_MONGO}
+rm -r "${TEMP_MONGO}"
 
 exit 0
