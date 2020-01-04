@@ -4,7 +4,8 @@ exists() {
   command -v "$1" >/dev/null 2>&1
 }
 
-export os_version_monkey=$(cat /etc/issue)
+os_version_monkey=$(cat /etc/issue)
+export os_version_monkey
 MONGODB_DIR=$1 # If using deb, this should be: /var/monkey/monkey_island/bin/mongodb
 
 if [[ ${os_version_monkey} == "Ubuntu 16.04"* ]]; then
