@@ -21,7 +21,7 @@ then
 	export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian92-3.6.12.tgz"
 else
 	echo Unsupported OS
-	exit -1
+	exit 1
 fi
 
 TEMP_MONGO=$(mktemp -d)
