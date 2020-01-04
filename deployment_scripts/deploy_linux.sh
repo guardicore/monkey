@@ -1,10 +1,14 @@
 #!/bin/bash
 source config
 
+exists() {
+  command -v "$1" >/dev/null 2>&1
+}
+
 # Setup monkey either in dir required or current dir
-monkey_home=${1:-`pwd`}
-if [[ $monkey_home == `pwd` ]]; then
-    monkey_home="$monkey_home/$MONKEY_FOLDER_NAME"
+monkey_home=${1:-$(pwd)}
+if [[ $monkey_home == $(pwd) ]]; then
+  monkey_home="$monkey_home/$MONKEY_FOLDER_NAME"
 fi
 
 # We can set main paths after we know the home dir
@@ -15,39 +19,39 @@ ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
 
-handle_error () {
-    echo "Fix the errors above and rerun the script"
-    exit 1
+handle_error() {
+  echo "Fix the errors above and rerun the script"
+  exit 1
 }
 
-log_message () {
-    echo -e "\n\n-------------------------------------------"
-    echo -e "DEPLOYMENT SCRIPT: $1"
-    echo -e "-------------------------------------------\n"
+log_message() {
+  echo -e "\n\n-------------------------------------------"
+  echo -e "DEPLOYMENT SCRIPT: $1"
+  echo -e "-------------------------------------------\n"
 }
 
 sudo -v
 if [[ $? != 0 ]]; then
-    echo "You need root permissions for some of this script operations. Quiting."
-    exit 1
+  echo "You need root permissions for some of this script operations. Quiting."
+  exit 1
 fi
 
 if [[ ! -d ${monkey_home} ]]; then
-    mkdir -p ${monkey_home}
+  mkdir -p ${monkey_home}
 fi
 
 git --version &>/dev/null
 git_available=$?
 if [[ ${git_available} != 0 ]]; then
-    echo "Please install git and re-run this script"
-    exit 1
+  echo "Please install git and re-run this script"
+  exit 1
 fi
 
 log_message "Cloning files from git"
 branch=${2:-"develop"}
 if [[ ! -d "$monkey_home/monkey" ]]; then # If not already cloned
-    git clone --single-branch -b $branch ${MONKEY_GIT_URL} ${monkey_home} 2>&1 || handle_error
-    chmod 774 -R ${monkey_home}
+  git clone --single-branch -b $branch ${MONKEY_GIT_URL} ${monkey_home} 2>&1 || handle_error
+  chmod 774 -R ${monkey_home}
 fi
 
 # Create folders
@@ -57,13 +61,13 @@ mkdir -p ${ISLAND_BINARIES_PATH} || handle_error
 
 # Detecting command that calls python 3.7
 python_cmd=""
-if [[ `python --version 2>&1` == *"Python 3.7"* ]]; then
+if [[ $(python --version 2>&1) == *"Python 3.7"* ]]; then
   python_cmd="python"
 fi
-if [[ `python37 --version 2>&1` == *"Python 3.7"* ]]; then
+if [[ $(python37 --version 2>&1) == *"Python 3.7"* ]]; then
   python_cmd="python37"
 fi
-if [[ `python3.7 --version 2>&1` == *"Python 3.7"* ]]; then
+if [[ $(python3.7 --version 2>&1) == *"Python 3.7"* ]]; then
   python_cmd="python3.7"
 fi
 
@@ -105,10 +109,9 @@ wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_64_BINARY_URL}
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
 
-
 # Get machine type/kernel version
-kernel=`uname -m`
-linux_dist=`lsb_release -a 2> /dev/null`
+kernel=$(uname -m)
+linux_dist=$(lsb_release -a 2>/dev/null)
 
 # If a user haven't installed mongo manually check if we can install it with our script
 log_message "Installing MongoDB"
@@ -148,7 +151,6 @@ wget -c -N -P ${MONKEY_BIN_DIR} ${SAMBACRY_32_BINARY_URL}
 log_message "Downloading traceroute binaries"
 wget -c -N -P ${MONKEY_BIN_DIR} ${TRACEROUTE_64_BINARY_URL}
 wget -c -N -P ${MONKEY_BIN_DIR} ${TRACEROUTE_32_BINARY_URL}
-
 
 sudo chmod +x ${monkey_home}/monkey/infection_monkey/build_linux.sh
 
