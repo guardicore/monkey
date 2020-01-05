@@ -34,7 +34,7 @@ def safe_process_telemetry(processing_function, telemetry_json):
         processing_function(telemetry_json)
     except Exception as err:
         logger.error(
-            "Error {} while in {} stage of processing telemetry.".format(str(err), processing_function.func_name),
+            "Error {} while in {} stage of processing telemetry.".format(str(err), processing_function.__name__),
             exc_info=True)
 
 
