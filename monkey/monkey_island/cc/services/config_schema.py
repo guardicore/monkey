@@ -99,6 +99,20 @@ SCHEMA = {
                 }
             ]
         },
+        "system_info_collectors_classes": {
+            "title": "System Information Collectors",
+            "type": "string",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        "EnvironmentCollector"
+                    ],
+                    "title": "Which Environment this machine is on (on prem/cloud)",
+                    "attack_techniques": []
+                },
+            ],
+        },
         "post_breach_acts": {
             "title": "Post breach actions",
             "type": "string",
@@ -432,6 +446,18 @@ SCHEMA = {
                             "default": True,
                             "attack_techniques": ["T1003"],
                             "description": "Determines whether to use Mimikatz"
+                        },
+                        "system_info_collectors_classes": {
+                            "title": "System info collectors",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "$ref": "#/definitions/system_info_collectors_classes"
+                            },
+                            "default": [
+                                "EnvironmentCollector"
+                            ],
+                            "description": "Determines which system information collectors will collect information."
                         },
                     }
                 },

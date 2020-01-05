@@ -5,6 +5,7 @@ from monkey_island.cc.models import Monkey
 from monkey_island.cc.services import mimikatz_utils
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import process_environment_telemetry
 from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence import test_antivirus_existence
 from monkey_island.cc.services.wmi_handler import WMIHandler
 from monkey_island.cc.encryptor import encryptor
@@ -20,6 +21,7 @@ def process_system_info_telemetry(telemetry_json):
         process_aws_data,
         update_db_with_new_hostname,
         test_antivirus_existence,
+        process_environment_telemetry
     ]
 
     # Calling safe_process_telemetry so if one of the stages fail, we log and move on instead of failing the rest of

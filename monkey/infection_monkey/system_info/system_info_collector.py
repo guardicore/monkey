@@ -11,7 +11,7 @@ class SystemInfoCollector(Plugin):
 
     @staticmethod
     def should_run(class_name) -> bool:
-        return class_name in WormConfiguration.system_info_collectors
+        return class_name in WormConfiguration.system_info_collectors_classes
 
     @staticmethod
     def base_package_file():

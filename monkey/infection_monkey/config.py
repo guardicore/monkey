@@ -125,6 +125,7 @@ class Configuration(object):
 
     finger_classes = []
     exploiter_classes = []
+    system_info_collectors_classes = ["EnvironmentCollector"]
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 100

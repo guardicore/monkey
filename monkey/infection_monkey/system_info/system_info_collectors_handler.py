@@ -10,7 +10,7 @@ PATH_TO_COLLECTORS = "infection_monkey.system_info.collectors."
 
 
 # TODO Add new collectors to config and config schema
-class SystemInfo(object):
+class SystemInfoCollectorsHandler(object):
     def __init__(self):
         self.collectors_list = self.config_to_collectors_list()
 
@@ -27,7 +27,8 @@ class SystemInfo(object):
                 LOG.error("Collector {} failed. Error info: {}".format(collector.name, e))
         LOG.info("All system info collectors executed. Total {} executed, out of which {} collected successfully.".
                  format(len(self.collectors_list), successful_collections))
-        # TODO Send SystemInfoTelem()
+
+        SystemInfoTelem({"collectors": system_info_telemetry}).send()
 
     @staticmethod
     def config_to_collectors_list() -> Sequence[SystemInfoCollector]:

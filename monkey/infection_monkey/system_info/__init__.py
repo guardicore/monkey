@@ -9,6 +9,7 @@ from infection_monkey.network.info import get_host_subnets
 from infection_monkey.system_info.aws_collector import AwsCollector
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
 from infection_monkey.system_info.netstat_collector import NetstatCollector
+from system_info.system_info_collectors_handler import SystemInfoCollectorsHandler
 
 LOG = logging.getLogger(__name__)
 
@@ -61,11 +62,15 @@ class InfoCollector(object):
         self.info = {}
 
     def get_info(self):
+        # Collect all hardcoded
         self.get_hostname()
         self.get_process_list()
         self.get_network_info()
         self.get_azure_info()
         self.get_aws_info()
+
+        # Collect all plugins
+        SystemInfoCollectorsHandler().execute_all_configured()
 
     def get_hostname(self):
         """

@@ -1,3 +1,7 @@
+UNKNOWN = "Unknown"
 ON_PREMISE = "On Premise"
 AZURE = "Azure"
 AWS = "AWS"
+GCP = "GCP"
+
+ALL_ENV_NAMES = [UNKNOWN, ON_PREMISE, AZURE, AWS, GCP]
