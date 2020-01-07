@@ -1,13 +1,30 @@
 import {Modal} from "react-bootstrap";
-import Modal from "react-bootstrap/es/Modal";
-import ReactComponent from "react";
-import AuthComponent from "../AuthComponent";
+import React from "react";
+import {GridLoader} from 'react-spinners';
 
 
-class StartOverModal extends ReactComponent {
+class StartOverModal extends React.PureComponent {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showCleanDialog: this.props.showCleanDialog,
+      allMonkeysAreDead: this.props.allMonkeysAreDead,
+      loading: false
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props !== prevProps) {
+      this.setState({ showCleanDialog: this.props.showCleanDialog,
+                      allMonkeysAreDead: this.props.allMonkeysAreDead})
+    }
+  }
+
   render = () => {
     return (
-      <Modal show={this.state.showCleanDialog} onHide={() => this.setState({showCleanDialog: false})}>
+      <Modal show={this.state.showCleanDialog} onHide={() => this.props.onClose()}>
         <Modal.Body>
           <h2>
             <div className="text-center">Reset environment</div>
@@ -24,22 +41,34 @@ class StartOverModal extends ReactComponent {
               :
               <div/>
           }
-          <div className="text-center">
-            <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
-                    onClick={() => {
-                      this.cleanup();
-                      this.setState({showCleanDialog: false});
-                    }}>
-              Reset environment
-            </button>
-            <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
-                    onClick={() => this.setState({showCleanDialog: false})}>
-              Cancel
-            </button>
-          </div>
+          {
+            this.state.loading ? <div className={"modalLoader"}><GridLoader/></div> : this.showModalButtons()
+          }
         </Modal.Body>
       </Modal>
     )
-
   };
+
+  showModalButtons() {
+    return (<div className="text-center">
+              <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
+                      onClick={this.modalVerificationOnClick}>
+                Reset environment
+              </button>
+              <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
+                      onClick={() => this.setState({showCleanDialog: false})}>
+                Cancel
+              </button>
+            </div>)
+  }
+
+  modalVerificationOnClick = async () => {
+    this.setState({loading: true});
+    this.props.onVerify()
+      .then(() => {this.setState({loading: false});
+                   this.props.onClose();})
+
+  }
 }
+
+export default StartOverModal;
