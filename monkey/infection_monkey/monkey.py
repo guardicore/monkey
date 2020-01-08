@@ -39,7 +39,7 @@ __author__ = 'itamar'
 LOG = logging.getLogger(__name__)
 
 
-class PlannedShutdown(Exception):
+class PlannedShutdownException(Exception):
     pass
 
 
@@ -216,14 +216,14 @@ class InfectionMonkey(object):
             if monkey_tunnel:
                 monkey_tunnel.stop()
                 monkey_tunnel.join()
-        except PlannedShutdown:
+        except PlannedShutdownException:
             LOG.info("A planned shutdown of the Monkey occurred. Logging the reason and finishing execution.")
             LOG.exception("Planned shutdown, reason:")
 
     def shutdown_by_max_depth_reached(self):
         if 0 == WormConfiguration.depth:
             TraceTelem(MAX_DEPTH_REACHED_MESSAGE).send()
-            raise PlannedShutdown(MAX_DEPTH_REACHED_MESSAGE)
+            raise PlannedShutdownException(MAX_DEPTH_REACHED_MESSAGE)
         else:
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
@@ -236,7 +236,7 @@ class InfectionMonkey(object):
 
     def shutdown_by_not_alive_config(self):
         if not WormConfiguration.alive:
-            raise PlannedShutdown("Marked 'not alive' from configuration.")
+            raise PlannedShutdownException("Marked 'not alive' from configuration.")
 
     def upgrade_to_64_if_needed(self):
         if WindowsUpgrader.should_upgrade():
@@ -244,7 +244,7 @@ class InfectionMonkey(object):
             self._singleton.unlock()
             LOG.info("32bit monkey running on 64bit Windows. Upgrading.")
             WindowsUpgrader.upgrade(self._opts)
-            raise PlannedShutdown("Finished upgrading from 32bit to 64bit.")
+            raise PlannedShutdownException("Finished upgrading from 32bit to 64bit.")
 
     def cleanup(self):
         LOG.info("Monkey cleanup started")
@@ -369,9 +369,9 @@ class InfectionMonkey(object):
     def set_default_server(self):
         """
         Sets the default server for the Monkey to communicate back to.
-        :raises PlannedShutdown if couldn't find the server.
+        :raises PlannedShutdownException if couldn't find the server.
         """
         if not ControlClient.find_server(default_tunnel=self._default_tunnel):
-            raise PlannedShutdown("Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel))
+            raise PlannedShutdownException("Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel))
         self._default_server = WormConfiguration.current_server
         LOG.debug("default server set to: %s" % self._default_server)
