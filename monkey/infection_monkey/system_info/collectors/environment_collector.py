@@ -1,4 +1,4 @@
-from common.cloud.aws_instance import AwsInstance
+from common.cloud.aws.aws_instance import AwsInstance
 from common.cloud.azure.azure_instance import AzureInstance
 from common.cloud.environment_names import ON_PREMISE, AZURE, AWS
 from infection_monkey.system_info.system_info_collector import SystemInfoCollector
@@ -6,9 +6,9 @@ from infection_monkey.system_info.system_info_collector import SystemInfoCollect
 
 def get_monkey_environment():
     # Check if on any cloud env. Default is on prem.
-    if AwsInstance().is_aws_instance():
+    if AwsInstance().is_instance():
         env = AWS
-    elif AzureInstance().is_azure_instance():
+    elif AzureInstance().is_instance():
         env = AZURE
     # TODO: elif GcpInstance().is_gcp_instance():
     else:

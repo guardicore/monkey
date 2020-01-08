@@ -6,7 +6,7 @@ import flask_restful
 
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
-from common.cloud.aws_service import AwsService
+from common.cloud.aws.aws_service import AwsService
 
 CLIENT_ERROR_FORMAT = "ClientError, error message: '{}'. Probably, the IAM role that has been associated with the " \
                       "instance doesn't permit SSM calls. "

@@ -1,13 +1,15 @@
 import logging
 import requests
 
-LATEST_AZURE_METADATA_API_VERSION = "2019-06-04"
+from common.cloud.instance import CloudInstance
+
+LATEST_AZURE_METADATA_API_VERSION = "2019-04-30"
 AZURE_METADATA_SERVICE_URL = "http://169.254.169.254/metadata/instance?api-version=%s" % LATEST_AZURE_METADATA_API_VERSION
 
 logger = logging.getLogger(__name__)
 
 
-class AzureInstance(object):
+class AzureInstance(CloudInstance):
     """
     Access to useful information about the current machine if it's an Azure VM.
     Based on Azure metadata service: https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service
@@ -46,5 +48,5 @@ class AzureInstance(object):
         except KeyError:
             logger.exception("Error while parsing response from Azure metadata service.")
 
-    def is_azure_instance(self):
+    def is_instance(self):
         return self.on_azure
