@@ -1,11 +1,11 @@
 from config import WormConfiguration
 from infection_monkey.utils.plugins.plugin import Plugin
-
+from abc import ABCMeta, abstractmethod
 
 import infection_monkey.system_info.collectors
 
 
-class SystemInfoCollector(Plugin):
+class SystemInfoCollector(Plugin, metaclass=ABCMeta):
     def __init__(self, name="unknown"):
         self.name = name
 
@@ -21,10 +21,10 @@ class SystemInfoCollector(Plugin):
     def base_package_name():
         return infection_monkey.system_info.collectors.__package__
 
+    @abstractmethod
     def collect(self) -> dict:
         """
         Collect the relevant information and return it in a dictionary.
         To be implemented by each collector.
-        TODO should this be an abstractmethod, or will that ruin the plugin system somehow? if can be abstract should add UT
         """
         raise NotImplementedError()
