@@ -2,14 +2,11 @@ import logging
 from typing import Sequence
 
 from infection_monkey.system_info.system_info_collector import SystemInfoCollector
-from telemetry.system_info_telem import SystemInfoTelem
+from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 
 LOG = logging.getLogger(__name__)
 
-PATH_TO_COLLECTORS = "infection_monkey.system_info.collectors."
 
-
-# TODO Add new collectors to config and config schema
 class SystemInfoCollectorsHandler(object):
     def __init__(self):
         self.collectors_list = self.config_to_collectors_list()
