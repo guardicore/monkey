@@ -88,7 +88,7 @@ class StartOverPageComponent extends AuthComponent {
 
   closeModal = () => {
     this.setState({
-      showCleanDialog: false,
+      showCleanDialog: false
     })
   };
 }
