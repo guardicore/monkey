@@ -1,3 +1,4 @@
+from common.cloud.all_instances import get_all_cloud_instances
 from common.cloud.aws.aws_instance import AwsInstance
 from common.cloud.azure.azure_instance import AzureInstance
 from common.cloud.environment_names import ON_PREMISE, AZURE, AWS
@@ -7,7 +8,7 @@ from infection_monkey.system_info.system_info_collector import SystemInfoCollect
 
 def get_monkey_environment() -> str:
     env = ON_PREMISE
-    for instance in CloudInstance.get_all_cloud_instances():
+    for instance in get_all_cloud_instances():
         if instance.is_instance():
             env = instance.get_cloud_provider_name()
     return env
