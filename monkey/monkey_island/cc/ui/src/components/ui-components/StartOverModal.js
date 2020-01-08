@@ -1,5 +1,5 @@
-import {Modal} from "react-bootstrap";
-import React from "react";
+import {Modal} from 'react-bootstrap';
+import React from 'react';
 import {GridLoader} from 'react-spinners';
 
 
@@ -27,22 +27,22 @@ class StartOverModal extends React.PureComponent {
       <Modal show={this.state.showCleanDialog} onHide={() => this.props.onClose()}>
         <Modal.Body>
           <h2>
-            <div className="text-center">Reset environment</div>
+            <div className='text-center'>Reset environment</div>
           </h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
             Are you sure you want to reset the environment?
           </p>
           {
             !this.state.allMonkeysAreDead ?
-              <div className="alert alert-warning">
-                <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
+              <div className='alert alert-warning'>
+                <i className='glyphicon glyphicon-warning-sign' style={{'marginRight': '5px'}}/>
                 Some monkeys are still running. It's advised to kill all monkeys before resetting.
               </div>
               :
               <div/>
           }
           {
-            this.state.loading ? <div className={"modalLoader"}><GridLoader/></div> : this.showModalButtons()
+            this.state.loading ? <div className={'modalLoader'}><GridLoader/></div> : this.showModalButtons()
           }
         </Modal.Body>
       </Modal>
@@ -50,12 +50,12 @@ class StartOverModal extends React.PureComponent {
   };
 
   showModalButtons() {
-    return (<div className="text-center">
-              <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
+    return (<div className='text-center'>
+              <button type='button' className='btn btn-danger btn-lg' style={{margin: '5px'}}
                       onClick={this.modalVerificationOnClick}>
                 Reset environment
               </button>
-              <button type="button" className="btn btn-success btn-lg" style={{margin: '5px'}}
+              <button type='button' className='btn btn-success btn-lg' style={{margin: '5px'}}
                       onClick={() => this.setState({showCleanDialog: false})}>
                 Cancel
               </button>
