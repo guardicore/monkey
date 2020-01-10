@@ -47,6 +47,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename="userdata.txt"
 #!/bin/bash
+rm ./monkey-linux-64
 wget --no-check-certificate https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 -k -o monkey-linux-64
 chmod +x ./monkey-linux-64
 ./monkey-linux-64 m0nk3y -s 10.0.0.251:5000
@@ -73,6 +74,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename="userdata.txt"
 #!/bin/bash
+rm ./monkey-linux-32
 wget --no-check-certificate https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 -k -o monkey-linux-32
 chmod +x ./monkey-linux-32
 ./monkey-linux-32 m0nk3y -s 10.0.0.251:5000
