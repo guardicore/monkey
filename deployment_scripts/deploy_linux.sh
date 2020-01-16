@@ -37,7 +37,7 @@ if [[ $? != 0 ]]; then
 fi
 
 if [[ ! -d ${monkey_home} ]]; then
-  mkdir -p ${monkey_home}
+  mkdir -p "${monkey_home}"
 fi
 
 if ! exists git; then
@@ -53,14 +53,14 @@ fi
 log_message "Cloning files from git"
 branch=${2:-"develop"}
 if [[ ! -d "$monkey_home/monkey" ]]; then # If not already cloned
-  git clone --single-branch -b $branch ${MONKEY_GIT_URL} ${monkey_home} 2>&1 || handle_error
-  chmod 774 -R ${monkey_home}
+  git clone --single-branch -b "$branch" "${MONKEY_GIT_URL}" "${monkey_home}" 2>&1 || handle_error
+  chmod 774 -R "${monkey_home}"
 fi
 
 # Create folders
 log_message "Creating island dirs under $ISLAND_PATH"
-mkdir -p ${MONGO_PATH}
-mkdir -p ${ISLAND_BINARIES_PATH} || handle_error
+mkdir -p "${MONGO_PATH}"
+mkdir -p "${ISLAND_BINARIES_PATH}" || handle_error
 
 # Detecting command that calls python 3.7
 python_cmd=""
@@ -99,7 +99,7 @@ ${python_cmd} -m pip install --user --upgrade -r ${requirements} || handle_error
 
 log_message "Installing monkey requirements"
 sudo apt-get install libffi-dev upx libssl-dev libc++1
-cd ${monkey_home}/monkey/infection_monkey || handle_error
+cd "${monkey_home}"/monkey/infection_monkey || handle_error
 ${python_cmd} -m pip install -r requirements.txt --user --upgrade || handle_error
 
 # Download binaries
@@ -118,14 +118,17 @@ linux_dist=$(lsb_release -a 2>/dev/null)
 
 # If a user haven't installed mongo manually check if we can install it with our script
 log_message "Installing MongoDB"
-${ISLAND_PATH}/linux/install_mongo.sh ${MONGO_PATH} || handle_error
+"${ISLAND_PATH}"/linux/install_mongo.sh ${MONGO_PATH} || handle_error
 
 log_message "Installing openssl"
 sudo apt-get install openssl
 
 # Generate SSL certificate
 log_message "Generating certificate"
-cd ${ISLAND_PATH}
+cd "${ISLAND_PATH}" || {
+  echo "cd failed"
+  exit 1
+}
 openssl genrsa -out cc/server.key 2048
 openssl req -new -key cc/server.key -out cc/server.csr -subj "/C=GB/ST=London/L=London/O=Global Security/OU=Monkey Department/CN=monkey.com"
 openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/server.crt
@@ -143,19 +146,19 @@ log_message "Generating front end"
 npm run dist
 
 # Making dir for binaries
-mkdir ${MONKEY_BIN_DIR}
+mkdir "${MONKEY_BIN_DIR}"
 
 # Download sambacry binaries
 log_message "Downloading sambacry binaries"
-wget -c -N -P ${MONKEY_BIN_DIR} ${SAMBACRY_64_BINARY_URL}
-wget -c -N -P ${MONKEY_BIN_DIR} ${SAMBACRY_32_BINARY_URL}
+wget -c -N -P "${MONKEY_BIN_DIR}" "${SAMBACRY_64_BINARY_URL}"
+wget -c -N -P "${MONKEY_BIN_DIR}" "${SAMBACRY_32_BINARY_URL}"
 
 # Download traceroute binaries
 log_message "Downloading traceroute binaries"
-wget -c -N -P ${MONKEY_BIN_DIR} ${TRACEROUTE_64_BINARY_URL}
-wget -c -N -P ${MONKEY_BIN_DIR} ${TRACEROUTE_32_BINARY_URL}
+wget -c -N -P "${MONKEY_BIN_DIR}" "${TRACEROUTE_64_BINARY_URL}"
+wget -c -N -P "${MONKEY_BIN_DIR}" "${TRACEROUTE_32_BINARY_URL}"
 
-sudo chmod +x ${monkey_home}/monkey/infection_monkey/build_linux.sh
+sudo chmod +x "${monkey_home}"/monkey/infection_monkey/build_linux.sh
 
 log_message "Deployment script finished."
 exit 0
