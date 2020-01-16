@@ -40,11 +40,14 @@ if [[ ! -d ${monkey_home} ]]; then
   mkdir -p ${monkey_home}
 fi
 
-git --version &>/dev/null
-git_available=$?
-if [[ ${git_available} != 0 ]]; then
+if ! exists git; then
   echo "Please install git and re-run this script"
   exit 1
+fi
+
+if ! exists wget; then
+    echo 'Your system does have wget, please install and re-run this script'
+    exit 1
 fi
 
 log_message "Cloning files from git"
