@@ -117,4 +117,5 @@ def process_mimikatz_and_wmi_info(telemetry_json):
 
 
 def update_db_with_new_hostname(telemetry_json):
-    Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid']).set_hostname(telemetry_json['data']['hostname'])
+    if 'hostname' in telemetry_json['data']:
+        Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid']).set_hostname(telemetry_json['data']['hostname'])
