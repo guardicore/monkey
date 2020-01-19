@@ -17,7 +17,7 @@ class SystemInfoTelemetryDispatcher(object):
             collector_to_parsing_function = SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSOR
         self.collector_to_parsing_function = collector_to_parsing_function
 
-    def dispatch_to_relevant_collector(self, telemetry_json):
+    def dispatch_to_relevant_collectors(self, telemetry_json):
         if "collectors" in telemetry_json["data"]:
             self.send_each_result_to_relevant_processor(telemetry_json)
 

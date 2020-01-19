@@ -1,28 +1,27 @@
 import logging
 
-from monkey_island.cc.database import mongo
+from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services import mimikatz_utils
-from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import process_aws_telemetry
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import process_environment_telemetry
+from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
+    SystemInfoTelemetryDispatcher
 from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence import test_antivirus_existence
 from monkey_island.cc.services.wmi_handler import WMIHandler
-from monkey_island.cc.encryptor import encryptor
 
 logger = logging.getLogger(__name__)
 
 
 def process_system_info_telemetry(telemetry_json):
+    dispatcher = SystemInfoTelemetryDispatcher()
     telemetry_processing_stages = [
         process_ssh_info,
         process_credential_info,
         process_mimikatz_and_wmi_info,
-        process_aws_telemetry,
         update_db_with_new_hostname,
         test_antivirus_existence,
-        process_environment_telemetry
+        dispatcher.dispatch_to_relevant_collectors
     ]
 
     # Calling safe_process_telemetry so if one of the stages fail, we log and move on instead of failing the rest of
