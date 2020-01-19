@@ -6,6 +6,14 @@ import infection_monkey.system_info.collectors
 
 
 class SystemInfoCollector(Plugin, metaclass=ABCMeta):
+    """
+    ABC for system info collection. See system_info_collector_handler for more info. Basically, to implement a new system info
+    collector, inherit from this class in an implementation in the infection_monkey.system_info.collectors class, and override
+    the 'collect' method. Don't forget to parse your results in the Monkey Island and to add the collector to the configuration
+    as well - see monkey_island.cc.services.processing.system_info_collectors for examples.
+
+    See the Wiki page "How to add a new System Info Collector to the Monkey?" for a detailed guide.
+    """
     def __init__(self, name="unknown"):
         self.name = name
 

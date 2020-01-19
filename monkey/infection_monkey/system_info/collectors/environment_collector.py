@@ -1,8 +1,5 @@
 from common.cloud.all_instances import get_all_cloud_instances
-from common.cloud.aws.aws_instance import AwsInstance
-from common.cloud.azure.azure_instance import AzureInstance
-from common.cloud.environment_names import ON_PREMISE, AZURE, AWS
-from common.cloud.instance import CloudInstance
+from common.cloud.environment_names import ON_PREMISE
 from infection_monkey.system_info.system_info_collector import SystemInfoCollector
 
 
