@@ -5,10 +5,15 @@ from common.cloud.environment_names import GCP
 from common.cloud.instance import CloudInstance
 
 logger = logging.getLogger(__name__)
+
+
 GCP_METADATA_SERVICE_URL = "http://metadata.google.internal/"
 
 
 class GcpInstance(CloudInstance):
+    """
+    Used to determine if on GCP. See https://cloud.google.com/compute/docs/storing-retrieving-metadata#runninggce
+    """
     def is_instance(self):
         return self.on_gcp
 
@@ -16,9 +21,6 @@ class GcpInstance(CloudInstance):
         return GCP
 
     def __init__(self):
-        """
-        Determines if on GCP.
-        """
         self.on_gcp = False
 
         try:
@@ -26,7 +28,7 @@ class GcpInstance(CloudInstance):
             response = requests.get(GCP_METADATA_SERVICE_URL)
 
             if response:
-                logger.debug("Got response, so probably on GCP. Trying to parse.")
+                logger.debug("Got ok metadata response: on GCP")
                 self.on_gcp = True
 
                 if "Metadata-Flavor" not in response.headers:
@@ -37,5 +39,5 @@ class GcpInstance(CloudInstance):
             else:
                 logger.warning("On GCP, but metadata response not ok: {}".format(response.status_code))
         except requests.RequestException:
-            logger.debug("Failed to get response from GCP metadata service: This instance is not on GCP.")
+            logger.debug("Failed to get response from GCP metadata service: This instance is not on GCP")
             self.on_gcp = False
