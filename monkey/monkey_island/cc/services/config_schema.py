@@ -111,6 +111,14 @@ SCHEMA = {
                     "title": "Which Environment this machine is on (on prem/cloud)",
                     "attack_techniques": []
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "AwsCollector"
+                    ],
+                    "title": "If on AWS, collect more information about the instance",
+                    "attack_techniques": []
+                },
             ],
         },
         "post_breach_acts": {
@@ -455,7 +463,8 @@ SCHEMA = {
                                 "$ref": "#/definitions/system_info_collectors_classes"
                             },
                             "default": [
-                                "EnvironmentCollector"
+                                "EnvironmentCollector",
+                                "AwsCollector"
                             ],
                             "description": "Determines which system information collectors will collect information."
                         },

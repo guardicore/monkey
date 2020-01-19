@@ -5,6 +5,7 @@ from monkey_island.cc.models import Monkey
 from monkey_island.cc.services import mimikatz_utils
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import process_aws_telemetry
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import process_environment_telemetry
 from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence import test_antivirus_existence
 from monkey_island.cc.services.wmi_handler import WMIHandler
@@ -18,7 +19,7 @@ def process_system_info_telemetry(telemetry_json):
         process_ssh_info,
         process_credential_info,
         process_mimikatz_and_wmi_info,
-        process_aws_data,
+        process_aws_telemetry,
         update_db_with_new_hostname,
         test_antivirus_existence,
         process_environment_telemetry
@@ -114,14 +115,6 @@ def process_mimikatz_and_wmi_info(telemetry_json):
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
         wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
         wmi_handler.process_and_handle_wmi_info()
-
-
-def process_aws_data(telemetry_json):
-    if 'aws' in telemetry_json['data']:
-        if 'instance_id' in telemetry_json['data']['aws']:
-            monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
-            mongo.db.monkey.update_one({'_id': monkey_id},
-                                       {'$set': {'aws_instance_id': telemetry_json['data']['aws']['instance_id']}})
 
 
 def update_db_with_new_hostname(telemetry_json):

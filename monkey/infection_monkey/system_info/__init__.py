@@ -6,7 +6,6 @@ import psutil
 from enum import IntEnum
 
 from infection_monkey.network.info import get_host_subnets
-from infection_monkey.system_info.aws_collector import AwsCollector
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
 from infection_monkey.system_info.netstat_collector import NetstatCollector
 from system_info.system_info_collectors_handler import SystemInfoCollectorsHandler
@@ -67,7 +66,6 @@ class InfoCollector(object):
         self.get_process_list()
         self.get_network_info()
         self.get_azure_info()
-        self.get_aws_info()
 
         # Collect all plugins
         SystemInfoCollectorsHandler().execute_all_configured()
@@ -155,11 +153,3 @@ class InfoCollector(object):
         except Exception:
             # If we failed to collect azure info, no reason to fail all the collection. Log and continue.
             LOG.error("Failed collecting Azure info.", exc_info=True)
-
-    def get_aws_info(self):
-        # noinspection PyBroadException
-        try:
-            self.info['aws'] = AwsCollector().get_aws_info()
-        except Exception:
-            # If we failed to collect aws info, no reason to fail all the collection. Log and continue.
-            LOG.error("Failed collecting AWS info.", exc_info=True)
