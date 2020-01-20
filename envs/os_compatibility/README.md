@@ -41,6 +41,8 @@ Since island machine is built from custom AMI it already has the following crede
 
 Administrator: %tPHGz8ZuQsBnEUgdpz!6f&elGnFy?;.
 
+For windows_2008_r2 Administrator:AGE(MP..txL
+
 The following machines does not download monkey automatically, so you'll have to manually check them:
 
 - os_compat_kali_2019
@@ -48,6 +50,7 @@ The following machines does not download monkey automatically, so you'll have to
 - os_compat_oracle_7
 - windows_2003_r2_32
 - windows_2003
+- windows_2008_r2
 
 A quick reference for usernames on different machines (if in doubt check official docs):
 - Ubuntu: ubuntu

@@ -318,7 +318,7 @@ module "windows_2003" {
 module "windows_2008_r2" {
   source = "./instance_template"
   name = "windows_2008_r2"
-  ami = "ami-b63c0aab"
+  ami = "ami-05af5509c2c73e36e"
   ip = "10.0.0.8"
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_windows_64}"
