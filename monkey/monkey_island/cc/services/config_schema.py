@@ -1,3 +1,5 @@
+from common.data.system_info_collectors_names import *
+
 WARNING_SIGN = " \u26A0"
 
 SCHEMA = {
@@ -106,7 +108,7 @@ SCHEMA = {
                 {
                     "type": "string",
                     "enum": [
-                        "EnvironmentCollector"
+                        ENVIRONMENT_COLLECTOR
                     ],
                     "title": "Collect which environment this machine is on (on prem/cloud)",
                     "attack_techniques": []
@@ -114,7 +116,7 @@ SCHEMA = {
                 {
                     "type": "string",
                     "enum": [
-                        "AwsCollector"
+                        AWS_COLLECTOR
                     ],
                     "title": "If on AWS, collect more information about the instance",
                     "attack_techniques": []
@@ -122,9 +124,17 @@ SCHEMA = {
                 {
                     "type": "string",
                     "enum": [
-                        "HostnameCollector"
+                        HOSTNAME_COLLECTOR
                     ],
                     "title": "Collect the machine's hostname",
+                    "attack_techniques": []
+                },
+{
+                    "type": "string",
+                    "enum": [
+                        PROCESS_LIST_COLLECTOR
+                    ],
+                    "title": "Collect running processes on the machine",
                     "attack_techniques": []
                 },
             ],
@@ -471,9 +481,10 @@ SCHEMA = {
                                 "$ref": "#/definitions/system_info_collectors_classes"
                             },
                             "default": [
-                                "EnvironmentCollector",
-                                "AwsCollector",
-                                "HostnameCollector"
+                                ENVIRONMENT_COLLECTOR,
+                                AWS_COLLECTOR,
+                                HOSTNAME_COLLECTOR,
+                                PROCESS_LIST_COLLECTOR
                             ],
                             "description": "Determines which system information collectors will collect information."
                         },

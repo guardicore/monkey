@@ -62,43 +62,11 @@ class InfoCollector(object):
 
     def get_info(self):
         # Collect all hardcoded
-        self.get_process_list()
         self.get_network_info()
         self.get_azure_info()
 
         # Collect all plugins
         SystemInfoCollectorsHandler().execute_all_configured()
-
-    def get_process_list(self):
-        """
-        Adds process information from the host to the system information.
-        Currently lists process name, ID, parent ID, command line
-        and the full image path of each process.
-        :return: None. Updates class information
-        """
-        LOG.debug("Reading process list")
-        processes = {}
-        for process in psutil.process_iter():
-            try:
-                processes[process.pid] = {"name": process.name(),
-                                          "pid": process.pid,
-                                          "ppid": process.ppid(),
-                                          "cmdline": " ".join(process.cmdline()),
-                                          "full_image_path": process.exe(),
-                                          }
-            except (psutil.AccessDenied, WindowsError):
-                # we may be running as non root
-                # and some processes are impossible to acquire in Windows/Linux
-                # in this case we'll just add what we can
-                processes[process.pid] = {"name": "null",
-                                          "pid": process.pid,
-                                          "ppid": process.ppid(),
-                                          "cmdline": "ACCESS DENIED",
-                                          "full_image_path": "null",
-                                          }
-                continue
-
-        self.info['process_list'] = processes
 
     def get_network_info(self):
         """

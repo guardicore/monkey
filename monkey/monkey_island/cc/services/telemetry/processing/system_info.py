@@ -6,7 +6,6 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
     SystemInfoTelemetryDispatcher
-from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence import test_antivirus_existence
 from monkey_island.cc.services.wmi_handler import WMIHandler
 
 logger = logging.getLogger(__name__)
@@ -18,8 +17,7 @@ def process_system_info_telemetry(telemetry_json):
         process_ssh_info,
         process_credential_info,
         process_mimikatz_and_wmi_info,
-        test_antivirus_existence,
-        dispatcher.dispatch_to_relevant_collectors
+        dispatcher.dispatch_collector_results_to_relevant_processors
     ]
 
     # Calling safe_process_telemetry so if one of the stages fail, we log and move on instead of failing the rest of
