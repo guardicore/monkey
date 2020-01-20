@@ -1,6 +1,6 @@
 import hashlib
-import os
 import json
+import os
 import sys
 import uuid
 from abc import ABCMeta
@@ -125,7 +125,7 @@ class Configuration(object):
 
     finger_classes = []
     exploiter_classes = []
-    system_info_collectors_classes = ["EnvironmentCollector", "AwsCollector"]
+    system_info_collectors_classes = []
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 100
