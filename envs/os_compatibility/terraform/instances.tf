@@ -315,10 +315,10 @@ module "windows_2003" {
   user_data = "${local.user_data_windows_64}"
 }
 
-module "windows_2008" {
+module "windows_2008_r2" {
   source = "./instance_template"
-  name = "windows_2008"
-  ami = "ami-0d8c60e4d3ca36ed6"
+  name = "windows_2008_r2"
+  ami = "ami-b63c0aab"
   ip = "10.0.0.8"
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_windows_64}"
