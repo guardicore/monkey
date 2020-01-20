@@ -13,13 +13,25 @@ has_sudo() {
   timeout 1 sudo id && return 0 || return 1
 }
 
+handle_error() {
+  echo "Fix the errors above and rerun the script"
+  exit 1
+}
+
+log_message() {
+  echo -e "\n\n"
+  echo -e "DEPLOYMENT SCRIPT: $1"
+}
+
 config_branch=${2:-"develop"}
 config_url="https://raw.githubusercontent.com/guardicore/monkey/"$config_branch"/deployment_scripts/config"
 
 if exists curl; then
   file=$(mktemp)
   curl -s -o $file "$config_url"
+  log_message "downloaded configuration"
   source $file
+  log_message "loaded configuration"
   rm $file
 else
   echo 'Your system does not have curl, exiting'
@@ -40,16 +52,7 @@ ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
 
-handle_error() {
-  echo "Fix the errors above and rerun the script"
-  exit 1
-}
 
-log_message() {
-  echo -e "\n\n-------------------------------------------"
-  echo -e "DEPLOYMENT SCRIPT: $1"
-  echo -e "-------------------------------------------\n"
-}
 
 if is_root; then
   echo "Please don't runt this script as root"
