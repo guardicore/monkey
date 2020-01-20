@@ -8,7 +8,7 @@ from monkey_island.cc.services.telemetry.processing.system_info_collectors.syste
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 TEST_SYS_INFO_TO_PROCESSING = {
-    "AwsCollector": process_aws_telemetry,
+    "AwsCollector": [process_aws_telemetry],
 }
 
 
@@ -20,18 +20,18 @@ class SystemInfoTelemetryDispatcherTest(IslandTestCase):
 
         # Bad format telem JSONs - throws
         bad_empty_telem_json = {}
-        self.assertRaises(KeyError, dispatcher.dispatch_to_relevant_collectors, bad_empty_telem_json)
+        self.assertRaises(KeyError, dispatcher.dispatch_collector_results_to_relevant_processors, bad_empty_telem_json)
         bad_no_data_telem_json = {"monkey_guid": "bla"}
-        self.assertRaises(KeyError, dispatcher.dispatch_to_relevant_collectors, bad_no_data_telem_json)
+        self.assertRaises(KeyError, dispatcher.dispatch_collector_results_to_relevant_processors, bad_no_data_telem_json)
         bad_no_monkey_telem_json = {"data": {"collectors": {"AwsCollector": "Bla"}}}
-        self.assertRaises(KeyError, dispatcher.dispatch_to_relevant_collectors, bad_no_monkey_telem_json)
+        self.assertRaises(KeyError, dispatcher.dispatch_collector_results_to_relevant_processors, bad_no_monkey_telem_json)
 
         # Telem JSON with no collectors - nothing gets dispatched
         good_telem_no_collectors = {"monkey_guid": "bla", "data": {"bla": "bla"}}
         good_telem_empty_collectors = {"monkey_guid": "bla", "data": {"bla": "bla", "collectors": {}}}
 
-        dispatcher.dispatch_to_relevant_collectors(good_telem_no_collectors)
-        dispatcher.dispatch_to_relevant_collectors(good_telem_empty_collectors)
+        dispatcher.dispatch_collector_results_to_relevant_processors(good_telem_no_collectors)
+        dispatcher.dispatch_collector_results_to_relevant_processors(good_telem_empty_collectors)
 
     def test_dispatch_to_relevant_collector(self):
         self.fail_if_not_testing_env()
@@ -52,6 +52,6 @@ class SystemInfoTelemetryDispatcherTest(IslandTestCase):
             },
             "monkey_guid": a_monkey.guid
         }
-        dispatcher.dispatch_to_relevant_collectors(telem_json)
+        dispatcher.dispatch_collector_results_to_relevant_processors(telem_json)
 
         self.assertEquals(Monkey.get_single_monkey_by_guid(a_monkey.guid).aws_instance_id, instance_id)
