@@ -1,5 +1,6 @@
 # -*- mode: python -*-
 import os
+import sys
 import platform
 
 
@@ -48,7 +49,7 @@ def is_windows():
 
 
 def is_32_bit():
-    return platform.architecture()[0] == "32bit"
+    return sys.maxsize <= 2**32
 
 
 def get_bin_folder():
