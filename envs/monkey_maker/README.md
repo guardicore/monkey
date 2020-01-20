@@ -26,3 +26,32 @@ terraform init
 terraform apply
 ```
 
+### Usage
+
+To login to windows use Administrator: %HwuzI!Uzsyfa=cB*XaQ6xxHqopfj)h) credentials
+
+You'll find docker files in `/home/ubuntu/docker_envs/linux/...`
+
+To build docker image for 32 bit linux: 
+```
+cd /home/ubuntu/docker_envs/linux/py3-32
+sudo docker build -t builder32 .
+```
+
+To build docker image for 64 bit linux: 
+```
+cd /home/ubuntu/docker_envs/linux/py3-64
+sudo docker build -t builder64 .
+```
+
+To build 32 bit monkey binary:
+```
+cd /home/ubuntu/monkey_folder/monkey
+sudo docker run -v "$(pwd):/src" builder32 -c "export SRCDIR=/src/infection_monkey && /entrypoint.sh"
+```
+
+To build 64 bit monkey binary:
+```
+cd /home/ubuntu/monkey_folder/monkey
+sudo docker run -v "$(pwd):/src" builder64 -c "export SRCDIR=/src/infection_monkey && /entrypoint.sh"
+```

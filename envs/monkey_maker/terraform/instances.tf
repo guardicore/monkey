@@ -11,14 +11,14 @@ resource "aws_instance" "island_windows" {
   associate_public_ip_address = true
 }
 
-resource "aws_instance" "island_linux_64" {
-  ami           = "ami-050a22b7e0cf85dd0"
+resource "aws_instance" "island_linux" {
+  ami           = "ami-0495203541087740a"
   instance_type = "t2.micro"
   private_ip = "10.0.0.252"
   subnet_id = "${aws_subnet.main.id}"
   key_name = "monkey_maker"
   tags = {
-    Name = "monkey_maker_linux_64"
+    Name = "monkey_maker_linux"
   }
   vpc_security_group_ids = ["${aws_security_group.monkey_maker_sg.id}"]
   associate_public_ip_address = true

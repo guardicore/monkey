@@ -3,7 +3,7 @@
 
 
 resource "aws_instance" "island" {
-  ami           = "ami-01cc9554aa0b4c00e"
+  ami           = "ami-004f0217ce761fc9a"
   instance_type = "t2.micro"
   private_ip = "10.0.0.251"
   subnet_id = "${aws_subnet.main.id}"
@@ -18,7 +18,6 @@ resource "aws_instance" "island" {
     volume_type           = "standard"
     delete_on_termination = true
   }
-  #associate_public_ip_address = false
 }
 
 locals {
@@ -48,7 +47,7 @@ Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename="userdata.txt"
 #!/bin/bash
 rm ./monkey-linux-64
-wget --no-check-certificate https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 -k -o monkey-linux-64
+wget --no-check-certificate -q https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 -O ./monkey-linux-64 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 -k -o monkey-linux-64
 chmod +x ./monkey-linux-64
 ./monkey-linux-64 m0nk3y -s 10.0.0.251:5000
 --//
@@ -75,7 +74,7 @@ Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename="userdata.txt"
 #!/bin/bash
 rm ./monkey-linux-32
-wget --no-check-certificate https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 -k -o monkey-linux-32
+wget --no-check-certificate -q https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 -O ./monkey-linux-32 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 -k -o monkey-linux-32
 chmod +x ./monkey-linux-32
 ./monkey-linux-32 m0nk3y -s 10.0.0.251:5000
 --//
@@ -177,7 +176,8 @@ module "kali_2019" {
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_linux_64}"
 }
-// Requires m3.medium
+
+// Requires m3.medium which usually isn't available
 //module "rhel_5" {
 //  source = "./instance_template"
 //  name = "rhel_5"
@@ -269,7 +269,7 @@ module "ubuntu_12" {
   user_data = "${local.user_data_linux_64}"
 }
 
-// Requires m3.medium instance
+// Requires m3.medium instance which usually isn't available
 // module "ubuntu_12_32" {
 //   source = "./instance_template"
 //   name = "ubuntu_12_32"
@@ -324,22 +324,14 @@ module "windows_2008" {
   user_data = "${local.user_data_windows_64}"
 }
 
+
 module "windows_2008_32" {
   source = "./instance_template"
   name = "windows_2008_32"
-  ami = "ami-0acaec54bac5cbb8f"
+  ami = "ami-3606352b"
   ip = "10.0.0.6"
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_windows_32}"
-}
-
-module "windows_2008_r2" {
-  source = "./instance_template"
-  name = "windows_2008_r2"
-  ami = "ami-0252def122d07efd3"
-  ip = "10.0.0.7"
-  env_vars = "${local.env_vars}"
-  user_data = "${local.user_data_windows_64}"
 }
 
 module "windows_2012" {
@@ -364,7 +356,7 @@ module "windows_2016" {
   source = "./instance_template"
   name = "windows_2016"
   ami = "ami-02a6791b44938cfcd"
-  ip = "10.0.0.16"
+  ip = "10.0.0.116"
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_windows_64}"
 }
@@ -373,7 +365,7 @@ module "windows_2019" {
   source = "./instance_template"
   name = "windows_2019"
   ami = "ami-09fe2745618d2af42"
-  ip = "10.0.0.19"
+  ip = "10.0.0.119"
   env_vars = "${local.env_vars}"
   user_data = "${local.user_data_windows_64}"
 }
