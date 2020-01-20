@@ -1,7 +1,6 @@
 import logging
 
 from monkey_island.cc.encryptor import encryptor
-from monkey_island.cc.models import Monkey
 from monkey_island.cc.services import mimikatz_utils
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
@@ -19,7 +18,6 @@ def process_system_info_telemetry(telemetry_json):
         process_ssh_info,
         process_credential_info,
         process_mimikatz_and_wmi_info,
-        update_db_with_new_hostname,
         test_antivirus_existence,
         dispatcher.dispatch_to_relevant_collectors
     ]
@@ -115,7 +113,3 @@ def process_mimikatz_and_wmi_info(telemetry_json):
         wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
         wmi_handler.process_and_handle_wmi_info()
 
-
-def update_db_with_new_hostname(telemetry_json):
-    if 'hostname' in telemetry_json['data']:
-        Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid']).set_hostname(telemetry_json['data']['hostname'])

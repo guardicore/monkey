@@ -108,7 +108,7 @@ SCHEMA = {
                     "enum": [
                         "EnvironmentCollector"
                     ],
-                    "title": "Which Environment this machine is on (on prem/cloud)",
+                    "title": "Collect which environment this machine is on (on prem/cloud)",
                     "attack_techniques": []
                 },
                 {
@@ -117,6 +117,14 @@ SCHEMA = {
                         "AwsCollector"
                     ],
                     "title": "If on AWS, collect more information about the instance",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "HostnameCollector"
+                    ],
+                    "title": "Collect the machine's hostname",
                     "attack_techniques": []
                 },
             ],
@@ -464,7 +472,8 @@ SCHEMA = {
                             },
                             "default": [
                                 "EnvironmentCollector",
-                                "AwsCollector"
+                                "AwsCollector",
+                                "HostnameCollector"
                             ],
                             "description": "Determines which system information collectors will collect information."
                         },
