@@ -62,21 +62,12 @@ class InfoCollector(object):
 
     def get_info(self):
         # Collect all hardcoded
-        self.get_hostname()
         self.get_process_list()
         self.get_network_info()
         self.get_azure_info()
 
         # Collect all plugins
         SystemInfoCollectorsHandler().execute_all_configured()
-
-    def get_hostname(self):
-        """
-        Adds the fully qualified computer hostname to the system information.
-        :return: None. Updates class information
-        """
-        LOG.debug("Reading hostname")
-        self.info['hostname'] = socket.getfqdn()
 
     def get_process_list(self):
         """
