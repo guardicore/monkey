@@ -1,4 +1,5 @@
-from common.data.system_info_collectors_names import *
+from common.data.system_info_collectors_names \
+    import AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR, PROCESS_LIST_COLLECTOR
 
 WARNING_SIGN = " \u26A0"
 
