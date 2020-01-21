@@ -1,3 +1,5 @@
+from common.data.system_info_collectors_names import *
+
 WARNING_SIGN = " \u26A0"
 
 SCHEMA = {
@@ -98,6 +100,44 @@ SCHEMA = {
                     "title": "VSFTPD Exploiter"
                 }
             ]
+        },
+        "system_info_collectors_classes": {
+            "title": "System Information Collectors",
+            "type": "string",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        ENVIRONMENT_COLLECTOR
+                    ],
+                    "title": "Collect which environment this machine is on (on prem/cloud)",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        AWS_COLLECTOR
+                    ],
+                    "title": "If on AWS, collect more information about the instance",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        HOSTNAME_COLLECTOR
+                    ],
+                    "title": "Collect the machine's hostname",
+                    "attack_techniques": []
+                },
+{
+                    "type": "string",
+                    "enum": [
+                        PROCESS_LIST_COLLECTOR
+                    ],
+                    "title": "Collect running processes on the machine",
+                    "attack_techniques": []
+                },
+            ],
         },
         "post_breach_acts": {
             "title": "Post breach actions",
@@ -432,6 +472,21 @@ SCHEMA = {
                             "default": True,
                             "attack_techniques": ["T1003"],
                             "description": "Determines whether to use Mimikatz"
+                        },
+                        "system_info_collectors_classes": {
+                            "title": "System info collectors",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "$ref": "#/definitions/system_info_collectors_classes"
+                            },
+                            "default": [
+                                ENVIRONMENT_COLLECTOR,
+                                AWS_COLLECTOR,
+                                HOSTNAME_COLLECTOR,
+                                PROCESS_LIST_COLLECTOR
+                            ],
+                            "description": "Determines which system information collectors will collect information."
                         },
                     }
                 },

@@ -9,6 +9,7 @@ from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_docu
 from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.models.command_control_channel import CommandControlChannel
 from monkey_island.cc.utils import local_ip_addresses
+from common.cloud import environment_names
 
 MAX_MONKEYS_AMOUNT_TO_CACHE = 100
 
@@ -42,6 +43,9 @@ class Monkey(Document):
     ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
     command_control_channel = EmbeddedDocumentField(CommandControlChannel)
+
+    # Environment related fields
+    environment = StringField(default=environment_names.Environment.UNKNOWN, choices=environment_names.ALL_ENVIRONMENTS_NAMES)
     aws_instance_id = StringField(required=False)  # This field only exists when the monkey is running on an AWS
 
     # instance. See https://github.com/guardicore/monkey/issues/426.
@@ -55,7 +59,8 @@ class Monkey(Document):
             raise MonkeyNotFoundError("info: {0} | id: {1}".format(ex, str(db_id)))
 
     @staticmethod
-    def get_single_monkey_by_guid(monkey_guid):
+    # See https://www.python.org/dev/peps/pep-0484/#forward-references
+    def get_single_monkey_by_guid(monkey_guid) -> 'Monkey':
         try:
             return Monkey.objects.get(guid=monkey_guid)
         except DoesNotExist as ex:
