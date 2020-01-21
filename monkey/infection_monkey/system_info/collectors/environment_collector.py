@@ -5,11 +5,15 @@ from infection_monkey.system_info.system_info_collector import SystemInfoCollect
 
 
 def get_monkey_environment() -> str:
-    env = ON_PREMISE
+    """
+    Get the Monkey's running environment.
+    :return: One of the cloud providers if on cloud; otherwise, assumes "on premise".
+    """
     for instance in get_all_cloud_instances():
         if instance.is_instance():
-            env = instance.get_cloud_provider_name()
-    return env
+            return instance.get_cloud_provider_name()
+
+    return ON_PREMISE
 
 
 class EnvironmentCollector(SystemInfoCollector):
