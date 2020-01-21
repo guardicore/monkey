@@ -8,7 +8,7 @@ from enum import IntEnum
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
 from infection_monkey.system_info.netstat_collector import NetstatCollector
-from system_info.system_info_collectors_handler import SystemInfoCollectorsHandler
+from infection_monkey.system_info.system_info_collectors_handler import SystemInfoCollectorsHandler
 
 LOG = logging.getLogger(__name__)
 
