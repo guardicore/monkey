@@ -16,7 +16,7 @@ except NameError:
 
 class ProcessListCollector(SystemInfoCollector):
     def __init__(self):
-        super(ProcessListCollector, self).__init__(name=PROCESS_LIST_COLLECTOR)
+        super().__init__(name=PROCESS_LIST_COLLECTOR)
 
     def collect(self) -> dict:
         """

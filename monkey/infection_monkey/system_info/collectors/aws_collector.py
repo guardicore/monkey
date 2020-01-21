@@ -1,6 +1,7 @@
 import logging
 
 from common.cloud.aws.aws_instance import AwsInstance
+from common.data.system_info_collectors_names import AWS_COLLECTOR
 from infection_monkey.system_info.system_info_collector import SystemInfoCollector
 
 
@@ -12,7 +13,7 @@ class AwsCollector(SystemInfoCollector):
     Extract info from AWS machines.
     """
     def __init__(self):
-        super(AwsCollector, self).__init__(name="AwsCollector")
+        super().__init__(name=AWS_COLLECTOR)
 
     def collect(self) -> dict:
         logger.info("Collecting AWS info")

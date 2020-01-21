@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class HostnameCollector(SystemInfoCollector):
     def __init__(self):
-        super(HostnameCollector, self).__init__(name=HOSTNAME_COLLECTOR)
+        super().__init__(name=HOSTNAME_COLLECTOR)
 
     def collect(self) -> dict:
         return {"hostname": socket.getfqdn()}
