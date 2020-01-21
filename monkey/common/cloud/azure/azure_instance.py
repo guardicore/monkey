@@ -1,7 +1,7 @@
 import logging
 import requests
 
-from common.cloud.environment_names import AZURE
+from common.cloud.environment_names import Environment
 from common.cloud.instance import CloudInstance
 
 LATEST_AZURE_METADATA_API_VERSION = "2019-04-30"
@@ -18,8 +18,8 @@ class AzureInstance(CloudInstance):
     def is_instance(self):
         return self.on_azure
 
-    def get_cloud_provider_name(self) -> str:
-        return AZURE
+    def get_cloud_provider_name(self) -> Environment:
+        return Environment.AZURE
 
     def __init__(self):
         """

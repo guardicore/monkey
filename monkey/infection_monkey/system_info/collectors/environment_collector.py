@@ -1,10 +1,10 @@
 from common.cloud.all_instances import get_all_cloud_instances
-from common.cloud.environment_names import ON_PREMISE
+from common.cloud.environment_names import Environment
 from common.data.system_info_collectors_names import ENVIRONMENT_COLLECTOR
 from infection_monkey.system_info.system_info_collector import SystemInfoCollector
 
 
-def get_monkey_environment() -> str:
+def get_monkey_environment() -> Environment:
     """
     Get the Monkey's running environment.
     :return: One of the cloud providers if on cloud; otherwise, assumes "on premise".
@@ -13,7 +13,7 @@ def get_monkey_environment() -> str:
         if instance.is_instance():
             return instance.get_cloud_provider_name()
 
-    return ON_PREMISE
+    return Environment.ON_PREMISE
 
 
 class EnvironmentCollector(SystemInfoCollector):

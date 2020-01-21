@@ -45,7 +45,7 @@ class Monkey(Document):
     command_control_channel = EmbeddedDocumentField(CommandControlChannel)
 
     # Environment related fields
-    environment = StringField(default=environment_names.UNKNOWN, choices=environment_names.ALL_ENV_NAMES)
+    environment = StringField(default=environment_names.Environment.UNKNOWN, choices=environment_names.ALL_ENVIRONMENTS_NAMES)
     aws_instance_id = StringField(required=False)  # This field only exists when the monkey is running on an AWS
 
     # instance. See https://github.com/guardicore/monkey/issues/426.

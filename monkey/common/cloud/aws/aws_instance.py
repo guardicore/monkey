@@ -6,7 +6,7 @@ import logging
 
 __author__ = 'itay.mizeretz'
 
-from common.cloud.environment_names import AWS
+from common.cloud.environment_names import Environment
 from common.cloud.instance import CloudInstance
 
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
@@ -23,8 +23,8 @@ class AwsInstance(CloudInstance):
     def is_instance(self):
         return self.instance_id is not None
 
-    def get_cloud_provider_name(self) -> str:
-        return AWS
+    def get_cloud_provider_name(self) -> Environment:
+        return Environment.AWS
 
     def __init__(self):
         self.instance_id = None

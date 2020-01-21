@@ -1,7 +1,7 @@
 import logging
 import requests
 
-from common.cloud.environment_names import GCP
+from common.cloud.environment_names import Environment
 from common.cloud.instance import CloudInstance
 
 logger = logging.getLogger(__name__)
@@ -17,8 +17,8 @@ class GcpInstance(CloudInstance):
     def is_instance(self):
         return self.on_gcp
 
-    def get_cloud_provider_name(self) -> str:
-        return GCP
+    def get_cloud_provider_name(self) -> Environment:
+        return Environment.GCP
 
     def __init__(self):
         self.on_gcp = False
