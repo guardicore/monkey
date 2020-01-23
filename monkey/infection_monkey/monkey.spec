@@ -94,7 +94,14 @@ def get_traceroute_binaries():
 
 
 def get_monkey_filename():
-    return 'monkey.exe' if is_windows() else 'monkey'
+    name = 'monkey'
+    if is_32_bit():
+        name = name+"32"
+    else:
+        name = name+"64"
+    if is_windows():
+        name = name+".exe"
+    return name
 
 
 def get_exe_strip():
