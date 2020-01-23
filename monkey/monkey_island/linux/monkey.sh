@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MACHINE_TYPE=`uname -m`
-if [ ${MACHINE_TYPE} == 'x86_64' ]; then
+MACHINE_TYPE=$(uname -m)
+if [ "${MACHINE_TYPE}" == 'x86_64' ]; then
   # 64-bit stuff here
   ARCH=64
 else
@@ -11,4 +11,4 @@ fi
 
 MONKEY_FILE=monkey-linux-$ARCH
 cp -f /var/monkey/monkey_island/cc/binaries/$MONKEY_FILE /tmp
-/tmp/$MONKEY_FILE m0nk3y $@
+/tmp/$MONKEY_FILE m0nk3y "$@"

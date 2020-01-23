@@ -5,7 +5,7 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import UnknownServiceError
 
-from common.cloud.aws_instance import AwsInstance
+from common.cloud.aws.aws_instance import AwsInstance
 from monkey_island.cc.environment.environment import load_server_configuration_from_file
 from monkey_island.cc.services.reporting.exporter import Exporter
 

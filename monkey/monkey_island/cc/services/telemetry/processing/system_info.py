@@ -1,25 +1,23 @@
 import logging
 
-from monkey_island.cc.database import mongo
-from monkey_island.cc.models import Monkey
-from monkey_island.cc.services import mimikatz_utils
-from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence import test_antivirus_existence
-from monkey_island.cc.services.wmi_handler import WMIHandler
 from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.services import mimikatz_utils
+from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
+    SystemInfoTelemetryDispatcher
+from monkey_island.cc.services.wmi_handler import WMIHandler
 
 logger = logging.getLogger(__name__)
 
 
 def process_system_info_telemetry(telemetry_json):
+    dispatcher = SystemInfoTelemetryDispatcher()
     telemetry_processing_stages = [
         process_ssh_info,
         process_credential_info,
         process_mimikatz_and_wmi_info,
-        process_aws_data,
-        update_db_with_new_hostname,
-        test_antivirus_existence,
+        dispatcher.dispatch_collector_results_to_relevant_processors
     ]
 
     # Calling safe_process_telemetry so if one of the stages fail, we log and move on instead of failing the rest of
@@ -34,7 +32,7 @@ def safe_process_telemetry(processing_function, telemetry_json):
         processing_function(telemetry_json)
     except Exception as err:
         logger.error(
-            "Error {} while in {} stage of processing telemetry.".format(str(err), processing_function.func_name),
+            "Error {} while in {} stage of processing telemetry.".format(str(err), processing_function.__name__),
             exc_info=True)
 
 
@@ -72,7 +70,6 @@ def encrypt_system_info_ssh_keys(ssh_info):
 def process_credential_info(telemetry_json):
     if 'credentials' in telemetry_json['data']:
         creds = telemetry_json['data']['credentials']
-        encrypt_system_info_creds(creds)
         add_system_info_creds_to_config(creds)
         replace_user_dot_with_comma(creds)
 
@@ -95,14 +92,6 @@ def add_system_info_creds_to_config(creds):
             ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
 
 
-def encrypt_system_info_creds(creds):
-    for user in creds:
-        for field in ['password', 'lm_hash', 'ntlm_hash']:
-            if field in creds[user]:
-                # this encoding is because we might run into passwords which are not pure ASCII
-                creds[user][field] = encryptor.enc(creds[user][field])
-
-
 def process_mimikatz_and_wmi_info(telemetry_json):
     users_secrets = {}
     if 'mimikatz' in telemetry_json['data']:
@@ -113,14 +102,3 @@ def process_mimikatz_and_wmi_info(telemetry_json):
         wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
         wmi_handler.process_and_handle_wmi_info()
 
-
-def process_aws_data(telemetry_json):
-    if 'aws' in telemetry_json['data']:
-        if 'instance_id' in telemetry_json['data']['aws']:
-            monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
-            mongo.db.monkey.update_one({'_id': monkey_id},
-                                       {'$set': {'aws_instance_id': telemetry_json['data']['aws']['instance_id']}})
-
-
-def update_db_with_new_hostname(telemetry_json):
-    Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid']).set_hostname(telemetry_json['data']['hostname'])

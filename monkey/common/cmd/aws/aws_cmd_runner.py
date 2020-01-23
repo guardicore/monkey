@@ -1,6 +1,6 @@
 import logging
 
-from common.cloud.aws_service import AwsService
+from common.cloud.aws.aws_service import AwsService
 from common.cmd.aws.aws_cmd_result import AwsCmdResult
 from common.cmd.cmd_runner import CmdRunner
 from common.cmd.cmd_status import CmdStatus

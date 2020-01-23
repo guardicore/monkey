@@ -6,10 +6,10 @@ from jsonschema import Draft4Validator, validators
 import monkey_island.cc.services.post_breach_files
 
 from monkey_island.cc.database import mongo
-from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.environment.environment import env
 from monkey_island.cc.utils import local_ip_addresses
 from .config_schema import SCHEMA
+from monkey_island.cc.encryptor import encryptor
 
 __author__ = "itay.mizeretz"
 
@@ -90,7 +90,13 @@ class ConfigService:
         return SCHEMA
 
     @staticmethod
-    def add_item_to_config_set(item_key, item_value):
+    def add_item_to_config_set_if_dont_exist(item_key, item_value, should_encrypt):
+        item_path_array = item_key.split('.')
+        items_from_config = ConfigService.get_config_value(item_path_array, False, should_encrypt)
+        if item_value in items_from_config:
+            return
+        if should_encrypt:
+            item_value = encryptor.enc(item_value)
         mongo.db.config.update(
             {'name': 'newconfig'},
             {'$addToSet': {item_key: item_value}},
@@ -105,31 +111,42 @@ class ConfigService:
 
     @staticmethod
     def creds_add_username(username):
-        ConfigService.add_item_to_config_set('basic.credentials.exploit_user_list', username)
+        ConfigService.add_item_to_config_set_if_dont_exist('basic.credentials.exploit_user_list',
+                                                           username,
+                                                           should_encrypt=False)
 
     @staticmethod
     def creds_add_password(password):
-        ConfigService.add_item_to_config_set('basic.credentials.exploit_password_list', password)
+        ConfigService.add_item_to_config_set_if_dont_exist('basic.credentials.exploit_password_list',
+                                                           password,
+                                                           should_encrypt=True)
 
     @staticmethod
     def creds_add_lm_hash(lm_hash):
-        ConfigService.add_item_to_config_set('internal.exploits.exploit_lm_hash_list', lm_hash)
+        ConfigService.add_item_to_config_set_if_dont_exist('internal.exploits.exploit_lm_hash_list',
+                                                           lm_hash,
+                                                           should_encrypt=True)
 
     @staticmethod
     def creds_add_ntlm_hash(ntlm_hash):
-        ConfigService.add_item_to_config_set('internal.exploits.exploit_ntlm_hash_list', ntlm_hash)
+        ConfigService.add_item_to_config_set_if_dont_exist('internal.exploits.exploit_ntlm_hash_list',
+                                                           ntlm_hash,
+                                                           should_encrypt=True)
 
     @staticmethod
     def ssh_add_keys(public_key, private_key, user, ip):
         if not ConfigService.ssh_key_exists(
                 ConfigService.get_config_value(['internal', 'exploits', 'exploit_ssh_keys'], False, False), user, ip):
-            ConfigService.add_item_to_config_set(
+            ConfigService.add_item_to_config_set_if_dont_exist(
                 'internal.exploits.exploit_ssh_keys',
                 {
                     "public_key": public_key,
                     "private_key": private_key,
                     "user": user, "ip": ip
-                }
+                },
+                # SSH keys already encrypted in process_ssh_info()
+                should_encrypt=False
+
             )
 
     @staticmethod

@@ -1,0 +1,28 @@
+$yellow: #ffcc00;
+
+
+.not-found .not-found-title {
+  color: $yellow;
+  font-size: 8em;
+  margin-bottom: 0 !important;
+}
+
+.not-found .monkey-detective {
+  height: 200px;
+  display: inline-block;
+}
+
+.not-found .text-block {
+  display: inline-block;
+}
+.not-found {
+  display: flex;
+  align-items: center;
+  margin-top:200px;
+  margin-left:100px;
+}
+
+.not-found .not-found-subtitle {
+  margin-top: 0 !important;
+}
+
