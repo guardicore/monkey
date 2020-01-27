@@ -7,6 +7,8 @@ import urllib
 from logging import getLogger
 from urllib.parse import urlsplit
 
+import requests
+
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 from infection_monkey.network.tools import get_interface_to_target
@@ -109,6 +111,19 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     timeout = 30  # timeout with clients, set to None not to make persistent connection
     proxy_via = None  # pseudonym of the proxy in Via header, set to None not to modify original Via header
     protocol_version = "HTTP/1.1"
+
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
+        post_data = self.rfile.read(content_length).decode()  # <--- Gets the data itself
+        r = requests.post(url=self.path, data=post_data)
+        if (r.status_code != 200):
+            # somehow forward post request to the next proxy
+            r = requests.post(url=self.path, data=post_data, proxy=self.path)
+            if (r.status_code != 200):
+                return self.send_response(404)
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(r.content)
 
     def version_string(self):
         return ""
