@@ -32,7 +32,7 @@ script:
 # --count will print the total number of errors.
 # --statistics Count the number of occurrences of each error/warning code and print a report.
 # The output is redirected to a file.
-- flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics > flake8_warnings.txt
+- flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=monkey/infection_monkey/system_info/collectors/scoutsuite > flake8_warnings.txt
 # Display the linter issues
 - cat flake8_warnings.txt
 # Make sure that we haven't increased the amount of warnings.
