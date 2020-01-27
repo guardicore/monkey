@@ -24,7 +24,7 @@ before_script:
 script:
 # Check Python code
 # Check syntax errors and fail the build if any are found.
-- flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
+- flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics --exclude=monkey/infection_monkey/system_info/collectors/scoutsuite
 
 # Warn about linter issues.
 # --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
