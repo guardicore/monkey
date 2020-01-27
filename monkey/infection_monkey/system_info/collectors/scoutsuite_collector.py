@@ -17,7 +17,11 @@ class ScoutSuiteCollector(SystemInfoCollector):
         env = get_monkey_environment()
         if env == Environment.ON_PREMISE.value:
             logger.info("Monkey is not on cloud; not running ScoutSuite")
+            return {}
         else:
             logger.info(f"Attempting to execute ScoutSuite with {env.lower()}")
-            run(env.lower(), debug=True, quiet=False)
-        return {}
+            scout_suite_results = run(env.lower(), debug=True, quiet=False)
+            return {
+                "Environment": env,
+                "Results": scout_suite_results
+            }

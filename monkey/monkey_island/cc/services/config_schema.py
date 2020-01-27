@@ -1,5 +1,5 @@
 from common.data.system_info_collectors_names \
-    import AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR, PROCESS_LIST_COLLECTOR
+    import AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR, PROCESS_LIST_COLLECTOR, SCOUTSUITE_COLLECTOR
 
 WARNING_SIGN = " \u26A0"
 
@@ -130,12 +130,20 @@ SCHEMA = {
                     "title": "Collect the machine's hostname",
                     "attack_techniques": []
                 },
-{
+                {
                     "type": "string",
                     "enum": [
                         PROCESS_LIST_COLLECTOR
                     ],
                     "title": "Collect running processes on the machine",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        SCOUTSUITE_COLLECTOR
+                    ],
+                    "title": "If on cloud, execute ScoutSuite and collect its results",
                     "attack_techniques": []
                 },
             ],
@@ -485,7 +493,8 @@ SCHEMA = {
                                 ENVIRONMENT_COLLECTOR,
                                 AWS_COLLECTOR,
                                 HOSTNAME_COLLECTOR,
-                                PROCESS_LIST_COLLECTOR
+                                PROCESS_LIST_COLLECTOR,
+                                SCOUTSUITE_COLLECTOR
                             ],
                             "description": "Determines which system information collectors will collect information."
                         },
