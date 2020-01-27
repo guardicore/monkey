@@ -1,3 +1,3 @@
 [submodule "monkey/infection_monkey/system_info/collectors/scoutsuite"]
 	path = monkey/infection_monkey/system_info/collectors/scoutsuite
-	url = git@github.com:ShayNehmad/ScoutSuite.git
+	url = https://github.com/ShayNehmad/ScoutSuite.git
