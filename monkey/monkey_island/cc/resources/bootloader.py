@@ -1,8 +1,6 @@
 import flask_restful
 from flask import request, make_response
 
-from monkey_island.cc.services.node import NodeService
-
 WINDOWS_VERSIONS = {
     "5.0": "Windows 2000",
     "5.1": "Windows XP",

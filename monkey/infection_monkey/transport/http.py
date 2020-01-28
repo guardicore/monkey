@@ -110,7 +110,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     timeout = 30  # timeout with clients, set to None not to make persistent connection
     proxy_via = None  # pseudonym of the proxy in Via header, set to None not to modify original Via header
-    protocol_version = "HTTP/1.1"
+    #protocol_version = "HTTP/1.1"
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
