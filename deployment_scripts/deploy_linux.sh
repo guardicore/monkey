@@ -55,7 +55,7 @@ MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
 
 
 if is_root; then
-  echo "Please don't runt this script as root"
+  echo "Please don't run this script as root"
   exit 1
 fi
 
@@ -75,7 +75,7 @@ if ! exists git; then
 fi
 
 if ! exists wget; then
-  echo 'Your system does have wget, please install and re-run this script'
+  echo 'Your system does not have wget, please install and re-run this script'
   exit 1
 fi
 
@@ -114,10 +114,6 @@ fi
 
 log_message "Updating package list"
 sudo apt-get update
-
-log_message "Installing pip"
-sudo apt install python3-pip
-${python_cmd} -m pip install pip
 
 log_message "Install python3.7-dev"
 sudo apt-get install python3.7-dev
