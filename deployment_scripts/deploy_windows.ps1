@@ -92,6 +92,9 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         return
     }
 
+    "Installing pywin32"
+    python -m pip install --user pywin32
+
     "Installing python packages for island"
     $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
     & python -m pip install --user -r $islandRequirements
@@ -186,12 +189,6 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     & npm update
     & npm run dist
     Pop-Location
-
-    # Install pywin32
-    "Downloading pywin32"
-    $webClient.DownloadFile($PYWIN32_URL, $TEMP_PYWIN32_INSTALLER)
-    Start-Process -Wait $TEMP_PYWIN32_INSTALLER -ErrorAction Stop
-    Remove-Item $TEMP_PYWIN32_INSTALLER
 
     # Create infection_monkey/bin directory if not already present
     $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\bin")
