@@ -3,13 +3,17 @@
 
 Before running the script you must have git installed.<br>
 `Invoke-WebRequest https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/deploy_windows.ps1 -OutFile deploy_windows.ps1`
+
 Then execute the resulting script with your shell. 
 First argument is an empty directory (script can create one) and second is branch you want to clone.
+
 Example usages:<br>
-`./run_script.bat` (Sets up monkey in current directory under .\infection_monkey)<br>
-`./run_script.bat "C:\test"` (Sets up monkey in C:\test)<br>
-`powershell -ExecutionPolicy ByPass -Command ". .\deploy_windows.ps1; Deploy-Windows -monkey_home C:\test"` (Same as above)<br>
-`./run_script.bat "" "master"` (Sets up master branch instead of develop in current dir)
+`.\deploy_windows.ps1` (Sets up monkey in current directory under .\infection_monkey)<br>
+`.\deploy_windows.ps1 -monkey_home "C:\test"` (Sets up monkey in C:\test)<br>
+`.\deploy_windows.ps1 -branch "master"` (Sets up master branch instead of develop in current dir)
+
+If you run into Execution Policy warnings, you can disable them by prefixing the following snippet
+`powershell -ExecutionPolicy ByPass -Command "[original command here]"`
 
 Don't forget to add python to PATH or do so while installing it via this script.<br>
 

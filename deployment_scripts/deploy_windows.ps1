@@ -1,18 +1,28 @@
+param(
+    [Parameter(Mandatory = $false, Position = 0)]
+    [String] $monkey_home = (Get-Item -Path ".\").FullName,
+
+    [Parameter(Mandatory = $false, Position = 1)]
+    [System.String]
+    $branch = "develop"
+)
 function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, [String] $branch = "develop")
 {
-
+    Write-Output "Downloading to $monkey_home"
+    Write-Output "Branch $branch"
     # Set variables for script execution
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $webClient = New-Object System.Net.WebClient
 
 
     # Import the config variables
+    $config_filename = New-TemporaryFile
     $config_filename = "config.ps1"
     $config_url = "https://raw.githubusercontent.com/guardicore/monkey/" + $branch + "/deployment_scripts/config.ps1"
     $webClient.DownloadFile($config_url, $config_filename)
     . ./config.ps1
     "Config variables from config.ps1 imported"
-    Remove-Item $config_filename
+    #Remove-Item $config_filename
 
 
     # If we want monkey in current dir we need to create an empty folder for source files
@@ -35,7 +45,9 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
 
     # Download the monkey
-    $output = cmd.exe /c "git clone --single-branch -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
+    $command = "git clone --single-branch -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
+    Write-Output $command
+    $output = cmd.exe /c $command
     $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\bin")
     if ($output -like "*already exists and is not an empty directory.*")
     {
@@ -242,3 +254,4 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     "Script finished"
 
 }
+Deploy-Windows -monkey_home $monkey_home -branch $branch
