@@ -24,7 +24,7 @@ log_message() {
 }
 
 config_branch=${2:-"develop"}
-config_url="https://raw.githubusercontent.com/guardicore/monkey/"$config_branch"/deployment_scripts/config"
+config_url="https://raw.githubusercontent.com/guardicore/monkey/${config_branch}/deployment_scripts/config"
 
 if exists curl; then
   file=$(mktemp)
@@ -46,13 +46,10 @@ fi
 
 # We can set main paths after we know the home dir
 ISLAND_PATH="$monkey_home/monkey/monkey_island"
-MONKEY_COMMON_PATH="$monkey_home/monkey/common/"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
-
-
 
 if is_root; then
   echo "Please don't run this script as root"
@@ -118,14 +115,14 @@ sudo apt-get update
 log_message "Install python3.7-dev"
 sudo apt-get install python3.7-dev
 
-log_message "Installing island requirements"
-requirements="$ISLAND_PATH/requirements.txt"
-${python_cmd} -m pip install --user --upgrade -r ${requirements} || handle_error
+log_message "Installing island requirements_island"
+requirements_island="$ISLAND_PATH/requirements.txt"
+${python_cmd} -m pip install -r "${requirements_island}" --user --upgrade || handle_error
 
-log_message "Installing monkey requirements"
+log_message "Installing monkey requirements_island"
 sudo apt-get install libffi-dev upx libssl-dev libc++1
-cd "${monkey_home}"/monkey/infection_monkey || handle_error
-${python_cmd} -m pip install -r requirements.txt --user --upgrade || handle_error
+requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
+${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
 
 # Download binaries
 log_message "Downloading binaries"
@@ -183,7 +180,7 @@ log_message "Downloading traceroute binaries"
 wget -c -N -P "${MONKEY_BIN_DIR}" "${TRACEROUTE_64_BINARY_URL}"
 wget -c -N -P "${MONKEY_BIN_DIR}" "${TRACEROUTE_32_BINARY_URL}"
 
-sudo chmod +x "${monkey_home}"/monkey/infection_monkey/build_linux.sh
+sudo chmod +x "${INFECTION_MONKEY_DIR}/build_linux.sh"
 
 log_message "Deployment script finished."
 exit 0
