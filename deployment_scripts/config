@@ -19,7 +19,3 @@ TRACEROUTE_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download
 TRACEROUTE_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/1.6/traceroute32"
 SAMBACRY_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner64.so"
 SAMBACRY_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner32.so"
-
-# Mongo url's
-MONGO_DEBIAN_URL="https://downloads.mongodb.org/linux/mongodb-linux-x86_64-debian81-latest.tgz"
-MONGO_UBUNTU_URL="https://downloads.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-latest.tgz"
