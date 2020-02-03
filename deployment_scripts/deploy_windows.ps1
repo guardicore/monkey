@@ -72,7 +72,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         "Select 'add to PATH' when installing"
         $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
         Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
-        $env: Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
         Remove-Item $TEMP_PYTHON_INSTALLER
         # Check if installed correctly
         $version = cmd.exe /c '"python" --version  2>&1'
@@ -101,10 +101,10 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
     $user_python_dir = cmd.exe /c 'py -m site --user-site'
     $user_python_dir = Join-Path (Split-Path $user_python_dir) -ChildPath "\Scripts"
-    if (!($ENV: PATH | Select-String -SimpleMatch $user_python_dir))
+    if (!($ENV:Path | Select-String -SimpleMatch $user_python_dir))
     {
         "Adding python scripts path to user's env"
-        $env: Path += ";" + $user_python_dir
+        $env:Path += ";" + $user_python_dir
         [Environment]::SetEnvironmentVariable("Path", $env:Path, "User")
     }
 
@@ -177,7 +177,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         "Downloading npm ..."
         $webClient.DownloadFile($NPM_URL, $TEMP_NPM_INSTALLER)
         Start-Process -Wait $TEMP_NPM_INSTALLER
-        $env: Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
         Remove-Item $TEMP_NPM_INSTALLER
     }
 
