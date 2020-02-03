@@ -14,10 +14,12 @@ $WINDOWS_32_BINARY_URL = "https://github.com/guardicore/monkey/releases/download
 $WINDOWS_32_BINARY_PATH = "monkey-windows-32.exe"
 $WINDOWS_64_BINARY_URL = "https://github.com/guardicore/monkey/releases/download/1.6/monkey-windows-64.exe"
 $WINDOWS_64_BINARY_PATH = "monkey-windows-64.exe"
-$SAMBA_32_BINARY_URL = "https://github.com/VakarisZ/tempBinaries/raw/master/sc_monkey_runner32.so"
+$SAMBA_32_BINARY_URL = "https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner32.so"
 $SAMBA_32_BINARY_NAME= "sc_monkey_runner32.so"
-$SAMBA_64_BINARY_URL = "https://github.com/VakarisZ/tempBinaries/raw/master/sc_monkey_runner64.so"
+$SAMBA_64_BINARY_URL = "https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner64.so"
 $SAMBA_64_BINARY_NAME = "sc_monkey_runner64.so"
+$TRACEROUTE_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/1.6/traceroute64"
+$TRACEROUTE_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/1.6/traceroute32"
 
 # Other directories and paths ( most likely you dont need to configure)
 $MONKEY_ISLAND_DIR = "\monkey\monkey_island"
