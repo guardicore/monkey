@@ -109,6 +109,8 @@ if [[ ${python_cmd} == "" ]]; then
   python_cmd="python3.7"
 fi
 
+sudo apt install build-essentials
+
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 ${python_cmd} get-pip.py
 
