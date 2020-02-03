@@ -4,7 +4,7 @@ $MONKEY_FOLDER_NAME = "infection_monkey"
 $MONKEY_GIT_URL = "https://github.com/guardicore/monkey"
 $MONKEY_RELEASES_URL = $MONKEY_GIT_URL + "/releases"
 $MONKEY_LATEST_VERSION = "1.7.0"
-$MONKEY_DOWNLOAD_URL = $MONKEY_RELEASES_URL + "/" + $MONKEY_LATEST_VERSION + "/"
+$MONKEY_DOWNLOAD_URL = $MONKEY_RELEASES_URL + "/download/" + $MONKEY_LATEST_VERSION + "/"
 # Link to the latest python download or install it manually
 $PYTHON_URL = "https://www.python.org/ftp/python/3.7.6/python-3.7.6-amd64.exe"
 
