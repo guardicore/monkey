@@ -109,6 +109,9 @@ if [[ ${python_cmd} == "" ]]; then
   python_cmd="python3.7"
 fi
 
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+${python_cmd} get-pip.py
+
 log_message "Installing island requirements_island"
 requirements_island="$ISLAND_PATH/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_island}" --user --upgrade || handle_error
