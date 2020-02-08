@@ -22,7 +22,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     $webClient.DownloadFile($config_url, $config_filename)
     . ./config.ps1
     "Config variables from config.ps1 imported"
-    #Remove-Item $config_filename
+    Remove-Item $config_filename
 
 
     # If we want monkey in current dir we need to create an empty folder for source files
