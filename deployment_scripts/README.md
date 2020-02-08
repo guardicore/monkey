@@ -16,7 +16,9 @@ Invoke-WebRequest https://raw.githubusercontent.com/guardicore/monkey/develop/de
 
 This will download our deploy script. It's a good idea to read it quickly before executing it!
 
-After downloading that script, execute it in a shell (like `cmd` or `powershell`). The first argument is an empty directory (script can create one). The second argument is which branch you want to clone - by default, the script will check out the `develop` branch. Some example usages:
+After downloading that script, execute it in  `powershell`. 
+
+The first argument is an empty directory (script can create one). The second argument is which branch you want to clone - by default, the script will check out the `develop` branch. Some example usages:
 
 - `.\deploy_windows.ps1` (Sets up monkey in current directory under .\infection_monkey)
 - `.\deploy_windows.ps1 -monkey_home "C:\test"` (Sets up monkey in C:\test)
