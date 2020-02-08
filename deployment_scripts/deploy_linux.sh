@@ -26,17 +26,29 @@ log_message() {
 config_branch=${2:-"develop"}
 config_url="https://raw.githubusercontent.com/guardicore/monkey/${config_branch}/deployment_scripts/config"
 
-if exists curl; then
-  file=$(mktemp)
-  curl -s -o $file "$config_url"
-  log_message "downloaded configuration"
-  source $file
-  log_message "loaded configuration"
-  rm $file
-else
-  echo 'Your system does not have curl, exiting'
+curl_exists=$(exists curl)
+wget_exists=$(exists wget)
+if [[ ! $curl_exists && ! $wget_exists ]]; then
+  echo 'Your system does not have curl or wget, exiting'
   exit 1
 fi
+
+file=$(mktemp)
+if [ $curl_exists ]; then
+  # shellcheck disable=SC2086
+  curl -s -o $file "$config_url"
+else
+  # shellcheck disable=SC2086
+  wget --output-file=$file --output-file=
+fi
+
+log_message "downloaded configuration"
+# shellcheck source=deployment_scripts/config
+# shellcheck disable=SC2086
+source $file
+log_message "loaded configuration"
+# shellcheck disable=SC2086
+rm $file
 
 # Setup monkey either in dir required or current dir
 monkey_home=${1:-$(pwd)}
@@ -68,11 +80,6 @@ fi
 
 if ! exists git; then
   echo "Please install git and re-run this script"
-  exit 1
-fi
-
-if ! exists wget; then
-  echo 'Your system does not have wget, please install and re-run this script'
   exit 1
 fi
 
@@ -110,9 +117,13 @@ if [[ ${python_cmd} == "" ]]; then
 fi
 
 sudo apt install build-essentials
-
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+if [ $curl_exists ]; then
+  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+else
+  wget --output-file=get-pip.py https://bootstrap.pypa.io/get-pip.py
+fi
 ${python_cmd} get-pip.py
+rm get-pip.py
 
 log_message "Installing island requirements_island"
 requirements_island="$ISLAND_PATH/requirements.txt"
@@ -125,17 +136,21 @@ ${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || han
 
 # Download binaries
 log_message "Downloading binaries"
-wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_32_BINARY_URL}
-wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_64_BINARY_URL}
-wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_32_BINARY_URL}
-wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_64_BINARY_URL}
+if [ $wget_exists ]; then
+  wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_32_BINARY_URL}
+  wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_64_BINARY_URL}
+  wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_32_BINARY_URL}
+  wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_64_BINARY_URL}
+else
+  curl -o ${ISLAND_BINARIES_PATH}\monkey-linux-32 ${LINUX_32_BINARY_URL}
+  curl -o ${ISLAND_BINARIES_PATH}\monkey-linux-64 ${LINUX_64_BINARY_URL}
+  curl -o ${ISLAND_BINARIES_PATH}\monkey-windows-32.exe ${WINDOWS_32_BINARY_URL}
+  curl -o ${ISLAND_BINARIES_PATH}\monkey-windows-64.exe ${WINDOWS_64_BINARY_URL}
+fi
+
 # Allow them to be executed
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
-
-# Get machine type/kernel version
-kernel=$(uname -m)
-linux_dist=$(lsb_release -a 2>/dev/null)
 
 # If a user haven't installed mongo manually check if we can install it with our script
 log_message "Installing MongoDB"
@@ -157,8 +172,11 @@ openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/ser
 # Update node
 log_message "Installing nodejs"
 cd "$ISLAND_PATH/cc/ui" || handle_error
-sudo apt-get install curl
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+if [ $curl_exists ]; then
+  curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+else
+  wget -q -O - https://deb.nodesource.com/setup_12.x | sudo -E bash -
+fi
 sudo apt-get install -y nodejs
 npm install sass-loader node-sass webpack --save-dev
 npm update
@@ -171,13 +189,22 @@ mkdir "${MONKEY_BIN_DIR}"
 
 # Download sambacry binaries
 log_message "Downloading sambacry binaries"
-wget -c -N -P "${MONKEY_BIN_DIR}" "${SAMBACRY_64_BINARY_URL}"
-wget -c -N -P "${MONKEY_BIN_DIR}" "${SAMBACRY_32_BINARY_URL}"
-
+if [ $wget_exists ]; then
+  wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_64_BINARY_URL}
+  wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_32_BINARY_URL}
+else
+  curl -o ${MONKEY_BIN_DIR}\sc_monkey_runner64.so ${SAMBACRY_64_BINARY_URL}
+  curl -o ${MONKEY_BIN_DIR}\sc_monkey_runner32.so ${SAMBACRY_32_BINARY_URL}
+fi
 # Download traceroute binaries
 log_message "Downloading traceroute binaries"
-wget -c -N -P "${MONKEY_BIN_DIR}" "${TRACEROUTE_64_BINARY_URL}"
-wget -c -N -P "${MONKEY_BIN_DIR}" "${TRACEROUTE_32_BINARY_URL}"
+if [ $wget_exists ]; then
+  wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_64_BINARY_URL}
+  wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_32_BINARY_URL}
+else
+  curl -o ${MONKEY_BIN_DIR}\traceroute64 ${TRACEROUTE_64_BINARY_URL}
+  curl -o ${MONKEY_BIN_DIR}\traceroute32 ${TRACEROUTE_32_BINARY_URL}
+fi
 
 sudo chmod +x "${INFECTION_MONKEY_DIR}/build_linux.sh"
 
