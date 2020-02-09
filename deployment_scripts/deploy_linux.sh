@@ -200,8 +200,8 @@ if exists wget; then
   wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_64_BINARY_URL}
   wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_32_BINARY_URL}
 else
-  curl -o ${MONKEY_BIN_DIR}\sc_monkey_runner64.so ${SAMBACRY_64_BINARY_URL}
-  curl -o ${MONKEY_BIN_DIR}\sc_monkey_runner32.so ${SAMBACRY_32_BINARY_URL}
+  curl -o ${MONKEY_BIN_DIR}/sc_monkey_runner64.so ${SAMBACRY_64_BINARY_URL}
+  curl -o ${MONKEY_BIN_DIR}/sc_monkey_runner32.so ${SAMBACRY_32_BINARY_URL}
 fi
 # Download traceroute binaries
 log_message "Downloading traceroute binaries"
@@ -210,8 +210,8 @@ if exists wget; then
   wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_64_BINARY_URL}
   wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_32_BINARY_URL}
 else
-  curl -o ${MONKEY_BIN_DIR}\traceroute64 ${TRACEROUTE_64_BINARY_URL}
-  curl -o ${MONKEY_BIN_DIR}\traceroute32 ${TRACEROUTE_32_BINARY_URL}
+  curl -o ${MONKEY_BIN_DIR}/traceroute64 ${TRACEROUTE_64_BINARY_URL}
+  curl -o ${MONKEY_BIN_DIR}/traceroute32 ${TRACEROUTE_32_BINARY_URL}
 fi
 
 sudo chmod +x "${INFECTION_MONKEY_DIR}/build_linux.sh"
