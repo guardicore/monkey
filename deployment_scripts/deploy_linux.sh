@@ -91,7 +91,7 @@ fi
 
 # Create folders
 log_message "Creating island dirs under $ISLAND_PATH"
-mkdir -p "${MONGO_PATH}"
+mkdir -p "${MONGO_PATH}" || handle_error
 mkdir -p "${ISLAND_BINARIES_PATH}" || handle_error
 
 # Detecting command that calls python 3.7
@@ -165,10 +165,6 @@ sudo apt-get install openssl
 
 # Generate SSL certificate
 log_message "Generating certificate"
-cd "${ISLAND_PATH}" || {
-  echo "cd failed"
-  exit 1
-}
 
 "${ISLAND_PATH}"/linux/create_certificate.sh ${ISLAND_PATH}/cc
 
@@ -184,12 +180,13 @@ if ! exists npm; then
   sudo apt-get install -y nodejs
 fi
 
-cd "$ISLAND_PATH/cc/ui" || handle_error
+pushd "$ISLAND_PATH/cc/ui" || handle_error
 npm install sass-loader node-sass webpack --save-dev
 npm update
 
 log_message "Generating front end"
 npm run dist
+popd || handle_error
 
 # Making dir for binaries
 mkdir "${MONKEY_BIN_DIR}"
