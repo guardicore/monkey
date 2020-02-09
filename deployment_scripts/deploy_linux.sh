@@ -117,8 +117,8 @@ fi
 
 log_message "Installing build-essentials"
 sudo apt install build-essentials
-log_message "Installing or updating pip"
 
+log_message "Installing or updating pip"
 # shellcheck disable=SC2086
 if exists wget; then
   wget --output-document=get-pip.py https://bootstrap.pypa.io/get-pip.py
@@ -127,7 +127,6 @@ else
 fi
 ${python_cmd} get-pip.py
 rm get-pip.py
-
 
 log_message "Installing island requirements_island"
 requirements_island="$ISLAND_PATH/requirements.txt"
@@ -157,9 +156,10 @@ chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
 
 # If a user haven't installed mongo manually check if we can install it with our script
-log_message "Installing MongoDB"
-"${ISLAND_PATH}"/linux/install_mongo.sh ${MONGO_PATH} || handle_error
-
+if ! exists mongod; then
+  log_message "Installing MongoDB"
+  "${ISLAND_PATH}"/linux/install_mongo.sh ${MONGO_PATH} || handle_error
+fi
 log_message "Installing openssl"
 sudo apt-get install openssl
 
