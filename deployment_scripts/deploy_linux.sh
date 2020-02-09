@@ -175,7 +175,6 @@ openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/ser
 
 # Update node
 log_message "Installing nodejs"
-cd "$ISLAND_PATH/cc/ui" || handle_error
 # shellcheck disable=SC2086
 if exists curl; then
   curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
@@ -183,6 +182,8 @@ else
   wget -q -O - https://deb.nodesource.com/setup_12.x | sudo -E bash -
 fi
 sudo apt-get install -y nodejs
+
+cd "$ISLAND_PATH/cc/ui" || handle_error
 npm install sass-loader node-sass webpack --save-dev
 npm update
 
