@@ -26,20 +26,19 @@ log_message() {
 config_branch=${2:-"develop"}
 config_url="https://raw.githubusercontent.com/guardicore/monkey/${config_branch}/deployment_scripts/config"
 
-curl_exists=$(exists curl)
-wget_exists=$(exists wget)
-if [[ ! $curl_exists && ! $wget_exists ]]; then
+if (! exists curl) && (! exists wget); then
   echo 'Your system does not have curl or wget, exiting'
   exit 1
 fi
 
 file=$(mktemp)
-if [ $curl_exists ]; then
+# shellcheck disable=SC2086
+if exists wget; then
   # shellcheck disable=SC2086
-  curl -s -o $file "$config_url"
+  wget --output-document=$file "$config_url"
 else
   # shellcheck disable=SC2086
-  wget --output-file=$file --output-file=
+  curl -s -o $file "$config_url"
 fi
 
 log_message "downloaded configuration"
@@ -48,7 +47,7 @@ log_message "downloaded configuration"
 source $file
 log_message "loaded configuration"
 # shellcheck disable=SC2086
-rm $file
+# rm $file
 
 # Setup monkey either in dir required or current dir
 monkey_home=${1:-$(pwd)}
@@ -117,10 +116,11 @@ if [[ ${python_cmd} == "" ]]; then
 fi
 
 sudo apt install build-essentials
-if [ $curl_exists ]; then
-  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+# shellcheck disable=SC2086
+if exists wget; then
+  wget --output-document=get-pip.py https://bootstrap.pypa.io/get-pip.py
 else
-  wget --output-file=get-pip.py https://bootstrap.pypa.io/get-pip.py
+  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 fi
 ${python_cmd} get-pip.py
 rm get-pip.py
@@ -136,7 +136,7 @@ ${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || han
 
 # Download binaries
 log_message "Downloading binaries"
-if [ $wget_exists ]; then
+if exists wget; then
   wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_32_BINARY_URL}
   wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_64_BINARY_URL}
   wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_32_BINARY_URL}
@@ -172,7 +172,8 @@ openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/ser
 # Update node
 log_message "Installing nodejs"
 cd "$ISLAND_PATH/cc/ui" || handle_error
-if [ $curl_exists ]; then
+# shellcheck disable=SC2086
+if exists curl; then
   curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 else
   wget -q -O - https://deb.nodesource.com/setup_12.x | sudo -E bash -
@@ -189,7 +190,8 @@ mkdir "${MONKEY_BIN_DIR}"
 
 # Download sambacry binaries
 log_message "Downloading sambacry binaries"
-if [ $wget_exists ]; then
+# shellcheck disable=SC2086
+if exists wget; then
   wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_64_BINARY_URL}
   wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_32_BINARY_URL}
 else
@@ -198,7 +200,8 @@ else
 fi
 # Download traceroute binaries
 log_message "Downloading traceroute binaries"
-if [ $wget_exists ]; then
+# shellcheck disable=SC2086
+if exists wget; then
   wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_64_BINARY_URL}
   wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_32_BINARY_URL}
 else
