@@ -94,7 +94,11 @@ def get_traceroute_binaries():
 
 
 def get_monkey_filename():
-    name = 'monkey'
+    name = 'monkey-'
+    if is_windows():
+        name = name+"windows-"
+    else:
+        name = name+"linux-"
     if is_32_bit():
         name = name+"32"
     else:
