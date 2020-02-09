@@ -128,11 +128,11 @@ fi
 ${python_cmd} get-pip.py
 rm get-pip.py
 
-log_message "Installing island requirements_island"
+log_message "Installing island requirements"
 requirements_island="$ISLAND_PATH/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_island}" --user --upgrade || handle_error
 
-log_message "Installing monkey requirements_island"
+log_message "Installing monkey requirements"
 sudo apt-get install libffi-dev upx libssl-dev libc++1
 requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
