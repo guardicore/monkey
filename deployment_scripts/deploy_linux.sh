@@ -169,9 +169,8 @@ cd "${ISLAND_PATH}" || {
   echo "cd failed"
   exit 1
 }
-openssl genrsa -out cc/server.key 2048
-openssl req -new -key cc/server.key -out cc/server.csr -subj "/C=GB/ST=London/L=London/O=Global Security/OU=Monkey Department/CN=monkey.com"
-openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/server.crt
+
+"${ISLAND_PATH}"/linux/create_certificate.sh ${ISLAND_PATH}/cc
 
 # Update node
 if ! exists npm; then
