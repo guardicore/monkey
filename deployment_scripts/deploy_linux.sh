@@ -174,14 +174,16 @@ openssl req -new -key cc/server.key -out cc/server.csr -subj "/C=GB/ST=London/L=
 openssl x509 -req -days 366 -in cc/server.csr -signkey cc/server.key -out cc/server.crt
 
 # Update node
-log_message "Installing nodejs"
-# shellcheck disable=SC2086
-if exists curl; then
-  curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-else
-  wget -q -O - https://deb.nodesource.com/setup_12.x | sudo -E bash -
+if ! exists npm; then
+  log_message "Installing nodejs"
+  # shellcheck disable=SC2086
+  if exists curl; then
+    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+  else
+    wget -q -O - https://deb.nodesource.com/setup_12.x | sudo -E bash -
+  fi
+  sudo apt-get install -y nodejs
 fi
-sudo apt-get install -y nodejs
 
 cd "$ISLAND_PATH/cc/ui" || handle_error
 npm install sass-loader node-sass webpack --save-dev
