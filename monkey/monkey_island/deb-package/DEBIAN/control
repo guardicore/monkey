@@ -1,7 +1,7 @@
 Package: gc-monkey-island
 Architecture: amd64
 Maintainer: Guardicore <support@infectionmonkey.com>
-Homepage: http://www.infectionmonkey.com
+Homepage: https://www.infectionmonkey.com
 Priority: optional
 Version: 1.0
 Description: Guardicore Infection Monkey Island installation package
