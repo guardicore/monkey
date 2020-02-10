@@ -24,6 +24,8 @@ The first argument is an empty directory (script can create one). The second arg
 - `.\deploy_windows.ps1 -monkey_home "C:\test"` (Sets up monkey in C:\test)
 - `.\deploy_windows.ps1 -branch "master"` (Sets up master branch instead of develop in current dir)
 
+You may also pass in an optional `agents=$false` parameter to disable downloading the latest agent binaries.
+
 ### Troubleshooting
 
 - If you run into Execution Policy warnings, you can disable them by prefixing the following snippet: `powershell -ExecutionPolicy ByPass -Command "[original command here]"`
@@ -49,3 +51,5 @@ After downloading that script, execute it in a shell. The first argument should 
 - `./deploy_linux.sh "/home/test/monkey"` (deploys under /home/test/monkey)
 - `./deploy_linux.sh "" "master"` (deploys master branch in script directory)
 - `./deploy_linux.sh "/home/user/new" "master"` (if directory "new" is not found creates it and clones master branch into it)
+
+You may also pass in an optional third `false` parameter to disable downloading the latest agent binaries.

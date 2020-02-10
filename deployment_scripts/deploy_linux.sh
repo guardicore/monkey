@@ -137,18 +137,22 @@ sudo apt-get install libffi-dev upx libssl-dev libc++1
 requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
 
+
+agents=${3:-true}
 # Download binaries
-log_message "Downloading binaries"
-if exists wget; then
-  wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_32_BINARY_URL}
-  wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_64_BINARY_URL}
-  wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_32_BINARY_URL}
-  wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_64_BINARY_URL}
-else
-  curl -o ${ISLAND_BINARIES_PATH}\monkey-linux-32 ${LINUX_32_BINARY_URL}
-  curl -o ${ISLAND_BINARIES_PATH}\monkey-linux-64 ${LINUX_64_BINARY_URL}
-  curl -o ${ISLAND_BINARIES_PATH}\monkey-windows-32.exe ${WINDOWS_32_BINARY_URL}
-  curl -o ${ISLAND_BINARIES_PATH}\monkey-windows-64.exe ${WINDOWS_64_BINARY_URL}
+if [ "$agents" = true ] ; then
+  log_message "Downloading binaries"
+  if exists wget; then
+    wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_32_BINARY_URL}
+    wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_64_BINARY_URL}
+    wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_32_BINARY_URL}
+    wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_64_BINARY_URL}
+  else
+    curl -o ${ISLAND_BINARIES_PATH}\monkey-linux-32 ${LINUX_32_BINARY_URL}
+    curl -o ${ISLAND_BINARIES_PATH}\monkey-linux-64 ${LINUX_64_BINARY_URL}
+    curl -o ${ISLAND_BINARIES_PATH}\monkey-windows-32.exe ${WINDOWS_32_BINARY_URL}
+    curl -o ${ISLAND_BINARIES_PATH}\monkey-windows-64.exe ${WINDOWS_64_BINARY_URL}
+  fi
 fi
 
 # Allow them to be executed
