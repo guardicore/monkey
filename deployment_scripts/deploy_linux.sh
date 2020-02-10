@@ -120,10 +120,11 @@ sudo apt install build-essentials
 
 log_message "Installing or updating pip"
 # shellcheck disable=SC2086
+pip_url=https://bootstrap.pypa.io/get-pip.py
 if exists wget; then
-  wget --output-document=get-pip.py https://bootstrap.pypa.io/get-pip.py
+  wget --output-document=get-pip.py $pip_url
 else
-  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+  curl $pip_url -o get-pip.py
 fi
 ${python_cmd} get-pip.py
 rm get-pip.py
@@ -175,11 +176,11 @@ log_message "Generating certificate"
 # Update node
 if ! exists npm; then
   log_message "Installing nodejs"
-  # shellcheck disable=SC2086
+  node_src=https://deb.nodesource.com/setup_12.x
   if exists curl; then
-    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+    curl -sL $node_src | sudo -E bash -
   else
-    wget -q -O - https://deb.nodesource.com/setup_12.x | sudo -E bash -
+    wget -q -O - $node_src | sudo -E bash -
   fi
   sudo apt-get install -y nodejs
 fi

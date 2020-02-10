@@ -109,9 +109,6 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         return
     }
 
-    "Installing pywin32"
-    python -m pip install --user pywin32
-
     "Installing python packages for island"
     $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
     & python -m pip install --user -r $islandRequirements
