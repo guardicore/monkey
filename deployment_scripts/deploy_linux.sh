@@ -27,7 +27,7 @@ config_branch=${2:-"develop"}
 config_url="https://raw.githubusercontent.com/guardicore/monkey/${config_branch}/deployment_scripts/config"
 
 if (! exists curl) && (! exists wget); then
-  echo 'Your system does not have curl or wget, exiting'
+  log_message 'Your system does not have curl or wget, exiting'
   exit 1
 fi
 
@@ -63,13 +63,13 @@ INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
 
 if is_root; then
-  echo "Please don't run this script as root"
+  log_message "Please don't run this script as root"
   exit 1
 fi
 
 HAS_SUDO=$(has_sudo)
 if [[ ! $HAS_SUDO ]]; then
-  echo "You need root permissions for some of this script operations. Quiting."
+  log_message "You need root permissions for some of this script operations. Quiting."
   exit 1
 fi
 
@@ -78,7 +78,7 @@ if [[ ! -d ${monkey_home} ]]; then
 fi
 
 if ! exists git; then
-  echo "Please install git and re-run this script"
+  log_message "Please install git and re-run this script"
   exit 1
 fi
 
