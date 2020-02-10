@@ -115,8 +115,8 @@ if [[ ${python_cmd} == "" ]]; then
   python_cmd="python3.7"
 fi
 
-log_message "Installing build-essentials"
-sudo apt install build-essentials
+log_message "Installing build-essential"
+sudo apt install build-essential
 
 log_message "Installing or updating pip"
 # shellcheck disable=SC2086
