@@ -23,10 +23,17 @@ class Bootloader(flask_restful.Resource):
     # Used by monkey. can't secure.
     def post(self, **kw):
         data = json.loads(request.data.decode().replace("\n", ""))
+
+        # Remove local ips
         local_addr = [i for i in data["ips"] if i.startswith("127")]
         if local_addr:
             data["ips"].remove(local_addr[0])
+
+        # Clean up os info
+        data['os_version'] = data['os_version'].split(" ")[0]
+
         mongo.db.bootloader_telems.insert(data)
         node_id = NodeService.get_or_create_node_from_bootloader_telem(data)
+
 
         return make_response({"status": "OK"}, 200)
