@@ -208,6 +208,42 @@ class NodeService:
         return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
 
     @staticmethod
+    def create_node_from_bootloader_telem(bootloader_telem):
+        new_node_insert_result = mongo.db.node.insert_one(
+            {
+                "ip_addresses": bootloader_telem['ips'],
+                "domain_name": bootloader_telem['hostname'],
+                "exploited": False,
+                "creds": [],
+                "os":
+                    {
+                        "type": bootloader_telem['system'],
+                        "version": bootloader_telem['os_version']
+                    }
+            })
+        return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
+
+    @staticmethod
+    def get_or_create_node_from_bootloader_telem(bootloader_telem):
+        new_node = mongo.db.node.find_one({"domain_name": bootloader_telem['hostname'],
+                                           "ip_addresses": bootloader_telem['ips']})
+        if new_node is None:
+            new_node = NodeService.create_node_from_bootloader_telem(bootloader_telem)
+            if bootloader_telem['tunnel']:
+                dst_node = NodeService.get_node_or_monkey_by_ip(bootloader_telem['tunnel'])
+            else:
+                dst_node = NodeService.get_monkey_island_node()
+            edge = EdgeService.get_or_create_edge(new_node['_id'], dst_node['id'])
+            mongo.db.edge.update({"_id": edge["_id"]},
+                                 {'$set': {'tunnel': bool(bootloader_telem['tunnel']),
+                                           'exploited': (not bool(bootloader_telem['tunnel'])),
+                                           'ip_address': bootloader_telem['ips'][0],
+                                           'group': 'island'}},
+                                 upsert=False)
+
+        return new_node
+
+    @staticmethod
     def get_or_create_node(ip_address, domain_name=''):
         new_node = mongo.db.node.find_one({"ip_addresses": ip_address})
         if new_node is None:

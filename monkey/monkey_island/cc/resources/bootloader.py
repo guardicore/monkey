@@ -1,5 +1,10 @@
+import json
+
 import flask_restful
 from flask import request, make_response
+
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.node import NodeService
 
 WINDOWS_VERSIONS = {
     "5.0": "Windows 2000",
@@ -17,9 +22,11 @@ class Bootloader(flask_restful.Resource):
 
     # Used by monkey. can't secure.
     def post(self, **kw):
-        os_version = request.data.decode().split(" ")
-        if (os_version[0][0] == "W"):
-            os_type = "windows"
-            os_version = os_version[1:]
+        data = json.loads(request.data.decode().replace("\n", ""))
+        local_addr = [i for i in data["ips"] if i.startswith("127")]
+        if local_addr:
+            data["ips"].remove(local_addr[0])
+        mongo.db.bootloader_telems.insert(data)
+        node_id = NodeService.get_or_create_node_from_bootloader_telem(data)
 
         return make_response({"status": "OK"}, 200)
