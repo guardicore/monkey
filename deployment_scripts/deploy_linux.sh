@@ -46,7 +46,7 @@ if ! exists git; then
 fi
 
 if ! exists wget; then
-    echo 'Your system does have wget, please install and re-run this script'
+    echo 'Your system does not have wget, please install and re-run this script'
     exit 1
 fi
 
