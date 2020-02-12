@@ -1,8 +1,11 @@
+import json
+import logging
 import os
+import time
 import uuid
 
 import flask_restful
-from flask import Flask, send_from_directory, Response
+from flask import Flask, send_from_directory, Response, g
 from werkzeug.exceptions import NotFound
 
 from monkey_island.cc.auth import init_jwt
@@ -40,6 +43,8 @@ from monkey_island.cc.resources.test.log_test import LogTest
 __author__ = 'Barak'
 
 HOME_FILE = 'index.html'
+
+logger = logging.getLogger(__name__)
 
 
 def serve_static_file(static_path):
@@ -119,6 +124,25 @@ def init_api_resources(api):
     api.add_resource(LogTest, '/api/test/log')
 
 
+def init_app_execution_time_calc(app):
+    @app.before_request
+    def before_request():
+        g.start = time.time()
+        logger.debug("inb4 next request?")
+
+    @app.after_request
+    def after_request(response):
+        diff_in_ms = int((time.time() - g.start)*1000)
+        logger.debug(f"After request")
+        if response.response:
+            if response.content_type == "application/json":
+                response_data = json.loads(response.get_data())
+                if isinstance(response_data, dict):
+                    response_data["execution_time_ms"] = diff_in_ms
+                    response.set_data(json.dumps(response_data))
+        return response
+
+
 def init_app(mongo_url):
     app = Flask(__name__)
 
@@ -128,6 +152,7 @@ def init_app(mongo_url):
     init_app_config(app, mongo_url)
     init_app_services(app)
     init_app_url_rules(app)
+    init_app_execution_time_calc(app)
     init_api_resources(api)
 
     return app
