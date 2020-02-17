@@ -21,15 +21,17 @@ MIN_GLIBC_VERSION = 2.14
 class BootloaderService:
 
     @staticmethod
-    def parse_bootloader_data(data: Dict) -> str:
+    def parse_bootloader_data(data: Dict) -> bool:
         data['ips'] = BootloaderService.remove_local_ips(data['ips'])
+        if data['os_version'] == "":
+            data['os_version'] = "Unknown OS"
         mongo.db.bootloader_telems.insert(data)
         will_monkey_run = BootloaderService.is_glibc_supported(data['glibc_version'])
         node = NodeService.get_or_create_node_from_bootloader_data(data, will_monkey_run)
         group_keywords = [data['system'], 'monkey']
         group_keywords.append('starting') if will_monkey_run else group_keywords.append('old')
         NodeService.set_node_group(node['_id'], NodeGroups.get_group_by_keywords(group_keywords))
-        return "abc"
+        return will_monkey_run
 
     @staticmethod
     def is_glibc_supported(glibc_version_string) -> bool:

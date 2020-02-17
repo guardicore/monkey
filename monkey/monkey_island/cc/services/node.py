@@ -250,7 +250,7 @@ class NodeService:
             edge = EdgeService.get_or_create_edge(new_node['_id'], dst_node['id'])
             mongo.db.edge.update({"_id": edge["_id"]},
                                  {'$set': {'tunnel': bool(bootloader_data['tunnel']),
-                                           'exploited': (not bool(bootloader_data['tunnel'])),
+                                           # 'exploited': (not bool(bootloader_data['tunnel'])),
                                            'ip_address': bootloader_data['ips'][0],
                                            'group': NodeGroups.get_group_by_keywords(['island']).value}},
                                  upsert=False)
