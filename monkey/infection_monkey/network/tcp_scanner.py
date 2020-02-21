@@ -31,7 +31,6 @@ class TcpScanner(HostScanner, HostFinger):
 
         # maybe hide under really bad detection systems
         target_ports = self._config.tcp_target_ports[:]
-        target_ports = list(filter(None, target_ports))  # remove None values
         shuffle(target_ports)
 
         ports, banners = check_tcp_ports(host.ip_addr, target_ports, self._config.tcp_scan_timeout / 1000.0,

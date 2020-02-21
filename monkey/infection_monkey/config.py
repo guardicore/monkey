@@ -27,6 +27,8 @@ class Configuration(object):
             if self._depth_from_commandline and key == "depth":
                 continue
             if hasattr(self, key):
+                if type(value) == list:
+                    value = list(filter(None, value))
                 setattr(self, key, value)
             else:
                 unknown_items.append(key)
