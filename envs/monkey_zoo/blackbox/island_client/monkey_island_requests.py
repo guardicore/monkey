@@ -62,5 +62,13 @@ class MonkeyIslandRequests(object):
                              verify=False)
 
     @_Decorators.refresh_jwt_token
+    def delete(self, url):
+        return requests.delete(  # noqa: DOU123
+            self.addr + url,
+            headers=self.get_jwt_header(),
+            verify=False
+        )
+
+    @_Decorators.refresh_jwt_token
     def get_jwt_header(self):
         return {"Authorization": "JWT " + self.token}

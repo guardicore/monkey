@@ -85,3 +85,13 @@ class MonkeyIslandClient(object):
     def is_all_monkeys_dead(self):
         query = {'dead': False}
         return len(self.find_monkeys_in_db(query)) == 0
+
+    def clear_caches(self):
+        """
+        Tries to clear caches.
+        :raises: If error (by error code), raises the error
+        :return: The response
+        """
+        response = self.requests.delete("api/test/clear_caches")
+        response.raise_for_status()
+        return response

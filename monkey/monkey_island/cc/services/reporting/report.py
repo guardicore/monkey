@@ -774,6 +774,19 @@ class ReportService:
         return False
 
     @staticmethod
+    def delete_saved_report_if_exists():
+        """
+        This function clears the saved report from the DB.
+        :raises RuntimeError if deletion failed
+        """
+        latest_report_doc = mongo.db.report.find_one({}, {'meta.latest_monkey_modifytime': 1})
+
+        if latest_report_doc:
+            delete_result = mongo.db.report.delete_one({"_id": latest_report_doc['_id']})
+            if delete_result.deleted_count != 1:
+                raise RuntimeError("Error while deleting report:" + str(delete_result))
+
+    @staticmethod
     def decode_dot_char_before_mongo_insert(report_dict):
         """
         this function replaces the ',,,' combo with the '.' char instead.

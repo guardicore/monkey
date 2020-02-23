@@ -25,6 +25,7 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
+from monkey_island.cc.resources.test.clear_caches import ClearCaches
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
@@ -116,6 +117,7 @@ def init_api_resources(api):
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
 
     api.add_resource(MonkeyTest, '/api/test/monkey')
+    api.add_resource(ClearCaches, '/api/test/clear_caches')
     api.add_resource(LogTest, '/api/test/log')
 
 

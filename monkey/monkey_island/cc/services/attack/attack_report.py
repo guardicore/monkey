@@ -103,3 +103,11 @@ class AttackReportService:
         """
         generated_report = mongo.db.attack_report.find_one({})
         return generated_report is not None
+
+    @staticmethod
+    def delete_saved_report_if_exists():
+        if AttackReportService.is_report_generated():
+            latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
+            delete_result = mongo.db.report.delete_one({"_id": latest_report['_id']})
+            if delete_result.deleted_count != 1:
+                raise RuntimeError("Error while deleting report:" + str(delete_result))
