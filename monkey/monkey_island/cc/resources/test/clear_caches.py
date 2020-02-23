@@ -29,7 +29,7 @@ class ClearCaches(flask_restful.Resource):
             flask_restful.abort(500, error_info=str(e))
 
         if ReportService.is_report_generated() or AttackReportService.is_report_generated():
-            logger.exception(NOT_ALL_REPORTS_DELETED)
+            logger.error(NOT_ALL_REPORTS_DELETED)
             flask_restful.abort(500, error_info=NOT_ALL_REPORTS_DELETED)
 
         return {"success": "true"}
