@@ -92,6 +92,27 @@ class MonkeyIslandClient(object):
         :raises: If error (by error code), raises the error
         :return: The response
         """
-        response = self.requests.delete("api/test/clear_caches")
+        response = self.requests.get("api/test/clear_caches")
         response.raise_for_status()
         return response
+
+    def time_all_report_pages(self):
+        REPORT_URLS = [
+            "api/report/security",
+            "api/attack/report",
+            "api/report/zero_trust/findings",
+            "api/report/zero_trust/principles",
+            "api/report/zero_trust/pillars"
+        ]
+
+        report_resource_to_response_time = {}
+
+        for url in REPORT_URLS:
+            response = self.requests.get(url)
+            if response:
+                report_resource_to_response_time[url] = response.elapsed
+            else:
+                LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
+                response.raise_for_status()
+
+        return report_resource_to_response_time

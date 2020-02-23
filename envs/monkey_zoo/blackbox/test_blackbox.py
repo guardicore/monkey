@@ -4,6 +4,7 @@ import logging
 import pytest
 from time import sleep
 
+from envs.monkey_zoo.blackbox.analyzers.performance_analyzer import PerformanceAnalyzer
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
@@ -66,6 +67,21 @@ class TestMonkeyBlackbox(object):
                   log_handler).run()
 
     @staticmethod
+    def run_performance_test(island_client, conf_filename, test_name, timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS):
+        config_parser = IslandConfigParser(conf_filename)
+        analyzers = [
+            CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets()),
+            PerformanceAnalyzer(island_client),
+        ]
+        log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
+        BasicTest(test_name,
+                  island_client,
+                  config_parser,
+                  analyzers,
+                  timeout_in_seconds,
+                  log_handler).run()
+
+    @staticmethod
     def get_log_dir_path():
         return os.path.abspath(LOG_DIR_PATH)
 
@@ -108,3 +124,6 @@ class TestMonkeyBlackbox(object):
 
     def test_wmi_pth(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "WMI_PTH.conf", "WMI_PTH")
+
+    def test_performance(self, island_client):
+        TestMonkeyBlackbox.run_performance_test(island_client, "STRUTS2.conf", "Report_timing")
