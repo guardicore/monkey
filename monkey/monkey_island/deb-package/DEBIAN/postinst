@@ -22,7 +22,7 @@ if [ -d "/etc/systemd/network" ]; then
     systemctl enable monkey-island
 fi
 
-${MONKEY_FOLDER}/monkey_island/create_certificate.sh
+${MONKEY_FOLDER}/monkey_island/create_certificate.sh ${MONKEY_FOLDER}/monkey_island/
 
 service monkey-island start
 
