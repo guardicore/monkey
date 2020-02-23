@@ -23,7 +23,7 @@ class PerformanceAnalyzer(Analyzer):
 
         single_page_time_less_then_max = True
 
-        for page, elapsed in timings:
+        for page, elapsed in timings.items():
             self.log.add_entry(f"page {page} took {str(elapsed)}")
             total_time += elapsed
             if elapsed > MAX_ALLOWED_SINGLE_PAGE_TIME:

@@ -70,7 +70,7 @@ class TestMonkeyBlackbox(object):
     def run_performance_test(island_client, conf_filename, test_name, timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS):
         config_parser = IslandConfigParser(conf_filename)
         analyzers = [
-            CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets()),
+            # TODO CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets()),
             PerformanceAnalyzer(island_client),
         ]
         log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
