@@ -23,6 +23,9 @@ elif [[ ${os_version_monkey} == "Debian GNU/Linux 9"* ]]; then
 elif [[ ${os_version_monkey} == "Debian GNU/Linux 10"* ]]; then
   echo Detected Debian 10
   export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-4.2.3.tgz"
+elif [[ ${os_version_monkey} == "Kali GNU/Linux"* ]]; then
+  echo Detected Kali Linux
+  export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-4.2.3.tgz"
 else
   echo Unsupported OS
   exit 1
