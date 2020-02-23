@@ -35,7 +35,7 @@ pushd "${TEMP_MONGO}" || {
 }
 
 if exists wget; then
-  wget ${tgz_url} -O mongodb.tgz
+  wget -q ${tgz_url} -O mongodb.tgz
 else
   if exists curl; then
     curl --output mongodb.tgz ${tgz_url}
