@@ -1,5 +1,6 @@
 # -*- mode: python -*-
 import os
+import sys
 import platform
 
 
@@ -48,7 +49,7 @@ def is_windows():
 
 
 def is_32_bit():
-    return platform.architecture()[0] == "32bit"
+    return sys.maxsize <= 2**32
 
 
 def get_bin_folder():
@@ -93,7 +94,18 @@ def get_traceroute_binaries():
 
 
 def get_monkey_filename():
-    return 'monkey.exe' if is_windows() else 'monkey'
+    name = 'monkey-'
+    if is_windows():
+        name = name+"windows-"
+    else:
+        name = name+"linux-"
+    if is_32_bit():
+        name = name+"32"
+    else:
+        name = name+"64"
+    if is_windows():
+        name = name+".exe"
+    return name
 
 
 def get_exe_strip():

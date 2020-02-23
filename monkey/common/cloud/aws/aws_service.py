@@ -4,7 +4,7 @@ import boto3
 import botocore
 from botocore.exceptions import ClientError
 
-from common.cloud.aws_instance import AwsInstance
+from common.cloud.aws.aws_instance import AwsInstance
 
 __author__ = ['itay.mizeretz', 'shay.nehmad']
 

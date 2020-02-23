@@ -15,28 +15,34 @@ __regular_report_generating_lock = threading.Semaphore()
 def safe_generate_reports():
     # Entering the critical section; Wait until report generation is available.
     __report_generating_lock.acquire()
-    report = safe_generate_regular_report()
-    attack_report = safe_generate_attack_report()
-    # Leaving the critical section.
-    __report_generating_lock.release()
+    try:
+        report = safe_generate_regular_report()
+        attack_report = safe_generate_attack_report()
+    finally:
+        # Leaving the critical section.
+        __report_generating_lock.release()
     return report, attack_report
 
 
 def safe_generate_regular_report():
     # Local import to avoid circular imports
     from monkey_island.cc.services.reporting.report import ReportService
-    __regular_report_generating_lock.acquire()
-    report = ReportService.generate_report()
-    __regular_report_generating_lock.release()
+    try:
+        __regular_report_generating_lock.acquire()
+        report = ReportService.generate_report()
+    finally:
+        __regular_report_generating_lock.release()
     return report
 
 
 def safe_generate_attack_report():
     # Local import to avoid circular imports
     from monkey_island.cc.services.attack.attack_report import AttackReportService
-    __attack_report_generating_lock.acquire()
-    attack_report = AttackReportService.generate_new_report()
-    __attack_report_generating_lock.release()
+    try:
+        __attack_report_generating_lock.acquire()
+        attack_report = AttackReportService.generate_new_report()
+    finally:
+        __attack_report_generating_lock.release()
     return attack_report
 
 

@@ -30,7 +30,7 @@ let infectionMonkeyImage = require('../images/infection-monkey.svg');
 let guardicoreLogoImage = require('../images/guardicore-logo.png');
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
-const reportZeroTrustRoute = '/report/zero_trust';
+const reportZeroTrustRoute = '/report/zeroTrust';
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {

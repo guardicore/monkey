@@ -1,0 +1,9 @@
+$yellow: #ffcc00;
+
+.modalLoader div{
+  margin-left: auto;
+  margin-right: auto;
+}
+.modalLoader div>div{
+  background-color: $yellow;
+}

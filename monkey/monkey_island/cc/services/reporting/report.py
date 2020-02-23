@@ -386,10 +386,11 @@ class ReportService:
     @staticmethod
     def get_monkey_subnets(monkey_guid):
         network_info = mongo.db.telemetry.find_one(
-            {'telem_category': 'system_info', 'monkey_guid': monkey_guid},
+            {'telem_category': 'system_info',
+             'monkey_guid': monkey_guid},
             {'data.network_info.networks': 1}
         )
-        if network_info is None:
+        if network_info is None or not network_info["data"]:
             return []
 
         return \

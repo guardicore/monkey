@@ -6,6 +6,9 @@ import logging
 
 __author__ = 'itay.mizeretz'
 
+from common.cloud.environment_names import Environment
+from common.cloud.instance import CloudInstance
+
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
 AWS_LATEST_METADATA_URI_PREFIX = 'http://{0}/latest/'.format(AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS)
 ACCOUNT_ID_KEY = "accountId"
@@ -13,10 +16,15 @@ ACCOUNT_ID_KEY = "accountId"
 logger = logging.getLogger(__name__)
 
 
-class AwsInstance(object):
+class AwsInstance(CloudInstance):
     """
     Class which gives useful information about the current instance you're on.
     """
+    def is_instance(self):
+        return self.instance_id is not None
+
+    def get_cloud_provider_name(self) -> Environment:
+        return Environment.AWS
 
     def __init__(self):
         self.instance_id = None
@@ -56,9 +64,6 @@ class AwsInstance(object):
 
     def get_region(self):
         return self.region
-
-    def is_aws_instance(self):
-        return self.instance_id is not None
 
     @staticmethod
     def _extract_account_id(instance_identity_document_response):

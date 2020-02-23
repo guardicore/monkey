@@ -34,7 +34,7 @@ The monkey is composed of three separate parts.
 6. To build the final exe:
     - `cd monkey\infection_monkey`
     - `build_windows.bat`
-    - `output is placed under dist\monkey.exe`
+    - output is placed under `dist\monkey32.exe` or `dist\monkey64.exe` depending on your version of Python
 
 ## Linux
 
@@ -66,7 +66,7 @@ Tested on Ubuntu 16.04.
     - `chmod +x build_linux.sh`
     - `./build_linux.sh`
     
-    output is placed under dist/monkey
+    output is placed under `dist/monkey32` or `dist/monkey64` depending on your version of python
 
 ### Sambacry
 

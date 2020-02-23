@@ -30,7 +30,7 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       sections: [],
       selectedSection: 'attack',
-      allMonkeysAreDead: true,
+      monkeysRan: false,
       PBAwinFile: [],
       PBAlinuxFile: [],
       showAttackAlert: false
@@ -363,13 +363,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
-        // This check is used to prevent unnecessary re-rendering
-        let allMonkeysAreDead = (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']);
-        if (allMonkeysAreDead !== this.state.allMonkeysAreDead) {
-          this.setState({
-            allMonkeysAreDead: allMonkeysAreDead
-          });
-        }
+        this.setState({monkeysRan: res['completed_steps']['run_monkey']});
       });
   };
 
@@ -470,15 +464,15 @@ class ConfigurePageComponent extends AuthComponent {
     </div>)
   };
 
-  renderRunningMonkeysWarning = () => {
+  renderConfigWontChangeWarning = () => {
     return (<div>
-      {this.state.allMonkeysAreDead ?
-        '' :
+      {this.state.monkeysRan ?
         <div className="alert alert-warning">
           <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-          Some monkeys are currently running. Note that changing the configuration will only apply to new
-          infections.
+          Changed configuration will only apply to new infections.
+          "Start over" to run again with different configuration.
         </div>
+        : ''
       }
     </div>)
   };
@@ -520,7 +514,7 @@ class ConfigurePageComponent extends AuthComponent {
         {this.renderAttackAlertModal()}
         <h1 className="page-title">Monkey Configuration</h1>
         {this.renderNav()}
-        {this.renderRunningMonkeysWarning()}
+        {this.renderConfigWontChangeWarning()}
         {content}
         <div className="text-center">
           <button type="submit" onClick={this.onSubmit} className="btn btn-success btn-lg" style={{margin: '5px'}}>
