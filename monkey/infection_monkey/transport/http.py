@@ -115,8 +115,12 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
         post_data = self.rfile.read(content_length).decode()  # <--- Gets the data itself
-        r = requests.post(url=self.path, data=post_data)
-        if (r.status_code != 200):
+        try:
+            r = requests.post(url=self.path, data=post_data)
+        except requests.exceptions.ConnectionError as e:
+            LOG.error("Couldn't forward request to the island: {}".format(e))
+            return self.send_response(404)
+        if r.status_code != 200:
             # somehow forward post request to the next proxy
             r = requests.post(url=self.path, data=post_data, proxy=self.path)
             if (r.status_code != 200):

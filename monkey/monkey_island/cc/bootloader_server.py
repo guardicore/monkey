@@ -1,4 +1,5 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from socketserver import ThreadingMixIn
 from urllib import parse
 import urllib3
 
@@ -9,7 +10,7 @@ import pymongo
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-class BootloaderHttpServer(HTTPServer):
+class BootloaderHttpServer(ThreadingMixIn, HTTPServer):
 
     def __init__(self, mongo_url):
         self.mongo_client = pymongo.MongoClient(mongo_url)
@@ -26,6 +27,7 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
         if not conf:
             conf = self.server.mongo_client['monkeyisland']['config'].find_one({'name': 'initial'})
         island_server_path = BootloaderHTTPRequestHandler.get_bootloader_resource_path_from_config(conf)
+        island_server_path = parse.urljoin(island_server_path, self.path)
         r = requests.post(url=island_server_path, data=post_data, verify=False)
 
         if r.status_code != 200:
