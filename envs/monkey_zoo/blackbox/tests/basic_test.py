@@ -1,4 +1,3 @@
-import json
 from time import sleep
 
 import logging
@@ -68,7 +67,7 @@ class BasicTest(object):
 
     def get_analyzer_logs(self):
         log = ""
-        for analyzer in self.get_all_analyzers():
+        for analyzer in self.analyzers:
             log += "\n" + analyzer.log.get_contents()
         return log
 
@@ -93,12 +92,9 @@ class BasicTest(object):
         If we try to launch monkey during that time window monkey will fail to start, that's
         why test needs to wait a bit even after all monkeys are dead.
         """
-        LOGGER.debug()
+        LOGGER.debug("Waiting for Monkey process to close...")
         sleep(TIME_FOR_MONKEY_PROCESS_TO_FINISH)
 
     def test_post_exec_analyzers(self):
         post_exec_analyzers_results = [analyzer.analyze_test_results() for analyzer in self.post_exec_analyzers]
         assert all(post_exec_analyzers_results)
-
-    def get_all_analyzers(self):
-        return self.analyzers + self.post_exec_analyzers
