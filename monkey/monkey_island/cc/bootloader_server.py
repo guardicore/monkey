@@ -27,7 +27,7 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
         if not conf:
             conf = self.server.mongo_client['monkeyisland']['config'].find_one({'name': 'initial'})
         island_server_path = BootloaderHTTPRequestHandler.get_bootloader_resource_path_from_config(conf)
-        island_server_path = parse.urljoin(island_server_path, self.path)
+        island_server_path = parse.urljoin(island_server_path, self.path[1:])
         r = requests.post(url=island_server_path, data=post_data, verify=False)
 
         if r.status_code != 200:
@@ -41,4 +41,4 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
     @staticmethod
     def get_bootloader_resource_path_from_config(config):
         address = config['cnc']['servers']['current_server']
-        return parse.urljoin("https://"+address, "api/bootloader")
+        return parse.urljoin("https://"+address, "api/bootloader/")

@@ -3,19 +3,7 @@ from typing import Dict, List
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.utils.node_groups import NodeGroups
-
-WINDOWS_VERSIONS = {
-    "5.0": "Windows 2000",
-    "5.1": "Windows XP",
-    "5.2": "Windows XP/server 2003",
-    "6.0": "Windows Vista/server 2008",
-    "6.1": "Windows 7/server 2008R2",
-    "6.2": "Windows 8/server 2012",
-    "6.3": "Windows 8.1/server 2012R2",
-    "10.0": "Windows 10/server 2016-2019"
-}
-
-MIN_GLIBC_VERSION = 2.14
+from monkey_island.cc.services.utils.bootloader_config import SUPPORTED_WINDOWS_VERSIONS, MIN_GLIBC_VERSION
 
 
 class BootloaderService:
@@ -26,12 +14,24 @@ class BootloaderService:
         if data['os_version'] == "":
             data['os_version'] = "Unknown OS"
         mongo.db.bootloader_telems.insert(data)
-        will_monkey_run = BootloaderService.is_glibc_supported(data['glibc_version'])
+        will_monkey_run = BootloaderService.is_os_compatible(data)
         node = NodeService.get_or_create_node_from_bootloader_data(data, will_monkey_run)
         group_keywords = [data['system'], 'monkey']
         group_keywords.append('starting') if will_monkey_run else group_keywords.append('old')
         NodeService.set_node_group(node['_id'], NodeGroups.get_group_by_keywords(group_keywords))
         return will_monkey_run
+
+    @staticmethod
+    def is_os_compatible(bootloader_data) -> bool:
+        if bootloader_data['system'] == 'windows':
+            return BootloaderService.is_windows_version_supported(bootloader_data['os_version'])
+        elif bootloader_data['system'] == 'linux':
+            return BootloaderService.is_glibc_supported(bootloader_data['glibc_version'])
+
+    @staticmethod
+    def is_windows_version_supported(windows_version) -> bool:
+        return SUPPORTED_WINDOWS_VERSIONS.get(windows_version)
+
 
     @staticmethod
     def is_glibc_supported(glibc_version_string) -> bool:
