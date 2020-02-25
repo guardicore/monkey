@@ -113,13 +113,16 @@ class MonkeyIslandClient(object):
         report_resource_to_response_time = {}
 
         for url in REPORT_URLS:
-            response = self.requests.get(url)
-            if response.ok:
-                LOGGER.debug(f"Got ok for {url} content peek:\n{response.content[:120].strip()}")
-                report_resource_to_response_time[url] = response.elapsed
-            else:
-                LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
-                # instead of raising for status, mark failed responses as maxtime
-                report_resource_to_response_time[url] = timedelta.max()
+            report_resource_to_response_time[url] = self.get_elapsed_for_get_request(url)
 
         return report_resource_to_response_time
+
+    def get_elapsed_for_get_request(self, url):
+        response = self.requests.get(url)
+        if response.ok:
+            LOGGER.debug(f"Got ok for {url} content peek:\n{response.content[:120].strip()}")
+            return response.elapsed
+        else:
+            LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
+            # instead of raising for status, mark failed responses as maxtime
+            return timedelta.max()

@@ -7,6 +7,14 @@ from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIs
 MAX_ALLOWED_SINGLE_PAGE_TIME = timedelta(seconds=2)
 MAX_ALLOWED_TOTAL_TIME = timedelta(seconds=5)
 
+REPORT_URLS = [
+    "api/report/security",
+    "api/attack/report",
+    "api/report/zero_trust/findings",
+    "api/report/zero_trust/principles",
+    "api/report/zero_trust/pillars"
+]
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,12 +26,17 @@ class PerformanceAnalyzer(Analyzer):
 
     def analyze_test_results(self) -> bool:
         if not self.island_client.is_all_monkeys_dead():
-            logger.info("Can't test report times since not all Monkeys have died.")
-            return False
+            raise RuntimeError("Can't test report times since not all Monkeys have died.")
 
         total_time = timedelta()
 
         self.island_client.clear_caches()
+
+        report_resource_to_response_time = {}
+
+        for url in REPORT_URLS:
+            report_resource_to_response_time[url] = self.island_client.get_elapsed_for_get_request(url)
+
         timings = self.island_client.time_all_report_pages()
 
         single_page_time_less_then_max = True

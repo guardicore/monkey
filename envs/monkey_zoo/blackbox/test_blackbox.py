@@ -13,7 +13,6 @@ from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 
 DEFAULT_TIMEOUT_SECONDS = 5*60
-PERFORMANCE_TIMEOUT_SECONDS = 10*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'hadoop-2', 'hadoop-3', 'mssql-16',
                          'mimikatz-14', 'mimikatz-15', 'struts2-23', 'struts2-24', 'tunneling-9', 'tunneling-10',
@@ -70,7 +69,7 @@ class TestMonkeyBlackbox(object):
             log_handler=log_handler).run()
 
     @staticmethod
-    def run_performance_test(island_client, conf_filename, test_name, timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS):
+    def run_performance_test(island_client, conf_filename, test_name, timeout_in_seconds):
         config_parser = IslandConfigParser(conf_filename)
         log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
         BasicTest(
@@ -141,4 +140,4 @@ class TestMonkeyBlackbox(object):
             island_client,
             "PERFORMANCE.conf",
             "test_report_performance",
-            timeout_in_seconds=PERFORMANCE_TIMEOUT_SECONDS)
+            timeout_in_seconds=10*60)
