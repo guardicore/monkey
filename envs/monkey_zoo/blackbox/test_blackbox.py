@@ -13,6 +13,7 @@ from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 
 DEFAULT_TIMEOUT_SECONDS = 5*60
+PERFORMANCE_TIMEOUT_SECONDS = 10*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'hadoop-2', 'hadoop-3', 'mssql-16',
                          'mimikatz-14', 'mimikatz-15', 'struts2-23', 'struts2-24', 'tunneling-9', 'tunneling-10',
@@ -59,27 +60,30 @@ class TestMonkeyBlackbox(object):
         config_parser = IslandConfigParser(conf_filename)
         analyzer = CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets())
         log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
-        BasicTest(test_name,
-                  island_client,
-                  config_parser,
-                  [analyzer],
-                  timeout_in_seconds,
-                  log_handler).run()
+        BasicTest(
+            name=test_name,
+            island_client=island_client,
+            config_parser=config_parser,
+            analyzers=[analyzer],
+            timeout=timeout_in_seconds,
+            post_exec_analyzers=[],
+            log_handler=log_handler).run()
 
     @staticmethod
     def run_performance_test(island_client, conf_filename, test_name, timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS):
         config_parser = IslandConfigParser(conf_filename)
-        analyzers = [
-            # TODO CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets()),
-            PerformanceAnalyzer(island_client),
-        ]
         log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
-        BasicTest(test_name,
-                  island_client,
-                  config_parser,
-                  analyzers,
-                  timeout_in_seconds,
-                  log_handler).run()
+        BasicTest(
+            name=test_name,
+            island_client=island_client,
+            config_parser=config_parser,
+            analyzers=[CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets())],
+            timeout=timeout_in_seconds,
+            post_exec_analyzers=[PerformanceAnalyzer(
+                island_client,
+                break_if_took_too_long=True  # TODO change to false before merging!!!
+            )],
+            log_handler=log_handler).run()
 
     @staticmethod
     def get_log_dir_path():
@@ -126,4 +130,15 @@ class TestMonkeyBlackbox(object):
         TestMonkeyBlackbox.run_basic_test(island_client, "WMI_PTH.conf", "WMI_PTH")
 
     def test_performance(self, island_client):
-        TestMonkeyBlackbox.run_performance_test(island_client, "STRUTS2.conf", "Report_timing")
+        """
+        This test includes the SSH + Elastic + Hadoop + MSSQL machines all in one test
+        for a total of 8 machines including the Monkey Island.
+
+        Is has 2 analyzers - the regular one which checks all the Monkeys
+        and the Timing one which checks how long the report took to execute
+        """
+        TestMonkeyBlackbox.run_performance_test(
+            island_client,
+            "PERFORMANCE.conf",
+            "test_report_performance",
+            timeout_in_seconds=PERFORMANCE_TIMEOUT_SECONDS)

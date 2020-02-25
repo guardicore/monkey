@@ -106,8 +106,12 @@ class AttackReportService:
 
     @staticmethod
     def delete_saved_report_if_exists():
-        if AttackReportService.is_report_generated():
-            latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
-            delete_result = mongo.db.report.delete_one({"_id": latest_report['_id']})
-            if delete_result.deleted_count != 1:
-                raise RuntimeError("Error while deleting report:" + str(delete_result))
+        delete_result = mongo.db.attack_report.delete_many({})
+        if mongo.db.attack_report.count_documents({}) != 0:
+            raise RuntimeError("Attack Report cache not cleared. DeleteResult: " + delete_result.raw_result)
+        # if AttackReportService.is_report_generated():
+        #     mongo.db.attack_report.delete_many({})
+            # latest_report = mongo.db.attack_report.find_one({'name': REPORT_NAME})
+            # delete_result = mongo.db.report.delete_one({"_id": latest_report['_id']})
+            # if delete_result.deleted_count != 1:
+            #     raise RuntimeError("Error while deleting report. Deleted count: " + str(delete_result.deleted_count))

@@ -1,3 +1,4 @@
+from datetime import timedelta
 from time import sleep
 import json
 
@@ -109,10 +110,13 @@ class MonkeyIslandClient(object):
 
         for url in REPORT_URLS:
             response = self.requests.get(url)
-            if response:
+            if response.ok:
+                LOGGER.debug(f"Got ok for {url} content peek:\n{response.content[:120]}")
                 report_resource_to_response_time[url] = response.elapsed
             else:
                 LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
-                response.raise_for_status()
+                # instead of raising for status, mark failed responses as maxtime
+                report_resource_to_response_time[url] = timedelta.max()
+
 
         return report_resource_to_response_time
