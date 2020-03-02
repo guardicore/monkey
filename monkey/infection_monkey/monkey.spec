@@ -20,7 +20,7 @@ def main():
                  runtime_hooks=None,
                  binaries=None,
                  datas=[
-                    ("../common/BUILD", "../common/BUILD")
+                    ("../common/BUILD", "/common")
                  ],
                  excludes=None,
                  win_no_prefer_redirects=None,
