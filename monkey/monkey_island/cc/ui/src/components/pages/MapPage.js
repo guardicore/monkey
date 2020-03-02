@@ -3,7 +3,7 @@ import {Col, Modal} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStopCircle, faMinus } from '@fortawesome/free-solid-svg-icons'
-import InfMapPreviewPaneComponent from 'components/map/preview-pane/InfMapPreviewPane';
+import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {options, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
@@ -192,7 +192,7 @@ class MapPageComponent extends AuthComponent {
             </div>
             : ''}
 
-          <InfMapPreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
+          <PreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
         </Col>
       </div>
     );
