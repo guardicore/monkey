@@ -1,7 +1,9 @@
 from typing import Dict, List
 
+from bson import ObjectId
+
 from monkey_island.cc.database import mongo
-from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.services.node import NodeService, NodeNotFoundException
 from monkey_island.cc.services.utils.node_groups import NodeGroups
 from monkey_island.cc.services.utils.bootloader_config import SUPPORTED_WINDOWS_VERSIONS, MIN_GLIBC_VERSION
 
@@ -9,17 +11,41 @@ from monkey_island.cc.services.utils.bootloader_config import SUPPORTED_WINDOWS_
 class BootloaderService:
 
     @staticmethod
-    def parse_bootloader_data(data: Dict) -> bool:
-        data['ips'] = BootloaderService.remove_local_ips(data['ips'])
-        if data['os_version'] == "":
-            data['os_version'] = "Unknown OS"
-        mongo.db.bootloader_telems.insert(data)
-        will_monkey_run = BootloaderService.is_os_compatible(data)
-        node = NodeService.get_or_create_node_from_bootloader_data(data, will_monkey_run)
-        group_keywords = [data['system'], 'monkey']
-        group_keywords.append('starting') if will_monkey_run else group_keywords.append('old')
-        NodeService.set_node_group(node['_id'], NodeGroups.get_group_by_keywords(group_keywords))
+    def parse_bootloader_telem(telem: Dict) -> bool:
+        telem['ips'] = BootloaderService.remove_local_ips(telem['ips'])
+        if telem['os_version'] == "":
+            telem['os_version'] = "Unknown OS"
+
+        telem_id = BootloaderService.get_mongo_id_for_bootloader_telem(telem)
+        mongo.db.bootloader_telems.update({'_id': telem_id}, telem, upsert=True)
+
+        will_monkey_run = BootloaderService.is_os_compatible(telem)
+        try:
+            node = NodeService.get_or_create_node_from_bootloader_telem(telem, will_monkey_run)
+        except NodeNotFoundException:
+            # Didn't find the node, but allow monkey to run anyways
+            return True
+
+        node_group = BootloaderService.get_next_node_state(node, telem['system'], will_monkey_run)
+        if 'group' not in node or node['group'] != node_group.value:
+            NodeService.set_node_group(node['_id'], node_group)
         return will_monkey_run
+
+    @staticmethod
+    def get_next_node_state(node: Dict, system: str, will_monkey_run: bool) -> NodeGroups:
+        group_keywords = [system, 'monkey']
+        if 'group' in node and node['group'] == 'island':
+            group_keywords.extend(['island', 'starting'])
+        else:
+            group_keywords.append('starting') if will_monkey_run else group_keywords.append('old')
+        node_group = NodeGroups.get_group_by_keywords(group_keywords)
+        return node_group
+
+    @staticmethod
+    def get_mongo_id_for_bootloader_telem(bootloader_telem) -> ObjectId:
+        ip_hash = hex(hash(str(bootloader_telem['ips'])))[3:15]
+        hostname_hash = hex(hash(bootloader_telem['hostname']))[3:15]
+        return ObjectId(ip_hash + hostname_hash)
 
     @staticmethod
     def is_os_compatible(bootloader_data) -> bool:
@@ -31,7 +57,6 @@ class BootloaderService:
     @staticmethod
     def is_windows_version_supported(windows_version) -> bool:
         return SUPPORTED_WINDOWS_VERSIONS.get(windows_version)
-
 
     @staticmethod
     def is_glibc_supported(glibc_version_string) -> bool:

@@ -18,7 +18,7 @@ class Bootloader(flask_restful.Resource):
         else:
             return make_response({"status": "OS_NOT_FOUND"}, 404)
 
-        resp = BootloaderService.parse_bootloader_data(data)
+        resp = BootloaderService.parse_bootloader_telem(data)
 
         if resp:
             return make_response({"status": "RUN"}, 200)

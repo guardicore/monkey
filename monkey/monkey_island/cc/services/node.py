@@ -8,7 +8,7 @@ import monkey_island.cc.services.log
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.edge import EdgeService
-from monkey_island.cc.utils import local_ip_addresses
+from monkey_island.cc.utils import local_ip_addresses, is_local_ips
 from monkey_island.cc import models
 from monkey_island.cc.services.utils.node_groups import NodeGroups
 
@@ -221,39 +221,42 @@ class NodeService:
         return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
 
     @staticmethod
-    def create_node_from_bootloader_data(bootloader_data: Dict, will_monkey_run: bool):
+    def create_node_from_bootloader_telem(bootloader_telem: Dict, will_monkey_run: bool):
         new_node_insert_result = mongo.db.node.insert_one(
             {
-                "ip_addresses": bootloader_data['ips'],
-                "domain_name": bootloader_data['hostname'],
+                "ip_addresses": bootloader_telem['ips'],
+                "domain_name": bootloader_telem['hostname'],
                 "will_monkey_run": will_monkey_run,
                 "exploited": False,
                 "creds": [],
                 "os":
                     {
-                        "type": bootloader_data['system'],
-                        "version": bootloader_data['os_version']
+                        "type": bootloader_telem['system'],
+                        "version": bootloader_telem['os_version']
                     }
             })
         return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
 
     @staticmethod
-    def get_or_create_node_from_bootloader_data(bootloader_data: Dict, will_monkey_run: bool) -> Dict:
-        new_node = mongo.db.node.find_one({"domain_name": bootloader_data['hostname'],
-                                           "ip_addresses": bootloader_data['ips']})
+    def get_or_create_node_from_bootloader_telem(bootloader_telem: Dict, will_monkey_run: bool) -> Dict:
+        if is_local_ips(bootloader_telem['ips']):
+            raise NodeNotFoundException("Bootloader ran on island, no need to create new node.")
+            #return NodeService.get_monkey_island_pseudo_net_node()
+
+        new_node = mongo.db.node.find_one({"domain_name": bootloader_telem['hostname'],
+                                           "ip_addresses": bootloader_telem['ips']})
         if new_node is None:
-            new_node = NodeService.create_node_from_bootloader_data(bootloader_data, will_monkey_run)
-            if bootloader_data['tunnel']:
-                dst_node = NodeService.get_node_or_monkey_by_ip(bootloader_data['tunnel'])
+            new_node = NodeService.create_node_from_bootloader_telem(bootloader_telem, will_monkey_run)
+            if bootloader_telem['tunnel']:
+                dst_node = NodeService.get_node_or_monkey_by_ip(bootloader_telem['tunnel'])
             else:
                 dst_node = NodeService.get_monkey_island_node()
             edge = EdgeService.get_or_create_edge(new_node['_id'], dst_node['id'])
             mongo.db.edge.update({"_id": edge["_id"]},
-                                 {'$set': {'tunnel': bool(bootloader_data['tunnel']),
-                                           'ip_address': bootloader_data['ips'][0],
+                                 {'$set': {'tunnel': bool(bootloader_telem['tunnel']),
+                                           'ip_address': bootloader_telem['ips'][0],
                                            'group': NodeGroups.get_group_by_keywords(['island']).value}},
                                  upsert=False)
-
         return new_node
 
     @staticmethod
@@ -403,3 +406,6 @@ class NodeService:
     @staticmethod
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))
+
+class NodeNotFoundException(Exception):
+    pass

@@ -5,6 +5,7 @@ from typing import List
 import collections
 
 
+# This list must correspond to the one on front end in src/components/map/MapOptions.js
 class NodeGroups(Enum):
     CLEAN_UNKNOWN = 'clean_unknown'
     CLEAN_LINUX = 'clean_linux'
@@ -14,8 +15,10 @@ class NodeGroups(Enum):
     ISLAND = 'island'
     ISLAND_MONKEY_LINUX = 'island_monkey_linux'
     ISLAND_MONKEY_LINUX_RUNNING = 'island_monkey_linux_running'
+    ISLAND_MONKEY_LINUX_STARTING = 'island_monkey_linux_starting'
     ISLAND_MONKEY_WINDOWS = 'island_monkey_windows'
     ISLAND_MONKEY_WINDOWS_RUNNING = 'island_monkey_windows_running'
+    ISLAND_MONKEY_WINDOWS_STARTING = 'island_monkey_windows_starting'
     MANUAL_LINUX = 'manual_linux'
     MANUAL_LINUX_RUNNING = 'manual_linux_running'
     MANUAL_WINDOWS = 'manual_windows'
