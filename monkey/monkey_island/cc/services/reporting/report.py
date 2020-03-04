@@ -782,12 +782,6 @@ class ReportService:
         delete_result = mongo.db.report.delete_many({})
         if mongo.db.report.count_documents({}) != 0:
             raise RuntimeError("Report cache not cleared. DeleteResult: " + delete_result.raw_result)
-        # latest_report_doc = mongo.db.report.find_one({}, {'meta.latest_monkey_modifytime': 1})
-        #
-        # if latest_report_doc:
-        #     delete_result = mongo.db.report.delete_one({"_id": latest_report_doc['_id']})
-        #     if delete_result.deleted_count != 1:
-        #         raise RuntimeError("Error while deleting report:" + str(delete_result))
 
     @staticmethod
     def decode_dot_char_before_mongo_insert(report_dict):
