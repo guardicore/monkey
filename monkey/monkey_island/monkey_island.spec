@@ -35,6 +35,7 @@ def main():
               debug=False,
               strip=get_exe_strip(),
               upx=True,
+              upx_exclude=['vcruntime140.dll'],
               console=True,
               icon=get_exe_icon())
 
