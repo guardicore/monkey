@@ -3,8 +3,8 @@ from typing import Dict, List
 from bson import ObjectId
 
 from monkey_island.cc.database import mongo
-from monkey_island.cc.services.node import NodeService, NodeNotFoundException
-from monkey_island.cc.services.utils.node_groups import NodeGroups
+from monkey_island.cc.services.node import NodeService, NodeCreationException
+from monkey_island.cc.services.utils.node_states import NodeStates
 from monkey_island.cc.services.utils.bootloader_config import SUPPORTED_WINDOWS_VERSIONS, MIN_GLIBC_VERSION
 
 
@@ -22,7 +22,7 @@ class BootloaderService:
         will_monkey_run = BootloaderService.is_os_compatible(telem)
         try:
             node = NodeService.get_or_create_node_from_bootloader_telem(telem, will_monkey_run)
-        except NodeNotFoundException:
+        except NodeCreationException:
             # Didn't find the node, but allow monkey to run anyways
             return True
 
@@ -32,13 +32,13 @@ class BootloaderService:
         return will_monkey_run
 
     @staticmethod
-    def get_next_node_state(node: Dict, system: str, will_monkey_run: bool) -> NodeGroups:
+    def get_next_node_state(node: Dict, system: str, will_monkey_run: bool) -> NodeStates:
         group_keywords = [system, 'monkey']
         if 'group' in node and node['group'] == 'island':
             group_keywords.extend(['island', 'starting'])
         else:
             group_keywords.append('starting') if will_monkey_run else group_keywords.append('old')
-        node_group = NodeGroups.get_group_by_keywords(group_keywords)
+        node_group = NodeStates.get_by_keywords(group_keywords)
         return node_group
 
     @staticmethod
@@ -56,7 +56,7 @@ class BootloaderService:
 
     @staticmethod
     def is_windows_version_supported(windows_version) -> bool:
-        return SUPPORTED_WINDOWS_VERSIONS.get(windows_version)
+        return SUPPORTED_WINDOWS_VERSIONS.get(windows_version, True)
 
     @staticmethod
     def is_glibc_supported(glibc_version_string) -> bool:

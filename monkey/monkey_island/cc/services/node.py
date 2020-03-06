@@ -10,7 +10,7 @@ from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.edge import EdgeService
 from monkey_island.cc.utils import local_ip_addresses, is_local_ips
 from monkey_island.cc import models
-from monkey_island.cc.services.utils.node_groups import NodeGroups
+from monkey_island.cc.services.utils.node_states import NodeStates
 
 __author__ = "itay.mizeretz"
 
@@ -134,7 +134,7 @@ class NodeService:
         keywords.append(NodeService.get_monkey_os(monkey))
         if not Monkey.get_single_monkey_by_id(monkey["_id"]).is_dead():
             keywords.append("running")
-        return NodeGroups.get_group_by_keywords(keywords).value
+        return NodeStates.get_by_keywords(keywords).value
 
     @staticmethod
     def get_node_group(node) -> str:
@@ -142,7 +142,7 @@ class NodeService:
             return node['group']
         node_type = "exploited" if node.get("exploited") else "clean"
         node_os = NodeService.get_node_os(node)
-        return NodeGroups.get_group_by_keywords([node_type, node_os]).value
+        return NodeStates.get_by_keywords([node_type, node_os]).value
 
     @staticmethod
     def monkey_to_net_node(monkey, for_report=False):
@@ -174,7 +174,7 @@ class NodeService:
             }
 
     @staticmethod
-    def set_node_group(node_id: str, node_group: NodeGroups):
+    def set_node_group(node_id: str, node_group: NodeStates):
         mongo.db.node.update({"_id": node_id},
                              {'$set': {'group': node_group.value}},
                              upsert=False)
@@ -240,8 +240,7 @@ class NodeService:
     @staticmethod
     def get_or_create_node_from_bootloader_telem(bootloader_telem: Dict, will_monkey_run: bool) -> Dict:
         if is_local_ips(bootloader_telem['ips']):
-            raise NodeNotFoundException("Bootloader ran on island, no need to create new node.")
-            #return NodeService.get_monkey_island_pseudo_net_node()
+            raise NodeCreationException("Bootloader ran on island, no need to create new node.")
 
         new_node = mongo.db.node.find_one({"domain_name": bootloader_telem['hostname'],
                                            "ip_addresses": bootloader_telem['ips']})
@@ -255,7 +254,7 @@ class NodeService:
             mongo.db.edge.update({"_id": edge["_id"]},
                                  {'$set': {'tunnel': bool(bootloader_telem['tunnel']),
                                            'ip_address': bootloader_telem['ips'][0],
-                                           'group': NodeGroups.get_group_by_keywords(['island']).value}},
+                                           'group': NodeStates.get_by_keywords(['island']).value}},
                                  upsert=False)
         return new_node
 
@@ -407,5 +406,5 @@ class NodeService:
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))
 
-class NodeNotFoundException(Exception):
+class NodeCreationException(Exception):
     pass

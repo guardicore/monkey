@@ -2,13 +2,14 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 from urllib import parse
 import urllib3
+import logging
 
 import requests
 import pymongo
 
 # Disable "unverified certificate" warnings when sending requests to island
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
+logger = logging.getLogger(__name__)
 
 class BootloaderHttpServer(ThreadingMixIn, HTTPServer):
 
@@ -30,13 +31,17 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
         island_server_path = parse.urljoin(island_server_path, self.path[1:])
         r = requests.post(url=island_server_path, data=post_data, verify=False)
 
-        if r.status_code != 200:
-            self.send_response(404)
-        else:
-            self.send_response(200)
-        self.end_headers()
-        self.wfile.write(r.content)
-        self.connection.close()
+        try:
+            if r.status_code != 200:
+                self.send_response(404)
+            else:
+                self.send_response(200)
+            self.end_headers()
+            self.wfile.write(r.content)
+        except Exception as e:
+            logger.error("Failed to respond to bootloader: {}".format(e))
+        finally:
+            self.connection.close()
 
     @staticmethod
     def get_bootloader_resource_path_from_config(config):

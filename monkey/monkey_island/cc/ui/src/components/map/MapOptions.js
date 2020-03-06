@@ -1,19 +1,11 @@
-// This list must correspond to the one on back end in cc/services/utils/node_groups.py
-const groupNames = ['clean_unknown', 'clean_linux', 'clean_windows', 'exploited_linux', 'exploited_windows', 'island',
-  'island_monkey_linux', 'island_monkey_linux_running', 'island_monkey_linux_starting', 'island_monkey_windows',
-  'island_monkey_windows_running', 'island_monkey_windows_starting', 'manual_linux', 'manual_linux_running',
-  'manual_windows', 'manual_windows_running', 'monkey_linux', 'monkey_linux_running', 'monkey_windows',
-  'monkey_windows_running', 'monkey_windows_starting', 'monkey_linux_starting', 'monkey_windows_old',
-  'monkey_linux_old' ];
-
-let getGroupsOptions = () => {
+let getGroupsOptions = (stateList) => {
   let groupOptions = {};
-  for (let groupName of groupNames) {
-    groupOptions[groupName] =
+  for (let stateName of stateList) {
+    groupOptions[stateName] =
       {
         shape: 'image',
         size: 50,
-        image: require('../../images/nodes/' + groupName + '.png')
+        image: require('../../images/nodes/' + stateName + '.png')
       };
   }
 
@@ -55,11 +47,11 @@ export const basic_options = {
   }
 };
 
-export const options = (() => {
+export function getOptions(stateList) {
   let opts = JSON.parse(JSON.stringify(basic_options)); /* Deep copy */
-  opts.groups = getGroupsOptions();
+  opts.groups = getGroupsOptions(stateList);
   return opts;
-})();
+}
 
 export const optionsPth = (() => {
   let opts = JSON.parse(JSON.stringify(basic_options)); /* Deep copy */

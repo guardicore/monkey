@@ -5,8 +5,7 @@ from typing import List
 import collections
 
 
-# This list must correspond to the one on front end in src/components/map/MapOptions.js
-class NodeGroups(Enum):
+class NodeStates(Enum):
     CLEAN_UNKNOWN = 'clean_unknown'
     CLEAN_LINUX = 'clean_linux'
     CLEAN_WINDOWS = 'clean_windows'
@@ -33,8 +32,8 @@ class NodeGroups(Enum):
     MONKEY_LINUX_OLD = 'monkey_linux_old'
 
     @staticmethod
-    def get_group_by_keywords(keywords: List) -> NodeGroups:
-        potential_groups = [i for i in NodeGroups if NodeGroups._is_group_from_keywords(i, keywords)]
+    def get_by_keywords(keywords: List) -> NodeStates:
+        potential_groups = [i for i in NodeStates if NodeStates._is_state_from_keywords(i, keywords)]
         if len(potential_groups) > 1:
             raise MultipleGroupsFoundException("Multiple groups contain provided keywords. "
                                                "Manually build group string to ensure keyword order.")
@@ -44,7 +43,7 @@ class NodeGroups(Enum):
         return potential_groups[0]
 
     @staticmethod
-    def _is_group_from_keywords(group, keywords) -> bool:
+    def _is_state_from_keywords(group, keywords) -> bool:
         group_keywords = group.value.split("_")
         return collections.Counter(group_keywords) == collections.Counter(keywords)
 

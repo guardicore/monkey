@@ -19,6 +19,7 @@ from monkey_island.cc.resources.island_configuration import IslandConfiguration
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
+from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
@@ -98,6 +99,7 @@ def init_api_resources(api):
     api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
     api.add_resource(Edge, '/api/netmap/edge', '/api/netmap/edge/')
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
+    api.add_resource(NodeStates, '/api/netmap/nodeStates')
 
     # report_type: zero_trust or security
     api.add_resource(

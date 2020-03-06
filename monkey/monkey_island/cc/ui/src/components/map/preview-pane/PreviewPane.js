@@ -253,11 +253,14 @@ class PreviewPaneComponent extends AuthComponent {
         info = this.scanInfo(this.props.item);
         break;
       case 'node':
-        if(this.props.item.group.includes('monkey') && this.props.item.group.includes('starting')){
+        if (this.props.item.group.includes('monkey') && this.props.item.group.includes('starting')) {
           info = this.assetInfo(this.props.item);
+        } else if (this.props.item.group.includes('monkey', 'manual')) {
+          info = this.infectedAssetInfo(this.props.item)
+        } else if (this.props.item.group !== 'island') {
+          info = this.assetInfo(this.props.item)
         } else {
-          info = this.props.item.group.includes('monkey', 'manual') ? this.infectedAssetInfo(this.props.item) :
-            this.props.item.group !== 'island' ? this.assetInfo(this.props.item) : this.islandAssetInfo();
+          info = this.islandAssetInfo();
         }
         break;
       case 'island_edge':
