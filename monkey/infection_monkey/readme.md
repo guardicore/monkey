@@ -55,11 +55,11 @@ Tested on Ubuntu 16.04.
 
 3. Build Sambacry binaries
     - Build/Download according to sections at the end of this readme.
-    - Place the binaries under [code location]\infection_monkey\bin, under the names 'sc_monkey_runner32.so', 'sc_monkey_runner64.so'
+    - Place the binaries under [code location]/infection_monkey/bin, under the names 'sc_monkey_runner32.so', 'sc_monkey_runner64.so'
 
 4. Build Traceroute binaries
     - Build/Download according to sections at the end of this readme.
-    - Place the binaries under [code location]\infection_monkey\bin, under the names 'traceroute32', 'traceroute64'
+    - Place the binaries under [code location]/infection_monkey/bin, under the names 'traceroute32', 'traceroute64'
 
 5. To build, run in terminal:
     - `cd [code location]/infection_monkey`
