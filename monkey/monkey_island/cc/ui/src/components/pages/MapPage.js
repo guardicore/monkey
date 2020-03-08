@@ -66,6 +66,8 @@ class MapPageComponent extends AuthComponent {
               telemetry: newTelem,
               telemetryLastTimestamp: res['timestamp']
             });
+            var telemConsole = document.querySelector('div.telemetry-console');
+            telemConsole.scrollTop = telemConsole.scrollHeight - telemConsole.clientHeight
           this.props.onStatusChange();
         }
       });
