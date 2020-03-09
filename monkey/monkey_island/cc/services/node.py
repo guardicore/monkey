@@ -242,8 +242,7 @@ class NodeService:
         if is_local_ips(bootloader_telem['ips']):
             raise NodeCreationException("Bootloader ran on island, no need to create new node.")
 
-        new_node = mongo.db.node.find_one({"domain_name": bootloader_telem['hostname'],
-                                           "ip_addresses": bootloader_telem['ips']})
+        new_node = mongo.db.node.find_one({"ip_addresses": {"$in": bootloader_telem['ips']}})
         if new_node is None:
             new_node = NodeService.create_node_from_bootloader_telem(bootloader_telem, will_monkey_run)
             if bootloader_telem['tunnel']:
