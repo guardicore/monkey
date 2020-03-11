@@ -4,7 +4,6 @@ python-dateutil
 tornado
 werkzeug
 jinja2
-markupsafe
 itsdangerous
 click
 flask
