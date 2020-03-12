@@ -18,9 +18,12 @@ class MapPageComponent extends AuthComponent {
       killPressed: false,
       showKillDialog: false,
       telemetry: [],
-      telemetryLastTimestamp: null
+      telemetryLastTimestamp: null,
+      movedTop: false,
     };
     this.telemConsole = React.createRef();
+    this.handleScroll = this.handleScroll.bind(this);
+    this.scrollTop = 0;
   }
 
   events = {
@@ -67,9 +70,13 @@ class MapPageComponent extends AuthComponent {
               telemetry: newTelem,
               telemetryLastTimestamp: res['timestamp']
             });
-          var telemConsoleRef = this.telemConsole.current;
-          telemConsoleRef.scrollTop = telemConsoleRef.scrollHeight - telemConsoleRef.clientHeight
           this.props.onStatusChange();
+
+          let telemConsoleRef = this.telemConsole.current;
+          if(!this.state.movedTop){
+            telemConsoleRef.scrollTop = telemConsoleRef.scrollHeight - telemConsoleRef.clientHeight;
+            this.scrollTop = telemConsoleRef.scrollTop;
+          }
         }
       });
   };
@@ -141,9 +148,20 @@ class MapPageComponent extends AuthComponent {
     );
   }
 
+  handleScroll(e){
+
+    let element = e.target;
+    if(element.scrollTop < this.scrollTop){
+      this.setState({movedTop: true});
+    }else{
+      this.setState({movedTop: false});
+    }
+
+  }
+
   renderTelemetryConsole() {
     return (
-      <div className="telemetry-console" ref={this.telemConsole}>
+      <div className="telemetry-console" onScroll={this.handleScroll} ref={this.telemConsole}>
         {
           this.state.telemetry.map(this.renderTelemetryEntry)
         }
