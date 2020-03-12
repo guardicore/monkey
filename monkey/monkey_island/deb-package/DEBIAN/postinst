@@ -5,8 +5,8 @@ INSTALLATION_FOLDER=/var/monkey/monkey_island/installation
 PYTHON_FOLDER=/var/monkey/monkey_island/bin/python
 
 # Prepare python virtualenv
-pip2 install virtualenv --no-index --find-links file://$INSTALLATION_FOLDER
-virtualenv -p python2.7 ${PYTHON_FOLDER}
+pip3 install virtualenv --no-index --find-links file://$INSTALLATION_FOLDER
+virtualenv -p python3 ${PYTHON_FOLDER}
 
 # install pip requirements
 ${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/monkey_island/requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
