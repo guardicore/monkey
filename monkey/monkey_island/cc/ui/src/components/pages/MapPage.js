@@ -20,6 +20,8 @@ class MapPageComponent extends AuthComponent {
       telemetry: [],
       telemetryLastTimestamp: null,
       isScrolledUp: false,
+      telemetryLines: 0,
+      telemetryCurrentLine: 0,
     };
     this.telemConsole = React.createRef();
     this.handleScroll = this.handleScroll.bind(this);
@@ -64,15 +66,16 @@ class MapPageComponent extends AuthComponent {
       .then(res => {
         if ('telemetries' in res) {
           let newTelem = this.state.telemetry.concat(res['telemetries']);
+          let telemConsoleRef = this.telemConsole.current;
 
           this.setState(
             {
               telemetry: newTelem,
-              telemetryLastTimestamp: res['timestamp']
+              telemetryLastTimestamp: res['timestamp'],
+              telemetryLines: telemConsoleRef.scrollHeight,
             });
           this.props.onStatusChange();
 
-          let telemConsoleRef = this.telemConsole.current;
           if (!this.state.isScrolledUp) {
             telemConsoleRef.scrollTop = telemConsoleRef.scrollHeight - telemConsoleRef.clientHeight;
             this.scrollTop = telemConsoleRef.scrollTop;
@@ -151,9 +154,9 @@ class MapPageComponent extends AuthComponent {
   handleScroll(e) {
     let element = e.target;
     if (element.scrollTop < this.scrollTop) {
-      this.setState({isScrolledUp: true});
+      this.setState({isScrolledUp: true, telemetryCurrentLine: element.scrollTop});
     } else {
-      this.setState({isScrolledUp: false});
+      this.setState({isScrolledUp: false, telemetryCurrentLine: element.scrollTop});
     }
   }
 
@@ -163,6 +166,14 @@ class MapPageComponent extends AuthComponent {
         {
           this.state.telemetry.map(this.renderTelemetryEntry)
         }
+      </div>
+    );
+  }
+
+  renderTelemetryLineCount() {
+    return (
+      <div className="telemetry-lines">
+        <b>[{this.state.telemetryCurrentLine}/{this.state.telemetryLines}]</b>
       </div>
     );
   }
@@ -189,6 +200,7 @@ class MapPageComponent extends AuthComponent {
           <div style={{height: '80vh'}}>
             <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
           </div>
+          {this.renderTelemetryLineCount()}
         </Col>
         <Col xs={4}>
           <input className="form-control input-block"

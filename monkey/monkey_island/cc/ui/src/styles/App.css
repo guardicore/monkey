@@ -324,6 +324,11 @@ body {
   font-weight: bold;
 }
 
+.telemetry-lines {
+  position: absolute;
+  right: 0;
+}
+
 .map-legend {
   font-size: 18px;
 }
