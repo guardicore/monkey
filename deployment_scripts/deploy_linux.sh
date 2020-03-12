@@ -197,26 +197,65 @@ popd || handle_error
 mkdir "${MONKEY_BIN_DIR}"
 
 # Download sambacry binaries
-log_message "Downloading sambacry binaries"
-# shellcheck disable=SC2086
-if exists wget; then
-  wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_64_BINARY_URL}
-  wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_32_BINARY_URL}
+read -p "Do you want to use the latest binaries, Press Y, otherwise specify the version to downloaded " Resp 
+if [ $Resp = Y ] || [ $Resp = y ] ; then
+ log_message "Downloading sambacry binaries"
+  # shellcheck disable=SC2086
+  if exists wget; then
+    wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_64_BINARY_URL_Latest}
+    wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_32_BINARY_URL_Latest}
+  else
+    curl -o ${MONKEY_BIN_DIR}/sc_monkey_runner64.so ${SAMBACRY_64_BINARY_URL_Latest}
+    curl -o ${MONKEY_BIN_DIR}/sc_monkey_runner32.so ${SAMBACRY_32_BINARY_URL_Latest}
+  fi
+
 else
-  curl -o ${MONKEY_BIN_DIR}/sc_monkey_runner64.so ${SAMBACRY_64_BINARY_URL}
-  curl -o ${MONKEY_BIN_DIR}/sc_monkey_runner32.so ${SAMBACRY_32_BINARY_URL}
+  log_message "Downloading sambacry binaries"
+  slink_64='https://github.com/guardicore/monkey/releases/download/'
+  slink_64+=$Resp
+  slink_64+='/sc_monkey_runner64.so'
+  slink_32='https://github.com/guardicore/monkey/releases/download/'
+  slink_32+=$Resp
+  slink_32+='/sc_monkey_runner32.so' 
+  # shellcheck disable=SC2086
+  if exists wget; then
+    wget -c -N -P "${MONKEY_BIN_DIR}" ${slink_64}
+    wget -c -N -P "${MONKEY_BIN_DIR}" ${slink_32}
+  else
+    curl -o ${MONKEY_BIN_DIR}/sc_monkey_runner64.so ${slink_64}
+    curl -o ${MONKEY_BIN_DIR}/sc_monkey_runner32.so ${slink_32}
+  fi
 fi
 # Download traceroute binaries
-log_message "Downloading traceroute binaries"
+read -p "Do you want to use the latest binaries, Press Y, otherwise specify the version{in v1.7.0 format for example} to be downloaded " Resp 
+if [ $Resp = Y ] || [ $Resp = y ] ; then
+  log_message "Downloading traceroute binaries"
 # shellcheck disable=SC2086
-if exists wget; then
-  wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_64_BINARY_URL}
-  wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_32_BINARY_URL}
-else
-  curl -o ${MONKEY_BIN_DIR}/traceroute64 ${TRACEROUTE_64_BINARY_URL}
-  curl -o ${MONKEY_BIN_DIR}/traceroute32 ${TRACEROUTE_32_BINARY_URL}
-fi
+  if exists wget; then
+    wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_64_BINARY_URL_Latest}
+    wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_32_BINARY_URL_Latest}
+  else
+    curl -o ${MONKEY_BIN_DIR}/traceroute64 ${TRACEROUTE_64_BINARY_URL_Latest}
+    curl -o ${MONKEY_BIN_DIR}/traceroute32 ${TRACEROUTE_32_BINARY_URL_Latest}
+  fi
 
+else 
+  log_message "Downloading traceroute binaries"
+  tlink_64='https://github.com/guardicore/monkey/releases/download/'
+  tlink_64+=$Resp
+  tlink_64+='/traceroute64'
+  tlink_32='https://github.com/guardicore/monkey/releases/download/'
+  tlink_32+=$Resp
+  tlink_32+='/traceroute32' 
+  # shellcheck disable=SC2086
+  if exists wget; then
+    wget -c -N -P "${MONKEY_BIN_DIR}" ${tlink_64}
+    wget -c -N -P "${MONKEY_BIN_DIR}" ${tlink_32}
+  else
+    curl -o ${MONKEY_BIN_DIR}/traceroute64 ${tlink_64}
+    curl -o ${MONKEY_BIN_DIR}/traceroute32 ${tlink_32}
+  fi
+fi
 sudo chmod +x "${INFECTION_MONKEY_DIR}/build_linux.sh"
 
 log_message "Deployment script finished."
