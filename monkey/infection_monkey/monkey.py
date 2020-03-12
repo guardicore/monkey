@@ -216,10 +216,6 @@ class InfectionMonkey(object):
 
         # if host was exploited, before continue to closing the tunnel ensure the exploited host had its chance to
         # connect to the tunnel
-
-        #TODO change back
-        time.sleep(WormConfiguration.keep_tunnel_open_time)
-
         if len(self._exploited_machines) > 0:
             time_to_sleep = WormConfiguration.keep_tunnel_open_time
             LOG.info("Sleeping %d seconds for exploited machines to connect to tunnel", time_to_sleep)

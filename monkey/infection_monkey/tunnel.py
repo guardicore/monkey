@@ -126,10 +126,7 @@ class MonkeyTunnel(Thread):
     def run(self):
         self._broad_sock = _set_multicast_socket(self._timeout)
         self.l_ips = local_ips()
-
-        #TODO change back
-        self.local_port = 5002
-        #self.local_port = get_free_tcp_port()
+        self.local_port = get_free_tcp_port()
 
         if not self.local_port:
             return

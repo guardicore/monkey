@@ -27,9 +27,9 @@ class Bootloader(flask_restful.Resource):
 
     @staticmethod
     def get_request_contents_linux(request_data: bytes) -> Dict[str, str]:
-        parsed_data = json.loads(request_data.decode().replace("\n", "")
+        parsed_data = json.loads(request_data.decode().replace("\"\n", "")
+                                                      .replace("\n", "")
                                                       .replace("NAME=\"", "")
-                                                      .replace("\"\"", "\"")
                                                       .replace("\":\",", "\":\"\","))
         return parsed_data
 

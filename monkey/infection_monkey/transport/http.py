@@ -110,11 +110,10 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     timeout = 30  # timeout with clients, set to None not to make persistent connection
     proxy_via = None  # pseudonym of the proxy in Via header, set to None not to modify original Via header
-    #protocol_version = "HTTP/1.1"
 
     def do_POST(self):
-        content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
-        post_data = self.rfile.read(content_length).decode()  # <--- Gets the data itself
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode()
         try:
             r = requests.post(url=self.path, data=post_data)
         except requests.exceptions.ConnectionError as e:
