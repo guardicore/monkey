@@ -157,19 +157,10 @@ class MapPageComponent extends AuthComponent {
     let telemetryLineHeight = parseInt((telemetryStyle.lineHeight).replace('px', ''))
 
     this.setState({
+      isScrolledUp: !!(element.scrollTop < this.scrollTop),
       telemetryCurrentLine: parseInt(element.scrollTop/telemetryLineHeight)+1,
       telemetryLines: parseInt(element.scrollHeight/telemetryLineHeight)
     });
-
-    if (element.scrollTop < this.scrollTop) {
-      this.setState({
-        isScrolledUp: true
-      });
-    } else {
-      this.setState({
-        isScrolledUp: false
-      });
-    }
   }
 
   renderTelemetryConsole() {
