@@ -156,17 +156,18 @@ class MapPageComponent extends AuthComponent {
     let telemetryStyle = window.getComputedStyle(element)
     let telemetryLineHeight = parseInt((telemetryStyle.lineHeight).replace('px', ''))
 
+    this.setState({
+      telemetryCurrentLine: parseInt(element.scrollTop/telemetryLineHeight)+1,
+      telemetryLines: parseInt(element.scrollHeight/telemetryLineHeight),
+    });
+
     if (element.scrollTop < this.scrollTop) {
       this.setState({
         isScrolledUp: true,
-        telemetryCurrentLine: parseInt(element.scrollTop/telemetryLineHeight)+1,
-        telemetryLines: parseInt(element.scrollHeight/telemetryLineHeight),
       });
     } else {
       this.setState({
         isScrolledUp: false,
-        telemetryCurrentLine: parseInt(element.scrollTop/telemetryLineHeight)+1,
-        telemetryLines: parseInt(element.scrollHeight/telemetryLineHeight),
       });
     }
   }
