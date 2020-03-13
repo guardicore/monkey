@@ -44,7 +44,6 @@ class NetworkRange(object, metaclass=ABCMeta):
 
     @staticmethod
     def get_range_obj(address_str):
-        address_str = address_str.strip()
         if not address_str:  # Empty string
             return None
         if NetworkRange.check_if_range(address_str):
