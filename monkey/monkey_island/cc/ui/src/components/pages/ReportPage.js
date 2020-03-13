@@ -3,8 +3,6 @@ import '../../styles/report/ReportPage.scss';
 import React from 'react';
 import {Route} from 'react-router-dom';
 import {Col, Nav, NavItem} from 'react-bootstrap';
-import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {edgeGroupToColor, options} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarning';
 import AttackReport from '../report-components/AttackReport'
