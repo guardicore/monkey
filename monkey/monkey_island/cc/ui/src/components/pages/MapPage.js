@@ -66,16 +66,15 @@ class MapPageComponent extends AuthComponent {
       .then(res => {
         if ('telemetries' in res) {
           let newTelem = this.state.telemetry.concat(res['telemetries']);
-          let telemConsoleRef = this.telemConsole.current;
 
           this.setState(
             {
               telemetry: newTelem,
-              telemetryLastTimestamp: res['timestamp'],
-              telemetryLines: telemConsoleRef.scrollHeight,
+              telemetryLastTimestamp: res['timestamp']
             });
           this.props.onStatusChange();
 
+          let telemConsoleRef = this.telemConsole.current;
           if (!this.state.isScrolledUp) {
             telemConsoleRef.scrollTop = telemConsoleRef.scrollHeight - telemConsoleRef.clientHeight;
             this.scrollTop = telemConsoleRef.scrollTop;
@@ -153,10 +152,22 @@ class MapPageComponent extends AuthComponent {
 
   handleScroll(e) {
     let element = e.target;
+
+    let telemetryStyle = window.getComputedStyle(element)
+    let telemetryLineHeight = parseInt((telemetryStyle.lineHeight).replace('px', ''))
+
     if (element.scrollTop < this.scrollTop) {
-      this.setState({isScrolledUp: true, telemetryCurrentLine: element.scrollTop});
+      this.setState({
+        isScrolledUp: true,
+        telemetryCurrentLine: parseInt(element.scrollTop/telemetryLineHeight)+1,
+        telemetryLines: parseInt(element.scrollHeight/telemetryLineHeight),
+      });
     } else {
-      this.setState({isScrolledUp: false, telemetryCurrentLine: element.scrollTop});
+      this.setState({
+        isScrolledUp: false,
+        telemetryCurrentLine: parseInt(element.scrollTop/telemetryLineHeight)+1,
+        telemetryLines: parseInt(element.scrollHeight/telemetryLineHeight),
+      });
     }
   }
 
