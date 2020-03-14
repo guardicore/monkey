@@ -227,35 +227,79 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
 
     # Download mimikatz binaries
-    $mk32_path = Join-Path -Path $binDir -ChildPath $MK32_DLL
+    
+    if ( $args.count = 0 ){
+            $mk32_path = Join-Path -Path $binDir -ChildPath $MK32_DLL
     if (!(Test-Path -Path $mk32_path))
     {
         "Downloading mimikatz 32 binary"
-        $webClient.DownloadFile($MK32_DLL_URL, $mk32_path)
+        $webClient.DownloadFile($MK32_DLL_URL_LATEST, $mk32_path)
     }
     $mk64_path = Join-Path -Path $binDir -ChildPath $MK64_DLL
     if (!(Test-Path -Path $mk64_path))
     {
         "Downloading mimikatz 64 binary"
-        $webClient.DownloadFile($MK64_DLL_URL, $mk64_path)
+        $webClient.DownloadFile($MK64_DLL_URL_LATEST, $mk64_path)
+    }
+    }    
+
+    else
+
+    $mk32_path = Join-Path -Path $binDir -ChildPath $MK32_DLL
+    if (!(Test-Path -Path $mk32_path))
+    {
+        "Downloading mimikatz 32 binary"
+        $MK32="https://github.com/guardicore/monkey/download/$($version)/mk32.zip"
+        $webClient.DownloadFile($MK32, $mk32_path)
+    }
+    $mk64_path = Join-Path -Path $binDir -ChildPath $MK64_DLL
+    if (!(Test-Path -Path $mk64_path))
+    {
+        "Downloading mimikatz 64 binary"
+         $MK32="https://github.com/guardicore/monkey/download/$($version)/mk64.zip"
+        $webClient.DownloadFile($MK64, $mk64_path)
     }
 
     # Download sambacry binaries
-    $samba_path = Join-Path -Path $monkey_home -ChildPath $SAMBA_BINARIES_DIR
-    $samba32_path = Join-Path -Path $samba_path -ChildPath $SAMBA_32_BINARY_NAME
-    if (!(Test-Path -Path $samba32_path))
-    {
-        "Downloading sambacry 32 binary"
-        $webClient.DownloadFile($SAMBA_32_BINARY_URL, $samba32_path)
-    }
-    $samba64_path = Join-Path -Path $samba_path -ChildPath $SAMBA_64_BINARY_NAME
-    if (!(Test-Path -Path $samba64_path))
-    {
-        "Downloading sambacry 64 binary"
-        $webClient.DownloadFile($SAMBA_64_BINARY_URL, $samba64_path)
-    }
+    
+    if ( $args.count = 0 ){
 
-    "Script finished"
+        $samba_path = Join-Path -Path $monkey_home -ChildPath $SAMBA_BINARIES_DIR
+        $samba32_path = Join-Path -Path $samba_path -ChildPath $SAMBA_32_BINARY_NAME
+        if (!(Test-Path -Path $samba32_path))
+        {
+            "Downloading sambacry 32 binary"
+            $webClient.DownloadFile($SAMBA_32_BINARY_URL_LATEST, $samba32_path)
+        }
+        $samba64_path = Join-Path -Path $samba_path -ChildPath $SAMBA_64_BINARY_NAME
+        if (!(Test-Path -Path $samba64_path))
+        {
+            "Downloading sambacry 64 binary"
+            $webClient.DownloadFile($SAMBA_64_BINARY_URL_LATEST, $samba64_path)
+        }
 
+        
+        
+    }
+    else{
+        $samba_path = Join-Path -Path $monkey_home -ChildPath $SAMBA_BINARIES_DIR
+        $samba32_path = Join-Path -Path $samba_path -ChildPath $SAMBA_32_BINARY_NAME
+        $version=$args[0]
+        if (!(Test-Path -Path $samba32_path))
+        {
+            "Downloading sambacry 32 binary"
+            $slink32="https://github.com/guardicore/monkey/download/$($version)/sc_monkey_runner32.so"
+            $webClient.DownloadFile($slink32, $samba32_path)
+        }
+        $samba64_path = Join-Path -Path $samba_path -ChildPath $SAMBA_64_BINARY_NAME
+        if (!(Test-Path -Path $samba64_path))
+        {
+            "Downloading sambacry 64 binary"
+             $slink64="https://github.com/guardicore/monkey/download/$($version)/sc_monkey_runner64.so"
+            $webClient.DownloadFile($slink64, $samba64_path)
+        }
+
+    }
+"Script finished"
 }
 Deploy-Windows -monkey_home $monkey_home -branch $branch
