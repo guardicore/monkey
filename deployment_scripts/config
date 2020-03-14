@@ -16,7 +16,9 @@ WINDOWS_64_BINARY_NAME_Latest="monkey-windows-64.exe"
 
 # Other binaries for monkey
 
-TRACEROUTE_64_BINARY_URL_Latest="https://github.com/guardicore/monkey/latest/download/traceroute64"
-TRACEROUTE_32_BINARY_URL_Latest="https://github.com/guardicore/monkey/latest/download/traceroute32"
-SAMBACRY_64_BINARY_URL_Latest="https://github.com/guardicore/monkey/latest/download/sc_monkey_runner64.so"
-SAMBACRY_32_BINARY_URL_Latest="https://github.com/guardicore/monkey/latest/download/sc_monkey_runner32.so"
+TRACEROUTE_64_BINARY_URL_Latest="https://github.com/guardicore/monkey/releases/latest/download/traceroute64"
+TRACEROUTE_32_BINARY_URL_Latest="https://github.com/guardicore/monkey/release/latest/download/traceroute32"
+SAMBACRY_64_BINARY_URL_Latest="https://github.com/guardicore/monkey/releases/latest/download/sc_monkey_runner64.so"
+SAMBACRY_32_BINARY_URL_Latest="https://github.com/guardicore/monkey/releases/latest/download/sc_monkey_runner32.so"
+
+
