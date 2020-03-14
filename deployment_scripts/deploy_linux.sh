@@ -197,9 +197,9 @@ popd || handle_error
 mkdir "${MONKEY_BIN_DIR}"
 
 # Download sambacry binaries
-read -p "Do you want to use the latest binaries, Press Y, otherwise specify the version to downloaded " Resp 
-if [ $Resp = Y ] || [ $Resp = y ] ; then
- log_message "Downloading sambacry binaries"
+
+if [ $# = 0 ] ; then
+ log_message "Downloading Latest sambacry binaries"
   # shellcheck disable=SC2086
   if exists wget; then
     wget -c -N -P "${MONKEY_BIN_DIR}" ${SAMBACRY_64_BINARY_URL_Latest}
@@ -211,12 +211,8 @@ if [ $Resp = Y ] || [ $Resp = y ] ; then
 
 else
   log_message "Downloading sambacry binaries"
-  slink_64='https://github.com/guardicore/monkey/releases/download/'
-  slink_64+=$Resp
-  slink_64+='/sc_monkey_runner64.so'
-  slink_32='https://github.com/guardicore/monkey/releases/download/'
-  slink_32+=$Resp
-  slink_32+='/sc_monkey_runner32.so' 
+  slink_64="https://github.com/guardicore/monkey/releases/download/$1/sc_monkey_runner64.so"
+   slink_32="https://github.com/guardicore/monkey/releases/download/$1/sc_monkey_runner32.so"
   # shellcheck disable=SC2086
   if exists wget; then
     wget -c -N -P "${MONKEY_BIN_DIR}" ${slink_64}
@@ -227,9 +223,8 @@ else
   fi
 fi
 # Download traceroute binaries
-read -p "Do you want to use the latest binaries, Press Y, otherwise specify the version{in v1.7.0 format for example} to be downloaded " Resp 
-if [ $Resp = Y ] || [ $Resp = y ] ; then
-  log_message "Downloading traceroute binaries"
+if [ $# = 0 ]  ; then
+  log_message "Downloading Latest traceroute binaries"
 # shellcheck disable=SC2086
   if exists wget; then
     wget -c -N -P "${MONKEY_BIN_DIR}" ${TRACEROUTE_64_BINARY_URL_Latest}
@@ -241,12 +236,8 @@ if [ $Resp = Y ] || [ $Resp = y ] ; then
 
 else 
   log_message "Downloading traceroute binaries"
-  tlink_64='https://github.com/guardicore/monkey/releases/download/'
-  tlink_64+=$Resp
-  tlink_64+='/traceroute64'
-  tlink_32='https://github.com/guardicore/monkey/releases/download/'
-  tlink_32+=$Resp
-  tlink_32+='/traceroute32' 
+  tlink_64="https://github.com/guardicore/monkey/releases/download/$1/traceroute64"
+  tlink_32="https://github.com/guardicore/monkey/releases/download/$1/traceroute32"
   # shellcheck disable=SC2086
   if exists wget; then
     wget -c -N -P "${MONKEY_BIN_DIR}" ${tlink_64}
