@@ -80,7 +80,7 @@ class TestMonkeyBlackbox(object):
             timeout=timeout_in_seconds,
             post_exec_analyzers=[PerformanceAnalyzer(
                 island_client,
-                break_if_took_too_long=True  # TODO change to false before merging!!!
+                break_if_took_too_long=False
             )],
             log_handler=log_handler).run()
 
