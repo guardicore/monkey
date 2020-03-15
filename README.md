@@ -49,7 +49,7 @@ The Infection Monkey supports a variety of platforms, documented [in the wiki](h
 ## Building the Monkey from source
 To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts) folder.
 If you only want to build the monkey from source, see [Setup](https://github.com/guardicore/monkey/wiki/Setup#compile-it-yourself)
-and follow the instructions at the readme files under [infection_monkey](infection_monkey) and [monkey_island](monkey_island). 
+and follow the instructions at the readme files under [infection_monkey](monkey/infection_monkey) and [monkey_island](monkey/monkey_island). 
 
 ### Build status
 | Branch | Status |
@@ -64,7 +64,7 @@ and follow the instructions at the readme files under [infection_monkey](infecti
 In order to run all of the Unit Tests, run the command `python -m pytest` in the `monkey` directory. 
 
 To get a coverage report, first make sure the `coverage` package is installed using `pip install coverage`. Run the command 
-`coverage run -m unittest discover` in the `monkey` directory and then `coverage html`. The coverage report can be found in 
+`coverage run -m unittest` in the `monkey` directory and then `coverage html`. The coverage report can be found in 
 `htmlcov.index`.  
 
 ### Blackbox tests

@@ -44,7 +44,7 @@ script:
 - python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
 ## Calculate Code Coverage
-- coverage run -m pytest discover
+- coverage run -m pytest
 
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui
