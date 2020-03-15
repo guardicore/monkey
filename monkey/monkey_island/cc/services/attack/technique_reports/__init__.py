@@ -53,6 +53,15 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         pass
 
     @classmethod
+    def technique_mitigation(cls):
+        """
+        Gets the mitigation of a certain attack technique.
+        :return: Mitigation string
+        """
+        pass
+        # TODO Get mitigation from ATT&CK DB https://github.com/mitre/cti/blob/master/USAGE.md
+
+    @classmethod
     def technique_status(cls):
         """
         Gets the status of a certain attack technique.
