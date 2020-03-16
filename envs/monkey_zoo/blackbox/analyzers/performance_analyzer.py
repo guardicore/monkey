@@ -28,20 +28,16 @@ class PerformanceAnalyzer(Analyzer):
         if not self.island_client.is_all_monkeys_dead():
             raise RuntimeError("Can't test report times since not all Monkeys have died.")
 
-        total_time = timedelta()
-
+        # Collect timings for all pages
         self.island_client.clear_caches()
-
         report_resource_to_response_time = {}
-
         for url in REPORT_URLS:
             report_resource_to_response_time[url] = self.island_client.get_elapsed_for_get_request(url)
 
-        timings = self.island_client.time_all_report_pages()
-
+        # Calculate total time and check each page
         single_page_time_less_then_max = True
-
-        for page, elapsed in timings.items():
+        total_time = timedelta()
+        for page, elapsed in report_resource_to_response_time.items():
             logger.info(f"page {page} took {str(elapsed)}")
             total_time += elapsed
             if elapsed > MAX_ALLOWED_SINGLE_PAGE_TIME:

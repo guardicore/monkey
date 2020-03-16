@@ -97,26 +97,6 @@ class MonkeyIslandClient(object):
         response.raise_for_status()
         return response
 
-    def time_all_report_pages(self):
-        """
-        Calculates elapsed time of request for each report URL
-        Make sure to call clear_caches before this function if you want to measure "worst case" generation time.
-        """
-        REPORT_URLS = [
-            "api/report/security",
-            "api/attack/report",
-            "api/report/zero_trust/findings",
-            "api/report/zero_trust/principles",
-            "api/report/zero_trust/pillars"
-        ]
-
-        report_resource_to_response_time = {}
-
-        for url in REPORT_URLS:
-            report_resource_to_response_time[url] = self.get_elapsed_for_get_request(url)
-
-        return report_resource_to_response_time
-
     def get_elapsed_for_get_request(self, url):
         response = self.requests.get(url)
         if response.ok:
