@@ -559,17 +559,13 @@ fullTest.conf is a good config to start, because it covers all machines.
 <td>OS:</td>
 <td><strong>Windows server 2019 x64</strong></td>
 </tr>
-<tr class="even">
-<td>Software:</td>
-<td>OpenSSL</td>
-</tr>
 <tr class="odd">
 <td>Default service’s port:</td>
 <td>445</td>
 </tr>
 <tr class="even">
 <td>Root password:</td>
-<td>:t67TC5ZD+mz</td>
+<td>t67TC5ZDmz</td>
 </tr>
 <tr class="odd">
 <td>Server’s config:</td>
