@@ -26,6 +26,7 @@ from monkey_island.cc.utils import local_ip_addresses
 from monkey_island.cc.environment.environment import env
 from monkey_island.cc.database import is_db_server_up, get_db_version
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
+from common.version import get_version
 from monkey_island.cc.bootloader_server import BootloaderHttpServer
 
 
@@ -66,8 +67,9 @@ def start_island_server():
 
 
 def log_init_info():
-    logger.info(
-        'Monkey Island Server is running. Listening on the following URLs: {}'.format(
+    logger.info('Monkey Island Server is running!')
+    logger.info(f"version: {get_version()}")
+    logger.info('Listening on the following URLs: {}'.format(
             ", ".join(["https://{}:{}".format(x, env.get_island_port()) for x in local_ip_addresses()])
         )
     )

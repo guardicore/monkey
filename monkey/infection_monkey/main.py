@@ -12,6 +12,7 @@ from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
 from infection_monkey.monkey import InfectionMonkey
+from common.version import get_version
 # noinspection PyUnresolvedReferences
 import infection_monkey.post_breach  # dummy import for pyinstaller
 
@@ -116,6 +117,8 @@ def main():
 
     LOG.info(">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<",
              monkey_cls.__name__, os.getpid())
+
+    LOG.info(f"version: {get_version()}")
 
     monkey = monkey_cls(monkey_args)
     monkey.initialize()

@@ -153,9 +153,18 @@ class ConfigService:
     def ssh_key_exists(keys, user, ip):
         return [key for key in keys if key['user'] == user and key['ip'] == ip]
 
+    def _filter_none_values(data):
+        if isinstance(data, dict):
+            return {k: ConfigService._filter_none_values(v) for k, v in data.items() if k is not None and v is not None}
+        elif isinstance(data, list):
+            return [ConfigService._filter_none_values(item) for item in data if item is not None]
+        else:
+            return data
+
     @staticmethod
     def update_config(config_json, should_encrypt):
         # PBA file upload happens on pba_file_upload endpoint and corresponding config options are set there
+        config_json = ConfigService._filter_none_values(config_json)
         monkey_island.cc.services.post_breach_files.set_config_PBA_files(config_json)
         if should_encrypt:
             try:

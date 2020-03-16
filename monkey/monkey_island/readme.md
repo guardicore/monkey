@@ -103,4 +103,4 @@
 
 #### How to run
 
-1. When your current working directory is monkey, run ./monkey_island/linux/run.sh (located under /linux)
+1. When your current working directory is monkey, run `chmod 755 ./monkey_island/linux/run.sh` followed by `./monkey_island/linux/run.sh` (located under /linux)
