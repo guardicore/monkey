@@ -1,3 +1,4 @@
+from datetime import timedelta
 from time import sleep
 import json
 
@@ -85,3 +86,23 @@ class MonkeyIslandClient(object):
     def is_all_monkeys_dead(self):
         query = {'dead': False}
         return len(self.find_monkeys_in_db(query)) == 0
+
+    def clear_caches(self):
+        """
+        Tries to clear caches.
+        :raises: If error (by error code), raises the error
+        :return: The response
+        """
+        response = self.requests.get("api/test/clear_caches")
+        response.raise_for_status()
+        return response
+
+    def get_elapsed_for_get_request(self, url):
+        response = self.requests.get(url)
+        if response.ok:
+            LOGGER.debug(f"Got ok for {url} content peek:\n{response.content[:120].strip()}")
+            return response.elapsed
+        else:
+            LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
+            # instead of raising for status, mark failed responses as maxtime
+            return timedelta.max()
