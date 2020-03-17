@@ -12,6 +12,7 @@ import requests
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 from infection_monkey.network.tools import get_interface_to_target
+import infection_monkey.control
 
 __author__ = 'hoffer'
 
@@ -117,16 +118,11 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
             post_data = self.rfile.read(content_length).decode()
             LOG.info("Received bootloader's request: {}".format(post_data))
             try:
-                r = requests.post(url=self.path, data=post_data)
+                r = requests.post(url=self.path, data=post_data, proxies=infection_monkey.control.ControlClient.proxies)
             except requests.exceptions.ConnectionError as e:
                 LOG.error("Couldn't forward request to the island: {}".format(e))
                 return self.send_response(404)
-            if r.status_code != 200:
-                # somehow forward post request to the next proxy
-                r = requests.post(url=self.path, data=post_data, proxy=self.path)
-                if (r.status_code != 200):
-                    return self.send_response(404)
-            self.send_response(200)
+            self.send_response(r.status_code)
             self.end_headers()
             self.wfile.write(r.content)
         except Exception as e:
@@ -136,6 +132,7 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
         return ""
 
     def do_CONNECT(self):
+        LOG.info("Received a connect request!")
         # just provide a tunnel, transfer the data with no modification
         req = self
         req.path = "https://%s/" % req.path.replace(':443', '')
