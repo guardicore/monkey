@@ -325,8 +325,14 @@ body {
 }
 
 .telemetry-lines {
+  z-index: 3;
   position: absolute;
-  right: 0;
+  bottom: 103px;
+  right: 20px;
+  background: black;
+  border-radius: 2px;
+  padding: 1px;
+  color: white;
 }
 
 .map-legend {
