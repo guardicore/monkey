@@ -60,6 +60,7 @@ A quick reference for usernames on different machines (if in doubt check officia
 - Everything else: ec2-user
 
 To manually verify the machine is compatible use commands to download and execute the monkey.
+Also, add your IP to `os_compat_instance` security group.
 
 Example commands:
  - Powershell:
