@@ -12,9 +12,9 @@ class Bootloader(flask_restful.Resource):
     # Used by monkey. can't secure.
     def post(self, os):
         if os == 'linux':
-            data = Bootloader.get_request_contents_linux(request.data)
+            data = Bootloader._get_request_contents_linux(request.data)
         elif os == 'windows':
-            data = Bootloader.get_request_contents_windows(request.data)
+            data = Bootloader._get_request_contents_windows(request.data)
         else:
             return make_response({"status": "OS_NOT_FOUND"}, 404)
 
@@ -26,7 +26,7 @@ class Bootloader(flask_restful.Resource):
             return make_response({"status": "ABORT"}, 200)
 
     @staticmethod
-    def get_request_contents_linux(request_data: bytes) -> Dict[str, str]:
+    def _get_request_contents_linux(request_data: bytes) -> Dict[str, str]:
         parsed_data = json.loads(request_data.decode().replace("\"\n", "")
                                                       .replace("\n", "")
                                                       .replace("NAME=\"", "")
@@ -34,5 +34,5 @@ class Bootloader(flask_restful.Resource):
         return parsed_data
 
     @staticmethod
-    def get_request_contents_windows(request_data: bytes) -> Dict[str, str]:
+    def _get_request_contents_windows(request_data: bytes) -> Dict[str, str]:
         return json.loads(request_data.decode("utf-16", "ignore"))
