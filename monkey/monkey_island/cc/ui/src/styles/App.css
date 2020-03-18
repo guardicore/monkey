@@ -329,8 +329,8 @@ body {
   position: absolute;
   bottom: 103px;
   right: 20px;
-  background: black;
-  border-radius: 2px;
+  background: #000000cc;
+  border-radius: 5px;
   padding: 1px;
   color: white;
 }
@@ -593,4 +593,3 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-
