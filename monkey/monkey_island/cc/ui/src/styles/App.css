@@ -324,6 +324,17 @@ body {
   font-weight: bold;
 }
 
+.telemetry-lines {
+  z-index: 3;
+  position: absolute;
+  bottom: 103px;
+  right: 20px;
+  background: #000000cc;
+  border-radius: 5px;
+  padding: 1px;
+  color: white;
+}
+
 .map-legend {
   font-size: 18px;
 }
@@ -582,4 +593,3 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-
