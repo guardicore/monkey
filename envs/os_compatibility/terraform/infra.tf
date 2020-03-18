@@ -43,7 +43,7 @@ resource "aws_subnet" "main" {
   }
 }
 
-resource "aws_security_group" "os_compat_islad" {
+resource "aws_security_group" "os_compat_island" {
   name        = "os_compat_island"
   description = "Allow remote access to the island"
   vpc_id      = "${aws_vpc.os_compat_vpc.id}"
@@ -52,7 +52,7 @@ resource "aws_security_group" "os_compat_islad" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.0.0.0/24"]
   }
 
   egress {
@@ -69,7 +69,7 @@ resource "aws_security_group" "os_compat_islad" {
 
 resource "aws_security_group" "os_compat_instance" {
   name        = "os_compat_instance"
-  description = "Disables remote access to vulnerable instances"
+  description = "Allow remote access to the machines"
   vpc_id      = "${aws_vpc.os_compat_vpc.id}"
 
   ingress {

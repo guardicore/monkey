@@ -11,7 +11,7 @@ resource "aws_instance" "island" {
   tags = {
     Name = "os_compat_ISLAND"
   }
-  vpc_security_group_ids = ["${aws_security_group.os_compat_islad.id}"]
+  vpc_security_group_ids = ["${aws_security_group.os_compat_island.id}"]
   associate_public_ip_address = true
   root_block_device {
     volume_size           = "30"
