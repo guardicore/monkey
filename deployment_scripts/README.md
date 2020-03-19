@@ -23,8 +23,8 @@ The first argument is an empty directory (script can create one). The second arg
 - `.\deploy_windows.ps1` (Sets up monkey in current directory under .\infection_monkey)
 - `.\deploy_windows.ps1 -monkey_home "C:\test"` (Sets up monkey in C:\test)
 - `.\deploy_windows.ps1 -branch "master"` (Sets up master branch instead of develop in current dir)
-
-You may also pass in an optional `agents=$false` parameter to disable downloading the latest agent binaries.
+- ` .\deploy_windows.ps1 -version "v1.7.0"` (To download the specific release of binaries)
+You may also pass in an optional `agents=$false` parameter to disable downloading the latest agent binaries.(By default the Script downloads the Latest Release of binaries)
 
 ### Troubleshooting
 
@@ -51,5 +51,4 @@ After downloading that script, execute it in a shell. The first argument should 
 - `./deploy_linux.sh "/home/test/monkey"` (deploys under /home/test/monkey)
 - `./deploy_linux.sh "" "master"` (deploys master branch in script directory)
 - `./deploy_linux.sh "/home/user/new" "master"` (if directory "new" is not found creates it and clones master branch into it)
-
-You may also pass in an optional third `false` parameter to disable downloading the latest agent binaries.
+- `./deploy_linux.sh "" "" "v1.7.1" ` (If you want to download any specific version of the releases, Provide the version in the 3rd argument, Else by Default, it will download the latest release of binaries)
