@@ -198,7 +198,7 @@ mkdir "${MONKEY_BIN_DIR}"
 
 # Download sambacry binaries
 
-if [ $# = 0 ] ; then
+if [ -z "$3" ] ; then
  log_message "Downloading Latest sambacry binaries"
   # shellcheck disable=SC2086
   if exists wget; then
@@ -211,8 +211,8 @@ if [ $# = 0 ] ; then
 
 else
   log_message "Downloading sambacry binaries"
-  slink_64="https://github.com/guardicore/monkey/releases/download/$1/sc_monkey_runner64.so"
-   slink_32="https://github.com/guardicore/monkey/releases/download/$1/sc_monkey_runner32.so"
+  slink_64="https://github.com/guardicore/monkey/releases/download/$3/sc_monkey_runner64.so"
+   slink_32="https://github.com/guardicore/monkey/releases/download/$3/sc_monkey_runner32.so"
   # shellcheck disable=SC2086
   if exists wget; then
     wget -c -N -P "${MONKEY_BIN_DIR}" ${slink_64}
@@ -223,7 +223,7 @@ else
   fi
 fi
 # Download traceroute binaries
-if [ $# = 0 ]  ; then
+if [ -z "$3" ]  ; then
   log_message "Downloading Latest traceroute binaries"
 # shellcheck disable=SC2086
   if exists wget; then
@@ -236,8 +236,8 @@ if [ $# = 0 ]  ; then
 
 else 
   log_message "Downloading traceroute binaries"
-  tlink_64="https://github.com/guardicore/monkey/releases/download/$1/traceroute64"
-  tlink_32="https://github.com/guardicore/monkey/releases/download/$1/traceroute32"
+  tlink_64="https://github.com/guardicore/monkey/releases/download/$3/traceroute64"
+  tlink_32="https://github.com/guardicore/monkey/releases/download/$3/traceroute32"
   # shellcheck disable=SC2086
   if exists wget; then
     wget -c -N -P "${MONKEY_BIN_DIR}" ${tlink_64}
