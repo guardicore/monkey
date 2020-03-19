@@ -8,6 +8,9 @@ param(
     [Parameter(Mandatory = $false, Position = 2)]
     [Bool]
     $agents = $true
+    [Parameter(Mandatory = $false, Position = 3)]
+    [System.String]
+    $version = "v1.7.0",
 )
 function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, [String] $branch = "develop")
 {
@@ -228,7 +231,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
     # Download mimikatz binaries
     
-    if ( $args.count = 0 ){
+    if (!$version){
             $mk32_path = Join-Path -Path $binDir -ChildPath $MK32_DLL
     if (!(Test-Path -Path $mk32_path))
     {
@@ -262,7 +265,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
     # Download sambacry binaries
     
-    if ( $args.count = 0 ){
+    if ( !$version){
 
         $samba_path = Join-Path -Path $monkey_home -ChildPath $SAMBA_BINARIES_DIR
         $samba32_path = Join-Path -Path $samba_path -ChildPath $SAMBA_32_BINARY_NAME
@@ -284,7 +287,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     else{
         $samba_path = Join-Path -Path $monkey_home -ChildPath $SAMBA_BINARIES_DIR
         $samba32_path = Join-Path -Path $samba_path -ChildPath $SAMBA_32_BINARY_NAME
-        $version=$args[0]
+        
         if (!(Test-Path -Path $samba32_path))
         {
             "Downloading sambacry 32 binary"
