@@ -17,7 +17,7 @@ class T1003 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <StolenPasswordsComponent
-            data={this.props.reportData.glance.stolen_creds.concat(this.props.reportData.glance.ssh_keys)}/>
+            data={this.props.data.stolen_creds}/>
           : ''}
       </div>
     );
