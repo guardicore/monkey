@@ -57,7 +57,7 @@ class AttackReport extends React.Component {
   static getComponentClass(tech_id, techniques) {
     switch (techniques[tech_id].status) {
       case ScanStatus.SCANNED:
-        return 'collapse-info';
+        return 'collapse-warning';
       case ScanStatus.USED:
         return 'collapse-danger';
       default:
