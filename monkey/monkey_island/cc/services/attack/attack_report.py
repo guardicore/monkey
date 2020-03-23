@@ -103,3 +103,9 @@ class AttackReportService:
         """
         generated_report = mongo.db.attack_report.find_one({})
         return generated_report is not None
+
+    @staticmethod
+    def delete_saved_report_if_exists():
+        delete_result = mongo.db.attack_report.delete_many({})
+        if mongo.db.attack_report.count_documents({}) != 0:
+            raise RuntimeError("Attack Report cache not cleared. DeleteResult: " + delete_result.raw_result)

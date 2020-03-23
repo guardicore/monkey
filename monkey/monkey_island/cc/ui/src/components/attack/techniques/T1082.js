@@ -12,13 +12,14 @@ class T1082 extends React.Component {
   static getSystemInfoColumns() {
     return ([{
       columns: [
-        {
-          Header: 'Machine',
+        { Header: 'Machine',
           id: 'machine',
           accessor: x => renderMachineFromSystemData(x.machine),
-          style: {'whiteSpace': 'unset'}
-        },
-        {Header: 'Gathered info', id: 'info', accessor: x => renderUsageFields(x.collections), style: {'whiteSpace': 'unset'}}
+          style: {'whiteSpace': 'unset'}},
+        { Header: 'Gathered info',
+          id: 'info',
+          accessor: x => renderUsageFields(x.collections),
+          style: {'whiteSpace': 'unset'}}
       ]
     }])
   }
