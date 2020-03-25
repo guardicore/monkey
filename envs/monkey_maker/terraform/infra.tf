@@ -48,13 +48,6 @@ resource "aws_security_group" "monkey_maker_sg" {
   description = "Allow remote access to the island"
   vpc_id      = "${aws_vpc.monkey_maker.id}"
 
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
