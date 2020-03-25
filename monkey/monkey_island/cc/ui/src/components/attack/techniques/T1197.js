@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {renderMachine} from './Helpers'
+import MitigationsComponent from "./MitigationsComponent";
 
 
 class T1210 extends React.Component {
@@ -49,6 +50,7 @@ class T1210 extends React.Component {
         </div>
         <br/>
         {this.renderExploitedMachines()}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

@@ -24,6 +24,7 @@ class T1003(AttackTechnique):
         else:
             status = ScanStatus.UNSCANNED.value
         data.update(T1003.get_message_and_status(status))
+        data.update(T1003.get_mitigations_by_status(status))
         data['stolen_creds'] = ReportService.get_stolen_creds()
         data['stolen_creds'].extend(ReportService.get_ssh_keys())
         return data

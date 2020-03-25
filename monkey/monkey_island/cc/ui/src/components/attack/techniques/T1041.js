@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {ScanStatus} from './Helpers';
+import MitigationsComponent from "./MitigationsComponent";
 
 class T1041 extends React.Component {
 
@@ -30,6 +31,7 @@ class T1041 extends React.Component {
             showPagination={false}
             defaultPageSize={this.props.data.command_control_channel.length}
           /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

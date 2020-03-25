@@ -30,4 +30,5 @@ class T1059(AttackTechnique):
         else:
             status = ScanStatus.UNSCANNED.value
         data.update(T1059.get_message_and_status(status))
+        data.update(T1059.get_mitigations_by_status(status))
         return data

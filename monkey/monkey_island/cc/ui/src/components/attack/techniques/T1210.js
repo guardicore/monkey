@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {renderMachine} from './Helpers'
+import MitigationsComponent from "./MitigationsComponent";
 
 
 class T1210 extends React.Component {
@@ -99,6 +100,7 @@ class T1210 extends React.Component {
           this.renderScannedServices(scanned_services) : ''}
         {this.props.data.exploited_services.length > 0 ?
           this.renderExploitedServices(this.props.data.exploited_services) : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

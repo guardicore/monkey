@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {renderMachine, ScanStatus} from './Helpers'
+import MitigationsComponent from "./MitigationsComponent";
 
 
 class T1021 extends React.Component {
@@ -16,7 +17,13 @@ class T1021 extends React.Component {
           Header: 'Machine', id: 'machine', accessor: x => renderMachine(x.machine),
           style: {'whiteSpace': 'unset'}, width: 160
         },
-        {Header: 'Service', id: 'service', accessor: x => x.info.display_name, style: {'whiteSpace': 'unset'}, width: 100},
+        {
+          Header: 'Service',
+          id: 'service',
+          accessor: x => x.info.display_name,
+          style: {'whiteSpace': 'unset'},
+          width: 100
+        },
         {
           Header: 'Valid account used',
           id: 'credentials',
@@ -43,6 +50,7 @@ class T1021 extends React.Component {
             showPagination={false}
             defaultPageSize={this.props.data.services.length}
           /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

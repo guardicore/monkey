@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {getUsageColumns} from './Helpers'
+import MitigationsComponent from "./MitigationsComponent";
 
 
 class T1035 extends React.Component {
@@ -21,6 +22,7 @@ class T1035 extends React.Component {
             showPagination={false}
             defaultPageSize={this.props.data.services.length}
           /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

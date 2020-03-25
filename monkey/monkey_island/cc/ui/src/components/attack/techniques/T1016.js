@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {renderMachineFromSystemData, renderUsageFields, ScanStatus} from './Helpers'
+import MitigationsComponent from "./MitigationsComponent";
 
 
 class T1016 extends React.Component {
@@ -36,6 +37,7 @@ class T1016 extends React.Component {
             showPagination={false}
             defaultPageSize={this.props.data.network_info.length}
           /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

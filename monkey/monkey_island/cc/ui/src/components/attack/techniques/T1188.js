@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {renderMachineFromSystemData, ScanStatus} from './Helpers'
+import MitigationsComponent from "./MitigationsComponent";
 
 
 class T1188 extends React.Component {
@@ -47,6 +48,7 @@ class T1188 extends React.Component {
             showPagination={false}
             defaultPageSize={this.props.data.hops.length}
           /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }
