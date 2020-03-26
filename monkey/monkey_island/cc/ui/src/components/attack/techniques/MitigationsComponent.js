@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import marked from 'marked';
+import '../../../styles/report/AttackReport.scss';
 
 
 class MitigationsComponent extends React.Component {
@@ -28,6 +29,7 @@ class MitigationsComponent extends React.Component {
   static getMitigationDescriptions(name) {
     return ([{
       Header: name,
+      style: {'text-align': 'left'},
       columns: [
         { id: 'description',
           accessor: x => (<div dangerouslySetInnerHTML={{__html: x}} />),
@@ -46,6 +48,7 @@ class MitigationsComponent extends React.Component {
             data={this.state.descriptions}
             showPagination={false}
             defaultPageSize={this.state.descriptions.length}
+            className={'attack-mitigation'}
           /> : ''}
       </div>
     );
