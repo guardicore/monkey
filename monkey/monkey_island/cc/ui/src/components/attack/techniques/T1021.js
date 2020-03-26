@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {renderMachine, ScanStatus} from './Helpers'
-import MitigationsComponent from "./MitigationsComponent";
+import MitigationsComponent from './MitigationsComponent';
 
 
 class T1021 extends React.Component {

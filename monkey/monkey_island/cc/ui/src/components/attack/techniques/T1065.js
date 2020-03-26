@@ -1,5 +1,5 @@
 import React from 'react';
-import MitigationsComponent from "./MitigationsComponent";
+import MitigationsComponent from './MitigationsComponent';
 
 
 class T1065 extends React.Component {

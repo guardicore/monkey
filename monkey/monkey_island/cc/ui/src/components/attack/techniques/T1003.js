@@ -2,7 +2,7 @@ import React from 'react';
 import '../../report-components/security/StolenPasswords'
 import StolenPasswordsComponent from '../../report-components/security/StolenPasswords';
 import {ScanStatus} from './Helpers'
-import MitigationsComponent from "./MitigationsComponent";
+import MitigationsComponent from './MitigationsComponent';
 
 
 class T1003 extends React.Component {
