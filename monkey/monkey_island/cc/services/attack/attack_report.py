@@ -57,7 +57,6 @@ class AttackReportService:
                 'meta': {'latest_monkey_modifytime': Monkey.get_latest_modifytime()},
                 'name': REPORT_NAME
             }
-
         for tech_id, tech_info in list(AttackConfig.get_techniques_for_report().items()):
             try:
                 technique_report_data = TECHNIQUES[tech_id].get_report_data()

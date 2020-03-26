@@ -26,6 +26,7 @@ from monkey_island.cc.environment.environment import env
 from monkey_island.cc.database import is_db_server_up, get_db_version
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from common.version import get_version
+from monkey_island.cc.setup import setup
 
 
 def main():
@@ -42,6 +43,8 @@ def main():
 
     crt_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.crt')
     key_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.key')
+
+    setup()
 
     if env.is_debug():
         app.run(host='0.0.0.0', debug=True, ssl_context=(crt_path, key_path))

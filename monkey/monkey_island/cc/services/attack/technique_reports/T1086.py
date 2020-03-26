@@ -32,6 +32,6 @@ class T1086(AttackTechnique):
         else:
             status = ScanStatus.UNSCANNED.value
 
-        data.update(T1086.get_mitigations_by_status(status))
+        data.update(T1086.get_mitigation_by_status(status))
         data.update(T1086.get_message_and_status(status))
         return data
