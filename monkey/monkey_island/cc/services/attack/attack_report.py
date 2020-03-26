@@ -3,7 +3,7 @@ import logging
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110, T1075, T1003, T1059, T1086, T1082
 from monkey_island.cc.services.attack.technique_reports import T1145, T1105, T1065, T1035, T1129, T1106, T1107, T1188
-from monkey_island.cc.services.attack.technique_reports import T1090, T1041, T1222, T1005, T1018, T1016, T1021, T1064
+from monkey_island.cc.services.attack.technique_reports import T1090, T1041, T1222, T1005, T1018, T1016, T1021, T1064, T1136
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_attack_report
@@ -35,7 +35,8 @@ TECHNIQUES = {'T1210': T1210.T1210,
               'T1018': T1018.T1018,
               'T1016': T1016.T1016,
               'T1021': T1021.T1021,
-              'T1064': T1064.T1064
+              'T1064': T1064.T1064,
+              'T1136': T1136.T1136
               }
 
 REPORT_NAME = 'new_report'
