@@ -3,9 +3,9 @@ import {Col, Modal} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStopCircle, faMinus } from '@fortawesome/free-solid-svg-icons'
-import InfMapPreviewPaneComponent from 'components/map/preview-pane/InfMapPreviewPane';
+import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {options, edgeGroupToColor} from 'components/map/MapOptions';
+import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 
 class MapPageComponent extends AuthComponent {
@@ -13,6 +13,7 @@ class MapPageComponent extends AuthComponent {
     super(props);
     this.state = {
       graph: {nodes: [], edges: []},
+      nodeStateList:[],
       selected: null,
       selectedType: null,
       killPressed: false,
@@ -33,6 +34,7 @@ class MapPageComponent extends AuthComponent {
   };
 
   componentDidMount() {
+    this.getNodeStateListFromServer();
     this.updateMapFromServer();
     this.interval = setInterval(this.timedEvents, 5000);
   }
@@ -40,6 +42,14 @@ class MapPageComponent extends AuthComponent {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getNodeStateListFromServer = () => {
+    this.authFetch('/api/netmap/nodeStates')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({nodeStateList: res.node_states});
+      });
+  };
 
   timedEvents = () => {
     this.updateMapFromServer();
@@ -201,7 +211,7 @@ class MapPageComponent extends AuthComponent {
           </div>
           {this.renderTelemetryConsole()}
           <div style={{height: '80vh'}}>
-            <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
+            <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)} events={this.events}/>
           </div>
           {this.renderTelemetryLineCount()}
         </Col>
@@ -226,7 +236,7 @@ class MapPageComponent extends AuthComponent {
             </div>
             : ''}
 
-          <InfMapPreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
+          <PreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
         </Col>
       </div>
     );
