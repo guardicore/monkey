@@ -28,9 +28,8 @@ class MitigationsComponent extends React.Component {
     const emptyLineRegex = /^\s*[\r\n]/gm;
     description = description.replace(citationRegex, '');
     description = description.replace(emptyLineRegex, '');
-    let descriptions = description.split('\n');
-    descriptions = descriptions.map(function(paragraph){ return marked(paragraph); });
-    return descriptions;
+    description = marked(description);
+    return description;
   }
 
   static getMitigations() {
@@ -42,7 +41,7 @@ class MitigationsComponent extends React.Component {
           accessor: x => this.getMitigationName(x.name, x.url),
           width: 200},
         { id: 'description',
-          accessor: x => (<div dangerouslySetInnerHTML={{__html: x.description}} />),
+          accessor: x => (<div dangerouslySetInnerHTML={{__html: this.parseDescription(x.description)}} />),
           style: {'whiteSpace': 'unset'}}
       ]
     }])

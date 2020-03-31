@@ -17,6 +17,8 @@ def try_store_mitigations_on_mongo():
     except errors.OperationFailure:
         try:
             mongo.db.create_collection(mitigation_collection_name)
+        except errors.CollectionInvalid:
+            pass
         finally:
             store_mitigations_on_mongo()
 
@@ -27,5 +29,8 @@ def store_mitigations_on_mongo():
     mitigation_technique_relationships = MitreApiInterface.get_technique_and_mitigation_relationships()
     for relationship in mitigation_technique_relationships:
         mongo_mitigations[relationship['target_ref']].add_mitigation(stix2_mitigations[relationship['source_ref']])
+    for relationship in mitigation_technique_relationships:
+        mongo_mitigations[relationship['target_ref']].\
+            add_no_mitigations_info(stix2_mitigations[relationship['source_ref']])
     for key, mongo_object in mongo_mitigations.items():
         mongo_object.save()
