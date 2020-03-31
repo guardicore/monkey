@@ -29,7 +29,7 @@ from common.version import get_version
 from monkey_island.cc.setup import setup
 
 
-def main():
+def main(should_setup_only):
     from tornado.wsgi import WSGIContainer
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
@@ -45,6 +45,10 @@ def main():
     key_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.key')
 
     setup()
+
+    if should_setup_only:
+        logger.warning("Setup only flag passed. Exiting.")
+        return
 
     if env.is_debug():
         app.run(host='0.0.0.0', debug=True, ssl_context=(crt_path, key_path))
