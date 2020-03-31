@@ -81,6 +81,7 @@
     "filepond": "^4.7.3",
     "json-loader": "^0.5.7",
     "jwt-decode": "^2.2.0",
+    "marked": "^0.8.2",
     "moment": "^2.24.0",
     "node-sass": "^4.13.0",
     "normalize.css": "^8.0.0",

@@ -8,15 +8,22 @@ class MitigationsComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    if (typeof this.props.mitigations !== 'undefined'){
-      let descriptions = MitigationsComponent.parseDescription(this.props.mitigations.description);
-      this.state = {name: this.props.mitigations.name, descriptions: descriptions};
+    if (typeof this.props.mitigations !== 'undefined' && this.props.mitigations.length > 0){
+      this.state = {mitigations: this.props.mitigations};
     } else {
-      this.state = {name: '', descriptions: []}
+      this.state = {mitigations: null}
     }
   }
 
-  static parseDescription(description){
+  static createRows(descriptions, references) {
+    let rows = [];
+    for(let i = 0; i < descriptions.length; i++){
+      rows[i] = {'description': descriptions[i], 'reference': references[i]};
+    }
+    return rows;
+  }
+
+  static parseDescription(description) {
     const citationRegex = /\(Citation:.*\)/gi;
     const emptyLineRegex = /^\s*[\r\n]/gm;
     description = description.replace(citationRegex, '');
@@ -26,28 +33,40 @@ class MitigationsComponent extends React.Component {
     return descriptions;
   }
 
-  static getMitigationDescriptions(name) {
+  static getMitigations() {
     return ([{
-      Header: name,
+      Header: 'Mitigations',
       style: {'text-align': 'left'},
       columns: [
+        { id: 'name',
+          accessor: x => this.getMitigationName(x.name, x.url),
+          width: 200},
         { id: 'description',
-          accessor: x => (<div dangerouslySetInnerHTML={{__html: x}} />),
+          accessor: x => (<div dangerouslySetInnerHTML={{__html: x.description}} />),
           style: {'whiteSpace': 'unset'}}
       ]
     }])
   }
 
+  static getMitigationName(name, url) {
+    if(url){
+      return (<a href={url} target={'_blank'}>{name}</a>)
+    } else {
+      return (<p>{name}</p>)
+    }
+  }
+
+
   render() {
     return (
       <div>
         <br/>
-        {this.state.descriptions.length !== 0 ?
+        {this.state.mitigations ?
           <ReactTable
-            columns={MitigationsComponent.getMitigationDescriptions(this.state.name)}
-            data={this.state.descriptions}
+            columns={MitigationsComponent.getMitigations()}
+            data={this.state.mitigations}
             showPagination={false}
-            defaultPageSize={this.state.descriptions.length}
+            defaultPageSize={this.state.mitigations.length}
             className={'attack-mitigation'}
           /> : ''}
       </div>

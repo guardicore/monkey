@@ -1,5 +1,5 @@
 from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterface
-from monkey_island.cc.models.attack_mitigation import AttackMitigation
+from cc.models.attack.attack_mitigations import AttackMitigations
 from monkey_island.cc.database import mongo
 from pymongo import errors
 
@@ -9,16 +9,23 @@ def setup():
 
 
 def try_store_mitigations_on_mongo():
-    # import the 'errors' module from PyMongo
-    mitigation_collection_name = 'attack_mitigation'
+    mitigation_collection_name = 'attack_mitigations'
     try:
         mongo.db.validate_collection(mitigation_collection_name)
+        if mongo.db.attack_mitigations.count() == 0:
+            raise errors.OperationFailure("Mitigation collection empty")
     except errors.OperationFailure:
-        mongo.db.create_collection(mitigation_collection_name)
-        store_mitigations_on_mongo()
+        try:
+            mongo.db.create_collection(mitigation_collection_name)
+        finally:
+            store_mitigations_on_mongo()
 
 
 def store_mitigations_on_mongo():
-    all_mitigations = MitreApiInterface.get_all_mitigations()
-    for mitigation in all_mitigations:
-        AttackMitigation.add_mitigation_from_stix2(mitigation)
+    stix2_mitigations = MitreApiInterface.get_all_mitigations()
+    mongo_mitigations = AttackMitigations.dict_from_stix2_attack_patterns(MitreApiInterface.get_all_attack_techniques())
+    mitigation_technique_relationships = MitreApiInterface.get_technique_and_mitigation_relationships()
+    for relationship in mitigation_technique_relationships:
+        mongo_mitigations[relationship['target_ref']].add_mitigation(stix2_mitigations[relationship['source_ref']])
+    for key, mongo_object in mongo_mitigations.items():
+        mongo_object.save()

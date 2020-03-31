@@ -5,7 +5,7 @@ from monkey_island.cc.database import mongo
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from common.utils.code_utils import abstractstatic
-from monkey_island.cc.models.attack_mitigation import AttackMitigation
+from cc.models.attack.attack_mitigations import AttackMitigations
 
 logger = logging.getLogger(__name__)
 
@@ -125,9 +125,8 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     @classmethod
     def get_mitigation_by_status(cls, status: ScanStatus) -> dict:
         if status == ScanStatus.USED.value:
-            mitigation_document = AttackMitigation.get_mitigation_by_technique_id(str(cls.tech_id))
-            return {'mitigations': {'name': mitigation_document['name'],
-                                    'description': mitigation_document['description']}}
+            mitigation_document = AttackMitigations.get_mitigation_by_technique_id(str(cls.tech_id))
+            return {'mitigations': mitigation_document.to_mongo().to_dict()['mitigations']}
         else:
             return {}
 
