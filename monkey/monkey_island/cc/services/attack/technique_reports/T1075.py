@@ -40,4 +40,5 @@ class T1075(AttackTechnique):
         else:
             status = ScanStatus.UNSCANNED.value
         data.update(T1075.get_message_and_status(status))
+        data.update(T1075.get_mitigation_by_status(status))
         return data

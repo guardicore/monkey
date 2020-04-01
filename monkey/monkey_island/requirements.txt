@@ -23,3 +23,4 @@ mongomock
 requests
 dpath
 ring
+stix2

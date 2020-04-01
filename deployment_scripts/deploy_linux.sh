@@ -85,7 +85,7 @@ fi
 log_message "Cloning files from git"
 branch=${2:-"develop"}
 if [[ ! -d "$monkey_home/monkey" ]]; then # If not already cloned
-  git clone --single-branch -b "$branch" "${MONKEY_GIT_URL}" "${monkey_home}" 2>&1 || handle_error
+  git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${monkey_home}" 2>&1 || handle_error
   chmod 774 -R "${monkey_home}"
 fi
 

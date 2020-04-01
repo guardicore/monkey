@@ -44,5 +44,6 @@ class T1082(AttackTechnique):
             status = ScanStatus.USED.value
         else:
             status = ScanStatus.UNSCANNED.value
+        data.update(T1082.get_mitigation_by_status(status))
         data.update(T1082.get_message_and_status(status))
         return data
