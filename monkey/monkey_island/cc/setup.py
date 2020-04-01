@@ -9,7 +9,7 @@ def setup():
 
 
 def try_store_mitigations_on_mongo():
-    mitigation_collection_name = 'attack_mitigations'
+    mitigation_collection_name = AttackMitigations.COLLECTION_NAME
     try:
         mongo.db.validate_collection(mitigation_collection_name)
         if mongo.db.attack_mitigations.count() == 0:

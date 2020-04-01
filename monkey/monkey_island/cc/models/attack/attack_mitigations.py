@@ -9,6 +9,8 @@ from monkey_island.cc.services.attack.test_mitre_api_interface import MitreApiIn
 
 class AttackMitigations(Document):
 
+    COLLECTION_NAME = "attack_mitigations"
+
     technique_id = StringField(required=True, primary_key=True)
     mitigations = ListField(EmbeddedDocumentField('Mitigation'))
 

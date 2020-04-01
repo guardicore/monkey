@@ -3,6 +3,7 @@ import logging
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.services.post_breach_files import remove_PBA_files
+from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 from flask import jsonify
 from monkey_island.cc.database import mongo
 
@@ -17,7 +18,8 @@ class Database(object):
     def reset_db():
         remove_PBA_files()
         # We can't drop system collections.
-        [mongo.db[x].drop() for x in mongo.db.collection_names() if not x.startswith('system.')]
+        [mongo.db[x].drop() for x in mongo.db.collection_names() if not x.startswith('system.')
+         and not AttackMitigations.COLLECTION_NAME]
         ConfigService.init_config()
         AttackConfig.reset_config()
         logger.info('DB was reset')
