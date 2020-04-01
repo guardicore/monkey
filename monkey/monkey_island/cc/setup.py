@@ -1,10 +1,16 @@
+import logging
+
 from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterface
-from cc.models.attack.attack_mitigations import AttackMitigations
+from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 from monkey_island.cc.database import mongo
 from pymongo import errors
 
 
+logger = logging.getLogger(__name__)
+
+
 def setup():
+    logger.info("Setting up the Monkey Island, this might take a while...")
     try_store_mitigations_on_mongo()
 
 
@@ -13,7 +19,7 @@ def try_store_mitigations_on_mongo():
     try:
         mongo.db.validate_collection(mitigation_collection_name)
         if mongo.db.attack_mitigations.count() == 0:
-            raise errors.OperationFailure("Mitigation collection empty")
+            raise errors.OperationFailure("Mitigation collection empty. Try dropping the collection and running again")
     except errors.OperationFailure:
         try:
             mongo.db.create_collection(mitigation_collection_name)

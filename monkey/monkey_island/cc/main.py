@@ -31,17 +31,17 @@ from monkey_island.cc.bootloader_server import BootloaderHttpServer
 from monkey_island.cc.setup import setup
 
 
-def main():
+def main(should_setup_only):
     logger.info("Starting bootloader server")
     mongo_url = os.environ.get('MONGO_URL', env.get_mongo_url())
     bootloader_server_thread = Thread(target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True)
 
     bootloader_server_thread.start()
-    start_island_server()
+    start_island_server(should_setup_only)
     bootloader_server_thread.join()
 
 
-def start_island_server():
+def start_island_server(should_setup_only):
     from tornado.wsgi import WSGIContainer
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
@@ -57,6 +57,10 @@ def start_island_server():
     key_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.key')
 
     setup()
+
+    if should_setup_only:
+        logger.warning("Setup only flag passed. Exiting.")
+        return
 
     if env.is_debug():
         app.run(host='0.0.0.0', debug=True, ssl_context=(crt_path, key_path))
