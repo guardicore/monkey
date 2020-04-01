@@ -3,6 +3,7 @@ import os.path
 import sys
 import time
 import logging
+from threading import Thread
 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "3.6.0"
 
@@ -26,10 +27,21 @@ from monkey_island.cc.environment.environment import env
 from monkey_island.cc.database import is_db_server_up, get_db_version
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from common.version import get_version
+from monkey_island.cc.bootloader_server import BootloaderHttpServer
 from monkey_island.cc.setup import setup
 
 
 def main():
+    logger.info("Starting bootloader server")
+    mongo_url = os.environ.get('MONGO_URL', env.get_mongo_url())
+    bootloader_server_thread = Thread(target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True)
+
+    bootloader_server_thread.start()
+    start_island_server()
+    bootloader_server_thread.join()
+
+
+def start_island_server():
     from tornado.wsgi import WSGIContainer
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop

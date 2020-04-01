@@ -2,7 +2,7 @@ from bson import ObjectId
 
 from monkey_island.cc.database import mongo
 import monkey_island.cc.services.node
-from monkey_island.cc.models import Monkey
+from monkey_island.cc.models.monkey import Monkey, MonkeyNotFoundError
 
 __author__ = "itay.mizeretz"
 
@@ -145,7 +145,10 @@ class EdgeService:
         from_id = edge["from"]
         to_id = edge["to"]
 
-        from_label = Monkey.get_label_by_id(from_id)
+        try:
+            from_label = Monkey.get_label_by_id(from_id)
+        except MonkeyNotFoundError:
+            from_label = node_service.get_node_by_id(from_id)['domain_name']
 
         if to_id == ObjectId("000000000000000000000000"):
             to_label = 'MonkeyIsland'

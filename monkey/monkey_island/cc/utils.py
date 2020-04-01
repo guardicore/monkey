@@ -1,5 +1,7 @@
 import socket
 import sys
+from typing import List
+import collections
 
 import array
 
@@ -47,6 +49,11 @@ else:
                     # name of interface is (namestr[i:i+16].split('\0', 1)[0]
         finally:
             return result
+
+
+def is_local_ips(ips: List) -> bool:
+    filtered_local_ips = [ip for ip in local_ip_addresses() if not ip.startswith('169.254')]
+    return collections.Counter(ips) == collections.Counter(filtered_local_ips)
 
 
 # The local IP addresses list should not change often. Therefore, we can cache the result and never call this function
