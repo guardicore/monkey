@@ -7,8 +7,8 @@ class TestMitreApiInterface(TestCase):
 
     def test_get_all_mitigations(self):
         mitigations = MitreApiInterface.get_all_mitigations()
-        self.assertTrue((len(mitigations) >= 282))
-        mitigation = mitigations[0]
+        self.assertTrue((len(mitigations.items()) >= 282))
+        mitigation = next(iter(mitigations.values()))
         self.assertEqual(mitigation['type'], "course-of-action")
         self.assertTrue(mitigation['name'])
         self.assertTrue(mitigation['description'])
