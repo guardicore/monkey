@@ -11,7 +11,7 @@ class T1082(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey gathered system info from machines in the network."
 
-    query = [{'$match': {'telem_category': 'system_info'}},
+    query = [{'$match': {'telem_category': 'system_info', 'data.network_info': {'$exists': True}}},
              {'$project': {'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
                            'aws': '$data.aws',
                            'netstat': '$data.network_info.netstat',
@@ -44,5 +44,6 @@ class T1082(AttackTechnique):
             status = ScanStatus.USED.value
         else:
             status = ScanStatus.UNSCANNED.value
+        data.update(T1082.get_mitigation_by_status(status))
         data.update(T1082.get_message_and_status(status))
         return data

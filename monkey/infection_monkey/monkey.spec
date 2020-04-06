@@ -19,7 +19,9 @@ def main():
                  hookspath=['./pyinstaller_hooks'],
                  runtime_hooks=None,
                  binaries=None,
-                 datas=None,
+                 datas=[
+                    ("../common/BUILD", "/common")
+                 ],
                  excludes=None,
                  win_no_prefer_redirects=None,
                  win_private_assemblies=None,
@@ -94,7 +96,18 @@ def get_traceroute_binaries():
 
 
 def get_monkey_filename():
-    return 'monkey.exe' if is_windows() else 'monkey'
+    name = 'monkey-'
+    if is_windows():
+        name = name+"windows-"
+    else:
+        name = name+"linux-"
+    if is_32_bit():
+        name = name+"32"
+    else:
+        name = name+"64"
+    if is_windows():
+        name = name+".exe"
+    return name
 
 
 def get_exe_strip():

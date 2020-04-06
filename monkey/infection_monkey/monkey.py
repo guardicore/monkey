@@ -30,6 +30,7 @@ from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
+from common.version import get_version
 from infection_monkey.exploit.HostExploiter import HostExploiter
 
 MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, shutting down"
@@ -133,7 +134,7 @@ class InfectionMonkey(object):
             if monkey_tunnel:
                 monkey_tunnel.start()
 
-            StateTelem(is_done=False).send()
+            StateTelem(is_done=False, version=get_version()).send()
             TunnelTelem().send()
 
             LOG.debug("Starting the post-breach phase.")
@@ -266,7 +267,7 @@ class InfectionMonkey(object):
             InfectionMonkey.close_tunnel()
             firewall.close()
         else:
-            StateTelem(is_done=True).send()  # Signal the server (before closing the tunnel)
+            StateTelem(is_done=True, version=get_version()).send()  # Signal the server (before closing the tunnel)
             InfectionMonkey.close_tunnel()
             firewall.close()
             if WormConfiguration.send_log_to_server:

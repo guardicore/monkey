@@ -5,7 +5,7 @@ requests
 odict
 paramiko
 psutil
-PyInstaller
+git+https://github.com/guardicore/pyinstaller
 ecdsa
 netifaces
 ipaddress

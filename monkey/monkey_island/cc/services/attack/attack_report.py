@@ -57,7 +57,6 @@ class AttackReportService:
                 'meta': {'latest_monkey_modifytime': Monkey.get_latest_modifytime()},
                 'name': REPORT_NAME
             }
-
         for tech_id, tech_info in list(AttackConfig.get_techniques_for_report().items()):
             try:
                 technique_report_data = TECHNIQUES[tech_id].get_report_data()
@@ -103,3 +102,9 @@ class AttackReportService:
         """
         generated_report = mongo.db.attack_report.find_one({})
         return generated_report is not None
+
+    @staticmethod
+    def delete_saved_report_if_exists():
+        delete_result = mongo.db.attack_report.delete_many({})
+        if mongo.db.attack_report.count_documents({}) != 0:
+            raise RuntimeError("Attack Report cache not cleared. DeleteResult: " + delete_result.raw_result)

@@ -15,7 +15,9 @@ def main():
                  hookspath=None,
                  runtime_hooks=None,
                  binaries=None,
-                 datas=None,
+                 datas=[
+                    ("../common/BUILD", "/common")
+                 ],
                  excludes=None,
                  win_no_prefer_redirects=None,
                  win_private_assemblies=None,
@@ -35,6 +37,7 @@ def main():
               debug=False,
               strip=get_exe_strip(),
               upx=True,
+              upx_exclude=['vcruntime140.dll'],
               console=True,
               icon=get_exe_icon())
 
@@ -44,7 +47,7 @@ def is_windows():
 
 
 def is_32_bit():
-    return platform.architecture()[0] == "32bit"
+    return sys.maxsize <= 2**32
 
 
 def process_datas(orig_datas):

@@ -3,9 +3,9 @@ import {Col, Modal} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStopCircle, faMinus } from '@fortawesome/free-solid-svg-icons'
-import InfMapPreviewPaneComponent from 'components/map/preview-pane/InfMapPreviewPane';
+import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {options, edgeGroupToColor} from 'components/map/MapOptions';
+import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 
 class MapPageComponent extends AuthComponent {
@@ -13,13 +13,20 @@ class MapPageComponent extends AuthComponent {
     super(props);
     this.state = {
       graph: {nodes: [], edges: []},
+      nodeStateList:[],
       selected: null,
       selectedType: null,
       killPressed: false,
       showKillDialog: false,
       telemetry: [],
-      telemetryLastTimestamp: null
+      telemetryLastTimestamp: null,
+      isScrolledUp: false,
+      telemetryLines: 0,
+      telemetryCurrentLine: 0
     };
+    this.telemConsole = React.createRef();
+    this.handleScroll = this.handleScroll.bind(this);
+    this.scrollTop = 0;
   }
 
   events = {
@@ -27,6 +34,7 @@ class MapPageComponent extends AuthComponent {
   };
 
   componentDidMount() {
+    this.getNodeStateListFromServer();
     this.updateMapFromServer();
     this.interval = setInterval(this.timedEvents, 5000);
   }
@@ -34,6 +42,14 @@ class MapPageComponent extends AuthComponent {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getNodeStateListFromServer = () => {
+    this.authFetch('/api/netmap/nodeStates')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({nodeStateList: res.node_states});
+      });
+  };
 
   timedEvents = () => {
     this.updateMapFromServer();
@@ -67,6 +83,12 @@ class MapPageComponent extends AuthComponent {
               telemetryLastTimestamp: res['timestamp']
             });
           this.props.onStatusChange();
+
+          let telemConsoleRef = this.telemConsole.current;
+          if (!this.state.isScrolledUp) {
+            telemConsoleRef.scrollTop = telemConsoleRef.scrollHeight - telemConsoleRef.clientHeight;
+            this.scrollTop = telemConsoleRef.scrollTop;
+          }
         }
       });
   };
@@ -138,12 +160,33 @@ class MapPageComponent extends AuthComponent {
     );
   }
 
+  handleScroll(e) {
+    let element = e.target;
+
+    let telemetryStyle = window.getComputedStyle(element);
+    let telemetryLineHeight = parseInt((telemetryStyle.lineHeight).replace('px', ''));
+
+    this.setState({
+      isScrolledUp: (element.scrollTop < this.scrollTop),
+      telemetryCurrentLine: Math.trunc(element.scrollTop/telemetryLineHeight)+1,
+      telemetryLines: Math.trunc(element.scrollHeight/telemetryLineHeight)
+    });
+  }
+
   renderTelemetryConsole() {
     return (
-      <div className="telemetry-console">
+      <div className="telemetry-console" onScroll={this.handleScroll} ref={this.telemConsole}>
         {
           this.state.telemetry.map(this.renderTelemetryEntry)
         }
+      </div>
+    );
+  }
+
+  renderTelemetryLineCount() {
+    return (
+      <div className="telemetry-lines">
+        <b>[{this.state.telemetryCurrentLine}/{this.state.telemetryLines}]</b>
       </div>
     );
   }
@@ -168,8 +211,9 @@ class MapPageComponent extends AuthComponent {
           </div>
           {this.renderTelemetryConsole()}
           <div style={{height: '80vh'}}>
-            <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
+            <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)} events={this.events}/>
           </div>
+          {this.renderTelemetryLineCount()}
         </Col>
         <Col xs={4}>
           <input className="form-control input-block"
@@ -192,7 +236,7 @@ class MapPageComponent extends AuthComponent {
             </div>
             : ''}
 
-          <InfMapPreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
+          <PreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
         </Col>
       </div>
     );

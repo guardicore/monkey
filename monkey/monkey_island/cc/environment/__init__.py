@@ -26,8 +26,6 @@ class Environment(object, metaclass=ABCMeta):
     def testing(self, value):
         self._testing = value
 
-    _MONKEY_VERSION = "1.7.0"
-
     def __init__(self):
         self.config = None
         self._testing = False  # Assume env is not for unit testing.
@@ -57,9 +55,6 @@ class Environment(object, metaclass=ABCMeta):
 
     def is_develop(self):
         return self.get_deployment() == 'develop'
-
-    def get_version(self):
-        return self._MONKEY_VERSION + ('-dev' if self.is_develop() else '')
 
     def _get_from_config(self, key, default_value=None):
         val = default_value

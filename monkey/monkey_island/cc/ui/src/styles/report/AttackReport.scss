@@ -80,3 +80,16 @@
   padding-right:5px;
   margin-bottom: 1px;
 }
+
+.attack-mitigation .rt-thead .rt-tr .rt-th {
+  text-align: left !important;
+  padding-left: 10px;
+}
+
+.attack-mitigation p {
+  padding-left: 7px;
+}
+
+.attack-mitigation .rt-table>.-header {
+  display: none !important;
+}
