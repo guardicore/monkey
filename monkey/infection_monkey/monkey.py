@@ -72,7 +72,7 @@ class InfectionMonkey(object):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument('-p', '--parent')
         arg_parser.add_argument('-t', '--tunnel')
-        arg_parser.add_argument('-s', '--server')
+        arg_parser.add_argument('-s', '--server',nargs = '+')
         arg_parser.add_argument('-d', '--depth', type=int)
         self._opts, self._args = arg_parser.parse_known_args(self._args)
 
@@ -90,20 +90,20 @@ class InfectionMonkey(object):
         secondary_servers= len(self._args) 
   
         if self._default_server:
-            if self._default_server not in WormConfiguration.command_servers:
-                LOG.debug("Added default server: %s" % self._default_server)
-                WormConfiguration.command_servers.insert(server_num, self._default_server)
-            else:
-                LOG.debug("Default server: %s is already in command servers list" % self._default_server)
-            server_num=server_num+1
+           if self._default_server[0] not in WormConfiguration.command_servers:
+                LOG.debug("Added default server: %s" % self._default_server[0])
+                WormConfiguration.command_servers.insert(0, self._default_server[0])
+           else:
+                LOG.debug("Default server: %s is already in command servers list" % self._default_server[0])
+           server_num=server_num+1
         
-        while server_num<(secondary_servers+1):
-            if self._args[server_num -1] not in WormConfiguration.command_servers:
-                LOG.debug("Added default server: %s" % self._args[server_num -1])
-                WormConfiguration.command_servers.insert(server_num, self._args[server_num-1])
-            else:
-                LOG.debug("Default server: %s is already in command servers list" % self._args[server_num-1])
-            server_num=server_num+1
+        while server_num<(secondary_servers):
+           if self._default_server[server_num ] not in WormConfiguration.command_servers:
+               LOG.debug("Added default server: %s" % self._default_server[server_num])
+               WormConfiguration.command_servers.insert(server_num, self._default_server[server_num])
+           else:
+                LOG.debug("Default server: %s is already in command servers list" % self._default_server[server_num])
+           server_num=server_num+1
 
     def start(self):
         try:
