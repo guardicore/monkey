@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from stix2 import FileSystemSource, Filter, CourseOfAction, AttackPattern, core
+from stix2 import FileSystemSource, Filter, CourseOfAction, AttackPattern, v20
 
 
 class MitreApiInterface:
@@ -32,14 +32,14 @@ class MitreApiInterface:
         return all_techniques
 
     @staticmethod
-    def get_stix2_external_reference_id(stix2_data: core.STIXDomainObject) -> str:
+    def get_stix2_external_reference_id(stix2_data: v20._DomainObject) -> str:
         for reference in stix2_data['external_references']:
             if reference['source_name'] == "mitre-attack" and 'external_id' in reference:
                 return reference['external_id']
         return ''
 
     @staticmethod
-    def get_stix2_external_reference_url(stix2_data: core.STIXDomainObject) -> str:
+    def get_stix2_external_reference_url(stix2_data: v20._DomainObject) -> str:
         for reference in stix2_data['external_references']:
             if 'url' in reference:
                 return reference['url']
