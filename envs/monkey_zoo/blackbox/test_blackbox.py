@@ -118,7 +118,6 @@ class TestMonkeyBlackbox(object):
     def test_shellshock_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "SHELLSHOCK.conf", "Shellschock_exploiter")
 
-    @pytest.mark.xfail(reason="Test fails randomly - still investigating.")
     def test_tunneling(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "TUNNELING.conf", "Tunneling_exploiter", 15*60)
 
@@ -128,6 +127,7 @@ class TestMonkeyBlackbox(object):
     def test_wmi_pth(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "WMI_PTH.conf", "WMI_PTH")
 
+    @pytest.mark.xfail(reason="Performance is slow, will improve on release 1.9.")
     def test_performance(self, island_client):
         """
         This test includes the SSH + Elastic + Hadoop + MSSQL machines all in one test
