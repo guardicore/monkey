@@ -5,4 +5,4 @@ Homepage: https://www.infectionmonkey.com
 Priority: optional
 Version: 1.0
 Description: Guardicore Infection Monkey Island installation package
-Depends: openssl, python3-pip, python3-dev
+Depends: openssl, python3.7-dev, python3.7-venv

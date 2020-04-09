@@ -3,10 +3,12 @@
 MONKEY_FOLDER=/var/monkey
 INSTALLATION_FOLDER=/var/monkey/monkey_island/installation
 PYTHON_FOLDER=/var/monkey/monkey_island/bin/python
+PYTHON_VERSION=python3.7
 
 # Prepare python virtualenv
-pip3 install virtualenv --no-index --find-links file://$INSTALLATION_FOLDER
-python3 -m virtualenv -p python3 ${PYTHON_FOLDER}
+# This is using the apt package `python3.7-venv` which is listed in the `control` file as a dependency.
+# See https://packages.debian.org/stable/python/python3.7-venv
+$PYTHON_VERSION -m venv ${PYTHON_FOLDER}
 
 # install pip requirements
 ${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/monkey_island/requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
