@@ -120,7 +120,7 @@ class TestMonkeyBlackbox(object):
 
     @pytest.mark.xfail(reason="Test fails randomly - still investigating.")
     def test_tunneling(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "TUNNELING.conf", "Tunneling_exploiter", 10*60)
+        TestMonkeyBlackbox.run_basic_test(island_client, "TUNNELING.conf", "Tunneling_exploiter", 15*60)
 
     def test_wmi_and_mimikatz_exploiters(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "WMI_MIMIKATZ.conf", "WMI_exploiter,_mimikatz")
