@@ -5,10 +5,10 @@ Homepage: https://www.infectionmonkey.com
 Priority: optional
 Version: 1.0
 Description: Guardicore Infection Monkey Island installation package
-# Dependency        Why is it required
-# openssl           Server certificate generation
-# python3.7-dev     Server runtime
-# python3.7-venv    For creating virtual env to install all the server pip deps (don't want to pollute system python)
-# python3-venv      python3.7-venv doesn't work without it since you need ensure-pip
-# build-essential   for compiling python dependencies that don't come in a pre-compiled wheel, like `netifaces`
 Depends: openssl, python3.7-dev, python3.7-venv, python3-venv, build-essential
+# Dependency - Why is it required
+# openssl - Server certificate generation
+# python3.7-dev - Server runtime
+# python3.7-venv - For creating virtual env to install all the server pip deps (don't want to pollute system python)
+# python3-venv - python3.7-venv doesn't work without it since you need ensure-pip
+# build-essential - for compiling python dependencies that don't come in a pre-compiled wheel, like `netifaces`
