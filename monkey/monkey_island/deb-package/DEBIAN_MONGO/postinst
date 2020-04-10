@@ -56,6 +56,6 @@ service monkey-mongo start
 
 echo "Monkey Island installation ended."
 echo "The server should be accessible soon via https://localhost:5000/"
-echo "To check server status, run 'sudo service monkey_island status'"
+echo "To check the Island's status, run 'sudo service monkey-island status'"
 
 exit 0
