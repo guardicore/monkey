@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Installing Monkey Island (Infection Monkey server)..."
+
 MONKEY_FOLDER=/var/monkey
 INSTALLATION_FOLDER=/var/monkey/monkey_island/installation
 PYTHON_FOLDER=/var/monkey/monkey_island/bin/python
@@ -8,12 +10,15 @@ PYTHON_VERSION=python3.7
 # Prepare python virtualenv
 # This is using the apt package `python3.7-venv` which is listed in the `control` file as a dependency.
 # See https://packages.debian.org/stable/python/python3.7-venv
-echo "Using $(command -v $PYTHON_VERSION) as the base for virtualenv creation."
+echo "Using $(command -v $PYTHON_VERSION) as the base for virtualenv creation"
 $PYTHON_VERSION -m venv ${PYTHON_FOLDER}
 # shellcheck disable=SC1090
 source ${PYTHON_FOLDER}/bin/activate
 
-# install pip requirements
+echo "Installing Python dependencies using $(command -v pip)..."
+# First, make sure that pip is updated
+${PYTHON_FOLDER}/bin/python -m pip install --upgrade pip
+# Then install the dependecies from the pre-downloaded whl and tar.gz file
 ${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/monkey_island/requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
 
 deactivate
@@ -22,6 +27,7 @@ deactivate
 rm -rf ${INSTALLATION_FOLDER}
 rm -f ${MONKEY_FOLDER}/monkey_island/requirements.txt
 
+echo "Installing mongodb..."
 ${MONKEY_FOLDER}/monkey_island/install_mongo.sh ${MONKEY_FOLDER}/monkey_island/bin/mongodb
 
 if [ -d "/etc/systemd/network" ]; then
@@ -32,11 +38,13 @@ if [ -d "/etc/systemd/network" ]; then
     systemctl enable monkey-island
 fi
 
+echo "Creating server certificate..."
 ${MONKEY_FOLDER}/monkey_island/create_certificate.sh ${MONKEY_FOLDER}/monkey_island/
 
+echo "Starting services..."
 service monkey-island start
 service monkey-mongo start
 
-echo Monkey Island installation ended
+echo "Monkey Island installation ended. The server should now be accessible soon via https://localhost:5000/"
 
 exit 0
