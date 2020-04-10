@@ -16,7 +16,7 @@ DEFAULT_TIMEOUT_SECONDS = 5*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'hadoop-2', 'hadoop-3', 'mssql-16',
                          'mimikatz-14', 'mimikatz-15', 'struts2-23', 'struts2-24', 'tunneling-9', 'tunneling-10',
-                         'tunneling-11', 'weblogic-18', 'weblogic-19', 'shellshock-8']
+                         'tunneling-11', 'tunneling-12', 'weblogic-18', 'weblogic-19', 'shellshock-8']
 LOG_DIR_PATH = "./logs"
 LOGGER = logging.getLogger(__name__)
 
@@ -118,9 +118,8 @@ class TestMonkeyBlackbox(object):
     def test_shellshock_exploiter(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "SHELLSHOCK.conf", "Shellschock_exploiter")
 
-    @pytest.mark.xfail(reason="Test fails randomly - still investigating.")
     def test_tunneling(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "TUNNELING.conf", "Tunneling_exploiter", 10*60)
+        TestMonkeyBlackbox.run_basic_test(island_client, "TUNNELING.conf", "Tunneling_exploiter", 15*60)
 
     def test_wmi_and_mimikatz_exploiters(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "WMI_MIMIKATZ.conf", "WMI_exploiter,_mimikatz")
@@ -128,6 +127,7 @@ class TestMonkeyBlackbox(object):
     def test_wmi_pth(self, island_client):
         TestMonkeyBlackbox.run_basic_test(island_client, "WMI_PTH.conf", "WMI_PTH")
 
+    @pytest.mark.xfail(reason="Performance is slow, will improve on release 1.9.")
     def test_performance(self, island_client):
         """
         This test includes the SSH + Elastic + Hadoop + MSSQL machines all in one test

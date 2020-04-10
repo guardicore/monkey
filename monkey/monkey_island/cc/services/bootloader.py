@@ -17,7 +17,7 @@ class BootloaderService:
             telem['os_version'] = "Unknown OS"
 
         telem_id = BootloaderService.get_mongo_id_for_bootloader_telem(telem)
-        mongo.db.bootloader_telems.update({'_id': telem_id}, telem, upsert=True)
+        mongo.db.bootloader_telems.update({'_id': telem_id}, {'$setOnInsert': telem}, upsert=True)
 
         will_monkey_run = BootloaderService.is_os_compatible(telem)
         try:
