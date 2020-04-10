@@ -243,6 +243,12 @@ class NodeService:
             raise NodeCreationException("Bootloader ran on island, no need to create new node.")
 
         new_node = mongo.db.node.find_one({"ip_addresses": {"$in": bootloader_telem['ips']}})
+        # Temporary workaround to not create a node after monkey finishes
+        monkey_node = mongo.db.monkey.find_one({"ip_addresses": {"$in": bootloader_telem['ips']}})
+        if monkey_node:
+            # Don't create new node, monkey node is already present
+            return monkey_node
+
         if new_node is None:
             new_node = NodeService.create_node_from_bootloader_telem(bootloader_telem, will_monkey_run)
             if bootloader_telem['tunnel']:
