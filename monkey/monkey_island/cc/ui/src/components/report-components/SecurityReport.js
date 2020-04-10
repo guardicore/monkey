@@ -3,7 +3,7 @@ import BreachedServers from 'components/report-components/security/BreachedServe
 import ScannedServers from 'components/report-components/security/ScannedServers';
 import PostBreach from 'components/report-components/security/PostBreach';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {edgeGroupToColor, options} from 'components/map/MapOptions';
+import {edgeGroupToColor, getOptions} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/security/StolenPasswords';
 import CollapsibleWellComponent from 'components/report-components/security/CollapsibleWell';
 import {Line} from 'rc-progress';
@@ -54,13 +54,23 @@ class ReportPageComponent extends AuthComponent {
     super(props);
     this.state = {
       report: props.report,
-      graph: {nodes: [], edges: []}
+      graph: {nodes: [], edges: []},
+      nodeStateList: []
     };
   }
 
   componentDidMount() {
+    this.getNodeStateListFromServer();
     this.updateMapFromServer();
   }
+
+  getNodeStateListFromServer = () => {
+    this.authFetch('/api/netmap/nodeStates')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({nodeStateList: res.node_states});
+      });
+  };
 
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -396,7 +406,7 @@ class ReportPageComponent extends AuthComponent {
           <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg"  style={{color: '#a9aaa9'}}/></span>
         </div>
         <div style={{position: 'relative', height: '80vh'}}>
-          <ReactiveGraph graph={this.state.graph} options={options}/>
+          <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)}/>
         </div>
         <div style={{marginBottom: '20px'}}>
           <BreachedServers data={this.state.report.glance.exploited}/>

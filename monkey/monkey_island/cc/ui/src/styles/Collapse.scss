@@ -1,8 +1,9 @@
 $transition: 300ms cubic-bezier(0.6, 0.3, 0.3, 0.6);
 
-$danger-color: #d9acac;
+$danger-color: #ebbcba;
 $info-color: #ade3eb;
 $default-color: #e0ddde;
+$warning-color: #ffe28d;
 
 .collapse-item button {
   font-size: inherit;
@@ -39,6 +40,10 @@ $default-color: #e0ddde;
 
 .collapse-danger {
   background-color: $danger-color !important;
+}
+
+.collapse-warning {
+  background-color: $warning-color !important;
 }
 
 .collapse-info {

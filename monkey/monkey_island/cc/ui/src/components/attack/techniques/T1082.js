@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {renderMachineFromSystemData, renderUsageFields, ScanStatus} from './Helpers'
+import MitigationsComponent from './MitigationsComponent';
 
 
 class T1082 extends React.Component {
@@ -12,14 +13,18 @@ class T1082 extends React.Component {
   static getSystemInfoColumns() {
     return ([{
       columns: [
-        { Header: 'Machine',
+        {
+          Header: 'Machine',
           id: 'machine',
           accessor: x => renderMachineFromSystemData(x.machine),
-          style: {'whiteSpace': 'unset'}},
-        { Header: 'Gathered info',
+          style: {'whiteSpace': 'unset'}
+        },
+        {
+          Header: 'Gathered info',
           id: 'info',
           accessor: x => renderUsageFields(x.collections),
-          style: {'whiteSpace': 'unset'}}
+          style: {'whiteSpace': 'unset'}
+        }
       ]
     }])
   }
@@ -36,6 +41,7 @@ class T1082 extends React.Component {
             showPagination={false}
             defaultPageSize={this.props.data.system_info.length}
           /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

@@ -57,7 +57,7 @@ class AttackReport extends React.Component {
   static getComponentClass(tech_id, techniques) {
     switch (techniques[tech_id].status) {
       case ScanStatus.SCANNED:
-        return 'collapse-info';
+        return 'collapse-warning';
       case ScanStatus.USED:
         return 'collapse-danger';
       default:
@@ -79,16 +79,16 @@ class AttackReport extends React.Component {
   renderLegend() {
     return (<div id='header' className='row justify-content-between attack-legend'>
       <Col xs={4}>
-        <FontAwesomeIcon icon={faCircle} className='icon-default'/>
-        <span> - Not scanned</span>
+        <FontAwesomeIcon icon={faCircle} className='technique-not-attempted'/>
+        <span> - Not attempted</span>
       </Col>
       <Col xs={4}>
-        <FontAwesomeIcon icon={faCircle} className='icon-info'/>
-        <span> - Scanned</span>
+        <FontAwesomeIcon icon={faCircle} className='technique-attempted'/>
+        <span> - Tried (but failed)</span>
       </Col>
       <Col xs={4}>
-        <FontAwesomeIcon icon={faCircle} className='icon-danger'/>
-        <span> - Used</span>
+        <FontAwesomeIcon icon={faCircle} className='technique-used'/>
+        <span> - Successfully used</span>
       </Col>
     </div>)
   }

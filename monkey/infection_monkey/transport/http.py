@@ -7,9 +7,12 @@ import urllib
 from logging import getLogger
 from urllib.parse import urlsplit
 
+import requests
+
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 from infection_monkey.network.tools import get_interface_to_target
+import infection_monkey.control
 
 __author__ = 'hoffer'
 
@@ -108,12 +111,35 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     timeout = 30  # timeout with clients, set to None not to make persistent connection
     proxy_via = None  # pseudonym of the proxy in Via header, set to None not to modify original Via header
-    protocol_version = "HTTP/1.1"
+
+    def do_POST(self):
+        try:
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode()
+            LOG.info("Received bootloader's request: {}".format(post_data))
+            try:
+                dest_path = self.path
+                r = requests.post(url=dest_path,
+                                  data=post_data,
+                                  verify=False,
+                                  proxies=infection_monkey.control.ControlClient.proxies)
+                self.send_response(r.status_code)
+            except requests.exceptions.ConnectionError as e:
+                LOG.error("Couldn't forward request to the island: {}".format(e))
+                self.send_response(404)
+            except Exception as e:
+                LOG.error("Failed to forward bootloader request: {}".format(e))
+            finally:
+                self.end_headers()
+                self.wfile.write(r.content)
+        except Exception as e:
+            LOG.error("Failed receiving bootloader telemetry: {}".format(e))
 
     def version_string(self):
         return ""
 
     def do_CONNECT(self):
+        LOG.info("Received a connect request!")
         # just provide a tunnel, transfer the data with no modification
         req = self
         req.path = "https://%s/" % req.path.replace(':443', '')

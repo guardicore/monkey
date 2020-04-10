@@ -48,7 +48,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
 
     # Download the monkey
-    $command = "git clone --single-branch -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
+    $command = "git clone --single-branch --recurse-submodules -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
     Write-Output $command
     $output = cmd.exe /c $command
     $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\bin")
