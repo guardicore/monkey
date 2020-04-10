@@ -8,10 +8,15 @@ PYTHON_VERSION=python3.7
 # Prepare python virtualenv
 # This is using the apt package `python3.7-venv` which is listed in the `control` file as a dependency.
 # See https://packages.debian.org/stable/python/python3.7-venv
+echo "Using $(command -v $PYTHON_VERSION) as the base for virtualenv creation."
 $PYTHON_VERSION -m venv ${PYTHON_FOLDER}
+# shellcheck disable=SC1090
+source ${PYTHON_FOLDER}/bin/activate
 
 # install pip requirements
 ${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/monkey_island/requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
+
+deactivate
 
 # remove installation folder and unnecessary files
 rm -rf ${INSTALLATION_FOLDER}
