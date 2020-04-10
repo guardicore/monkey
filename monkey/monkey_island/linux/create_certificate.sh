@@ -3,6 +3,10 @@
 server_root=${1:-"./cc"}
 
 # We override the RANDFILE determined by default openssl.cnf
+# This is a known issue with the current version of openssl on Ubuntu 18.04 - once they release
+# a new version, we can delete this command. See
+# https://github.com/openssl/openssl/commit/0f58220973a02248ca5c69db59e615378467b9c8#diff-8ce6aaad88b10ed2b3b4592fd5c8e03a
+# for more details.
 dd bs=1024 count=2 </dev/urandom >~/.rnd
 
 openssl genrsa -out "$server_root"/server.key 2048
