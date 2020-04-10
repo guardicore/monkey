@@ -54,6 +54,8 @@ echo "Starting services..."
 service monkey-island start
 service monkey-mongo start
 
-echo "Monkey Island installation ended. The server should now be accessible soon via https://localhost:5000/"
+echo "Monkey Island installation ended."
+echo "The server should be accessible soon via https://localhost:5000/"
+echo "To check server status, run 'sudo service monkey_island status'"
 
 exit 0
