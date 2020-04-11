@@ -2,6 +2,7 @@
 
 server_root=${1:-"./cc"}
 
+echo "Creating server cetificate. Server root: $server_root"
 # We override the RANDFILE determined by default openssl.cnf
 # This is a known issue with the current version of openssl on Ubuntu 18.04 - once they release
 # a new version, we can delete this command. See
@@ -10,8 +11,11 @@ server_root=${1:-"./cc"}
 dd bs=1024 count=2 </dev/urandom >~/.rnd
 chmod 666 ~/.rnd
 
+echo "Generating key in $server_root/server.key"
 openssl genrsa -out "$server_root"/server.key 2048
+echo "Generating csr in $server_root/server.csr"
 openssl req -new -key "$server_root"/server.key -out "$server_root"/server.csr -subj "/C=GB/ST=London/L=London/O=Global Security/OU=Monkey Department/CN=monkey.com"
+echo "Generating certificate in $server_root/server.crt"
 openssl x509 -req -days 366 -in "$server_root"/server.csr -signkey "$server_root"/server.key -out $server_root/server.crt
 
 # Shove some new random data into the file to override the original seed.

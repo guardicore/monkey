@@ -48,14 +48,16 @@ if [ -d "/etc/systemd/network" ]; then
 fi
 
 echo "Creating server certificate..."
-${MONKEY_FOLDER}/monkey_island/create_certificate.sh ${MONKEY_FOLDER}/monkey_island/
+${MONKEY_FOLDER}/monkey_island/create_certificate.sh ${MONKEY_FOLDER}/monkey_island/cc
 
 echo "Starting services..."
 service monkey-island start
 service monkey-mongo start
 
+echo ""
 echo "Monkey Island installation ended."
-echo "The server should be accessible soon via https://localhost:5000/"
+echo "The server should be accessible soon via https://<server_ip>:5000/"
 echo "To check the Island's status, run 'sudo service monkey-island status'"
+echo ""
 
 exit 0
