@@ -17,12 +17,16 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
     def __init__(self):
         pass
 
-    def send(self):
+    def send(self, display_data=True):
         """
         Sends telemetry to island
         """
         data = self.get_data()
-        logger.debug("Sending {} telemetry. Data: {}".format(self.telem_category, json.dumps(data)))
+        if display_data:
+            data_to_display = json.dumps(data)
+        else:
+            data_to_display = 'redacted'
+        logger.debug("Sending {} telemetry. Data: {}".format(self.telem_category, data_to_display))
         ControlClient.send_telemetry(self.telem_category, data)
 
     @property
