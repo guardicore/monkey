@@ -180,7 +180,19 @@ class ConfigurePageComponent extends AuthComponent {
       if (techType[1].properties.hasOwnProperty(technique)) {
         let tempMatrix = this.state.attackConfig;
         tempMatrix[techType[0]].properties[technique].value = value;
-        this.setState({attackConfig: tempMatrix});
+
+        if (technique == 'T1136') {
+          let newConfig = this.state.configuration;
+          if (value && !newConfig['monkey']['general']['post_breach_actions'].includes('BackdoorUser')) {
+              newConfig['monkey']['general']['post_breach_actions'].push('BackdoorUser');
+            }
+          else if (!value && newConfig['monkey']['general']['post_breach_actions'].includes('BackdoorUser')) {
+              let toRemoveIndex = newConfig['monkey']['general']['post_breach_actions'].indexOf('BackdoorUser');
+              newConfig['monkey']['general']['post_breach_actions'].splice(toRemoveIndex, 1);
+            }
+          this.setState({attackConfig: tempMatrix, configuration: newConfig});
+          this.configSubmit();
+      }
 
         // Toggle all mapped techniques
         if (!mapped) {
@@ -205,6 +217,19 @@ class ConfigurePageComponent extends AuthComponent {
   updateConfigSection = () => {
     let newConfig = this.state.configuration;
     if (Object.keys(this.currentFormData).length > 0) {
+
+      if (this.currentSection == 'monkey') {
+        let tempMatrix = this.state.attackConfig;
+        if (this.currentFormData['general']['post_breach_actions'].includes('BackdoorUser')) {
+          tempMatrix['persistence'].properties['T1136'].value = true;
+        }
+        else {
+          tempMatrix['persistence'].properties['T1136'].value = false;
+        }
+        this.setState({attackConfig: tempMatrix});
+        this.matrixSubmit();
+      }
+
       newConfig[this.currentSection] = this.currentFormData;
       this.currentFormData = {};
     }

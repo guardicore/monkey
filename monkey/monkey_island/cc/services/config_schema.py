@@ -150,7 +150,7 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1136"]
                 },
                 {
                     "type": "string",
@@ -378,6 +378,7 @@ SCHEMA = {
                                 "$ref": "#/definitions/post_breach_acts"
                             },
                             "default": [
+                                "BackdoorUser",
                                 "CommunicateAsNewUser"
                             ],
                             "description": "List of actions the Monkey will run post breach"
