@@ -24,11 +24,11 @@ $PYTHON_VERSION -m venv ${PYTHON_FOLDER}
 # shellcheck disable=SC1090
 source ${PYTHON_FOLDER}/bin/activate
 
-echo "Installing Python dependencies using $(command -v pip)..."
+echo "Installing Python dependencies using $(command -v python) and $(command -v pip)..."
 # First, make sure that pip is updated
-${PYTHON_FOLDER}/bin/python -m pip install --upgrade pip
+python -m pip install --upgrade pip
 # Then install the dependecies from the pre-downloaded whl and tar.gz file
-${PYTHON_FOLDER}/bin/python -m pip install -r $MONKEY_FOLDER/monkey_island/requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
+python -m pip install -r $MONKEY_FOLDER/monkey_island/requirements.txt --no-index --find-links file://$INSTALLATION_FOLDER
 
 deactivate
 
