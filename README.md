@@ -41,7 +41,7 @@ To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonk
 
 <details>
 <summary>ATT&CK report</summary>
-<img src=".github/attack-report.png"  width="900" height="400">
+<img src=".github/attack-report.png"  width="900" height="500">
 <br>
 </details>
 
