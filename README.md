@@ -23,30 +23,26 @@ To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonk
 ## Screenshots
 <details>
 <summary>Map</summary>
-<br>
-<img src=".github/map-full.png"  width="800" height="500">
+<img src=".github/map-full.png"  width="800" height="600">
 <br>
 </details>
 
 <details>
-&lt;summary&gt;Security report&lt;&#47;summary&gt;
-&lt;br&gt;
+<summary>Security report</summary>
 <img src=".github/security-report.png"  width="800" height="500">
-&lt;&#47;details&gt;
+<br>
 </details>
 
 <details>
-&lt;summary&gt;Zero trust report&lt;&#47;summary&gt;
-&lt;br&gt;
+<summary>Zero trust report</summary>
 <img src=".github/zero-trust-report.png"  width="800" height="500">
-&lt;&#47;details&gt;
+<br>
 </details>
 
 <details>
-&lt;summary&gt;ATT&CK report&lt;&#47;summary&gt;
-&lt;br&gt;
-<img src=".github/attack-report.png"  width="800" height="500">
-&lt;&#47;details&gt;
+<summary>ATT&CK report</summary>
+<img src=".github/attack-report.png"  width="900" height="400">
+<br>
 </details>
 
 ## Main Features
