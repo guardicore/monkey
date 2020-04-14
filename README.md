@@ -21,25 +21,33 @@ The Infection Monkey is comprised of two parts:
 To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonkey.com). 
 
 ## Screenshots
-&lt;summary&gt;Map&lt;&#47;summary&gt;
-&lt;br&gt;
+<details>
+<summary>Map</summary>
+<br>
 <img src=".github/map-full.png"  width="800" height="500">
-&lt;&#47;details&gt;
+<br>
+</details>
 
+<details>
 &lt;summary&gt;Security report&lt;&#47;summary&gt;
 &lt;br&gt;
 <img src=".github/security-report.png"  width="800" height="500">
 &lt;&#47;details&gt;
+</details>
 
+<details>
 &lt;summary&gt;Zero trust report&lt;&#47;summary&gt;
 &lt;br&gt;
 <img src=".github/zero-trust-report.png"  width="800" height="500">
 &lt;&#47;details&gt;
+</details>
 
+<details>
 &lt;summary&gt;ATT&CK report&lt;&#47;summary&gt;
 &lt;br&gt;
 <img src=".github/attack-report.png"  width="800" height="500">
 &lt;&#47;details&gt;
+</details>
 
 ## Main Features
 
