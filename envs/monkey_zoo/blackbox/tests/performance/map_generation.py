@@ -9,7 +9,7 @@ MAX_ALLOWED_SINGLE_PAGE_TIME = timedelta(seconds=2)
 MAX_ALLOWED_TOTAL_TIME = timedelta(seconds=5)
 
 MAP_RESOURCES = [
-    "api/map",
+    "api/netmap",
 ]
 
 

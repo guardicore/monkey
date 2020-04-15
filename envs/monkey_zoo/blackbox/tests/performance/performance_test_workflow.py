@@ -23,7 +23,9 @@ class PerformanceTestWorkflow(BasicTest):
             self.island_client.kill_all_monkeys()
             self.exploitation_test.wait_until_monkeys_die()
             self.exploitation_test.wait_for_monkey_process_to_finish()
-            performance_test = EndpointPerformanceTest(self.name, self.performance_config, self.island_client)
-            performance_test.run()
+        performance_test = EndpointPerformanceTest(self.name, self.performance_config, self.island_client)
+        try:
+            assert performance_test.run()
+        finally:
             self.exploitation_test.parse_logs()
             self.island_client.reset_env()

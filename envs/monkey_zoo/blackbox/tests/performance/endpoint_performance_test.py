@@ -39,4 +39,4 @@ class EndpointPerformanceTest(BasicTest):
         else:
             LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
             # instead of raising for status, mark failed responses as maxtime
-            return timedelta.max()
+            return timedelta.max
