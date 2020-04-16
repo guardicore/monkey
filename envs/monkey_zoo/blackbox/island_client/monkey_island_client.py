@@ -31,7 +31,7 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def run_monkey_local(self):
-        response = self.requests.post_json("api/local-monkey", dict_data={"action": "run"})
+        response = self.requests.post_json("api/local-monkey", data={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
             LOGGER.info("Running the monkey.")
         else:

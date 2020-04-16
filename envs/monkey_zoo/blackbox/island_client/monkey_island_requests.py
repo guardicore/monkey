@@ -1,3 +1,5 @@
+from typing import Dict
+
 import requests
 import functools
 
@@ -55,9 +57,16 @@ class MonkeyIslandRequests(object):
                              verify=False)
 
     @_Decorators.refresh_jwt_token
-    def post_json(self, url, dict_data):
+    def post_json(self, url, data: Dict):
         return requests.post(self.addr + url,  # noqa: DUO123
-                             json=dict_data,
+                             json=data,
+                             headers=self.get_jwt_header(),
+                             verify=False)
+
+    @_Decorators.refresh_jwt_token
+    def patch_json(self, url, data: Dict):
+        return requests.patch(self.addr + url,  # noqa: DUO123
+                             json=data,
                              headers=self.get_jwt_header(),
                              verify=False)
 

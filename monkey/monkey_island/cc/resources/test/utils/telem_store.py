@@ -1,5 +1,6 @@
 from functools import wraps
 from os import mkdir, path
+from datetime import datetime
 
 from flask import request
 
@@ -14,11 +15,12 @@ class TestTelemStore:
     def store_test_telem(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            time = datetime.now()
             method = request.method
             content = request.data.decode()
             endpoint = request.path
             name = str(request.url_rule).replace('/', '_').replace('<', '_').replace('>', '_').replace(':', '_')
-            TestTelem(name=name, method=method, endpoint=endpoint, content=content).save()
+            TestTelem(name=name, method=method, endpoint=endpoint, content=content, time=time).save()
             return f(*args, **kwargs)
 
         return decorated_function
