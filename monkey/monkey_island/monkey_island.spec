@@ -19,7 +19,7 @@ def main():
     a = Analysis(['cc/main.py'],
                  pathex=['..'],
                  hiddenimports=get_hidden_imports(),
-                 hookspath=None,
+                 hookspath=[os.path.join(".", "pyinstaller_hooks")],
                  runtime_hooks=None,
                  binaries=None,
                  datas=added_datas,
