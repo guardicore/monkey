@@ -37,7 +37,7 @@ def main():
               debug=False,
               strip=get_exe_strip(),
               upx=True,
-              upx_exclude=['vcruntime140.dll'],
+              upx_exclude=['vcruntime140.dll', 'ucrtbase.dll'],
               console=True,
               icon=get_exe_icon())
 
@@ -74,7 +74,7 @@ def get_linux_only_binaries():
 
 
 def get_hidden_imports():
-    return ['_cffi_backend', 'queue'] if is_windows() else ['_cffi_backend']
+    return ['_cffi_backend', 'queue', 'pkg_resources.py2_warn'] if is_windows() else ['_cffi_backend']
 
 
 def get_msvcr():
