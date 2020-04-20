@@ -1,38 +1,13 @@
 from typing import List, Dict
 from os import listdir, path
 import copy
-import random
 import json
+
+from envs.monkey_zoo.blackbox.tests.performance.utils.fake_ip_generator import FakeIpGenerator
+from envs.monkey_zoo.blackbox.tests.performance.utils.fake_monkey import FakeMonkey
 
 
 TELEM_DIR_PATH = './tests/performance/test_telems'
-
-
-class FakeIpGenerator:
-    def __init__(self):
-        self.fake_ip_parts = [1, 1, 1, 1]
-
-    def generate_fake_ips_for_real_ips(self, real_ips):
-        self.fake_ip_parts[2] += 1
-        fake_ips = []
-        for i in range(len(real_ips)):
-            fake_ips.append('.'.join(str(part) for part in self.fake_ip_parts))
-            self.fake_ip_parts[3] += 1
-        return fake_ips
-
-
-class Monkey:
-    def __init__(self, ips, guid, fake_ip_generator: FakeIpGenerator, on_island=False):
-        self.ips = ips
-        self.guid = guid
-        self.fake_ip_generator = fake_ip_generator
-        self.on_island = on_island
-        self.fake_guid = str(random.randint(1000000000000, 9999999999999))
-        self.fake_ips = fake_ip_generator.generate_fake_ips_for_real_ips(ips)
-
-    def change_fake_data(self):
-        self.fake_ips = self.fake_ip_generator.generate_fake_ips_for_real_ips(self.ips)
-        self.fake_guid = str(random.randint(1000000000000, 9999999999999))
 
 
 class TelemParser:
@@ -54,16 +29,16 @@ class TelemParser:
             TelemParser.save_teletries_to_files(fake_telem_batch)
 
     @staticmethod
-    def fabricate_monkeys_in_telems(telems: List[Dict], monkeys: List[Monkey]):
+    def fabricate_monkeys_in_telems(telems: List[Dict], monkeys: List[FakeMonkey]):
         for telem in telems:
             for monkey in monkeys:
                 if monkey.on_island:
                     continue
-                if (monkey.guid in telem['content'] or monkey.guid in telem['endpoint']) and not monkey.on_island:
-                    telem['content'] = telem['content'].replace(monkey.guid, monkey.fake_guid)
-                    telem['endpoint'] = telem['endpoint'].replace(monkey.guid, monkey.fake_guid)
-                for i in range(len(monkey.ips)):
-                    telem['content'] = telem['content'].replace(monkey.ips[i], monkey.fake_ips[i])
+                if (monkey.original_guid in telem['content'] or monkey.original_guid in telem['endpoint']) and not monkey.on_island:
+                    telem['content'] = telem['content'].replace(monkey.original_guid, monkey.fake_guid)
+                    telem['endpoint'] = telem['endpoint'].replace(monkey.original_guid, monkey.fake_guid)
+                for i in range(len(monkey.original_ips)):
+                    telem['content'] = telem['content'].replace(monkey.original_ips[i], monkey.fake_ips[i])
 
     @staticmethod
     def offset_telem_times(iteration: int, telems: List[Dict]):
@@ -105,7 +80,7 @@ class TelemParser:
             if 'network_info' not in telem['data']:
                 continue
             guid = telem['monkey_guid']
-            monkey_present = [monkey for monkey in monkeys if monkey.guid == guid]
+            monkey_present = [monkey for monkey in monkeys if monkey.original_guid == guid]
             if not monkey_present:
                 ips = [net_info['addr'] for net_info in telem['data']['network_info']['networks']]
                 if self.island_ip in ips:
@@ -113,10 +88,10 @@ class TelemParser:
                 else:
                     on_island = False
 
-                monkeys.append(Monkey(ips=ips,
-                                      guid=guid,
-                                      fake_ip_generator=self.fake_ip_generator,
-                                      on_island=on_island))
+                monkeys.append(FakeMonkey(ips=ips,
+                                          guid=guid,
+                                          fake_ip_generator=self.fake_ip_generator,
+                                          on_island=on_island))
         return monkeys
 
 
