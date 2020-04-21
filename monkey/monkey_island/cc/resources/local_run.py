@@ -43,7 +43,29 @@ def run_local_monkey():
 
     # run the monkey
     try:
-        args = ['"%s" m0nk3y -s %s:%s' % (target_path, local_ip_addresses()[0], env.get_island_port())]
+        
+        #Retrieving the Command Servers from Monkey_Island UI
+        Config_Dict=ConfigService.get_config(False,True,True)                       
+        CommandServerUI_List=Config_Dict['cnc']['servers']['command_servers']
+        Final_IPList=[]                                       #The IP List of all servers that need to be communicated 
+        
+        i=0
+        while(i<len(local_ip_addresses())):
+             Final_IPList.append(local_ip_addresses()[i]+":" + str(env.get_island_port()))
+             i=i+1
+        i=0
+        while(i<len(CommandServerUI_List)):
+             Final_IPList.append(CommandServerUI_List[i])
+             i=i+1
+        
+        args = ['"%s" m0nk3y -s ' % (target_path)]
+        
+        i=0
+        while(i<(len(Final_IPList))):                          #Now,args have the final string to run the Monkey_executable
+              args[0]= args[0]+Final_IPList[i]+"  "
+              i=i+1
+        
+      
         if sys.platform == "win32":
             args = "".join(args)
         pid = subprocess.Popen(args, shell=True).pid
