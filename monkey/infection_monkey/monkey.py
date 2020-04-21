@@ -57,7 +57,7 @@ class InfectionMonkey(object):
         self._dropper_path = None
         self._exploiters = None
         self._fingerprint = None
-        self._default_server = None
+        self._default_servers = None
         self._default_server_port = None
         self._depth = 0
         self._opts = None
@@ -72,13 +72,13 @@ class InfectionMonkey(object):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument('-p', '--parent')
         arg_parser.add_argument('-t', '--tunnel')
-        arg_parser.add_argument('-s', '--server',nargs = '+')
+        arg_parser.add_argument('-s', '--server', nargs = '+')
         arg_parser.add_argument('-d', '--depth', type=int)
         self._opts, self._args = arg_parser.parse_known_args(self._args)
 
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
-        self._default_server = self._opts.server
+        self._default_servers = self._opts.server
 
         if self._opts.depth:
             WormConfiguration._depth_from_commandline = True
@@ -87,17 +87,10 @@ class InfectionMonkey(object):
         self._dropper_path = sys.argv[0]
 
         server_num=0     
-        secondary_servers= len(self._args) 
+        server_count= len(self._args)+1
   
-        if self._default_server:
-           if self._default_server[0] not in WormConfiguration.command_servers:
-                LOG.debug("Added default server: %s" % self._default_server[0])
-                WormConfiguration.command_servers.insert(0, self._default_server[0])
-           else:
-                LOG.debug("Default server: %s is already in command servers list" % self._default_server[0])
-           server_num=server_num+1
-        
-        while server_num<(secondary_servers):
+        if self._default_servers
+         while server_num < (server_count):
            if self._default_server[server_num ] not in WormConfiguration.command_servers:
                LOG.debug("Added default server: %s" % self._default_server[server_num])
                WormConfiguration.command_servers.insert(server_num, self._default_server[server_num])
@@ -186,13 +179,13 @@ class InfectionMonkey(object):
 
                     if monkey_tunnel:
                         monkey_tunnel.set_tunnel_for_host(machine)
-                    if self._default_server:
-                        if self._network.on_island(self._default_server):
+                    if self._default_servers:
+                        if self._network.on_island(self._default_servers):
                             machine.set_default_server(get_interface_to_target(machine.ip_addr) +
                                                        (':' + self._default_server_port if self._default_server_port else ''))
                         else:
-                            machine.set_default_server(self._default_server)
-                        LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_server))
+                            machine.set_default_server(self._default_servers)
+                        LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_servers))
 
                     # Order exploits according to their type
                     if WormConfiguration.should_exploit:
