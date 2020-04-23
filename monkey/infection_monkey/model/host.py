@@ -9,7 +9,7 @@ class VictimHost(object):
         self.services = {}
         self.monkey_exe = None
         self.default_tunnel = None
-        self.default_server = None
+        self.server_list = None
 
     def as_dict(self):
         return self.__dict__
@@ -44,5 +44,3 @@ class VictimHost(object):
         victim += "target monkey: %s" % self.monkey_exe
         return victim
 
-    def set_default_server(self, default_server):
-        self.default_server = default_server

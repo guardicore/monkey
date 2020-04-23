@@ -41,7 +41,7 @@ class MonkeyDrops(object):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument('-p', '--parent')
         arg_parser.add_argument('-t', '--tunnel')
-        arg_parser.add_argument('-s', '--server')
+        arg_parser.add_argument('-s', '--servers')
         arg_parser.add_argument('-d', '--depth', type=int)
         arg_parser.add_argument('-l', '--location')
         self.monkey_args = args[1:]
