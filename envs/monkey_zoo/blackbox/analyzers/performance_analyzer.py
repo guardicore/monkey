@@ -14,11 +14,11 @@ class PerformanceAnalyzer(Analyzer):
         self.endpoint_timings = endpoint_timings
 
     def analyze_test_results(self):
-        # Calculate total time and check each page
+        # Calculate total time and check each endpoint
         single_page_time_less_then_max = True
         total_time = timedelta()
-        for page, elapsed in self.endpoint_timings.items():
-            LOGGER.info(f"page {page} took {str(elapsed)}")
+        for endpoint, elapsed in self.endpoint_timings.items():
+            LOGGER.info(f"Endpoint {endpoint} took {str(elapsed)}")
             total_time += elapsed
             if elapsed > self.performance_test_config.max_allowed_single_page_time:
                 single_page_time_less_then_max = False

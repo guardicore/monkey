@@ -1,7 +1,11 @@
 from typing import Dict
+from datetime import timedelta
+
 
 import requests
 import functools
+
+from envs.monkey_zoo.blackbox.island_client.supported_reuqest_method import SupportedRequestMethod
 
 # SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
 import logging
@@ -16,6 +20,26 @@ class MonkeyIslandRequests(object):
     def __init__(self, server_address):
         self.addr = "https://{IP}/".format(IP=server_address)
         self.token = self.try_get_jwt_from_server()
+        self.supported_request_methods = {SupportedRequestMethod.GET: self.get,
+                                          SupportedRequestMethod.POST: self.post,
+                                          SupportedRequestMethod.PATCH: self.patch,
+                                          SupportedRequestMethod.DELETE: self.delete}
+
+    def get_request_time(self, url, method: SupportedRequestMethod, data=None):
+        response = self.send_request_by_method(url, method, data)
+        if response.ok:
+            LOGGER.debug(f"Got ok for {url} content peek:\n{response.content[:120].strip()}")
+            return response.elapsed
+        else:
+            LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
+            # instead of raising for status, mark failed responses as maxtime
+            return timedelta.max
+
+    def send_request_by_method(self, url, method=SupportedRequestMethod.GET, data=None):
+        if data:
+            return self.supported_request_methods[method](url, data)
+        else:
+            return self.supported_request_methods[method](url)
 
     def try_get_jwt_from_server(self):
         try:
@@ -64,9 +88,9 @@ class MonkeyIslandRequests(object):
                              verify=False)
 
     @_Decorators.refresh_jwt_token
-    def patch_json(self, url, data: Dict):
+    def patch(self, url, data: Dict):
         return requests.patch(self.addr + url,  # noqa: DUO123
-                             json=data,
+                             data=data,
                              headers=self.get_jwt_header(),
                              verify=False)
 
