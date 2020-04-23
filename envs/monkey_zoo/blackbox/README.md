@@ -17,3 +17,19 @@ Run the following command:
 #### Running in PyCharm
 Configure a PyTest configuration with the additional argument `--island=35.207.152.72` on the 
 `monkey\envs\monkey_zoo\blackbox`.
+
+### Running telemetry performance test
+To run telemetry performance test follow these steps:
+1. Gather monkey telemetries.
+    1. Enable "Export monkey telemetries" in Configuration -> Internal -> Tests if you don't have 
+    exported telemetries already.
+    2. Run monkey and wait until infection is done.
+    3. All telemetries are gathered in `monkey/test_telems`
+2. Run telemetry performance test.
+    1. Move directory `monkey/test_telems` to `envs/monkey_zoo/blackbox/tests/performance/test_telems`
+    2. (Optional) Use `envs/monkey_zoo/blackbox/tests/performance/utils/telem_parser.py` to multiply 
+    telemetries gathered.
+        1. Run `telem_parser.py` scrip with working directory set to `monkey\envs\monkey_zoo\blackbox`
+        2. Pass integer to indicate the multiplier. For example running `telem_parser.py 4` will replicate
+        telemetries 4 times.
+    3. Run blackbox tests, telemetry performance test will run as part of it.

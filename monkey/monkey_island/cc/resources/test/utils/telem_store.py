@@ -1,12 +1,14 @@
 from functools import wraps
 from os import mkdir, path
+import shutil
 from datetime import datetime
 
 from flask import request
 
 from monkey_island.cc.models.test_telem import TestTelem
+from monkey_island.cc.services.config import ConfigService
 
-MONKEY_TELEM_COLLECTION_NAME = "monkey_telems_for_tests"
+TEST_TELEM_DIR = "./test_telems"
 
 
 class TestTelemStore:
@@ -15,27 +17,27 @@ class TestTelemStore:
     def store_test_telem(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            time = datetime.now()
-            method = request.method
-            content = request.data.decode()
-            endpoint = request.path
-            name = str(request.url_rule).replace('/', '_').replace('<', '_').replace('>', '_').replace(':', '_')
-            TestTelem(name=name, method=method, endpoint=endpoint, content=content, time=time).save()
+            if ConfigService.is_test_telem_export_enabled():
+                time = datetime.now()
+                method = request.method
+                content = request.data.decode()
+                endpoint = request.path
+                name = str(request.url_rule).replace('/', '_').replace('<', '_').replace('>', '_').replace(':', '_')
+                TestTelem(name=name, method=method, endpoint=endpoint, content=content, time=time).save()
             return f(*args, **kwargs)
 
         return decorated_function
 
     @staticmethod
     def export_test_telems():
-        telem_dir = "./test_telems"
         try:
-            mkdir(telem_dir)
+            mkdir(TEST_TELEM_DIR)
         except FileExistsError:
-            pass
+            shutil.rmtree(TEST_TELEM_DIR)
+            mkdir(TEST_TELEM_DIR)
         for test_telem in TestTelem.objects():
-            with open(TestTelemStore.get_unique_file_path_for_test_telem(telem_dir, test_telem), 'w') as file:
+            with open(TestTelemStore.get_unique_file_path_for_test_telem(TEST_TELEM_DIR, test_telem), 'w') as file:
                 file.write(test_telem.to_json())
-
 
     @staticmethod
     def get_unique_file_path_for_test_telem(target_dir: str, test_telem: TestTelem):

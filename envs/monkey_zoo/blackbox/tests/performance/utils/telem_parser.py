@@ -2,6 +2,7 @@ from typing import List, Dict
 from os import listdir, path
 import copy
 import json
+import sys
 
 from envs.monkey_zoo.blackbox.tests.performance.utils.fake_ip_generator import FakeIpGenerator
 from envs.monkey_zoo.blackbox.tests.performance.utils.fake_monkey import FakeMonkey
@@ -11,10 +12,10 @@ TELEM_DIR_PATH = './tests/performance/test_telems'
 
 
 class TelemParser:
-    def __init__(self, island_ip: str, multiplier: int):
+
+    def __init__(self, multiplier: int):
         self.multiplier = multiplier
         self.fake_ip_generator = FakeIpGenerator()
-        self.island_ip = island_ip
 
     def multiply_telems(self):
         telems = TelemParser.get_all_telemetries()
@@ -51,7 +52,7 @@ class TelemParser:
             TelemParser.save_telemetry_to_file(telem)
 
     @staticmethod
-    def save_telemetry_to_file(telem):
+    def save_telemetry_to_file(telem: Dict):
         telem_filename = telem['name'] + telem['method']
         for i in range(10000):
             if not path.exists(path.join(TELEM_DIR_PATH, (str(i) + telem_filename))):
@@ -71,10 +72,11 @@ class TelemParser:
         return telems
 
     @staticmethod
-    def get_all_telemetries():
+    def get_all_telemetries() -> List[Dict]:
         return [json.loads(t) for t in TelemParser.read_telem_files()]
 
     def get_monkeys_from_telems(self, telems: List[Dict]):
+        island_ips = TelemParser.get_island_ips_from_telems(telems)
         monkeys = []
         for telem in [telem for telem in telems if 'telem_category' in telem and telem['telem_category'] == 'system_info']:
             if 'network_info' not in telem['data']:
@@ -83,7 +85,7 @@ class TelemParser:
             monkey_present = [monkey for monkey in monkeys if monkey.original_guid == guid]
             if not monkey_present:
                 ips = [net_info['addr'] for net_info in telem['data']['network_info']['networks']]
-                if self.island_ip in ips:
+                if set(island_ips).intersection(ips):
                     on_island = True
                 else:
                     on_island = False
@@ -94,6 +96,16 @@ class TelemParser:
                                           on_island=on_island))
         return monkeys
 
+    @staticmethod
+    def get_island_ips_from_telems(telems: List[Dict]) -> List[str]:
+        island_ips = []
+        for telem in telems:
+            if 'config' in telem:
+                island_ips = telem['config']['command_servers']
+                for i in range(len(island_ips)):
+                    island_ips[i] = island_ips[i].replace(":5000", "")
+        return island_ips
+
 
 if __name__ == "__main__":
-    TelemParser(island_ip='192.168.56.1', multiplier=100).multiply_telems()
+    TelemParser(multiplier=int(sys.argv[1])).multiply_telems()

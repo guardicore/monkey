@@ -1,5 +1,5 @@
 """
-Define a Document Schema for the Monkey document.
+Define a Document Schema for the TestTelem document.
 """
 from mongoengine import Document, StringField, DateTimeField
 

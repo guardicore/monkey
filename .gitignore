@@ -82,5 +82,9 @@ MonkeyZoo/*
 !MonkeyZoo/config.tf
 !MonkeyZoo/MonkeyZooDocs.pdf
 
+# Exported monkey telemetries
+/monkey/test_telems/
+
+
 # vim swap files
 *.swp

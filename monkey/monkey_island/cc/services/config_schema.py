@@ -736,6 +736,19 @@ SCHEMA = {
                             "description": "List of SSH key pairs to use, when trying to ssh into servers"
                         }
                     }
+                },
+                "testing": {
+                    "title": "Testing",
+                    "type": "object",
+                    "properties": {
+                        "export_monkey_telems": {
+                            "title": "Export monkey telemetries",
+                            "type": "boolean",
+                            "default": False,
+                            "description": "Exports unencrypted telemetries that can be used for tests in development."
+                                           " Do not turn on!"
+                        }
+                    }
                 }
             }
         },

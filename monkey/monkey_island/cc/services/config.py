@@ -307,3 +307,7 @@ class ConfigService:
             pair['public_key'] = encryptor.dec(pair['public_key'])
             pair['private_key'] = encryptor.dec(pair['private_key'])
         return pair
+
+    @staticmethod
+    def is_test_telem_export_enabled():
+        return ConfigService.get_config_value(['internal', 'testing', 'export_monkey_telems'])
