@@ -217,19 +217,6 @@ class ConfigurePageComponent extends AuthComponent {
   updateConfigSection = () => {
     let newConfig = this.state.configuration;
     if (Object.keys(this.currentFormData).length > 0) {
-
-      if (this.currentSection == 'monkey') {
-        let tempMatrix = this.state.attackConfig;
-        if (this.currentFormData['general']['post_breach_actions'].includes('BackdoorUser')) {
-          tempMatrix['persistence'].properties['T1136'].value = true;
-        }
-        else {
-          tempMatrix['persistence'].properties['T1136'].value = false;
-        }
-        this.setState({attackConfig: tempMatrix});
-        this.matrixSubmit();
-      }
-
       newConfig[this.currentSection] = this.currentFormData;
       this.currentFormData = {};
     }
