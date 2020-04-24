@@ -49,5 +49,5 @@ class TelemetryPerformanceTest:
     def get_verbose_telemetry_endpoint(telemetry):
         telem_category = ""
         if "telem_category" in telemetry['content']:
-            telem_category = "_" + json.loads(telemetry['content'])['telem_category']
+            telem_category = "_" + json.loads(telemetry['content'])['telem_category'] + "_" + telemetry['_id']['$oid']
         return telemetry['endpoint'] + telem_category
