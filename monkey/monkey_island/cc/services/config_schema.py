@@ -158,7 +158,7 @@ SCHEMA = {
                         "CommunicateAsNewUser"
                     ],
                     "title": "Communicate as new user",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1136"]
                 },
             ],
         },

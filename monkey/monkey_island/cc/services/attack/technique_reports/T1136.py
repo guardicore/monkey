@@ -3,14 +3,14 @@ from monkey_island.cc.services.reporting.report import ReportService
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.models import Monkey
 
-__author__ = "VakarisZ"
+__author__ = "shreyamalviya"
 
 
 class T1136(AttackTechnique):
     tech_id = "T1136"
-    unscanned_msg = "Monkey didn't try creating a new user."
+    unscanned_msg = "Monkey didn't try creating a new user on the network's systems."
     scanned_msg = ""
-    used_msg = "Monkey created a new user."
+    used_msg = "Monkey created a new user on the network's systems."
 
     @staticmethod
     def get_report_data():
