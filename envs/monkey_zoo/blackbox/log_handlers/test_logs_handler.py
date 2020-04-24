@@ -1,7 +1,6 @@
+import logging
 import os
 import shutil
-
-import logging
 
 from envs.monkey_zoo.blackbox.log_handlers.monkey_log_parser import MonkeyLogParser
 from envs.monkey_zoo.blackbox.log_handlers.monkey_logs_downloader import MonkeyLogsDownloader

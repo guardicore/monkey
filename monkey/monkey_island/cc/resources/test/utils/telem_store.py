@@ -9,6 +9,7 @@ from monkey_island.cc.models.test_telem import TestTelem
 from monkey_island.cc.services.config import ConfigService
 
 TEST_TELEM_DIR = "./test_telems"
+MAX_SAME_CATEGORY_TELEMS = 10000
 
 
 class TestTelemStore:
@@ -42,11 +43,12 @@ class TestTelemStore:
     @staticmethod
     def get_unique_file_path_for_test_telem(target_dir: str, test_telem: TestTelem):
         telem_filename = TestTelemStore._get_filename_by_test_telem(test_telem)
-        for i in range(100):
+        for i in range(MAX_SAME_CATEGORY_TELEMS):
             potential_filepath = path.join(target_dir, (telem_filename + str(i)))
             if path.exists(potential_filepath):
                 continue
             return potential_filepath
+        raise Exception(f"Too many telemetries of the same category. Max amount {MAX_SAME_CATEGORY_TELEMS}")
 
     @staticmethod
     def _get_filename_by_test_telem(test_telem: TestTelem):

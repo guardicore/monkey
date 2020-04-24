@@ -12,10 +12,10 @@ this information in the GCP Console `Compute Engine/VM Instances` under _Externa
 #### Running in command line
 Run the following command:
 
-`monkey\envs\monkey_zoo\blackbox>python -m pytest --island=35.207.152.72:5000 test_blackbox.py`
+`monkey\envs\monkey_zoo\blackbox>python -m pytest -s --island=35.207.152.72:5000 test_blackbox.py`
 
 #### Running in PyCharm
-Configure a PyTest configuration with the additional argument `--island=35.207.152.72` on the 
+Configure a PyTest configuration with the additional arguments `-s --island=35.207.152.72` on the 
 `monkey\envs\monkey_zoo\blackbox`.
 
 ### Running telemetry performance test

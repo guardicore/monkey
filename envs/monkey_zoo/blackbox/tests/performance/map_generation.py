@@ -1,8 +1,8 @@
 from datetime import timedelta
 
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
-from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
 from envs.monkey_zoo.blackbox.tests.performance.performance_test import PerformanceTest
+from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
 from envs.monkey_zoo.blackbox.tests.performance.performance_test_workflow import PerformanceTestWorkflow
 
 MAX_ALLOWED_SINGLE_PAGE_TIME = timedelta(seconds=2)

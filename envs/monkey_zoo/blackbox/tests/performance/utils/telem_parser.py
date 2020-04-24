@@ -1,14 +1,17 @@
-from typing import List, Dict
-from os import listdir, path
 import copy
 import json
+import logging
 import sys
+from os import listdir, path
+from typing import List, Dict
+
+from tqdm import tqdm
 
 from envs.monkey_zoo.blackbox.tests.performance.utils.fake_ip_generator import FakeIpGenerator
 from envs.monkey_zoo.blackbox.tests.performance.utils.fake_monkey import FakeMonkey
 
-
 TELEM_DIR_PATH = './tests/performance/test_telems'
+LOGGER = logging.getLogger(__name__)
 
 
 class TelemParser:
@@ -21,7 +24,7 @@ class TelemParser:
         telems = TelemParser.get_all_telemetries()
         telem_contents = [json.loads(telem['content']) for telem in telems]
         monkeys = self.get_monkeys_from_telems(telem_contents)
-        for i in range(self.multiplier):
+        for i in tqdm(range(self.multiplier), desc="Batch of fabricated telemetries"):
             for monkey in monkeys:
                 monkey.change_fake_data()
             fake_telem_batch = copy.deepcopy(telems)
@@ -31,7 +34,7 @@ class TelemParser:
 
     @staticmethod
     def fabricate_monkeys_in_telems(telems: List[Dict], monkeys: List[FakeMonkey]):
-        for telem in telems:
+        for telem in tqdm(telems, desc="Teletry"):
             for monkey in monkeys:
                 if monkey.on_island:
                     continue

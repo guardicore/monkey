@@ -1,18 +1,16 @@
-import os
 import logging
-
-import pytest
+import os
 from time import sleep
 
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
+import pytest
+
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
-from envs.monkey_zoo.blackbox.tests.performance.map_generation import MapGenerationTest
-from envs.monkey_zoo.blackbox.tests.performance.report_generation import ReportGenerationTest
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
+from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
+from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
 from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import TelemetryPerformanceTest
 from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
-from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
-from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 
 DEFAULT_TIMEOUT_SECONDS = 5*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30

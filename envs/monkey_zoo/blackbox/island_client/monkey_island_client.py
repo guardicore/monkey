@@ -1,8 +1,7 @@
-from datetime import timedelta
-from time import sleep
 import json
-
 import logging
+from time import sleep
+
 from bson import json_util
 
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests

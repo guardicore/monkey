@@ -85,6 +85,5 @@ MonkeyZoo/*
 # Exported monkey telemetries
 /monkey/test_telems/
 
-
 # vim swap files
 *.swp

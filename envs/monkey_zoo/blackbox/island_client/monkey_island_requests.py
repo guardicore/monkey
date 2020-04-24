@@ -7,9 +7,9 @@ import functools
 
 from envs.monkey_zoo.blackbox.island_client.supported_reuqest_method import SupportedRequestMethod
 
-# SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
 import logging
 
+# SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
 NO_AUTH_CREDS = '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062' \
                 '8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557'
 LOGGER = logging.getLogger(__name__)
