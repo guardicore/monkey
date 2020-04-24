@@ -1,6 +1,7 @@
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 from monkey_island.cc.services.reporting.report import ReportService
 from common.utils.attack_utils import ScanStatus
+from common.data.post_breach_consts import POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER
 from monkey_island.cc.models import Monkey
 
 __author__ = "shreyamalviya"
@@ -9,7 +10,7 @@ __author__ = "shreyamalviya"
 class T1136(AttackTechnique):
     tech_id = "T1136"
     unscanned_msg = "Monkey didn't try creating a new user on the network's systems."
-    scanned_msg = ""
+    scanned_msg = "Monkey tried creating a new user on the network's systems, but failed."
     used_msg = "Monkey created a new user on the network's systems."
 
     @staticmethod
@@ -21,15 +22,17 @@ class T1136(AttackTechnique):
         for node in scanned_nodes:
             if node['pba_results'] != 'None':
                 for pba in node['pba_results']:
-                    if pba['name'] == 'Backdoor user':
-                        status = ScanStatus.USED.value
+                    if pba['name'] in [POST_BREACH_BACKDOOR_USER,
+                                       POST_BREACH_COMMUNICATE_AS_NEW_USER]:
+                        status = ScanStatus.USED.value if pba['result'][1]\
+                                                       else ScanStatus.SCANNED.value
                         data.update({
                             'info': [{
                                 'machine': {
                                     'hostname': pba['hostname'],
                                     'ips': node['ip_addresses'],
                                 },
-                                'result': pba['result'][0]
+                                'result': ': '.join([pba['name'], pba['result'][0]])
                             }]
                         })
             data.update(T1136.get_message_and_status(status))
