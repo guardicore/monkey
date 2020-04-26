@@ -232,6 +232,18 @@ class Configuration(object):
             cred_list.append(cred)
         return cred_list
 
+    def get_command_server_string(self):
+        """
+        Returns a string that contains all the command servers that monkey can connect back to
+        """
+        server_string = " "
+
+        for server in self.command_servers:
+           server_string = server_string + server + " "
+    
+        return server_string  
+   
+
     exploit_user_list = ['Administrator', 'root', 'user']
     exploit_password_list = ["Password1!", "1234", "password", "12345678"]
     exploit_lm_hash_list = []

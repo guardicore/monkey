@@ -57,7 +57,7 @@ class InfectionMonkey(object):
         self._dropper_path = None
         self._exploiters = None
         self._fingerprint = None
-        self._default_server = None
+        self._default_servers = None
         self._default_server_port = None
         self._depth = 0
         self._opts = None
@@ -78,7 +78,7 @@ class InfectionMonkey(object):
 
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
-        self._default_server = self._opts.server
+        self._default_servers = self._opts.server
 
         if self._opts.depth:
             WormConfiguration._depth_from_commandline = True
@@ -87,15 +87,15 @@ class InfectionMonkey(object):
         self._dropper_path = sys.argv[0]
 
         server_num=0     
-        server_count = len(self._default_server)
+        server_count = len(self._default_servers)
   
-        if self._default_server:
+        if self._default_servers:
          while server_num < (server_count):
-           if self._default_server[server_num ] not in WormConfiguration.command_servers:
-               LOG.debug("Added default server: %s" % self._default_server[server_num])
-               WormConfiguration.command_servers.insert(server_num, self._default_server[server_num])
+           if self._default_servers[server_num ] not in WormConfiguration.command_servers:
+               LOG.debug("Added default server: %s" % self._default_servers[server_num])
+               WormConfiguration.command_servers.insert(server_num, self._default_servers[server_num])
            else:
-                LOG.debug("Default server: %s is already in command servers list" % self._default_server[server_num])
+                LOG.debug("Default server: %s is already in command servers list" % self._default_servers[server_num])
            server_num=server_num+1
 
     def start(self):
@@ -179,8 +179,8 @@ class InfectionMonkey(object):
 
                     if monkey_tunnel:
                         monkey_tunnel.set_tunnel_for_host(machine)
-                    if self._default_server:
-                        machine.server_list = WormConfiguration.command_servers
+                    if self._default_servers:
+                        machine.server_list = WormConfiguration.get_command_server_string()
                         
 
                     # Order exploits according to their type
@@ -364,7 +364,7 @@ class InfectionMonkey(object):
 
     def set_default_port(self):
         try:
-            self._default_server_port = self._default_server.split(':')[1]
+            self._default_server_port = self._default_servers.split(':')[1]
         except KeyError:
             self._default_server_port = ''
 
@@ -375,5 +375,5 @@ class InfectionMonkey(object):
         """
         if not ControlClient.find_server(default_tunnel=self._default_tunnel):
             raise PlannedShutdownException("Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel))
-        self._default_server = WormConfiguration.current_server
-        LOG.debug("default server set to: %s" % self._default_server)
+        self._default_servers = WormConfiguration.current_server
+        LOG.debug("Servers set to: %s" % self._default_servers)
