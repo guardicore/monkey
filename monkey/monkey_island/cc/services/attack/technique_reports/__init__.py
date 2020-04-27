@@ -5,39 +5,43 @@ from monkey_island.cc.database import mongo
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from common.utils.code_utils import abstractstatic
+from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 
 logger = logging.getLogger(__name__)
 
 
-class AttackTechnique(object):
+class AttackTechnique(object, metaclass=abc.ABCMeta):
     """ Abstract class for ATT&CK report components """
-    __metaclass__ = abc.ABCMeta
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def unscanned_msg(self):
         """
         :return: Message that will be displayed in case attack technique was not scanned.
         """
         pass
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def scanned_msg(self):
         """
         :return: Message that will be displayed in case attack technique was scanned.
         """
         pass
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def used_msg(self):
         """
         :return: Message that will be displayed in case attack technique was used by the scanner.
         """
         pass
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def tech_id(self):
         """
-        :return: Message that will be displayed in case of attack technique not being scanned.
+        :return: Id of attack technique. E.g. T1003
         """
         pass
 
@@ -108,10 +112,21 @@ class AttackTechnique(object):
         data.update({'status': status,
                      'title': title,
                      'message': cls.get_message_by_status(status)})
+        data.update(cls.get_mitigation_by_status(status))
         return data
 
     @classmethod
     def get_base_data_by_status(cls, status):
         data = cls.get_message_and_status(status)
         data.update({'title': cls.technique_title()})
+        data.update(cls.get_mitigation_by_status(status))
         return data
+
+    @classmethod
+    def get_mitigation_by_status(cls, status: ScanStatus) -> dict:
+        if status == ScanStatus.USED.value:
+            mitigation_document = AttackMitigations.get_mitigation_by_technique_id(str(cls.tech_id))
+            return {'mitigations': mitigation_document.to_mongo().to_dict()['mitigations']}
+        else:
+            return {}
+

@@ -1,4 +1,3 @@
-import json
 from time import sleep
 
 import logging
@@ -14,16 +13,16 @@ LOGGER = logging.getLogger(__name__)
 
 class BasicTest(object):
 
-    def __init__(self, name, island_client, config_parser, analyzers, timeout, log_handler):
+    def __init__(self, name, island_client, config_parser, analyzers, timeout, post_exec_analyzers, log_handler):
         self.name = name
         self.island_client = island_client
         self.config_parser = config_parser
         self.analyzers = analyzers
+        self.post_exec_analyzers = post_exec_analyzers
         self.timeout = timeout
         self.log_handler = log_handler
 
     def run(self):
-        LOGGER.info("Uploading configuration:\n{}".format(json.dumps(self.config_parser.config_json, indent=2)))
         self.island_client.import_config(self.config_parser.config_raw)
         self.print_test_starting_info()
         try:
@@ -33,13 +32,13 @@ class BasicTest(object):
             self.island_client.kill_all_monkeys()
             self.wait_until_monkeys_die()
             self.wait_for_monkey_process_to_finish()
+            self.test_post_exec_analyzers()
             self.parse_logs()
             self.island_client.reset_env()
 
     def print_test_starting_info(self):
         LOGGER.info("Started {} test".format(self.name))
-        LOGGER.info("Machines participating in test:")
-        LOGGER.info("  ".join(self.config_parser.get_ips_of_targets()))
+        LOGGER.info("Machines participating in test: " + ", ".join(self.config_parser.get_ips_of_targets()))
         print("")
 
     def test_until_timeout(self):
@@ -63,10 +62,8 @@ class BasicTest(object):
                                                                                              timer.get_time_taken()))
 
     def all_analyzers_pass(self):
-        for analyzer in self.analyzers:
-            if not analyzer.analyze_test_results():
-                return False
-        return True
+        analyzers_results = [analyzer.analyze_test_results() for analyzer in self.analyzers]
+        return all(analyzers_results)
 
     def get_analyzer_logs(self):
         log = ""
@@ -95,4 +92,9 @@ class BasicTest(object):
         If we try to launch monkey during that time window monkey will fail to start, that's
         why test needs to wait a bit even after all monkeys are dead.
         """
+        LOGGER.debug("Waiting for Monkey process to close...")
         sleep(TIME_FOR_MONKEY_PROCESS_TO_FINISH)
+
+    def test_post_exec_analyzers(self):
+        post_exec_analyzers_results = [analyzer.analyze_test_results() for analyzer in self.post_exec_analyzers]
+        assert all(post_exec_analyzers_results)

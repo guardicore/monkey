@@ -6,18 +6,28 @@ from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
-
-
+from infection_monkey.utils.plugins.plugin import Plugin
+import infection_monkey.post_breach.actions
 LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
 
 EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
-class PBA(object):
+
+class PBA(Plugin):
     """
     Post breach action object. Can be extended to support more than command execution on target machine.
     """
+
+    @staticmethod
+    def base_package_name():
+        return infection_monkey.post_breach.actions.__package__
+
+    @staticmethod
+    def base_package_file():
+        return infection_monkey.post_breach.actions.__file__
+
     def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
         """
         :param name: Name of post breach action.
@@ -75,13 +85,13 @@ class PBA(object):
         :return: Tuple of command's output string and boolean, indicating if it succeeded
         """
         try:
-            output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True)
+            output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True).decode()
             if not output:
                 output = EXECUTION_WITHOUT_OUTPUT
             return output, True
         except subprocess.CalledProcessError as e:
             # Return error output of the command
-            return e.output, False
+            return e.output.decode(), False
 
     @staticmethod
     def choose_command(linux_cmd, windows_cmd):

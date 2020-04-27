@@ -1,8 +1,7 @@
 import logging
 
-from monkey_island.cc.services.config import ConfigService
-from common.cloud.aws_instance import AwsInstance
-from common.cloud.aws_service import AwsService
+from common.cloud.aws.aws_instance import AwsInstance
+from common.cloud.aws.aws_service import AwsService
 from common.cmd.aws.aws_cmd_runner import AwsCmdRunner
 from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner
@@ -55,7 +54,7 @@ class RemoteRunAwsService:
 
     @staticmethod
     def is_running_on_aws():
-        return RemoteRunAwsService.aws_instance.is_aws_instance()
+        return RemoteRunAwsService.aws_instance.is_instance()
 
     @staticmethod
     def update_aws_region_authless():
@@ -131,7 +130,8 @@ class RemoteRunAwsService:
         return r"[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {" \
                r"$true}; (New-Object System.Net.WebClient).DownloadFile('https://" + island_ip + \
                r":5000/api/monkey/download/monkey-windows-" + bit_text + r".exe','.\\monkey.exe'); " \
-                                                                         r";Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s " + island_ip + r":5000'; "
+                                                                         r";Start-Process -FilePath '.\\monkey.exe' " \
+                                                                         r"-ArgumentList 'm0nk3y -s " + island_ip + r":5000'; "
 
     @staticmethod
     def _get_run_monkey_cmd_line(is_linux, is_64bit, island_ip):

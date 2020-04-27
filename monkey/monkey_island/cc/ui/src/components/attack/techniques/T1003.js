@@ -1,8 +1,8 @@
 import React from 'react';
-import '../../../styles/Collapse.scss'
 import '../../report-components/security/StolenPasswords'
-import StolenPasswordsComponent from "../../report-components/security/StolenPasswords";
-import {ScanStatus} from "./Helpers"
+import StolenPasswordsComponent from '../../report-components/security/StolenPasswords';
+import {ScanStatus} from './Helpers'
+import MitigationsComponent from './MitigationsComponent';
 
 
 class T1003 extends React.Component {
@@ -17,8 +17,10 @@ class T1003 extends React.Component {
         <div>{this.props.data.message}</div>
         <br/>
         {this.props.data.status === ScanStatus.USED ?
-          <StolenPasswordsComponent data={this.props.reportData.glance.stolen_creds.concat(this.props.reportData.glance.ssh_keys)}/>
-          : ""}
+          <StolenPasswordsComponent
+            data={this.props.data.stolen_creds}/>
+          : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

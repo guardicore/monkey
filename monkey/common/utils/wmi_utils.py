@@ -1,6 +1,6 @@
 import wmi
 
-from mongo_utils import MongoUtils
+from .mongo_utils import MongoUtils
 
 __author__ = 'maor.rayzin'
 

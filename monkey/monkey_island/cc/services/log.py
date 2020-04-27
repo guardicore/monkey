@@ -20,7 +20,7 @@ class LogService:
             return \
                 {
                     'monkey_label': monkey_label,
-                    'log': log_file.read(),
+                    'log': log_file.read().decode(),
                     'timestamp': log['timestamp']
                 }
 
@@ -34,7 +34,7 @@ class LogService:
     @staticmethod
     def add_log(monkey_id, log_data, timestamp=datetime.now()):
         LogService.remove_logs_by_monkey_id(monkey_id)
-        file_id = database.gridfs.put(log_data)
+        file_id = database.gridfs.put(log_data, encoding='utf-8')
         return mongo.db.log.insert(
             {
                 'monkey_id': monkey_id,

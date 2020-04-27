@@ -6,9 +6,9 @@ import psutil
 from enum import IntEnum
 
 from infection_monkey.network.info import get_host_subnets
-from infection_monkey.system_info.aws_collector import AwsCollector
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
 from infection_monkey.system_info.netstat_collector import NetstatCollector
+from infection_monkey.system_info.system_info_collectors_handler import SystemInfoCollectorsHandler
 
 LOG = logging.getLogger(__name__)
 
@@ -16,7 +16,8 @@ LOG = logging.getLogger(__name__)
 try:
     WindowsError
 except NameError:
-    WindowsError = None
+    # noinspection PyShadowingBuiltins
+    WindowsError = psutil.AccessDenied
 
 __author__ = 'uri'
 
@@ -34,10 +35,10 @@ class SystemInfoCollector(object):
     def __init__(self):
         self.os = SystemInfoCollector.get_os()
         if OperatingSystem.Windows == self.os:
-            from windows_info_collector import WindowsInfoCollector
+            from .windows_info_collector import WindowsInfoCollector
             self.collector = WindowsInfoCollector()
         else:
-            from linux_info_collector import LinuxInfoCollector
+            from .linux_info_collector import LinuxInfoCollector
             self.collector = LinuxInfoCollector()
 
     def get_info(self):
@@ -60,50 +61,12 @@ class InfoCollector(object):
         self.info = {}
 
     def get_info(self):
-        self.get_hostname()
-        self.get_process_list()
+        # Collect all hardcoded
         self.get_network_info()
         self.get_azure_info()
-        self.get_aws_info()
 
-    def get_hostname(self):
-        """
-        Adds the fully qualified computer hostname to the system information.
-        :return: None. Updates class information
-        """
-        LOG.debug("Reading hostname")
-        self.info['hostname'] = socket.getfqdn()
-
-    def get_process_list(self):
-        """
-        Adds process information from the host to the system information.
-        Currently lists process name, ID, parent ID, command line
-        and the full image path of each process.
-        :return: None. Updates class information
-        """
-        LOG.debug("Reading process list")
-        processes = {}
-        for process in psutil.process_iter():
-            try:
-                processes[process.pid] = {"name": process.name(),
-                                          "pid": process.pid,
-                                          "ppid": process.ppid(),
-                                          "cmdline": " ".join(process.cmdline()),
-                                          "full_image_path": process.exe(),
-                                          }
-            except (psutil.AccessDenied, WindowsError):
-                # we may be running as non root
-                # and some processes are impossible to acquire in Windows/Linux
-                # in this case we'll just add what we can
-                processes[process.pid] = {"name": "null",
-                                          "pid": process.pid,
-                                          "ppid": process.ppid(),
-                                          "cmdline": "ACCESS DENIED",
-                                          "full_image_path": "null",
-                                          }
-                continue
-
-        self.info['process_list'] = processes
+        # Collect all plugins
+        SystemInfoCollectorsHandler().execute_all_configured()
 
     def get_network_info(self):
         """
@@ -149,11 +112,3 @@ class InfoCollector(object):
         except Exception:
             # If we failed to collect azure info, no reason to fail all the collection. Log and continue.
             LOG.error("Failed collecting Azure info.", exc_info=True)
-
-    def get_aws_info(self):
-        # noinspection PyBroadException
-        try:
-            self.info['aws'] = AwsCollector().get_aws_info()
-        except Exception:
-            # If we failed to collect aws info, no reason to fail all the collection. Log and continue.
-            LOG.error("Failed collecting AWS info.", exc_info=True)

@@ -1,10 +1,11 @@
 import React from 'react';
 import {Col, Modal} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import {Icon} from 'react-fa';
-import InfMapPreviewPaneComponent from 'components/map/preview-pane/InfMapPreviewPane';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStopCircle, faMinus } from '@fortawesome/free-solid-svg-icons'
+import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {options, edgeGroupToColor} from 'components/map/MapOptions';
+import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 
 class MapPageComponent extends AuthComponent {
@@ -12,13 +13,20 @@ class MapPageComponent extends AuthComponent {
     super(props);
     this.state = {
       graph: {nodes: [], edges: []},
+      nodeStateList:[],
       selected: null,
       selectedType: null,
       killPressed: false,
       showKillDialog: false,
       telemetry: [],
-      telemetryLastTimestamp: null
+      telemetryLastTimestamp: null,
+      isScrolledUp: false,
+      telemetryLines: 0,
+      telemetryCurrentLine: 0
     };
+    this.telemConsole = React.createRef();
+    this.handleScroll = this.handleScroll.bind(this);
+    this.scrollTop = 0;
   }
 
   events = {
@@ -26,6 +34,7 @@ class MapPageComponent extends AuthComponent {
   };
 
   componentDidMount() {
+    this.getNodeStateListFromServer();
     this.updateMapFromServer();
     this.interval = setInterval(this.timedEvents, 5000);
   }
@@ -33,6 +42,14 @@ class MapPageComponent extends AuthComponent {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getNodeStateListFromServer = () => {
+    this.authFetch('/api/netmap/nodeStates')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({nodeStateList: res.node_states});
+      });
+  };
 
   timedEvents = () => {
     this.updateMapFromServer();
@@ -43,26 +60,36 @@ class MapPageComponent extends AuthComponent {
     this.authFetch('/api/netmap')
       .then(res => res.json())
       .then(res => {
-        res.edges.forEach(edge => {
-          edge.color = {'color': edgeGroupToColor(edge.group)};
-        });
-        this.setState({graph: res});
-        this.props.onStatusChange();
+        if (res.hasOwnProperty('edges')) {
+          res.edges.forEach(edge => {
+            edge.color = {'color': edgeGroupToColor(edge.group)};
+          });
+          this.setState({graph: res});
+          this.props.onStatusChange();
+        }
       });
   };
 
   updateTelemetryFromServer = () => {
-    this.authFetch('/api/telemetry-feed?timestamp='+this.state.telemetryLastTimestamp)
+    this.authFetch('/api/telemetry-feed?timestamp=' + this.state.telemetryLastTimestamp)
       .then(res => res.json())
       .then(res => {
-        let newTelem = this.state.telemetry.concat(res['telemetries']);
+        if ('telemetries' in res) {
+          let newTelem = this.state.telemetry.concat(res['telemetries']);
 
-        this.setState(
-          {
-            telemetry: newTelem,
-            telemetryLastTimestamp: res['timestamp']
-          });
-        this.props.onStatusChange();
+          this.setState(
+            {
+              telemetry: newTelem,
+              telemetryLastTimestamp: res['timestamp']
+            });
+          this.props.onStatusChange();
+
+          let telemConsoleRef = this.telemConsole.current;
+          if (!this.state.isScrolledUp) {
+            telemConsoleRef.scrollTop = telemConsoleRef.scrollHeight - telemConsoleRef.clientHeight;
+            this.scrollTop = telemConsoleRef.scrollTop;
+          }
+        }
       });
   };
 
@@ -71,8 +98,7 @@ class MapPageComponent extends AuthComponent {
       this.authFetch('/api/netmap/node?id=' + event.nodes[0])
         .then(res => res.json())
         .then(res => this.setState({selected: res, selectedType: 'node'}));
-    }
-    else if (event.edges.length === 1) {
+    } else if (event.edges.length === 1) {
       let displayedEdge = this.state.graph.edges.find(
         function (edge) {
           return edge['id'] === event.edges[0];
@@ -84,8 +110,7 @@ class MapPageComponent extends AuthComponent {
           .then(res => res.json())
           .then(res => this.setState({selected: res.edge, selectedType: 'edge'}));
       }
-    }
-    else {
+    } else {
       this.setState({selected: null, selectedType: null});
     }
   }
@@ -100,7 +125,9 @@ class MapPageComponent extends AuthComponent {
     return (
       <Modal show={this.state.showKillDialog} onHide={() => this.setState({showKillDialog: false})}>
         <Modal.Body>
-          <h2><div className="text-center">Are you sure you want to kill all monkeys?</div></h2>
+          <h2>
+            <div className="text-center">Are you sure you want to kill all monkeys?</div>
+          </h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
             This might take a few moments...
           </p>
@@ -133,12 +160,33 @@ class MapPageComponent extends AuthComponent {
     );
   }
 
+  handleScroll(e) {
+    let element = e.target;
+
+    let telemetryStyle = window.getComputedStyle(element);
+    let telemetryLineHeight = parseInt((telemetryStyle.lineHeight).replace('px', ''));
+
+    this.setState({
+      isScrolledUp: (element.scrollTop < this.scrollTop),
+      telemetryCurrentLine: Math.trunc(element.scrollTop/telemetryLineHeight)+1,
+      telemetryLines: Math.trunc(element.scrollHeight/telemetryLineHeight)
+    });
+  }
+
   renderTelemetryConsole() {
     return (
-      <div className="telemetry-console">
+      <div className="telemetry-console" onScroll={this.handleScroll} ref={this.telemConsole}>
         {
           this.state.telemetry.map(this.renderTelemetryEntry)
         }
+      </div>
+    );
+  }
+
+  renderTelemetryLineCount() {
+    return (
+      <div className="telemetry-lines">
+        <b>[{this.state.telemetryCurrentLine}/{this.state.telemetryLines}]</b>
       </div>
     );
   }
@@ -153,18 +201,19 @@ class MapPageComponent extends AuthComponent {
         <Col xs={8}>
           <div className="map-legend">
             <b>Legend: </b>
-            <span>Exploit <i className="fa fa-lg fa-minus" style={{color: '#cc0200'}} /></span>
+            <span>Exploit <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#cc0200'}}/></span>
             <b style={{color: '#aeaeae'}}> | </b>
-            <span>Scan <i className="fa fa-lg fa-minus" style={{color: '#ff9900'}} /></span>
+            <span>Scan <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#ff9900'}}/></span>
             <b style={{color: '#aeaeae'}}> | </b>
-            <span>Tunnel <i className="fa fa-lg fa-minus" style={{color: '#0158aa'}} /></span>
+            <span>Tunnel <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#0158aa'}}/></span>
             <b style={{color: '#aeaeae'}}> | </b>
-            <span>Island Communication <i className="fa fa-lg fa-minus" style={{color: '#a9aaa9'}} /></span>
+            <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#a9aaa9'}}/></span>
           </div>
-          { this.renderTelemetryConsole() }
+          {this.renderTelemetryConsole()}
           <div style={{height: '80vh'}}>
-            <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
+            <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)} events={this.events}/>
           </div>
+          {this.renderTelemetryLineCount()}
         </Col>
         <Col xs={4}>
           <input className="form-control input-block"
@@ -174,8 +223,9 @@ class MapPageComponent extends AuthComponent {
           <div style={{'overflow': 'auto', 'marginBottom': '1em'}}>
             <Link to="/infection/telemetry" className="btn btn-default pull-left" style={{'width': '48%'}}>Monkey
               Telemetry</Link>
-            <button onClick={() => this.setState({showKillDialog: true})} className="btn btn-danger pull-right" style={{'width': '48%'}}>
-              <Icon name="stop-circle" style={{'marginRight': '0.5em'}}/>
+            <button onClick={() => this.setState({showKillDialog: true})} className="btn btn-danger pull-right"
+                    style={{'width': '48%'}}>
+              <FontAwesomeIcon icon={faStopCircle} style={{'marginRight': '0.5em'}}/>
               Kill All Monkeys
             </button>
           </div>
@@ -186,7 +236,7 @@ class MapPageComponent extends AuthComponent {
             </div>
             : ''}
 
-          <InfMapPreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
+          <PreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
         </Col>
       </div>
     );

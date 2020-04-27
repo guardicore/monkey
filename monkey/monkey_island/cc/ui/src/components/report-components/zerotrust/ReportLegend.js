@@ -1,8 +1,11 @@
-import React, {Component} from "react";
-import StatusLabel from "./StatusLabel";
-import {ZeroTrustStatuses} from "./ZeroTrustPillars";
-import {NavLink} from "react-router-dom";
-import {Panel} from "react-bootstrap";
+import React, {Component} from 'react';
+import StatusLabel from './StatusLabel';
+import {ZeroTrustStatuses} from './ZeroTrustPillars';
+import {NavLink} from 'react-router-dom';
+import {Panel} from 'react-bootstrap';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 
 class ZeroTrustReportLegend extends Component {
@@ -13,7 +16,7 @@ class ZeroTrustReportLegend extends Component {
       <Panel>
         <Panel.Heading>
           <Panel.Title toggle>
-            <h3><i className="fa fa-chevron-down" /> Legend</h3>
+            <h3><FontAwesomeIcon icon={faChevronDown} /> Legend</h3>
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
@@ -27,30 +30,32 @@ class ZeroTrustReportLegend extends Component {
 
   getLegendContent() {
     return <div id={this.constructor.name}>
-      <ul style={{listStyle: "none"}}>
+      <ul style={{listStyle: 'none'}}>
         <li>
-          <div style={{display: "inline-block"}}>
+          <div style={{display: 'inline-block'}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.failed}/>
           </div>
-          {"\t"}At least one of the tests related to this component failed. This means that the Infection Monkey detected an unmet Zero Trust requirement.
+          {'\t'}At least one of the tests related to this component failed. This means that the Infection Monkey detected an
+          unmet Zero Trust requirement.
         </li>
         <li>
-          <div style={{display: "inline-block"}}>
+          <div style={{display: 'inline-block'}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.verify}/>
           </div>
-          {"\t"}At least one of the tests’ results related to this component requires further manual verification.
+          {'\t'}At least one of the tests’ results related to this component requires further manual verification.
         </li>
         <li>
-          <div style={{display: "inline-block"}}>
+          <div style={{display: 'inline-block'}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.passed}/>
           </div>
-          {"\t"}All Tests related to this pillar passed. No violation of a Zero Trust guiding principle was detected.
+          {'\t'}All Tests related to this pillar passed. No violation of a Zero Trust guiding principle was detected.
         </li>
         <li>
-          <div style={{display: "inline-block"}}>
+          <div style={{display: 'inline-block'}}>
             <StatusLabel showText={true} status={ZeroTrustStatuses.unexecuted}/>
           </div>
-          {"\t"}This status means the test wasn't executed.To activate more tests, refer to the Monkey <NavLink to="/configuration"><u>configuration</u></NavLink> page.
+          {'\t'}This status means the test wasn't executed.To activate more tests, refer to the Monkey <NavLink
+          to="/configuration"><u>configuration</u></NavLink> page.
         </li>
       </ul>
     </div>;

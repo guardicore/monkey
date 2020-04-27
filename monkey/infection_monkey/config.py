@@ -1,12 +1,10 @@
 import hashlib
-import os
 import json
+import os
 import sys
-import types
 import uuid
 from abc import ABCMeta
 from itertools import product
-import importlib
 
 __author__ = 'itamar'
 
@@ -14,36 +12,24 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
-SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list"]
+SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list", "exploit_ssh_keys"]
 HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
 
 
 class Configuration(object):
     def from_kv(self, formatted_data):
-        # now we won't work at <2.7 for sure
-        network_import = importlib.import_module('infection_monkey.network')
-        exploit_import = importlib.import_module('infection_monkey.exploit')
-
         unknown_items = []
-        for key, value in formatted_data.items():
+        for key, value in list(formatted_data.items()):
             if key.startswith('_'):
                 continue
             if key in ["name", "id", "current_server"]:
                 continue
             if self._depth_from_commandline and key == "depth":
                 continue
-            # handle in cases
-            if key == 'finger_classes':
-                class_objects = [getattr(network_import, val) for val in value]
-                setattr(self, key, class_objects)
-            elif key == 'exploiter_classes':
-                class_objects = [getattr(exploit_import, val) for val in value]
-                setattr(self, key, class_objects)
+            if hasattr(self, key):
+                setattr(self, key, value)
             else:
-                if hasattr(self, key):
-                    setattr(self, key, value)
-                else:
-                    unknown_items.append(key)
+                unknown_items.append(key)
         return unknown_items
 
     def from_json(self, json_data):
@@ -74,7 +60,7 @@ class Configuration(object):
 
             val_type = type(value)
 
-            if val_type is types.FunctionType or val_type is types.MethodType:
+            if callable(value):
                 continue
 
             if val_type in (type, ABCMeta):
@@ -139,6 +125,7 @@ class Configuration(object):
 
     finger_classes = []
     exploiter_classes = []
+    system_info_collectors_classes = []
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 100
@@ -287,7 +274,7 @@ class Configuration(object):
         :param sensitive_data: the data to hash.
         :return: the hashed data.
         """
-        password_hashed = hashlib.sha512(sensitive_data).hexdigest()
+        password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
         return password_hashed
 
 

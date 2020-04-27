@@ -1,11 +1,8 @@
 import os
 import uuid
-from datetime import datetime
 
-import bson
 import flask_restful
-from bson.json_util import dumps
-from flask import Flask, send_from_directory, make_response, Response
+from flask import Flask, send_from_directory, Response
 from werkzeug.exceptions import NotFound
 
 from monkey_island.cc.auth import init_jwt
@@ -22,25 +19,28 @@ from monkey_island.cc.resources.island_configuration import IslandConfiguration
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
+from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
+from monkey_island.cc.resources.test.clear_caches import ClearCaches
 from monkey_island.cc.resources.version_update import VersionUpdate
-from monkey_island.cc.services.database import Database
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
+from monkey_island.cc.resources.bootloader import Bootloader
+from monkey_island.cc.services.database import Database
+from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
+from monkey_island.cc.services.representations import output_json
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 from monkey_island.cc.resources.test.monkey_test import MonkeyTest
 from monkey_island.cc.resources.test.log_test import LogTest
 
 __author__ = 'Barak'
-
 
 HOME_FILE = 'index.html'
 
@@ -60,32 +60,6 @@ def serve_static_file(static_path):
 
 def serve_home():
     return serve_static_file(HOME_FILE)
-
-
-def normalize_obj(obj):
-    if '_id' in obj and not 'id' in obj:
-        obj['id'] = obj['_id']
-        del obj['_id']
-
-    for key, value in obj.items():
-        if type(value) is bson.objectid.ObjectId:
-            obj[key] = str(value)
-        if type(value) is datetime:
-            obj[key] = str(value)
-        if type(value) is dict:
-            obj[key] = normalize_obj(value)
-        if type(value) is list:
-            for i in range(0, len(value)):
-                if type(value[i]) is dict:
-                    value[i] = normalize_obj(value[i])
-    return obj
-
-
-def output_json(obj, code, headers=None):
-    obj = normalize_obj(obj)
-    resp = make_response(dumps(obj), code)
-    resp.headers.extend(headers or {})
-    return resp
 
 
 def init_app_config(app, mongo_url):
@@ -115,6 +89,7 @@ def init_app_url_rules(app):
 def init_api_resources(api):
     api.add_resource(Root, '/api')
     api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
+    api.add_resource(Bootloader, '/api/bootloader/<string:os>')
     api.add_resource(LocalRun, '/api/local-monkey', '/api/local-monkey/')
     api.add_resource(ClientRun, '/api/client-monkey', '/api/client-monkey/')
     api.add_resource(Telemetry, '/api/telemetry', '/api/telemetry/', '/api/telemetry/<string:monkey_guid>')
@@ -125,6 +100,7 @@ def init_api_resources(api):
     api.add_resource(NetMap, '/api/netmap', '/api/netmap/')
     api.add_resource(Edge, '/api/netmap/edge', '/api/netmap/edge/')
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
+    api.add_resource(NodeStates, '/api/netmap/nodeStates')
 
     # report_type: zero_trust or security
     api.add_resource(
@@ -145,6 +121,7 @@ def init_api_resources(api):
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
 
     api.add_resource(MonkeyTest, '/api/test/monkey')
+    api.add_resource(ClearCaches, '/api/test/clear_caches')
     api.add_resource(LogTest, '/api/test/log')
 
 

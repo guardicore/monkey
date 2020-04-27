@@ -5,8 +5,9 @@ import subprocess
 import sys
 
 import infection_monkey.config
+from infection_monkey.network.HostFinger import HostFinger
+from infection_monkey.network.HostScanner import HostScanner
 from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostScanner, HostFinger
 
 __author__ = 'itamar'
 
@@ -20,7 +21,6 @@ LOG = logging.getLogger(__name__)
 
 
 class PingScanner(HostScanner, HostFinger):
-
     _SCANNED_SERVICE = ''
 
     def __init__(self):
@@ -29,7 +29,6 @@ class PingScanner(HostScanner, HostFinger):
         self._ttl_regex = re.compile(TTL_REGEX_STR, re.IGNORECASE)
 
     def is_host_alive(self, host):
-        assert isinstance(host, VictimHost)
 
         timeout = self._config.ping_scan_timeout
         if not "win32" == sys.platform:
@@ -43,19 +42,17 @@ class PingScanner(HostScanner, HostFinger):
                                     stderr=self._devnull)
 
     def get_host_fingerprint(self, host):
-        assert isinstance(host, VictimHost)
 
         timeout = self._config.ping_scan_timeout
         if not "win32" == sys.platform:
             timeout /= 1000
 
-        sub_proc = subprocess.Popen(["ping",
-                                     PING_COUNT_FLAG,
-                                     "1",
-                                     PING_TIMEOUT_FLAG,
-                                     str(timeout), host.ip_addr],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
+        sub_proc = subprocess.Popen(
+            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
 
         output = " ".join(sub_proc.communicate())
         regex_result = self._ttl_regex.search(output)

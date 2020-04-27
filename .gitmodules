@@ -1,0 +1,4 @@
+
+[submodule "monkey/monkey_island/cc/services/attack/attack_data"]
+	path = monkey/monkey_island/cc/services/attack/attack_data
+	url = https://github.com/guardicore/cti

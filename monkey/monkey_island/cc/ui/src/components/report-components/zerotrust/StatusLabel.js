@@ -1,30 +1,33 @@
-import React, {Component} from "react";
-import * as PropTypes from "prop-types";
+import React, {Component} from 'react';
+import * as PropTypes from 'prop-types';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faExclamationTriangle, faBomb, faQuestion } from '@fortawesome/free-solid-svg-icons';
 
 const statusToIcon = {
-  "Passed": "fa-check",
-  "Verify": "fa-exclamation-triangle",
-  "Failed": "fa-bomb",
-  "Unexecuted": "fa-question",
+  'Passed': faCheck,
+  'Verify': faExclamationTriangle,
+  'Failed': faBomb,
+  'Unexecuted': faQuestion
 };
 
 export const statusToLabelType = {
-  "Passed": "label-success",
-  "Verify": "label-warning",
-  "Failed": "label-danger",
-  "Unexecuted": "label-default",
+  'Passed': 'label-success',
+  'Verify': 'label-warning',
+  'Failed': 'label-danger',
+  'Unexecuted': 'label-default'
 };
 
 export default class StatusLabel extends Component {
   render() {
-    let text = "";
+    let text = '';
     if (this.props.showText) {
-      text = " " + this.props.status;
+      text = ' ' + this.props.status;
     }
 
     return (
-      <div className={"label " + statusToLabelType[this.props.status]} style={{display: "flow-root"}}>
-        <i className={"fa " + statusToIcon[this.props.status] + " " + this.props.size}/>{text}
+      <div className={'label ' + statusToLabelType[this.props.status]} style={{display: 'flow-root'}}>
+        <FontAwesomeIcon icon={statusToIcon[this.props.status]} size={this.props.size}/>{text}
       </div>
     );
   }

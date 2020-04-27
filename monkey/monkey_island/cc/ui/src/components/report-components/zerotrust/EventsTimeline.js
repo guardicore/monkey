@@ -1,13 +1,13 @@
-import React, {Component} from "react";
-import {Timeline, TimelineEvent} from "react-event-timeline";
-import * as PropTypes from "prop-types";
+import React, {Component} from 'react';
+import {Timeline, TimelineEvent} from 'react-event-timeline';
+import * as PropTypes from 'prop-types';
 
 let monkeyLocalIcon = require('../../../images/zerotrust/im-alert-machine-icon.svg');
 let monkeyNetworkIcon = require('../../../images/zerotrust/im-alert-network-icon.svg');
 
 const eventTypeToIcon = {
-  "monkey_local": monkeyLocalIcon,
-  "monkey_network": monkeyNetworkIcon,
+  'monkey_local': monkeyLocalIcon,
+  'monkey_network': monkeyNetworkIcon
 };
 
 export default class EventsTimeline extends Component {
@@ -22,8 +22,8 @@ export default class EventsTimeline extends Component {
                 key={index}
                 createdAt={event_time}
                 title={event.title}
-                icon={<img src={eventTypeToIcon[event.event_type]} alt="icon" style={{width: '24px'}} />}>
-                  {event.message}
+                icon={<img src={eventTypeToIcon[event.event_type]} alt="icon" style={{width: '24px'}}/>}>
+                {event.message}
               </TimelineEvent>)
             })
           }

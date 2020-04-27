@@ -1,4 +1,4 @@
-import abc
+from abc import ABCMeta, abstractmethod
 from datetime import timedelta
 import os
 from Crypto.Hash import SHA3_512
@@ -6,9 +6,7 @@ from Crypto.Hash import SHA3_512
 __author__ = 'itay.mizeretz'
 
 
-class Environment(object):
-    __metaclass__ = abc.ABCMeta
-
+class Environment(object, metaclass=ABCMeta):
     _ISLAND_PORT = 5000
     _MONGO_DB_NAME = "monkeyisland"
     _MONGO_DB_HOST = "localhost"
@@ -27,8 +25,6 @@ class Environment(object):
     @testing.setter
     def testing(self, value):
         self._testing = value
-
-    _MONKEY_VERSION = "1.7.0"
 
     def __init__(self):
         self.config = None
@@ -60,16 +56,13 @@ class Environment(object):
     def is_develop(self):
         return self.get_deployment() == 'develop'
 
-    def get_version(self):
-        return self._MONKEY_VERSION + ('-dev' if self.is_develop() else '')
-
     def _get_from_config(self, key, default_value=None):
         val = default_value
         if self.config is not None:
             val = self.config.get(key, val)
         return val
 
-    @abc.abstractmethod
+    @abstractmethod
     def get_auth_users(self):
         return
 

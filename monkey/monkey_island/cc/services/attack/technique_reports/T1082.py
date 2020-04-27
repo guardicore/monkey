@@ -6,13 +6,12 @@ __author__ = "VakarisZ"
 
 
 class T1082(AttackTechnique):
-
     tech_id = "T1082"
     unscanned_msg = "Monkey didn't gather any system info on the network."
     scanned_msg = ""
     used_msg = "Monkey gathered system info from machines in the network."
 
-    query = [{'$match': {'telem_category': 'system_info'}},
+    query = [{'$match': {'telem_category': 'system_info', 'data.network_info': {'$exists': True}}},
              {'$project': {'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
                            'aws': '$data.aws',
                            'netstat': '$data.network_info.netstat',
@@ -22,17 +21,17 @@ class T1082(AttackTechnique):
              {'$project': {'_id': 0,
                            'machine': 1,
                            'collections': [
-                             {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$gt': ['$aws', {}]}]},
-                              'name': {'$literal': 'Amazon Web Services info'}},
-                             {'used': {'$and': [{'$ifNull': ['$process_list', False]}, {'$gt': ['$process_list', {}]}]},
-                              'name': {'$literal': 'Running process list'}},
-                             {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$ne': ['$netstat', []]}]},
-                              'name': {'$literal': 'Network connections'}},
-                             {'used': {'$and': [{'$ifNull': ['$ssh_info', False]}, {'$ne': ['$ssh_info', []]}]},
-                              'name': {'$literal': 'SSH info'}},
-                             {'used': {'$and': [{'$ifNull': ['$azure_info', False]}, {'$ne': ['$azure_info', []]}]},
-                              'name': {'$literal': 'Azure info'}}
-                             ]}},
+                               {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$gt': ['$aws', {}]}]},
+                                'name': {'$literal': 'Amazon Web Services info'}},
+                               {'used': {'$and': [{'$ifNull': ['$process_list', False]}, {'$gt': ['$process_list', {}]}]},
+                                'name': {'$literal': 'Running process list'}},
+                               {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$ne': ['$netstat', []]}]},
+                                'name': {'$literal': 'Network connections'}},
+                               {'used': {'$and': [{'$ifNull': ['$ssh_info', False]}, {'$ne': ['$ssh_info', []]}]},
+                                'name': {'$literal': 'SSH info'}},
+                               {'used': {'$and': [{'$ifNull': ['$azure_info', False]}, {'$ne': ['$azure_info', []]}]},
+                                'name': {'$literal': 'Azure info'}}
+                           ]}},
              {'$group': {'_id': {'machine': '$machine', 'collections': '$collections'}}},
              {"$replaceRoot": {"newRoot": "$_id"}}]
 
@@ -45,5 +44,6 @@ class T1082(AttackTechnique):
             status = ScanStatus.USED.value
         else:
             status = ScanStatus.UNSCANNED.value
+        data.update(T1082.get_mitigation_by_status(status))
         data.update(T1082.get_message_and_status(status))
         return data

@@ -2,7 +2,7 @@ provider "google" {
   project = "test-000000"
   region  = "europe-west3"
   zone    = "europe-west3-b"
-  credentials = "${file("../gcp_keys/gcp_key.json")}"
+  credentials = file("../gcp_keys/gcp_key.json")
 }
 locals {
   resource_prefix = ""

@@ -1,7 +1,7 @@
 import React from 'react';
-import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import { renderMachineFromSystemData, ScanStatus } from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachineFromSystemData, ScanStatus} from './Helpers'
+import MitigationsComponent from './MitigationsComponent';
 
 
 class T1145 extends React.Component {
@@ -10,11 +10,11 @@ class T1145 extends React.Component {
     super(props);
   }
 
-  static renderSSHKeys(keys){
+  static renderSSHKeys(keys) {
     let output = [];
-    keys.forEach(function(keyInfo){
-        output.push(<div key={keyInfo['name']+keyInfo['home_dir']}>
-          SSH key pair used by <b>{keyInfo['name']}</b> user found in {keyInfo['home_dir']}</div>)
+    keys.forEach(function (keyInfo) {
+      output.push(<div key={keyInfo['name'] + keyInfo['home_dir']}>
+        SSH key pair used by <b>{keyInfo['name']}</b> user found in {keyInfo['home_dir']}</div>)
     });
     return (<div>{output}</div>);
   }
@@ -22,16 +22,21 @@ class T1145 extends React.Component {
   static getKeysInfoColumns() {
     return ([{
       columns: [
-        {Header: 'Machine',
+        {
+          Header: 'Machine',
           id: 'machine',
           accessor: x => renderMachineFromSystemData(x.machine),
-          style: { 'whiteSpace': 'unset' }},
-        {Header: 'Keys found',
+          style: {'whiteSpace': 'unset'}
+        },
+        {
+          Header: 'Keys found',
           id: 'keys',
           accessor: x => T1145.renderSSHKeys(x.ssh_info),
-          style: { 'whiteSpace': 'unset' }},
-        ]
-    }])};
+          style: {'whiteSpace': 'unset'}
+        }
+      ]
+    }])
+  }
 
   render() {
     return (
@@ -40,11 +45,12 @@ class T1145 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
-              columns={T1145.getKeysInfoColumns()}
-              data={this.props.data.ssh_info}
-              showPagination={false}
-              defaultPageSize={this.props.data.ssh_info.length}
-          /> : ""}
+            columns={T1145.getKeysInfoColumns()}
+            data={this.props.data.ssh_info}
+            showPagination={false}
+            defaultPageSize={this.props.data.ssh_info.length}
+          /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

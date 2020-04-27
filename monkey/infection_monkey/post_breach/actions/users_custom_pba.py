@@ -9,7 +9,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path
 from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
 from common.utils.attack_utils import ScanStatus
-from infection_monkey.exploit.tools.helpers import get_interface_to_target
+from infection_monkey.network.tools import get_interface_to_target
 
 LOG = logging.getLogger(__name__)
 
@@ -27,6 +27,7 @@ class UsersPBA(PBA):
     """
     Defines user's configured post breach action.
     """
+
     def __init__(self):
         super(UsersPBA, self).__init__(POST_BREACH_FILE_EXECUTION)
         self.filename = ''

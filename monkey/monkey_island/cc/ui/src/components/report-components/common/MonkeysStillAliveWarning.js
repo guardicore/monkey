@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import * as PropTypes from "prop-types";
+import React, {Component} from 'react';
+import * as PropTypes from 'prop-types';
 
 export default class MonkeysStillAliveWarning extends Component {
   render() {

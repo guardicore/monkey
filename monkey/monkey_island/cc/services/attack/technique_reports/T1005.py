@@ -5,7 +5,6 @@ __author__ = "VakarisZ"
 
 
 class T1005(AttackTechnique):
-
     tech_id = "T1005"
     unscanned_msg = "Monkey didn't gather any sensitive data from local system."
     scanned_msg = ""

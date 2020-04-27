@@ -9,25 +9,28 @@ logger = logging.getLogger(__name__)
 __author__ = 'itay.mizeretz'
 
 
-class BaseTelem(object):
+class BaseTelem(object, metaclass=abc.ABCMeta):
     """
     Abstract base class for telemetry.
     """
 
-    __metaclass__ = abc.ABCMeta
-
     def __init__(self):
         pass
 
-    def send(self):
+    def send(self, log_data=True):
         """
         Sends telemetry to island
         """
         data = self.get_data()
-        logger.debug("Sending {} telemetry. Data: {}".format(self.telem_category, json.dumps(data)))
+        if log_data:
+            data_to_log = json.dumps(data)
+        else:
+            data_to_log = 'redacted'
+        logger.debug("Sending {} telemetry. Data: {}".format(self.telem_category, data_to_log))
         ControlClient.send_telemetry(self.telem_category, data)
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def telem_category(self):
         """
         :return: Telemetry type
@@ -35,7 +38,7 @@ class BaseTelem(object):
         pass
 
     @abc.abstractmethod
-    def get_data(self):
+    def get_data(self) -> dict:
         """
         :return: Data of telemetry (should be dict)
         """

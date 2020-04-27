@@ -1,7 +1,7 @@
 import React from 'react';
-import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {getUsageColumns} from "./Helpers";
+import ReactTable from 'react-table';
+import {getUsageColumns} from './Helpers';
+import MitigationsComponent from './MitigationsComponent';
 
 class T1129 extends React.Component {
 
@@ -16,11 +16,12 @@ class T1129 extends React.Component {
         <br/>
         {this.props.data.dlls.length !== 0 ?
           <ReactTable
-              columns={getUsageColumns()}
-              data={this.props.data.dlls}
-              showPagination={false}
-              defaultPageSize={this.props.data.dlls.length}
-          /> : ""}
+            columns={getUsageColumns()}
+            data={this.props.data.dlls}
+            showPagination={false}
+            defaultPageSize={this.props.data.dlls.length}
+          /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

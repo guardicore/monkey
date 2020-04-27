@@ -6,7 +6,6 @@ __author__ = "VakarisZ"
 
 
 class T1059(AttackTechnique):
-
     tech_id = "T1059"
     unscanned_msg = "Monkey didn't exploit any machines to run commands at."
     scanned_msg = ""
@@ -31,4 +30,5 @@ class T1059(AttackTechnique):
         else:
             status = ScanStatus.UNSCANNED.value
         data.update(T1059.get_message_and_status(status))
+        data.update(T1059.get_mitigation_by_status(status))
         return data

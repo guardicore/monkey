@@ -1,11 +1,11 @@
-import React, {Component} from "react";
-import {Badge, Modal} from "react-bootstrap";
-import EventsTimeline from "./EventsTimeline";
-import * as PropTypes from "prop-types";
-import saveJsonToFile from "../../utils/SaveJsonToFile";
-import EventsModalButtons from "./EventsModalButtons";
+import React, {Component} from 'react';
+import {Badge, Modal} from 'react-bootstrap';
+import EventsTimeline from './EventsTimeline';
+import * as PropTypes from 'prop-types';
+import saveJsonToFile from '../../utils/SaveJsonToFile';
+import EventsModalButtons from './EventsModalButtons';
 import Pluralize from 'pluralize'
-import {statusToLabelType} from "./StatusLabel";
+import {statusToLabelType} from './StatusLabel';
 
 export default class EventsModal extends Component {
   constructor(props) {
@@ -20,9 +20,11 @@ export default class EventsModal extends Component {
             <h3>
               <div className="text-center">Events</div>
             </h3>
-            <hr />
+            <hr/>
             <p>
-              There {Pluralize('is', this.props.events.length)} {<div className={"label label-primary"}>{this.props.events.length}</div>} {Pluralize('event', this.props.events.length)} associated with this finding.
+              There {Pluralize('is', this.props.events.length)} {<div
+              className={'label label-primary'}>{this.props.events.length}</div>} {Pluralize('event', this.props.events.length)} associated
+              with this finding.
             </p>
             {this.props.events.length > 5 ? this.renderButtons() : null}
             <EventsTimeline events={this.props.events}/>
@@ -47,5 +49,5 @@ export default class EventsModal extends Component {
 EventsModal.propTypes = {
   showEvents: PropTypes.bool,
   events: PropTypes.array,
-  hideCallback: PropTypes.func,
+  hideCallback: PropTypes.func
 };

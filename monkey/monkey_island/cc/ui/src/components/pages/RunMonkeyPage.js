@@ -1,13 +1,17 @@
 import React from 'react';
-import { css } from '@emotion/core';
+import {css} from '@emotion/core';
 import {Button, Col, Well, Nav, NavItem, Collapse} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import GridLoader from 'react-spinners/GridLoader';
 
-import {Icon} from 'react-fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClipboard, faCheck, faSync } from '@fortawesome/free-solid-svg-icons';
+
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
-import AwsRunTable from "../run-monkey/AwsRunTable";
+import AwsRunTable from '../run-monkey/AwsRunTable';
+
+import '../../styles/MonkeyRunPage.scss';
 
 const loading_css_override = css`
     display: block;
@@ -35,7 +39,7 @@ class RunMonkeyPageComponent extends AuthComponent {
       isLoadingAws: true,
       isErrorWhileCollectingAwsMachines: false,
       awsMachineCollectionErrorMsg: ''
-  };
+    };
   }
 
   componentDidMount() {
@@ -48,7 +52,7 @@ class RunMonkeyPageComponent extends AuthComponent {
 
     this.authFetch('/api/local-monkey')
       .then(res => res.json())
-      .then(res =>{
+      .then(res => {
         if (res['is_running']) {
           this.setState({runningOnIslandState: 'running'});
         } else {
@@ -75,7 +79,7 @@ class RunMonkeyPageComponent extends AuthComponent {
   fetchAwsInfo() {
     return this.authFetch('/api/remote-monkey?action=list_aws')
       .then(res => res.json())
-      .then(res =>{
+      .then(res => {
         let is_aws = res['is_aws'];
         if (is_aws) {
           // On AWS!
@@ -83,7 +87,12 @@ class RunMonkeyPageComponent extends AuthComponent {
           let is_error_while_collecting_aws_machines = (res['error'] != null);
           if (is_error_while_collecting_aws_machines) {
             // There was an error. Finish loading, and display error message.
-            this.setState({isOnAws: true, isErrorWhileCollectingAwsMachines: true, awsMachineCollectionErrorMsg: res['error'], isLoadingAws: false});
+            this.setState({
+              isOnAws: true,
+              isErrorWhileCollectingAwsMachines: true,
+              awsMachineCollectionErrorMsg: res['error'],
+              isLoadingAws: false
+            });
           } else {
             // No error! Finish loading and display machines for user
             this.setState({isOnAws: true, awsMachines: res['instances'], isLoadingAws: false});
@@ -138,11 +147,11 @@ class RunMonkeyPageComponent extends AuthComponent {
       cmdText = RunMonkeyPageComponent.generateWindowsCmd(this.state.selectedIp, is32Bit);
     }
     return (
-      <Well key={'cmdDiv'+this.state.selectedIp} className="well-sm" style={{'margin': '0.5em'}}>
+      <Well key={'cmdDiv' + this.state.selectedIp} className="well-sm" style={{'margin': '0.5em'}}>
         <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
           <CopyToClipboard text={cmdText} className="pull-right btn-sm">
             <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
-              <Icon name="clipboard"/>
+              <FontAwesomeIcon icon={faClipboard}/>
             </Button>
           </CopyToClipboard>
           <code>{cmdText}</code>
@@ -165,9 +174,9 @@ class RunMonkeyPageComponent extends AuthComponent {
 
   static renderIconByState(state) {
     if (state === 'running') {
-      return <Icon name="check" className="text-success" style={{'marginLeft': '5px'}}/>
+      return (<FontAwesomeIcon icon={faCheck} className="text-success" style={{'marginLeft': '5px'}}/>)
     } else if (state === 'installing') {
-      return <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/>
+      return (<FontAwesomeIcon icon={faSync} className="text-success" style={{'marginLeft': '5px'}}/>)
     } else {
       return '';
     }
@@ -219,6 +228,7 @@ class RunMonkeyPageComponent extends AuthComponent {
         });
       });
   };
+
   fetchConfig() {
     return this.authFetch('/api/configuration/island')
       .then(res => res.json())
@@ -226,6 +236,7 @@ class RunMonkeyPageComponent extends AuthComponent {
         return res.configuration;
       })
   }
+
   instanceIdToInstance = (instance_id) => {
     let instance = this.state.awsMachines.find(
       function (inst) {
@@ -241,7 +252,9 @@ class RunMonkeyPageComponent extends AuthComponent {
         <div style={{'marginTop': '1em', 'marginBottom': '1em'}}>
           <p className="alert alert-info">
             <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-            Not sure what this is? Not seeing your AWS EC2 instances? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances" target="_blank">Read the documentation</a>!
+            Not sure what this is? Not seeing your AWS EC2 instances? <a
+            href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances"
+            target="_blank">Read the documentation</a>!
           </p>
         </div>
         {
@@ -250,7 +263,7 @@ class RunMonkeyPageComponent extends AuthComponent {
                  style={{'marginBottom': '2em'}}>
               {this.state.ips.map(ip => <NavItem key={ip} eventKey={ip}>{ip}</NavItem>)}
             </Nav>
-            : <div style={{'marginBottom': '2em'}} />
+            : <div style={{'marginBottom': '2em'}}/>
         }
 
         <AwsRunTable
@@ -263,12 +276,13 @@ class RunMonkeyPageComponent extends AuthComponent {
             className={'btn btn-default btn-md center-block'}
             disabled={this.state.awsClicked}>
             Run on selected machines
-            { this.state.awsClicked ? <Icon name="refresh" className="text-success" style={{'marginLeft': '5px'}}/> : null }
+            {this.state.awsClicked ? <FontAwesomeIcon icon={faSync} className="text-success" style={{'marginLeft': '5px'}}/> : null}
           </button>
         </div>
       </div>
     )
   }
+
   render() {
     return (
       <Col xs={12} lg={8}>
@@ -281,9 +295,9 @@ class RunMonkeyPageComponent extends AuthComponent {
           <button onClick={this.runLocalMonkey}
                   className="btn btn-default btn-lg center-block"
                   disabled={this.state.runningOnIslandState !== 'not_running'}
-                  >
+          >
             Run on Monkey Island Server
-            { RunMonkeyPageComponent.renderIconByState(this.state.runningOnIslandState) }
+            {RunMonkeyPageComponent.renderIconByState(this.state.runningOnIslandState)}
           </button>
           {
             // TODO: implement button functionality
@@ -302,8 +316,9 @@ class RunMonkeyPageComponent extends AuthComponent {
           OR
         </p>
         <p style={this.state.showManual || !this.state.isOnAws ? {'marginBottom': '2em'} : {}}>
-          <button onClick={this.toggleManual} className={'btn btn-default btn-lg center-block' + (this.state.showManual ? ' active' : '')}>
-            Run on machine of your choice
+          <button onClick={this.toggleManual}
+                  className={'btn btn-default btn-lg center-block' + (this.state.showManual ? ' active' : '')}>
+            Run on a machine of your choice
           </button>
         </p>
         <Collapse in={this.state.showManual}>
@@ -312,7 +327,8 @@ class RunMonkeyPageComponent extends AuthComponent {
               Choose the operating system where you want to run the monkey
               {this.state.ips.length > 1 ? ', and the interface to communicate with.' : '.'}
             </p>
-            <Nav bsStyle="pills" justified activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
+            <Nav bsStyle='pills' id={'bootstrap-override'} className={'runOnOsButtons'} 
+                 justified activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
               <NavItem key='windows-32' eventKey='windows-32'>Windows (32 bit)</NavItem>
               <NavItem key='windows-64' eventKey='windows-64'>Windows (64 bit)</NavItem>
               <NavItem key='linux-32' eventKey='linux-32'>Linux (32 bit)</NavItem>
@@ -323,7 +339,7 @@ class RunMonkeyPageComponent extends AuthComponent {
                    style={{'marginBottom': '2em'}}>
                 {this.state.ips.map(ip => <NavItem key={ip} eventKey={ip}>{ip}</NavItem>)}
               </Nav>
-              : <div style={{'marginBottom': '2em'}} />
+              : <div style={{'marginBottom': '2em'}}/>
             }
             <p style={{'fontSize': '1.2em'}}>
               Copy the following command to your machine and run it with Administrator or root privileges.
@@ -337,14 +353,14 @@ class RunMonkeyPageComponent extends AuthComponent {
               <div className='sweet-loading'>
                 <GridLoader
                   css={loading_css_override}
-                  sizeUnit={"px"}
+                  sizeUnit={'px'}
                   size={30}
                   color={'#ffcc00'}
                   loading={this.state.loading}
                 />
               </div>
             </p>
-             : null
+            : null
         }
         {
           this.state.isOnAws ?
@@ -357,7 +373,8 @@ class RunMonkeyPageComponent extends AuthComponent {
         {
           this.state.isOnAws ?
             <p style={{'marginBottom': '2em'}}>
-              <button onClick={this.toggleAws} className={'btn btn-default btn-lg center-block' + (this.state.showAws ? ' active' : '')}>
+              <button onClick={this.toggleAws}
+                      className={'btn btn-default btn-lg center-block' + (this.state.showAws ? ' active' : '')}>
                 Run on AWS machine of your choice
               </button>
             </p>
@@ -370,9 +387,12 @@ class RunMonkeyPageComponent extends AuthComponent {
               <div style={{'marginTop': '1em'}}>
                 <p class="alert alert-danger">
                   <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-                  Error while collecting AWS machine data. Error message: <code>{this.state.awsMachineCollectionErrorMsg}</code><br/>
+                  Error while collecting AWS machine data. Error
+                  message: <code>{this.state.awsMachineCollectionErrorMsg}</code><br/>
                   Are you sure you've set the correct role on your Island AWS machine?<br/>
-                  Not sure what this is? <a href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read the documentation</a>!
+                  Not sure what this is? <a
+                  href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances">Read
+                  the documentation</a>!
                 </p>
               </div>
               :

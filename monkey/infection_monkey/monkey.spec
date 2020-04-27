@@ -1,5 +1,6 @@
 # -*- mode: python -*-
 import os
+import sys
 import platform
 
 
@@ -18,7 +19,9 @@ def main():
                  hookspath=['./pyinstaller_hooks'],
                  runtime_hooks=None,
                  binaries=None,
-                 datas=None,
+                 datas=[
+                    ("../common/BUILD", "/common")
+                 ],
                  excludes=None,
                  win_no_prefer_redirects=None,
                  win_private_assemblies=None,
@@ -38,6 +41,7 @@ def main():
               debug=False,
               strip=get_exe_strip(),
               upx=True,
+              upx_exclude=['vcruntime140.dll'],
               console=True,
               icon=get_exe_icon())
 
@@ -47,7 +51,7 @@ def is_windows():
 
 
 def is_32_bit():
-    return platform.architecture()[0] == "32bit"
+    return sys.maxsize <= 2**32
 
 
 def get_bin_folder():
@@ -67,14 +71,8 @@ def process_datas(orig_datas):
 
 
 def get_binaries():
-    binaries = get_windows_only_binaries() if is_windows() else get_linux_only_binaries()
+    binaries = [] if is_windows() else get_linux_only_binaries()
     binaries += get_sc_binaries()
-    return binaries
-
-
-def get_windows_only_binaries():
-    binaries = []
-    binaries += get_msvcr()
     return binaries
 
 
@@ -92,17 +90,24 @@ def get_sc_binaries():
     return [(x, get_bin_file_path(x), 'BINARY') for x in ['sc_monkey_runner32.so', 'sc_monkey_runner64.so']]
 
 
-def get_msvcr():
-    return [('msvcr100.dll', os.environ['WINDIR'] + '\\system32\\msvcr100.dll', 'BINARY')]
-
-
 def get_traceroute_binaries():
     traceroute_name = 'traceroute32' if is_32_bit() else 'traceroute64'
     return [(traceroute_name, get_bin_file_path(traceroute_name), 'BINARY')]
 
 
 def get_monkey_filename():
-    return 'monkey.exe' if is_windows() else 'monkey'
+    name = 'monkey-'
+    if is_windows():
+        name = name+"windows-"
+    else:
+        name = name+"linux-"
+    if is_32_bit():
+        name = name+"32"
+    else:
+        name = name+"64"
+    if is_windows():
+        name = name+".exe"
+    return name
 
 
 def get_exe_strip():

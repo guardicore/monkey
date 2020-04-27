@@ -1,8 +1,8 @@
+import errno
 import logging
 import socket
 
-from infection_monkey.model.host import VictimHost
-from infection_monkey.network import HostFinger
+from infection_monkey.network.HostFinger import HostFinger
 import infection_monkey.config
 
 __author__ = 'Maor Rayzin'
@@ -11,7 +11,6 @@ LOG = logging.getLogger(__name__)
 
 
 class MSSQLFinger(HostFinger):
-
     # Class related consts
     SQL_BROWSER_DEFAULT_PORT = 1434
     BUFFER_SIZE = 4096
@@ -30,7 +29,6 @@ class MSSQLFinger(HostFinger):
                 Discovered server information written to the Host info struct.
                 True if success, False otherwise.
         """
-        assert isinstance(host, VictimHost)
 
         # Create a UDP socket and sets a timeout
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -54,7 +52,7 @@ class MSSQLFinger(HostFinger):
             sock.close()
             return False
         except socket.error as e:
-            if e.errno == socket.errno.ECONNRESET:
+            if e.errno == errno.ECONNRESET:
                 LOG.info('Connection was forcibly closed by the remote host. The host: {0} is rejecting the packet.'
                          .format(host))
             else:

@@ -1,8 +1,8 @@
-import React, {Component, Fragment} from "react";
-import PillarLabel from "./PillarLabel";
-import StatusLabel from "./StatusLabel";
-import * as PropTypes from "prop-types";
-import {ZeroTrustStatuses} from "./ZeroTrustPillars";
+import React, {Component, Fragment} from 'react';
+import PillarLabel from './PillarLabel';
+import StatusLabel from './StatusLabel';
+import * as PropTypes from 'prop-types';
+import {ZeroTrustStatuses} from './ZeroTrustPillars';
 
 export default class StatusesToPillarsSummary extends Component {
   render() {
@@ -21,11 +21,11 @@ export default class StatusesToPillarsSummary extends Component {
           <StatusLabel showText={true} status={status}/>
         </h3>
         <div>
-            {
-              this.props.statusesToPillars[status].map((pillar) => {
-                return <PillarLabel key={pillar} pillar={pillar} status={status} />
-              })
-            }
+          {
+            this.props.statusesToPillars[status].map((pillar) => {
+              return <PillarLabel key={pillar} pillar={pillar} status={status}/>
+            })
+          }
         </div>
       </Fragment>
     }

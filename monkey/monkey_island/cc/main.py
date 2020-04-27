@@ -1,10 +1,9 @@
-from __future__ import print_function  # In python 2.7
-
 import os
 import os.path
 import sys
 import time
 import logging
+from threading import Thread
 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "3.6.0"
 
@@ -15,6 +14,7 @@ if BASE_PATH not in sys.path:
 
 from monkey_island.cc.island_logger import json_setup_logging
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+
 # This is here in order to catch EVERYTHING, some functions are being called on imports the log init needs to be on top.
 json_setup_logging(default_path=os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'island_logger_default_config.json'),
                    default_level=logging.DEBUG)
@@ -26,9 +26,22 @@ from monkey_island.cc.utils import local_ip_addresses
 from monkey_island.cc.environment.environment import env
 from monkey_island.cc.database import is_db_server_up, get_db_version
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
+from common.version import get_version
+from monkey_island.cc.bootloader_server import BootloaderHttpServer
+from monkey_island.cc.setup import setup
 
 
-def main():
+def main(should_setup_only=False):
+    logger.info("Starting bootloader server")
+    mongo_url = os.environ.get('MONGO_URL', env.get_mongo_url())
+    bootloader_server_thread = Thread(target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True)
+
+    bootloader_server_thread.start()
+    start_island_server(should_setup_only)
+    bootloader_server_thread.join()
+
+
+def start_island_server(should_setup_only):
     from tornado.wsgi import WSGIContainer
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
@@ -43,6 +56,12 @@ def main():
     crt_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.crt')
     key_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.key')
 
+    setup()
+
+    if should_setup_only:
+        logger.warning("Setup only flag passed. Exiting.")
+        return
+
     if env.is_debug():
         app.run(host='0.0.0.0', debug=True, ssl_context=(crt_path, key_path))
     else:
@@ -55,8 +74,9 @@ def main():
 
 
 def log_init_info():
-    logger.info(
-        'Monkey Island Server is running. Listening on the following URLs: {}'.format(
+    logger.info('Monkey Island Server is running!')
+    logger.info(f"version: {get_version()}")
+    logger.info('Listening on the following URLs: {}'.format(
             ", ".join(["https://{}:{}".format(x, env.get_island_port()) for x in local_ip_addresses()])
         )
     )

@@ -1,28 +1,31 @@
-import React, {Fragment} from "react";
-import PaginatedTable from "../common/PaginatedTable";
-import AuthComponent from "../../AuthComponent";
-import StatusLabel from "./StatusLabel";
-import * as PropTypes from "prop-types";
-import {ZeroTrustStatuses} from "./ZeroTrustPillars";
+import React, {Fragment} from 'react';
+import PaginatedTable from '../common/PaginatedTable';
+import AuthComponent from '../../AuthComponent';
+import StatusLabel from './StatusLabel';
+import * as PropTypes from 'prop-types';
+import {ZeroTrustStatuses} from './ZeroTrustPillars';
 
 
 const MAX_WIDTH_STATUS_COLUMN = 80;
 const columns = [
   {
     columns: [
-      { Header: 'Status', id: 'status',
+      {
+        Header: 'Status', id: 'status',
         accessor: x => {
-          return <StatusLabel status={x.status} size="fa-3x" showText={false} />;
+          return <StatusLabel status={x.status} size="3x" showText={false}/>;
         },
         maxWidth: MAX_WIDTH_STATUS_COLUMN
       },
-      { Header: 'Zero Trust Principle', accessor: 'principle',
+      {
+        Header: 'Zero Trust Principle', accessor: 'principle',
         style: {'whiteSpace': 'unset'}  // This enables word wrap
       },
-      { Header: 'Monkey Tests', id: 'tests',
+      {
+        Header: 'Monkey Tests', id: 'tests',
         style: {'whiteSpace': 'unset'},  // This enables word wrap
         accessor: x => {
-          return <TestsStatus tests={x.tests} />;
+          return <TestsStatus tests={x.tests}/>;
         }
       }
     ]

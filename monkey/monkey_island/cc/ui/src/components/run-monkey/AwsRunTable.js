@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table'
-import checkboxHOC from "react-table/lib/hoc/selectTable";
+import checkboxHOC from 'react-table/lib/hoc/selectTable';
 
 const CheckboxTable = checkboxHOC(ReactTable);
 
@@ -8,10 +8,10 @@ const columns = [
   {
     Header: 'Machines',
     columns: [
-      { Header: 'Machine', accessor: 'name'},
-      { Header: 'Instance ID', accessor: 'instance_id'},
-      { Header: 'IP Address', accessor: 'ip_address'},
-      { Header: 'OS', accessor: 'os'}
+      {Header: 'Machine', accessor: 'name'},
+      {Header: 'Instance ID', accessor: 'instance_id'},
+      {Header: 'IP Address', accessor: 'ip_address'},
+      {Header: 'OS', accessor: 'os'}
     ]
   }
 ];
@@ -28,7 +28,7 @@ class AwsRunTableComponent extends React.Component {
     }
   }
 
-  toggleSelection = (key, shift, row) => {
+  toggleSelection = (key) => {
     // start off with the existing state
     let selection = [...this.state.selection];
     const keyIndex = selection.indexOf(key);
@@ -44,7 +44,7 @@ class AwsRunTableComponent extends React.Component {
       selection.push(key);
     }
     // update the state
-    this.setState({ selection });
+    this.setState({selection});
   };
 
   isSelected = key => {
@@ -64,17 +64,17 @@ class AwsRunTableComponent extends React.Component {
         selection.push(item._original.instance_id);
       });
     }
-    this.setState({ selectAll, selection });
+    this.setState({selectAll, selection});
   };
 
   getTrProps = (s, r) => {
-    let color = "inherit";
+    let color = 'inherit';
     if (r) {
       let instId = r.original.instance_id;
       if (this.isSelected(instId)) {
-        color = "#ffed9f";
+        color = '#ffed9f';
       } else if (this.state.result.hasOwnProperty(instId)) {
-        color = this.state.result[instId] ? "#00f01b" : '#f00000'
+        color = this.state.result[instId] ? '#00f01b' : '#f00000'
       }
     }
 

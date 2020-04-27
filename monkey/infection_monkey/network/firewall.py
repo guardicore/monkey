@@ -4,9 +4,10 @@ import platform
 
 
 def _run_netsh_cmd(command, args):
-    cmd = subprocess.Popen("netsh %s %s" % (command, " ".join(['%s="%s"' % (key, value) for key, value in args.items()
+    cmd = subprocess.Popen("netsh %s %s" % (command, " ".join(['%s="%s"' % (key, value) for key, value in list(args.items())
                                                                if value])), stdout=subprocess.PIPE)
     return cmd.stdout.read().strip().lower().endswith('ok.')
+
 
 class FirewallApp(object):
     def is_enabled(self, **kwargs):
@@ -24,7 +25,7 @@ class FirewallApp(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exc_type, value, traceback):
         self.close()
 
     def close(self):
@@ -48,9 +49,9 @@ class WinAdvFirewall(FirewallApp):
         except:
             return None
 
-    def add_firewall_rule(self, name="Firewall", dir="in", action="allow", program=sys.executable, **kwargs):
+    def add_firewall_rule(self, name="Firewall", direction="in", action="allow", program=sys.executable, **kwargs):
         netsh_args = {'name': name,
-                      'dir': dir,
+                      'dir': direction,
                       'action': action,
                       'program': program}
         netsh_args.update(kwargs)
@@ -81,18 +82,18 @@ class WinAdvFirewall(FirewallApp):
         if not self.is_enabled():
             return True
 
-        for rule in self._rules.values():
+        for rule in list(self._rules.values()):
             if rule.get('program') == sys.executable and \
-                            'in' == rule.get('dir') and \
-                            'allow' == rule.get('action') and \
-                            4 == len(rule.keys()):
+                    'in' == rule.get('dir') and \
+                    'allow' == rule.get('action') and \
+                    4 == len(list(rule.keys())):
                 return True
         return False
 
     def close(self):
         try:
-            for rule in self._rules.keys():
-                self.remove_firewall_rule({'name': rule})
+            for rule in list(self._rules.keys()):
+                self.remove_firewall_rule(name=rule)
         except:
             pass
 
@@ -151,14 +152,14 @@ class WinFirewall(FirewallApp):
         if not self.is_enabled():
             return True
 
-        for rule in self._rules.values():
+        for rule in list(self._rules.values()):
             if rule.get('program') == sys.executable and 'ENABLE' == rule.get('mode'):
                 return True
         return False
 
     def close(self):
         try:
-            for rule in self._rules.values():
+            for rule in list(self._rules.values()):
                 self.remove_firewall_rule(**rule)
         except:
             pass

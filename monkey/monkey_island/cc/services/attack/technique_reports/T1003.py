@@ -1,4 +1,5 @@
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
+from monkey_island.cc.services.reporting.report import ReportService
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
 
@@ -6,7 +7,6 @@ __author__ = "VakarisZ"
 
 
 class T1003(AttackTechnique):
-
     tech_id = "T1003"
     unscanned_msg = "Monkey tried to obtain credentials from systems in the network but didn't find any or failed."
     scanned_msg = ""
@@ -24,4 +24,7 @@ class T1003(AttackTechnique):
         else:
             status = ScanStatus.UNSCANNED.value
         data.update(T1003.get_message_and_status(status))
+        data.update(T1003.get_mitigation_by_status(status))
+        data['stolen_creds'] = ReportService.get_stolen_creds()
+        data['stolen_creds'].extend(ReportService.get_ssh_keys())
         return data

@@ -1,6 +1,6 @@
 import logging
 
-from common.cloud.aws_service import AwsService
+from common.cloud.aws.aws_service import AwsService
 from common.cmd.aws.aws_cmd_result import AwsCmdResult
 from common.cmd.cmd_runner import CmdRunner
 from common.cmd.cmd_status import CmdStatus
@@ -15,7 +15,7 @@ class AwsCmdRunner(CmdRunner):
     Class for running commands on a remote AWS machine
     """
 
-    def __init__(self, is_linux, instance_id, region = None):
+    def __init__(self, is_linux, instance_id, region=None):
         super(AwsCmdRunner, self).__init__(is_linux)
         self.instance_id = instance_id
         self.region = region
@@ -28,9 +28,9 @@ class AwsCmdRunner(CmdRunner):
         return AwsCmdResult(command_info)
 
     def get_command_status(self, command_info):
-        if command_info[u'Status'] == u'InProgress':
+        if command_info['Status'] == 'InProgress':
             return CmdStatus.IN_PROGRESS
-        elif command_info[u'Status'] == u'Success':
+        elif command_info['Status'] == 'Success':
             return CmdStatus.SUCCESS
         else:
             return CmdStatus.FAILURE

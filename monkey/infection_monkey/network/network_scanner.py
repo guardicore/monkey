@@ -6,7 +6,8 @@ from common.network.network_range import NetworkRange
 from infection_monkey.config import WormConfiguration
 from infection_monkey.model.victim_host_generator import VictimHostGenerator
 from infection_monkey.network.info import local_ips, get_interfaces_ranges
-from infection_monkey.network import TcpScanner, PingScanner
+from infection_monkey.network.tcp_scanner import TcpScanner
+from infection_monkey.network.ping_scanner import PingScanner
 
 LOG = logging.getLogger(__name__)
 
@@ -48,13 +49,13 @@ class NetworkScanner(object):
         subnets_to_scan = []
         if len(WormConfiguration.inaccessible_subnets) > 1:
             for subnet_str in WormConfiguration.inaccessible_subnets:
-                if NetworkScanner._is_any_ip_in_subnet([unicode(x) for x in self._ip_addresses], subnet_str):
+                if NetworkScanner._is_any_ip_in_subnet([str(x) for x in self._ip_addresses], subnet_str):
                     # If machine has IPs from 2 different subnets in the same group, there's no point checking the other
                     # subnet.
                     for other_subnet_str in WormConfiguration.inaccessible_subnets:
                         if other_subnet_str == subnet_str:
                             continue
-                        if not NetworkScanner._is_any_ip_in_subnet([unicode(x) for x in self._ip_addresses],
+                        if not NetworkScanner._is_any_ip_in_subnet([str(x) for x in self._ip_addresses],
                                                                    other_subnet_str):
                             subnets_to_scan.append(NetworkRange.get_range_obj(other_subnet_str))
                     break
@@ -85,7 +86,7 @@ class NetworkScanner(object):
                 return
 
             results = pool.map(self.scan_machine, victim_chunk)
-            resulting_victims = filter(lambda x: x is not None, results)
+            resulting_victims = [x for x in results if x is not None]
             for victim in resulting_victims:
                 LOG.debug("Found potential victim: %r", victim)
                 victims_count += 1

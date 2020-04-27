@@ -15,7 +15,7 @@ class AttackConfig(object):
 
     @staticmethod
     def get_config():
-        config = mongo.db.attack.find_one({'name': 'newconfig'})
+        config = mongo.db.attack.find_one({'name': 'newconfig'})['properties']
         return config
 
     @staticmethod
@@ -26,9 +26,9 @@ class AttackConfig(object):
         :return: Technique object or None if technique is not found
         """
         attack_config = AttackConfig.get_config()
-        for key, attack_type in attack_config['properties'].items():
-            for key, technique in attack_type['properties'].items():
-                if key == technique_id:
+        for config_key, attack_type in list(attack_config.items()):
+            for type_key, technique in list(attack_type['properties'].items()):
+                if type_key == technique_id:
                     return technique
         return None
 
@@ -66,7 +66,7 @@ class AttackConfig(object):
         :param monkey_config: Monkey island's configuration
         :param monkey_schema: Monkey configuration schema
         """
-        for key, definition in monkey_schema['definitions'].items():
+        for key, definition in list(monkey_schema['definitions'].items()):
             for array_field in definition['anyOf']:
                 # Check if current array field has attack_techniques assigned to it
                 if 'attack_techniques' in array_field and array_field['attack_techniques']:
@@ -83,7 +83,7 @@ class AttackConfig(object):
         :param monkey_config: Monkey island's configuration
         :param monkey_schema: Monkey configuration schema
         """
-        for key, value in monkey_schema['properties'].items():
+        for key, value in list(monkey_schema['properties'].items()):
             AttackConfig.r_set_booleans([key], value, attack_techniques, monkey_config)
 
     @staticmethod
@@ -110,7 +110,7 @@ class AttackConfig(object):
                 dictionary = value['properties']
             else:
                 dictionary = value
-            for key, item in dictionary.items():
+            for key, item in list(dictionary.items()):
                 path.append(key)
                 AttackConfig.r_set_booleans(path, item, attack_techniques, monkey_config)
                 # Method enumerated everything in current path, goes back a level.
@@ -158,7 +158,7 @@ class AttackConfig(object):
                 elif not remove and field not in config_value[array_name]:
                     config_value[array_name].append(field)
             else:
-                for prop in config_value.items():
+                for prop in list(config_value.items()):
                     AttackConfig.r_alter_array(prop[1], array_name, field, remove)
 
     @staticmethod
@@ -169,7 +169,19 @@ class AttackConfig(object):
         """
         attack_config = AttackConfig.get_config()
         techniques = {}
-        for type_name, attack_type in attack_config['properties'].items():
-            for key, technique in attack_type['properties'].items():
+        for type_name, attack_type in list(attack_config.items()):
+            for key, technique in list(attack_type['properties'].items()):
                 techniques[key] = technique['value']
+        return techniques
+
+    @staticmethod
+    def get_techniques_for_report():
+        """
+        :return: Format: {"T1110": {"selected": True, "type": "Credential Access", "T1075": ...}
+        """
+        attack_config = AttackConfig.get_config()
+        techniques = {}
+        for type_name, attack_type in list(attack_config.items()):
+            for key, technique in list(attack_type['properties'].items()):
+                    techniques[key] = {'selected': technique['value'], 'type': SCHEMA['properties'][type_name]['title']}
         return techniques

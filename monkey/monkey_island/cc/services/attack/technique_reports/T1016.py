@@ -6,13 +6,12 @@ __author__ = "VakarisZ"
 
 
 class T1016(AttackTechnique):
-
     tech_id = "T1016"
     unscanned_msg = "Monkey didn't gather network configurations."
     scanned_msg = ""
     used_msg = "Monkey gathered network configurations on systems in the network."
 
-    query = [{'$match': {'telem_category': 'system_info'}},
+    query = [{'$match': {'telem_category': 'system_info', 'data.network_info': {'$exists': True}}},
              {'$project': {'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
                            'networks': '$data.network_info.networks',
                            'netstat': '$data.network_info.netstat'}},

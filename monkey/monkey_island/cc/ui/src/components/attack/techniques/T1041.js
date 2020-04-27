@@ -1,7 +1,7 @@
 import React from 'react';
-import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import {ScanStatus} from "./Helpers";
+import ReactTable from 'react-table';
+import {ScanStatus} from './Helpers';
+import MitigationsComponent from './MitigationsComponent';
 
 class T1041 extends React.Component {
 
@@ -11,11 +11,13 @@ class T1041 extends React.Component {
 
   static getC2Columns() {
     return ([{
-      Header: "Data exfiltration channels",
+      Header: 'Data exfiltration channels',
       columns: [
-        {Header: 'Source', id: 'src', accessor: x => x.src, style: { 'whiteSpace': 'unset' }},
-        {Header: 'Destination', id: 'dst', accessor: x => x.dst, style: { 'whiteSpace': 'unset' }}
-        ]}])};
+        {Header: 'Source', id: 'src', accessor: x => x.src, style: {'whiteSpace': 'unset'}},
+        {Header: 'Destination', id: 'dst', accessor: x => x.dst, style: {'whiteSpace': 'unset'}}
+      ]
+    }])
+  }
 
   render() {
     return (
@@ -24,11 +26,12 @@ class T1041 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
-              columns={T1041.getC2Columns()}
-              data={this.props.data.command_control_channel}
-              showPagination={false}
-              defaultPageSize={this.props.data.command_control_channel.length}
-          /> : ""}
+            columns={T1041.getC2Columns()}
+            data={this.props.data.command_control_channel}
+            showPagination={false}
+            defaultPageSize={this.props.data.command_control_channel.length}
+          /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

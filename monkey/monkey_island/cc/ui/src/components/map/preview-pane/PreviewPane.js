@@ -1,5 +1,6 @@
 import React from 'react';
-import {Icon} from 'react-fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'
 import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import download from 'downloadjs'
@@ -92,14 +93,14 @@ class PreviewPaneComponent extends AuthComponent {
 
   unescapeLog(st) {
     return st.substr(1, st.length - 2) // remove quotation marks on beginning and end of string.
-        .replace(/\\n/g, "\n")
-        .replace(/\\r/g, "\r")
-        .replace(/\\t/g, "\t")
-        .replace(/\\b/g, "\b")
-        .replace(/\\f/g, "\f")
-        .replace(/\\"/g, '\"')
-        .replace(/\\'/g, "\'")
-        .replace(/\\&/g, "\&");
+      .replace(/\\n/g, '\n')
+      .replace(/\\r/g, '\r')
+      .replace(/\\t/g, '\t')
+      .replace(/\\b/g, '\b')
+      .replace(/\\f/g, '\f')
+      .replace(/\\"/g, '\"')
+      .replace(/\\'/g, '\'')
+      .replace(/\\&/g, '\&');
   }
 
   downloadLog(asset) {
@@ -252,8 +253,15 @@ class PreviewPaneComponent extends AuthComponent {
         info = this.scanInfo(this.props.item);
         break;
       case 'node':
-        info = this.props.item.group.includes('monkey', 'manual') ? this.infectedAssetInfo(this.props.item) :
-          this.props.item.group !== 'island' ? this.assetInfo(this.props.item) : this.islandAssetInfo();
+        if (this.props.item.group.includes('monkey') && this.props.item.group.includes('starting')) {
+          info = this.assetInfo(this.props.item);
+        } else if (this.props.item.group.includes('monkey', 'manual')) {
+          info = this.infectedAssetInfo(this.props.item)
+        } else if (this.props.item.group !== 'island') {
+          info = this.assetInfo(this.props.item)
+        } else {
+          info = this.islandAssetInfo();
+        }
         break;
       case 'island_edge':
         info = this.islandEdgeInfo();
@@ -273,7 +281,7 @@ class PreviewPaneComponent extends AuthComponent {
       <div className="preview-pane">
         {!info ?
           <span>
-            <Icon name="hand-o-left" style={{'marginRight': '0.5em'}}/>
+            <FontAwesomeIcon icon={faHandPointLeft} style={{'marginRight': '0.5em'}}/>
             Select an item on the map for a detailed look
           </span>
           :

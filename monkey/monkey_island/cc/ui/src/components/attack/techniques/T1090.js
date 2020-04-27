@@ -1,7 +1,7 @@
 import React from 'react';
-import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import { renderMachineFromSystemData, ScanStatus } from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachineFromSystemData, ScanStatus} from './Helpers'
+import MitigationsComponent from './MitigationsComponent';
 
 
 class T1090 extends React.Component {
@@ -13,11 +13,14 @@ class T1090 extends React.Component {
   static getProxyColumns() {
     return ([{
       columns: [
-        {Header: 'Machines',
+        {
+          Header: 'Machines',
           id: 'machine',
           accessor: x => renderMachineFromSystemData(x),
-          style: { 'whiteSpace': 'unset', textAlign: 'center' }}]}])
-  };
+          style: {'whiteSpace': 'unset', textAlign: 'center'}
+        }]
+    }])
+  }
 
   render() {
     return (
@@ -26,11 +29,12 @@ class T1090 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
-              columns={T1090.getProxyColumns()}
-              data={this.props.data.proxies}
-              showPagination={false}
-              defaultPageSize={this.props.data.proxies.length}
-          /> : ""}
+            columns={T1090.getProxyColumns()}
+            data={this.props.data.proxies}
+            showPagination={false}
+            defaultPageSize={this.props.data.proxies.length}
+          /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

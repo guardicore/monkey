@@ -1,5 +1,5 @@
 import React from 'react'
-import PillarLabel from "../PillarLabel";
+import PillarLabel from '../PillarLabel';
 import {Popover, OverlayTrigger} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
@@ -38,17 +38,17 @@ class CircularNode extends React.Component {
   }
 
 
-  handleClick(e_) {
+  handleClick() {
     this.props.disableHover(this.refs.overlay);
   }
 
-  handleOver(e_) {
+  handleOver() {
     if (this.props.hover) {
       this.refs.overlay.show();
     }
   }
 
-  handleOut(e_) {
+  handleOut() {
     if (this.props.hover) {
       this.refs.overlay.hide();
     }

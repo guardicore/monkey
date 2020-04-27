@@ -1,19 +1,14 @@
-bson
+pytest
 python-dateutil
-tornado==5.1.1
+tornado
 werkzeug
-jinja2
-markupsafe
-itsdangerous
-click
 flask
 Flask-Pymongo
 Flask-Restful
 Flask-JWT
-jsonschema==2.6.0
+jsonschema
 netifaces
 ipaddress
-enum34
 pycryptodome
 boto3
 botocore
@@ -27,3 +22,4 @@ mongomock
 requests
 dpath
 ring
+stix2

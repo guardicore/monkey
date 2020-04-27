@@ -5,9 +5,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique, 
 from common.utils.attack_utils import UsageEnum
 
 
-class UsageTechnique(AttackTechnique):
-    __metaclass__ = abc.ABCMeta
-
+class UsageTechnique(AttackTechnique, metaclass=abc.ABCMeta):
     @staticmethod
     def parse_usages(usage):
         """

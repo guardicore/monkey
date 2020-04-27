@@ -1,7 +1,7 @@
 import React from 'react';
-import '../../../styles/Collapse.scss'
-import ReactTable from "react-table";
-import { renderMachineFromSystemData, ScanStatus } from "./Helpers"
+import ReactTable from 'react-table';
+import {renderMachineFromSystemData, ScanStatus} from './Helpers'
+import MitigationsComponent from './MitigationsComponent';
 
 
 class T1188 extends React.Component {
@@ -12,22 +12,29 @@ class T1188 extends React.Component {
 
   static getHopColumns() {
     return ([{
-      Header: "Communications through multi-hop proxies",
+      Header: 'Communications through multi-hop proxies',
       columns: [
-        {Header: 'From',
+        {
+          Header: 'From',
           id: 'from',
           accessor: x => renderMachineFromSystemData(x.from),
-          style: { 'whiteSpace': 'unset' }},
-        {Header: 'To',
+          style: {'whiteSpace': 'unset'}
+        },
+        {
+          Header: 'To',
           id: 'to',
           accessor: x => renderMachineFromSystemData(x.to),
-          style: { 'whiteSpace': 'unset' }},
-        {Header: 'Hops',
+          style: {'whiteSpace': 'unset'}
+        },
+        {
+          Header: 'Hops',
           id: 'hops',
           accessor: x => x.count,
-          style: { 'whiteSpace': 'unset' }},
-        ]
-    }])};
+          style: {'whiteSpace': 'unset'}
+        }
+      ]
+    }])
+  }
 
   render() {
     return (
@@ -36,11 +43,12 @@ class T1188 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
-              columns={T1188.getHopColumns()}
-              data={this.props.data.hops}
-              showPagination={false}
-              defaultPageSize={this.props.data.hops.length}
-          /> : ""}
+            columns={T1188.getHopColumns()}
+            data={this.props.data.hops}
+            showPagination={false}
+            defaultPageSize={this.props.data.hops.length}
+          /> : ''}
+        <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
   }

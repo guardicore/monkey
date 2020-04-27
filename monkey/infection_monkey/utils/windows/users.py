@@ -5,7 +5,7 @@ from infection_monkey.utils.auto_new_user import AutoNewUser
 from infection_monkey.utils.new_user_error import NewUserError
 
 ACTIVE_NO_NET_USER = '/ACTIVE:NO'
-WAIT_TIMEOUT_IN_MILLISECONDS = 20 * 1000
+WAIT_TIMEOUT_IN_MILLISECONDS = 60 * 1000
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +65,7 @@ class AutoNewWindowsUser(AutoNewUser):
                 self.username,
                 ".",  # Use current domain.
                 self.password,
-                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user). Need this to open ping
-                # using a shell.
+                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user), since we're using a shell.
                 win32con.LOGON32_PROVIDER_DEFAULT)  # Which logon provider to use - whatever Windows offers.
         except Exception as err:
             raise NewUserError("Can't logon as {}. Error: {}".format(self.username, str(err)))
@@ -78,33 +77,28 @@ class AutoNewWindowsUser(AutoNewUser):
         import win32process
         import win32api
         import win32event
+        from winsys import _advapi32
 
         exit_code = -1
         process_handle = None
         thread_handle = None
 
         try:
-            # Open process as that user:
-            # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera
-            process_handle, thread_handle, _, _ = win32process.CreateProcessAsUser(
-                self.get_logon_handle(),  # A handle to the primary token that represents a user.
-                None,  # The name of the module to be executed.
-                command,  # The command line to be executed.
-                None,  # Process attributes
-                None,  # Thread attributes
-                True,  # Should inherit handles
-                win32con.NORMAL_PRIORITY_CLASS,  # The priority class and the creation of the process.
-                None,  # An environment block for the new process. If this parameter is NULL, the new process
-                # uses the environment of the calling process.
-                None,  # CWD. If this parameter is NULL, the new process will have the same current drive and
-                # directory as the calling process.
-                win32process.STARTUPINFO()  # STARTUPINFO structure.
-                # https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
+            # Open process as that user
+            # https://github.com/tjguk/winsys/blob/master/winsys/_advapi32.py
+            proc_info = _advapi32.CreateProcessWithLogonW(
+                username=self.username,
+                domain=".",
+                password=self.password,
+                command_line=command
             )
+            process_handle = proc_info.hProcess
+            thread_handle = proc_info.hThread
 
             logger.debug(
                 "Waiting for process to finish. Timeout: {}ms".format(WAIT_TIMEOUT_IN_MILLISECONDS))
 
+            # https://social.msdn.microsoft.com/Forums/vstudio/en-US/b6d6a7ae-71e9-4edb-ac8f-408d2a41750d/what-events-on-a-process-handle-signal-satisify-waitforsingleobject?forum=vcgeneral
             # Ignoring return code, as we'll use `GetExitCode` to determine the state of the process later.
             _ = win32event.WaitForSingleObject(  # Waits until the specified object is signaled, or time-out.
                 process_handle,  # Ping process handle

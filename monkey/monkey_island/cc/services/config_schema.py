@@ -1,4 +1,7 @@
-WARNING_SIGN = u" \u26A0"
+from common.data.system_info_collectors_names \
+    import AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR, PROCESS_LIST_COLLECTOR
+
+WARNING_SIGN = " \u26A0"
 
 SCHEMA = {
     "title": "Monkey",
@@ -98,6 +101,44 @@ SCHEMA = {
                     "title": "VSFTPD Exploiter"
                 }
             ]
+        },
+        "system_info_collectors_classes": {
+            "title": "System Information Collectors",
+            "type": "string",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        ENVIRONMENT_COLLECTOR
+                    ],
+                    "title": "Collect which environment this machine is on (on prem/cloud)",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        AWS_COLLECTOR
+                    ],
+                    "title": "If on AWS, collect more information about the instance",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        HOSTNAME_COLLECTOR
+                    ],
+                    "title": "Collect the machine's hostname",
+                    "attack_techniques": []
+                },
+{
+                    "type": "string",
+                    "enum": [
+                        PROCESS_LIST_COLLECTOR
+                    ],
+                    "title": "Collect running processes on the machine",
+                    "attack_techniques": []
+                },
+            ],
         },
         "post_breach_acts": {
             "title": "Post breach actions",
@@ -433,6 +474,21 @@ SCHEMA = {
                             "attack_techniques": ["T1003"],
                             "description": "Determines whether to use Mimikatz"
                         },
+                        "system_info_collectors_classes": {
+                            "title": "System info collectors",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "$ref": "#/definitions/system_info_collectors_classes"
+                            },
+                            "default": [
+                                ENVIRONMENT_COLLECTOR,
+                                AWS_COLLECTOR,
+                                HOSTNAME_COLLECTOR,
+                                PROCESS_LIST_COLLECTOR
+                            ],
+                            "description": "Determines which system information collectors will collect information."
+                        },
                     }
                 },
                 "life_cycle": {
@@ -753,7 +809,8 @@ SCHEMA = {
                                 "Struts2Exploiter",
                                 "WebLogicExploiter",
                                 "HadoopExploiter",
-                                "VSFTPDExploiter"
+                                "VSFTPDExploiter",
+                                "MSSQLExploiter"
                             ],
                             "description":
                                 "Determines which exploits to use. " + WARNING_SIGN
@@ -899,7 +956,8 @@ SCHEMA = {
                                 8008,
                                 3306,
                                 9200,
-                                7001
+                                7001,
+                                8088
                             ],
                             "description": "List of TCP ports the monkey will check whether they're open"
                         },

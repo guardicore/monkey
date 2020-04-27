@@ -1,10 +1,14 @@
 import uuid
+import logging
 from time import sleep
 
-from monkey import Monkey
-from monkey_island.cc.models.monkey import MonkeyNotFoundError
+import pytest
+
+from monkey_island.cc.models.monkey import Monkey, MonkeyNotFoundError
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
-from monkey_ttl import MonkeyTtl
+from .monkey_ttl import MonkeyTtl
+
+logger = logging.getLogger(__name__)
 
 
 class TestMonkey(IslandTestCase):
@@ -32,7 +36,7 @@ class TestMonkey(IslandTestCase):
         # MIA stands for Missing In Action
         mia_monkey_ttl = MonkeyTtl.create_ttl_expire_in(30)
         mia_monkey_ttl.save()
-        mia_monkey = Monkey(guid=str(uuid.uuid4()), dead=False, ttl_ref=mia_monkey_ttl)
+        mia_monkey = Monkey(guid=str(uuid.uuid4()), dead=False, ttl_ref=mia_monkey_ttl.id)
         mia_monkey.save()
         # Emulate timeout - ttl is manually deleted here, since we're using mongomock and not a real mongo instance.
         sleep(1)
@@ -70,15 +74,17 @@ class TestMonkey(IslandTestCase):
         # Act + assert
         # Find the existing one
         self.assertIsNotNone(Monkey.get_single_monkey_by_id(a_monkey.id))
+
         # Raise on non-existent monkey
-        self.assertRaises(MonkeyNotFoundError, Monkey.get_single_monkey_by_id, "abcdefabcdefabcdefabcdef")
+        with pytest.raises(MonkeyNotFoundError) as e_info:
+            _ = Monkey.get_single_monkey_by_id("abcdefabcdefabcdefabcdef")
 
     def test_get_os(self):
         self.fail_if_not_testing_env()
         self.clean_monkey_db()
 
         linux_monkey = Monkey(guid=str(uuid.uuid4()),
-                              description="Linux shay-Virtual-Machine 4.15.0-50-generic #54-Ubuntu SMP Mon May 6 18:46:08 UTC 2019 x86_64 x86_64")
+                              description="Linux shay-Virtual-Machine 4.15.0-50-generic #54-Ubuntu")
         windows_monkey = Monkey(guid=str(uuid.uuid4()),
                                 description="Windows bla bla bla")
         unknown_monkey = Monkey(guid=str(uuid.uuid4()),
@@ -87,9 +93,9 @@ class TestMonkey(IslandTestCase):
         windows_monkey.save()
         unknown_monkey.save()
 
-        self.assertEquals(1, len(filter(lambda m: m.get_os() == "windows", Monkey.objects())))
-        self.assertEquals(1, len(filter(lambda m: m.get_os() == "linux", Monkey.objects())))
-        self.assertEquals(1, len(filter(lambda m: m.get_os() == "unknown", Monkey.objects())))
+        self.assertEqual(1, len([m for m in Monkey.objects() if m.get_os() == "windows"]))
+        self.assertEqual(1, len([m for m in Monkey.objects() if m.get_os() == "linux"]))
+        self.assertEqual(1, len([m for m in Monkey.objects() if m.get_os() == "unknown"]))
 
     def test_get_tunneled_monkeys(self):
         self.fail_if_not_testing_env()
@@ -125,29 +131,41 @@ class TestMonkey(IslandTestCase):
                               ip_addresses=[ip_example])
         linux_monkey.save()
 
+        logger.debug(id(Monkey.get_label_by_id))
+
         cache_info_before_query = Monkey.get_label_by_id.storage.backend.cache_info()
-        self.assertEquals(cache_info_before_query.hits, 0)
+        self.assertEqual(cache_info_before_query.hits, 0)
+        self.assertEqual(cache_info_before_query.misses, 0)
 
         # not cached
         label = Monkey.get_label_by_id(linux_monkey.id)
+        cache_info_after_query_1 = Monkey.get_label_by_id.storage.backend.cache_info()
+        self.assertEqual(cache_info_after_query_1.hits, 0)
+        self.assertEqual(cache_info_after_query_1.misses, 1)
+        logger.debug("1) ID: {} label: {}".format(linux_monkey.id, label))
 
         self.assertIsNotNone(label)
         self.assertIn(hostname_example, label)
         self.assertIn(ip_example, label)
 
         # should be cached
-        _ = Monkey.get_label_by_id(linux_monkey.id)
-        cache_info_after_query = Monkey.get_label_by_id.storage.backend.cache_info()
-        self.assertEquals(cache_info_after_query.hits, 1)
+        label = Monkey.get_label_by_id(linux_monkey.id)
+        logger.debug("2) ID: {} label: {}".format(linux_monkey.id, label))
+        cache_info_after_query_2 = Monkey.get_label_by_id.storage.backend.cache_info()
+        self.assertEqual(cache_info_after_query_2.hits, 1)
+        self.assertEqual(cache_info_after_query_2.misses, 1)
 
+        # set hostname deletes the id from the cache.
         linux_monkey.set_hostname("Another hostname")
 
         # should be a miss
         label = Monkey.get_label_by_id(linux_monkey.id)
-        cache_info_after_second_query = Monkey.get_label_by_id.storage.backend.cache_info()
+        logger.debug("3) ID: {} label: {}".format(linux_monkey.id, label))
+        cache_info_after_query_3 = Monkey.get_label_by_id.storage.backend.cache_info()
+        logger.debug("Cache info: {}".format(str(cache_info_after_query_3)))
         # still 1 hit only
-        self.assertEquals(cache_info_after_second_query.hits, 1)
-        self.assertEquals(cache_info_after_second_query.misses, 2)
+        self.assertEqual(cache_info_after_query_3.hits, 1)
+        self.assertEqual(cache_info_after_query_3.misses, 2)
 
     def test_is_monkey(self):
         self.fail_if_not_testing_env()
@@ -157,7 +175,7 @@ class TestMonkey(IslandTestCase):
         a_monkey.save()
 
         cache_info_before_query = Monkey.is_monkey.storage.backend.cache_info()
-        self.assertEquals(cache_info_before_query.hits, 0)
+        self.assertEqual(cache_info_before_query.hits, 0)
 
         # not cached
         self.assertTrue(Monkey.is_monkey(a_monkey.id))
@@ -169,5 +187,4 @@ class TestMonkey(IslandTestCase):
         self.assertFalse(Monkey.is_monkey(fake_id))
 
         cache_info_after_query = Monkey.is_monkey.storage.backend.cache_info()
-        self.assertEquals(cache_info_after_query.hits, 2)
-
+        self.assertEqual(cache_info_after_query.hits, 2)

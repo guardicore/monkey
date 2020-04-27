@@ -9,6 +9,7 @@ from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_docu
 from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.models.command_control_channel import CommandControlChannel
 from monkey_island.cc.utils import local_ip_addresses
+from common.cloud import environment_names
 
 MAX_MONKEYS_AMOUNT_TO_CACHE = 100
 
@@ -42,7 +43,12 @@ class Monkey(Document):
     ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
     command_control_channel = EmbeddedDocumentField(CommandControlChannel)
+
+    # Environment related fields
+    environment = StringField(default=environment_names.Environment.UNKNOWN.value,
+                              choices=environment_names.ALL_ENVIRONMENTS_NAMES)
     aws_instance_id = StringField(required=False)  # This field only exists when the monkey is running on an AWS
+
     # instance. See https://github.com/guardicore/monkey/issues/426.
 
     # LOGIC
@@ -51,14 +57,15 @@ class Monkey(Document):
         try:
             return Monkey.objects.get(id=db_id)
         except DoesNotExist as ex:
-            raise MonkeyNotFoundError("info: {0} | id: {1}".format(ex.message, str(db_id)))
+            raise MonkeyNotFoundError("info: {0} | id: {1}".format(ex, str(db_id)))
 
     @staticmethod
-    def get_single_monkey_by_guid(monkey_guid):
+    # See https://www.python.org/dev/peps/pep-0484/#forward-references
+    def get_single_monkey_by_guid(monkey_guid) -> 'Monkey':
         try:
             return Monkey.objects.get(guid=monkey_guid)
         except DoesNotExist as ex:
-            raise MonkeyNotFoundError("info: {0} | guid: {1}".format(ex.message, str(monkey_guid)))
+            raise MonkeyNotFoundError("info: {0} | guid: {1}".format(ex, str(monkey_guid)))
 
     @staticmethod
     def get_latest_modifytime():
@@ -88,8 +95,8 @@ class Monkey(Document):
             os = "windows"
         return os
 
-    @staticmethod
     @ring.lru()
+    @staticmethod
     def get_label_by_id(object_id):
         current_monkey = Monkey.get_single_monkey_by_id(object_id)
         label = Monkey.get_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
@@ -97,8 +104,8 @@ class Monkey(Document):
             label = "MonkeyIsland - " + label
         return label
 
-    @staticmethod
     @ring.lru()
+    @staticmethod
     def get_hostname_by_id(object_id):
         """
         :param object_id: the object ID of a Monkey in the database.
@@ -124,10 +131,10 @@ class Monkey(Document):
         """
         return {'ips': self.ip_addresses, 'hostname': self.hostname}
 
-    @staticmethod
     @ring.lru(
         expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.
     )
+    @staticmethod
     def is_monkey(object_id):
         try:
             _ = Monkey.get_single_monkey_by_id(object_id)

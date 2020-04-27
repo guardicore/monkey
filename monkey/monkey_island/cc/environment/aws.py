@@ -1,7 +1,6 @@
 import monkey_island.cc.auth
 from monkey_island.cc.environment import Environment
-from common.cloud.aws_instance import AwsInstance
-from Crypto.Hash import SHA3_512
+from common.cloud.aws.aws_instance import AwsInstance
 
 __author__ = 'itay.mizeretz'
 

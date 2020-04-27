@@ -5,9 +5,9 @@ const columns = [
   {
     Header: 'Stolen Credentials',
     columns: [
-      { Header: 'Username', accessor: 'username'},
-      { Header: 'Type', accessor: 'type'},
-      { Header: 'Stolen From', accessor: 'origin'}
+      {Header: 'Username', accessor: 'username'},
+      {Header: 'Type', accessor: 'type'},
+      {Header: 'Stolen From', accessor: 'origin'}
     ]
   }
 ];

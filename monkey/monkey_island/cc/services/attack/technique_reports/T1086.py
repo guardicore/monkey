@@ -6,7 +6,6 @@ __author__ = "VakarisZ"
 
 
 class T1086(AttackTechnique):
-
     tech_id = "T1086"
     unscanned_msg = "Monkey didn't run powershell."
     scanned_msg = ""
@@ -32,5 +31,7 @@ class T1086(AttackTechnique):
             status = ScanStatus.USED.value
         else:
             status = ScanStatus.UNSCANNED.value
+
+        data.update(T1086.get_mitigation_by_status(status))
         data.update(T1086.get_message_and_status(status))
         return data

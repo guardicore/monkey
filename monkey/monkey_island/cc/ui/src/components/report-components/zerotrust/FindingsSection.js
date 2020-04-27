@@ -1,8 +1,8 @@
-import React, {Component, Fragment} from "react";
-import PillarLabel from "./PillarLabel";
-import EventsButton from "./EventsButton";
-import ZeroTrustPillars, {ZeroTrustStatuses} from "./ZeroTrustPillars";
-import {FindingsTable} from "./FindingsTable";
+import React, {Component, Fragment} from 'react';
+import PillarLabel from './PillarLabel';
+import EventsButton from './EventsButton';
+import ZeroTrustPillars, {ZeroTrustStatuses} from './ZeroTrustPillars';
+import {FindingsTable} from './FindingsTable';
 
 
 class FindingsSection extends Component {

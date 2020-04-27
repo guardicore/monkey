@@ -1,7 +1,7 @@
-import {css} from "@emotion/core";
-import React, {Component} from "react";
-import {GridLoader} from "react-spinners";
-import * as PropTypes from "prop-types";
+import {css} from '@emotion/core';
+import React, {Component} from 'react';
+import {GridLoader} from 'react-spinners';
+import * as PropTypes from 'prop-types';
 
 const loading_css_override = css`
     display: block;
@@ -16,7 +16,7 @@ export default class ReportLoader extends Component {
       <h1>Generating Report...</h1>
       <GridLoader
         css={loading_css_override}
-        sizeUnit={"px"}
+        sizeUnit={'px'}
         size={20}
         color={'#ffcc00'}
         loading={this.props.loading}

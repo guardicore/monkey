@@ -1,18 +1,71 @@
+# Infection Monkey travis.yml. See Travis documentation for information about this file structure.
+
 group: travis_latest
+
 language: python
+
 cache: pip
+
 python:
-    - 2.7
+- 3.7
+
+os: linux
+
 install:
-    #- pip install -r requirements.txt
-    - pip install flake8  # pytest  # add another testing frameworks later
+# Python
+- pip install -r monkey/monkey_island/requirements.txt  # for unit tests
+- pip install flake8 pytest dlint  # for next stages
+- pip install coverage  # for code coverage
+- pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
+
 before_script:
-    # stop the build if there are Python syntax errors or undefined names
-    - flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
-    # exit-zero treats all errors as warnings.  The GitHub editor is 127 chars wide
-    - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+# Set the server config to `testing`. This is required for for the UTs to pass.
+- python monkey/monkey_island/cc/set_server_config.py testing
+
 script:
-    - true  # pytest --capture=sys  # add other tests here
+# Check Python code
+## Check syntax errors and fail the build if any are found.
+- flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
+
+## Warn about linter issues.
+### --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
+### --count will print the total number of errors.
+### --statistics Count the number of occurrences of each error/warning code and print a report.
+### The output is redirected to a file.
+- flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics > flake8_warnings.txt
+## Display the linter issues
+- cat flake8_warnings.txt
+## Make sure that we haven't increased the amount of warnings.
+- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=190
+- if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
+
+## Run unit tests
+- cd monkey  # This is our source dir
+- python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+
+## Calculate Code Coverage
+- coverage run -m pytest
+
+# Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
+- cd monkey_island/cc/ui
+- npm i
+- npm i -g eslint
+- cd -
+- cd monkey_island/cc/ui
+- eslint ./src --quiet
+- JS_WARNINGS_AMOUNT_UPPER_LIMIT=37
+- eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT
+
+after_success:
+  # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
+  - bash <(curl -s https://codecov.io/bash)
+
 notifications:
-    on_success: change
-    on_failure: change # `always` will be the setting once code changes slow down
+  slack:  # Notify to slack
+      rooms:
+      - infectionmonkey:QaXbsx4g7tHFJW0lhtiBmoAg#ci  # room: #ci
+      on_success: change
+      on_failure: always
+  email:
+      on_success: change
+      on_failure: always

@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactTable from 'react-table'
 
-let renderArray = function(val) {
+let renderArray = function (val) {
   return <div>{val.map(x => <div>{x}</div>)}</div>;
 };
 
 let renderIpAddresses = function (val) {
-  return <div>{renderArray(val.ip_addresses)} {(val.domain_name ? " (".concat(val.domain_name, ")") : "")} </div>;
+  return <div>{renderArray(val.ip_addresses)} {(val.domain_name ? ' ('.concat(val.domain_name, ')') : '')} </div>;
 };
 
 const columns = [
@@ -14,10 +14,12 @@ const columns = [
     Header: 'Breached Servers',
     columns: [
       {Header: 'Machine', accessor: 'label'},
-      {Header: 'IP Addresses', id: 'ip_addresses',
-       accessor: x => renderIpAddresses(x)},
+      {
+        Header: 'IP Addresses', id: 'ip_addresses',
+        accessor: x => renderIpAddresses(x)
+      },
       {Header: 'Exploits', id: 'exploits', accessor: x => renderArray(x.exploits)}
-      ]
+    ]
   }
 ];
 

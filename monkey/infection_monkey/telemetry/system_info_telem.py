@@ -17,3 +17,6 @@ class SystemInfoTelem(BaseTelem):
 
     def get_data(self):
         return self.system_info
+
+    def send(self, log_data=False):
+        super(SystemInfoTelem, self).send(log_data)

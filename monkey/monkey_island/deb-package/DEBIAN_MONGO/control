@@ -1,0 +1,8 @@
+Package: gc-monkey-island
+Architecture: amd64
+Maintainer: Guardicore <support@infectionmonkey.com>
+Homepage: https://www.infectionmonkey.com
+Priority: optional
+Version: 1.0
+Description: Guardicore Infection Monkey Island installation package
+Depends: openssl, python3.7-dev, python3.7-venv, python3-venv, build-essential

@@ -1,7 +1,6 @@
 import itertools
-from six import text_type
 
-from common.data.zero_trust_consts import STATUS_FAILED, EVENT_TYPE_MONKEY_NETWORK, STATUS_PASSED
+import common.data.zero_trust_consts as zero_trust_consts
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst, get_ip_if_in_subnet
 from monkey_island.cc.models import Monkey
@@ -10,7 +9,7 @@ from monkey_island.cc.models.zero_trust.segmentation_finding import Segmentation
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 
 SEGMENTATION_DONE_EVENT_TEXT = "Monkey on {hostname} is done attempting cross-segment communications " \
-                       "from `{src_seg}` segments to `{dst_seg}` segments."
+                               "from `{src_seg}` segments to `{dst_seg}` segments."
 
 SEGMENTATION_VIOLATION_EVENT_TEXT = \
     "Segmentation violation! Monkey on '{hostname}', with the {source_ip} IP address (in segment {source_seg}) " \
@@ -29,13 +28,12 @@ def test_segmentation_violation(current_monkey, target_ip):
                 event = get_segmentation_violation_event(current_monkey, source_subnet, target_ip, target_subnet)
                 SegmentationFinding.create_or_add_to_existing_finding(
                     subnets=[source_subnet, target_subnet],
-                    status=STATUS_FAILED,
+                    status=zero_trust_consts.STATUS_FAILED,
                     segmentation_event=event
                 )
 
 
-def is_segmentation_violation(current_monkey, target_ip, source_subnet, target_subnet):
-    # type: (Monkey, str, str, str) -> bool
+def is_segmentation_violation(current_monkey: Monkey, target_ip: str, source_subnet: str, target_subnet: str) -> bool:
     """
     Checks is a specific communication is a segmentation violation.
     :param current_monkey:  The source monkey which originated the communication.
@@ -49,7 +47,7 @@ def is_segmentation_violation(current_monkey, target_ip, source_subnet, target_s
     source_subnet_range = NetworkRange.get_range_obj(source_subnet)
     target_subnet_range = NetworkRange.get_range_obj(target_subnet)
 
-    if target_subnet_range.is_in_range(text_type(target_ip)):
+    if target_subnet_range.is_in_range(str(target_ip)):
         cross_segment_ip = get_ip_in_src_and_not_in_dst(
             current_monkey.ip_addresses,
             source_subnet_range,
@@ -68,7 +66,7 @@ def get_segmentation_violation_event(current_monkey, source_subnet, target_ip, t
             target_ip=target_ip,
             target_seg=target_subnet
         ),
-        event_type=EVENT_TYPE_MONKEY_NETWORK
+        event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK
     )
 
 
@@ -94,7 +92,7 @@ def create_or_add_findings_for_all_pairs(all_subnets, current_monkey):
     for subnet_pair in all_subnets_pairs_for_this_monkey:
         SegmentationFinding.create_or_add_to_existing_finding(
             subnets=list(subnet_pair),
-            status=STATUS_PASSED,
+            status=zero_trust_consts.STATUS_PASSED,
             segmentation_event=get_segmentation_done_event(current_monkey, subnet_pair)
         )
 
@@ -103,8 +101,8 @@ def get_segmentation_done_event(current_monkey, subnet_pair):
     return Event.create_event(
         title="Segmentation test done",
         message=SEGMENTATION_DONE_EVENT_TEXT.format(
-                    hostname=current_monkey.hostname,
-                    src_seg=subnet_pair[0],
-                    dst_seg=subnet_pair[1]),
-        event_type=EVENT_TYPE_MONKEY_NETWORK
+            hostname=current_monkey.hostname,
+            src_seg=subnet_pair[0],
+            dst_seg=subnet_pair[1]),
+        event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK
     )
