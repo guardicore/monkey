@@ -181,19 +181,6 @@ class ConfigurePageComponent extends AuthComponent {
         let tempMatrix = this.state.attackConfig;
         tempMatrix[techType[0]].properties[technique].value = value;
 
-        if (technique == 'T1136') {
-          let newConfig = this.state.configuration;
-          if (value && !newConfig['monkey']['general']['post_breach_actions'].includes('BackdoorUser')) {
-              newConfig['monkey']['general']['post_breach_actions'].push('BackdoorUser');
-            }
-          else if (!value && newConfig['monkey']['general']['post_breach_actions'].includes('BackdoorUser')) {
-              let toRemoveIndex = newConfig['monkey']['general']['post_breach_actions'].indexOf('BackdoorUser');
-              newConfig['monkey']['general']['post_breach_actions'].splice(toRemoveIndex, 1);
-            }
-          this.setState({attackConfig: tempMatrix, configuration: newConfig});
-          this.configSubmit();
-      }
-
         // Toggle all mapped techniques
         if (!mapped) {
           // Loop trough each column and each row
