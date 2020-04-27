@@ -140,7 +140,7 @@ SCHEMA = {
                 },
             ],
         },
-        "post_breach_acts": {
+        "post_breach_actions": {
             "title": "Post breach actions",
             "type": "string",
             "anyOf": [
@@ -375,7 +375,7 @@ SCHEMA = {
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
-                                "$ref": "#/definitions/post_breach_acts"
+                                "$ref": "#/definitions/post_breach_actions"
                             },
                             "default": [
                                 "BackdoorUser",
