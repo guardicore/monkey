@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
 import os
-from Crypto.Hash import SHA3_512
+import hashlib
 
 __author__ = 'itay.mizeretz'
 
@@ -45,10 +45,11 @@ class Environment(object, metaclass=ABCMeta):
     def get_auth_expiration_time(self):
         return self._AUTH_EXPIRATION_TIME
 
-    def hash_secret(self, secret):
-        h = SHA3_512.new()
-        h.update(secret)
-        return h.hexdigest()
+    @staticmethod
+    def hash_secret(secret):
+        hash_obj = hashlib.sha3_512()
+        hash_obj.update(secret.encode('utf-8'))
+        return hash_obj.hexdigest()
 
     def get_deployment(self):
         return self._get_from_config('deployment', 'unknown')
