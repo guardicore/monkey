@@ -54,7 +54,3 @@ class Finding(Document):
         finding.save()
 
         return finding
-
-    def add_events(self, events):
-        # type: (list) -> None
-        self.events.extend(events)

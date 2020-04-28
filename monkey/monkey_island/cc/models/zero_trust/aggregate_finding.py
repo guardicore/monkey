@@ -12,7 +12,7 @@ class AggregateFinding(Finding):
         :raises: Assertion error if this is used when there's more then one finding which fits the query - this is not
         when this function should be used.
         """
-        existing_findings = Finding.objects(test=test, status=status)
+        existing_findings = Finding.objects(test=test, status=status).exclude('events')
         assert (len(existing_findings) < 2), "More than one finding exists for {}:{}".format(test, status)
 
         if len(existing_findings) == 0:
@@ -20,7 +20,7 @@ class AggregateFinding(Finding):
         else:
             # Now we know for sure this is the only one
             orig_finding = existing_findings[0]
-            orig_finding.add_events(events)
+            orig_finding.update(push_all__events=events)
             orig_finding.save()
 
 
