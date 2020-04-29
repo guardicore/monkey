@@ -2,7 +2,7 @@ import logging
 
 from envs.monkey_zoo.blackbox.analyzers.performance_analyzer import PerformanceAnalyzer
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
-from envs.monkey_zoo.blackbox.island_client.supported_reuqest_method import SupportedRequestMethod
+from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
 from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
 from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
 
