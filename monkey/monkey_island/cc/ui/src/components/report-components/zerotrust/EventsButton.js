@@ -4,7 +4,7 @@ import {Badge, Button} from 'react-bootstrap';
 import * as PropTypes from 'prop-types';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList } from '@fortawesome/free-solid-svg-icons';
+import { faList } from '@fortawesome/free-solid-svg-icons/faList';
 
 export default class EventsButton extends Component {
   constructor(props) {

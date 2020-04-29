@@ -3,7 +3,7 @@ import Collapse from '@kunukn/react-collapse';
 
 import AttackReport from '../AttackReport';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
+import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons/faQuestionCircle';
 
 const classNames = require('classnames');
 

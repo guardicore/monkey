@@ -1,7 +1,10 @@
 import React from 'react';
 import Collapse from '@kunukn/react-collapse';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faQuestionCircle, faChevronUp, faChevronDown, faToggleOn } from '@fortawesome/free-solid-svg-icons'
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons/faQuestionCircle'
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
+import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleON'
 
 import {Button} from 'react-bootstrap';
 import AttackReport from '../AttackReport';
