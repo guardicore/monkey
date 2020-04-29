@@ -32,4 +32,5 @@ To run telemetry performance test follow these steps:
         1. Run `telem_parser.py` scrip with working directory set to `monkey\envs\monkey_zoo\blackbox`
         2. Pass integer to indicate the multiplier. For example running `telem_parser.py 4` will replicate
         telemetries 4 times.
+        3. If you're using pycharm check "Emulate terminal in output console" on debug/run configuraion.
     3. Run blackbox tests, telemetry performance test will run as part of it.

@@ -5,7 +5,7 @@ from datetime import timedelta
 import requests
 import functools
 
-from envs.monkey_zoo.blackbox.island_client.supported_reuqest_method import SupportedRequestMethod
+from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
 
 import logging
 
