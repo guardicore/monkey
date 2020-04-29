@@ -111,6 +111,7 @@
     "react-tooltip-lite": "^1.10.0",
     "redux": "^4.0.4",
     "sass-loader": "^7.3.1",
-    "sha3": "^2.0.7"
+    "sha3": "^2.0.7",
+    "stylelint": "^13.3.3"
   }
 }
