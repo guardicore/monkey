@@ -9,7 +9,7 @@ import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleON'
 import {Button} from 'react-bootstrap';
 import AttackReport from '../AttackReport';
 
-const classNames = require('classnames');
+import classNames from 'classnames';
 
 class TechniqueDropdowns extends React.Component{
 

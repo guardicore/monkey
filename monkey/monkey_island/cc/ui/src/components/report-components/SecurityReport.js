@@ -17,8 +17,7 @@ import PrintReportButton from './common/PrintReportButton';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
-
-let guardicoreLogoImage = require('../../images/guardicore-logo.png');
+import guardicoreLogoImage from '../../images/guardicore-logo.png'
 
 
 class ReportPageComponent extends AuthComponent {

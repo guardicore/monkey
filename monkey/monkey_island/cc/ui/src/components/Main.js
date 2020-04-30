@@ -26,10 +26,10 @@ import 'react-toggle/style.css';
 import 'react-table/react-table.css';
 import VersionComponent from './side-menu/VersionComponent';
 
-let logoImage = require('../images/monkey-icon.svg');
-let infectionMonkeyImage = require('../images/infection-monkey.svg');
-let guardicoreLogoImage = require('../images/guardicore-logo.png');
-let notificationIcon = require('../images/notification-logo-512x512.png');
+import logoImage from '../images/monkey-icon.svg';
+import infectionMonkeyImage from '../images/infection-monkey.svg';
+import guardicoreLogoImage from '../images/guardicore-logo.png';
+import notificationIcon from '../images/notification-logo-512x512.png';
 
 const reportZeroTrustRoute = '/report/zeroTrust';
 

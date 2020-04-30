@@ -2,7 +2,7 @@ import React from 'react';
 
 import '../../styles/NotFoundPage.scss';
 
-let monkeyDetective = require('../../images/detective-monkey.svg');
+import monkeyDetective from '../../images/detective-monkey.svg';
 
 class ConfigurePageComponent extends React.Component{
   constructor(props) {

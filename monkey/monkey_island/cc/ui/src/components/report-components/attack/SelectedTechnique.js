@@ -5,7 +5,7 @@ import AttackReport from '../AttackReport';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons/faQuestionCircle';
 
-const classNames = require('classnames');
+import classNames from 'classnames';
 
 class SelectedTechnique extends React.Component {
 
