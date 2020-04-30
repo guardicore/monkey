@@ -65,7 +65,7 @@ class ZeroTrustService(object):
         worst_status = zero_trust_consts.STATUS_UNEXECUTED
         all_statuses = set()
         for test in principle_tests:
-            all_statuses |= set(Finding.objects(test=test).distinct("status"))
+            all_statuses |= set(Finding.objects(test=test).exclude('events').distinct("status"))
 
         for status in all_statuses:
             if zero_trust_consts.ORDERED_TEST_STATUSES.index(status) \
@@ -78,7 +78,7 @@ class ZeroTrustService(object):
     def __get_tests_status(principle_tests):
         results = []
         for test in principle_tests:
-            test_findings = Finding.objects(test=test)
+            test_findings = Finding.objects(test=test).exclude('events')
             results.append(
                 {
                     "test": zero_trust_consts.TESTS_MAP[test][zero_trust_consts.TEST_EXPLANATION_KEY],

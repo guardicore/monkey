@@ -6,12 +6,12 @@ PROFILER_LOG_DIR = "./profiler_logs/"
 
 
 def profile(sort_args=['cumulative'], print_args=[100]):
-    profiler = Profile()
 
     def decorator(fn):
         def inner(*args, **kwargs):
             result = None
             try:
+                profiler = Profile()
                 result = profiler.runcall(fn, *args, **kwargs)
             finally:
                 try:
