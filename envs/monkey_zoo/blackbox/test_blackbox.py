@@ -10,7 +10,10 @@ from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIs
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
 from envs.monkey_zoo.blackbox.tests.performance.map_generation import MapGenerationTest
+from envs.monkey_zoo.blackbox.tests.performance.map_generation_from_telemetries import MapGenerationFromTelemetryTest
 from envs.monkey_zoo.blackbox.tests.performance.report_generation import ReportGenerationTest
+from envs.monkey_zoo.blackbox.tests.performance.report_generation_from_telemetries import \
+    ReportGenerationFromTelemetryTest
 from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import TelemetryPerformanceTest
 from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
 
@@ -26,11 +29,11 @@ LOGGER = logging.getLogger(__name__)
 @pytest.fixture(autouse=True, scope='session')
 def GCPHandler(request):
     GCPHandler = gcp_machine_handlers.GCPHandler()
-    GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
-    wait_machine_bootup()
+    #GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
+    #wait_machine_bootup()
 
     def fin():
-        GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
+        #GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
         pass
 
     request.addfinalizer(fin)
@@ -49,7 +52,7 @@ def wait_machine_bootup():
 @pytest.fixture(scope='class')
 def island_client(island):
     island_client_object = MonkeyIslandClient(island)
-    island_client_object.reset_env()
+    # island_client_object.reset_env()
     yield island_client_object
 
 
@@ -146,6 +149,12 @@ class TestMonkeyBlackbox(object):
                                                 island_client,
                                                 "PERFORMANCE.conf",
                                                 timeout_in_seconds=10*60)
+
+    def test_report_generation_from_fake_telemetries(self, island_client):
+        ReportGenerationFromTelemetryTest(island_client).run()
+
+    def test_map_generation_from_fake_telemetries(self, island_client):
+        MapGenerationFromTelemetryTest(island_client).run()
 
     def test_telem_performance(self, island_client):
         TelemetryPerformanceTest(island_client).test_telemetry_performance()

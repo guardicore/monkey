@@ -25,6 +25,8 @@ class PerformanceTestWorkflow(BasicTest):
             self.exploitation_test.wait_for_monkey_process_to_finish()
         performance_test = EndpointPerformanceTest(self.name, self.performance_config, self.island_client)
         try:
+            if not self.island_client.is_all_monkeys_dead():
+                raise RuntimeError("Can't test report times since not all Monkeys have died.")
             assert performance_test.run()
         finally:
             self.exploitation_test.parse_logs()
