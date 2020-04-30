@@ -9,13 +9,13 @@ class ZeroTrustService(object):
     @staticmethod
     def get_pillars_grades():
         pillars_grades = []
+        all_findings = Finding.objects().exclude('events')
         for pillar in zero_trust_consts.PILLARS:
-            pillars_grades.append(ZeroTrustService.__get_pillar_grade(pillar))
+            pillars_grades.append(ZeroTrustService.__get_pillar_grade(pillar, all_findings))
         return pillars_grades
 
     @staticmethod
-    def __get_pillar_grade(pillar):
-        all_findings = Finding.objects()
+    def __get_pillar_grade(pillar, all_findings):
         pillar_grade = {
             "pillar": pillar,
             zero_trust_consts.STATUS_FAILED: 0,
@@ -147,7 +147,8 @@ class ZeroTrustService(object):
 
     @staticmethod
     def __get_status_of_single_pillar(pillar):
-        grade = ZeroTrustService.__get_pillar_grade(pillar)
+        all_findings = Finding.objects().exclude('events')
+        grade = ZeroTrustService.__get_pillar_grade(pillar, all_findings)
         for status in zero_trust_consts.ORDERED_TEST_STATUSES:
             if grade[status] > 0:
                 return status
