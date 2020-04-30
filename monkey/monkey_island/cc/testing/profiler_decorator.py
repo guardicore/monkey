@@ -1,5 +1,8 @@
 from cProfile import Profile
+import os
 import pstats
+
+PROFILER_LOG_DIR = "./profiler_logs/"
 
 
 def profile(sort_args=['cumulative'], print_args=[100]):
@@ -11,7 +14,11 @@ def profile(sort_args=['cumulative'], print_args=[100]):
             try:
                 result = profiler.runcall(fn, *args, **kwargs)
             finally:
-                filename = _get_filename_for_function(fn)
+                try:
+                    os.mkdir(PROFILER_LOG_DIR)
+                except os.error:
+                    pass
+                filename = PROFILER_LOG_DIR + _get_filename_for_function(fn)
                 with open(filename, 'w') as stream:
                     stats = pstats.Stats(profiler, stream=stream)
                     stats.strip_dirs().sort_stats(*sort_args).print_stats(*print_args)
