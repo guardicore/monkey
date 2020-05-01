@@ -96,7 +96,7 @@ class InfectionMonkey(object):
                WormConfiguration.command_servers.insert(server_num, self._default_servers[server_num])
            else:
                 LOG.debug("Default server: %s is already in command servers list" % self._default_servers[server_num])
-           server_num=server_num+1
+           server_num = server_num + 1
 
     def start(self):
         try:
