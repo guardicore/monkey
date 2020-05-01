@@ -19,6 +19,11 @@
       "configFile": ".babelrc"
     }
   },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "env": {
     "browser": true,
     "amd": true,
@@ -34,7 +39,6 @@
     ],
     "no-undef": 1,
     "global-strict": 0,
-    "no-extra-semi": 1,
     "no-underscore-dangle": 0,
     "no-console": 0,
     "no-unused-vars": 1,
@@ -52,6 +56,8 @@
     "no-useless-escape": 0,
     "react/prop-types": 0,
     "react/no-string-refs": 0,
-    "react/no-unescaped-entities": 0
+    "react/no-unescaped-entities": 0,
+    "react/jsx-key": 0,
+    "react/display-name": 1
   }
 }
