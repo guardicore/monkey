@@ -129,4 +129,3 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
             return {'mitigations': mitigation_document.to_mongo().to_dict()['mitigations']}
         else:
             return {}
-
