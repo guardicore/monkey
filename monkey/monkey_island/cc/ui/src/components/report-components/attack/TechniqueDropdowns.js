@@ -43,7 +43,7 @@ class TechniqueDropdowns extends React.Component{
             {this.state.techniques[tech_id].title}
           </span>
           <span>
-            <a href={this.state.techniques[tech_id].link} target='_blank' className={'link-to-technique'}>
+            <a href={this.state.techniques[tech_id].link} rel="noopener noreferrer" target='_blank' className={'link-to-technique'}>
               <FontAwesomeIcon icon={faQuestionCircle}/>
             </a>
               <FontAwesomeIcon icon={this.state.collapseOpen === tech_id ? faChevronDown : faChevronUp}/>

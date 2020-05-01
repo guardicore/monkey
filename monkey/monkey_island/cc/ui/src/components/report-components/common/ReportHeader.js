@@ -29,7 +29,7 @@ export class ReportHeader extends Component {
         </div>
       </Col>
       <Col xs={4}>
-        <img src={monkeyLogoImage}
+        <img alt="monkey logo image" src={monkeyLogoImage}
              style={{
                float: 'right',
                width: '80px'

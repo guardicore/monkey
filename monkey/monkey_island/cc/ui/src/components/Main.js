@@ -126,7 +126,7 @@ class AppComponent extends AuthComponent {
           <Row>
             <Col sm={3} md={2} className='sidebar'>
               <div className='header'>
-                <img src={logoImage} style={{width: '5vw', margin: '15px'}}/>
+                <img alt="logo" src={logoImage} style={{width: '5vw', margin: '15px'}}/>
                 <img src={infectionMonkeyImage} style={{width: '15vw'}} alt='Infection Monkey'/>
               </div>
 
@@ -189,7 +189,7 @@ class AppComponent extends AuthComponent {
               <hr/>
               <div className='guardicore-link text-center' style={{'marginBottom': '0.5em'}}>
                 <span>Powered by</span>
-                <a href='http://www.guardicore.com' target='_blank'>
+                <a href='http://www.guardicore.com' rel="noopener noreferrer" target='_blank'>
                   <img src={guardicoreLogoImage} alt='GuardiCore'/>
                 </a>
               </div>

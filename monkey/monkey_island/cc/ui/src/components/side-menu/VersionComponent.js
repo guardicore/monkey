@@ -34,7 +34,7 @@ class VersionComponent extends React.Component {
             <div>
               <b>Newer version available!</b>
               <br/>
-              <b><a target="_blank" href={this.state.downloadLink}>Download here <FontAwesomeIcon icon={faDownload}/></a></b>
+              <b><a rel="noopener noreferrer" target="_blank" href={this.state.downloadLink}>Download here <FontAwesomeIcon icon={faDownload}/></a></b>
             </div>
             :
             undefined

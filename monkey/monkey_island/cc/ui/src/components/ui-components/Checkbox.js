@@ -83,7 +83,7 @@ class CheckboxComponent extends React.PureComponent {
                type='checkbox' value={this.state.checked}
                name={this.props.name}/>
         <label className='text'>{this.props.children}</label>
-        <div className='ui-btn-ping' onTransitionEnd={this.stopAnimation}></div>
+        <div className='ui-btn-ping' onTransitionEnd={this.stopAnimation}/>
       </div>
     )
   }

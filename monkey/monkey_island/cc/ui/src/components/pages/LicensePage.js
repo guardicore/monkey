@@ -21,10 +21,10 @@ class LicensePageComponent extends React.Component {
           <p>
             Copyright <i className="glyphicon glyphicon-copyright-mark"/> {rainge(2015)} Guardicore Ltd.
             <br/>
-            Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPLv3</a>.
+            Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener noreferrer" target="_blank">GPLv3</a>.
           </p>
           <p>
-            The source code is available on <a href="https://github.com/guardicore/monkey" target="_blank">GitHub</a>
+            The source code is available on <a href="https://github.com/guardicore/monkey" rel="noopener noreferrer" target="_blank">GitHub</a>
           </p>
         </div>
       </Col>
