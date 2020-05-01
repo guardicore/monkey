@@ -86,7 +86,7 @@ class InfectionMonkey(object):
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
 
-        server_num=0     
+        server_num = 0   
         server_count = len(self._default_servers)
   
         if self._default_servers:
