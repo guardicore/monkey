@@ -96,13 +96,3 @@ class MonkeyIslandClient(object):
         response = self.requests.get("api/test/clear_caches")
         response.raise_for_status()
         return response
-
-    def get_elapsed_for_get_request(self, url):
-        response = self.requests.get(url)
-        if response.ok:
-            LOGGER.debug(f"Got ok for {url} content peek:\n{response.content[:120].strip()}")
-            return response.elapsed
-        else:
-            LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
-            # instead of raising for status, mark failed responses as maxtime
-            return timedelta.max()
