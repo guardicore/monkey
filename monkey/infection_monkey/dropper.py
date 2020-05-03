@@ -41,7 +41,7 @@ class MonkeyDrops(object):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument('-p', '--parent')
         arg_parser.add_argument('-t', '--tunnel')
-        arg_parser.add_argument('-s', '--servers')
+        arg_parser.add_argument('-s', '--servers', nargs ='+')
         arg_parser.add_argument('-d', '--depth', type=int)
         arg_parser.add_argument('-l', '--location')
         self.monkey_args = args[1:]
@@ -113,9 +113,13 @@ class MonkeyDrops(object):
                              (ref_stat.st_atime, ref_stat.st_mtime))
                 except OSError:
                     LOG.warning("Cannot set reference date to destination file")
-
+        
+        server_string =" "
+        for server in self.opts.servers:
+            server_string = server_string + " " + server    #Making the server string containing multiple server
+        
         monkey_options = \
-            build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
+            build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, server_string, self.opts.depth)
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._config['destination_path']} + monkey_options
