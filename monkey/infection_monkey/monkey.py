@@ -86,7 +86,7 @@ class InfectionMonkey(object):
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
         
-        def_server_list = [ def_server for def_server in WormConfiguration.command_servers ]
+        def_server_list = WormConfiguration.command_servers
         WormConfiguration.command_servers = [ server for server in self._default_servers ]
         WormConfiguration.command_servers = WormConfiguration.command_servers + def_server_list    # Constructing the command server list 
 
