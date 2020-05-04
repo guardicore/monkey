@@ -180,6 +180,7 @@ class ConfigurePageComponent extends AuthComponent {
       if (techType[1].properties.hasOwnProperty(technique)) {
         let tempMatrix = this.state.attackConfig;
         tempMatrix[techType[0]].properties[technique].value = value;
+        this.setState({attackConfig: tempMatrix});
 
         // Toggle all mapped techniques
         if (!mapped) {
