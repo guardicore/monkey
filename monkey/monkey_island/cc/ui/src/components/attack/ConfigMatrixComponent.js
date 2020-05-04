@@ -8,8 +8,8 @@ import '../../styles/Tooltip.scss';
 import {Col} from 'react-bootstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle as faCircle } from '@fortawesome/free-solid-svg-icons';
-import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons';
+import { faCircle as faCircle } from '@fortawesome/free-solid-svg-icons/faCircle';
+import { faCircle as faCircleThin } from '@fortawesome/free-regular-svg-icons/faCircle';
 
 class ConfigMatrixComponent extends AuthComponent {
   constructor(props) {

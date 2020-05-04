@@ -346,8 +346,8 @@ class ConfigurePageComponent extends AuthComponent {
             throw Error()
           }
           return res;
-        }).catch(error => {
-        console.log('bad configuration');
+        }).catch((error) => {
+        console.log(`bad configuration ${error}`);
         this.setState({lastAction: 'invalid_configuration'});
       }));
   }

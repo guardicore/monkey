@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'
+import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons/faHandPointLeft'
 import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import download from 'downloadjs'

@@ -2,7 +2,8 @@ import React from 'react';
 import {BrowserRouter as Router, NavLink, Redirect, Route, Switch} from 'react-router-dom';
 import {Col, Grid, Row} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck, faUndo } from '@fortawesome/free-solid-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
+import { faUndo } from '@fortawesome/free-solid-svg-icons/faUndo'
 
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
@@ -25,10 +26,10 @@ import 'react-toggle/style.css';
 import 'react-table/react-table.css';
 import VersionComponent from './side-menu/VersionComponent';
 
-let logoImage = require('../images/monkey-icon.svg');
-let infectionMonkeyImage = require('../images/infection-monkey.svg');
-let guardicoreLogoImage = require('../images/guardicore-logo.png');
-let notificationIcon = require('../images/notification-logo-512x512.png');
+import logoImage from '../images/monkey-icon.svg';
+import infectionMonkeyImage from '../images/infection-monkey.svg';
+import guardicoreLogoImage from '../images/guardicore-logo.png';
+import notificationIcon from '../images/notification-logo-512x512.png';
 
 const reportZeroTrustRoute = '/report/zeroTrust';
 
@@ -125,7 +126,7 @@ class AppComponent extends AuthComponent {
           <Row>
             <Col sm={3} md={2} className='sidebar'>
               <div className='header'>
-                <img src={logoImage} style={{width: '5vw', margin: '15px'}}/>
+                <img alt="logo" src={logoImage} style={{width: '5vw', margin: '15px'}}/>
                 <img src={infectionMonkeyImage} style={{width: '15vw'}} alt='Infection Monkey'/>
               </div>
 
@@ -188,7 +189,7 @@ class AppComponent extends AuthComponent {
               <hr/>
               <div className='guardicore-link text-center' style={{'marginBottom': '0.5em'}}>
                 <span>Powered by</span>
-                <a href='http://www.guardicore.com' target='_blank'>
+                <a href='http://www.guardicore.com' rel="noopener noreferrer" target='_blank'>
                   <img src={guardicoreLogoImage} alt='GuardiCore'/>
                 </a>
               </div>

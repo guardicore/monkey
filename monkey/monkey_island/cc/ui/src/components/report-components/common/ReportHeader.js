@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Col} from 'react-bootstrap';
 import * as PropTypes from 'prop-types';
 
-let monkeyLogoImage = require('../../../images/monkey-icon.svg');
+import monkeyLogoImage from '../../../images/monkey-icon.svg';
 
 export const ReportTypes = {
   zeroTrust: 'Zero Trust',
@@ -29,7 +29,7 @@ export class ReportHeader extends Component {
         </div>
       </Col>
       <Col xs={4}>
-        <img src={monkeyLogoImage}
+        <img alt="monkey logo image" src={monkeyLogoImage}
              style={{
                float: 'right',
                width: '80px'

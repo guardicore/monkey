@@ -3,7 +3,7 @@ import {Button} from 'react-bootstrap';
 import * as PropTypes from 'prop-types';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 
 export default class ExportEventsButton extends Component {
   render() {
