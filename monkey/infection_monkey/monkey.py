@@ -78,25 +78,17 @@ class InfectionMonkey(object):
 
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
-        self._default_servers = self._opts.server
+        self._default_servers = self._opts.servers
 
         if self._opts.depth:
             WormConfiguration._depth_from_commandline = True
         self._keep_running = True
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
-
-        server_num = 0   
-        server_count = len(self._default_servers)
-  
-        if self._default_servers:
-         while server_num < (server_count):
-           if self._default_servers[server_num ] not in WormConfiguration.command_servers:
-               LOG.debug("Added default server: %s" % self._default_servers[server_num])
-               WormConfiguration.command_servers.insert(server_num, self._default_servers[server_num])
-           else:
-                LOG.debug("Default server: %s is already in command servers list" % self._default_servers[server_num])
-           server_num = server_num + 1
+        
+        def_server_list = [ def_server for def_server in WormConfiguration.command_servers ]
+        WormConfiguration.command_servers = [ server for server in self._default_servers ]
+        WormConfiguration.command_servers = WormConfiguration.command_servers + def_server_list    # Constructing the command server list 
 
     def start(self):
         try:

@@ -114,9 +114,7 @@ class MonkeyDrops(object):
                 except OSError:
                     LOG.warning("Cannot set reference date to destination file")
         
-        server_string =" "
-        for server in self.opts.servers:
-            server_string = server_string + " " + server    #Making the server string containing multiple server
+        server_string = " ".join(self.opts.servers)              #Making the server string containing multiple server
         
         monkey_options = \
             build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, server_string, self.opts.depth)
