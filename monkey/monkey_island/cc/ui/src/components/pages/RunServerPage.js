@@ -22,7 +22,7 @@ class RunServerPageComponent extends React.Component {
           </p>
           <p>
             To read more about the Monkey, visit <a href="http://infectionmonkey.com"
-                                                    target="_blank">infectionmonkey.com</a>
+                                                    rel="noopener noreferrer" target="_blank">infectionmonkey.com</a>
           </p>
           <p>
             Go ahead and <Link to="/run-monkey">run the monkey</Link>.
