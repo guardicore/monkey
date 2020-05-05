@@ -2,7 +2,8 @@ import React from 'react';
 import {Col, Modal} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStopCircle, faMinus } from '@fortawesome/free-solid-svg-icons'
+import { faStopCircle } from '@fortawesome/free-solid-svg-icons/faStopCircle'
+import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus'
 import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';

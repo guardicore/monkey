@@ -3,9 +3,9 @@ import Collapse from '@kunukn/react-collapse';
 
 import AttackReport from '../AttackReport';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
+import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons/faQuestionCircle';
 
-const classNames = require('classnames');
+import classNames from 'classnames';
 
 class SelectedTechnique extends React.Component {
 
@@ -37,7 +37,7 @@ class SelectedTechnique extends React.Component {
             {this.state.techniques[tech_id].title}
           </span>
           <span>
-            <a href={this.state.techniques[tech_id].link} target='_blank' className={'link-to-technique'}>
+            <a href={this.state.techniques[tech_id].link} rel="noopener noreferrer" target='_blank' className={'link-to-technique'}>
               <FontAwesomeIcon icon={faQuestionCircle}/>
             </a>
           </span>

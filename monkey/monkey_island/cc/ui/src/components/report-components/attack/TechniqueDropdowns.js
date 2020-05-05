@@ -1,12 +1,15 @@
 import React from 'react';
 import Collapse from '@kunukn/react-collapse';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faQuestionCircle, faChevronUp, faChevronDown, faToggleOn } from '@fortawesome/free-solid-svg-icons'
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons/faQuestionCircle'
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown'
+import { faToggleOn } from '@fortawesome/free-solid-svg-icons/faToggleON'
 
 import {Button} from 'react-bootstrap';
 import AttackReport from '../AttackReport';
 
-const classNames = require('classnames');
+import classNames from 'classnames';
 
 class TechniqueDropdowns extends React.Component{
 
@@ -40,7 +43,7 @@ class TechniqueDropdowns extends React.Component{
             {this.state.techniques[tech_id].title}
           </span>
           <span>
-            <a href={this.state.techniques[tech_id].link} target='_blank' className={'link-to-technique'}>
+            <a href={this.state.techniques[tech_id].link} rel="noopener noreferrer" target='_blank' className={'link-to-technique'}>
               <FontAwesomeIcon icon={faQuestionCircle}/>
             </a>
               <FontAwesomeIcon icon={this.state.collapseOpen === tech_id ? faChevronDown : faChevronUp}/>
