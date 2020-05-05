@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 from monkey_island.cc.resources.bootloader import Bootloader
-from monkey_island.cc.services.utils.bootloader_config import SUPPORTED_WINDOWS_VERSIONS
 
 
 class TestBootloader(TestCase):

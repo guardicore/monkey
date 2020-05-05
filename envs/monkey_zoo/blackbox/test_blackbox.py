@@ -144,4 +144,3 @@ class TestMonkeyBlackbox(object):
                                                 island_client,
                                                 "PERFORMANCE.conf",
                                                 timeout_in_seconds=10*60)
-
