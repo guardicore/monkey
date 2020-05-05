@@ -49,7 +49,7 @@ class MitigationsComponent extends React.Component {
 
   static getMitigationName(name, url) {
     if(url){
-      return (<a href={url} target={'_blank'}>{name}</a>)
+      return (<a href={url} rel="noopener noreferrer" target={'_blank'}>{name}</a>)
     } else {
       return (<p>{name}</p>)
     }

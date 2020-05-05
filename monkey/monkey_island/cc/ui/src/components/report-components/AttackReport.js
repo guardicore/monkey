@@ -3,7 +3,10 @@ import {Col, Button} from 'react-bootstrap';
 import '../../styles/Collapse.scss';
 import '../../styles/report/AttackReport.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faCircle, faEye, faEyeSlash, faRadiation} from '@fortawesome/free-solid-svg-icons';
+import {faCircle} from '@fortawesome/free-solid-svg-icons/faCircle';
+import {faRadiation} from '@fortawesome/free-solid-svg-icons/faRadiation';
+import {faEye} from '@fortawesome/free-solid-svg-icons/faEye';
+import {faEyeSlash} from '@fortawesome/free-solid-svg-icons/faEyeSlash';
 
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import {ScanStatus} from '../attack/techniques/Helpers';

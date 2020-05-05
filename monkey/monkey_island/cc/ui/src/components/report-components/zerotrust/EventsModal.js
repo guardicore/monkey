@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import {Badge, Modal} from 'react-bootstrap';
+import {Modal} from 'react-bootstrap';
 import EventsTimeline from './EventsTimeline';
 import * as PropTypes from 'prop-types';
 import saveJsonToFile from '../../utils/SaveJsonToFile';
 import EventsModalButtons from './EventsModalButtons';
 import Pluralize from 'pluralize'
-import {statusToLabelType} from './StatusLabel';
 
 export default class EventsModal extends Component {
   constructor(props) {
