@@ -88,7 +88,7 @@ class InfectionMonkey(object):
         
         def_server_list = WormConfiguration.command_servers
         WormConfiguration.command_servers = [ server for server in self._default_servers ]
-        WormConfiguration.command_servers = WormConfiguration.command_servers + def_server_list    # Constructing the command server list 
+        WormConfiguration.command_servers = WormConfiguration.command_servers + def_server_list      # Constructing the command server list 
 
     def start(self):
         try:
@@ -368,4 +368,4 @@ class InfectionMonkey(object):
         if not ControlClient.find_server(default_tunnel=self._default_tunnel):
             raise PlannedShutdownException("Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel))
         self._default_servers = WormConfiguration.current_server
-        LOG.debug("Servers set to: %s" % self._default_servers)
+        LOG.debug("Default server set to: %s" % self._default_servers)
