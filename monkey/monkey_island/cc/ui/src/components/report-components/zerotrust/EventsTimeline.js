@@ -17,7 +17,7 @@ export default class EventsTimeline extends Component {
         <Timeline style={{fontSize: '100%'}}>
           {
             this.props.events.map((event, index) => {
-              const event_time = new Date(event.timestamp['$date']).toString();
+              const event_time = new Date(event.timestamp).toString();
               return (<TimelineEvent
                 key={index}
                 createdAt={event_time}

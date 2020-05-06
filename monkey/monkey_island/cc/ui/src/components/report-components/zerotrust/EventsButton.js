@@ -24,7 +24,12 @@ export default class EventsButton extends Component {
 
   render() {
     return <Fragment>
-      <EventsModal events={this.props.events} showEvents={this.state.isShow} hideCallback={this.hide}
+      <EventsModal finding_id={this.props.finding_id}
+                   latest_events={this.props.latest_events}
+                   oldest_events={this.props.oldest_events}
+                   event_count={this.props.event_count}
+                   showEvents={this.state.isShow}
+                   hideCallback={this.hide}
                    exportFilename={this.props.exportFilename}/>
       <div className="text-center" style={{'display': 'grid'}}>
         <Button className="btn btn-primary btn-lg" onClick={this.show}>
@@ -35,12 +40,14 @@ export default class EventsButton extends Component {
   }
 
   createEventsAmountBadge() {
-    const eventsAmountBadgeContent = this.props.events.length > 9 ? '9+' : this.props.events.length;
+    const eventsAmountBadgeContent = this.props.event_count > 9 ? '9+' : this.props.event_count;
     return <Badge>{eventsAmountBadgeContent}</Badge>;
   }
 }
 
 EventsButton.propTypes = {
-  events: PropTypes.array,
+  latest_events: PropTypes.array,
+  oldest_events: PropTypes.array,
+  event_count: PropTypes.number,
   exportFilename: PropTypes.string
 };
