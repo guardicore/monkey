@@ -32,4 +32,3 @@ class TestBootloaderService(TestCase):
         ips = ["127.1.1.1", "127.0.0.1", "192.168.56.1"]
         ips = BootloaderService.remove_local_ips(ips)
         self.assertEqual(["192.168.56.1"], ips)
-

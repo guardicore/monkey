@@ -73,7 +73,6 @@ class AutoNewWindowsUser(AutoNewUser):
 
     def run_as(self, command):
         # Importing these only on windows, as they won't exist on linux.
-        import win32con
         import win32process
         import win32api
         import win32event

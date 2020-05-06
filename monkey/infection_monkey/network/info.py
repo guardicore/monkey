@@ -51,17 +51,14 @@ if is_windows_os():
         local_hostname = socket.gethostname()
         return socket.gethostbyname_ex(local_hostname)[2]
 
-
     def get_routes():
         raise NotImplementedError()
 else:
     from fcntl import ioctl
 
-
     def local_ips():
         valid_ips = [network['addr'] for network in get_host_subnets()]
         return valid_ips
-
 
     def get_routes():  # based on scapy implementation for route parsing
         try:

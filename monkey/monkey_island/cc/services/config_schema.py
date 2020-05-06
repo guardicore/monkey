@@ -130,7 +130,7 @@ SCHEMA = {
                     "title": "Collect the machine's hostname",
                     "attack_techniques": []
                 },
-{
+                {
                     "type": "string",
                     "enum": [
                         PROCESS_LIST_COLLECTOR
