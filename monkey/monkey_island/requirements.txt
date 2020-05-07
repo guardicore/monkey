@@ -24,4 +24,4 @@ requests
 dpath
 ring
 stix2
-tcdm
+tqdm
