@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 class TestMonkey(IslandTestCase):
     """
-    Make sure to set server environment to `testing` in server_config.json! Otherwise this will mess up your mongo instance and
-    won't work.
+    Make sure to set server environment to `testing` in server_config.json!
+    Otherwise this will mess up your mongo instance and won't work.
 
     Also, the working directory needs to be the working directory from which you usually run the island so the
     server_config.json file is found and loaded.

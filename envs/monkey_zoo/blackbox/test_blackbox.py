@@ -1,8 +1,8 @@
-import logging
 import os
-from time import sleep
+import logging
 
 import pytest
+from time import sleep
 
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
@@ -31,7 +31,6 @@ def GCPHandler(request):
 
     def fin():
         GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
-        pass
 
     request.addfinalizer(fin)
 

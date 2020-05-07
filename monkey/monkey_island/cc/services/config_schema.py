@@ -130,7 +130,7 @@ SCHEMA = {
                     "title": "Collect the machine's hostname",
                     "attack_techniques": []
                 },
-{
+                {
                     "type": "string",
                     "enum": [
                         PROCESS_LIST_COLLECTOR
@@ -140,7 +140,7 @@ SCHEMA = {
                 },
             ],
         },
-        "post_breach_acts": {
+        "post_breach_actions": {
             "title": "Post breach actions",
             "type": "string",
             "anyOf": [
@@ -150,7 +150,7 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1136"]
                 },
                 {
                     "type": "string",
@@ -158,7 +158,7 @@ SCHEMA = {
                         "CommunicateAsNewUser"
                     ],
                     "title": "Communicate as new user",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1136"]
                 },
             ],
         },
@@ -375,9 +375,10 @@ SCHEMA = {
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
-                                "$ref": "#/definitions/post_breach_acts"
+                                "$ref": "#/definitions/post_breach_actions"
                             },
                             "default": [
+                                "BackdoorUser",
                                 "CommunicateAsNewUser"
                             ],
                             "description": "List of actions the Monkey will run post breach"

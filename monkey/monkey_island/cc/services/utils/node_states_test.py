@@ -11,5 +11,3 @@ class TestNodeGroups(TestCase):
         self.assertEqual(NodeStates.get_by_keywords(['monkey', 'linux', 'running']), NodeStates.MONKEY_LINUX_RUNNING)
         with self.assertRaises(NoGroupsFoundException):
             NodeStates.get_by_keywords(['bogus', 'values', 'from', 'long', 'list', 'should', 'fail'])
-
-

@@ -20,7 +20,6 @@ if sys.platform == "win32":
 else:
     import fcntl
 
-
     def local_ips():
         result = []
         try:

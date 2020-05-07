@@ -5,11 +5,15 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import GridLoader from 'react-spinners/GridLoader';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboard, faCheck, faSync } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard } from '@fortawesome/free-solid-svg-icons/faClipboard';
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
+import { faSync } from '@fortawesome/free-solid-svg-icons/faSync';
 
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import AwsRunTable from '../run-monkey/AwsRunTable';
+
+import '../../styles/MonkeyRunPage.scss';
 
 const loading_css_override = css`
     display: block;
@@ -252,7 +256,7 @@ class RunMonkeyPageComponent extends AuthComponent {
             <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
             Not sure what this is? Not seeing your AWS EC2 instances? <a
             href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances"
-            target="_blank">Read the documentation</a>!
+            rel="noopener noreferrer" target="_blank">Read the documentation</a>!
           </p>
         </div>
         {
@@ -325,7 +329,8 @@ class RunMonkeyPageComponent extends AuthComponent {
               Choose the operating system where you want to run the monkey
               {this.state.ips.length > 1 ? ', and the interface to communicate with.' : '.'}
             </p>
-            <Nav bsStyle="pills" justified activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
+            <Nav bsStyle='pills' id={'bootstrap-override'} className={'runOnOsButtons'}
+                 justified activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
               <NavItem key='windows-32' eventKey='windows-32'>Windows (32 bit)</NavItem>
               <NavItem key='windows-64' eventKey='windows-64'>Windows (64 bit)</NavItem>
               <NavItem key='linux-32' eventKey='linux-32'>Linux (32 bit)</NavItem>

@@ -1,9 +1,9 @@
 /*eslint no-console:0 */
 'use strict';
-require('core-js/fn/object/assign');
-const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
-const config = require('./webpack.config');
+import assign from 'core-js/fn/object'
+import webpack from 'webpack'
+import WebpackDevServer from 'webpack-dev-server'
+import config from './webpack.config'
 
 /**
  * Flag indicating whether webpack compiled for the first time.

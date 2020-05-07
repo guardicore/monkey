@@ -411,5 +411,6 @@ class NodeService:
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))
 
+
 class NodeCreationException(Exception):
     pass

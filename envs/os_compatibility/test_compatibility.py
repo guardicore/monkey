@@ -57,6 +57,3 @@ class TestOSCompatibility(object):
 
         if len(ips_that_communicated) < len(machine_list):
             assert False
-
-
-
