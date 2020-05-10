@@ -83,6 +83,8 @@ class InfectionMonkey(object):
         if self._opts.depth is not None:
             WormConfiguration._depth_from_commandline = True
             WormConfiguration.depth = self._opts.depth
+            LOG.debug(f"Setting propagation depth from command line")
+        LOG.debug(f"Set propagation depth to {WormConfiguration.depth}")
 
         self._keep_running = True
         self._network = NetworkScanner()
