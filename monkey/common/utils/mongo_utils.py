@@ -1,5 +1,7 @@
-import wmi
-import win32com
+import sys
+if sys.platform == 'win32':
+    import win32com
+    import wmi
 
 __author__ = 'maor.rayzin'
 
