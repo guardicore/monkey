@@ -30,8 +30,12 @@ class SampleFileParser:
     @staticmethod
     def read_telem_files() -> List[str]:
         telems = []
-        file_paths = [path.join(TELEM_DIR_PATH, f) for f in listdir(TELEM_DIR_PATH)
-                      if path.isfile(path.join(TELEM_DIR_PATH, f))]
+        try:
+            file_paths = [path.join(TELEM_DIR_PATH, f) for f in listdir(TELEM_DIR_PATH)
+                          if path.isfile(path.join(TELEM_DIR_PATH, f))]
+        except FileNotFoundError:
+            raise FileNotFoundError("Telemetries to send not found. "
+                                    "Refer to readme to figure out how to generate telemetries and where to put them.")
         for file_path in file_paths:
             with open(file_path, 'r') as telem_file:
                 telem_string = "".join(telem_file.readlines()).replace("\n", "")

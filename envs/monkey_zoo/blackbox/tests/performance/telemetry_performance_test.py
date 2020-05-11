@@ -26,9 +26,8 @@ class TelemetryPerformanceTest:
         try:
             all_telemetries = SampleFileParser.get_all_telemetries()
         except FileNotFoundError:
-            LOGGER.error("Telemetries to send not found. Refer to readme to figure out how to generate telemetries "
-                         "and where to put them.")
-            return False
+            raise FileNotFoundError("Telemetries to send not found. "
+                                    "Refer to readme to figure out how to generate telemetries and where to put them.")
         LOGGER.info("Telemetries imported successfully.")
         all_telemetries.sort(key=lambda telem: telem['time']['$date'])
         telemetry_parse_times = {}
