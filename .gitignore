@@ -83,7 +83,7 @@ MonkeyZoo/*
 !MonkeyZoo/MonkeyZooDocs.pdf
 
 # Exported monkey telemetries
-/monkey/test_telems/
+/monkey/telem_sample/
 
 # vim swap files
 *.swp

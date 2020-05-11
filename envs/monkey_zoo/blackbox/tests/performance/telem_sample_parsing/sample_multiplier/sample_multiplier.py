@@ -2,35 +2,37 @@ import copy
 import json
 import logging
 import sys
-from os import listdir, path
 from typing import List, Dict
 
 from tqdm import tqdm
 
-from envs.monkey_zoo.blackbox.tests.performance.utils.fake_ip_generator import FakeIpGenerator
-from envs.monkey_zoo.blackbox.tests.performance.utils.fake_monkey import FakeMonkey
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_file_parser import SampleFileParser
+from envs.monkey_zoo.blackbox.tests.performance.\
+    telem_sample_parsing.sample_multiplier.fake_ip_generator import FakeIpGenerator
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_monkey import FakeMonkey
 
-TELEM_DIR_PATH = './tests/performance/test_telems'
+TELEM_DIR_PATH = './tests/performance/telemetry_sample'
 LOGGER = logging.getLogger(__name__)
 
 
-class TelemParser:
+class SampleMultiplier:
 
     def __init__(self, multiplier: int):
         self.multiplier = multiplier
         self.fake_ip_generator = FakeIpGenerator()
 
     def multiply_telems(self):
-        telems = TelemParser.get_all_telemetries()
+        telems = SampleFileParser.get_all_telemetries()
         telem_contents = [json.loads(telem['content']) for telem in telems]
         monkeys = self.get_monkeys_from_telems(telem_contents)
         for i in tqdm(range(self.multiplier), desc="Batch of fabricated telemetries", position=1):
             for monkey in monkeys:
                 monkey.change_fake_data()
             fake_telem_batch = copy.deepcopy(telems)
-            TelemParser.fabricate_monkeys_in_telems(fake_telem_batch, monkeys)
-            TelemParser.offset_telem_times(iteration=i, telems=fake_telem_batch)
-            TelemParser.save_teletries_to_files(fake_telem_batch)
+            SampleMultiplier.fabricate_monkeys_in_telems(fake_telem_batch, monkeys)
+            SampleMultiplier.offset_telem_times(iteration=i, telems=fake_telem_batch)
+            SampleFileParser.save_teletries_to_files(fake_telem_batch)
+            LOGGER.info("")
 
     @staticmethod
     def fabricate_monkeys_in_telems(telems: List[Dict], monkeys: List[FakeMonkey]):
@@ -38,7 +40,8 @@ class TelemParser:
             for monkey in monkeys:
                 if monkey.on_island:
                     continue
-                if (monkey.original_guid in telem['content'] or monkey.original_guid in telem['endpoint']) and not monkey.on_island:
+                if (monkey.original_guid in telem['content'] or monkey.original_guid in telem['endpoint']) \
+                        and not monkey.on_island:
                     telem['content'] = telem['content'].replace(monkey.original_guid, monkey.fake_guid)
                     telem['endpoint'] = telem['endpoint'].replace(monkey.original_guid, monkey.fake_guid)
                 for i in range(len(monkey.original_ips)):
@@ -49,39 +52,11 @@ class TelemParser:
         for telem in telems:
             telem['time']['$date'] += iteration * 1000
 
-    @staticmethod
-    def save_teletries_to_files(telems: List[Dict]):
-        for telem in (tqdm(telems, desc="Telemetries saved to files", position=3)):
-            TelemParser.save_telemetry_to_file(telem)
-
-    @staticmethod
-    def save_telemetry_to_file(telem: Dict):
-        telem_filename = telem['name'] + telem['method']
-        for i in range(10000):
-            if not path.exists(path.join(TELEM_DIR_PATH, (str(i) + telem_filename))):
-                telem_filename = str(i) + telem_filename
-                break
-        with open(path.join(TELEM_DIR_PATH, telem_filename), 'w') as file:
-            file.write(json.dumps(telem))
-
-    @staticmethod
-    def read_telem_files() -> List[str]:
-        telems = []
-        file_paths = [path.join(TELEM_DIR_PATH, f) for f in listdir(TELEM_DIR_PATH)
-                      if path.isfile(path.join(TELEM_DIR_PATH, f))]
-        for file_path in file_paths:
-            with open(file_path, 'r') as telem_file:
-                telems.append(telem_file.readline())
-        return telems
-
-    @staticmethod
-    def get_all_telemetries() -> List[Dict]:
-        return [json.loads(t) for t in TelemParser.read_telem_files()]
-
     def get_monkeys_from_telems(self, telems: List[Dict]):
-        island_ips = TelemParser.get_island_ips_from_telems(telems)
+        island_ips = SampleMultiplier.get_island_ips_from_telems(telems)
         monkeys = []
-        for telem in [telem for telem in telems if 'telem_category' in telem and telem['telem_category'] == 'system_info']:
+        for telem in [telem for telem in telems
+                      if 'telem_category' in telem and telem['telem_category'] == 'system_info']:
             if 'network_info' not in telem['data']:
                 continue
             guid = telem['monkey_guid']
@@ -111,4 +86,4 @@ class TelemParser:
 
 
 if __name__ == "__main__":
-    TelemParser(multiplier=int(sys.argv[1])).multiply_telems()
+    SampleMultiplier(multiplier=int(sys.argv[1])).multiply_telems()

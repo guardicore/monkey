@@ -9,4 +9,3 @@ SUPPORTED_WINDOWS_VERSIONS = {
     "windows7_sp1": True,
     "windows8_or_greater": True,
 }
-

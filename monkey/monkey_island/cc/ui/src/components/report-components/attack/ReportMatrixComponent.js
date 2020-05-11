@@ -20,7 +20,7 @@ class ReportMatrixComponent extends React.Component {
       }
       let tech_type = this.state.schema.properties[type_key];
       columns.push({
-        Header: () => (<a href={tech_type.link} target="_blank">{tech_type.title}</a>),
+        Header: () => (<a href={tech_type.link} rel="noopener noreferrer" target="_blank">{tech_type.title}</a>),
         id: type_key,
         accessor: x => this.renderTechnique(x[tech_type.title]),
         style: {'whiteSpace': 'unset'}

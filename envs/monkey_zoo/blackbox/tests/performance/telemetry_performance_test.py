@@ -8,7 +8,7 @@ from envs.monkey_zoo.blackbox.analyzers.performance_analyzer import PerformanceA
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
 from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
-from envs.monkey_zoo.blackbox.tests.performance.utils.telem_parser import TelemParser
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_file_parser import SampleFileParser
 
 LOGGER = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class TelemetryPerformanceTest:
     def test_telemetry_performance(self):
         LOGGER.info("Starting telemetry performance test.")
         try:
-            all_telemetries = TelemParser.get_all_telemetries()
+            all_telemetries = SampleFileParser.get_all_telemetries()
         except FileNotFoundError:
             LOGGER.error("Telemetries to send not found. Refer to readme to figure out how to generate telemetries "
                          "and where to put them.")

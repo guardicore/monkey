@@ -1,2 +1,2 @@
 logs/
-/blackbox/tests/performance/test_telems/*
+/blackbox/tests/performance/telem_sample

@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {Timeline, TimelineEvent} from 'react-event-timeline';
 import * as PropTypes from 'prop-types';
 
-let monkeyLocalIcon = require('../../../images/zerotrust/im-alert-machine-icon.svg');
-let monkeyNetworkIcon = require('../../../images/zerotrust/im-alert-network-icon.svg');
+import monkeyLocalIcon from '../../../images/zerotrust/im-alert-machine-icon.svg';
+import monkeyNetworkIcon from '../../../images/zerotrust/im-alert-network-icon.svg';
 
 const eventTypeToIcon = {
   'monkey_local': monkeyLocalIcon,

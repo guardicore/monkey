@@ -1,3 +1,4 @@
+import logging
 from functools import wraps
 from os import mkdir, path
 import shutil
@@ -8,8 +9,12 @@ from flask import request
 from monkey_island.cc.models.test_telem import TestTelem
 from monkey_island.cc.services.config import ConfigService
 
-TEST_TELEM_DIR = "./test_telems"
+TELEM_SAMPLE_DIR = "./telem_sample"
 MAX_SAME_CATEGORY_TELEMS = 10000
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class TestTelemStore:
@@ -31,14 +36,17 @@ class TestTelemStore:
 
     @staticmethod
     def export_test_telems():
+        logger.info(f"Exporting all telemetries to {TELEM_SAMPLE_DIR}")
         try:
-            mkdir(TEST_TELEM_DIR)
+            mkdir(TELEM_SAMPLE_DIR)
         except FileExistsError:
-            shutil.rmtree(TEST_TELEM_DIR)
-            mkdir(TEST_TELEM_DIR)
+            logger.info("Deleting all previous telemetries.")
+            shutil.rmtree(TELEM_SAMPLE_DIR)
+            mkdir(TELEM_SAMPLE_DIR)
         for test_telem in TestTelem.objects():
-            with open(TestTelemStore.get_unique_file_path_for_test_telem(TEST_TELEM_DIR, test_telem), 'w') as file:
-                file.write(test_telem.to_json())
+            with open(TestTelemStore.get_unique_file_path_for_test_telem(TELEM_SAMPLE_DIR, test_telem), 'w') as file:
+                file.write(test_telem.to_json(indent=2))
+        logger.info("Telemetries exported!")
 
     @staticmethod
     def get_unique_file_path_for_test_telem(target_dir: str, test_telem: TestTelem):
