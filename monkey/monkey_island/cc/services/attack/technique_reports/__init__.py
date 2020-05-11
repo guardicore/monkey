@@ -5,7 +5,7 @@ from monkey_island.cc.database import mongo
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from common.utils.code_utils import abstractstatic
-from cc.models.attack.attack_mitigations import AttackMitigations
+from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 
 logger = logging.getLogger(__name__)
 
@@ -129,4 +129,3 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
             return {'mitigations': mitigation_document.to_mongo().to_dict()['mitigations']}
         else:
             return {}
-

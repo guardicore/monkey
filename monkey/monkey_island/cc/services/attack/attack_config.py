@@ -120,7 +120,7 @@ class AttackConfig(object):
     def set_bool_conf_val(path, val, monkey_config):
         """
         Changes monkey's configuration by setting one of its boolean fields value
-        :param path: Path to boolean value in monkey's configuration. E.g. ['monkey', 'system_info', 'should_use_mimikatz']
+        :param path: Path to boolean value in monkey's configuration. ['monkey', 'system_info', 'should_use_mimikatz']
         :param val: Boolean
         :param monkey_config: Monkey's configuration
         """
@@ -183,5 +183,5 @@ class AttackConfig(object):
         techniques = {}
         for type_name, attack_type in list(attack_config.items()):
             for key, technique in list(attack_type['properties'].items()):
-                    techniques[key] = {'selected': technique['value'], 'type': SCHEMA['properties'][type_name]['title']}
+                techniques[key] = {'selected': technique['value'], 'type': SCHEMA['properties'][type_name]['title']}
         return techniques

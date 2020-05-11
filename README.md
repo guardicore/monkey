@@ -13,16 +13,26 @@ Welcome to the Infection Monkey!
 
 The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island server.
 
-<img src=".github/map-full.png" >
-
-<img src=".github/Security-overview.png" width="800" height="500">
-
 The Infection Monkey is comprised of two parts:
 
 * **Monkey** - A tool which infects other machines and propagates to them.
 * **Monkey Island** - A dedicated server to control and visualize the Infection Monkey's progress inside the data center.
 
 To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonkey.com). 
+
+## Screenshots
+
+### Map
+<img src=".github/map-full.png"  width="800" height="600">
+
+### Security report
+<img src=".github/security-report.png"  width="800" height="500">
+
+### Zero trust report
+<img src=".github/zero-trust-report.png"  width="800" height="500">
+
+### ATT&CK report
+<img src=".github/attack-report.png"  width="900" height="500">
 
 ## Main Features
 
@@ -40,6 +50,8 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
   * Conficker
   * SambaCry
   * Elastic Search (CVE-2015-1427)
+  * Weblogic server
+  * and more
 
 ## Setup
 Check out the [Setup](https://github.com/guardicore/monkey/wiki/setup) page in the Wiki or a quick getting [started guide](https://www.guardicore.com/infectionmonkey/wt/).

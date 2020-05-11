@@ -46,4 +46,3 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
     @staticmethod
     def get_bootloader_resource_url(server_ip):
         return "https://" + server_ip + ":" + str(Environment._ISLAND_PORT) + "/api/bootloader/"
-

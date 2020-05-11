@@ -16,4 +16,3 @@ class Mitigation(EmbeddedDocument):
         description = mitigation['description']
         url = MitreApiInterface.get_stix2_external_reference_url(mitigation)
         return Mitigation(name=name, description=description, url=url)
-
