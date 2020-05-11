@@ -74,7 +74,7 @@
     "jwt-decode": "^2.2.0",
     "marked": "^0.8.2",
     "normalize.css": "^8.0.0",
-    "npm": "^6.13.1",
+    "npm": "^6.14.5",
     "pluralize": "^7.0.0",
     "prop-types": "^15.7.2",
     "rainge": "^1.0.1",
