@@ -14,14 +14,15 @@
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "serve": "node server.js --env=dev",
     "serve:dist": "node server.js --env=dist",
-    "start": "webpack-dev-server --verbose --mode development --open --history-api-fallback --port 8000",
-    "test": "karma start",
-    "test:watch": "karma start --autoWatch=true --singleRun=false"
+    "start": "webpack-dev-server --verbose --mode development --open --history-api-fallback --port 8000"
   },
   "repository": "",
   "keywords": [],
   "author": "Guardicore",
-  "browserslist": "> 0.25%, not dead",
+  "browserslist": [
+    "> 0.25%",
+    "not dead"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
@@ -32,8 +33,6 @@
     "@babel/runtime": "^7.9.6",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.0.0",
-    "chai": "^4.2.0",
-    "copyfiles": "^2.2.0",
     "css-loader": "^3.5.0",
     "eslint": "^6.8.0",
     "eslint-loader": "^4.0.1",
@@ -42,27 +41,19 @@
     "glob": "^7.1.6",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
-    "karma": "^3.1.4",
-    "karma-chai": "^0.1.0",
-    "karma-coverage": "^1.1.2",
-    "karma-mocha": "^1.0.0",
-    "karma-mocha-reporter": "^2.2.5",
-    "karma-phantomjs-launcher": "^1.0.0",
-    "karma-sourcemap-loader": "^0.3.5",
-    "karma-webpack": "^3.0.5",
     "minimist": "^1.2.5",
-    "mocha": "^5.2.0",
     "null-loader": "^0.1.1",
-    "phantomjs-prebuilt": "^2.1.16",
     "react-addons-test-utils": "^15.6.2",
-    "react-event-timeline": "^1.6.3",
-    "react-hot-loader": "^4.12.20",
     "rimraf": "^2.7.1",
     "style-loader": "^0.22.1",
+    "copyfiles": "^2.2.0",
     "url-loader": "^1.1.2",
+    "sass-loader": "^7.3.1",
+    "node-sass": "^4.14.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "stylelint": "^13.3.3",
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.0",
@@ -80,11 +71,8 @@
     "fetch": "^1.1.0",
     "file-saver": "^2.0.2",
     "filepond": "^4.7.3",
-    "json-loader": "^0.5.7",
     "jwt-decode": "^2.2.0",
     "marked": "^0.8.2",
-    "moment": "^2.24.0",
-    "node-sass": "^4.14.1",
     "normalize.css": "^8.0.0",
     "npm": "^6.13.1",
     "pluralize": "^7.0.0",
@@ -97,6 +85,8 @@
     "react-data-components": "^1.2.0",
     "react-desktop-notification": "^1.0.9",
     "react-dimensions": "^1.3.0",
+    "react-event-timeline": "^1.6.3",
+    "react-hot-loader": "^4.12.20",
     "react-dom": "^16.12.0",
     "react-fa": "^5.0.0",
     "react-filepond": "^7.0.1",
@@ -110,8 +100,6 @@
     "react-toggle": "^4.1.1",
     "react-tooltip-lite": "^1.10.0",
     "redux": "^4.0.4",
-    "sass-loader": "^7.3.1",
-    "sha3": "^2.0.7",
-    "stylelint": "^13.3.3"
+    "sha3": "^2.0.7"
   }
 }
