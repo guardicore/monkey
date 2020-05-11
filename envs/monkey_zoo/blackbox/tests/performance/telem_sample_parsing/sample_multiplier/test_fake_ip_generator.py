@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from envs.monkey_zoo.blackbox.tests.performance.utils.fake_ip_generator import FakeIpGenerator
+from envs.monkey_zoo.blackbox.tests.performance.\
+    telem_sample_parsing.sample_multiplier.fake_ip_generator import FakeIpGenerator
 
 
 class TestFakeIpGenerator(TestCase):
