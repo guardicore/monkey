@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table'
+import Pluralize from 'pluralize'
 
 let renderArray = function (val) {
   return <span>{val.map(x => <span key={x}> {x}</span>)}</span>;
@@ -62,19 +63,26 @@ class PostBreachComponent extends React.Component {
     });
     let defaultPageSize = pbaMachines.length > pageSize ? pageSize : pbaMachines.length;
     let showPagination = pbaMachines > pageSize;
+    const howManyPBAs = pbaMachines.reduce((accumulated, pbaMachine) => accumulated+pbaMachine["pba_results"].length,0)
     return (
-      <div className="data-table-container">
-        <ReactTable
-          columns={columns}
-          data={pbaMachines}
-          showPagination={showPagination}
-          defaultPageSize={defaultPageSize}
-          SubComponent={row => {
-            return renderDetails(row.original.pba_results);
-          }}
-        />
-      </div>
-
+      <>
+        <p>
+          The Monkey performed <span
+          className="label label-danger">{howManyPBAs}</span> post-breach {Pluralize('actions', howManyPBAs)} on <span
+          className="label label-warning">{pbaMachines.length}</span> {Pluralize('machines', pbaMachines.length)}:
+        </p>
+        <div className="data-table-container">
+          <ReactTable
+            columns={columns}
+            data={pbaMachines}
+            showPagination={showPagination}
+            defaultPageSize={defaultPageSize}
+            SubComponent={row => {
+              return renderDetails(row.original.pba_results);
+            }}
+          />
+        </div>
+      </>
     );
   }
 }
