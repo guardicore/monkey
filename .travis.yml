@@ -1,12 +1,14 @@
 # Infection Monkey travis.yml. See Travis documentation for information about this file structure.
 
+# If you change this file, you can validate using Travis CI's Build Config Explorer https://config.travis-ci.com/explore
+
 group: travis_latest
 
 language: python
 
 cache:
   - pip
-  directories:
+  - directories:
     - "$HOME/.npm"
 
 python:
