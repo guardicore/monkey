@@ -8,6 +8,7 @@ from flask import request
 
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
+from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
 from monkey_island.cc.models.monkey import Monkey
@@ -40,6 +41,7 @@ class Telemetry(flask_restful.Resource):
         return result
 
     # Used by monkey. can't secure.
+    @TestTelemStore.store_test_telem
     def post(self):
         telemetry_json = json.loads(request.data)
         telemetry_json['timestamp'] = datetime.now()

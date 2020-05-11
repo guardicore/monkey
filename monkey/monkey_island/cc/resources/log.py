@@ -6,6 +6,7 @@ from flask import request
 
 from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
+from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.log import LogService
 from monkey_island.cc.services.node import NodeService
 
@@ -23,6 +24,7 @@ class Log(flask_restful.Resource):
             return LogService.log_exists(ObjectId(exists_monkey_id))
 
     # Used by monkey. can't secure.
+    @TestTelemStore.store_test_telem
     def post(self):
         telemetry_json = json.loads(request.data)
 

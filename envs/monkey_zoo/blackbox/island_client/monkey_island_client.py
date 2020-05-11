@@ -1,7 +1,8 @@
-from time import sleep
 import json
 
 import logging
+from time import sleep
+
 from bson import json_util
 
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
@@ -30,7 +31,7 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def run_monkey_local(self):
-        response = self.requests.post_json("api/local-monkey", dict_data={"action": "run"})
+        response = self.requests.post_json("api/local-monkey", data={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
             LOGGER.info("Running the monkey.")
         else:
