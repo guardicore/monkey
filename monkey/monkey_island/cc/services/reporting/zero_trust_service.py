@@ -109,8 +109,7 @@ class ZeroTrustService(object):
 
     @staticmethod
     def get_all_findings():
-        pipeline = [{'$match': {}},
-                    {'$addFields': {'oldest_events': {'$slice': ['$events', EVENT_FETCH_CNT]},
+        pipeline = [{'$addFields': {'oldest_events': {'$slice': ['$events', EVENT_FETCH_CNT]},
                                     'latest_events': {'$slice': ['$events', -1*EVENT_FETCH_CNT]},
                                     'event_count': {'$size': '$events'}}},
                     {'$unset': ['events']}]
@@ -130,7 +129,7 @@ class ZeroTrustService(object):
         elif overlap_count <= 0:
             return []
         else:
-            return events[ -overlap_count :]
+            return events[-1 * overlap_count:]
 
     @staticmethod
     def __get_enriched_finding(finding):
