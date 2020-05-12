@@ -86,7 +86,7 @@ MonkeyZoo/*
 /monkey/telem_sample/
 
 # Profiling logs
-/monkey/profiler_logs/
+profiler_logs/
 
 # vim swap files
 *.swp
