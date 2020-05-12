@@ -20,8 +20,7 @@ class AggregateFinding(Finding):
         else:
             # Now we know for sure this is the only one
             orig_finding = existing_findings[0]
-            orig_finding.update(push_all__events=events)
-            orig_finding.save()
+            orig_finding.add_events(events)
 
 
 def add_malicious_activity_to_timeline(events):

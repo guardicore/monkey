@@ -319,9 +319,9 @@ class TestZeroTrustService(IslandTestCase):
 
     def test_get_events_without_overlap(self):
         monkey_island.cc.services.reporting.zero_trust_service.EVENT_FETCH_CNT = 5
-        self.assertListEqual([], ZeroTrustService._ZeroTrustService__get_events_without_overlap(5, [1, 2, 3]))
-        self.assertListEqual([3], ZeroTrustService._ZeroTrustService__get_events_without_overlap(6, [1, 2, 3]))
-        self.assertListEqual([1, 2, 3, 4, 5], ZeroTrustService._ZeroTrustService__get_events_without_overlap(10, [1, 2, 3, 4, 5]))
+        self.assertListEqual([], ZeroTrustService._get_events_without_overlap(5, [1, 2, 3]))
+        self.assertListEqual([3], ZeroTrustService._get_events_without_overlap(6, [1, 2, 3]))
+        self.assertListEqual([1, 2, 3, 4, 5], ZeroTrustService._get_events_without_overlap(10, [1, 2, 3, 4, 5]))
 
 
 def compare_lists_no_order(s, t):

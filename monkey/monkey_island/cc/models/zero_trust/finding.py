@@ -2,6 +2,7 @@
 """
 Define a Document Schema for Zero Trust findings.
 """
+from typing import List
 
 from mongoengine import Document, StringField, EmbeddedDocumentListField
 
@@ -54,3 +55,6 @@ class Finding(Document):
         finding.save()
 
         return finding
+
+    def add_events(self, events: List) -> None:
+        self.update(push_all__events=events)
