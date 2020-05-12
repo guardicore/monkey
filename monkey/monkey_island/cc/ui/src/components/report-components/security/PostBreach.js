@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactTable from 'react-table'
-import Pluralize from 'pluralize'
+import ReactTable from 'react-table';
+import Pluralize from 'pluralize';
 
 let renderArray = function (val) {
   return <span>{val.map(x => <span key={x}> {x}</span>)}</span>;
@@ -63,13 +63,13 @@ class PostBreachComponent extends React.Component {
     });
     let defaultPageSize = pbaMachines.length > pageSize ? pageSize : pbaMachines.length;
     let showPagination = pbaMachines > pageSize;
-    const howManyPBAs = pbaMachines.reduce((accumulated, pbaMachine) => accumulated+pbaMachine["pba_results"].length,0)
+    const pbaCount = pbaMachines.reduce((accumulated, pbaMachine) => accumulated+pbaMachine["pba_results"].length, 0);
     return (
       <>
         <p>
           The Monkey performed <span
-          className="label label-danger">{howManyPBAs}</span> post-breach {Pluralize('actions', howManyPBAs)} on <span
-          className="label label-warning">{pbaMachines.length}</span> {Pluralize('machines', pbaMachines.length)}:
+          className="label label-danger">{pbaCount}</span> post-breach {Pluralize('action', pbaCount)} on <span
+          className="label label-warning">{pbaMachines.length}</span> {Pluralize('machine', pbaMachines.length)}:
         </p>
         <div className="data-table-container">
           <ReactTable

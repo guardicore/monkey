@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactTable from 'react-table'
-import Pluralize from 'pluralize'
+import ReactTable from 'react-table';
+import Pluralize from 'pluralize';
 
 let renderArray = function (val) {
   return <div>{val.map(x => <div>{x}</div>)}</div>;
@@ -37,16 +37,19 @@ class ScannedServersComponent extends React.Component {
     let defaultPageSize = this.props.data.length > pageSize ? pageSize : this.props.data.length;
     let showPagination = this.props.data.length > pageSize;
 
-    const howManyScannedMachines = this.props.data.length;
+    const scannedMachinesCount = this.props.data.length;
     const reducerFromScannedServerToServicesAmount = (accumulated, scannedServer) => accumulated + scannedServer["services"].length;
-    const howManyScannedServices = this.props.data.reduce(reducerFromScannedServerToServicesAmount, 0);
+    const scannedServicesAmount = this.props.data.reduce(reducerFromScannedServerToServicesAmount, 0);
 
     return (
       <>
         <p>
-          The Monkey discovered <span
-          className="label label-danger">{howManyScannedServices}</span> open {Pluralize('services', howManyScannedServices)} on <span
-          className="label label-warning">{howManyScannedMachines}</span> {Pluralize('machines', howManyScannedMachines)}:
+          The Monkey discovered
+          <span className="label label-danger">{scannedServicesAmount}</span>
+          open {Pluralize('service', scannedServicesAmount)}
+          on
+          <span className="label label-warning">{scannedMachinesCount}</span>
+          {Pluralize('machine', scannedMachinesCount)}:
         </p>
         <div className="data-table-container">
           <ReactTable

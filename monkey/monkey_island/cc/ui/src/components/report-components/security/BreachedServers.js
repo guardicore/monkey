@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactTable from 'react-table'
-import Pluralize from "pluralize";
+import ReactTable from 'react-table';
+import Pluralize from 'pluralize';
 
 let renderArray = function (val) {
   return <div>{val.map(x => <div>{x}</div>)}</div>;
@@ -38,7 +38,7 @@ class BreachedServersComponent extends React.Component {
       <>
         <p>
           The Monkey successfully breached <span
-          className="label label-danger">{this.props.data.length}</span> {Pluralize('machines', this.props.data.length)}:
+          className="label label-danger">{this.props.data.length}</span> {Pluralize('machine', this.props.data.length)}:
         </p>
         <div className="data-table-container">
           <ReactTable
