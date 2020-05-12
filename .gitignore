@@ -83,7 +83,10 @@ MonkeyZoo/*
 !MonkeyZoo/MonkeyZooDocs.pdf
 
 # Exported monkey telemetries
-/monkey/test_telems/
+/monkey/telem_sample/
+
+# Profiling logs
+profiler_logs/
 
 # vim swap files
 *.swp

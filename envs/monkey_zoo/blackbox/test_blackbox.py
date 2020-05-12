@@ -1,8 +1,8 @@
 import os
 import logging
-from time import sleep
 
 import pytest
+from time import sleep
 
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
@@ -29,12 +29,11 @@ LOGGER = logging.getLogger(__name__)
 @pytest.fixture(autouse=True, scope='session')
 def GCPHandler(request):
     GCPHandler = gcp_machine_handlers.GCPHandler()
-    #GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
-    #wait_machine_bootup()
+    GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
+    wait_machine_bootup()
 
     def fin():
-        #GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
-        pass
+        GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
 
     request.addfinalizer(fin)
 
@@ -52,7 +51,7 @@ def wait_machine_bootup():
 @pytest.fixture(scope='class')
 def island_client(island):
     island_client_object = MonkeyIslandClient(island)
-    # island_client_object.reset_env()
+    island_client_object.reset_env()
     yield island_client_object
 
 

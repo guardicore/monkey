@@ -13,9 +13,8 @@ class TelemetryPerformanceTestWorkflow(BasicTest):
 
     def run(self):
         try:
-            # TelemetryPerformanceTest(island_client=self.island_client).test_telemetry_performance()
+            TelemetryPerformanceTest(island_client=self.island_client).test_telemetry_performance()
             performance_test = EndpointPerformanceTest(self.name, self.performance_config, self.island_client)
             assert performance_test.run()
         finally:
-            pass
-            # self.island_client.reset_env()
+            self.island_client.reset_env()

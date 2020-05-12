@@ -109,28 +109,27 @@ class ZeroTrustService(object):
 
     @staticmethod
     def get_all_findings():
-        pipeline = [{'$match': {}},
-                    {'$addFields': {'oldest_events': {'$slice': ['$events', EVENT_FETCH_CNT]},
+        pipeline = [{'$addFields': {'oldest_events': {'$slice': ['$events', EVENT_FETCH_CNT]},
                                     'latest_events': {'$slice': ['$events', -1*EVENT_FETCH_CNT]},
                                     'event_count': {'$size': '$events'}}},
                     {'$unset': ['events']}]
         all_findings = list(Finding.objects.aggregate(*pipeline))
         for finding in all_findings:
-            finding['latest_events'] = ZeroTrustService.__get_events_without_overlap(finding['event_count'],
-                                                                                     finding['latest_events'])
+            finding['latest_events'] = ZeroTrustService._get_events_without_overlap(finding['event_count'],
+                                                                                    finding['latest_events'])
 
         enriched_findings = [ZeroTrustService.__get_enriched_finding(f) for f in all_findings]
         return enriched_findings
 
     @staticmethod
-    def __get_events_without_overlap(event_count: int, events: List[object]) -> List[object]:
+    def _get_events_without_overlap(event_count: int, events: List[object]) -> List[object]:
         overlap_count = event_count - EVENT_FETCH_CNT
         if overlap_count >= EVENT_FETCH_CNT:
             return events
         elif overlap_count <= 0:
             return []
         else:
-            return events[ -overlap_count :]
+            return events[-1 * overlap_count:]
 
     @staticmethod
     def __get_enriched_finding(finding):

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Modal} from 'react-bootstrap';
 import EventsTimeline from './EventsTimeline';
 import * as PropTypes from 'prop-types';
@@ -6,7 +6,7 @@ import saveJsonToFile from '../../utils/SaveJsonToFile';
 import EventsModalButtons from './EventsModalButtons';
 import AuthComponent from '../../AuthComponent';
 import Pluralize from 'pluralize';
-import SkippedEventsTimeline from "./SkippedEventsTimeline";
+import SkippedEventsTimeline from './SkippedEventsTimeline';
 
 const FINDING_EVENTS_URL = '/api/zero-trust/finding-event/';
 
