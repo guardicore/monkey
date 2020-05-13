@@ -27,15 +27,16 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True, scope='session')
-def GCPHandler(request):
-    GCPHandler = gcp_machine_handlers.GCPHandler()
-    GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
-    wait_machine_bootup()
+def GCPHandler(request, no_gcp):
+    if not no_gcp:
+        GCPHandler = gcp_machine_handlers.GCPHandler()
+        GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
+        wait_machine_bootup()
 
-    def fin():
-        GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
+        def fin():
+            GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
 
-    request.addfinalizer(fin)
+        request.addfinalizer(fin)
 
 
 @pytest.fixture(autouse=True, scope='session')
@@ -49,9 +50,10 @@ def wait_machine_bootup():
 
 
 @pytest.fixture(scope='class')
-def island_client(island):
+def island_client(island, quick_performance_tests):
     island_client_object = MonkeyIslandClient(island)
-    island_client_object.reset_env()
+    if not quick_performance_tests:
+        island_client_object.reset_env()
     yield island_client_object
 
 
@@ -130,7 +132,7 @@ class TestMonkeyBlackbox(object):
     def test_wmi_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, "WMI_PTH.conf", "WMI_PTH")
 
-    def test_report_generation_performance(self, island_client):
+    def test_report_generation_performance(self, island_client, quick_performance_tests):
         """
         This test includes the SSH + Elastic + Hadoop + MSSQL machines all in one test
         for a total of 8 machines including the Monkey Island.
@@ -138,22 +140,31 @@ class TestMonkeyBlackbox(object):
         Is has 2 analyzers - the regular one which checks all the Monkeys
         and the Timing one which checks how long the report took to execute
         """
-        TestMonkeyBlackbox.run_performance_test(ReportGenerationTest,
-                                                island_client,
-                                                "PERFORMANCE.conf",
-                                                timeout_in_seconds=10*60)
+        if not quick_performance_tests:
+            TestMonkeyBlackbox.run_performance_test(ReportGenerationTest,
+                                                    island_client,
+                                                    "PERFORMANCE.conf",
+                                                    timeout_in_seconds=10*60)
+        else:
+            LOGGER.error("This test doesn't support 'quick_performance_tests' option.")
+            assert False
 
-    def test_map_generation_performance(self, island_client):
-        TestMonkeyBlackbox.run_performance_test(MapGenerationTest,
-                                                island_client,
-                                                "PERFORMANCE.conf",
-                                                timeout_in_seconds=10*60)
+    def test_map_generation_performance(self, island_client, quick_performance_tests):
+        if not quick_performance_tests:
+            TestMonkeyBlackbox.run_performance_test(MapGenerationTest,
+                                                    island_client,
+                                                    "PERFORMANCE.conf",
+                                                    timeout_in_seconds=10*60)
+        else:
+            LOGGER.error("This test doesn't support 'quick_performance_tests' option.")
+            assert False
 
-    def test_report_generation_from_fake_telemetries(self, island_client):
-        ReportGenerationFromTelemetryTest(island_client).run()
+    def test_report_generation_from_fake_telemetries(self, island_client, quick_performance_tests):
+        ReportGenerationFromTelemetryTest(island_client, quick_performance_tests).run()
 
-    def test_map_generation_from_fake_telemetries(self, island_client):
-        MapGenerationFromTelemetryTest(island_client).run()
+    def test_map_generation_from_fake_telemetries(self, island_client, quick_performance_tests):
+        MapGenerationFromTelemetryTest(island_client, quick_performance_tests).run()
 
-    def test_telem_performance(self, island_client):
-        TelemetryPerformanceTest(island_client).test_telemetry_performance()
+    def test_telem_performance(self, island_client, quick_performance_tests):
+        if not quick_performance_tests:
+            TelemetryPerformanceTest(island_client).test_telemetry_performance()
