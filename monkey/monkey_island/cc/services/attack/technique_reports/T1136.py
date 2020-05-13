@@ -34,5 +34,5 @@ class T1136(AttackTechnique):
                                 'result': ': '.join([pba['name'], pba['result'][0]])
                             }]
                         })
-            data.update(T1136.get_message_and_status(status))
+            data.update(T1136.get_base_data_by_status(status))
         return data
