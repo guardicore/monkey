@@ -13,8 +13,7 @@ ipaddress
 # See breaking change here: https://github.com/tjguk/wmi/commit/dcf8e3eca79bb8c0101ffb83e25c066b0ba9e16d
 # Causes pip to error with:
 # Could not find a version that satisfies the requirement pywin32 (from wmi->-r /src/infection_monkey/requirements.txt (line 12)) (from versions: none)
-wmi==1.4.9
-pywin32 ; sys_platform == 'win32'
+wmi==1.4.9 ; sys_platform == 'win32'
 pymssql<3.0
 pyftpdlib
 WinSys-3.x

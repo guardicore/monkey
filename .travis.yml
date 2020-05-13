@@ -1,10 +1,15 @@
 # Infection Monkey travis.yml. See Travis documentation for information about this file structure.
 
+# If you change this file, you can validate using Travis CI's Build Config Explorer https://config.travis-ci.com/explore
+
 group: travis_latest
 
 language: python
 
-cache: pip
+cache:
+  - pip
+  - directories:
+    - "$HOME/.npm"
 
 python:
 - 3.7
@@ -23,6 +28,8 @@ install:
 - npm --version
 # Install NVM, see https://github.com/nvm-sh/nvm#installing-and-updating
 - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+- export NVM_DIR="$HOME/.nvm"
+- [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 - nvm install node
 - nvm use node
 - npm i -g eslint
@@ -59,7 +66,7 @@ script:
 
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui
-- npm i
+- npm ci  # See https://docs.npmjs.com/cli/ci.html
 - eslint ./src --quiet  # Test for errors
 - JS_WARNINGS_AMOUNT_UPPER_LIMIT=490
 - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # Test for max warnings
