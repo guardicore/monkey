@@ -166,5 +166,4 @@ class TestMonkeyBlackbox(object):
         MapGenerationFromTelemetryTest(island_client, quick_performance_tests).run()
 
     def test_telem_performance(self, island_client, quick_performance_tests):
-        if not quick_performance_tests:
-            TelemetryPerformanceTest(island_client).test_telemetry_performance()
+        TelemetryPerformanceTest(island_client, quick_performance_tests).test_telemetry_performance()

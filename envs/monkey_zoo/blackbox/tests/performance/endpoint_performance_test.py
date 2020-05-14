@@ -17,9 +17,6 @@ class EndpointPerformanceTest(BasicTest):
         self.island_client = island_client
 
     def run(self) -> bool:
-        if not self.island_client.is_all_monkeys_dead():
-            raise RuntimeError("Can't test report times since not all Monkeys have died.")
-
         # Collect timings for all pages
         self.island_client.clear_caches()
         endpoint_timings = {}
