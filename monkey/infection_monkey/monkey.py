@@ -10,6 +10,7 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.model import DELAY_DELETE_CMD
@@ -38,10 +39,6 @@ MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, shutting down"
 __author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)
-
-
-class PlannedShutdownException(Exception):
-    pass
 
 
 class InfectionMonkey(object):
@@ -128,6 +125,8 @@ class InfectionMonkey(object):
 
             StateTelem(is_done=False, version=get_version()).send()
             TunnelTelem().send()
+
+            WormConfiguration.should_monkey_run()
 
             LOG.debug("Starting the post-breach phase.")
             self.collect_system_info_if_configured()

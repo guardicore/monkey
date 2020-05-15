@@ -8,6 +8,9 @@ from itertools import product
 
 __author__ = 'itamar'
 
+from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
+from infection_monkey.network import info
+
 GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
@@ -276,6 +279,13 @@ class Configuration(object):
         """
         password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
         return password_hashed
+
+    @staticmethod
+    def should_monkey_run():
+        local_ips = info.local_ips()
+        if set(local_ips).intersection(set(WormConfiguration.blocked_ips)):
+            raise PlannedShutdownException("Monkey shouldn't run on current machine "
+                                           "(blocked ip or redundant exploitation).")
 
 
 WormConfiguration = Configuration()

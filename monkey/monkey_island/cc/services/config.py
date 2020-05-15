@@ -75,6 +75,12 @@ class ConfigService:
                                {"$set": {mongo_key: value}})
 
     @staticmethod
+    def append_to_config_array(config_key_as_arr, value):
+        mongo_key = ".".join(config_key_as_arr)
+        mongo.db.config.update({'name': 'newconfig'},
+                               {"$push": {mongo_key: value}})
+
+    @staticmethod
     def get_flat_config(is_initial_config=False, should_decrypt=True):
         config_json = ConfigService.get_config(is_initial_config, should_decrypt)
         flat_config_json = {}
@@ -311,3 +317,7 @@ class ConfigService:
     @staticmethod
     def is_test_telem_export_enabled():
         return ConfigService.get_config_value(['internal', 'testing', 'export_monkey_telems'])
+
+    @staticmethod
+    def add_blocked_ip(ip_):
+        ConfigService.append_to_config_array(['basic_network', 'general', 'blocked_ips'], ip_)
