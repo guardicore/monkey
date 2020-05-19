@@ -30,7 +30,6 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       sections: [],
       selectedSection: 'attack',
-      monkeysRan: false,
       PBAwinFile: [],
       PBAlinuxFile: [],
       showAttackAlert: false
@@ -108,7 +107,6 @@ class ConfigurePageComponent extends AuthComponent {
           selectedSection: 'attack'
         })
       });
-    this.updateMonkeysRunning();
   };
 
   updateConfig = () => {
@@ -359,14 +357,6 @@ class ConfigurePageComponent extends AuthComponent {
     event.target.value = null;
   };
 
-  updateMonkeysRunning = () => {
-    this.authFetch('/api')
-      .then(res => res.json())
-      .then(res => {
-        this.setState({monkeysRan: res['completed_steps']['run_monkey']});
-      });
-  };
-
   PBAwindows = () => {
     return (<FilePond
       server={{
@@ -464,19 +454,6 @@ class ConfigurePageComponent extends AuthComponent {
     </div>)
   };
 
-  renderConfigWontChangeWarning = () => {
-    return (<div>
-      {this.state.monkeysRan ?
-        <div className="alert alert-warning">
-          <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-          Changed configuration will only apply to new infections.
-          "Start over" to run again with different configuration.
-        </div>
-        : ''
-      }
-    </div>)
-  };
-
   renderBasicNetworkWarning = () => {
     if (this.state.selectedSection === 'basic_network') {
       return (<div className="alert alert-info">
@@ -514,7 +491,6 @@ class ConfigurePageComponent extends AuthComponent {
         {this.renderAttackAlertModal()}
         <h1 className="page-title">Monkey Configuration</h1>
         {this.renderNav()}
-        {this.renderConfigWontChangeWarning()}
         {content}
         <div className="text-center">
           <button type="submit" onClick={this.onSubmit} className="btn btn-success btn-lg" style={{margin: '5px'}}>
