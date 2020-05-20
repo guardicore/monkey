@@ -18,7 +18,6 @@ def process_system_info_telemetry(telemetry_json):
         process_ssh_info,
         process_credential_info,
         process_mimikatz_and_wmi_info,
-        try_process_network_info,
         dispatcher.dispatch_collector_results_to_relevant_processors
     ]
 
@@ -103,19 +102,3 @@ def process_mimikatz_and_wmi_info(telemetry_json):
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
         wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
         wmi_handler.process_and_handle_wmi_info()
-
-
-def try_process_network_info(telemetry_json):
-    try:
-        process_network_info(telemetry_json)
-    except KeyError:
-        pass
-
-
-def process_network_info(telemetry_json):
-    interfaces = telemetry_json['data']['network_info']['networks']
-    for interface in interfaces:
-        ip_ = ip_address(interface['addr'])
-        if not ip_.is_loopback:
-            ConfigService.add_blocked_ip(ip_.exploded)
-

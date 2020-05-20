@@ -319,9 +319,5 @@ class ConfigService:
         return ConfigService.get_config_value(['internal', 'testing', 'export_monkey_telems'])
 
     @staticmethod
-    def add_blocked_ip(ip_):
-        ConfigService.append_to_config_array(['basic_network', 'general', 'blocked_ips'], ip_)
-
-    @staticmethod
     def set_started_on_island(value: bool):
         ConfigService.set_config_value(['internal', 'general', 'started_on_island'], value)
