@@ -50,7 +50,8 @@ export default class EventsModal extends AuthComponent {
   renderSkippedEventsTimeline(){
     return <div className={'skipped-events-timeline'}>
       <SkippedEventsTimeline
-              skipped_count={this.props.event_count - this.props.latest_events.length+this.props.oldest_events.length}/>
+              skipped_count={this.props.event_count -
+                             this.props.latest_events.length + this.props.oldest_events.length}/>
     </div>
   }
 
