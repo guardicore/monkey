@@ -69,7 +69,11 @@ class ConfigurePageComponent extends AuthComponent {
       cnc: {},
       network: {},
       exploits: {},
-      internal: {}
+      internal: {
+        general: {
+          started_on_island: {'ui:widget': 'hidden'}
+        }
+      }
     })
   }
 

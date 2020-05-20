@@ -8,9 +8,6 @@ from itertools import product
 
 __author__ = 'itamar'
 
-from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
-from infection_monkey.network import info
-
 GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
@@ -25,14 +22,17 @@ class Configuration(object):
         for key, value in list(formatted_data.items()):
             if key.startswith('_'):
                 continue
-            if key in ["name", "id", "current_server"]:
+            if key in ["name", "id", "current_server", "max_depth"]:
                 continue
             if self._depth_from_commandline and key == "depth":
+                self.max_depth = value
                 continue
             if hasattr(self, key):
                 setattr(self, key, value)
             else:
                 unknown_items.append(key)
+        if not self.max_depth:
+            self.max_depth = self.depth
         return unknown_items
 
     def from_json(self, json_data):
@@ -138,6 +138,8 @@ class Configuration(object):
 
     # depth of propagation
     depth = 2
+    max_depth = None
+    started_on_island = False
     current_server = ""
 
     # Configuration servers to try to connect to, in this order.
@@ -235,6 +237,18 @@ class Configuration(object):
             cred_list.append(cred)
         return cred_list
 
+    @staticmethod
+    def hash_sensitive_data(sensitive_data):
+        """
+        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data plain-text, as the log is
+        saved on client machines plain-text.
+
+        :param sensitive_data: the data to hash.
+        :return: the hashed data.
+        """
+        password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
+        return password_hashed
+
     exploit_user_list = ['Administrator', 'root', 'user']
     exploit_password_list = ["Password1!", "1234", "password", "12345678"]
     exploit_lm_hash_list = []
@@ -262,30 +276,22 @@ class Configuration(object):
 
     extract_azure_creds = True
 
+    ###########################
+    # post breach actions
+    ###########################
     post_breach_actions = []
     custom_PBA_linux_cmd = ""
     custom_PBA_windows_cmd = ""
     PBA_linux_filename = None
     PBA_windows_filename = None
 
-    @staticmethod
-    def hash_sensitive_data(sensitive_data):
-        """
-        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data plain-text, as the log is
-        saved on client machines plain-text.
+    ###########################
+    # testing configuration
+    ###########################
+    export_monkey_telems = False
 
-        :param sensitive_data: the data to hash.
-        :return: the hashed data.
-        """
-        password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
-        return password_hashed
-
-    @staticmethod
-    def should_monkey_run():
-        local_ips = info.local_ips()
-        if set(local_ips).intersection(set(WormConfiguration.blocked_ips)):
-            raise PlannedShutdownException("Monkey shouldn't run on current machine "
-                                           "(blocked ip or redundant exploitation).")
+    def get_hop_count(self):
+        return self.max_depth - self.depth
 
 
 WormConfiguration = Configuration()

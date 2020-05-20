@@ -27,7 +27,7 @@ from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.network.tools import get_interface_to_target
+from infection_monkey.network.tools import get_interface_to_target, is_running_on_server
 from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
@@ -71,6 +71,7 @@ class InfectionMonkey(object):
         arg_parser.add_argument('-t', '--tunnel')
         arg_parser.add_argument('-s', '--server')
         arg_parser.add_argument('-d', '--depth', type=int)
+        arg_parser.add_argument('-vp', '--vulnerable-port')
         self._opts, self._args = arg_parser.parse_known_args(self._args)
 
         self._parent = self._opts.parent
@@ -116,6 +117,10 @@ class InfectionMonkey(object):
 
             self.shutdown_by_not_alive_config()
 
+            if self.is_started_on_island():
+                ControlClient.report_start_on_island()
+            ControlClient.should_monkey_run(self._opts.vulnerable_port)
+
             if firewall.is_enabled():
                 firewall.add_firewall_rule()
 
@@ -125,8 +130,6 @@ class InfectionMonkey(object):
 
             StateTelem(is_done=False, version=get_version()).send()
             TunnelTelem().send()
-
-            WormConfiguration.should_monkey_run()
 
             LOG.debug("Starting the post-breach phase.")
             self.collect_system_info_if_configured()
@@ -379,3 +382,6 @@ class InfectionMonkey(object):
             raise PlannedShutdownException("Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel))
         self._default_server = WormConfiguration.current_server
         LOG.debug("default server set to: %s" % self._default_server)
+
+    def is_started_on_island(self):
+        return is_running_on_server(self._default_server) and WormConfiguration.depth == WormConfiguration.max_depth

@@ -15,6 +15,8 @@ from infection_monkey.transport.tcp import TcpProxy
 
 __author__ = 'hoffer'
 
+from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
+
 requests.packages.urllib3.disable_warnings()
 
 LOG = logging.getLogger(__name__)
@@ -321,3 +323,28 @@ class ControlClient(object):
                                 proxies=ControlClient.proxies)
         except requests.exceptions.RequestException:
             return False
+
+    @staticmethod
+    def should_monkey_run(port: str) -> bool:
+        if WormConfiguration.get_hop_count() > 1 and \
+           ControlClient.can_island_see_port(port) and \
+           WormConfiguration.started_on_island:
+            raise PlannedShutdownException("Monkey shouldn't run on current machine "
+                                           "(it will be exploited later with more depth).")
+        return True
+
+    @staticmethod
+    def can_island_see_port(port):
+        try:
+            url = f"https://{WormConfiguration.current_server}/api/monkey_control/check_remote_port/{port}"
+            response = requests.get(url, verify=False)
+            response = json.loads(response.content.decode())
+            return response['status'] == "port_visible"
+        except requests.exceptions.RequestException:
+            return False
+
+    @staticmethod
+    def report_start_on_island():
+        requests.post(f"https://{WormConfiguration.current_server}/api/monkey_control/started_on_island",
+                      data=json.dumps({'started_on_island': True}),
+                      verify=False)

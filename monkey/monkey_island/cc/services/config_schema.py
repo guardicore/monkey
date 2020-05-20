@@ -564,6 +564,13 @@ SCHEMA = {
                             "default": r"monkey_dir",
                             "description": "Directory name for the directory which will contain all of the monkey files"
                         },
+                        "started_on_island": {
+                            "title": "Started on island",
+                            "type": "boolean",
+                            "default": False,
+                            "description": "Was exploitation started from island"
+                                           "(did monkey with max depth ran on island)"
+                        },
                     }
                 },
                 "classes": {
