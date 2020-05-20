@@ -8,7 +8,7 @@ from monkey_island.cc.auth import jwt_required
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.infection_lifecycle import InfectionLifecycle
-from monkey_island.cc.utils import local_ip_addresses
+from monkey_island.cc.network_utils import local_ip_addresses
 
 __author__ = 'Barak'
 

@@ -1,12 +1,12 @@
+import array
+import collections
+import ipaddress
 import socket
+import struct
 import sys
 from typing import List
 import collections
 
-import array
-
-import struct
-import ipaddress
 from netifaces import interfaces, ifaddresses, AF_INET
 from ring import lru
 
