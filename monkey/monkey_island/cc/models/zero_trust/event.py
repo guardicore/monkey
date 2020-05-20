@@ -23,7 +23,9 @@ class Event(EmbeddedDocument):
 
     # LOGIC
     @staticmethod
-    def create_event(title, message, event_type, timestamp=datetime.now()):
+    def create_event(title, message, event_type, timestamp=None):
+        if not timestamp:
+            timestamp = datetime.now()
         event = Event(
             timestamp=timestamp,
             title=title,

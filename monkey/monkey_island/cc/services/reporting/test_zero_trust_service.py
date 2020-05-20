@@ -1,6 +1,7 @@
 import common.data.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.services.reporting.zero_trust_service import ZeroTrustService
+import monkey_island.cc.services.reporting.zero_trust_service
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 EXPECTED_DICT = {
@@ -315,6 +316,12 @@ class TestZeroTrustService(IslandTestCase):
         }
 
         self.assertEqual(ZeroTrustService.get_pillars_to_statuses(), expected)
+
+    def test_get_events_without_overlap(self):
+        monkey_island.cc.services.reporting.zero_trust_service.EVENT_FETCH_CNT = 5
+        self.assertListEqual([], ZeroTrustService._get_events_without_overlap(5, [1, 2, 3]))
+        self.assertListEqual([3], ZeroTrustService._get_events_without_overlap(6, [1, 2, 3]))
+        self.assertListEqual([1, 2, 3, 4, 5], ZeroTrustService._get_events_without_overlap(10, [1, 2, 3, 4, 5]))
 
 
 def compare_lists_no_order(s, t):

@@ -10,7 +10,10 @@ from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIs
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
 from envs.monkey_zoo.blackbox.tests.performance.map_generation import MapGenerationTest
+from envs.monkey_zoo.blackbox.tests.performance.map_generation_from_telemetries import MapGenerationFromTelemetryTest
 from envs.monkey_zoo.blackbox.tests.performance.report_generation import ReportGenerationTest
+from envs.monkey_zoo.blackbox.tests.performance.report_generation_from_telemetries import \
+    ReportGenerationFromTelemetryTest
 from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import TelemetryPerformanceTest
 from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
 
@@ -145,6 +148,12 @@ class TestMonkeyBlackbox(object):
                                                 island_client,
                                                 "PERFORMANCE.conf",
                                                 timeout_in_seconds=10*60)
+
+    def test_report_generation_from_fake_telemetries(self, island_client):
+        ReportGenerationFromTelemetryTest(island_client).run()
+
+    def test_map_generation_from_fake_telemetries(self, island_client):
+        MapGenerationFromTelemetryTest(island_client).run()
 
     def test_telem_performance(self, island_client):
         TelemetryPerformanceTest(island_client).test_telemetry_performance()
