@@ -325,9 +325,10 @@ class ControlClient(object):
             return False
 
     @staticmethod
-    def should_monkey_run(port: str) -> bool:
-        if WormConfiguration.get_hop_count() > 1 and \
-           ControlClient.can_island_see_port(port) and \
+    def should_monkey_run(vulnerable_port: str) -> bool:
+        if vulnerable_port and \
+           WormConfiguration.get_hop_count() > 1 and \
+           ControlClient.can_island_see_port(vulnerable_port) and \
            WormConfiguration.started_on_island:
             raise PlannedShutdownException("Monkey shouldn't run on current machine "
                                            "(it will be exploited later with more depth).")
