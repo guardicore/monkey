@@ -116,11 +116,12 @@ class MonkeyDrops(object):
                     LOG.warning("Cannot set reference date to destination file")
 
         monkey_options = \
-            build_monkey_commandline_explicitly(self.opts.parent,
-                                                self.opts.tunnel,
-                                                self.opts.server,
-                                                self.opts.depth,
-                                                self.opts.vulnerable_port)
+            build_monkey_commandline_explicitly(parent=self.opts.parent,
+                                                tunnel=self.opts.tunnel,
+                                                server=self.opts.server,
+                                                depth=self.opts.depth,
+                                                location=None,
+                                                vulnerable_port=self.opts.vulnerable_port)
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._config['destination_path']} + monkey_options
