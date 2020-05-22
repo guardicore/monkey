@@ -23,8 +23,7 @@ class MapPageComponent extends AuthComponent {
       telemetryLastTimestamp: null,
       isScrolledUp: false,
       telemetryLines: 0,
-      telemetryCurrentLine: 0,
-      telemetryUpdateInProgress: false
+      telemetryCurrentLine: 0
     };
     this.telemConsole = React.createRef();
     this.handleScroll = this.handleScroll.bind(this);
@@ -73,20 +72,16 @@ class MapPageComponent extends AuthComponent {
   };
 
   updateTelemetryFromServer = () => {
-    if( this.state.telemetryUpdateInProgress ) {
-      return
-    }
-    this.setState({telemetryUpdateInProgress: true});
     this.authFetch('/api/telemetry-feed?timestamp=' + this.state.telemetryLastTimestamp)
       .then(res => res.json())
       .then(res => {
         if ('telemetries' in res) {
           let newTelem = this.state.telemetry.concat(res['telemetries']);
+
           this.setState(
             {
               telemetry: newTelem,
-              telemetryLastTimestamp: res['timestamp'],
-              telemetryUpdateInProgress: false
+              telemetryLastTimestamp: res['timestamp']
             });
           this.props.onStatusChange();
 
