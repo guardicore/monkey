@@ -15,7 +15,9 @@ class TelemetryPerformanceTestWorkflow(BasicTest):
     def run(self):
         try:
             if not self.quick_performance_test:
-                TelemetryPerformanceTest(island_client=self.island_client).test_telemetry_performance()
+                telem_sending_test = TelemetryPerformanceTest(island_client=self.island_client,
+                                                              quick_performance_test=self.quick_performance_test)
+                telem_sending_test.test_telemetry_performance()
             performance_test = EndpointPerformanceTest(self.name, self.performance_config, self.island_client)
             assert performance_test.run()
         finally:

@@ -48,7 +48,9 @@ class EdgeService:
                 "scans": [],
                 "exploits": [],
                 "tunnel": False,
-                "exploited": False
+                "exploited": False,
+                "src_label": EdgeService.get_label_for_endpoint(from_id),
+                "dst_label": EdgeService.get_label_for_endpoint(to_id)
             })
         return mongo.db.edge.find_one({"_id": edge_insert_result.inserted_id})
 
@@ -67,7 +69,9 @@ class EdgeService:
                 "id": edge_id,
                 "from": edge_from,
                 "to": edge_to,
-                "group": "island"
+                "group": "island",
+                "src_label": EdgeService.get_label_for_endpoint(edge_from),
+                "dst_label": EdgeService.get_label_for_endpoint(edge_to)
             }
         edge["_label"] = EdgeService.get_edge_label(edge)
         return edge
@@ -118,7 +122,9 @@ class EdgeService:
                 "id": edge["_id"],
                 "from": edge["from"],
                 "to": edge["to"],
-                "group": EdgeService.get_edge_group(edge)
+                "group": EdgeService.get_edge_group(edge),
+                "src_label": edge["src_label"],
+                "dst_label": edge["dst_label"]
             }
 
     @staticmethod
@@ -141,24 +147,27 @@ class EdgeService:
 
     @staticmethod
     def get_edge_label(edge):
+        return "%s %s %s" % (edge['src_label'], RIGHT_ARROW, edge['dst_label'])
+
+    @staticmethod
+    def get_label_for_endpoint(endpoint_id):
         node_service = monkey_island.cc.services.node.NodeService
-        from_id = edge["from"]
-        to_id = edge["to"]
-
-        try:
-            from_label = Monkey.get_label_by_id(from_id)
-        except MonkeyNotFoundError:
-            from_label = node_service.get_node_by_id(from_id)['domain_name']
-
-        if to_id == ObjectId("000000000000000000000000"):
-            to_label = 'MonkeyIsland'
+        if endpoint_id == ObjectId("000000000000000000000000"):
+            return 'MonkeyIsland'
+        if Monkey.is_monkey(endpoint_id):
+            return Monkey.get_label_by_id(endpoint_id)
         else:
-            if Monkey.is_monkey(to_id):
-                to_label = Monkey.get_label_by_id(to_id)
-            else:
-                to_label = node_service.get_node_label(node_service.get_node_by_id(to_id))
+            return node_service.get_node_label(node_service.get_node_by_id(endpoint_id))
 
-        return "%s %s %s" % (from_label, RIGHT_ARROW, to_label)
+    @staticmethod
+    def update_label_by_endpoint(edge, endpoint_id):
+        label = EdgeService.get_label_for_endpoint(endpoint_id)
+        if endpoint_id == edge["to"]:
+            mongo_field = {"dst_label": label}
+        else:
+            mongo_field = {"src_label": label}
+        mongo.db.edge.update({"_id": edge["_id"]},
+                             {"$set": mongo_field})
 
 
 RIGHT_ARROW = "\u2192"

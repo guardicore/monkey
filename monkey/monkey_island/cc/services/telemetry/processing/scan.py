@@ -2,6 +2,7 @@ import copy
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
+from monkey_island.cc.services.edge import EdgeService
 from monkey_island.cc.services.telemetry.processing.utils import get_edge_by_scan_or_exploit_telemetry
 from monkey_island.cc.services.telemetry.zero_trust_tests.data_endpoints import test_open_data_endpoints
 from monkey_island.cc.services.telemetry.zero_trust_tests.segmentation import test_segmentation_violation
@@ -42,3 +43,4 @@ def update_edges_and_nodes_based_on_scan_telemetry(telemetry_json):
             mongo.db.node.update({"_id": node["_id"]},
                                  {"$set": {"os.version": scan_os["version"]}},
                                  upsert=False)
+        EdgeService.update_label_by_endpoint(edge, node["_id"])
