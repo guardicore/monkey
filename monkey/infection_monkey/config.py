@@ -291,7 +291,7 @@ class Configuration(object):
     ###########################
     export_monkey_telems = False
 
-    def get_hop_count(self):
+    def get_hop_distance_to_island(self):
         return self.max_depth - self.depth
 
 

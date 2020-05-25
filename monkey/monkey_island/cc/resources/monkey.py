@@ -58,6 +58,7 @@ class Monkey(flask_restful.Resource):
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
     # Used by monkey. can't secure.
+    # Called on monkey wakeup to initialize local configuration
     @TestTelemStore.store_test_telem
     def post(self, **kw):
         monkey_json = json.loads(request.data)
