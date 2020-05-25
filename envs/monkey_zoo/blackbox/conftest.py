@@ -24,4 +24,3 @@ def no_gcp(request):
 @pytest.fixture(scope='session')
 def quick_performance_tests(request):
     return request.config.getoption("--quick-performance-tests")
-

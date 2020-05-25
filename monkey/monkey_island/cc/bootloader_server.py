@@ -10,7 +10,7 @@ import pymongo
 from monkey_island.cc.environment import Environment
 
 # Disable "unverified certificate" warnings when sending requests to island
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # noqa: DUO131
 logger = logging.getLogger(__name__)
 
 
@@ -29,7 +29,9 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length).decode()
         island_server_path = BootloaderHTTPRequestHandler.get_bootloader_resource_url(self.request.getsockname()[0])
         island_server_path = parse.urljoin(island_server_path, self.path[1:])
-        r = requests.post(url=island_server_path, data=post_data, verify=False)
+        # The island server doesn't always have a correct SSL cert installed (By default it comes with a self signed one),
+        # that's why we're not verifying the cert in this request.
+        r = requests.post(url=island_server_path, data=post_data, verify=False)  # noqa: DUO123
 
         try:
             if r.status_code != 200:

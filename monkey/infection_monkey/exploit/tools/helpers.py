@@ -46,19 +46,19 @@ def build_monkey_commandline_explicitly(parent=None, tunnel=None, server=None, d
     cmdline = ""
 
     if parent is not None:
-        cmdline += " -p " + parent
+        cmdline += f" -p {parent}"
     if tunnel is not None:
-        cmdline += " -t " + tunnel
+        cmdline += f" -t {tunnel}"
     if server is not None:
-        cmdline += " -s " + server
+        cmdline += f" -s {server}"
     if depth is not None:
-        if depth < 0:
+        if int(depth) < 0:
             depth = 0
         cmdline += f" -d {depth}"
     if location is not None:
         cmdline += f" -l {location}"
     if vulnerable_port is not None:
-        cmdline += f" -vp {str(vulnerable_port)}"
+        cmdline += f" -vp {vulnerable_port}"
 
     return cmdline
 

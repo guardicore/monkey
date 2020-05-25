@@ -90,9 +90,10 @@ class MonkeyIslandRequests(object):
     @_Decorators.refresh_jwt_token
     def patch(self, url, data: Dict):
         return requests.patch(self.addr + url,  # noqa: DUO123
-                             data=data,
-                             headers=self.get_jwt_header(),
-                             verify=False)
+                              data=data,
+                              headers=self.get_jwt_header(),
+                              verify=False
+        )
 
     @_Decorators.refresh_jwt_token
     def delete(self, url):

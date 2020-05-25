@@ -13,6 +13,7 @@ GUID = str(uuid.getnode())
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
 SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list", "exploit_ssh_keys"]
+LOCAL_CONFIG_VARS = ["name", "id", "current_server", "max_depth"]
 HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
 
 
@@ -22,7 +23,7 @@ class Configuration(object):
         for key, value in list(formatted_data.items()):
             if key.startswith('_'):
                 continue
-            if key in ["name", "id", "current_server", "max_depth"]:
+            if key in LOCAL_CONFIG_VARS:
                 continue
             if self._depth_from_commandline and key == "depth":
                 self.max_depth = value
@@ -290,7 +291,7 @@ class Configuration(object):
     ###########################
     export_monkey_telems = False
 
-    def get_hop_count(self):
+    def get_hop_distance_to_island(self):
         return self.max_depth - self.depth
 
 

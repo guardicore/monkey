@@ -74,6 +74,7 @@ class InfectionMonkey(object):
         arg_parser.add_argument('-d', '--depth', type=int)
         arg_parser.add_argument('-vp', '--vulnerable-port')
         self._opts, self._args = arg_parser.parse_known_args(self._args)
+        self.log_arguments()
 
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
@@ -387,3 +388,7 @@ class InfectionMonkey(object):
     def is_started_on_island(self):
         island_ip = remove_port_from_ip_string(self._default_server)
         return is_running_on_server(island_ip) and WormConfiguration.depth == WormConfiguration.max_depth
+
+    def log_arguments(self):
+        arg_string = " ".join([f"{key}: {value}" for key, value in vars(self._opts).items()])
+        LOG.info(f"Monkey started with arguments: {arg_string}")
