@@ -41,12 +41,9 @@ export const basic_options = {
   physics: {
     barnesHut: {
       gravitationalConstant: -120000,
-      avoidOverlap: 0.5,
-      springLength: 100,
-      springConstant: 0.025
+      avoidOverlap: 0.5
     },
-    minVelocity: 0.3,
-    maxVelocity: 25
+    minVelocity: 0.75
   }
 };
 
