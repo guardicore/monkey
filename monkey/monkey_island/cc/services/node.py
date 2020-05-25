@@ -8,7 +8,7 @@ import monkey_island.cc.services.log
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.edge import EdgeService
-from monkey_island.cc.utils import local_ip_addresses, is_local_ips
+from monkey_island.cc.network_utils import local_ip_addresses, is_local_ips
 from monkey_island.cc import models
 from monkey_island.cc.services.utils.node_states import NodeStates
 

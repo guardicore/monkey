@@ -10,7 +10,13 @@ In order to execute the entire test suite, you must know the external IP of the 
 this information in the GCP Console `Compute Engine/VM Instances` under _External IP_. 
 
 #### Running in command line
-Run the following command:
+Blackbox tests have following parameters:
+- `--island=IP` Sets island's IP
+- `--no-gcp` (Optional) Use for no interaction with the cloud (local test).
+- `--quick-performance-tests` (Optional) If enabled performance tests won't reset island and won't send telemetries, 
+instead will just test performance of endpoints in already present island state.
+
+Example run command:
 
 `monkey\envs\monkey_zoo\blackbox>python -m pytest -s --island=35.207.152.72:5000 test_blackbox.py`
 

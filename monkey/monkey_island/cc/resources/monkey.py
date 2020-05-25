@@ -58,6 +58,7 @@ class Monkey(flask_restful.Resource):
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
     # Used by monkey. can't secure.
+    # Called on monkey wakeup to initialize local configuration
     @TestTelemStore.store_test_telem
     def post(self, **kw):
         monkey_json = json.loads(request.data)
@@ -74,16 +75,11 @@ class Monkey(flask_restful.Resource):
 
         # if new monkey telem, change config according to "new monkeys" config.
         db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
-        if not db_monkey:
-            # we pull it encrypted because we then decrypt it for the monkey in get
-            new_config = ConfigService.get_flat_config(False, False)
-            monkey_json['config'] = monkey_json.get('config', {})
-            monkey_json['config'].update(new_config)
-        else:
-            db_config = db_monkey.get('config', {})
-            if 'current_server' in db_config:
-                del db_config['current_server']
-            monkey_json.get('config', {}).update(db_config)
+
+        # Update monkey configuration
+        new_config = ConfigService.get_flat_config(False, False)
+        monkey_json['config'] = monkey_json.get('config', {})
+        monkey_json['config'].update(new_config)
 
         # try to find new monkey parent
         parent = monkey_json.get('parent')

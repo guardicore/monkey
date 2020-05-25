@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 class TestTelemStore:
 
+    TELEMS_EXPORTED = False
+
     @staticmethod
     def store_test_telem(f):
         @wraps(f)
@@ -46,6 +48,7 @@ class TestTelemStore:
         for test_telem in TestTelem.objects():
             with open(TestTelemStore.get_unique_file_path_for_test_telem(TELEM_SAMPLE_DIR, test_telem), 'w') as file:
                 file.write(test_telem.to_json(indent=2))
+        TestTelemStore.TELEMS_EXPORTED = True
         logger.info("Telemetries exported!")
 
     @staticmethod

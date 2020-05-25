@@ -1,4 +1,5 @@
 import logging
+from ipaddress import ip_address
 
 from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.services import mimikatz_utils
