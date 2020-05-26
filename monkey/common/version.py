@@ -4,7 +4,7 @@ from pathlib import Path
 
 MAJOR = "1"
 MINOR = "8"
-PATCH = "1"
+PATCH = "2"
 build_file_path = Path(__file__).parent.joinpath("BUILD")
 with open(build_file_path, "r") as build_file:
     BUILD = build_file.read()
