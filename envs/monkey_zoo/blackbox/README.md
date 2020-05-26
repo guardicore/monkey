@@ -25,6 +25,9 @@ Configure a PyTest configuration with the additional arguments `-s --island=35.2
 `monkey\envs\monkey_zoo\blackbox`.
 
 ### Running telemetry performance test
+
+**Before running performance test make sure browser is not sending requests to island!** 
+
 To run telemetry performance test follow these steps:
 1. Gather monkey telemetries.
     1. Enable "Export monkey telemetries" in Configuration -> Internal -> Tests if you don't have 
