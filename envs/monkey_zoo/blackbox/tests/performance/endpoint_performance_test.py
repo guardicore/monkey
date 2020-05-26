@@ -18,9 +18,9 @@ class EndpointPerformanceTest(BasicTest):
 
     def run(self) -> bool:
         # Collect timings for all pages
-        self.island_client.clear_caches()
         endpoint_timings = {}
         for endpoint in self.test_config.endpoints_to_test:
+            self.island_client.clear_caches()
             endpoint_timings[endpoint] = self.island_client.requests.get_request_time(endpoint,
                                                                                       SupportedRequestMethod.GET)
         analyzer = PerformanceAnalyzer(self.test_config, endpoint_timings)
