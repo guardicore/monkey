@@ -43,7 +43,8 @@ class RunMonkeyPageComponent extends AuthComponent {
       isLoadingAws: true,
       isErrorWhileCollectingAwsMachines: false,
       awsMachineCollectionErrorMsg: '',
-      showModal: false
+      showModal: false,
+      errorDetails: ''
     };
 
     this.closeModal = this.closeModal.bind(this);
@@ -138,7 +139,8 @@ class RunMonkeyPageComponent extends AuthComponent {
           /* If Monkey binaries are missing, change the state accordingly */
           if (res['error_text'].startsWith('Copy file failed')) {
             this.setState({
-              showModal: true}
+              showModal: true,
+              errorDetails: res['error_text']}
             );
           }
           this.setState({
@@ -320,7 +322,7 @@ class RunMonkeyPageComponent extends AuthComponent {
           <MissingBinariesModal
                         showModal = {this.state.showModal}
                         onClose = {this.closeModal}
-                        onVerify = {this.cleanup}/>
+                        errorDetails = {this.state.errorDetails}/>
           {
             // TODO: implement button functionality
             /*
