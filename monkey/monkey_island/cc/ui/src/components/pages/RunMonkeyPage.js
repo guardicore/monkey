@@ -13,6 +13,8 @@ import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import AwsRunTable from '../run-monkey/AwsRunTable';
 
+import MissingBinariesModal from '../ui-components/MissingBinariesModal';
+
 import '../../styles/MonkeyRunPage.scss';
 
 const loading_css_override = css`
@@ -40,8 +42,11 @@ class RunMonkeyPageComponent extends AuthComponent {
       awsMachines: [],
       isLoadingAws: true,
       isErrorWhileCollectingAwsMachines: false,
-      awsMachineCollectionErrorMsg: ''
+      awsMachineCollectionErrorMsg: '',
+      showModal: false
     };
+
+    this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
@@ -130,6 +135,12 @@ class RunMonkeyPageComponent extends AuthComponent {
             runningOnIslandState: 'installing'
           });
         } else {
+          /* If Monkey binaries are missing, change the state accordingly */
+          if (res['error_text'].startsWith('Copy file failed')) {
+            this.setState({
+              showModal: true}
+            );
+          }
           this.setState({
             runningOnIslandState: 'not_running'
           });
@@ -285,6 +296,12 @@ class RunMonkeyPageComponent extends AuthComponent {
     )
   }
 
+  closeModal = () => {
+    this.setState({
+      showModal: false
+    })
+  };
+
   render() {
     return (
       <Col xs={12} lg={8}>
@@ -296,11 +313,14 @@ class RunMonkeyPageComponent extends AuthComponent {
         <p>
           <button onClick={this.runLocalMonkey}
                   className="btn btn-default btn-lg center-block"
-                  disabled={this.state.runningOnIslandState !== 'not_running'}
-          >
+                  disabled={this.state.runningOnIslandState !== 'not_running'}>
             Run on Monkey Island Server
             {RunMonkeyPageComponent.renderIconByState(this.state.runningOnIslandState)}
           </button>
+          <MissingBinariesModal
+                        showModal = {this.state.showModal}
+                        onClose = {this.closeModal}
+                        onVerify = {this.cleanup}/>
           {
             // TODO: implement button functionality
             /*
