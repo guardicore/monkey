@@ -35,7 +35,7 @@ class MissingBinariesModal extends React.PureComponent {
               <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
               Some Monkey binaries are not found where they should be...<br/>
               You can download the files from <a href="https://github.com/guardicore/monkey/releases/latest" target="blank">here</a>,
-              at the bottommost section titled "Assets", and place them under the directory <i>monkey/monkey_island/cc/binaries</i>.
+              at the bottommost section titled "Assets", and place them under the directory <code>monkey/monkey_island/cc/binaries</code>.
             </p>
           </div>
           <hr/>
