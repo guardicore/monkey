@@ -78,7 +78,7 @@ SCHEMA = {
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1136",
                     "description": "Adversaries with a sufficient level of access "
-                                    "may create a local system, domain, or cloud tenant account."
+                                   "may create a local system, domain, or cloud tenant account."
                 }
             }
         },

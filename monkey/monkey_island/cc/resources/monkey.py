@@ -3,6 +3,8 @@ from datetime import datetime
 
 import dateutil.parser
 import flask_restful
+
+from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from flask import request
 
@@ -129,8 +131,9 @@ class Monkey(flask_restful.Resource):
 
         if existing_node:
             node_id = existing_node["_id"]
-            for edge in mongo.db.edge.find({"to": node_id}):
-                mongo.db.edge.update({"_id": edge["_id"]}, {"$set": {"to": new_monkey_id}})
+            for edge in Edge.objects(dst_node_id=node_id):
+                edge.dst_node_id = new_monkey_id
+                edge.save()
             for creds in existing_node['creds']:
                 NodeService.add_credentials_to_monkey(new_monkey_id, creds)
             mongo.db.node.remove({"_id": node_id})
