@@ -1,5 +1,3 @@
-import copy
-
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.edge.edge import EdgeService

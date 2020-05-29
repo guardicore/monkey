@@ -2,8 +2,6 @@ from copy import deepcopy
 
 from bson import ObjectId
 
-from monkey_island.cc.database import mongo
-from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.services.edge.edge import EdgeService
 
@@ -57,25 +55,6 @@ class DisplayedEdgeService:
             }
         edge["_label"] = EdgeService.get_edge_label(edge)
         return edge
-
-    @staticmethod
-    def get_infected_monkey_island_pseudo_edges(monkey_island_monkey):
-        existing_ids = [x.src_node_id for x in Edge.objects(dst_node_id=monkey_island_monkey["_id"])]
-        monkey_ids = [x["_id"] for x in mongo.db.monkey.find({})
-                      if ("tunnel" not in x) and
-                      (x["_id"] not in existing_ids) and
-                      (x["_id"] != monkey_island_monkey["_id"])]
-        edges = []
-
-        # We're using fake ids because the frontend graph module requires unique ids.
-        # Collision with real id is improbable.
-        count = 0
-        for monkey_id in monkey_ids:
-            count += 1
-            edges.append(DisplayedEdgeService.generate_pseudo_edge(
-                ObjectId(hex(count)[2:].zfill(24)), monkey_id, monkey_island_monkey["_id"]))
-
-        return edges
 
     @staticmethod
     def services_to_displayed_services(services, for_report=False):

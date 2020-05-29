@@ -59,6 +59,11 @@ class EdgeService:
             EdgeService.set_edge_exploited(edge)
 
     @staticmethod
+    def set_edge_exploited(edge: Edge):
+        edge.exploited = True
+        edge.save()
+
+    @staticmethod
     def get_edge_group(edge: Edge):
         if edge.exploited:
             return "exploited"
@@ -67,11 +72,6 @@ class EdgeService:
         if edge.scans or edge.exploits:
             return "scan"
         return "empty"
-
-    @staticmethod
-    def set_edge_exploited(edge: Edge):
-        edge.exploited = True
-        edge.save()
 
     @staticmethod
     def get_edge_label(edge):
