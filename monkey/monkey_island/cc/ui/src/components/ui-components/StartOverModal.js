@@ -56,7 +56,7 @@ class StartOverModal extends React.PureComponent {
                 Reset environment
               </button>
               <button type='button' className='btn btn-success btn-lg' style={{margin: '5px'}}
-                      onClick={() => this.setState({showCleanDialog: false})}>
+                      onClick={() => {this.props.onClose(); this.setState({showCleanDialog: false})}}>
                 Cancel
               </button>
             </div>)
