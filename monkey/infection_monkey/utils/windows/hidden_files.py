@@ -1,4 +1,8 @@
+import win32file
+
+
 HIDDEN_FILE = 'C:\\monkey-hidden-file'
+HIDDEN_FILE_WINAPI = 'C:\\monkey-hidden-file-winAPI'
 HIDDEN_FOLDER = 'C:\\monkey-hidden-folder'
 
 
@@ -24,8 +28,28 @@ def get_windows_commands_to_hide_folders():
     ]
 
 
-# def get_winAPI_commands_to_hide_files():
-#     pass
+def get_winAPI_to_hide_files():
+    try:
+        fileAccess = win32file.GENERIC_READ | win32file.GENERIC_WRITE  # read-write access
+        fileCreation = win32file.CREATE_ALWAYS  # overwrite existing file
+        fileFlags = win32file.FILE_ATTRIBUTE_HIDDEN  # make hidden
+
+        hiddenFile = win32file.CreateFile(HIDDEN_FILE_WINAPI,
+                                          fileAccess,
+                                          0,
+                                          None,
+                                          fileCreation,
+                                          fileFlags,
+                                          0)
+
+        return "Created hidden file: {}".format(HIDDEN_FILE_WINAPI), True
+
+    except Exception as err:
+        return str(err), False
+
+
+def get_winAPI_to_delete_files():
+    win32file.DeleteFile(HIDDEN_FILE_WINAPI)
 
 
 def get_windows_commands_to_delete():

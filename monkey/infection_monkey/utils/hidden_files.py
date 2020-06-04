@@ -1,3 +1,4 @@
+import subprocess
 from infection_monkey.utils.linux.hidden_files import\
     get_linux_commands_to_hide_files,\
     get_linux_commands_to_hide_folders,\
@@ -5,8 +6,9 @@ from infection_monkey.utils.linux.hidden_files import\
 from infection_monkey.utils.windows.hidden_files import\
     get_windows_commands_to_hide_files,\
     get_windows_commands_to_hide_folders,\
-    # get_winAPI_commands_to_hide_files,\
-    get_windows_commands_to_delete
+    get_winAPI_to_hide_files,\
+    get_windows_commands_to_delete,\
+    get_winAPI_to_delete_files
 from infection_monkey.utils.environment import is_windows_os
 
 
@@ -22,11 +24,12 @@ def get_commands_to_hide_folders():
     return linux_cmds, windows_cmds
 
 
-# def get_winAPI_commands():
-#     winAPI_command = get_winAPI_commands_to_hide_files()
-#     return winAPI_command
+def get_winAPI_to_hide_files():
+    get_winAPI_to_hide_files()
 
 
 def cleanup_hidden_files(is_windows=is_windows_os()):
-    get_windows_commands_to_delete() if is_windows \
-                                     else get_linux_commands_to_delete()
+    if is_windows:
+        get_winAPI_to_delete_files()
+    subprocess.run(get_windows_commands_to_delete() if is_windows
+                   else get_linux_commands_to_delete())
