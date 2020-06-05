@@ -8,6 +8,7 @@ import StolenPasswords from 'components/report-components/security/StolenPasswor
 import CollapsibleWellComponent from 'components/report-components/security/CollapsibleWell';
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
+import PassTheHashMapPageComponent from '../pages/PassTheHashMapPage';
 import StrongUsers from 'components/report-components/security/StrongUsers';
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
@@ -419,8 +420,9 @@ class ReportPageComponent extends AuthComponent {
           <PostBreach data={this.state.report.glance.scanned}/>
         </div>
 
-        <div style={{position: 'relative', height: '80vh'}}>
-          {/*this.generateReportPthMap()*/}
+        <div style={{position: 'relative' /*, height: '80vh'*/}}>
+          {/*Disable PTH map until we fix it
+          this.generateReportPthMap()*/}
         </div>
 
         <div style={{marginBottom: '20px'}}>
