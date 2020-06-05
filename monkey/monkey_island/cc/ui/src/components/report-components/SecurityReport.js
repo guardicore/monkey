@@ -8,7 +8,6 @@ import StolenPasswords from 'components/report-components/security/StolenPasswor
 import CollapsibleWellComponent from 'components/report-components/security/CollapsibleWell';
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
-import PassTheHashMapPageComponent from '../pages/PassTheHashMapPage';
 import StrongUsers from 'components/report-components/security/StrongUsers';
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
@@ -421,7 +420,7 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{position: 'relative', height: '80vh'}}>
-          {this.generateReportPthMap()}
+          {/*this.generateReportPthMap()*/}
         </div>
 
         <div style={{marginBottom: '20px'}}>
