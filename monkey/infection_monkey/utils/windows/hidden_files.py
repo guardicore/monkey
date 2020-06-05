@@ -5,11 +5,13 @@ HIDDEN_FOLDER = 'C:\\monkey-hidden-folder'
 
 def get_windows_commands_to_hide_files():
     return [
-        'echo Successfully created hidden file >',  # create text file
+        'type NUL >',   # create empty file
         HIDDEN_FILE,
         '&& attrib',    # change file attributes
         '+h',           # make hidden
-        HIDDEN_FILE
+        HIDDEN_FILE,
+        'echo Successfully created hidden file: {0} > {0}'.format(HIDDEN_FILE),
+        '&& type {}'.format(HIDDEN_FILE)
     ]
 
 
@@ -20,8 +22,9 @@ def get_windows_commands_to_hide_folders():
         '&& attrib',    # change file attributes
         '+h',           # make hidden
         HIDDEN_FOLDER,
-        '&& echo Successfully created hidden folder >'
-        '{}\{}'.format(HIDDEN_FOLDER, 'some-file')
+        '&& echo Successfully created hidden folder: {} >'.format(HIDDEN_FOLDER),
+        '{}\\{}'.format(HIDDEN_FOLDER, 'some-file'),
+        '&& type {}'.format(HIDDEN_FOLDER, 'some-file')
     ]
 
 
@@ -40,7 +43,7 @@ def get_winAPI_to_hide_files():
                                           fileFlags,
                                           0)
 
-        return "Created hidden file: {}".format(HIDDEN_FILE_WINAPI), True
+        return "Succesfully created hidden file: {}".format(HIDDEN_FILE_WINAPI), True
     except Exception as err:
         return str(err), False
 
