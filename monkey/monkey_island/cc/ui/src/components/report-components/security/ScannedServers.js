@@ -46,7 +46,7 @@ class ScannedServersComponent extends React.Component {
         <p>
           The Monkey discovered
           <span className="label label-danger">{scannedServicesAmount}</span>
-          open {Pluralize('service', scannedServicesAmount)}
+          open {Pluralize('service', scannedServicesAmount)} 
           on
           <span className="label label-warning">{scannedMachinesCount}</span>
           {Pluralize('machine', scannedMachinesCount)}:
