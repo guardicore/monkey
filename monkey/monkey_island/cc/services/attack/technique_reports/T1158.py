@@ -31,7 +31,6 @@ class T1158(AttackTechnique):
                                     'hostname': pba['hostname'],
                                     'ips': node['ip_addresses']
                                 },
-                                'type': 'Folder' if 'folder' in pba['command'] else 'File',
                                 'result': pba['result'][0]
                             })
             data.update(T1158.get_base_data_by_status(status))
