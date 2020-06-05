@@ -18,5 +18,8 @@ class WindowsCredentialCollector(object):
     def cred_list_to_cred_dict(creds: List[WindowsCredential]):
         cred_dict = {}
         for cred in creds:
-            cred_dict.update({cred.username: cred.to_dict()})
+            # Lets not use "." and "$" in keys, because it will confuse mongo.
+            # Ideally we should refactor island not to use a dict and simply parse credential list.
+            key = cred.username.replace(".", ",").replace("$", "")
+            cred_dict.update({key: cred.to_dict()})
         return cred_dict
