@@ -83,11 +83,11 @@ def replace_user_dot_with_comma(creds):
 def add_system_info_creds_to_config(creds):
     for user in creds:
         ConfigService.creds_add_username(user)
-        if 'password' in creds[user]:
+        if 'password' in creds[user] and creds[user]['password']:
             ConfigService.creds_add_password(creds[user]['password'])
-        if 'lm_hash' in creds[user]:
+        if 'lm_hash' in creds[user] and creds[user]['lm_hash']:
             ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
-        if 'ntlm_hash' in creds[user]:
+        if 'ntlm_hash' in creds[user] and creds[user]['ntlm_hash']:
             ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
 
 
