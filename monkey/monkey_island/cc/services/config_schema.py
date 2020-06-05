@@ -167,6 +167,10 @@ SCHEMA = {
                     ],
                     "title": "Modify shell startup files",
                     "attack_techniques": ["T1156", "T1504"]
+                        "HiddenFiles"
+                    ],
+                    "title": "Hidden files and directories",
+                    "attack_techniques": ["T1158"]
                 }
             ],
         },
@@ -389,6 +393,7 @@ SCHEMA = {
                                 "BackdoorUser",
                                 "CommunicateAsNewUser",
                                 "ModifyShellStartupFiles"
+                                "HiddenFiles"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },

@@ -99,6 +99,15 @@ SCHEMA = {
                     "description": "Adversaries may gain persistence and elevate privileges "
                                    "in certain situations by abusing PowerShell profiles which "
                                    "are scripts that run when PowerShell starts."
+                "T1158": {
+                    "title": "Hidden Files and Directories",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1158",
+                    "description": "Adversaries can hide files and folders on the system "
+                                   "and evade a typical user or system analysis that does not "
+                                   "incorporate investigation of hidden files."
                 }
             }
         },
