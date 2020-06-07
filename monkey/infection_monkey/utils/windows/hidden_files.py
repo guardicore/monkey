@@ -1,30 +1,40 @@
-HIDDEN_FILE = 'C:\\monkey-hidden-file'
-HIDDEN_FILE_WINAPI = 'C:\\monkey-hidden-file-winAPI'
-HIDDEN_FOLDER = 'C:\\monkey-hidden-folder'
+HIDDEN_FILE = "%temp%\\monkey-hidden-file"
+HIDDEN_FILE_WINAPI = "%temp%\\monkey-hidden-file-winAPI"
+HIDDEN_FOLDER = "%temp%\\monkey-hidden-folder"
 
 
 def get_windows_commands_to_hide_files():
     return [
-        'type NUL >',   # create empty file
+        'echo',
+        'Successfully created hidden file: {}'.format(HIDDEN_FILE),  # create empty file
+        '>',
         HIDDEN_FILE,
-        '&& attrib',    # change file attributes
+        '&&',
+        'attrib',       # change file attributes
         '+h',           # make hidden
         HIDDEN_FILE,
-        'echo Successfully created hidden file: {0} > {0}'.format(HIDDEN_FILE),
-        '&& type {}'.format(HIDDEN_FILE)
+        '&&',
+        'type',
+        HIDDEN_FILE
     ]
 
 
 def get_windows_commands_to_hide_folders():
     return [
-        'mkdir',        # make directory
-        HIDDEN_FOLDER,
-        '&& attrib',    # change file attributes
-        '+h',           # make hidden
-        HIDDEN_FOLDER,
-        '&& echo Successfully created hidden folder: {} >'.format(HIDDEN_FOLDER),
+        'mkdir',
+        HIDDEN_FOLDER,  # make directory
+        '&&',
+        'attrib',
+        '+h',
+        HIDDEN_FOLDER,  # change file attributes
+        '&&',
+        'echo',
+        'Successfully created hidden folder: {}'.format(HIDDEN_FOLDER),
+        '>',
         '{}\\{}'.format(HIDDEN_FOLDER, 'some-file'),
-        '&& type {}'.format(HIDDEN_FOLDER, 'some-file')
+        '&&',
+        'type',
+        '{}\\{}'.format(HIDDEN_FOLDER, 'some-file')
     ]
 
 
@@ -37,11 +47,11 @@ def get_winAPI_to_hide_files():
 
         hiddenFile = win32file.CreateFile(HIDDEN_FILE_WINAPI,
                                           fileAccess,
-                                          0,
-                                          None,
+                                          0,  # sharing mode: 0 => can't be shared
+                                          None,  # security attributes
                                           fileCreation,
                                           fileFlags,
-                                          0)
+                                          0)  # template file
 
         return "Succesfully created hidden file: {}".format(HIDDEN_FILE_WINAPI), True
     except Exception as err:
@@ -51,9 +61,11 @@ def get_winAPI_to_hide_files():
 def get_windows_commands_to_delete():
     return [
         'del',          # delete file
-        '/f',           # force delete
+        '-Force',           # force delete
         HIDDEN_FILE,
         HIDDEN_FILE_WINAPI,
-        '&& rmdir',     # delete folder
+        '&&',
+        'rmdir',     # delete folder
+        '-Force',
         HIDDEN_FOLDER
     ]

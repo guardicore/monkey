@@ -23,10 +23,6 @@ def get_commands_to_hide_folders():
     return linux_cmds, windows_cmds
 
 
-def get_winAPI_to_hide_files():
-    get_winAPI_to_hide_files()
-
-
 def cleanup_hidden_files(is_windows=is_windows_os()):
     subprocess.run(get_windows_commands_to_delete() if is_windows
                    else get_linux_commands_to_delete())
