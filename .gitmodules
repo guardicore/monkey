@@ -2,3 +2,6 @@
 [submodule "monkey/monkey_island/cc/services/attack/attack_data"]
 	path = monkey/monkey_island/cc/services/attack/attack_data
 	url = https://github.com/guardicore/cti
+[submodule "docs/themes/learn"]
+	path = docs/themes/learn
+	url = https://github.com/ShayNehmad/hugo-theme-learn.git
