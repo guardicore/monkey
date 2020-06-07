@@ -6,7 +6,8 @@ def get_linux_commands_to_hide_files():
     return [
         'touch',    # create file
         HIDDEN_FILE,
-        '; echo \"Successfully created hidden file: {}\" |'.format(HIDDEN_FILE),  # output
+        '&&'
+        'echo \"Successfully created hidden file: {}\" |'.format(HIDDEN_FILE),  # output
         'tee -a',   # and write to file
         HIDDEN_FILE
     ]

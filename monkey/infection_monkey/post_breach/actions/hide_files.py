@@ -10,8 +10,8 @@ from infection_monkey.utils.hidden_files import\
 from infection_monkey.utils.environment import is_windows_os
 
 
-CREATE_HIDDEN = [get_commands_to_hide_files,
-                 get_commands_to_hide_folders]
+HIDDEN_FSO_CREATION_COMMANDS = [get_commands_to_hide_files,
+                                get_commands_to_hide_folders]
 
 
 class HiddenFiles(PBA):
@@ -24,8 +24,8 @@ class HiddenFiles(PBA):
 
     def run(self):
         # create hidden files and folders
-        for method_to_create in CREATE_HIDDEN:
-            linux_cmds, windows_cmds = method_to_create()
+        for function_to_get_commands in HIDDEN_FSO_CREATION_COMMANDS:
+            linux_cmds, windows_cmds = function_to_get_commands()
             super(HiddenFiles, self).__init__(name=POST_BREACH_HIDDEN_FILES,
                                               linux_cmd=' '.join(linux_cmds),
                                               windows_cmd=windows_cmds)
