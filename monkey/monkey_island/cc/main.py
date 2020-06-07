@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 from monkey_island.cc.app import init_app
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list
-from monkey_island.cc.utils import local_ip_addresses
+from monkey_island.cc.network_utils import local_ip_addresses
 from monkey_island.cc.environment.environment import env
 from monkey_island.cc.database import is_db_server_up, get_db_version
 from monkey_island.cc.resources.monkey_download import MonkeyDownload

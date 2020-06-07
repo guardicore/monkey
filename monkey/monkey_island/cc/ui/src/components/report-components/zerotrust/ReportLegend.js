@@ -5,7 +5,7 @@ import {NavLink} from 'react-router-dom';
 import {Panel} from 'react-bootstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
 
 
 class ZeroTrustReportLegend extends Component {

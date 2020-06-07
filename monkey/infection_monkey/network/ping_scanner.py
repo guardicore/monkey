@@ -7,7 +7,6 @@ import sys
 import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.HostScanner import HostScanner
-from infection_monkey.model.host import VictimHost
 
 __author__ = 'itamar'
 

@@ -1,4 +1,5 @@
 import logging
+from ipaddress import ip_address
 
 from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.services import mimikatz_utils
@@ -101,4 +102,3 @@ def process_mimikatz_and_wmi_info(telemetry_json):
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
         wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
         wmi_handler.process_and_handle_wmi_info()
-

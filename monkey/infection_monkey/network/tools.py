@@ -7,7 +7,7 @@ import struct
 import time
 import re
 
-from infection_monkey.network.info import get_routes
+from infection_monkey.network.info import get_routes, local_ips
 from infection_monkey.pyinstaller_utils import get_binary_file_path
 from infection_monkey.utils.environment import is_64bit_python
 
@@ -309,3 +309,7 @@ def get_interface_to_target(dst):
         paths.sort()
         ret = paths[-1][1]
         return ret[1]
+
+
+def is_running_on_server(ip: str) -> bool:
+    return ip in local_ips()

@@ -66,6 +66,22 @@ SCHEMA = {
                 }
             }
         },
+        "persistence": {
+            "title": "Persistence",
+            "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0003/",
+            "properties": {
+                "T1136": {
+                    "title": "Create account",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1136",
+                    "description": "Adversaries with a sufficient level of access "
+                                    "may create a local system, domain, or cloud tenant account."
+                }
+            }
+        },
         "defence_evasion": {
             "title": "Defence evasion",
             "type": "object",

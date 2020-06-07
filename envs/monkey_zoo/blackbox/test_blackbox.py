@@ -4,13 +4,18 @@ import logging
 import pytest
 from time import sleep
 
-from envs.monkey_zoo.blackbox.analyzers.performance_analyzer import PerformanceAnalyzer
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
-from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
-from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
+from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
+from envs.monkey_zoo.blackbox.tests.performance.map_generation import MapGenerationTest
+from envs.monkey_zoo.blackbox.tests.performance.map_generation_from_telemetries import MapGenerationFromTelemetryTest
+from envs.monkey_zoo.blackbox.tests.performance.report_generation import ReportGenerationTest
+from envs.monkey_zoo.blackbox.tests.performance.report_generation_from_telemetries import \
+    ReportGenerationFromTelemetryTest
+from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import TelemetryPerformanceTest
+from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
 
 DEFAULT_TIMEOUT_SECONDS = 5*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
@@ -22,15 +27,16 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True, scope='session')
-def GCPHandler(request):
-    GCPHandler = gcp_machine_handlers.GCPHandler()
-    GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
-    wait_machine_bootup()
+def GCPHandler(request, no_gcp):
+    if not no_gcp:
+        GCPHandler = gcp_machine_handlers.GCPHandler()
+        GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
+        wait_machine_bootup()
 
-    def fin():
-        GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
+        def fin():
+            GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
 
-    request.addfinalizer(fin)
+        request.addfinalizer(fin)
 
 
 @pytest.fixture(autouse=True, scope='session')
@@ -44,9 +50,10 @@ def wait_machine_bootup():
 
 
 @pytest.fixture(scope='class')
-def island_client(island):
+def island_client(island, quick_performance_tests):
     island_client_object = MonkeyIslandClient(island)
-    island_client_object.reset_env()
+    if not quick_performance_tests:
+        island_client_object.reset_env()
     yield island_client_object
 
 
@@ -55,34 +62,32 @@ def island_client(island):
 class TestMonkeyBlackbox(object):
 
     @staticmethod
-    def run_basic_test(island_client, conf_filename, test_name, timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS):
+    def run_exploitation_test(island_client, conf_filename, test_name, timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS):
         config_parser = IslandConfigParser(conf_filename)
         analyzer = CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets())
         log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
-        BasicTest(
+        ExploitationTest(
             name=test_name,
             island_client=island_client,
             config_parser=config_parser,
             analyzers=[analyzer],
             timeout=timeout_in_seconds,
-            post_exec_analyzers=[],
             log_handler=log_handler).run()
 
     @staticmethod
-    def run_performance_test(island_client, conf_filename, test_name, timeout_in_seconds):
+    def run_performance_test(performance_test_class, island_client,
+                             conf_filename, timeout_in_seconds, break_on_timeout=False):
         config_parser = IslandConfigParser(conf_filename)
-        log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
-        BasicTest(
-            name=test_name,
-            island_client=island_client,
-            config_parser=config_parser,
-            analyzers=[CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets())],
-            timeout=timeout_in_seconds,
-            post_exec_analyzers=[PerformanceAnalyzer(
-                island_client,
-                break_if_took_too_long=False
-            )],
-            log_handler=log_handler).run()
+        log_handler = TestLogsHandler(performance_test_class.TEST_NAME,
+                                      island_client,
+                                      TestMonkeyBlackbox.get_log_dir_path())
+        analyzers = [CommunicationAnalyzer(island_client, config_parser.get_ips_of_targets())]
+        performance_test_class(island_client=island_client,
+                               config_parser=config_parser,
+                               analyzers=analyzers,
+                               timeout=timeout_in_seconds,
+                               log_handler=log_handler,
+                               break_on_timeout=break_on_timeout).run()
 
     @staticmethod
     def get_log_dir_path():
@@ -92,43 +97,42 @@ class TestMonkeyBlackbox(object):
         assert island_client.get_api_status() is not None
 
     def test_ssh_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "SSH.conf", "SSH_exploiter_and_keys")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "SSH.conf", "SSH_exploiter_and_keys")
 
     def test_hadoop_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "HADOOP.conf", "Hadoop_exploiter", 6*60)
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "HADOOP.conf", "Hadoop_exploiter", 6 * 60)
 
     def test_mssql_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "MSSQL.conf", "MSSQL_exploiter")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "MSSQL.conf", "MSSQL_exploiter")
 
     def test_smb_and_mimikatz_exploiters(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "SMB_MIMIKATZ.conf", "SMB_exploiter_mimikatz")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "SMB_MIMIKATZ.conf", "SMB_exploiter_mimikatz")
 
     def test_smb_pth(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "SMB_PTH.conf", "SMB_PTH")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "SMB_PTH.conf", "SMB_PTH")
 
     def test_elastic_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "ELASTIC.conf", "Elastic_exploiter")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "ELASTIC.conf", "Elastic_exploiter")
 
     def test_struts_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "STRUTS2.conf", "Strtuts2_exploiter")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "STRUTS2.conf", "Strtuts2_exploiter")
 
     def test_weblogic_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "WEBLOGIC.conf", "Weblogic_exploiter")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "WEBLOGIC.conf", "Weblogic_exploiter")
 
     def test_shellshock_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "SHELLSHOCK.conf", "Shellschock_exploiter")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "SHELLSHOCK.conf", "Shellschock_exploiter")
 
     def test_tunneling(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "TUNNELING.conf", "Tunneling_exploiter", 15*60)
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "TUNNELING.conf", "Tunneling_exploiter", 15 * 60)
 
     def test_wmi_and_mimikatz_exploiters(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "WMI_MIMIKATZ.conf", "WMI_exploiter,_mimikatz")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "WMI_MIMIKATZ.conf", "WMI_exploiter,_mimikatz")
 
     def test_wmi_pth(self, island_client):
-        TestMonkeyBlackbox.run_basic_test(island_client, "WMI_PTH.conf", "WMI_PTH")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, "WMI_PTH.conf", "WMI_PTH")
 
-    @pytest.mark.xfail(reason="Performance is slow, will improve on release 1.9.")
-    def test_performance(self, island_client):
+    def test_report_generation_performance(self, island_client, quick_performance_tests):
         """
         This test includes the SSH + Elastic + Hadoop + MSSQL machines all in one test
         for a total of 8 machines including the Monkey Island.
@@ -136,8 +140,30 @@ class TestMonkeyBlackbox(object):
         Is has 2 analyzers - the regular one which checks all the Monkeys
         and the Timing one which checks how long the report took to execute
         """
-        TestMonkeyBlackbox.run_performance_test(
-            island_client,
-            "PERFORMANCE.conf",
-            "test_report_performance",
-            timeout_in_seconds=10*60)
+        if not quick_performance_tests:
+            TestMonkeyBlackbox.run_performance_test(ReportGenerationTest,
+                                                    island_client,
+                                                    "PERFORMANCE.conf",
+                                                    timeout_in_seconds=10*60)
+        else:
+            LOGGER.error("This test doesn't support 'quick_performance_tests' option.")
+            assert False
+
+    def test_map_generation_performance(self, island_client, quick_performance_tests):
+        if not quick_performance_tests:
+            TestMonkeyBlackbox.run_performance_test(MapGenerationTest,
+                                                    island_client,
+                                                    "PERFORMANCE.conf",
+                                                    timeout_in_seconds=10*60)
+        else:
+            LOGGER.error("This test doesn't support 'quick_performance_tests' option.")
+            assert False
+
+    def test_report_generation_from_fake_telemetries(self, island_client, quick_performance_tests):
+        ReportGenerationFromTelemetryTest(island_client, quick_performance_tests).run()
+
+    def test_map_generation_from_fake_telemetries(self, island_client, quick_performance_tests):
+        MapGenerationFromTelemetryTest(island_client, quick_performance_tests).run()
+
+    def test_telem_performance(self, island_client, quick_performance_tests):
+        TelemetryPerformanceTest(island_client, quick_performance_tests).test_telemetry_performance()

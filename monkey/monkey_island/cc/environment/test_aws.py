@@ -9,7 +9,8 @@ class TestAwsEnvironment(IslandTestCase):
     def test_get_auth_users(self):
         env = AwsEnvironment()
         # This is "injecting" the instance id to the env. This is the UTs aren't always executed on the same AWS machine
-        # (might not be an AWS machine at all). Perhaps it would have been more elegant to create a Mock, but not worth it for
+        # (might not be an AWS machine at all).
+        # Perhaps it would have been more elegant to create a Mock, but not worth it for
         # this small test.
         env._instance_id = "i-666"
         hash_obj = hashlib.sha3_512()
@@ -22,5 +23,3 @@ class TestAwsEnvironment(IslandTestCase):
         assert auth_user.id == 1
         assert auth_user.username == "monkey"
         assert auth_user.secret == hash_obj.hexdigest()
-
-

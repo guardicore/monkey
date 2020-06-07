@@ -1,21 +1,26 @@
-import json
+from typing import List
 
 import common.data.zero_trust_consts as zero_trust_consts
+from bson.objectid import ObjectId
 
 from monkey_island.cc.models.zero_trust.finding import Finding
+
+# How many events of a single finding to return to UI.
+# 50 will return 50 latest and 50 oldest events from a finding
+EVENT_FETCH_CNT = 50
 
 
 class ZeroTrustService(object):
     @staticmethod
     def get_pillars_grades():
         pillars_grades = []
+        all_findings = Finding.objects().exclude('events')
         for pillar in zero_trust_consts.PILLARS:
-            pillars_grades.append(ZeroTrustService.__get_pillar_grade(pillar))
+            pillars_grades.append(ZeroTrustService.__get_pillar_grade(pillar, all_findings))
         return pillars_grades
 
     @staticmethod
-    def __get_pillar_grade(pillar):
-        all_findings = Finding.objects()
+    def __get_pillar_grade(pillar, all_findings):
         pillar_grade = {
             "pillar": pillar,
             zero_trust_consts.STATUS_FAILED: 0,
@@ -65,7 +70,7 @@ class ZeroTrustService(object):
         worst_status = zero_trust_consts.STATUS_UNEXECUTED
         all_statuses = set()
         for test in principle_tests:
-            all_statuses |= set(Finding.objects(test=test).distinct("status"))
+            all_statuses |= set(Finding.objects(test=test).exclude('events').distinct("status"))
 
         for status in all_statuses:
             if zero_trust_consts.ORDERED_TEST_STATUSES.index(status) \
@@ -78,7 +83,7 @@ class ZeroTrustService(object):
     def __get_tests_status(principle_tests):
         results = []
         for test in principle_tests:
-            test_findings = Finding.objects(test=test)
+            test_findings = Finding.objects(test=test).exclude('events')
             results.append(
                 {
                     "test": zero_trust_consts.TESTS_MAP[test][zero_trust_consts.TEST_EXPLANATION_KEY],
@@ -104,25 +109,42 @@ class ZeroTrustService(object):
 
     @staticmethod
     def get_all_findings():
-        all_findings = Finding.objects()
+        pipeline = [{'$addFields': {'oldest_events': {'$slice': ['$events', EVENT_FETCH_CNT]},
+                                    'latest_events': {'$slice': ['$events', -1*EVENT_FETCH_CNT]},
+                                    'event_count': {'$size': '$events'}}},
+                    {'$unset': ['events']}]
+        all_findings = list(Finding.objects.aggregate(*pipeline))
+        for finding in all_findings:
+            finding['latest_events'] = ZeroTrustService._get_events_without_overlap(finding['event_count'],
+                                                                                    finding['latest_events'])
+
         enriched_findings = [ZeroTrustService.__get_enriched_finding(f) for f in all_findings]
         return enriched_findings
 
     @staticmethod
-    def __get_enriched_finding(finding):
-        test_info = zero_trust_consts.TESTS_MAP[finding.test]
-        enriched_finding = {
-            "test": test_info[zero_trust_consts.FINDING_EXPLANATION_BY_STATUS_KEY][finding.status],
-            "test_key": finding.test,
-            "pillars": test_info[zero_trust_consts.PILLARS_KEY],
-            "status": finding.status,
-            "events": ZeroTrustService.__get_events_as_dict(finding.events)
-        }
-        return enriched_finding
+    def _get_events_without_overlap(event_count: int, events: List[object]) -> List[object]:
+        overlap_count = event_count - EVENT_FETCH_CNT
+        if overlap_count >= EVENT_FETCH_CNT:
+            return events
+        elif overlap_count <= 0:
+            return []
+        else:
+            return events[-1 * overlap_count:]
 
     @staticmethod
-    def __get_events_as_dict(events):
-        return [json.loads(event.to_json()) for event in events]
+    def __get_enriched_finding(finding):
+        test_info = zero_trust_consts.TESTS_MAP[finding['test']]
+        enriched_finding = {
+            'finding_id': str(finding['_id']),
+            'test': test_info[zero_trust_consts.FINDING_EXPLANATION_BY_STATUS_KEY][finding['status']],
+            'test_key': finding['test'],
+            'pillars': test_info[zero_trust_consts.PILLARS_KEY],
+            'status': finding['status'],
+            'latest_events': finding['latest_events'],
+            'oldest_events': finding['oldest_events'],
+            'event_count': finding['event_count']
+        }
+        return enriched_finding
 
     @staticmethod
     def get_statuses_to_pillars():
@@ -147,8 +169,17 @@ class ZeroTrustService(object):
 
     @staticmethod
     def __get_status_of_single_pillar(pillar):
-        grade = ZeroTrustService.__get_pillar_grade(pillar)
+        all_findings = Finding.objects().exclude('events')
+        grade = ZeroTrustService.__get_pillar_grade(pillar, all_findings)
         for status in zero_trust_consts.ORDERED_TEST_STATUSES:
             if grade[status] > 0:
                 return status
         return zero_trust_consts.STATUS_UNEXECUTED
+
+    @staticmethod
+    def get_events_by_finding(finding_id: str) -> List[object]:
+        pipeline = [{'$match': {'_id': ObjectId(finding_id)}},
+                    {'$unwind': '$events'},
+                    {'$project': {'events': '$events'}},
+                    {'$replaceRoot': {'newRoot': '$events'}}]
+        return list(Finding.objects.aggregate(*pipeline))

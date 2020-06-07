@@ -1,8 +1,8 @@
-from datetime import timedelta
-from time import sleep
 import json
 
 import logging
+from time import sleep
+
 from bson import json_util
 
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
@@ -31,7 +31,7 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def run_monkey_local(self):
-        response = self.requests.post_json("api/local-monkey", dict_data={"action": "run"})
+        response = self.requests.post_json("api/local-monkey", data={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
             LOGGER.info("Running the monkey.")
         else:
@@ -96,13 +96,3 @@ class MonkeyIslandClient(object):
         response = self.requests.get("api/test/clear_caches")
         response.raise_for_status()
         return response
-
-    def get_elapsed_for_get_request(self, url):
-        response = self.requests.get(url)
-        if response.ok:
-            LOGGER.debug(f"Got ok for {url} content peek:\n{response.content[:120].strip()}")
-            return response.elapsed
-        else:
-            LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
-            # instead of raising for status, mark failed responses as maxtime
-            return timedelta.max()

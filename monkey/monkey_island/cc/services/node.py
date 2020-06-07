@@ -8,7 +8,7 @@ import monkey_island.cc.services.log
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.edge import EdgeService
-from monkey_island.cc.utils import local_ip_addresses, is_local_ips
+from monkey_island.cc.network_utils import local_ip_addresses, is_local_ips
 from monkey_island.cc import models
 from monkey_island.cc.services.utils.node_states import NodeStates
 
@@ -410,6 +410,7 @@ class NodeService:
     @staticmethod
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))
+
 
 class NodeCreationException(Exception):
     pass

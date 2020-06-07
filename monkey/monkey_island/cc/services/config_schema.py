@@ -130,7 +130,7 @@ SCHEMA = {
                     "title": "Collect the machine's hostname",
                     "attack_techniques": []
                 },
-{
+                {
                     "type": "string",
                     "enum": [
                         PROCESS_LIST_COLLECTOR
@@ -140,7 +140,7 @@ SCHEMA = {
                 },
             ],
         },
-        "post_breach_acts": {
+        "post_breach_actions": {
             "title": "Post breach actions",
             "type": "string",
             "anyOf": [
@@ -150,7 +150,7 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1136"]
                 },
                 {
                     "type": "string",
@@ -158,7 +158,7 @@ SCHEMA = {
                         "CommunicateAsNewUser"
                     ],
                     "title": "Communicate as new user",
-                    "attack_techniques": []
+                    "attack_techniques": ["T1136"]
                 },
             ],
         },
@@ -375,9 +375,10 @@ SCHEMA = {
                             "type": "array",
                             "uniqueItems": True,
                             "items": {
-                                "$ref": "#/definitions/post_breach_acts"
+                                "$ref": "#/definitions/post_breach_actions"
                             },
                             "default": [
+                                "BackdoorUser",
                                 "CommunicateAsNewUser"
                             ],
                             "description": "List of actions the Monkey will run post breach"
@@ -563,6 +564,13 @@ SCHEMA = {
                             "default": r"monkey_dir",
                             "description": "Directory name for the directory which will contain all of the monkey files"
                         },
+                        "started_on_island": {
+                            "title": "Started on island",
+                            "type": "boolean",
+                            "default": False,
+                            "description": "Was exploitation started from island"
+                                           "(did monkey with max depth ran on island)"
+                        },
                     }
                 },
                 "classes": {
@@ -734,6 +742,19 @@ SCHEMA = {
                                 "type": "string"
                             },
                             "description": "List of SSH key pairs to use, when trying to ssh into servers"
+                        }
+                    }
+                },
+                "testing": {
+                    "title": "Testing",
+                    "type": "object",
+                    "properties": {
+                        "export_monkey_telems": {
+                            "title": "Export monkey telemetries",
+                            "type": "boolean",
+                            "default": False,
+                            "description": "Exports unencrypted telemetries that can be used for tests in development."
+                                           " Do not turn on!"
                         }
                     }
                 }

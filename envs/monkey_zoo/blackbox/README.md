@@ -10,10 +10,37 @@ In order to execute the entire test suite, you must know the external IP of the 
 this information in the GCP Console `Compute Engine/VM Instances` under _External IP_. 
 
 #### Running in command line
-Run the following command:
+Blackbox tests have following parameters:
+- `--island=IP` Sets island's IP
+- `--no-gcp` (Optional) Use for no interaction with the cloud (local test).
+- `--quick-performance-tests` (Optional) If enabled performance tests won't reset island and won't send telemetries, 
+instead will just test performance of endpoints in already present island state.
 
-`monkey\envs\monkey_zoo\blackbox>python -m pytest --island=35.207.152.72:5000 test_blackbox.py`
+Example run command:
+
+`monkey\envs\monkey_zoo\blackbox>python -m pytest -s --island=35.207.152.72:5000 test_blackbox.py`
 
 #### Running in PyCharm
-Configure a PyTest configuration with the additional argument `--island=35.207.152.72` on the 
+Configure a PyTest configuration with the additional arguments `-s --island=35.207.152.72` on the 
 `monkey\envs\monkey_zoo\blackbox`.
+
+### Running telemetry performance test
+
+**Before running performance test make sure browser is not sending requests to island!** 
+
+To run telemetry performance test follow these steps:
+1. Gather monkey telemetries.
+    1. Enable "Export monkey telemetries" in Configuration -> Internal -> Tests if you don't have 
+    exported telemetries already.
+    2. Run monkey and wait until infection is done.
+    3. All telemetries are gathered in `monkey/telem_sample`
+2. Run telemetry performance test.
+    1. Move directory `monkey/test_telems` to `envs/monkey_zoo/blackbox/tests/performance/test_telems`
+    2. (Optional) Use `envs/monkey_zoo/blackbox/tests/performance/utils/telem_parser.py` to multiply 
+    telemetries gathered.
+        1. Run `telem_parser.py` script with working directory set to `monkey\envs\monkey_zoo\blackbox`
+        2. Pass integer to indicate the multiplier. For example running `telem_parser.py 4` will replicate
+        telemetries 4 times.
+        3. If you're using pycharm check "Emulate terminal in output console" on debug/run configuraion.
+    3. Performance test will run as part of BlackBox tests or you can run it separately by adding 
+    `-k 'test_telem_performance'` option.

@@ -1,10 +1,15 @@
 # Infection Monkey travis.yml. See Travis documentation for information about this file structure.
 
+# If you change this file, you can validate using Travis CI's Build Config Explorer https://config.travis-ci.com/explore
+
 group: travis_latest
 
 language: python
 
-cache: pip
+cache:
+  - pip
+  - directories:
+    - "$HOME/.npm"
 
 python:
 - 3.7
@@ -17,6 +22,16 @@ install:
 - pip install flake8 pytest dlint  # for next stages
 - pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
+
+# node + npm + eslint
+- node --version
+- npm --version
+- nvm --version
+- nvm install node
+- nvm use node
+- npm i -g eslint
+- node --version
+- npm --version
 
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
@@ -36,7 +51,7 @@ script:
 ## Display the linter issues
 - cat flake8_warnings.txt
 ## Make sure that we haven't increased the amount of warnings.
-- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=190
+- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=120
 - if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
 ## Run unit tests
@@ -48,13 +63,10 @@ script:
 
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui
-- npm i
-- npm i -g eslint
-- cd -
-- cd monkey_island/cc/ui
-- eslint ./src --quiet
-- JS_WARNINGS_AMOUNT_UPPER_LIMIT=37
-- eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT
+- npm ci  # See https://docs.npmjs.com/cli/ci.html
+- eslint ./src --quiet  # Test for errors
+- JS_WARNINGS_AMOUNT_UPPER_LIMIT=490
+- eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # Test for max warnings
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information

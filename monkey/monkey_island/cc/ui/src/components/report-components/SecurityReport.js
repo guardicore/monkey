@@ -16,9 +16,8 @@ import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinus } from '@fortawesome/free-solid-svg-icons';
-
-let guardicoreLogoImage = require('../../images/guardicore-logo.png');
+import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
+import guardicoreLogoImage from '../../images/guardicore-logo.png'
 
 
 class ReportPageComponent extends AuthComponent {
@@ -408,18 +407,23 @@ class ReportPageComponent extends AuthComponent {
         <div style={{position: 'relative', height: '80vh'}}>
           <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)}/>
         </div>
-        <div style={{marginBottom: '20px'}}>
-          <BreachedServers data={this.state.report.glance.exploited}/>
-        </div>
-        <div style={{marginBottom: '20px'}}>
-          <PostBreach data={this.state.report.glance.scanned}/>
-        </div>
+
         <div style={{marginBottom: '20px'}}>
           <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
+
+        <div style={{marginBottom: '20px'}}>
+          <BreachedServers data={this.state.report.glance.exploited}/>
+        </div>
+
+        <div style={{marginBottom: '20px'}}>
+          <PostBreach data={this.state.report.glance.scanned}/>
+        </div>
+
         <div style={{position: 'relative', height: '80vh'}}>
           {this.generateReportPthMap()}
         </div>
+
         <div style={{marginBottom: '20px'}}>
           <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
         </div>

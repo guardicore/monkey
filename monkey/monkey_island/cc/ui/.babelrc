@@ -1,10 +1,15 @@
 {
   "presets": [
-    "es2015",
-    "stage-0",
-    "react"
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "entry"
+      }
+    ],
+    "@babel/preset-react"
   ],
   "plugins": [
-    "emotion"
+    "emotion",
+    "@babel/plugin-proposal-class-properties"
   ]
 }

@@ -18,7 +18,11 @@ const columns = [
       {
         Header: 'Events', id: 'events',
         accessor: x => {
-          return <EventsButton events={x.events} exportFilename={'Events_' + x.test_key}/>;
+          return <EventsButton finding_id={x.finding_id}
+                               latest_events={x.latest_events}
+                               oldest_events={x.oldest_events}
+                               event_count={x.event_count}
+                               exportFilename={'Events_' + x.test_key}/>;
         },
         maxWidth: EVENTS_COLUMN_MAX_WIDTH
       },

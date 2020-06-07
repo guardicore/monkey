@@ -5,11 +5,15 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import GridLoader from 'react-spinners/GridLoader';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboard, faCheck, faSync } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard } from '@fortawesome/free-solid-svg-icons/faClipboard';
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
+import { faSync } from '@fortawesome/free-solid-svg-icons/faSync';
 
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import AwsRunTable from '../run-monkey/AwsRunTable';
+
+import MissingBinariesModal from '../ui-components/MissingBinariesModal';
 
 import '../../styles/MonkeyRunPage.scss';
 
@@ -38,8 +42,12 @@ class RunMonkeyPageComponent extends AuthComponent {
       awsMachines: [],
       isLoadingAws: true,
       isErrorWhileCollectingAwsMachines: false,
-      awsMachineCollectionErrorMsg: ''
+      awsMachineCollectionErrorMsg: '',
+      showModal: false,
+      errorDetails: ''
     };
+
+    this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
@@ -128,6 +136,13 @@ class RunMonkeyPageComponent extends AuthComponent {
             runningOnIslandState: 'installing'
           });
         } else {
+          /* If Monkey binaries are missing, change the state accordingly */
+          if (res['error_text'].startsWith('Copy file failed')) {
+            this.setState({
+              showModal: true,
+              errorDetails: res['error_text']}
+            );
+          }
           this.setState({
             runningOnIslandState: 'not_running'
           });
@@ -254,7 +269,7 @@ class RunMonkeyPageComponent extends AuthComponent {
             <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
             Not sure what this is? Not seeing your AWS EC2 instances? <a
             href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances"
-            target="_blank">Read the documentation</a>!
+            rel="noopener noreferrer" target="_blank">Read the documentation</a>!
           </p>
         </div>
         {
@@ -283,6 +298,12 @@ class RunMonkeyPageComponent extends AuthComponent {
     )
   }
 
+  closeModal = () => {
+    this.setState({
+      showModal: false
+    })
+  };
+
   render() {
     return (
       <Col xs={12} lg={8}>
@@ -294,11 +315,14 @@ class RunMonkeyPageComponent extends AuthComponent {
         <p>
           <button onClick={this.runLocalMonkey}
                   className="btn btn-default btn-lg center-block"
-                  disabled={this.state.runningOnIslandState !== 'not_running'}
-          >
+                  disabled={this.state.runningOnIslandState !== 'not_running'}>
             Run on Monkey Island Server
             {RunMonkeyPageComponent.renderIconByState(this.state.runningOnIslandState)}
           </button>
+          <MissingBinariesModal
+                        showModal = {this.state.showModal}
+                        onClose = {this.closeModal}
+                        errorDetails = {this.state.errorDetails}/>
           {
             // TODO: implement button functionality
             /*
@@ -327,7 +351,7 @@ class RunMonkeyPageComponent extends AuthComponent {
               Choose the operating system where you want to run the monkey
               {this.state.ips.length > 1 ? ', and the interface to communicate with.' : '.'}
             </p>
-            <Nav bsStyle='pills' id={'bootstrap-override'} className={'runOnOsButtons'} 
+            <Nav bsStyle='pills' id={'bootstrap-override'} className={'runOnOsButtons'}
                  justified activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
               <NavItem key='windows-32' eventKey='windows-32'>Windows (32 bit)</NavItem>
               <NavItem key='windows-64' eventKey='windows-64'>Windows (64 bit)</NavItem>

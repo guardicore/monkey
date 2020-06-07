@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {Timeline, TimelineEvent} from 'react-event-timeline';
 import * as PropTypes from 'prop-types';
 
-let monkeyLocalIcon = require('../../../images/zerotrust/im-alert-machine-icon.svg');
-let monkeyNetworkIcon = require('../../../images/zerotrust/im-alert-network-icon.svg');
+import monkeyLocalIcon from '../../../images/zerotrust/im-alert-machine-icon.svg';
+import monkeyNetworkIcon from '../../../images/zerotrust/im-alert-network-icon.svg';
 
 const eventTypeToIcon = {
   'monkey_local': monkeyLocalIcon,
@@ -17,7 +17,7 @@ export default class EventsTimeline extends Component {
         <Timeline style={{fontSize: '100%'}}>
           {
             this.props.events.map((event, index) => {
-              const event_time = new Date(event.timestamp['$date']).toString();
+              const event_time = new Date(event.timestamp).toString();
               return (<TimelineEvent
                 key={index}
                 createdAt={event_time}

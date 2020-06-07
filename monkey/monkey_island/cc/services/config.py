@@ -7,7 +7,7 @@ import monkey_island.cc.services.post_breach_files
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.environment.environment import env
-from monkey_island.cc.utils import local_ip_addresses
+from monkey_island.cc.network_utils import local_ip_addresses
 from .config_schema import SCHEMA
 from monkey_island.cc.encryptor import encryptor
 
@@ -73,6 +73,12 @@ class ConfigService:
         mongo_key = ".".join(config_key_as_arr)
         mongo.db.config.update({'name': 'newconfig'},
                                {"$set": {mongo_key: value}})
+
+    @staticmethod
+    def append_to_config_array(config_key_as_arr, value):
+        mongo_key = ".".join(config_key_as_arr)
+        mongo.db.config.update({'name': 'newconfig'},
+                               {"$push": {mongo_key: value}})
 
     @staticmethod
     def get_flat_config(is_initial_config=False, should_decrypt=True):
@@ -307,3 +313,11 @@ class ConfigService:
             pair['public_key'] = encryptor.dec(pair['public_key'])
             pair['private_key'] = encryptor.dec(pair['private_key'])
         return pair
+
+    @staticmethod
+    def is_test_telem_export_enabled():
+        return ConfigService.get_config_value(['internal', 'testing', 'export_monkey_telems'])
+
+    @staticmethod
+    def set_started_on_island(value: bool):
+        ConfigService.set_config_value(['internal', 'general', 'started_on_island'], value)

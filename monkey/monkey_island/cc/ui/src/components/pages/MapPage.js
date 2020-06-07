@@ -2,7 +2,8 @@ import React from 'react';
 import {Col, Modal} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStopCircle, faMinus } from '@fortawesome/free-solid-svg-icons'
+import { faStopCircle } from '@fortawesome/free-solid-svg-icons/faStopCircle'
+import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus'
 import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';
@@ -22,7 +23,8 @@ class MapPageComponent extends AuthComponent {
       telemetryLastTimestamp: null,
       isScrolledUp: false,
       telemetryLines: 0,
-      telemetryCurrentLine: 0
+      telemetryCurrentLine: 0,
+      telemetryUpdateInProgress: false
     };
     this.telemConsole = React.createRef();
     this.handleScroll = this.handleScroll.bind(this);
@@ -71,16 +73,20 @@ class MapPageComponent extends AuthComponent {
   };
 
   updateTelemetryFromServer = () => {
+    if( this.state.telemetryUpdateInProgress ) {
+      return
+    }
+    this.setState({telemetryUpdateInProgress: true});
     this.authFetch('/api/telemetry-feed?timestamp=' + this.state.telemetryLastTimestamp)
       .then(res => res.json())
       .then(res => {
         if ('telemetries' in res) {
           let newTelem = this.state.telemetry.concat(res['telemetries']);
-
           this.setState(
             {
               telemetry: newTelem,
-              telemetryLastTimestamp: res['timestamp']
+              telemetryLastTimestamp: res['timestamp'],
+              telemetryUpdateInProgress: false
             });
           this.props.onStatusChange();
 

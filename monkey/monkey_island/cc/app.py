@@ -16,10 +16,12 @@ from monkey_island.cc.resources.island_logs import IslandLog
 from monkey_island.cc.resources.monkey import Monkey
 from monkey_island.cc.resources.monkey_configuration import MonkeyConfiguration
 from monkey_island.cc.resources.island_configuration import IslandConfiguration
+from monkey_island.cc.resources.monkey_control.started_on_island import StartedOnIsland
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
+from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
@@ -32,6 +34,7 @@ from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.bootloader import Bootloader
+from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
@@ -107,6 +110,7 @@ def init_api_resources(api):
         Report,
         '/api/report/<string:report_type>',
         '/api/report/<string:report_type>/<string:report_data>')
+    api.add_resource(ZeroTrustFindingEvent, '/api/zero-trust/finding-event/<string:finding_id>')
 
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
     api.add_resource(Log, '/api/log', '/api/log/')
@@ -119,6 +123,8 @@ def init_api_resources(api):
     api.add_resource(AttackConfiguration, '/api/attack')
     api.add_resource(AttackReport, '/api/attack/report')
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
+    api.add_resource(RemotePortCheck, '/api/monkey_control/check_remote_port/<string:port>')
+    api.add_resource(StartedOnIsland, '/api/monkey_control/started_on_island')
 
     api.add_resource(MonkeyTest, '/api/test/monkey')
     api.add_resource(ClearCaches, '/api/test/clear_caches')

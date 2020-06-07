@@ -10,6 +10,7 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.model import DELAY_DELETE_CMD
@@ -26,22 +27,19 @@ from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.network.tools import get_interface_to_target
+from infection_monkey.network.tools import get_interface_to_target, is_running_on_server
 from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.exploit.HostExploiter import HostExploiter
+from common.network.network_utils import get_host_from_network_location
 
 MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, shutting down"
 
 __author__ = 'itamar'
 
 LOG = logging.getLogger(__name__)
-
-
-class PlannedShutdownException(Exception):
-    pass
 
 
 class InfectionMonkey(object):
@@ -74,14 +72,20 @@ class InfectionMonkey(object):
         arg_parser.add_argument('-t', '--tunnel')
         arg_parser.add_argument('-s', '--server')
         arg_parser.add_argument('-d', '--depth', type=int)
+        arg_parser.add_argument('-vp', '--vulnerable-port')
         self._opts, self._args = arg_parser.parse_known_args(self._args)
+        self.log_arguments()
 
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
         self._default_server = self._opts.server
 
-        if self._opts.depth:
+        if self._opts.depth is not None:
             WormConfiguration._depth_from_commandline = True
+            WormConfiguration.depth = self._opts.depth
+            LOG.debug(f"Setting propagation depth from command line")
+        LOG.debug(f"Set propagation depth to {WormConfiguration.depth}")
+
         self._keep_running = True
         self._network = NetworkScanner()
         self._dropper_path = sys.argv[0]
@@ -114,6 +118,10 @@ class InfectionMonkey(object):
                 T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
             self.shutdown_by_not_alive_config()
+
+            if self.is_started_on_island():
+                ControlClient.report_start_on_island()
+            ControlClient.should_monkey_run(self._opts.vulnerable_port)
 
             if firewall.is_enabled():
                 firewall.add_firewall_rule()
@@ -376,3 +384,11 @@ class InfectionMonkey(object):
             raise PlannedShutdownException("Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel))
         self._default_server = WormConfiguration.current_server
         LOG.debug("default server set to: %s" % self._default_server)
+
+    def is_started_on_island(self):
+        island_ip = get_host_from_network_location(self._default_server)
+        return is_running_on_server(island_ip) and WormConfiguration.depth == WormConfiguration.max_depth
+
+    def log_arguments(self):
+        arg_string = " ".join([f"{key}: {value}" for key, value in vars(self._opts).items()])
+        LOG.info(f"Monkey started with arguments: {arg_string}")

@@ -41,29 +41,32 @@ def get_target_monkey_by_os(is_windows, is_32bit):
     return ControlClient.download_monkey_exe_by_os(is_windows, is_32bit)
 
 
-def build_monkey_commandline_explicitly(parent=None, tunnel=None, server=None, depth=None, location=None):
+def build_monkey_commandline_explicitly(parent=None, tunnel=None, server=None, depth=None, location=None,
+                                        vulnerable_port=None):
     cmdline = ""
 
     if parent is not None:
-        cmdline += " -p " + parent
+        cmdline += f" -p {parent}"
     if tunnel is not None:
-        cmdline += " -t " + tunnel
+        cmdline += f" -t {tunnel}"
     if server is not None:
-        cmdline += " -s " + server
+        cmdline += f" -s {server}"
     if depth is not None:
-        if depth < 0:
+        if int(depth) < 0:
             depth = 0
-        cmdline += " -d %d" % depth
+        cmdline += f" -d {depth}"
     if location is not None:
-        cmdline += " -l %s" % location
+        cmdline += f" -l {location}"
+    if vulnerable_port is not None:
+        cmdline += f" -vp {vulnerable_port}"
 
     return cmdline
 
 
-def build_monkey_commandline(target_host, depth, location=None):
+def build_monkey_commandline(target_host, depth, vulnerable_port, location=None):
     from infection_monkey.config import GUID
     return build_monkey_commandline_explicitly(
-        GUID, target_host.default_tunnel, target_host.default_server, depth, location)
+        GUID, target_host.default_tunnel, target_host.default_server, depth, location, vulnerable_port)
 
 
 def get_monkey_depth():
