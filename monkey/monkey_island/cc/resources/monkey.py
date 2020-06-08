@@ -4,7 +4,6 @@ from datetime import datetime
 import dateutil.parser
 import flask_restful
 
-from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from flask import request
 
@@ -12,6 +11,7 @@ from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECOND
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
 
 __author__ = 'Barak'
@@ -133,9 +133,8 @@ class Monkey(flask_restful.Resource):
 
         if existing_node:
             node_id = existing_node["_id"]
-            for edge in Edge.objects(dst_node_id=node_id):
-                edge.dst_node_id = new_monkey_id
-                edge.save()
+            EdgeService.update_all_dst_nodes(old_dst_node_id=node_id,
+                                             new_dst_node_id=new_monkey_id)
             for creds in existing_node['creds']:
                 NodeService.add_credentials_to_monkey(new_monkey_id, creds)
             mongo.db.node.remove({"_id": node_id})

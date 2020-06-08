@@ -189,12 +189,9 @@ class NodeService:
             {'$unset': {'tunnel': ''}},
             upsert=False)
 
-        try:
-            edge = Edge.objects.get(src_node_id=monkey_id, tunnel=True)
-            edge.tunnel = False
-            edge.save()
-        except DoesNotExist:
-            pass
+        edges = EdgeService.get_tunnel_edges_by_src(monkey_id)
+        for edge in edges:
+            edge.disable_tunnel()
 
     @staticmethod
     def set_monkey_tunnel(monkey_id, tunnel_host_ip):

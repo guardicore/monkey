@@ -2,6 +2,9 @@ from mongoengine import Document, ObjectIdField, ListField, DynamicField, Boolea
 
 
 class Edge(Document):
+
+    meta = {'allow_inheritance': True}
+
     # SCHEMA
     src_node_id = ObjectIdField(required=True)
     dst_node_id = ObjectIdField(required=True)

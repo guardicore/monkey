@@ -58,21 +58,21 @@ class TestDisplayedEdgeService(IslandTestCase):
         src_id2 = ObjectId()
         EdgeService.get_or_create_edge(src_id2, dst_id, "Ubuntu-4ubuntu3.2", "Ubuntu-4ubuntu2.8")
 
-        displayed_edges = DisplayedEdgeService.get_displayed_edges_by_dst(dst_id)
+        displayed_edges = DisplayedEdgeService.get_displayed_edges_by_dst(str(dst_id))
         self.assertEqual(len(displayed_edges), 2)
 
     def test_edge_to_displayed_edge(self):
         src_node_id = ObjectId()
         dst_node_id = ObjectId()
-        edge = Edge(src_node_id=src_node_id,
-                    dst_node_id=dst_node_id,
-                    scans=SCAN_DATA_MOCK,
-                    exploits=EXPLOIT_DATA_MOCK,
-                    exploited=True,
-                    domain_name=None,
-                    ip_address="10.2.2.2",
-                    dst_label="Ubuntu-4ubuntu2.8",
-                    src_label="Ubuntu-4ubuntu3.2")
+        edge = EdgeService(src_node_id=src_node_id,
+                           dst_node_id=dst_node_id,
+                           scans=SCAN_DATA_MOCK,
+                           exploits=EXPLOIT_DATA_MOCK,
+                           exploited=True,
+                           domain_name=None,
+                           ip_address="10.2.2.2",
+                           dst_label="Ubuntu-4ubuntu2.8",
+                           src_label="Ubuntu-4ubuntu3.2")
 
         displayed_edge = DisplayedEdgeService.edge_to_displayed_edge(edge)
 

@@ -3,6 +3,7 @@ from bson import ObjectId
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
+from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
 
 
@@ -20,7 +21,7 @@ class NetEdgeService:
 
     @staticmethod
     def _get_standard_net_edges():
-        return [DisplayedEdgeService.edge_to_net_edge(x) for x in Edge.objects()]
+        return [DisplayedEdgeService.edge_to_net_edge(x) for x in EdgeService.get_all_edges()]
 
     @staticmethod
     def _get_uninfected_island_net_edges():
@@ -44,7 +45,8 @@ class NetEdgeService:
 
     @staticmethod
     def _get_infected_island_net_edges(monkey_island_monkey):
-        existing_ids = [x.src_node_id for x in Edge.objects(dst_node_id=monkey_island_monkey["_id"])]
+        existing_ids = [x.src_node_id for x
+                        in EdgeService.get_by_dst_node(dst_node_id=monkey_island_monkey["_id"])]
         monkey_ids = [x.id for x in Monkey.objects()
                       if ("tunnel" not in x) and
                       (x.id not in existing_ids) and

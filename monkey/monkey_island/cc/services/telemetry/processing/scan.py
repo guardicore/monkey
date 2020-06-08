@@ -18,7 +18,7 @@ def process_scan_telemetry(telemetry_json):
 
 def update_edges_and_nodes_based_on_scan_telemetry(telemetry_json):
     edge = get_edge_by_scan_or_exploit_telemetry(telemetry_json)
-    EdgeService.update_based_on_scan_telemetry(edge, telemetry_json)
+    edge.update_based_on_scan_telemetry(telemetry_json)
 
     node = mongo.db.node.find_one({"_id": edge.dst_node_id})
     if node is not None:
@@ -32,4 +32,4 @@ def update_edges_and_nodes_based_on_scan_telemetry(telemetry_json):
                                  {"$set": {"os.version": scan_os["version"]}},
                                  upsert=False)
         label = NodeService.get_label_for_endpoint(node["_id"])
-        EdgeService.update_label(edge, node["_id"], label)
+        edge.update_label(node["_id"], label)

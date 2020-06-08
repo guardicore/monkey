@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import copy
-from typing import Dict
+from typing import Dict, List
 
 from bson import ObjectId
 from mongoengine import DoesNotExist
@@ -9,35 +11,60 @@ from monkey_island.cc.models.edge import Edge
 RIGHT_ARROW = "\u2192"
 
 
-class EdgeService:
+class EdgeService(Edge):
 
     @staticmethod
-    def get_or_create_edge(src_node_id, dst_node_id, src_label, dst_label):
-        edge = False
+    def get_all_edges() -> List[EdgeService]:
+        return EdgeService.objects()
+
+    @staticmethod
+    def get_or_create_edge(src_node_id, dst_node_id, src_label, dst_label) -> EdgeService:
+        edge = None
         try:
-            edge = Edge.objects.get(src_node_id=src_node_id, dst_node_id=dst_node_id)
+            edge = EdgeService.objects.get(src_node_id=src_node_id, dst_node_id=dst_node_id)
         except DoesNotExist:
-            edge = Edge(src_node_id=src_node_id, dst_node_id=dst_node_id)
+            edge = EdgeService(src_node_id=src_node_id, dst_node_id=dst_node_id)
         finally:
             if edge:
-                edge.src_label = src_label
-                edge.dst_label = dst_label
-                edge.save()
+                edge.update_label(node_id=src_node_id, label=src_label)
+                edge.update_label(node_id=dst_node_id, label=dst_label)
         return edge
 
     @staticmethod
-    def update_label(edge: Edge, node_id: ObjectId, label: str):
-        if edge.src_node_id == node_id:
-            edge.src_label = label
-        elif edge.dst_node_id == node_id:
-            edge.dst_label = label
-        else:
-            raise DoesNotExist("Node id provided does not match with any endpoint of an edge provided.")
-        edge.save()
-        pass
+    def get_by_dst_node(dst_node_id: ObjectId) -> List[EdgeService]:
+        return EdgeService.objects(dst_node_id=dst_node_id)
 
     @staticmethod
-    def update_based_on_scan_telemetry(edge: Edge, telemetry: Dict):
+    def get_edge_by_id(edge_id: ObjectId) -> EdgeService:
+        return EdgeService.objects.get(id=edge_id)
+
+    def update_label(self, node_id: ObjectId, label: str):
+        if self.src_node_id == node_id:
+            self.src_label = label
+        elif self.dst_node_id == node_id:
+            self.dst_label = label
+        else:
+            raise DoesNotExist("Node id provided does not match with any endpoint of an self provided.")
+        self.save()
+
+    @staticmethod
+    def update_all_dst_nodes(old_dst_node_id: ObjectId, new_dst_node_id: ObjectId):
+        for edge in EdgeService.objects(dst_node_id=old_dst_node_id):
+            edge.dst_node_id = new_dst_node_id
+            edge.save()
+
+    @staticmethod
+    def get_tunnel_edges_by_src(src_node_id) -> List[EdgeService]:
+        try:
+            return EdgeService.objects(src_node_id=src_node_id, tunnel=True)
+        except DoesNotExist:
+            return []
+
+    def disable_tunnel(self):
+        self.tunnel = False
+        self.save()
+
+    def update_based_on_scan_telemetry(self, telemetry: Dict):
         machine_info = copy.deepcopy(telemetry['data']['machine'])
         new_scan = \
             {
@@ -46,33 +73,29 @@ class EdgeService:
             }
         ip_address = machine_info.pop("ip_addr")
         domain_name = machine_info.pop("domain_name")
-        edge.scans.append(new_scan)
-        edge.ip_address = ip_address
-        edge.domain_name = domain_name
-        edge.save()
+        self.scans.append(new_scan)
+        self.ip_address = ip_address
+        self.domain_name = domain_name
+        self.save()
 
-    @staticmethod
-    def update_based_on_exploit(edge: Edge, exploit: Dict):
-        edge.exploits.append(exploit)
-        edge.save()
+    def update_based_on_exploit(self, exploit: Dict):
+        self.exploits.append(exploit)
+        self.save()
         if exploit['result']:
-            EdgeService.set_edge_exploited(edge)
+            self.set_exploited()
 
-    @staticmethod
-    def set_edge_exploited(edge: Edge):
-        edge.exploited = True
-        edge.save()
+    def set_exploited(self):
+        self.exploited = True
+        self.save()
 
-    @staticmethod
-    def get_edge_group(edge: Edge):
-        if edge.exploited:
+    def get_group(self) -> str:
+        if self.exploited:
             return "exploited"
-        if edge.tunnel:
+        if self.tunnel:
             return "tunnel"
-        if edge.scans or edge.exploits:
+        if self.scans or self.exploits:
             return "scan"
         return "empty"
 
-    @staticmethod
-    def get_edge_label(edge):
-        return "%s %s %s" % (edge['src_label'], RIGHT_ARROW, edge['dst_label'])
+    def get_label(self) -> str:
+        return f"{self.src_label} {RIGHT_ARROW} {self.dst_label}"

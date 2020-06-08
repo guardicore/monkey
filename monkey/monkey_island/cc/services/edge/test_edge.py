@@ -45,16 +45,16 @@ class TestEdgeService(IslandTestCase):
         edge = Edge(src_node_id=ObjectId(),
                     dst_node_id=ObjectId(),
                     exploited=True)
-        self.assertEqual("exploited", EdgeService.get_edge_group(edge))
+        self.assertEqual("exploited", EdgeService.get_group(edge))
 
         edge.exploited = False
         edge.tunnel = True
-        self.assertEqual("tunnel", EdgeService.get_edge_group(edge))
+        self.assertEqual("tunnel", EdgeService.get_group(edge))
 
         edge.tunnel = False
         edge.exploits.append(["mock_exploit_data"])
-        self.assertEqual("scan", EdgeService.get_edge_group(edge))
+        self.assertEqual("scan", EdgeService.get_group(edge))
 
         edge.exploits = []
         edge.scans = []
-        self.assertEqual("empty", EdgeService.get_edge_group(edge))
+        self.assertEqual("empty", EdgeService.get_group(edge))
