@@ -82,7 +82,7 @@ def replace_user_dot_with_comma(creds):
 
 def add_system_info_creds_to_config(creds):
     for user in creds:
-        ConfigService.creds_add_username(user)
+        ConfigService.creds_add_username(creds[user]['username'])
         if 'password' in creds[user] and creds[user]['password']:
             ConfigService.creds_add_password(creds[user]['password'])
         if 'lm_hash' in creds[user] and creds[user]['lm_hash']:
