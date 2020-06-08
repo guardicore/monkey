@@ -1,7 +1,7 @@
 from typing import Dict
 
 
-class WindowsCredential:
+class WindowsCredentials:
     def __init__(self, username: str, password="", ntlm_hash="", lm_hash=""):
         self.username = username
         self.password = password

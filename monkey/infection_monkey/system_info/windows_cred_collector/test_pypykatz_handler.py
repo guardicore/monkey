@@ -80,5 +80,4 @@ class TestPypykatzHandler(TestCase):
                        'lm_hash': ''},
                       ]
         results = [result.to_dict() for result in results]
-        for test_dict in test_dicts:
-            self.assertTrue(test_dict in results)
+        [self.assertTrue(test_dict in results) for test_dict in test_dicts]

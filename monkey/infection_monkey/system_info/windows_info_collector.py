@@ -2,7 +2,7 @@ import os
 import logging
 import sys
 
-from infection_monkey.system_info.windows_cred_collector.windows_cred_collector import WindowsCredentialCollector
+from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import MimikatzCredentialCollector
 
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 # noinspection PyPep8
@@ -63,7 +63,7 @@ class WindowsInfoCollector(InfoCollector):
     def get_mimikatz_info(self):
         LOG.info("Gathering mimikatz info")
         try:
-            credentials = WindowsCredentialCollector.get_creds()
+            credentials = MimikatzCredentialCollector.get_creds()
             if credentials:
                 if "credentials" in self.info:
                     self.info["credentials"].update(credentials)
@@ -72,4 +72,4 @@ class WindowsInfoCollector(InfoCollector):
             else:
                 LOG.info('No mimikatz info was gathered')
         except Exception as e:
-            LOG.info(f"Pypykatz failed: {e}")
+            LOG.info(f"Mimikatz credential collector failed: {e}")
