@@ -44,11 +44,10 @@ class ScannedServersComponent extends React.Component {
     return (
       <>
         <p>
-          The Monkey discovered
-          <span className="label label-danger">{scannedServicesAmount}</span>
-          open {Pluralize('service', scannedServicesAmount)}
-          on
-          <span className="label label-warning">{scannedMachinesCount}</span>
+          The Monkey discovered&nbsp;
+          <span className="label label-danger">{scannedServicesAmount}</span> open&nbsp;
+          {Pluralize('service', scannedServicesAmount)} on&nbsp;
+          <span className="label label-warning">{scannedMachinesCount}</span>&nbsp;
           {Pluralize('machine', scannedMachinesCount)}:
         </p>
         <div className="data-table-container">

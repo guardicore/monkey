@@ -8,9 +8,6 @@ __author__ = 'itay.mizeretz'
 
 block_cipher = None
 
-# Name of zip file in monkey. That's the name of the file in the _MEI folder
-MIMIKATZ_ZIP_NAME = 'tmpzipfile123456.zip'
-
 
 def main():
     a = Analysis(['main.py'],
@@ -66,7 +63,6 @@ def process_datas(orig_datas):
     datas = orig_datas
     if is_windows():
         datas = [i for i in datas if i[0].find('Include') < 0]
-        datas += [(MIMIKATZ_ZIP_NAME, get_mimikatz_zip_path(), 'BINARY')]
     return datas
 
 
@@ -116,11 +112,6 @@ def get_exe_strip():
 
 def get_exe_icon():
     return 'monkey.ico' if is_windows() else None
-
-
-def get_mimikatz_zip_path():
-    mk_filename = 'mk32.zip' if is_32_bit() else 'mk64.zip'
-    return os.path.join(get_bin_folder(), mk_filename)
 
 
 main()  # We don't check if __main__ because this isn't the main script.
