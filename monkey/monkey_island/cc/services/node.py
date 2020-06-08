@@ -3,13 +3,16 @@ from typing import Dict
 import socket
 
 from bson import ObjectId
+from mongoengine import DoesNotExist
 
 import monkey_island.cc.services.log
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.edge import EdgeService
+from monkey_island.cc.models.edge import Edge
+from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
 from monkey_island.cc.network_utils import local_ip_addresses, is_local_ips
 from monkey_island.cc import models
+from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.utils.node_states import NodeStates
 
 __author__ = "itay.mizeretz"
@@ -48,18 +51,18 @@ class NodeService:
         accessible_from_nodes_hostnames = []
         exploits = []
 
-        edges = EdgeService.get_displayed_edges_by_to(node_id, for_report)
+        edges = DisplayedEdgeService.get_displayed_edges_by_dst(node_id, for_report)
 
         for edge in edges:
-            from_node_id = edge["from"]
+            from_node_id = edge['from']
             from_node_label = Monkey.get_label_by_id(from_node_id)
             from_node_hostname = Monkey.get_hostname_by_id(from_node_id)
 
             accessible_from_nodes.append(from_node_label)
             accessible_from_nodes_hostnames.append(from_node_hostname)
 
-            for edge_exploit in edge["exploits"]:
-                edge_exploit["origin"] = from_node_label
+            for edge_exploit in edge['exploits']:
+                edge_exploit['origin'] = from_node_label
                 exploits.append(edge_exploit)
 
         exploits = sorted(exploits, key=lambda exploit: exploit['timestamp'])
@@ -186,23 +189,27 @@ class NodeService:
             {'$unset': {'tunnel': ''}},
             upsert=False)
 
-        mongo.db.edge.update(
-            {"from": monkey_id, 'tunnel': True},
-            {'$set': {'tunnel': False}},
-            upsert=False)
+        edges = EdgeService.get_tunnel_edges_by_src(monkey_id)
+        for edge in edges:
+            edge.disable_tunnel()
 
     @staticmethod
     def set_monkey_tunnel(monkey_id, tunnel_host_ip):
         tunnel_host_id = NodeService.get_monkey_by_ip(tunnel_host_ip)["_id"]
         NodeService.unset_all_monkey_tunnels(monkey_id)
         mongo.db.monkey.update(
-            {"_id": monkey_id},
+            {'_id': monkey_id},
             {'$set': {'tunnel': tunnel_host_id}},
             upsert=False)
-        tunnel_edge = EdgeService.get_or_create_edge(monkey_id, tunnel_host_id)
-        mongo.db.edge.update({"_id": tunnel_edge["_id"]},
-                             {'$set': {'tunnel': True, 'ip_address': tunnel_host_ip}},
-                             upsert=False)
+        monkey_label = NodeService.get_label_for_endpoint(monkey_id)
+        tunnel_host_label = NodeService.get_label_for_endpoint(tunnel_host_id)
+        tunnel_edge = EdgeService.get_or_create_edge(src_node_id=monkey_id,
+                                                     dst_node_id=tunnel_host_id,
+                                                     src_label=monkey_label,
+                                                     dst_label=tunnel_host_label)
+        tunnel_edge.tunnel = True
+        tunnel_edge.ip_address = tunnel_host_ip
+        tunnel_edge.save()
 
     @staticmethod
     def insert_node(ip_address, domain_name=''):
@@ -255,12 +262,16 @@ class NodeService:
                 dst_node = NodeService.get_node_or_monkey_by_ip(bootloader_telem['tunnel'])
             else:
                 dst_node = NodeService.get_monkey_island_node()
-            edge = EdgeService.get_or_create_edge(new_node['_id'], dst_node['id'])
-            mongo.db.edge.update({"_id": edge["_id"]},
-                                 {'$set': {'tunnel': bool(bootloader_telem['tunnel']),
-                                           'ip_address': bootloader_telem['ips'][0],
-                                           'group': NodeStates.get_by_keywords(['island']).value}},
-                                 upsert=False)
+            src_label = NodeService.get_label_for_endpoint(new_node['_id'])
+            dst_label = NodeService.get_label_for_endpoint(dst_node['id'])
+            edge = EdgeService.get_or_create_edge(src_node_id=new_node['_id'],
+                                                  dst_node_id=dst_node['id'],
+                                                  src_label=src_label,
+                                                  dst_label=dst_label)
+            edge.tunnel = bool(bootloader_telem['tunnel'])
+            edge.ip_address = bootloader_telem['ips'][0]
+            edge.group = NodeStates.get_by_keywords(['island']).value
+            edge.save()
         return new_node
 
     @staticmethod
@@ -410,6 +421,15 @@ class NodeService:
     @staticmethod
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(mongo.db.monkey.find_one({'_id': node_id}, {'hostname': 1}))
+
+    @staticmethod
+    def get_label_for_endpoint(endpoint_id):
+        if endpoint_id == ObjectId("000000000000000000000000"):
+            return 'MonkeyIsland'
+        if Monkey.is_monkey(endpoint_id):
+            return Monkey.get_label_by_id(endpoint_id)
+        else:
+            return NodeService.get_node_label(NodeService.get_node_by_id(endpoint_id))
 
 
 class NodeCreationException(Exception):

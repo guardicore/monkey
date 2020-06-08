@@ -106,7 +106,8 @@ class PTHReportService(object):
                 {
                     'username': user['name'],
                     'domain_name': user['domain_name'],
-                    'hostname': NodeService.get_hostname_by_id(ObjectId(user['machine_id'])) if user['machine_id'] else None
+                    'hostname': NodeService.get_hostname_by_id(ObjectId(user['machine_id'])) if
+                    user['machine_id'] else None
                 } for user in doc['Docs']
             ]
             users_cred_groups.append({'cred_groups': users_list})
