@@ -39,18 +39,24 @@ theme = "learn"
 
 [[menu.shortcuts]] 
 name = "<i class='fas fa-home'></i> Homepage"
-identifier = "hp"
+identifier = "homepage"
 url = "https://infectionmonkey.com"
 weight = 10
 
 [[menu.shortcuts]] 
 name = "<i class='fab fa-github'></i> GitHub"
-identifier = "ds"
+identifier = "github"
 url = "https://github.com/guardicore/monkey"
 weight = 20
 
 [[menu.shortcuts]] 
 name = "<i class='fab fa-slack'></i> Slack"
-identifier = "sl"
+identifier = "slack"
 url = "https://join.slack.com/t/infectionmonkey/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU"
 weight = 30
+
+[[menu.shortcuts]] 
+name = "<i class='fas fa-inbox'></i> Email"
+identifier = "email"
+url = "https://join.slack.com/t/infectionmonkey/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU"
+weight = 40
