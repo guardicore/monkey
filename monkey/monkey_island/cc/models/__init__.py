@@ -1,6 +1,6 @@
 from mongoengine import connect
 
-from monkey_island.cc.environment.environment import env
+from monkey_island.cc.environment.environment_singleton import env
 
 # This section sets up the DB connection according to the environment.
 #   If testing, use mongomock which only emulates mongo. for more information, see

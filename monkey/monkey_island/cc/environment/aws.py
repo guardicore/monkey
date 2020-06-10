@@ -6,6 +6,9 @@ __author__ = 'itay.mizeretz'
 
 
 class AwsEnvironment(Environment):
+
+    _credentials_required = True
+
     def __init__(self):
         super(AwsEnvironment, self).__init__()
         # Not suppressing error here on purpose. This is critical if we're on AWS env.

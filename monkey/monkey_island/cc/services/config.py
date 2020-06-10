@@ -6,7 +6,7 @@ from jsonschema import Draft4Validator, validators
 import monkey_island.cc.services.post_breach_files
 
 from monkey_island.cc.database import mongo
-from monkey_island.cc.environment.environment import env
+from monkey_island.cc.environment.environment_singleton import env
 from monkey_island.cc.network_utils import local_ip_addresses
 from .config_schema import SCHEMA
 from monkey_island.cc.encryptor import encryptor

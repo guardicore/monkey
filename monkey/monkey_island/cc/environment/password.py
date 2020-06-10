@@ -6,7 +6,10 @@ __author__ = 'itay.mizeretz'
 
 class PasswordEnvironment(Environment):
 
+    _credentials_required = True
+
     def get_auth_users(self):
-        return [
-            monkey_island.cc.auth.User(1, self.config['user'], self.config['hash'])
-        ]
+        if 'user' in self.config and 'hash' in self.config:
+            return [monkey_island.cc.auth.User(1, self.config['user'], self.config['hash'])]
+        else:
+            return []

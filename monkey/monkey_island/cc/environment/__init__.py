@@ -1,7 +1,13 @@
+import json
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
 import os
 import hashlib
+
+from typing import Dict
+
+from common.utils.exceptions import ServerConfigFileChanged
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = 'itay.mizeretz'
 
@@ -17,6 +23,45 @@ class Environment(object, metaclass=ABCMeta):
     _AUTH_EXPIRATION_TIME = timedelta(hours=1)
 
     _testing = False
+
+    @property
+    @abstractmethod
+    def _credentials_required(self) -> bool:
+        pass
+
+    @abstractmethod
+    def get_auth_users(self):
+        return
+
+    @staticmethod
+    def set_server_config(config: Dict):
+        Environment.upload_server_configuration_to_file(config)
+        raise ServerConfigFileChanged
+
+    @staticmethod
+    def upload_server_configuration_to_file(config: Dict):
+        file_path = Environment.get_server_config_file_path()
+        with open(file_path, 'w') as f:
+            f.write(json.dumps(config, indent=2))
+
+    @staticmethod
+    def get_server_config_file_path():
+        return os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc/server_config.json')
+
+    def needs_registration(self) -> bool:
+        if not self._credentials_required:
+            return False
+        else:
+            return not self._is_registered()
+
+    def _is_registered(self) -> bool:
+        return self._credentials_required and self._is_credentials_set_up()
+
+    def _is_credentials_set_up(self) -> bool:
+        if 'user' in self.config and 'hash' in self.config:
+            return True
+        else:
+            return False
 
     @property
     def testing(self):
@@ -62,10 +107,6 @@ class Environment(object, metaclass=ABCMeta):
         if self.config is not None:
             val = self.config.get(key, val)
         return val
-
-    @abstractmethod
-    def get_auth_users(self):
-        return
 
     @property
     def mongo_db_name(self):

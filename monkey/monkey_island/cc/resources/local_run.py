@@ -6,7 +6,7 @@ import sys
 from flask import request, jsonify, make_response
 import flask_restful
 
-from monkey_island.cc.environment.environment import env
+from monkey_island.cc.environment.environment_singleton import env
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.resources.monkey_download import get_monkey_executable
 from monkey_island.cc.services.node import NodeService

@@ -1,14 +1,12 @@
 import json
 import logging
-import os
 
 env = None
 
-from monkey_island.cc.environment import standard
+from monkey_island.cc.environment import standard, Environment
 from monkey_island.cc.environment import testing
 from monkey_island.cc.environment import aws
 from monkey_island.cc.environment import password
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = 'itay.mizeretz'
 
@@ -27,15 +25,16 @@ ENV_DICT = {
 }
 
 
-def load_server_configuration_from_file():
-    with open(os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc/server_config.json'), 'r') as f:
-        config_content = f.read()
-    return json.loads(config_content)
-
-
 def load_env_from_file():
     loaded_config_json = load_server_configuration_from_file()
     return loaded_config_json['server_config']
+
+
+def load_server_configuration_from_file():
+    file_path = Environment.get_server_config_file_path()
+    with open(file_path, 'r') as f:
+        config_content = f.read()
+    return json.loads(config_content)
 
 
 try:

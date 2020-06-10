@@ -3,7 +3,7 @@ import logging
 import requests
 
 from common.version import get_version
-from monkey_island.cc.environment.environment import env
+from monkey_island.cc.environment.environment_singleton import env
 
 __author__ = "itay.mizeretz"
 

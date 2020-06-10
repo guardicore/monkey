@@ -7,6 +7,8 @@ class TestingEnvironment(Environment):
     This will cause all mongo connections to happen via `mongomock` instead of using an actual mongodb instance.
     """
 
+    _credentials_required = True
+
     def __init__(self):
         super(TestingEnvironment, self).__init__()
         self.testing = True
