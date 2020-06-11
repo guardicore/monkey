@@ -160,6 +160,14 @@ SCHEMA = {
                     "title": "Communicate as new user",
                     "attack_techniques": ["T1136"]
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "ModifyShellStartupFiles"
+                    ],
+                    "title": "Modify shell startup files",
+                    "attack_techniques": ["T1156"]
+                }
             ],
         },
         "finger_classes": {
@@ -379,7 +387,8 @@ SCHEMA = {
                             },
                             "default": [
                                 "BackdoorUser",
-                                "CommunicateAsNewUser"
+                                "CommunicateAsNewUser",
+                                "ModifyShellStartupFiles"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },

@@ -71,6 +71,16 @@ SCHEMA = {
             "type": "object",
             "link": "https://attack.mitre.org/tactics/TA0003/",
             "properties": {
+                "T1156": {
+                    "title": ".bash_profile and .bashrc",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1156",
+                    "description": "Adversaries may abuse shell scripts by "
+                                   "inserting arbitrary shell commands to gain persistence, which "
+                                   "would be executed every time the user logs in or opens a new shell."
+                },
                 "T1136": {
                     "title": "Create account",
                     "type": "bool",
