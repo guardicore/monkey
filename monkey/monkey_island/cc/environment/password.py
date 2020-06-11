@@ -9,7 +9,7 @@ class PasswordEnvironment(Environment):
     _credentials_required = True
 
     def get_auth_users(self):
-        if 'user' in self.config and 'hash' in self.config:
-            return [monkey_island.cc.auth.User(1, self.config['user'], self.config['hash'])]
+        if self._is_registered():
+            return self._config.get_users
         else:
             return []

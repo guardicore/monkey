@@ -7,7 +7,7 @@ from werkzeug.exceptions import NotFound
 
 from monkey_island.cc.auth import init_jwt
 from monkey_island.cc.database import mongo, database
-from monkey_island.cc.environment.environment import env
+from monkey_island.cc.environment.environment_singleton import env
 from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.local_run import LocalRun
@@ -22,6 +22,7 @@ from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
+from monkey_island.cc.resources.registration import Registration
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
@@ -91,6 +92,7 @@ def init_app_url_rules(app):
 
 def init_api_resources(api):
     api.add_resource(Root, '/api')
+    api.add_resource(Registration, '/api/registration')
     api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
     api.add_resource(Bootloader, '/api/bootloader/<string:os>')
     api.add_resource(LocalRun, '/api/local-monkey', '/api/local-monkey/')

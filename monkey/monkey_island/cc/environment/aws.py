@@ -1,4 +1,5 @@
 import monkey_island.cc.auth
+from monkey_island.cc.auth_user import User
 from monkey_island.cc.environment import Environment
 from common.cloud.aws.aws_instance import AwsInstance
 
@@ -24,5 +25,6 @@ class AwsEnvironment(Environment):
 
     def get_auth_users(self):
         return [
-            monkey_island.cc.auth.User(1, 'monkey', self.hash_secret(self._instance_id))
+            # TODO change this to propper registration?
+            User(1, 'monkey', self.hash_secret(self._instance_id))
         ]

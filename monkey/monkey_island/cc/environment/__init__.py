@@ -1,15 +1,15 @@
-import json
+import hashlib
+import os
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
-import os
-import hashlib
+
+__author__ = 'itay.mizeretz'
 
 from typing import Dict
 
-from common.utils.exceptions import ServerConfigFileChanged
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
-
-__author__ = 'itay.mizeretz'
+from common.utils.exceptions import InvalidRegistrationCredentials
+from monkey_island.cc.environment.environment_config import EnvironmentConfig
+from monkey_island.cc.environment.user_creds import UserCreds
 
 
 class Environment(object, metaclass=ABCMeta):
@@ -24,6 +24,10 @@ class Environment(object, metaclass=ABCMeta):
 
     _testing = False
 
+    def __init__(self):
+        self._config = None
+        self._testing = False  # Assume env is not for unit testing.
+
     @property
     @abstractmethod
     def _credentials_required(self) -> bool:
@@ -31,22 +35,17 @@ class Environment(object, metaclass=ABCMeta):
 
     @abstractmethod
     def get_auth_users(self):
-        return
+        pass
 
-    @staticmethod
-    def set_server_config(config: Dict):
-        Environment.upload_server_configuration_to_file(config)
-        raise ServerConfigFileChanged
-
-    @staticmethod
-    def upload_server_configuration_to_file(config: Dict):
-        file_path = Environment.get_server_config_file_path()
-        with open(file_path, 'w') as f:
-            f.write(json.dumps(config, indent=2))
-
-    @staticmethod
-    def get_server_config_file_path():
-        return os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc/server_config.json')
+    def try_add_user(self, credentials: UserCreds):
+        if self._credentials_required:
+            if credentials:
+                self._config.add_user(credentials)
+            else:
+                raise InvalidRegistrationCredentials("Missing part of credentials.")
+        else:
+            raise InvalidRegistrationCredentials("Can't add user because credentials are not required "
+                                                 "for current environment.")
 
     def needs_registration(self) -> bool:
         if not self._credentials_required:
@@ -58,7 +57,7 @@ class Environment(object, metaclass=ABCMeta):
         return self._credentials_required and self._is_credentials_set_up()
 
     def _is_credentials_set_up(self) -> bool:
-        if 'user' in self.config and 'hash' in self.config:
+        if self._config and self._config.user_creds:
             return True
         else:
             return False
@@ -71,12 +70,8 @@ class Environment(object, metaclass=ABCMeta):
     def testing(self, value):
         self._testing = value
 
-    def __init__(self):
-        self.config = None
-        self._testing = False  # Assume env is not for unit testing.
-
-    def set_config(self, config):
-        self.config = config
+    def set_config(self, config: EnvironmentConfig):
+        self._config = config
 
     def get_island_port(self):
         return self._ISLAND_PORT
@@ -97,16 +92,10 @@ class Environment(object, metaclass=ABCMeta):
         return hash_obj.hexdigest()
 
     def get_deployment(self):
-        return self._get_from_config('deployment', 'unknown')
-
-    def is_develop(self):
-        return self.get_deployment() == 'develop'
-
-    def _get_from_config(self, key, default_value=None):
-        val = default_value
-        if self.config is not None:
-            val = self.config.get(key, val)
-        return val
+        deployment = 'unknown'
+        if self._config and self._config.deployment:
+            deployment = self._config.deployment
+        return deployment
 
     @property
     def mongo_db_name(self):
