@@ -1,10 +1,8 @@
 import React from 'react';
-import {BrowserRouter as Router, NavLink, Redirect, Route, Switch} from 'react-router-dom';
+import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import {Col, Grid, Row} from 'react-bootstrap';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck'
-import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo'
 
+import SideNavComponent from 'components/SideNavComponent';
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
 import RunMonkeyPage from 'components/pages/RunMonkeyPage';
@@ -25,12 +23,8 @@ import 'react-data-components/css/table-twbs.css';
 import 'styles/App.css';
 import 'react-toggle/style.css';
 import 'react-table/react-table.css';
-import VersionComponent from './side-menu/VersionComponent';
-
-import logoImage from '../images/monkey-icon.svg';
-import infectionMonkeyImage from '../images/infection-monkey.svg';
-import guardicoreLogoImage from '../images/guardicore-logo.png';
 import notificationIcon from '../images/notification-logo-512x512.png';
+import {StandardLayoutComponent} from "./layouts/StandardLayoutComponent";
 
 const reportZeroTrustRoute = '/report/zeroTrust';
 
@@ -44,7 +38,7 @@ class AppComponent extends AuthComponent {
           });
         }
 
-        if (!res){
+        if (!res) {
           this.auth.needsRegistration()
             .then(result => {
               this.setState({
@@ -80,7 +74,7 @@ class AppComponent extends AuthComponent {
         case true:
           return page_component;
         case false:
-          switch (this.state.needsRegistration){
+          switch (this.state.needsRegistration) {
             case true:
               return <Redirect to={{pathname: '/register'}}/>
             case false:
@@ -110,7 +104,6 @@ class AppComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
-      removePBAfiles: false,
       completedSteps: {
         run_server: true,
         run_monkey: false,
@@ -121,11 +114,6 @@ class AppComponent extends AuthComponent {
       }
     };
   }
-
-  // Sets the property that indicates if we need to remove PBA files from state or not
-  setRemovePBAfiles = (rmFiles) => {
-    this.setState({removePBAfiles: rmFiles});
-  };
 
   componentDidMount() {
     this.updateStatus();
@@ -141,96 +129,50 @@ class AppComponent extends AuthComponent {
       <Router>
         <Grid fluid={true}>
           <Row>
-            <Col sm={3} md={2} className='sidebar'>
-              <div className='header'>
-                <img alt="logo" src={logoImage} style={{width: '5vw', margin: '15px'}}/>
-                <img src={infectionMonkeyImage} style={{width: '15vw'}} alt='Infection Monkey'/>
-              </div>
-
-              <ul className='navigation'>
-                <li>
-                  <NavLink to='/' exact={true}>
-                    <span className='number'>1.</span>
-                    Run Monkey Island Server
-                    {this.state.completedSteps.run_server ?
-                      <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
-                      : ''}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to='/run-monkey'>
-                    <span className='number'>2.</span>
-                    Run Monkey
-                    {this.state.completedSteps.run_monkey ?
-                      <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
-                      : ''}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to='/infection/map'>
-                    <span className='number'>3.</span>
-                    Infection Map
-                    {this.state.completedSteps.infection_done ?
-                      <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
-                      : ''}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to='/report/security'
-                           isActive={(match, location) => {
-                             return (location.pathname === '/report/attack'
-                               || location.pathname === '/report/zeroTrust'
-                               || location.pathname === '/report/security')
-                           }}>
-                    <span className='number'>4.</span>
-                    Security Reports
-                    {this.state.completedSteps.report_done ?
-                      <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
-                      : ''}
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to='/start-over'>
-                    <span className='number'><FontAwesomeIcon icon={faUndo} style={{'marginLeft': '-1px'}}/></span>
-                    Start Over
-                  </NavLink>
-                </li>
-              </ul>
-
-              <hr/>
-              <ul>
-                <li><NavLink to='/configure'>Configuration</NavLink></li>
-                <li><NavLink to='/infection/telemetry'>Log</NavLink></li>
-              </ul>
-
-              <hr/>
-              <div className='guardicore-link text-center' style={{'marginBottom': '0.5em'}}>
-                <span>Powered by</span>
-                <a href='http://www.guardicore.com' rel="noopener noreferrer" target='_blank'>
-                  <img src={guardicoreLogoImage} alt='GuardiCore'/>
-                </a>
-              </div>
-              <div className='license-link text-center'>
-                <NavLink to='/license'>License</NavLink>
-              </div>
-              <VersionComponent/>
-            </Col>
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className='main'>
-
               <Switch>
                 <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
                 <Route path='/register' render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
-                {this.renderRoute('/', <RunServerPage onStatusChange={this.updateStatus}/>, true)}
-                {this.renderRoute('/configure', <ConfigurePage onStatusChange={this.updateStatus}/>)}
-                {this.renderRoute('/run-monkey', <RunMonkeyPage onStatusChange={this.updateStatus}/>)}
-                {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
-                {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
-                {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
+                {this.renderRoute('/',
+                  <StandardLayoutComponent component={RunServerPage}
+                                           completedSteps={this.state.completedSteps}
+                                           onStatusChange={this.updateStatus}
+                                           />,
+                  true)}
+                {this.renderRoute('/configure',
+                  <StandardLayoutComponent component={ConfigurePage}
+                                           onStatusChange={this.updateStatus}
+                                           completedSteps={this.state.completedSteps}/>)}
+                {this.renderRoute('/run-monkey',
+                  <StandardLayoutComponent component={RunMonkeyPage}
+                                           onStatusChange={this.updateStatus}
+                                           completedSteps={this.state.completedSteps}/>)}
+                {this.renderRoute('/infection/map',
+                  <StandardLayoutComponent component={MapPage}
+                                           onStatusChange={this.updateStatus}
+                                           completedSteps={this.state.completedSteps}/>)}
+                {this.renderRoute('/infection/telemetry',
+                  <StandardLayoutComponent component={TelemetryPage}
+                                           onStatusChange={this.updateStatus}
+                                           completedSteps={this.state.completedSteps}/>)}
+                {this.renderRoute('/start-over',
+                  <StandardLayoutComponent component={StartOverPage}
+                                           onStatusChange={this.updateStatus}
+                                           completedSteps={this.state.completedSteps}/>)}
                 {this.redirectTo('/report', '/report/security')}
-                {this.renderRoute('/report/security', <ReportPage/>)}
-                {this.renderRoute('/report/attack', <ReportPage/>)}
-                {this.renderRoute('/report/zeroTrust', <ReportPage/>)}
-                {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
+                {this.renderRoute('/report/security',
+                  <StandardLayoutComponent component={ReportPage}
+                                           completedSteps={this.state.completedSteps}/>)}
+                {this.renderRoute('/report/attack',
+                  <StandardLayoutComponent component={ReportPage}
+                                           completedSteps={this.state.completedSteps}/>)}
+                {this.renderRoute('/report/zeroTrust',
+                  <StandardLayoutComponent component={ReportPage}
+                                           completedSteps={this.state.completedSteps}/>)}
+                {this.renderRoute('/license',
+                  <StandardLayoutComponent component={LicensePage}
+                                           onStatusChange={this.updateStatus}
+                                           completedSteps={this.state.completedSteps}/>)}
                 <Route component={NotFoundPage}/>
               </Switch>
             </Col>
