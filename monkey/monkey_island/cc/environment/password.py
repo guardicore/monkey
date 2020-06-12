@@ -1,5 +1,4 @@
 from monkey_island.cc.environment import Environment
-import monkey_island.cc.auth
 
 __author__ = 'itay.mizeretz'
 
@@ -10,6 +9,6 @@ class PasswordEnvironment(Environment):
 
     def get_auth_users(self):
         if self._is_registered():
-            return self._config.get_users
+            return self._config.get_users()
         else:
             return []

@@ -1,5 +1,4 @@
-import monkey_island.cc.auth
-from monkey_island.cc.auth_user import User
+from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.environment import Environment
 from common.cloud.aws.aws_instance import AwsInstance
 

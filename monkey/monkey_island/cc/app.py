@@ -5,7 +5,7 @@ import flask_restful
 from flask import Flask, send_from_directory, Response
 from werkzeug.exceptions import NotFound
 
-from monkey_island.cc.auth import init_jwt
+from monkey_island.cc.resources.auth.auth import init_jwt
 from monkey_island.cc.database import mongo, database
 from monkey_island.cc.environment.environment_singleton import env
 from monkey_island.cc.resources.client_run import ClientRun

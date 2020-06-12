@@ -5,7 +5,6 @@ from datetime import timedelta
 
 __author__ = 'itay.mizeretz'
 
-from typing import Dict
 
 from common.utils.exceptions import InvalidRegistrationCredentials
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
@@ -25,7 +24,7 @@ class Environment(object, metaclass=ABCMeta):
     _testing = False
 
     def __init__(self):
-        self._config = None
+        self._config = EnvironmentConfig("", "", UserCreds())
         self._testing = False  # Assume env is not for unit testing.
 
     @property
@@ -40,6 +39,9 @@ class Environment(object, metaclass=ABCMeta):
     def try_add_user(self, credentials: UserCreds):
         if self._credentials_required:
             if credentials:
+                if self._is_registered():
+                    raise InvalidRegistrationCredentials("User has already been registered. "
+                                                         "Reset credentials or login.")
                 self._config.add_user(credentials)
             else:
                 raise InvalidRegistrationCredentials("Missing part of credentials.")

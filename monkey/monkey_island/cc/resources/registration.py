@@ -14,7 +14,7 @@ class Registration(flask_restful.Resource):
         credentials = UserCreds.get_from_json(request.data)
         try:
             env.try_add_user(credentials)
-            return make_response({"error": ""}, 300)
+            return make_response({"error": ""}, 200)
         except InvalidRegistrationCredentials as e:
-            return make_response({"error": e}, 400)
+            return make_response({"error": str(e)}, 400)
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import Dict
 
-from monkey_island.cc.auth_user import User
+from monkey_island.cc.resources.auth.auth_user import User
 
 
 class UserCreds:

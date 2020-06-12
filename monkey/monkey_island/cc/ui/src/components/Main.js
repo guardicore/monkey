@@ -1,9 +1,9 @@
 import React from 'react';
 import {BrowserRouter as Router, NavLink, Redirect, Route, Switch} from 'react-router-dom';
 import {Col, Grid, Row} from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
-import { faUndo } from '@fortawesome/free-solid-svg-icons/faUndo'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck'
+import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo'
 
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
@@ -15,6 +15,7 @@ import ReportPage from 'components/pages/ReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
 import LoginPageComponent from 'components/pages/LoginPage';
+import RegisterPageComponent from 'components/pages/RegisterPage';
 import Notifier from 'react-desktop-notification';
 import NotFoundPage from 'components/pages/NotFoundPage';
 
@@ -41,6 +42,15 @@ class AppComponent extends AuthComponent {
           this.setState({
             isLoggedIn: res
           });
+        }
+
+        if (!res){
+          this.auth.needsRegistration()
+            .then(result => {
+              this.setState({
+                needsRegistration: result
+              });
+            })
         }
 
         if (res) {
@@ -70,10 +80,16 @@ class AppComponent extends AuthComponent {
         case true:
           return page_component;
         case false:
-          return <Redirect to={{pathname: '/login'}}/>;
+          switch (this.state.needsRegistration){
+            case true:
+              return <Redirect to={{pathname: '/register'}}/>
+            case false:
+              return <Redirect to={{pathname: '/login'}}/>;
+            default:
+              return page_component;
+          }
         default:
           return page_component;
-
       }
     };
 
@@ -85,8 +101,8 @@ class AppComponent extends AuthComponent {
   };
 
   redirectTo = (userPath, targetPath) => {
-    let pathQuery = new RegExp(userPath+'[\/]?$', 'g');
-    if(window.location.pathname.match(pathQuery)){
+    let pathQuery = new RegExp(userPath + '[\/]?$', 'g');
+    if (window.location.pathname.match(pathQuery)) {
       return <Redirect to={{pathname: targetPath}}/>
     }
   };
@@ -100,7 +116,8 @@ class AppComponent extends AuthComponent {
         run_monkey: false,
         infection_done: false,
         report_done: false,
-        isLoggedIn: undefined
+        isLoggedIn: undefined,
+        needsRegistration: undefined
       }
     };
   }
@@ -201,19 +218,20 @@ class AppComponent extends AuthComponent {
             <Col sm={9} md={10} smOffset={3} mdOffset={2} className='main'>
 
               <Switch>
-              <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
-              {this.renderRoute('/', <RunServerPage onStatusChange={this.updateStatus}/>, true)}
-              {this.renderRoute('/configure', <ConfigurePage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/run-monkey', <RunMonkeyPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
-              {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
-              {this.redirectTo('/report', '/report/security')}
-              {this.renderRoute('/report/security', <ReportPage/>)}
-              {this.renderRoute('/report/attack', <ReportPage/>)}
-              {this.renderRoute('/report/zeroTrust', <ReportPage/>)}
-              {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
-              <Route component={NotFoundPage} />
+                <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
+                <Route path='/register' render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
+                {this.renderRoute('/', <RunServerPage onStatusChange={this.updateStatus}/>, true)}
+                {this.renderRoute('/configure', <ConfigurePage onStatusChange={this.updateStatus}/>)}
+                {this.renderRoute('/run-monkey', <RunMonkeyPage onStatusChange={this.updateStatus}/>)}
+                {this.renderRoute('/infection/map', <MapPage onStatusChange={this.updateStatus}/>)}
+                {this.renderRoute('/infection/telemetry', <TelemetryPage onStatusChange={this.updateStatus}/>)}
+                {this.renderRoute('/start-over', <StartOverPage onStatusChange={this.updateStatus}/>)}
+                {this.redirectTo('/report', '/report/security')}
+                {this.renderRoute('/report/security', <ReportPage/>)}
+                {this.renderRoute('/report/attack', <ReportPage/>)}
+                {this.renderRoute('/report/zeroTrust', <ReportPage/>)}
+                {this.renderRoute('/license', <LicensePage onStatusChange={this.updateStatus}/>)}
+                <Route component={NotFoundPage}/>
               </Switch>
             </Col>
           </Row>

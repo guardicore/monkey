@@ -2,8 +2,10 @@ import json
 import os
 from typing import Dict
 from unittest import TestCase
+from unittest.mock import patch, MagicMock
 
-from monkey_island.cc.environment import Environment, EnvironmentConfig
+from common.utils.exceptions import InvalidRegistrationCredentials
+from monkey_island.cc.environment import Environment, EnvironmentConfig, UserCreds
 
 
 def get_server_config_file_path_test_version():
@@ -56,6 +58,21 @@ class TestEnvironment(TestCase):
         "password_hash": "9ece086e9bac491fac5c1d1046ca11d737b92a2b2ebd93f005d7b710110c0a678288166e7fbe796883a"
                 "4f2e9b3ca9f484f521d0ce464345cc1aec96779149c14"
     }
+
+    @patch.object(target=EnvironmentConfig, attribute="save_to_file", new=MagicMock())
+    def test_try_add_user(self):
+        env = TestEnvironment.EnvironmentWithCredentials()
+        credentials = UserCreds(username="test", password_hash="1231234")
+        env.try_add_user(credentials)
+
+        credentials = UserCreds(username="test")
+        with self.assertRaises(InvalidRegistrationCredentials):
+            env.try_add_user(credentials)
+
+        env = TestEnvironment.EnvironmentNoCredentials()
+        credentials = UserCreds(username="test", password_hash="1231234")
+        with self.assertRaises(InvalidRegistrationCredentials):
+            env.try_add_user(credentials)
 
     def test_needs_registration(self):
         env = TestEnvironment.EnvironmentWithCredentials()

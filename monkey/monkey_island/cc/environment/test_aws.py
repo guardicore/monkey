@@ -1,4 +1,4 @@
-from monkey_island.cc.auth_user import User
+from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 from monkey_island.cc.environment.aws import AwsEnvironment
 

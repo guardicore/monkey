@@ -3,17 +3,19 @@ import {Col} from 'react-bootstrap';
 
 import AuthService from '../../services/AuthService';
 
-class LoginPageComponent extends React.Component {
-  login = () => {
-    this.auth.login(this.username, this.password).then(res => {
+class RegisterPageComponent extends React.Component {
+
+  register = () => {
+    this.auth.register(this.username, this.password).then(res => {
+      this.setState({failed: false, error: ""});
       if (res['result']) {
         this.redirectToHome();
       } else {
-        this.setState({failed: true});
+        this.setState({failed: true,
+                            error: res['error']});
       }
     });
   };
-
   updateUsername = (evt) => {
     this.username = evt.target.value;
   };
@@ -21,13 +23,8 @@ class LoginPageComponent extends React.Component {
   updatePassword = (evt) => {
     this.password = evt.target.value;
   };
-
   redirectToHome = () => {
     window.location.href = '/';
-  };
-
-  redirectToRegistration = () => {
-    window.location.href = '/register';
   };
 
   constructor(props) {
@@ -36,31 +33,27 @@ class LoginPageComponent extends React.Component {
     this.password = '';
     this.auth = new AuthService();
     this.state = {
-      failed: false
+      failed: false,
+      loading: false
     };
 
     this.auth.needsRegistration()
       .then(result => {
-        if(result){
-          this.redirectToRegistration()
+        if(!result){
+          this.redirectToHome()
         }
       })
-    this.auth.loggedIn()
-      .then(res => {
-        if (res) {
-          this.redirectToHome();
-        }
-      });
   }
 
   render() {
     return (
       <Col xs={12} lg={8}>
-        <h1 className="page-title">Login</h1>
+        <h1 className="page-title">First time?</h1>
+        <h3 className="page-title">Let's secure your island</h3>
         <div className="col-sm-6 col-sm-offset-3" style={{'fontSize': '1.2em'}}>
           <div className="panel panel-default">
             <div className="panel-heading text-center">
-              <b>Login</b>
+              <b>Register</b>
             </div>
             <div className="panel-body">
               <div className="input-group center-block text-center">
@@ -70,13 +63,13 @@ class LoginPageComponent extends React.Component {
                        onChange={evt => this.updatePassword(evt)}/>
                 <button type="button" className="btn btn-primary btn-lg" style={{margin: '5px'}}
                         onClick={() => {
-                          this.login()
+                          this.register()
                         }}>
-                  Login
+                  Lets Go!
                 </button>
                 {
                   this.state.failed ?
-                    <div className="alert alert-danger" role="alert">Login failed. Bad credentials.</div>
+                    <div className="alert alert-danger" role="alert">{this.state.error}</div>
                     :
                     ''
                 }
@@ -89,4 +82,4 @@ class LoginPageComponent extends React.Component {
   }
 }
 
-export default LoginPageComponent;
+export default RegisterPageComponent;

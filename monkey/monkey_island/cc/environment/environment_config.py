@@ -4,9 +4,10 @@ import json
 import os
 from typing import List, Dict
 
-from monkey_island.cc.auth_user import User
+from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.environment.user_creds import UserCreds
+from monkey_island.cc.resources.auth.user_store import UserStore
 
 
 class EnvironmentConfig:
@@ -60,6 +61,8 @@ class EnvironmentConfig:
 
     def add_user(self, credentials: UserCreds):
         self.user_creds = credentials
+        self.save_to_file()
+        UserStore.set_users(self.get_users())
 
     def get_users(self) -> List[User]:
         auth_user = self.user_creds.to_auth_user()

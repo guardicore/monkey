@@ -4,7 +4,7 @@ import threading
 import flask_restful
 from flask import request, make_response, jsonify
 
-from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.infection_lifecycle import InfectionLifecycle

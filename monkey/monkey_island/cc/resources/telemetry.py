@@ -6,7 +6,7 @@ import dateutil
 import flask_restful
 from flask import request
 
-from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.database import mongo
 from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.node import NodeService
