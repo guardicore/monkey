@@ -89,6 +89,33 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1136",
                     "description": "Adversaries with a sufficient level of access "
                                    "may create a local system, domain, or cloud tenant account."
+                },
+                "T1504": {
+                    "title": "PowerShell profile",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1504",
+                    "description": "Adversaries may gain persistence and elevate privileges "
+                                   "in certain situations by abusing PowerShell profiles which "
+                                   "are scripts that run when PowerShell starts."
+                }
+            }
+        },
+        "privilege_escalation": {
+            "title": "Privilege escalation",
+            "type": "object",
+            "link": "https://attack.mitre.org/tactics/TA0004/",
+            "properties": {
+                "T1504": {
+                    "title": "PowerShell profile",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1504",
+                    "description": "Adversaries may gain persistence and elevate privileges "
+                                   "in certain situations by abusing PowerShell profiles which "
+                                   "are scripts that run when PowerShell starts."
                 }
             }
         },
