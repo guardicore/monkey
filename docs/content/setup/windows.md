@@ -25,3 +25,11 @@ The installer requires [Windows update #2999226](https://support.microsoft.com/e
 ### Supported browsers
 
 The Monkey Island supports Chrome (and Chrome-based) browsers. Some Windows Servers only have Internet Explorer installed. Make sure to use Chrome or a similar modern browser. [You can download Google Chrome from here](https://www.google.com/chrome/).
+
+## Upgrading
+
+To upgrade, download the new installer and run it. The new Monkey version should be installed over the old one.
+
+If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new server.
+
+![Export configuration](../../images/setup/export-configuration.png "Export configuration")

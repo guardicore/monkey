@@ -54,3 +54,11 @@ sudo apt install -f
 ### The Monkey Island interface isn't accessible after installation
 
 To check the status of the Monkey Island after the installation, run the following command: `sudo service monkey-island status`.
+
+## Upgrading
+
+To upgrade when a new version comes out, download the new Monkey `.deb` file and install it. You should see a message like `Unpacking monkey-island (1.8.2) over (1.8.0)`. After which, the installation should complete successfully.
+
+If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new server.
+
+![Export configuration](../../images/setup/export-configuration.png "Export configuration")

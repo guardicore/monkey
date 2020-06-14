@@ -9,7 +9,7 @@ tags: ["setup", "aws"]
 
 ## Deployment
 
-On the Infection Monkey’s AWS Marketplace page, click **Continue to Subscribe**.
+On the [Infection Monkey’s AWS Marketplace page](https://aws.amazon.com/marketplace/pp/GuardiCore-Infection-Monkey/B07B3J7K6D), click **Continue to Subscribe**.
 
 1. Choose the desired region.
 1. Choose an EC2 instance type with at least 1GB of RAM for optimal performance or stick with the recommended.
@@ -27,3 +27,9 @@ When ready, you can browse to  the Infection Monkey running on your fresh deploy
 You will be presented a login page. Use the username **monkey**, and the new EC2 instace’s instance ID for password. You can find the instance id by going to the EC2 console and selecting your instance. It should appear in the details pane below.
 
 ![AWS instance ID](../../images/setup/aws/aws-instance-id.png "AWS instance ID")
+
+## Upgrading
+
+Currently there's no "upgrade-in-place" option when a new version comes out. To get the new version, you can deploy a new machine from the marketplace. If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new Monkey Island.
+
+![Export configuration](../../images/setup/export-configuration.png "Export configuration")

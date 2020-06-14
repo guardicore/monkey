@@ -20,3 +20,11 @@ sudo mkdir -p /var/monkey-mongo/data/db
 sudo docker run --name monkey-mongo --network=host -v /var/monkey-mongo/data/db:/data/db -d mongo
 sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:1.8.2
 ```
+
+## Upgrading
+
+There's no "upgrade-in-place" option for Docker. To get the new version, download it, stop the current container, and run the installation commands again with the new file.
+
+If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new server.
+
+![Export configuration](../../images/setup/export-configuration.png "Export configuration")

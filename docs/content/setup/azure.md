@@ -26,3 +26,9 @@ Select [Infection Monkey from the Azure Marketplace](https://azuremarketplace.mi
 At this point, Azure will instance and deploy your new machine. When ready, you can browse to the Infection Monkey running on your fresh deployment at:
 
 `https://{public-ip-address}:5000`
+
+## Upgrading
+
+Currently there's no "upgrade-in-place" option when a new version comes out. To get the new version, you can deploy a new machine from the marketplace. If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new Monkey Island.
+
+![Export configuration](../../images/setup/export-configuration.png "Export configuration")

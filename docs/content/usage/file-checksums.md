@@ -5,7 +5,7 @@ draft: true
 weight: 100
 ---
 
-The official distribution of Infection Monkey is compiled and supplied by Guardicore ([download from our official site here](infectionmonkey.com)). The team signs all software packages to certify that a particular Infection Monkey package is a valid and unaltered Infection Monkey release. Before installing Monkey, you should validate the package using the SHA-256 checksum.
+The official distribution of Infection Monkey is compiled and supplied by Guardicore ([download from our official site here](https://infectionmonkey.com/)). The team signs all software packages to certify that a particular Infection Monkey package is a valid and unaltered Infection Monkey release. Before installing Monkey, you should validate the package using the SHA-256 checksum.
 
 ## How to get SHA-256 checksum
 
