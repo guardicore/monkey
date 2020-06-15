@@ -7,15 +7,15 @@ from common.data.post_breach_consts import POST_BREACH_SHELL_STARTUP_FILE_MODIFI
 __author__ = "shreyamalviya"
 
 
-class T1156(AttackTechnique):
-    tech_id = "T1156"
+class T1504(AttackTechnique):
+    tech_id = "T1504"
     unscanned_msg = "Monkey did not try modifying shell startup files on the system."
     scanned_msg = "Monkey tried modifying shell startup files on the system but failed."
     used_msg = "Monkey modified shell startup files on the system."
 
     @staticmethod
     def get_report_data():
-        data = {'title': T1156.technique_title(), 'info': []}
+        data = {'title': T1504.technique_title(), 'info': []}
 
         scanned_nodes = ReportService.get_scanned()
         status = ScanStatus.UNSCANNED.value
@@ -24,7 +24,7 @@ class T1156(AttackTechnique):
             if node['pba_results'] != 'None':
                 for pba in node['pba_results']:
                     if pba['name'] == POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION:
-                        if 'powershell.exe' not in pba['command']:
+                        if 'powershell.exe' in pba['command']:
                             status = ScanStatus.USED.value if pba['result'][1]\
                                                         else ScanStatus.SCANNED.value
                             data['info'].append({
@@ -34,5 +34,5 @@ class T1156(AttackTechnique):
                                     },
                                     'result': pba['result'][0].replace('#', '')
                                 })
-            data.update(T1156.get_base_data_by_status(status))
+            data.update(T1504.get_base_data_by_status(status))
         return data
