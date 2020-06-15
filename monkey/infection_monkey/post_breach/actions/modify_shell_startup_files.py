@@ -20,7 +20,7 @@ class ModifyShellStartupFiles(PBA):
 
         if is_windows_os():
             super(ModifyShellStartupFiles, self).__init__(name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
-                                                          linux_cmd=' '.join(linux_cmds),
+                                                          linux_cmd='',  # windows so won't matter
                                                           windows_cmd=windows_cmds)
             super(ModifyShellStartupFiles, self).run()
         else:
