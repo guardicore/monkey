@@ -51,7 +51,11 @@ export default class AuthService {
   };
 
   register = (username, password) => {
-    return this._register(username, this.hashSha3(password));
+    if (password !== '') {
+      return this._register(username, this.hashSha3(password));
+    } else {
+      return this._register(username, password);
+    }
   };
 
   _register = (username, password) => {
@@ -62,14 +66,14 @@ export default class AuthService {
         'password_hash': password
       })
     }).then(res => {
-        if (res.status === 200) {
-          return this._login(username, password)
-        } else {
-          return res.json().then(res_json => {
-            return {result: false, error: res_json['error']};
-          })
-        }
-      })
+      if (res.status === 200) {
+        return this._login(username, password)
+      } else {
+        return res.json().then(res_json => {
+          return {result: false, error: res_json['error']};
+        })
+      }
+    })
   };
 
   _authFetch = (url, options = {}) => {
@@ -101,7 +105,7 @@ export default class AuthService {
 
   needsRegistration = () => {
     return fetch(this.REGISTRATION_API_ENDPOINT,
-                   {method: 'GET'})
+      {method: 'GET'})
       .then(response => response.json())
       .then(res => {
         return res['needs_registration']
@@ -132,8 +136,7 @@ export default class AuthService {
   _isTokenExpired(token) {
     try {
       return decode(token)['exp'] - this.SECONDS_BEFORE_JWT_EXPIRES < Date.now() / 1000;
-    }
-    catch (err) {
+    } catch (err) {
       return false;
     }
   }

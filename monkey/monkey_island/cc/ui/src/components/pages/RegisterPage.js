@@ -65,8 +65,8 @@ class RegisterPageComponent extends React.Component {
                 <h3 className='reg-subtitle'>Let's secure your island!</h3>
                 <div>
                   <Form className={'registration-form'}>
-                    <Form.Control type='text' placeholder='Username'/>
-                    <Form.Control type='password' placeholder='Password'/>
+                    <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
+                    <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
                     <Button id={'registration-button'} onClick={() => {
                       this.register()
                     }}>
