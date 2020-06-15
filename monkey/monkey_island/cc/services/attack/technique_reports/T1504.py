@@ -9,9 +9,9 @@ __author__ = "shreyamalviya"
 
 class T1504(AttackTechnique):
     tech_id = "T1504"
-    unscanned_msg = "Monkey did not try modifying shell startup files on the system."
-    scanned_msg = "Monkey tried modifying shell startup files on the system but failed."
-    used_msg = "Monkey modified shell startup files on the system."
+    unscanned_msg = "Monkey did not try modifying Window's shell startup files on the system."
+    scanned_msg = "Monkey tried modifying Window's shell startup files on the system but failed."
+    used_msg = "Monkey modified Window's shell startup files on the system."
 
     @staticmethod
     def get_report_data():
