@@ -166,7 +166,7 @@ SCHEMA = {
                         "ModifyShellStartupFiles"
                     ],
                     "title": "Modify shell startup files",
-                    "attack_techniques": ["T1156"]
+                    "attack_techniques": ["T1156", "T1504"]
                 }
             ],
         },
