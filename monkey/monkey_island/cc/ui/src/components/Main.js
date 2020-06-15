@@ -1,8 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
-import {Col, Grid, Row} from 'react-bootstrap';
+import {Container, Row} from 'react-bootstrap';
 
-import SideNavComponent from 'components/SideNavComponent';
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
 import RunMonkeyPage from 'components/pages/RunMonkeyPage';
@@ -127,57 +126,55 @@ class AppComponent extends AuthComponent {
   render() {
     return (
       <Router>
-        <Grid fluid={true}>
+        <Container fluid>
           <Row>
-            <Col sm={9} md={10} smOffset={3} mdOffset={2} className='main'>
-              <Switch>
-                <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
-                <Route path='/register' render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
-                {this.renderRoute('/',
-                  <StandardLayoutComponent component={RunServerPage}
-                                           completedSteps={this.state.completedSteps}
-                                           onStatusChange={this.updateStatus}
-                                           />,
-                  true)}
-                {this.renderRoute('/configure',
-                  <StandardLayoutComponent component={ConfigurePage}
-                                           onStatusChange={this.updateStatus}
-                                           completedSteps={this.state.completedSteps}/>)}
-                {this.renderRoute('/run-monkey',
-                  <StandardLayoutComponent component={RunMonkeyPage}
-                                           onStatusChange={this.updateStatus}
-                                           completedSteps={this.state.completedSteps}/>)}
-                {this.renderRoute('/infection/map',
-                  <StandardLayoutComponent component={MapPage}
-                                           onStatusChange={this.updateStatus}
-                                           completedSteps={this.state.completedSteps}/>)}
-                {this.renderRoute('/infection/telemetry',
-                  <StandardLayoutComponent component={TelemetryPage}
-                                           onStatusChange={this.updateStatus}
-                                           completedSteps={this.state.completedSteps}/>)}
-                {this.renderRoute('/start-over',
-                  <StandardLayoutComponent component={StartOverPage}
-                                           onStatusChange={this.updateStatus}
-                                           completedSteps={this.state.completedSteps}/>)}
-                {this.redirectTo('/report', '/report/security')}
-                {this.renderRoute('/report/security',
-                  <StandardLayoutComponent component={ReportPage}
-                                           completedSteps={this.state.completedSteps}/>)}
-                {this.renderRoute('/report/attack',
-                  <StandardLayoutComponent component={ReportPage}
-                                           completedSteps={this.state.completedSteps}/>)}
-                {this.renderRoute('/report/zeroTrust',
-                  <StandardLayoutComponent component={ReportPage}
-                                           completedSteps={this.state.completedSteps}/>)}
-                {this.renderRoute('/license',
-                  <StandardLayoutComponent component={LicensePage}
-                                           onStatusChange={this.updateStatus}
-                                           completedSteps={this.state.completedSteps}/>)}
-                <Route component={NotFoundPage}/>
-              </Switch>
-            </Col>
+            <Switch>
+              <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
+              <Route path='/register' render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
+              {this.renderRoute('/',
+                <StandardLayoutComponent component={RunServerPage}
+                                         completedSteps={this.state.completedSteps}
+                                         onStatusChange={this.updateStatus}
+                />,
+                true)}
+              {this.renderRoute('/configure',
+                <StandardLayoutComponent component={ConfigurePage}
+                                         onStatusChange={this.updateStatus}
+                                         completedSteps={this.state.completedSteps}/>)}
+              {this.renderRoute('/run-monkey',
+                <StandardLayoutComponent component={RunMonkeyPage}
+                                         onStatusChange={this.updateStatus}
+                                         completedSteps={this.state.completedSteps}/>)}
+              {this.renderRoute('/infection/map',
+                <StandardLayoutComponent component={MapPage}
+                                         onStatusChange={this.updateStatus}
+                                         completedSteps={this.state.completedSteps}/>)}
+              {this.renderRoute('/infection/telemetry',
+                <StandardLayoutComponent component={TelemetryPage}
+                                         onStatusChange={this.updateStatus}
+                                         completedSteps={this.state.completedSteps}/>)}
+              {this.renderRoute('/start-over',
+                <StandardLayoutComponent component={StartOverPage}
+                                         onStatusChange={this.updateStatus}
+                                         completedSteps={this.state.completedSteps}/>)}
+              {this.redirectTo('/report', '/report/security')}
+              {this.renderRoute('/report/security',
+                <StandardLayoutComponent component={ReportPage}
+                                         completedSteps={this.state.completedSteps}/>)}
+              {this.renderRoute('/report/attack',
+                <StandardLayoutComponent component={ReportPage}
+                                         completedSteps={this.state.completedSteps}/>)}
+              {this.renderRoute('/report/zeroTrust',
+                <StandardLayoutComponent component={ReportPage}
+                                         completedSteps={this.state.completedSteps}/>)}
+              {this.renderRoute('/license',
+                <StandardLayoutComponent component={LicensePage}
+                                         onStatusChange={this.updateStatus}
+                                         completedSteps={this.state.completedSteps}/>)}
+              <Route component={NotFoundPage}/>
+            </Switch>
           </Row>
-        </Grid>
+        </Container>
       </Router>
     );
   }

@@ -1,21 +1,28 @@
 import React from 'react';
-import {Col} from 'react-bootstrap';
+import {Row, Col, Container, Form, Button} from 'react-bootstrap';
+import Particles from 'react-particles-js';
 
 import AuthService from '../../services/AuthService';
+import '../../styles/RegisterPage.scss';
+import {particleParams} from '../../styles/particle-component/RegistrationPageParams';
+import monkeyDetective from '../../images/detective-monkey.svg';
 
 class RegisterPageComponent extends React.Component {
 
   register = () => {
     this.auth.register(this.username, this.password).then(res => {
-      this.setState({failed: false, error: ""});
+      this.setState({failed: false, error: ''});
       if (res['result']) {
         this.redirectToHome();
       } else {
-        this.setState({failed: true,
-                            error: res['error']});
+        this.setState({
+          failed: true,
+          error: res['error']
+        });
       }
     });
   };
+
   updateUsername = (evt) => {
     this.username = evt.target.value;
   };
@@ -23,6 +30,7 @@ class RegisterPageComponent extends React.Component {
   updatePassword = (evt) => {
     this.password = evt.target.value;
   };
+
   redirectToHome = () => {
     window.location.href = '/';
   };
@@ -39,7 +47,7 @@ class RegisterPageComponent extends React.Component {
 
     this.auth.needsRegistration()
       .then(result => {
-        if(!result){
+        if (!result) {
           this.redirectToHome()
         }
       })
@@ -47,37 +55,39 @@ class RegisterPageComponent extends React.Component {
 
   render() {
     return (
-      <Col xs={12} lg={8}>
-        <h1 className="page-title">First time?</h1>
-        <h3 className="page-title">Let's secure your island</h3>
-        <div className="col-sm-6 col-sm-offset-3" style={{'fontSize': '1.2em'}}>
-          <div className="panel panel-default">
-            <div className="panel-heading text-center">
-              <b>Register</b>
-            </div>
-            <div className="panel-body">
-              <div className="input-group center-block text-center">
-                <input type="text" className="form-control" placeholder="Username"
-                       onChange={evt => this.updateUsername(evt)}/>
-                <input type="password" className="form-control" placeholder="Password"
-                       onChange={evt => this.updatePassword(evt)}/>
-                <button type="button" className="btn btn-primary btn-lg" style={{margin: '5px'}}
-                        onClick={() => {
-                          this.register()
-                        }}>
-                  Lets Go!
-                </button>
-                {
-                  this.state.failed ?
-                    <div className="alert alert-danger" role="alert">{this.state.error}</div>
-                    :
-                    ''
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-      </Col>
+      <Container fluid className={'registration-container'}>
+        <Particles className={'particle-background'} params={particleParams}/>
+        <Row>
+          <Col xs={12} lg={{span: 6, offset: 3}} md={{span: 7, offset: 3}} className={'registration-block'}>
+            <Row>
+              <Col lg={8} md={8} sm={8}>
+                <h1 className='reg-title'>First time?</h1>
+                <h3 className='reg-subtitle'>Let's secure your island!</h3>
+                <div>
+                  <Form className={'registration-form'}>
+                    <Form.Control type='text' placeholder='Username'/>
+                    <Form.Control type='password' placeholder='Password'/>
+                    <Button id={'registration-button'} onClick={() => {
+                      this.register()
+                    }}>
+                      Lets Go!
+                    </Button>
+                    {
+                      this.state.failed ?
+                        <div className='alert alert-danger' role='alert'>{this.state.error}</div>
+                        :
+                        ''
+                    }
+                  </Form>
+                </div>
+              </Col>
+              <Col lg={4} md={4} sm={4}>
+                <img alt="infection monkey" className={'monkey-detective'} src={monkeyDetective}/>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
