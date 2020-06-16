@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 from monkey_island.cc.app import init_app
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list
 from monkey_island.cc.network_utils import local_ip_addresses
-from monkey_island.cc.environment.environment_singleton import env
+import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.database import is_db_server_up, get_db_version
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from common.version import get_version
@@ -33,7 +33,7 @@ from monkey_island.cc.setup import setup
 
 def main(should_setup_only=False):
     logger.info("Starting bootloader server")
-    mongo_url = os.environ.get('MONGO_URL', env.get_mongo_url())
+    mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True)
 
     bootloader_server_thread.start()
@@ -46,7 +46,7 @@ def start_island_server(should_setup_only):
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
 
-    mongo_url = os.environ.get('MONGO_URL', env.get_mongo_url())
+    mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)
     assert_mongo_db_version(mongo_url)
 
@@ -62,13 +62,13 @@ def start_island_server(should_setup_only):
         logger.warning("Setup only flag passed. Exiting.")
         return
 
-    if env.is_debug():
+    if env_singleton.env.is_debug():
         app.run(host='0.0.0.0', debug=True, ssl_context=(crt_path, key_path))
     else:
         http_server = HTTPServer(WSGIContainer(app),
                                  ssl_options={'certfile': os.environ.get('SERVER_CRT', crt_path),
                                               'keyfile': os.environ.get('SERVER_KEY', key_path)})
-        http_server.listen(env.get_island_port())
+        http_server.listen(env_singleton.env.get_island_port())
         log_init_info()
         IOLoop.instance().start()
 
@@ -77,7 +77,7 @@ def log_init_info():
     logger.info('Monkey Island Server is running!')
     logger.info(f"version: {get_version()}")
     logger.info('Listening on the following URLs: {}'.format(
-            ", ".join(["https://{}:{}".format(x, env.get_island_port()) for x in local_ip_addresses()])
+            ", ".join(["https://{}:{}".format(x, env_singleton.env.get_island_port()) for x in local_ip_addresses()])
         )
     )
     MonkeyDownload.log_executable_hashes()

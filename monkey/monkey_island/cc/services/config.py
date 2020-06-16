@@ -6,7 +6,7 @@ from jsonschema import Draft4Validator, validators
 import monkey_island.cc.services.post_breach_files
 
 from monkey_island.cc.database import mongo
-from monkey_island.cc.environment.environment_singleton import env
+import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.network_utils import local_ip_addresses
 from .config_schema import SCHEMA
 from monkey_island.cc.encryptor import encryptor
@@ -216,8 +216,8 @@ class ConfigService:
     @staticmethod
     def set_server_ips_in_config(config):
         ips = local_ip_addresses()
-        config["cnc"]["servers"]["command_servers"] = ["%s:%d" % (ip, env.get_island_port()) for ip in ips]
-        config["cnc"]["servers"]["current_server"] = "%s:%d" % (ips[0], env.get_island_port())
+        config["cnc"]["servers"]["command_servers"] = ["%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips]
+        config["cnc"]["servers"]["current_server"] = "%s:%d" % (ips[0], env_singleton.env.get_island_port())
 
     @staticmethod
     def save_initial_config_if_needed():

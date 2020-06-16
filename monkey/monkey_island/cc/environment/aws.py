@@ -9,8 +9,8 @@ class AwsEnvironment(Environment):
 
     _credentials_required = True
 
-    def __init__(self):
-        super(AwsEnvironment, self).__init__()
+    def __init__(self, config):
+        super(AwsEnvironment, self).__init__(config)
         # Not suppressing error here on purpose. This is critical if we're on AWS env.
         self.aws_info = AwsInstance()
         self._instance_id = self._get_instance_id()

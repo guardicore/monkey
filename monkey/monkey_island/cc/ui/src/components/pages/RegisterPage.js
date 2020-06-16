@@ -9,6 +9,8 @@ import monkeyDetective from '../../images/detective-monkey.svg';
 
 class RegisterPageComponent extends React.Component {
 
+  NO_AUTH_API_ENDPOINT = '/api/environment';
+
   register = () => {
     this.auth.register(this.username, this.password).then(res => {
       this.setState({failed: false, error: ''});
@@ -22,6 +24,29 @@ class RegisterPageComponent extends React.Component {
       }
     });
   };
+
+  setNoAuth = () => {
+    let options = {}
+    options['headers'] = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    };
+    options['method'] = 'PATCH'
+    options['body'] = JSON.stringify({'server_config': 'standard'})
+
+    return fetch(this.NO_AUTH_API_ENDPOINT, options)
+      .then(res => {
+        if (res.status === 200) {
+          this.auth.attemptNoAuthLogin().then(() => {
+            this.redirectToHome();
+          });
+        }
+        this.setState({
+          failed: true,
+          error: res['error']
+        });
+      })
+  }
 
   updateUsername = (evt) => {
     this.username = evt.target.value;
@@ -72,6 +97,9 @@ class RegisterPageComponent extends React.Component {
                     }}>
                       Lets Go!
                     </Button>
+                    <a href='#' onClick={this.setNoAuth} className={'no-auth-link'}>
+                      I want anyone to access the island
+                    </a>
                     {
                       this.state.failed ?
                         <div className='alert alert-danger' role='alert'>{this.state.error}</div>

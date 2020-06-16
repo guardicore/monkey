@@ -23,8 +23,8 @@ class Environment(object, metaclass=ABCMeta):
 
     _testing = False
 
-    def __init__(self):
-        self._config = EnvironmentConfig("", "", UserCreds())
+    def __init__(self, config: EnvironmentConfig):
+        self._config = config
         self._testing = False  # Assume env is not for unit testing.
 
     @property
@@ -72,8 +72,11 @@ class Environment(object, metaclass=ABCMeta):
     def testing(self, value):
         self._testing = value
 
-    def set_config(self, config: EnvironmentConfig):
-        self._config = config
+    def save_config(self):
+        self._config.save_to_file()
+
+    def get_config(self) -> EnvironmentConfig:
+        return self._config
 
     def get_island_port(self):
         return self._ISLAND_PORT
@@ -93,11 +96,14 @@ class Environment(object, metaclass=ABCMeta):
         hash_obj.update(secret.encode('utf-8'))
         return hash_obj.hexdigest()
 
-    def get_deployment(self):
+    def get_deployment(self) -> str:
         deployment = 'unknown'
         if self._config and self._config.deployment:
             deployment = self._config.deployment
         return deployment
+
+    def set_deployment(self, deployment: str):
+        self._config.deployment = deployment
 
     @property
     def mongo_db_name(self):

@@ -1,3 +1,4 @@
+from monkey_island.cc.environment import EnvironmentConfig, UserCreds
 from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 from monkey_island.cc.environment.aws import AwsEnvironment
@@ -7,7 +8,7 @@ import hashlib
 
 class TestAwsEnvironment(IslandTestCase):
     def test_get_auth_users(self):
-        env = AwsEnvironment()
+        env = AwsEnvironment(EnvironmentConfig("", "", UserCreds()))
         # This is "injecting" the instance id to the env. This is the UTs aren't always executed on the same AWS machine
         # (might not be an AWS machine at all).
         # Perhaps it would have been more elegant to create a Mock, but not worth it for

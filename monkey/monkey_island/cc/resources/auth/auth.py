@@ -4,23 +4,23 @@ from flask import current_app, abort
 from flask_jwt import JWT, _jwt_required, JWTError
 from werkzeug.security import safe_str_cmp
 
-from monkey_island.cc.environment.environment_singleton import env
-from monkey_island.cc.resources.auth.user_store import UserStore
+import monkey_island.cc.environment.environment_singleton as env_singleton
+import monkey_island.cc.resources.auth.user_store as user_store
 
 __author__ = 'itay.mizeretz'
 
 
 def init_jwt(app):
-    UserStore.set_users(env.get_auth_users())
+    user_store.UserStore.set_users(env_singleton.env.get_auth_users())
 
     def authenticate(username, secret):
-        user = UserStore.username_table.get(username, None)
+        user = user_store.UserStore.username_table.get(username, None)
         if user and safe_str_cmp(user.secret.encode('utf-8'), secret.encode('utf-8')):
             return user
 
     def identity(payload):
         user_id = payload['identity']
-        return UserStore.userid_table.get(user_id, None)
+        return user_store.UserStore.userid_table.get(user_id, None)
 
     JWT(app, authenticate, identity)
 
