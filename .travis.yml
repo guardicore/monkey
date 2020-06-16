@@ -33,6 +33,15 @@ install:
 - node --version
 - npm --version
 
+# linuxbrew (for hugo)
+- test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
+- test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+- test -r ~/.bash_profile && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.bash_profile
+- echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
+
+# hugo (for documentation)
+- brew install hugo
+
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
 - python monkey/monkey_island/cc/set_server_config.py testing
@@ -67,6 +76,10 @@ script:
 - eslint ./src --quiet  # Test for errors
 - JS_WARNINGS_AMOUNT_UPPER_LIMIT=490
 - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # Test for max warnings
+
+# Build documentation
+- cd $TRAVIS_BUILD_DIR/docs
+- hugo --verbose
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
