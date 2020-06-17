@@ -41,6 +41,8 @@ install:
 
 # hugo (for documentation)
 - brew install hugo
+# print hugo version (useful for debugging documentation build errors)
+- hugo version
 
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
@@ -79,7 +81,7 @@ script:
 
 # Build documentation
 - cd $TRAVIS_BUILD_DIR/docs
-- hugo --verbose
+- hugo --verbose --environment staging
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information

@@ -1,5 +1,6 @@
 # when deploying to prod, use baseURL = "https://www.guardicore.com/infectionmonkey/docs"
-baseURL = "https://staging-covuyicu.kinsta.cloud/infectionmonkey/docs/"
+# baseURL = "https://staging-covuyicu.kinsta.cloud/infectionmonkey/docs/"
+baseURL = ""
 languageCode = "en-us"
 title = "Guardicore Infection Monkey - Documentation Hub"
 
@@ -60,3 +61,7 @@ name = "<i class='fas fa-inbox'></i> Email"
 identifier = "email"
 url = "https://join.slack.com/t/infectionmonkey/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU"
 weight = 40
+
+# Enables raw html in markdown.
+[markup.goldmark.renderer]
+unsafe = true

@@ -4,7 +4,7 @@ date: 2020-05-26T18:15:37+03:00
 draft: false
 ---
 
-Welcome to the Infection Monkey documenation hub!
+Welcome to the Infection Monkey documentation hub!
 
 ## What is Infection Monkey?
 
@@ -19,7 +19,7 @@ To read more about the Monkey and download it, visit [our homepage](https://infe
 
 ## Getting Started
 
-If you haven't downloaded Infection Monkey yet you can do so [from our homepage](https://infectionmonkey.com/). After downloadling the Monkey, install it using one of our [setup guides](setup), and read our [getting started guide](usage/getting-started) for a quick-start on Monkey!
+If you haven't downloaded Infection Monkey yet you can do so [from our homepage](https://infectionmonkey.com/). After downloading the Monkey, install it using one of our [setup guides](setup), and read our [getting started guide](usage/getting-started) for a quick-start on Monkey!
 
 ## Support and community
 
