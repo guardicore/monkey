@@ -3,7 +3,6 @@ import {Row, Col, Container, Form, Button} from 'react-bootstrap';
 import Particles from 'react-particles-js';
 
 import AuthService from '../../services/AuthService';
-import '../../styles/RegisterPage.scss';
 import {particleParams} from '../../styles/particle-component/RegistrationPageParams';
 import monkeyDetective from '../../images/detective-monkey.svg';
 
@@ -80,19 +79,20 @@ class RegisterPageComponent extends React.Component {
 
   render() {
     return (
-      <Container fluid className={'registration-container'}>
+      <Container fluid className={'auth-container'}>
         <Particles className={'particle-background'} params={particleParams}/>
         <Row>
-          <Col xs={12} lg={{span: 6, offset: 3}} md={{span: 7, offset: 3}} className={'registration-block'}>
+          <Col xs={12} lg={{span: 6, offset: 3}} md={{span: 7, offset: 3}}
+               className={'auth-block'}>
             <Row>
               <Col lg={8} md={8} sm={8}>
                 <h1 className='reg-title'>First time?</h1>
                 <h3 className='reg-subtitle'>Let's secure your island!</h3>
                 <div>
-                  <Form className={'registration-form'}>
+                  <Form className={'auth-form'}>
                     <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
                     <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
-                    <Button id={'registration-button'} onClick={() => {
+                    <Button id={'auth-button'} onClick={() => {
                       this.register()
                     }}>
                       Lets Go!

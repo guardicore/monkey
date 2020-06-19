@@ -1,7 +1,10 @@
 import React from 'react';
-import {Col} from 'react-bootstrap';
+import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 
 import AuthService from '../../services/AuthService';
+import Particles from "react-particles-js";
+import {particleParams} from "../../styles/particle-component/RegistrationPageParams";
+import monkeyDetective from "../../images/militant-monkey.svg";
 
 class LoginPageComponent extends React.Component {
   login = () => {
@@ -41,7 +44,7 @@ class LoginPageComponent extends React.Component {
 
     this.auth.needsRegistration()
       .then(result => {
-        if(result){
+        if (result) {
           this.redirectToRegistration()
         }
       })
@@ -55,39 +58,38 @@ class LoginPageComponent extends React.Component {
 
   render() {
     return (
-      <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
-           lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
-           className={'main'}>
-        <h1 className="page-title">Login</h1>
-        <div style={{'fontSize': '1.2em'}}>
-          <div className="panel panel-default">
-            <div className="panel-heading text-center">
-              <b>Login</b>
-            </div>
-            <div className="panel-body">
-              <div className="input-group center-block text-center">
-                <input type="text" className="form-control" placeholder="Username"
-                       onChange={evt => this.updateUsername(evt)}/>
-                <input type="password" className="form-control" placeholder="Password"
-                       onChange={evt => this.updatePassword(evt)}/>
-                <button type="button" className="btn btn-primary btn-lg" style={{margin: '5px'}}
-                        onClick={() => {
-                          this.login()
-                        }}>
-                  Login
-                </button>
-                {
-                  this.state.failed ?
-                    <div className="alert alert-danger" role="alert">Login failed. Bad credentials.</div>
-                    :
-                    ''
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-      </Col>
-    );
+      <Container fluid className={'auth-container'}>
+        <Particles className={'particle-background'} params={particleParams}/>
+        <Row>
+          <Col xs={12} lg={{span: 6, offset: 3}} md={{span: 7, offset: 3}} className={'auth-block'}>
+            <Row>
+              <Col lg={8} md={8} sm={8}>
+                <h1 className='auth-title'>Login</h1>
+                <div>
+                  <Form className={'auth-form'}>
+                    <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
+                    <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
+                    <Button id={'auth-button'} onClick={() => {
+                      this.login()
+                    }}>
+                      Login
+                    </Button>
+                    {
+                      this.state.failed ?
+                        <div className="alert alert-danger" role="alert">Login failed. Bad credentials.</div>
+                        :
+                        ''
+                    }
+                  </Form>
+                </div>
+              </Col>
+              <Col lg={4} md={4} sm={4}>
+                <img alt="infection monkey" className={'monkey-detective'} src={monkeyDetective}/>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Container>)
   }
 }
 
