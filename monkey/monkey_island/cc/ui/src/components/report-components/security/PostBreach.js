@@ -68,8 +68,8 @@ class PostBreachComponent extends React.Component {
       <>
         <p>
           The Monkey performed <span
-          className="label label-danger">{pbaCount}</span> post-breach {Pluralize('action', pbaCount)} on <span
-          className="label label-warning">{pbaMachines.length}</span> {Pluralize('machine', pbaMachines.length)}:
+          className="badge badge-danger">{pbaCount}</span> post-breach {Pluralize('action', pbaCount)} on <span
+          className="badge badge-warning">{pbaMachines.length}</span> {Pluralize('machine', pbaMachines.length)}:
         </p>
         <div className="data-table-container">
           <ReactTable

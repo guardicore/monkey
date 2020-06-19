@@ -38,7 +38,7 @@ class BreachedServersComponent extends React.Component {
       <>
         <p>
           The Monkey successfully breached <span
-          className="label label-danger">{this.props.data.length}</span> {Pluralize('machine', this.props.data.length)}:
+          className="badge badge-danger">{this.props.data.length}</span> {Pluralize('machine', this.props.data.length)}:
         </p>
         <div className="data-table-container">
           <ReactTable

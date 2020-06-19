@@ -1,5 +1,7 @@
-$blue: #337ab7;
+div.run-on-os-buttons {
+  margin-bottom: 20px;
+}
 
-#bootstrap-override.runOnOsButtons > li.active > a{
-  background-color: $blue !important;
+div.run-on-os-buttons > .nav-item{
+  margin: 0 10px 0 10px;
 }

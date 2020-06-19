@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import marked from 'marked';
-import '../../../styles/report/AttackReport.scss';
 
 
 class MitigationsComponent extends React.Component {

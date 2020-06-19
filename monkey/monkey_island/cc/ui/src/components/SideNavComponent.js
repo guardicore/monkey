@@ -14,7 +14,7 @@ class SideNavComponent extends React.Component {
 
   render() {
     return (
-      <Col sm={3} md={2} className='sidebar'>
+      <>
         <div className='header'>
           <img alt="logo" src={logoImage} style={{width: '5vw', margin: '15px'}}/>
           <img src={infectionMonkeyImage} style={{width: '15vw'}} alt='Infection Monkey'/>
@@ -26,7 +26,7 @@ class SideNavComponent extends React.Component {
               <span className='number'>1.</span>
               Run Monkey Island Server
               {this.props.completedSteps.run_server ?
-                <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
+                <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
                 : ''}
             </NavLink>
           </li>
@@ -35,7 +35,7 @@ class SideNavComponent extends React.Component {
               <span className='number'>2.</span>
               Run Monkey
               {this.props.completedSteps.run_monkey ?
-                <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
+                <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
                 : ''}
             </NavLink>
           </li>
@@ -44,7 +44,7 @@ class SideNavComponent extends React.Component {
               <span className='number'>3.</span>
               Infection Map
               {this.props.completedSteps.infection_done ?
-                <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
+                <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
                 : ''}
             </NavLink>
           </li>
@@ -58,7 +58,7 @@ class SideNavComponent extends React.Component {
               <span className='number'>4.</span>
               Security Reports
               {this.props.completedSteps.report_done ?
-                <FontAwesomeIcon icon={faCheck} className='pull-right checkmark text-success'/>
+                <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
                 : ''}
             </NavLink>
           </li>
@@ -87,7 +87,7 @@ class SideNavComponent extends React.Component {
           <NavLink to='/license'>License</NavLink>
         </div>
         <VersionComponent/>
-      </Col>)
+      </>)
   }
 }
 

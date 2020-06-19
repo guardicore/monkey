@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Collapse, Well} from 'react-bootstrap';
+import {Button, Collapse, Card} from 'react-bootstrap';
 
 class CollapsibleWellComponent extends React.Component {
   constructor(props) {
@@ -12,18 +12,19 @@ class CollapsibleWellComponent extends React.Component {
   render() {
     let well =
       (
-        <Well style={{margin: '10px'}}>
+        <Card body>
           {this.props.children}
-        </Well>
+        </Card>
       );
 
     return (
       <div>
         <div className="no-print">
-          <Button onClick={() => this.setState({open: !this.state.open})} bsStyle="link">
+          <Button onClick={() => this.setState({open: !this.state.open})}
+                  variant="link">
             Read More...
           </Button>
-          <Collapse in={this.state.open}>
+          <Collapse in={this.state.open} style={{margin: '10px'}}>
             <div>
               {well}
             </div>

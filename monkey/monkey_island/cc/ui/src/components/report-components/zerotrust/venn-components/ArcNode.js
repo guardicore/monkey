@@ -12,21 +12,19 @@ class ArcNode extends React.Component {
 
     return (
       <g transform={'rotate(180)'} id={data.node.pillar} key={prefix + 'arcGroup' + index}>
-        <OverlayTrigger ref={'overlay'} key={prefix + 'arcOverlayTrigger' + index} trigger={null}
+        <OverlayTrigger key={prefix + 'arcOverlayTrigger' + index}
+                        trigger={['hover', 'focus']}
                         placement={data.popover}
-                        overlay={<Popover id={prefix + 'ArcPopover' + index} style={{backgroundColor: data.hex}}
-                                          title={data.node.pillar}>{data.tooltip}</Popover>} rootClose>
+                        overlay={<Popover id={prefix + 'ArcPopover' + index} style={{backgroundColor: data.hex}}>
+                          <Popover.Title>{data.node.pillar}</Popover.Title>
+                          <Popover.Content>{data.tooltip}</Popover.Content>
+                        </Popover>} rootClose>
           <path
-
             id={prefix + 'Node_' + index}
             className={'arcNode'}
             data-tooltip={data.tooltip}
             d={arc()}
             fill={data.hex}
-            onClick={this.handleClick.bind(this)}
-            onMouseEnter={this.handleOver.bind(this)}
-            onMouseLeave={this.handleOut.bind(this)}
-
           />
         </OverlayTrigger>
         <text x={0} dy={data.fontStyle.size * 1.2} fontSize={data.fontStyle.size} fill={'white'} textAnchor='middle'
@@ -38,23 +36,6 @@ class ArcNode extends React.Component {
         </text>
       </g>
     );
-  }
-
-
-  handleClick() {
-    this.props.disableHover(this.refs.overlay);
-  }
-
-  handleOver() {
-    if (this.props.hover) {
-      this.refs.overlay.show();
-    }
-  }
-
-  handleOut() {
-    if (this.props.hover) {
-      this.refs.overlay.hide();
-    }
   }
 }
 

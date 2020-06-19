@@ -27,10 +27,10 @@ export default class EventsModal extends AuthComponent {
             <hr/>
             <p>
               There {Pluralize('is', this.props.event_count)} {<div
-              className={'label label-primary'}>{this.props.event_count}</div>}
+              className={'badge badge-primary'}>{this.props.event_count}</div>}
               {Pluralize('event', this.props.event_count)} associated
               with this finding.
-              {<div className={'label label-primary'}>
+              {<div className={'badge badge-primary'}>
                 {this.props.latest_events.length + this.props.oldest_events.length}
               </div>} {Pluralize('is', this.props.event_count)} displayed below.
               All events can be exported to json.

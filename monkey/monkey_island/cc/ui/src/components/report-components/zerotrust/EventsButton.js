@@ -32,7 +32,7 @@ export default class EventsButton extends Component {
                    hideCallback={this.hide}
                    exportFilename={this.props.exportFilename}/>
       <div className="text-center" style={{'display': 'grid'}}>
-        <Button className="btn btn-primary btn-lg" onClick={this.show}>
+        <Button variant={'monkey-alt'} size={'lg'} onClick={this.show}>
           <FontAwesomeIcon icon={faList}/> Events {this.createEventsAmountBadge()}
         </Button>
       </div>
@@ -41,7 +41,7 @@ export default class EventsButton extends Component {
 
   createEventsAmountBadge() {
     const eventsAmountBadgeContent = this.props.event_count > 9 ? '9+' : this.props.event_count;
-    return <Badge>{eventsAmountBadgeContent}</Badge>;
+    return <Badge variant={'alt-light'}>{eventsAmountBadgeContent}</Badge>;
   }
 }
 

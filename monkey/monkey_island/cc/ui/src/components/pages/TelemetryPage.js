@@ -1,9 +1,13 @@
 import React from 'react';
 import {Button, Col} from 'react-bootstrap';
-import JSONTree from 'react-json-tree'
+import JSONTree from 'react-json-tree';
 import {DataTable} from 'react-data-components';
 import AuthComponent from '../AuthComponent';
-import download from 'downloadjs'
+import download from 'downloadjs';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+
+import '../../styles/TelemetryPage.scss';
+import {faDownload} from "@fortawesome/free-solid-svg-icons/faDownload";
 
 const renderJson = (val) => <JSONTree data={val} level={1} theme="eighties" invertTheme={true}/>;
 const renderTime = (val) => val.split('.')[0];
@@ -41,9 +45,10 @@ class TelemetryPageComponent extends AuthComponent {
 
   render() {
     return (
-      <div>
+      <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
+           lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
+           className={'main'}>
         <div>
-          <Col xs={12} lg={8}>
             <h1 className="page-title">Log</h1>
             <div className="data-table-container">
               <DataTable
@@ -55,21 +60,18 @@ class TelemetryPageComponent extends AuthComponent {
                 pageLengthOptions={[20, 50, 100]}
               />
             </div>
-          </Col>
         </div>
         <div>
-          <Col xs={12} lg={8}>
             <h1 className="page-title"> Monkey Island Logs </h1>
             <div className="text-center" style={{marginBottom: '20px'}}>
               <p style={{'marginBottom': '2em', 'fontSize': '1.2em'}}> Download Monkey Island internal log file </p>
               <Button bsSize="large" onClick={() => {
                 this.downloadIslandLog();
               }}>
-                <i className="glyphicon glyphicon-download"/> Download </Button>
+                <FontAwesomeIcon icon={faDownload}/> Download </Button>
             </div>
-          </Col>
         </div>
-      </div>
+      </Col>
     );
   }
 }

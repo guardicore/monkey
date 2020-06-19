@@ -23,7 +23,7 @@ const pillarToIcon = {
 
 export default class PillarLabel extends Component {
   render() {
-    const className = 'label ' + statusToLabelType[this.props.status];
+    const className = 'badge ' + statusToLabelType[this.props.status];
     return <div className={className} style={{margin: '2px', display: 'inline-block'}}>
       <FontAwesomeIcon icon={pillarToIcon[this.props.pillar]}/> {this.props.pillar}</div>
   }

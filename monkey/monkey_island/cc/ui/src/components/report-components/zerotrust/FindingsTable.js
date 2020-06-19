@@ -5,7 +5,7 @@ import * as PropTypes from 'prop-types';
 import PillarLabel from './PillarLabel';
 import EventsButton from './EventsButton';
 
-const EVENTS_COLUMN_MAX_WIDTH = 160;
+const EVENTS_COLUMN_MAX_WIDTH = 170;
 const PILLARS_COLUMN_MAX_WIDTH = 200;
 const columns = [
   {

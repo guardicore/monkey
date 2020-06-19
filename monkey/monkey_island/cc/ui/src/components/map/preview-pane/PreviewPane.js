@@ -1,6 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons/faHandPointLeft'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faHandPointLeft} from '@fortawesome/free-solid-svg-icons/faHandPointLeft'
+import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons/faQuestionCircle'
 import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import download from 'downloadjs'
@@ -10,8 +11,10 @@ class PreviewPaneComponent extends AuthComponent {
 
   generateToolTip(text) {
     return (
-      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip">{text}</Tooltip>}>
-        <a><i className="glyphicon glyphicon-info-sign"/></a>
+      <OverlayTrigger placement="top"
+                      overlay={<Tooltip id="tooltip">{text}</Tooltip>}
+                      delay={{ show: 250, hide: 400 }}>
+        <a><FontAwesomeIcon icon={faQuestionCircle} style={{'marginRight': '0.5em'}}/></a>
       </OverlayTrigger>
     );
   }
