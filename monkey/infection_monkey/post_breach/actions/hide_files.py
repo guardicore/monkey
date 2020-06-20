@@ -34,8 +34,5 @@ class HiddenFiles(PBA):
             result, status = get_winAPI_to_hide_files()
             PostBreachTelem(self, (result, status)).send()
 
-        # detection time for AV software
-        time.sleep(10)
-
         # cleanup hidden files and folders
         cleanup_hidden_files(is_windows_os())
