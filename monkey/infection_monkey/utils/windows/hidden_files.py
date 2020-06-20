@@ -1,6 +1,6 @@
-HIDDEN_FILE = "%temp%\\monkey-hidden-file"
-HIDDEN_FILE_WINAPI = "%temp%\\monkey-hidden-file-winAPI"
-HIDDEN_FOLDER = "%temp%\\monkey-hidden-folder"
+HIDDEN_FILE = "%homepath%\\monkey-hidden-file"
+HIDDEN_FILE_WINAPI = "%homepath%\\monkey-hidden-file-winAPI"
+HIDDEN_FOLDER = "%homepath%\\monkey-hidden-folder"
 
 
 def get_windows_commands_to_hide_files():
@@ -10,8 +10,9 @@ def get_windows_commands_to_hide_files():
         '>',
         HIDDEN_FILE,
         '&&',
-        'attrib',       # change file attributes
-        '+h',           # make hidden
+        'attrib',  # change file attributes
+        '+h',  # hidden attribute
+        '+s',  # system attribute
         HIDDEN_FILE,
         '&&',
         'type',
@@ -25,7 +26,8 @@ def get_windows_commands_to_hide_folders():
         HIDDEN_FOLDER,  # make directory
         '&&',
         'attrib',
-        '+h',
+        '+h',  # hidden attribute
+        '+s',  # system attribute
         HIDDEN_FOLDER,  # change file attributes
         '&&',
         'echo',
@@ -60,12 +62,12 @@ def get_winAPI_to_hide_files():
 
 def get_windows_commands_to_delete():
     return [
-        'del',          # delete file
-        '-Force',           # force delete
+        'del',  # delete file
+        '-Force',  # force delete
         HIDDEN_FILE,
         HIDDEN_FILE_WINAPI,
         '&&',
-        'rmdir',     # delete folder
+        'rmdir',  # delete folder
         '-Force',
         HIDDEN_FOLDER
     ]
