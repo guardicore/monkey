@@ -21,13 +21,15 @@ class ModifyShellStartupFiles(PBA):
 
 class ShellStartupPBAGenerator():
     def get_modify_shell_startup_pbas():
-        (cmds_for_linux, shell_startup_files_for_linux), windows_cmds = get_commands_to_modify_shell_startup_files()
+        (cmds_for_linux, shell_startup_files_for_linux, usernames_for_linux), windows_cmds =\
+            get_commands_to_modify_shell_startup_files()
 
         pbas = [ModifyShellStartupFile(linux_cmds='', windows_cmds=windows_cmds)]
 
-        for shell_startup_file in shell_startup_files_for_linux:
-            linux_cmds = ' '.join(cmds_for_linux).format(shell_startup_file)
-            pbas.append(ModifyShellStartupFile(linux_cmds=linux_cmds, windows_cmds=''))
+        for username in usernames_for_linux:
+            for shell_startup_file in shell_startup_files_for_linux:
+                linux_cmds = ' '.join(cmds_for_linux).format(shell_startup_file).format(username)
+                pbas.append(ModifyShellStartupFile(linux_cmds=linux_cmds, windows_cmds=''))
 
         return pbas
 

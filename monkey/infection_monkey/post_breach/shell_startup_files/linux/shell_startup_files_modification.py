@@ -1,12 +1,30 @@
+import subprocess
+
+
+HOME_DIR = "/home/"
+
+# get list of usernames
+USERS = subprocess.check_output(
+        "cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1",
+        shell=True
+    ).decode().split('\n')[:-1]
+
+# get list of paths of different shell startup files with place for username
 STARTUP_FILES = [
-    "~/.profile",  # bash, dash, ksh, sh
-    "~/.bashrc", "~/.bash_profile",  # bash
-    "~/.config/fish/config.fish",  # fish
-    "~/.zshrc", "~/.zshenv", "~/.zprofile",  # zsh
-    "~/.kshrc",  # ksh
-    "~/.tcshrc",  # tcsh
-    "~/.cshrc",  # csh
+    file_path.format(HOME_DIR) for file_path in
+    [
+        "{0}{{0}}/.profile",                    # bash, dash, ksh, sh
+        "{0}{{0}}/.bashrc",                     # bash
+        "{0}{{0}}/.bash_profile",
+        "{0}{{0}}/.config/fish/config.fish",    # fish
+        "{0}{{0}}/.zshrc",                      # zsh
+        "{0}{{0}}/.zshenv",
+        "{0}{{0}}/.zprofile",
+        "{0}{{0}}/.kshrc",                      # ksh
+        "{0}{{0}}/.tcshrc",                     # tcsh
+        "{0}{{0}}/.cshrc",                      # csh
     ]
+]
 
 
 def get_linux_commands_to_modify_shell_startup_files():
@@ -16,4 +34,4 @@ def get_linux_commands_to_modify_shell_startup_files():
         'tee -a {0} &&',  # append to file
         'sed -i \'$d\' {0}',  # remove last line of file (undo changes)
     ],\
-     STARTUP_FILES
+     STARTUP_FILES, USERS
