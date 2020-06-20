@@ -37,6 +37,3 @@ class ModifyShellStartupFile(PBA):
         super(ModifyShellStartupFile, self).__init__(name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
                                                      linux_cmd=linux_cmds,
                                                      windows_cmd=windows_cmds)
-
-    def run(self):
-        super(ModifyShellStartupFile, self).run()
