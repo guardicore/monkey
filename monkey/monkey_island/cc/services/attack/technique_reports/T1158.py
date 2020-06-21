@@ -18,14 +18,13 @@ class T1158(AttackTechnique):
         data = {'title': T1158.technique_title(), 'info': []}
 
         scanned_nodes = ReportService.get_scanned()
-        status = ScanStatus.UNSCANNED.value
+        status = []
 
         for node in scanned_nodes:
             if node['pba_results'] != 'None':
                 for pba in node['pba_results']:
                     if pba['name'] == POST_BREACH_HIDDEN_FILES:
-                        status = ScanStatus.USED.value if pba['result'][1]\
-                                                       else ScanStatus.SCANNED.value
+                        status.append(pba['result'][1])
                         data['info'].append({
                                 'machine': {
                                     'hostname': pba['hostname'],
@@ -33,5 +32,7 @@ class T1158(AttackTechnique):
                                 },
                                 'result': pba['result'][0]
                             })
-            data.update(T1158.get_base_data_by_status(status))
+        status = (ScanStatus.USED.value if any(status) else ScanStatus.SCANNED.value)\
+            if status else ScanStatus.UNSCANNEDvalue
+        data.update(T1158.get_base_data_by_status(status))
         return data
