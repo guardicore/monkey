@@ -1,6 +1,11 @@
-HIDDEN_FILE = "%homepath%\\monkey-hidden-file"
-HIDDEN_FILE_WINAPI = "%homepath%\\monkey-hidden-file-winAPI"
-HIDDEN_FOLDER = "%homepath%\\monkey-hidden-folder"
+import os
+
+
+HOME_PATH = os.path.expanduser("~")
+
+HIDDEN_FILE = HOME_PATH + "\\monkey-hidden-file"
+HIDDEN_FOLDER = HOME_PATH + "\\monkey-hidden-folder"
+HIDDEN_FILE_WINAPI = HOME_PATH + "\\monkey-hidden-file-winAPI"
 
 
 def get_windows_commands_to_hide_files():
@@ -62,12 +67,15 @@ def get_winAPI_to_hide_files():
 
 def get_windows_commands_to_delete():
     return [
+        'powershell.exe',
         'del',  # delete file
-        '-Force',  # force delete
+        '-Force',
         HIDDEN_FILE,
+        ',',
         HIDDEN_FILE_WINAPI,
-        '&&',
+        ';',
         'rmdir',  # delete folder
         '-Force',
+        '-Recurse',
         HIDDEN_FOLDER
     ]
