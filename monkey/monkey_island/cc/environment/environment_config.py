@@ -49,7 +49,7 @@ class EnvironmentConfig:
 
     @staticmethod
     def get_config_file_path() -> str:
-        return os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc/server_config.json')
+        return os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server_config.json')
 
     def to_dict(self) -> Dict:
         config_dict = {'server_config': self.server_config,
