@@ -8,7 +8,6 @@ import StolenPasswords from 'components/report-components/security/StolenPasswor
 import CollapsibleWellComponent from 'components/report-components/security/CollapsibleWell';
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
-import PassTheHashMapPageComponent from '../pages/PassTheHashMapPage';
 import StrongUsers from 'components/report-components/security/StrongUsers';
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
