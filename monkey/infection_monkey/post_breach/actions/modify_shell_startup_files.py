@@ -2,7 +2,6 @@ from common.data.post_breach_consts import POST_BREACH_SHELL_STARTUP_FILE_MODIFI
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.shell_startup_files.shell_startup_files_modification import\
     get_commands_to_modify_shell_startup_files
-from infection_monkey.utils.environment import is_windows_os
 
 
 class ModifyShellStartupFiles(PBA):
@@ -21,10 +20,14 @@ class ModifyShellStartupFiles(PBA):
 
 class ShellStartupPBAGenerator():
     def get_modify_shell_startup_pbas():
-        (cmds_for_linux, shell_startup_files_for_linux, usernames_for_linux), windows_cmds =\
-            get_commands_to_modify_shell_startup_files()
+        (cmds_for_linux, shell_startup_files_for_linux, usernames_for_linux),\
+        (cmds_for_windows, shell_startup_files_per_user_for_windows) = get_commands_to_modify_shell_startup_files()
 
-        pbas = [ModifyShellStartupFile(linux_cmds='', windows_cmds=windows_cmds)]
+        pbas = []
+
+        for startup_file_per_user in shell_startup_files_per_user_for_windows:
+            windows_cmds = ' '.join(cmds_for_windows).format(startup_file_per_user)
+            pbas.append(ModifyShellStartupFile(linux_cmds='', windows_cmds=['powershell.exe', windows_cmds]))
 
         for username in usernames_for_linux:
             for shell_startup_file in shell_startup_files_for_linux:
