@@ -7,7 +7,7 @@ from unittest.mock import patch, MagicMock
 from common.utils.exceptions import InvalidRegistrationCredentialsError, AlreadyRegisteredError, \
     CredentialsNotRequiredError, RegistrationNotNeededError
 from monkey_island.cc.environment import Environment, EnvironmentConfig, UserCreds
-from monkey_island.cc.testing.environment.server_config_mocks import *
+import monkey_island.cc.testing.environment.server_config_mocks as config_mocks
 
 
 def get_server_config_file_path_test_version():
@@ -75,32 +75,32 @@ class TestEnvironment(TestCase):
 
     def test_needs_registration(self):
         env = TestEnvironment.EnvironmentCredentialsRequired()
-        self._test_bool_env_method("needs_registration", env, CONFIG_WITH_CREDENTIALS, False)
-        self._test_bool_env_method("needs_registration", env, CONFIG_NO_CREDENTIALS, True)
-        self._test_bool_env_method("needs_registration", env, CONFIG_PARTIAL_CREDENTIALS, True)
+        self._test_bool_env_method("needs_registration", env, config_mocks.CONFIG_WITH_CREDENTIALS, False)
+        self._test_bool_env_method("needs_registration", env, config_mocks.CONFIG_NO_CREDENTIALS, True)
+        self._test_bool_env_method("needs_registration", env, config_mocks.CONFIG_PARTIAL_CREDENTIALS, True)
 
         env = TestEnvironment.EnvironmentCredentialsNotRequired()
-        self._test_bool_env_method("needs_registration", env, CONFIG_STANDARD_ENV, False)
-        self._test_bool_env_method("needs_registration", env, CONFIG_STANDARD_WITH_CREDENTIALS, False)
+        self._test_bool_env_method("needs_registration", env, config_mocks.CONFIG_STANDARD_ENV, False)
+        self._test_bool_env_method("needs_registration", env, config_mocks.CONFIG_STANDARD_WITH_CREDENTIALS, False)
 
     def test_is_registered(self):
         env = TestEnvironment.EnvironmentCredentialsRequired()
-        self._test_bool_env_method("_is_registered", env, CONFIG_WITH_CREDENTIALS, True)
-        self._test_bool_env_method("_is_registered", env, CONFIG_NO_CREDENTIALS, False)
-        self._test_bool_env_method("_is_registered", env, CONFIG_PARTIAL_CREDENTIALS, False)
+        self._test_bool_env_method("_is_registered", env, config_mocks.CONFIG_WITH_CREDENTIALS, True)
+        self._test_bool_env_method("_is_registered", env, config_mocks.CONFIG_NO_CREDENTIALS, False)
+        self._test_bool_env_method("_is_registered", env, config_mocks.CONFIG_PARTIAL_CREDENTIALS, False)
 
         env = TestEnvironment.EnvironmentCredentialsNotRequired()
-        self._test_bool_env_method("_is_registered", env, CONFIG_STANDARD_ENV, False)
-        self._test_bool_env_method("_is_registered", env, CONFIG_STANDARD_WITH_CREDENTIALS, False)
+        self._test_bool_env_method("_is_registered", env, config_mocks.CONFIG_STANDARD_ENV, False)
+        self._test_bool_env_method("_is_registered", env, config_mocks.CONFIG_STANDARD_WITH_CREDENTIALS, False)
 
     def test_is_credentials_set_up(self):
         env = TestEnvironment.EnvironmentCredentialsRequired()
-        self._test_bool_env_method("_is_credentials_set_up", env, CONFIG_NO_CREDENTIALS, False)
-        self._test_bool_env_method("_is_credentials_set_up", env, CONFIG_WITH_CREDENTIALS, True)
-        self._test_bool_env_method("_is_credentials_set_up", env, CONFIG_PARTIAL_CREDENTIALS, False)
+        self._test_bool_env_method("_is_credentials_set_up", env, config_mocks.CONFIG_NO_CREDENTIALS, False)
+        self._test_bool_env_method("_is_credentials_set_up", env, config_mocks.CONFIG_WITH_CREDENTIALS, True)
+        self._test_bool_env_method("_is_credentials_set_up", env, config_mocks.CONFIG_PARTIAL_CREDENTIALS, False)
 
         env = TestEnvironment.EnvironmentCredentialsNotRequired()
-        self._test_bool_env_method("_is_credentials_set_up", env, CONFIG_STANDARD_ENV, False)
+        self._test_bool_env_method("_is_credentials_set_up", env, config_mocks.CONFIG_STANDARD_ENV, False)
 
     def _test_bool_env_method(self, method_name: str, env: Environment, config: Dict, expected_result: bool):
         env._config = EnvironmentConfig.get_from_json(json.dumps(config))
