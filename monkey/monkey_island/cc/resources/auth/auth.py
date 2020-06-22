@@ -20,7 +20,7 @@ def init_jwt(app):
 
     def identity(payload):
         user_id = payload['identity']
-        return user_store.UserStore.userid_table.get(user_id, None)
+        return user_store.UserStore.user_id_table.get(user_id, None)
 
     JWT(app, authenticate, identity)
 

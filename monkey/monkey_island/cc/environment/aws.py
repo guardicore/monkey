@@ -23,7 +23,7 @@ class AwsEnvironment(Environment):
         return self.aws_info.get_region()
 
     def get_auth_users(self):
-        return [
-            # TODO change this to propper registration?
-            User(1, 'monkey', self.hash_secret(self._instance_id))
-        ]
+        if self._is_registered():
+            return self._config.get_users()
+        else:
+            return []

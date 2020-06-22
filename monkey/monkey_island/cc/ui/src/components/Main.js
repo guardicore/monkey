@@ -1,6 +1,6 @@
 import React from 'react';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
-import {Container, Row} from 'react-bootstrap';
+import {Container} from 'react-bootstrap';
 
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
