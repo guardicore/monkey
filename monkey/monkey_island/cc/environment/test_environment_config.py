@@ -8,6 +8,7 @@ from unittest.mock import patch, MagicMock
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
+from monkey_island.cc.testing.environment.server_config_mocks import *
 
 
 def get_server_config_file_path_test_version():
@@ -15,52 +16,11 @@ def get_server_config_file_path_test_version():
 
 
 class TestEnvironmentConfig(TestCase):
-    # Username:test Password:test
-    CONFIG_WITH_CREDENTIALS = {
-        "server_config": "password",
-        "deployment": "develop",
-        "user": "test",
-        "password_hash": "9ece086e9bac491fac5c1d1046ca11d737b92a2b2ebd93f005d7b710110c0a678288166e7fbe796883a"
-                         "4f2e9b3ca9f484f521d0ce464345cc1aec96779149c14"
-    }
-
-    CONFIG_NO_CREDENTIALS = {
-        "server_config": "password",
-        "deployment": "develop"
-    }
-
-    CONFIG_PARTIAL_CREDENTIALS = {
-        "server_config": "password",
-        "deployment": "develop",
-        "user": "test"
-    }
-
-    CONFIG_BOGUS_VALUES = {
-        "server_config": "password",
-        "deployment": "develop",
-        "user": "test",
-        "aws": "test",
-        "test": "test",
-        "test2": "test2"
-    }
-
-    CONFIG_STANDARD_ENV = {
-        "server_config": "standard",
-        "deployment": "develop"
-    }
-
-    CONFIG_STANDARD_WITH_CREDENTIALS = {
-        "server_config": "standard",
-        "deployment": "develop",
-        "user": "test",
-        "password_hash": "9ece086e9bac491fac5c1d1046ca11d737b92a2b2ebd93f005d7b710110c0a678288166e7fbe796883a"
-                         "4f2e9b3ca9f484f521d0ce464345cc1aec96779149c14"
-    }
 
     def test_get_from_json(self):
-        self._test_get_from_json(TestEnvironmentConfig.CONFIG_WITH_CREDENTIALS)
-        self._test_get_from_json(TestEnvironmentConfig.CONFIG_NO_CREDENTIALS)
-        self._test_get_from_json(TestEnvironmentConfig.CONFIG_PARTIAL_CREDENTIALS)
+        self._test_get_from_json(CONFIG_WITH_CREDENTIALS)
+        self._test_get_from_json(CONFIG_NO_CREDENTIALS)
+        self._test_get_from_json(CONFIG_PARTIAL_CREDENTIALS)
 
     def _test_get_from_json(self, config: Dict):
         config_json = json.dumps(config)
@@ -75,9 +35,9 @@ class TestEnvironmentConfig(TestCase):
             self.assertEqual(config['aws'], env_config_object.aws)
 
     def test_save_to_file(self):
-        self._test_save_to_file(TestEnvironmentConfig.CONFIG_WITH_CREDENTIALS)
-        self._test_save_to_file(TestEnvironmentConfig.CONFIG_NO_CREDENTIALS)
-        self._test_save_to_file(TestEnvironmentConfig.CONFIG_PARTIAL_CREDENTIALS)
+        self._test_save_to_file(CONFIG_WITH_CREDENTIALS)
+        self._test_save_to_file(CONFIG_NO_CREDENTIALS)
+        self._test_save_to_file(CONFIG_PARTIAL_CREDENTIALS)
 
     @patch.object(target=EnvironmentConfig, attribute="get_config_file_path",
                   new=MagicMock(return_value=get_server_config_file_path_test_version()))
@@ -103,14 +63,14 @@ class TestEnvironmentConfig(TestCase):
         self.assertEqual(EnvironmentConfig.get_config_file_path(), server_file_path)
 
     def test_get_from_dict(self):
-        config_dict = TestEnvironmentConfig.CONFIG_WITH_CREDENTIALS
+        config_dict = CONFIG_WITH_CREDENTIALS
         env_conf = EnvironmentConfig.get_from_dict(config_dict)
         self.assertEqual(env_conf.server_config, config_dict['server_config'])
         self.assertEqual(env_conf.deployment, config_dict['deployment'])
         self.assertEqual(env_conf.user_creds.username, config_dict['user'])
         self.assertEqual(env_conf.aws, None)
 
-        config_dict = TestEnvironmentConfig.CONFIG_BOGUS_VALUES
+        config_dict = CONFIG_BOGUS_VALUES
         env_conf = EnvironmentConfig.get_from_dict(config_dict)
         self.assertEqual(env_conf.server_config, config_dict['server_config'])
         self.assertEqual(env_conf.deployment, config_dict['deployment'])
@@ -118,13 +78,13 @@ class TestEnvironmentConfig(TestCase):
         self.assertEqual(env_conf.aws, config_dict['aws'])
 
     def test_to_dict(self):
-        conf_json1 = json.dumps(TestEnvironmentConfig.CONFIG_WITH_CREDENTIALS)
+        conf_json1 = json.dumps(CONFIG_WITH_CREDENTIALS)
         self._test_to_dict(EnvironmentConfig.get_from_json(conf_json1))
 
-        conf_json2 = json.dumps(TestEnvironmentConfig.CONFIG_NO_CREDENTIALS)
+        conf_json2 = json.dumps(CONFIG_NO_CREDENTIALS)
         self._test_to_dict(EnvironmentConfig.get_from_json(conf_json2))
 
-        conf_json3 = json.dumps(TestEnvironmentConfig.CONFIG_PARTIAL_CREDENTIALS)
+        conf_json3 = json.dumps(CONFIG_PARTIAL_CREDENTIALS)
         self._test_to_dict(EnvironmentConfig.get_from_json(conf_json3))
 
     def _test_to_dict(self, env_config_object: EnvironmentConfig):

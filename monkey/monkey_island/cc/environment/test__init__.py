@@ -4,8 +4,10 @@ from typing import Dict
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from common.utils.exceptions import InvalidRegistrationCredentials
+from common.utils.exceptions import InvalidRegistrationCredentialsError, AlreadyRegisteredError, \
+    CredentialsNotRequiredError, RegistrationNotNeededError
 from monkey_island.cc.environment import Environment, EnvironmentConfig, UserCreds
+from monkey_island.cc.testing.environment.server_config_mocks import *
 
 
 def get_server_config_file_path_test_version():
@@ -14,94 +16,91 @@ def get_server_config_file_path_test_version():
 
 class TestEnvironment(TestCase):
 
-    class EnvironmentNoCredentials(Environment):
+    class EnvironmentCredentialsNotRequired(Environment):
+        def __init__(self):
+            config = EnvironmentConfig('test', 'test', UserCreds())
+            super().__init__(config)
+
         _credentials_required = False
 
         def get_auth_users(self):
             return []
 
-    class EnvironmentWithCredentials(Environment):
+    class EnvironmentCredentialsRequired(Environment):
+        def __init__(self):
+            config = EnvironmentConfig('test', 'test', UserCreds())
+            super().__init__(config)
+
         _credentials_required = True
 
         def get_auth_users(self):
             return []
 
-    # Username:test Password:test
-    CONFIG_WITH_CREDENTIALS = {
-        "server_config": "password",
-        "deployment": "develop",
-        "user": "test",
-        "password_hash": "9ece086e9bac491fac5c1d1046ca11d737b92a2b2ebd93f005d7b710110c0a678288166e7fbe796883a"
-                "4f2e9b3ca9f484f521d0ce464345cc1aec96779149c14"
-    }
+    class EnvironmentAlreadyRegistered(Environment):
+        def __init__(self):
+            config = EnvironmentConfig('test', 'test', UserCreds('test_user', 'test_secret'))
+            super().__init__(config)
 
-    CONFIG_NO_CREDENTIALS = {
-        "server_config": "password",
-        "deployment": "develop"
-    }
+        _credentials_required = True
 
-    CONFIG_PARTIAL_CREDENTIALS = {
-        "server_config": "password",
-        "deployment": "develop",
-        "user": "test"
-    }
-
-    CONFIG_STANDARD_ENV = {
-        "server_config": "standard",
-        "deployment": "develop"
-    }
-
-    CONFIG_STANDARD_WITH_CREDENTIALS = {
-        "server_config": "standard",
-        "deployment": "develop",
-        "user": "test",
-        "password_hash": "9ece086e9bac491fac5c1d1046ca11d737b92a2b2ebd93f005d7b710110c0a678288166e7fbe796883a"
-                "4f2e9b3ca9f484f521d0ce464345cc1aec96779149c14"
-    }
+        def get_auth_users(self):
+            return [1, "Test_username", "Test_secret"]
 
     @patch.object(target=EnvironmentConfig, attribute="save_to_file", new=MagicMock())
     def test_try_add_user(self):
-        env = TestEnvironment.EnvironmentWithCredentials()
+        env = TestEnvironment.EnvironmentCredentialsRequired()
         credentials = UserCreds(username="test", password_hash="1231234")
         env.try_add_user(credentials)
 
         credentials = UserCreds(username="test")
-        with self.assertRaises(InvalidRegistrationCredentials):
+        with self.assertRaises(InvalidRegistrationCredentialsError):
             env.try_add_user(credentials)
 
-        env = TestEnvironment.EnvironmentNoCredentials()
+        env = TestEnvironment.EnvironmentCredentialsNotRequired()
         credentials = UserCreds(username="test", password_hash="1231234")
-        with self.assertRaises(InvalidRegistrationCredentials):
+        with self.assertRaises(RegistrationNotNeededError):
             env.try_add_user(credentials)
+
+    def test_try_needs_registration(self):
+        env = TestEnvironment.EnvironmentAlreadyRegistered()
+        with self.assertRaises(AlreadyRegisteredError):
+            env._try_needs_registration()
+
+        env = TestEnvironment.EnvironmentCredentialsNotRequired()
+        with self.assertRaises(CredentialsNotRequiredError):
+            env._try_needs_registration()
+
+        env = TestEnvironment.EnvironmentCredentialsRequired()
+        self.assertTrue(env._try_needs_registration())
 
     def test_needs_registration(self):
-        env = TestEnvironment.EnvironmentWithCredentials()
-        self._test_bool_env_method("needs_registration", env, TestEnvironment.CONFIG_WITH_CREDENTIALS, False)
-        self._test_bool_env_method("needs_registration", env, TestEnvironment.CONFIG_NO_CREDENTIALS, True)
-        self._test_bool_env_method("needs_registration", env, TestEnvironment.CONFIG_PARTIAL_CREDENTIALS, True)
+        env = TestEnvironment.EnvironmentCredentialsRequired()
+        self._test_bool_env_method("needs_registration", env, CONFIG_WITH_CREDENTIALS, False)
+        self._test_bool_env_method("needs_registration", env, CONFIG_NO_CREDENTIALS, True)
+        self._test_bool_env_method("needs_registration", env, CONFIG_PARTIAL_CREDENTIALS, True)
 
-        env = TestEnvironment.EnvironmentNoCredentials()
-        self._test_bool_env_method("needs_registration", env, TestEnvironment.CONFIG_STANDARD_ENV, False)
-        self._test_bool_env_method("needs_registration", env, TestEnvironment.CONFIG_STANDARD_WITH_CREDENTIALS, False)
+        env = TestEnvironment.EnvironmentCredentialsNotRequired()
+        self._test_bool_env_method("needs_registration", env, CONFIG_STANDARD_ENV, False)
+        self._test_bool_env_method("needs_registration", env, CONFIG_STANDARD_WITH_CREDENTIALS, False)
 
     def test_is_registered(self):
-        env = TestEnvironment.EnvironmentWithCredentials()
-        self._test_bool_env_method("_is_registered", env, TestEnvironment.CONFIG_WITH_CREDENTIALS, True)
-        self._test_bool_env_method("_is_registered", env, TestEnvironment.CONFIG_NO_CREDENTIALS, False)
-        self._test_bool_env_method("_is_registered", env, TestEnvironment.CONFIG_PARTIAL_CREDENTIALS, False)
+        env = TestEnvironment.EnvironmentCredentialsRequired()
+        self._test_bool_env_method("_is_registered", env, CONFIG_WITH_CREDENTIALS, True)
+        self._test_bool_env_method("_is_registered", env, CONFIG_NO_CREDENTIALS, False)
+        self._test_bool_env_method("_is_registered", env, CONFIG_PARTIAL_CREDENTIALS, False)
 
-        env = TestEnvironment.EnvironmentNoCredentials()
-        self._test_bool_env_method("_is_registered", env, TestEnvironment.CONFIG_STANDARD_ENV, False)
-        self._test_bool_env_method("_is_registered", env, TestEnvironment.CONFIG_STANDARD_WITH_CREDENTIALS, False)
+        env = TestEnvironment.EnvironmentCredentialsNotRequired()
+        self._test_bool_env_method("_is_registered", env, CONFIG_STANDARD_ENV, False)
+        self._test_bool_env_method("_is_registered", env, CONFIG_STANDARD_WITH_CREDENTIALS, False)
 
     def test_is_credentials_set_up(self):
-        env = TestEnvironment.EnvironmentWithCredentials()
-        self._test_bool_env_method("_is_credentials_set_up", env, TestEnvironment.CONFIG_NO_CREDENTIALS, False)
-        self._test_bool_env_method("_is_credentials_set_up", env, TestEnvironment.CONFIG_WITH_CREDENTIALS, True)
-        self._test_bool_env_method("_is_credentials_set_up", env, TestEnvironment.CONFIG_PARTIAL_CREDENTIALS, False)
+        env = TestEnvironment.EnvironmentCredentialsRequired()
+        self._test_bool_env_method("_is_credentials_set_up", env, CONFIG_NO_CREDENTIALS, False)
+        self._test_bool_env_method("_is_credentials_set_up", env, CONFIG_WITH_CREDENTIALS, True)
+        self._test_bool_env_method("_is_credentials_set_up", env, CONFIG_PARTIAL_CREDENTIALS, False)
 
-        env = TestEnvironment.EnvironmentNoCredentials()
-        self._test_bool_env_method("_is_credentials_set_up", env, TestEnvironment.CONFIG_STANDARD_ENV, False)
+        env = TestEnvironment.EnvironmentCredentialsNotRequired()
+        self._test_bool_env_method("_is_credentials_set_up", env, CONFIG_STANDARD_ENV, False)
 
     def _test_bool_env_method(self, method_name: str, env: Environment, config: Dict, expected_result: bool):
         env._config = EnvironmentConfig.get_from_json(json.dumps(config))

@@ -1,14 +1,17 @@
 import hashlib
+import logging
 import os
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
 
 __author__ = 'itay.mizeretz'
 
-
-from common.utils.exceptions import InvalidRegistrationCredentials
+from common.utils.exceptions import InvalidRegistrationCredentialsError, RegistrationNotNeededError, \
+    CredentialsNotRequiredError, AlreadyRegisteredError
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
+
+logger = logging.getLogger(__name__)
 
 
 class Environment(object, metaclass=ABCMeta):
@@ -36,24 +39,29 @@ class Environment(object, metaclass=ABCMeta):
     def get_auth_users(self):
         pass
 
-    def try_add_user(self, credentials: UserCreds):
-        if self._credentials_required:
-            if credentials:
-                if self._is_registered():
-                    raise InvalidRegistrationCredentials("User has already been registered. "
-                                                         "Reset credentials or login.")
-                self._config.add_user(credentials)
-            else:
-                raise InvalidRegistrationCredentials("Missing part of credentials.")
-        else:
-            raise InvalidRegistrationCredentials("Can't add user because credentials are not required "
-                                                 "for current environment.")
-
     def needs_registration(self) -> bool:
-        if not self._credentials_required:
+        try:
+            needs_registration = self._try_needs_registration()
+            return needs_registration
+        except (CredentialsNotRequiredError, AlreadyRegisteredError) as e:
+            logger.info(e)
             return False
+
+    def try_add_user(self, credentials: UserCreds):
+        if not credentials:
+            raise InvalidRegistrationCredentialsError("Missing part of credentials.")
+        if self._try_needs_registration():
+            self._config.add_user(credentials)
+
+    def _try_needs_registration(self) -> bool:
+        if not self._credentials_required:
+            raise CredentialsNotRequiredError("Credentials are not required "
+                                              "for current environment.")
         else:
-            return not self._is_registered()
+            if self._is_registered():
+                raise AlreadyRegisteredError("User has already been registered. "
+                                             "Reset credentials or login.")
+            return True
 
     def _is_registered(self) -> bool:
         return self._credentials_required and self._is_credentials_set_up()
