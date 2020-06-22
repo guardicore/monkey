@@ -8,14 +8,16 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClipboard} from '@fortawesome/free-solid-svg-icons/faClipboard';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faSync} from '@fortawesome/free-solid-svg-icons/faSync';
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons/faInfoCircle";
+import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import AwsRunTable from '../run-monkey/AwsRunTable';
 
+import MissingBinariesModal from '../ui-components/MissingBinariesModal';
+
 import '../../styles/MonkeyRunPage.scss';
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons/faInfoCircle";
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
 
 const loading_css_override = css`
     display: block;
@@ -42,8 +44,12 @@ class RunMonkeyPageComponent extends AuthComponent {
       awsMachines: [],
       isLoadingAws: true,
       isErrorWhileCollectingAwsMachines: false,
-      awsMachineCollectionErrorMsg: ''
+      awsMachineCollectionErrorMsg: '',
+      showModal: false,
+      errorDetails: ''
     };
+
+    this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
@@ -132,6 +138,13 @@ class RunMonkeyPageComponent extends AuthComponent {
             runningOnIslandState: 'installing'
           });
         } else {
+          /* If Monkey binaries are missing, change the state accordingly */
+          if (res['error_text'].startsWith('Copy file failed')) {
+            this.setState({
+              showModal: true,
+              errorDetails: res['error_text']}
+            );
+          }
           this.setState({
             runningOnIslandState: 'not_running'
           });
@@ -288,6 +301,12 @@ class RunMonkeyPageComponent extends AuthComponent {
     )
   }
 
+  closeModal = () => {
+    this.setState({
+      showModal: false
+    })
+  };
+
   render() {
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
@@ -307,6 +326,10 @@ class RunMonkeyPageComponent extends AuthComponent {
             Run on Monkey Island Server
             {RunMonkeyPageComponent.renderIconByState(this.state.runningOnIslandState)}
           </Button>
+          <MissingBinariesModal
+                        showModal = {this.state.showModal}
+                        onClose = {this.closeModal}
+                        errorDetails = {this.state.errorDetails}/>
           {
             // TODO: implement button functionality
             /*

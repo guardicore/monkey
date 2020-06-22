@@ -21,8 +21,9 @@ SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {
 class SystemInfoTelemetryDispatcher(object):
     def __init__(self, collector_to_parsing_functions: typing.Mapping[str, typing.List[typing.Callable]] = None):
         """
-        :param collector_to_parsing_functions: Map between collector names and a list of functions that process the output of
-        that collector. If `None` is supplied, uses the default one; This should be the normal flow, overriding the
+        :param collector_to_parsing_functions: Map between collector names and a list of functions
+        that process the output of that collector.
+        If `None` is supplied, uses the default one; This should be the normal flow, overriding the
         collector->functions mapping is useful mostly for testing.
         """
         if collector_to_parsing_functions is None:

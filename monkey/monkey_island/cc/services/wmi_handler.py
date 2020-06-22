@@ -69,7 +69,7 @@ class WMIHandler(object):
                 base_entity = self.build_entity_document(user)
             else:
                 base_entity = self.build_entity_document(user, self.monkey_id)
-            base_entity['NTLM_secret'] = self.users_secrets.get(base_entity['name'], {}).get('ntlm')
+            base_entity['NTLM_secret'] = self.users_secrets.get(base_entity['name'], {}).get('ntlm_hash')
             base_entity['SAM_secret'] = self.users_secrets.get(base_entity['name'], {}).get('sam')
             base_entity['secret_location'] = []
 

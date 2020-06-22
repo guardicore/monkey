@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 class ClearCaches(flask_restful.Resource):
     """
-    Used for timing tests - we want to get actual execution time of functions in BlackBox without caching - so we use this
-    to clear the caches.
+    Used for timing tests - we want to get actual execution time of functions in BlackBox without caching -
+    so we use this to clear the caches.
     :note: DO NOT CALL THIS IN PRODUCTION CODE as this will slow down the user experience.
     """
     @jwt_required()
