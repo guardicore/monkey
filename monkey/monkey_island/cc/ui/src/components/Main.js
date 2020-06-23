@@ -23,7 +23,7 @@ import 'styles/App.css';
 import 'react-toggle/style.css';
 import 'react-table/react-table.css';
 import notificationIcon from '../images/notification-logo-512x512.png';
-import {StandardLayoutComponent} from "./layouts/StandardLayoutComponent";
+import {StandardLayoutComponent} from './layouts/StandardLayoutComponent';
 
 const reportZeroTrustRoute = '/report/zeroTrust';
 

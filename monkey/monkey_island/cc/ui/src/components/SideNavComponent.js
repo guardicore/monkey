@@ -1,13 +1,12 @@
-import logoImage from "../images/monkey-icon.svg";
-import infectionMonkeyImage from "../images/infection-monkey.svg";
-import {NavLink} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";
-import {faUndo} from "@fortawesome/free-solid-svg-icons/faUndo";
-import guardicoreLogoImage from "../images/guardicore-logo.png";
-import VersionComponent from "./side-menu/VersionComponent";
-import {Col} from "react-bootstrap";
-import React from "react";
+import logoImage from '../images/monkey-icon.svg';
+import infectionMonkeyImage from '../images/infection-monkey.svg';
+import {NavLink} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
+import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
+import guardicoreLogoImage from '../images/guardicore-logo.png';
+import VersionComponent from './side-menu/VersionComponent';
+import React from 'react';
 
 
 class SideNavComponent extends React.Component {
@@ -16,7 +15,7 @@ class SideNavComponent extends React.Component {
     return (
       <>
         <div className='header'>
-          <img alt="logo" src={logoImage} style={{width: '5vw', margin: '15px'}}/>
+          <img alt='logo' src={logoImage} style={{width: '5vw', margin: '15px'}}/>
           <img src={infectionMonkeyImage} style={{width: '15vw'}} alt='Infection Monkey'/>
         </div>
 
@@ -79,7 +78,7 @@ class SideNavComponent extends React.Component {
         <hr/>
         <div className='guardicore-link text-center' style={{'marginBottom': '0.5em'}}>
           <span>Powered by</span>
-          <a href='http://www.guardicore.com' rel="noopener noreferrer" target='_blank'>
+          <a href='http://www.guardicore.com' rel='noopener noreferrer' target='_blank'>
             <img src={guardicoreLogoImage} alt='GuardiCore'/>
           </a>
         </div>
