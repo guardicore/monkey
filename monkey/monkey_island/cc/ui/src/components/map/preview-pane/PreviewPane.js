@@ -126,8 +126,8 @@ class PreviewPaneComponent extends AuthComponent {
           Download Log
         </th>
         <td>
-          <a type="button"
-             className={asset.has_log ? "btn btn-primary" : "btn btn-primary disabled"}
+          <a type='button'
+             className={asset.has_log ? 'btn btn-primary' : 'btn btn-primary disabled'}
              onClick={() => this.downloadLog(asset)}>Download</a>
         </td>
       </tr>
@@ -145,7 +145,7 @@ class PreviewPaneComponent extends AuthComponent {
           Exploit Timeline&nbsp;
           {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
         </h4>
-        <ul className="timeline">
+        <ul className='timeline'>
           {asset.exploits.map(exploit =>
             <li key={exploit.timestamp}>
               <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
@@ -170,7 +170,7 @@ class PreviewPaneComponent extends AuthComponent {
   assetInfo(asset) {
     return (
       <div>
-        <table className="table table-condensed">
+        <table className='table table-condensed'>
           <tbody>
           {this.osRow(asset)}
           {this.ipsRow(asset)}
@@ -186,7 +186,7 @@ class PreviewPaneComponent extends AuthComponent {
   infectedAssetInfo(asset) {
     return (
       <div>
-        <table className="table table-condensed">
+        <table className='table table-condensed'>
           <tbody>
           {this.osRow(asset)}
           {this.statusRow(asset)}
@@ -205,7 +205,7 @@ class PreviewPaneComponent extends AuthComponent {
   scanInfo(edge) {
     return (
       <div>
-        <table className="table table-condensed">
+        <table className='table table-condensed'>
           <tbody>
           <tr>
             <th>Operating System</th>
@@ -226,7 +226,7 @@ class PreviewPaneComponent extends AuthComponent {
             '' :
             <div>
               <h4 style={{'marginTop': '2em'}}>Timeline</h4>
-              <ul className="timeline">
+              <ul className='timeline'>
                 {edge.exploits.map(exploit =>
                   <li key={exploit.timestamp}>
                     <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
@@ -281,7 +281,7 @@ class PreviewPaneComponent extends AuthComponent {
     }
 
     return (
-      <div className="preview-pane">
+      <div className='preview-pane'>
         {!info ?
           <span>
             <FontAwesomeIcon icon={faHandPointLeft} style={{'marginRight': '0.5em'}}/>
