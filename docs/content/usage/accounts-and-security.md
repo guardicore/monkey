@@ -1,12 +1,12 @@
 ---
 title: "Accounts and Security"
 date: 2020-06-22T15:36:56+03:00
-draft: true
+draft: false
 ---
 
-## Security in InfectionMonkey
+## Security in Infection Monkey
 
-The first time you launch Monkey Island (InfectionMonkey CC server), you'll be prompted to 
+The first time you launch Monkey Island (Infection Monkey CC server), you'll be prompted to 
 create an account and secure your island. After your account is created, the server will only
 be accessible via the credentials you chose. 
 
@@ -20,7 +20,7 @@ by deleting `user` and `password_hash` variables. Then restart Island server and
 prompted with registration form.
 
 Example `server_config.json` for account reset:
-```
+```json
 {
   "server_config": "password",
   "deployment": "develop"
