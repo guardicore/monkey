@@ -1,6 +1,6 @@
 import React from 'react';
 import {css} from '@emotion/core';
-import {Button, Col, Card, Nav, Collapse} from 'react-bootstrap';
+import {Button, Col, Card, Nav, Collapse, Row} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import GridLoader from 'react-spinners/GridLoader';
 
@@ -16,8 +16,6 @@ import AuthComponent from '../AuthComponent';
 import AwsRunTable from '../run-monkey/AwsRunTable';
 
 import MissingBinariesModal from '../ui-components/MissingBinariesModal';
-
-import '../../styles/MonkeyRunPage.scss';
 
 const loading_css_override = css`
     display: block;
@@ -141,8 +139,9 @@ class RunMonkeyPageComponent extends AuthComponent {
           /* If Monkey binaries are missing, change the state accordingly */
           if (res['error_text'].startsWith('Copy file failed')) {
             this.setState({
-              showModal: true,
-              errorDetails: res['error_text']}
+                showModal: true,
+                errorDetails: res['error_text']
+              }
             );
           }
           this.setState({
@@ -327,9 +326,9 @@ class RunMonkeyPageComponent extends AuthComponent {
             {RunMonkeyPageComponent.renderIconByState(this.state.runningOnIslandState)}
           </Button>
           <MissingBinariesModal
-                        showModal = {this.state.showModal}
-                        onClose = {this.closeModal}
-                        errorDetails = {this.state.errorDetails}/>
+            showModal={this.state.showModal}
+            onClose={this.closeModal}
+            errorDetails={this.state.errorDetails}/>
           {
             // TODO: implement button functionality
             /*
@@ -358,38 +357,55 @@ class RunMonkeyPageComponent extends AuthComponent {
         <Collapse in={this.state.showManual}>
           <div style={{'marginBottom': '2em'}}>
             <p style={{'fontSize': '1.2em'}}>
-              Choose the operating system where you want to run the monkey
-              {this.state.ips.length > 1 ? ', and the interface to communicate with.' : '.'}
+              Choose the operating system where you want to run the monkey:
             </p>
-            <Nav variant='pills' id={'bootstrap-override'} className={'run-on-os-buttons'}
-                 activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
-              <Nav.Item>
-                <Nav.Link eventKey={'windows-32'}>
-                  Windows (32 bit)
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey='windows-64'>
-                  Windows (64 bit)
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey='linux-32' variant={'monkey-alt'}>
-                  Linux (32 bit)
-                </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey='linux-64'>
-                  Linux (64 bit)
-                </Nav.Link>
-              </Nav.Item>
-            </Nav>
+            <Row>
+              <Col>
+                <Nav variant='pills' fill id={'bootstrap-override'} className={'run-on-os-buttons'}
+                     activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
+                  <Nav.Item>
+                    <Nav.Link eventKey={'windows-32'}>
+                      Windows (32 bit)
+                    </Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link eventKey='windows-64'>
+                      Windows (64 bit)
+                    </Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link eventKey='linux-32'>
+                      Linux (32 bit)
+                    </Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link eventKey='linux-64'>
+                      Linux (64 bit)
+                    </Nav.Link>
+                  </Nav.Item>
+                </Nav>
+              </Col>
+            </Row>
+
             {this.state.ips.length > 1 ?
-              <Nav variant="pills" activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
-                   className={'run-on-os-buttons'}>
-                {this.state.ips.map(ip => <Nav.Item>
-                  <Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
-              </Nav>
+              <div>
+                <Row>
+                  <Col>
+                    <p style={{'fontSize': '1.2em'}}>
+                      Choose the interface to communicate with:
+                    </p>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Nav variant="pills" fill activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
+                         className={'run-on-os-buttons'}>
+                      {this.state.ips.map(ip => <Nav.Item>
+                        <Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
+                    </Nav>
+                  </Col>
+                </Row>
+              </div>
               : <div style={{'marginBottom': '2em'}}/>
             }
             <p style={{'fontSize': '1.2em'}}>

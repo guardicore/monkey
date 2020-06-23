@@ -3,16 +3,22 @@
 @import '../../node_modules/bootstrap/scss/bootstrap';
 
 // Imports that require variables
-@import './report/ReportPage';
+@import './report/ReportPage.scss';
 @import './report/AttackReport.scss';
 @import './PreviewPane.scss';
-@import './ConfigurationPage';
-@import './AuthPage';
+@import './ConfigurationPage.scss';
+@import './AuthPage.scss';
+@import './MonkeyRunPage.scss';
 
 
 // Define custom elements after bootstrap import
 .btn-outline-monkey, button {
   @include button-outline-variant($monkey-yellow, $monkey-black, $monkey-yellow, $monkey-yellow);
+  color: $monkey-black;
+}
+
+.btn-outline-monkey-alt, button {
+  @include button-outline-variant($monkey-alt, $monkey-white, $monkey-alt, $monkey-alt);
   color: $monkey-black;
 }
 
