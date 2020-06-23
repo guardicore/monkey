@@ -2,7 +2,7 @@ import {Modal} from 'react-bootstrap';
 import React from 'react';
 import {GridLoader} from 'react-spinners';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 
 class StartOverModal extends React.PureComponent {
