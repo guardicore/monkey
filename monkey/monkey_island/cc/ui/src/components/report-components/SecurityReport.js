@@ -8,7 +8,6 @@ import StolenPasswords from 'components/report-components/security/StolenPasswor
 import CollapsibleWellComponent from 'components/report-components/security/CollapsibleWell';
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
-import PassTheHashMapPageComponent from '../pages/PassTheHashMapPage';
 import StrongUsers from 'components/report-components/security/StrongUsers';
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
@@ -426,29 +425,6 @@ class ReportPageComponent extends AuthComponent {
         <div>
           <StrongUsers data={this.state.report.glance.strong_users}/>
         </div>
-      </div>
-    );
-  }
-
-  generateReportPthMap() {
-    return (
-      <div id="pth">
-        <h3>
-          Credentials Map
-        </h3>
-        <p>
-          This map visualizes possible attack paths through the network using credential compromise. Paths represent lateral
-          movement opportunities by attackers.
-        </p>
-        <div className="map-legend">
-          <b>Legend: </b>
-          <span>Access credentials <FontAwesomeIcon icon={faMinus} size="lg"  style={{color: '#0158aa'}}/></span> <b
-          style={{color: '#aeaeae'}}> | </b>
-        </div>
-        <div>
-          <PassTheHashMapPageComponent graph={this.state.report.glance.pth_map}/>
-        </div>
-        <br/>
       </div>
     );
   }
