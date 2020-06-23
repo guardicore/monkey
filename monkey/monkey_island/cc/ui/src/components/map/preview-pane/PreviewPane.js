@@ -126,8 +126,8 @@ class PreviewPaneComponent extends AuthComponent {
           Download Log
         </th>
         <td>
-          <a type="button" className="btn btn-primary"
-             disabled={!asset.has_log}
+          <a type="button"
+             className={asset.has_log ? "btn btn-primary" : "btn btn-primary disabled"}
              onClick={() => this.downloadLog(asset)}>Download</a>
         </td>
       </tr>
