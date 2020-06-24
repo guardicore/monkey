@@ -24,6 +24,6 @@ def get_commands_to_hide_folders():
 
 
 def cleanup_hidden_files(is_windows=is_windows_os()):
-    subprocess.run(get_windows_commands_to_delete() if is_windows
+    subprocess.run(get_windows_commands_to_delete() if is_windows  # noqa: DUO116
                    else ' '.join(get_linux_commands_to_delete()),
                    shell=True)
