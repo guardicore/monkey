@@ -64,7 +64,7 @@ These are the build output of `hugo` and should never be `commit`-ed to git.
 
 ### Requirements
 
-You have to [install `hugo`](https://gohugo.io/getting-started/installing/) and a text editor that's good for markdown (`vscode` and `vim` are good options).
+You have to [install `hugo`](https://gohugo.io/getting-started/installing/), a text editor that's good for markdown (`vscode` and `vim` are good options), and `git`.
 
 ### Adding and editing content
 

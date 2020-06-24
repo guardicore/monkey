@@ -7,15 +7,17 @@ weight: 1
 
 ## Using the Infection Monkey
 
-After deploying the Monkey Island in your environment, navigate to `https://<server-ip>:5000`. You should see this screen:
+After deploying the Monkey Island in your environment, navigate to `https://<server-ip>:5000`.
+
+### First-time setup
+
+On your first login, you'll be asked to set up a username and password for the Monkey Island server. [See this page for more details](../accounts-and-security).
+
+### Run the Monkey
+
+To get the Infection Monkey running as fast as possible, click **Run Monkey**. Optionally, you can configure the Monkey before you continue by clicking **Configuration** (see [how to configure the monkey](../configuration)).
 
 - [ ] TODO put screenshot
-
-To get the Infection Monkey running as fast as possible, click **Run Monkey**. Optionally, you can configure the Monkey before you continue by clicking **Configuration** (see [how to configure the monkey](../how-to-configure-the-monkey)).
-
-- [ ] TODO put screenshot
-
-### Run Monkey
 
 To run the monkey, select one of the following options:
 
@@ -38,7 +40,7 @@ Within a few minutes, the Infection Monkey should be able to find and attack acc
 
 - [ ] TODO put screenshot
 
-As the Infection Monkey continues, the map should be filled with accessible and “hacked” machines. Once all the Infection Monkeys have finished propagating, click **Reports** (see [Infection Monkey Reports](../infection-monkey-reports)).
+As the Infection Monkey continues, the map should be filled with accessible and “hacked” machines. Once all the Infection Monkeys have finished propagating, click **Reports** (see [Infection Monkey Reports](../reports)) to see the reports.
 
 - [ ] TODO put screenshot
 

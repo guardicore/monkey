@@ -9,3 +9,5 @@ pre = '<i class="fas fa-users-cog"></i> '
 # Usage
 
 If you're just starting with Infection Monkey, check out our [Getting Started](getting-started) page.
+
+If you haven't downloaded Monkey yet, {{% button href="https://infectionmonkey.com/" icon="fas fa-download" %}}Get Infection Monkey here{{% /button %}}!
