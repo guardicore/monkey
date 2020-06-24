@@ -99,6 +99,7 @@ SCHEMA = {
                     "description": "Adversaries may gain persistence and elevate privileges "
                                    "in certain situations by abusing PowerShell profiles which "
                                    "are scripts that run when PowerShell starts."
+                },
                 "T1158": {
                     "title": "Hidden Files and Directories",
                     "type": "bool",
