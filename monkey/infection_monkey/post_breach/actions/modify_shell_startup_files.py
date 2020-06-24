@@ -21,7 +21,7 @@ class ModifyShellStartupFiles(PBA):
 class ShellStartupPBAGenerator():
     def get_modify_shell_startup_pbas():
         (cmds_for_linux, shell_startup_files_for_linux, usernames_for_linux),\
-        (cmds_for_windows, shell_startup_files_per_user_for_windows) = get_commands_to_modify_shell_startup_files()
+         (cmds_for_windows, shell_startup_files_per_user_for_windows) = get_commands_to_modify_shell_startup_files()
 
         pbas = []
 

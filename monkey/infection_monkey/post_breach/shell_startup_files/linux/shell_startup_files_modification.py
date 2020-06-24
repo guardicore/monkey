@@ -9,7 +9,7 @@ def get_linux_commands_to_modify_shell_startup_files():
     HOME_DIR = "/home/"
 
     # get list of usernames
-    USERS = subprocess.check_output(
+    USERS = subprocess.check_output(  # noqa: DUO116
             "cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1",
             shell=True
         ).decode().split('\n')[:-1]

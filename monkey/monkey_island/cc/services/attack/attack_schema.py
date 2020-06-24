@@ -90,6 +90,16 @@ SCHEMA = {
                     "description": "Adversaries with a sufficient level of access "
                                    "may create a local system, domain, or cloud tenant account."
                 },
+                "T1158": {
+                    "title": "Hidden files and directories",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1158",
+                    "description": "Adversaries can hide files and folders on the system "
+                                   "and evade a typical user or system analysis that does not "
+                                   "incorporate investigation of hidden files."
+                },
                 "T1504": {
                     "title": "PowerShell profile",
                     "type": "bool",
