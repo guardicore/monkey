@@ -53,7 +53,7 @@
     "react/jsx-uses-react": 1,
     "react/jsx-uses-vars": 1,
     "react/jsx-key": 1,
-    "react/prop-types": 1,
+    "react/prop-types": 0,
     "react/no-unescaped-entities": 1,
     "react/no-unknown-property": [1, { "ignore": ["class"] }],
     "react/no-string-refs": 1,
