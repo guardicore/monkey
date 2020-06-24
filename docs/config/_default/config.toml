@@ -34,6 +34,8 @@ theme = "learn"
   disableNextPrev = true
   # Order sections in menu by "weight" or "title". Default to "weight"
   ordersectionsby = "weight"
+  # Provide a list of custom css files to load relative from the `static/` folder in the site root.
+  custom_css = ["css/labels.css"]
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
