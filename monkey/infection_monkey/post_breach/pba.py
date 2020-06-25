@@ -57,11 +57,12 @@ class PBA(Plugin):
         """
         Runs post breach action command
         """
-        exec_funct = self._execute_default
-        result = exec_funct()
-        if self.scripts_were_used_successfully(result):
-            T1064Telem(ScanStatus.USED, "Scripts were used to execute %s post breach action." % self.name).send()
-        PostBreachTelem(self, result).send()
+        if self.command:
+            exec_funct = self._execute_default
+            result = exec_funct()
+            if self.scripts_were_used_successfully(result):
+                T1064Telem(ScanStatus.USED, "Scripts were used to execute %s post breach action." % self.name).send()
+            PostBreachTelem(self, result).send()
 
     def is_script(self):
         """

@@ -65,7 +65,7 @@ script:
 - cd monkey_island/cc/ui
 - npm ci  # See https://docs.npmjs.com/cli/ci.html
 - eslint ./src --quiet  # Test for errors
-- JS_WARNINGS_AMOUNT_UPPER_LIMIT=500
+- JS_WARNINGS_AMOUNT_UPPER_LIMIT=90
 - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # Test for max warnings
 
 after_success:

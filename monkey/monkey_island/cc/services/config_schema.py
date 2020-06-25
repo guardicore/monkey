@@ -160,6 +160,22 @@ SCHEMA = {
                     "title": "Communicate as new user",
                     "attack_techniques": ["T1136"]
                 },
+                {
+                    "type": "string",
+                    "enum": [
+                        "ModifyShellStartupFiles"
+                    ],
+                    "title": "Modify shell startup files",
+                    "attack_techniques": ["T1156", "T1504"]
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "HiddenFiles"
+                    ],
+                    "title": "Hidden files and directories",
+                    "attack_techniques": ["T1158"]
+                }
             ],
         },
         "finger_classes": {
@@ -379,7 +395,9 @@ SCHEMA = {
                             },
                             "default": [
                                 "BackdoorUser",
-                                "CommunicateAsNewUser"
+                                "CommunicateAsNewUser",
+                                "ModifyShellStartupFiles",
+                                "HiddenFiles"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
