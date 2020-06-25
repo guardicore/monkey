@@ -1,11 +1,11 @@
 export const particleParams = {
     particles: {
       color: {
-        value: '#ffcc00'
+        value: '#2b2b2b'
       },
       line_linked: {
         color: {
-          value: '#a08100'
+          value: '#555555'
         }
       },
       number: {

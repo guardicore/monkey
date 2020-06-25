@@ -22,7 +22,7 @@ const columns = [
                                latest_events={x.latest_events}
                                oldest_events={x.oldest_events}
                                event_count={x.event_count}
-                               exportFilename={'Events_' + x.test_key}/>;
+                               exportFilename={'Events_' + x.test_key} />;
         },
         maxWidth: EVENTS_COLUMN_MAX_WIDTH
       },

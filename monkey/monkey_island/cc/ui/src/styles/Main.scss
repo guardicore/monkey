@@ -46,6 +46,12 @@
   border-radius: 10px;
 }
 
+.badge-monkey-info-light {
+  color: $monkey-info;
+  background-color: $monkey-white;
+  border-radius: 10px;
+}
+
 .btn-link:active, .btn-link:hover, .btn-link:focus {
   color: $monkey-alt !important;
   background-color: transparent !important;

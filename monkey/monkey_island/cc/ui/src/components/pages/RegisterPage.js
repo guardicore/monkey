@@ -3,7 +3,7 @@ import {Row, Col, Container, Form, Button} from 'react-bootstrap';
 import Particles from 'react-particles-js';
 
 import AuthService from '../../services/AuthService';
-import {particleParams} from '../../styles/particle-component/RegistrationPageParams';
+import {particleParams} from '../../styles/particle-component/AuthPageParams';
 import monkeyDetective from '../../images/detective-monkey.svg';
 
 class RegisterPageComponent extends React.Component {
@@ -87,7 +87,7 @@ class RegisterPageComponent extends React.Component {
             <Row>
               <Col lg={8} md={8} sm={8}>
                 <h1 className='reg-title'>First time?</h1>
-                <h3 className='reg-subtitle'>Let's secure your island!</h3>
+                <h3 className='reg-subtitle'>Let's secure your Monkey Island!</h3>
                 <div>
                   <Form className={'auth-form'}>
                     <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
@@ -95,7 +95,7 @@ class RegisterPageComponent extends React.Component {
                     <Button id={'auth-button'} onClick={() => {
                       this.register()
                     }}>
-                      Lets Go!
+                      Lets go!
                     </Button>
                     <Row>
                       <Col>

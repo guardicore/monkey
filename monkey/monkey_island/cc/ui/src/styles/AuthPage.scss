@@ -43,7 +43,7 @@
   z-index: -100;
   width: 100%;
   height: 100%;
-  background-color: #1a1a1a;
+  background-color: $gray-300;
 }
 
 .auth-block {
@@ -55,10 +55,12 @@
 .auth-block h1 {
   font-size: 4.5em;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .auth-block h3 {
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .no-auth-link {
