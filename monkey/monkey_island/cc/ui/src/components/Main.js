@@ -29,6 +29,9 @@ const reportZeroTrustRoute = '/report/zeroTrust';
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
+    if (this.state.isLoggedIn === false){
+      return
+    }
     this.auth.loggedIn()
       .then(res => {
         if (this.state.isLoggedIn !== res) {
@@ -110,7 +113,8 @@ class AppComponent extends AuthComponent {
         report_done: false,
         isLoggedIn: undefined,
         needsRegistration: undefined
-      }
+      },
+      noAuthLoginAttempted: undefined
     };
   }
 
