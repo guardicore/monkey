@@ -10,10 +10,14 @@ class CircularNode extends React.Component {
     let translate = 'translate(' + data.cx + ',' + data.cy + ')';
     return (
       <g transform={translate} id={data.node.pillar} key={prefix + 'circularGroup' + index}>
-        <OverlayTrigger ref={'overlay'} key={prefix + 'CircularOverlay' + index} trigger={null} placement={data.popover}
+        <OverlayTrigger key={prefix + 'CircularOverlay' + index}
+                        trigger={['hover', 'focus']}
+                        placement={data.popover}
                         overlay={<Popover id={prefix + 'CircularClickPopover' + index}
-                                          style={{backgroundColor: data.hex}}
-                                          title={data.node.pillar}>{data.tooltip}</Popover>} rootClose>
+                                          style={{backgroundColor: data.hex}}>
+                          <Popover.Title>{data.node.pillar}</Popover.Title>
+                          <Popover.Content>{data.tooltip}</Popover.Content>
+                        </Popover>} rootClose>
           <circle
             id={prefix + 'Node_' + index}
             className={'circularNode'}
@@ -21,10 +25,6 @@ class CircularNode extends React.Component {
             r={data.r}
             opacity={0.8}
             fill={data.hex}
-            onClick={this.handleClick.bind(this)}
-            onMouseEnter={this.handleOver.bind(this)}
-            onMouseLeave={this.handleOut.bind(this)}
-
           />
         </OverlayTrigger>
         <foreignObject style={{fontSize: data.fontStyle.size, pointerEvents: 'none'}}
@@ -36,24 +36,6 @@ class CircularNode extends React.Component {
       </g>
     );
   }
-
-
-  handleClick() {
-    this.props.disableHover(this.refs.overlay);
-  }
-
-  handleOver() {
-    if (this.props.hover) {
-      this.refs.overlay.show();
-    }
-  }
-
-  handleOut() {
-    if (this.props.hover) {
-      this.refs.overlay.hide();
-    }
-  }
-
 }
 
 CircularNode.propTypes = {

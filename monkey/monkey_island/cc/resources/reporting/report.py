@@ -3,7 +3,7 @@ import http.client
 import flask_restful
 from flask import jsonify
 
-from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.reporting.report import ReportService
 from monkey_island.cc.services.reporting.zero_trust_service import ZeroTrustService
 

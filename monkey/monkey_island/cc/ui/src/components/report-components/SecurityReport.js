@@ -17,6 +17,8 @@ import PrintReportButton from './common/PrintReportButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
+import '../../styles/App.css';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -145,7 +147,7 @@ class ReportPageComponent extends AuthComponent {
             ''
             :
             <p className="alert alert-info">
-              <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+              <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
               To improve the monkey's detection rates, try adding users and passwords and enable the "Local
               network
               scan" config value under <b>Basic - Network</b>.
@@ -153,8 +155,8 @@ class ReportPageComponent extends AuthComponent {
         }
         <p>
           The first monkey run was started on <span
-          className="label label-info">{this.state.report.overview.monkey_start_time}</span>. After <span
-          className="label label-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished
+          className="badge badge-info">{this.state.report.overview.monkey_start_time}</span>. After <span
+          className="badge badge-info">{this.state.report.overview.monkey_duration}</span>, all monkeys finished
           propagation attempts.
         </p>
         <p>
@@ -241,7 +243,7 @@ class ReportPageComponent extends AuthComponent {
             }).length > 0 ?
               <div>
                 During this simulated attack the Monkey uncovered <span
-                className="label label-warning">
+                className="badge badge-warning">
                     {this.state.report.overview.issues.filter(function (x) {
                       return x === true;
                     }).length} threats</span>:
@@ -295,7 +297,7 @@ class ReportPageComponent extends AuthComponent {
               :
               <div>
                 During this simulated attack the Monkey uncovered <span
-                className="label label-success">0 threats</span>.
+                className="badge badge-success">0 threats</span>.
               </div>
           }
         </div>
@@ -379,9 +381,9 @@ class ReportPageComponent extends AuthComponent {
         <div>
           <p>
             The Monkey discovered <span
-            className="label label-warning">{this.state.report.glance.scanned.length}</span> machines and
+            className="badge badge-warning">{this.state.report.glance.scanned.length}</span> machines and
             successfully breached <span
-            className="label label-danger">{this.state.report.glance.exploited.length}</span> of them.
+            className="badge badge-danger">{this.state.report.glance.exploited.length}</span> of them.
           </p>
           <div className="text-center" style={{margin: '10px'}}>
             <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth="4"
@@ -441,7 +443,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateInfoBadges(data_array) {
-    return data_array.map(badge_data => <span className="label label-info" style={{margin: '2px'}}>{badge_data}</span>);
+    return data_array.map(badge_data => <span className="badge badge-info" style={{margin: '2px'}}>{badge_data}</span>);
   }
 
   generateCrossSegmentIssue(crossSegmentIssue) {
@@ -466,21 +468,21 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateShellshockPathListBadges(paths) {
-    return paths.map(path => <span className="label label-warning" style={{margin: '2px'}}>{path}</span>);
+    return paths.map(path => <span className="badge badge-warning" style={{margin: '2px'}}>{path}</span>);
   }
 
   generateSmbPasswordIssue(issue) {
     return (
       <li>
-        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">SMB</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">SMB</span> attack.
           <br/>
           The Monkey authenticated over the SMB protocol with user <span
-          className="label label-success">{issue.username}</span> and its password.
+          className="badge badge-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
       </li>
     );
@@ -489,15 +491,15 @@ class ReportPageComponent extends AuthComponent {
   generateSmbPthIssue(issue) {
     return (
       <li>
-        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">SMB</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">SMB</span> attack.
           <br/>
           The Monkey used a pass-the-hash attack over SMB protocol with user <span
-          className="label label-success">{issue.username}</span>.
+          className="badge badge-success">{issue.username}</span>.
         </CollapsibleWellComponent>
       </li>
     );
@@ -506,15 +508,15 @@ class ReportPageComponent extends AuthComponent {
   generateWmiPasswordIssue(issue) {
     return (
       <li>
-        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">WMI</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">WMI</span> attack.
           <br/>
           The Monkey authenticated over the WMI protocol with user <span
-          className="label label-success">{issue.username}</span> and its password.
+          className="badge badge-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
       </li>
     );
@@ -523,15 +525,15 @@ class ReportPageComponent extends AuthComponent {
   generateWmiPthIssue(issue) {
     return (
       <li>
-        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">WMI</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">WMI</span> attack.
           <br/>
           The Monkey used a pass-the-hash attack over WMI protocol with user <span
-          className="label label-success">{issue.username}</span>.
+          className="badge badge-success">{issue.username}</span>.
         </CollapsibleWellComponent>
       </li>
     );
@@ -540,15 +542,15 @@ class ReportPageComponent extends AuthComponent {
   generateSshIssue(issue) {
     return (
       <li>
-        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">SSH</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">SSH</span> attack.
           <br/>
           The Monkey authenticated over the SSH protocol with user <span
-          className="label label-success">{issue.username}</span> and its password.
+          className="badge badge-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
       </li>
     );
@@ -557,14 +559,14 @@ class ReportPageComponent extends AuthComponent {
   generateSshKeysIssue(issue) {
     return (
       <li>
-        Protect <span className="label label-success">{issue.ssh_key}</span> private key with a pass phrase.
+        Protect <span className="badge badge-success">{issue.ssh_key}</span> private key with a pass phrase.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">SSH</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">SSH</span> attack.
           <br/>
           The Monkey authenticated over the SSH protocol with private key <span
-          className="label label-success">{issue.ssh_key}</span>.
+          className="badge badge-success">{issue.ssh_key}</span>.
         </CollapsibleWellComponent>
       </li>
     );
@@ -574,17 +576,17 @@ class ReportPageComponent extends AuthComponent {
   generateSambaCryIssue(issue) {
     return (
       <li>
-        Change <span className="label label-success">{issue.username}</span>'s password to a complex one-use password
+        Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <br/>
         Update your Samba server to 4.4.14 and up, 4.5.10 and up, or 4.6.4 and up.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">SambaCry</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">SambaCry</span> attack.
           <br/>
           The Monkey authenticated over the SMB protocol with user <span
-          className="label label-success">{issue.username}</span> and its password, and used the SambaCry
+          className="badge badge-success">{issue.username}</span> and its password, and used the SambaCry
           vulnerability.
         </CollapsibleWellComponent>
       </li>
@@ -596,9 +598,9 @@ class ReportPageComponent extends AuthComponent {
       <li>
         Update your VSFTPD server to the latest version vsftpd-3.0.3.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) has a backdoor running at port <span
-          className="label label-danger">6200</span>.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) has a backdoor running at port <span
+          className="badge badge-danger">6200</span>.
           <br/>
           The attack was made possible because the VSFTPD server was not patched against CVE-2011-2523.
           <br/><br/>In July 2011, it was discovered that vsftpd version 2.3.4 downloadable from the master site had been
@@ -621,9 +623,9 @@ class ReportPageComponent extends AuthComponent {
       <li>
         Update your Elastic Search server to version 1.4.3 and up.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to an <span
-          className="label label-danger">Elastic Groovy</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to an <span
+          className="badge badge-danger">Elastic Groovy</span> attack.
           <br/>
           The attack was made possible because the Elastic Search server was not patched against CVE-2015-1427.
         </CollapsibleWellComponent>
@@ -636,12 +638,12 @@ class ReportPageComponent extends AuthComponent {
       <li>
         Update your Bash to a ShellShock-patched version.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">ShellShock</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">ShellShock</span> attack.
           <br/>
           The attack was made possible because the HTTP server running on TCP port <span
-          className="label label-info">{issue.port}</span> was vulnerable to a shell injection attack on the
+          className="badge badge-info">{issue.port}</span> was vulnerable to a shell injection attack on the
           paths: {this.generateShellshockPathListBadges(issue.paths)}.
         </CollapsibleWellComponent>
       </li>
@@ -654,8 +656,8 @@ class ReportPageComponent extends AuthComponent {
         Delete VM Access plugin configuration files.
         <CollapsibleWellComponent>
           Credentials could be stolen from <span
-          className="label label-primary">{issue.machine}</span> for the following users <span
-          className="label label-primary">{issue.users}</span>. Read more about the security issue and remediation <a
+          className="badge badge-primary">{issue.machine}</span> for the following users <span
+          className="badge badge-primary">{issue.users}</span>. Read more about the security issue and remediation <a
           href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
         >here</a>.
         </CollapsibleWellComponent>
@@ -668,9 +670,9 @@ class ReportPageComponent extends AuthComponent {
       <li>
         Install the latest Windows updates or upgrade to a newer operating system.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">Conficker</span> attack.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">Conficker</span> attack.
           <br/>
           The attack was made possible because the target machine used an outdated and unpatched operating system
           vulnerable to Conficker.
@@ -685,7 +687,7 @@ class ReportPageComponent extends AuthComponent {
         Segment your network and make sure there is no communication between machines from different segments.
         <CollapsibleWellComponent>
           The network can probably be segmented. A monkey instance on <span
-          className="label label-primary">{issue.machine}</span> in the
+          className="badge badge-primary">{issue.machine}</span> in the
           networks {this.generateInfoBadges(issue.networks)}
           could directly access the Monkey Island server in the
           networks {this.generateInfoBadges(issue.server_networks)}.
@@ -725,7 +727,7 @@ class ReportPageComponent extends AuthComponent {
         admin sharing.
         <CollapsibleWellComponent>
           Here is a list of machines which the account <span
-          className="label label-primary">{issue.username}</span> is defined as an administrator:
+          className="badge badge-primary">{issue.username}</span> is defined as an administrator:
           {this.generateInfoBadges(issue.shared_machines)}
         </CollapsibleWellComponent>
       </li>
@@ -752,8 +754,8 @@ class ReportPageComponent extends AuthComponent {
         Use micro-segmentation policies to disable communication other than the required.
         <CollapsibleWellComponent>
           Machines are not locked down at port level. Network tunnel was set up from <span
-          className="label label-primary">{issue.machine}</span> to <span
-          className="label label-primary">{issue.dest}</span>.
+          className="badge badge-primary">{issue.machine}</span> to <span
+          className="badge badge-primary">{issue.dest}</span>.
         </CollapsibleWellComponent>
       </li>
     );
@@ -764,9 +766,9 @@ class ReportPageComponent extends AuthComponent {
       <li>
         Upgrade Struts2 to version 2.3.32 or 2.5.10.1 or any later versions.
         <CollapsibleWellComponent>
-          Struts2 server at <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
-          className="label label-danger">remote code execution</span> attack.
+          Struts2 server at <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="badge badge-danger">remote code execution</span> attack.
           <br/>
           The attack was made possible because the server is using an old version of Jakarta based file upload
           Multipart parser. For possible work-arounds and more info read <a
@@ -782,9 +784,9 @@ class ReportPageComponent extends AuthComponent {
       <li>
         Update Oracle WebLogic server to the latest supported version.
         <CollapsibleWellComponent>
-          Oracle WebLogic server at <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to one of <span
-          className="label label-danger">remote code execution</span> attacks.
+          Oracle WebLogic server at <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to one of <span
+          className="badge badge-danger">remote code execution</span> attacks.
           <br/>
           The attack was made possible due to one of the following vulnerabilities:
           <a href={'https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10271'}> CVE-2017-10271</a> or
@@ -801,9 +803,9 @@ class ReportPageComponent extends AuthComponent {
         href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
         add Kerberos authentication</a>).
         <CollapsibleWellComponent>
-          The Hadoop server at <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
-          className="label label-danger">remote code execution</span> attack.
+          The Hadoop server at <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="badge badge-danger">remote code execution</span> attack.
           <br/>
           The attack was made possible due to default Hadoop/Yarn configuration being insecure.
         </CollapsibleWellComponent>
@@ -816,9 +818,9 @@ class ReportPageComponent extends AuthComponent {
       <li>
         Disable the xp_cmdshell option.
         <CollapsibleWellComponent>
-          The machine <span className="label label-primary">{issue.machine}</span> (<span
-          className="label label-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className="label label-danger">MSSQL exploit attack</span>.
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">MSSQL exploit attack</span>.
           <br/>
           The attack was made possible because the target machine used an outdated MSSQL server configuration allowing
           the usage of the xp_cmdshell command. To learn more about how to disable this feature, read <a

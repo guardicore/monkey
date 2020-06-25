@@ -11,6 +11,12 @@ body {
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.center-block {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 /*
  * Sidebar
  */
@@ -122,7 +128,7 @@ body {
  */
 
 .main {
-  padding: 2em 1em;
+  padding: 0.7em 1.5em 1.5em 1.5em !important;
 }
 
 .page-title {
@@ -202,10 +208,6 @@ body {
   display: inline-block !important;
   width: 130px !important;
   margin-left: 1em;
-}
-
-.run-monkey-snippets .well {
-  margin-bottom: 0;
 }
 
 /*
@@ -405,55 +407,6 @@ body {
   }
 }
 
-
-/* Report page */
-
-.report-page {
-  font-size: 1.2em;
-  border: 1px solid #fff;
-  padding: 2em;
-  -webkit-box-shadow: 1px 1px 7px -1px #ccc;
-  box-shadow: 1px 1px 7px -1px #ccc;
-}
-
-.report-page h1 {
-  margin-top: 30px;
-}
-
-.report-page h3 {
-  margin-top: 20px;
-}
-
-.report-page h4 {
-  margin-top: 20px;
-}
-
-.report-page ul {
-  list-style: disc;
-  padding-left: 40px;
-}
-
-.report-page li {
-  overflow: visible;
-}
-
-.report-page li a {
-  display: inline;
-  padding: 0em;
-}
-
-.modal-dialog {
-  top: 30%;
-}
-
-.pba-danger {
-  background-color: #ffc7af;
-}
-
-.pba-success {
-  background-color: #afd2a2;
-}
-
 /* Print report styling */
 
 @media print {
@@ -473,12 +426,12 @@ body {
     width: 100px;
   }
 
-  .label {
+  .badge {
     padding: 2px 6px;
     border: 1px solid #000;
     color: #fff !important;
     display: inline !important;
-    font-size: 75% !important;
+    font-size: 80% !important;
     font-weight: bold !important;
     line-height: 1 !important;
     text-align: center !important;
@@ -512,27 +465,27 @@ body {
     border-color: #bce8f1 !important;
   }
 
-  .label-default {
+  .badge-default {
     background-color: #777 !important;
   }
 
-  .label-primary {
+  .badge-primary {
     background-color: #337ab7 !important;
   }
 
-  .label-success {
+  .badge-success {
     background-color: #5cb85c !important;
   }
 
-  .label-info {
+  .badge-info {
     background-color: #5bc0de !important;
   }
 
-  .label-warning {
+  .badge-warning {
     background-color: #f0ad4e !important;
   }
 
-  .label-danger {
+  .badge-danger {
     background-color: #d9534f !important;
   }
 }

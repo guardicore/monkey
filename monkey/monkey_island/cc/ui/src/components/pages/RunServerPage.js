@@ -9,7 +9,9 @@ class RunServerPageComponent extends React.Component {
 
   render() {
     return (
-      <Col xs={12} lg={8}>
+      <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
+           lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
+           className={'main'}>
         <h1 className="page-title">1. Monkey Island Server</h1>
         <div style={{'fontSize': '1.2em'}}>
           <p style={{'marginTop': '30px'}}>Congrats! You have successfully set up the Monkey Island

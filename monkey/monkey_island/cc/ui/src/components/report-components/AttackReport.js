@@ -1,7 +1,6 @@
 import React from 'react';
 import {Col, Button} from 'react-bootstrap';
 import '../../styles/Collapse.scss';
-import '../../styles/report/AttackReport.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faCircle} from '@fortawesome/free-solid-svg-icons/faCircle';
 import {faRadiation} from '@fortawesome/free-solid-svg-icons/faRadiation';
@@ -101,9 +100,9 @@ class AttackReport extends React.Component {
         <div>
           <p>
             This report shows information about
-            <Button bsStyle={'link'}
+            <Button variant={'link'}
                     href={'https://attack.mitre.org/'}
-                    bsSize={'lg'}
+                    size={'lg'}
                     className={'attack-link'}
                     target={'_blank'}>
               Mitre ATT&CK™

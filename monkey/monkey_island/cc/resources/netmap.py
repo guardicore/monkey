@@ -1,6 +1,6 @@
 import flask_restful
 
-from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.netmap.net_edge import NetEdgeService
 from monkey_island.cc.services.netmap.net_node import NetNodeService
 

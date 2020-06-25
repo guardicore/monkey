@@ -1,7 +1,7 @@
 import flask_restful
 import json
 
-from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.reporting.zero_trust_service import ZeroTrustService
 
 

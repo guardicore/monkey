@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Col, Grid, Row} from 'react-bootstrap';
+import {Col, Container, Row} from 'react-bootstrap';
 import PillarsOverview from './PillarOverview';
 import ZeroTrustReportLegend from './ReportLegend';
 import * as PropTypes from 'prop-types';
@@ -8,7 +8,7 @@ export default class SummarySection extends Component {
   render() {
     return <div id="summary-section">
       <h2>Summary</h2>
-      <Grid fluid={true}>
+      <Container fluid>
         <Row>
           <Col xs={12} sm={12} md={12} lg={12}>
             <p>
@@ -28,7 +28,7 @@ export default class SummarySection extends Component {
             <ZeroTrustReportLegend/>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     </div>
   }
 }

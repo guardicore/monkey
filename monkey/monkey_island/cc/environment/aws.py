@@ -1,4 +1,4 @@
-import monkey_island.cc.auth
+from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.environment import Environment
 from common.cloud.aws.aws_instance import AwsInstance
 
@@ -6,8 +6,11 @@ __author__ = 'itay.mizeretz'
 
 
 class AwsEnvironment(Environment):
-    def __init__(self):
-        super(AwsEnvironment, self).__init__()
+
+    _credentials_required = True
+
+    def __init__(self, config):
+        super(AwsEnvironment, self).__init__(config)
         # Not suppressing error here on purpose. This is critical if we're on AWS env.
         self.aws_info = AwsInstance()
         self._instance_id = self._get_instance_id()
@@ -20,6 +23,7 @@ class AwsEnvironment(Environment):
         return self.aws_info.get_region()
 
     def get_auth_users(self):
-        return [
-            monkey_island.cc.auth.User(1, 'monkey', self.hash_secret(self._instance_id))
-        ]
+        if self._is_registered():
+            return self._config.get_users()
+        else:
+            return []

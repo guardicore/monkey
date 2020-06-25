@@ -1,11 +1,15 @@
 import React from 'react';
-import Form from 'react-jsonschema-form';
-import {Col, Modal, Nav, NavItem} from 'react-bootstrap';
+import Form from 'react-jsonschema-form-bs4';
+import {Col, Modal, Nav, Button} from 'react-bootstrap';
 import FileSaver from 'file-saver';
 import AuthComponent from '../AuthComponent';
 import {FilePond} from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import ConfigMatrixComponent from '../attack/ConfigMatrixComponent';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
+import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -169,8 +173,8 @@ class ConfigurePageComponent extends AuthComponent {
         this.setInitialConfig(res.configuration);
         this.props.onStatusChange();
       }).catch(error => {
-        console.log('Bad configuration: ' + error.toString());
-        this.setState({lastAction: 'invalid_configuration'});
+      console.log('Bad configuration: ' + error.toString());
+      this.setState({lastAction: 'invalid_configuration'});
     });
   };
 
@@ -219,20 +223,21 @@ class ConfigurePageComponent extends AuthComponent {
     }}>
       <Modal.Body>
         <h2>
-          <div className="text-center">Warning</div>
+          <div className='text-center'>Warning</div>
         </h2>
-        <p className="text-center" style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
+        <p className='text-center' style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
           You have unsubmitted changes. Submit them before proceeding.
         </p>
-        <div className="text-center">
-          <button type="button"
-                  className="btn btn-success btn-lg"
+        <div className='text-center'>
+          <Button type='button'
+                  className='btn btn-success'
+                  size='lg'
                   style={{margin: '5px'}}
                   onClick={() => {
                     this.setState({showAttackAlert: false})
                   }}>
             Cancel
-          </button>
+          </Button>
         </div>
       </Modal.Body>
     </Modal>)
@@ -452,17 +457,18 @@ class ConfigurePageComponent extends AuthComponent {
             uiSchema={this.uiSchemas[this.state.selectedSection]}
             formData={this.state.configuration[this.state.selectedSection]}
             onChange={this.onChange}
-            noValidate={true}>
-        <button type="submit" className={'hidden'}>Submit</button>
+            noValidate={true}
+            className={'config-form'}>
+        <button type='submit' className={'hidden'}>Submit</button>
       </Form>
     </div>)
   };
 
   renderBasicNetworkWarning = () => {
     if (this.state.selectedSection === 'basic_network') {
-      return (<div className="alert alert-info">
-        <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-        The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey scans machines
+      return (<div className='alert alert-info'>
+        <FontAwesomeIcon icon={faInfoCircle} style={{'marginRight': '5px'}}/>
+        The Monkey scans its subnet if 'Local network scan' is ticked. Additionally the monkey scans machines
         according to its range class.
       </div>)
     } else {
@@ -471,10 +477,15 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   renderNav = () => {
-    return (<Nav bsStyle="tabs" justified
+    return (<Nav variant='tabs'
+                 fill
                  activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
-                 style={{'marginBottom': '2em'}}>
-      {this.state.sections.map(section => <NavItem key={section.key} eventKey={section.key}>{section.title}</NavItem>)}
+                 style={{'marginBottom': '2em'}}
+                 className={'config-nav'}>
+      {this.state.sections.map(section =>
+        <Nav.Item>
+          <Nav.Link eventKey={section.key}>{section.title}</Nav.Link>
+        </Nav.Item>)}
     </Nav>)
   };
 
@@ -491,57 +502,60 @@ class ConfigurePageComponent extends AuthComponent {
       content = this.renderConfigContent(displayedSchema)
     }
     return (
-      <Col xs={12} lg={10}>
+      <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
+           lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
+           className={'main'}>
         {this.renderAttackAlertModal()}
-        <h1 className="page-title">Monkey Configuration</h1>
+        <h1 className='page-title'>Monkey Configuration</h1>
         {this.renderNav()}
         {content}
-        <div className="text-center">
-          <button type="submit" onClick={this.onSubmit} className="btn btn-success btn-lg" style={{margin: '5px'}}>
+        <div className='text-center'>
+          <button type='submit' onClick={this.onSubmit} className='btn btn-success btn-lg' style={{margin: '5px'}}>
             Submit
           </button>
-          <button type="button" onClick={this.resetConfig} className="btn btn-danger btn-lg" style={{margin: '5px'}}>
+          <button type='button' onClick={this.resetConfig} className='btn btn-danger btn-lg' style={{margin: '5px'}}>
             Reset to defaults
           </button>
         </div>
-        <div className="text-center">
+        <div className='text-center'>
           <button onClick={() => document.getElementById('uploadInputInternal').click()}
-                  className="btn btn-info btn-lg" style={{margin: '5px'}}>
+                  className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Import Config
           </button>
-          <input id="uploadInputInternal" type="file" accept=".conf" onChange={this.importConfig} style={{display: 'none'}}/>
-          <button type="button" onClick={this.exportConfig} className="btn btn-info btn-lg" style={{margin: '5px'}}>
+          <input id='uploadInputInternal' type='file' accept='.conf' onChange={this.importConfig}
+                 style={{display: 'none'}}/>
+          <button type='button' onClick={this.exportConfig} className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Export config
           </button>
         </div>
         <div>
           {this.state.lastAction === 'reset' ?
-            <div className="alert alert-success">
-              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-success'>
+              <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration reset successfully.
             </div>
             : ''}
           {this.state.lastAction === 'saved' ?
-            <div className="alert alert-success">
-              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-success'>
+              <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration saved successfully.
             </div>
             : ''}
           {this.state.lastAction === 'import_failure' ?
-            <div className="alert alert-danger">
-              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-danger'>
+              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
               Failed importing configuration. Invalid config file.
             </div>
             : ''}
           {this.state.lastAction === 'invalid_configuration' ?
-            <div className="alert alert-danger">
-              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-danger'>
+              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
               An invalid configuration file was imported or submitted.
             </div>
             : ''}
           {this.state.lastAction === 'import_success' ?
-            <div className="alert alert-success">
-              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-success'>
+              <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration imported successfully.
             </div>
             : ''}

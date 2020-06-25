@@ -2,7 +2,7 @@ from bson import json_util
 import flask_restful
 from flask import request
 
-from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.database import mongo, database
 
 

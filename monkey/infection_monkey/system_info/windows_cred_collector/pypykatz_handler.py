@@ -9,6 +9,7 @@ CREDENTIAL_TYPES = ['msv_creds', 'wdigest_creds', 'ssp_creds', 'livessp_creds', 
                     'kerberos_creds', 'credman_creds', 'tspkg_creds']
 PypykatzCredential = NewType('PypykatzCredential', Dict)
 
+
 def get_windows_creds() -> List[WindowsCredentials]:
     pypy_handle = pypykatz.go_live()
     logon_data = pypy_handle.to_dict()

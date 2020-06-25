@@ -1,9 +1,12 @@
 import React from 'react';
-import {Col} from 'react-bootstrap';
+import {Col, Button} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import StartOverModal from '../ui-components/StartOverModal';
 import '../../styles/StartOverPage.scss';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons/faInfoCircle";
+import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";
 
 class StartOverPageComponent extends AuthComponent {
   constructor(props) {
@@ -32,7 +35,9 @@ class StartOverPageComponent extends AuthComponent {
 
   render() {
     return (
-      <Col xs={12} lg={8}>
+      <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
+           lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
+           className={'main'}>
         <StartOverModal cleaned = {this.state.cleaned}
                         showCleanDialog = {this.state.showCleanDialog}
                         allMonkeysAreDead = {this.state.allMonkeysAreDead}
@@ -44,25 +49,25 @@ class StartOverPageComponent extends AuthComponent {
             If you are finished and want to start over with a fresh configuration, erase the logs and clear the map
             you can go ahead and
           </p>
-          <p style={{margin: '20px'}}>
-            <button className="btn btn-danger btn-lg center-block"
+          <p style={{margin: '20px'}} className={'text-center'}>
+            <Button className="btn btn-danger btn-lg center-block"
                     onClick={() => {
                       this.setState({showCleanDialog: true});
                       this.updateMonkeysRunning();
                     }
                     }>
               Reset the Environment
-            </button>
+            </Button>
           </p>
           <div className="alert alert-info">
-            <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
+            <FontAwesomeIcon icon={faInfoCircle} style={{'marginRight': '5px'}}/>
             You don't have to reset the environment to keep running monkeys.
             You can continue and <Link to="/run-monkey">Run More Monkeys</Link> as you wish,
             and see the results on the <Link to="/infection/map">Infection Map</Link> without deleting anything.
           </div>
           {this.state.cleaned ?
             <div className="alert alert-success">
-              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+              <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Environment was reset successfully
             </div>
             : ''}

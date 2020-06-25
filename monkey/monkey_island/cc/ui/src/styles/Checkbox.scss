@@ -1,6 +1,6 @@
 // colors
-$light-grey: #EAF4F4;
-$medium-grey: #7B9EA8;
+$light-gray: #EAF4F4;
+$medium-gray: #7B9EA8;
 $dark-green: #007d02;
 $green: #44CF6C;
 $black: #000000;
@@ -38,8 +38,8 @@ $black: #000000;
 
   &.blocked {
     background-color: $dark-green;
-    color: $light-grey;
-    fill: $light-grey;
+    color: $light-gray;
+    fill: $light-gray;
     cursor: default;
   }
 
@@ -100,6 +100,7 @@ $black: #000000;
 }
 
 .attack-matrix .ui-checkbox-btn label {
+  font-weight: 700;
   padding-top: 0;
   position: relative;
   float: left;

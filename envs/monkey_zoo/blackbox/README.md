@@ -29,6 +29,7 @@ Configure a PyTest configuration with the additional arguments `-s --island=35.2
 **Before running performance test make sure browser is not sending requests to island!** 
 
 To run telemetry performance test follow these steps:
+0. Set `server_config.json` to "standard" (no password protection) setting.
 1. Gather monkey telemetries.
     1. Enable "Export monkey telemetries" in Configuration -> Internal -> Tests if you don't have 
     exported telemetries already.

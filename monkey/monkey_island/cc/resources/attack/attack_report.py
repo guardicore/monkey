@@ -1,5 +1,5 @@
 import flask_restful
-from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.attack.attack_report import AttackReportService
 from monkey_island.cc.services.attack.attack_schema import SCHEMA
 from flask import json, current_app

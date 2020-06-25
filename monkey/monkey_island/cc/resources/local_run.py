@@ -6,7 +6,7 @@ import sys
 from flask import request, jsonify, make_response
 import flask_restful
 
-from monkey_island.cc.environment.environment import env
+import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.resources.monkey_download import get_monkey_executable
 from monkey_island.cc.services.node import NodeService
@@ -43,7 +43,7 @@ def run_local_monkey():
 
     # run the monkey
     try:
-        args = ['"%s" m0nk3y -s %s:%s' % (target_path, local_ip_addresses()[0], env.get_island_port())]
+        args = ['"%s" m0nk3y -s %s:%s' % (target_path, local_ip_addresses()[0], env_singleton.env.get_island_port())]
         if sys.platform == "win32":
             args = "".join(args)
         pid = subprocess.Popen(args, shell=True).pid

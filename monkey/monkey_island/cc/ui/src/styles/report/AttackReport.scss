@@ -30,9 +30,13 @@
   padding: 2em 2em 0 2em;
 }
 
-.ReactTable .rt-td,.rt-resizable-header-content{
+.attack-report .ReactTable .rt-td,.rt-resizable-header-content{
   white-space: pre-line !important;
   word-wrap: break-word;
+}
+
+.attack-matrix .ReactTable .rt-td,.rt-resizable-header-content a{
+  color: $monkey-yellow;
 }
 
 .attack-link{
@@ -46,6 +50,7 @@
 }
 
 .attack-report .toggle-btn {
+  box-shadow: None !important;
   padding: 0;
   margin-bottom: 30px;
   margin-left: 6px;

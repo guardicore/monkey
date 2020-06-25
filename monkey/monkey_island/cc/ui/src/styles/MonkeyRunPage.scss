@@ -1,5 +1,16 @@
-$blue: #337ab7;
+div.run-on-os-buttons {
+  margin-bottom: 20px;
+}
 
-#bootstrap-override.runOnOsButtons > li.active > a{
-  background-color: $blue !important;
+div.run-on-os-buttons > .nav-item{
+  margin: 0 10px 0 10px;
+}
+
+div.run-on-os-buttons > .nav-item > .nav-link{
+  border: 1px solid $monkey-alt;
+}
+
+div.run-on-os-buttons > .nav-item > .nav-link:hover{
+  color: $monkey-white;
+  background-color: $monkey-alt;
 }

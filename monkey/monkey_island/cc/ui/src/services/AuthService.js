@@ -8,6 +8,8 @@ export default class AuthService {
     '8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557';
 
   SECONDS_BEFORE_JWT_EXPIRES = 20;
+  AUTHENTICATION_API_ENDPOINT = '/api/auth';
+  REGISTRATION_API_ENDPOINT = '/api/registration';
 
   login = (username, password) => {
     return this._login(username, this.hashSha3(password));
@@ -30,7 +32,7 @@ export default class AuthService {
   }
 
   _login = (username, password) => {
-    return this._authFetch('/api/auth', {
+    return this._authFetch(this.AUTHENTICATION_API_ENDPOINT, {
       method: 'POST',
       body: JSON.stringify({
         username,
@@ -46,6 +48,32 @@ export default class AuthService {
           return {result: false};
         }
       })
+  };
+
+  register = (username, password) => {
+    if (password !== '') {
+      return this._register(username, this.hashSha3(password));
+    } else {
+      return this._register(username, password);
+    }
+  };
+
+  _register = (username, password) => {
+    return this._authFetch(this.REGISTRATION_API_ENDPOINT, {
+      method: 'POST',
+      body: JSON.stringify({
+        'user': username,
+        'password_hash': password
+      })
+    }).then(res => {
+      if (res.status === 200) {
+        return this._login(username, password)
+      } else {
+        return res.json().then(res_json => {
+          return {result: false, error: res_json['error']};
+        })
+      }
+    })
   };
 
   _authFetch = (url, options = {}) => {
@@ -72,7 +100,16 @@ export default class AuthService {
           this._removeToken();
         }
         return res;
-      });
+      })
+  };
+
+  needsRegistration = () => {
+    return fetch(this.REGISTRATION_API_ENDPOINT,
+      {method: 'GET'})
+      .then(response => response.json())
+      .then(res => {
+        return res['needs_registration']
+      })
   };
 
   async loggedIn() {
@@ -99,8 +136,7 @@ export default class AuthService {
   _isTokenExpired(token) {
     try {
       return decode(token)['exp'] - this.SECONDS_BEFORE_JWT_EXPIRES < Date.now() / 1000;
-    }
-    catch (err) {
+    } catch (err) {
       return false;
     }
   }
