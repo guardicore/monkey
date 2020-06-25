@@ -61,7 +61,7 @@ The Monkey performs queries out to the Internet on two separate occasions:
 
 The Monkey Island’s log file can be downloaded directly from the UI. Click the “log” section and choose “Download Monkey Island internal logfile”, like so:
 
-![How to download Monkey Island internal log file](../../../images/faq/download_log_monkey_island.png "How to download Monkey Island internal log file")
+![How to download Monkey Island internal log file](/images/faq/download_log_monkey_island.png "How to download Monkey Island internal log file")
 
 It can also be found as a local file on the Monkey Island server, where the Monkey Island was executed, called `info.log`.
 
@@ -140,7 +140,7 @@ If you wish to simulate a very “deep” attack into your network, you can try 
 
 To do this, change the “Distance from Island” parameter in the “Basic - Network” tab of the configuration:
 
-![How to increase propagation depth](../../../images/faq/prop_depth.png "How to increase propagation depth")
+![How to increase propagation depth](/images/faq/prop_depth.png "How to increase propagation depth")
 
 ## The report returns a blank screen
 

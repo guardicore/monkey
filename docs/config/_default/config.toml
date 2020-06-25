@@ -61,7 +61,7 @@ weight = 30
 [[menu.shortcuts]] 
 name = "<i class='fas fa-inbox'></i> Email"
 identifier = "email"
-url = "https://join.slack.com/t/infectionmonkey/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU"
+url = "mailto:support@infectionmonkey.com"
 weight = 40
 
 # Enables raw html in markdown.
