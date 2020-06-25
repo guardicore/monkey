@@ -5,7 +5,7 @@ import time
 import logging
 from threading import Thread
 
-MINIMUM_MONGO_DB_VERSION_REQUIRED = "3.6.0"
+MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
