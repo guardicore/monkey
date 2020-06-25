@@ -3,6 +3,7 @@ import logging
 import os
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
+import json
 
 __author__ = 'itay.mizeretz'
 
@@ -52,6 +53,7 @@ class Environment(object, metaclass=ABCMeta):
             raise InvalidRegistrationCredentialsError("Missing part of credentials.")
         if self._try_needs_registration():
             self._config.add_user(credentials)
+            logger.info(f"New user {credentials.username} registered!")
 
     def _try_needs_registration(self) -> bool:
         if not self._credentials_required:
