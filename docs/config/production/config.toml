@@ -1,1 +1,2 @@
 baseURL = "https://www.guardicore.com/infectionmonkey/docs"
+canonifyURLs = true
