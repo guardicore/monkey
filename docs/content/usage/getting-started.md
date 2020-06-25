@@ -3,6 +3,7 @@ title: "Getting Started"
 date: 2020-05-26T21:01:12+03:00
 draft: false
 weight: 1
+pre: "<i class='fas fa-play-circle'></i> "
 ---
 
 ## Using the Infection Monkey
@@ -17,31 +18,31 @@ On your first login, you'll be asked to set up a username and password for the M
 
 To get the Infection Monkey running as fast as possible, click **Run Monkey**. Optionally, you can configure the Monkey before you continue by clicking **Configuration** (see [how to configure the monkey](../configuration)).
 
-- [ ] TODO put screenshot
-
 To run the monkey, select one of the following options:
 
-1. Click **Run on C&C Server** to run the Infection Monkey on the Monkey Island server. This simulates an attacker trying to propagate from a machine in the Monkey Island subnet.
-1. Click **Run on machine of your choice** to download and execute the Infection Monkey on a machine of your choice. Then follow the instructions and execute the generated command on the machine of your choice. This simulates an attacker who has breached one of your servers. The Monkey will map all accessible machines and their open services and try to steal credentials and use its exploits to propagate.
+![Run Page](/images/usage/getting-started/run_page_with_arrows.jpg "Run Page")
 
-- [ ] TODO put screenshot
+1. Click **Run on C&C Server** to run the Infection Monkey on the Monkey Island server. This simulates an attacker trying to propagate from a machine in the Monkey Island subnet.
+2. Click **Run on machine of your choice** to download and execute the Infection Monkey on a machine of your choice. Then follow the instructions and execute the generated command on the machine of your choice. This simulates an attacker who has breached one of your servers. The Monkey will map all accessible machines and their open services and try to steal credentials and use its exploits to propagate.
+
+![Run on machine of your choice](/images/usage/getting-started/run_page_button_no_arrow.jpg "Run on machine of your choice")
 
 ### Infection Map
 
 Next, click **Infection Map** to see the Infection Monkey in action.
 
-- [ ] TODO put screenshot
+![Run page to infection map page](/images/usage/getting-started/run_page_button.JPG "Run page to infection map page")
 
 At first, the infection map will look like this:
 
-- [ ] TODO put screenshot
+![Start of Monkey execution](/images/usage/getting-started/run_island.JPG "Start of Monkey execution")
 
 Within a few minutes, the Infection Monkey should be able to find and attack accessible machines.
 
-- [ ] TODO put screenshot
+![Middle of Monkey execution](/images/usage/getting-started/single_exploitation.JPG "Middle of Monkey execution")
 
-As the Infection Monkey continues, the map should be filled with accessible and “hacked” machines. Once all the Infection Monkeys have finished propagating, click **Reports** (see [Infection Monkey Reports](../reports)) to see the reports.
+As the Infection Monkey continues, the map should be filled with accessible and “hacked” machines. Once all the Infection Monkeys have finished propagating, click **Reports** to see the reports. See [Infection Monkey Reports](../reports) for more info.
 
-- [ ] TODO put screenshot
+![End of Monkey execution](/images/usage/getting-started/exploitation_tunneling_arrow.jpg "End of Monkey execution")
 
 Congratulations, you finished first successful execution of the Infection Monkey! 🎉 To thoroughly test your network, you can run the Infection Monkey from different starting locations using different configurations.

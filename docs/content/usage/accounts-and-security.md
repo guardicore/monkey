@@ -2,6 +2,8 @@
 title: "Accounts and Security"
 date: 2020-06-22T15:36:56+03:00
 draft: false
+weight: 50
+pre: "<i class='fas fa-user-lock'></i> "
 ---
 
 ## Security in Infection Monkey

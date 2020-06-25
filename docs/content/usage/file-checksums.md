@@ -3,6 +3,7 @@ title: "Verify Integrity - Checksums"
 date: 2020-06-08T19:53:47+03:00
 draft: false
 weight: 100
+pre: "<i class='fas fa-certificate'></i> "
 ---
 
 The official distribution of Infection Monkey is compiled and supplied by Guardicore ([download from our official site here](https://infectionmonkey.com/)). The team signs all software packages to certify that a particular Infection Monkey package is a valid and unaltered Infection Monkey release. Before installing Monkey, you should validate the package using the SHA-256 checksum.
