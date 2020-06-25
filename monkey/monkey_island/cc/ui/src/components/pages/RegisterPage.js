@@ -10,7 +10,8 @@ class RegisterPageComponent extends React.Component {
 
   NO_AUTH_API_ENDPOINT = '/api/environment';
 
-  register = () => {
+  register = (event) => {
+    event.preventDefault();
     this.auth.register(this.username, this.password).then(res => {
       this.setState({failed: false, error: ''});
       if (res['result']) {
@@ -89,13 +90,11 @@ class RegisterPageComponent extends React.Component {
                 <h1 className='reg-title'>First time?</h1>
                 <h3 className='reg-subtitle'>Let's secure your Monkey Island!</h3>
                 <div>
-                  <Form className={'auth-form'}>
+                  <Form className={'auth-form'} onSubmit={this.register} >
                     <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
                     <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
-                    <Button id={'auth-button'} onClick={() => {
-                      this.register()
-                    }}>
-                      Lets go!
+                    <Button id={'auth-button'} type={'submit'} >
+                      Let's go!
                     </Button>
                     <Row>
                       <Col>

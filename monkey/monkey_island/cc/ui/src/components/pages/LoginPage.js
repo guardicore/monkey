@@ -4,10 +4,11 @@ import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 import AuthService from '../../services/AuthService';
 import Particles from "react-particles-js";
 import {particleParams} from "../../styles/particle-component/AuthPageParams";
-import monkeyDetective from "../../images/militant-monkey.svg";
+import monkeyGeneral from "../../images/militant-monkey.svg";
 
 class LoginPageComponent extends React.Component {
-  login = () => {
+  login = (event) => {
+    event.preventDefault()
     this.auth.login(this.username, this.password).then(res => {
       if (res['result']) {
         this.redirectToHome();
@@ -66,12 +67,10 @@ class LoginPageComponent extends React.Component {
               <Col lg={8} md={8} sm={8}>
                 <h1 className='auth-title'>Login</h1>
                 <div>
-                  <Form className={'auth-form'}>
+                  <Form className={'auth-form'} onSubmit={this.login}>
                     <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
                     <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
-                    <Button id={'auth-button'} onClick={() => {
-                      this.login()
-                    }}>
+                    <Button id={'auth-button'} type={'submit'}>
                       Login
                     </Button>
                     {
@@ -84,7 +83,7 @@ class LoginPageComponent extends React.Component {
                 </div>
               </Col>
               <Col lg={4} md={4} sm={4}>
-                <img alt="infection monkey" className={'monkey-detective'} src={monkeyDetective}/>
+                <img alt="infection monkey" className={'monkey-detective'} src={monkeyGeneral}/>
               </Col>
             </Row>
           </Col>
