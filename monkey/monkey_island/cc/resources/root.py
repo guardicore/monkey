@@ -40,5 +40,3 @@ class Root(flask_restful.Resource):
             ip_addresses=local_ip_addresses(),
             mongo=str(mongo.db),
             completed_steps=InfectionLifecycle.get_completed_steps())
-
-

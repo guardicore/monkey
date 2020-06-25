@@ -17,4 +17,3 @@ class Registration(flask_restful.Resource):
             return make_response({"error": ""}, 200)
         except (InvalidRegistrationCredentialsError, RegistrationNotNeededError) as e:
             return make_response({"error": str(e)}, 400)
-

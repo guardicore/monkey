@@ -3,11 +3,10 @@ import logging
 import os
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
-import json
 
 __author__ = 'itay.mizeretz'
 
-from common.utils.exceptions import InvalidRegistrationCredentialsError, RegistrationNotNeededError, \
+from common.utils.exceptions import InvalidRegistrationCredentialsError, \
     CredentialsNotRequiredError, AlreadyRegisteredError
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
