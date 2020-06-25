@@ -25,7 +25,7 @@ The site is based on [Hugo](https://gohugo.io/) and the [learn](https://themes.g
     - [Build the content for deployment](#build-the-content-for-deployment)
     - [Troubleshooting](#troubleshooting)
       - [`Error: Unable to locate config file or config directory. Perhaps you need to create a new site.`](#error-unable-to-locate-config-file-or-config-directory-perhaps-you-need-to-create-a-new-site)
-      - [`failed to extract shortcode: template for shortcode "children" not found`](#failed-to-extract-shortcode-template-for-shortcode-children-not-found)
+      - [`failed to extract shortcode: template for shortcode "children" not found` or theme doesn't seem right?](#failed-to-extract-shortcode-template-for-shortcode-children-not-found-or-theme-doesnt-seem-right)
       - [CSS is missing](#css-is-missing)
 
 ## Directory Structure
@@ -80,7 +80,7 @@ Edit the markdown file(s). [Here's a markdown cheatsheet](https://themes.gohugo.
 
 #### Serve the documentation locally
 
-Run `hugo server -D`. The server will be available locally at `http://localhost:1313/infectionmonkey/docs/`. You can change the content/theme and the site will refresh automatically to reflect your changes.
+Run `hugo server -D`. The server will be available locally at `http://localhost:1313/`. You can change the content/theme and the site will refresh automatically to reflect your changes.
 
 #### Build the content for deployment
 
@@ -92,7 +92,7 @@ Run `hugo --environment staging` or `hugo --environment production`. This will c
 
 What is your working directory? It should be `monkey/docs`.
   
-##### `failed to extract shortcode: template for shortcode "children" not found`
+##### `failed to extract shortcode: template for shortcode "children" not found` or theme doesn't seem right?
 
 Have you ran `git submodule update`?
 
