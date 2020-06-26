@@ -198,7 +198,7 @@ SCHEMA = {
                         "ScheduleJobs"
                     ],
                     "title": "Job scheduling",
-                    "attack_techniques": ["T1168"]
+                    "attack_techniques": ["T1168", "T1053"]
                 }
             ],
         },
