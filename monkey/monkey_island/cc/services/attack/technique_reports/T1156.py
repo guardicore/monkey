@@ -14,8 +14,7 @@ class T1156(AttackTechnique):
     used_msg = "Monkey modified bash startup files on the system."
 
     query = [{'$match': {'telem_category': 'post_breach',
-                         'data.name': POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
-                         'data.command': {'$regex': 'bash'}}},
+                         'data.name': POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION}},
              {'$project': {'_id': 0,
                            'machine': {'hostname': '$data.hostname',
                                        'ips': ['$data.ip']},
@@ -25,14 +24,23 @@ class T1156(AttackTechnique):
     def get_report_data():
         data = {'title': T1156.technique_title(), 'info': []}
 
-        bash_modification_info = list(mongo.db.telemetry.aggregate(T1156.query))
+        shell_startup_files_modification_info = list(mongo.db.telemetry.aggregate(T1156.query))
+
+        bash_startup_modification_info = []
+        for shell_startup_file_result in shell_startup_files_modification_info[0]['result']:
+            # only want bash startup files
+            if any(file_name in shell_startup_file_result[0] for file_name in [".bash", ".profile"]):
+                bash_startup_modification_info.append({
+                    'machine': shell_startup_files_modification_info[0]['machine'],
+                    'result': shell_startup_file_result
+                    })
 
         status = []
-        for pba_node in bash_modification_info:
-            status.append(pba_node['result'][1])
+        for bash_startup_file in bash_startup_modification_info:
+            status.append(bash_startup_file['result'][1])
         status = (ScanStatus.USED.value if any(status) else ScanStatus.SCANNED.value)\
             if status else ScanStatus.UNSCANNED.value
 
         data.update(T1156.get_base_data_by_status(status))
-        data.update({'info': bash_modification_info})
+        data.update({'info': bash_startup_modification_info})
         return data
