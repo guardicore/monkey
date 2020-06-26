@@ -129,6 +129,7 @@ SCHEMA = {
                                    "in certain situations by abusing PowerShell profiles which "
                                    "are scripts that run when PowerShell starts."
                 },
+<<<<<<< HEAD
                 "T1053": {
                     "title": "Scheduled task",
                     "type": "bool",
@@ -148,6 +149,18 @@ SCHEMA = {
                     "description": "Adversaries can set the setuid or setgid bits to get code running in "
                                    "a different user’s context."
                 }
+=======
+                # "T1053": {
+                #     "title": "Scheduled task",
+                #     "type": "bool",
+                #     "value": True,
+                #     "necessary": False,
+                #     "link": "https://attack.mitre.org/techniques/T1053",
+                #     "description": "Windows utilities can be used to schedule programs or scripts to "
+                #                    "be executed at a date and time. An adversary may use task scheduling to "
+                #                    "execute programs at system startup or on a scheduled basis for persistence."
+                # },
+>>>>>>> Add T1168 (linux PBA)
             }
         },
         "defence_evasion": {
