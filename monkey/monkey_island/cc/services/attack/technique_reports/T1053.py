@@ -9,12 +9,13 @@ __author__ = "shreyamalviya"
 
 class T1053(AttackTechnique):
     tech_id = "T1053"
-    unscanned_msg = "Monkey did not try scheduling a job."
-    scanned_msg = "Monkey tried scheduling a job on the system but failed."
-    used_msg = "Monkey scheduled a job on the system."
+    unscanned_msg = "Monkey did not try scheduling a job on Windows."
+    scanned_msg = "Monkey tried scheduling a job on the Windows system but failed."
+    used_msg = "Monkey scheduled a job on the Windows system."
 
     query = [{'$match': {'telem_category': 'post_breach',
-                         'data.name': POST_BREACH_JOB_SCHEDULING}},
+                         'data.name': POST_BREACH_JOB_SCHEDULING,
+                         'data.command': {'$regex': 'schtasks'}}},
              {'$project': {'_id': 0,
                            'machine': {'hostname': '$data.hostname',
                                        'ips': ['$data.ip']},
