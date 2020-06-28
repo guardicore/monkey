@@ -4,6 +4,7 @@ date: 2020-05-26T21:01:12+03:00
 draft: false
 weight: 1
 pre: "<i class='fas fa-play-circle'></i> "
+tags: ["usage"]
 ---
 
 ## Using the Infection Monkey
@@ -26,6 +27,10 @@ To run the monkey, select one of the following options:
 2. Click **Run on machine of your choice** to download and execute the Infection Monkey on a machine of your choice. Then follow the instructions and execute the generated command on the machine of your choice. This simulates an attacker who has breached one of your servers. The Monkey will map all accessible machines and their open services and try to steal credentials and use its exploits to propagate.
 
 ![Run on machine of your choice](/images/usage/getting-started/run_page_button_no_arrow.jpg "Run on machine of your choice")
+
+{{% notice tip %}}
+If you're running in an AWS cloud environment, check out [Usage -> Integrations](../../usage/integrations) for information about how Monkey integrates with AWS.
+{{% /notice %}}
 
 ### Infection Map
 

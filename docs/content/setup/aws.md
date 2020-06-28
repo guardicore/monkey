@@ -28,6 +28,10 @@ You will be presented a login page. Use the username **monkey**, and the new EC2
 
 ![AWS instance ID](../../images/setup/aws/aws-instance-id.png "AWS instance ID")
 
+## Integration with AWS services
+
+The Monkey has built-in integrations with AWS services for better execution and reporting. See [Usage -> Integrations](../../usage/integrations) for more details.
+
 ## Upgrading
 
 Currently there's no "upgrade-in-place" option when a new version comes out. To get the new version, you can deploy a new machine from the marketplace. If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new Monkey Island.

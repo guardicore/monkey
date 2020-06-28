@@ -9,7 +9,7 @@ tags = ["setup"]
 
 # Setting up Infection Monkey
 
-Setting up Infection Monkey is really easy! First, you need to [download the Infection Monkey from our site](https://infectionmonkey.com/). 
+Setting up Infection Monkey is really easy! First, you need to {{% button href="https://infectionmonkey.com/" icon="fas fa-download" %}}download the Infection Monkey from our site{{% /button %}}.
 
 Once you've downloaded an installer, you can follow the relevant guide for your environment:
 

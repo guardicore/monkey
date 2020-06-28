@@ -2,6 +2,7 @@
 title: "Contribute Documentation"
 date: 2020-06-17T17:31:54+03:00
 draft: false
+tags: ["contribute"]
 ---
 
 The `/docs` folder contains the Monkey Documentation site.

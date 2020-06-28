@@ -2,6 +2,7 @@
 title: "Setting up a development environment"
 date: 2020-06-08T19:53:00+03:00
 draft: false
+tags: ["contribute"]
 ---
 
 ## Deployment scripts

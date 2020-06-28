@@ -3,6 +3,7 @@ title: "Scenarios"
 date: 2020-05-26T21:01:19+03:00
 draft: true
 weight: 2
+tags: ["usage"]
 ---
 
 In this page we show how you can use the Infection Monkey to simulate breach and attack scenarios as well as to share some cool tips and tricks you can use to up your Infection Monkey game. This page is aimed at both novice and experienced Monkey users. You can also refer to [our FAQ](../../faq) for more specific questions and answers.

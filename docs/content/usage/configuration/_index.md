@@ -11,6 +11,10 @@ pre: "<i class='fas fa-sliders-h'></i> "
 
 The Monkey is highly configurable. Nearly every part of it can be modified to turn it to a fast acting worm or into a port scanning and system information collecting machine.
 
+{{% notice warning %}}
+This section of the documentation is incomplete and under active construction.
+{{% /notice %}}
+
 See these documentation pages for information on each configuration value:
 
 {{% children description=true %}}
