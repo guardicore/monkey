@@ -4,7 +4,9 @@ date: 2020-05-26T18:15:37+03:00
 draft: false
 ---
 
-Welcome to the Infection Monkey documentation hub!
+# Infection Monkey documentation hub
+
+{{< homepage_shortcuts >}}
 
 ## What is Infection Monkey?
 
