@@ -19,7 +19,7 @@ This diagram provides a quick glance at how your organization scores on each com
 
 ## Test Results
 
-See how your network fared against each of the tests the Infection Monkey ran. The tests are ordered by Zero Trust components so you can so you quickly navigate to the components you care about first.
+See how your network fared against each of the tests the Infection Monkey ran. The tests are ordered by Zero Trust components so you can quickly navigate to the components you care about first.
 
 ![Zero Trust Report test results](/images/usage/reports/ztreport2.png "Zero Trust Report test results")
 
