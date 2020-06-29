@@ -7,7 +7,7 @@ from botocore.exceptions import UnknownServiceError
 
 from common.cloud.aws.aws_instance import AwsInstance
 from monkey_island.cc.environment import EnvironmentConfig
-from monkey_island.cc.services.reporting.exporter import Exporter
+from monkey_island.cc.services.reporting.exporting.exporter import Exporter
 
 __authors__ = ['maor.rayzin', 'shay.nehmad']
 

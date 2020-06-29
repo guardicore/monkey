@@ -14,7 +14,7 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
-from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
+from monkey_island.cc.services.reporting.exporting.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_regular_report
 from monkey_island.cc.network_utils import local_ip_addresses, get_subnets
 

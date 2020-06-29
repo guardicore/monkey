@@ -321,3 +321,7 @@ class ConfigService:
     @staticmethod
     def set_started_on_island(value: bool):
         ConfigService.set_config_value(['internal', 'general', 'started_on_island'], value)
+
+    @staticmethod
+    def get_active_exporters():
+        return ConfigService.get_config_value(['cnc', 'exporters', 'active_exporters'])

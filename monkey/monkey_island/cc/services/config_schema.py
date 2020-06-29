@@ -1,5 +1,6 @@
 from common.data.system_info_collectors_names \
     import AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR, PROCESS_LIST_COLLECTOR
+from monkey_island.cc.services.reporting.exporting.exporter_names import AWS_EXPORTER, LABELS_EXPORTER
 
 WARNING_SIGN = " \u26A0"
 
@@ -136,6 +137,28 @@ SCHEMA = {
                         PROCESS_LIST_COLLECTOR
                     ],
                     "title": "Collect running processes on the machine",
+                    "attack_techniques": []
+                },
+            ],
+        },
+        "exporters_classes": {
+            "title": "Exporters",
+            "type": "string",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        LABELS_EXPORTER
+                    ],
+                    "title": "Export machine labels for Guardicore Centra.",
+                    "attack_techniques": []
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        AWS_EXPORTER
+                    ],
+                    "title": "Export security findings to AWS Security Hub.",
                     "attack_techniques": []
                 },
             ],
@@ -819,7 +842,27 @@ SCHEMA = {
                             "default": "192.0.2.0:5000",
                             "description": "The current command server the monkey is communicating with"
                         }
-                    }
+                    },
+                },
+                "exporters": {
+                    "title": "Exporters",
+                    "type": "object",
+                    "properties": {
+                        "active_exporters": {
+                            "title": "Active Exporters",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "$ref": "#/definitions/exporters_classes"
+                            },
+                            "default": [
+                                AWS_EXPORTER,
+                                LABELS_EXPORTER
+                            ],
+                            "description": "Determines which exporters to activate. Exporters report the Monkey's "
+                                           "findings to other places, like AWS Security Hub or Guardicore Centra."
+                        },
+                    },
                 },
             }
         },

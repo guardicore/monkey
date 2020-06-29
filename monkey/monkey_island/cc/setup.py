@@ -1,5 +1,6 @@
 import logging
 
+from monkey_island.cc.services.reporting.exporting.exporter_init import populate_exporter_list
 from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterface
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 from monkey_island.cc.database import mongo
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 def setup():
     logger.info("Setting up the Monkey Island, this might take a while...")
     try_store_mitigations_on_mongo()
+    populate_exporter_list()
 
 
 def try_store_mitigations_on_mongo():

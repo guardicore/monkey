@@ -21,7 +21,6 @@ json_setup_logging(default_path=os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'isla
 logger = logging.getLogger(__name__)
 
 from monkey_island.cc.app import init_app
-from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list
 from monkey_island.cc.network_utils import local_ip_addresses
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.database import is_db_server_up, get_db_version
@@ -50,7 +49,6 @@ def start_island_server(should_setup_only):
     wait_for_mongo_db_server(mongo_url)
     assert_mongo_db_version(mongo_url)
 
-    populate_exporter_list()
     app = init_app(mongo_url)
 
     crt_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.crt')
