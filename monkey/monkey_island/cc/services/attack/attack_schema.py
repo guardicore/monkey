@@ -63,8 +63,17 @@ SCHEMA = {
                     "description": "Adversaries may execute a binary, command, or script via a method "
                                    "that interacts with Windows services, such as the Service Control Manager.",
                     "depends_on": ["T1210"]
+                },
+                "T1154": {
+                    "title": "Trap",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1154",
+                    "description": "Adversaries can use the trap command to register code to be executed "
+                                   "when the shell encounters specific interrupts."
                 }
-            }
+            },
         },
         "persistence": {
             "title": "Persistence",

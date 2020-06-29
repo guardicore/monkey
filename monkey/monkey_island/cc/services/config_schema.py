@@ -175,6 +175,14 @@ SCHEMA = {
                     ],
                     "title": "Hidden files and directories",
                     "attack_techniques": ["T1158"]
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "TrapCommand"
+                    ],
+                    "title": "Trap",
+                    "attack_techniques": ["T1154"]
                 }
             ],
         },
@@ -397,7 +405,8 @@ SCHEMA = {
                                 "BackdoorUser",
                                 "CommunicateAsNewUser",
                                 "ModifyShellStartupFiles",
-                                "HiddenFiles"
+                                "HiddenFiles",
+                                "TrapCommand"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
