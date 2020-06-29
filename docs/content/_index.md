@@ -21,7 +21,7 @@ To read more about the Monkey and download it, visit [our homepage](https://infe
 
 ## Getting Started
 
-If you haven't downloaded Infection Monkey yet you can do so [from our homepage](https://infectionmonkey.com/). After downloading the Monkey, install it using one of our [setup guides](setup), and read our [getting started guide](usage/getting-started) for a quick-start on Monkey!
+If you haven't downloaded Infection Monkey yet you can do so [from our homepage](https://www.guardicore.com/infectionmonkey/#download). After downloading the Monkey, install it using one of our [setup guides](setup), and read our [getting started guide](usage/getting-started) for a quick-start on Monkey!
 
 ## Support and community
 
