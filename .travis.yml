@@ -33,6 +33,17 @@ install:
 - node --version
 - npm --version
 
+# linuxbrew (for hugo)
+- git clone https://github.com/Homebrew/brew ~/.linuxbrew/Homebrew
+- mkdir ~/.linuxbrew/bin
+- ln -s ~/.linuxbrew/Homebrew/bin/brew ~/.linuxbrew/bin
+- eval $(~/.linuxbrew/bin/brew shellenv)
+
+# hugo (for documentation)
+- brew install hugo
+# print hugo version (useful for debugging documentation build errors)
+- hugo version
+
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
 - python monkey/monkey_island/cc/set_server_config.py testing
@@ -67,6 +78,10 @@ script:
 - eslint ./src --quiet  # Test for errors
 - JS_WARNINGS_AMOUNT_UPPER_LIMIT=70
 - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # Test for max warnings
+
+# Build documentation
+- cd $TRAVIS_BUILD_DIR/docs
+- hugo --verbose --environment staging
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
