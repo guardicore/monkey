@@ -8,7 +8,7 @@ draft: false
 
 {{< homepage_shortcuts >}}
 
-## What is Infection Monkey?
+## What is Guardicore Infection Monkey?
 
 The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island Command and Control server.
 
