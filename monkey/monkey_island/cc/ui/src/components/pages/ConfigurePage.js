@@ -3,9 +3,8 @@ import Form from 'react-jsonschema-form-bs4';
 import {Col, Modal, Nav, Button} from 'react-bootstrap';
 import FileSaver from 'file-saver';
 import AuthComponent from '../AuthComponent';
-import {FilePond} from 'react-filepond';
-import 'filepond/dist/filepond.min.css';
 import ConfigMatrixComponent from '../attack/ConfigMatrixComponent';
+import UiSchema from '../configuration-components/UiSchema';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
@@ -13,20 +12,19 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamati
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
+export const API_PBA_LINUX = '/api/fileUpload/PBAlinux';
+export const API_PBA_WINDOWS = '/api/fileUpload/PBAwindows';
 
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.PBAwindowsPond = null;
-    this.PBAlinuxPond = null;
     this.currentSection = 'attack';
     this.currentFormData = {};
     this.initialConfig = {};
     this.initialAttackConfig = {};
     this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
-    this.uiSchemas = this.getUiSchemas();
-    // set schema from server
+
     this.state = {
       schema: {},
       configuration: {},
@@ -34,51 +32,11 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       sections: [],
       selectedSection: 'attack',
-      PBAwinFile: [],
-      PBAlinuxFile: [],
-      showAttackAlert: false
-    };
-  }
+      showAttackAlert: false,
 
-  getUiSchemas() {
-    return ({
-      basic: {'ui:order': ['general', 'credentials']},
-      basic_network: {},
-      monkey: {
-        behaviour: {
-          custom_PBA_linux_cmd: {
-            'ui:widget': 'textarea',
-            'ui:emptyValue': ''
-          },
-          PBA_linux_file: {
-            'ui:widget': this.PBAlinux
-          },
-          custom_PBA_windows_cmd: {
-            'ui:widget': 'textarea',
-            'ui:emptyValue': ''
-          },
-          PBA_windows_file: {
-            'ui:widget': this.PBAwindows
-          },
-          PBA_linux_filename: {
-            classNames: 'linux-pba-file-info',
-            'ui:emptyValue': ''
-          },
-          PBA_windows_filename: {
-            classNames: 'windows-pba-file-info',
-            'ui:emptyValue': ''
-          }
-        }
-      },
-      cnc: {},
-      network: {},
-      exploits: {},
-      internal: {
-        general: {
-          started_on_island: {'ui:widget': 'hidden'}
-        }
-      }
-    })
+      PBAwindowsFile: [],
+      PBAlinuxFile: []
+    };
   }
 
   setInitialConfig(config) {
@@ -122,7 +80,7 @@ class ConfigurePageComponent extends AuthComponent {
       .then(res => res.json())
       .then(data => {
         this.setInitialConfig(data.configuration);
-        this.setState({configuration: data.configuration})
+        this.setState({configuration: data.configuration});
       })
   };
 
@@ -271,7 +229,6 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   resetConfig = () => {
-    this.removePBAfiles();
     this.authFetch(CONFIG_URL,
       {
         method: 'POST',
@@ -280,14 +237,15 @@ class ConfigurePageComponent extends AuthComponent {
       })
       .then(res => res.json())
       .then(res => {
-        this.setState({
-          lastAction: 'reset',
-          schema: res.schema,
-          configuration: res.configuration
-        });
-        this.setInitialConfig(res.configuration);
-        this.props.onStatusChange();
-      });
+          this.setState({
+            lastAction: 'reset',
+            schema: res.schema,
+            configuration: res.configuration
+          });
+          this.setInitialConfig(res.configuration);
+          this.props.onStatusChange();
+        }
+      );
     this.authFetch(ATTACK_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -298,23 +256,22 @@ class ConfigurePageComponent extends AuthComponent {
         this.setState({attackConfig: res.configuration});
         this.setInitialAttackConfig(res.configuration);
       })
+
+    this.removePBAfile(API_PBA_WINDOWS, this.setPbaFileWindows)
+    this.removePBAfile(API_PBA_LINUX, this.setPbaFileLinux)
   };
 
-  removePBAfiles() {
-    // We need to clean files from widget, local state and configuration (to sync with bac end)
-    if (this.PBAwindowsPond !== null) {
-      this.PBAwindowsPond.removeFile();
-    }
-    if (this.PBAlinuxPond !== null) {
-      this.PBAlinuxPond.removeFile();
-    }
+  removePBAfile(apiEndpoint, setParamsFnc) {
+    this.sendPbaRemoveRequest(apiEndpoint)
+    setParamsFnc([], "")
+  }
+
+  sendPbaRemoveRequest(apiEndpoint) {
     let request_options = {
       method: 'DELETE',
       headers: {'Content-Type': 'text/plain'}
     };
-    this.authFetch('/api/fileUpload/PBAlinux', request_options);
-    this.authFetch('/api/fileUpload/PBAwindows', request_options);
-    this.setState({PBAlinuxFile: [], PBAwinFile: []});
+    this.authFetch(apiEndpoint, request_options);
   }
 
   setConfigOnImport = (event) => {
@@ -366,82 +323,6 @@ class ConfigurePageComponent extends AuthComponent {
     event.target.value = null;
   };
 
-  PBAwindows = () => {
-    return (<FilePond
-      server={{
-        url: '/api/fileUpload/PBAwindows',
-        process: {headers: {'Authorization': this.jwtHeader}},
-        revert: {headers: {'Authorization': this.jwtHeader}},
-        restore: {headers: {'Authorization': this.jwtHeader}},
-        load: {headers: {'Authorization': this.jwtHeader}},
-        fetch: {headers: {'Authorization': this.jwtHeader}}
-      }}
-      files={this.getWinPBAfile()}
-      onupdatefiles={fileItems => {
-        this.setState({
-          PBAwinFile: fileItems.map(fileItem => fileItem.file)
-        })
-      }}
-      ref={ref => this.PBAwindowsPond = ref}
-    />)
-  };
-
-  PBAlinux = () => {
-    return (<FilePond
-      server={{
-        url: '/api/fileUpload/PBAlinux',
-        process: {headers: {'Authorization': this.jwtHeader}},
-        revert: {headers: {'Authorization': this.jwtHeader}},
-        restore: {headers: {'Authorization': this.jwtHeader}},
-        load: {headers: {'Authorization': this.jwtHeader}},
-        fetch: {headers: {'Authorization': this.jwtHeader}}
-      }}
-      files={this.getLinuxPBAfile()}
-      onupdatefiles={fileItems => {
-        this.setState({
-          PBAlinuxFile: fileItems.map(fileItem => fileItem.file)
-        })
-      }}
-      ref={ref => this.PBAlinuxPond = ref}
-    />)
-  };
-
-  getWinPBAfile() {
-    if (this.state.PBAwinFile.length !== 0) {
-      return ConfigurePageComponent.getMockPBAfile(this.state.PBAwinFile[0])
-    } else if (this.state.configuration.monkey.behaviour.PBA_windows_filename) {
-      return ConfigurePageComponent.getFullPBAfile(this.state.configuration.monkey.behaviour.PBA_windows_filename)
-    }
-  }
-
-  getLinuxPBAfile() {
-    if (this.state.PBAlinuxFile.length !== 0) {
-      return ConfigurePageComponent.getMockPBAfile(this.state.PBAlinuxFile[0])
-    } else if (this.state.configuration.monkey.behaviour.PBA_linux_filename) {
-      return ConfigurePageComponent.getFullPBAfile(this.state.configuration.monkey.behaviour.PBA_linux_filename)
-    }
-  }
-
-  static getFullPBAfile(filename) {
-    return [{
-      source: filename,
-      options: {
-        type: 'limbo'
-      }
-    }];
-  }
-
-  static getMockPBAfile(mockFile) {
-    let pbaFile = [{
-      source: mockFile.name,
-      options: {
-        type: 'limbo'
-      }
-    }];
-    pbaFile[0].options.file = mockFile;
-    return pbaFile
-  }
-
   renderMatrix = () => {
     return (<ConfigMatrixComponent configuration={this.state.attackConfig}
                                    submit={this.componentDidMount}
@@ -449,12 +330,15 @@ class ConfigurePageComponent extends AuthComponent {
                                    change={this.attackTechniqueChange}/>)
   };
 
-
   renderConfigContent = (displayedSchema) => {
     return (<div>
       {this.renderBasicNetworkWarning()}
       <Form schema={displayedSchema}
-            uiSchema={this.uiSchemas[this.state.selectedSection]}
+            uiSchema={UiSchema({
+              configuration: this.state,
+              setPbaFileWindows: this.setPbaFileWindows,
+              setPbaFileLinux: this.setPbaFileLinux,
+            })}
             formData={this.state.configuration[this.state.selectedSection]}
             onChange={this.onChange}
             noValidate={true}
@@ -463,6 +347,27 @@ class ConfigurePageComponent extends AuthComponent {
       </Form>
     </div>)
   };
+
+  setPbaFileWindows = (pbaFile, filename) => {
+    let pbaFileDeepCopy = JSON.parse(JSON.stringify(pbaFile))
+    let config = this.state.configuration
+    config.monkey.behaviour.PBA_windows_filename = filename
+    this.setState({
+      PBAwindowsFile: pbaFileDeepCopy,
+      configuration: config
+    })
+  }
+
+  setPbaFileLinux = (pbaFile, filename) => {
+    let pbaFileDeepCopy = JSON.parse(JSON.stringify(pbaFile))
+    let config = this.state.configuration
+    config.monkey.behaviour.PBA_linux_filename = filename
+    console.log(config);
+    this.setState({
+      PBAlinuxFile: pbaFileDeepCopy,
+      configuration: config
+    })
+  }
 
   renderBasicNetworkWarning = () => {
     if (this.state.selectedSection === 'basic_network') {
@@ -495,6 +400,7 @@ class ConfigurePageComponent extends AuthComponent {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }
+
     let content = '';
     if (this.state.selectedSection === 'attack' && Object.entries(this.state.attackConfig).length !== 0) {
       content = this.renderMatrix()
