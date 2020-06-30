@@ -33,9 +33,6 @@ class ConfigurePageComponent extends AuthComponent {
       sections: [],
       selectedSection: 'attack',
       showAttackAlert: false,
-
-      PBAwindowsFile: [],
-      PBAlinuxFile: []
     };
   }
 
@@ -245,7 +242,10 @@ class ConfigurePageComponent extends AuthComponent {
           this.setInitialConfig(res.configuration);
           this.props.onStatusChange();
         }
-      );
+      ).then(() => {
+          this.removePBAfile(API_PBA_WINDOWS, this.setPbaFilenameWindows)
+          this.removePBAfile(API_PBA_LINUX, this.setPbaFilenameLinux)
+    });
     this.authFetch(ATTACK_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -257,13 +257,12 @@ class ConfigurePageComponent extends AuthComponent {
         this.setInitialAttackConfig(res.configuration);
       })
 
-    this.removePBAfile(API_PBA_WINDOWS, this.setPbaFileWindows)
-    this.removePBAfile(API_PBA_LINUX, this.setPbaFileLinux)
+
   };
 
-  removePBAfile(apiEndpoint, setParamsFnc) {
+  removePBAfile(apiEndpoint, setFilenameFnc) {
     this.sendPbaRemoveRequest(apiEndpoint)
-    setParamsFnc([], "")
+    setFilenameFnc("")
   }
 
   sendPbaRemoveRequest(apiEndpoint) {
@@ -335,9 +334,11 @@ class ConfigurePageComponent extends AuthComponent {
       {this.renderBasicNetworkWarning()}
       <Form schema={displayedSchema}
             uiSchema={UiSchema({
-              configuration: this.state,
-              setPbaFileWindows: this.setPbaFileWindows,
-              setPbaFileLinux: this.setPbaFileLinux,
+              PBA_linux_filename: this.state.configuration.monkey.behaviour.PBA_linux_filename,
+              PBA_windows_filename: this.state.configuration.monkey.behaviour.PBA_windows_filename,
+              setPbaFilenameWindows: this.setPbaFilenameWindows,
+              setPbaFilenameLinux: this.setPbaFilenameLinux,
+              selectedSection: this.state.selectedSection
             })}
             formData={this.state.configuration[this.state.selectedSection]}
             onChange={this.onChange}
@@ -348,23 +349,18 @@ class ConfigurePageComponent extends AuthComponent {
     </div>)
   };
 
-  setPbaFileWindows = (pbaFile, filename) => {
-    let pbaFileDeepCopy = JSON.parse(JSON.stringify(pbaFile))
+  setPbaFilenameWindows = (filename) => {
     let config = this.state.configuration
     config.monkey.behaviour.PBA_windows_filename = filename
     this.setState({
-      PBAwindowsFile: pbaFileDeepCopy,
       configuration: config
     })
   }
 
-  setPbaFileLinux = (pbaFile, filename) => {
-    let pbaFileDeepCopy = JSON.parse(JSON.stringify(pbaFile))
+  setPbaFilenameLinux = (filename) => {
     let config = this.state.configuration
     config.monkey.behaviour.PBA_linux_filename = filename
-    console.log(config);
     this.setState({
-      PBAlinuxFile: pbaFileDeepCopy,
       configuration: config
     })
   }

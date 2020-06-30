@@ -22,10 +22,9 @@ export default function UiSchema(props) {
         PBA_linux_file: {
           'ui:widget': PbaInput,
           'ui:options': {
-            PbaFile: props.configuration.PBAlinuxFile,
-            filename: props.configuration.configuration.monkey.behaviour.PBA_linux_filename,
+            filename: props.PBA_linux_filename,
             apiEndpoint: API_PBA_LINUX,
-            setPbaFile: props.setPbaFileLinux
+            setPbaFilename: props.setPbaFilenameLinux
           }
         },
         custom_PBA_windows_cmd: {
@@ -35,10 +34,9 @@ export default function UiSchema(props) {
         PBA_windows_file: {
           'ui:widget': PbaInput,
           'ui:options': {
-            PbaFile: props.configuration.PBAwindowsFile,
-            filename: props.configuration.configuration.monkey.behaviour.PBA_windows_filename,
+            filename: props.PBA_windows_filename,
             apiEndpoint: API_PBA_WINDOWS,
-            setPbaFile: props.setPbaFileWindows
+            setPbaFilename: props.setPbaFilenameWindows
           }
         },
         PBA_linux_filename: {
@@ -66,5 +64,5 @@ export default function UiSchema(props) {
       }
     }
   }
-  return UiSchema[props.configuration.selectedSection]
+  return UiSchema[props.selectedSection]
 }

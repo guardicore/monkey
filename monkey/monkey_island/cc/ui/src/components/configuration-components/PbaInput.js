@@ -9,7 +9,6 @@ class PbaInput extends AuthComponent {
 
   constructor(props) {
     super(props);
-    console.log("Constructor called");
     // set schema from server
     this.state = this.getStateFromProps(this.props);
   }
@@ -18,34 +17,23 @@ class PbaInput extends AuthComponent {
     let options = props.options
     // set schema from server
     return {
-      PBAFile: options.PbaFile,
       filename: options.filename,
       apiEndpoint: options.apiEndpoint,
-      setPbaFile: options.setPbaFile
+      setPbaFilename: options.setPbaFilename
     };
   }
 
-  getPBAfile() {
-    if (this.state.PBAFile.length !== 0) {
-      return this.state.PBAFile
-      return PbaInput.getMockPBAfile(this.state.PBAFile)
-    } else if (this.state.filename) {
-      return PbaInput.getFullPBAfile(this.state.filename)
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if(prevProps.options.filename !== this.props.options.filename && this.props.options.filename === ""){
+      this.setState({filename: this.props.options.filename})
     }
   }
 
-  static getMockPBAfile(mockFile) {
-    let pbaFile = [{
-      name: mockFile.name,
-      source: mockFile.name,
-      options: {
-        type: 'limbo'
-      }
-    }];
-    pbaFile[0].options.file = mockFile;
-    return pbaFile
+  getPBAfile() {
+    if (this.state.filename) {
+      return PbaInput.getFullPBAfile(this.state.filename)
+    }
   }
-
 
   static getFullPBAfile(filename) {
     return [{
@@ -78,9 +66,9 @@ class PbaInput extends AuthComponent {
       files={this.getPBAfile()}
       onupdatefiles={fileItems => {
         if (fileItems.length > 0) {
-            this.state.setPbaFile([fileItems[0].file], fileItems[0].file.name)
+            this.state.setPbaFilename(fileItems[0].file.name)
         } else {
-            this.state.setPbaFile([], "")
+            this.state.setPbaFilename("")
         }
       }}
     />)
