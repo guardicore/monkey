@@ -1,6 +1,9 @@
 ---
-name: 📃 Documentation request
+name: "\U0001F4C3 Documentation request"
 about: Suggest additions or fixes to our documentation hub!
+title: ''
+labels: Documentation
+assignees: ''
 
 ---
 
