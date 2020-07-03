@@ -8,7 +8,7 @@ import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
-import '../../styles/Map.scss';
+import '../../styles/components/Map.scss';
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons/faInfoCircle";
 
 class MapPageComponent extends AuthComponent {

@@ -3,7 +3,7 @@ import {Col, Button} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
 import StartOverModal from '../ui-components/StartOverModal';
-import '../../styles/StartOverPage.scss';
+import '../../styles/pages/StartOverPage.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons/faInfoCircle";
 import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";

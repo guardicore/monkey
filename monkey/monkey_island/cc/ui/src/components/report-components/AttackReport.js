@@ -1,6 +1,6 @@
 import React from 'react';
 import {Col, Button} from 'react-bootstrap';
-import '../../styles/Collapse.scss';
+import '../../styles/components/Collapse.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faCircle} from '@fortawesome/free-solid-svg-icons/faCircle';
 import {faRadiation} from '@fortawesome/free-solid-svg-icons/faRadiation';

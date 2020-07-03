@@ -7,7 +7,7 @@ import {Card, Collapse} from 'react-bootstrap';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChevronDown} from '@fortawesome/free-solid-svg-icons';
-import '../../../styles/report/ZeroTrustReport.scss';
+import '../../../styles/pages/report/ZeroTrustReport.scss';
 
 export default class SinglePillarPrinciplesStatus extends AuthComponent {
 
