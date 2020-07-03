@@ -1,7 +1,7 @@
 import subprocess
-from infection_monkey.post_breach.job_scheduling.linux.job_scheduling import\
+from infection_monkey.post_breach.job_scheduling.linux_job_scheduling import\
     get_linux_commands_to_schedule_jobs
-from infection_monkey.post_breach.job_scheduling.windows.job_scheduling import\
+from infection_monkey.post_breach.job_scheduling.windows_job_scheduling import\
     get_windows_commands_to_schedule_jobs,\
     get_windows_commands_to_remove_scheduled_jobs
 from infection_monkey.utils.environment import is_windows_os
@@ -14,6 +14,5 @@ def get_commands_to_schedule_jobs():
 
 
 def remove_scheduled_jobs():
-    subprocess.run(get_windows_commands_to_remove_scheduled_jobs() if is_windows_os()  # noqa: DUO116
-                   else '',
-                   shell=True)
+    if is_windows_os():
+        subprocess.run(get_windows_commands_to_remove_scheduled_jobs(), shell=True)  # noqa: DUO116

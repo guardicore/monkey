@@ -3,9 +3,10 @@ TEMP_CRON = "$HOME/monkey-schedule-jobs"
 
 def get_linux_commands_to_schedule_jobs():
     return [
-        'touch {} &&'.format(TEMP_CRON),
-        'crontab -l > {} &&'.format(TEMP_CRON),
+        f'touch {TEMP_CRON} &&',
+        f'crontab -l > {TEMP_CRON} &&',
         'echo \"# Successfully scheduled a job using crontab\" |',
-        'tee -a {} &&'.format(TEMP_CRON),
-        'crontab {}'.format(TEMP_CRON)
+        f'tee -a {TEMP_CRON} &&',
+        f'crontab {TEMP_CRON} &&',
+        f'rm {TEMP_CRON}'
     ]
