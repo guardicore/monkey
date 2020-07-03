@@ -10,4 +10,4 @@ class TrapCommand(PBA):
         if not is_windows_os():
             linux_cmds = get_trap_commands()
             super(TrapCommand, self).__init__(POST_BREACH_TRAP_COMMAND,
-                                              linux_cmd=' '.join(linux_cmds))
+                                              linux_cmd=linux_cmds)

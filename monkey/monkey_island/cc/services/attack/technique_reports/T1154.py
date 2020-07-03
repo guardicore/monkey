@@ -9,9 +9,9 @@ __author__ = "shreyamalviya"
 
 class T1154(AttackTechnique):
     tech_id = "T1154"
-    unscanned_msg = "Monkey did not use the trap command on the system."
-    scanned_msg = "Monkey tried using the trap command but failed on the system."
-    used_msg = "Monkey used the trap command on the system."
+    unscanned_msg = "Monkey did not use the trap command."
+    scanned_msg = "Monkey tried using the trap command but failed."
+    used_msg = "Monkey used the trap command successfully."
 
     query = [{'$match': {'telem_category': 'post_breach',
                          'data.name': POST_BREACH_TRAP_COMMAND}},
