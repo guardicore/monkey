@@ -17,7 +17,10 @@ SCHEMA = {
                         "SmbExploiter"
                     ],
                     "title": "SMB Exploiter",
-                    "attack_techniques": ["T1110", "T1075", "T1035"]
+                    "attack_techniques": ["T1110", "T1075", "T1035"],
+                    "info": "Brute forces using credentials provided by user and"
+                            " hashes gathered by mimikatz.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
@@ -25,7 +28,10 @@ SCHEMA = {
                         "WmiExploiter"
                     ],
                     "title": "WMI Exploiter",
-                    "attack_techniques": ["T1110", "T1106"]
+                    "attack_techniques": ["T1110", "T1106"],
+                    "info": "Brute forces WMI (Windows Management Instrumentation) "
+                            "using credentials provided by user and hashes gathered by mimikatz.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
@@ -33,7 +39,10 @@ SCHEMA = {
                         "MSSQLExploiter"
                     ],
                     "title": "MSSQL Exploiter",
-                    "attack_techniques": ["T1110"]
+                    "attack_techniques": ["T1110"],
+                    "info": "Tries to brute force into MsSQL server and uses insecure "
+                            "configuration to execute commands on server.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
@@ -41,7 +50,9 @@ SCHEMA = {
                         "Ms08_067_Exploiter"
                     ],
                     "title": "MS08-067 Exploiter (UNSAFE)",
-                    "attack_techniques": []
+                    "info": "Unsafe exploiter, that might cause system crash due to the use of buffer overflow. "
+                            "Uses MS08-067 vulnerability.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
@@ -49,56 +60,74 @@ SCHEMA = {
                         "SSHExploiter"
                     ],
                     "title": "SSH Exploiter",
-                    "attack_techniques": ["T1110", "T1145", "T1106"]
+                    "attack_techniques": ["T1110", "T1145", "T1106"],
+                    "info": "Brute forces using credentials provided by user and SSH keys gathered from systems.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "ShellShockExploiter"
                     ],
-                    "title": "ShellShock Exploiter"
+                    "title": "ShellShock Exploiter",
+                    "info": "CVE-2014-6271, based on logic in NCC group's github.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "SambaCryExploiter"
                     ],
-                    "title": "SambaCry Exploiter"
+                    "title": "SambaCry Exploiter",
+                    "info": "Bruteforces and searches for anonymous shares. Uses Impacket.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "ElasticGroovyExploiter"
                     ],
-                    "title": "ElasticGroovy Exploiter"
+                    "title": "ElasticGroovy Exploiter",
+                    "info": "CVE-2015-1427. Logic is based on Metasploit module.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "Struts2Exploiter"
                     ],
-                    "title": "Struts2 Exploiter"
+                    "title": "Struts2 Exploiter",
+                    "info": "Exploits struts2 java web framework. CVE-2017-5638. Logic based on this PoC.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "WebLogicExploiter"
                     ],
-                    "title": "WebLogic Exploiter"
+                    "title": "WebLogic Exploiter",
+                    "info": "Exploits CVE-2017-10271 and CVE-2019-2725 vulnerabilities on WebLogic server.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "HadoopExploiter"
                     ],
-                    "title": "Hadoop/Yarn Exploiter"
+                    "title": "Hadoop/Yarn Exploiter",
+                    "info": "Remote code execution on HADOOP server with YARN and default settings. "
+                            "Logic based on https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
                     "type": "string",
                     "enum": [
                         "VSFTPDExploiter"
                     ],
-                    "title": "VSFTPD Exploiter"
+                    "title": "VSFTPD Exploiter",
+                    "info": "Exploits a malicious backdoor that was added to the VSFTPD download archive. "
+                            "Logic based on Metasploit module.",
+                    "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 }
             ]
         },

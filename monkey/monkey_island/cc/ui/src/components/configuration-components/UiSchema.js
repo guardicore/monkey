@@ -1,4 +1,4 @@
-import ArrayFieldTemplate from "../ui-components/AdvancedMultipleSelect";
+import AdvancedMultiSelect from "../ui-components/AdvancedMultiSelect";
 import PbaInput from "./PbaInput";
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
 
@@ -6,11 +6,6 @@ export default function UiSchema(props) {
   const UiSchema = {
     basic: {
       'ui:order': ['general', 'credentials'],
-      credentials: {
-        exploit_password_list: {
-          "ui:ArrayFieldTemplate": ArrayFieldTemplate
-        }
-      }
     },
     basic_network: {},
     monkey: {
@@ -54,7 +49,13 @@ export default function UiSchema(props) {
     exploits: {
       general: {
         exploiter_classes: {
-          "ui:ArrayFieldTemplate": ArrayFieldTemplate
+          'ui:widget': AdvancedMultiSelect,
+          'ui:options': {
+            defaultPaneParams: {
+              title: 'Exploiters',
+              content: 'Click on exploiter to get more information about it.'
+            }
+          }
         }
       }
     },
