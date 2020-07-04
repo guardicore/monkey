@@ -26,11 +26,12 @@ class T1136(AttackTechnique):
 
         create_user_info = list(mongo.db.telemetry.aggregate(T1136.query))
 
-        status = []
-        for pba_node in create_user_info:
-            status.append(pba_node['result'][1])
-        status = (ScanStatus.USED.value if any(status) else ScanStatus.SCANNED.value)\
-            if status else ScanStatus.UNSCANNED.value
+        status = ScanStatus.UNSCANNED.value
+        if create_user_info:
+            successful_PBAs = mongo.db.telemetry.count({'$or': [{'data.name': POST_BREACH_BACKDOOR_USER},
+                                                                {'data.name': POST_BREACH_COMMUNICATE_AS_NEW_USER}],
+                                                        'data.result.1': True})
+            status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
 
         data.update(T1136.get_base_data_by_status(status))
         data.update({'info': create_user_info})
