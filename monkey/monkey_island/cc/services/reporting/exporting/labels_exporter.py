@@ -20,24 +20,23 @@ def create_machine_object(machine):
 def create_seen_label(machine):
     return {
         "label_key": "Monkey Scan",
-        "label_value": f"Seen be Monkeys {machine['accessible_from_nodes']}",
+        "label_value": f"Seen by Monkey from {', '.join(machine['accessible_from_nodes'])}",
         "machine": create_machine_object(machine)
     }
 
 
 def create_exploited_label(machine):
-    exploit = "ssh"
-    # exploit = machine["???"]
+    exploits = machine['exploits']
     logger.debug(f"Info: {machine}")
     return {
         "label_key": "Monkey Exploit",
-        "label_value": f"{exploit} used by Monkey",
+        "label_value": f"Monkey breached with {', '.join(exploits)}",
         "machine": create_machine_object(machine)
     }
 
 
 def create_risk_assessment_label(machine):
-    risk_assessment = "Medium" # TODO run a demo with a lot of info in the report
+    risk_assessment = "Medium"
     return {
         "label_key": "Monkey Risk assessment",
         "label_value": f"Risk: {risk_assessment}",
@@ -47,26 +46,18 @@ def create_risk_assessment_label(machine):
 
 def create_machine_labels_from_report(report_json):
     labels = []
-    """
-    Labels:
-    Each label has: 
-    the label itself, which can be:
-    - Monkey Scan: Seen
-    - Monkey Exploit: CVE-xxx
-    - Monkey Risk Assessment: low/medium/high
-    
-    The Machine itself: Only IPs are required
-    """
-    # Get Monkey seen
+
     for machine in report_json['glance']['scanned']:
         # Might be the machine the Monkey started on
         if len(machine["accessible_from_nodes"]) > 0:
             labels.append(create_seen_label(machine))
-    # Get Monkey Exploited
+
     for machine in report_json['glance']['exploited']:
         labels.append(create_exploited_label(machine))
+
     # Get Monkey risk assessment
     # TODO choose an assessment scheme with product
+
     return labels
 
 
@@ -83,5 +74,3 @@ class LabelsExporter(Exporter):
         machine_labels = create_machine_labels_from_report(report_json)
         logger.info(f"Created {len(machine_labels)} labels")
         export_labels_to_file(machine_labels)
-        # Save labels to X?
-        # Export labels?
