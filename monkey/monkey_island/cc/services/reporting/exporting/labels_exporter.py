@@ -20,7 +20,7 @@ def create_machine_object(machine):
 def create_seen_label(machine):
     return {
         "label_key": "Monkey Scan",
-        "label_value": f"Seen by Monkey from {', '.join(machine['accessible_from_nodes'])}",
+        "label_value": f"Seen from {len(machine['accessible_from_nodes'])} machines by Monkey",
         "machine": create_machine_object(machine)
     }
 
@@ -30,7 +30,7 @@ def create_exploited_label(machine):
     logger.debug(f"Info: {machine}")
     return {
         "label_key": "Monkey Exploit",
-        "label_value": f"Monkey breached with {', '.join(exploits)}",
+        "label_value": f"Breached using {', '.join(exploits)} by Monkey",
         "machine": create_machine_object(machine)
     }
 
