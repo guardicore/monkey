@@ -8,8 +8,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClipboard} from '@fortawesome/free-solid-svg-icons/faClipboard';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faSync} from '@fortawesome/free-solid-svg-icons/faSync';
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons/faInfoCircle";
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';

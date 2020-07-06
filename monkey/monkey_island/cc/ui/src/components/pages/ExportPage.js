@@ -2,13 +2,13 @@ import React from 'react';
 import {Col, Button} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheck, faCloud, faInfo, faTag} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import {faCheck, faCloud, faInfo, faTag} from '@fortawesome/free-solid-svg-icons';
+import {Link} from 'react-router-dom';
 
 const ExportStatus = {
-    BEFORE: "Before",
-    SUCCESS: "Success",
-    ERROR: "Error",
+    BEFORE: 'Before',
+    SUCCESS: 'Success',
+    ERROR: 'Error'
 };
 
 class ExportPageComponent extends AuthComponent {
@@ -22,7 +22,6 @@ class ExportPageComponent extends AuthComponent {
   }
 
   render() {
-    console.log("rendering, cur state is " + JSON.stringify(this.state));
     let statusBox;
     switch(this.state.exported) {
       case ExportStatus.BEFORE:
@@ -60,7 +59,7 @@ class ExportPageComponent extends AuthComponent {
               <li>
             <Button className="btn btn-info btn-lg center-block"
                     onClick={() => {
-                      this.export("AWSExporter")
+                      this.export('AWSExporter')
                     }
                     }>
               <FontAwesomeIcon icon={faCloud} style={{'marginRight': '5px'}}/> Export findings to AWS
@@ -70,7 +69,7 @@ class ExportPageComponent extends AuthComponent {
               <li>
               <Button className="btn btn-info btn-lg center-block"
                       onClick={() => {
-                        this.export("LabelsExporter")
+                        this.export('LabelsExporter')
                       }
                       }>
                 <FontAwesomeIcon icon={faTag} style={{'marginRight': '5px'}}/> Export labels to file
@@ -90,13 +89,11 @@ class ExportPageComponent extends AuthComponent {
     });
     return this.authFetch('/api/export/' + exporter)
       .then(res => {
-        console.log(res);
         if (res['status'] === 200) {
           this.setState({
             exported: ExportStatus.SUCCESS
           });
         } else {
-          console.log("errir");
           this.setState({
             exported: ExportStatus.ERROR
           })

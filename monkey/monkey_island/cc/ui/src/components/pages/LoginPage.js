@@ -2,9 +2,9 @@ import React from 'react';
 import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 
 import AuthService from '../../services/AuthService';
-import Particles from "react-particles-js";
-import {particleParams} from "../../styles/particle-component/AuthPageParams";
-import monkeyGeneral from "../../images/militant-monkey.svg";
+import Particles from 'react-particles-js';
+import {particleParams} from '../../styles/particle-component/AuthPageParams';
+import monkeyGeneral from '../../images/militant-monkey.svg';
 
 class LoginPageComponent extends React.Component {
   login = (event) => {
