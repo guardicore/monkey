@@ -25,6 +25,7 @@ from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
 from monkey_island.cc.resources.registration import Registration
 from monkey_island.cc.resources.remote_run import RemoteRun
+from monkey_island.cc.resources.reporting.export import Export
 from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
@@ -129,6 +130,9 @@ def init_api_resources(api):
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
     api.add_resource(RemotePortCheck, '/api/monkey_control/check_remote_port/<string:port>')
     api.add_resource(StartedOnIsland, '/api/monkey_control/started_on_island')
+
+    # Exporters
+    api.add_resource(Export, '/api/export/<string:exporter>')
 
     api.add_resource(MonkeyTest, '/api/test/monkey')
     api.add_resource(ClearCaches, '/api/test/clear_caches')

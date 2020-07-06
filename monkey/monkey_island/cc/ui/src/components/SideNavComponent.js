@@ -73,6 +73,7 @@ class SideNavComponent extends React.Component {
         <ul>
           <li><NavLink to='/configure'>Configuration</NavLink></li>
           <li><NavLink to='/infection/telemetry'>Log</NavLink></li>
+          <li><NavLink to='/export'>Export</NavLink></li>
         </ul>
 
         <hr/>

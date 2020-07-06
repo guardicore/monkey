@@ -8,6 +8,7 @@ import RunMonkeyPage from 'components/pages/RunMonkeyPage';
 import MapPage from 'components/pages/MapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
+import ExportPage from 'components/pages/ExportPage';
 import ReportPage from 'components/pages/ReportPage';
 import LicensePage from 'components/pages/LicensePage';
 import AuthComponent from 'components/AuthComponent';
@@ -172,6 +173,10 @@ class AppComponent extends AuthComponent {
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/license',
               <StandardLayoutComponent component={LicensePage}
+                                       onStatusChange={this.updateStatus}
+                                       completedSteps={this.state.completedSteps}/>)}
+             {this.renderRoute('/export',
+              <StandardLayoutComponent component={ExportPage}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             <Route component={NotFoundPage}/>
