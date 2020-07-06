@@ -32,9 +32,7 @@ def create_exploited_label(machine):
     return {
         "label_key": "Monkey Exploit",
         "label_value": f"{exploit} used by Monkey",
-        "machine": {
-            create_machine_object(machine)
-        }
+        "machine": create_machine_object(machine)
     }
 
 
@@ -43,9 +41,7 @@ def create_risk_assessment_label(machine):
     return {
         "label_key": "Monkey Risk assessment",
         "label_value": f"Risk: {risk_assessment}",
-        "machine": {
-            create_machine_object(machine)
-        }
+        "machine": create_machine_object(machine)
     }
 
 
