@@ -118,6 +118,15 @@ SCHEMA = {
                     "description": "Adversaries may gain persistence and elevate privileges "
                                    "in certain situations by abusing PowerShell profiles which "
                                    "are scripts that run when PowerShell starts."
+                },
+                "T1166": {
+                    "title": "Setuid and Setgid",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1166",
+                    "description": "Adversaries can set the setuid or setgid bits to get code running in "
+                                   "a different user’s context."
                 }
             }
         },

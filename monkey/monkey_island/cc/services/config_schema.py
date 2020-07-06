@@ -183,6 +183,14 @@ SCHEMA = {
                     ],
                     "title": "Trap",
                     "attack_techniques": ["T1154"]
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "ChangeSetuidSetgid"
+                    ],
+                    "title": "Setuid and Setgid",
+                    "attack_techniques": ["T1166"]
                 }
             ],
         },
@@ -406,7 +414,8 @@ SCHEMA = {
                                 "CommunicateAsNewUser",
                                 "ModifyShellStartupFiles",
                                 "HiddenFiles",
-                                "TrapCommand"
+                                "TrapCommand",
+                                "ChangeSetuidSetgid"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
