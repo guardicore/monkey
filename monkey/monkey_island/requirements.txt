@@ -22,5 +22,5 @@ mongomock
 requests
 dpath
 ring
-stix2==1.4.0
+stix2==2.0.2
 tqdm
