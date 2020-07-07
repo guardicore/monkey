@@ -28,6 +28,6 @@ class ReportExporterManager(object, metaclass=Singleton):
         for exporter in self._exporters_set:
             try:
                 logger.debug("Trying to export using " + repr(exporter))
-                exporter().handle_report(report)
+                exporter.handle_report(report)
             except Exception as e:
                 logger.exception('Failed to export report.', exc_info=e)

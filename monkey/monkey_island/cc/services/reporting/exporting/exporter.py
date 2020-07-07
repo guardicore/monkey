@@ -3,5 +3,8 @@ class Exporter(object):
         pass
 
     @staticmethod
-    def handle_report(report_json):
+    def handle_report(report_json: dict) -> str:
+        """
+        Get the report, export it, and report back a user-facing message on success.
+        """
         raise NotImplementedError

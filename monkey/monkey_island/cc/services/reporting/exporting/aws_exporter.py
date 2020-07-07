@@ -22,7 +22,7 @@ class AWSExporter(Exporter):
         issues_list = report_json['recommendations']['issues']
         if not issues_list:
             logger.info('No issues were found by the monkey, no need to send anything')
-            return True
+            return "No issues to export."
 
         # Not suppressing error here on purpose.
         current_aws_region = AwsInstance().get_region()
@@ -33,10 +33,10 @@ class AWSExporter(Exporter):
                     findings_list.append(AWSExporter._prepare_finding(issue, current_aws_region))
 
         if not AWSExporter._send_findings(findings_list, current_aws_region):
-            logger.error('Exporting findings to aws failed')
-            return False
+            logger.error('Exporting findings to AWS failed')
+            return 'Exporting findings to AWS failed.'
 
-        return True
+        return "Exported results to AWS."
 
     @staticmethod
     def merge_two_dicts(x, y):

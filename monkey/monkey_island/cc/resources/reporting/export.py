@@ -18,8 +18,8 @@ class Export(flask_restful.Resource):
         try:
             exporter = ExporterFactory.get_exporter(exporter)
             report = ReportService.get_report()
-            exporter.handle_report(report)
-            return jsonify(status="OK")
+            user_message = exporter.handle_report(report)
+            return jsonify(status="OK", extra_info=user_message)
         except NotImplementedError as _:
             logger.error(f"Export called with unknown exporter {exporter}. More info:", exc_info=True)
             return flask_restful.abort(404)
