@@ -1,7 +1,7 @@
 Flask-JWT>=0.3.2
 Flask-Pymongo>=2.3.0
 Flask-Restful>=0.3.8
-PyInstaller>=4.0
+PyInstaller
 awscli>=1.18
 boto3>=1.14
 botocore>=1.17.18,<1.18.0
