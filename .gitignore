@@ -93,3 +93,6 @@ profiler_logs/
 
 # Server config might contain credentials. Don't commit by default.
 /monkey/monkey_island/cc/server_config.json
+
+# Virtualenv
+venv/
