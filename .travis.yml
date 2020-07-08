@@ -23,7 +23,9 @@ install:
 - pip install flake8 pytest dlint  # for next stages
 - pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
-- pip freeze
+- pip install pipdeptree
+# Fail builds on possible conflicting dependencies.
+- pipdeptree --warn fail
 
 # node + npm + eslint
 - node --version
