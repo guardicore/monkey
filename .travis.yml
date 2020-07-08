@@ -18,10 +18,12 @@ os: linux
 
 install:
 # Python
+- pip freeze
 - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
 - pip install flake8 pytest dlint  # for next stages
 - pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
+- pip freeze
 
 # node + npm + eslint
 - node --version
