@@ -1,9 +1,10 @@
 ---
 title: "Scenarios"
 date: 2020-05-26T21:01:19+03:00
-draft: true
+draft: false
 weight: 2
 tags: ["usage"]
+pre: "<i class='fas fa-map-marked-alt'></i> "
 ---
 
 In this page we show how you can use the Infection Monkey to simulate breach and attack scenarios as well as to share some cool tips and tricks you can use to up your Infection Monkey game. This page is aimed at both novice and experienced Monkey users. You can also refer to [our FAQ](../../faq) for more specific questions and answers.
@@ -51,6 +52,8 @@ To simulate the damage from a successful phishing attack using the Infection Mon
 - After setting up the Island add the users’ **real** credentials (usernames and passwords) to the Monkey’s configuration (Don’t worry, this sensitive data is not accessible and is not distributed or used in any way other than being sent to the monkeys, and can be easily eliminated by resetting the Monkey Island’s configuration). Now you can simulate an attacker attempting to probe deeper in the network with credentials “successfully” phished.
 - You can configure these credentials for the Monkey as follows:
 From the **“Basic - Credentials”** tab of the Island’s configuration, under the **“Exploit password list”** press the ‘+’ button and add the passwords you would like the Monkey to use. Do the same with usernames in the **“Exploit user list”**.
+
+![Exploit password and user lists](/images/usage/scenarios/user-password-lists.png "Exploit password and user lists")
 
 After supplying the Monkey with the passwords and usernames, execute the Monkey from the simulated “victim” machines. To do this, click “**2. Run Monkey**” from the left sidebar menu and choose “**Run on machine of your choice**”.
 
