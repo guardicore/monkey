@@ -4,6 +4,10 @@ date: 2020-06-24T21:16:18+03:00
 draft: false
 ---
 
+{{% notice info %}}
+Check out [the documentation for the other reports as well](../).
+{{% /notice %}}
+
 The Guardicore Infection Monkey runs different tests to evaluate your network adherence to key components of the Zero Trust framework as established by Forrester, such as whether you have applied segmentation, user identity, encryption and more. Then, the Monkey generates a status report with detailed explanations of security gaps and prescriptive instructions on how to rectify them.
 
 ## Summary
