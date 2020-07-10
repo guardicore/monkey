@@ -1,12 +1,7 @@
 from common.data.post_breach_consts import (
     POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER)
-from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.database import mongo
-from monkey_island.cc.services.attack.attack_config import AttackConfig
-from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 from monkey_island.cc.services.attack.technique_reports.pba_technique import \
     PostBreachTechnique
-from monkey_island.cc.services.reporting.report import ReportService
 
 __author__ = "shreyamalviya"
 

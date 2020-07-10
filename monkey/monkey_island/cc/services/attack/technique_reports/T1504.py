@@ -1,8 +1,5 @@
 from common.data.post_breach_consts import \
     POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
-from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.database import mongo
-from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 from monkey_island.cc.services.attack.technique_reports.pba_technique import \
     PostBreachTechnique
 
