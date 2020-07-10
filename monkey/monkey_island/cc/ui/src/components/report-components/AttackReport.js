@@ -62,8 +62,10 @@ class AttackReport extends React.Component {
         return 'collapse-warning';
       case ScanStatus.USED:
         return 'collapse-danger';
-      default:
-        return 'collapse-default';
+      case ScanStatus.UNSCANNED:
+        return 'collapse-unscanned';
+      case ScanStatus.DISABLED:
+        return 'collapse-disabled';
     }
   }
 
@@ -80,15 +82,19 @@ class AttackReport extends React.Component {
 
   renderLegend() {
     return (<div id='header' className='row justify-content-between attack-legend'>
-      <Col xs={4}>
+      <Col xs={3}>
+        <FontAwesomeIcon icon={faCircle} className='technique-disabled'/>
+        <span> - Disabled</span>
+      </Col>
+      <Col xs={3}>
         <FontAwesomeIcon icon={faCircle} className='technique-not-attempted'/>
         <span> - Not attempted</span>
       </Col>
-      <Col xs={4}>
+      <Col xs={3}>
         <FontAwesomeIcon icon={faCircle} className='technique-attempted'/>
         <span> - Tried (but failed)</span>
       </Col>
-      <Col xs={4}>
+      <Col xs={3}>
         <FontAwesomeIcon icon={faCircle} className='technique-used'/>
         <span> - Successfully used</span>
       </Col>

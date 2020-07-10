@@ -11,4 +11,4 @@ class T1158(PostBreachTechnique):
     unscanned_msg = "Monkey did not try creating hidden files or folders."
     scanned_msg = "Monkey tried creating hidden files and folders on the system but failed."
     used_msg = "Monkey created hidden files and folders on the system."
-    pba_name = POST_BREACH_HIDDEN_FILES
+    pba_names = [POST_BREACH_HIDDEN_FILES]

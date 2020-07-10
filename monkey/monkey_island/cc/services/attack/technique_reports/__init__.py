@@ -10,6 +10,9 @@ from monkey_island.cc.services.attack.attack_config import AttackConfig
 logger = logging.getLogger(__name__)
 
 
+disabled_msg = "This technique has been disabled. You can enable it from the configuration page."
+
+
 class AttackTechnique(object, metaclass=abc.ABCMeta):
     """ Abstract class for ATT&CK report components """
 
@@ -68,7 +71,8 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
                                           'data.technique': cls.tech_id}):
             return ScanStatus.SCANNED.value
         else:
-            return ScanStatus.UNSCANNED.value
+            return ScanStatus.DISABLED.value if not AttackConfig.get_technique_values()[cls.tech_id]\
+                else ScanStatus.UNSCANNED.value
 
     @classmethod
     def get_message_and_status(cls, status):
@@ -77,6 +81,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :param status: Enum from common/attack_utils.py integer value
         :return: Dict with message and status
         """
+        status = cls._check_status(status)
         return {'message': cls.get_message_by_status(status), 'status': status}
 
     @classmethod
@@ -86,6 +91,8 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :param status: Enum from common/attack_utils.py integer value
         :return: message string
         """
+        if status == ScanStatus.DISABLED.value:
+            return disabled_msg
         if status == ScanStatus.UNSCANNED.value:
             return cls.unscanned_msg
         elif status == ScanStatus.SCANNED.value:
@@ -117,6 +124,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
 
     @classmethod
     def get_base_data_by_status(cls, status):
+        status = cls._check_status(status)
         data = cls.get_message_and_status(status)
         data.update({'title': cls.technique_title()})
         data.update(cls.get_mitigation_by_status(status))
@@ -124,8 +132,16 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
 
     @classmethod
     def get_mitigation_by_status(cls, status: ScanStatus) -> dict:
+        status = cls._check_status(status)
         if status == ScanStatus.USED.value:
             mitigation_document = AttackMitigations.get_mitigation_by_technique_id(str(cls.tech_id))
             return {'mitigations': mitigation_document.to_mongo().to_dict()['mitigations']}
         else:
             return {}
+
+    @classmethod
+    def _check_status(cls, status):
+        if status == ScanStatus.UNSCANNED.value:
+            return ScanStatus.DISABLED.value if not AttackConfig.get_technique_values()[cls.tech_id]\
+                    else ScanStatus.UNSCANNED.value
+        return status
