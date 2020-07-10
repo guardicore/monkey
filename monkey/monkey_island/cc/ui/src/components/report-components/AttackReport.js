@@ -64,10 +64,10 @@ class AttackReport extends React.Component {
         return 'collapse-warning';
       case ScanStatus.USED:
         return 'collapse-danger';
+      case ScanStatus.UNSCANNED:
+        return 'collapse-unscanned';
       case ScanStatus.DISABLED:
         return 'collapse-disabled';
-      default:
-        return 'collapse-default';
     }
   }
 

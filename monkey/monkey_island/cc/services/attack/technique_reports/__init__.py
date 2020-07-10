@@ -10,8 +10,7 @@ from monkey_island.cc.services.attack.attack_config import AttackConfig
 logger = logging.getLogger(__name__)
 
 
-disabled_msg = "This technique has been disabled. " +\
-               "You can enable it from the [configuration page](../../configure)."
+disabled_msg = "This technique has been disabled. You can enable it from the configuration page."
 
 
 class AttackTechnique(object, metaclass=abc.ABCMeta):
@@ -74,7 +73,8 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
                                           'data.technique': cls.tech_id}):
             return ScanStatus.SCANNED.value
         else:
-            return ScanStatus.UNSCANNED.value
+            return ScanStatus.DISABLED.value if not AttackConfig.get_technique_values()[cls.tech_id]\
+                else ScanStatus.UNSCANNED.value
 
     @classmethod
     def get_message_and_status(cls, status):
@@ -93,7 +93,6 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :param status: Enum from common/attack_utils.py integer value
         :return: message string
         """
-        status = cls._check_status(status)
         if status == ScanStatus.DISABLED.value:
             return disabled_msg
         if status == ScanStatus.UNSCANNED.value:
@@ -143,12 +142,8 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
             return {}
 
     @classmethod
-    def _check_status(cls, status, *args):
-        enabled_in_config = args[0] if args else cls._is_enabled_in_config()
-        if status == ScanStatus.UNSCANNED.value and not enabled_in_config:
-            return ScanStatus.DISABLED.value
+    def _check_status(cls, status):
+        if status == ScanStatus.UNSCANNED.value:
+            return ScanStatus.DISABLED.value if not AttackConfig.get_technique_values()[cls.tech_id]\
+                    else ScanStatus.UNSCANNED.value
         return status
-
-    @classmethod
-    def _is_enabled_in_config(cls):
-        return AttackConfig.get_technique_values()[cls.tech_id]
