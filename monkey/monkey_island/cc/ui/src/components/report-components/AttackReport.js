@@ -6,6 +6,7 @@ import {faCircle} from '@fortawesome/free-solid-svg-icons/faCircle';
 import {faRadiation} from '@fortawesome/free-solid-svg-icons/faRadiation';
 import {faEye} from '@fortawesome/free-solid-svg-icons/faEye';
 import {faEyeSlash} from '@fortawesome/free-solid-svg-icons/faEyeSlash';
+import {faToggleOff} from '@fortawesome/free-solid-svg-icons/faToggleOff';
 
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import {ScanStatus} from '../attack/techniques/Helpers';
@@ -75,8 +76,10 @@ class AttackReport extends React.Component {
         return <FontAwesomeIcon icon={faEye} className={'technique-status-icon'}/>;
       case ScanStatus.USED:
         return <FontAwesomeIcon icon={faRadiation} className={'technique-status-icon'}/>;
-      default:
+      case ScanStatus.UNSCANNED:
         return <FontAwesomeIcon icon={faEyeSlash} className={'technique-status-icon'}/>;
+      case ScanStatus.DISABLED:
+        return <FontAwesomeIcon icon={faToggleOff} className={'technique-status-icon'}/>;
     }
   }
 
