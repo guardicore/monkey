@@ -18,7 +18,6 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
     @classmethod
     def get_pba_query(cls, post_breach_action_names):
         return [{'$match': {'telem_category': 'post_breach',
-                            # 'data.name': post_breach_action_name}},
                             '$or': [{'data.name': pba_name} for pba_name in post_breach_action_names]}},
                 {'$project': {'_id': 0,
                               'machine': {'hostname': '$data.hostname',
@@ -36,10 +35,6 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
             status.append(pba_node['result'][1])
         status = (ScanStatus.USED.value if any(status) else ScanStatus.SCANNED.value)\
             if status else ScanStatus.UNSCANNED.value
-
-        if status == ScanStatus.UNSCANNED.value and\
-           not AttackConfig.get_technique_values()[cls.tech_id]:
-            status = ScanStatus.DISABLED.value
 
         data.update(cls.get_base_data_by_status(status))
         data.update({'info': info})

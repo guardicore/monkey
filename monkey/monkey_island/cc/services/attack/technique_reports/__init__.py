@@ -70,9 +70,10 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
                                           'data.status': ScanStatus.SCANNED.value,
                                           'data.technique': cls.tech_id}):
             return ScanStatus.SCANNED.value
+        elif not AttackConfig.get_technique_values()[cls.tech_id]:
+            return ScanStatus.DISABLED.value
         else:
-            return ScanStatus.DISABLED.value if not AttackConfig.get_technique_values()[cls.tech_id]\
-                else ScanStatus.UNSCANNED.value
+            return ScanStatus.UNSCANNED.value
 
     @classmethod
     def get_message_and_status(cls, status):
@@ -91,6 +92,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :param status: Enum from common/attack_utils.py integer value
         :return: message string
         """
+        status = cls._check_status(status)
         if status == ScanStatus.DISABLED.value:
             return disabled_msg
         if status == ScanStatus.UNSCANNED.value:
@@ -141,7 +143,6 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
 
     @classmethod
     def _check_status(cls, status):
-        if status == ScanStatus.UNSCANNED.value:
-            return ScanStatus.DISABLED.value if not AttackConfig.get_technique_values()[cls.tech_id]\
-                    else ScanStatus.UNSCANNED.value
+        if status == ScanStatus.UNSCANNED.value and not AttackConfig.get_technique_values()[cls.tech_id]:
+            return ScanStatus.DISABLED.value
         return status
