@@ -26,11 +26,11 @@ class T1154(AttackTechnique):
 
         trap_command_info = list(mongo.db.telemetry.aggregate(T1154.query))
 
-        status = []
-        for pba_node in trap_command_info:
-            status.append(pba_node['result'][1])
-        status = (ScanStatus.USED.value if any(status) else ScanStatus.SCANNED.value)\
-            if status else ScanStatus.UNSCANNED.value
+        status = ScanStatus.UNSCANNED.value
+        if trap_command_info:
+            successful_PBAs = mongo.db.telemetry.count({'data.name': POST_BREACH_TRAP_COMMAND,
+                                                        'data.result.1': True})
+            status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
 
         data.update(T1154.get_base_data_by_status(status))
         data.update({'info': trap_command_info})
