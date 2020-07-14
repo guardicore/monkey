@@ -1,7 +1,8 @@
 ---
-title: "Setting up a development environment"
+title: "Development setup"
 date: 2020-06-08T19:53:00+03:00
 draft: false
+weight: 5
 tags: ["contribute"]
 ---
 
