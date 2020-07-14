@@ -1,0 +1,22 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.16.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - react-data-components > lodash:
+        patched: '2020-07-14T15:09:05.611Z'
+    - react-graph-vis > lodash:
+        patched: '2020-07-14T15:09:05.611Z'
+    - react-jsonschema-form > lodash:
+        patched: '2020-07-14T15:09:05.611Z'
+    - react-particles-js > lodash:
+        patched: '2020-07-14T15:09:05.611Z'
+    - react-bootstrap > @restart/hooks > lodash:
+        patched: '2020-07-14T15:09:05.611Z'
+    - react-bootstrap > react-overlays > @restart/hooks > lodash:
+        patched: '2020-07-14T15:09:05.611Z'
+    - '@emotion/core > @emotion/css > babel-plugin-emotion > @babel/helper-module-imports > @babel/types > lodash':
+        patched: '2020-07-14T15:09:05.611Z'
+    - react-spinners > @emotion/core > @emotion/css > babel-plugin-emotion > @babel/helper-module-imports > @babel/types > lodash:
+        patched: '2020-07-14T15:09:05.611Z'
