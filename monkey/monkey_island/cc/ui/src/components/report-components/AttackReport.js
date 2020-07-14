@@ -63,10 +63,10 @@ class AttackReport extends React.Component {
         return 'collapse-warning';
       case ScanStatus.USED:
         return 'collapse-danger';
-      case ScanStatus.UNSCANNED:
-        return 'collapse-unscanned';
       case ScanStatus.DISABLED:
         return 'collapse-disabled';
+      default:
+        return 'collapse-default';
     }
   }
 
@@ -76,11 +76,11 @@ class AttackReport extends React.Component {
         return <FontAwesomeIcon icon={faEye} className={'technique-status-icon'}/>;
       case ScanStatus.USED:
         return <FontAwesomeIcon icon={faRadiation} className={'technique-status-icon'}/>;
-      case ScanStatus.UNSCANNED:
-        return <FontAwesomeIcon icon={faEyeSlash} className={'technique-status-icon'}/>;
       case ScanStatus.DISABLED:
         return <FontAwesomeIcon icon={faToggleOff} className={'technique-status-icon'}/>;
-    }
+      default:
+        return <FontAwesomeIcon icon={faEyeSlash} className={'technique-status-icon'}/>;
+      }
   }
 
   renderLegend() {
