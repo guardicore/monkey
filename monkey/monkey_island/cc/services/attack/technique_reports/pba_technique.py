@@ -1,8 +1,8 @@
 import abc
 
-from monkey_island.cc.services.attack.attack_config import AttackConfig
-from monkey_island.cc.database import mongo
 from common.utils.attack_utils import ScanStatus
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 
@@ -41,9 +41,10 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
 
         info = list(mongo.db.telemetry.aggregate(cls.get_pba_query(cls.pba_names)))
 
+        status = ScanStatus.UNSCANNED.value
         if info:
             successful_PBAs = mongo.db.telemetry.count({
-                '$or': [{'data.name': pba_name} for pba_name in post_breach_action_names],
+                '$or': [{'data.name': pba_name} for pba_name in cls.pba_names],
                 'data.result.1': True
             })
             status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
