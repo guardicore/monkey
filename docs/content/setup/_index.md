@@ -16,3 +16,7 @@ Once you've downloaded an installer, you can follow the relevant guide for your 
 {{% children %}}
 
 Once you're done setting the Monkey up, check out our [Getting Started](../usage/getting-started) guide!
+
+{{% notice tip %}}
+You can find information about [operating system compatibility and support here](../reference/operating_systems_support).
+{{% /notice %}}
