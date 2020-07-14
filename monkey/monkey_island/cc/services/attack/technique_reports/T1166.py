@@ -8,7 +8,7 @@ from monkey_island.cc.services.attack.technique_reports.pba_technique import \
 __author__ = "shreyamalviya"
 
 
-class T1166(AttackTechnique):
+class T1166(PostBreachTechnique):
     tech_id = "T1166"
     unscanned_msg = "Monkey did not try creating hidden files or folders."
     scanned_msg = "Monkey tried creating hidden files and folders on the system but failed."

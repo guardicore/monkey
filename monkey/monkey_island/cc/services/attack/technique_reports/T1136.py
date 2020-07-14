@@ -3,7 +3,6 @@ from common.data.post_breach_consts import (
 from monkey_island.cc.services.attack.technique_reports.pba_technique import \
     PostBreachTechnique
 
-
 __author__ = "shreyamalviya"
 
 
