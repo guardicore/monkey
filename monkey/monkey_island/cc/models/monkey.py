@@ -32,7 +32,7 @@ class Monkey(Document):
     ip_addresses = ListField(StringField())
     keepalive = DateTimeField()
     modifytime = DateTimeField()
-    # TODO make "parent" an embedded document, so this can be removed and the schema explained (and validated) verbosly.
+    # TODO make "parent" an embedded document, so this can be removed and the schema explained (and validated) verbosely.
     # This is a temporary fix, since mongoengine doesn't allow for lists of strings to be null
     # (even with required=False of null=True).
     # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904

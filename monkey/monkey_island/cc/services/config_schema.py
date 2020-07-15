@@ -576,7 +576,7 @@ SCHEMA = {
                             "default": True,
                             "description":
                                 "Determines whether the monkey should retry exploiting machines"
-                                " it didn't successfuly exploit on previous iterations"
+                                " it didn't successfully exploit on previous iterations"
                         }
                     }
                 }
@@ -713,7 +713,7 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description":
-                                "Determines whether the dropper should try to move itsel instead of copying itself"
+                                "Determines whether the dropper should try to move itself instead of copying itself"
                                 " to target path"
                         }
                     }
