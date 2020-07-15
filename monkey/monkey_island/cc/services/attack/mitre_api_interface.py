@@ -1,6 +1,6 @@
-from typing import List, Dict
+from typing import Dict, List
 
-from stix2 import FileSystemSource, Filter, CourseOfAction, AttackPattern
+from stix2 import AttackPattern, CourseOfAction, FileSystemSource, Filter
 
 
 class MitreApiInterface:

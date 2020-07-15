@@ -1,7 +1,7 @@
 from common.data.post_breach_consts import POST_BREACH_JOB_SCHEDULING
+from infection_monkey.post_breach.job_scheduling.job_scheduling import (
+    get_commands_to_schedule_jobs, remove_scheduled_jobs)
 from infection_monkey.post_breach.pba import PBA
-from infection_monkey.post_breach.job_scheduling.job_scheduling import\
-    get_commands_to_schedule_jobs, remove_scheduled_jobs
 
 
 class ScheduleJobs(PBA):

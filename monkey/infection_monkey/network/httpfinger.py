@@ -1,6 +1,7 @@
+import logging
+
 import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
-import logging
 
 LOG = logging.getLogger(__name__)
 
@@ -20,9 +21,10 @@ class HTTPFinger(HostFinger):
         pass
 
     def get_host_fingerprint(self, host):
-        from requests import head
-        from requests.exceptions import Timeout, ConnectionError
         from contextlib import closing
+
+        from requests import head
+        from requests.exceptions import ConnectionError, Timeout
 
         for port in self.HTTP:
             # check both http and https

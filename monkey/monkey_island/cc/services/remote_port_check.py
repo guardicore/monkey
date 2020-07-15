@@ -1,6 +1,5 @@
 import socket
 
-
 DEFAULT_TIMEOUT = 5  # Seconds
 
 

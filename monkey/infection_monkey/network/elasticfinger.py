@@ -3,11 +3,11 @@ import logging
 from contextlib import closing
 
 import requests
-from requests.exceptions import Timeout, ConnectionError
+from requests.exceptions import ConnectionError, Timeout
 
 import infection_monkey.config
-from infection_monkey.network.HostFinger import HostFinger
 from common.data.network_consts import ES_SERVICE
+from infection_monkey.network.HostFinger import HostFinger
 
 ES_PORT = 9200
 ES_HTTP_TIMEOUT = 5

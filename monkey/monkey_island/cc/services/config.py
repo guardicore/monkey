@@ -1,15 +1,17 @@
-import copy
 import collections
+import copy
 import functools
 import logging
-from jsonschema import Draft4Validator, validators
-import monkey_island.cc.services.post_breach_files
 
-from monkey_island.cc.database import mongo
+from jsonschema import Draft4Validator, validators
+
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from monkey_island.cc.network_utils import local_ip_addresses
-from .config_schema import SCHEMA
+import monkey_island.cc.services.post_breach_files
+from monkey_island.cc.database import mongo
 from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.network_utils import local_ip_addresses
+
+from .config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
 

@@ -1,17 +1,17 @@
 import json
 import os
+import sys
 from shutil import copyfile
 
-import sys
-from flask import request, jsonify, make_response
 import flask_restful
+from flask import jsonify, make_response, request
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.models import Monkey
+from monkey_island.cc.network_utils import local_ip_addresses
 from monkey_island.cc.resources.monkey_download import get_monkey_executable
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.network_utils import local_ip_addresses
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = 'Barak'
 
@@ -22,8 +22,8 @@ logger = logging.getLogger(__name__)
 
 def run_local_monkey():
     import platform
-    import subprocess
     import stat
+    import subprocess
 
     # get the monkey executable suitable to run on the server
     result = get_monkey_executable(platform.system().lower(), platform.machine().lower())

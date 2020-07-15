@@ -6,6 +6,7 @@ for more details.
 """
 
 import argparse
+
 from Crypto.Hash import SHA3_512
 
 

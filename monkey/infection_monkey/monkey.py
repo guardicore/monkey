@@ -6,34 +6,39 @@ import sys
 import time
 
 import infection_monkey.tunnel as tunnel
-from infection_monkey.network.HostFinger import HostFinger
-from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
-from infection_monkey.utils.monkey_log_path import get_monkey_log_path
-from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
+from common.network.network_utils import get_host_from_network_location
+from common.utils.attack_utils import ScanStatus, UsageEnum
+from common.utils.exceptions import (ExploitingVulnerableMachineError,
+                                     FailedExploitationError)
+from common.version import get_version
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.exploit.HostExploiter import HostExploiter
 from infection_monkey.model import DELAY_DELETE_CMD
 from infection_monkey.network.firewall import app as firewall
+from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
+from infection_monkey.network.tools import (get_interface_to_target,
+                                            is_running_on_server)
+from infection_monkey.post_breach.post_breach_handler import PostBreach
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
-from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
+from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
+from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
+from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.exceptions.planned_shutdown_exception import \
+    PlannedShutdownException
+from infection_monkey.utils.monkey_dir import (create_monkey_dir,
+                                               get_monkey_dir_path,
+                                               remove_monkey_dir)
+from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.windows_upgrader import WindowsUpgrader
-from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.network.tools import get_interface_to_target, is_running_on_server
-from common.utils.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
-from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
-from common.utils.attack_utils import ScanStatus, UsageEnum
-from common.version import get_version
-from infection_monkey.exploit.HostExploiter import HostExploiter
-from common.network.network_utils import get_host_from_network_location
 
 MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, shutting down"
 
@@ -290,7 +295,8 @@ class InfectionMonkey(object):
             try:
                 status = None
                 if "win32" == sys.platform:
-                    from subprocess import SW_HIDE, STARTF_USESHOWWINDOW, CREATE_NEW_CONSOLE
+                    from subprocess import (CREATE_NEW_CONSOLE,
+                                            STARTF_USESHOWWINDOW, SW_HIDE)
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = SW_HIDE

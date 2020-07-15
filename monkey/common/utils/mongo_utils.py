@@ -1,4 +1,5 @@
 import sys
+
 if sys.platform == 'win32':
     import win32com
     import wmi

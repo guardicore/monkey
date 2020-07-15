@@ -1,8 +1,8 @@
 import logging
 from typing import Sequence
 
-from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.post_breach.pba import PBA
+from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
 

@@ -1,8 +1,8 @@
+import logging
 import os
 import os.path
 import sys
 import time
-import logging
 from threading import Thread
 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
@@ -12,22 +12,23 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_PATH not in sys.path:
     sys.path.insert(0, BASE_PATH)
 
-from monkey_island.cc.island_logger import json_setup_logging
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.island_logger import json_setup_logging
 
 # This is here in order to catch EVERYTHING, some functions are being called on imports the log init needs to be on top.
 json_setup_logging(default_path=os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'island_logger_default_config.json'),
                    default_level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-from monkey_island.cc.app import init_app
-from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list
-from monkey_island.cc.network_utils import local_ip_addresses
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from monkey_island.cc.database import is_db_server_up, get_db_version
-from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from common.version import get_version
+from monkey_island.cc.app import init_app
 from monkey_island.cc.bootloader_server import BootloaderHttpServer
+from monkey_island.cc.database import get_db_version, is_db_server_up
+from monkey_island.cc.network_utils import local_ip_addresses
+from monkey_island.cc.resources.monkey_download import MonkeyDownload
+from monkey_island.cc.services.reporting.exporter_init import \
+    populate_exporter_list
 from monkey_island.cc.setup import setup
 
 
@@ -42,9 +43,9 @@ def main(should_setup_only=False):
 
 
 def start_island_server(should_setup_only):
-    from tornado.wsgi import WSGIContainer
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
+    from tornado.wsgi import WSGIContainer
 
     mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)

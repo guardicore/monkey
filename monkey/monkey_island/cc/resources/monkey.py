@@ -3,13 +3,13 @@ from datetime import datetime
 
 import dateutil.parser
 import flask_restful
-
-from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from flask import request
 
-from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
+from monkey_island.cc.consts import \
+    DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
+from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.node import NodeService

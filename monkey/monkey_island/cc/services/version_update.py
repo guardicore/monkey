@@ -2,8 +2,8 @@ import logging
 
 import requests
 
-from common.version import get_version
 import monkey_island.cc.environment.environment_singleton as env_singleton
+from common.version import get_version
 
 __author__ = "itay.mizeretz"
 

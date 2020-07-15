@@ -1,8 +1,8 @@
 import json
 import logging
 
-from flask import request
 import flask_restful
+from flask import request
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
 
