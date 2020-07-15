@@ -20,7 +20,7 @@ install:
 # Python
 - pip freeze
 - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
-- pip install flake8 pytest dlint flake8-import-order # for next stages
+- pip install flake8 pytest dlint isort # for next stages
 - pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
 - pip install pipdeptree
@@ -68,6 +68,9 @@ script:
 ## Make sure that we haven't increased the amount of warnings.
 - PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=120
 - if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
+
+## Check import order
+- python -m isort . -c -p common -p infection_monkey -p monkey_island
 
 ## Run unit tests
 - cd monkey  # This is our source dir

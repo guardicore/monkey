@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import sys
 from shutil import copyfile
@@ -15,7 +16,6 @@ from monkey_island.cc.services.node import NodeService
 
 __author__ = 'Barak'
 
-import logging
 
 logger = logging.getLogger(__name__)
 
