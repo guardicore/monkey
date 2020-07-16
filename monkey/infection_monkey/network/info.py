@@ -5,11 +5,11 @@ import struct
 from random import randint
 from subprocess import check_output
 
+import netifaces
 import psutil
 import requests
 from requests import ConnectionError
 
-import netifaces
 from common.network.network_range import CidrRange
 from infection_monkey.utils.environment import is_windows_os
 
