@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from mongoengine import EmbeddedDocument, DateTimeField, StringField
+from mongoengine import DateTimeField, EmbeddedDocument, StringField
 
 import common.data.zero_trust_consts as zero_trust_consts
 

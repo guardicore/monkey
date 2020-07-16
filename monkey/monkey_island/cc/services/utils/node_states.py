@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import collections
 from enum import Enum
 from typing import List
-import collections
 
 
 class NodeStates(Enum):

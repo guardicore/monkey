@@ -1,6 +1,7 @@
-from common.data.post_breach_consts import POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
+from common.data.post_breach_consts import \
+    POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
 from infection_monkey.post_breach.pba import PBA
-from infection_monkey.post_breach.shell_startup_files.shell_startup_files_modification import\
+from infection_monkey.post_breach.shell_startup_files.shell_startup_files_modification import \
     get_commands_to_modify_shell_startup_files
 
 

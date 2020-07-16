@@ -2,7 +2,7 @@ from bson import ObjectId
 
 from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
-from monkey_island.cc.services.edge.edge import EdgeService, RIGHT_ARROW
+from monkey_island.cc.services.edge.edge import RIGHT_ARROW, EdgeService
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 SCAN_DATA_MOCK = [{

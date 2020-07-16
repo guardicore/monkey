@@ -1,6 +1,6 @@
-from cProfile import Profile
 import os
 import pstats
+from cProfile import Profile
 
 PROFILER_LOG_DIR = "./profiler_logs/"
 

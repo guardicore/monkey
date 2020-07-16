@@ -1,6 +1,5 @@
 import os
 
-
 HOME_PATH = os.path.expanduser("~")
 
 HIDDEN_FILE = HOME_PATH + "\\monkey-hidden-file"

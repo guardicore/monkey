@@ -1,10 +1,10 @@
 # Inspired by Giampaolo Rodola's psutil example from https://github.com/giampaolo/psutil/blob/master/scripts/netstat.py
 
 import logging
-import psutil
 import socket
+from socket import AF_INET, SOCK_DGRAM, SOCK_STREAM
 
-from socket import AF_INET, SOCK_STREAM, SOCK_DGRAM
+import psutil
 
 __author__ = 'itay.mizeretz'
 

@@ -1,4 +1,4 @@
-from infection_monkey.post_breach.setuid_setgid.linux_setuid_setgid import\
+from infection_monkey.post_breach.setuid_setgid.linux_setuid_setgid import \
     get_linux_commands_to_setuid_setgid
 
 

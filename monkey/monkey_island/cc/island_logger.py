@@ -1,6 +1,6 @@
-import os
 import json
 import logging.config
+import os
 
 __author__ = 'Maor.Rayzin'
 

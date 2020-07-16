@@ -1,6 +1,7 @@
-import monkey_island.cc.services.config
 import logging
 import os
+
+import monkey_island.cc.services.config
 
 __author__ = "VakarisZ"
 

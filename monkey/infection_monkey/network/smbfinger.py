@@ -1,6 +1,7 @@
+import logging
 import socket
 import struct
-import logging
+
 from odict import odict
 
 from infection_monkey.network.HostFinger import HostFinger

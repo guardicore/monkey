@@ -1,13 +1,26 @@
 import logging
 
-from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.attack.technique_reports import T1210, T1197, T1110, T1075, T1003, T1059, T1086, T1082
-from monkey_island.cc.services.attack.technique_reports import T1145, T1105, T1065, T1035, T1129, T1106, T1107, T1188
-from monkey_island.cc.services.attack.technique_reports import T1090, T1041, T1222, T1005, T1018, T1016, T1021, T1064
-from monkey_island.cc.services.attack.technique_reports import T1136, T1156, T1504, T1158, T1154, T1166
-from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.database import mongo
-from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_attack_report
+from monkey_island.cc.models import Monkey
+from monkey_island.cc.services.attack.attack_config import AttackConfig
+from monkey_island.cc.services.attack.technique_reports import (T1003, T1005,
+                                                                T1016, T1018,
+                                                                T1021, T1035,
+                                                                T1041, T1053,
+                                                                T1059, T1064,
+                                                                T1065, T1075,
+                                                                T1082, T1086,
+                                                                T1090, T1105,
+                                                                T1106, T1107,
+                                                                T1110, T1129,
+                                                                T1136, T1145,
+                                                                T1154, T1156,
+                                                                T1158, T1166,
+                                                                T1168, T1188,
+                                                                T1197, T1210,
+                                                                T1222, T1504)
+from monkey_island.cc.services.reporting.report_generation_synchronisation import \
+    safe_generate_attack_report
 
 __author__ = "VakarisZ"
 
@@ -42,7 +55,9 @@ TECHNIQUES = {'T1210': T1210.T1210,
               'T1504': T1504.T1504,
               'T1158': T1158.T1158,
               'T1154': T1154.T1154,
-              'T1166': T1166.T1166
+              'T1166': T1166.T1166,
+              'T1168': T1168.T1168,
+              'T1053': T1053.T1053
               }
 
 REPORT_NAME = 'new_report'

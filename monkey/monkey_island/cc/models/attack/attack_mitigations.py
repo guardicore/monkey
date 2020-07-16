@@ -1,10 +1,12 @@
 from typing import Dict
 
-from mongoengine import Document, StringField, DoesNotExist, EmbeddedDocumentField, ListField
-from monkey_island.cc.models.attack.mitigation import Mitigation
+from mongoengine import (Document, DoesNotExist, EmbeddedDocumentField,
+                         ListField, StringField)
 from stix2 import AttackPattern, CourseOfAction
 
-from monkey_island.cc.services.attack.test_mitre_api_interface import MitreApiInterface
+from monkey_island.cc.models.attack.mitigation import Mitigation
+from monkey_island.cc.services.attack.test_mitre_api_interface import \
+    MitreApiInterface
 
 
 class AttackMitigations(Document):

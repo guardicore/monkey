@@ -1,5 +1,7 @@
-from common.data.system_info_collectors_names \
-    import AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR, PROCESS_LIST_COLLECTOR
+from common.data.system_info_collectors_names import (AWS_COLLECTOR,
+                                                      ENVIRONMENT_COLLECTOR,
+                                                      HOSTNAME_COLLECTOR,
+                                                      PROCESS_LIST_COLLECTOR)
 
 WARNING_SIGN = " \u26A0"
 
@@ -191,6 +193,14 @@ SCHEMA = {
                     ],
                     "title": "Setuid and Setgid",
                     "attack_techniques": ["T1166"]
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "ScheduleJobs"
+                    ],
+                    "title": "Job scheduling",
+                    "attack_techniques": ["T1168", "T1053"]
                 }
             ],
         },
@@ -415,7 +425,8 @@ SCHEMA = {
                                 "ModifyShellStartupFiles",
                                 "HiddenFiles",
                                 "TrapCommand",
-                                "ChangeSetuidSetgid"
+                                "ChangeSetuidSetgid",
+                                "ScheduleJobs"
                             ],
                             "description": "List of actions the Monkey will run post breach"
                         },
@@ -567,7 +578,7 @@ SCHEMA = {
                             "default": True,
                             "description":
                                 "Determines whether the monkey should retry exploiting machines"
-                                " it didn't successfuly exploit on previous iterations"
+                                " it didn't successfully exploit on previous iterations"
                         }
                     }
                 }
@@ -704,7 +715,7 @@ SCHEMA = {
                             "type": "boolean",
                             "default": True,
                             "description":
-                                "Determines whether the dropper should try to move itsel instead of copying itself"
+                                "Determines whether the dropper should try to move itself instead of copying itself"
                                 " to target path"
                         }
                     }

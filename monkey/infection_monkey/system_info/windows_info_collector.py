@@ -1,18 +1,19 @@
-import os
 import logging
+import os
 import sys
 
-from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import MimikatzCredentialCollector
+from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import \
+    MimikatzCredentialCollector
 
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 # noinspection PyPep8
 import infection_monkey.config
 # noinspection PyPep8
+from common.utils.wmi_utils import WMIUtils
+# noinspection PyPep8
 from infection_monkey.system_info import InfoCollector
 # noinspection PyPep8
 from infection_monkey.system_info.wmi_consts import WMI_CLASSES
-# noinspection PyPep8
-from common.utils.wmi_utils import WMIUtils
 
 LOG = logging.getLogger(__name__)
 LOG.info('started windows info collector')

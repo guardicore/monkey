@@ -1,15 +1,15 @@
-import os
 import logging
+import os
 
 from common.data.post_breach_consts import POST_BREACH_FILE_EXECUTION
-from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.post_breach.pba import PBA
-from infection_monkey.control import ControlClient
-from infection_monkey.config import WormConfiguration
-from infection_monkey.utils.monkey_dir import get_monkey_dir_path
-from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
 from common.utils.attack_utils import ScanStatus
+from infection_monkey.config import WormConfiguration
+from infection_monkey.control import ControlClient
 from infection_monkey.network.tools import get_interface_to_target
+from infection_monkey.post_breach.pba import PBA
+from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
+from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.monkey_dir import get_monkey_dir_path
 
 LOG = logging.getLogger(__name__)
 
