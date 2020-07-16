@@ -46,7 +46,7 @@ We provide a dockerfile from our [website](http://infectionmonkey.com/) that let
 
 ### Old machine bootloader
 
-Some **Older machines** still get a partial compatibility as in they get exploited and reported, but monkey can't run on them. So instead of monkey, old machine bootloader(small c program) is ran, which reports some minor info like network interface configuration, GLIBC version, OS and so on.
+Some **Older machines** still get a partial compatibility as in they get exploited and reported, but monkey can't run on them. So instead of monkey, old machine bootloader (small c program) is ran, which reports some minor info like network interface configuration, GLIBC version, OS and so on.
 
 **Old machine bootloader** also has a GLIBC 2.14+ requirement for linux, because bootloader is included into pyinstaller bootloader which uses python3.7, which in turn requires GLIBC 2.14+. If you think partial support for older machines is important, don't hesitate to open a new issue about it.
 
