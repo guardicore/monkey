@@ -7,6 +7,7 @@ import {faRadiation} from '@fortawesome/free-solid-svg-icons/faRadiation';
 import {faEye} from '@fortawesome/free-solid-svg-icons/faEye';
 import {faEyeSlash} from '@fortawesome/free-solid-svg-icons/faEyeSlash';
 import {faToggleOff} from '@fortawesome/free-solid-svg-icons/faToggleOff';
+import marked from 'marked';
 
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import {ScanStatus} from '../attack/techniques/Helpers';
@@ -38,14 +39,14 @@ class AttackReport extends React.Component {
     };
     if (typeof this.props.report.schema !== 'undefined' && typeof this.props.report.techniques !== 'undefined'){
       this.state['schema'] = this.props.report['schema'];
-      this.state['techniques'] = AttackReport.addLinksToTechniques(this.props.report['schema'], this.props.report['techniques']);
+      this.state['techniques'] = AttackReport.modifyTechniqueData(this.props.report['schema'], this.props.report['techniques']);
     }
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.report !== prevProps.report) {
      this.setState({schema: this.props.report['schema'],
-      techniques: AttackReport.addLinksToTechniques(this.props.report['schema'], this.props.report['techniques'])})
+      techniques: AttackReport.modifyTechniqueData(this.props.report['schema'], this.props.report['techniques'])})
     }
   }
 
@@ -143,7 +144,8 @@ class AttackReport extends React.Component {
     return false;
   }
 
-  static addLinksToTechniques(schema, techniques){
+  static modifyTechniqueData(schema, techniques){
+    // add links to techniques
     schema = schema.properties;
     for(const type in schema){
       if (! schema.hasOwnProperty(type)) {return false;}
@@ -155,6 +157,11 @@ class AttackReport extends React.Component {
         }
       }
     }
+    // modify techniques' messages
+    for (const tech_id in techniques){
+      techniques[tech_id]['message'] = <div dangerouslySetInnerHTML={{__html: marked(techniques[tech_id]['message'])}} />;
+    }
+
     return techniques
   }
 
