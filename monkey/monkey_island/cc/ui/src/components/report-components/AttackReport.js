@@ -7,6 +7,7 @@ import {faRadiation} from '@fortawesome/free-solid-svg-icons/faRadiation';
 import {faEye} from '@fortawesome/free-solid-svg-icons/faEye';
 import {faEyeSlash} from '@fortawesome/free-solid-svg-icons/faEyeSlash';
 import {faToggleOff} from '@fortawesome/free-solid-svg-icons/faToggleOff';
+import marked from 'marked';
 
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import {ScanStatus} from '../attack/techniques/Helpers';

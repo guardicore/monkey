@@ -10,7 +10,8 @@ from monkey_island.cc.services.attack.attack_config import AttackConfig
 logger = logging.getLogger(__name__)
 
 
-disabled_msg = "This technique has been disabled. You can enable it from the configuration page."
+disabled_msg = "This technique has been disabled. " +\
+               "You can enable it from the [configuration page](../../configure)."
 
 
 class AttackTechnique(object, metaclass=abc.ABCMeta):
