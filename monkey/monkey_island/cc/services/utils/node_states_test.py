@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from monkey_island.cc.services.utils.node_states import NodeStates, NoGroupsFoundException
+from monkey_island.cc.services.utils.node_states import (
+    NodeStates, NoGroupsFoundException)
 
 
 class TestNodeGroups(TestCase):

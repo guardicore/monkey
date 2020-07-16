@@ -1,7 +1,8 @@
 import flask_restful
 
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services.utils.node_states import NodeStates as NodeStateList
+from monkey_island.cc.services.utils.node_states import \
+    NodeStates as NodeStateList
 
 
 class NodeStates(flask_restful.Resource):

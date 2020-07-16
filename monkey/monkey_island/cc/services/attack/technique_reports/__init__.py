@@ -1,11 +1,11 @@
 import abc
 import logging
 
-from monkey_island.cc.database import mongo
 from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.services.attack.attack_config import AttackConfig
 from common.utils.code_utils import abstractstatic
+from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
+from monkey_island.cc.services.attack.attack_config import AttackConfig
 
 logger = logging.getLogger(__name__)
 

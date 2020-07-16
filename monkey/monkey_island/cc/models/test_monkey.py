@@ -1,11 +1,12 @@
-import uuid
 import logging
+import uuid
 from time import sleep
 
 import pytest
 
 from monkey_island.cc.models.monkey import Monkey, MonkeyNotFoundError
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
+
 from .monkey_ttl import MonkeyTtl
 
 logger = logging.getLogger(__name__)

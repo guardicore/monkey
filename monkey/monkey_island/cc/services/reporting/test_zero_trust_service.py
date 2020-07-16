@@ -1,7 +1,8 @@
 import common.data.zero_trust_consts as zero_trust_consts
-from monkey_island.cc.models.zero_trust.finding import Finding
-from monkey_island.cc.services.reporting.zero_trust_service import ZeroTrustService
 import monkey_island.cc.services.reporting.zero_trust_service
+from monkey_island.cc.models.zero_trust.finding import Finding
+from monkey_island.cc.services.reporting.zero_trust_service import \
+    ZeroTrustService
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 EXPECTED_DICT = {

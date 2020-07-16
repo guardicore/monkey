@@ -5,7 +5,6 @@ from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.zero_trust_tests.segmentation import \
     test_passed_findings_for_unreached_segments
 
-
 logger = logging.getLogger(__name__)
 
 

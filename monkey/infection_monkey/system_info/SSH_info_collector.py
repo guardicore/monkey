@@ -1,7 +1,7 @@
-import logging
-import pwd
-import os
 import glob
+import logging
+import os
+import pwd
 
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem

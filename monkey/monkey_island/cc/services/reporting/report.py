@@ -1,22 +1,25 @@
 import functools
+import ipaddress
 import itertools
 import logging
-
-import ipaddress
-from bson import json_util
 from enum import Enum
+
+from bson import json_util
 
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
+from monkey_island.cc.network_utils import get_subnets, local_ip_addresses
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
+from monkey_island.cc.services.configuration.utils import \
+    get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
-from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
-from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_regular_report
-from monkey_island.cc.network_utils import local_ip_addresses, get_subnets
+from monkey_island.cc.services.reporting.report_exporter_manager import \
+    ReportExporterManager
+from monkey_island.cc.services.reporting.report_generation_synchronisation import \
+    safe_generate_regular_report
 
 __author__ = "itay.mizeretz"
 

@@ -1,9 +1,9 @@
-import sys
+import glob
+import json
 import logging
 import os.path
-import json
-import glob
 import subprocess
+import sys
 
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
