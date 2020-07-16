@@ -29,7 +29,7 @@ from infection_monkey.system_info.system_info_collector import SystemInfoCollect
 class MyNewCollector(SystemInfoCollector):
 ```
 
-3. Set the Collector name in the C'tor, like so:
+3. Set the Collector name in the constructor, like so:
 
 ```py
 class MyNewCollector(SystemInfoCollector):
@@ -41,17 +41,13 @@ class MyNewCollector(SystemInfoCollector):
 
 Override the `collect` method with your own implementation. See the `EnvironmentCollector.py` Collector for reference. You can log during collection as well.
 
-#### Configuration
-
-Add the new collector to `infection_monkey/config.py`
-
 ### Island side
 
-#### Configuration
+#### Island Configuration
 
-##### `definitions`
+##### Definitions
 
-You'll need to add your Collector to the `config_schema.py` file, under `definitions/system_info_collectors_classes/anyOf`, like so:
+You'll need to add your Collector to the `monkey_island/cc/services/config_schema.py` file, under `definitions/system_info_collectors_classes/anyOf`, like so:
 
 ```json
 "system_info_collectors_classes": {
@@ -78,7 +74,7 @@ You'll need to add your Collector to the `config_schema.py` file, under `definit
 },
 ```
 
-##### `properties`
+##### properties
 
 Also, you can add the Collector to be used by default by adding it to the `default` key under `properties/monkey/system_info/system_info_collectors_classes`:
 

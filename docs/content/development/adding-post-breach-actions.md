@@ -29,7 +29,7 @@ from infection_monkey.post_breach.pba import PBA
 class MyNewPba(PBA):
 ```
 
-3. Set the action name in the C'tor, like so:
+3. Set the action name in the constructor, like so:
 
 ```python
 class MyNewPba(PBA):
