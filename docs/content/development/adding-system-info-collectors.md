@@ -98,4 +98,4 @@ Also, you can add the Collector to be used by default by adding it to the `defau
 
 1. Add a process function under `monkey_island/cc/telemetry/processing/system_info_collectors/{DATA_NAME_HERE}.py`. The function should parse the collector's result. See `processing/system_info_collectors/environment.py` for example.
 
-2. Add that function to the dispatcher - `monkey_island/cc/services/telemetry/processing/system_info_collectors/system_info_telemetry_dispatcher.py`.
+2. Add that function to `SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS` under `monkey_island/cc/services/telemetry/processing/system_info_collectors/system_info_telemetry_dispatcher.py`.
