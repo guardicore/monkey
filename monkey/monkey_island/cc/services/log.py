@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import monkey_island.cc.services.node
-from monkey_island.cc.database import mongo, database
+from monkey_island.cc.database import database, mongo
 
 __author__ = "itay.mizeretz"
 

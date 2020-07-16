@@ -9,10 +9,11 @@ from urllib.parse import urlsplit
 
 import requests
 
-import infection_monkey.monkeyfs as monkeyfs
-from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
-from infection_monkey.network.tools import get_interface_to_target
 import infection_monkey.control
+import infection_monkey.monkeyfs as monkeyfs
+from infection_monkey.network.tools import get_interface_to_target
+from infection_monkey.transport.base import (TransportProxyBase,
+                                             update_last_serve_time)
 
 __author__ = 'hoffer'
 
@@ -190,7 +191,8 @@ class HTTPServer(threading.Thread):
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
             from common.utils.attack_utils import ScanStatus
-            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
+            from infection_monkey.telemetry.attack.t1105_telem import \
+                T1105Telem
 
             filename = self._filename
 
@@ -244,7 +246,8 @@ class LockedHTTPServer(threading.Thread):
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
             from common.utils.attack_utils import ScanStatus
-            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
+            from infection_monkey.telemetry.attack.t1105_telem import \
+                T1105Telem
             filename = self._filename
 
             @staticmethod

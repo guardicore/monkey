@@ -1,7 +1,7 @@
 """
 Define a Document Schema for the TestTelem document.
 """
-from mongoengine import Document, StringField, DateTimeField
+from mongoengine import DateTimeField, Document, StringField
 
 
 class TestTelem(Document):

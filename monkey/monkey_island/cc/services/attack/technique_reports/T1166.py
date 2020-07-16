@@ -1,8 +1,7 @@
-from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from monkey_island.cc.database import mongo
-from common.utils.attack_utils import ScanStatus
 from common.data.post_breach_consts import POST_BREACH_SETUID_SETGID
-
+from common.utils.attack_utils import ScanStatus
+from monkey_island.cc.database import mongo
+from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 __author__ = "shreyamalviya"
 

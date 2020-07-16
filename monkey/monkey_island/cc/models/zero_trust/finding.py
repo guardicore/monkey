@@ -4,7 +4,7 @@ Define a Document Schema for Zero Trust findings.
 """
 from typing import List
 
-from mongoengine import Document, StringField, EmbeddedDocumentListField
+from mongoengine import Document, EmbeddedDocumentListField, StringField
 
 import common.data.zero_trust_consts as zero_trust_consts
 # Dummy import for mongoengine.

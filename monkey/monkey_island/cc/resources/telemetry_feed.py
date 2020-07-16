@@ -2,12 +2,12 @@ import logging
 from datetime import datetime
 
 import dateutil
+import flask_pymongo
 import flask_restful
 from flask import request
-import flask_pymongo
 
-from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.database import mongo
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.node import NodeService
 
 logger = logging.getLogger(__name__)

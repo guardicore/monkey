@@ -1,5 +1,6 @@
 import argparse
 import ctypes
+import filecmp
 import logging
 import os
 import pprint
@@ -9,13 +10,15 @@ import sys
 import time
 from ctypes import c_char_p
 
-import filecmp
-from infection_monkey.config import WormConfiguration
-from infection_monkey.exploit.tools.helpers import build_monkey_commandline_explicitly
-from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
-from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
-from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
+from infection_monkey.config import WormConfiguration
+from infection_monkey.exploit.tools.helpers import \
+    build_monkey_commandline_explicitly
+from infection_monkey.model import (GENERAL_CMDLINE_LINUX,
+                                    MONKEY_CMDLINE_LINUX,
+                                    MONKEY_CMDLINE_WINDOWS)
+from infection_monkey.system_info import OperatingSystem, SystemInfoCollector
+from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS

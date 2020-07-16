@@ -1,5 +1,6 @@
 from monkey_island.cc.database import mongo
-from monkey_island.cc.services.groups_and_users_consts import USERTYPE, GROUPTYPE
+from monkey_island.cc.services.groups_and_users_consts import (GROUPTYPE,
+                                                               USERTYPE)
 
 __author__ = 'maor.rayzin'
 

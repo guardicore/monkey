@@ -1,5 +1,6 @@
-import flask_restful
 import logging
+
+import flask_restful
 
 from common.version import get_version
 from monkey_island.cc.services.version_update import VersionUpdateService
