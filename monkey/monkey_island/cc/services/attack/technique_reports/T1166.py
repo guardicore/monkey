@@ -7,7 +7,7 @@ __author__ = "shreyamalviya"
 
 class T1166(PostBreachTechnique):
     tech_id = "T1166"
-    unscanned_msg = "Monkey did not try creating hidden files or folders."
-    scanned_msg = "Monkey tried creating hidden files and folders on the system but failed."
-    used_msg = "Monkey created hidden files and folders on the system."
+    unscanned_msg = "Monkey didn't try setting the setuid or setgid bits since it found no Linux machines."
+    scanned_msg = "Monkey tried setting the setuid or setgid bits but failed."
+    used_msg = "Monkey successfully set the setuid or setgid bits."
     pba_names = [POST_BREACH_SETUID_SETGID]
