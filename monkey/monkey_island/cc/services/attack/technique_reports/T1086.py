@@ -7,7 +7,7 @@ __author__ = "VakarisZ"
 
 class T1086(AttackTechnique):
     tech_id = "T1086"
-    unscanned_msg = "Monkey didn't run powershell."
+    unscanned_msg = "Monkey didn't run powershell since it found no Windows machines."
     scanned_msg = ""
     used_msg = "Monkey successfully ran powershell commands on exploited machines in the network."
 

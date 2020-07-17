@@ -6,7 +6,7 @@ __author__ = "VakarisZ"
 
 class T1035(UsageTechnique):
     tech_id = "T1035"
-    unscanned_msg = "Monkey didn't try to interact with Windows services."
+    unscanned_msg = "Monkey didn't try to interact with Windows services since it found no Windows machines."
     scanned_msg = "Monkey tried to interact with Windows services, but failed."
     used_msg = "Monkey successfully interacted with Windows services."
 

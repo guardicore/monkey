@@ -6,7 +6,7 @@ __author__ = "VakarisZ"
 
 class T1197(AttackTechnique):
     tech_id = "T1197"
-    unscanned_msg = "Monkey didn't try to use any bits jobs."
+    unscanned_msg = "Monkey didn't try to use any bits jobs since it found no Windows machines."
     scanned_msg = "Monkey tried to use bits jobs but failed."
     used_msg = "Monkey successfully used bits jobs at least once in the network."
 
