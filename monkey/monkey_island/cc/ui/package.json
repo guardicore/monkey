@@ -103,7 +103,7 @@
     "react-spinners": "^0.9.0",
     "react-table": "^6.10.3",
     "react-toggle": "^4.1.1",
-    "react-tooltip-lite": "^1.10.0",
+    "react-tooltip-lite": "^1.12.0",
     "redux": "^4.0.4",
     "sha3": "^2.0.7",
     "snyk": "^1.361.3"
