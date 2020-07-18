@@ -63,7 +63,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         Gets the status of a certain attack technique.
         :return: ScanStatus numeric value
         """
-        if cls._is_disabled_in_config():
+        if not cls._is_enabled_in_config():
             return ScanStatus.DISABLED.value
         elif mongo.db.telemetry.find_one({'telem_category': 'attack',
                                           'data.status': ScanStatus.USED.value,
@@ -143,11 +143,12 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
             return {}
 
     @classmethod
-    def _check_status(cls, status):
-        if status == ScanStatus.UNSCANNED.value and cls._is_disabled_in_config():
+    def _check_status(cls, status, *args):
+        enabled_in_config = args[0] if args else cls._is_enabled_in_config()
+        if status == ScanStatus.UNSCANNED.value and not enabled_in_config:
             return ScanStatus.DISABLED.value
         return status
 
     @classmethod
-    def _is_disabled_in_config(cls):
-        return not AttackConfig.get_technique_values()[cls.tech_id]
+    def _is_enabled_in_config(cls):
+        return AttackConfig.get_technique_values()[cls.tech_id]

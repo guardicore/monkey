@@ -13,27 +13,27 @@ class T9999(PostBreachTechnique):
     pba_names = ["PBA Name"]
 
 
-config =\
-    {
-        'category': {
-            'link': '',
-            'properties': {
-                'T9999': {
-                    'description': '',
-                    'link': '',
-                    'necessary': False,
-                    'title': '',
-                    'type': 'bool',
-                    'value': False  # this field denotes whether technique is enabled or disabled in config
-                }
-            }
-        }
-    }
+# config =\
+#     {
+#         'category': {
+#             'link': '',
+#             'properties': {
+#                 'T9999': {
+#                     'description': '',
+#                     'link': '',
+#                     'necessary': False,
+#                     'title': '',
+#                     'type': 'bool',
+#                     'value': False  # this field denotes whether technique is enabled or disabled in config
+#                 }
+#             }
+#         }
+#     }
 
 
-def set_config(value: bool):
-    config['category']['properties']['T9999']['value'] = value
-    return config
+# def set_config(value: bool):
+#     config['category']['properties']['T9999']['value'] = value
+#     return config
 
 
 param_list = [
@@ -45,7 +45,8 @@ param_list = [
             'status': 0,
             'title': 'Unscanned technique'
         },
-        set_config(True),  # configuration
+        # set_config(True),  # configuration
+        True,  # configuration
         ScanStatus.UNSCANNED.value  # expected status
     ),
 
@@ -57,7 +58,8 @@ param_list = [
             'status': 1,
             'title': 'Scanned technique'
         },
-        set_config(True),  # configuration
+        # set_config(True),  # configuration
+        True,  # configuration
         ScanStatus.SCANNED.value  # expected status
     ),
 
@@ -69,7 +71,8 @@ param_list = [
             'status': 2,
             'title': 'Used technique'
         },
-        set_config(True),  # configuration
+        # set_config(True),  # configuration
+        True,  # configuration
         ScanStatus.USED.value  # expected status
     ),
 
@@ -81,7 +84,8 @@ param_list = [
             'status': 0,
             'title': 'Disabled technique'
         },
-        set_config(False),  # configuration
+        # set_config(False),  # configuration
+        False,  # configuration
         ScanStatus.DISABLED.value  # expected status
     )
 ]
@@ -91,4 +95,6 @@ class TestAttackTechnique(TestCase):
     def test__check_status(self):
         for telem_data, config, expected_status in param_list:
             with self.subTest(msg=f"Checking if correct status is returned (status: {telem_data['message']})"):
-                self.assertEqual(T9999._check_status(telem_data['status']), expected_status)
+                # self.assertEqual(T9999._check_status(telem_data['status']), expected_status)
+                self.assertEqual(T9999._check_status(telem_data['status'], config),
+                                 expected_status)
