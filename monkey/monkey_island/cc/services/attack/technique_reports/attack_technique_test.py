@@ -1,10 +1,7 @@
-import json
 from unittest import TestCase
 
 from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.database import mongo
 
-from . import AttackTechnique
 from .pba_technique import PostBreachTechnique
 
 
