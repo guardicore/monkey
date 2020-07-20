@@ -1,7 +1,7 @@
 import flask_restful
 from flask import send_from_directory
 
-from monkey_island.cc.resources.pba_file_upload import GET_FILE_DIR
+from monkey_island.cc.services.post_breach_files import UPLOADS_DIR
 
 __author__ = 'VakarisZ'
 
@@ -13,4 +13,4 @@ class PBAFileDownload(flask_restful.Resource):
 
     # Used by monkey. can't secure.
     def get(self, path):
-        return send_from_directory(GET_FILE_DIR, path)
+        return send_from_directory(UPLOADS_DIR, path)
