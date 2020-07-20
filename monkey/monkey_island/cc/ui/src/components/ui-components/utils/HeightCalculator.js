@@ -1,16 +1,14 @@
-const defaultMinHeight = 50
-const defaultMaxHeight = 300
-const defaultSubcomponentHeight = 15
+const defaultMinHeight = 25
+const defaultMaxHeight = 250
+const defaultSubcomponentHeight = 25
 
 export function getComponentHeight(subcomponentCount,
                                    subcomponentHeight = defaultSubcomponentHeight,
                                    minHeight = defaultMinHeight,
                                    maxHeight = defaultMaxHeight) {
-  let height = subcomponentHeight * subcomponentCount;
+  let height = defaultMinHeight + (subcomponentHeight*subcomponentCount);
   if (height > maxHeight)
     height = maxHeight
-  else if (height < minHeight)
-    height = minHeight
 
   return height
 }

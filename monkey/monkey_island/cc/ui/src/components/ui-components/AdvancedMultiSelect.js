@@ -32,9 +32,12 @@ function onMasterCheckboxClick(checkboxValue, defaultArray, onChangeFnc) {
 // Definitions passed to components only contains value and label,
 // custom fields like "info" or "links" must be pulled from registry object using this function
 function getFullDefinitionsFromRegistry(refString, registry) {
+  return getObjectFromRegistryByRef(refString, registry).anyOf;
+}
+
+function getObjectFromRegistryByRef(refString, registry) {
   let refArray = refString.replace('#', '').split('/');
-  let definitionObject = resolveObjectPath(refArray, registry);
-  return definitionObject.anyOf;
+ return resolveObjectPath(refArray, registry);
 }
 
 function getFullDefinitionByKey(refString, registry, itemKey) {
@@ -45,6 +48,11 @@ function getFullDefinitionByKey(refString, registry, itemKey) {
 function setPaneInfo(refString, registry, itemKey, setPaneInfoFnc) {
   let definitionObj = getFullDefinitionByKey(refString, registry, itemKey);
   setPaneInfoFnc({title: definitionObj.title, content: definitionObj.info, link: definitionObj.link});
+}
+
+function getDefaultPaneParams(refString, registry){
+  let configSection = getObjectFromRegistryByRef(refString, registry);
+  return ({title: configSection.title, content: configSection.description});
 }
 
 function AdvancedMultiSelect(props) {
@@ -62,8 +70,9 @@ function AdvancedMultiSelect(props) {
     onChange,
     registry
   } = props;
-  const {enumOptions, defaultPaneParams} = options;
-  const [infoPaneParams, setInfoPaneParams] = useState(defaultPaneParams);
+  const {enumOptions} = options;
+  const [infoPaneParams, setInfoPaneParams] = useState(getDefaultPaneParams(schema.items.$ref, registry));
+  getDefaultPaneParams(schema.items.$ref, registry);
   const selectValue = cloneDeep(value);
   return (
     <div className={'advanced-multi-select'}>

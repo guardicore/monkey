@@ -9,6 +9,7 @@ SCHEMA = {
     "definitions": {
         "exploiter_classes": {
             "title": "Exploit class",
+            "description": "Click on exploiter to get more information about it.",
             "type": "string",
             "anyOf": [
                 {
@@ -70,7 +71,8 @@ SCHEMA = {
                         "ShellShockExploiter"
                     ],
                     "title": "ShellShock Exploiter",
-                    "info": "CVE-2014-6271, based on logic in NCC group's github.",
+                    "info": "CVE-2014-6271, based on logic from "
+                            "https://github.com/nccgroup/shocker/blob/master/shocker.py .",
                     "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
@@ -97,7 +99,8 @@ SCHEMA = {
                         "Struts2Exploiter"
                     ],
                     "title": "Struts2 Exploiter",
-                    "info": "Exploits struts2 java web framework. CVE-2017-5638. Logic based on this PoC.",
+                    "info": "Exploits struts2 java web framework. CVE-2017-5638. Logic based on "
+                            "https://www.exploit-db.com/exploits/41570 .",
                     "link": "https://github.com/guardicore/monkey/wiki/Exploiters"
                 },
                 {
@@ -133,6 +136,7 @@ SCHEMA = {
         },
         "system_info_collectors_classes": {
             "title": "System Information Collectors",
+            "description": "Click on a system info collector to find out what it collects.",
             "type": "string",
             "anyOf": [
                 {
@@ -140,7 +144,8 @@ SCHEMA = {
                     "enum": [
                         ENVIRONMENT_COLLECTOR
                     ],
-                    "title": "Collect which environment this machine is on (on prem/cloud)",
+                    "title": "Environment collector",
+                    "info": "Collects information about machine's environment (on premise/GCP/AWS).",
                     "attack_techniques": []
                 },
                 {
@@ -148,7 +153,8 @@ SCHEMA = {
                     "enum": [
                         AWS_COLLECTOR
                     ],
-                    "title": "If on AWS, collect more information about the instance",
+                    "title": "AWS collector",
+                    "info": "If on AWS, collects more information about the AWS instance currently running on.",
                     "attack_techniques": []
                 },
                 {
@@ -156,7 +162,8 @@ SCHEMA = {
                     "enum": [
                         HOSTNAME_COLLECTOR
                     ],
-                    "title": "Collect the machine's hostname",
+                    "title": "Hostname collector",
+                    "info": "Collects machine's hostname.",
                     "attack_techniques": []
                 },
                 {
@@ -164,13 +171,16 @@ SCHEMA = {
                     "enum": [
                         PROCESS_LIST_COLLECTOR
                     ],
-                    "title": "Collect running processes on the machine",
+                    "title": "Process list collector",
+                    "info": "Collects a list of running processes on the machine.",
                     "attack_techniques": []
                 },
             ],
         },
         "post_breach_actions": {
             "title": "Post breach actions",
+            "description": "Runs scripts/commands on infected machines. These actions safely simulate what an adversary"
+                           "might do after breaching a new machine. Used in ATT&CK and Zero trust reports.",
             "type": "string",
             "anyOf": [
                 {
@@ -179,6 +189,7 @@ SCHEMA = {
                         "BackdoorUser"
                     ],
                     "title": "Back door user",
+                    "info": "Attempts to create a new user on the system and delete it afterwards.",
                     "attack_techniques": ["T1136"]
                 },
                 {
@@ -187,6 +198,8 @@ SCHEMA = {
                         "CommunicateAsNewUser"
                     ],
                     "title": "Communicate as new user",
+                    "info": "Attempts to create a new user, create HTTPS requests as that user and delete the user "
+                            "afterwards.",
                     "attack_techniques": ["T1136"]
                 },
                 {
@@ -195,6 +208,8 @@ SCHEMA = {
                         "ModifyShellStartupFiles"
                     ],
                     "title": "Modify shell startup files",
+                    "info": "Attempts to modify shell startup files, like ~/.profile, ~/.bashrc, ~/.bash_profile "
+                            "in linux, and profile.ps1 in windows. Reverts modifications done afterwards.",
                     "attack_techniques": ["T1156", "T1504"]
                 },
                 {
@@ -203,12 +218,15 @@ SCHEMA = {
                         "HiddenFiles"
                     ],
                     "title": "Hidden files and directories",
+                    "info": "Attempts to create a hidden file and remove it afterward.",
                     "attack_techniques": ["T1158"]
                 }
             ],
         },
         "finger_classes": {
             "title": "Fingerprint class",
+            "description": "Fingerprint modules collect info about external services "
+                           "Infection Monkey scans.",
             "type": "string",
             "anyOf": [
                 {
@@ -217,6 +235,7 @@ SCHEMA = {
                         "SMBFinger"
                     ],
                     "title": "SMBFinger",
+                    "info": "Figures out if SMB is running and what's the version of it.",
                     "attack_techniques": ["T1210"]
                 },
                 {
@@ -225,6 +244,7 @@ SCHEMA = {
                         "SSHFinger"
                     ],
                     "title": "SSHFinger",
+                    "info": "Figures out if SSH is running.",
                     "attack_techniques": ["T1210"]
                 },
                 {
@@ -232,14 +252,16 @@ SCHEMA = {
                     "enum": [
                         "PingScanner"
                     ],
-                    "title": "PingScanner"
+                    "title": "PingScanner",
+                    "info": "Tries to identify if host is alive and which OS it's running by ping scan."
                 },
                 {
                     "type": "string",
                     "enum": [
                         "HTTPFinger"
                     ],
-                    "title": "HTTPFinger"
+                    "title": "HTTPFinger",
+                    "info": "Checks if host has HTTP/HTTPS ports open."
                 },
                 {
                     "type": "string",
@@ -247,6 +269,7 @@ SCHEMA = {
                         "MySQLFinger"
                     ],
                     "title": "MySQLFinger",
+                    "info": "Checks if MySQL server is running and tries to get it's version.",
                     "attack_techniques": ["T1210"]
                 },
                 {
@@ -255,6 +278,7 @@ SCHEMA = {
                         "MSSQLFinger"
                     ],
                     "title": "MSSQLFinger",
+                    "info": "Checks if Microsoft SQL service is running and tries to gather information about it.",
                     "attack_techniques": ["T1210"]
                 },
 
@@ -264,6 +288,7 @@ SCHEMA = {
                         "ElasticFinger"
                     ],
                     "title": "ElasticFinger",
+                    "info": "Checks if ElasticSearch is running and attempts to find it's version.",
                     "attack_techniques": ["T1210"]
                 }
             ]

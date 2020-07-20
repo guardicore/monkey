@@ -9,6 +9,11 @@ export default function UiSchema(props) {
     },
     basic_network: {},
     monkey: {
+      general: {
+        post_breach_actions: {
+          'ui:widget': AdvancedMultiSelect
+        }
+      },
       behaviour: {
         custom_PBA_linux_cmd: {
           'ui:widget': 'textarea',
@@ -42,6 +47,11 @@ export default function UiSchema(props) {
           classNames: 'windows-pba-file-info',
           'ui:emptyValue': ''
         }
+      },
+      system_info: {
+        system_info_collectors_classes: {
+          'ui:widget': AdvancedMultiSelect
+        }
       }
     },
     cnc: {},
@@ -49,19 +59,18 @@ export default function UiSchema(props) {
     exploits: {
       general: {
         exploiter_classes: {
-          'ui:widget': AdvancedMultiSelect,
-          'ui:options': {
-            defaultPaneParams: {
-              title: 'Exploiters',
-              content: 'Click on exploiter to get more information about it.'
-            }
-          }
+          'ui:widget': AdvancedMultiSelect
         }
       }
     },
     internal: {
       general: {
         started_on_island: {'ui:widget': 'hidden'}
+      },
+      classes: {
+        finger_classes: {
+          'ui:widget': AdvancedMultiSelect
+        }
       }
     }
   }
