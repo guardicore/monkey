@@ -2,14 +2,16 @@ import copy
 import json
 import logging
 import sys
-from typing import List, Dict
+from typing import Dict, List
 
 from tqdm import tqdm
 
-from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_file_parser import SampleFileParser
-from envs.monkey_zoo.blackbox.tests.performance.\
-    telem_sample_parsing.sample_multiplier.fake_ip_generator import FakeIpGenerator
-from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_monkey import FakeMonkey
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_file_parser import \
+    SampleFileParser
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_ip_generator import \
+    FakeIpGenerator
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_monkey import \
+    FakeMonkey
 
 TELEM_DIR_PATH = './tests/performance/telemetry_sample'
 LOGGER = logging.getLogger(__name__)

@@ -1,13 +1,11 @@
 from common.data.post_breach_consts import POST_BREACH_HIDDEN_FILES
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
-from infection_monkey.utils.hidden_files import\
-    get_commands_to_hide_files,\
-    get_commands_to_hide_folders,\
-    cleanup_hidden_files,\
-    get_winAPI_to_hide_files
 from infection_monkey.utils.environment import is_windows_os
-
+from infection_monkey.utils.hidden_files import (cleanup_hidden_files,
+                                                 get_commands_to_hide_files,
+                                                 get_commands_to_hide_folders,
+                                                 get_winAPI_to_hide_files)
 
 HIDDEN_FSO_CREATION_COMMANDS = [get_commands_to_hide_files,
                                 get_commands_to_hide_folders]

@@ -1,7 +1,8 @@
-import monkey_island.cc.services.config
 import logging
 import os
 from pathlib import Path
+
+import monkey_island.cc.services.config
 
 __author__ = "VakarisZ"
 

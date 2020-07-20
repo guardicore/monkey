@@ -1,7 +1,8 @@
-from mongoengine import StringField, EmbeddedDocument
+from mongoengine import EmbeddedDocument, StringField
 from stix2 import CourseOfAction
 
-from monkey_island.cc.services.attack.test_mitre_api_interface import MitreApiInterface
+from monkey_island.cc.services.attack.test_mitre_api_interface import \
+    MitreApiInterface
 
 
 class Mitigation(EmbeddedDocument):

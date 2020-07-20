@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from mongoengine import Document, DateTimeField
+from mongoengine import DateTimeField, Document
 
 
 class MonkeyTtl(Document):

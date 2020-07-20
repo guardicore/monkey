@@ -1,7 +1,7 @@
 from functools import wraps
 
-from flask import current_app, abort
-from flask_jwt import JWT, _jwt_required, JWTError
+from flask import abort, current_app
+from flask_jwt import JWT, JWTError, _jwt_required
 from werkzeug.security import safe_str_cmp
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
