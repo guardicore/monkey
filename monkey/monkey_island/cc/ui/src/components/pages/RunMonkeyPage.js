@@ -277,7 +277,7 @@ class RunMonkeyPageComponent extends AuthComponent {
           this.state.ips.length > 1 ?
             <Nav variant="pills" activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
                  style={{'marginBottom': '2em'}}>
-              {this.state.ips.map(ip => <Nav.Item><Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
+              {this.state.ips.map(ip => <Nav.Item key={ip}><Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
             </Nav>
             : <div style={{'marginBottom': '2em'}}/>
         }
@@ -400,7 +400,7 @@ class RunMonkeyPageComponent extends AuthComponent {
                   <Col>
                     <Nav variant="pills" fill activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
                          className={'run-on-os-buttons'}>
-                      {this.state.ips.map(ip => <Nav.Item>
+                      {this.state.ips.map(ip => <Nav.Item key={ip}>
                         <Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
                     </Nav>
                   </Col>
