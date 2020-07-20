@@ -26,10 +26,16 @@
   margin-left: 2em;
 }
 
-.config-template-no-header>p{
+.config-template-no-header > p {
   display: none;
 }
 
-.config-template-no-header>label{
+.config-template-no-header > label {
   display: none;
+}
+
+.config-form .form-group.field > label {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: 1.2em;
 }
