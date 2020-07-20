@@ -323,8 +323,9 @@ SCHEMA = {
     },
     "properties": {
         "basic": {
-            "title": "Basic - Exploits",
+            "title": "Exploits",
             "type": "object",
+            "primary": True,
             "properties": {
                 "general": {
                     "title": "General",
@@ -377,7 +378,7 @@ SCHEMA = {
             }
         },
         "basic_network": {
-            "title": "Basic - Network",
+            "title": "Network",
             "type": "object",
             "properties": {
                 "general": {

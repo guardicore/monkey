@@ -383,10 +383,13 @@ class ConfigurePageComponent extends AuthComponent {
                  activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
                  style={{'marginBottom': '2em'}}
                  className={'config-nav'}>
-      {this.state.sections.map(section =>
+      {this.state.sections.map(section => {
+        let classProp = section.key.startsWith('basic') ? 'tab-primary' : '';
+        return (
         <Nav.Item>
-          <Nav.Link eventKey={section.key}>{section.title}</Nav.Link>
-        </Nav.Item>)}
+          <Nav.Link className={classProp} eventKey={section.key}>{section.title}</Nav.Link>
+        </Nav.Item>);
+      })}
     </Nav>)
   };
 
