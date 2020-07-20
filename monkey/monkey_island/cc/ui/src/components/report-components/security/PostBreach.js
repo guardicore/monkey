@@ -23,6 +23,17 @@ const subColumns = [
 ];
 
 let renderDetails = function (data) {
+  data.forEach(pba => {
+    if (typeof pba['result'][0] === "object") {  // if `result` has more than one entry
+      let results = pba['result'];
+      let details = data.splice(data.indexOf(pba), 1);  // remove that pba from `data`
+      results.forEach(result => {  // add back those results to `data` as individual pba entries
+        let tempDetails = JSON.parse(JSON.stringify(details));
+        tempDetails[0]['result'] = result;
+        data.push(tempDetails[0]);
+      });
+    }
+  });
   let defaultPageSize = data.length > pageSize ? pageSize : data.length;
   let showPagination = data.length > pageSize;
   return <ReactTable
