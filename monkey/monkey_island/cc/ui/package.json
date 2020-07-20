@@ -59,7 +59,6 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.10.1",
     "@emotion/core": "^10.0.22",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-regular-svg-icons": "^5.13.1",
@@ -68,7 +67,7 @@
     "@kunukn/react-collapse": "^1.2.7",
     "bootstrap": "^4.5.0",
     "classnames": "^2.2.6",
-    "core-js": "^2.6.10",
+    "core-js": "^3.6.5",
     "d3": "^5.14.1",
     "downloadjs": "^1.4.7",
     "fetch": "^1.1.0",
