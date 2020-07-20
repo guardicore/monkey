@@ -25,3 +25,11 @@
 .config-form .form-group {
   margin-left: 2em;
 }
+
+.config-template-no-header>p{
+  display: none;
+}
+
+.config-template-no-header>label{
+  display: none;
+}

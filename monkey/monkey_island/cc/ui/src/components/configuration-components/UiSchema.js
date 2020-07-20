@@ -11,6 +11,7 @@ export default function UiSchema(props) {
     monkey: {
       general: {
         post_breach_actions: {
+          classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }
       },
@@ -50,6 +51,7 @@ export default function UiSchema(props) {
       },
       system_info: {
         system_info_collectors_classes: {
+          classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }
       }
@@ -59,6 +61,7 @@ export default function UiSchema(props) {
     exploits: {
       general: {
         exploiter_classes: {
+          classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }
       }
@@ -69,6 +72,7 @@ export default function UiSchema(props) {
       },
       classes: {
         finger_classes: {
+          classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }
       }
