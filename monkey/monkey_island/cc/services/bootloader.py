@@ -3,9 +3,10 @@ from typing import Dict, List
 from bson import ObjectId
 
 from monkey_island.cc.database import mongo
-from monkey_island.cc.services.node import NodeService, NodeCreationException
+from monkey_island.cc.services.node import NodeCreationException, NodeService
+from monkey_island.cc.services.utils.bootloader_config import (
+    MIN_GLIBC_VERSION, SUPPORTED_WINDOWS_VERSIONS)
 from monkey_island.cc.services.utils.node_states import NodeStates
-from monkey_island.cc.services.utils.bootloader_config import SUPPORTED_WINDOWS_VERSIONS, MIN_GLIBC_VERSION
 
 
 class BootloaderService:

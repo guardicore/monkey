@@ -1,0 +1,69 @@
+# when deploying to prod, use baseURL = "https://www.guardicore.com/infectionmonkey/docs"
+# baseURL = "https://staging-covuyicu.kinsta.cloud/infectionmonkey/docs/"
+baseURL = ""
+languageCode = "en-us"
+title = "Guardicore Infection Monkey - Documentation Hub"
+
+theme = "learn"
+
+[params]
+  # Change default color scheme with a variant one. See it in the themes folder.
+  themeVariant = "monkey"
+  # Prefix URL to edit current page. Will display an "Edit this page" button on top right hand corner of every page.
+  editURL = "https://github.com/guardicore/monkey/edit/develop/docs/content/"
+  # Author of the site, will be used in meta information
+  author = "Guardicore"
+  # Description of the site, will be used in meta information
+  description = "Guardicore Infection Monkey - Documentation hub"
+  # Shows a checkmark for visited pages on the menu
+  showVisitedLinks = false
+  # Disable search function. It will hide search bar
+  disableSearch = false
+  # Javascript and CSS cache are automatically busted when new version of site is generated.
+  # Set this to true to disable this behavior (some proxies don't handle well this optimization)
+  disableAssetsBusting = false
+  # Set this to true to disable copy-to-clipboard button for inline code.
+  disableInlineCopyToClipBoard = false
+  # A title for shortcuts in menu is set by default. Set this to true to disable it.
+  disableShortcutsTitle = false
+  # When using mulitlingual website, disable the switch language button.
+  disableLanguageSwitchingButton = false
+  # Hide breadcrumbs in the header and only show the current page title
+  disableBreadcrumb = false
+  # Hide Next and Previous page buttons normally displayed full height beside content
+  disableNextPrev = true
+  # Order sections in menu by "weight" or "title". Default to "weight"
+  ordersectionsby = "weight"
+  # Provide a list of custom css files to load relative from the `static/` folder in the site root.
+  custom_css = ["css/labels.css", "css/shadow_around_images.css"]
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[[menu.shortcuts]] 
+name = "<i class='fas fa-home'></i> Homepage"
+identifier = "homepage"
+url = "https://infectionmonkey.com"
+weight = 10
+
+[[menu.shortcuts]] 
+name = "<i class='fab fa-github'></i> GitHub"
+identifier = "github"
+url = "https://github.com/guardicore/monkey"
+weight = 20
+
+[[menu.shortcuts]] 
+name = "<i class='fab fa-slack'></i> Slack"
+identifier = "slack"
+url = "https://join.slack.com/t/infectionmonkey/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU"
+weight = 30
+
+[[menu.shortcuts]] 
+name = "<i class='fas fa-inbox'></i> Email"
+identifier = "email"
+url = "mailto:support@infectionmonkey.com"
+weight = 40
+
+# Enables raw html in markdown.
+[markup.goldmark.renderer]
+unsafe = true

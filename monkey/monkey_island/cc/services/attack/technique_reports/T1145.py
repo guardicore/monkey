@@ -1,6 +1,6 @@
+from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from common.utils.attack_utils import ScanStatus
 
 __author__ = "VakarisZ"
 

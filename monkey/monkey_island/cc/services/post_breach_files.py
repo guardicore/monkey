@@ -1,6 +1,8 @@
-import monkey_island.cc.services.config
 import logging
 import os
+from pathlib import Path
+
+import monkey_island.cc.services.config
 
 __author__ = "VakarisZ"
 
@@ -9,7 +11,7 @@ logger = logging.getLogger(__name__)
 # Where to find file names in config
 PBA_WINDOWS_FILENAME_PATH = ['monkey', 'behaviour', 'PBA_windows_filename']
 PBA_LINUX_FILENAME_PATH = ['monkey', 'behaviour', 'PBA_linux_filename']
-UPLOADS_DIR = 'monkey_island/cc/userUploads'
+UPLOADS_DIR = Path('monkey_island', 'cc', 'userUploads')
 
 
 def remove_PBA_files():

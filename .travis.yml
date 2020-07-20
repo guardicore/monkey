@@ -18,10 +18,14 @@ os: linux
 
 install:
 # Python
+- pip freeze
 - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
-- pip install flake8 pytest dlint  # for next stages
+- pip install flake8 pytest dlint isort # for next stages
 - pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
+- pip install pipdeptree
+# Fail builds on possible conflicting dependencies.
+- pipdeptree --warn fail
 
 # node + npm + eslint
 - node --version
@@ -32,6 +36,17 @@ install:
 - npm i -g eslint
 - node --version
 - npm --version
+
+# linuxbrew (for hugo)
+- git clone https://github.com/Homebrew/brew ~/.linuxbrew/Homebrew
+- mkdir ~/.linuxbrew/bin
+- ln -s ~/.linuxbrew/Homebrew/bin/brew ~/.linuxbrew/bin
+- eval $(~/.linuxbrew/bin/brew shellenv)
+
+# hugo (for documentation)
+- brew install hugo
+# print hugo version (useful for debugging documentation build errors)
+- hugo version
 
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
@@ -54,6 +69,9 @@ script:
 - PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=120
 - if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
+## Check import order
+- python -m isort . -c -p common -p infection_monkey -p monkey_island
+
 ## Run unit tests
 - cd monkey  # This is our source dir
 - python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
@@ -67,6 +85,10 @@ script:
 - eslint ./src --quiet  # Test for errors
 - JS_WARNINGS_AMOUNT_UPPER_LIMIT=70
 - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # Test for max warnings
+
+# Build documentation
+- cd $TRAVIS_BUILD_DIR/docs
+- hugo --verbose --environment staging
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information

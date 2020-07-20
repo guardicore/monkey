@@ -1,4 +1,5 @@
 import unittest
+
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.edge import Edge

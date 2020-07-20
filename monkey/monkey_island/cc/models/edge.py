@@ -1,4 +1,5 @@
-from mongoengine import Document, ObjectIdField, ListField, DynamicField, BooleanField, StringField
+from mongoengine import (BooleanField, Document, DynamicField, ListField,
+                         ObjectIdField, StringField)
 
 
 class Edge(Document):

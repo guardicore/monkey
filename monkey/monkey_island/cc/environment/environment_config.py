@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import json
 import os
-from typing import List, Dict
+from typing import Dict, List
 
-from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.environment.user_creds import UserCreds
+from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.resources.auth.user_store import UserStore
 
 

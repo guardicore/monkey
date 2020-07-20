@@ -1,4 +1,5 @@
 import subprocess
+
 from infection_monkey.utils.environment import is_windows_os
 
 

@@ -63,8 +63,17 @@ SCHEMA = {
                     "description": "Adversaries may execute a binary, command, or script via a method "
                                    "that interacts with Windows services, such as the Service Control Manager.",
                     "depends_on": ["T1210"]
+                },
+                "T1154": {
+                    "title": "Trap",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1154",
+                    "description": "Adversaries can use the trap command to register code to be executed "
+                                   "when the shell encounters specific interrupts."
                 }
-            }
+            },
         },
         "persistence": {
             "title": "Persistence",
@@ -100,6 +109,16 @@ SCHEMA = {
                                    "and evade a typical user or system analysis that does not "
                                    "incorporate investigation of hidden files."
                 },
+                "T1168": {
+                    "title": "Local job scheduling",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1168/",
+                    "description": "Linux supports multiple methods for creating pre-scheduled and "
+                                   "periodic background jobs. Job scheduling can be used by adversaries to "
+                                   "schedule running malicious code at some specified date and time."
+                },
                 "T1504": {
                     "title": "PowerShell profile",
                     "type": "bool",
@@ -109,6 +128,25 @@ SCHEMA = {
                     "description": "Adversaries may gain persistence and elevate privileges "
                                    "in certain situations by abusing PowerShell profiles which "
                                    "are scripts that run when PowerShell starts."
+                },
+                "T1053": {
+                    "title": "Scheduled task",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1053",
+                    "description": "Windows utilities can be used to schedule programs or scripts to "
+                                   "be executed at a date and time. An adversary may use task scheduling to "
+                                   "execute programs at system startup or on a scheduled basis for persistence."
+                },
+                "T1166": {
+                    "title": "Setuid and Setgid",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1166",
+                    "description": "Adversaries can set the setuid or setgid bits to get code running in "
+                                   "a different user’s context."
                 }
             }
         },

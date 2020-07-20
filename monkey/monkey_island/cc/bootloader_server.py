@@ -1,11 +1,11 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import logging
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 from urllib import parse
-import urllib3
-import logging
 
-import requests
 import pymongo
+import requests
+import urllib3
 
 from monkey_island.cc.environment import Environment
 

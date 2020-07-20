@@ -2,9 +2,11 @@ import json
 
 import common.data.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
+from monkey_island.cc.models.zero_trust.aggregate_finding import \
+    AggregateFinding
 from monkey_island.cc.models.zero_trust.event import Event
-from monkey_island.cc.services.telemetry.zero_trust_tests.known_anti_viruses import ANTI_VIRUS_KNOWN_PROCESS_NAMES
+from monkey_island.cc.services.telemetry.zero_trust_tests.known_anti_viruses import \
+    ANTI_VIRUS_KNOWN_PROCESS_NAMES
 
 
 def test_antivirus_existence(process_list_json, monkey_guid):

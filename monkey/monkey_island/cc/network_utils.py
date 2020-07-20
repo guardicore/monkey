@@ -6,7 +6,7 @@ import struct
 import sys
 from typing import List
 
-from netifaces import interfaces, ifaddresses, AF_INET
+from netifaces import AF_INET, ifaddresses, interfaces
 from ring import lru
 
 __author__ = 'Barak'
