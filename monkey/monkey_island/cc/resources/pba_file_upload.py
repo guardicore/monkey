@@ -11,7 +11,6 @@ import copy
 __author__ = 'VakarisZ'
 
 LOG = logging.getLogger(__name__)
-GET_FILE_DIR = "./userUploads"
 # Front end uses these strings to identify which files to work with (linux of windows)
 LINUX_PBA_TYPE = 'PBAlinux'
 WINDOWS_PBA_TYPE = 'PBAwindows'
@@ -37,7 +36,7 @@ class FileUpload(flask_restful.Resource):
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_LINUX_FILENAME_PATH))
         else:
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_WINDOWS_FILENAME_PATH))
-        return send_from_directory(GET_FILE_DIR, filename)
+        return send_from_directory(UPLOADS_DIR, filename)
 
     @jwt_required()
     def post(self, file_type):
