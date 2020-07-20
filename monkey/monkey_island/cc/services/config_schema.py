@@ -11,7 +11,8 @@ SCHEMA = {
     "definitions": {
         "exploiter_classes": {
             "title": "Exploit class",
-            "description": "Click on exploiter to get more information about it.",
+            "description": "Click on exploiter to get more information about it." + WARNING_SIGN +
+                           " Note that using unsafe exploits may cause crashes of the exploited machine/service.",
             "type": "string",
             "anyOf": [
                 {
@@ -481,8 +482,7 @@ SCHEMA = {
                                 "TrapCommand",
                                 "ChangeSetuidSetgid",
                                 "ScheduleJobs"
-                            ],
-                            "description": "List of actions the Monkey will run post breach"
+                            ]
                         },
                     }
                 },
@@ -588,8 +588,7 @@ SCHEMA = {
                                 AWS_COLLECTOR,
                                 HOSTNAME_COLLECTOR,
                                 PROCESS_LIST_COLLECTOR
-                            ],
-                            "description": "Determines which system information collectors will collect information."
+                            ]
                         },
                     }
                 },
@@ -693,8 +692,7 @@ SCHEMA = {
                                 "MySQLFinger",
                                 "MSSQLFinger",
                                 "ElasticFinger"
-                            ],
-                            "description": "Determines which classes to use for fingerprinting"
+                            ]
                         }
                     }
                 },
@@ -933,10 +931,7 @@ SCHEMA = {
                                 "HadoopExploiter",
                                 "VSFTPDExploiter",
                                 "MSSQLExploiter"
-                            ],
-                            "description":
-                                "Determines which exploits to use. " + WARNING_SIGN
-                                + " Note that using unsafe exploits may cause crashes of the exploited machine/service"
+                            ]
                         },
                         "skip_exploit_if_file_exist": {
                             "title": "Skip exploit if file exists",
