@@ -2,7 +2,6 @@ from common.data.post_breach_consts import POST_BREACH_TRAP_COMMAND
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.trap_command.trap_command import \
     get_trap_commands
-from infection_monkey.utils.environment import is_windows_os
 
 
 class TrapCommand(PBA):
