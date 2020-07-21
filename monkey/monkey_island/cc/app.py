@@ -73,9 +73,9 @@ def init_app_config(app, mongo_url):
     app.config['MONGO_URI'] = mongo_url
 
     # See https://flask-jwt-extended.readthedocs.io/en/stable/options
-    app.config['JWT_TOKEN_LOCATION'] = ['headers']
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = env_singleton.env.get_auth_expiration_time()
-    # Invalidate the signature of JWTs between server resets.
+    # Invalidate the signature of JWTs if the server process restarts. This avoids the edge case of getting a JWT,
+    # deciding to reset credentials and then still logging in with the old JWT.
     app.config['JWT_SECRET_KEY'] = str(uuid.uuid4())
 
 

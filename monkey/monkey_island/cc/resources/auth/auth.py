@@ -47,7 +47,7 @@ class Authenticate(flask_restful.Resource):
         # If the user and password have been previously registered
         if self._authenticate(username, secret):
             access_token = flask_jwt_extended.create_access_token(identity=user_store.UserStore.username_table[username].id)
-            logger.debug(f"Created access token for user {username}: {access_token}")
+            logger.debug(f"Created access token for user {username} that begins with {access_token[:4]}")
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
             return make_response({"error": "Invalid credentials"}, 401)
