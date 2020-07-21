@@ -1,8 +1,9 @@
 from common.data.post_breach_consts import \
     POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
-from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
+from monkey_island.cc.services.attack.technique_reports.technique_report_tools import \
+    extract_shell_startup_files_modification_info, get_shell_startup_files_modification_status
 
 __author__ = "shreyamalviya"
 
@@ -26,20 +27,10 @@ class T1156(AttackTechnique):
 
         shell_startup_files_modification_info = list(mongo.db.telemetry.aggregate(T1156.query))
 
-        bash_startup_modification_info = []
-        for shell_startup_file_result in shell_startup_files_modification_info[0]['result']:
-            # only want bash startup files
-            if any(file_name in shell_startup_file_result[0] for file_name in [".bash", ".profile"]):
-                bash_startup_modification_info.append({
-                    'machine': shell_startup_files_modification_info[0]['machine'],
-                    'result': shell_startup_file_result
-                    })
+        bash_startup_modification_info =\
+            extract_shell_startup_files_modification_info(shell_startup_files_modification_info, [".bash", ".profile"])
 
-        status = []
-        for bash_startup_file in bash_startup_modification_info:
-            status.append(bash_startup_file['result'][1])
-        status = (ScanStatus.USED.value if any(status) else ScanStatus.SCANNED.value)\
-            if status else ScanStatus.UNSCANNED.value
+        status = get_shell_startup_files_modification_status(bash_startup_modification_info)
 
         data.update(T1156.get_base_data_by_status(status))
         data.update({'info': bash_startup_modification_info})

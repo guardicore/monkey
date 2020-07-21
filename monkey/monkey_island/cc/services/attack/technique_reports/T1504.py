@@ -1,8 +1,9 @@
 from common.data.post_breach_consts import \
     POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
-from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
+from monkey_island.cc.services.attack.technique_reports.technique_report_tools import \
+    extract_shell_startup_files_modification_info, get_shell_startup_files_modification_status
 
 __author__ = "shreyamalviya"
 
@@ -26,20 +27,10 @@ class T1504(AttackTechnique):
 
         shell_startup_files_modification_info = list(mongo.db.telemetry.aggregate(T1504.query))
 
-        powershell_startup_modification_info = []
-        for shell_startup_file_result in shell_startup_files_modification_info[0]['result']:
-            # only want powershell startup files
-            if "profile.ps1" in shell_startup_file_result[0]:
-                powershell_startup_modification_info.append({
-                    'machine': shell_startup_files_modification_info[0]['machine'],
-                    'result': shell_startup_file_result
-                    })
+        powershell_startup_modification_info =\
+            extract_shell_startup_files_modification_info(shell_startup_files_modification_info, ["profile.ps1"])
 
-        status = []
-        for powershell_startup_file in powershell_startup_modification_info:
-            status.append(powershell_startup_file['result'][1])
-        status = (ScanStatus.USED.value if any(status) else ScanStatus.SCANNED.value)\
-            if status else ScanStatus.UNSCANNED.value
+        status = get_shell_startup_files_modification_status(powershell_startup_modification_info)
 
         data.update(T1504.get_base_data_by_status(status))
         data.update({'info': powershell_startup_modification_info})
