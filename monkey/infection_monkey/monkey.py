@@ -196,17 +196,16 @@ class InfectionMonkey(object):
                         LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_server))
 
                     # Order exploits according to their type
-                    if WormConfiguration.should_exploit:
-                        self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
-                        host_exploited = False
-                        for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
-                            if self.try_exploiting(machine, exploiter):
-                                host_exploited = True
-                                VictimHostTelem('T1210', ScanStatus.USED, machine=machine).send()
-                                break
-                        if not host_exploited:
-                            self._fail_exploitation_machines.add(machine)
-                            VictimHostTelem('T1210', ScanStatus.SCANNED, machine=machine).send()
+                    self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
+                    host_exploited = False
+                    for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
+                        if self.try_exploiting(machine, exploiter):
+                            host_exploited = True
+                            VictimHostTelem('T1210', ScanStatus.USED, machine=machine).send()
+                            break
+                    if not host_exploited:
+                        self._fail_exploitation_machines.add(machine)
+                        VictimHostTelem('T1210', ScanStatus.SCANNED, machine=machine).send()
                     if not self._keep_running:
                         break
 

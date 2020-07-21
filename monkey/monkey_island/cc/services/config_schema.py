@@ -331,13 +331,6 @@ SCHEMA = {
                     "title": "General",
                     "type": "object",
                     "properties": {
-                        "should_exploit": {
-                            "title": "Exploit network machines",
-                            "type": "boolean",
-                            "default": True,
-                            "attack_techniques": ["T1210"],
-                            "description": "Determines if monkey should try to safely exploit machines on the network"
-                        }
                     }
                 },
                 "credentials": {
