@@ -10,6 +10,9 @@ export default function UiSchema(props) {
     basic_network: {},
     monkey: {
       general: {
+        alive: {
+          classNames: 'config-field-hidden'
+        },
         post_breach_actions: {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
