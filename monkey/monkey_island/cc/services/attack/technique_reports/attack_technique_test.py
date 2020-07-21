@@ -42,7 +42,7 @@ param_list = [
         {  # telemetry data
             'info': [],
             'message': 'Unscanned',
-            'status': 0,
+            'status': ScanStatus.UNSCANNED.value,
             'title': 'Unscanned technique'
         },
         set_config(True),  # configuration
@@ -54,7 +54,7 @@ param_list = [
         {  # telemetry data
             'info': [],
             'message': 'Scanned',
-            'status': 1,
+            'status': ScanStatus.SCANNED.value,
             'title': 'Scanned technique'
         },
         set_config(True),  # configuration
@@ -66,7 +66,7 @@ param_list = [
         {  # telemetry data
             'info': [],
             'message': 'Used',
-            'status': 2,
+            'status': ScanStatus.USED.value,
             'title': 'Used technique'
         },
         set_config(True),  # configuration
@@ -78,7 +78,7 @@ param_list = [
         {  # telemetry data
             'info': [],
             'message': 'Disabled',
-            'status': 0,
+            'status': ScanStatus.UNSCANNED.value,
             'title': 'Disabled technique'
         },
         set_config(False),  # configuration
