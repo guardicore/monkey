@@ -1,13 +1,9 @@
-import subprocess
-
 from common.data.post_breach_consts import \
     POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.shell_startup_files.shell_startup_files_modification import \
     get_commands_to_modify_shell_startup_files
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
-
-EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
 
 class ModifyShellStartupFiles(PBA):

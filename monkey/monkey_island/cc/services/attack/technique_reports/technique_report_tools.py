@@ -1,5 +1,5 @@
-from monkey_island.cc.encryptor import encryptor
 from common.utils.attack_utils import ScanStatus
+from monkey_island.cc.encryptor import encryptor
 
 
 def parse_creds(attempt):
@@ -51,7 +51,7 @@ def extract_shell_startup_files_modification_info(shell_startup_files_modificati
     required_shell_startup_files_modification_info = []
     for shell_startup_file_result in shell_startup_files_modification_info[0]['result']:
         if any(file_name in shell_startup_file_result[0] for file_name in required_file_names):
-            shell_startup_files_modification_info.append({
+            required_shell_startup_files_modification_info.append({
                 'machine': shell_startup_files_modification_info[0]['machine'],
                 'result': shell_startup_file_result
                 })
