@@ -5,7 +5,7 @@ draft: false
 pre: '<i class="fab fa-linux"></i> '
 weight: 1
 disableToc: false
-tags: ["setup", "debian"] 
+tags: ["setup", "debian", "linux"]
 ---
 
 ## Deployment

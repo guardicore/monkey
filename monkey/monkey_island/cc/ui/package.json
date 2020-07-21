@@ -1,6 +1,7 @@
 {
   "private": true,
-  "version": "1.0.0",
+  "version": "1.8.2",
+  "name": "infection-monkey",
   "description": "Infection Monkey C&C UI",
   "scripts": {
     "clean": "rimraf dist/*",
@@ -14,7 +15,9 @@
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "serve": "node server.js --env=dev",
     "serve:dist": "node server.js --env=dist",
-    "start": "webpack-dev-server --verbose --mode development --open --history-api-fallback --port 8000"
+    "start": "webpack-dev-server --verbose --mode development --open --history-api-fallback --port 8000",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": "",
   "keywords": [],
@@ -56,7 +59,6 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.8.0",
     "@emotion/core": "^10.0.22",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-regular-svg-icons": "^5.13.1",
@@ -65,16 +67,16 @@
     "@kunukn/react-collapse": "^1.2.7",
     "bootstrap": "^4.5.0",
     "classnames": "^2.2.6",
-    "core-js": "^2.6.10",
+    "core-js": "^3.6.5",
     "d3": "^5.14.1",
     "downloadjs": "^1.4.7",
     "fetch": "^1.1.0",
     "file-saver": "^2.0.2",
-    "filepond": "^4.7.3",
+    "filepond": "^4.18.0",
     "jwt-decode": "^2.2.0",
     "marked": "^0.8.2",
     "normalize.css": "^8.0.0",
-    "npm": "^6.14.5",
+    "npm": "^6.14.6",
     "pluralize": "^7.0.0",
     "prop-types": "^15.7.2",
     "rainge": "^1.0.1",
@@ -102,6 +104,8 @@
     "react-toggle": "^4.1.1",
     "react-tooltip-lite": "^1.10.0",
     "redux": "^4.0.4",
-    "sha3": "^2.0.7"
-  }
+    "sha3": "^2.0.7",
+    "snyk": "^1.361.3"
+  },
+  "snyk": true
 }
