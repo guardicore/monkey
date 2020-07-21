@@ -121,7 +121,7 @@ class ReportPageComponent extends AuthComponent {
 
   renderNavButton = (section) => {
     return (
-      <Nav.Item>
+      <Nav.Item key={section.key}>
         <Nav.Link key={section.key}
                   eventKey={section.key}
                   onSelect={() => {
