@@ -7,7 +7,6 @@ from infection_monkey.utils.environment import is_windows_os
 
 class ChangeSetuidSetgid(PBA):
     def __init__(self):
-        if not is_windows_os():
-            linux_cmds = get_commands_to_change_setuid_setgid()
-            super(ChangeSetuidSetgid, self).__init__(POST_BREACH_SETUID_SETGID,
-                                                     linux_cmd=' '.join(linux_cmds))
+        linux_cmds = get_commands_to_change_setuid_setgid()
+        super(ChangeSetuidSetgid, self).__init__(POST_BREACH_SETUID_SETGID,
+                                                 linux_cmd=' '.join(linux_cmds))
