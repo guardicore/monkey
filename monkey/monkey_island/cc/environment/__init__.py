@@ -23,7 +23,7 @@ class Environment(object, metaclass=ABCMeta):
     _MONGO_URL = os.environ.get("MONKEY_MONGO_URL",
                                 "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)))
     _DEBUG_SERVER = False
-    _AUTH_EXPIRATION_TIME = timedelta(hours=1)
+    _AUTH_EXPIRATION_TIME = timedelta(minutes=30)
 
     _testing = False
 

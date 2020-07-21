@@ -8,7 +8,7 @@ __author__ = 'Barak'
 
 
 class Node(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self):
         node_id = request.args.get('id')
         if node_id:

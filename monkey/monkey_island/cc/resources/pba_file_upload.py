@@ -27,7 +27,7 @@ class FileUpload(flask_restful.Resource):
         # Create all directories on the way if they don't exist
         UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
-    @jwt_required()
+    @jwt_required
     def get(self, file_type):
         """
         Sends file to filepond
@@ -41,7 +41,7 @@ class FileUpload(flask_restful.Resource):
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_WINDOWS_FILENAME_PATH))
         return send_from_directory(UPLOADS_DIR, filename)
 
-    @jwt_required()
+    @jwt_required
     def post(self, file_type):
         """
         Receives user's uploaded file from filepond
@@ -55,7 +55,7 @@ class FileUpload(flask_restful.Resource):
             status=200, mimetype='text/plain')
         return response
 
-    @jwt_required()
+    @jwt_required
     def delete(self, file_type):
         """
         Deletes file that has been deleted on the front end

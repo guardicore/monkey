@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class Telemetry(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self, **kw):
         monkey_guid = request.args.get('monkey_guid')
         telem_category = request.args.get('telem_category')

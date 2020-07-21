@@ -7,7 +7,7 @@ from monkey_island.cc.resources.auth.auth import jwt_required
 
 
 class LogTest(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self):
         find_query = json_util.loads(request.args.get('find_query'))
         log = mongo.db.log.find_one(find_query)

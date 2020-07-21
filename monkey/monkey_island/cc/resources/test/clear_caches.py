@@ -17,7 +17,7 @@ class ClearCaches(flask_restful.Resource):
     so we use this to clear the caches.
     :note: DO NOT CALL THIS IN PRODUCTION CODE as this will slow down the user experience.
     """
-    @jwt_required()
+    @jwt_required
     def get(self, **kw):
         try:
             logger.warning("Trying to clear caches! Make sure this is not production")

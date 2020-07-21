@@ -1,4 +1,4 @@
-Flask-JWT>=0.3.2
+Flask-JWT-Extended==3.24.1
 Flask-Pymongo>=2.3.0
 Flask-Restful>=0.3.8
 PyInstaller==3.6

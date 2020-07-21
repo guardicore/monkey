@@ -6,6 +6,6 @@ from monkey_island.cc.services.utils.node_states import \
 
 
 class NodeStates(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self):
         return {'node_states': [state.value for state in NodeStateList]}
