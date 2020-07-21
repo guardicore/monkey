@@ -16,7 +16,7 @@ __author__ = 'itay.mizeretz'
 
 
 class TelemetryFeed(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self, **kw):
         timestamp = request.args.get('timestamp')
         if "null" == timestamp or timestamp is None:  # special case to avoid ugly JS code...

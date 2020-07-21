@@ -21,7 +21,7 @@ __author__ = ["itay.mizeretz", "shay.nehmad"]
 
 class Report(flask_restful.Resource):
 
-    @jwt_required()
+    @jwt_required
     def get(self, report_type=SECURITY_REPORT_TYPE, report_data=None):
         if report_type == SECURITY_REPORT_TYPE:
             return ReportService.get_report()

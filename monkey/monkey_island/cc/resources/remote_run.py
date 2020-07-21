@@ -24,7 +24,7 @@ class RemoteRun(flask_restful.Resource):
         island_ip = request_body.get('island_ip')
         return RemoteRunAwsService.run_aws_monkeys(instances, island_ip)
 
-    @jwt_required()
+    @jwt_required
     def get(self):
         action = request.args.get('action')
         if action == 'list_aws':
@@ -43,7 +43,7 @@ class RemoteRun(flask_restful.Resource):
 
         return {}
 
-    @jwt_required()
+    @jwt_required
     def post(self):
         body = json.loads(request.data)
         resp = {}

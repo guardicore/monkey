@@ -10,7 +10,7 @@ __author__ = "VakarisZ"
 
 class AttackReport(flask_restful.Resource):
 
-    @jwt_required()
+    @jwt_required
     def get(self):
         response_content = {'techniques': AttackReportService.get_latest_report()['techniques'], 'schema': SCHEMA}
         return current_app.response_class(json.dumps(response_content,

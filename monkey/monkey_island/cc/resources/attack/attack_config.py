@@ -8,7 +8,7 @@ __author__ = "VakarisZ"
 
 
 class AttackConfiguration(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self):
         return current_app.response_class(json.dumps({"configuration": AttackConfig.get_config()},
                                                      indent=None,
@@ -16,7 +16,7 @@ class AttackConfiguration(flask_restful.Resource):
                                                      sort_keys=False) + "\n",
                                           mimetype=current_app.config['JSONIFY_MIMETYPE'])
 
-    @jwt_required()
+    @jwt_required
     def post(self):
         """
         Based on request content this endpoint either resets ATT&CK configuration or updates it.
