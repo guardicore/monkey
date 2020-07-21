@@ -2,8 +2,9 @@ from common.data.post_breach_consts import \
     POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from monkey_island.cc.services.attack.technique_reports.technique_report_tools import \
-    extract_shell_startup_files_modification_info, get_shell_startup_files_modification_status
+from monkey_island.cc.services.attack.technique_reports.technique_report_tools import (
+    extract_shell_startup_files_modification_info,
+    get_shell_startup_files_modification_status)
 
 __author__ = "shreyamalviya"
 
@@ -17,8 +18,8 @@ class T1156(AttackTechnique):
     query = [{'$match': {'telem_category': 'post_breach',
                          'data.name': POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION}},
              {'$project': {'_id': 0,
-                           'machine': {'hostname': '$data.hostname',
-                                       'ips': ['$data.ip']},
+                           'machine': {'hostname': {'$arrayElemAt': ['$data.hostname', 0]},
+                                       'ips': [{'$arrayElemAt': ['$data.ip', 0]}]},
                            'result': '$data.result'}}]
 
     @staticmethod
