@@ -2,8 +2,8 @@ import json
 import logging
 from functools import wraps
 
-import flask_restful
 import flask_jwt_extended
+import flask_restful
 from flask import make_response, request
 from flask_jwt_extended.exceptions import JWTExtendedException
 from jwt import PyJWTError

@@ -10,7 +10,8 @@ from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
-from monkey_island.cc.resources.auth.auth import init_jwt, Authenticate
+from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
+from monkey_island.cc.resources.auth.registration import Registration
 from monkey_island.cc.resources.bootloader import Bootloader
 from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.edge import Edge
@@ -31,7 +32,6 @@ from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
-from monkey_island.cc.resources.auth.registration import Registration
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
