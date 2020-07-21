@@ -1,14 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
-
-let renderArray = function (val) {
-  return <span>{val.map(x => <span key={x}> {x}</span>)}</span>;
-};
-
-let renderIpAddresses = function (val) {
-  return <span> {renderArray(val.ip_addresses)} {(val.domain_name ? ' ('.concat(val.domain_name, ')') : '')} </span>;
-};
+import {renderIpAddresses} from "../common/RenderArrays";
 
 let renderMachine = function (data) {
   return <div>{data.label} ( {renderIpAddresses(data)} )</div>
