@@ -54,7 +54,7 @@ class PBA(Plugin):
         """
         return class_name in WormConfiguration.post_breach_actions
 
-    def run(self):
+    def run(self, return_result=False):
         """
         Runs post breach action command
         """
@@ -63,7 +63,10 @@ class PBA(Plugin):
             result = exec_funct()
             if self.scripts_were_used_successfully(result):
                 T1064Telem(ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action.").send()
-            PostBreachTelem(self, result).send()
+            if return_result:
+                return result
+            else:
+                PostBreachTelem(self, result).send()
         else:
             LOG.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
 

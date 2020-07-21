@@ -21,7 +21,7 @@ class ModifyShellStartupFiles(PBA):
         super().__init__(name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION)
 
     def run(self):
-        results = [pba.run() for pba in self.modify_shell_startup_PBA_list()]
+        results = [pba.run(return_result=True) for pba in self.modify_shell_startup_PBA_list()]
         PostBreachTelem(self, results).send()
 
     def modify_shell_startup_PBA_list(self):
@@ -51,14 +51,3 @@ class ModifyShellStartupFiles(PBA):
                 super().__init__(name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
                                  linux_cmd=linux_cmds,
                                  windows_cmd=windows_cmds)
-
-            def run(self):
-                if self.command:
-                    try:
-                        output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True).decode()
-                        if not output:
-                            output = EXECUTION_WITHOUT_OUTPUT
-                        return output, True
-                    except subprocess.CalledProcessError as e:
-                        # Return error output of the command
-                        return e.output.decode(), False
