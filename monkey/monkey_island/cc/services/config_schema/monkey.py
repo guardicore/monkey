@@ -2,7 +2,7 @@ from monkey_island.cc.services.utils.typographic_symbols import WARNING_SIGN
 from common.data.system_info_collectors_names import (AWS_COLLECTOR,
                                                       ENVIRONMENT_COLLECTOR,
                                                       HOSTNAME_COLLECTOR,
-                                                      PROCESS_LIST_COLLECTOR)
+                                                      PROCESS_LIST_COLLECTOR, MIMIKATZ_COLLECTOR, AZURE_CRED_COLLECTOR)
 
 MONKEY = {
     "title": "Monkey",
@@ -18,27 +18,10 @@ MONKEY = {
                     "default": True,
                     "description": "Is the monkey alive"
                 },
-                "post_breach_actions": {
-                    "title": "Post breach actions",
-                    "type": "array",
-                    "uniqueItems": True,
-                    "items": {
-                        "$ref": "#/definitions/post_breach_actions"
-                    },
-                    "default": [
-                        "BackdoorUser",
-                        "CommunicateAsNewUser",
-                        "ModifyShellStartupFiles",
-                        "HiddenFiles",
-                        "TrapCommand",
-                        "ChangeSetuidSetgid",
-                        "ScheduleJobs"
-                    ]
-                },
             }
         },
-        "behaviour": {
-            "title": "Behaviour",
+        "post_breach": {
+            "title": "Post breach",
             "type": "object",
             "properties": {
                 "custom_PBA_linux_cmd": {
@@ -81,52 +64,29 @@ MONKEY = {
                     "type": "string",
                     "default": ""
                 },
-                "self_delete_in_cleanup": {
-                    "title": "Self delete on cleanup",
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Should the monkey delete its executable when going down"
+                "post_breach_actions": {
+                    "title": "Post breach actions",
+                    "type": "array",
+                    "uniqueItems": True,
+                    "items": {
+                        "$ref": "#/definitions/post_breach_actions"
+                    },
+                    "default": [
+                        "BackdoorUser",
+                        "CommunicateAsNewUser",
+                        "ModifyShellStartupFiles",
+                        "HiddenFiles",
+                        "TrapCommand",
+                        "ChangeSetuidSetgid",
+                        "ScheduleJobs"
+                    ]
                 },
-                "use_file_logging": {
-                    "title": "Use file logging",
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Should the monkey dump to a log file"
-                },
-                "serialize_config": {
-                    "title": "Serialize config",
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Should the monkey dump its config on startup"
-                }
             }
         },
         "system_info": {
             "title": "System info",
             "type": "object",
             "properties": {
-                "extract_azure_creds": {
-                    "title": "Harvest Azure Credentials",
-                    "type": "boolean",
-                    "default": True,
-                    "attack_techniques": ["T1003"],
-                    "description":
-                        "Determine if the Monkey should try to harvest password credentials from Azure VMs"
-                },
-                "collect_system_info": {
-                    "title": "Collect system info",
-                    "type": "boolean",
-                    "default": True,
-                    "attack_techniques": ["T1082", "T1005", "T1016"],
-                    "description": "Determines whether to collect system info"
-                },
-                "should_use_mimikatz": {
-                    "title": "Should use Mimikatz",
-                    "type": "boolean",
-                    "default": True,
-                    "attack_techniques": ["T1003"],
-                    "description": "Determines whether to use Mimikatz"
-                },
                 "system_info_collector_classes": {
                     "title": "System info collectors",
                     "type": "array",
@@ -138,7 +98,9 @@ MONKEY = {
                         ENVIRONMENT_COLLECTOR,
                         AWS_COLLECTOR,
                         HOSTNAME_COLLECTOR,
-                        PROCESS_LIST_COLLECTOR
+                        PROCESS_LIST_COLLECTOR,
+                        MIMIKATZ_COLLECTOR,
+                        AZURE_CRED_COLLECTOR
                     ]
                 },
             }

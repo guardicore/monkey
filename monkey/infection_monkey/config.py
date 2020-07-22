@@ -267,16 +267,6 @@ class Configuration(object):
     # Shares to not check if they're writable.
     sambacry_shares_not_to_check = ["IPC$", "print$"]
 
-    # system info collection
-    collect_system_info = True
-    should_use_mimikatz = True
-
-    ###########################
-    # systeminfo config
-    ###########################
-
-    extract_azure_creds = True
-
     ###########################
     # post breach actions
     ###########################

@@ -4,6 +4,7 @@ from enum import IntEnum
 
 import psutil
 
+from common.data.system_info_collectors_names import AZURE_CRED_COLLECTOR
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
 from infection_monkey.system_info.netstat_collector import NetstatCollector
@@ -91,7 +92,7 @@ class InfoCollector(object):
         # noinspection PyBroadException
         try:
             from infection_monkey.config import WormConfiguration
-            if not WormConfiguration.extract_azure_creds:
+            if AZURE_CRED_COLLECTOR not in WormConfiguration.system_info_collector_classes:
                 return
             LOG.debug("Harvesting creds if on an Azure machine")
             azure_collector = AzureCollector()

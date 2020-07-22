@@ -1,7 +1,9 @@
 from common.data.system_info_collectors_names import (AWS_COLLECTOR,
                                                       ENVIRONMENT_COLLECTOR,
                                                       HOSTNAME_COLLECTOR,
-                                                      PROCESS_LIST_COLLECTOR)
+                                                      PROCESS_LIST_COLLECTOR,
+                                                      MIMIKATZ_COLLECTOR,
+                                                      AZURE_CRED_COLLECTOR)
 
 SYSTEM_INFO_COLLECTOR_CLASSES = {
     "title": "System Information Collectors",
@@ -15,7 +17,16 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             ],
             "title": "Environment collector",
             "info": "Collects information about machine's environment (on premise/GCP/AWS).",
-            "attack_techniques": []
+            "attack_techniques": ["T1082"]
+        },
+        {
+            "type": "string",
+            "enum": [
+                MIMIKATZ_COLLECTOR
+            ],
+            "title": "Mimikatz collector",
+            "info": "Collects credentials from Windows credential manager.",
+            "attack_techniques": ["T1003", "T1005"]
         },
         {
             "type": "string",
@@ -24,7 +35,7 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             ],
             "title": "AWS collector",
             "info": "If on AWS, collects more information about the AWS instance currently running on.",
-            "attack_techniques": []
+            "attack_techniques": ["T1082"]
         },
         {
             "type": "string",
@@ -33,7 +44,7 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             ],
             "title": "Hostname collector",
             "info": "Collects machine's hostname.",
-            "attack_techniques": []
+            "attack_techniques": ["T1082", "T1016"]
         },
         {
             "type": "string",
@@ -42,7 +53,16 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             ],
             "title": "Process list collector",
             "info": "Collects a list of running processes on the machine.",
-            "attack_techniques": []
+            "attack_techniques": ["T1082"]
         },
+        {
+            "type": "string",
+            "enum": [
+                AZURE_CRED_COLLECTOR
+            ],
+            "title": "Azure credential collector",
+            "info": "Collects password credentials from Azure VMs",
+            "attack_techniques": ["T1003", "T1005"]
+        }
     ]
 }

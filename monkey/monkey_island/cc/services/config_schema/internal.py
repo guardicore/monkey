@@ -34,6 +34,30 @@ INTERNAL = {
                 },
             }
         },
+        "monkey": {
+          "title": "Monkey",
+          "type": "object",
+          "properties": {
+              "self_delete_in_cleanup": {
+                  "title": "Self delete on cleanup",
+                  "type": "boolean",
+                  "default": True,
+                  "description": "Should the monkey delete its executable when going down"
+              },
+              "use_file_logging": {
+                  "title": "Use file logging",
+                  "type": "boolean",
+                  "default": True,
+                  "description": "Should the monkey dump to a log file"
+              },
+              "serialize_config": {
+                  "title": "Serialize config",
+                  "type": "boolean",
+                  "default": False,
+                  "description": "Should the monkey dump its config on startup"
+              }
+          }
+        },
         "classes": {
             "title": "Classes",
             "type": "object",

@@ -24,7 +24,7 @@ export default function UiSchema(props) {
           'ui:widget': AdvancedMultiSelect
         }
       },
-      behaviour: {
+      post_breach: {
         custom_PBA_linux_cmd: {
           'ui:widget': 'textarea',
           'ui:emptyValue': ''

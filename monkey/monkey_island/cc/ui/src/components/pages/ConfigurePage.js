@@ -334,8 +334,8 @@ class ConfigurePageComponent extends AuthComponent {
       {this.renderBasicNetworkWarning()}
       <Form schema={displayedSchema}
             uiSchema={UiSchema({
-              PBA_linux_filename: this.state.configuration.monkey.behaviour.PBA_linux_filename,
-              PBA_windows_filename: this.state.configuration.monkey.behaviour.PBA_windows_filename,
+              PBA_linux_filename: this.state.configuration.monkey.post_breach.PBA_linux_filename,
+              PBA_windows_filename: this.state.configuration.monkey.post_breach.PBA_windows_filename,
               setPbaFilenameWindows: this.setPbaFilenameWindows,
               setPbaFilenameLinux: this.setPbaFilenameLinux,
               selectedSection: this.state.selectedSection
@@ -351,7 +351,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   setPbaFilenameWindows = (filename) => {
     let config = this.state.configuration
-    config.monkey.behaviour.PBA_windows_filename = filename
+    config.monkey.post_breach.PBA_windows_filename = filename
     this.setState({
       configuration: config
     })
@@ -359,7 +359,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   setPbaFilenameLinux = (filename) => {
     let config = this.state.configuration
-    config.monkey.behaviour.PBA_linux_filename = filename
+    config.monkey.post_breach.PBA_linux_filename = filename
     this.setState({
       configuration: config
     })
