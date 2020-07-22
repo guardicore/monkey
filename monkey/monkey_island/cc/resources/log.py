@@ -14,7 +14,7 @@ __author__ = "itay.mizeretz"
 
 
 class Log(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self):
         monkey_id = request.args.get('id')
         exists_monkey_id = request.args.get('exists')

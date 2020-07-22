@@ -26,13 +26,13 @@ class RegisterPageComponent extends React.Component {
   };
 
   setNoAuth = () => {
-    let options = {}
+    let options = {};
     options['headers'] = {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     };
-    options['method'] = 'PATCH'
-    options['body'] = JSON.stringify({'server_config': 'standard'})
+    options['method'] = 'PATCH';
+    options['body'] = JSON.stringify({'server_config': 'standard'});
 
     return fetch(this.NO_AUTH_API_ENDPOINT, options)
       .then(res => {

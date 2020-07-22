@@ -26,15 +26,15 @@ class Root(flask_restful.Resource):
         if not action:
             return self.get_server_info()
         elif action == "reset":
-            return jwt_required()(Database.reset_db)()
+            return jwt_required(Database.reset_db)()
         elif action == "killall":
-            return jwt_required()(InfectionLifecycle.kill_all)()
+            return jwt_required(InfectionLifecycle.kill_all)()
         elif action == "is-up":
             return {'is-up': True}
         else:
             return make_response(400, {'error': 'unknown action'})
 
-    @jwt_required()
+    @jwt_required
     def get_server_info(self):
         return jsonify(
             ip_addresses=local_ip_addresses(),

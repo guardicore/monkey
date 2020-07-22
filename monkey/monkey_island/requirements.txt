@@ -1,4 +1,4 @@
-Flask-JWT>=0.3.2
+Flask-JWT-Extended==3.24.1
 Flask-Pymongo>=2.3.0
 Flask-Restful>=0.3.8
 PyInstaller==3.6
@@ -25,3 +25,5 @@ tqdm>=4.47
 virtualenv>=20.0.26
 werkzeug>=1.0.1
 wheel>=0.34.2
+
+pyjwt>=1.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
