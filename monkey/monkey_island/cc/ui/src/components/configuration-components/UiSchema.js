@@ -59,7 +59,7 @@ export default function UiSchema(props) {
         }
       },
       system_info: {
-        system_info_collectors_classes: {
+        system_info_collector_classes: {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }

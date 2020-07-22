@@ -11,7 +11,7 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.network_utils import local_ip_addresses
 
-from .config_schema import SCHEMA
+from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
 
