@@ -327,10 +327,31 @@ SCHEMA = {
             "type": "object",
             "primary": True,
             "properties": {
-                "general": {
-                    "title": "General",
+                "exploiters": {
+                    "title": "Exploiters",
                     "type": "object",
                     "properties": {
+                        "exploiter_classes": {
+                            "title": "Exploiters",
+                            "type": "array",
+                            "uniqueItems": True,
+                            "items": {
+                                "$ref": "#/definitions/exploiter_classes"
+                            },
+                            "default": [
+                                "SmbExploiter",
+                                "WmiExploiter",
+                                "SSHExploiter",
+                                "ShellShockExploiter",
+                                "SambaCryExploiter",
+                                "ElasticGroovyExploiter",
+                                "Struts2Exploiter",
+                                "WebLogicExploiter",
+                                "HadoopExploiter",
+                                "VSFTPDExploiter",
+                                "MSSQLExploiter"
+                            ]
+                        }
                     }
                 },
                 "credentials": {
@@ -374,8 +395,8 @@ SCHEMA = {
             "title": "Network",
             "type": "object",
             "properties": {
-                "general": {
-                    "title": "General",
+                "scope": {
+                    "title": "Scope",
                     "type": "object",
                     "properties": {
                         "blocked_ips": {
@@ -906,27 +927,6 @@ SCHEMA = {
                     "title": "General",
                     "type": "object",
                     "properties": {
-                        "exploiter_classes": {
-                            "title": "Exploits",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {
-                                "$ref": "#/definitions/exploiter_classes"
-                            },
-                            "default": [
-                                "SmbExploiter",
-                                "WmiExploiter",
-                                "SSHExploiter",
-                                "ShellShockExploiter",
-                                "SambaCryExploiter",
-                                "ElasticGroovyExploiter",
-                                "Struts2Exploiter",
-                                "WebLogicExploiter",
-                                "HadoopExploiter",
-                                "VSFTPDExploiter",
-                                "MSSQLExploiter"
-                            ]
-                        },
                         "skip_exploit_if_file_exist": {
                             "title": "Skip exploit if file exists",
                             "type": "boolean",

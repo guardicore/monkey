@@ -5,7 +5,13 @@ import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
 export default function UiSchema(props) {
   const UiSchema = {
     basic: {
-      'ui:order': ['general', 'credentials'],
+      'ui:order': ['exploiters', 'credentials'],
+      exploiters: {
+        exploiter_classes: {
+          classNames: 'config-template-no-header',
+          'ui:widget': AdvancedMultiSelect
+        }
+      }
     },
     basic_network: {},
     monkey: {
@@ -61,14 +67,6 @@ export default function UiSchema(props) {
     },
     cnc: {},
     network: {},
-    exploits: {
-      general: {
-        exploiter_classes: {
-          classNames: 'config-template-no-header',
-          'ui:widget': AdvancedMultiSelect
-        }
-      }
-    },
     internal: {
       general: {
         started_on_island: {'ui:widget': 'hidden'}
