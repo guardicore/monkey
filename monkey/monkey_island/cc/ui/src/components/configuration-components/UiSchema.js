@@ -13,7 +13,14 @@ export default function UiSchema(props) {
         }
       }
     },
-    basic_network: {},
+    basic_network: {
+      'ui:order': ['scope', 'network_analysis'],
+      scope: {
+        subnet_scan_list:{
+          format: 'ip-list',
+        }
+      }
+    },
     monkey: {
       post_breach: {
         post_breach_actions: {

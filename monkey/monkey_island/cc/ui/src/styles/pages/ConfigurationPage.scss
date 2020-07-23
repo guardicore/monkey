@@ -31,6 +31,10 @@
   margin-left: 2em;
 }
 
+.config-form div.card.errors {
+  display: none;
+}
+
 .config-template-no-header > p {
   display: none;
 }

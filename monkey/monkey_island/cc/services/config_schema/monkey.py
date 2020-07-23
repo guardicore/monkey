@@ -1,4 +1,3 @@
-from monkey_island.cc.services.utils.typographic_symbols import WARNING_SIGN
 from common.data.system_info_collectors_names import (AWS_COLLECTOR,
                                                       ENVIRONMENT_COLLECTOR,
                                                       HOSTNAME_COLLECTOR,
@@ -101,6 +100,7 @@ MONKEY = {
                     "title": "Max iterations",
                     "type": "integer",
                     "default": 1,
+                    "minimum": 1,
                     "description": "Determines how many iterations of the monkey's full lifecycle should occur "
                                    "(how many times to do the scan)"
                 },
@@ -108,6 +108,7 @@ MONKEY = {
                     "title": "Wait time between iterations",
                     "type": "integer",
                     "default": 100,
+                    "minimum": 0,
                     "description":
                         "Determines for how long (in seconds) should the monkey wait before starting another scan"
                 },

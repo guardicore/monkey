@@ -1,3 +1,4 @@
+from common.data.validation_formats import IP, IP_RANGE
 from monkey_island.cc.services.utils.typographic_symbols import WARNING_SIGN
 
 BASIC_NETWORK = {
@@ -13,7 +14,8 @@ BASIC_NETWORK = {
                     "type": "array",
                     "uniqueItems": True,
                     "items": {
-                        "type": "string"
+                        "type": "string",
+                        "format": IP,
                     },
                     "default": [
                     ],
@@ -29,6 +31,7 @@ BASIC_NETWORK = {
                 "depth": {
                     "title": "Distance from island",
                     "type": "integer",
+                    "minimum": 1,
                     "default": 2,
                     "description":
                         "Amount of hops allowed for the monkey to spread from the island. \n"
@@ -40,7 +43,8 @@ BASIC_NETWORK = {
                     "type": "array",
                     "uniqueItems": True,
                     "items": {
-                        "type": "string"
+                        "type": "string",
+                        "format": IP_RANGE
                     },
                     "default": [
                     ],
@@ -63,7 +67,8 @@ BASIC_NETWORK = {
                     "type": "array",
                     "uniqueItems": True,
                     "items": {
-                        "type": "string"
+                        "type": "string",
+                        "format": IP_RANGE
                     },
                     "default": [
                     ],
