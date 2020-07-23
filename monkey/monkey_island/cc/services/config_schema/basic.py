@@ -6,6 +6,7 @@ BASIC = {
         "exploiters": {
             "title": "Exploiters",
             "type": "object",
+            "description": "Choose which exploiters the Monkey will attempt.",
             "properties": {
                 "exploiter_classes": {
                     "title": "Exploiters",
@@ -46,7 +47,8 @@ BASIC = {
                         "root",
                         "user"
                     ],
-                    "description": "List of usernames to use on exploits using credentials"
+                    "description": "List of user names that will be used by exploiters that need credentials, like "
+                                   "SSH brute-forcing."
                 },
                 "exploit_password_list": {
                     "title": "Exploit password list",
@@ -61,7 +63,8 @@ BASIC = {
                         "password",
                         "12345678"
                     ],
-                    "description": "List of password to use on exploits using credentials"
+                    "description": "List of passwords that will be used by exploiters that need credentials, like "
+                                   "SSH brute-forcing."
                 }
             }
         }
