@@ -5,10 +5,8 @@ from monkey_island.cc.services.config_schema.definitions.finger_classes import F
 from monkey_island.cc.services.config_schema.definitions.post_breach_actions import POST_BREACH_ACTIONS
 from monkey_island.cc.services.config_schema.definitions.system_info_collector_classes import \
     SYSTEM_INFO_COLLECTOR_CLASSES
-from monkey_island.cc.services.config_schema.exploits import EXPLOITS
 from monkey_island.cc.services.config_schema.internal import INTERNAL
 from monkey_island.cc.services.config_schema.monkey import MONKEY
-from monkey_island.cc.services.config_schema.network import NETWORK
 
 SCHEMA = {
     "title": "Monkey",
@@ -25,8 +23,6 @@ SCHEMA = {
         "basic_network": BASIC_NETWORK,
         "monkey": MONKEY,
         "internal": INTERNAL,
-        "exploits": EXPLOITS,
-        "network": NETWORK
     },
     "options": {
         "collapsed": True

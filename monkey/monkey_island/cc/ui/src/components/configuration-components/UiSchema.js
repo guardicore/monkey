@@ -60,8 +60,6 @@ export default function UiSchema(props) {
         }
       }
     },
-    cnc: {},
-    network: {},
     internal: {
       general: {
         started_on_island: {'ui:widget': 'hidden'}
