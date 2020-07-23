@@ -8,18 +8,6 @@ MONKEY = {
     "title": "Monkey",
     "type": "object",
     "properties": {
-        "general": {
-            "title": "General",
-            "type": "object",
-            "properties": {
-                "alive": {
-                    "title": "Alive",
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Is the monkey alive"
-                },
-            }
-        },
         "post_breach": {
             "title": "Post breach",
             "type": "object",

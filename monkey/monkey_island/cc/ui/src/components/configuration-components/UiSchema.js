@@ -15,16 +15,11 @@ export default function UiSchema(props) {
     },
     basic_network: {},
     monkey: {
-      general: {
-        alive: {
-          classNames: 'config-field-hidden'
-        },
+      post_breach: {
         post_breach_actions: {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
-        }
-      },
-      post_breach: {
+        },
         custom_PBA_linux_cmd: {
           'ui:widget': 'textarea',
           'ui:emptyValue': ''
@@ -75,6 +70,11 @@ export default function UiSchema(props) {
         finger_classes: {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
+        }
+      },
+      monkey: {
+        alive: {
+          classNames: 'config-field-hidden'
         }
       }
     }
