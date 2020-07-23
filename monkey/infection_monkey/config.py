@@ -135,7 +135,7 @@ class Configuration(object):
     victims_max_find = 100
 
     # how many victims to exploit before stopping
-    victims_max_exploit = 15
+    victims_max_exploit = 100
 
     # depth of propagation
     depth = 2

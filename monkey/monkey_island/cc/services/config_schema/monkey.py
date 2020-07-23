@@ -93,38 +93,23 @@ MONKEY = {
                 },
             }
         },
-        "life_cycle": {
-            "title": "Life cycle",
+        "persistent_scanning": {
+            "title": "Persistent scanning",
             "type": "object",
             "properties": {
                 "max_iterations": {
                     "title": "Max iterations",
                     "type": "integer",
                     "default": 1,
-                    "description": "Determines how many iterations of the monkey's full lifecycle should occur"
-                },
-                "victims_max_find": {
-                    "title": "Max victims to find",
-                    "type": "integer",
-                    "default": 100,
-                    "description": "Determines the maximum number of machines the monkey is allowed to scan"
-                },
-                "victims_max_exploit": {
-                    "title": "Max victims to exploit",
-                    "type": "integer",
-                    "default": 15,
-                    "description":
-                        "Determines the maximum number of machines the monkey"
-                        " is allowed to successfully exploit. " + WARNING_SIGN
-                        + " Note that setting this value too high may result in the monkey propagating to "
-                          "a high number of machines"
+                    "description": "Determines how many iterations of the monkey's full lifecycle should occur "
+                                   "(how many times to do the scan)"
                 },
                 "timeout_between_iterations": {
                     "title": "Wait time between iterations",
                     "type": "integer",
                     "default": 100,
                     "description":
-                        "Determines for how long (in seconds) should the monkey wait between iterations"
+                        "Determines for how long (in seconds) should the monkey wait before starting another scan"
                 },
                 "retry_failed_explotation": {
                     "title": "Retry failed exploitation",
@@ -132,7 +117,7 @@ MONKEY = {
                     "default": True,
                     "description":
                         "Determines whether the monkey should retry exploiting machines"
-                        " it didn't successfully exploit on previous iterations"
+                        " it didn't successfully exploit on previous scans"
                 }
             }
         }
