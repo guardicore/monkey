@@ -1,4 +1,3 @@
-from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.encryptor import encryptor
 
 
