@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 
 import {Card, Button, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSquare, faCheckSquare} from '@fortawesome/free-solid-svg-icons';
+import {faCheckSquare} from '@fortawesome/free-solid-svg-icons';
+import {faSquare} from '@fortawesome/free-regular-svg-icons';
 import {cloneDeep} from 'lodash';
 
 import {getComponentHeight} from './utils/HeightCalculator';
@@ -37,7 +38,7 @@ function getFullDefinitionsFromRegistry(refString, registry) {
 
 function getObjectFromRegistryByRef(refString, registry) {
   let refArray = refString.replace('#', '').split('/');
- return resolveObjectPath(refArray, registry);
+  return resolveObjectPath(refArray, registry);
 }
 
 function getFullDefinitionByKey(refString, registry, itemKey) {
@@ -50,7 +51,7 @@ function setPaneInfo(refString, registry, itemKey, setPaneInfoFnc) {
   setPaneInfoFnc({title: definitionObj.title, content: definitionObj.info, link: definitionObj.link});
 }
 
-function getDefaultPaneParams(refString, registry){
+function getDefaultPaneParams(refString, registry) {
   let configSection = getObjectFromRegistryByRef(refString, registry);
   return ({title: configSection.title, content: configSection.description});
 }
