@@ -45,23 +45,3 @@ def censor_hash(hash_, plain_chars=5):
         return ""
     hash_ = encryptor.dec(hash_)
     return hash_[0: plain_chars] + ' ...'
-
-
-def extract_shell_startup_files_modification_info(shell_startup_files_modification_info, required_file_names):
-    required_shell_startup_files_modification_info = []
-    for shell_startup_file_result in shell_startup_files_modification_info[0]['result']:
-        if any(file_name in shell_startup_file_result[0] for file_name in required_file_names):
-            required_shell_startup_files_modification_info.append({
-                'machine': shell_startup_files_modification_info[0]['machine'],
-                'result': shell_startup_file_result
-                })
-    return required_shell_startup_files_modification_info
-
-
-def get_shell_startup_files_modification_status(shell_startup_files_modification_info):
-    status = []
-    for startup_file in shell_startup_files_modification_info:
-        status.append(startup_file['result'][1])
-    status = (ScanStatus.USED.value if any(status) else ScanStatus.SCANNED.value)\
-        if status else ScanStatus.UNSCANNED.value
-    return status
