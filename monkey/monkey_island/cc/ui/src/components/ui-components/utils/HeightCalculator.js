@@ -6,7 +6,7 @@ export function getComponentHeight(subcomponentCount,
                                    subcomponentHeight = defaultSubcomponentHeight,
                                    minHeight = defaultMinHeight,
                                    maxHeight = defaultMaxHeight) {
-  let height = defaultMinHeight + (subcomponentHeight*subcomponentCount);
+  let height = minHeight + (subcomponentHeight*subcomponentCount);
   if (height > maxHeight)
     height = maxHeight
 
