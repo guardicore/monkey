@@ -47,3 +47,12 @@ class ModifyShellStartupFiles(PBA):
                 super().__init__(name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
                                  linux_cmd=linux_cmds,
                                  windows_cmd=windows_cmds)
+
+            def run(self):
+                if self.command:
+                    try:
+                        output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True).decode()
+                        return output, True
+                    except subprocess.CalledProcessError as e:
+                        # Return error output of the command
+                        return e.output.decode(), False

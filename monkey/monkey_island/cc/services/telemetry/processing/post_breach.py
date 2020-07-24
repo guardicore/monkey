@@ -8,6 +8,8 @@ from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.telemetry.zero_trust_tests.communicate_as_new_user import \
     test_new_user_communication
 
+EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
+
 
 def process_communicate_as_new_user_telemetry(telemetry_json):
     current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid'])
@@ -38,10 +40,16 @@ def process_post_breach_telemetry(telemetry_json):
 
     if type(telemetry_json['data']) is list:
         for pba_data in telemetry_json['data']:
+            modify_blank_outputs(pba_data)
             mongo.db.monkey.update(
                 {'guid': telemetry_json['monkey_guid']},
                 {'$push': {'pba_results': pba_data}})
     else:
+        modify_blank_outputs(telemetry_json['data'])
         mongo.db.monkey.update(
             {'guid': telemetry_json['monkey_guid']},
             {'$push': {'pba_results': telemetry_json['data']}})
+
+    def modify_blank_outputs(data):
+        if not data['result']:
+            data['result'] = EXECUTION_WITHOUT_OUTPUT
