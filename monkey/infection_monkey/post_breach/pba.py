@@ -13,8 +13,6 @@ LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
 
-EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
-
 
 class PBA(Plugin):
     """
@@ -54,7 +52,7 @@ class PBA(Plugin):
         """
         return class_name in WormConfiguration.post_breach_actions
 
-    def run(self, return_result=False):
+    def run(self):
         """
         Runs post breach action command
         """
@@ -63,10 +61,7 @@ class PBA(Plugin):
             result = exec_funct()
             if self.scripts_were_used_successfully(result):
                 T1064Telem(ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action.").send()
-            if return_result:
-                return result
-            else:
-                PostBreachTelem(self, result).send()
+            PostBreachTelem(self, result).send()
         else:
             LOG.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
 
@@ -93,8 +88,6 @@ class PBA(Plugin):
         """
         try:
             output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True).decode()
-            if not output:
-                output = EXECUTION_WITHOUT_OUTPUT
             return output, True
         except subprocess.CalledProcessError as e:
             # Return error output of the command
