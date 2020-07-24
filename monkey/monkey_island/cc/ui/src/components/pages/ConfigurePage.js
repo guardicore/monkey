@@ -371,8 +371,8 @@ class ConfigurePageComponent extends AuthComponent {
     if (this.state.selectedSection === 'basic_network') {
       return (<div className='alert alert-info'>
         <FontAwesomeIcon icon={faInfoCircle} style={{'marginRight': '5px'}}/>
-        The Monkey scans its subnet if 'Local network scan' is ticked. Additionally the monkey scans machines
-        according to its range class.
+        The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey scans machines
+        according to "Scan target list".
       </div>)
     } else {
       return (<div/>)
