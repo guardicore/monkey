@@ -1,4 +1,7 @@
-import wmi
+import sys
+
+if sys.platform.startswith("win"):
+    import wmi
 
 from .mongo_utils import MongoUtils
 
