@@ -83,6 +83,6 @@ export default function UiSchema(props) {
         }
       }
     }
-  }
+  };
   return UiSchema[props.selectedSection]
 }
