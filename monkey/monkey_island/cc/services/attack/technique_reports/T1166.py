@@ -16,7 +16,7 @@ class T1166(AttackTechnique):
                          'data.name': POST_BREACH_SETUID_SETGID}},
              {'$project': {'_id': 0,
                            'machine': {'hostname': '$data.hostname',
-                                       'ips': ['$data.ip']},
+                                       'ips': '$data.ip'},
                            'result': '$data.result'}}]
 
     @staticmethod

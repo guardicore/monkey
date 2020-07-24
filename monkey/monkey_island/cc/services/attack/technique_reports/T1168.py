@@ -17,7 +17,7 @@ class T1168(AttackTechnique):
                          'data.command': {'$regex': 'crontab'}}},
              {'$project': {'_id': 0,
                            'machine': {'hostname': '$data.hostname',
-                                       'ips': ['$data.ip']},
+                                       'ips': '$data.ip'},
                            'result': '$data.result'}}]
 
     @staticmethod
@@ -26,8 +26,11 @@ class T1168(AttackTechnique):
 
         job_scheduling_info = list(mongo.db.telemetry.aggregate(T1168.query))
 
-        status = (ScanStatus.USED.value if job_scheduling_info[0]['result'][1]
-                  else ScanStatus.SCANNED.value) if job_scheduling_info else ScanStatus.UNSCANNED.value
+        status = ScanStatus.UNSCANNED.value
+        if job_scheduling_info:
+            successful_PBAs = mongo.db.telemetry.count({'data.name': POST_BREACH_JOB_SCHEDULING,
+                                                        'data.result.1': True})
+            status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
 
         data.update(T1168.get_base_data_by_status(status))
         data.update({'info': job_scheduling_info})
