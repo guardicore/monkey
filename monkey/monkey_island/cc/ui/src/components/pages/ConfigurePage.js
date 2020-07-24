@@ -10,6 +10,7 @@ import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from "../configuration-components/ValidationFormats";
+import InternalConfig from "../configuration-components/InternalConfig";
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -244,8 +245,8 @@ class ConfigurePageComponent extends AuthComponent {
           this.props.onStatusChange();
         }
       ).then(() => {
-          this.removePBAfile(API_PBA_WINDOWS, this.setPbaFilenameWindows)
-          this.removePBAfile(API_PBA_LINUX, this.setPbaFilenameLinux)
+      this.removePBAfile(API_PBA_WINDOWS, this.setPbaFilenameWindows)
+      this.removePBAfile(API_PBA_LINUX, this.setPbaFilenameLinux)
     });
     this.authFetch(ATTACK_URL, {
       method: 'POST',
@@ -331,24 +332,33 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   renderConfigContent = (displayedSchema) => {
-    return (<div>
-      {this.renderBasicNetworkWarning()}
-      <Form schema={displayedSchema}
-            uiSchema={UiSchema({
-              PBA_linux_filename: this.state.configuration.monkey.post_breach.PBA_linux_filename,
-              PBA_windows_filename: this.state.configuration.monkey.post_breach.PBA_windows_filename,
-              setPbaFilenameWindows: this.setPbaFilenameWindows,
-              setPbaFilenameLinux: this.setPbaFilenameLinux,
-              selectedSection: this.state.selectedSection
-            })}
-            formData={this.state.configuration[this.state.selectedSection]}
-            onChange={this.onChange}
-            customFormats={formValidationFormats}
-            className={'config-form'}
-            liveValidate>
-        <button type='submit' className={'hidden'}>Submit</button>
-      </Form>
-    </div>)
+    let formProperties = {};
+    formProperties['schema'] = displayedSchema
+    formProperties['uiSchema'] = UiSchema({
+      PBA_linux_filename: this.state.configuration.monkey.post_breach.PBA_linux_filename,
+      PBA_windows_filename: this.state.configuration.monkey.post_breach.PBA_windows_filename,
+      setPbaFilenameWindows: this.setPbaFilenameWindows,
+      setPbaFilenameLinux: this.setPbaFilenameLinux,
+      selectedSection: this.state.selectedSection
+    })
+    formProperties['formData'] = this.state.configuration[this.state.selectedSection]
+    formProperties['onChange'] = this.onChange
+    formProperties['customFormats'] = formValidationFormats
+    formProperties['className'] = 'config-form'
+    formProperties['liveValidate'] = true
+
+    if (this.state.selectedSection === 'internal') {
+      return (<InternalConfig {...formProperties}/>)
+    } else {
+      return (
+        <div>
+          {this.renderBasicNetworkWarning()}
+          <Form {...formProperties}>
+            <button type='submit' className={'hidden'}>Submit</button>
+          </Form>
+        </div>
+      )
+    }
   };
 
   setPbaFilenameWindows = (filename) => {
@@ -388,9 +398,9 @@ class ConfigurePageComponent extends AuthComponent {
       {this.state.sections.map(section => {
         let classProp = section.key.startsWith('basic') ? 'tab-primary' : '';
         return (
-        <Nav.Item>
-          <Nav.Link className={classProp} eventKey={section.key}>{section.title}</Nav.Link>
-        </Nav.Item>);
+          <Nav.Item>
+            <Nav.Link className={classProp} eventKey={section.key}>{section.title}</Nav.Link>
+          </Nav.Item>);
       })}
     </Nav>)
   };
