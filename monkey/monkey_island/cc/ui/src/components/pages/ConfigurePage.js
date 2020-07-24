@@ -9,8 +9,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
-import {formValidationFormats} from "../configuration-components/ValidationFormats";
-import InternalConfig from "../configuration-components/InternalConfig";
+import {formValidationFormats} from '../configuration-components/ValidationFormats';
+import InternalConfig from '../configuration-components/InternalConfig';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -264,7 +264,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   removePBAfile(apiEndpoint, setFilenameFnc) {
     this.sendPbaRemoveRequest(apiEndpoint)
-    setFilenameFnc("")
+    setFilenameFnc('')
   }
 
   sendPbaRemoveRequest(apiEndpoint) {

@@ -1,5 +1,5 @@
-import AdvancedMultiSelect from "../ui-components/AdvancedMultiSelect";
-import PbaInput from "./PbaInput";
+import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
+import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
 
 export default function UiSchema(props) {
@@ -17,7 +17,7 @@ export default function UiSchema(props) {
       'ui:order': ['scope', 'network_analysis'],
       scope: {
         subnet_scan_list:{
-          format: 'ip-list',
+          format: 'ip-list'
         }
       }
     },
