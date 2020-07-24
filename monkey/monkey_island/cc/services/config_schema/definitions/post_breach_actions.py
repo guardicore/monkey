@@ -48,6 +48,8 @@ POST_BREACH_ACTIONS = {
                 "TrapCommand"
             ],
             "title": "Trap",
+            "info": "On Linux systems, attempts to trap an interrupt signal in order to execute a command "
+                    "upon receiving that signal. Removes the trap afterwards.",
             "attack_techniques": ["T1154"]
         },
         {
@@ -56,6 +58,8 @@ POST_BREACH_ACTIONS = {
                 "ChangeSetuidSetgid"
             ],
             "title": "Setuid and Setgid",
+            "info": "On Linux systems, attempts to set the setuid and setgid bits of a new file. "
+                    "Removes the file afterwards.",
             "attack_techniques": ["T1166"]
         },
         {
@@ -64,6 +68,7 @@ POST_BREACH_ACTIONS = {
                 "ScheduleJobs"
             ],
             "title": "Job scheduling",
+            "info": "Attempts to create a scheduled job on the system and remove it.",
             "attack_techniques": ["T1168", "T1053"]
         }
     ]
