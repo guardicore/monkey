@@ -17,7 +17,7 @@ export default function InternalConfig(props) {
   } = props;
   const [selectedSection, setSelectedSection] = useState(initialSection);
   const [displayedSchema, setDisplayedSchema] = useState(getSchemaByKey(schema, initialSection));
-  const [displayedSchemaUi, setDisplayedSchemaUi] = useState(uiSchema[initialSection])
+  const [displayedSchemaUi, setDisplayedSchemaUi] = useState(uiSchema[initialSection]);
 
   const onInnerDataChange = (innerData) => {
     formData[selectedSection] = innerData.formData;
@@ -27,7 +27,7 @@ export default function InternalConfig(props) {
   const setSection = (sectionKey) => {
     setSelectedSection(sectionKey);
     setDisplayedSchema(getSchemaByKey(schema, sectionKey));
-    setDisplayedSchemaUi(uiSchema[sectionKey])
+    setDisplayedSchemaUi(uiSchema[sectionKey]);
   }
 
   const renderNav = () => {
@@ -57,11 +57,11 @@ export default function InternalConfig(props) {
       <button type='submit' className={'hidden'}>Submit</button>
     </Form>
   </div>)
-};
+}
 
 function getSchemaByKey(schema, key) {
-  let definitions = schema['definitions']
-  return {definitions: definitions, properties: schema['properties'][key]['properties']}
+  let definitions = schema['definitions'];
+  return {definitions: definitions, properties: schema['properties'][key]['properties']};
 }
 
 function getNavTitle(schema, key) {
