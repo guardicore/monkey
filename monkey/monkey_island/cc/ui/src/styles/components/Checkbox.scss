@@ -7,7 +7,8 @@ $black: #000000;
 
 .ui-checkbox-btn {
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
   background-color: rgba(red, .6);
   text-align: center;
   width: 100%;
@@ -100,15 +101,13 @@ $black: #000000;
 }
 
 .attack-matrix .ui-checkbox-btn label {
+  width:100%;
   font-weight: 700;
   padding-top: 0;
-  position: relative;
-  float: left;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   padding-left: 5px;
   padding-right: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 .attack-matrix div.rt-td>div {

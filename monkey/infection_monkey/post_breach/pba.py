@@ -62,8 +62,10 @@ class PBA(Plugin):
             exec_funct = self._execute_default
             result = exec_funct()
             if self.scripts_were_used_successfully(result):
-                T1064Telem(ScanStatus.USED, "Scripts were used to execute %s post breach action." % self.name).send()
+                T1064Telem(ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action.").send()
             PostBreachTelem(self, result).send()
+        else:
+            LOG.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
 
     def is_script(self):
         """
