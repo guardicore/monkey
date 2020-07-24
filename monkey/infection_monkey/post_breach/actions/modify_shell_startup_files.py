@@ -1,3 +1,5 @@
+import subprocess
+
 from common.data.post_breach_consts import \
     POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
 from infection_monkey.post_breach.pba import PBA
@@ -17,7 +19,7 @@ class ModifyShellStartupFiles(PBA):
         super().__init__(name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION)
 
     def run(self):
-        results = [pba.run(return_result=True) for pba in self.modify_shell_startup_PBA_list()]
+        results = [pba.run() for pba in self.modify_shell_startup_PBA_list()]
         PostBreachTelem(self, results).send()
 
     def modify_shell_startup_PBA_list(self):

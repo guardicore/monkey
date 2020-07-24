@@ -16,7 +16,7 @@ class T1158(AttackTechnique):
                          'data.name': POST_BREACH_HIDDEN_FILES}},
              {'$project': {'_id': 0,
                            'machine': {'hostname': '$data.hostname',
-                                       'ips': ['$data.ip']},
+                                       'ips': '$data.ip'},
                            'result': '$data.result'}}]
 
     @staticmethod
@@ -25,11 +25,11 @@ class T1158(AttackTechnique):
 
         hidden_file_info = list(mongo.db.telemetry.aggregate(T1158.query))
 
-        status = []
-        for pba_node in hidden_file_info:
-            status.append(pba_node['result'][1])
-        status = (ScanStatus.USED.value if any(status) else ScanStatus.SCANNED.value)\
-            if status else ScanStatus.UNSCANNED.value
+        status = ScanStatus.UNSCANNED.value
+        if hidden_file_info:
+            successful_PBAs = mongo.db.telemetry.count({'data.name': POST_BREACH_HIDDEN_FILES,
+                                                        'data.result.1': True})
+            status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
 
         data.update(T1158.get_base_data_by_status(status))
         data.update({'info': hidden_file_info})
