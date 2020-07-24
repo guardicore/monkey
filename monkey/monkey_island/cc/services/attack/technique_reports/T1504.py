@@ -1,10 +1,8 @@
 from common.data.post_breach_consts import \
     POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
+from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from monkey_island.cc.services.attack.technique_reports.technique_report_tools import (
-    extract_shell_startup_files_modification_info,
-    get_shell_startup_files_modification_status)
 
 __author__ = "shreyamalviya"
 
@@ -20,18 +18,21 @@ class T1504(AttackTechnique):
              {'$project': {'_id': 0,
                            'machine': {'hostname': {'$arrayElemAt': ['$data.hostname', 0]},
                                        'ips': [{'$arrayElemAt': ['$data.ip', 0]}]},
-                           'result': '$data.result'}}]
+                           'result': '$data.result'}},
+             {'$unwind': '$result'},
+             {'$match': {'result': {'$regex': 'profile\.ps1'}}}]
 
     @staticmethod
     def get_report_data():
         data = {'title': T1504.technique_title(), 'info': []}
 
-        shell_startup_files_modification_info = list(mongo.db.telemetry.aggregate(T1504.query))
+        powershell_startup_modification_info = list(mongo.db.telemetry.aggregate(T1504.query))
 
-        powershell_startup_modification_info =\
-            extract_shell_startup_files_modification_info(shell_startup_files_modification_info, ["profile.ps1"])
-
-        status = get_shell_startup_files_modification_status(powershell_startup_modification_info)
+        status = ScanStatus.UNSCANNED.value
+        if powershell_startup_modification_info:
+            successful_PBAs = mongo.db.telemetry.count({'data.name': POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
+                                                        'data.result.1': True})
+            status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
 
         data.update(T1504.get_base_data_by_status(status))
         data.update({'info': powershell_startup_modification_info})
