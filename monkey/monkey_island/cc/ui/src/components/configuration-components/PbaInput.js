@@ -23,8 +23,8 @@ class PbaInput extends AuthComponent {
     };
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if(prevProps.options.filename !== this.props.options.filename && this.props.options.filename === ""){
+  componentDidUpdate(prevProps, _prevState, _snapshot) {
+    if(prevProps.options.filename !== this.props.options.filename && this.props.options.filename === ''){
       this.setState({filename: this.props.options.filename})
     }
   }
@@ -68,7 +68,7 @@ class PbaInput extends AuthComponent {
         if (fileItems.length > 0) {
             this.state.setPbaFilename(fileItems[0].file.name)
         } else {
-            this.state.setPbaFilename("")
+            this.state.setPbaFilename('')
         }
       }}
     />)

@@ -13,7 +13,9 @@ const columns = [
       {
         Header: 'Status', id: 'status',
         accessor: x => {
-          return <StatusLabel status={x.status} size="3x" showText={false}/>;
+          const comp = <StatusLabel status={x.status} size="3x" showText={false}/>;
+          comp.displayName = 'StatusLabel';
+          return comp;
         },
         maxWidth: MAX_WIDTH_STATUS_COLUMN
       },
@@ -25,7 +27,9 @@ const columns = [
         Header: 'Monkey Tests', id: 'tests',
         style: {'whiteSpace': 'unset'},  // This enables word wrap
         accessor: x => {
-          return <TestsStatus tests={x.tests}/>;
+          const comp = <TestsStatus tests={x.tests}/>;
+          comp.displayName = 'TestsStatus';
+          return comp;
         }
       }
     ]

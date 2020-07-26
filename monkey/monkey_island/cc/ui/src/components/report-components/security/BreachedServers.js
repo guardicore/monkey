@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
-import {renderArray, renderIpAddresses} from "../common/RenderArrays";
+import {renderArray, renderIpAddresses} from '../common/RenderArrays';
 
 
 const columns = [

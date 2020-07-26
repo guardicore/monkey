@@ -4,7 +4,7 @@ const hostnameRegex = '^([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*.?)*([A-Za-z0-9]*[A-Za
 
 export const formValidationFormats = {
   'ip-range': buildIpRangeRegex(),
-  'ip': buildIpRegex(),
+  'ip': buildIpRegex()
 };
 
 function buildIpRangeRegex(){
@@ -12,7 +12,7 @@ function buildIpRangeRegex(){
     '^'+ipRegex+'$|', // Single IP
     '^'+ipRegex+'-'+ipRegex+'$|', // IP range IP-IP
     '^'+ipRegex+'/'+cidrNotationRegex+'$|', // IP range with cidr notation: IP/cidr
-    hostnameRegex, // IP range with cidr notation: IP/cidr
+    hostnameRegex // IP range with cidr notation: IP/cidr
   ].join(''))
 }
 

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import * as PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 export default class MonkeysStillAliveWarning extends Component {
   render() {
