@@ -18,38 +18,42 @@ def process_communicate_as_new_user_telemetry(telemetry_json):
     test_new_user_communication(current_monkey, success, message)
 
 
-def modify_data(telemetry_json):
-    modified_data = [telemetry_json['data']]
-    if type(telemetry_json['data']['result'][0]) is list:
-        modified_data = []
-        for result in telemetry_json['data']['result']:
-            temp = copy.deepcopy(telemetry_json['data'])
-            temp['result'] = result
-            modified_data.append(temp)
-    telemetry_json['data'] = modified_data
-
-
 POST_BREACH_TELEMETRY_PROCESSING_FUNCS = {
     POST_BREACH_COMMUNICATE_AS_NEW_USER: process_communicate_as_new_user_telemetry,
 }
 
 
 def process_post_breach_telemetry(telemetry_json):
-    def modify_blank_outputs(data):
-        if not data['result'][0]:
-            data['result'][0] = EXECUTION_WITHOUT_OUTPUT
+    def convert_telem_data_to_list(data):
+        modified_data = [data]
+        if type(data['result'][0]) is list:  # multiple results in one pba
+            modified_data = separate_results_to_single_pba_telems(data)
+        return modified_data
+
+    def separate_results_to_single_pba_telems(data):
+        modified_data = []
+        for result in data['result']:
+            temp = copy.deepcopy(data)
+            temp['result'] = result
+            modified_data.append(temp)
+        return modified_data
 
     def update_data(data):
-        modify_blank_outputs(data)
+        data = add_message_for_blank_outputs(data)
         mongo.db.monkey.update(
             {'guid': telemetry_json['monkey_guid']},
             {'$push': {'pba_results': data}})
+
+    def add_message_for_blank_outputs(data):
+        if not data['result'][0]:
+            data['result'][0] = EXECUTION_WITHOUT_OUTPUT
+        return data
 
     post_breach_action_name = telemetry_json["data"]["name"]
     if post_breach_action_name in POST_BREACH_TELEMETRY_PROCESSING_FUNCS:
         POST_BREACH_TELEMETRY_PROCESSING_FUNCS[post_breach_action_name](telemetry_json)
 
-    modify_data(telemetry_json)
+    telemetry_json['data'] = convert_telem_data_to_list(telemetry_json['data'])
 
     for pba_data in telemetry_json['data']:
         update_data(pba_data)
