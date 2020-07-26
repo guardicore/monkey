@@ -144,7 +144,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
 
     @classmethod
     def _check_status(cls, status):
-        if status == ScanStatus.UNSCANNED.value and cls._is_disabled_in_config():
+        if status == ScanStatus.UNSCANNED.value and not cls._is_enabled_in_config():
             return ScanStatus.DISABLED.value
         return status
 
