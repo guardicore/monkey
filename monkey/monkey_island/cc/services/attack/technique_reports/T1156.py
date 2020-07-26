@@ -20,8 +20,8 @@ class T1156(AttackTechnique):
                                        'ips': [{'$arrayElemAt': ['$data.ip', 0]}]},
                            'result': '$data.result'}},
              {'$unwind': '$result'},
-             {'$match': {'$or': [{'result': {'$regex': '\.bash'}},  # noqa: W605
-                                 {'result': {'$regex': '\.profile'}}]}}]  # noqa: W605
+             {'$match': {'$or': [{'result': {'$regex': r'\.bash'}},
+                                 {'result': {'$regex': r'\.profile'}}]}}]
 
     @staticmethod
     def get_report_data():

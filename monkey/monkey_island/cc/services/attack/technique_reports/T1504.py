@@ -20,7 +20,7 @@ class T1504(AttackTechnique):
                                        'ips': [{'$arrayElemAt': ['$data.ip', 0]}]},
                            'result': '$data.result'}},
              {'$unwind': '$result'},
-             {'$match': {'result': {'$regex': 'profile\.ps1'}}}]  # noqa: W605
+             {'$match': {'result': {'$regex': r'profile\.ps1'}}}]
 
     @staticmethod
     def get_report_data():
