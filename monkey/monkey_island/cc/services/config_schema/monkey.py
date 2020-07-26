@@ -1,7 +1,9 @@
 from common.data.system_info_collectors_names import (AWS_COLLECTOR,
+                                                      AZURE_CRED_COLLECTOR,
                                                       ENVIRONMENT_COLLECTOR,
                                                       HOSTNAME_COLLECTOR,
-                                                      PROCESS_LIST_COLLECTOR, MIMIKATZ_COLLECTOR, AZURE_CRED_COLLECTOR)
+                                                      MIMIKATZ_COLLECTOR,
+                                                      PROCESS_LIST_COLLECTOR)
 
 MONKEY = {
     "title": "Monkey",
