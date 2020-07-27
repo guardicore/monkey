@@ -6,7 +6,6 @@ import AuthComponent from '../AuthComponent';
 import ConfigMatrixComponent from '../attack/ConfigMatrixComponent';
 import UiSchema from '../configuration-components/UiSchema';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
@@ -352,7 +351,6 @@ class ConfigurePageComponent extends AuthComponent {
     } else {
       return (
         <div>
-          {this.renderBasicNetworkWarning()}
           <Form {...formProperties}>
             <button type='submit' className={'hidden'}>Submit</button>
           </Form>
@@ -376,18 +374,6 @@ class ConfigurePageComponent extends AuthComponent {
       configuration: config
     })
   }
-
-  renderBasicNetworkWarning = () => {
-    if (this.state.selectedSection === 'basic_network') {
-      return (<div className='alert alert-info'>
-        <FontAwesomeIcon icon={faInfoCircle} style={{'marginRight': '5px'}}/>
-        The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey scans machines
-        according to "Scan target list".
-      </div>)
-    } else {
-      return (<div/>)
-    }
-  };
 
   renderNav = () => {
     return (<Nav variant='tabs'

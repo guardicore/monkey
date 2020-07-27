@@ -19,7 +19,9 @@ BASIC_NETWORK = {
                     },
                     "default": [
                     ],
-                    "description": "List of IPs that the Monkey will not scan."
+                    "description": "List of IPs that the Monkey will not scan.",
+                    "info": "The Monkey scans its subnet if \"Local network scan\" is ticked. "
+                            "Additionally the monkey scans machines according to \"Scan target list\"."
                 },
                 "local_network_scan": {
                     "title": "Local network scan",

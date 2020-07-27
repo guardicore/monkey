@@ -1,6 +1,7 @@
 import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
+import FieldWithInfo from './FieldWithInfo';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -16,7 +17,10 @@ export default function UiSchema(props) {
     basic_network: {
       'ui:order': ['scope', 'network_analysis'],
       scope: {
-        subnet_scan_list:{
+        blocked_ips: {
+          'ui:field': FieldWithInfo
+        },
+        subnet_scan_list: {
           format: 'ip-list'
         }
       }
