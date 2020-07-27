@@ -15,7 +15,7 @@ function buildIpRangeRegex(){
     '^'+ipRegex+'$|', // Single: IP
     '^'+ipRegex+'-'+ipRegex+'$|', // IP range: IP-IP
     '^'+ipRegex+'/'+cidrNotationRegex+'$|', // IP range with cidr notation: IP/cidr
-    hostnameRegex, // Hostname: target.tg
+    hostnameRegex // Hostname: target.tg
   ].join(''))
 }
 
