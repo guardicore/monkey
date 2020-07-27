@@ -190,23 +190,23 @@ class InfectionMonkey(object):
                     if self._default_server:
                         if self._network.on_island(self._default_server):
                             machine.set_default_server(get_interface_to_target(machine.ip_addr) +
-                                                       (':' + self._default_server_port if self._default_server_port else ''))
+                                                       (
+                                                           ':' + self._default_server_port if self._default_server_port else ''))
                         else:
                             machine.set_default_server(self._default_server)
                         LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_server))
 
                     # Order exploits according to their type
-                    if WormConfiguration.should_exploit:
-                        self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
-                        host_exploited = False
-                        for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
-                            if self.try_exploiting(machine, exploiter):
-                                host_exploited = True
-                                VictimHostTelem('T1210', ScanStatus.USED, machine=machine).send()
-                                break
-                        if not host_exploited:
-                            self._fail_exploitation_machines.add(machine)
-                            VictimHostTelem('T1210', ScanStatus.SCANNED, machine=machine).send()
+                    self._exploiters = sorted(self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value)
+                    host_exploited = False
+                    for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
+                        if self.try_exploiting(machine, exploiter):
+                            host_exploited = True
+                            VictimHostTelem('T1210', ScanStatus.USED, machine=machine).send()
+                            break
+                    if not host_exploited:
+                        self._fail_exploitation_machines.add(machine)
+                        VictimHostTelem('T1210', ScanStatus.SCANNED, machine=machine).send()
                     if not self._keep_running:
                         break
 
@@ -242,11 +242,10 @@ class InfectionMonkey(object):
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
     def collect_system_info_if_configured(self):
-        if WormConfiguration.collect_system_info:
-            LOG.debug("Calling system info collection")
-            system_info_collector = SystemInfoCollector()
-            system_info = system_info_collector.get_info()
-            SystemInfoTelem(system_info).send()
+        LOG.debug("Calling system info collection")
+        system_info_collector = SystemInfoCollector()
+        system_info = system_info_collector.get_info()
+        SystemInfoTelem(system_info).send()
 
     def shutdown_by_not_alive_config(self):
         if not WormConfiguration.alive:
@@ -387,7 +386,8 @@ class InfectionMonkey(object):
         :raises PlannedShutdownException if couldn't find the server.
         """
         if not ControlClient.find_server(default_tunnel=self._default_tunnel):
-            raise PlannedShutdownException("Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel))
+            raise PlannedShutdownException(
+                "Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel))
         self._default_server = WormConfiguration.current_server
         LOG.debug("default server set to: %s" % self._default_server)
 

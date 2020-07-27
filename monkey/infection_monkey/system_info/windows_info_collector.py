@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 
+from common.data.system_info_collectors_names import MIMIKATZ_COLLECTOR
 from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import \
     MimikatzCredentialCollector
 
@@ -44,7 +45,7 @@ class WindowsInfoCollector(InfoCollector):
         # TODO: Think about returning self.get_wmi_info()
         self.get_installed_packages()
         from infection_monkey.config import WormConfiguration
-        if WormConfiguration.should_use_mimikatz:
+        if MIMIKATZ_COLLECTOR in WormConfiguration.system_info_collector_classes:
             self.get_mimikatz_info()
 
         return self.info

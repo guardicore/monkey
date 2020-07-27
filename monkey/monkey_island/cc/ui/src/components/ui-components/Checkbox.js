@@ -1,4 +1,4 @@
-import '../../styles/Checkbox.scss'
+import '../../styles/components/Checkbox.scss'
 import React from 'react';
 
 class CheckboxComponent extends React.PureComponent {

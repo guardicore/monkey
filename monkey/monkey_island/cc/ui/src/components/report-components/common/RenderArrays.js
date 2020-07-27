@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export let renderArray = function (val) {
     return <>{val.map(x => <div key={x}>{x}</div>)}</>;

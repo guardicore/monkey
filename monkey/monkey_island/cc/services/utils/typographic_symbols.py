@@ -1,0 +1,1 @@
+WARNING_SIGN = " \u26A0"
