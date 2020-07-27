@@ -34,7 +34,7 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       sections: [],
       selectedSection: 'attack',
-      showAttackAlert: false,
+      showAttackAlert: false
     };
   }
 
@@ -384,7 +384,7 @@ class ConfigurePageComponent extends AuthComponent {
       {this.state.sections.map(section => {
         let classProp = section.key.startsWith('basic') ? 'tab-primary' : '';
         return (
-          <Nav.Item>
+          <Nav.Item key={section.key}>
             <Nav.Link className={classProp} eventKey={section.key}>{section.title}</Nav.Link>
           </Nav.Item>);
       })}

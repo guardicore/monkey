@@ -11,7 +11,6 @@ export const formValidationFormats = {
 };
 
 function buildIpRangeRegex(){
-  console.log(formValidationFormats);
   return new RegExp([
     '^'+ipRegex+'$|', // Single: IP
     '^'+ipRegex+'-'+ipRegex+'$|', // IP range: IP-IP

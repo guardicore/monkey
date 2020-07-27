@@ -1,6 +1,5 @@
 import {Modal} from 'react-bootstrap';
 import React from 'react';
-import {GridLoader} from 'react-spinners';
 
 
 class MissingBinariesModal extends React.PureComponent {

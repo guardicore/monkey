@@ -1,8 +1,8 @@
 import React from 'react';
 import {Col} from 'react-bootstrap';
 import rainge from 'rainge';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCopyright} from "@fortawesome/free-regular-svg-icons";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCopyright} from '@fortawesome/free-regular-svg-icons';
 
 class LicensePageComponent extends React.Component {
   constructor(props) {

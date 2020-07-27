@@ -97,7 +97,7 @@ class AppComponent extends AuthComponent {
   };
 
   redirectTo = (userPath, targetPath) => {
-    let pathQuery = new RegExp(userPath + '[\/]?$', 'g');
+    let pathQuery = new RegExp(userPath + '[/]?$', 'g');
     if (window.location.pathname.match(pathQuery)) {
       return <Redirect to={{pathname: targetPath}}/>
     }

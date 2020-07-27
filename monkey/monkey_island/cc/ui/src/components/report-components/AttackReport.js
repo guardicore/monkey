@@ -48,7 +48,7 @@ class AttackReport extends React.Component {
     }
   }
 
-  onTechniqueSelect = (technique, value) => {
+  onTechniqueSelect = (technique, _) => {
     let selectedTechnique = this.getTechniqueByTitle(technique);
     if (selectedTechnique === false){
       return;

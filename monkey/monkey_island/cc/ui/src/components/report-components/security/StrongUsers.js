@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table'
-import {renderArray} from "../common/RenderArrays";
+import {renderArray} from '../common/RenderArrays';
 
 
 const columns = [

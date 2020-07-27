@@ -15,7 +15,7 @@ export default class SinglePillarPrinciplesStatus extends AuthComponent {
     super(props, context);
 
     this.state = {
-      open: false,
+      open: false
     };
   }
 

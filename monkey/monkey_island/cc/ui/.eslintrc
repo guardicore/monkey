@@ -41,7 +41,7 @@
     "global-strict": 0,
     "no-underscore-dangle": 0,
     "no-console": 0,
-    "no-unused-vars": 1,
+    "no-unused-vars": [1, {"vars": "all", "args": "all", "argsIgnorePattern": "^_", "varsIgnorePattern": "^React$" }],
     "no-trailing-spaces": [
       1,
       {

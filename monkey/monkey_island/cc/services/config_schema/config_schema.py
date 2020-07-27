@@ -1,8 +1,11 @@
 from monkey_island.cc.services.config_schema.basic import BASIC
 from monkey_island.cc.services.config_schema.basic_network import BASIC_NETWORK
-from monkey_island.cc.services.config_schema.definitions.exploiter_classes import EXPLOITER_CLASSES
-from monkey_island.cc.services.config_schema.definitions.finger_classes import FINGER_CLASSES
-from monkey_island.cc.services.config_schema.definitions.post_breach_actions import POST_BREACH_ACTIONS
+from monkey_island.cc.services.config_schema.definitions.exploiter_classes import \
+    EXPLOITER_CLASSES
+from monkey_island.cc.services.config_schema.definitions.finger_classes import \
+    FINGER_CLASSES
+from monkey_island.cc.services.config_schema.definitions.post_breach_actions import \
+    POST_BREACH_ACTIONS
 from monkey_island.cc.services.config_schema.definitions.system_info_collector_classes import \
     SYSTEM_INFO_COLLECTOR_CLASSES
 from monkey_island.cc.services.config_schema.internal import INTERNAL

@@ -2,8 +2,18 @@ import Form from 'react-jsonschema-form-bs4';
 import React, {useState} from 'react';
 import {Nav} from 'react-bootstrap';
 
-const sectionOrder = ['network', 'monkey', 'island_server', 'logging', 'exploits', 'dropper',   'classes', 'general',
-  'kill_file', 'testing'];
+const sectionOrder = [
+  'network',
+  'monkey',
+  'island_server',
+  'logging',
+  'exploits',
+  'dropper',
+  'classes',
+  'general',
+  'kill_file',
+  'testing'
+];
 const initialSection = sectionOrder[0];
 
 export default function InternalConfig(props) {
@@ -38,7 +48,7 @@ export default function InternalConfig(props) {
                  className={'config-nav'}>
       {sectionOrder.map(section => {
         return (
-          <Nav.Item>
+          <Nav.Item key={section}>
             <Nav.Link eventKey={section}>{getNavTitle(schema, section)}</Nav.Link>
           </Nav.Item>);
       })}

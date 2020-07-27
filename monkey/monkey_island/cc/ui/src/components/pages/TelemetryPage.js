@@ -7,7 +7,7 @@ import download from 'downloadjs';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import '../../styles/pages/TelemetryPage.scss';
-import {faDownload} from "@fortawesome/free-solid-svg-icons/faDownload";
+import {faDownload} from '@fortawesome/free-solid-svg-icons/faDownload';
 
 const renderJson = (val) => <JSONTree data={val} level={1} theme="eighties" invertTheme={true}/>;
 const renderTime = (val) => val.split('.')[0];

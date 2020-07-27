@@ -149,7 +149,7 @@ class VennDiagram extends React.Component {
     } else {
 
       // Return z indices to default
-      Object.keys(this.layout).forEach(function (d_, i_) {
+      Object.keys(this.layout).forEach(function (_d, i_) {
         document.querySelector('#' + self.prefix).appendChild(document.querySelector('#' + self.prefix + 'Node_' + i_).parentNode);
       })
     }
