@@ -58,10 +58,13 @@ BASIC = {
                         "type": "string"
                     },
                     "default": [
-                        "Password1!",
-                        "1234",
+                        "root",
+                        "123456",
                         "password",
-                        "12345678"
+                        "123456789",
+                        "qwerty",
+                        "111111",
+                        "iloveyou"
                     ],
                     "description": "List of passwords that will be used by exploiters that need credentials, like "
                                    "SSH brute-forcing."
