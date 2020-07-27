@@ -1,4 +1,5 @@
 import abc
+from typing import List
 
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
@@ -11,9 +12,9 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
 
     @property
     @abc.abstractmethod
-    def pba_names(self):
+    def pba_names(self) -> List[str]:
         """
-        :return: name of post breach action
+        :return: names of post breach action
         """
         pass
 
