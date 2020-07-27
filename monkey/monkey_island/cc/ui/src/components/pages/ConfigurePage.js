@@ -10,6 +10,7 @@ import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
+import transformErrors from '../configuration-components/ValidationErrorMessages';
 import InternalConfig from '../configuration-components/InternalConfig';
 
 const ATTACK_URL = '/api/attack';
@@ -258,8 +259,6 @@ class ConfigurePageComponent extends AuthComponent {
         this.setState({attackConfig: res.configuration});
         this.setInitialAttackConfig(res.configuration);
       })
-
-
   };
 
   removePBAfile(apiEndpoint, setFilenameFnc) {
@@ -341,11 +340,12 @@ class ConfigurePageComponent extends AuthComponent {
       setPbaFilenameLinux: this.setPbaFilenameLinux,
       selectedSection: this.state.selectedSection
     })
-    formProperties['formData'] = this.state.configuration[this.state.selectedSection]
-    formProperties['onChange'] = this.onChange
-    formProperties['customFormats'] = formValidationFormats
-    formProperties['className'] = 'config-form'
-    formProperties['liveValidate'] = true
+    formProperties['formData'] = this.state.configuration[this.state.selectedSection];
+    formProperties['onChange'] = this.onChange;
+    formProperties['customFormats'] = formValidationFormats;
+    formProperties['transformErrors'] = transformErrors;
+    formProperties['className'] = 'config-form';
+    formProperties['liveValidate'] = true;
 
     if (this.state.selectedSection === 'internal') {
       return (<InternalConfig {...formProperties}/>)
