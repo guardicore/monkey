@@ -18,13 +18,11 @@ const columns = [
       {
         Header: 'Events', id: 'events',
         accessor: x => {
-          const comp = <EventsButton finding_id={x.finding_id}
+          return <EventsButton finding_id={x.finding_id}
                                latest_events={x.latest_events}
                                oldest_events={x.oldest_events}
                                event_count={x.event_count}
                                exportFilename={'Events_' + x.test_key} />;
-          comp.displayName = 'EventsButton_' + x.finding_id;
-          return comp;
         },
         maxWidth: EVENTS_COLUMN_MAX_WIDTH
       },
@@ -36,9 +34,7 @@ const columns = [
           const pillarLabels = pillars.map((pillar) =>
             <PillarLabel key={pillar.name} pillar={pillar.name} status={pillar.status}/>
           );
-          const comp = <div style={{textAlign: 'center'}}>{pillarLabels}</div>;
-          comp.displayName = 'PillarsLabels';
-          return comp;
+          return <div style={{textAlign: 'center'}}>{pillarLabels}</div>;
         },
         maxWidth: PILLARS_COLUMN_MAX_WIDTH,
         style: {'whiteSpace': 'unset'}
