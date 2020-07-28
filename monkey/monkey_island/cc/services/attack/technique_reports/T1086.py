@@ -25,15 +25,17 @@ class T1086(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        if not T1086.is_enabled_in_config():
-            status = ScanStatus.DISABLED.value
-        else:
+        @T1086.is_status_disabled
+        def get_technique_status_and_data():
             cmd_data = list(mongo.db.telemetry.aggregate(T1086.query))
-            data = {'title': T1086.technique_title(), 'cmds': cmd_data}
             if cmd_data:
                 status = ScanStatus.USED.value
             else:
                 status = ScanStatus.UNSCANNED.value
+            return (status, cmd_data)
+
+        status, cmd_data = get_technique_status_and_data()
+        data = {'title': T1086.technique_title(), 'cmds': cmd_data}
 
         data.update(T1086.get_mitigation_by_status(status))
         data.update(T1086.get_message_and_status(status))

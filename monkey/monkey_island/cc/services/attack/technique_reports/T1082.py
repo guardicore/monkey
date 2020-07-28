@@ -38,17 +38,18 @@ class T1082(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        data = {'title': T1082.technique_title()}
-
-        if not T1082.is_enabled_in_config():
-            status = ScanStatus.DISABLED.value
-        else:
+        @T1082.is_status_disabled
+        def get_technique_status_and_data():
             system_info = list(mongo.db.telemetry.aggregate(T1082.query))
-            data.update({'system_info': system_info})
             if system_info:
                 status = ScanStatus.USED.value
             else:
                 status = ScanStatus.UNSCANNED.value
+            return (status, system_info)
+
+        status, system_info = get_technique_status_and_data()
+        data = {'title': T1082.technique_title()}
+        data.update({'system_info': system_info})
 
         data.update(T1082.get_mitigation_by_status(status))
         data.update(T1082.get_message_and_status(status))

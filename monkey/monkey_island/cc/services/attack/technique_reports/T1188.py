@@ -13,11 +13,8 @@ class T1188(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        hops = []
-
-        if not T1188.is_enabled_in_config():
-            status = ScanStatus.DISABLED.value
-        else:
+        @T1188.is_status_disabled
+        def get_technique_status_and_data():
             monkeys = Monkey.get_tunneled_monkeys()
             hops = []
             for monkey in monkeys:
@@ -31,6 +28,9 @@ class T1188(AttackTechnique):
                                  'to': proxy.get_network_info(),
                                  'count': proxy_count})
             status = ScanStatus.USED.value if hops else ScanStatus.UNSCANNED.value
+            return (status, hops)
+
+        status, hops = get_technique_status_and_data()
 
         data = T1188.get_base_data_by_status(status)
         data.update({'hops': hops})

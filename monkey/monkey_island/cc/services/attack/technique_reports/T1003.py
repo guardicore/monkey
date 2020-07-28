@@ -18,15 +18,16 @@ class T1003(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        data = {'title': T1003.technique_title()}
-
-        if not T1003.is_enabled_in_config():
-            status = ScanStatus.DISABLED.value
-        else:
+        @T1003.is_status_disabled
+        def get_technique_status_and_data():
             if mongo.db.telemetry.count_documents(T1003.query):
                 status = ScanStatus.USED.value
             else:
                 status = ScanStatus.UNSCANNED.value
+            return (status, [])
+
+        data = {'title': T1003.technique_title()}
+        status, _ = get_technique_status_and_data()
 
         data.update(T1003.get_message_and_status(status))
         data.update(T1003.get_mitigation_by_status(status))

@@ -13,13 +13,8 @@ class T1210(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        scanned_services = []
-        exploited_services = []
-        data = {'title': T1210.technique_title()}
-
-        if not T1210.is_enabled_in_config():
-            status = ScanStatus.DISABLED.value
-        else:
+        @T1210.is_status_disabled
+        def get_technique_status_and_data():
             scanned_services = T1210.get_scanned_services()
             exploited_services = T1210.get_exploited_services()
             if exploited_services:
@@ -28,6 +23,15 @@ class T1210(AttackTechnique):
                 status = ScanStatus.SCANNED.value
             else:
                 status = ScanStatus.UNSCANNED.value
+            return (status, scanned_services, exploited_services)
+
+        status_and_data = get_technique_status_and_data()
+        status = status_and_data[0]
+        if status == ScanStatus.DISABLED.value:
+            scanned_services, exploited_services = [], []
+        else:
+            scanned_services, exploited_services = status_and_data[1], status_and_data[2]
+        data = {'title': T1210.technique_title()}
 
         data.update(T1210.get_message_and_status(status))
         data.update(T1210.get_mitigation_by_status(status))
