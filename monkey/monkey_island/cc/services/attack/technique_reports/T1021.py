@@ -34,18 +34,23 @@ class T1021(AttackTechnique):
     @staticmethod
     def get_report_data():
         attempts = []
-        if mongo.db.telemetry.count_documents(T1021.scanned_query):
-            attempts = list(mongo.db.telemetry.aggregate(T1021.query))
-            if attempts:
-                status = ScanStatus.USED.value
-                for result in attempts:
-                    result['successful_creds'] = []
-                    for attempt in result['attempts']:
-                        result['successful_creds'].append(parse_creds(attempt))
-            else:
-                status = ScanStatus.SCANNED.value
+
+        if not T1021.is_enabled_in_config():
+            status = ScanStatus.DISABLED.value
         else:
-            status = ScanStatus.UNSCANNED.value
+            if mongo.db.telemetry.count_documents(T1021.scanned_query):
+                attempts = list(mongo.db.telemetry.aggregate(T1021.query))
+                if attempts:
+                    status = ScanStatus.USED.value
+                    for result in attempts:
+                        result['successful_creds'] = []
+                        for attempt in result['attempts']:
+                            result['successful_creds'].append(parse_creds(attempt))
+                else:
+                    status = ScanStatus.SCANNED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+
         data = T1021.get_base_data_by_status(status)
         data.update({'services': attempts})
         return data

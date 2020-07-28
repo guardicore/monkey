@@ -19,10 +19,15 @@ class T1003(AttackTechnique):
     @staticmethod
     def get_report_data():
         data = {'title': T1003.technique_title()}
-        if mongo.db.telemetry.count_documents(T1003.query):
-            status = ScanStatus.USED.value
+
+        if not T1003.is_enabled_in_config():
+            status = ScanStatus.DISABLED.value
         else:
-            status = ScanStatus.UNSCANNED.value
+            if mongo.db.telemetry.count_documents(T1003.query):
+                status = ScanStatus.USED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+
         data.update(T1003.get_message_and_status(status))
         data.update(T1003.get_mitigation_by_status(status))
         data['stolen_creds'] = ReportService.get_stolen_creds()

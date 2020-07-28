@@ -26,21 +26,27 @@ class T1110(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        attempts = list(mongo.db.telemetry.aggregate(T1110.query))
-        succeeded = False
+        attempts = []
 
-        for result in attempts:
-            result['successful_creds'] = []
-            for attempt in result['attempts']:
-                succeeded = True
-                result['successful_creds'].append(parse_creds(attempt))
-
-        if succeeded:
-            status = ScanStatus.USED.value
-        elif attempts:
-            status = ScanStatus.SCANNED.value
+        if not T1110.is_enabled_in_config():
+            status = ScanStatus.DISABLED.value
         else:
-            status = ScanStatus.UNSCANNED.value
+            attempts = list(mongo.db.telemetry.aggregate(T1110.query))
+            succeeded = False
+
+            for result in attempts:
+                result['successful_creds'] = []
+                for attempt in result['attempts']:
+                    succeeded = True
+                    result['successful_creds'].append(parse_creds(attempt))
+
+            if succeeded:
+                status = ScanStatus.USED.value
+            elif attempts:
+                status = ScanStatus.SCANNED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+
         data = T1110.get_base_data_by_status(status)
         # Remove data with no successful brute force attempts
         attempts = [attempt for attempt in attempts if attempt['attempts']]

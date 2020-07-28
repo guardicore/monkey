@@ -28,11 +28,17 @@ class T1018(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        scan_info = list(mongo.db.telemetry.aggregate(T1018.query))
-        if scan_info:
-            status = ScanStatus.USED.value
+        scan_info = []
+
+        if not T1018.is_enabled_in_config():
+            status = ScanStatus.DISABLED.value
         else:
-            status = ScanStatus.UNSCANNED.value
+            scan_info = list(mongo.db.telemetry.aggregate(T1018.query))
+            if scan_info:
+                status = ScanStatus.USED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+
         data = T1018.get_base_data_by_status(status)
         data.update({'scan_info': scan_info})
         return data

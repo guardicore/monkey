@@ -39,16 +39,19 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
         :return: Technique's report data aggregated from the database
         """
         data = {'title': cls.technique_title(), 'info': []}
+        info = []
 
-        info = list(mongo.db.telemetry.aggregate(cls.get_pba_query(cls.pba_names)))
-
-        status = ScanStatus.UNSCANNED.value
-        if info:
-            successful_PBAs = mongo.db.telemetry.count({
-                '$or': [{'data.name': pba_name} for pba_name in cls.pba_names],
-                'data.result.1': True
-            })
-            status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
+        if not cls.is_enabled_in_config():
+            status = ScanStatus.DISABLED.value
+        else:
+            info = list(mongo.db.telemetry.aggregate(cls.get_pba_query(cls.pba_names)))
+            status = ScanStatus.UNSCANNED.value
+            if info:
+                successful_PBAs = mongo.db.telemetry.count({
+                    '$or': [{'data.name': pba_name} for pba_name in cls.pba_names],
+                    'data.result.1': True
+                })
+                status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
 
         data.update(cls.get_base_data_by_status(status))
         data.update({'info': info})

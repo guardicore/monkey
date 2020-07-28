@@ -13,14 +13,20 @@ class T1041(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        monkeys = list(Monkey.objects())
-        info = [{'src': monkey['command_control_channel']['src'],
-                 'dst': monkey['command_control_channel']['dst']}
-                for monkey in monkeys if monkey['command_control_channel']]
-        if info:
-            status = ScanStatus.USED.value
+        info = []
+
+        if not T1041.is_enabled_in_config():
+            status = ScanStatus.DISABLED.value
         else:
-            status = ScanStatus.UNSCANNED.value
+            monkeys = list(Monkey.objects())
+            info = [{'src': monkey['command_control_channel']['src'],
+                    'dst': monkey['command_control_channel']['dst']}
+                    for monkey in monkeys if monkey['command_control_channel']]
+            if info:
+                status = ScanStatus.USED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+
         data = T1041.get_base_data_by_status(status)
         data.update({'command_control_channel': info})
         return data

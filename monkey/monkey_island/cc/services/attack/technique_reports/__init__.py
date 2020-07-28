@@ -63,7 +63,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         Gets the status of a certain attack technique.
         :return: ScanStatus numeric value
         """
-        if cls._is_disabled_in_config():
+        if not cls.is_enabled_in_config():
             return ScanStatus.DISABLED.value
         elif mongo.db.telemetry.find_one({'telem_category': 'attack',
                                           'data.status': ScanStatus.USED.value,
@@ -83,7 +83,6 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :param status: Enum from common/attack_utils.py integer value
         :return: Dict with message and status
         """
-        status = cls._check_status(status)
         return {'message': cls.get_message_by_status(status), 'status': status}
 
     @classmethod
@@ -93,7 +92,6 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :param status: Enum from common/attack_utils.py integer value
         :return: message string
         """
-        status = cls._check_status(status)
         if status == ScanStatus.DISABLED.value:
             return disabled_msg
         if status == ScanStatus.UNSCANNED.value:
@@ -127,7 +125,6 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
 
     @classmethod
     def get_base_data_by_status(cls, status):
-        status = cls._check_status(status)
         data = cls.get_message_and_status(status)
         data.update({'title': cls.technique_title()})
         data.update(cls.get_mitigation_by_status(status))
@@ -135,7 +132,6 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
 
     @classmethod
     def get_mitigation_by_status(cls, status: ScanStatus) -> dict:
-        status = cls._check_status(status)
         if status == ScanStatus.USED.value:
             mitigation_document = AttackMitigations.get_mitigation_by_technique_id(str(cls.tech_id))
             return {'mitigations': mitigation_document.to_mongo().to_dict()['mitigations']}
@@ -143,11 +139,5 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
             return {}
 
     @classmethod
-    def _check_status(cls, status):
-        if status == ScanStatus.UNSCANNED.value and not cls._is_enabled_in_config():
-            return ScanStatus.DISABLED.value
-        return status
-
-    @classmethod
-    def _is_disabled_in_config(cls):
-        return not AttackConfig.get_technique_values()[cls.tech_id]
+    def is_enabled_in_config(cls) -> bool:
+        return AttackConfig.get_technique_values()[cls.tech_id]

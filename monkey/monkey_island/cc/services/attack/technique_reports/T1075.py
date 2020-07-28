@@ -31,14 +31,19 @@ class T1075(AttackTechnique):
     @staticmethod
     def get_report_data():
         data = {'title': T1075.technique_title()}
-        successful_logins = list(mongo.db.telemetry.aggregate(T1075.query))
-        data.update({'successful_logins': successful_logins})
-        if successful_logins:
-            status = ScanStatus.USED.value
-        elif mongo.db.telemetry.count_documents(T1075.login_attempt_query):
-            status = ScanStatus.SCANNED.value
+
+        if not T1075.is_enabled_in_config():
+            status = ScanStatus.DISABLED.value
         else:
-            status = ScanStatus.UNSCANNED.value
+            successful_logins = list(mongo.db.telemetry.aggregate(T1075.query))
+            data.update({'successful_logins': successful_logins})
+            if successful_logins:
+                status = ScanStatus.USED.value
+            elif mongo.db.telemetry.count_documents(T1075.login_attempt_query):
+                status = ScanStatus.SCANNED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+
         data.update(T1075.get_message_and_status(status))
         data.update(T1075.get_mitigation_by_status(status))
         return data
