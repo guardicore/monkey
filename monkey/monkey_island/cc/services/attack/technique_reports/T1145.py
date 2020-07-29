@@ -20,12 +20,17 @@ class T1145(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        ssh_info = list(mongo.db.telemetry.aggregate(T1145.query))
+        @T1145.is_status_disabled
+        def get_technique_status_and_data():
+            ssh_info = list(mongo.db.telemetry.aggregate(T1145.query))
+            if ssh_info:
+                status = ScanStatus.USED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+            return (status, ssh_info)
 
-        if ssh_info:
-            status = ScanStatus.USED.value
-        else:
-            status = ScanStatus.UNSCANNED.value
+        status, ssh_info = get_technique_status_and_data()
+
         data = T1145.get_base_data_by_status(status)
         data.update({'ssh_info': ssh_info})
         return data

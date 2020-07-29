@@ -75,7 +75,7 @@
     "filepond": "^4.18.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
-    "marked": "^0.8.2",
+    "marked": "^1.1.1",
     "normalize.css": "^8.0.0",
     "npm": "^6.14.6",
     "pluralize": "^7.0.0",

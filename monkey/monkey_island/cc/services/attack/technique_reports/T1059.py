@@ -23,12 +23,18 @@ class T1059(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        cmd_data = list(mongo.db.telemetry.aggregate(T1059.query))
+        @T1059.is_status_disabled
+        def get_technique_status_and_data():
+            cmd_data = list(mongo.db.telemetry.aggregate(T1059.query))
+            if cmd_data:
+                status = ScanStatus.USED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+            return (status, cmd_data)
+
+        status, cmd_data = get_technique_status_and_data()
         data = {'title': T1059.technique_title(), 'cmds': cmd_data}
-        if cmd_data:
-            status = ScanStatus.USED.value
-        else:
-            status = ScanStatus.UNSCANNED.value
+
         data.update(T1059.get_message_and_status(status))
         data.update(T1059.get_mitigation_by_status(status))
         return data
