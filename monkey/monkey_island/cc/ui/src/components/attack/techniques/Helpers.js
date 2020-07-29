@@ -65,5 +65,6 @@ export function renderUsageFields(usages) {
 export const ScanStatus = {
   UNSCANNED: 0,
   SCANNED: 1,
-  USED: 2
+  USED: 2,
+  DISABLED: 3
 };

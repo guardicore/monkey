@@ -1,8 +1,9 @@
 $transition: 300ms cubic-bezier(0.6, 0.3, 0.3, 0.6);
 
 $danger-color: #ebbcba;
+$disabled-color: #f4f4f4;
 $info-color: #ade3eb;
-$default-color: #e0ddde;
+$default-color: #cbcbcb;
 $warning-color: #ffe28d;
 
 .collapse-item button {
@@ -52,6 +53,14 @@ $warning-color: #ffe28d;
 
 .collapse-default {
   background-color: $default-color !important;
+}
+
+.collapse-disabled {
+  background-color: $disabled-color !important;
+}
+
+.collapse-disabled {
+  background-color: $disabled-color !important;
 }
 
 .collapse-item {
