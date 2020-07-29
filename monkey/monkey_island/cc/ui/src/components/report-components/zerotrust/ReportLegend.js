@@ -14,7 +14,7 @@ class ZeroTrustReportLegend extends Component {
     super(props, context);
 
     this.state = {
-      open: false,
+      open: false
     };
   }
 

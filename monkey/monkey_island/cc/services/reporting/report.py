@@ -618,7 +618,7 @@ class ReportService:
 
     @staticmethod
     def get_config_exploits():
-        exploits_config_value = ['exploits', 'general', 'exploiter_classes']
+        exploits_config_value = ['basic', 'exploiters', 'exploiter_classes']
         default_exploits = ConfigService.get_default_config(False)
         for namespace in exploits_config_value:
             default_exploits = default_exploits[namespace]
@@ -632,11 +632,11 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        return ConfigService.get_config_value(['basic_network', 'general', 'subnet_scan_list'], True, True)
+        return ConfigService.get_config_value(['basic_network', 'scope', 'subnet_scan_list'], True, True)
 
     @staticmethod
     def get_config_scan():
-        return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True, True)
+        return ConfigService.get_config_value(['basic_network', 'scope', 'local_network_scan'], True, True)
 
     @staticmethod
     def get_issues_overview(issues, config_users, config_passwords):

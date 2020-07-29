@@ -2,6 +2,11 @@
   height: 50px !important;
 }
 
+.config-nav .nav-link.tab-primary{
+  color: $monkey-alt;
+  font-weight: bold;
+}
+
 .config-nav .nav-item > a{
   color: $black;
   padding: 15px 10px 15px 10px;
@@ -25,3 +30,30 @@
 .config-form .form-group {
   margin-left: 2em;
 }
+
+.config-form div.card.errors {
+  display: none;
+}
+
+.config-template-no-header > p {
+  display: none;
+}
+
+.config-template-no-header > label {
+  display: none;
+}
+
+.config-form .form-group.field > label {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: 1.2em;
+}
+
+.config-field-hidden {
+  display: none;
+}
+
+.field-description {
+  white-space: pre-wrap;
+}
+

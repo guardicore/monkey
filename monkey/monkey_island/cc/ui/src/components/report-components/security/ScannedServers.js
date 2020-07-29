@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
-import {renderArray, renderIpAddresses} from "../common/RenderArrays";
+import {renderArray, renderIpAddresses} from '../common/RenderArrays';
 
 
 const columns = [
@@ -32,7 +32,7 @@ class ScannedServersComponent extends React.Component {
     let showPagination = this.props.data.length > pageSize;
 
     const scannedMachinesCount = this.props.data.length;
-    const reducerFromScannedServerToServicesAmount = (accumulated, scannedServer) => accumulated + scannedServer["services"].length;
+    const reducerFromScannedServerToServicesAmount = (accumulated, scannedServer) => accumulated + scannedServer['services'].length;
     const scannedServicesAmount = this.props.data.reduce(reducerFromScannedServerToServicesAmount, 0);
 
     return (

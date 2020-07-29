@@ -4,7 +4,7 @@ import Tooltip from 'react-tooltip-lite'
 import AuthComponent from '../AuthComponent';
 import ReactTable from 'react-table';
 import 'filepond/dist/filepond.min.css';
-import '../../styles/Tooltip.scss';
+import '../../styles/components/Tooltip.scss';
 import {Col} from 'react-bootstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

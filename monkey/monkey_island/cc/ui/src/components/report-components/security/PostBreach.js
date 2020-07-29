@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
-import {renderIpAddresses} from "../common/RenderArrays";
-import parsePbaResults from "./PostBreachParser";
+import {renderIpAddresses} from '../common/RenderArrays';
+import parsePbaResults from './PostBreachParser';
 
 let renderMachine = function (data) {
   return <div>{data.label} ( {renderIpAddresses(data)} )</div>
@@ -58,7 +58,7 @@ class PostBreachComponent extends React.Component {
     pbaMachines = pbaMachines.map(pbaData => parsePbaResults(pbaData));
     let defaultPageSize = pbaMachines.length > pageSize ? pageSize : pbaMachines.length;
     let showPagination = pbaMachines > pageSize;
-    const pbaCount = pbaMachines.reduce((accumulated, pbaMachine) => accumulated+pbaMachine["pba_results"].length, 0);
+    const pbaCount = pbaMachines.reduce((accumulated, pbaMachine) => accumulated+pbaMachine['pba_results'].length, 0);
     return (
       <>
         <p>

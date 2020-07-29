@@ -1,0 +1,47 @@
+.advanced-multi-select .choice-block.form-control {
+  overflow: scroll;
+  overflow-x: hidden;
+  padding: 0;
+  margin-left: 0;
+}
+
+.advanced-multi-select svg {
+  font-size: 1.15em;
+}
+
+.advanced-multi-select .card-header {
+  border: 1px solid $gray-300;
+  border-bottom: none;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding-left: 0;
+  padding-bottom: 5px;
+}
+
+.advanced-multi-select .card-header button {
+  padding-top: 0;
+}
+
+.advanced-multi-select .card-header .header-title {
+  font-size: 1.2em;
+}
+
+.advanced-multi-select .choice-block .form-group {
+  margin: 0;
+  padding: 3px 0 0 0;
+  height: 30px;
+}
+
+.advanced-multi-select .choice-block .form-group:hover {
+  background-color: $gray-300;
+  cursor: pointer;
+}
+
+.advanced-multi-select .choice-block .form-group button {
+  margin: 0 3px 3px 12px;
+  padding: 0;
+}
+
+.advanced-multi-select .option-text {
+  margin-left: 10px;
+}

@@ -10,8 +10,7 @@ import monkey_island.cc.services.post_breach_files
 from monkey_island.cc.database import mongo
 from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.network_utils import local_ip_addresses
-
-from .config_schema import SCHEMA
+from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
 
@@ -218,8 +217,8 @@ class ConfigService:
     @staticmethod
     def set_server_ips_in_config(config):
         ips = local_ip_addresses()
-        config["cnc"]["servers"]["command_servers"] = ["%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips]
-        config["cnc"]["servers"]["current_server"] = "%s:%d" % (ips[0], env_singleton.env.get_island_port())
+        config["internal"]["island_server"]["command_servers"] = ["%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips]
+        config["internal"]["island_server"]["current_server"] = "%s:%d" % (ips[0], env_singleton.env.get_island_port())
 
     @staticmethod
     def save_initial_config_if_needed():

@@ -3,12 +3,14 @@
 @import '../../node_modules/bootstrap/scss/bootstrap';
 
 // Imports that require variables
-@import './report/ReportPage.scss';
-@import './report/AttackReport.scss';
-@import './PreviewPane.scss';
-@import './ConfigurationPage.scss';
-@import './AuthPage.scss';
-@import './MonkeyRunPage.scss';
+@import 'pages/report/ReportPage.scss';
+@import 'pages/report/AttackReport.scss';
+@import 'pages/ConfigurationPage';
+@import 'pages/AuthPage';
+@import 'pages/MonkeyRunPage';
+@import 'components/InfoPane';
+@import 'components/PreviewPane';
+@import 'components/AdvancedMultiSelect';
 
 
 // Define custom elements after bootstrap import

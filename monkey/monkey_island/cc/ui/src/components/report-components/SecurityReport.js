@@ -473,7 +473,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateShellshockPathListBadges(paths) {
-    return paths.map(path => <span className="badge badge-warning" style={{margin: '2px'}}>{path}</span>);
+    return paths.map(path => <span className="badge badge-warning" style={{margin: '2px'}} key={path}>{path}</span>);
   }
 
   generateSmbPasswordIssue(issue) {

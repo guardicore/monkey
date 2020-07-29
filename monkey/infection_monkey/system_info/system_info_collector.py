@@ -19,7 +19,7 @@ class SystemInfoCollector(Plugin, metaclass=ABCMeta):
 
     @staticmethod
     def should_run(class_name) -> bool:
-        return class_name in WormConfiguration.system_info_collectors_classes
+        return class_name in WormConfiguration.system_info_collector_classes
 
     @staticmethod
     def base_package_file():

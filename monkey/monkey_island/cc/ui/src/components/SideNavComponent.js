@@ -49,7 +49,7 @@ class SideNavComponent extends React.Component {
           </li>
           <li>
             <NavLink to='/report/security'
-                     isActive={(match, location) => {
+                     isActive={(_match, location) => {
                        return (location.pathname === '/report/attack'
                          || location.pathname === '/report/zeroTrust'
                          || location.pathname === '/report/security')
