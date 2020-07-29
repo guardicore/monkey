@@ -1,5 +1,6 @@
 // colors
-$not-attempted: #e0ddde;
+$disabled: #f4f4f4;
+$not-attempted: #cbcbcb;
 $attempted: #ffe28d;
 $used: #ebbcba;
 $black: #3a3a3a;
@@ -19,6 +20,11 @@ $black: #3a3a3a;
   color: $black;
 }
 
+.attack-matrix .status-3 {
+  background-color: $disabled !important;
+  color: $black;
+}
+
 .attack-matrix div.rt-td:hover {
     transform: scale(1.08);
     filter: brightness(110%);
@@ -27,6 +33,10 @@ $black: #3a3a3a;
 
 .attack-matrix .rt-thead,.-header {
   border-bottom: 1px solid #0000000f;
+}
+
+.technique-disabled {
+  color: $disabled;
 }
 
 .technique-not-attempted {

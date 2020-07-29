@@ -8,6 +8,8 @@ class ScanStatus(Enum):
     SCANNED = 1
     # Technique was attempted and succeeded
     USED = 2
+    # Techique was disabled
+    DISABLED = 3
 
 
 class UsageEnum(Enum):
