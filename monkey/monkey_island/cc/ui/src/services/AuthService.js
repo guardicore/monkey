@@ -21,7 +21,7 @@ export default class AuthService {
 
   jwtHeader = () => {
     if (this._loggedIn()) {
-      return 'JWT ' + this._getToken();
+      return 'Bearer ' + this._getToken();
     }
   };
 
