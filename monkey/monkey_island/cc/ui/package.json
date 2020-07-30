@@ -83,7 +83,7 @@
     "rainge": "^1.0.1",
     "rc-progress": "^2.6.1",
     "react": "^16.12.0",
-    "react-bootstrap": "^1.1.0",
+    "react-bootstrap": "^1.1.1",
     "react-copy-to-clipboard": "^5.0.2",
     "react-data-components": "^1.2.0",
     "react-desktop-notification": "^1.0.9",
