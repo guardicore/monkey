@@ -143,6 +143,7 @@ def init_api_resources(api):
 
 def init_app(mongo_url):
     app = Flask(__name__)
+    app.config['JSON_SORT_KEYS'] = False
 
     api = flask_restful.Api(app)
     api.representations = {'application/json': output_json}
