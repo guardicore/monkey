@@ -78,6 +78,10 @@ def init_app_config(app, mongo_url):
     # deciding to reset credentials and then still logging in with the old JWT.
     app.config['JWT_SECRET_KEY'] = str(uuid.uuid4())
 
+    # By default, Flask sorts keys of JSON objects alphabetically, which messes with the ATT&CK matrix in the
+    # configuration. See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
+    app.config['JSON_SORT_KEYS'] = False
+
 
 def init_app_services(app):
     init_jwt(app)
