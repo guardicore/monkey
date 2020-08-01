@@ -36,12 +36,6 @@ def process_post_breach_telemetry(telemetry_json):
             modified_data.append(temp)
         return modified_data
 
-    def update_data(data):
-        data = add_message_for_blank_outputs(data)
-        mongo.db.monkey.update(
-            {'guid': telemetry_json['monkey_guid']},
-            {'$push': {'pba_results': data}})
-
     def add_message_for_blank_outputs(data):
         if not data['result'][0]:
             data['result'][0] = EXECUTION_WITHOUT_OUTPUT
@@ -54,4 +48,11 @@ def process_post_breach_telemetry(telemetry_json):
     telemetry_json['data'] = convert_telem_data_to_list(telemetry_json['data'])
 
     for pba_data in telemetry_json['data']:
-        update_data(pba_data)
+        pba_data = add_message_for_blank_outputs(pba_data)
+        update_data(telemetry_json, pba_data)
+
+
+def update_data(telemetry_json, data):
+    mongo.db.monkey.update(
+        {'guid': telemetry_json['monkey_guid']},
+        {'$push': {'pba_results': data}})
