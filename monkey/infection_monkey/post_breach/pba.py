@@ -13,8 +13,6 @@ LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
 
-EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
-
 
 class PBA(Plugin):
     """
@@ -90,8 +88,6 @@ class PBA(Plugin):
         """
         try:
             output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True).decode()
-            if not output:
-                output = EXECUTION_WITHOUT_OUTPUT
             return output, True
         except subprocess.CalledProcessError as e:
             # Return error output of the command
