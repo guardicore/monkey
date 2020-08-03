@@ -246,6 +246,16 @@ class ConfigService:
                     for property3, subschema3 in list(subschema2["properties"].items()):
                         if "default" in subschema3:
                             sub_dict[property3] = subschema3["default"]
+                        elif "properties" in subschema3:
+                            layer_3_dict = {}
+                            for property4, subschema4 in list(subschema3["properties"].items()):
+                                if "properties" in subschema4:
+                                    raise ValueError("monkey/monkey_island/cc/services/config.py "
+                                                     "can't handle 5 level config. "
+                                                     "Either change back the config or refactor.")
+                                if "default" in subschema4:
+                                    layer_3_dict[property4] = subschema4["default"]
+                            sub_dict[property3] = layer_3_dict
                     main_dict[property2] = sub_dict
                 instance.setdefault(property1, main_dict)
 
