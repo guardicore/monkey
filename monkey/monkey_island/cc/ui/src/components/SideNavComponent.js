@@ -1,12 +1,14 @@
-import logoImage from '../images/monkey-icon.svg';
-import infectionMonkeyImage from '../images/infection-monkey.svg';
+import React from 'react';
 import {NavLink} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
+import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 import guardicoreLogoImage from '../images/guardicore-logo.png';
+import logoImage from '../images/monkey-icon.svg';
+import infectionMonkeyImage from '../images/infection-monkey.svg';
 import VersionComponent from './side-menu/VersionComponent';
-import React from 'react';
+import '../styles/components/SideNav.scss';
 
 
 class SideNavComponent extends React.Component {
@@ -14,24 +16,17 @@ class SideNavComponent extends React.Component {
   render() {
     return (
       <>
-        <div className='header'>
-          <img alt='logo' src={logoImage} style={{width: '5vw', margin: '15px'}}/>
-          <img src={infectionMonkeyImage} style={{width: '15vw'}} alt='Infection Monkey'/>
-        </div>
+        <NavLink to={'/'} exact={true}>
+          <div className='header'>
+            <img alt='logo' src={logoImage} style={{width: '5vw', margin: '15px'}}/>
+            <img src={infectionMonkeyImage} style={{width: '15vw'}} alt='Infection Monkey'/>
+          </div>
+        </NavLink>
 
         <ul className='navigation'>
           <li>
-            <NavLink to='/' exact={true}>
-              <span className='number'>1.</span>
-              Run Monkey Island Server
-              {this.props.completedSteps.run_server ?
-                <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
-                : ''}
-            </NavLink>
-          </li>
-          <li>
             <NavLink to='/run-monkey'>
-              <span className='number'>2.</span>
+              <span className='number'>1.</span>
               Run Monkey
               {this.props.completedSteps.run_monkey ?
                 <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
@@ -40,7 +35,7 @@ class SideNavComponent extends React.Component {
           </li>
           <li>
             <NavLink to='/infection/map'>
-              <span className='number'>3.</span>
+              <span className='number'>2.</span>
               Infection Map
               {this.props.completedSteps.infection_done ?
                 <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
@@ -54,7 +49,7 @@ class SideNavComponent extends React.Component {
                          || location.pathname === '/report/zeroTrust'
                          || location.pathname === '/report/security')
                      }}>
-              <span className='number'>4.</span>
+              <span className='number'>3.</span>
               Security Reports
               {this.props.completedSteps.report_done ?
                 <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
@@ -72,7 +67,7 @@ class SideNavComponent extends React.Component {
         <hr/>
         <ul>
           <li><NavLink to='/configure'>Configuration</NavLink></li>
-          <li><NavLink to='/infection/telemetry'>Log</NavLink></li>
+          <li><NavLink to='/infection/telemetry'>Logs</NavLink></li>
         </ul>
 
         <hr/>
@@ -83,6 +78,10 @@ class SideNavComponent extends React.Component {
           </a>
         </div>
         <div className='license-link text-center'>
+          <a href='https://www.guardicore.com/infectionmonkey/docs' rel="noopener noreferrer" target="_blank">
+            <FontAwesomeIcon icon={faExternalLinkAlt} /> Documentation
+          </a>
+          <br/>
           <NavLink to='/license'>License</NavLink>
         </div>
         <VersionComponent/>
