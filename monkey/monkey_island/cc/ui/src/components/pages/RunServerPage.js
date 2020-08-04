@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlayCircle} from '@fortawesome/free-regular-svg-icons';
 import {faBookOpen, faCogs} from '@fortawesome/free-solid-svg-icons';
+import '../../styles/pages/RunServerPage.scss';
 
 class RunServerPageComponent extends React.Component {
   constructor(props) {
