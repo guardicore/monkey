@@ -8,6 +8,7 @@ import guardicoreLogoImage from '../images/guardicore-logo.png';
 import logoImage from '../images/monkey-icon.svg';
 import infectionMonkeyImage from '../images/infection-monkey.svg';
 import VersionComponent from './side-menu/VersionComponent';
+import '../styles/components/SideNav.scss';
 
 
 class SideNavComponent extends React.Component {
