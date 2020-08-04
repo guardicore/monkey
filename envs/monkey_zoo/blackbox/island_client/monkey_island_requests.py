@@ -104,4 +104,4 @@ class MonkeyIslandRequests(object):
 
     @_Decorators.refresh_jwt_token
     def get_jwt_header(self):
-        return {"Authorization": "JWT " + self.token}
+        return {"Authorization": "Bearer " + self.token}

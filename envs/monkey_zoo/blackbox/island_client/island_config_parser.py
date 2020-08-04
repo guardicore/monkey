@@ -9,7 +9,7 @@ class IslandConfigParser(object):
         self.config_json = json.loads(self.config_raw)
 
     def get_ips_of_targets(self):
-        return self.config_json['basic_network']['general']['subnet_scan_list']
+        return self.config_json['basic_network']['scope']['subnet_scan_list']
 
     @staticmethod
     def get_conf_file_path(conf_file_name):
