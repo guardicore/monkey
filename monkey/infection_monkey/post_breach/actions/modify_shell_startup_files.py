@@ -35,7 +35,7 @@ class ModifyShellStartupFiles(PBA):
 
             for startup_file_per_user in shell_startup_files_per_user_for_windows:
                 windows_cmds = ' '.join(cmds_for_windows).format(startup_file_per_user)
-                pbas.append(self.ModifyShellStartupFile(linux_cmds='', windows_cmds=['powershell.exe', windows_cmds]))
+                pbas.append(self.ModifyShellStartupFile(linux_cmds='', windows_cmds=windows_cmds))
 
             for username in usernames_for_linux:
                 for shell_startup_file in shell_startup_files_for_linux:
