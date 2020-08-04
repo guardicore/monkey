@@ -49,7 +49,7 @@ class TelemetryPageComponent extends AuthComponent {
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
            className={'main'}>
         <div>
-            <h1 className="page-title">Log</h1>
+            <h1 className="page-title">Logs</h1>
             <div className="data-table-container">
               <DataTable
                 keys="name"

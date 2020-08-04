@@ -154,7 +154,7 @@ class ReportPageComponent extends AuthComponent {
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 10}}
            className={'report-wrapper'}>
-        <h1 className='page-title no-print'>4. Security Reports</h1>
+        <h1 className='page-title no-print'>3. Security Reports</h1>
         {this.renderNav()}
         <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
         <div style={{'fontSize': '1.2em'}}>
