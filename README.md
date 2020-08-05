@@ -51,12 +51,12 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
   * SambaCry
   * Elastic Search (CVE-2015-1427)
   * Weblogic server
-  * and more
+  * and more, see our [Documentation hub](https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/) for more information about our RCE exploiters.
 
 ## Setup
 Check out the [Setup](https://www.guardicore.com/infectionmonkey/docs/setup/) page in the Wiki or a quick getting [started guide](https://www.guardicore.com/infectionmonkey/docs/usage/getting-started/).
 
-The Infection Monkey supports a variety of platforms, documented [in the documentation framework](https://www.guardicore.com/infectionmonkey/docs/reference/operating_systems_support/).
+The Infection Monkey supports a variety of platforms, documented [in our documentation hub](https://www.guardicore.com/infectionmonkey/docs/reference/operating_systems_support/).
 
 ## Building the Monkey from source
 To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts) 
