@@ -8,14 +8,15 @@ from requests.exceptions import ConnectionError
 
 import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
-from infection_monkey.config import WormConfiguration, GUID
-from infection_monkey.network.info import local_ips, check_internet_access
+from infection_monkey.config import GUID, WormConfiguration
+from infection_monkey.network.info import check_internet_access, local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
+from infection_monkey.utils.exceptions.planned_shutdown_exception import \
+    PlannedShutdownException
 
 __author__ = 'hoffer'
 
-from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 
 requests.packages.urllib3.disable_warnings()
 

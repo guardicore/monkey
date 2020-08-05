@@ -109,8 +109,8 @@ class TechniqueDropdowns extends React.Component{
       <div className='attack-technique-list-component'>
         <h3>
           List of all techniques
-          <Button bsStyle='link'
-                  bsSize='large'
+          <Button variant='link'
+                  size='lg'
                   onClick={() => this.toggleTechList()}
                   className={classNames({'toggle-btn': true,
                                          'toggled-off' : this.state.techniquesHidden,

@@ -1,4 +1,4 @@
-from PyInstaller.utils.hooks import collect_submodules, collect_data_files
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 # Import all actions as modules
 hiddenimports = collect_submodules('infection_monkey.post_breach.actions')

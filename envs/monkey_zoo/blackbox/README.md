@@ -2,7 +2,8 @@
 ### Prerequisites
 1. Download google sdk: https://cloud.google.com/sdk/docs/
 2. Download service account key for MonkeyZoo project (if you deployed MonkeyZoo via terraform scripts then you already have it). 
-GCP console -> IAM -> service accounts(you can use the same key used to authenticate terraform scripts)
+GCP console -> IAM -> service accounts(you can use the same key used to authenticate terraform scripts).
+Place the key in `envs/monkey_zoo/gcp_keys/gcp_key.json`.
 3. Deploy the relevant branch + complied executables to the Island machine on GCP.   
 
 ### Running the tests
@@ -21,14 +22,15 @@ Example run command:
 `monkey\envs\monkey_zoo\blackbox>python -m pytest -s --island=35.207.152.72:5000 test_blackbox.py`
 
 #### Running in PyCharm
-Configure a PyTest configuration with the additional arguments `-s --island=35.207.152.72` on the 
-`monkey\envs\monkey_zoo\blackbox`.
+Configure a PyTest configuration with the additional arguments `-s --island=35.207.152.72`, and to run from
+directory `monkey\envs\monkey_zoo\blackbox`.
 
 ### Running telemetry performance test
 
 **Before running performance test make sure browser is not sending requests to island!** 
 
 To run telemetry performance test follow these steps:
+0. Set `server_config.json` to "standard" (no password protection) setting.
 1. Gather monkey telemetries.
     1. Enable "Export monkey telemetries" in Configuration -> Internal -> Tests if you don't have 
     exported telemetries already.

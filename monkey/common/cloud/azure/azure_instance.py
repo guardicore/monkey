@@ -1,4 +1,5 @@
 import logging
+
 import requests
 
 from common.cloud.environment_names import Environment

@@ -2,8 +2,8 @@ import logging
 
 import requests
 
+import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.version import get_version
-from monkey_island.cc.environment.environment import env
 
 __author__ = "itay.mizeretz"
 
@@ -40,7 +40,7 @@ class VersionUpdateService:
         Checks if newer monkey version is available
         :return: False if not, version in string format ('1.6.2') otherwise
         """
-        url = VersionUpdateService.VERSION_SERVER_CHECK_NEW_URL % (env.get_deployment(), get_version())
+        url = VersionUpdateService.VERSION_SERVER_CHECK_NEW_URL % (env_singleton.env.get_deployment(), get_version())
 
         reply = requests.get(url, timeout=15)
 
@@ -54,4 +54,4 @@ class VersionUpdateService:
 
     @staticmethod
     def get_download_link():
-        return VersionUpdateService.VERSION_SERVER_DOWNLOAD_URL % (env.get_deployment(), get_version())
+        return VersionUpdateService.VERSION_SERVER_DOWNLOAD_URL % (env_singleton.env.get_deployment(), get_version())

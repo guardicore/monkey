@@ -1,12 +1,12 @@
-import socket
-import struct
-import psutil
 import ipaddress
 import itertools
-import netifaces
-from subprocess import check_output
+import socket
+import struct
 from random import randint
+from subprocess import check_output
 
+import netifaces
+import psutil
 import requests
 from requests import ConnectionError
 

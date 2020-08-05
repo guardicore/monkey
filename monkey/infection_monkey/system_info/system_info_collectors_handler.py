@@ -1,7 +1,8 @@
 import logging
 from typing import Sequence
 
-from infection_monkey.system_info.system_info_collector import SystemInfoCollector
+from infection_monkey.system_info.system_info_collector import \
+    SystemInfoCollector
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 
 LOG = logging.getLogger(__name__)

@@ -1,7 +1,8 @@
+from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.services.attack.technique_reports.technique_report_tools import parse_creds
+from monkey_island.cc.services.attack.technique_reports.technique_report_tools import \
+    parse_creds
 
 __author__ = "VakarisZ"
 
@@ -25,21 +26,27 @@ class T1110(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        attempts = list(mongo.db.telemetry.aggregate(T1110.query))
-        succeeded = False
+        @T1110.is_status_disabled
+        def get_technique_status_and_data():
+            attempts = list(mongo.db.telemetry.aggregate(T1110.query))
+            succeeded = False
 
-        for result in attempts:
-            result['successful_creds'] = []
-            for attempt in result['attempts']:
-                succeeded = True
-                result['successful_creds'].append(parse_creds(attempt))
+            for result in attempts:
+                result['successful_creds'] = []
+                for attempt in result['attempts']:
+                    succeeded = True
+                    result['successful_creds'].append(parse_creds(attempt))
 
-        if succeeded:
-            status = ScanStatus.USED.value
-        elif attempts:
-            status = ScanStatus.SCANNED.value
-        else:
-            status = ScanStatus.UNSCANNED.value
+            if succeeded:
+                status = ScanStatus.USED.value
+            elif attempts:
+                status = ScanStatus.SCANNED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+            return (status, attempts)
+
+        status, attempts = get_technique_status_and_data()
+
         data = T1110.get_base_data_by_status(status)
         # Remove data with no successful brute force attempts
         attempts = [attempt for attempt in attempts if attempt['attempts']]

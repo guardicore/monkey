@@ -226,20 +226,6 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         Remove-Item $TEMP_UPX_ZIP
     }
 
-    # Download mimikatz binaries
-    $mk32_path = Join-Path -Path $binDir -ChildPath $MK32_DLL
-    if (!(Test-Path -Path $mk32_path))
-    {
-        "Downloading mimikatz 32 binary"
-        $webClient.DownloadFile($MK32_DLL_URL, $mk32_path)
-    }
-    $mk64_path = Join-Path -Path $binDir -ChildPath $MK64_DLL
-    if (!(Test-Path -Path $mk64_path))
-    {
-        "Downloading mimikatz 64 binary"
-        $webClient.DownloadFile($MK64_DLL_URL, $mk64_path)
-    }
-
     # Download sambacry binaries
     $samba_path = Join-Path -Path $monkey_home -ChildPath $SAMBA_BINARIES_DIR
     $samba32_path = Join-Path -Path $samba_path -ChildPath $SAMBA_32_BINARY_NAME

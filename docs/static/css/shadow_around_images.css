@@ -1,0 +1,10 @@
+/* Add a shadow around images in content pages. Most of our content is screenshots, and the Island's background merges with
+ the documentation background. Only #body-inner so that the Logo image won't get a border around it */
+#body-inner img {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+/* We don't want shadow around this image in particular */
+#body-inner img[src*="/images/monkey-teacher.svg"] {
+  box-shadow: none; !important;
+}

@@ -1,29 +1,29 @@
 import json
+import logging
 import os
+import sys
 from shutil import copyfile
 
-import sys
-from flask import request, jsonify, make_response
 import flask_restful
+from flask import jsonify, make_response, request
 
-from monkey_island.cc.environment.environment import env
+import monkey_island.cc.environment.environment_singleton as env_singleton
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.models import Monkey
+from monkey_island.cc.network_utils import local_ip_addresses
 from monkey_island.cc.resources.monkey_download import get_monkey_executable
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.network_utils import local_ip_addresses
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = 'Barak'
 
-import logging
 
 logger = logging.getLogger(__name__)
 
 
 def run_local_monkey():
     import platform
-    import subprocess
     import stat
+    import subprocess
 
     # get the monkey executable suitable to run on the server
     result = get_monkey_executable(platform.system().lower(), platform.machine().lower())
@@ -43,7 +43,7 @@ def run_local_monkey():
 
     # run the monkey
     try:
-        args = ['"%s" m0nk3y -s %s:%s' % (target_path, local_ip_addresses()[0], env.get_island_port())]
+        args = ['"%s" m0nk3y -s %s:%s' % (target_path, local_ip_addresses()[0], env_singleton.env.get_island_port())]
         if sys.platform == "win32":
             args = "".join(args)
         pid = subprocess.Popen(args, shell=True).pid

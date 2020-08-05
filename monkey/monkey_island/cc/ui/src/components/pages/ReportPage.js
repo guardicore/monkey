@@ -1,8 +1,6 @@
-import '../../styles/report/ReportPage.scss';
-
 import React from 'react';
 import {Route} from 'react-router-dom';
-import {Col, Nav, NavItem} from 'react-bootstrap';
+import {Col, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarning';
 import AttackReport from '../report-components/AttackReport'
@@ -30,10 +28,10 @@ class ReportPageComponent extends AuthComponent {
     };
   }
 
-  static selectReport(reports){
+  static selectReport(reports) {
     let url = window.location.href;
-    for (let report_name in reports){
-      if (reports.hasOwnProperty(report_name) && url.endsWith(reports[report_name])){
+    for (let report_name in reports) {
+      if (reports.hasOwnProperty(report_name) && url.endsWith(reports[report_name])) {
         return reports[report_name];
       }
     }
@@ -109,24 +107,32 @@ class ReportPageComponent extends AuthComponent {
   renderNav = () => {
     return (
       <Route render={({history}) => (
-      <Nav bsStyle='tabs' justified
-                 activeKey={this.state.selectedSection}
-                 onSelect={(key) => {this.setSelectedSection(key); history.push(key)}}
-                 className={'report-nav'}>
-      {this.state.sections.map(section => this.renderNavButton(section))}
-      </Nav>)}/>)
+        <Nav variant='tabs'
+             fill
+             activeKey={this.state.selectedSection}
+             onSelect={(key) => {
+               this.setSelectedSection(key);
+               history.push(key)
+             }}
+             className={'report-nav'}>
+          {this.state.sections.map(section => this.renderNavButton(section))}
+        </Nav>)}/>)
   };
 
   renderNavButton = (section) => {
     return (
-        <NavItem key={section.key}
-                 eventKey={section.key}
-                 onSelect={() => {}}>
+      <Nav.Item key={section.key}>
+        <Nav.Link key={section.key}
+                  eventKey={section.key}
+                  onSelect={() => {
+                  }}>
           {section.title}
-        </NavItem>)};
+        </Nav.Link>
+      </Nav.Item>)
+  };
 
   getReportContent() {
-    switch(this.state.selectedSection){
+    switch (this.state.selectedSection) {
       case 'security':
         return (<SecurityReport report={this.state.securityReport}/>);
       case 'attack':
@@ -145,8 +151,10 @@ class ReportPageComponent extends AuthComponent {
       content = <MustRunMonkeyWarning/>;
     }
     return (
-      <Col xs={12} lg={12}>
-        <h1 className='page-title no-print'>4. Security Reports</h1>
+      <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
+           lg={{offset: 3, span: 9}} xl={{offset: 2, span: 10}}
+           className={'report-wrapper'}>
+        <h1 className='page-title no-print'>3. Security Reports</h1>
         {this.renderNav()}
         <MonkeysStillAliveWarning allMonkeysAreDead={this.state.allMonkeysAreDead}/>
         <div style={{'fontSize': '1.2em'}}>

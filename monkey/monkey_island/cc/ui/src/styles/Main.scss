@@ -1,0 +1,75 @@
+@import './variables';
+
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
+// Imports that require variables
+@import 'pages/report/ReportPage.scss';
+@import 'pages/report/AttackReport.scss';
+@import 'pages/ConfigurationPage';
+@import 'pages/AuthPage';
+@import 'pages/MonkeyRunPage';
+@import 'components/InfoPane';
+@import 'components/PreviewPane';
+@import 'components/AdvancedMultiSelect';
+
+
+// Define custom elements after bootstrap import
+.btn-outline-monkey, button {
+  @include button-outline-variant($monkey-yellow, $monkey-black, $monkey-yellow, $monkey-yellow);
+  color: $monkey-black;
+}
+
+.btn-outline-monkey-alt, button {
+  @include button-outline-variant($monkey-alt, $monkey-white, $monkey-alt, $monkey-alt);
+  color: $monkey-black;
+}
+
+.btn-outline-standard, button {
+  @include button-outline-variant($light-gray, $monkey-black, $light-gray, $light-gray);
+  color: $monkey-black;
+}
+
+.badge-info {
+  background-color: $monkey-alt;
+}
+
+.badge-primary {
+  color: $monkey-white;
+}
+
+.badge-default {
+  background-color: $gray-600;
+  color: $white;
+}
+
+.badge-alt-light {
+  color: $monkey-alt;
+  background-color: $monkey-white;
+  border-radius: 10px;
+}
+
+.badge-monkey-info-light {
+  color: $monkey-info;
+  background-color: $monkey-white;
+  border-radius: 10px;
+}
+
+.btn-link:active, .btn-link:hover, .btn-link:focus {
+  color: $monkey-alt !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: None;
+}
+
+div.card-header.collapse-control:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+div.collapse.card-body ul, div.collapsing.card-body ul {
+  padding: 0;
+}
+
+.hidden{
+  display: None;
+}

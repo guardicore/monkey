@@ -1,22 +1,25 @@
 import functools
+import ipaddress
 import itertools
 import logging
-
-import ipaddress
-from bson import json_util
 from enum import Enum
+
+from bson import json_util
 
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
+from monkey_island.cc.network_utils import get_subnets, local_ip_addresses
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
+from monkey_island.cc.services.configuration.utils import \
+    get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
-from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
-from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_regular_report
-from monkey_island.cc.network_utils import local_ip_addresses, get_subnets
+from monkey_island.cc.services.reporting.report_exporter_manager import \
+    ReportExporterManager
+from monkey_island.cc.services.reporting.report_generation_synchronisation import \
+    safe_generate_regular_report
 
 __author__ = "itay.mizeretz"
 
@@ -184,10 +187,13 @@ class ReportService:
                 continue
             origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
             for user in monkey_creds:
-                for pass_type in monkey_creds[user]:
+                for pass_type in PASS_TYPE_DICT:
+                    if pass_type not in monkey_creds[user] or not monkey_creds[user][pass_type]:
+                        continue
+                    username = monkey_creds[user]['username'] if 'username' in monkey_creds[user] else user
                     cred_row = \
                         {
-                            'username': user.replace(',', '.'),
+                            'username': username,
                             'type': PASS_TYPE_DICT[pass_type],
                             'origin': origin
                         }
@@ -612,7 +618,7 @@ class ReportService:
 
     @staticmethod
     def get_config_exploits():
-        exploits_config_value = ['exploits', 'general', 'exploiter_classes']
+        exploits_config_value = ['basic', 'exploiters', 'exploiter_classes']
         default_exploits = ConfigService.get_default_config(False)
         for namespace in exploits_config_value:
             default_exploits = default_exploits[namespace]
@@ -626,11 +632,11 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        return ConfigService.get_config_value(['basic_network', 'general', 'subnet_scan_list'], True, True)
+        return ConfigService.get_config_value(['basic_network', 'scope', 'subnet_scan_list'], True, True)
 
     @staticmethod
     def get_config_scan():
-        return ConfigService.get_config_value(['basic_network', 'general', 'local_network_scan'], True, True)
+        return ConfigService.get_config_value(['basic_network', 'scope', 'local_network_scan'], True, True)
 
     @staticmethod
     def get_issues_overview(issues, config_users, config_passwords):
@@ -729,8 +735,7 @@ class ReportService:
                         'stolen_creds': ReportService.get_stolen_creds(),
                         'azure_passwords': ReportService.get_azure_creds(),
                         'ssh_keys': ReportService.get_ssh_keys(),
-                        'strong_users': PTHReportService.get_strong_users_on_crit_details(),
-                        'pth_map': PTHReportService.get_pth_map()
+                        'strong_users': PTHReportService.get_strong_users_on_crit_details()
                     },
                 'recommendations':
                     {

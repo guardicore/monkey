@@ -56,8 +56,8 @@ class AutoNewWindowsUser(AutoNewUser):
 
     def __enter__(self):
         # Importing these only on windows, as they won't exist on linux.
-        import win32security
         import win32con
+        import win32security
 
         try:
             # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-logonusera
@@ -73,9 +73,9 @@ class AutoNewWindowsUser(AutoNewUser):
 
     def run_as(self, command):
         # Importing these only on windows, as they won't exist on linux.
-        import win32process
         import win32api
         import win32event
+        import win32process
         from winsys import _advapi32
 
         exit_code = -1

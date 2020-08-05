@@ -1,7 +1,7 @@
 import json
 
 import flask_restful
-from flask import request, make_response
+from flask import make_response, request
 
 from monkey_island.cc.services.config import ConfigService
 

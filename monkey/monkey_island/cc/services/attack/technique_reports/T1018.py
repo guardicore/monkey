@@ -1,6 +1,6 @@
 from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 from monkey_island.cc.database import mongo
+from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 __author__ = "VakarisZ"
 
@@ -28,11 +28,17 @@ class T1018(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        scan_info = list(mongo.db.telemetry.aggregate(T1018.query))
-        if scan_info:
-            status = ScanStatus.USED.value
-        else:
-            status = ScanStatus.UNSCANNED.value
+        @T1018.is_status_disabled
+        def get_technique_status_and_data():
+            scan_info = list(mongo.db.telemetry.aggregate(T1018.query))
+            if scan_info:
+                status = ScanStatus.USED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+            return (status, scan_info)
+
+        status, scan_info = get_technique_status_and_data()
+
         data = T1018.get_base_data_by_status(status)
         data.update({'scan_info': scan_info})
         return data

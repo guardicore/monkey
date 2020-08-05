@@ -1,11 +1,11 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import logging
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 from urllib import parse
-import urllib3
-import logging
 
-import requests
 import pymongo
+import requests
+import urllib3
 
 from monkey_island.cc.environment import Environment
 
@@ -29,7 +29,8 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length).decode()
         island_server_path = BootloaderHTTPRequestHandler.get_bootloader_resource_url(self.request.getsockname()[0])
         island_server_path = parse.urljoin(island_server_path, self.path[1:])
-        # The island server doesn't always have a correct SSL cert installed (By default it comes with a self signed one),
+        # The island server doesn't always have a correct SSL cert installed
+        # (By default it comes with a self signed one),
         # that's why we're not verifying the cert in this request.
         r = requests.post(url=island_server_path, data=post_data, verify=False)  # noqa: DUO123
 

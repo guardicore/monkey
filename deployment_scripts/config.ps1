@@ -1,12 +1,14 @@
 # Absolute monkey's path
 $MONKEY_FOLDER_NAME = "infection_monkey"
 # Url of public git repository that contains monkey's source code
+$MONKEY_REPO = "guardicore/monkey"
 $MONKEY_GIT_URL = "https://github.com/guardicore/monkey"
 $MONKEY_RELEASES_URL = $MONKEY_GIT_URL + "/releases"
-$MONKEY_LATEST_VERSION = "v1.7.0"
+$MONKEY_API_RELEASES_URL = "https://api.github.com/repos/$MONKEY_REPO/releases"
+$MONKEY_LATEST_VERSION = (Invoke-WebRequest $MONKEY_API_RELEASES_URL | ConvertFrom-Json)[0].tag_name
 $MONKEY_DOWNLOAD_URL = $MONKEY_RELEASES_URL + "/download/" + $MONKEY_LATEST_VERSION + "/"
 # Link to the latest python download or install it manually
-$PYTHON_URL = "https://www.python.org/ftp/python/3.7.6/python-3.7.6-amd64.exe"
+$PYTHON_URL = "https://www.python.org/ftp/python/3.7.7/python-3.7.7-amd64.exe"
 
 
 # Monkey binaries
@@ -29,8 +31,6 @@ $TRACEROUTE_32_BINARY_URL = $MONKEY_DOWNLOAD_URL + "traceroute32"
 $MONKEY_ISLAND_DIR = Join-Path "\monkey" -ChildPath "monkey_island"
 $MONKEY_DIR = Join-Path "\monkey" -ChildPath "infection_monkey"
 $SAMBA_BINARIES_DIR = Join-Path -Path $MONKEY_DIR -ChildPath "\bin"
-$MK32_DLL = "mk32.zip"
-$MK64_DLL = "mk64.zip"
 $TEMP_PYTHON_INSTALLER = ".\python.exe"
 $TEMP_MONGODB_ZIP = ".\mongodb.zip"
 $TEMP_OPEN_SSL_ZIP = ".\openssl.zip"
@@ -44,6 +44,4 @@ $MONGODB_URL = "https://downloads.mongodb.org/win32/mongodb-win32-x86_64-2012plu
 $OPEN_SSL_URL = "https://indy.fulgan.com/SSL/openssl-1.0.2u-x64_86-win64.zip"
 $CPP_URL = "https://go.microsoft.com/fwlink/?LinkId=746572"
 $NPM_URL = "https://nodejs.org/dist/v12.14.1/node-v12.14.1-x64.msi"
-$MK32_DLL_URL = "https://github.com/guardicore/mimikatz/releases/download/1.1.0/mk32.zip"
-$MK64_DLL_URL = "https://github.com/guardicore/mimikatz/releases/download/1.1.0/mk64.zip"
 $UPX_URL = "https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip"

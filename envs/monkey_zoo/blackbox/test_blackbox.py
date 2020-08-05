@@ -1,20 +1,28 @@
-import os
 import logging
-
-import pytest
+import os
 from time import sleep
 
-from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
-from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
-from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
+import pytest
+
+from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import \
+    CommunicationAnalyzer
+from envs.monkey_zoo.blackbox.island_client.island_config_parser import \
+    IslandConfigParser
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import \
+    MonkeyIslandClient
+from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import \
+    TestLogsHandler
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
-from envs.monkey_zoo.blackbox.tests.performance.map_generation import MapGenerationTest
-from envs.monkey_zoo.blackbox.tests.performance.map_generation_from_telemetries import MapGenerationFromTelemetryTest
-from envs.monkey_zoo.blackbox.tests.performance.report_generation import ReportGenerationTest
+from envs.monkey_zoo.blackbox.tests.performance.map_generation import \
+    MapGenerationTest
+from envs.monkey_zoo.blackbox.tests.performance.map_generation_from_telemetries import \
+    MapGenerationFromTelemetryTest
+from envs.monkey_zoo.blackbox.tests.performance.report_generation import \
+    ReportGenerationTest
 from envs.monkey_zoo.blackbox.tests.performance.report_generation_from_telemetries import \
     ReportGenerationFromTelemetryTest
-from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import TelemetryPerformanceTest
+from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import \
+    TelemetryPerformanceTest
 from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
 
 DEFAULT_TIMEOUT_SECONDS = 5*60
@@ -132,6 +140,7 @@ class TestMonkeyBlackbox(object):
     def test_wmi_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, "WMI_PTH.conf", "WMI_PTH")
 
+    @pytest.mark.skip(reason="Perfomance test that creates env from fake telemetries is faster, use that instead.")
     def test_report_generation_performance(self, island_client, quick_performance_tests):
         """
         This test includes the SSH + Elastic + Hadoop + MSSQL machines all in one test
@@ -149,6 +158,7 @@ class TestMonkeyBlackbox(object):
             LOGGER.error("This test doesn't support 'quick_performance_tests' option.")
             assert False
 
+    @pytest.mark.skip(reason="Perfomance test that creates env from fake telemetries is faster, use that instead.")
     def test_map_generation_performance(self, island_client, quick_performance_tests):
         if not quick_performance_tests:
             TestMonkeyBlackbox.run_performance_test(MapGenerationTest,

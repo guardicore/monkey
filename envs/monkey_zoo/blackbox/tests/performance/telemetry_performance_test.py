@@ -4,11 +4,16 @@ from datetime import timedelta
 
 from tqdm import tqdm
 
-from envs.monkey_zoo.blackbox.analyzers.performance_analyzer import PerformanceAnalyzer
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
-from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
-from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
-from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_file_parser import SampleFileParser
+from envs.monkey_zoo.blackbox.analyzers.performance_analyzer import \
+    PerformanceAnalyzer
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import \
+    MonkeyIslandClient
+from envs.monkey_zoo.blackbox.island_client.supported_request_method import \
+    SupportedRequestMethod
+from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import \
+    PerformanceTestConfig
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_file_parser import \
+    SampleFileParser
 
 LOGGER = logging.getLogger(__name__)
 

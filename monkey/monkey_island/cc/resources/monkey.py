@@ -3,13 +3,15 @@ from datetime import datetime
 
 import dateutil.parser
 import flask_restful
-from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from flask import request
 
-from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
+from monkey_island.cc.consts import \
+    DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
+from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
 
 __author__ = 'Barak'
@@ -86,7 +88,8 @@ class Monkey(flask_restful.Resource):
         parent_to_add = (monkey_json.get('guid'), None)  # default values in case of manual run
         if parent and parent != monkey_json.get('guid'):  # current parent is known
             exploit_telem = [x for x in
-                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
+                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'},
+                                                      'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']},
                                                       'monkey_guid': {'$eq': parent}})]
             if 1 == len(exploit_telem):
@@ -95,7 +98,8 @@ class Monkey(flask_restful.Resource):
                 parent_to_add = (parent, None)
         elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in monkey_json:
             exploit_telem = [x for x in
-                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
+                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'},
+                                                      'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}})]
 
             if 1 == len(exploit_telem):
@@ -129,8 +133,8 @@ class Monkey(flask_restful.Resource):
 
         if existing_node:
             node_id = existing_node["_id"]
-            for edge in mongo.db.edge.find({"to": node_id}):
-                mongo.db.edge.update({"_id": edge["_id"]}, {"$set": {"to": new_monkey_id}})
+            EdgeService.update_all_dst_nodes(old_dst_node_id=node_id,
+                                             new_dst_node_id=new_monkey_id)
             for creds in existing_node['creds']:
                 NodeService.add_credentials_to_monkey(new_monkey_id, creds)
             mongo.db.node.remove({"_id": node_id})

@@ -1,8 +1,8 @@
-from infection_monkey.config import WormConfiguration
-from infection_monkey.utils.plugins.plugin import Plugin
 from abc import ABCMeta, abstractmethod
 
 import infection_monkey.system_info.collectors
+from infection_monkey.config import WormConfiguration
+from infection_monkey.utils.plugins.plugin import Plugin
 
 
 class SystemInfoCollector(Plugin, metaclass=ABCMeta):
@@ -19,7 +19,7 @@ class SystemInfoCollector(Plugin, metaclass=ABCMeta):
 
     @staticmethod
     def should_run(class_name) -> bool:
-        return class_name in WormConfiguration.system_info_collectors_classes
+        return class_name in WormConfiguration.system_info_collector_classes
 
     @staticmethod
     def base_package_file():

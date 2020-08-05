@@ -5,7 +5,7 @@ import * as PropTypes from 'prop-types';
 import PillarLabel from './PillarLabel';
 import EventsButton from './EventsButton';
 
-const EVENTS_COLUMN_MAX_WIDTH = 160;
+const EVENTS_COLUMN_MAX_WIDTH = 170;
 const PILLARS_COLUMN_MAX_WIDTH = 200;
 const columns = [
   {
@@ -22,7 +22,7 @@ const columns = [
                                latest_events={x.latest_events}
                                oldest_events={x.oldest_events}
                                event_count={x.event_count}
-                               exportFilename={'Events_' + x.test_key}/>;
+                               exportFilename={'Events_' + x.test_key} />;
         },
         maxWidth: EVENTS_COLUMN_MAX_WIDTH
       },

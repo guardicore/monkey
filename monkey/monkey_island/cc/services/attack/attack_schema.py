@@ -63,14 +63,34 @@ SCHEMA = {
                     "description": "Adversaries may execute a binary, command, or script via a method "
                                    "that interacts with Windows services, such as the Service Control Manager.",
                     "depends_on": ["T1210"]
+                },
+                "T1154": {
+                    "title": "Trap",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1154",
+                    "description": "Adversaries can use the trap command to register code to be executed "
+                                   "when the shell encounters specific interrupts."
                 }
-            }
+            },
         },
         "persistence": {
             "title": "Persistence",
             "type": "object",
             "link": "https://attack.mitre.org/tactics/TA0003/",
             "properties": {
+                "T1156": {
+                    "title": ".bash_profile and .bashrc",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1156",
+                    "description": "Adversaries may abuse shell scripts by "
+                                   "inserting arbitrary shell commands to gain persistence, which "
+                                   "would be executed every time the user logs in or opens a new shell.",
+                    "depends_on": ["T1504"]
+                },
                 "T1136": {
                     "title": "Create account",
                     "type": "bool",
@@ -78,7 +98,59 @@ SCHEMA = {
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1136",
                     "description": "Adversaries with a sufficient level of access "
-                                    "may create a local system, domain, or cloud tenant account."
+                                   "may create a local system, domain, or cloud tenant account."
+                },
+                "T1158": {
+                    "title": "Hidden files and directories",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1158",
+                    "description": "Adversaries can hide files and folders on the system "
+                                   "and evade a typical user or system analysis that does not "
+                                   "incorporate investigation of hidden files."
+                },
+                "T1168": {
+                    "title": "Local job scheduling",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1168/",
+                    "description": "Linux supports multiple methods for creating pre-scheduled and "
+                                   "periodic background jobs. Job scheduling can be used by adversaries to "
+                                   "schedule running malicious code at some specified date and time.",
+                    "depends_on": ["T1053"]
+                },
+                "T1504": {
+                    "title": "PowerShell profile",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1504",
+                    "description": "Adversaries may gain persistence and elevate privileges "
+                                   "in certain situations by abusing PowerShell profiles which "
+                                   "are scripts that run when PowerShell starts.",
+                    "depends_on": ["T1156"]
+                },
+                "T1053": {
+                    "title": "Scheduled task",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1053",
+                    "description": "Windows utilities can be used to schedule programs or scripts to "
+                                   "be executed at a date and time. An adversary may use task scheduling to "
+                                   "execute programs at system startup or on a scheduled basis for persistence.",
+                    "depends_on": ["T1168"]
+                },
+                "T1166": {
+                    "title": "Setuid and Setgid",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1166",
+                    "description": "Adversaries can set the setuid or setgid bits to get code running in "
+                                   "a different user’s context."
                 }
             }
         },

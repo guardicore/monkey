@@ -2,46 +2,50 @@ import os
 import uuid
 
 import flask_restful
-from flask import Flask, send_from_directory, Response
+from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
-from monkey_island.cc.auth import init_jwt
-from monkey_island.cc.database import mongo, database
-from monkey_island.cc.environment.environment import env
+import monkey_island.cc.environment.environment_singleton as env_singleton
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.database import database, mongo
+from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
+from monkey_island.cc.resources.attack.attack_report import AttackReport
+from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
+from monkey_island.cc.resources.auth.registration import Registration
+from monkey_island.cc.resources.bootloader import Bootloader
 from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.edge import Edge
+from monkey_island.cc.resources.environment import Environment
+from monkey_island.cc.resources.island_configuration import IslandConfiguration
+from monkey_island.cc.resources.island_logs import IslandLog
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
-from monkey_island.cc.resources.island_logs import IslandLog
 from monkey_island.cc.resources.monkey import Monkey
 from monkey_island.cc.resources.monkey_configuration import MonkeyConfiguration
-from monkey_island.cc.resources.island_configuration import IslandConfiguration
-from monkey_island.cc.resources.monkey_control.started_on_island import StartedOnIsland
+from monkey_island.cc.resources.monkey_control.remote_port_check import \
+    RemotePortCheck
+from monkey_island.cc.resources.monkey_control.started_on_island import \
+    StartedOnIsland
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
-from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
+from monkey_island.cc.resources.pba_file_download import PBAFileDownload
+from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
-from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.test.clear_caches import ClearCaches
+from monkey_island.cc.resources.test.log_test import LogTest
+from monkey_island.cc.resources.test.monkey_test import MonkeyTest
 from monkey_island.cc.resources.version_update import VersionUpdate
-from monkey_island.cc.resources.pba_file_upload import FileUpload
-from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
-from monkey_island.cc.resources.attack.attack_report import AttackReport
-from monkey_island.cc.resources.bootloader import Bootloader
-from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
+from monkey_island.cc.resources.zero_trust.finding_event import \
+    ZeroTrustFindingEvent
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
-
-from monkey_island.cc.resources.test.monkey_test import MonkeyTest
-from monkey_island.cc.resources.test.log_test import LogTest
 
 __author__ = 'Barak'
 
@@ -67,9 +71,16 @@ def serve_home():
 
 def init_app_config(app, mongo_url):
     app.config['MONGO_URI'] = mongo_url
-    app.config['SECRET_KEY'] = str(uuid.getnode())
-    app.config['JWT_AUTH_URL_RULE'] = '/api/auth'
-    app.config['JWT_EXPIRATION_DELTA'] = env.get_auth_expiration_time()
+
+    # See https://flask-jwt-extended.readthedocs.io/en/stable/options
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = env_singleton.env.get_auth_expiration_time()
+    # Invalidate the signature of JWTs if the server process restarts. This avoids the edge case of getting a JWT,
+    # deciding to reset credentials and then still logging in with the old JWT.
+    app.config['JWT_SECRET_KEY'] = str(uuid.uuid4())
+
+    # By default, Flask sorts keys of JSON objects alphabetically, which messes with the ATT&CK matrix in the
+    # configuration. See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
+    app.config['JSON_SORT_KEYS'] = False
 
 
 def init_app_services(app):
@@ -91,6 +102,9 @@ def init_app_url_rules(app):
 
 def init_api_resources(api):
     api.add_resource(Root, '/api')
+    api.add_resource(Registration, '/api/registration')
+    api.add_resource(Authenticate, '/api/auth')
+    api.add_resource(Environment, '/api/environment')
     api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
     api.add_resource(Bootloader, '/api/bootloader/<string:os>')
     api.add_resource(LocalRun, '/api/local-monkey', '/api/local-monkey/')

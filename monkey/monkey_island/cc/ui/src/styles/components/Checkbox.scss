@@ -1,0 +1,147 @@
+// colors
+$light-gray: #EAF4F4;
+$medium-gray: #7B9EA8;
+$dark-green: #007d02;
+$green: #44CF6C;
+$black: #000000;
+
+.ui-checkbox-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: rgba(red, .6);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+
+  input {
+    display: none;
+  }
+
+  .icon,
+  .text {
+    display: inline-block;
+    color: inherit;
+  }
+
+  .text {
+    padding-top: 4px;
+    font-size: 14px;
+  }
+
+  // color states
+  &.is-unchecked {
+    background-color: transparent;
+    color: $black;
+    fill: $black;
+  }
+
+  &.blocked {
+    background-color: $dark-green;
+    color: $light-gray;
+    fill: $light-gray;
+    cursor: default;
+  }
+
+  &.is-checked {
+    background-color: $green;
+    color: white;
+    fill: white;
+  }
+}
+
+.icon {
+  position: relative;
+  display: inline-block;
+
+  svg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: 16px;
+    height: auto;
+    fill: inherit;
+  }
+
+  .is-checked & {
+    color: white;
+    fill: white;
+  }
+}
+
+// ping animation magic
+.ui-btn-ping {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  transform: translate3d(-50%, -50%, 0); // center center by default
+
+  // set the square
+  &:before {
+    content: '';
+    transform: scale(0, 0); // center center by default
+    transition-property: background-color transform;
+    transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+    display: block;
+    padding-bottom: 100%;
+    border-radius: 50%;
+    background-color: rgba(white, .84);;
+  }
+
+  .do-ping &:before {
+    transform: scale(2.5, 2.5);
+    transition-duration: .35s;
+    background-color: rgba(white, .08);
+  }
+}
+
+.attack-matrix .ui-checkbox-btn label {
+  width:100%;
+  font-weight: 700;
+  padding-top: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.attack-matrix div.rt-td>div {
+  height: 100%;
+  padding: 0;
+}
+
+.attack-matrix div.rt-td {
+  padding: 0;
+  border-right: 3px solid rgba(0,0,0,0) !important;
+}
+
+.attack-matrix .rt-tr-group div.rt-td:first-child {
+  border-left: 3px solid rgba(0,0,0,0) !important;
+}
+
+
+.attack-matrix .rt-tr-group {
+  border-top: 3px solid white !important;
+  border-bottom: none !important;
+}
+
+.attack-matrix .rt-tr-group:last-child {
+  margin-bottom: 3px !important;
+}
+
+.icon-checked {
+  color: $green
+}
+
+.icon-mandatory {
+  color: $dark-green;
+}
+
+.icon-unchecked {
+  color: $black;
+}
