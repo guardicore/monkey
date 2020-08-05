@@ -54,14 +54,13 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
   * and more
 
 ## Setup
-Check out the [Setup](https://github.com/guardicore/monkey/wiki/setup) page in the Wiki or a quick getting [started guide](https://www.guardicore.com/infectionmonkey/wt/).
+Check out the [Setup](https://www.guardicore.com/infectionmonkey/docs/setup/) page in the Wiki or a quick getting [started guide](https://www.guardicore.com/infectionmonkey/docs/usage/getting-started/).
 
-The Infection Monkey supports a variety of platforms, documented [in the wiki](https://github.com/guardicore/monkey/wiki/OS-compatibility).
+The Infection Monkey supports a variety of platforms, documented [in the documentation framework](https://www.guardicore.com/infectionmonkey/docs/reference/operating_systems_support/).
 
 ## Building the Monkey from source
-To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts) folder.
-If you only want to build the monkey from source, see [Setup](https://github.com/guardicore/monkey/wiki/Setup#compile-it-yourself)
-and follow the instructions at the readme files under [infection_monkey](monkey/infection_monkey) and [monkey_island](monkey/monkey_island). 
+To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts) 
+folder or follow documentation in [documentation hub](https://www.guardicore.com/infectionmonkey/docs/development/setup-development-environment/).
 
 ### Build status
 | Branch | Status |
