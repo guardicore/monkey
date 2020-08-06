@@ -37,15 +37,15 @@ sha256sum monkey-linux-64
 
 | Filename | Type | Version | SHA256 hash |
 |-|-|-|-|
-monkey-windows-64.exe | Windows Agent | 1.8.2 | `2e6a1cb5523d87ddfd48f75b10114617343fbac8125fa950ba7f00289b38b550`
-monkey-windows-32.exe | Windows Agent | 1.8.2 | `86a7d7065e73b795e38f2033be0c53f3ac808cc67478aed794a7a6c89123979f`
-monkey-linux-64 | Linux Agent | 1.8.2 | `4dce4a115d41b43adffc11672fae2164265f8902267f1355d02bebb802bd45c5`
-monkey-linux-32 | Linux Agent | 1.8.2 | `39d3fe1c7b33482a8cb9288d323dde17b539825ab2d736be66a9582764185478`
-infection_monkey_deb.tgz | Debian Package | 1.8.2 | `2a6b4b9b846566724ff985c6cc8283222b981b3495dd5a8920b6bc3f34d556e2`
-Monkey Island v1.8.2_3536_windows.exe | Windows Installer | 1.8.2 | `2be528685d675c882604d98382adb739f5ba0a7e234e3569b21f535173bd9569`
-Monkey Island v1.8.2_3536_windowszt.exe | Windows Installer | 1.8.2 | `f282ce4dd50abe54671948fb5b3baf913087459444e451660971290a72fe244a`
-infection_monkey_docker_docker_20200607_172156.tgz | Docker | 1.8.2 | `0e4bc731ef7e8bf19b759709672375890136c008526be454850d334d9ba5012d`
-infection_monkey_docker_dockerzt_20200607_172521.tgz | Docker | 1.8.2 | `0f4b0cd6fd54dc14ea50c5d2fb3fc711e9863518bd5bffd04e08a0f17eb99e75`
+monkey-windows-64.exe | Windows Agent | 1.9.0 | `24622cb8dbabb0cf4b25ecd3c13800c72ec5b59b76895b737ece509640d4c068`
+monkey-windows-32.exe | Windows Agent | 1.9.0 | `67f12171c3859a21fc8f54c5b2299790985453e9ac028bb80efc7328927be3d8`
+monkey-linux-64 | Linux Agent | 1.9.0 | `aec6b14dc2bea694eb01b517cca70477deeb695f39d40b1d9e5ce02a8075c956`
+monkey-linux-32 | Linux Agent | 1.9.0 | `4c24318026239530ed2437bfef1a01147bb1f3479696eb4eee6009326ce6b380`
+infection_monkey_deb.tgz | Debian Package | 1.9.0 | `8dff2e5995ff889f97ef3d4bcb51d80b63384b45e51bc76ed655df08bde51e06`
+Monkey Island v1.9.0_3545_windows.exe | Windows Installer | 1.9.0 | `8eb9791e9294b94a62f94e6fdb4072425f6012cd8df24df58902deb79dff59e3`
+Monkey Island v1.9.0_3545_windowszt.exe | Windows Installer | 1.9.0 | `da5f08fa229e79e9ca1537c6e7ce70e26efcac9123fdb00cfeed41109c7e60de`
+infection_monkey_docker_docker_20200805_231255.tgz | Docker | 1.9.0 | `408e100e340cb8a6b78ec51bb46b07c484f3980d38ba428231f1df50c3d85f87`
+infection_monkey_docker_dockerzt_20200805_231705.tgz | Docker | 1.9.0 | `c1edbd534730c519fec7645908cb4564aa4115c5c8b41a48c741cddbd596c3e4`
 
 ## All checksums
 
