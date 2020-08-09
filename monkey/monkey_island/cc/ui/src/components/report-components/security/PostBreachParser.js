@@ -23,7 +23,7 @@ function aggregateShellStartupPba(results) {
       failedOutputs += results[i].result[0];
     }
   }
-  if(aggregatedPbaResult === undefined) return;
+  if(aggregatedPbaResult === undefined) return results;
 
   results = results.filter(result => result.name !== SHELL_STARTUP_NAME);
   aggregatedPbaResult.result[0] = successfulOutputs + failedOutputs;
