@@ -105,7 +105,7 @@
     "react-tooltip-lite": "^1.12.0",
     "redux": "^4.0.4",
     "sha3": "^2.0.7",
-    "snyk": "^1.361.3"
+    "snyk": "^1.362.0"
   },
   "snyk": true
 }
