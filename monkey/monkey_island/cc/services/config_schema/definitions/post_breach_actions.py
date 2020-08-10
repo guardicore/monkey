@@ -70,6 +70,16 @@ POST_BREACH_ACTIONS = {
             "title": "Job scheduling",
             "info": "Attempts to create a scheduled job on the system and remove it.",
             "attack_techniques": ["T1168", "T1053"]
+        },
+        {
+            "type": "string",
+            "enum": [
+                "SignedScriptProxyExecution"
+            ],
+            "title": "Signed script proxy execution",
+            "info": "On Windows systems, attemps to execute an arbitrary file "
+                    "with the help of a pre-existing signed script.",
+            "attack_techniques": ["T1216"]
         }
     ]
 }

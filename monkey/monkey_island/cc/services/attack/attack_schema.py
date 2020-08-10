@@ -185,6 +185,15 @@ SCHEMA = {
                     "necessary": True,
                     "link": "https://attack.mitre.org/techniques/T1222",
                     "description": "Adversaries may modify file permissions/attributes to evade intended DACLs."
+                },
+                "T1216": {
+                    "title": "Signed script proxy execution",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1216",
+                    "description": "Adversaries may use scripts signed with trusted certificates to "
+                                   "proxy execution of malicious files on Windows systems."
                 }
             }
         },
