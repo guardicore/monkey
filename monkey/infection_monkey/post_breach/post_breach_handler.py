@@ -25,7 +25,7 @@ class PostBreach(object):
         """
         Executes all post breach actions.
         """
-        pool = Pool(4)
+        pool = Pool(5)
         pool.map(self.run_pba, self.pba_list)
         LOG.info("All PBAs executed. Total {} executed.".format(len(self.pba_list)))
 

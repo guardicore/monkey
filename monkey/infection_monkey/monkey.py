@@ -139,7 +139,7 @@ class InfectionMonkey(object):
             StateTelem(is_done=False, version=get_version()).send()
             TunnelTelem().send()
 
-            LOG.debug("Starting the post-breach phase.")
+            LOG.debug("Starting the post-breach phase asynchronously.")
             post_breach_phase = Thread(target=self.start_post_breach_phase)
             post_breach_phase.start()
 
