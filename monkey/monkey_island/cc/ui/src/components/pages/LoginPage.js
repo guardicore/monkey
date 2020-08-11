@@ -2,9 +2,8 @@ import React from 'react';
 import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 
 import AuthService from '../../services/AuthService';
-import Particles from 'react-particles-js';
-import {particleParams} from '../../styles/components/particle-component/AuthPageParams';
 import monkeyGeneral from '../../images/militant-monkey.svg';
+import ParticleBackground from '../ui-components/ParticleBackground';
 
 class LoginPageComponent extends React.Component {
   login = (event) => {
@@ -60,7 +59,7 @@ class LoginPageComponent extends React.Component {
   render() {
     return (
       <Container fluid className={'auth-container'}>
-        <Particles className={'particle-background'} params={particleParams}/>
+        <ParticleBackground/>
         <Row>
           <Col xs={12} lg={{span: 6, offset: 3}} md={{span: 7, offset: 3}} className={'auth-block'}>
             <Row>
