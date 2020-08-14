@@ -50,7 +50,7 @@ install:
 
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
-- python monkey/monkey_island/cc/set_server_config.py testing
+- python monkey/monkey_island/cc/environment/set_server_config.py testing
 
 script:
 # Check Python code
