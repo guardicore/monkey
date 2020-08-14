@@ -9,7 +9,24 @@ weight: 100
 
 This page provides additional information about configuring monkeys, tips and tricks and creative usage scenarios.
 
+## ATT&CK & Zero Trust scanning
+
+You can use **ATT&CK** configuration section to select which techniques you want to scan. Keep in mind that ATT&CK
+ matrix configuration just changes the overall configuration by modifying related fields, thus you should start by
+ modifying and saving the matrix. After that you can change credentials and scope of the scan, but exploiters,
+ post breach actions and other configuration values will be already chosen based on ATT&CK matrix and shouldn't be
+ modified.
+ 
+There's currently no way to configure monkey using Zero Trust framework, but regardless of configuration options,
+ you'll always be able to see ATT&CK and Zero Trust reports.
+
 ## Tips and tricks
+
+- Use **Monkey -> Persistent scanning** configuration section to either have periodic scans or to increase
+ reliability of exploitations.
+ 
+- To increase propagation run monkey as root/administrator. This will ensure that monkey will gather credentials
+ on current system and use them to move laterally.
 
 - Every network has its old “skeleton keys” that should have long been discarded. Configure the Monkey with old and stale passwords, but make sure that they were really discarded using the Monkey. To add the old passwords, in the island’s configuration, go to the “Exploit password list” under “Basic - Credentials” and use the “+” button to add the old passwords to the configuration. For example, here we added a few extra passwords (and a username as well) to the configuration:
 
@@ -19,29 +36,6 @@ This page provides additional information about configuring monkeys, tips and tr
 
 ![How to configure post breach commands](/images/usage/scenarios/pba-example.png "How to configure post breach commands.")
 
+- If you're scanning a large network, consider narrowing the scope and scanning it bit by bit if scan times become too
+ long. Lowering the amount of credentials, exploiters or post breach actions can also help to lower scanning times.
 
-## Assessing results
-
-After running the Monkey, follow the Monkeys’ actions on the Monkey Island’s infection map.
-
-Now you can match this activity from the Monkey timeline display to your internal SIEM and make sure your security
- solutions are identifying and correctly alerting on different attacks.
-
-- The red arrows indicate successful exploitations. If you see red arrows, those incidents ought to be reported as
- exploitation attempts, so check whether you are receiving alerts from your security systems as expected.
-- The orange arrows indicate scanning activity, usually used by attackers to locate potential vulnerabilities.
- If you see orange arrows, those incidents ought to be reported as scanning attempts (and possibly as segmentation violations).
-- The blue arrows indicate tunneling activity, usually used by attackers to infiltrate “protected” networks from
- the Internet. Perhaps someone is trying to bypass your firewall to gain access to a protected service in your network?
- Check if your micro-segmentation / firewall solution identify or report anything.
-
-While running this scenario, be on the lookout for the action that should arise:
- Did you get a phone call telling you about suspicious activity inside your network? Are events flowing
- into your security events aggregators? Are you getting emails from your IR teams?
- Is the endpoint protection software you installed on machines in the network reporting on anything? Are your
- compliance scanners detecting anything wrong?
- 
-Lastly, check Zero Trust and Mitre ATT&CK reports, to see which attacks can be executed on the network and how to
- fix it.
- 
- ![Map](/images/usage/scenarios/map-full-cropped.png "Map")

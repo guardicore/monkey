@@ -13,16 +13,12 @@ understand how this tool can be configured.
 You can also refer to [our FAQ](../../faq) for more specific questions and answers.
 
 {{% notice note %}}
-No worries! The Monkey uses safe exploiters and does not cause any permanent system modifications that impact security or operations. [See our FAQ for more details](../faq).
+No worries! The Monkey uses safe exploiters and does not cause any permanent system modifications that impact security or operations.
 {{% /notice %}}
 
-Section contains:
-- [Your network has been breached via internet facing servers](#your-network-has-been-breached-via-internet-facing-servers)
-  - [Simulate this scenario using the Monkey](#simulate-this-scenario-using-the-monkey)
-- [You are the newest victim of a phishing fraud! 🎣](#you-are-the-newest-victim-of-a-phishing-fraud)
-  - [Simulate this scenario using the Monkey](#simulate-this-scenario-using-the-monkey-1)
-- [You want to test your network segmentation](#you-want-to-test-your-network-segmentation)
-  - [Simulate this scenario using the Monkey](#simulate-this-scenario-using-the-monkey-2)
-- [You want to verify your security solutions, procedures and teams are working as intended](#you-want-to-verify-your-security-solutions-procedures-and-teams-are-working-as-intended)
-  - [Simulate this scenario using the Monkey](#simulate-this-scenario-using-the-monkey-3)
-- [Other useful tips](#other-useful-tips)
+#### Section contents:
+- [Network breach](./network-breach) - Simulate internal network breach.
+- [Network segmentation](./network-segmentation) - Test network segmentation.
+- [Credential leak](./credential-leak) - Assess the impact of successful phishing attack or other form of credential leak. 
+- [IDS/IPS Test](./ids-test) - Test your network defence solutions.
+- [Other](./other) - Tips and tricks about configuring monkey for your needs.

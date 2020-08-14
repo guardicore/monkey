@@ -25,9 +25,9 @@ its cross-segment traffic testing feature.
 - **Network -> Network analysis -> Network segmentation testing** This configuration setting allows you to define
  subnets that should be segregated from each other. If any of provided networks can reach each other, you'll see it 
  in security report.
-- **(Optional)Network -> Scope** You can disable **Local network scan** and leave other options by default if you only want to
+- **(Optional) Network -> Scope** You can disable **Local network scan** and leave other options by default if you only want to
  test for network segmentation without any lateral movement.
-- **(Optional)Monkey -> Post Breach Actions** If you only want to test segmentation in the network, you can turn off 
+- **(Optional) Monkey -> Post Breach Actions** If you only want to test segmentation in the network, you can turn off 
 all post breach actions. These actions simulate attacker's behaviour after getting access to a new system, so they
  might trigger your defence solutions which will interrupt segmentation test.
 

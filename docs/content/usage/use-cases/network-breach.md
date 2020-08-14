@@ -26,8 +26,8 @@ safe exploiters are selected.
  and allow Monkey to propagate until maximum **Scan depth**(hop count) is reached or you can fine tune it by providing 
  specific network ranges in **Scan target list**. Scanning local network is more realistic, but providing specific 
  targets will make scanning process substantially faster.
-- **(Optional)Internal -> Network -> TCP scanner** You can add custom ports your organization is using.
-- **(Optional)Monkey -> Post Breach Actions** If you only want to test propagation in the network, you can turn off 
+- **(Optional) Internal -> Network -> TCP scanner** You can add custom ports your organization is using.
+- **(Optional) Monkey -> Post Breach Actions** If you only want to test propagation in the network, you can turn off 
 all post breach actions. These actions simulate attacker's behaviour after getting access to a new system, but in no
  way helps to exploit new machines.
 
