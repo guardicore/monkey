@@ -1,7 +1,6 @@
 import argparse
 import json
 import logging
-import os
 import sys
 from pathlib import Path
 
@@ -14,7 +13,7 @@ def add_monkey_dir_to_sys_path():
 
 add_monkey_dir_to_sys_path()
 
-from monkey_island.cc.environment.environment_config import EnvironmentConfig #isort:skip
+from monkey_island.cc.environment.environment_config import EnvironmentConfig  # noqa: E402 isort:skip
 
 SERVER_CONFIG = "server_config"
 
