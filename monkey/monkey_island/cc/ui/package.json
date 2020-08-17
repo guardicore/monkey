@@ -74,7 +74,7 @@
     "file-saver": "^2.0.2",
     "filepond": "^4.18.0",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "marked": "^1.1.1",
     "normalize.css": "^8.0.0",
     "npm": "^6.14.7",
@@ -96,7 +96,7 @@
     "react-hot-loader": "^4.12.20",
     "react-json-tree": "^0.11.2",
     "react-jsonschema-form-bs4": "^1.7.1",
-    "react-particles-js": "^3.2.1",
+    "react-particles-js": "^3.3.0",
     "react-redux": "^5.1.2",
     "react-router-dom": "^4.3.1",
     "react-spinners": "^0.9.0",
@@ -104,8 +104,8 @@
     "react-toggle": "^4.1.1",
     "react-tooltip-lite": "^1.12.0",
     "redux": "^4.0.4",
-    "sha3": "^2.0.7",
-    "snyk": "^1.361.3"
+    "sha3": "^2.1.3",
+    "snyk": "^1.363.0"
   },
   "snyk": true
 }

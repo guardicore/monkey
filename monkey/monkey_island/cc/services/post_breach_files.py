@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 # Where to find file names in config
 PBA_WINDOWS_FILENAME_PATH = ['monkey', 'post_breach', 'PBA_windows_filename']
 PBA_LINUX_FILENAME_PATH = ['monkey', 'post_breach', 'PBA_linux_filename']
-UPLOADS_DIR = Path('monkey_island', 'cc', 'userUploads')
+PBA_UPLOAD_PATH = ['monkey_island', 'cc', 'userUploads']
+UPLOADS_DIR = Path(*PBA_UPLOAD_PATH)
 
 
 def remove_PBA_files():

@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import time
+from threading import Thread
 
 import infection_monkey.tunnel as tunnel
 from common.network.network_utils import get_host_from_network_location
@@ -138,9 +139,9 @@ class InfectionMonkey(object):
             StateTelem(is_done=False, version=get_version()).send()
             TunnelTelem().send()
 
-            LOG.debug("Starting the post-breach phase.")
-            self.collect_system_info_if_configured()
-            PostBreach().execute_all_configured()
+            LOG.debug("Starting the post-breach phase asynchronously.")
+            post_breach_phase = Thread(target=self.start_post_breach_phase)
+            post_breach_phase.start()
 
             LOG.debug("Starting the propagation phase.")
             self.shutdown_by_max_depth_reached()
@@ -230,9 +231,16 @@ class InfectionMonkey(object):
             if monkey_tunnel:
                 monkey_tunnel.stop()
                 monkey_tunnel.join()
+
+            post_breach_phase.join()
+
         except PlannedShutdownException:
             LOG.info("A planned shutdown of the Monkey occurred. Logging the reason and finishing execution.")
             LOG.exception("Planned shutdown, reason:")
+
+    def start_post_breach_phase(self):
+        self.collect_system_info_if_configured()
+        PostBreach().execute_all_configured()
 
     def shutdown_by_max_depth_reached(self):
         if 0 == WormConfiguration.depth:

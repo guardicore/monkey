@@ -88,7 +88,8 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1156",
                     "description": "Adversaries may abuse shell scripts by "
                                    "inserting arbitrary shell commands to gain persistence, which "
-                                   "would be executed every time the user logs in or opens a new shell."
+                                   "would be executed every time the user logs in or opens a new shell.",
+                    "depends_on": ["T1504"]
                 },
                 "T1136": {
                     "title": "Create account",
@@ -117,7 +118,8 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1168/",
                     "description": "Linux supports multiple methods for creating pre-scheduled and "
                                    "periodic background jobs. Job scheduling can be used by adversaries to "
-                                   "schedule running malicious code at some specified date and time."
+                                   "schedule running malicious code at some specified date and time.",
+                    "depends_on": ["T1053"]
                 },
                 "T1504": {
                     "title": "PowerShell profile",
@@ -127,7 +129,8 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1504",
                     "description": "Adversaries may gain persistence and elevate privileges "
                                    "in certain situations by abusing PowerShell profiles which "
-                                   "are scripts that run when PowerShell starts."
+                                   "are scripts that run when PowerShell starts.",
+                    "depends_on": ["T1156"]
                 },
                 "T1053": {
                     "title": "Scheduled task",
@@ -137,7 +140,8 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1053",
                     "description": "Windows utilities can be used to schedule programs or scripts to "
                                    "be executed at a date and time. An adversary may use task scheduling to "
-                                   "execute programs at system startup or on a scheduled basis for persistence."
+                                   "execute programs at system startup or on a scheduled basis for persistence.",
+                    "depends_on": ["T1168"]
                 },
                 "T1166": {
                     "title": "Setuid and Setgid",

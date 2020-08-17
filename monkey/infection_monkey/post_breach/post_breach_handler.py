@@ -1,4 +1,5 @@
 import logging
+from multiprocessing.dummy import Pool
 from typing import Sequence
 
 from infection_monkey.post_breach.pba import PBA
@@ -24,12 +25,8 @@ class PostBreach(object):
         """
         Executes all post breach actions.
         """
-        for pba in self.pba_list:
-            try:
-                LOG.debug("Executing PBA: '{}'".format(pba.name))
-                pba.run()
-            except Exception as e:
-                LOG.error("PBA {} failed. Error info: {}".format(pba.name, e))
+        pool = Pool(5)
+        pool.map(self.run_pba, self.pba_list)
         LOG.info("All PBAs executed. Total {} executed.".format(len(self.pba_list)))
 
     @staticmethod
@@ -38,3 +35,10 @@ class PostBreach(object):
         :return: A list of PBA objects.
         """
         return PBA.get_instances()
+
+    def run_pba(self, pba):
+        try:
+            LOG.debug("Executing PBA: '{}'".format(pba.name))
+            pba.run()
+        except Exception as e:
+            LOG.error("PBA {} failed. Error info: {}".format(pba.name, e))
