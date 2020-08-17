@@ -31,6 +31,7 @@ from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
+from monkey_island.cc.resources.T1216_pba_file_download import T1216PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
