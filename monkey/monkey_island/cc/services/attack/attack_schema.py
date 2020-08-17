@@ -189,7 +189,7 @@ SCHEMA = {
                 "T1216": {
                     "title": "Signed script proxy execution",
                     "type": "bool",
-                    "value": True,
+                    "value": False,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1216",
                     "description": "Adversaries may use scripts signed with trusted certificates to "

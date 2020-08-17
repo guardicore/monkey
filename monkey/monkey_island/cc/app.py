@@ -35,6 +35,8 @@ from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
+from monkey_island.cc.resources.T1216_pba_file_download import \
+    T1216PBAFileDownload
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.test.clear_caches import ClearCaches
@@ -130,6 +132,7 @@ def init_api_resources(api):
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')
     api.add_resource(PBAFileDownload, '/api/pba/download/<string:path>')
+    api.add_resource(T1216PBAFileDownload, '/api/t1216-pba/download/')
     api.add_resource(FileUpload, '/api/fileUpload/<string:file_type>',
                      '/api/fileUpload/<string:file_type>?load=<string:filename>',
                      '/api/fileUpload/<string:file_type>?restore=<string:filename>')

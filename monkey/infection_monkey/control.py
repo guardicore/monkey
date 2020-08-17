@@ -326,6 +326,16 @@ class ControlClient(object):
             return False
 
     @staticmethod
+    def get_T1216_pba_file():
+        try:
+            return requests.get("https://%s/api/t1216-pba/download/" % WormConfiguration.current_server,  # noqa: DUO123
+                                verify=False,
+                                proxies=ControlClient.proxies,
+                                stream=True)
+        except requests.exceptions.RequestException:
+            return False
+
+    @staticmethod
     def should_monkey_run(vulnerable_port: str) -> bool:
         if vulnerable_port and \
            WormConfiguration.get_hop_distance_to_island() > 1 and \

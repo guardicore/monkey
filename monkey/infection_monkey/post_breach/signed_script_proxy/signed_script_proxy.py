@@ -11,6 +11,6 @@ def get_commands_to_proxy_execution_using_signed_script():
     return windows_cmds
 
 
-def cleanup_changes():
+def cleanup_changes(original_comspec):
     if is_windows_os():
-        subprocess.run(get_windows_commands_to_reset_comspec(), shell=True)  # noqa: DUO116
+        subprocess.run(get_windows_commands_to_reset_comspec(original_comspec), shell=True)  # noqa: DUO116
