@@ -1,8 +1,20 @@
 import argparse
 import json
 import logging
+import os
+import sys
+from pathlib import Path
 
-from monkey_island.cc.environment.environment_config import EnvironmentConfig
+
+def add_monkey_dir_to_sys_path():
+    monkey_path = Path(sys.path[0])
+    monkey_path = monkey_path.parents[2]
+    sys.path.insert(0, monkey_path.__str__())
+
+
+add_monkey_dir_to_sys_path()
+
+from monkey_island.cc.environment.environment_config import EnvironmentConfig #isort:skip
 
 SERVER_CONFIG = "server_config"
 
