@@ -18,7 +18,8 @@ from monkey_island.cc.services.attack.technique_reports import (T1003, T1005,
                                                                 T1158, T1166,
                                                                 T1168, T1188,
                                                                 T1197, T1210,
-                                                                T1222, T1504)
+                                                                T1222, T1504,
+                                                                T1087)
 from monkey_island.cc.services.reporting.report_generation_synchronisation import \
     safe_generate_attack_report
 
@@ -57,7 +58,8 @@ TECHNIQUES = {'T1210': T1210.T1210,
               'T1154': T1154.T1154,
               'T1166': T1166.T1166,
               'T1168': T1168.T1168,
-              'T1053': T1053.T1053
+              'T1053': T1053.T1053,
+              'T1087': T1087.T1087
               }
 
 REPORT_NAME = 'new_report'

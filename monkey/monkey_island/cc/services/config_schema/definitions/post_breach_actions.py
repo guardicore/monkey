@@ -70,6 +70,15 @@ POST_BREACH_ACTIONS = {
             "title": "Job scheduling",
             "info": "Attempts to create a scheduled job on the system and remove it.",
             "attack_techniques": ["T1168", "T1053"]
+        },
+        {
+            "type": "string",
+            "enum": [
+                "AccountDiscovery"
+            ],
+            "title": "Account Discovery",
+            "info": "Attempts to get a listing of user accounts on the system.",
+            "attack_techniques": ["T1087"]
         }
     ]
 }

@@ -234,6 +234,16 @@ SCHEMA = {
             "type": "object",
             "link": "https://attack.mitre.org/tactics/TA0007/",
             "properties": {
+                "T1087": {
+                    "title": "Account Discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1087",
+                    "description": "Adversaries may attempt to get a listing of accounts on a system or "
+                                   "within an environment. This information can help adversaries determine which "
+                                   "accounts exist to aid in follow-on behavior."
+                },
                 "T1018": {
                     "title": "Remote System Discovery",
                     "type": "bool",
