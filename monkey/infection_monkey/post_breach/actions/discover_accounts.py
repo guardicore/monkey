@@ -1,7 +1,7 @@
 from common.data.post_breach_consts import POST_BREACH_ACCOUNT_DISCOVERY
-from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.account_discovery.account_discovery import \
     get_commands_to_discover_accounts
+from infection_monkey.post_breach.pba import PBA
 
 
 class AccountDiscovery(PBA):
