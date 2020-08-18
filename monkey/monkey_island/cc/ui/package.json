@@ -72,7 +72,7 @@
     "downloadjs": "^1.4.7",
     "fetch": "^1.1.0",
     "file-saver": "^2.0.2",
-    "filepond": "^4.18.0",
+    "filepond": "^4.19.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.20",
     "marked": "^1.1.1",
