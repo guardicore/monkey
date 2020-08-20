@@ -9,3 +9,6 @@ def get_linux_timestomping_commands():
         f'cat {TEMP_FILE} ; '
         f'rm {TEMP_FILE} -f'
     ]
+
+
+# Commands' source: https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1070.006/T1070.006.md
