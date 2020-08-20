@@ -77,7 +77,7 @@ POST_BREACH_ACTIONS = {
                 "Timestomping"
             ],
             "title": "Timestomping",
-            "info": "Creates a temporary file and attempts to modify its file time attributes. Removes temporary file.",
+            "info": "Creates a temporary file and attempts to modify its time attributes. Removes the file afterwards.",
             "attack_techniques": ["T1099"]
         }
     ]
