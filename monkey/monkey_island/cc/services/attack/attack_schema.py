@@ -185,6 +185,15 @@ SCHEMA = {
                     "necessary": True,
                     "link": "https://attack.mitre.org/techniques/T1222",
                     "description": "Adversaries may modify file permissions/attributes to evade intended DACLs."
+                },
+                "T1099": {
+                    "title": "Timestomping",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1099",
+                    "description": "Adversaries may modify file time attributes to hide new/changes to existing "
+                                   "files to avoid attention from forensic investigators or file analysis tools."
                 }
             }
         },
