@@ -4,7 +4,7 @@ import {Container} from 'react-bootstrap';
 
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
-import RunMonkeyPage from 'components/pages/RunMonkeyPage';
+import RunMonkeyPage from 'components/pages/RunMonkeyPage/RunMonkeyPage';
 import MapPage from 'components/pages/MapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';

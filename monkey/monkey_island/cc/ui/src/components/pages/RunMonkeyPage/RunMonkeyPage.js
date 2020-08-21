@@ -12,10 +12,11 @@ import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 import {Link} from 'react-router-dom';
-import AuthComponent from '../AuthComponent';
-import AwsRunTable from '../run-monkey/AwsRunTable';
+import AuthComponent from '../../AuthComponent';
+import AwsRunTable from '../../run-monkey/AwsRunTable';
 
-import MissingBinariesModal from '../ui-components/MissingBinariesModal';
+import MissingBinariesModal from '../../ui-components/MissingBinariesModal';
+import ManualRunOptions from './ManualRunOptions';
 
 const loading_css_override = css`
     display: block;
@@ -329,22 +330,11 @@ class RunMonkeyPageComponent extends AuthComponent {
             showModal={this.state.showModal}
             onClose={this.closeModal}
             errorDetails={this.state.errorDetails}/>
-          {
-            // TODO: implement button functionality
-            /*
-            <button
-               className="btn btn-default"
-               disabled={this.state.runningOnClientState !== 'not_running'}
-               style={{'marginLeft': '1em'}}>
-              Download and run locally
-              { this.renderIconByState(this.state.runningOnClientState) }
-            </button>
-            */
-          }
         </p>
         <p className="text-center">
           OR
         </p>
+        <ManualRunOptions />
         <p className={'text-center'}
            style={this.state.showManual || !this.state.isOnAws ? {'marginBottom': '2em'} : {}}>
           <Button onClick={this.toggleManual}

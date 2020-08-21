@@ -10,4 +10,10 @@ class AuthComponent extends React.Component {
   }
 }
 
+export function authFetch(){
+  const auth = new AuthService();
+  const authFetch = auth.authFetch;
+  const jwtHeader = auth.jwtHeader();
+}
+
 export default AuthComponent;
