@@ -1,9 +1,9 @@
 import subprocess
 
 from common.data.post_breach_consts import POST_BREACH_CLEAR_CMD_HISTORY
-from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.clear_command_history.clear_command_history import \
     get_commands_to_clear_command_history
+from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 
 
