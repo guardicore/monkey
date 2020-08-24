@@ -18,7 +18,7 @@ function setPreviousComponent(props, previousComponent) {
   if(previousComponent === ManualRunOptions){
     return props.setComponent()
   } else {
-    return props.setComponent(previousComponent)
+    return props.setComponent(previousComponent, props)
   }
 }
 

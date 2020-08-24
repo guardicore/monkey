@@ -5,6 +5,7 @@ import {Container} from 'react-bootstrap';
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
 import RunMonkeyPage from 'components/pages/RunMonkeyPage/RunMonkeyPage';
+import RunMonkeyPage2 from 'components/pages/RunMonkeyPage/RunMonkeyPage2';
 import MapPage from 'components/pages/MapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
@@ -29,7 +30,7 @@ const reportZeroTrustRoute = '/report/zeroTrust';
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
-    if (this.state.isLoggedIn === false){
+    if (this.state.isLoggedIn === false) {
       return
     }
     this.auth.loggedIn()
@@ -146,6 +147,10 @@ class AppComponent extends AuthComponent {
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/run-monkey',
               <StandardLayoutComponent component={RunMonkeyPage}
+                                       onStatusChange={this.updateStatus}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute('/run-monkey2',
+              <StandardLayoutComponent component={RunMonkeyPage2}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/infection/map',

@@ -1,42 +1,57 @@
-import React, {useEffect} from 'react';
-import NextSelectionButton from '../../ui-components/inline-selection/NextSelectionButton';
+import React, {useEffect, useState} from 'react';
 import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
-import CommandSection from '../../ui-components/inline-selection/CommandSection';
 import ManualRunOptions from './ManualRunOptions';
-import InterfaceSelection from './InterfaceSelection';
+import DropdownSelect from '../../ui-components/DropdownSelect';
+import {OS_TYPES} from './OsTypes';
+import GenerateLocalWindowsCmd from './commands/local_windows_cmd';
+import GenerateLocalWindowsPowershell from './commands/local_windows_powershell';
+import GenerateLocalLinuxWget from './commands/local_linux_wget';
+import GenerateLocalLinuxCurl from './commands/local_linux_curl';
+import CommandDisplay from './CommandDisplay';
+
 
 const LocalManualRunOptions = (props) => {
   return InlineSelection(getContents, props, ManualRunOptions)
 }
 
-const win64commands = [{name: "CMD", command: "monkey.exe m0nk3y -s 192.168.56.1"}]
-
 const getContents = (props) => {
+
+  const osTypes = {
+    [OS_TYPES.WINDOWS_64]: 'Windows 64bit',
+    [OS_TYPES.WINDOWS_32]: 'Windows 32bit',
+    [OS_TYPES.LINUX_64]: 'Linux 64bit',
+    [OS_TYPES.LINUX_32]: 'Linux 32bit'
+  }
+
+  const [osType, setOsType] = useState(OS_TYPES.WINDOWS_64);
+  const [selectedIp, setSelectedIp] = useState(props.ips[0]);
+  const [commands, setCommands] = useState(generateCommands());
+
+  useEffect(() => {
+    setCommands(generateCommands());
+  }, [osType, selectedIp])
+
+  function setIp(index) {
+    setSelectedIp(props.ips[index]);
+  }
+
+  function generateCommands() {
+    if(osType === OS_TYPES.WINDOWS_64 || osType === OS_TYPES.WINDOWS_32) {
+      return [{name: 'CMD', command: GenerateLocalWindowsCmd(selectedIp, osType)},
+              {name: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, osType)}]
+    } else {
+      return [{name: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, osType)},
+              {name: 'WGET', command: GenerateLocalLinuxWget(selectedIp, osType)}]
+    }
+  }
+
   return (
     <>
-      <NextSelectionButton text={'Windows 64bit'}
-                           onButtonClick={() => {
-                             props.setComponent(InterfaceSelection('Windows64'))
-                           }}/>
-      <NextSelectionButton text={'Windows 32bit'} onButtonClick={() => {
-      }}/>
-      <NextSelectionButton text={'Linux 64bit'} onButtonClick={() => {
-      }}/>
-      <NextSelectionButton text={'Linux 32bit'} onButtonClick={() => {
-      }}/>
+      <DropdownSelect defaultKey={'win64'} options={osTypes} onClick={setOsType}/>
+      <DropdownSelect defaultKey={0} options={props.ips} onClick={setIp}/>
+      <CommandDisplay commands={commands}/>
     </>
   )
-}
-
-const setCommandAsContent = (props) => {
-  let commandComponent = () => InlineSelection(CommandSection,
-    {
-      commands: win64commands,
-      setComponent: props.setComponent
-    },
-    LocalManualRunOptions
-  );
-  props.setComponent(commandComponent, props);
 }
 
 export default LocalManualRunOptions;

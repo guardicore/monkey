@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import NextSelectionButton from '../../ui-components/inline-selection/NextSelectionButton';
 import LocalManualRunOptions from './LocalManualRunOptions';
 import AuthComponent from '../../AuthComponent';
+import BackButton from '../../ui-components/inline-selection/BackButton';
 
 function ManualRunOptions(props) {
 
@@ -16,7 +17,7 @@ function ManualRunOptions(props) {
       authComponent.authFetch('/api')
         .then(res => res.json())
         .then(res => {
-          setIps([res['ip_addresses']]);
+          setIps([res['ip_addresses']][0]);
           setInitialized(true);
         });
     }
@@ -48,6 +49,7 @@ function ManualRunOptions(props) {
         }}/>
         <NextSelectionButton text={'Automation'} onButtonClick={() => {
         }}/>
+        <BackButton onClick={props.disableManualOptions} />
       </div>
     );
   }

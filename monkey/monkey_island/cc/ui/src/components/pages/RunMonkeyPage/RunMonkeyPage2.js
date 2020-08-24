@@ -1,9 +1,11 @@
 import React from 'react';
 import {css} from '@emotion/core';
 import {Button, Col, Card, Nav, Collapse, Row} from 'react-bootstrap';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import GridLoader from 'react-spinners/GridLoader';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faClipboard} from '@fortawesome/free-solid-svg-icons/faClipboard';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faSync} from '@fortawesome/free-solid-svg-icons/faSync';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
@@ -23,14 +25,17 @@ const loading_css_override = css`
     margin-left: auto;
 `;
 
-class RunMonkeyPageComponent extends AuthComponent {
+class RunMonkeyPageComponent2 extends AuthComponent {
 
   constructor(props) {
     super(props);
     this.state = {
+      ips: [],
       runningOnIslandState: 'not_running',
       runningOnClientState: 'not_running',
       awsClicked: false,
+      selectedIp: '0.0.0.0',
+      selectedOs: 'windows-32',
       showManual: false,
       showAws: false,
       isOnAws: false,
@@ -48,6 +53,13 @@ class RunMonkeyPageComponent extends AuthComponent {
   }
 
   componentDidMount() {
+    this.authFetch('/api')
+      .then(res => res.json())
+      .then(res => this.setState({
+        ips: res['ip_addresses'],
+        selectedIp: res['ip_addresses'][0]
+      }));
+
     this.authFetch('/api/local-monkey')
       .then(res => res.json())
       .then(res => {
@@ -102,7 +114,17 @@ class RunMonkeyPageComponent extends AuthComponent {
       });
   }
 
-  runIslandMonkey = () => {
+  static generateLinuxCmd(ip, is32Bit) {
+    let bitText = is32Bit ? '32' : '64';
+    return `wget --no-check-certificate https://${ip}:5000/api/monkey/download/monkey-linux-${bitText}; chmod +x monkey-linux-${bitText}; ./monkey-linux-${bitText} m0nk3y -s ${ip}:5000`
+  }
+
+  static generateWindowsCmd(ip, is32Bit) {
+    let bitText = is32Bit ? '32' : '64';
+    return `powershell [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}; (New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/monkey-windows-${bitText}.exe','.\\monkey.exe'); ;Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`;
+  }
+
+  runLocalMonkey = () => {
     this.authFetch('/api/local-monkey',
       {
         method: 'POST',
@@ -131,6 +153,41 @@ class RunMonkeyPageComponent extends AuthComponent {
 
         this.props.onStatusChange();
       });
+  };
+
+  generateCmdDiv() {
+    let isLinux = (this.state.selectedOs.split('-')[0] === 'linux');
+    let is32Bit = (this.state.selectedOs.split('-')[1] === '32');
+    let cmdText = '';
+    if (isLinux) {
+      cmdText = RunMonkeyPageComponent2.generateLinuxCmd(this.state.selectedIp, is32Bit);
+    } else {
+      cmdText = RunMonkeyPageComponent2.generateWindowsCmd(this.state.selectedIp, is32Bit);
+    }
+    return (
+      <Card key={'cmdDiv' + this.state.selectedIp} style={{'margin': '0.5em'}}>
+        <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
+          <CopyToClipboard text={cmdText} className="pull-right btn-sm">
+            <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
+              <FontAwesomeIcon icon={faClipboard}/>
+            </Button>
+          </CopyToClipboard>
+          <code>{cmdText}</code>
+        </div>
+      </Card>
+    )
+  }
+
+  setSelectedOs = (key) => {
+    this.setState({
+      selectedOs: key
+    });
+  };
+
+  setSelectedIp = (key) => {
+    this.setState({
+      selectedIp: key
+    });
   };
 
   static renderIconByState(state) {
@@ -218,6 +275,14 @@ class RunMonkeyPageComponent extends AuthComponent {
             rel="noopener noreferrer" target="_blank">Read the documentation</a>!
           </p>
         </div>
+        {
+          this.state.ips.length > 1 ?
+            <Nav variant="pills" activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
+                 style={{'marginBottom': '2em'}}>
+              {this.state.ips.map(ip => <Nav.Item key={ip}><Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
+            </Nav>
+            : <div style={{'marginBottom': '2em'}}/>
+        }
 
         <AwsRunTable
           data={this.state.awsMachines}
@@ -243,46 +308,6 @@ class RunMonkeyPageComponent extends AuthComponent {
     })
   };
 
-  renderIslandVsManual = () => {
-    return (
-      <>
-        <p className={'text-center'}>
-          <Button onClick={this.runIslandMonkey}
-                  variant={'outline-monkey'}
-                  size='lg'
-                  disabled={this.state.runningOnIslandState !== 'not_running'}
-          >
-            <Emoji symbol={"🏝️"}/>Run on Monkey Island Server
-            {RunMonkeyPageComponent.renderIconByState(this.state.runningOnIslandState)}
-          </Button>
-          <MissingBinariesModal
-            showModal={this.state.showModal}
-            onClose={this.closeModal}
-            errorDetails={this.state.errorDetails}/>
-        </p>
-        <p className="text-center">
-          OR
-        </p>
-        <p className={'text-center'}
-           style={this.state.showManual || !this.state.isOnAws ? {'marginBottom': '2em'} : {}}>
-          <Button onClick={this.toggleManual}
-                  variant={'outline-monkey'}
-                  size='lg'
-                  className={(this.state.showManual ? 'active' : '')}>
-            <Emoji symbol={"💻"}/> Run on a machine of your choice
-          </Button>
-        </p>
-        <p style={{'fontSize': '1.2em'}}>
-          Go ahead and monitor the ongoing infection in the <Link to="/infection/map">Infection Map</Link> view.
-        </p>
-      </>
-    )
-  }
-
-  disableManualOptions = () => {
-    this.setState({showManual: false})
-  }
-
   render() {
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
@@ -293,9 +318,93 @@ class RunMonkeyPageComponent extends AuthComponent {
           Go ahead and run the monkey!
           <i> (Or <Link to="/configure">configure the monkey</Link> to fine tune its behavior)</i>
         </p>
-        {this.state.showManual ?
-          <ManualRunOptions disableManualOptions={this.disableManualOptions}/> :
-          this.renderIslandVsManual()}
+        <p className={'text-center'}>
+          <Button onClick={this.runLocalMonkey}
+                  variant={'outline-monkey'}
+                  size='lg'
+                  disabled={this.state.runningOnIslandState !== 'not_running'}
+          >
+            <Emoji symbol={"🏝️"}/>Run on Monkey Island Server
+            {RunMonkeyPageComponent2.renderIconByState(this.state.runningOnIslandState)}
+          </Button>
+          <MissingBinariesModal
+            showModal={this.state.showModal}
+            onClose={this.closeModal}
+            errorDetails={this.state.errorDetails}/>
+        </p>
+        <p className="text-center">
+          OR
+        </p>
+        <ManualRunOptions />
+        <p className={'text-center'}
+           style={this.state.showManual || !this.state.isOnAws ? {'marginBottom': '2em'} : {}}>
+          <Button onClick={this.toggleManual}
+                  variant={'outline-monkey'}
+                  size='lg'
+                  className={(this.state.showManual ? 'active' : '')}>
+            <Emoji symbol={"💻"} /> Run on a machine of your choice
+          </Button>
+        </p>
+        <Collapse in={this.state.showManual}>
+          <div style={{'marginBottom': '2em'}}>
+            <p style={{'fontSize': '1.2em'}}>
+              Choose the operating system where you want to run the monkey:
+            </p>
+            <Row>
+              <Col>
+                <Nav variant='pills' fill id={'bootstrap-override'} className={'run-on-os-buttons'}
+                     activeKey={this.state.selectedOs} onSelect={this.setSelectedOs}>
+                  <Nav.Item>
+                    <Nav.Link eventKey={'windows-32'}>
+                      Windows (32 bit)
+                    </Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link eventKey='windows-64'>
+                      Windows (64 bit)
+                    </Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link eventKey='linux-32'>
+                      Linux (32 bit)
+                    </Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link eventKey='linux-64'>
+                      Linux (64 bit)
+                    </Nav.Link>
+                  </Nav.Item>
+                </Nav>
+              </Col>
+            </Row>
+
+            {this.state.ips.length > 1 ?
+              <div>
+                <Row>
+                  <Col>
+                    <p style={{'fontSize': '1.2em'}}>
+                      Choose the interface to communicate with:
+                    </p>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Nav variant="pills" fill activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
+                         className={'run-on-os-buttons'}>
+                      {this.state.ips.map(ip => <Nav.Item key={ip}>
+                        <Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
+                    </Nav>
+                  </Col>
+                </Row>
+              </div>
+              : <div style={{'marginBottom': '2em'}}/>
+            }
+            <p style={{'fontSize': '1.2em'}}>
+              Copy the following command to your machine and run it with Administrator or root privileges.
+            </p>
+            {this.generateCmdDiv()}
+          </div>
+        </Collapse>
         {
           this.state.isLoadingAws ?
             <div style={{'marginBottom': '2em', 'align': 'center'}}>
@@ -351,9 +460,13 @@ class RunMonkeyPageComponent extends AuthComponent {
           }
 
         </Collapse>
+
+        <p style={{'fontSize': '1.2em'}}>
+          Go ahead and monitor the ongoing infection in the <Link to="/infection/map">Infection Map</Link> view.
+        </p>
       </Col>
     );
   }
 }
 
-export default RunMonkeyPageComponent;
+export default RunMonkeyPageComponent2;
