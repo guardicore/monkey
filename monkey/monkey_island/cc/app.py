@@ -6,6 +6,7 @@ from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
+from common.data.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
@@ -132,7 +133,7 @@ def init_api_resources(api):
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')
     api.add_resource(PBAFileDownload, '/api/pba/download/<string:path>')
-    api.add_resource(T1216PBAFileDownload, '/api/t1216-pba/download/')
+    api.add_resource(T1216PBAFileDownload, T1216_PBA_FILE_DOWNLOAD_PATH)
     api.add_resource(FileUpload, '/api/fileUpload/<string:file_type>',
                      '/api/fileUpload/<string:file_type>?load=<string:filename>',
                      '/api/fileUpload/<string:file_type>?restore=<string:filename>')

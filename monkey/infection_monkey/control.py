@@ -2,12 +2,14 @@ import json
 import logging
 import platform
 from socket import gethostname
+from urllib.parse import urljoin
 
 import requests
 from requests.exceptions import ConnectionError
 
 import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
+from common.data.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import check_internet_access, local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
@@ -328,7 +330,8 @@ class ControlClient(object):
     @staticmethod
     def get_T1216_pba_file():
         try:
-            return requests.get("https://%s/api/t1216-pba/download/" % WormConfiguration.current_server,  # noqa: DUO123
+            return requests.get(urljoin(f"https://{WormConfiguration.current_server}/",  # noqa: DUO123
+                                        T1216_PBA_FILE_DOWNLOAD_PATH),
                                 verify=False,
                                 proxies=ControlClient.proxies,
                                 stream=True)
