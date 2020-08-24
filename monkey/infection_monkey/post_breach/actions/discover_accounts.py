@@ -9,4 +9,4 @@ class AccountDiscovery(PBA):
         linux_cmds, windows_cmds = get_commands_to_discover_accounts()
         super().__init__(POST_BREACH_ACCOUNT_DISCOVERY,
                          linux_cmd=' '.join(linux_cmds),
-                         windows_cmd=' '.join(windows_cmds))
+                         windows_cmd=windows_cmds)
