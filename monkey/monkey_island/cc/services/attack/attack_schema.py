@@ -171,7 +171,7 @@ SCHEMA = {
                 "T1146": {
                     "title": "Clear command history",
                     "type": "bool",
-                    "value": True,
+                    "value": False,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1146",
                     "description": "Adversaries may clear/disable command history of a compromised "

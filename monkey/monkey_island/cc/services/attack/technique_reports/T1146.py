@@ -7,9 +7,9 @@ __author__ = "shreyamalviya"
 
 class T1146(PostBreachTechnique):
     tech_id = "T1146"
-    unscanned_msg = "Monkey didn't try clearing/disabling the command history since it didn't run on any Linux machines."
-    scanned_msg = "Monkey tried clearing/disabling the command history but failed."
-    used_msg = "Monkey successfully cleared/disabled the command history."
+    unscanned_msg = "Monkey didn't try clearing the command history since it didn't run on any Linux machines."
+    scanned_msg = "Monkey tried clearing the command history but failed."
+    used_msg = "Monkey successfully cleared the command history (and then restored it back)."
     pba_names = [POST_BREACH_CLEAR_CMD_HISTORY]
 
     @staticmethod

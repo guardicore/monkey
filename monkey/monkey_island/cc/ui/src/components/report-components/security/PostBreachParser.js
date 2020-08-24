@@ -56,7 +56,7 @@ function aggregateMultipleResultsPba(results) {
     return results;
 
   // if modifications were made, push aggregated results to `results` and return
-  results = results.filter(result => result.name !== SHELL_STARTUP_NAME && result.name !== CMD_HISTORY_NAME);
+  results = results.filter(result => !multipleResultsPbas.includes(result.name));
   multipleResultsPbas.forEach(pba => checkAggregatedResults(pba));
   return results;
 }
