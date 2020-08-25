@@ -1,0 +1,34 @@
+.inline-selection-component .selection-button {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 20px;
+  padding-right: 40px;
+}
+
+.inline-selection-component .selection-button svg,
+.inline-selection-component .selection-button h1 {
+  display: inline-block;
+}
+
+.inline-selection-component .selection-button h1 {
+  margin: 0;
+  font-size: 1.3em;
+}
+
+.inline-selection-component .selection-button p {
+  margin: 0;
+  font-size: 0.8em;
+}
+
+.inline-selection-component .selection-button svg {
+  margin-bottom: 1px;
+  margin-right: 7px;
+}
+
+.inline-selection-component .selection-button .angle-right {
+  display: inline-block;
+  position: absolute;
+  right: 23px;
+  top: 22%;
+  font-size: 1.7em;
+}

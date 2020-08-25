@@ -37,11 +37,11 @@ const getContents = (props) => {
 
   function generateCommands() {
     if(osType === OS_TYPES.WINDOWS_64 || osType === OS_TYPES.WINDOWS_32) {
-      return [{name: 'CMD', command: GenerateLocalWindowsCmd(selectedIp, osType)},
-              {name: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, osType)}]
+      return [{type: 'CMD', command: GenerateLocalWindowsCmd(selectedIp, osType)},
+              {type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, osType)}]
     } else {
-      return [{name: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, osType)},
-              {name: 'WGET', command: GenerateLocalLinuxWget(selectedIp, osType)}]
+      return [{type: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, osType)},
+              {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, osType)}]
     }
   }
 
