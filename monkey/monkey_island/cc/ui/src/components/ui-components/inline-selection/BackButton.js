@@ -1,12 +1,19 @@
-import {Button} from 'react-bootstrap';
+import {Button, Col, Row} from 'react-bootstrap';
 import React from 'react';
 import PropTypes from 'prop-types';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCaretLeft} from '@fortawesome/free-solid-svg-icons/faCaretLeft';
 
 export default function backButton(props) {
   return (
-    <Button variant={'secondary'} onClick={props.onClick}>
-      Back
-    </Button>
+    <Row>
+      <Col lg={8} md={10} sm={12}>
+        <Button variant={'outline-dark'} onClick={props.onClick} className={'back-button'}>
+          <FontAwesomeIcon icon={faCaretLeft} />
+          <h1>Back</h1>
+        </Button>
+      </Col>
+    </Row>
   )
 }
 

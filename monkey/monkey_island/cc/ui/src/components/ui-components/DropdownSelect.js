@@ -11,7 +11,7 @@ export default function DropdownSelect(props) {
     } else if (typeof data === 'object') {
       return generateDropdownItemsFromObject(data);
     } else {
-      throw "Component can only generate dropdown intems from lists and objects."
+      throw 'Component can only generate dropdown items from arrays and objects.'
     }
   }
 
@@ -35,7 +35,8 @@ export default function DropdownSelect(props) {
     return (
       <Dropdown.Item onClick={() => { setSelectedOption(key);
                                       props.onClick(key)}}
-                     active={(key === selectedOption)}>
+                     active={(key === selectedOption)}
+                     key={value}>
         {value}
       </Dropdown.Item>);
   }

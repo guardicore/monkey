@@ -3,6 +3,10 @@ import NextSelectionButton from '../../ui-components/inline-selection/NextSelect
 import LocalManualRunOptions from './LocalManualRunOptions';
 import AuthComponent from '../../AuthComponent';
 import BackButton from '../../ui-components/inline-selection/BackButton';
+import {faLaptopCode} from '@fortawesome/free-solid-svg-icons/faLaptopCode';
+import {faNetworkWired} from '@fortawesome/free-solid-svg-icons/faNetworkWired';
+import {faCogs} from '@fortawesome/free-solid-svg-icons/faCogs';
+import {Container} from 'react-bootstrap';
 
 function ManualRunOptions(props) {
 
@@ -41,16 +45,22 @@ function ManualRunOptions(props) {
 
   function getDefaultContents() {
     return (
-      <div className={`container inline-selection-component`}>
-        <NextSelectionButton text={'Local'} onButtonClick={() => {
-          setComponent(LocalManualRunOptions, {ips: ips, setComponent: setComponent})
-        }}/>
-        <NextSelectionButton text={'Remote'} onButtonClick={() => {
-        }}/>
-        <NextSelectionButton text={'Automation'} onButtonClick={() => {
-        }}/>
+      <Container className={'inline-selection-component'}>
+        <NextSelectionButton text={'Local'}
+                             description={'Run on a machine via command.'}
+                             icon={faLaptopCode}
+                             onButtonClick={() => {setComponent(LocalManualRunOptions,
+                                                          {ips: ips, setComponent: setComponent})}}/>
+        <NextSelectionButton text={'Remote'}
+                             description={'Run using remote command execution.'}
+                             icon={faNetworkWired}
+                             onButtonClick={() => {}}/>
+        <NextSelectionButton text={'Automation'}
+                             description={'Run using automation tools like ansible or chef.'}
+                             icon={faCogs}
+                             onButtonClick={() => {}}/>
         <BackButton onClick={props.disableManualOptions} />
-      </div>
+      </Container>
     );
   }
 

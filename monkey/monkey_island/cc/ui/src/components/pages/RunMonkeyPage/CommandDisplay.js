@@ -2,29 +2,40 @@ import {Button, Card, Nav} from 'react-bootstrap';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClipboard} from '@fortawesome/free-solid-svg-icons/faClipboard';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
 export default function commandDisplay(props) {
 
-  const [selectedVariant, setSelectedVariant] = useState(props.commands[0].name);
+  const [selectedCommand, setSelectedCommand] = useState(props.commands[0]);
+
+  function setSelectedCommandByName(type){
+    setSelectedCommand(getCommandByName(props.commands, type));
+  }
+
+  function getCommandByName(commands, type){
+    return commands.find((command) => {return command.type === type});
+  }
+
+  useEffect(() => {
+    let sameTypeCommand = getCommandByName(props.commands, selectedCommand.type);
+    if( sameTypeCommand !== undefined){
+      setSelectedCommand(sameTypeCommand);
+    } else {
+      setSelectedCommand(props.commands[0]);
+    }
+  }, [props.commands]);
 
   function renderNav() {
     return (
-      <Nav variant='pills' fill activeKey={selectedVariant} onSelect={setSelectedVariant}>
+      <Nav variant='pills' fill activeKey={selectedCommand.type} onSelect={setSelectedCommandByName}>
         {props.commands.map(command => {
           return (
-            <Nav.Item key={command.name}>
-              <Nav.Link eventKey={command.name}>{command.name}</Nav.Link>
+            <Nav.Item key={command.type}>
+              <Nav.Link eventKey={command.type}>{command.type}</Nav.Link>
             </Nav.Item>);
         })}
       </Nav>);
-  }
-
-  function getCommandByName(name, commands) {
-    commands.forEach((command) => {
-
-    })
   }
 
   return (
@@ -32,12 +43,12 @@ export default function commandDisplay(props) {
       {renderNav()}
       <Card style={{'margin': '0.5em'}}>
         <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
-          <CopyToClipboard text={props.commands[0].name} className="pull-right btn-sm">
+          <CopyToClipboard text={selectedCommand.type} className="pull-right btn-sm">
             <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
               <FontAwesomeIcon icon={faClipboard}/>
             </Button>
           </CopyToClipboard>
-          <code>{props.commands[0].command}</code>
+          <code>{selectedCommand.command}</code>
         </div>
       </Card>
     </>
@@ -46,7 +57,7 @@ export default function commandDisplay(props) {
 
 commandDisplay.propTypes = {
   commands: PropTypes.arrayOf(PropTypes.exact({
-    name: PropTypes.string,
+    type: PropTypes.string,
     command: PropTypes.string
   }))
 }

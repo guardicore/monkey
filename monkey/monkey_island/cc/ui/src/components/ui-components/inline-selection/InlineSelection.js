@@ -2,15 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import BackButton from './BackButton';
 import ManualRunOptions from '../../pages/RunMonkeyPage/ManualRunOptions';
+import Container from 'react-bootstrap';
 
 
 export default function InlineSelection(WrappedComponent, props, previousComponent){
   return (
-    <div className={`container inline-selection-component`}>
+    <Container className={'inline-selection-component'}>
       {previousComponent === undefined ? '' :
         <BackButton onClick={() => {setPreviousComponent(props, previousComponent)}}/>}
       <WrappedComponent {...props}/>
-    </div>
+    </Container>
   )
 }
 
