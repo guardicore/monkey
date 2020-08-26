@@ -25,7 +25,7 @@ Running the Monkey on both the Island and on a few other machines in the network
  as it increases coverage and propagation rates.
 
 
-![Post breach configuration](/images/usage/scenarios/ids-test.png "Post breach configuration")
+![Post breach configuration](/images/usage/use-cases/ids-test.PNG "Post breach configuration")
 
 ## Assessing results
 
@@ -51,5 +51,5 @@ While running this scenario, be on the lookout for the action that should arise:
 Lastly, check Zero Trust and Mitre ATT&CK reports, to see which attacks can be executed on the network and how to
  fix it.
  
- ![Map](/images/usage/scenarios/map-full-cropped.png "Map")
+ ![Map](/images/usage/use-cases/map-full-cropped.png "Map")
 
