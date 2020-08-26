@@ -1,7 +1,8 @@
 ---
 title: "IDS/IPS Test"
 date: 2020-08-12T13:07:47+03:00
-draft: true
+draft: false
+description: "Test your network defence solutions."
 weight: 5
 ---
 
