@@ -13,7 +13,8 @@ class ClearCommandHistory(PBA):
 
     def run(self):
         results = [pba.run() for pba in self.clear_command_history_PBA_list()]
-        PostBreachTelem(self, results).send()
+        if results:
+            PostBreachTelem(self, results).send()
 
     def clear_command_history_PBA_list(self):
         return self.CommandHistoryPBAGenerator().get_clear_command_history_pbas()
