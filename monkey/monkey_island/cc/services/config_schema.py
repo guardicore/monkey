@@ -99,6 +99,13 @@ SCHEMA = {
                         "VSFTPDExploiter"
                     ],
                     "title": "VSFTPD Exploiter"
+                },
+                {
+                    "type": "string",
+                    "enum": [
+                        "DrupalExploiter"
+                    ],
+                    "title": "Drupal Exploiter"
                 }
             ]
         },
