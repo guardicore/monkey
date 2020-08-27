@@ -40,7 +40,8 @@ class ReportService:
             'WebLogicExploiter': 'Oracle WebLogic Exploiter',
             'HadoopExploiter': 'Hadoop/Yarn Exploiter',
             'MSSQLExploiter': 'MSSQL Exploiter',
-            'VSFTPDExploiter': 'VSFTPD Backdoor Exploited'
+            'VSFTPDExploiter': 'VSFTPD Backdoor Exploiter',
+            'DrupalExploiter': 'Drupal Server Exploiter'
         }
 
     class ISSUES_DICT(Enum):
@@ -350,6 +351,12 @@ class ReportService:
         return processed_exploit
 
     @staticmethod
+    def process_drupal_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'drupal'
+        return processed_exploit
+
+    @staticmethod
     def process_exploit(exploit):
         exploiter_type = exploit['data']['exploiter']
         EXPLOIT_PROCESS_FUNCTION_DICT = {
@@ -364,7 +371,8 @@ class ReportService:
             'WebLogicExploiter': ReportService.process_weblogic_exploit,
             'HadoopExploiter': ReportService.process_hadoop_exploit,
             'MSSQLExploiter': ReportService.process_mssql_exploit,
-            'VSFTPDExploiter': ReportService.process_vsftpd_exploit
+            'VSFTPDExploiter': ReportService.process_vsftpd_exploit,
+            'DrupalExploiter': ReportService.process_drupal_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
