@@ -7,3 +7,4 @@ POST_BREACH_TRAP_COMMAND = "Execute command when a particular signal is received
 POST_BREACH_SETUID_SETGID = "Setuid and Setgid"
 POST_BREACH_JOB_SCHEDULING = "Schedule jobs"
 POST_BREACH_ACCOUNT_DISCOVERY = "Account discovery"
+POST_BREACH_CLEAR_CMD_HISTORY = "Clear command history"

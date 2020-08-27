@@ -79,6 +79,15 @@ POST_BREACH_ACTIONS = {
             "title": "Account Discovery",
             "info": "Attempts to get a listing of user accounts on the system.",
             "attack_techniques": ["T1087"]
+        },
+        {
+            "type": "string",
+            "enum": [
+                "ClearCommandHistory"
+            ],
+            "title": "Clear command history",
+            "info": "Attempts to clear the command history.",
+            "attack_techniques": ["T1146"]
         }
     ]
 }
