@@ -74,6 +74,16 @@ POST_BREACH_ACTIONS = {
         {
             "type": "string",
             "enum": [
+                "SignedScriptProxyExecution"
+            ],
+            "title": "Signed script proxy execution",
+            "info": "On Windows systems, attemps to execute an arbitrary file "
+                    "with the help of a pre-existing signed script.",
+            "attack_techniques": ["T1216"]
+        },
+        {
+            "type": "string",
+            "enum": [
                 "AccountDiscovery"
             ],
             "title": "Account Discovery",
