@@ -5,7 +5,6 @@ if sys.platform.startswith("win"):
 
     pythoncom.CoInitialize()
     import wmi
-    import wmi
 
 from .mongo_utils import MongoUtils
 
