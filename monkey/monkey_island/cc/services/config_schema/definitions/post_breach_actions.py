@@ -80,6 +80,24 @@ POST_BREACH_ACTIONS = {
             "info": "On Windows systems, attemps to execute an arbitrary file "
                     "with the help of a pre-existing signed script.",
             "attack_techniques": ["T1216"]
+        },
+        {
+            "type": "string",
+            "enum": [
+                "AccountDiscovery"
+            ],
+            "title": "Account Discovery",
+            "info": "Attempts to get a listing of user accounts on the system.",
+            "attack_techniques": ["T1087"]
+        },
+        {
+            "type": "string",
+            "enum": [
+                "ClearCommandHistory"
+            ],
+            "title": "Clear command history",
+            "info": "Attempts to clear the command history.",
+            "attack_techniques": ["T1146"]
         }
     ]
 }
