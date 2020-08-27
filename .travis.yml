@@ -19,7 +19,6 @@ os: linux
 before_install:
 # Init server_config.json to default
 - cp monkey/monkey_island/cc/server_config.json.default monkey/monkey_island/cc/server_config.json
-- ls monkey/monkey_island/cc/
 
 install:
 # Python
@@ -55,10 +54,7 @@ install:
 
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
-- ls /home/travis/build/guardicore/monkey/
-- ls /home/travis/build/guardicore/
 - pushd /home/travis/build/guardicore/monkey/monkey
-- ls ./
 - python monkey_island/cc/environment/set_server_config.py testing
 - popd
 
