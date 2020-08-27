@@ -168,6 +168,15 @@ SCHEMA = {
                     "description": "Adversaries may abuse BITS to download, execute, "
                                    "and even clean up after running malicious code."
                 },
+                "T1146": {
+                    "title": "Clear command history",
+                    "type": "bool",
+                    "value": False,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1146",
+                    "description": "Adversaries may clear/disable command history of a compromised "
+                                   "account to conceal the actions undertaken during an intrusion."
+                },
                 "T1107": {
                     "title": "File Deletion",
                     "type": "bool",
