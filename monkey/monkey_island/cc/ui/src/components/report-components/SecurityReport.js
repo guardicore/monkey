@@ -161,25 +161,29 @@ class ReportPageComponent extends AuthComponent {
         </p>
         <p>
           The monkey started propagating from the following machines where it was manually installed:
-          <ul>
-            {this.state.report.overview.manual_monkeys.map(x => <li>{x}</li>)}
-          </ul>
         </p>
+        <ul>
+          {this.state.report.overview.manual_monkeys.map(x => <li key={x}>{x}</li>)}
+        </ul>
         <p>
           The monkeys were run with the following configuration:
         </p>
         {
           this.state.report.overview.config_users.length > 0 ?
-            <p>
-              Usernames used for brute-forcing:
+            <>
+              <p>
+                Usernames used for brute-forcing:
+              </p>
               <ul>
-                {this.state.report.overview.config_users.map(x => <li>{x}</li>)}
+                  {this.state.report.overview.config_users.map(x => <li key={x}>{x}</li>)}
               </ul>
-              Passwords used for brute-forcing:
+              <p>
+                Passwords used for brute-forcing:
+              </p>
               <ul>
-                {this.state.report.overview.config_passwords.map(x => <li>{x.substr(0, 3) + '******'}</li>)}
+                {this.state.report.overview.config_passwords.map(x => <li key={x}>{x.substr(0, 3) + '******'}</li>)}
               </ul>
-            </p>
+            </>
             :
             <p>
               Brute forcing uses stolen credentials only. No credentials were supplied during Monkey’s
@@ -195,7 +199,7 @@ class ReportPageComponent extends AuthComponent {
                 <p>
                   The Monkey uses the following exploit methods:
                   <ul>
-                    {this.state.report.overview.config_exploits.map(x => <li>{x}</li>)}
+                    {this.state.report.overview.config_exploits.map(x => <li key={x}>{x}</li>)}
                   </ul>
                 </p>
             )
@@ -209,7 +213,7 @@ class ReportPageComponent extends AuthComponent {
             <p>
               The Monkey scans the following IPs:
               <ul>
-                {this.state.report.overview.config_ips.map(x => <li>{x}</li>)}
+                {this.state.report.overview.config_ips.map(x => <li key={x}>{x}</li>)}
               </ul>
             </p>
             :
@@ -313,15 +317,15 @@ class ReportPageComponent extends AuthComponent {
                 The Monkey uncovered the following possible set of issues:
                 <ul>
                   {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
-                    <li>Weak segmentation - Machines from different segments are able to
+                    <li key={this.Warning.CROSS_SEGMENT}>Weak segmentation - Machines from different segments are able to
                       communicate.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                    <li>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
+                    <li key={this.Warning.TUNNEL}>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_LOCAL_ADMIN] ?
-                    <li>Shared local administrator account - Different machines have the same account as a local
+                    <li key={this.Warning.SHARED_LOCAL_ADMIN}>Shared local administrator account - Different machines have the same account as a local
                       administrator.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS] ?
-                    <li>Multiple users have the same password</li> : null}
+                    <li key={this.Warning.SHARED_PASSWORDS}>Multiple users have the same password</li> : null}
                 </ul>
               </div>
               :
@@ -443,21 +447,22 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateInfoBadges(data_array) {
-    return data_array.map(badge_data => <span className="badge badge-info" style={{margin: '2px'}}>{badge_data}</span>);
+    return data_array.map(badge_data => <span key={badge_data} className="badge badge-info" style={{margin: '2px'}}>{badge_data}</span>);
   }
 
   generateCrossSegmentIssue(crossSegmentIssue) {
-    return <li>
-      {'Communication possible from ' + crossSegmentIssue['source_subnet'] + ' to ' + crossSegmentIssue['target_subnet']}
+    let crossSegmentIssueOverview = 'Communication possible from ' + crossSegmentIssue['source_subnet'] + ' to ' + crossSegmentIssue['target_subnet']
+    return <li key={crossSegmentIssueOverview}>
+      {crossSegmentIssueOverview}
       <CollapsibleWellComponent>
         <ul>
           {crossSegmentIssue['issues'].map(x =>
             x['is_self'] ?
-              <li>
+              <li key={x['hostname']}>
                 {'Machine ' + x['hostname'] + ' has both ips: ' + x['source'] + ' and ' + x['target']}
               </li>
               :
-              <li>
+              <li key={x['source'] + x['target']}>
                 {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
                 + ' using the services: ' + Object.keys(x['services']).join(', ')}
               </li>
@@ -468,12 +473,12 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateShellshockPathListBadges(paths) {
-    return paths.map(path => <span className="badge badge-warning" style={{margin: '2px'}}>{path}</span>);
+    return paths.map(path => <span className="badge badge-warning" style={{margin: '2px'}} key={path}>{path}</span>);
   }
 
   generateSmbPasswordIssue(issue) {
     return (
-      <li>
+      <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -484,13 +489,13 @@ class ReportPageComponent extends AuthComponent {
           The Monkey authenticated over the SMB protocol with user <span
           className="badge badge-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateSmbPthIssue(issue) {
     return (
-      <li>
+      <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -501,13 +506,13 @@ class ReportPageComponent extends AuthComponent {
           The Monkey used a pass-the-hash attack over SMB protocol with user <span
           className="badge badge-success">{issue.username}</span>.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateWmiPasswordIssue(issue) {
     return (
-      <li>
+      <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -518,13 +523,13 @@ class ReportPageComponent extends AuthComponent {
           The Monkey authenticated over the WMI protocol with user <span
           className="badge badge-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateWmiPthIssue(issue) {
     return (
-      <li>
+      <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -535,13 +540,13 @@ class ReportPageComponent extends AuthComponent {
           The Monkey used a pass-the-hash attack over WMI protocol with user <span
           className="badge badge-success">{issue.username}</span>.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateSshIssue(issue) {
     return (
-      <li>
+      <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <CollapsibleWellComponent>
@@ -552,13 +557,13 @@ class ReportPageComponent extends AuthComponent {
           The Monkey authenticated over the SSH protocol with user <span
           className="badge badge-success">{issue.username}</span> and its password.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateSshKeysIssue(issue) {
     return (
-      <li>
+      <>
         Protect <span className="badge badge-success">{issue.ssh_key}</span> private key with a pass phrase.
         <CollapsibleWellComponent>
           The machine <span className="badge badge-primary">{issue.machine}</span> (<span
@@ -568,14 +573,14 @@ class ReportPageComponent extends AuthComponent {
           The Monkey authenticated over the SSH protocol with private key <span
           className="badge badge-success">{issue.ssh_key}</span>.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
 
   generateSambaCryIssue(issue) {
     return (
-      <li>
+      <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
         that is not shared with other computers on the network.
         <br/>
@@ -589,13 +594,13 @@ class ReportPageComponent extends AuthComponent {
           className="badge badge-success">{issue.username}</span> and its password, and used the SambaCry
           vulnerability.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateVsftpdBackdoorIssue(issue) {
     return (
-      <li>
+      <>
         Update your VSFTPD server to the latest version vsftpd-3.0.3.
         <CollapsibleWellComponent>
           The machine <span className="badge badge-primary">{issue.machine}</span> (<span
@@ -614,13 +619,13 @@ class ReportPageComponent extends AuthComponent {
           href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2523"
         >here</a>.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateElasticIssue(issue) {
     return (
-      <li>
+      <>
         Update your Elastic Search server to version 1.4.3 and up.
         <CollapsibleWellComponent>
           The machine <span className="badge badge-primary">{issue.machine}</span> (<span
@@ -629,13 +634,13 @@ class ReportPageComponent extends AuthComponent {
           <br/>
           The attack was made possible because the Elastic Search server was not patched against CVE-2015-1427.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateShellshockIssue(issue) {
     return (
-      <li>
+      <>
         Update your Bash to a ShellShock-patched version.
         <CollapsibleWellComponent>
           The machine <span className="badge badge-primary">{issue.machine}</span> (<span
@@ -646,13 +651,13 @@ class ReportPageComponent extends AuthComponent {
           className="badge badge-info">{issue.port}</span> was vulnerable to a shell injection attack on the
           paths: {this.generateShellshockPathListBadges(issue.paths)}.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateAzureIssue(issue) {
     return (
-      <li>
+      <>
         Delete VM Access plugin configuration files.
         <CollapsibleWellComponent>
           Credentials could be stolen from <span
@@ -661,13 +666,13 @@ class ReportPageComponent extends AuthComponent {
           href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
         >here</a>.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateConfickerIssue(issue) {
     return (
-      <li>
+      <>
         Install the latest Windows updates or upgrade to a newer operating system.
         <CollapsibleWellComponent>
           The machine <span className="badge badge-primary">{issue.machine}</span> (<span
@@ -677,13 +682,13 @@ class ReportPageComponent extends AuthComponent {
           The attack was made possible because the target machine used an outdated and unpatched operating system
           vulnerable to Conficker.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateIslandCrossSegmentIssue(issue) {
     return (
-      <li>
+      <>
         Segment your network and make sure there is no communication between machines from different segments.
         <CollapsibleWellComponent>
           The network can probably be segmented. A monkey instance on <span
@@ -692,37 +697,37 @@ class ReportPageComponent extends AuthComponent {
           could directly access the Monkey Island server in the
           networks {this.generateInfoBadges(issue.server_networks)}.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateSharedCredsDomainIssue(issue) {
     return (
-      <li>
+      <>
         Some domain users are sharing passwords, this should be fixed by changing passwords.
         <CollapsibleWellComponent>
           These users are sharing access password:
           {this.generateInfoBadges(issue.shared_with)}.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateSharedCredsIssue(issue) {
     return (
-      <li>
+      <>
         Some users are sharing passwords, this should be fixed by changing passwords.
         <CollapsibleWellComponent>
           These users are sharing access password:
           {this.generateInfoBadges(issue.shared_with)}.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateSharedLocalAdminsIssue(issue) {
     return (
-      <li>
+      <>
         Make sure the right administrator accounts are managing the right machines, and that there isn’t an unintentional local
         admin sharing.
         <CollapsibleWellComponent>
@@ -730,13 +735,13 @@ class ReportPageComponent extends AuthComponent {
           className="badge badge-primary">{issue.username}</span> is defined as an administrator:
           {this.generateInfoBadges(issue.shared_machines)}
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateStrongUsersOnCritIssue(issue) {
     return (
-      <li>
+      <>
         This critical machine is open to attacks via strong users with access to it.
         <CollapsibleWellComponent>
           The services: {this.generateInfoBadges(issue.services)} have been found on the machine
@@ -744,26 +749,26 @@ class ReportPageComponent extends AuthComponent {
           These users has access to it:
           {this.generateInfoBadges(issue.threatening_users)}.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateTunnelIssue(issue) {
     return (
-      <li>
+      <>
         Use micro-segmentation policies to disable communication other than the required.
         <CollapsibleWellComponent>
           Machines are not locked down at port level. Network tunnel was set up from <span
           className="badge badge-primary">{issue.machine}</span> to <span
           className="badge badge-primary">{issue.dest}</span>.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateStruts2Issue(issue) {
     return (
-      <li>
+      <>
         Upgrade Struts2 to version 2.3.32 or 2.5.10.1 or any later versions.
         <CollapsibleWellComponent>
           Struts2 server at <span className="badge badge-primary">{issue.machine}</span> (<span
@@ -775,13 +780,31 @@ class ReportPageComponent extends AuthComponent {
           href="https://cwiki.apache.org/confluence/display/WW/S2-045"
         >here</a>.
         </CollapsibleWellComponent>
-      </li>
+      </>
+    );
+  }
+
+  generateDrupalIssue(issue) {
+    return (
+      <>
+        Upgrade Drupal server to versions 8.5.11, 8.6.10, or later.
+        <CollapsibleWellComponent>
+          Drupal server at <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
+          className="badge badge-danger">remote command execution</span> attack.
+          <br/>
+          The attack was made possible because the server is using an old version of Drupal.
+          For possible workarounds and more info read <a
+          href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340"
+        >here</a>.
+        </CollapsibleWellComponent>
+      </>
     );
   }
 
   generateWebLogicIssue(issue) {
     return (
-      <li>
+      <>
         Update Oracle WebLogic server to the latest supported version.
         <CollapsibleWellComponent>
           Oracle WebLogic server at <span className="badge badge-primary">{issue.machine}</span> (<span
@@ -792,13 +815,13 @@ class ReportPageComponent extends AuthComponent {
           <a href={'https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10271'}> CVE-2017-10271</a> or
           <a href={'https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-2725'}> CVE-2019-2725</a>
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateHadoopIssue(issue) {
     return (
-      <li>
+      <>
         Run Hadoop in secure mode (<a
         href="http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html">
         add Kerberos authentication</a>).
@@ -809,13 +832,13 @@ class ReportPageComponent extends AuthComponent {
           <br/>
           The attack was made possible due to default Hadoop/Yarn configuration being insecure.
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateMSSQLIssue(issue) {
     return (
-      <li>
+      <>
         Disable the xp_cmdshell option.
         <CollapsibleWellComponent>
           The machine <span className="badge badge-primary">{issue.machine}</span> (<span
@@ -827,88 +850,91 @@ class ReportPageComponent extends AuthComponent {
           href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017">
           Microsoft's documentation. </a>
         </CollapsibleWellComponent>
-      </li>
+      </>
     );
   }
 
   generateIssue = (issue) => {
-    let data;
+    let issueData;
     switch (issue.type) {
       case 'vsftp':
-        data = this.generateVsftpdBackdoorIssue(issue);
+        issueData = this.generateVsftpdBackdoorIssue(issue);
         break;
       case 'smb_password':
-        data = this.generateSmbPasswordIssue(issue);
+        issueData = this.generateSmbPasswordIssue(issue);
         break;
       case 'smb_pth':
-        data = this.generateSmbPthIssue(issue);
+        issueData = this.generateSmbPthIssue(issue);
         break;
       case 'wmi_password':
-        data = this.generateWmiPasswordIssue(issue);
+        issueData = this.generateWmiPasswordIssue(issue);
         break;
       case 'wmi_pth':
-        data = this.generateWmiPthIssue(issue);
+        issueData = this.generateWmiPthIssue(issue);
         break;
       case 'ssh':
-        data = this.generateSshIssue(issue);
+        issueData = this.generateSshIssue(issue);
         break;
       case 'ssh_key':
-        data = this.generateSshKeysIssue(issue);
+        issueData = this.generateSshKeysIssue(issue);
         break;
       case 'sambacry':
-        data = this.generateSambaCryIssue(issue);
+        issueData = this.generateSambaCryIssue(issue);
         break;
       case 'elastic':
-        data = this.generateElasticIssue(issue);
+        issueData = this.generateElasticIssue(issue);
         break;
       case 'shellshock':
-        data = this.generateShellshockIssue(issue);
+        issueData = this.generateShellshockIssue(issue);
         break;
       case 'conficker':
-        data = this.generateConfickerIssue(issue);
+        issueData = this.generateConfickerIssue(issue);
         break;
       case 'island_cross_segment':
-        data = this.generateIslandCrossSegmentIssue(issue);
+        issueData = this.generateIslandCrossSegmentIssue(issue);
         break;
       case 'shared_passwords':
-        data = this.generateSharedCredsIssue(issue);
+        issueData = this.generateSharedCredsIssue(issue);
         break;
       case 'shared_passwords_domain':
-        data = this.generateSharedCredsDomainIssue(issue);
+        issueData = this.generateSharedCredsDomainIssue(issue);
         break;
       case 'shared_admins_domain':
-        data = this.generateSharedLocalAdminsIssue(issue);
+        issueData = this.generateSharedLocalAdminsIssue(issue);
         break;
       case 'strong_users_on_crit':
-        data = this.generateStrongUsersOnCritIssue(issue);
+        issueData = this.generateStrongUsersOnCritIssue(issue);
         break;
       case 'tunnel':
-        data = this.generateTunnelIssue(issue);
+        issueData = this.generateTunnelIssue(issue);
         break;
       case 'azure_password':
-        data = this.generateAzureIssue(issue);
+        issueData = this.generateAzureIssue(issue);
         break;
       case 'struts2':
-        data = this.generateStruts2Issue(issue);
+        issueData = this.generateStruts2Issue(issue);
         break;
       case 'weblogic':
-        data = this.generateWebLogicIssue(issue);
+        issueData = this.generateWebLogicIssue(issue);
         break;
       case 'hadoop':
-        data = this.generateHadoopIssue(issue);
+        issueData = this.generateHadoopIssue(issue);
         break;
       case 'mssql':
-        data = this.generateMSSQLIssue(issue);
+        issueData = this.generateMSSQLIssue(issue);
+        break;
+      case 'drupal':
+        issueData = this.generateDrupalIssue(issue);
         break;
     }
-    return data;
+    return <li key={JSON.stringify(issue)}>{issueData}</li>;
   };
 
   generateIssues = (issues) => {
     let issuesDivArray = [];
     for (let machine of Object.keys(issues)) {
       issuesDivArray.push(
-        <li>
+        <li key={JSON.stringify(machine)}>
           <h4><b>{machine}</b></h4>
           <ol>
             {issues[machine].map(this.generateIssue)}
