@@ -1,10 +1,10 @@
+import glob
 import importlib
 import inspect
 import logging
 from abc import ABCMeta, abstractmethod
-from os.path import dirname, basename, isfile, join
-import glob
-from typing import Sequence, TypeVar, Type, Callable
+from os.path import basename, dirname, isfile, join
+from typing import Callable, Sequence, Type, TypeVar
 
 LOG = logging.getLogger(__name__)
 

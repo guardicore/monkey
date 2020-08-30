@@ -1,15 +1,20 @@
-# What is this? 
+# What does this PR do? 
+
 Fixes #`put issue number here`. 
 
 Add any further explanations here. 
 
-## Checklist
+## PR Checklist
 * [ ] Have you added an explanation of what your changes do and why you'd like to include them?
-* [ ] Have you successfully tested your changes locally?
 * [ ] Is the TravisCI build passing? 
 
-## Proof that it works
-If applicable, add screenshots or log transcripts of the feature working
+## Testing Checklist
 
-## Changes
+* [ ] Added relevant unit tests?
+* [ ] Have you successfully tested your changes locally? Elaborate:
+    > Tested by {Running the Monkey locally with relevant config/running Island/...} 
+* [ ] If applicable, add screenshots or log transcripts of the feature working
+
+## Explain Changes
+
 Are the commit messages enough? If not, elaborate. 

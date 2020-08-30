@@ -6,8 +6,9 @@ from datetime import timedelta
 
 __author__ = 'itay.mizeretz'
 
-from common.utils.exceptions import InvalidRegistrationCredentialsError, \
-    CredentialsNotRequiredError, AlreadyRegisteredError
+from common.utils.exceptions import (AlreadyRegisteredError,
+                                     CredentialsNotRequiredError,
+                                     InvalidRegistrationCredentialsError)
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
 
@@ -22,7 +23,7 @@ class Environment(object, metaclass=ABCMeta):
     _MONGO_URL = os.environ.get("MONKEY_MONGO_URL",
                                 "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)))
     _DEBUG_SERVER = False
-    _AUTH_EXPIRATION_TIME = timedelta(hours=1)
+    _AUTH_EXPIRATION_TIME = timedelta(minutes=30)
 
     _testing = False
 

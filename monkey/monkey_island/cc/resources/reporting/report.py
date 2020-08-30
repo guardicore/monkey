@@ -5,7 +5,8 @@ from flask import jsonify
 
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.reporting.report import ReportService
-from monkey_island.cc.services.reporting.zero_trust_service import ZeroTrustService
+from monkey_island.cc.services.reporting.zero_trust_service import \
+    ZeroTrustService
 
 ZERO_TRUST_REPORT_TYPE = "zero_trust"
 SECURITY_REPORT_TYPE = "security"
@@ -20,7 +21,7 @@ __author__ = ["itay.mizeretz", "shay.nehmad"]
 
 class Report(flask_restful.Resource):
 
-    @jwt_required()
+    @jwt_required
     def get(self, report_type=SECURITY_REPORT_TYPE, report_data=None):
         if report_type == SECURITY_REPORT_TYPE:
             return ReportService.get_report()

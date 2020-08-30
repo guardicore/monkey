@@ -1,0 +1,29 @@
+.info-pane, .card {
+  margin-top: 5px;
+}
+
+.info-pane svg {
+  font-size: 1.1em;
+}
+
+.info-pane .pane-title {
+  margin: 10px 15px 3px 15px;
+  color: $monkey-alt;
+}
+
+.info-pane .pane-link {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.info-pane .pane-subtitle {
+  margin: 0 15px;
+  color: $gray-600;
+}
+
+
+.info-pane .pane-body {
+  margin: 10px 15px;
+  padding: 0;
+}

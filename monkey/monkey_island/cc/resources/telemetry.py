@@ -6,12 +6,13 @@ import dateutil
 import flask_restful
 from flask import request
 
-from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.database import mongo
+from monkey_island.cc.models.monkey import Monkey
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
-from monkey_island.cc.models.monkey import Monkey
+from monkey_island.cc.services.telemetry.processing.processing import \
+    process_telemetry
 
 __author__ = 'Barak'
 
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class Telemetry(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self, **kw):
         monkey_guid = request.args.get('monkey_guid')
         telem_category = request.args.get('telem_category')

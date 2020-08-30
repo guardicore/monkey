@@ -1,0 +1,59 @@
+.config-nav > li > a{
+  height: 50px !important;
+}
+
+.config-nav .nav-link.tab-primary{
+  color: $monkey-alt;
+  font-weight: bold;
+}
+
+.config-nav .nav-item > a{
+  color: $black;
+  padding: 15px 10px 15px 10px;
+}
+
+.config-nav .nav-item > a.active{
+  font-weight: bold;
+  color: $black;
+}
+
+.config-nav .nav-item > a:hover:not(.active),  .config-nav .nav-item > a:focus:not(.active){
+    text-decoration: none;
+    background-color: $light-gray;
+}
+
+.config-form legend {
+  border-bottom: 1px solid $light-gray;
+  margin-bottom: 15px;
+}
+
+.config-form .form-group {
+  margin-left: 2em;
+}
+
+.config-form div.card.errors {
+  display: none;
+}
+
+.config-template-no-header > p {
+  display: none;
+}
+
+.config-template-no-header > label {
+  display: none;
+}
+
+.config-form .form-group.field > label {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: 1.2em;
+}
+
+.config-field-hidden {
+  display: none;
+}
+
+.field-description {
+  white-space: pre-wrap;
+}
+

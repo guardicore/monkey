@@ -1,13 +1,14 @@
 import json
-import re
-import urllib.request
-import urllib.error
 import logging
-
-__author__ = 'itay.mizeretz'
+import re
+import urllib.error
+import urllib.request
 
 from common.cloud.environment_names import Environment
 from common.cloud.instance import CloudInstance
+
+__author__ = 'itay.mizeretz'
+
 
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
 AWS_LATEST_METADATA_URI_PREFIX = 'http://{0}/latest/'.format(AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS)

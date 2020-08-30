@@ -1,6 +1,6 @@
 import React from 'react';
 
-import '../../styles/NotFoundPage.scss';
+import '../../styles/pages/NotFoundPage.scss';
 
 import monkeyDetective from '../../images/detective-monkey.svg';
 

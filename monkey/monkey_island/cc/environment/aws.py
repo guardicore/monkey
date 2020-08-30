@@ -1,6 +1,6 @@
-from monkey_island.cc.resources.auth.auth_user import User
-from monkey_island.cc.environment import Environment
 from common.cloud.aws.aws_instance import AwsInstance
+from monkey_island.cc.environment import Environment
+from monkey_island.cc.resources.auth.auth_user import User
 
 __author__ = 'itay.mizeretz'
 

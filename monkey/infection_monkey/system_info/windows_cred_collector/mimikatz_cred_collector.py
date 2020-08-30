@@ -1,8 +1,10 @@
 import logging
 from typing import List
 
-from infection_monkey.system_info.windows_cred_collector import pypykatz_handler
-from infection_monkey.system_info.windows_cred_collector.windows_credentials import WindowsCredentials
+from infection_monkey.system_info.windows_cred_collector import \
+    pypykatz_handler
+from infection_monkey.system_info.windows_cred_collector.windows_credentials import \
+    WindowsCredentials
 
 LOG = logging.getLogger(__name__)
 

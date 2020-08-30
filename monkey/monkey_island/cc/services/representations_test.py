@@ -1,8 +1,9 @@
-from unittest import TestCase
 from datetime import datetime
-from monkey_island.cc.services.representations import normalize_obj
+from unittest import TestCase
 
 import bson
+
+from monkey_island.cc.services.representations import normalize_obj
 
 
 class TestJsonRepresentations(TestCase):

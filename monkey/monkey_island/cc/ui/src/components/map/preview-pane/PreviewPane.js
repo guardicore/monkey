@@ -101,9 +101,9 @@ class PreviewPaneComponent extends AuthComponent {
       .replace(/\\t/g, '\t')
       .replace(/\\b/g, '\b')
       .replace(/\\f/g, '\f')
-      .replace(/\\"/g, '\"')
+      .replace(/\\"/g, '"')
       .replace(/\\'/g, '\'')
-      .replace(/\\&/g, '\&');
+      .replace(/\\&/g, '&');
   }
 
   downloadLog(asset) {

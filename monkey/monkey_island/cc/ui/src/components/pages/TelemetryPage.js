@@ -6,8 +6,8 @@ import AuthComponent from '../AuthComponent';
 import download from 'downloadjs';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
-import '../../styles/TelemetryPage.scss';
-import {faDownload} from "@fortawesome/free-solid-svg-icons/faDownload";
+import '../../styles/pages/TelemetryPage.scss';
+import {faDownload} from '@fortawesome/free-solid-svg-icons/faDownload';
 
 const renderJson = (val) => <JSONTree data={val} level={1} theme="eighties" invertTheme={true}/>;
 const renderTime = (val) => val.split('.')[0];
@@ -49,7 +49,7 @@ class TelemetryPageComponent extends AuthComponent {
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
            className={'main'}>
         <div>
-            <h1 className="page-title">Log</h1>
+            <h1 className="page-title">Logs</h1>
             <div className="data-table-container">
               <DataTable
                 keys="name"

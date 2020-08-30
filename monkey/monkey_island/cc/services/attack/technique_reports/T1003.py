@@ -1,7 +1,7 @@
-from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from monkey_island.cc.services.reporting.report import ReportService
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
+from monkey_island.cc.services.attack.technique_reports import AttackTechnique
+from monkey_island.cc.services.reporting.report import ReportService
 
 __author__ = "VakarisZ"
 
@@ -18,11 +18,17 @@ class T1003(AttackTechnique):
 
     @staticmethod
     def get_report_data():
+        @T1003.is_status_disabled
+        def get_technique_status_and_data():
+            if mongo.db.telemetry.count_documents(T1003.query):
+                status = ScanStatus.USED.value
+            else:
+                status = ScanStatus.UNSCANNED.value
+            return (status, [])
+
         data = {'title': T1003.technique_title()}
-        if mongo.db.telemetry.count_documents(T1003.query):
-            status = ScanStatus.USED.value
-        else:
-            status = ScanStatus.UNSCANNED.value
+        status, _ = get_technique_status_and_data()
+
         data.update(T1003.get_message_and_status(status))
         data.update(T1003.get_mitigation_by_status(status))
         data['stolen_creds'] = ReportService.get_stolen_creds()

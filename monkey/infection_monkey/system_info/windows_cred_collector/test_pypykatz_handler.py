@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from infection_monkey.system_info.windows_cred_collector.pypykatz_handler import _get_creds_from_pypykatz_session
+from infection_monkey.system_info.windows_cred_collector.pypykatz_handler import \
+    _get_creds_from_pypykatz_session
 
 
 class TestPypykatzHandler(TestCase):

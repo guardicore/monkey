@@ -1,4 +1,5 @@
 import sys
+
 if sys.platform == 'win32':
     import win32com
     import wmi
@@ -24,7 +25,7 @@ class MongoUtils:
             return o
 
         elif isinstance(o, str):
-            # mongo dosn't like unprintable chars, so we use repr :/
+            # mongo doesn't like unprintable chars, so we use repr :/
             return repr(o)
 
         elif hasattr(o, "__class__") and o.__class__ == wmi._wmi_object:
@@ -32,7 +33,7 @@ class MongoUtils:
 
         elif hasattr(o, "__class__") and o.__class__ == win32com.client.CDispatch:
             try:
-                # objectSid property of ds_user is problematic and need thie special treatment.
+                # objectSid property of ds_user is problematic and need this special treatment.
                 # ISWbemObjectEx interface. Class Uint8Array ?
                 if str(o._oleobj_.GetTypeInfo().GetTypeAttr().iid) == "{269AD56A-8A67-4129-BC8C-0506DCFE9880}":
                     return o.Value

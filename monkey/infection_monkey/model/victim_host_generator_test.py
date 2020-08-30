@@ -1,6 +1,7 @@
 from unittest import TestCase
-from infection_monkey.model.victim_host_generator import VictimHostGenerator
+
 from common.network.network_range import CidrRange, SingleIpRange
+from infection_monkey.model.victim_host_generator import VictimHostGenerator
 
 
 class VictimHostGeneratorTester(TestCase):

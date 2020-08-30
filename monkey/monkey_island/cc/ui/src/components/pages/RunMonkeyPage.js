@@ -8,8 +8,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClipboard} from '@fortawesome/free-solid-svg-icons/faClipboard';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faSync} from '@fortawesome/free-solid-svg-icons/faSync';
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons/faInfoCircle";
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons/faExclamationTriangle";
+import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
@@ -277,7 +277,7 @@ class RunMonkeyPageComponent extends AuthComponent {
           this.state.ips.length > 1 ?
             <Nav variant="pills" activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
                  style={{'marginBottom': '2em'}}>
-              {this.state.ips.map(ip => <Nav.Item><Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
+              {this.state.ips.map(ip => <Nav.Item key={ip}><Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
             </Nav>
             : <div style={{'marginBottom': '2em'}}/>
         }
@@ -311,7 +311,7 @@ class RunMonkeyPageComponent extends AuthComponent {
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
            className={'main'}>
-        <h1 className="page-title">2. Run the Monkey</h1>
+        <h1 className="page-title">1. Run Monkey</h1>
         <p style={{'marginBottom': '2em', 'fontSize': '1.2em'}}>
           Go ahead and run the monkey!
           <i> (Or <Link to="/configure">configure the monkey</Link> to fine tune its behavior)</i>
@@ -400,7 +400,7 @@ class RunMonkeyPageComponent extends AuthComponent {
                   <Col>
                     <Nav variant="pills" fill activeKey={this.state.selectedIp} onSelect={this.setSelectedIp}
                          className={'run-on-os-buttons'}>
-                      {this.state.ips.map(ip => <Nav.Item>
+                      {this.state.ips.map(ip => <Nav.Item key={ip}>
                         <Nav.Link eventKey={ip}>{ip}</Nav.Link></Nav.Item>)}
                     </Nav>
                   </Col>

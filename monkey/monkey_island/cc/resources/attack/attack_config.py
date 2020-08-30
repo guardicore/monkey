@@ -1,5 +1,5 @@
 import flask_restful
-from flask import jsonify, request, json, current_app
+from flask import current_app, json, jsonify, request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.attack.attack_config import AttackConfig
@@ -8,7 +8,7 @@ __author__ = "VakarisZ"
 
 
 class AttackConfiguration(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self):
         return current_app.response_class(json.dumps({"configuration": AttackConfig.get_config()},
                                                      indent=None,
@@ -16,7 +16,7 @@ class AttackConfiguration(flask_restful.Resource):
                                                      sort_keys=False) + "\n",
                                           mimetype=current_app.config['JSONIFY_MIMETYPE'])
 
-    @jwt_required()
+    @jwt_required
     def post(self):
         """
         Based on request content this endpoint either resets ATT&CK configuration or updates it.

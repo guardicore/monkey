@@ -1,15 +1,19 @@
 """
 Define a Document Schema for the Monkey document.
 """
-from mongoengine import Document, StringField, ListField, BooleanField, EmbeddedDocumentField, ReferenceField, \
-    DateTimeField, DynamicField, DoesNotExist
 import ring
+from mongoengine import (BooleanField, DateTimeField, Document, DoesNotExist,
+                         DynamicField, EmbeddedDocumentField, ListField,
+                         ReferenceField, StringField)
 
-from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
-from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
-from monkey_island.cc.models.command_control_channel import CommandControlChannel
-from monkey_island.cc.network_utils import local_ip_addresses
 from common.cloud import environment_names
+from monkey_island.cc.consts import \
+    DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
+from monkey_island.cc.models.command_control_channel import \
+    CommandControlChannel
+from monkey_island.cc.models.monkey_ttl import (MonkeyTtl,
+                                                create_monkey_ttl_document)
+from monkey_island.cc.network_utils import local_ip_addresses
 
 MAX_MONKEYS_AMOUNT_TO_CACHE = 100
 
@@ -32,7 +36,7 @@ class Monkey(Document):
     ip_addresses = ListField(StringField())
     keepalive = DateTimeField()
     modifytime = DateTimeField()
-    # TODO make "parent" an embedded document, so this can be removed and the schema explained (and validated) verbosly.
+    # TODO make "parent" an embedded document, so this can be removed and the schema explained (and validated) verbosely.
     # This is a temporary fix, since mongoengine doesn't allow for lists of strings to be null
     # (even with required=False of null=True).
     # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904

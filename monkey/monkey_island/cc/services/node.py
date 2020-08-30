@@ -1,17 +1,17 @@
+import socket
 from datetime import datetime, timedelta
 from typing import Dict
-import socket
 
 from bson import ObjectId
 from mongoengine import DoesNotExist
 
 import monkey_island.cc.services.log
+from monkey_island.cc import models
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.edge import Edge
+from monkey_island.cc.network_utils import is_local_ips, local_ip_addresses
 from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
-from monkey_island.cc.network_utils import local_ip_addresses, is_local_ips
-from monkey_island.cc import models
 from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.utils.node_states import NodeStates
 

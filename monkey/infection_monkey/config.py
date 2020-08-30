@@ -129,13 +129,13 @@ class Configuration(object):
 
     finger_classes = []
     exploiter_classes = []
-    system_info_collectors_classes = []
+    system_info_collector_classes = []
 
     # how many victims to look for in a single scan iteration
     victims_max_find = 100
 
     # how many victims to exploit before stopping
-    victims_max_exploit = 15
+    victims_max_exploit = 100
 
     # depth of propagation
     depth = 2
@@ -266,16 +266,6 @@ class Configuration(object):
     sambacry_folder_paths_to_guess = ['/', '/mnt', '/tmp', '/storage', '/export', '/share', '/shares', '/home']
     # Shares to not check if they're writable.
     sambacry_shares_not_to_check = ["IPC$", "print$"]
-
-    # system info collection
-    collect_system_info = True
-    should_use_mimikatz = True
-
-    ###########################
-    # systeminfo config
-    ###########################
-
-    extract_azure_creds = True
 
     ###########################
     # post breach actions

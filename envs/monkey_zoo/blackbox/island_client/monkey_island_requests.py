@@ -1,13 +1,12 @@
-from typing import Dict
+import functools
+import logging
 from datetime import timedelta
-
+from typing import Dict
 
 import requests
-import functools
 
-from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
-
-import logging
+from envs.monkey_zoo.blackbox.island_client.supported_request_method import \
+    SupportedRequestMethod
 
 # SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
 NO_AUTH_CREDS = '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062' \
@@ -105,4 +104,4 @@ class MonkeyIslandRequests(object):
 
     @_Decorators.refresh_jwt_token
     def get_jwt_header(self):
-        return {"Authorization": "JWT " + self.token}
+        return {"Authorization": "Bearer " + self.token}

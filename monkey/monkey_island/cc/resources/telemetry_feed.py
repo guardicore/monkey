@@ -2,12 +2,12 @@ import logging
 from datetime import datetime
 
 import dateutil
+import flask_pymongo
 import flask_restful
 from flask import request
-import flask_pymongo
 
-from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.database import mongo
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.node import NodeService
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ __author__ = 'itay.mizeretz'
 
 
 class TelemetryFeed(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self, **kw):
         timestamp = request.args.get('timestamp')
         if "null" == timestamp or timestamp is None:  # special case to avoid ugly JS code...
@@ -98,9 +98,9 @@ class TelemetryFeed(flask_restful.Resource):
 
     @staticmethod
     def get_post_breach_telem_brief(telem):
-        return '%s post breach action executed on %s (%s) machine.' % (telem['data']['name'],
-                                                                       telem['data']['hostname'],
-                                                                       telem['data']['ip'])
+        return '%s post breach action executed on %s (%s) machine.' % (telem['data'][0]['name'],
+                                                                       telem['data'][0]['hostname'],
+                                                                       telem['data'][0]['ip'])
 
     @staticmethod
     def should_show_brief(telem):

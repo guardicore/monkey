@@ -11,9 +11,10 @@ def try_get_target_monkey(host):
 
 
 def get_target_monkey(host):
-    from infection_monkey.control import ControlClient
     import platform
     import sys
+
+    from infection_monkey.control import ControlClient
 
     if host.monkey_exe:
         return host.monkey_exe

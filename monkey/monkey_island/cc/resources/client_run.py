@@ -1,6 +1,7 @@
 import logging
-from flask import request, jsonify
+
 import flask_restful
+from flask import jsonify, request
 
 from monkey_island.cc.services.node import NodeService
 

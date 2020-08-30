@@ -1,15 +1,16 @@
-import copy
 import collections
+import copy
 import functools
 import logging
-from jsonschema import Draft4Validator, validators
-import monkey_island.cc.services.post_breach_files
 
-from monkey_island.cc.database import mongo
+from jsonschema import Draft4Validator, validators
+
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from monkey_island.cc.network_utils import local_ip_addresses
-from .config_schema import SCHEMA
+import monkey_island.cc.services.post_breach_files
+from monkey_island.cc.database import mongo
 from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.network_utils import local_ip_addresses
+from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
 
@@ -216,8 +217,8 @@ class ConfigService:
     @staticmethod
     def set_server_ips_in_config(config):
         ips = local_ip_addresses()
-        config["cnc"]["servers"]["command_servers"] = ["%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips]
-        config["cnc"]["servers"]["current_server"] = "%s:%d" % (ips[0], env_singleton.env.get_island_port())
+        config["internal"]["island_server"]["command_servers"] = ["%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips]
+        config["internal"]["island_server"]["current_server"] = "%s:%d" % (ips[0], env_singleton.env.get_island_port())
 
     @staticmethod
     def save_initial_config_if_needed():
@@ -245,6 +246,16 @@ class ConfigService:
                     for property3, subschema3 in list(subschema2["properties"].items()):
                         if "default" in subschema3:
                             sub_dict[property3] = subschema3["default"]
+                        elif "properties" in subschema3:
+                            layer_3_dict = {}
+                            for property4, subschema4 in list(subschema3["properties"].items()):
+                                if "properties" in subschema4:
+                                    raise ValueError("monkey/monkey_island/cc/services/config.py "
+                                                     "can't handle 5 level config. "
+                                                     "Either change back the config or refactor.")
+                                if "default" in subschema4:
+                                    layer_3_dict[property4] = subschema4["default"]
+                            sub_dict[property3] = layer_3_dict
                     main_dict[property2] = sub_dict
                 instance.setdefault(property1, main_dict)
 

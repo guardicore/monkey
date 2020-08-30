@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import json
 import os
-from typing import List, Dict
+from pathlib import Path
+from typing import Dict, List
 
-from monkey_island.cc.resources.auth.auth_user import User
+import monkey_island.cc.environment.server_config_generator as server_config_generator
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.environment.user_creds import UserCreds
+from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.resources.auth.user_store import UserStore
+
+SERVER_CONFIG_FILENAME = "server_config.json"
 
 
 class EnvironmentConfig:
@@ -43,13 +47,15 @@ class EnvironmentConfig:
     @staticmethod
     def get_from_file() -> EnvironmentConfig:
         file_path = EnvironmentConfig.get_config_file_path()
+        if not Path(file_path).is_file():
+            server_config_generator.create_default_config_file(file_path)
         with open(file_path, 'r') as f:
             config_content = f.read()
         return EnvironmentConfig.get_from_json(config_content)
 
     @staticmethod
     def get_config_file_path() -> str:
-        return os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server_config.json')
+        return os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', SERVER_CONFIG_FILENAME)
 
     def to_dict(self) -> Dict:
         config_dict = {'server_config': self.server_config,

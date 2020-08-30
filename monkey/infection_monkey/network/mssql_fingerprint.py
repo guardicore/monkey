@@ -2,8 +2,8 @@ import errno
 import logging
 import socket
 
-from infection_monkey.network.HostFinger import HostFinger
 import infection_monkey.config
+from infection_monkey.network.HostFinger import HostFinger
 
 __author__ = 'Maor Rayzin'
 

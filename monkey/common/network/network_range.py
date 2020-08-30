@@ -1,10 +1,9 @@
+import ipaddress
+import logging
 import random
 import socket
 import struct
 from abc import ABCMeta, abstractmethod
-
-import ipaddress
-import logging
 
 __author__ = 'itamar'
 

@@ -2,20 +2,23 @@ import json
 import logging
 import platform
 from socket import gethostname
+from urllib.parse import urljoin
 
 import requests
 from requests.exceptions import ConnectionError
 
 import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
-from infection_monkey.config import WormConfiguration, GUID
-from infection_monkey.network.info import local_ips, check_internet_access
+from common.data.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
+from infection_monkey.config import GUID, WormConfiguration
+from infection_monkey.network.info import check_internet_access, local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
+from infection_monkey.utils.exceptions.planned_shutdown_exception import \
+    PlannedShutdownException
 
 __author__ = 'hoffer'
 
-from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 
 requests.packages.urllib3.disable_warnings()
 
@@ -321,6 +324,17 @@ class ControlClient(object):
                                 (WormConfiguration.current_server, filename),
                                 verify=False,
                                 proxies=ControlClient.proxies)
+        except requests.exceptions.RequestException:
+            return False
+
+    @staticmethod
+    def get_T1216_pba_file():
+        try:
+            return requests.get(urljoin(f"https://{WormConfiguration.current_server}/",  # noqa: DUO123
+                                        T1216_PBA_FILE_DOWNLOAD_PATH),
+                                verify=False,
+                                proxies=ControlClient.proxies,
+                                stream=True)
         except requests.exceptions.RequestException:
             return False
 

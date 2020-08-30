@@ -8,8 +8,8 @@ import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
-import '../../styles/Map.scss';
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons/faInfoCircle";
+import '../../styles/components/Map.scss';
+import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {
@@ -206,7 +206,7 @@ class MapPageComponent extends AuthComponent {
         <Row>
           {this.renderKillDialogModal()}
           <Col xs={12} lg={8}>
-            <h1 className="page-title">3. Infection Map</h1>
+            <h1 className="page-title">2. Infection Map</h1>
           </Col>
           <Col xs={8}>
             <div className="map-legend">

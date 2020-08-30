@@ -1,5 +1,5 @@
-from flask import request
 import flask_restful
+from flask import request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.node import NodeService
@@ -8,7 +8,7 @@ __author__ = 'Barak'
 
 
 class Node(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self):
         node_id = request.args.get('id')
         if node_id:

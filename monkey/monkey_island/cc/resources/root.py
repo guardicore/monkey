@@ -2,13 +2,13 @@ import logging
 import threading
 
 import flask_restful
-from flask import request, make_response, jsonify
+from flask import jsonify, make_response, request
 
-from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.database import mongo
+from monkey_island.cc.network_utils import local_ip_addresses
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.infection_lifecycle import InfectionLifecycle
-from monkey_island.cc.network_utils import local_ip_addresses
 
 __author__ = 'Barak'
 
@@ -26,15 +26,15 @@ class Root(flask_restful.Resource):
         if not action:
             return self.get_server_info()
         elif action == "reset":
-            return jwt_required()(Database.reset_db)()
+            return jwt_required(Database.reset_db)()
         elif action == "killall":
-            return jwt_required()(InfectionLifecycle.kill_all)()
+            return jwt_required(InfectionLifecycle.kill_all)()
         elif action == "is-up":
             return {'is-up': True}
         else:
             return make_response(400, {'error': 'unknown action'})
 
-    @jwt_required()
+    @jwt_required
     def get_server_info(self):
         return jsonify(
             ip_addresses=local_ip_addresses(),

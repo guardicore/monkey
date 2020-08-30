@@ -1,5 +1,5 @@
-from infection_monkey.utils.plugins.plugin import Plugin
 import infection_monkey.utils.plugins.pluginTests
+from infection_monkey.utils.plugins.plugin import Plugin
 
 
 class TestPlugin(Plugin):

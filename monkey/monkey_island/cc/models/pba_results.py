@@ -1,4 +1,4 @@
-from mongoengine import EmbeddedDocument, StringField, ListField
+from mongoengine import EmbeddedDocument, ListField, StringField
 
 
 class PbaResults(EmbeddedDocument):

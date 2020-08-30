@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class IslandLog(flask_restful.Resource):
-    @jwt_required()
+    @jwt_required
     def get(self):
         try:
             return IslandLogService.get_log_file()

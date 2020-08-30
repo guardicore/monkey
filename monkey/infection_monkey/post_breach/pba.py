@@ -1,18 +1,17 @@
 import logging
 import subprocess
 
+import infection_monkey.post_breach.actions
 from common.utils.attack_utils import ScanStatus
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
-from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.config import WormConfiguration
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
+from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
+from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.plugins.plugin import Plugin
-import infection_monkey.post_breach.actions
+
 LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
-
-EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
 
 class PBA(Plugin):
@@ -61,8 +60,10 @@ class PBA(Plugin):
             exec_funct = self._execute_default
             result = exec_funct()
             if self.scripts_were_used_successfully(result):
-                T1064Telem(ScanStatus.USED, "Scripts were used to execute %s post breach action." % self.name).send()
+                T1064Telem(ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action.").send()
             PostBreachTelem(self, result).send()
+        else:
+            LOG.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
 
     def is_script(self):
         """
@@ -87,8 +88,6 @@ class PBA(Plugin):
         """
         try:
             output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True).decode()
-            if not output:
-                output = EXECUTION_WITHOUT_OUTPUT
             return output, True
         except subprocess.CalledProcessError as e:
             # Return error output of the command

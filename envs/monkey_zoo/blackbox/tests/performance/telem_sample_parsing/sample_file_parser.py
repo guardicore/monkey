@@ -1,7 +1,7 @@
 import json
 import logging
 from os import listdir, path
-from typing import List, Dict
+from typing import Dict, List
 
 from tqdm import tqdm
 

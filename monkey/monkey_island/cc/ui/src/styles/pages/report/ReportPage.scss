@@ -1,0 +1,78 @@
+.report-nav {
+  margin-bottom: 2em !important;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  font-size: large;
+}
+
+.report-nav > li > a{
+  height: 50px !important;
+}
+
+.report-nav .nav-item > a{
+  color: $black;
+}
+
+.report-nav .nav-item > a.active{
+  font-weight: bold;
+  color: $black;
+}
+
+.report-page {
+  font-size: 1.1em;
+  border: 1px solid #fff;
+  padding: 2em;
+  -webkit-box-shadow: 1px 1px 7px -1px #ccc;
+  box-shadow: 1px 1px 7px -1px #ccc;
+}
+
+.report-page h1 {
+  margin-top: 30px;
+}
+
+.report-page h3 {
+  margin-top: 20px;
+}
+
+.report-page h4 {
+  margin-top: 20px;
+}
+
+.report-page ul {
+  list-style: disc;
+  padding-left: 40px;
+}
+
+.report-page li {
+  overflow: visible;
+}
+
+.report-page li a {
+  display: inline;
+  padding: 0em;
+}
+
+.modal-dialog {
+  top: 30%;
+}
+
+.pba-danger {
+  background-color: #ffc7af;
+  white-space: pre-wrap;
+}
+
+.pba-success {
+  background-color: #afd2a2;
+  white-space: pre-wrap;
+}
+
+div.report-wrapper {
+  padding-bottom: 20px;
+}
+
+div.report-wrapper .nav-tabs > .nav-item > a:hover:not(.active),  .nav-tabs > .nav-item > a:focus:not(.active){
+    text-decoration: none;
+    background-color: $light-gray;
+}

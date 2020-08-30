@@ -1,10 +1,8 @@
 import uuid
 
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
-    SystemInfoTelemetryDispatcher
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
-    process_aws_telemetry
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (
+    SystemInfoTelemetryDispatcher, process_aws_telemetry)
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 TEST_SYS_INFO_TO_PROCESSING = {

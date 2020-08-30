@@ -63,8 +63,17 @@ SCHEMA = {
                     "description": "Adversaries may execute a binary, command, or script via a method "
                                    "that interacts with Windows services, such as the Service Control Manager.",
                     "depends_on": ["T1210"]
+                },
+                "T1154": {
+                    "title": "Trap",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1154",
+                    "description": "Adversaries can use the trap command to register code to be executed "
+                                   "when the shell encounters specific interrupts."
                 }
-            }
+            },
         },
         "persistence": {
             "title": "Persistence",
@@ -79,7 +88,8 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1156",
                     "description": "Adversaries may abuse shell scripts by "
                                    "inserting arbitrary shell commands to gain persistence, which "
-                                   "would be executed every time the user logs in or opens a new shell."
+                                   "would be executed every time the user logs in or opens a new shell.",
+                    "depends_on": ["T1504"]
                 },
                 "T1136": {
                     "title": "Create account",
@@ -100,6 +110,17 @@ SCHEMA = {
                                    "and evade a typical user or system analysis that does not "
                                    "incorporate investigation of hidden files."
                 },
+                "T1168": {
+                    "title": "Local job scheduling",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1168/",
+                    "description": "Linux supports multiple methods for creating pre-scheduled and "
+                                   "periodic background jobs. Job scheduling can be used by adversaries to "
+                                   "schedule running malicious code at some specified date and time.",
+                    "depends_on": ["T1053"]
+                },
                 "T1504": {
                     "title": "PowerShell profile",
                     "type": "bool",
@@ -108,7 +129,28 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1504",
                     "description": "Adversaries may gain persistence and elevate privileges "
                                    "in certain situations by abusing PowerShell profiles which "
-                                   "are scripts that run when PowerShell starts."
+                                   "are scripts that run when PowerShell starts.",
+                    "depends_on": ["T1156"]
+                },
+                "T1053": {
+                    "title": "Scheduled task",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1053",
+                    "description": "Windows utilities can be used to schedule programs or scripts to "
+                                   "be executed at a date and time. An adversary may use task scheduling to "
+                                   "execute programs at system startup or on a scheduled basis for persistence.",
+                    "depends_on": ["T1168"]
+                },
+                "T1166": {
+                    "title": "Setuid and Setgid",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1166",
+                    "description": "Adversaries can set the setuid or setgid bits to get code running in "
+                                   "a different user’s context."
                 }
             }
         },
@@ -125,6 +167,15 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1197",
                     "description": "Adversaries may abuse BITS to download, execute, "
                                    "and even clean up after running malicious code."
+                },
+                "T1146": {
+                    "title": "Clear command history",
+                    "type": "bool",
+                    "value": False,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1146",
+                    "description": "Adversaries may clear/disable command history of a compromised "
+                                   "account to conceal the actions undertaken during an intrusion."
                 },
                 "T1107": {
                     "title": "File Deletion",
@@ -143,6 +194,15 @@ SCHEMA = {
                     "necessary": True,
                     "link": "https://attack.mitre.org/techniques/T1222",
                     "description": "Adversaries may modify file permissions/attributes to evade intended DACLs."
+                },
+                "T1216": {
+                    "title": "Signed script proxy execution",
+                    "type": "bool",
+                    "value": False,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1216",
+                    "description": "Adversaries may use scripts signed with trusted certificates to "
+                                   "proxy execution of malicious files on Windows systems."
                 }
             }
         },
@@ -192,6 +252,16 @@ SCHEMA = {
             "type": "object",
             "link": "https://attack.mitre.org/tactics/TA0007/",
             "properties": {
+                "T1087": {
+                    "title": "Account Discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1087",
+                    "description": "Adversaries may attempt to get a listing of accounts on a system or "
+                                   "within an environment. This information can help adversaries determine which "
+                                   "accounts exist to aid in follow-on behavior."
+                },
                 "T1018": {
                     "title": "Remote System Discovery",
                     "type": "bool",

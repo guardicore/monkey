@@ -24,6 +24,7 @@ import 'react-toggle/style.css';
 import 'react-table/react-table.css';
 import notificationIcon from '../images/notification-logo-512x512.png';
 import {StandardLayoutComponent} from './layouts/StandardLayoutComponent';
+import LoadingScreen from './ui-components/LoadingScreen';
 
 const reportZeroTrustRoute = '/report/zeroTrust';
 
@@ -82,10 +83,10 @@ class AppComponent extends AuthComponent {
             case false:
               return <Redirect to={{pathname: '/login'}}/>;
             default:
-              return page_component;
+              return <LoadingScreen text={'Loading page...'}/>;
           }
         default:
-          return page_component;
+          return <LoadingScreen text={'Loading page...'}/>;
       }
     };
 
@@ -97,7 +98,7 @@ class AppComponent extends AuthComponent {
   };
 
   redirectTo = (userPath, targetPath) => {
-    let pathQuery = new RegExp(userPath + '[\/]?$', 'g');
+    let pathQuery = new RegExp(userPath + '[/]?$', 'g');
     if (window.location.pathname.match(pathQuery)) {
       return <Redirect to={{pathname: targetPath}}/>
     }

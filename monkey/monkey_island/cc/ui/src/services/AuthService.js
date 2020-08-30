@@ -21,7 +21,7 @@ export default class AuthService {
 
   jwtHeader = () => {
     if (this._loggedIn()) {
-      return 'JWT ' + this._getToken();
+      return 'Bearer ' + this._getToken();
     }
   };
 
@@ -83,7 +83,7 @@ export default class AuthService {
     };
 
     if (this._loggedIn()) {
-      headers['Authorization'] = 'JWT ' + this._getToken();
+      headers['Authorization'] = 'Bearer ' + this._getToken();
     }
 
     if (options.hasOwnProperty('headers')) {
@@ -97,6 +97,9 @@ export default class AuthService {
     return fetch(url, options)
       .then(res => {
         if (res.status === 401) {
+          res.clone().json().then(res_json => {
+            console.log('Got 401 from server while trying to authFetch: ' + JSON.stringify(res_json));
+          });
           this._removeToken();
         }
         return res;
@@ -156,6 +159,4 @@ export default class AuthService {
   _toHexStr(byteArr) {
     return byteArr.reduce((acc, x) => (acc + ('0' + x.toString(0x10)).slice(-2)), '');
   }
-
-
 }

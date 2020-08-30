@@ -1,14 +1,8 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
-
-let renderArray = function (val) {
-  return <span>{val.map(x => <span key={x}> {x}</span>)}</span>;
-};
-
-let renderIpAddresses = function (val) {
-  return <span> {renderArray(val.ip_addresses)} {(val.domain_name ? ' ('.concat(val.domain_name, ')') : '')} </span>;
-};
+import {renderIpAddresses} from '../common/RenderArrays';
+import parsePbaResults from './PostBreachParser';
 
 let renderMachine = function (data) {
   return <div>{data.label} ( {renderIpAddresses(data)} )</div>
@@ -61,9 +55,10 @@ class PostBreachComponent extends React.Component {
     let pbaMachines = this.props.data.filter(function (value) {
       return (value.pba_results !== 'None' && value.pba_results.length > 0);
     });
+    pbaMachines = pbaMachines.map(pbaData => parsePbaResults(pbaData));
     let defaultPageSize = pbaMachines.length > pageSize ? pageSize : pbaMachines.length;
     let showPagination = pbaMachines > pageSize;
-    const pbaCount = pbaMachines.reduce((accumulated, pbaMachine) => accumulated+pbaMachine["pba_results"].length, 0);
+    const pbaCount = pbaMachines.reduce((accumulated, pbaMachine) => accumulated+pbaMachine['pba_results'].length, 0);
     return (
       <>
         <p>

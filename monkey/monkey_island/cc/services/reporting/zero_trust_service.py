@@ -1,8 +1,8 @@
 from typing import List
 
-import common.data.zero_trust_consts as zero_trust_consts
 from bson.objectid import ObjectId
 
+import common.data.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
 
 # How many events of a single finding to return to UI.
