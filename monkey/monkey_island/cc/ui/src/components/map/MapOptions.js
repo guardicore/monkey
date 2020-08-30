@@ -45,7 +45,7 @@ export const basic_options = {
       springLength: 100,
       springConstant: 0.025
     },
-    minVelocity: 0.3,
+    minVelocity: 0.7,
     maxVelocity: 25
   }
 };

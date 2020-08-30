@@ -28,12 +28,12 @@ from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.windows_upgrader import WindowsUpgrader
 from infection_monkey.post_breach.post_breach_handler import PostBreach
 from infection_monkey.network.tools import get_interface_to_target, is_running_on_server
-from infection_monkey.exploit.tools.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
+from common.utils.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.exploit.HostExploiter import HostExploiter
-from monkey_island.cc.network_utils import remove_port_from_ip_string
+from common.network.network_utils import get_host_from_network_location
 
 MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, shutting down"
 
@@ -386,7 +386,7 @@ class InfectionMonkey(object):
         LOG.debug("default server set to: %s" % self._default_server)
 
     def is_started_on_island(self):
-        island_ip = remove_port_from_ip_string(self._default_server)
+        island_ip = get_host_from_network_location(self._default_server)
         return is_running_on_server(island_ip) and WormConfiguration.depth == WormConfiguration.max_depth
 
     def log_arguments(self):

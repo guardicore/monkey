@@ -23,7 +23,8 @@ class T1082(AttackTechnique):
                            'collections': [
                                {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$gt': ['$aws', {}]}]},
                                 'name': {'$literal': 'Amazon Web Services info'}},
-                               {'used': {'$and': [{'$ifNull': ['$process_list', False]}, {'$gt': ['$process_list', {}]}]},
+                               {'used': {'$and': [{'$ifNull': ['$process_list', False]},
+                                                  {'$gt': ['$process_list', {}]}]},
                                 'name': {'$literal': 'Running process list'}},
                                {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$ne': ['$netstat', []]}]},
                                 'name': {'$literal': 'Network connections'}},

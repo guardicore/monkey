@@ -1,19 +1,20 @@
-impacket
-pycryptodome
-cffi
-requests
-odict
-paramiko
-psutil
+WinSys-3.x>=0.5.2
+cffi>=1.14
+ecdsa==0.15
 git+https://github.com/guardicore/pyinstaller
-ecdsa
-netifaces
-ipaddress
+impacket>=0.9
+ipaddress>=1.0.23
+netifaces>=0.10.9
+odict==1.7.0
+paramiko>=2.7.1
+psutil>=5.7.0
+pycryptodome==3.9.8
+pyftpdlib==1.5.6
+pymssql<3.0
+pypykatz==0.3.12
+requests>=2.24
 # Locking WMI since version 1.5 introduced breaking change on Linux agent compilation.
 # See breaking change here: https://github.com/tjguk/wmi/commit/dcf8e3eca79bb8c0101ffb83e25c066b0ba9e16d
 # Causes pip to error with:
 # Could not find a version that satisfies the requirement pywin32 (from wmi->-r /src/infection_monkey/requirements.txt (line 12)) (from versions: none)
 wmi==1.4.9 ; sys_platform == 'win32'
-pymssql<3.0
-pyftpdlib
-WinSys-3.x

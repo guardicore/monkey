@@ -5,11 +5,12 @@ import flask_restful
 from flask import Flask, send_from_directory, Response
 from werkzeug.exceptions import NotFound
 
-from monkey_island.cc.auth import init_jwt
+from monkey_island.cc.resources.auth.auth import init_jwt
 from monkey_island.cc.database import mongo, database
-from monkey_island.cc.environment.environment import env
+import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.edge import Edge
+from monkey_island.cc.resources.environment import Environment
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.island_logs import IslandLog
@@ -22,6 +23,7 @@ from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
+from monkey_island.cc.resources.registration import Registration
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.reporting.report import Report
 from monkey_island.cc.resources.root import Root
@@ -69,7 +71,7 @@ def init_app_config(app, mongo_url):
     app.config['MONGO_URI'] = mongo_url
     app.config['SECRET_KEY'] = str(uuid.getnode())
     app.config['JWT_AUTH_URL_RULE'] = '/api/auth'
-    app.config['JWT_EXPIRATION_DELTA'] = env.get_auth_expiration_time()
+    app.config['JWT_EXPIRATION_DELTA'] = env_singleton.env.get_auth_expiration_time()
 
 
 def init_app_services(app):
@@ -91,6 +93,8 @@ def init_app_url_rules(app):
 
 def init_api_resources(api):
     api.add_resource(Root, '/api')
+    api.add_resource(Registration, '/api/registration')
+    api.add_resource(Environment, '/api/environment')
     api.add_resource(Monkey, '/api/monkey', '/api/monkey/', '/api/monkey/<string:guid>')
     api.add_resource(Bootloader, '/api/bootloader/<string:os>')
     api.add_resource(LocalRun, '/api/local-monkey', '/api/local-monkey/')

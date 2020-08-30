@@ -1,7 +1,7 @@
 from flask import request
 import flask_restful
 
-from monkey_island.cc.auth import jwt_required
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.node import NodeService
 
 __author__ = 'Barak'

@@ -15,10 +15,10 @@ const statusToIcon = {
 };
 
 export const statusToLabelType = {
-  'Passed': 'label-success',
-  'Verify': 'label-warning',
-  'Failed': 'label-danger',
-  'Unexecuted': 'label-default'
+  'Passed': 'badge-success',
+  'Verify': 'badge-warning',
+  'Failed': 'badge-danger',
+  'Unexecuted': 'badge-default'
 };
 
 export default class StatusLabel extends Component {
@@ -29,7 +29,7 @@ export default class StatusLabel extends Component {
     }
 
     return (
-      <div className={'label ' + statusToLabelType[this.props.status]} style={{display: 'flow-root'}}>
+      <div className={'badge ' + statusToLabelType[this.props.status]} style={{display: 'flow-root'}}>
         <FontAwesomeIcon icon={statusToIcon[this.props.status]} size={this.props.size}/>{text}
       </div>
     );

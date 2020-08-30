@@ -132,6 +132,7 @@ class TestMonkeyBlackbox(object):
     def test_wmi_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, "WMI_PTH.conf", "WMI_PTH")
 
+    @pytest.mark.skip(reason="Perfomance test that creates env from fake telemetries is faster, use that instead.")
     def test_report_generation_performance(self, island_client, quick_performance_tests):
         """
         This test includes the SSH + Elastic + Hadoop + MSSQL machines all in one test
@@ -149,6 +150,7 @@ class TestMonkeyBlackbox(object):
             LOGGER.error("This test doesn't support 'quick_performance_tests' option.")
             assert False
 
+    @pytest.mark.skip(reason="Perfomance test that creates env from fake telemetries is faster, use that instead.")
     def test_map_generation_performance(self, island_client, quick_performance_tests):
         if not quick_performance_tests:
             TestMonkeyBlackbox.run_performance_test(MapGenerationTest,

@@ -185,10 +185,13 @@ class ReportService:
                 continue
             origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
             for user in monkey_creds:
-                for pass_type in monkey_creds[user]:
+                for pass_type in PASS_TYPE_DICT:
+                    if pass_type not in monkey_creds[user] or not monkey_creds[user][pass_type]:
+                        continue
+                    username = monkey_creds[user]['username'] if 'username' in monkey_creds[user] else user
                     cred_row = \
                         {
-                            'username': user.replace(',', '.'),
+                            'username': username,
                             'type': PASS_TYPE_DICT[pass_type],
                             'origin': origin
                         }
@@ -737,8 +740,7 @@ class ReportService:
                         'stolen_creds': ReportService.get_stolen_creds(),
                         'azure_passwords': ReportService.get_azure_creds(),
                         'ssh_keys': ReportService.get_ssh_keys(),
-                        'strong_users': PTHReportService.get_strong_users_on_crit_details(),
-                        'pth_map': PTHReportService.get_pth_map()
+                        'strong_users': PTHReportService.get_strong_users_on_crit_details()
                     },
                 'recommendations':
                     {
