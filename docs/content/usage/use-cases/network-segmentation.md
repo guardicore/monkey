@@ -1,7 +1,8 @@
 ---
 title: "Network Segmentation"
 date: 2020-08-12T13:05:05+03:00
-draft: true
+draft: false
+description: "Test network segmentation policies for apps that need ringfencing or tiers that require microsegmentation."
 weight: 3
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "Other"
 date: 2020-08-12T13:07:55+03:00
-draft: true
+draft: false
+description: "Tips and tricks about configuring monkey for your needs."
 weight: 100
 ---
 
