@@ -44,7 +44,7 @@ class CommunicateAsNewUser(PBA):
 
     @staticmethod
     def get_random_new_user_name():
-        return USERNAME_PREFIX + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
+        return USERNAME_PREFIX + ''.join(random.choice(string.ascii_lowercase) for _ in range(5))  # noqa: DUO102
 
     @staticmethod
     def get_commandline_for_http_request(url, is_windows=is_windows_os()):

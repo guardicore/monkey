@@ -51,7 +51,7 @@ def get_winAPI_to_hide_files():
         fileCreation = win32file.CREATE_ALWAYS  # overwrite existing file
         fileFlags = win32file.FILE_ATTRIBUTE_HIDDEN  # make hidden
 
-        hiddenFile = win32file.CreateFile(HIDDEN_FILE_WINAPI,
+        _ = win32file.CreateFile(HIDDEN_FILE_WINAPI,
                                           fileAccess,
                                           0,  # sharing mode: 0 => can't be shared
                                           None,  # security attributes
