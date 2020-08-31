@@ -217,7 +217,8 @@ class ConfigService:
     @staticmethod
     def set_server_ips_in_config(config):
         ips = local_ip_addresses()
-        config["internal"]["island_server"]["command_servers"] = ["%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips]
+        config["internal"]["island_server"]["command_servers"] = \
+            ["%s:%d" % (ip, env_singleton.env.get_islaned_port()) for ip in ips]
         config["internal"]["island_server"]["current_server"] = "%s:%d" % (ips[0], env_singleton.env.get_island_port())
 
     @staticmethod

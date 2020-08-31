@@ -77,7 +77,7 @@ class TestMonkey(IslandTestCase):
         self.assertIsNotNone(Monkey.get_single_monkey_by_id(a_monkey.id))
 
         # Raise on non-existent monkey
-        with pytest.raises(MonkeyNotFoundError) as e_info:
+        with pytest.raises(MonkeyNotFoundError) as _:
             _ = Monkey.get_single_monkey_by_id("abcdefabcdefabcdefabcdef")
 
     def test_get_os(self):

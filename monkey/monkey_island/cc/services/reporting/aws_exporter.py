@@ -299,7 +299,7 @@ class AWSExporter(Exporter):
             title="Machines are accessible using passwords supplied by the user during the Monkey's configuration.",
             description="Change {0}'s password to a complex one-use password that is not shared with other computers on the "
                         "network.",
-            recommendation="The machine machine ({ip_address}) is vulnerable to a WMI attack. The Monkey authenticated over "
+            recommendation="The machine {machine} ({ip_address}) is vulnerable to a WMI attack. The Monkey authenticated over "
                            "the WMI protocol with user {username} and its password.".format(
                             machine=issue['machine'],
                             ip_address=issue['ip_address'],
@@ -316,7 +316,7 @@ class AWSExporter(Exporter):
             title="Machines are accessible using passwords supplied by the user during the Monkey's configuration.",
             description="Change {0}'s password to a complex one-use password that is not shared with other computers on the "
                         "network.".format(issue['username']),
-            recommendation="The machine machine ({ip_address}) is vulnerable to a WMI attack. The Monkey used a "
+            recommendation="The machine {machine} ({ip_address}) is vulnerable to a WMI attack. The Monkey used a "
                            "pass-the-hash attack over WMI protocol with user {username}".format(
                             machine=issue['machine'],
                             ip_address=issue['ip_address'],
