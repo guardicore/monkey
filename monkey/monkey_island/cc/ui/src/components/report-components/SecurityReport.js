@@ -793,10 +793,9 @@ class ReportPageComponent extends AuthComponent {
           className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
           className="badge badge-danger">remote command execution</span> attack.
           <br/>
-          The attack was made possible because the server is using an old version of Drupal.
-          For possible workarounds and more info read <a
-          href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340"
-        >here</a>.
+          The attack was made possible because the server is using an old version of Drupal, for which REST API is
+          enabled. For possible workarounds and more info read
+          <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340">here</a>.
         </CollapsibleWellComponent>
       </>
     );
