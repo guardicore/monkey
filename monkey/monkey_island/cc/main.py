@@ -23,8 +23,8 @@ from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.bootloader_server import \
     BootloaderHttpServer  # noqa: E402
-from monkey_island.cc.database import (get_db_version,  # noqa: E402
-                                       is_db_server_up)
+from monkey_island.cc.database import get_db_version  # noqa: E402
+from monkey_island.cc.database import is_db_server_up  # noqa: E402
 from monkey_island.cc.network_utils import local_ip_addresses  # noqa: E402
 from monkey_island.cc.resources.monkey_download import \
     MonkeyDownload  # noqa: E402
