@@ -1,1 +1,1 @@
-from infection_monkey.transport.http import HTTPServer, LockedHTTPServer
+from infection_monkey.transport.http import HTTPServer, LockedHTTPServer  # noqa: F401
