@@ -1,7 +1,19 @@
 import argparse
 import json
 import logging
+import sys
 from pathlib import Path
+
+
+def add_monkey_dir_to_sys_path():
+    monkey_path = Path(sys.path[0])
+    monkey_path = monkey_path.parents[2]
+    sys.path.insert(0, monkey_path.__str__())
+
+
+add_monkey_dir_to_sys_path()
+
+from monkey_island.cc.environment.environment_config import EnvironmentConfig  # noqa: E402 isort:skip
 
 SERVER_CONFIG = "server_config"
 
@@ -12,7 +24,7 @@ logger.setLevel(logging.DEBUG)
 
 def main():
     args = parse_args()
-    file_path = get_config_file_path(args)
+    file_path = EnvironmentConfig.get_config_file_path()
 
     # Read config
     with open(file_path) as config_file:
@@ -28,16 +40,9 @@ def main():
         config_file.write("\n")  # Have to add newline at end of file, since json.dump does not.
 
 
-def get_config_file_path(args):
-    file_path = Path(__file__).parent.joinpath(args.file_name)
-    logger.info("Config file path: {}".format(file_path))
-    return file_path
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("server_config", choices=["standard", "testing", "password"])
-    parser.add_argument("-f", "--file_name", required=False, default="server_config.json")
     args = parser.parse_args()
     return args
 

@@ -168,6 +168,15 @@ SCHEMA = {
                     "description": "Adversaries may abuse BITS to download, execute, "
                                    "and even clean up after running malicious code."
                 },
+                "T1146": {
+                    "title": "Clear command history",
+                    "type": "bool",
+                    "value": False,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1146",
+                    "description": "Adversaries may clear/disable command history of a compromised "
+                                   "account to conceal the actions undertaken during an intrusion."
+                },
                 "T1107": {
                     "title": "File Deletion",
                     "type": "bool",
@@ -194,6 +203,15 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1099",
                     "description": "Adversaries may modify file time attributes to hide new/changes to existing "
                                    "files to avoid attention from forensic investigators or file analysis tools."
+                },
+                "T1216": {
+                    "title": "Signed script proxy execution",
+                    "type": "bool",
+                    "value": False,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1216",
+                    "description": "Adversaries may use scripts signed with trusted certificates to "
+                                   "proxy execution of malicious files on Windows systems."
                 }
             }
         },
@@ -243,6 +261,16 @@ SCHEMA = {
             "type": "object",
             "link": "https://attack.mitre.org/tactics/TA0007/",
             "properties": {
+                "T1087": {
+                    "title": "Account Discovery",
+                    "type": "bool",
+                    "value": True,
+                    "necessary": False,
+                    "link": "https://attack.mitre.org/techniques/T1087",
+                    "description": "Adversaries may attempt to get a listing of accounts on a system or "
+                                   "within an environment. This information can help adversaries determine which "
+                                   "accounts exist to aid in follow-on behavior."
+                },
                 "T1018": {
                     "title": "Remote System Discovery",
                     "type": "bool",

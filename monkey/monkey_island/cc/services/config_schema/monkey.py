@@ -68,7 +68,8 @@ MONKEY = {
                         "TrapCommand",
                         "ChangeSetuidSetgid",
                         "ScheduleJobs",
-                        "Timestomping"
+                        "Timestomping",
+                        "AccountDiscovery"
                     ]
                 },
             }
