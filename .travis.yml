@@ -1,56 +1,105 @@
 # Infection Monkey travis.yml. See Travis documentation for information about this file structure.
 
+# If you change this file, you can validate using Travis CI's Build Config Explorer https://config.travis-ci.com/explore
+
 group: travis_latest
 
 language: python
 
-cache: pip
+cache:
+  - pip
+  - directories:
+    - "$HOME/.npm"
 
 python:
 - 3.7
 
 os: linux
 
+before_install:
+# Init server_config.json to default
+- cp monkey/monkey_island/cc/server_config.json.default monkey/monkey_island/cc/server_config.json
+
 install:
 # Python
+- pip freeze
 - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
-- pip install flake8 pytest dlint  # for next stages
+- pip install flake8 pytest dlint isort # for next stages
+- pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
 - pip install -r monkey/infection_monkey/system_info/collectors/scoutsuite/requirements.txt
+- pip install pipdeptree
+# Fail builds on possible conflicting dependencies.
+- pipdeptree --warn fail
+
+# node + npm + eslint
+- node --version
+- npm --version
+- nvm --version
+- nvm install node
+- nvm use node
+- npm i -g eslint
+- node --version
+- npm --version
+
+# linuxbrew (for hugo)
+- git clone https://github.com/Homebrew/brew ~/.linuxbrew/Homebrew
+- mkdir ~/.linuxbrew/bin
+- ln -s ~/.linuxbrew/Homebrew/bin/brew ~/.linuxbrew/bin
+- eval $(~/.linuxbrew/bin/brew shellenv)
+
+# hugo (for documentation)
+- brew install hugo
+# print hugo version (useful for debugging documentation build errors)
+- hugo version
 
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
-- python monkey/monkey_island/cc/set_server_config.py testing
+- pushd /home/travis/build/guardicore/monkey/monkey
+- python monkey_island/cc/environment/set_server_config.py testing
+- popd
 
 script:
 # Check Python code
-# Check syntax errors and fail the build if any are found.
+## Check syntax errors and fail the build if any are found.
 - flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics --exclude=monkey/infection_monkey/system_info/collectors/scoutsuite
 
-# Warn about linter issues.
-# --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
-# --count will print the total number of errors.
-# --statistics Count the number of occurrences of each error/warning code and print a report.
-# The output is redirected to a file.
+## Warn about linter issues.
+### --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
+### --count will print the total number of errors.
+### --statistics Count the number of occurrences of each error/warning code and print a report.
+### The output is redirected to a file.
 - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=monkey/infection_monkey/system_info/collectors/scoutsuite > flake8_warnings.txt
-# Display the linter issues
+## Display the linter issues
 - cat flake8_warnings.txt
-# Make sure that we haven't increased the amount of warnings.
-- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=190
-- if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
+## Make sure that we haven't increased the amount of warnings.
+- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=120
+- if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
+## Check import order
+- python -m isort . -c -p common -p infection_monkey -p monkey_island
+
+## Run unit tests
 - cd monkey  # This is our source dir
 - python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
+## Calculate Code Coverage
+- coverage run -m pytest
+
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui
-- npm i
-- npm i -g eslint
-- cd -
-- cd monkey_island/cc/ui
-- eslint ./src --quiet
-- JS_WARNINGS_AMOUNT_UPPER_LIMIT=37
-- eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT
+- npm ci  # See https://docs.npmjs.com/cli/ci.html
+- eslint ./src --quiet  # Test for errors
+- JS_WARNINGS_AMOUNT_UPPER_LIMIT=28
+- eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # Test for max warnings
+
+# Build documentation
+- cd $TRAVIS_BUILD_DIR/docs
+- hugo --verbose --environment staging
+
+after_success:
+  # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
+  - bash <(curl -s https://codecov.io/bash)
 
 notifications:
   slack:  # Notify to slack

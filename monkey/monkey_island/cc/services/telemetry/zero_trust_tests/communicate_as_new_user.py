@@ -1,5 +1,6 @@
 import common.data.zero_trust_consts as zero_trust_consts
-from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
+from monkey_island.cc.models.zero_trust.aggregate_finding import \
+    AggregateFinding
 from monkey_island.cc.models.zero_trust.event import Event
 
 COMM_AS_NEW_USER_FAILED_FORMAT = "Monkey on {} couldn't communicate as new user. Details: {}"

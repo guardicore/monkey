@@ -82,5 +82,17 @@ MonkeyZoo/*
 !MonkeyZoo/config.tf
 !MonkeyZoo/MonkeyZooDocs.pdf
 
+# Exported monkey telemetries
+/monkey/telem_sample/
+
+# Profiling logs
+profiler_logs/
+
 # vim swap files
 *.swp
+
+# Server config might contain credentials
+/monkey/monkey_island/cc/server_config.json
+
+# Virtualenv
+venv/

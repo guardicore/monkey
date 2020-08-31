@@ -3,7 +3,13 @@ import {statusToLabelType} from './StatusLabel';
 import * as PropTypes from 'prop-types';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDatabase, faUser, faWifi, faCloud, faLaptop, faEyeSlash, faCogs } from '@fortawesome/free-solid-svg-icons';
+import { faDatabase } from '@fortawesome/free-solid-svg-icons/faDatabase';
+import { faUser  } from '@fortawesome/free-solid-svg-icons/faUser';
+import { faWifi } from '@fortawesome/free-solid-svg-icons/faWifi';
+import { faCloud } from '@fortawesome/free-solid-svg-icons/faCloud';
+import { faLaptop } from '@fortawesome/free-solid-svg-icons/faLaptop';
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash';
+import { faCogs } from '@fortawesome/free-solid-svg-icons/faCogs';
 
 const pillarToIcon = {
   'Data': faDatabase,
@@ -17,7 +23,7 @@ const pillarToIcon = {
 
 export default class PillarLabel extends Component {
   render() {
-    const className = 'label ' + statusToLabelType[this.props.status];
+    const className = 'badge ' + statusToLabelType[this.props.status];
     return <div className={className} style={{margin: '2px', display: 'inline-block'}}>
       <FontAwesomeIcon icon={pillarToIcon[this.props.pillar]}/> {this.props.pillar}</div>
   }

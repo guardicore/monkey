@@ -8,6 +8,8 @@ export default class AuthService {
     '8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557';
 
   SECONDS_BEFORE_JWT_EXPIRES = 20;
+  AUTHENTICATION_API_ENDPOINT = '/api/auth';
+  REGISTRATION_API_ENDPOINT = '/api/registration';
 
   login = (username, password) => {
     return this._login(username, this.hashSha3(password));
@@ -19,7 +21,7 @@ export default class AuthService {
 
   jwtHeader = () => {
     if (this._loggedIn()) {
-      return 'JWT ' + this._getToken();
+      return 'Bearer ' + this._getToken();
     }
   };
 
@@ -30,7 +32,7 @@ export default class AuthService {
   }
 
   _login = (username, password) => {
-    return this._authFetch('/api/auth', {
+    return this._authFetch(this.AUTHENTICATION_API_ENDPOINT, {
       method: 'POST',
       body: JSON.stringify({
         username,
@@ -48,6 +50,32 @@ export default class AuthService {
       })
   };
 
+  register = (username, password) => {
+    if (password !== '') {
+      return this._register(username, this.hashSha3(password));
+    } else {
+      return this._register(username, password);
+    }
+  };
+
+  _register = (username, password) => {
+    return this._authFetch(this.REGISTRATION_API_ENDPOINT, {
+      method: 'POST',
+      body: JSON.stringify({
+        'user': username,
+        'password_hash': password
+      })
+    }).then(res => {
+      if (res.status === 200) {
+        return this._login(username, password)
+      } else {
+        return res.json().then(res_json => {
+          return {result: false, error: res_json['error']};
+        })
+      }
+    })
+  };
+
   _authFetch = (url, options = {}) => {
     const headers = {
       'Accept': 'application/json',
@@ -55,7 +83,7 @@ export default class AuthService {
     };
 
     if (this._loggedIn()) {
-      headers['Authorization'] = 'JWT ' + this._getToken();
+      headers['Authorization'] = 'Bearer ' + this._getToken();
     }
 
     if (options.hasOwnProperty('headers')) {
@@ -69,10 +97,22 @@ export default class AuthService {
     return fetch(url, options)
       .then(res => {
         if (res.status === 401) {
+          res.clone().json().then(res_json => {
+            console.log('Got 401 from server while trying to authFetch: ' + JSON.stringify(res_json));
+          });
           this._removeToken();
         }
         return res;
-      });
+      })
+  };
+
+  needsRegistration = () => {
+    return fetch(this.REGISTRATION_API_ENDPOINT,
+      {method: 'GET'})
+      .then(response => response.json())
+      .then(res => {
+        return res['needs_registration']
+      })
   };
 
   async loggedIn() {
@@ -99,8 +139,7 @@ export default class AuthService {
   _isTokenExpired(token) {
     try {
       return decode(token)['exp'] - this.SECONDS_BEFORE_JWT_EXPIRES < Date.now() / 1000;
-    }
-    catch (err) {
+    } catch (err) {
       return false;
     }
   }
@@ -120,6 +159,4 @@ export default class AuthService {
   _toHexStr(byteArr) {
     return byteArr.reduce((acc, x) => (acc + ('0' + x.toString(0x10)).slice(-2)), '');
   }
-
-
 }

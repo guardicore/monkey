@@ -1,6 +1,7 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faHandPointLeft} from '@fortawesome/free-solid-svg-icons/faHandPointLeft'
+import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons/faQuestionCircle'
 import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import download from 'downloadjs'
@@ -10,8 +11,10 @@ class PreviewPaneComponent extends AuthComponent {
 
   generateToolTip(text) {
     return (
-      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip">{text}</Tooltip>}>
-        <a><i className="glyphicon glyphicon-info-sign"/></a>
+      <OverlayTrigger placement="top"
+                      overlay={<Tooltip id="tooltip">{text}</Tooltip>}
+                      delay={{ show: 250, hide: 400 }}>
+        <a><FontAwesomeIcon icon={faQuestionCircle} style={{'marginRight': '0.5em'}}/></a>
       </OverlayTrigger>
     );
   }
@@ -98,9 +101,9 @@ class PreviewPaneComponent extends AuthComponent {
       .replace(/\\t/g, '\t')
       .replace(/\\b/g, '\b')
       .replace(/\\f/g, '\f')
-      .replace(/\\"/g, '\"')
+      .replace(/\\"/g, '"')
       .replace(/\\'/g, '\'')
-      .replace(/\\&/g, '\&');
+      .replace(/\\&/g, '&');
   }
 
   downloadLog(asset) {
@@ -123,8 +126,8 @@ class PreviewPaneComponent extends AuthComponent {
           Download Log
         </th>
         <td>
-          <a type="button" className="btn btn-primary"
-             disabled={!asset.has_log}
+          <a type='button'
+             className={asset.has_log ? 'btn btn-primary' : 'btn btn-primary disabled'}
              onClick={() => this.downloadLog(asset)}>Download</a>
         </td>
       </tr>
@@ -142,7 +145,7 @@ class PreviewPaneComponent extends AuthComponent {
           Exploit Timeline&nbsp;
           {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
         </h4>
-        <ul className="timeline">
+        <ul className='timeline'>
           {asset.exploits.map(exploit =>
             <li key={exploit.timestamp}>
               <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
@@ -167,7 +170,7 @@ class PreviewPaneComponent extends AuthComponent {
   assetInfo(asset) {
     return (
       <div>
-        <table className="table table-condensed">
+        <table className='table table-condensed'>
           <tbody>
           {this.osRow(asset)}
           {this.ipsRow(asset)}
@@ -183,7 +186,7 @@ class PreviewPaneComponent extends AuthComponent {
   infectedAssetInfo(asset) {
     return (
       <div>
-        <table className="table table-condensed">
+        <table className='table table-condensed'>
           <tbody>
           {this.osRow(asset)}
           {this.statusRow(asset)}
@@ -202,7 +205,7 @@ class PreviewPaneComponent extends AuthComponent {
   scanInfo(edge) {
     return (
       <div>
-        <table className="table table-condensed">
+        <table className='table table-condensed'>
           <tbody>
           <tr>
             <th>Operating System</th>
@@ -223,7 +226,7 @@ class PreviewPaneComponent extends AuthComponent {
             '' :
             <div>
               <h4 style={{'marginTop': '2em'}}>Timeline</h4>
-              <ul className="timeline">
+              <ul className='timeline'>
                 {edge.exploits.map(exploit =>
                   <li key={exploit.timestamp}>
                     <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
@@ -253,8 +256,15 @@ class PreviewPaneComponent extends AuthComponent {
         info = this.scanInfo(this.props.item);
         break;
       case 'node':
-        info = this.props.item.group.includes('monkey', 'manual') ? this.infectedAssetInfo(this.props.item) :
-          this.props.item.group !== 'island' ? this.assetInfo(this.props.item) : this.islandAssetInfo();
+        if (this.props.item.group.includes('monkey') && this.props.item.group.includes('starting')) {
+          info = this.assetInfo(this.props.item);
+        } else if (this.props.item.group.includes('monkey', 'manual')) {
+          info = this.infectedAssetInfo(this.props.item)
+        } else if (this.props.item.group !== 'island') {
+          info = this.assetInfo(this.props.item)
+        } else {
+          info = this.islandAssetInfo();
+        }
         break;
       case 'island_edge':
         info = this.islandEdgeInfo();
@@ -271,7 +281,7 @@ class PreviewPaneComponent extends AuthComponent {
     }
 
     return (
-      <div className="preview-pane">
+      <div className='preview-pane'>
         {!info ?
           <span>
             <FontAwesomeIcon icon={faHandPointLeft} style={{'marginRight': '0.5em'}}/>

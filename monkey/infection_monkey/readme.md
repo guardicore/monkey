@@ -7,7 +7,6 @@ The monkey is composed of three separate parts.
 
 - The Infection Monkey itself - PyInstaller compressed python archives
 - Sambacry binaries - Two linux binaries, 32/64 bit.
-- Mimikatz binaries - Two windows binaries, 32/64 bit.
 - Traceroute binaries - Two linux binaries, 32/64bit.
 
 ## Windows
@@ -28,7 +27,7 @@ The monkey is composed of three separate parts.
         `pip install -r requirements.txt`
 4. Download and extract UPX binary to monkey\infection_monkey\bin\upx.exe:
         <https://github.com/upx/upx/releases/download/v3.94/upx394w.zip>
-5. Build/Download Sambacry and Mimikatz binaries
+5. Build/Download Sambacry
     - Build/Download according to sections at the end of this readme.
     - Place the binaries under monkey\infection_monkey\bin
 6. To build the final exe:
@@ -55,11 +54,11 @@ Tested on Ubuntu 16.04.
 
 3. Build Sambacry binaries
     - Build/Download according to sections at the end of this readme.
-    - Place the binaries under [code location]\infection_monkey\bin, under the names 'sc_monkey_runner32.so', 'sc_monkey_runner64.so'
+    - Place the binaries under [code location]/infection_monkey/bin, under the names 'sc_monkey_runner32.so', 'sc_monkey_runner64.so'
 
 4. Build Traceroute binaries
     - Build/Download according to sections at the end of this readme.
-    - Place the binaries under [code location]\infection_monkey\bin, under the names 'traceroute32', 'traceroute64'
+    - Place the binaries under [code location]/infection_monkey/bin, under the names 'traceroute32', 'traceroute64'
 
 5. To build, run in terminal:
     - `cd [code location]/infection_monkey`
@@ -82,24 +81,6 @@ Sambacry requires two standalone binaries to execute remotely.
     - Available here:
         - 32bit: <https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner32.so>
         - 64bit: <https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner64.so>
-
-### Mimikatz
-
-Mimikatz is required for the Monkey to be able to steal credentials on Windows. It's possible to either compile binaries from source (requires Visual Studio 2013 and up) or download them from our repository.
-
-1. Build Mimikatz yourself
-    - Building mimikatz requires Visual Studio 2013 and up
-    - Clone our version of mimikatz from <https://github.com/guardicore/mimikatz/tree/1.1.0>
-    - Build using Visual Studio.
-    - Put each version in a zip file
-        1. The zip should contain only the Mimikatz DLL named tmpzipfile123456.dll
-        2. It should be protected using the password 'VTQpsJPXgZuXhX6x3V84G'.
-        3. The zip file should be named mk32.zip/mk64.zip accordingly.
-        4. Zipping with 7zip has been tested. Other zipping software may not work.
-
-2. Download our pre-built mimikatz binaries
-    - Download both 32 and 64 bit zipped DLLs from <https://github.com/guardicore/mimikatz/releases/tag/1.1.0>
-    - Place them under [code location]\infection_monkey\bin
 
 ### Traceroute
 

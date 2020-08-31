@@ -1,16 +1,16 @@
-impacket
-pycryptodome
-cffi
-requests
-odict
-paramiko
-psutil
-PyInstaller
-ecdsa
-netifaces
-ipaddress
-wmi
-pywin32 ; sys_platform == 'win32'
+WinSys-3.x>=0.5.2
+cffi>=1.14
+ecdsa==0.15
+git+https://github.com/guardicore/pyinstaller
+impacket>=0.9
+ipaddress>=1.0.23
+netifaces>=0.10.9
+odict==1.7.0
+paramiko>=2.7.1
+psutil>=5.7.0
+pycryptodome==3.9.8
+pyftpdlib==1.5.6
 pymssql<3.0
-pyftpdlib
-WinSys-3.x
+pypykatz==0.3.12
+requests>=2.24
+wmi==1.5.1 ; sys_platform == 'win32'

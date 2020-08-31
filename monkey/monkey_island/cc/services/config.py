@@ -1,15 +1,16 @@
-import copy
 import collections
+import copy
 import functools
 import logging
-from jsonschema import Draft4Validator, validators
-import monkey_island.cc.services.post_breach_files
 
+from jsonschema import Draft4Validator, validators
+
+import monkey_island.cc.environment.environment_singleton as env_singleton
+import monkey_island.cc.services.post_breach_files
 from monkey_island.cc.database import mongo
-from monkey_island.cc.environment.environment import env
-from monkey_island.cc.utils import local_ip_addresses
-from .config_schema import SCHEMA
 from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.network_utils import local_ip_addresses
+from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
 
@@ -73,6 +74,12 @@ class ConfigService:
         mongo_key = ".".join(config_key_as_arr)
         mongo.db.config.update({'name': 'newconfig'},
                                {"$set": {mongo_key: value}})
+
+    @staticmethod
+    def append_to_config_array(config_key_as_arr, value):
+        mongo_key = ".".join(config_key_as_arr)
+        mongo.db.config.update({'name': 'newconfig'},
+                               {"$push": {mongo_key: value}})
 
     @staticmethod
     def get_flat_config(is_initial_config=False, should_decrypt=True):
@@ -153,9 +160,18 @@ class ConfigService:
     def ssh_key_exists(keys, user, ip):
         return [key for key in keys if key['user'] == user and key['ip'] == ip]
 
+    def _filter_none_values(data):
+        if isinstance(data, dict):
+            return {k: ConfigService._filter_none_values(v) for k, v in data.items() if k is not None and v is not None}
+        elif isinstance(data, list):
+            return [ConfigService._filter_none_values(item) for item in data if item is not None]
+        else:
+            return data
+
     @staticmethod
     def update_config(config_json, should_encrypt):
         # PBA file upload happens on pba_file_upload endpoint and corresponding config options are set there
+        config_json = ConfigService._filter_none_values(config_json)
         monkey_island.cc.services.post_breach_files.set_config_PBA_files(config_json)
         if should_encrypt:
             try:
@@ -201,8 +217,8 @@ class ConfigService:
     @staticmethod
     def set_server_ips_in_config(config):
         ips = local_ip_addresses()
-        config["cnc"]["servers"]["command_servers"] = ["%s:%d" % (ip, env.get_island_port()) for ip in ips]
-        config["cnc"]["servers"]["current_server"] = "%s:%d" % (ips[0], env.get_island_port())
+        config["internal"]["island_server"]["command_servers"] = ["%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips]
+        config["internal"]["island_server"]["current_server"] = "%s:%d" % (ips[0], env_singleton.env.get_island_port())
 
     @staticmethod
     def save_initial_config_if_needed():
@@ -230,6 +246,16 @@ class ConfigService:
                     for property3, subschema3 in list(subschema2["properties"].items()):
                         if "default" in subschema3:
                             sub_dict[property3] = subschema3["default"]
+                        elif "properties" in subschema3:
+                            layer_3_dict = {}
+                            for property4, subschema4 in list(subschema3["properties"].items()):
+                                if "properties" in subschema4:
+                                    raise ValueError("monkey/monkey_island/cc/services/config.py "
+                                                     "can't handle 5 level config. "
+                                                     "Either change back the config or refactor.")
+                                if "default" in subschema4:
+                                    layer_3_dict[property4] = subschema4["default"]
+                            sub_dict[property3] = layer_3_dict
                     main_dict[property2] = sub_dict
                 instance.setdefault(property1, main_dict)
 
@@ -298,3 +324,11 @@ class ConfigService:
             pair['public_key'] = encryptor.dec(pair['public_key'])
             pair['private_key'] = encryptor.dec(pair['private_key'])
         return pair
+
+    @staticmethod
+    def is_test_telem_export_enabled():
+        return ConfigService.get_config_value(['internal', 'testing', 'export_monkey_telems'])
+
+    @staticmethod
+    def set_started_on_island(value: bool):
+        ConfigService.set_config_value(['internal', 'general', 'started_on_island'], value)

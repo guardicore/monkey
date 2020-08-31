@@ -1,7 +1,6 @@
 import logging
 
 from monkey_island.cc.encryptor import encryptor
-from monkey_island.cc.services import mimikatz_utils
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
@@ -16,7 +15,7 @@ def process_system_info_telemetry(telemetry_json):
     telemetry_processing_stages = [
         process_ssh_info,
         process_credential_info,
-        process_mimikatz_and_wmi_info,
+        process_wmi_info,
         dispatcher.dispatch_collector_results_to_relevant_processors
     ]
 
@@ -83,22 +82,19 @@ def replace_user_dot_with_comma(creds):
 
 def add_system_info_creds_to_config(creds):
     for user in creds:
-        ConfigService.creds_add_username(user)
-        if 'password' in creds[user]:
+        ConfigService.creds_add_username(creds[user]['username'])
+        if 'password' in creds[user] and creds[user]['password']:
             ConfigService.creds_add_password(creds[user]['password'])
-        if 'lm_hash' in creds[user]:
+        if 'lm_hash' in creds[user] and creds[user]['lm_hash']:
             ConfigService.creds_add_lm_hash(creds[user]['lm_hash'])
-        if 'ntlm_hash' in creds[user]:
+        if 'ntlm_hash' in creds[user] and creds[user]['ntlm_hash']:
             ConfigService.creds_add_ntlm_hash(creds[user]['ntlm_hash'])
 
 
-def process_mimikatz_and_wmi_info(telemetry_json):
+def process_wmi_info(telemetry_json):
     users_secrets = {}
-    if 'mimikatz' in telemetry_json['data']:
-        users_secrets = mimikatz_utils.MimikatzSecrets. \
-            extract_secrets_from_mimikatz(telemetry_json['data'].get('mimikatz', ''))
+
     if 'wmi' in telemetry_json['data']:
         monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid']).get('_id')
         wmi_handler = WMIHandler(monkey_id, telemetry_json['data']['wmi'], users_secrets)
         wmi_handler.process_and_handle_wmi_info()
-

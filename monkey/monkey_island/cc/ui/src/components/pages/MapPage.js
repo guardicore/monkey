@@ -1,25 +1,36 @@
 import React from 'react';
-import {Col, Modal} from 'react-bootstrap';
+import {Col, Modal, Row} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStopCircle, faMinus } from '@fortawesome/free-solid-svg-icons'
-import InfMapPreviewPaneComponent from 'components/map/preview-pane/InfMapPreviewPane';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faStopCircle} from '@fortawesome/free-solid-svg-icons/faStopCircle';
+import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
+import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {options, edgeGroupToColor} from 'components/map/MapOptions';
+import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
+import '../../styles/components/Map.scss';
+import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
       graph: {nodes: [], edges: []},
+      nodeStateList:[],
       selected: null,
       selectedType: null,
       killPressed: false,
       showKillDialog: false,
       telemetry: [],
-      telemetryLastTimestamp: null
+      telemetryLastTimestamp: null,
+      isScrolledUp: false,
+      telemetryLines: 0,
+      telemetryCurrentLine: 0,
+      telemetryUpdateInProgress: false
     };
+    this.telemConsole = React.createRef();
+    this.handleScroll = this.handleScroll.bind(this);
+    this.scrollTop = 0;
   }
 
   events = {
@@ -27,6 +38,7 @@ class MapPageComponent extends AuthComponent {
   };
 
   componentDidMount() {
+    this.getNodeStateListFromServer();
     this.updateMapFromServer();
     this.interval = setInterval(this.timedEvents, 5000);
   }
@@ -34,6 +46,14 @@ class MapPageComponent extends AuthComponent {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  getNodeStateListFromServer = () => {
+    this.authFetch('/api/netmap/nodeStates')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({nodeStateList: res.node_states});
+      });
+  };
 
   timedEvents = () => {
     this.updateMapFromServer();
@@ -55,18 +75,28 @@ class MapPageComponent extends AuthComponent {
   };
 
   updateTelemetryFromServer = () => {
+    if (this.state.telemetryUpdateInProgress) {
+      return
+    }
+    this.setState({telemetryUpdateInProgress: true});
     this.authFetch('/api/telemetry-feed?timestamp=' + this.state.telemetryLastTimestamp)
       .then(res => res.json())
       .then(res => {
         if ('telemetries' in res) {
           let newTelem = this.state.telemetry.concat(res['telemetries']);
-
           this.setState(
             {
               telemetry: newTelem,
-              telemetryLastTimestamp: res['timestamp']
+              telemetryLastTimestamp: res['timestamp'],
+              telemetryUpdateInProgress: false
             });
           this.props.onStatusChange();
+
+          let telemConsoleRef = this.telemConsole.current;
+          if (!this.state.isScrolledUp) {
+            telemConsoleRef.scrollTop = telemConsoleRef.scrollHeight - telemConsoleRef.clientHeight;
+            this.scrollTop = telemConsoleRef.scrollTop;
+          }
         }
       });
   };
@@ -125,7 +155,6 @@ class MapPageComponent extends AuthComponent {
         </Modal.Body>
       </Modal>
     )
-
   };
 
   renderTelemetryEntry(telemetry) {
@@ -138,9 +167,22 @@ class MapPageComponent extends AuthComponent {
     );
   }
 
+  handleScroll(e) {
+    let element = e.target;
+
+    let telemetryStyle = window.getComputedStyle(element);
+    let telemetryLineHeight = parseInt((telemetryStyle.lineHeight).replace('px', ''));
+
+    this.setState({
+      isScrolledUp: (element.scrollTop < this.scrollTop),
+      telemetryCurrentLine: Math.trunc(element.scrollTop / telemetryLineHeight) + 1,
+      telemetryLines: Math.trunc(element.scrollHeight / telemetryLineHeight)
+    });
+  }
+
   renderTelemetryConsole() {
     return (
-      <div className="telemetry-console">
+      <div className="telemetry-console" onScroll={this.handleScroll} ref={this.telemConsole}>
         {
           this.state.telemetry.map(this.renderTelemetryEntry)
         }
@@ -148,53 +190,63 @@ class MapPageComponent extends AuthComponent {
     );
   }
 
+  renderTelemetryLineCount() {
+    return (
+      <div className="telemetry-lines">
+        <b>[{this.state.telemetryCurrentLine}/{this.state.telemetryLines}]</b>
+      </div>
+    );
+  }
+
   render() {
     return (
-      <div>
-        {this.renderKillDialogModal()}
-        <Col xs={12} lg={8}>
-          <h1 className="page-title">3. Infection Map</h1>
-        </Col>
-        <Col xs={8}>
-          <div className="map-legend">
-            <b>Legend: </b>
-            <span>Exploit <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#cc0200'}}/></span>
-            <b style={{color: '#aeaeae'}}> | </b>
-            <span>Scan <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#ff9900'}}/></span>
-            <b style={{color: '#aeaeae'}}> | </b>
-            <span>Tunnel <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#0158aa'}}/></span>
-            <b style={{color: '#aeaeae'}}> | </b>
-            <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#a9aaa9'}}/></span>
-          </div>
-          {this.renderTelemetryConsole()}
-          <div style={{height: '80vh'}}>
-            <ReactiveGraph graph={this.state.graph} options={options} events={this.events}/>
-          </div>
-        </Col>
-        <Col xs={4}>
-          <input className="form-control input-block"
-                 placeholder="Find on map"
-                 style={{'marginBottom': '1em'}}/>
-
-          <div style={{'overflow': 'auto', 'marginBottom': '1em'}}>
-            <Link to="/infection/telemetry" className="btn btn-default pull-left" style={{'width': '48%'}}>Monkey
-              Telemetry</Link>
-            <button onClick={() => this.setState({showKillDialog: true})} className="btn btn-danger pull-right"
-                    style={{'width': '48%'}}>
-              <FontAwesomeIcon icon={faStopCircle} style={{'marginRight': '0.5em'}}/>
-              Kill All Monkeys
-            </button>
-          </div>
-          {this.state.killPressed ?
-            <div className="alert alert-info">
-              <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-              Kill command sent to all monkeys
+      <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
+           lg={{offset: 3, span: 9}} xl={{offset: 2, span: 10}}
+           className={'main'}>
+        <Row>
+          {this.renderKillDialogModal()}
+          <Col xs={12} lg={8}>
+            <h1 className="page-title">2. Infection Map</h1>
+          </Col>
+          <Col xs={8}>
+            <div className="map-legend">
+              <b>Legend: </b>
+              <span>Exploit <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#cc0200'}}/></span>
+              <b style={{color: '#aeaeae'}}> | </b>
+              <span>Scan <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#ff9900'}}/></span>
+              <b style={{color: '#aeaeae'}}> | </b>
+              <span>Tunnel <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#0158aa'}}/></span>
+              <b style={{color: '#aeaeae'}}> | </b>
+              <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#a9aaa9'}}/></span>
             </div>
-            : ''}
+            <div style={{height: '80vh'}} className={'map-window'}>
+              {this.renderTelemetryLineCount()}
+              {this.renderTelemetryConsole()}
+              <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)}
+                             events={this.events}/>
+            </div>
+          </Col>
+          <Col xs={4}>
+            <div style={{'overflow': 'auto', 'marginBottom': '1em'}}>
+              <Link to="/infection/telemetry" className="btn btn-light pull-left" style={{'width': '48%'}}>Monkey
+                Telemetry</Link>
+              <button onClick={() => this.setState({showKillDialog: true})} className="btn btn-danger pull-right"
+                      style={{'width': '48%'}}>
+                <FontAwesomeIcon icon={faStopCircle} style={{'marginRight': '0.5em'}}/>
+                Kill All Monkeys
+              </button>
+            </div>
+            {this.state.killPressed ?
+              <div className="alert alert-info">
+                <FontAwesomeIcon icon={faInfoCircle} style={{'marginRight': '5px'}} />
+                Kill command sent to all monkeys
+              </div>
+              : ''}
 
-          <InfMapPreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
-        </Col>
-      </div>
+            <PreviewPaneComponent item={this.state.selected} type={this.state.selectedType}/>
+          </Col>
+        </Row>
+      </Col>
     );
   }
 }

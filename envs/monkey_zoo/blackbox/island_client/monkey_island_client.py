@@ -1,10 +1,11 @@
-from time import sleep
 import json
-
 import logging
+from time import sleep
+
 from bson import json_util
 
-from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
+from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import \
+    MonkeyIslandRequests
 
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 MONKEY_TEST_ENDPOINT = 'api/test/monkey'
@@ -30,7 +31,7 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def run_monkey_local(self):
-        response = self.requests.post_json("api/local-monkey", dict_data={"action": "run"})
+        response = self.requests.post_json("api/local-monkey", data={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
             LOGGER.info("Running the monkey.")
         else:
@@ -85,3 +86,13 @@ class MonkeyIslandClient(object):
     def is_all_monkeys_dead(self):
         query = {'dead': False}
         return len(self.find_monkeys_in_db(query)) == 0
+
+    def clear_caches(self):
+        """
+        Tries to clear caches.
+        :raises: If error (by error code), raises the error
+        :return: The response
+        """
+        response = self.requests.get("api/test/clear_caches")
+        response.raise_for_status()
+        return response

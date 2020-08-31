@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 import os
 import platform
-
+import sys
 
 __author__ = 'itay.mizeretz'
 
@@ -9,13 +9,20 @@ block_cipher = None
 
 
 def main():
+    # These data files and folders will be included in the bundle.
+    # The format of the tuples is (src, dest_dir). See https://pythonhosted.org/PyInstaller/spec-files.html#adding-data-files
+    added_datas = [
+        ("../common/BUILD", "/common"),
+        ("../monkey_island/cc/services/attack/attack_data", "/monkey_island/cc/services/attack/attack_data")
+    ]
+
     a = Analysis(['cc/main.py'],
                  pathex=['..'],
                  hiddenimports=get_hidden_imports(),
-                 hookspath=None,
+                 hookspath=[os.path.join(".", "pyinstaller_hooks")],
                  runtime_hooks=None,
                  binaries=None,
-                 datas=None,
+                 datas=added_datas,
                  excludes=None,
                  win_no_prefer_redirects=None,
                  win_private_assemblies=None,
@@ -34,7 +41,7 @@ def main():
               name=get_monkey_filename(),
               debug=False,
               strip=get_exe_strip(),
-              upx=True,
+              upx=False,
               console=True,
               icon=get_exe_icon())
 
@@ -44,7 +51,7 @@ def is_windows():
 
 
 def is_32_bit():
-    return platform.architecture()[0] == "32bit"
+    return sys.maxsize <= 2**32
 
 
 def process_datas(orig_datas):
@@ -71,7 +78,7 @@ def get_linux_only_binaries():
 
 
 def get_hidden_imports():
-    return ['_cffi_backend', 'queue'] if is_windows() else ['_cffi_backend']
+    return ['_cffi_backend', 'queue', 'pkg_resources.py2_warn'] if is_windows() else ['_cffi_backend']
 
 
 def get_msvcr():

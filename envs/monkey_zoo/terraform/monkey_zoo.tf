@@ -201,6 +201,21 @@ resource "google_compute_instance_from_template" "tunneling-11" {
   }
 }
 
+resource "google_compute_instance_from_template" "tunneling-12" {
+  name = "${local.resource_prefix}tunneling-12"
+  source_instance_template = local.default_windows
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.tunneling-12.self_link
+    }
+    auto_delete = true
+  }
+  network_interface{
+    subnetwork="${local.resource_prefix}tunneling2-main"
+    network_ip="10.2.0.12"
+  }
+}
+
 resource "google_compute_instance_from_template" "sshkeys-11" {
   name = "${local.resource_prefix}sshkeys-11"
   source_instance_template = local.default_ubuntu

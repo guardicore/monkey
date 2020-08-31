@@ -1,7 +1,5 @@
-import React, {Component, Fragment} from 'react';
-import PillarLabel from './PillarLabel';
-import EventsButton from './EventsButton';
-import ZeroTrustPillars, {ZeroTrustStatuses} from './ZeroTrustPillars';
+import React, {Component} from 'react';
+import {ZeroTrustStatuses} from './ZeroTrustPillars';
 import {FindingsTable} from './FindingsTable';
 
 

@@ -1,12 +1,17 @@
 import abc
 import logging
 
-from monkey_island.cc.database import mongo
 from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.services.attack.attack_config import AttackConfig
 from common.utils.code_utils import abstractstatic
+from monkey_island.cc.database import mongo
+from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
+from monkey_island.cc.services.attack.attack_config import AttackConfig
 
 logger = logging.getLogger(__name__)
+
+
+disabled_msg = "This technique has been disabled. " +\
+               "You can enable it from the [configuration page](../../configure)."
 
 
 class AttackTechnique(object, metaclass=abc.ABCMeta):
@@ -40,7 +45,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def tech_id(self):
         """
-        :return: Message that will be displayed in case of attack technique not being scanned.
+        :return: Id of attack technique. E.g. T1003
         """
         pass
 
@@ -58,9 +63,11 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         Gets the status of a certain attack technique.
         :return: ScanStatus numeric value
         """
-        if mongo.db.telemetry.find_one({'telem_category': 'attack',
-                                        'data.status': ScanStatus.USED.value,
-                                        'data.technique': cls.tech_id}):
+        if not cls._is_enabled_in_config():
+            return ScanStatus.DISABLED.value
+        elif mongo.db.telemetry.find_one({'telem_category': 'attack',
+                                          'data.status': ScanStatus.USED.value,
+                                          'data.technique': cls.tech_id}):
             return ScanStatus.USED.value
         elif mongo.db.telemetry.find_one({'telem_category': 'attack',
                                           'data.status': ScanStatus.SCANNED.value,
@@ -85,6 +92,8 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :param status: Enum from common/attack_utils.py integer value
         :return: message string
         """
+        if status == ScanStatus.DISABLED.value:
+            return disabled_msg
         if status == ScanStatus.UNSCANNED.value:
             return cls.unscanned_msg
         elif status == ScanStatus.SCANNED.value:
@@ -111,10 +120,30 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         data.update({'status': status,
                      'title': title,
                      'message': cls.get_message_by_status(status)})
+        data.update(cls.get_mitigation_by_status(status))
         return data
 
     @classmethod
     def get_base_data_by_status(cls, status):
         data = cls.get_message_and_status(status)
         data.update({'title': cls.technique_title()})
+        data.update(cls.get_mitigation_by_status(status))
         return data
+
+    @classmethod
+    def get_mitigation_by_status(cls, status: ScanStatus) -> dict:
+        if status == ScanStatus.USED.value:
+            mitigation_document = AttackMitigations.get_mitigation_by_technique_id(str(cls.tech_id))
+            return {'mitigations': mitigation_document.to_mongo().to_dict()['mitigations']}
+        else:
+            return {}
+
+    @classmethod
+    def is_status_disabled(cls, get_technique_status_and_data) -> bool:
+        def check_if_disabled_in_config():
+            return (ScanStatus.DISABLED.value, []) if not cls._is_enabled_in_config() else get_technique_status_and_data()
+        return check_if_disabled_in_config
+
+    @classmethod
+    def _is_enabled_in_config(cls) -> bool:
+        return AttackConfig.get_technique_values()[cls.tech_id]

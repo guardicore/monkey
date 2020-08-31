@@ -1,11 +1,20 @@
+import unittest
+
+import mongomock
+from packaging import version
+
 import common.data.zero_trust_consts as zero_trust_consts
-from monkey_island.cc.models.zero_trust.aggregate_finding import AggregateFinding
+from monkey_island.cc.models.zero_trust.aggregate_finding import \
+    AggregateFinding
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 
 class TestAggregateFinding(IslandTestCase):
+
+    @unittest.skipIf(version.parse(mongomock.__version__) <= version.parse("3.19.0"),
+                     "mongomock version doesn't support this test")
     def test_create_or_add_to_existing(self):
         self.fail_if_not_testing_env()
         self.clean_finding_db()
@@ -25,6 +34,8 @@ class TestAggregateFinding(IslandTestCase):
         self.assertEqual(len(Finding.objects(test=test, status=status)), 1)
         self.assertEqual(len(Finding.objects(test=test, status=status)[0].events), 2)
 
+    @unittest.skipIf(version.parse(mongomock.__version__) <= version.parse("3.19.0"),
+                     "mongomock version doesn't support this test")
     def test_create_or_add_to_existing_2_tests_already_exist(self):
         self.fail_if_not_testing_env()
         self.clean_finding_db()

@@ -1,0 +1,100 @@
+.attack-report.footer-text {
+  text-align: right;
+  font-size: 0.8em;
+  margin-top: 20px;
+}
+
+.attack-report div.attack-legend {
+  margin-top: 30px;
+}
+
+.attack-report .hidden-list{
+  display: none;
+}
+
+.attack-technique-list-component .dropdown-list .btn-lg {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  padding: 0;
+}
+
+.attack-report .link-to-technique {
+  margin-right: 10px;
+}
+
+.attack-report .selected-technique {
+  cursor: default;
+}
+
+.attack-report .padded{
+  padding: 2em 2em 0 2em;
+}
+
+.attack-report .ReactTable .rt-td,.rt-resizable-header-content{
+  white-space: pre-line !important;
+  word-wrap: break-word;
+}
+
+.attack-matrix .ReactTable .rt-td,.rt-resizable-header-content a{
+  color: $monkey-yellow;
+}
+
+.attack-link{
+  padding: 0 7px 3px 7px !important;
+}
+
+.attack-report .toggle-btn{
+  position:relative;
+  height:30px;
+  width:30px;
+}
+
+.attack-report .toggle-btn {
+  box-shadow: None !important;
+  padding: 0;
+  margin-bottom: 30px;
+  margin-left: 6px;
+  outline: none !important;
+  font-size: 15px;
+}
+
+.attack-report .toggle-btn svg {
+  position:absolute;
+  left:0;
+  -webkit-transition: opacity 0.15s ease-in-out;
+  -moz-transition: opacity 0.15s ease-in-out;
+  -o-transition: opacity 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.attack-report .toggle-btn.toggled-on .switch-off{
+  opacity:0;
+}
+
+.attack-report .toggle-btn.toggled-off .switch-on{
+  opacity:0;
+}
+
+.attack-report .switch-off {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  color: gray;
+}
+
+.technique-status-icon {
+  padding-right:5px;
+  margin-bottom: 1px;
+}
+
+.attack-mitigation .rt-thead .rt-tr .rt-th {
+  text-align: left !important;
+  padding-left: 10px;
+}
+
+.attack-mitigation p {
+  padding-left: 7px;
+}
+
+.attack-mitigation .rt-table>.-header {
+  display: none !important;
+}

@@ -1,4 +1,10 @@
-import wmi
+import sys
+
+if sys.platform.startswith("win"):
+    import pythoncom
+
+    pythoncom.CoInitialize()
+    import wmi
 
 from .mongo_utils import MongoUtils
 

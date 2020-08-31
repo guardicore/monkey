@@ -1,6 +1,6 @@
+import platform
 import subprocess
 import sys
-import platform
 
 
 def _run_netsh_cmd(command, args):

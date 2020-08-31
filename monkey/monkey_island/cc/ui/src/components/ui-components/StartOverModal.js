@@ -1,6 +1,8 @@
 import {Modal} from 'react-bootstrap';
 import React from 'react';
 import {GridLoader} from 'react-spinners';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 
 class StartOverModal extends React.PureComponent {
@@ -35,7 +37,7 @@ class StartOverModal extends React.PureComponent {
           {
             !this.state.allMonkeysAreDead ?
               <div className='alert alert-warning'>
-                <i className='glyphicon glyphicon-warning-sign' style={{'marginRight': '5px'}}/>
+                <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
                 Some monkeys are still running. It's advised to kill all monkeys before resetting.
               </div>
               :
@@ -56,7 +58,7 @@ class StartOverModal extends React.PureComponent {
                 Reset environment
               </button>
               <button type='button' className='btn btn-success btn-lg' style={{margin: '5px'}}
-                      onClick={() => this.setState({showCleanDialog: false})}>
+                      onClick={() => {this.props.onClose(); this.setState({showCleanDialog: false})}}>
                 Cancel
               </button>
             </div>)

@@ -7,13 +7,15 @@ import sys
 import traceback
 from multiprocessing import freeze_support
 
-from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
-from infection_monkey.config import WormConfiguration, EXTERNAL_CONFIG_FILE
-from infection_monkey.dropper import MonkeyDrops
-from infection_monkey.model import MONKEY_ARG, DROPPER_ARG
-from infection_monkey.monkey import InfectionMonkey
 # noinspection PyUnresolvedReferences
 import infection_monkey.post_breach  # dummy import for pyinstaller
+from common.version import get_version
+from infection_monkey.config import EXTERNAL_CONFIG_FILE, WormConfiguration
+from infection_monkey.dropper import MonkeyDrops
+from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
+from infection_monkey.monkey import InfectionMonkey
+from infection_monkey.utils.monkey_log_path import (get_dropper_log_path,
+                                                    get_monkey_log_path)
 
 __author__ = 'itamar'
 
@@ -116,6 +118,8 @@ def main():
 
     LOG.info(">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<",
              monkey_cls.__name__, os.getpid())
+
+    LOG.info(f"version: {get_version()}")
 
     monkey = monkey_cls(monkey_args)
     monkey.initialize()

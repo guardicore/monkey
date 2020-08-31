@@ -1,3 +1,9 @@
+[submodule "monkey/monkey_island/cc/services/attack/attack_data"]
+	path = monkey/monkey_island/cc/services/attack/attack_data
+	url = https://github.com/guardicore/cti
+[submodule "docs/themes/learn"]
+	path = docs/themes/learn
+	url = https://github.com/guardicode/hugo-theme-learn.git
 [submodule "monkey/infection_monkey/system_info/collectors/scoutsuite"]
 	path = monkey/infection_monkey/system_info/collectors/scoutsuite
 	url = https://github.com/ShayNehmad/ScoutSuite.git

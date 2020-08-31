@@ -1,7 +1,8 @@
+from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.services.attack.technique_reports.technique_report_tools import parse_creds
+from monkey_island.cc.services.attack.technique_reports.technique_report_tools import \
+    parse_creds
 
 __author__ = "VakarisZ"
 
@@ -32,19 +33,25 @@ class T1021(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        attempts = []
-        if mongo.db.telemetry.count_documents(T1021.scanned_query):
-            attempts = list(mongo.db.telemetry.aggregate(T1021.query))
-            if attempts:
-                status = ScanStatus.USED.value
-                for result in attempts:
-                    result['successful_creds'] = []
-                    for attempt in result['attempts']:
-                        result['successful_creds'].append(parse_creds(attempt))
+        @T1021.is_status_disabled
+        def get_technique_status_and_data():
+            attempts = []
+            if mongo.db.telemetry.count_documents(T1021.scanned_query):
+                attempts = list(mongo.db.telemetry.aggregate(T1021.query))
+                if attempts:
+                    status = ScanStatus.USED.value
+                    for result in attempts:
+                        result['successful_creds'] = []
+                        for attempt in result['attempts']:
+                            result['successful_creds'].append(parse_creds(attempt))
+                else:
+                    status = ScanStatus.SCANNED.value
             else:
-                status = ScanStatus.SCANNED.value
-        else:
-            status = ScanStatus.UNSCANNED.value
+                status = ScanStatus.UNSCANNED.value
+            return (status, attempts)
+
+        status, attempts = get_technique_status_and_data()
+
         data = T1021.get_base_data_by_status(status)
         data.update({'services': attempts})
         return data

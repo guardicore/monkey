@@ -9,7 +9,10 @@ export function renderMachine(val) {
 /* Function takes data gathered from system info collector and creates a
    string representation of machine from that data. */
 export function renderMachineFromSystemData(data) {
-  let machineStr = data['hostname'] + ' ( ';
+  let machineStr = '';
+  if (typeof data['hostname'] !== 'undefined') {
+    machineStr = data['hostname'] + ' ( ';
+  }
   data['ips'].forEach(function (ipInfo) {
     if (typeof ipInfo === 'object') {
       machineStr += ipInfo['addr'] + ', ';
@@ -17,8 +20,12 @@ export function renderMachineFromSystemData(data) {
       machineStr += ipInfo + ', ';
     }
   });
-  // Replaces " ," with " )" to finish a list of IP's
-  return machineStr.slice(0, -2) + ' )'
+  if (typeof data['hostname'] !== 'undefined') {
+    return machineStr.slice(0, -2) + ' )';
+  } else {
+    // Replaces " ," with " )" to finish a list of IP's
+    return machineStr.slice(0, -2);
+  }
 }
 
 /* Formats telemetry data that contains _id.machine and _id.usage fields into columns
@@ -58,5 +65,6 @@ export function renderUsageFields(usages) {
 export const ScanStatus = {
   UNSCANNED: 0,
   SCANNED: 1,
-  USED: 2
+  USED: 2,
+  DISABLED: 3
 };

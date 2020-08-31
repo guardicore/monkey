@@ -1,9 +1,9 @@
 from itertools import product
 
-from monkey_island.cc.database import mongo
-from monkey_island.cc.models import Monkey
 from bson import ObjectId
 
+from monkey_island.cc.database import mongo
+from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.groups_and_users_consts import USERTYPE
 from monkey_island.cc.services.node import NodeService
 
@@ -106,7 +106,8 @@ class PTHReportService(object):
                 {
                     'username': user['name'],
                     'domain_name': user['domain_name'],
-                    'hostname': NodeService.get_hostname_by_id(ObjectId(user['machine_id'])) if user['machine_id'] else None
+                    'hostname': NodeService.get_hostname_by_id(ObjectId(user['machine_id'])) if
+                    user['machine_id'] else None
                 } for user in doc['Docs']
             ]
             users_cred_groups.append({'cred_groups': users_list})

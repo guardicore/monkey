@@ -5,10 +5,13 @@ import dateutil.parser
 import flask_restful
 from flask import request
 
-from monkey_island.cc.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
+from monkey_island.cc.consts import \
+    DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
+from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
 
 __author__ = 'Barak'
@@ -33,6 +36,7 @@ class Monkey(flask_restful.Resource):
         return {}
 
     # Used by monkey. can't secure.
+    @TestTelemStore.store_test_telem
     def patch(self, guid):
         monkey_json = json.loads(request.data)
         update = {"$set": {'modifytime': datetime.now()}}
@@ -56,6 +60,8 @@ class Monkey(flask_restful.Resource):
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
     # Used by monkey. can't secure.
+    # Called on monkey wakeup to initialize local configuration
+    @TestTelemStore.store_test_telem
     def post(self, **kw):
         monkey_json = json.loads(request.data)
         monkey_json['creds'] = []
@@ -71,23 +77,19 @@ class Monkey(flask_restful.Resource):
 
         # if new monkey telem, change config according to "new monkeys" config.
         db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
-        if not db_monkey:
-            # we pull it encrypted because we then decrypt it for the monkey in get
-            new_config = ConfigService.get_flat_config(False, False)
-            monkey_json['config'] = monkey_json.get('config', {})
-            monkey_json['config'].update(new_config)
-        else:
-            db_config = db_monkey.get('config', {})
-            if 'current_server' in db_config:
-                del db_config['current_server']
-            monkey_json.get('config', {}).update(db_config)
+
+        # Update monkey configuration
+        new_config = ConfigService.get_flat_config(False, False)
+        monkey_json['config'] = monkey_json.get('config', {})
+        monkey_json['config'].update(new_config)
 
         # try to find new monkey parent
         parent = monkey_json.get('parent')
         parent_to_add = (monkey_json.get('guid'), None)  # default values in case of manual run
         if parent and parent != monkey_json.get('guid'):  # current parent is known
             exploit_telem = [x for x in
-                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
+                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'},
+                                                      'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']},
                                                       'monkey_guid': {'$eq': parent}})]
             if 1 == len(exploit_telem):
@@ -96,7 +98,8 @@ class Monkey(flask_restful.Resource):
                 parent_to_add = (parent, None)
         elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in monkey_json:
             exploit_telem = [x for x in
-                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'}, 'data.result': {'$eq': True},
+                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'},
+                                                      'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}})]
 
             if 1 == len(exploit_telem):
@@ -130,8 +133,8 @@ class Monkey(flask_restful.Resource):
 
         if existing_node:
             node_id = existing_node["_id"]
-            for edge in mongo.db.edge.find({"to": node_id}):
-                mongo.db.edge.update({"_id": edge["_id"]}, {"$set": {"to": new_monkey_id}})
+            EdgeService.update_all_dst_nodes(old_dst_node_id=node_id,
+                                             new_dst_node_id=new_monkey_id)
             for creds in existing_node['creds']:
                 NodeService.add_credentials_to_monkey(new_monkey_id, creds)
             mongo.db.node.remove({"_id": node_id})

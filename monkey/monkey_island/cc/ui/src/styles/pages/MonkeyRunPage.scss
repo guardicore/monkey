@@ -1,0 +1,16 @@
+div.run-on-os-buttons {
+  margin-bottom: 20px;
+}
+
+div.run-on-os-buttons > .nav-item{
+  margin: 0 10px 0 10px;
+}
+
+div.run-on-os-buttons > .nav-item > .nav-link{
+  border: 1px solid $monkey-alt;
+}
+
+div.run-on-os-buttons > .nav-item > .nav-link:hover{
+  color: $monkey-white;
+  background-color: $monkey-alt;
+}

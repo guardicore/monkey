@@ -1,9 +1,18 @@
+import hashlib
+import logging
+import os
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
-import os
-from Crypto.Hash import SHA3_512
 
 __author__ = 'itay.mizeretz'
+
+from common.utils.exceptions import (AlreadyRegisteredError,
+                                     CredentialsNotRequiredError,
+                                     InvalidRegistrationCredentialsError)
+from monkey_island.cc.environment.environment_config import EnvironmentConfig
+from monkey_island.cc.environment.user_creds import UserCreds
+
+logger = logging.getLogger(__name__)
 
 
 class Environment(object, metaclass=ABCMeta):
@@ -14,9 +23,56 @@ class Environment(object, metaclass=ABCMeta):
     _MONGO_URL = os.environ.get("MONKEY_MONGO_URL",
                                 "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)))
     _DEBUG_SERVER = False
-    _AUTH_EXPIRATION_TIME = timedelta(hours=1)
+    _AUTH_EXPIRATION_TIME = timedelta(minutes=30)
 
     _testing = False
+
+    def __init__(self, config: EnvironmentConfig):
+        self._config = config
+        self._testing = False  # Assume env is not for unit testing.
+
+    @property
+    @abstractmethod
+    def _credentials_required(self) -> bool:
+        pass
+
+    @abstractmethod
+    def get_auth_users(self):
+        pass
+
+    def needs_registration(self) -> bool:
+        try:
+            needs_registration = self._try_needs_registration()
+            return needs_registration
+        except (CredentialsNotRequiredError, AlreadyRegisteredError) as e:
+            logger.info(e)
+            return False
+
+    def try_add_user(self, credentials: UserCreds):
+        if not credentials:
+            raise InvalidRegistrationCredentialsError("Missing part of credentials.")
+        if self._try_needs_registration():
+            self._config.add_user(credentials)
+            logger.info(f"New user {credentials.username} registered!")
+
+    def _try_needs_registration(self) -> bool:
+        if not self._credentials_required:
+            raise CredentialsNotRequiredError("Credentials are not required "
+                                              "for current environment.")
+        else:
+            if self._is_registered():
+                raise AlreadyRegisteredError("User has already been registered. "
+                                             "Reset credentials or login.")
+            return True
+
+    def _is_registered(self) -> bool:
+        return self._credentials_required and self._is_credentials_set_up()
+
+    def _is_credentials_set_up(self) -> bool:
+        if self._config and self._config.user_creds:
+            return True
+        else:
+            return False
 
     @property
     def testing(self):
@@ -26,14 +82,11 @@ class Environment(object, metaclass=ABCMeta):
     def testing(self, value):
         self._testing = value
 
-    _MONKEY_VERSION = "1.7.0"
+    def save_config(self):
+        self._config.save_to_file()
 
-    def __init__(self):
-        self.config = None
-        self._testing = False  # Assume env is not for unit testing.
-
-    def set_config(self, config):
-        self.config = config
+    def get_config(self) -> EnvironmentConfig:
+        return self._config
 
     def get_island_port(self):
         return self._ISLAND_PORT
@@ -47,29 +100,20 @@ class Environment(object, metaclass=ABCMeta):
     def get_auth_expiration_time(self):
         return self._AUTH_EXPIRATION_TIME
 
-    def hash_secret(self, secret):
-        h = SHA3_512.new()
-        h.update(secret)
-        return h.hexdigest()
+    @staticmethod
+    def hash_secret(secret):
+        hash_obj = hashlib.sha3_512()
+        hash_obj.update(secret.encode('utf-8'))
+        return hash_obj.hexdigest()
 
-    def get_deployment(self):
-        return self._get_from_config('deployment', 'unknown')
+    def get_deployment(self) -> str:
+        deployment = 'unknown'
+        if self._config and self._config.deployment:
+            deployment = self._config.deployment
+        return deployment
 
-    def is_develop(self):
-        return self.get_deployment() == 'develop'
-
-    def get_version(self):
-        return self._MONKEY_VERSION + ('-dev' if self.is_develop() else '')
-
-    def _get_from_config(self, key, default_value=None):
-        val = default_value
-        if self.config is not None:
-            val = self.config.get(key, val)
-        return val
-
-    @abstractmethod
-    def get_auth_users(self):
-        return
+    def set_deployment(self, deployment: str):
+        self._config.deployment = deployment
 
     @property
     def mongo_db_name(self):

@@ -1,4 +1,4 @@
-from monkey_island.cc.environment import Environment
+from monkey_island.cc.environment import Environment, EnvironmentConfig
 
 
 class TestingEnvironment(Environment):
@@ -7,8 +7,10 @@ class TestingEnvironment(Environment):
     This will cause all mongo connections to happen via `mongomock` instead of using an actual mongodb instance.
     """
 
-    def __init__(self):
-        super(TestingEnvironment, self).__init__()
+    _credentials_required = True
+
+    def __init__(self, config: EnvironmentConfig):
+        super(TestingEnvironment, self).__init__(config)
         self.testing = True
 
     def get_auth_users(self):

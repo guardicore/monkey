@@ -57,7 +57,7 @@ PRINCIPLES = {
     PRINCIPLE_ENDPOINT_SECURITY: "Use anti-virus and other traditional endpoint security solutions.",
     PRINCIPLE_DATA_TRANSIT: "Secure data at transit by encrypting it.",
     PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES: "Configure network policies to be as restrictive as possible.",
-    PRINCIPLE_USERS_MAC_POLICIES: "Users' permissions to the network and to resources should be MAC (Mandetory "
+    PRINCIPLE_USERS_MAC_POLICIES: "Users' permissions to the network and to resources should be MAC (Mandatory "
                                   "Access Control) only.",
 }
 

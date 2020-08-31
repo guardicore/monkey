@@ -1,10 +1,8 @@
 import uuid
 
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
-    SystemInfoTelemetryDispatcher
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
-    process_aws_telemetry
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (
+    SystemInfoTelemetryDispatcher, process_aws_telemetry)
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 TEST_SYS_INFO_TO_PROCESSING = {
@@ -22,9 +20,13 @@ class SystemInfoTelemetryDispatcherTest(IslandTestCase):
         bad_empty_telem_json = {}
         self.assertRaises(KeyError, dispatcher.dispatch_collector_results_to_relevant_processors, bad_empty_telem_json)
         bad_no_data_telem_json = {"monkey_guid": "bla"}
-        self.assertRaises(KeyError, dispatcher.dispatch_collector_results_to_relevant_processors, bad_no_data_telem_json)
+        self.assertRaises(KeyError,
+                          dispatcher.dispatch_collector_results_to_relevant_processors,
+                          bad_no_data_telem_json)
         bad_no_monkey_telem_json = {"data": {"collectors": {"AwsCollector": "Bla"}}}
-        self.assertRaises(KeyError, dispatcher.dispatch_collector_results_to_relevant_processors, bad_no_monkey_telem_json)
+        self.assertRaises(KeyError,
+                          dispatcher.dispatch_collector_results_to_relevant_processors,
+                          bad_no_monkey_telem_json)
 
         # Telem JSON with no collectors - nothing gets dispatched
         good_telem_no_collectors = {"monkey_guid": "bla", "data": {"bla": "bla"}}

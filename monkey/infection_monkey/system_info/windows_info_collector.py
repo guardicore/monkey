@@ -1,18 +1,20 @@
-import os
 import logging
+import os
 import sys
+
+from common.data.system_info_collectors_names import MIMIKATZ_COLLECTOR
+from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import \
+    MimikatzCredentialCollector
 
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 # noinspection PyPep8
 import infection_monkey.config
 # noinspection PyPep8
-from infection_monkey.system_info.mimikatz_collector import MimikatzCollector
+from common.utils.wmi_utils import WMIUtils
 # noinspection PyPep8
 from infection_monkey.system_info import InfoCollector
 # noinspection PyPep8
 from infection_monkey.system_info.wmi_consts import WMI_CLASSES
-# noinspection PyPep8
-from common.utils.wmi_utils import WMIUtils
 
 LOG = logging.getLogger(__name__)
 LOG.info('started windows info collector')
@@ -43,7 +45,7 @@ class WindowsInfoCollector(InfoCollector):
         # TODO: Think about returning self.get_wmi_info()
         self.get_installed_packages()
         from infection_monkey.config import WormConfiguration
-        if WormConfiguration.should_use_mimikatz:
+        if MIMIKATZ_COLLECTOR in WormConfiguration.system_info_collector_classes:
             self.get_mimikatz_info()
 
         return self.info
@@ -61,12 +63,15 @@ class WindowsInfoCollector(InfoCollector):
         LOG.debug('finished get_wmi_info')
 
     def get_mimikatz_info(self):
-        mimikatz_collector = MimikatzCollector()
-        mimikatz_info = mimikatz_collector.get_logon_info()
-        if mimikatz_info:
-            if "credentials" in self.info:
-                self.info["credentials"].update(mimikatz_info)
-            self.info["mimikatz"] = mimikatz_collector.get_mimikatz_text()
-            LOG.info('Mimikatz info gathered successfully')
-        else:
-            LOG.info('No mimikatz info was gathered')
+        LOG.info("Gathering mimikatz info")
+        try:
+            credentials = MimikatzCredentialCollector.get_creds()
+            if credentials:
+                if "credentials" in self.info:
+                    self.info["credentials"].update(credentials)
+                self.info["mimikatz"] = credentials
+                LOG.info('Mimikatz info gathered successfully')
+            else:
+                LOG.info('No mimikatz info was gathered')
+        except Exception as e:
+            LOG.info(f"Mimikatz credential collector failed: {e}")

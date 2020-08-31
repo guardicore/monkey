@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from mongoengine import EmbeddedDocument, DateTimeField, StringField
+from mongoengine import DateTimeField, EmbeddedDocument, StringField
 
 import common.data.zero_trust_consts as zero_trust_consts
 
@@ -23,7 +23,9 @@ class Event(EmbeddedDocument):
 
     # LOGIC
     @staticmethod
-    def create_event(title, message, event_type, timestamp=datetime.now()):
+    def create_event(title, message, event_type, timestamp=None):
+        if not timestamp:
+            timestamp = datetime.now()
         event = Event(
             timestamp=timestamp,
             title=title,

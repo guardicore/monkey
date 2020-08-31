@@ -1,14 +1,15 @@
 import logging
-import socket
 import sys
-
-import psutil
 from enum import IntEnum
 
+import psutil
+
+from common.data.system_info_collectors_names import AZURE_CRED_COLLECTOR
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
 from infection_monkey.system_info.netstat_collector import NetstatCollector
-from infection_monkey.system_info.system_info_collectors_handler import SystemInfoCollectorsHandler
+from infection_monkey.system_info.system_info_collectors_handler import \
+    SystemInfoCollectorsHandler
 
 LOG = logging.getLogger(__name__)
 
@@ -91,7 +92,7 @@ class InfoCollector(object):
         # noinspection PyBroadException
         try:
             from infection_monkey.config import WormConfiguration
-            if not WormConfiguration.extract_azure_creds:
+            if AZURE_CRED_COLLECTOR not in WormConfiguration.system_info_collector_classes:
                 return
             LOG.debug("Harvesting creds if on an Azure machine")
             azure_collector = AzureCollector()
@@ -106,6 +107,7 @@ class InfoCollector(object):
                 # we might be losing passwords in case of multiple reset attempts on same username
                 # or in case another collector already filled in a password for this user
                 self.info["credentials"][username]['password'] = password
+                self.info["credentials"][username]['username'] = username
             if len(azure_creds) != 0:
                 self.info["Azure"] = {}
                 self.info["Azure"]['usernames'] = [cred[0] for cred in azure_creds]

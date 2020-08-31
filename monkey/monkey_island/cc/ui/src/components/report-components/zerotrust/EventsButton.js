@@ -4,7 +4,7 @@ import {Badge, Button} from 'react-bootstrap';
 import * as PropTypes from 'prop-types';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList } from '@fortawesome/free-solid-svg-icons';
+import { faList } from '@fortawesome/free-solid-svg-icons/faList';
 
 export default class EventsButton extends Component {
   constructor(props) {
@@ -24,10 +24,15 @@ export default class EventsButton extends Component {
 
   render() {
     return <Fragment>
-      <EventsModal events={this.props.events} showEvents={this.state.isShow} hideCallback={this.hide}
+      <EventsModal finding_id={this.props.finding_id}
+                   latest_events={this.props.latest_events}
+                   oldest_events={this.props.oldest_events}
+                   event_count={this.props.event_count}
+                   showEvents={this.state.isShow}
+                   hideCallback={this.hide}
                    exportFilename={this.props.exportFilename}/>
       <div className="text-center" style={{'display': 'grid'}}>
-        <Button className="btn btn-primary btn-lg" onClick={this.show}>
+        <Button variant={'monkey-info'} size={'lg'} onClick={this.show}>
           <FontAwesomeIcon icon={faList}/> Events {this.createEventsAmountBadge()}
         </Button>
       </div>
@@ -35,12 +40,14 @@ export default class EventsButton extends Component {
   }
 
   createEventsAmountBadge() {
-    const eventsAmountBadgeContent = this.props.events.length > 9 ? '9+' : this.props.events.length;
-    return <Badge>{eventsAmountBadgeContent}</Badge>;
+    const eventsAmountBadgeContent = this.props.event_count > 9 ? '9+' : this.props.event_count;
+    return <Badge variant={'monkey-info-light'}>{eventsAmountBadgeContent}</Badge>;
   }
 }
 
 EventsButton.propTypes = {
-  events: PropTypes.array,
+  latest_events: PropTypes.array,
+  oldest_events: PropTypes.array,
+  event_count: PropTypes.number,
   exportFilename: PropTypes.string
 };

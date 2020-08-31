@@ -1,28 +1,32 @@
 import React from 'react';
-import Form from 'react-jsonschema-form';
-import {Col, Modal, Nav, NavItem} from 'react-bootstrap';
+import Form from 'react-jsonschema-form-bs4';
+import {Col, Modal, Nav, Button} from 'react-bootstrap';
 import FileSaver from 'file-saver';
 import AuthComponent from '../AuthComponent';
-import {FilePond} from 'react-filepond';
-import 'filepond/dist/filepond.min.css';
 import ConfigMatrixComponent from '../attack/ConfigMatrixComponent';
+import UiSchema from '../configuration-components/UiSchema';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
+import {formValidationFormats} from '../configuration-components/ValidationFormats';
+import transformErrors from '../configuration-components/ValidationErrorMessages';
+import InternalConfig from '../configuration-components/InternalConfig';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
+export const API_PBA_LINUX = '/api/fileUpload/PBAlinux';
+export const API_PBA_WINDOWS = '/api/fileUpload/PBAwindows';
 
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.PBAwindowsPond = null;
-    this.PBAlinuxPond = null;
     this.currentSection = 'attack';
     this.currentFormData = {};
     this.initialConfig = {};
     this.initialAttackConfig = {};
-    this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'cnc', 'network', 'exploits', 'internal'];
-    this.uiSchemas = this.getUiSchemas();
-    // set schema from server
+    this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'internal'];
+
     this.state = {
       schema: {},
       configuration: {},
@@ -30,48 +34,8 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       sections: [],
       selectedSection: 'attack',
-      monkeysRan: false,
-      PBAwinFile: [],
-      PBAlinuxFile: [],
       showAttackAlert: false
     };
-  }
-
-  getUiSchemas() {
-    return ({
-      basic: {'ui:order': ['general', 'credentials']},
-      basic_network: {},
-      monkey: {
-        behaviour: {
-          custom_PBA_linux_cmd: {
-            'ui:widget': 'textarea',
-            'ui:emptyValue': ''
-          },
-          PBA_linux_file: {
-            'ui:widget': this.PBAlinux
-          },
-          custom_PBA_windows_cmd: {
-            'ui:widget': 'textarea',
-            'ui:emptyValue': ''
-          },
-          PBA_windows_file: {
-            'ui:widget': this.PBAwindows
-          },
-          PBA_linux_filename: {
-            classNames: 'linux-pba-file-info',
-            'ui:emptyValue': ''
-          },
-          PBA_windows_filename: {
-            classNames: 'windows-pba-file-info',
-            'ui:emptyValue': ''
-          }
-        }
-      },
-      cnc: {},
-      network: {},
-      exploits: {},
-      internal: {}
-    })
   }
 
   setInitialConfig(config) {
@@ -108,7 +72,6 @@ class ConfigurePageComponent extends AuthComponent {
           selectedSection: 'attack'
         })
       });
-    this.updateMonkeysRunning();
   };
 
   updateConfig = () => {
@@ -116,7 +79,7 @@ class ConfigurePageComponent extends AuthComponent {
       .then(res => res.json())
       .then(data => {
         this.setInitialConfig(data.configuration);
-        this.setState({configuration: data.configuration})
+        this.setState({configuration: data.configuration});
       })
   };
 
@@ -167,8 +130,8 @@ class ConfigurePageComponent extends AuthComponent {
         this.setInitialConfig(res.configuration);
         this.props.onStatusChange();
       }).catch(error => {
-        console.log('Bad configuration: ' + error.toString());
-        this.setState({lastAction: 'invalid_configuration'});
+      console.log('Bad configuration: ' + error.toString());
+      this.setState({lastAction: 'invalid_configuration'});
     });
   };
 
@@ -217,20 +180,21 @@ class ConfigurePageComponent extends AuthComponent {
     }}>
       <Modal.Body>
         <h2>
-          <div className="text-center">Warning</div>
+          <div className='text-center'>Warning</div>
         </h2>
-        <p className="text-center" style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
+        <p className='text-center' style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
           You have unsubmitted changes. Submit them before proceeding.
         </p>
-        <div className="text-center">
-          <button type="button"
-                  className="btn btn-success btn-lg"
+        <div className='text-center'>
+          <Button type='button'
+                  className='btn btn-success'
+                  size='lg'
                   style={{margin: '5px'}}
                   onClick={() => {
                     this.setState({showAttackAlert: false})
                   }}>
             Cancel
-          </button>
+          </Button>
         </div>
       </Modal.Body>
     </Modal>)
@@ -264,7 +228,6 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   resetConfig = () => {
-    this.removePBAfiles();
     this.authFetch(CONFIG_URL,
       {
         method: 'POST',
@@ -273,14 +236,18 @@ class ConfigurePageComponent extends AuthComponent {
       })
       .then(res => res.json())
       .then(res => {
-        this.setState({
-          lastAction: 'reset',
-          schema: res.schema,
-          configuration: res.configuration
-        });
-        this.setInitialConfig(res.configuration);
-        this.props.onStatusChange();
-      });
+          this.setState({
+            lastAction: 'reset',
+            schema: res.schema,
+            configuration: res.configuration
+          });
+          this.setInitialConfig(res.configuration);
+          this.props.onStatusChange();
+        }
+      ).then(() => {
+      this.removePBAfile(API_PBA_WINDOWS, this.setPbaFilenameWindows)
+      this.removePBAfile(API_PBA_LINUX, this.setPbaFilenameLinux)
+    });
     this.authFetch(ATTACK_URL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -293,21 +260,17 @@ class ConfigurePageComponent extends AuthComponent {
       })
   };
 
-  removePBAfiles() {
-    // We need to clean files from widget, local state and configuration (to sync with bac end)
-    if (this.PBAwindowsPond !== null) {
-      this.PBAwindowsPond.removeFile();
-    }
-    if (this.PBAlinuxPond !== null) {
-      this.PBAlinuxPond.removeFile();
-    }
+  removePBAfile(apiEndpoint, setFilenameFnc) {
+    this.sendPbaRemoveRequest(apiEndpoint)
+    setFilenameFnc('')
+  }
+
+  sendPbaRemoveRequest(apiEndpoint) {
     let request_options = {
       method: 'DELETE',
       headers: {'Content-Type': 'text/plain'}
     };
-    this.authFetch('/api/fileUpload/PBAlinux', request_options);
-    this.authFetch('/api/fileUpload/PBAwindows', request_options);
-    this.setState({PBAlinuxFile: [], PBAwinFile: []});
+    this.authFetch(apiEndpoint, request_options);
   }
 
   setConfigOnImport = (event) => {
@@ -346,8 +309,8 @@ class ConfigurePageComponent extends AuthComponent {
             throw Error()
           }
           return res;
-        }).catch(error => {
-        console.log('bad configuration');
+        }).catch((error) => {
+        console.log(`bad configuration ${error}`);
         this.setState({lastAction: 'invalid_configuration'});
       }));
   }
@@ -359,90 +322,6 @@ class ConfigurePageComponent extends AuthComponent {
     event.target.value = null;
   };
 
-  updateMonkeysRunning = () => {
-    this.authFetch('/api')
-      .then(res => res.json())
-      .then(res => {
-        this.setState({monkeysRan: res['completed_steps']['run_monkey']});
-      });
-  };
-
-  PBAwindows = () => {
-    return (<FilePond
-      server={{
-        url: '/api/fileUpload/PBAwindows',
-        process: {headers: {'Authorization': this.jwtHeader}},
-        revert: {headers: {'Authorization': this.jwtHeader}},
-        restore: {headers: {'Authorization': this.jwtHeader}},
-        load: {headers: {'Authorization': this.jwtHeader}},
-        fetch: {headers: {'Authorization': this.jwtHeader}}
-      }}
-      files={this.getWinPBAfile()}
-      onupdatefiles={fileItems => {
-        this.setState({
-          PBAwinFile: fileItems.map(fileItem => fileItem.file)
-        })
-      }}
-      ref={ref => this.PBAwindowsPond = ref}
-    />)
-  };
-
-  PBAlinux = () => {
-    return (<FilePond
-      server={{
-        url: '/api/fileUpload/PBAlinux',
-        process: {headers: {'Authorization': this.jwtHeader}},
-        revert: {headers: {'Authorization': this.jwtHeader}},
-        restore: {headers: {'Authorization': this.jwtHeader}},
-        load: {headers: {'Authorization': this.jwtHeader}},
-        fetch: {headers: {'Authorization': this.jwtHeader}}
-      }}
-      files={this.getLinuxPBAfile()}
-      onupdatefiles={fileItems => {
-        this.setState({
-          PBAlinuxFile: fileItems.map(fileItem => fileItem.file)
-        })
-      }}
-      ref={ref => this.PBAlinuxPond = ref}
-    />)
-  };
-
-  getWinPBAfile() {
-    if (this.state.PBAwinFile.length !== 0) {
-      return ConfigurePageComponent.getMockPBAfile(this.state.PBAwinFile[0])
-    } else if (this.state.configuration.monkey.behaviour.PBA_windows_filename) {
-      return ConfigurePageComponent.getFullPBAfile(this.state.configuration.monkey.behaviour.PBA_windows_filename)
-    }
-  }
-
-  getLinuxPBAfile() {
-    if (this.state.PBAlinuxFile.length !== 0) {
-      return ConfigurePageComponent.getMockPBAfile(this.state.PBAlinuxFile[0])
-    } else if (this.state.configuration.monkey.behaviour.PBA_linux_filename) {
-      return ConfigurePageComponent.getFullPBAfile(this.state.configuration.monkey.behaviour.PBA_linux_filename)
-    }
-  }
-
-  static getFullPBAfile(filename) {
-    return [{
-      source: filename,
-      options: {
-        type: 'limbo'
-      }
-    }];
-  }
-
-  static getMockPBAfile(mockFile) {
-    let pbaFile = [{
-      source: mockFile.name,
-      options: {
-        type: 'limbo'
-      }
-    }];
-    pbaFile[0].options.file = mockFile;
-    return pbaFile
-  }
-
   renderMatrix = () => {
     return (<ConfigMatrixComponent configuration={this.state.attackConfig}
                                    submit={this.componentDidMount}
@@ -450,50 +329,65 @@ class ConfigurePageComponent extends AuthComponent {
                                    change={this.attackTechniqueChange}/>)
   };
 
-
   renderConfigContent = (displayedSchema) => {
-    return (<div>
-      {this.renderBasicNetworkWarning()}
-      <Form schema={displayedSchema}
-            uiSchema={this.uiSchemas[this.state.selectedSection]}
-            formData={this.state.configuration[this.state.selectedSection]}
-            onChange={this.onChange}
-            noValidate={true}>
-        <button type="submit" className={'hidden'}>Submit</button>
-      </Form>
-    </div>)
-  };
+    let formProperties = {};
+    formProperties['schema'] = displayedSchema
+    formProperties['uiSchema'] = UiSchema({
+      PBA_linux_filename: this.state.configuration.monkey.post_breach.PBA_linux_filename,
+      PBA_windows_filename: this.state.configuration.monkey.post_breach.PBA_windows_filename,
+      setPbaFilenameWindows: this.setPbaFilenameWindows,
+      setPbaFilenameLinux: this.setPbaFilenameLinux,
+      selectedSection: this.state.selectedSection
+    })
+    formProperties['formData'] = this.state.configuration[this.state.selectedSection];
+    formProperties['onChange'] = this.onChange;
+    formProperties['customFormats'] = formValidationFormats;
+    formProperties['transformErrors'] = transformErrors;
+    formProperties['className'] = 'config-form';
+    formProperties['liveValidate'] = true;
 
-  renderConfigWontChangeWarning = () => {
-    return (<div>
-      {this.state.monkeysRan ?
-        <div className="alert alert-warning">
-          <i className="glyphicon glyphicon-warning-sign" style={{'marginRight': '5px'}}/>
-          Changed configuration will only apply to new infections.
-          "Start over" to run again with different configuration.
-        </div>
-        : ''
-      }
-    </div>)
-  };
-
-  renderBasicNetworkWarning = () => {
-    if (this.state.selectedSection === 'basic_network') {
-      return (<div className="alert alert-info">
-        <i className="glyphicon glyphicon-info-sign" style={{'marginRight': '5px'}}/>
-        The Monkey scans its subnet if "Local network scan" is ticked. Additionally the monkey scans machines
-        according to its range class.
-      </div>)
+    if (this.state.selectedSection === 'internal') {
+      return (<InternalConfig {...formProperties}/>)
     } else {
-      return (<div/>)
+      return (
+        <div>
+          <Form {...formProperties}>
+            <button type='submit' className={'hidden'}>Submit</button>
+          </Form>
+        </div>
+      )
     }
   };
 
+  setPbaFilenameWindows = (filename) => {
+    let config = this.state.configuration
+    config.monkey.post_breach.PBA_windows_filename = filename
+    this.setState({
+      configuration: config
+    })
+  }
+
+  setPbaFilenameLinux = (filename) => {
+    let config = this.state.configuration
+    config.monkey.post_breach.PBA_linux_filename = filename
+    this.setState({
+      configuration: config
+    })
+  }
+
   renderNav = () => {
-    return (<Nav bsStyle="tabs" justified
+    return (<Nav variant='tabs'
+                 fill
                  activeKey={this.state.selectedSection} onSelect={this.setSelectedSection}
-                 style={{'marginBottom': '2em'}}>
-      {this.state.sections.map(section => <NavItem key={section.key} eventKey={section.key}>{section.title}</NavItem>)}
+                 style={{'marginBottom': '2em'}}
+                 className={'config-nav'}>
+      {this.state.sections.map(section => {
+        let classProp = section.key.startsWith('basic') ? 'tab-primary' : '';
+        return (
+          <Nav.Item key={section.key}>
+            <Nav.Link className={classProp} eventKey={section.key}>{section.title}</Nav.Link>
+          </Nav.Item>);
+      })}
     </Nav>)
   };
 
@@ -503,6 +397,7 @@ class ConfigurePageComponent extends AuthComponent {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }
+
     let content = '';
     if (this.state.selectedSection === 'attack' && Object.entries(this.state.attackConfig).length !== 0) {
       content = this.renderMatrix()
@@ -510,58 +405,60 @@ class ConfigurePageComponent extends AuthComponent {
       content = this.renderConfigContent(displayedSchema)
     }
     return (
-      <Col xs={12} lg={10}>
+      <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
+           lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
+           className={'main'}>
         {this.renderAttackAlertModal()}
-        <h1 className="page-title">Monkey Configuration</h1>
+        <h1 className='page-title'>Monkey Configuration</h1>
         {this.renderNav()}
-        {this.renderConfigWontChangeWarning()}
         {content}
-        <div className="text-center">
-          <button type="submit" onClick={this.onSubmit} className="btn btn-success btn-lg" style={{margin: '5px'}}>
+        <div className='text-center'>
+          <button type='submit' onClick={this.onSubmit} className='btn btn-success btn-lg' style={{margin: '5px'}}>
             Submit
           </button>
-          <button type="button" onClick={this.resetConfig} className="btn btn-danger btn-lg" style={{margin: '5px'}}>
+          <button type='button' onClick={this.resetConfig} className='btn btn-danger btn-lg' style={{margin: '5px'}}>
             Reset to defaults
           </button>
         </div>
-        <div className="text-center">
+        <div className='text-center'>
           <button onClick={() => document.getElementById('uploadInputInternal').click()}
-                  className="btn btn-info btn-lg" style={{margin: '5px'}}>
+                  className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Import Config
           </button>
-          <input id="uploadInputInternal" type="file" accept=".conf" onChange={this.importConfig} style={{display: 'none'}}/>
-          <button type="button" onClick={this.exportConfig} className="btn btn-info btn-lg" style={{margin: '5px'}}>
+          <input id='uploadInputInternal' type='file' accept='.conf' onChange={this.importConfig}
+                 style={{display: 'none'}}/>
+          <button type='button' onClick={this.exportConfig} className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Export config
           </button>
         </div>
         <div>
           {this.state.lastAction === 'reset' ?
-            <div className="alert alert-success">
-              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-success'>
+              <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration reset successfully.
             </div>
             : ''}
           {this.state.lastAction === 'saved' ?
-            <div className="alert alert-success">
-              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-success'>
+              <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration saved successfully.
             </div>
             : ''}
           {this.state.lastAction === 'import_failure' ?
-            <div className="alert alert-danger">
-              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-danger'>
+              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
               Failed importing configuration. Invalid config file.
             </div>
             : ''}
           {this.state.lastAction === 'invalid_configuration' ?
-            <div className="alert alert-danger">
-              <i className="glyphicon glyphicon-exclamation-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-danger'>
+              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
               An invalid configuration file was imported or submitted.
             </div>
             : ''}
           {this.state.lastAction === 'import_success' ?
-            <div className="alert alert-success">
-              <i className="glyphicon glyphicon-ok-sign" style={{'marginRight': '5px'}}/>
+            <div className='alert alert-success'>
+              <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration imported successfully.
             </div>
             : ''}

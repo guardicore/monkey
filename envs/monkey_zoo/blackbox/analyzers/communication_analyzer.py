@@ -1,7 +1,8 @@
+from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
 from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 
 
-class CommunicationAnalyzer(object):
+class CommunicationAnalyzer(Analyzer):
 
     def __init__(self, island_client, machine_ips):
         self.island_client = island_client

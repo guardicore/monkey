@@ -1,6 +1,6 @@
+import logging
 import os
 
-import logging
 from bson import ObjectId
 
 LOGGER = logging.getLogger(__name__)

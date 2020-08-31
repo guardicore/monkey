@@ -1,10 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table'
+import {renderArray} from '../common/RenderArrays';
 
-let renderArray = function (val) {
-  console.log(val);
-  return <div>{val.map(x => <div>{x}</div>)}</div>;
-};
 
 const columns = [
   {

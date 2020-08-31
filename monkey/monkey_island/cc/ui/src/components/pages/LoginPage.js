@@ -1,10 +1,13 @@
 import React from 'react';
-import {Col} from 'react-bootstrap';
+import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 
-import AuthService from '../../services/AuthService'
+import AuthService from '../../services/AuthService';
+import monkeyGeneral from '../../images/militant-monkey.svg';
+import ParticleBackground from '../ui-components/ParticleBackground';
 
 class LoginPageComponent extends React.Component {
-  login = () => {
+  login = (event) => {
+    event.preventDefault()
     this.auth.login(this.username, this.password).then(res => {
       if (res['result']) {
         this.redirectToHome();
@@ -26,6 +29,10 @@ class LoginPageComponent extends React.Component {
     window.location.href = '/';
   };
 
+  redirectToRegistration = () => {
+    window.location.href = '/register';
+  };
+
   constructor(props) {
     super(props);
     this.username = '';
@@ -34,6 +41,13 @@ class LoginPageComponent extends React.Component {
     this.state = {
       failed: false
     };
+
+    this.auth.needsRegistration()
+      .then(result => {
+        if (result) {
+          this.redirectToRegistration()
+        }
+      })
     this.auth.loggedIn()
       .then(res => {
         if (res) {
@@ -44,37 +58,36 @@ class LoginPageComponent extends React.Component {
 
   render() {
     return (
-      <Col xs={12} lg={8}>
-        <h1 className="page-title">Login</h1>
-        <div className="col-sm-6 col-sm-offset-3" style={{'fontSize': '1.2em'}}>
-          <div className="panel panel-default">
-            <div className="panel-heading text-center">
-              <b>Login</b>
-            </div>
-            <div className="panel-body">
-              <div className="input-group center-block text-center">
-                <input type="text" className="form-control" placeholder="Username"
-                       onChange={evt => this.updateUsername(evt)}/>
-                <input type="password" className="form-control" placeholder="Password"
-                       onChange={evt => this.updatePassword(evt)}/>
-                <button type="button" className="btn btn-primary btn-lg" style={{margin: '5px'}}
-                        onClick={() => {
-                          this.login()
-                        }}>
-                  Login
-                </button>
-                {
-                  this.state.failed ?
-                    <div className="alert alert-danger" role="alert">Login failed. Bad credentials.</div>
-                    :
-                    ''
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-      </Col>
-    );
+      <Container fluid className={'auth-container'}>
+        <ParticleBackground/>
+        <Row>
+          <Col xs={12} lg={{span: 6, offset: 3}} md={{span: 7, offset: 3}} className={'auth-block'}>
+            <Row>
+              <Col lg={8} md={8} sm={8}>
+                <h1 className='auth-title'>Login</h1>
+                <div>
+                  <Form className={'auth-form'} onSubmit={this.login}>
+                    <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
+                    <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
+                    <Button id={'auth-button'} type={'submit'}>
+                      Login
+                    </Button>
+                    {
+                      this.state.failed ?
+                        <div className="alert alert-danger" role="alert">Login failed. Bad credentials.</div>
+                        :
+                        ''
+                    }
+                  </Form>
+                </div>
+              </Col>
+              <Col lg={4} md={4} sm={4}>
+                <img alt="infection monkey" className={'monkey-detective'} src={monkeyGeneral}/>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Container>)
   }
 }
 

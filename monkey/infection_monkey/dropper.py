@@ -1,5 +1,6 @@
 import argparse
 import ctypes
+import filecmp
 import logging
 import os
 import pprint
@@ -9,13 +10,15 @@ import sys
 import time
 from ctypes import c_char_p
 
-import filecmp
-from infection_monkey.config import WormConfiguration
-from infection_monkey.exploit.tools.helpers import build_monkey_commandline_explicitly
-from infection_monkey.model import MONKEY_CMDLINE_WINDOWS, MONKEY_CMDLINE_LINUX, GENERAL_CMDLINE_LINUX
-from infection_monkey.system_info import SystemInfoCollector, OperatingSystem
-from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from common.utils.attack_utils import ScanStatus, UsageEnum
+from infection_monkey.config import WormConfiguration
+from infection_monkey.exploit.tools.helpers import \
+    build_monkey_commandline_explicitly
+from infection_monkey.model import (GENERAL_CMDLINE_LINUX,
+                                    MONKEY_CMDLINE_LINUX,
+                                    MONKEY_CMDLINE_WINDOWS)
+from infection_monkey.system_info import OperatingSystem, SystemInfoCollector
+from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -44,6 +47,7 @@ class MonkeyDrops(object):
         arg_parser.add_argument('-s', '--server')
         arg_parser.add_argument('-d', '--depth', type=int)
         arg_parser.add_argument('-l', '--location')
+        arg_parser.add_argument('-vp', '--vulnerable-port')
         self.monkey_args = args[1:]
         self.opts, _ = arg_parser.parse_known_args(args)
 
@@ -115,7 +119,12 @@ class MonkeyDrops(object):
                     LOG.warning("Cannot set reference date to destination file")
 
         monkey_options = \
-            build_monkey_commandline_explicitly(self.opts.parent, self.opts.tunnel, self.opts.server, self.opts.depth)
+            build_monkey_commandline_explicitly(parent=self.opts.parent,
+                                                tunnel=self.opts.tunnel,
+                                                server=self.opts.server,
+                                                depth=self.opts.depth,
+                                                location=None,
+                                                vulnerable_port=self.opts.vulnerable_port)
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             monkey_cmdline = MONKEY_CMDLINE_WINDOWS % {'monkey_path': self._config['destination_path']} + monkey_options

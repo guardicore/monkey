@@ -1,0 +1,13 @@
+.label {
+    color: white;
+    padding: 3px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+  }
+  
+  .success {background-color: #4CAF50;} /* Green */
+  .info {background-color: #2196F3;} /* Blue */
+  .warning {background-color: #ff9800;} /* Orange */
+  .danger {background-color: #f44336;} /* Red */
+  .unused {background-color: #8d8d8d;} /* Dark Gray */
+  .disabled {background-color: #cfcfcf; color: black;} /* Light Gray */

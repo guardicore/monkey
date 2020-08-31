@@ -1,7 +1,8 @@
-import flask_restful
 import logging
 
-from monkey_island.cc.environment.environment import env
+import flask_restful
+
+from common.version import get_version
 from monkey_island.cc.services.version_update import VersionUpdateService
 
 __author__ = 'itay.mizeretz'
@@ -17,7 +18,7 @@ class VersionUpdate(flask_restful.Resource):
     # even when not authenticated
     def get(self):
         return {
-            'current_version': env.get_version(),
+            'current_version': get_version(),
             'newer_version': VersionUpdateService.get_newer_version(),
             'download_link': VersionUpdateService.get_download_link()
         }

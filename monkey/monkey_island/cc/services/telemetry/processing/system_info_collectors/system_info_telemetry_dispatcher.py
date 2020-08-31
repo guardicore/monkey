@@ -1,13 +1,21 @@
 import logging
 import typing
 
-from common.data.system_info_collectors_names \
-    import AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR, PROCESS_LIST_COLLECTOR, SCOUTSUITE_COLLECTOR
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import process_aws_telemetry
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import process_environment_telemetry
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.hostname import process_hostname_telemetry
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.scoutsuite import process_scout_suite_telemetry
-from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence import test_antivirus_existence
+from common.data.system_info_collectors_names import (AWS_COLLECTOR,
+                                                      ENVIRONMENT_COLLECTOR,
+                                                      HOSTNAME_COLLECTOR,
+                                                      PROCESS_LIST_COLLECTOR,
+                                                      SCOUTSUITE_COLLECTOR)
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import \
+    process_aws_telemetry
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import \
+    process_environment_telemetry
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.hostname import \
+    process_hostname_telemetry
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.scoutsuite import \
+    process_scout_suite_telemetry
+from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence import \
+    test_antivirus_existence
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +31,9 @@ SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {
 class SystemInfoTelemetryDispatcher(object):
     def __init__(self, collector_to_parsing_functions: typing.Mapping[str, typing.List[typing.Callable]] = None):
         """
-        :param collector_to_parsing_functions: Map between collector names and a list of functions that process the output of
-        that collector. If `None` is supplied, uses the default one; This should be the normal flow, overriding the
+        :param collector_to_parsing_functions: Map between collector names and a list of functions
+        that process the output of that collector.
+        If `None` is supplied, uses the default one; This should be the normal flow, overriding the
         collector->functions mapping is useful mostly for testing.
         """
         if collector_to_parsing_functions is None:

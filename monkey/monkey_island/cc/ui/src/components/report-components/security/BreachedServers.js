@@ -1,13 +1,8 @@
 import React from 'react';
-import ReactTable from 'react-table'
+import ReactTable from 'react-table';
+import Pluralize from 'pluralize';
+import {renderArray, renderIpAddresses} from '../common/RenderArrays';
 
-let renderArray = function (val) {
-  return <div>{val.map(x => <div>{x}</div>)}</div>;
-};
-
-let renderIpAddresses = function (val) {
-  return <div>{renderArray(val.ip_addresses)} {(val.domain_name ? ' ('.concat(val.domain_name, ')') : '')} </div>;
-};
 
 const columns = [
   {
@@ -34,14 +29,20 @@ class BreachedServersComponent extends React.Component {
     let defaultPageSize = this.props.data.length > pageSize ? pageSize : this.props.data.length;
     let showPagination = this.props.data.length > pageSize;
     return (
-      <div className="data-table-container">
-        <ReactTable
-          columns={columns}
-          data={this.props.data}
-          showPagination={showPagination}
-          defaultPageSize={defaultPageSize}
-        />
-      </div>
+      <>
+        <p>
+          The Monkey successfully breached <span
+          className="badge badge-danger">{this.props.data.length}</span> {Pluralize('machine', this.props.data.length)}:
+        </p>
+        <div className="data-table-container">
+          <ReactTable
+            columns={columns}
+            data={this.props.data}
+            showPagination={showPagination}
+            defaultPageSize={defaultPageSize}
+          />
+        </div>
+      </>
     );
   }
 }

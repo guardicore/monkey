@@ -3,7 +3,7 @@ import React from 'react';
 import Checkbox from '../../ui-components/Checkbox';
 import ReactTable from 'react-table';
 import 'filepond/dist/filepond.min.css';
-import '../../../styles/report/ReportAttackMatrix.scss';
+import '../../../styles/pages/report/ReportAttackMatrix.scss';
 
 class ReportMatrixComponent extends React.Component {
   constructor(props) {
@@ -20,7 +20,7 @@ class ReportMatrixComponent extends React.Component {
       }
       let tech_type = this.state.schema.properties[type_key];
       columns.push({
-        Header: () => (<a href={tech_type.link} target="_blank">{tech_type.title}</a>),
+        Header: () => (<a href={tech_type.link} rel="noopener noreferrer" target="_blank">{tech_type.title}</a>),
         id: type_key,
         accessor: x => this.renderTechnique(x[tech_type.title]),
         style: {'whiteSpace': 'unset'}
