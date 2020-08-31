@@ -3,7 +3,7 @@ import {Row, Col, Container, Form, Button} from 'react-bootstrap';
 
 import AuthService from '../../services/AuthService';
 import monkeyDetective from '../../images/detective-monkey.svg';
-import ParticleBackground from "../ui-components/ParticleBackground";
+import ParticleBackground from '../ui-components/ParticleBackground';
 
 class RegisterPageComponent extends React.Component {
 

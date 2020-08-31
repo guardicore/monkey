@@ -134,7 +134,7 @@ class AttackReport extends React.Component {
 
   getTechniqueByTitle(title){
     for (const tech_id in this.state.techniques){
-      if (! this.state.techniques.hasOwnProperty(tech_id)) {return false;}
+      if (! Object.prototype.hasOwnProperty.call(this.state.techniques, tech_id)) {return false;}
       let technique = this.state.techniques[tech_id];
       if (technique.title === title){
         technique['tech_id'] = tech_id;
@@ -148,10 +148,10 @@ class AttackReport extends React.Component {
     // add links to techniques
     schema = schema.properties;
     for(const type in schema){
-      if (! schema.hasOwnProperty(type)) {return false;}
+      if (! Object.prototype.hasOwnProperty.call(schema, type)) {return false;}
       let typeTechniques = schema[type].properties;
       for(const tech_id in typeTechniques){
-        if (! typeTechniques.hasOwnProperty(tech_id)) {return false;}
+        if (! Object.prototype.hasOwnProperty.call(typeTechniques, tech_id)) {return false;}
         if (typeTechniques[tech_id] !== undefined){
           techniques[tech_id]['link'] = typeTechniques[tech_id].link
         }
