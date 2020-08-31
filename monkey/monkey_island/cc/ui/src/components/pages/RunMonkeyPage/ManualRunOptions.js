@@ -2,11 +2,12 @@ import React, {useEffect, useState} from 'react';
 import NextSelectionButton from '../../ui-components/inline-selection/NextSelectionButton';
 import LocalManualRunOptions from './LocalManualRunOptions';
 import AuthComponent from '../../AuthComponent';
-import BackButton from '../../ui-components/inline-selection/BackButton';
 import {faLaptopCode} from '@fortawesome/free-solid-svg-icons/faLaptopCode';
 import {faNetworkWired} from '@fortawesome/free-solid-svg-icons/faNetworkWired';
 import {faCogs} from '@fortawesome/free-solid-svg-icons/faCogs';
 import {Container} from 'react-bootstrap';
+import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
+import {cloneDeep} from 'lodash';
 
 function ManualRunOptions(props) {
 
@@ -44,23 +45,31 @@ function ManualRunOptions(props) {
   }
 
   function getDefaultContents() {
+    const newProps = cloneDeep({...props, onBackButtonClick: props.disableManualOptions});
+    return InlineSelection(defaultContents, newProps);
+  }
+
+  function defaultContents() {
     return (
-      <Container className={'inline-selection-component'}>
+      <>
         <NextSelectionButton text={'Local'}
                              description={'Run on a machine via command.'}
                              icon={faLaptopCode}
-                             onButtonClick={() => {setComponent(LocalManualRunOptions,
-                                                          {ips: ips, setComponent: setComponent})}}/>
+                             onButtonClick={() => {
+                               setComponent(LocalManualRunOptions,
+                                 {ips: ips, setComponent: setComponent})
+                             }}/>
         <NextSelectionButton text={'Remote'}
                              description={'Run using remote command execution.'}
                              icon={faNetworkWired}
-                             onButtonClick={() => {}}/>
+                             onButtonClick={() => {
+                             }}/>
         <NextSelectionButton text={'Automation'}
                              description={'Run using automation tools like ansible or chef.'}
                              icon={faCogs}
-                             onButtonClick={() => {}}/>
-        <BackButton onClick={props.disableManualOptions} />
-      </Container>
+                             onButtonClick={() => {
+                             }}/>
+      </>
     );
   }
 

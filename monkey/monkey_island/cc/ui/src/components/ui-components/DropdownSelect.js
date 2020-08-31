@@ -44,7 +44,7 @@ export default function DropdownSelect(props) {
   return (
     <>
       <Dropdown>
-        <Dropdown.Toggle variant="success" id="dropdown-basic">
+        <Dropdown.Toggle variant={props.variant !== undefined ? props.variant : 'success'} id='dropdown-basic'>
           {props.options[selectedOption]}
         </Dropdown.Toggle>
 

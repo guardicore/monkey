@@ -28,7 +28,7 @@ export default function commandDisplay(props) {
 
   function renderNav() {
     return (
-      <Nav variant='pills' fill activeKey={selectedCommand.type} onSelect={setSelectedCommandByName}>
+      <Nav variant='tabs' activeKey={selectedCommand.type} onSelect={setSelectedCommandByName}>
         {props.commands.map(command => {
           return (
             <Nav.Item key={command.type}>
@@ -39,9 +39,9 @@ export default function commandDisplay(props) {
   }
 
   return (
-    <>
+    <div className={'command-display'}>
       {renderNav()}
-      <Card style={{'margin': '0.5em'}}>
+      <Card>
         <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
           <CopyToClipboard text={selectedCommand.type} className="pull-right btn-sm">
             <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
@@ -51,7 +51,7 @@ export default function commandDisplay(props) {
           <code>{selectedCommand.command}</code>
         </div>
       </Card>
-    </>
+    </div>
   )
 }
 

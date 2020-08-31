@@ -11,7 +11,7 @@ import CommandDisplay from './CommandDisplay';
 
 
 const LocalManualRunOptions = (props) => {
-  return InlineSelection(getContents, props, ManualRunOptions)
+  return InlineSelection(getContents, props)
 }
 
 const getContents = (props) => {
@@ -47,8 +47,8 @@ const getContents = (props) => {
 
   return (
     <>
-      <DropdownSelect defaultKey={'win64'} options={osTypes} onClick={setOsType}/>
-      <DropdownSelect defaultKey={0} options={props.ips} onClick={setIp}/>
+      <DropdownSelect defaultKey={'win64'} options={osTypes} onClick={setOsType} variant={'outline-monkey'}/>
+      <DropdownSelect defaultKey={0} options={props.ips} onClick={setIp} variant={'outline-monkey'}/>
       <CommandDisplay commands={commands}/>
     </>
   )
