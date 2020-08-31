@@ -4,4 +4,4 @@
 	url = https://github.com/guardicore/cti
 [submodule "docs/themes/learn"]
 	path = docs/themes/learn
-	url = https://github.com/ShayNehmad/hugo-theme-learn.git
+	url = https://github.com/guardicode/hugo-theme-learn.git
