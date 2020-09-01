@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from common.network.network_utils import get_host_from_network_location, remove_port
+from common.network.network_utils import (get_host_from_network_location,
+                                          remove_port)
 
 
 class TestNetworkUtils(TestCase):
