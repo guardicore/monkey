@@ -43,8 +43,9 @@ class TechniqueDropdowns extends React.Component{
             {this.state.techniques[tech_id].title}
           </span>
           <span>
-            <a href={this.state.techniques[tech_id].link} rel="noopener noreferrer" target='_blank' className={'link-to-technique'}>
-              <FontAwesomeIcon icon={faQuestionCircle}/>
+            <a href={this.state.techniques[tech_id].link} rel="noopener noreferrer" target='_blank'>
+              <FontAwesomeIcon icon={faQuestionCircle} className={'link-to-technique'}
+                               color={AttackReport.getComponentClass(tech_id, this.state.techniques) === 'collapse-default' ? '#ffffff' : '#000000'}/>
             </a>
               <FontAwesomeIcon icon={this.state.collapseOpen === tech_id ? faChevronDown : faChevronUp}/>
           </span>
