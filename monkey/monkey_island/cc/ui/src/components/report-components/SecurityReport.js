@@ -794,7 +794,7 @@ class ReportPageComponent extends AuthComponent {
           className="badge badge-danger">remote command execution</span> attack.
           <br/>
           The attack was made possible because the server is using an old version of Drupal, for which REST API is
-          enabled. For possible workarounds and more info read
+          enabled. For possible workarounds, fixes and more info read
           <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340">here</a>.
         </CollapsibleWellComponent>
       </>
