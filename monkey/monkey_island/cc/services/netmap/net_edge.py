@@ -1,7 +1,6 @@
 from bson import ObjectId
 
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
 from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.node import NodeService

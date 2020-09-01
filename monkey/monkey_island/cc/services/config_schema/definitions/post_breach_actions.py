@@ -74,6 +74,15 @@ POST_BREACH_ACTIONS = {
         {
             "type": "string",
             "enum": [
+                "Timestomping"
+            ],
+            "title": "Timestomping",
+            "info": "Creates a temporary file and attempts to modify its time attributes. Removes the file afterwards.",
+            "attack_techniques": ["T1099"]
+        },
+        {
+            "type": "string",
+            "enum": [
                 "SignedScriptProxyExecution"
             ],
             "title": "Signed script proxy execution",

@@ -79,13 +79,13 @@ class TechniqueDropdowns extends React.Component{
   getOrderedTechniqueList(){
     let content = [];
     for(const type_key in this.state.schema.properties){
-      if (! this.state.schema.properties.hasOwnProperty(type_key)){
+      if (! Object.prototype.hasOwnProperty.call(this.state.schema.properties, type_key)){
         continue;
       }
       let tech_type = this.state.schema.properties[type_key];
       content.push(<h3>{tech_type.title}</h3>);
       for(const tech_id in this.state.techniques){
-        if (! this.state.techniques.hasOwnProperty(tech_id)){
+        if (! Object.prototype.hasOwnProperty.call(this.state.techniques, tech_id)){
           continue;
         }
         let technique = this.state.techniques[tech_id];

@@ -31,7 +31,7 @@ class ReportPageComponent extends AuthComponent {
   static selectReport(reports) {
     let url = window.location.href;
     for (let report_name in reports) {
-      if (reports.hasOwnProperty(report_name) && url.endsWith(reports[report_name])) {
+      if (Object.prototype.hasOwnProperty.call(reports, report_name) && url.endsWith(reports[report_name])) {
         return reports[report_name];
       }
     }
