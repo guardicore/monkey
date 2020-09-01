@@ -274,9 +274,9 @@ class PreviewPaneComponent extends AuthComponent {
     let label = '';
     if (!this.props.item) {
       label = '';
-    } else if (this.props.item.hasOwnProperty('label')) {
+    } else if (Object.prototype.hasOwnProperty.call(this.props.item, 'label')) {
       label = this.props.item['label'];
-    } else if (this.props.item.hasOwnProperty('_label')) {
+    } else if (Object.prototype.hasOwnProperty.call(this.props.item, '_label')) {
       label = this.props.item['_label'];
     }
 
