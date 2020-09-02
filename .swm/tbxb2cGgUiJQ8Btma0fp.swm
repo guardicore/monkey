@@ -1,6 +1,6 @@
 {
     "id": "tbxb2cGgUiJQ8Btma0fp",
-    "name": "Simple Post Breach action - CLI commands only",
+    "name": "Add a simple Post Breach action",
     "tests": [],
     "hints": [
         "See `ScheduleJobs` PBA for an example of a PBA which only uses shell commands",
