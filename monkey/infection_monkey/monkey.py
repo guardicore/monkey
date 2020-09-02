@@ -337,8 +337,8 @@ class InfectionMonkey(object):
         :return: True if successfully exploited, False otherwise
         """
         if not exploiter.is_os_supported():
-            LOG.info("Skipping exploiter %s host:%r, os is not supported",
-                     exploiter.__class__.__name__, machine)
+            LOG.info("Skipping exploiter %s host:%r, os %s is not supported",
+                     exploiter.__class__.__name__, machine, machine.os)
             return False
 
         LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
