@@ -1,6 +1,6 @@
 {
     "id": "AzD8XysWg1BBXCjCDkfq",
-    "name": "Add a new configuration value and use it in the Monkey Agent ⚙",
+    "name": "Add a new configuration to the Agent ⚙",
     "tests": [],
     "hints": [
         "Look for `victims_max_exploit` - it's rather similar."
