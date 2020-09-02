@@ -1,6 +1,6 @@
 {
     "id": "OwcKMnALpn7tuBaJY1US",
-    "name": "System info collectors",
+    "name": "Add a new System Info Collector",
     "tests": [],
     "hints": [
         "First thing you should do is take a look at a different collector (like EnvironemntCollector) and 100% understand how it runs, how results are relayed back to the server, and how the server processes the data.",
