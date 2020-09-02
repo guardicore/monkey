@@ -57,7 +57,7 @@ class TestEnvironmentConfig(TestCase):
 
     def test_get_server_config_file_path(self):
         if platform.system() == "Windows":
-            server_file_path = MONKEY_ISLAND_ABS_PATH + "\cc\server_config.json"
+            server_file_path = MONKEY_ISLAND_ABS_PATH + r"\cc\server_config.json"
         else:
             server_file_path = MONKEY_ISLAND_ABS_PATH + "/cc/server_config.json"
         self.assertEqual(EnvironmentConfig.get_config_file_path(), server_file_path)

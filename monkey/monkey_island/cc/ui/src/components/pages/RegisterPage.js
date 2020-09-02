@@ -1,10 +1,9 @@
 import React from 'react';
 import {Row, Col, Container, Form, Button} from 'react-bootstrap';
-import Particles from 'react-particles-js';
 
 import AuthService from '../../services/AuthService';
-import {particleParams} from '../../styles/components/particle-component/AuthPageParams';
 import monkeyDetective from '../../images/detective-monkey.svg';
+import ParticleBackground from '../ui-components/ParticleBackground';
 
 class RegisterPageComponent extends React.Component {
 
@@ -81,7 +80,7 @@ class RegisterPageComponent extends React.Component {
   render() {
     return (
       <Container fluid className={'auth-container'}>
-        <Particles className={'particle-background'} params={particleParams}/>
+        <ParticleBackground />
         <Row>
           <Col xs={12} lg={{span: 6, offset: 3}} md={{span: 7, offset: 3}}
                className={'auth-block'}>

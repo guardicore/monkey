@@ -7,8 +7,9 @@ import sys
 import traceback
 from multiprocessing import freeze_support
 
+# dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
-import infection_monkey.post_breach  # dummy import for pyinstaller
+import infection_monkey.post_breach  # noqa: F401
 from common.version import get_version
 from infection_monkey.config import EXTERNAL_CONFIG_FILE, WormConfiguration
 from infection_monkey.dropper import MonkeyDrops

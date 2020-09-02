@@ -51,13 +51,13 @@ def get_winAPI_to_hide_files():
         fileCreation = win32file.CREATE_ALWAYS  # overwrite existing file
         fileFlags = win32file.FILE_ATTRIBUTE_HIDDEN  # make hidden
 
-        hiddenFile = win32file.CreateFile(HIDDEN_FILE_WINAPI,
-                                          fileAccess,
-                                          0,  # sharing mode: 0 => can't be shared
-                                          None,  # security attributes
-                                          fileCreation,
-                                          fileFlags,
-                                          0)  # template file
+        win32file.CreateFile(HIDDEN_FILE_WINAPI,
+                             fileAccess,
+                             0,  # sharing mode: 0 => can't be shared
+                             None,  # security attributes
+                             fileCreation,
+                             fileFlags,
+                             0)  # template file
 
         return "Succesfully created hidden file: {}".format(HIDDEN_FILE_WINAPI), True
     except Exception as err:
