@@ -20,4 +20,4 @@ def run_scoutsuite(cloud_type):
 
 
 def send_results(results):
-    ScoutSuiteTelem.send(results)
+    ScoutSuiteTelem(results).send(results)

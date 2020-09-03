@@ -7,3 +7,4 @@ class TelemCategoryEnum:
     SYSTEM_INFO = 'system_info'
     TRACE = 'trace'
     TUNNEL = 'tunnel'
+    ATTACK = 'attack'
