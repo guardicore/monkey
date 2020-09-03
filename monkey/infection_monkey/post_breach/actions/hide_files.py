@@ -1,4 +1,4 @@
-from common.data.post_breach_consts import POST_BREACH_HIDDEN_FILES
+from common.common_consts.post_breach_consts import POST_BREACH_HIDDEN_FILES
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os

@@ -1,4 +1,4 @@
-import common.data.zero_trust_consts as zero_trust_consts
+import common.common_consts.zero_trust_consts as zero_trust_consts
 import monkey_island.cc.services.reporting.zero_trust_service
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.services.reporting.zero_trust_service import \

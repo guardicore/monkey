@@ -1,7 +1,7 @@
 import logging
 import socket
 
-from common.data.system_info_collectors_names import HOSTNAME_COLLECTOR
+from common.common_consts.system_info_collectors_names import HOSTNAME_COLLECTOR
 from infection_monkey.system_info.system_info_collector import \
     SystemInfoCollector
 

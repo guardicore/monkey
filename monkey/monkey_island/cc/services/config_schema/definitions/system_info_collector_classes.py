@@ -1,9 +1,9 @@
-from common.data.system_info_collectors_names import (AWS_COLLECTOR,
-                                                      AZURE_CRED_COLLECTOR,
-                                                      ENVIRONMENT_COLLECTOR,
-                                                      HOSTNAME_COLLECTOR,
-                                                      MIMIKATZ_COLLECTOR,
-                                                      PROCESS_LIST_COLLECTOR)
+from common.common_consts.system_info_collectors_names import (AWS_COLLECTOR,
+                                                               AZURE_CRED_COLLECTOR,
+                                                               ENVIRONMENT_COLLECTOR,
+                                                               HOSTNAME_COLLECTOR,
+                                                               MIMIKATZ_COLLECTOR,
+                                                               PROCESS_LIST_COLLECTOR)
 
 SYSTEM_INFO_COLLECTOR_CLASSES = {
     "title": "System Information Collectors",

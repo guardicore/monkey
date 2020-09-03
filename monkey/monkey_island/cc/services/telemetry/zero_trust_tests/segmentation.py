@@ -1,6 +1,6 @@
 import itertools
 
-import common.data.zero_trust_consts as zero_trust_consts
+import common.common_consts.zero_trust_consts as zero_trust_consts
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import (get_ip_if_in_subnet,
                                                get_ip_in_src_and_not_in_dst)

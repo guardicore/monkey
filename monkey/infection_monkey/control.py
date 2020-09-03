@@ -9,7 +9,7 @@ from requests.exceptions import ConnectionError
 
 import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
-from common.data.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
+from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import check_internet_access, local_ips
 from infection_monkey.transport.http import HTTPConnectProxy

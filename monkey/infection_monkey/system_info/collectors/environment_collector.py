@@ -1,6 +1,6 @@
 from common.cloud.all_instances import get_all_cloud_instances
 from common.cloud.environment_names import Environment
-from common.data.system_info_collectors_names import ENVIRONMENT_COLLECTOR
+from common.common_consts.system_info_collectors_names import ENVIRONMENT_COLLECTOR
 from infection_monkey.system_info.system_info_collector import \
     SystemInfoCollector
 

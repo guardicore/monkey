@@ -1,7 +1,7 @@
 import json
 
-import common.data.zero_trust_consts as zero_trust_consts
-from common.data.network_consts import ES_SERVICE
+import common.common_consts.zero_trust_consts as zero_trust_consts
+from common.common_consts.network_consts import ES_SERVICE
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.aggregate_finding import (
     AggregateFinding, add_malicious_activity_to_timeline)

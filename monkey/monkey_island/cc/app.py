@@ -6,7 +6,7 @@ from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from common.data.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
+from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration

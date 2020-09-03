@@ -1,3 +1,4 @@
+from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 
 __author__ = "itay.mizeretz"
@@ -13,7 +14,7 @@ class SystemInfoTelem(BaseTelem):
         super(SystemInfoTelem, self).__init__()
         self.system_info = system_info
 
-    telem_category = 'system_info'
+    telem_category = TelemCategoryEnum.SYSTEM_INFO
 
     def get_data(self):
         return self.system_info

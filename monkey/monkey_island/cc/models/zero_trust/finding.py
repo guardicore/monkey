@@ -6,7 +6,7 @@ from typing import List
 
 from mongoengine import Document, EmbeddedDocumentListField, StringField
 
-import common.data.zero_trust_consts as zero_trust_consts
+import common.common_consts.zero_trust_consts as zero_trust_consts
 # Dummy import for mongoengine.
 # noinspection PyUnresolvedReferences
 from monkey_island.cc.models.zero_trust.event import Event

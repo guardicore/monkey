@@ -1,7 +1,7 @@
 import logging
 
 from common.cloud.aws.aws_instance import AwsInstance
-from common.data.system_info_collectors_names import AWS_COLLECTOR
+from common.common_consts.system_info_collectors_names import AWS_COLLECTOR
 from infection_monkey.system_info.system_info_collector import \
     SystemInfoCollector
 

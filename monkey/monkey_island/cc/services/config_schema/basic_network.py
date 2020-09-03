@@ -1,4 +1,4 @@
-from common.data.validation_formats import IP, IP_RANGE
+from common.common_consts.validation_formats import IP, IP_RANGE
 from monkey_island.cc.services.utils.typographic_symbols import WARNING_SIGN
 
 BASIC_NETWORK = {

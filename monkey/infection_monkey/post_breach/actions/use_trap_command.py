@@ -1,4 +1,4 @@
-from common.data.post_breach_consts import POST_BREACH_TRAP_COMMAND
+from common.common_consts.post_breach_consts import POST_BREACH_TRAP_COMMAND
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.trap_command.trap_command import \
     get_trap_commands

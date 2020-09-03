@@ -1,4 +1,4 @@
-from common.data.post_breach_consts import POST_BREACH_HIDDEN_FILES
+from common.common_consts.post_breach_consts import POST_BREACH_HIDDEN_FILES
 from monkey_island.cc.services.attack.technique_reports.pba_technique import \
     PostBreachTechnique
 

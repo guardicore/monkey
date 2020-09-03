@@ -6,7 +6,7 @@ import requests
 from requests.exceptions import ConnectionError, Timeout
 
 import infection_monkey.config
-from common.data.network_consts import ES_SERVICE
+from common.common_consts.network_consts import ES_SERVICE
 from infection_monkey.network.HostFinger import HostFinger
 
 ES_PORT = 9200
