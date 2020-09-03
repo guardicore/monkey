@@ -40,4 +40,4 @@ After setting up a monkey environment in AWS and attaching the correct IAM roles
 1. Navigate to `Findings`.
 2. Press on a specific finding to see more details and possible solutions.
 
-![AWS Security hub console example](images/usage/integrations/security-hub-console-example.png "AWS Security hub console example")
+![AWS Security hub console example](/images/usage/integrations/security-hub-console-example.png "AWS Security hub console example")
