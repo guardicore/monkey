@@ -1,4 +1,6 @@
 from common.common_consts.telem_categories import TelemCategoryEnum
+from infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite.ScoutSuite.output.result_encoder import \
+    ScoutJsonEncoder
 from infection_monkey.telemetry.base_telem import BaseTelem
 
 
@@ -12,6 +14,7 @@ class ScoutSuiteTelem(BaseTelem):
         super().__init__()
         self.data = data
 
+    json_encoder = ScoutJsonEncoder
     telem_category = TelemCategoryEnum.SCOUTSUITE
 
     def get_data(self):

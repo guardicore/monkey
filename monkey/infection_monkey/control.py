@@ -128,12 +128,12 @@ class ControlClient(object):
             return {}
 
     @staticmethod
-    def send_telemetry(telem_category, data):
+    def send_telemetry(telem_category, json_data: str):
         if not WormConfiguration.current_server:
             LOG.error("Trying to send %s telemetry before current server is established, aborting." % telem_category)
             return
         try:
-            telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': data}
+            telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': json_data}
             requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),  # noqa: DUO123
                           data=json.dumps(telemetry),
                           headers={'content-type': 'application/json'},

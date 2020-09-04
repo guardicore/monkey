@@ -31,8 +31,7 @@ class Report(flask_restful.Resource):
                     "statusesToPillars": ZeroTrustService.get_statuses_to_pillars(),
                     "pillarsToStatuses": ZeroTrustService.get_pillars_to_statuses(),
                     "grades": ZeroTrustService.get_pillars_grades()
-                }
-                )
+                })
             elif report_data == REPORT_DATA_PRINCIPLES_STATUS:
                 return jsonify(ZeroTrustService.get_principles_status())
             elif report_data == REPORT_DATA_FINDINGS:
