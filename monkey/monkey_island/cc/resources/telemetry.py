@@ -46,6 +46,7 @@ class Telemetry(flask_restful.Resource):
     @TestTelemStore.store_test_telem
     def post(self):
         telemetry_json = json.loads(request.data)
+        telemetry_json['data'] = json.loads(telemetry_json['data'])
         telemetry_json['timestamp'] = datetime.now()
         telemetry_json['command_control_channel'] = {'src': request.remote_addr, 'dst': request.host}
 

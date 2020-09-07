@@ -35,6 +35,6 @@ class Report(flask_restful.Resource):
             elif report_data == REPORT_DATA_PRINCIPLES_STATUS:
                 return jsonify(ZeroTrustService.get_principles_status())
             elif report_data == REPORT_DATA_FINDINGS:
-                return jsonify(ZeroTrustService.get_all_findings())
+                return jsonify(ZeroTrustService.get_all_monkey_findings())
 
         flask_restful.abort(http.client.NOT_FOUND)

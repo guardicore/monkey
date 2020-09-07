@@ -1,5 +1,9 @@
+from typing import List
+
 import common.common_consts.zero_trust_consts as zero_trust_consts
+from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
+from monkey_island.cc.models.zero_trust.finding_details import FindingDetails
 
 
 class AggregateFinding(Finding):
@@ -12,15 +16,25 @@ class AggregateFinding(Finding):
         :raises: Assertion error if this is used when there's more then one finding which fits the query - this is not
         when this function should be used.
         """
-        existing_findings = Finding.objects(test=test, status=status).exclude('events')
+        existing_findings = Finding.objects(test=test, status=status)
         assert (len(existing_findings) < 2), "More than one finding exists for {}:{}".format(test, status)
 
         if len(existing_findings) == 0:
-            Finding.save_finding(test, status, events)
+            AggregateFinding.create_new_finding(test, status, events)
         else:
             # Now we know for sure this is the only one
-            orig_finding = existing_findings[0]
-            orig_finding.add_events(events)
+            AggregateFinding.add_events(existing_findings[0], events)
+
+    @staticmethod
+    def create_new_finding(test: str, status: str, events: List[Event]):
+        details = FindingDetails()
+        details.events = events
+        details.save()
+        Finding.save_finding(test, status, details)
+
+    @staticmethod
+    def add_events(finding: Finding, events: List[Event]):
+        finding.details.fetch().add_events(events)
 
 
 def add_malicious_activity_to_timeline(events):
