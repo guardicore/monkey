@@ -152,3 +152,11 @@ This is sometimes caused when Monkey Island is installed with an old version of 
 ## How can I get involved with the project? 👩‍💻👨‍💻
 
 The Monkey is an open-source project, and we weclome contributions and contributors. Check out the [contribution documentation](../development) for more information.
+
+## About the project 🐵
+
+### How did you come up with the Infection Monkey?
+
+Oddly enough, the idea of proactively breaking the network to test its survival wasn’t born in the security industry. In 2011, the streaming giant Netflix released Chaos Monkey, a tool that was designed to randomly disable the company’s production servers to verify they could survive network failures without any customer impact. Netflix's Chaos Monkey became a popular network resilience tool, breaking the network in a variety of failure modes, including connectivity issues, invalid SSL certificates and randomly deleting VMs.
+
+Inspired by this concept, Guardicore Labs developed its own attack simulator - Infection Monkey - to run non-intrusively within existing production environments. The idea was to test the resiliency of modern data centers against attack and give security teams the insights they need to make informed decisions and enforce tighter security policies. Since its launch in 2017 (?) the Infection Monkey has been used by hundreds of information technology teams from across the world to find weaknesses in their on-premises and cloud-based data centers.
