@@ -5,14 +5,8 @@ from bson.objectid import ObjectId
 import common.common_consts.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
 
-# How many events of a single finding to return to UI.
-# 50 will return 50 latest and 50 oldest events from a finding
-from monkey_island.cc.models.zero_trust.finding_details import FindingDetails
 
-EVENT_FETCH_CNT = 50
-
-
-class ZeroTrustService(object):
+class ZeroTrustService:
     @staticmethod
     def get_pillars_grades():
         pillars_grades = []
@@ -111,54 +105,6 @@ class ZeroTrustService(object):
         return current_worst_status
 
     @staticmethod
-    def get_all_monkey_findings():
-        findings = list(Finding.objects)
-        for finding in findings:
-            details = finding.details.fetch()
-            finding.details = details
-        enriched_findings = [ZeroTrustService.__get_enriched_finding(f) for f in findings]
-        all_finding_details = ZeroTrustService._parse_finding_details_for_ui()
-        return enriched_findings
-
-
-    @staticmethod
-    def _parse_finding_details_for_ui() -> List[FindingDetails]:
-        """
-        We don't need to return all events to UI, we only display N first and N last events.
-        This code returns a list of FindingDetails with ONLY the events which are relevant to UI.
-        """
-        pipeline = [{'$addFields': {'oldest_events': {'$slice': ['$events', EVENT_FETCH_CNT]},
-                                    'latest_events': {'$slice': ['$events', -1 * EVENT_FETCH_CNT]},
-                                    'event_count': {'$size': '$events'}}},
-                    {'$unset': ['events']}]
-        all_details = list(FindingDetails.objects.aggregate(*pipeline))
-        for details in all_details:
-            details['latest_events'] = ZeroTrustService._get_events_without_overlap(details['event_count'],
-                                                                                    details['latest_events'])
-
-    @staticmethod
-    def _get_events_without_overlap(event_count: int, events: List[object]) -> List[object]:
-        overlap_count = event_count - EVENT_FETCH_CNT
-        if overlap_count >= EVENT_FETCH_CNT:
-            return events
-        elif overlap_count <= 0:
-            return []
-        else:
-            return events[-1 * overlap_count:]
-
-    @staticmethod
-    def __get_enriched_finding(finding):
-        test_info = zero_trust_consts.TESTS_MAP[finding['test']]
-        enriched_finding = {
-            'finding_id': str(finding['_id']),
-            'test': test_info[zero_trust_consts.FINDING_EXPLANATION_BY_STATUS_KEY][finding['status']],
-            'test_key': finding['test'],
-            'pillars': test_info[zero_trust_consts.PILLARS_KEY],
-            'status': finding['status'],
-        }
-        return enriched_finding
-
-    @staticmethod
     def get_statuses_to_pillars():
         results = {
             zero_trust_consts.STATUS_FAILED: [],
@@ -187,11 +133,3 @@ class ZeroTrustService(object):
             if grade[status] > 0:
                 return status
         return zero_trust_consts.STATUS_UNEXECUTED
-
-    @staticmethod
-    def get_events_by_finding(finding_id: str) -> List[object]:
-        pipeline = [{'$match': {'_id': ObjectId(finding_id)}},
-                    {'$unwind': '$events'},
-                    {'$project': {'events': '$events'}},
-                    {'$replaceRoot': {'newRoot': '$events'}}]
-        return list(Finding.objects.aggregate(*pipeline))

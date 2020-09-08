@@ -4,13 +4,14 @@ Define a Document Schema for Zero Trust findings.
 """
 from typing import List
 
-from mongoengine import Document, EmbeddedDocumentListField, StringField, LazyReferenceField
+from mongoengine import Document, StringField, GenericLazyReferenceField
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
 # Dummy import for mongoengine.
 # noinspection PyUnresolvedReferences
 from monkey_island.cc.models.zero_trust.event import Event
-from monkey_island.cc.models.zero_trust.finding_details import FindingDetails
+from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
+from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutsuiteFindingDetails
 
 
 class Finding(Document):
@@ -34,7 +35,7 @@ class Finding(Document):
     # SCHEMA
     test = StringField(required=True, choices=zero_trust_consts.TESTS)
     status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)
-    details = LazyReferenceField(document_type=FindingDetails, required=True)
+    details = GenericLazyReferenceField(choices=[MonkeyFindingDetails, ScoutsuiteFindingDetails], required=True)
     # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
     meta = {'allow_inheritance': True}
 

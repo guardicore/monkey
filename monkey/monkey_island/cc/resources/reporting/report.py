@@ -5,7 +5,7 @@ from flask import jsonify
 
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.reporting.report import ReportService
-from monkey_island.cc.services.reporting.zero_trust_service import \
+from monkey_island.cc.services.zero_trust.zero_trust_service import \
     ZeroTrustService
 
 ZERO_TRUST_REPORT_TYPE = "zero_trust"

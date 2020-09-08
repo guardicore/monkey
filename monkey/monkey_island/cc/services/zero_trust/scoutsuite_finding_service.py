@@ -1,0 +1,3 @@
+
+class ScoutsuiteFindingService:
+    pass
