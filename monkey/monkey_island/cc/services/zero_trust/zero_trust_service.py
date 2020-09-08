@@ -1,7 +1,3 @@
-from typing import List
-
-from bson.objectid import ObjectId
-
 import common.common_consts.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
 

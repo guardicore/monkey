@@ -5,6 +5,7 @@ from flask import jsonify
 
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.reporting.report import ReportService
+from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
 from monkey_island.cc.services.zero_trust.zero_trust_service import \
     ZeroTrustService
 
@@ -35,6 +36,6 @@ class Report(flask_restful.Resource):
             elif report_data == REPORT_DATA_PRINCIPLES_STATUS:
                 return jsonify(ZeroTrustService.get_principles_status())
             elif report_data == REPORT_DATA_FINDINGS:
-                return jsonify(ZeroTrustService.get_all_monkey_findings())
+                return jsonify(MonkeyFindingService.get_all_monkey_findings())
 
         flask_restful.abort(http.client.NOT_FOUND)
