@@ -7,14 +7,10 @@ from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector
     MimikatzCredentialCollector
 
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
-# noinspection PyPep8
-import infection_monkey.config
-# noinspection PyPep8
-from common.utils.wmi_utils import WMIUtils
-# noinspection PyPep8
-from infection_monkey.system_info import InfoCollector
-# noinspection PyPep8
-from infection_monkey.system_info.wmi_consts import WMI_CLASSES
+import infection_monkey.config  # noqa: E402
+from common.utils.wmi_utils import WMIUtils  # noqa: E402
+from infection_monkey.system_info import InfoCollector  # noqa: E402
+from infection_monkey.system_info.wmi_consts import WMI_CLASSES  # noqa: E402
 
 LOG = logging.getLogger(__name__)
 LOG.info('started windows info collector')

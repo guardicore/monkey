@@ -140,7 +140,7 @@ class ConfigurePageComponent extends AuthComponent {
     // Change value in attack configuration
     // Go trough each column in matrix, searching for technique
     Object.entries(this.state.attackConfig).forEach(techType => {
-      if (techType[1].properties.hasOwnProperty(technique)) {
+      if (Object.prototype.hasOwnProperty.call(techType[1].properties, technique)) {
         let tempMatrix = this.state.attackConfig;
         tempMatrix[techType[0]].properties[technique].value = value;
         this.setState({attackConfig: tempMatrix});
@@ -151,7 +151,8 @@ class ConfigurePageComponent extends AuthComponent {
           Object.entries(this.state.attackConfig).forEach(otherType => {
             Object.entries(otherType[1].properties).forEach(otherTech => {
               // If this technique depends on a technique that was changed
-              if (otherTech[1].hasOwnProperty('depends_on') && otherTech[1]['depends_on'].includes(technique)) {
+              if (Object.prototype.hasOwnProperty.call(otherTech[1], 'depends_on') &&
+                otherTech[1]['depends_on'].includes(technique)) {
                 this.attackTechniqueChange(otherTech[0], value, true)
               }
             })
@@ -393,7 +394,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   render() {
     let displayedSchema = {};
-    if (this.state.schema.hasOwnProperty('properties') && this.state.selectedSection !== 'attack') {
+    if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties') && this.state.selectedSection !== 'attack') {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }

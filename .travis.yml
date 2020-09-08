@@ -73,7 +73,7 @@ script:
 ## Display the linter issues
 - cat flake8_warnings.txt
 ## Make sure that we haven't increased the amount of warnings.
-- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=120
+- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=80
 - if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
 ## Check import order
@@ -90,12 +90,19 @@ script:
 - cd monkey_island/cc/ui
 - npm ci  # See https://docs.npmjs.com/cli/ci.html
 - eslint ./src --quiet  # Test for errors
-- JS_WARNINGS_AMOUNT_UPPER_LIMIT=28
+- JS_WARNINGS_AMOUNT_UPPER_LIMIT=4
 - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # Test for max warnings
 
 # Build documentation
 - cd $TRAVIS_BUILD_DIR/docs
 - hugo --verbose --environment staging
+
+# verify swimm
+- cd $TRAVIS_BUILD_DIR
+- wget https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv018%2Fswimm-0.1.8-linux-executable\?alt\=media\&token\=e59c0a18-577f-4b77-bb3b-91b22c3d8b2a -O swimm
+- chmod +x ./swimm
+- ./swimm --version
+- ./swimm verify
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information

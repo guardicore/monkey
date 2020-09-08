@@ -143,7 +143,7 @@ class Monkey(Document):
         try:
             _ = Monkey.get_single_monkey_by_id(object_id)
             return True
-        except:
+        except:  # noqa: E722
             return False
 
     @staticmethod

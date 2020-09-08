@@ -1,3 +1,4 @@
+import re
 from urllib.parse import urlparse
 
 
@@ -10,3 +11,10 @@ def get_host_from_network_location(network_location: str) -> str:
     """
     url = urlparse("http://" + network_location)
     return str(url.hostname)
+
+
+def remove_port(url):
+    parsed = urlparse(url)
+    with_port = f'{parsed.scheme}://{parsed.netloc}'
+    without_port = re.sub(':[0-9]+(?=$|\/)', '', with_port)
+    return without_port

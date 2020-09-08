@@ -40,7 +40,7 @@ export default class AuthService {
       })
     }).then(response => response.json())
       .then(res => {
-        if (res.hasOwnProperty('access_token')) {
+        if (Object.prototype.hasOwnProperty.call(res, 'access_token')) {
           this._setToken(res['access_token']);
           return {result: true};
         } else {
@@ -86,7 +86,7 @@ export default class AuthService {
       headers['Authorization'] = 'Bearer ' + this._getToken();
     }
 
-    if (options.hasOwnProperty('headers')) {
+    if (Object.prototype.hasOwnProperty.call(options, 'headers')) {
       for (let header in headers) {
         options['headers'][header] = headers[header];
       }

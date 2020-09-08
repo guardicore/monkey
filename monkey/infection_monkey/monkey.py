@@ -89,7 +89,7 @@ class InfectionMonkey(object):
         if self._opts.depth is not None:
             WormConfiguration._depth_from_commandline = True
             WormConfiguration.depth = self._opts.depth
-            LOG.debug(f"Setting propagation depth from command line")
+            LOG.debug("Setting propagation depth from command line")
         LOG.debug(f"Set propagation depth to {WormConfiguration.depth}")
 
         self._keep_running = True
@@ -337,8 +337,8 @@ class InfectionMonkey(object):
         :return: True if successfully exploited, False otherwise
         """
         if not exploiter.is_os_supported():
-            LOG.info("Skipping exploiter %s host:%r, os is not supported",
-                     exploiter.__class__.__name__, machine)
+            LOG.info("Skipping exploiter %s host:%r, os %s is not supported",
+                     exploiter.__class__.__name__, machine, machine.os)
             return False
 
         LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)

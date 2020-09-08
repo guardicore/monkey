@@ -5,8 +5,8 @@ from infection_monkey.utils.linux.hidden_files import (
     get_linux_commands_to_delete, get_linux_commands_to_hide_files,
     get_linux_commands_to_hide_folders)
 from infection_monkey.utils.windows.hidden_files import (
-    get_winAPI_to_hide_files, get_windows_commands_to_delete,
-    get_windows_commands_to_hide_files, get_windows_commands_to_hide_folders)
+    get_windows_commands_to_delete, get_windows_commands_to_hide_files,
+    get_windows_commands_to_hide_folders)
 
 
 def get_commands_to_hide_files():
