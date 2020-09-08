@@ -3,14 +3,13 @@ import json
 import common.common_consts.zero_trust_consts as zero_trust_consts
 from common.common_consts.network_consts import ES_SERVICE
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.models.zero_trust.aggregate_finding import (
-    AggregateFinding, add_malicious_activity_to_timeline)
 from monkey_island.cc.models.zero_trust.event import Event
+from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
 
 HTTP_SERVERS_SERVICES_NAMES = ['tcp-80']
 
 
-def test_open_data_endpoints(telemetry_json):
+def check_open_data_endpoints(telemetry_json):
     services = telemetry_json["data"]["machine"]["services"]
     current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid'])
     found_http_server_status = zero_trust_consts.STATUS_PASSED
@@ -56,16 +55,16 @@ def test_open_data_endpoints(telemetry_json):
                 event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK
             ))
 
-    AggregateFinding.create_or_add_to_existing(
+    MonkeyFindingService.create_or_add_to_existing(
         test=zero_trust_consts.TEST_DATA_ENDPOINT_HTTP,
         status=found_http_server_status,
         events=events
     )
 
-    AggregateFinding.create_or_add_to_existing(
+    MonkeyFindingService.create_or_add_to_existing(
         test=zero_trust_consts.TEST_DATA_ENDPOINT_ELASTIC,
         status=found_elastic_search_server,
         events=events
     )
 
-    add_malicious_activity_to_timeline(events)
+    MonkeyFindingService.add_malicious_activity_to_timeline(events)

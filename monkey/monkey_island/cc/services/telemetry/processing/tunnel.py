@@ -1,12 +1,12 @@
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.utils import \
     get_tunnel_host_ip_from_proxy_field
-from monkey_island.cc.services.telemetry.zero_trust_tests.tunneling import \
-    test_tunneling_violation
+from monkey_island.cc.services.telemetry.zero_trust_checks.tunneling import \
+    check_tunneling_violation
 
 
 def process_tunnel_telemetry(telemetry_json):
-    test_tunneling_violation(telemetry_json)
+    check_tunneling_violation(telemetry_json)
     monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])["_id"]
     if telemetry_json['data']['proxy'] is not None:
         tunnel_host_ip = get_tunnel_host_ip_from_proxy_field(telemetry_json)

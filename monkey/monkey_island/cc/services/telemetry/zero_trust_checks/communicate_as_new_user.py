@@ -1,6 +1,5 @@
 import common.common_consts.zero_trust_consts as zero_trust_consts
-from monkey_island.cc.models.zero_trust.aggregate_finding import \
-    AggregateFinding
+from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
 from monkey_island.cc.models.zero_trust.event import Event
 
 COMM_AS_NEW_USER_FAILED_FORMAT = "Monkey on {} couldn't communicate as new user. Details: {}"
@@ -8,8 +7,8 @@ COMM_AS_NEW_USER_SUCCEEDED_FORMAT = \
     "New user created by Monkey on {} successfully tried to communicate with the internet. Details: {}"
 
 
-def test_new_user_communication(current_monkey, success, message):
-    AggregateFinding.create_or_add_to_existing(
+def check_new_user_communication(current_monkey, success, message):
+    MonkeyFindingService.create_or_add_to_existing(
         test=zero_trust_consts.TEST_COMMUNICATE_AS_NEW_USER,
         # If the monkey succeeded to create a user, then the test failed.
         status=zero_trust_consts.STATUS_FAILED if success else zero_trust_consts.STATUS_PASSED,

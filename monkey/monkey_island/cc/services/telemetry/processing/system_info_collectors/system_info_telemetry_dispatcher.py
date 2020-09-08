@@ -14,8 +14,8 @@ from monkey_island.cc.services.telemetry.processing.system_info_collectors.hostn
     process_hostname_telemetry
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.scoutsuite import \
     process_scout_suite_telemetry
-from monkey_island.cc.services.telemetry.zero_trust_tests.antivirus_existence import \
-    test_antivirus_existence
+from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import \
+    check_antivirus_existence
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {
     AWS_COLLECTOR: [process_aws_telemetry],
     ENVIRONMENT_COLLECTOR: [process_environment_telemetry],
     HOSTNAME_COLLECTOR: [process_hostname_telemetry],
-    PROCESS_LIST_COLLECTOR: [test_antivirus_existence],
+    PROCESS_LIST_COLLECTOR: [check_antivirus_existence],
     SCOUTSUITE_COLLECTOR: [process_scout_suite_telemetry]
 }
 

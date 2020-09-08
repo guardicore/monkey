@@ -6,7 +6,7 @@ from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.segmentation_finding import \
     SegmentationFinding
-from monkey_island.cc.services.telemetry.zero_trust_tests.segmentation import \
+from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import \
     create_or_add_findings_for_all_pairs
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
@@ -15,7 +15,7 @@ SECOND_SUBNET = "2.2.2.0/24"
 THIRD_SUBNET = "3.3.3.3-3.3.3.200"
 
 
-class TestSegmentationTests(IslandTestCase):
+class TestSegmentationChecks(IslandTestCase):
     def test_create_findings_for_all_done_pairs(self):
         self.fail_if_not_testing_env()
         self.clean_finding_db()
