@@ -1,4 +1,4 @@
-from common.data.post_breach_consts import POST_BREACH_TIMESTOMPING
+from common.common_consts.post_breach_consts import POST_BREACH_TIMESTOMPING
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.timestomping.timestomping import \
     get_timestomping_commands
