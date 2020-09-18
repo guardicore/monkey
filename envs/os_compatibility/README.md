@@ -57,6 +57,7 @@ A quick reference for usernames on different machines (if in doubt check officia
 - Ubuntu: ubuntu
 - Oracle: clckwrk
 - CentOS: centos
+- Debian: admin
 - Everything else: ec2-user
 
 To manually verify the machine is compatible use commands to download and execute the monkey.
