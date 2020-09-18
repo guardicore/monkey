@@ -22,6 +22,11 @@ STATUS_FAILED = "Failed"
 # Don't change order! The statuses are ordered by importance/severity.
 ORDERED_TEST_STATUSES = [STATUS_FAILED, STATUS_VERIFY, STATUS_PASSED, STATUS_UNEXECUTED]
 
+MONKEY_FINDING = "monkey_finding"
+SCOUTSUITE_FINDING = "scoutsuite_finding"
+FINDING_TYPES = [MONKEY_FINDING, SCOUTSUITE_FINDING]
+
+
 TEST_DATA_ENDPOINT_ELASTIC = "unencrypted_data_endpoint_elastic"
 TEST_DATA_ENDPOINT_HTTP = "unencrypted_data_endpoint_http"
 TEST_MACHINE_EXPLOITED = "machine_exploited"
@@ -31,6 +36,7 @@ TEST_MALICIOUS_ACTIVITY_TIMELINE = "malicious_activity_timeline"
 TEST_SEGMENTATION = "segmentation"
 TEST_TUNNELING = "tunneling"
 TEST_COMMUNICATE_AS_NEW_USER = "communicate_as_new_user"
+TEST_SCOUTSUITE_PERMISSIVE_FIREWALL_RULES = "scoutsuite_permissive_firewall_rules"
 TESTS = (
     TEST_SEGMENTATION,
     TEST_MALICIOUS_ACTIVITY_TIMELINE,
@@ -40,7 +46,8 @@ TESTS = (
     TEST_DATA_ENDPOINT_HTTP,
     TEST_DATA_ENDPOINT_ELASTIC,
     TEST_TUNNELING,
-    TEST_COMMUNICATE_AS_NEW_USER
+    TEST_COMMUNICATE_AS_NEW_USER,
+    TEST_SCOUTSUITE_PERMISSIVE_FIREWALL_RULES
 )
 
 PRINCIPLE_DATA_TRANSIT = "data_transit"
@@ -163,6 +170,16 @@ TESTS_MAP = {
         },
         PRINCIPLE_KEY: PRINCIPLE_USERS_MAC_POLICIES,
         PILLARS_KEY: [PEOPLE, NETWORKS, VISIBILITY_ANALYTICS],
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
+    },
+    TEST_SCOUTSUITE_PERMISSIVE_FIREWALL_RULES: {
+        TEST_EXPLANATION_KEY: "ScoutSuite assessed cloud firewall rules and settings.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_FAILED: "ScoutSuite found overly permissive firewall rules.",
+            STATUS_PASSED: "ScoutSuite found no problems with cloud firewall rules."
+        },
+        PRINCIPLE_KEY: PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES,
+        PILLARS_KEY: [NETWORKS],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     },
 }

@@ -2,16 +2,15 @@
 """
 Define a Document Schema for Zero Trust findings.
 """
-from typing import List
+from typing import Union
 
 from mongoengine import Document, StringField, GenericLazyReferenceField
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
 # Dummy import for mongoengine.
 # noinspection PyUnresolvedReferences
-from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
-from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutsuiteFindingDetails
+from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutSuiteFindingDetails
 
 
 class Finding(Document):
@@ -35,7 +34,8 @@ class Finding(Document):
     # SCHEMA
     test = StringField(required=True, choices=zero_trust_consts.TESTS)
     status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)
-    details = GenericLazyReferenceField(choices=[MonkeyFindingDetails, ScoutsuiteFindingDetails], required=True)
+    type = StringField(required=True, choices=zero_trust_consts.FINDING_TYPES)
+    details = GenericLazyReferenceField(choices=[MonkeyFindingDetails, ScoutSuiteFindingDetails], required=True)
     # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
     meta = {'allow_inheritance': True}
 
@@ -48,11 +48,19 @@ class Finding(Document):
 
     # Creation methods
     @staticmethod
-    def save_finding(test: str, status: str, detail_ref):
-        finding = Finding(test=test,
-                          status=status,
-                          details=detail_ref)
+    def save_finding(test: str,
+                     status: str,
+                     detail_ref: Union[MonkeyFindingDetails, ScoutSuiteFindingDetails]):
+        temp_finding = Finding(test=test,
+                               status=status,
+                               details=detail_ref,
+                               type=Finding._get_finding_type_by_details(detail_ref))
+        temp_finding.save()
+        return temp_finding
 
-        finding.save()
-
-        return finding
+    @staticmethod
+    def _get_finding_type_by_details(details: Union[MonkeyFindingDetails, ScoutSuiteFindingDetails]) -> str:
+        if type(details) == MonkeyFindingDetails:
+            return zero_trust_consts.MONKEY_FINDING
+        else:
+            return zero_trust_consts.SCOUTSUITE_FINDING

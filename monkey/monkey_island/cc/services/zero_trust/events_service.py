@@ -18,9 +18,11 @@ class EventsService:
                                     'latest_events': {'$slice': ['$events', -1 * EVENT_FETCH_CNT]},
                                     'event_count': {'$size': '$events'}}},
                     {'$unset': ['events']}]
-        details = MonkeyFindingDetails.objects.aggregate(*pipeline).next()
-        details['latest_events'] = EventsService._get_events_without_overlap(details['event_count'],
-                                                                             details['latest_events'])
+        details = list(MonkeyFindingDetails.objects.aggregate(*pipeline))
+        if details:
+            details = details[0]
+            details['latest_events'] = EventsService._get_events_without_overlap(details['event_count'],
+                                                                                 details['latest_events'])
         return details
 
     @staticmethod

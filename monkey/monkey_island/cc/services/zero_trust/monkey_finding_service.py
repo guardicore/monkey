@@ -6,7 +6,6 @@ from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
-from monkey_island.cc.services.zero_trust.finding_service import FindingService
 
 
 class MonkeyFindingService:
@@ -38,17 +37,7 @@ class MonkeyFindingService:
 
     @staticmethod
     def add_events(finding: Finding, events: List[Event]):
-        finding.details.fetch().add_events(events)
-
-    @staticmethod
-    def get_all_monkey_findings():
-        findings = FindingService.get_all_findings()
-        for i in range(len(findings)):
-            details = MonkeyFindingService.fetch_events_for_display(findings[i].details.id)
-            findings[i] = findings[i].to_mongo()
-            findings[i] = FindingService.get_enriched_finding(findings[i])
-            findings[i]['details'] = details
-        return findings
+        finding.details.fetch().add_events(events).save()
 
     @staticmethod
     def get_events_by_finding(finding_id: str) -> List[object]:

@@ -1,11 +1,9 @@
-from typing import List
+from mongoengine import Document, EmbeddedDocumentListField
 
-from mongoengine import DateTimeField, Document, StringField, EmbeddedDocumentListField
-
-from monkey_island.cc.models.zero_trust.scoutsuite_finding import ScoutsuiteFinding
+from monkey_island.cc.models.zero_trust.scoutsuite_rule import ScoutSuiteRule
 
 
-class ScoutsuiteFindingDetails(Document):
+class ScoutSuiteFindingDetails(Document):
     """
     This model represents additional information about monkey finding:
     Events if monkey finding
@@ -13,7 +11,9 @@ class ScoutsuiteFindingDetails(Document):
     """
 
     # SCHEMA
-    scoutsuite_findings = EmbeddedDocumentListField(document_type=ScoutsuiteFinding, required=False)
+    scoutsuite_rules = EmbeddedDocumentListField(document_type=ScoutSuiteRule, required=False)
 
-    def add_scoutsuite_findings(self, scoutsuite_findings: List[ScoutsuiteFinding]) -> None:
-        self.update(push_all__scoutsuite_findings=scoutsuite_findings)
+    def add_rule(self, rule: ScoutSuiteRule) -> None:
+        if rule not in self.scoutsuite_rules:
+            self.scoutsuite_rules.append(rule)
+            self.save()
