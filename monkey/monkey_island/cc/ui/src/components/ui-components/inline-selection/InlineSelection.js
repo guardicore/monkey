@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BackButton from './BackButton';
-import ManualRunOptions from '../../pages/RunMonkeyPage/ManualRunOptions';
+import ManualRunOptions from '../../pages/RunMonkeyPage/RunOptions';
 import {Col, Row, Container} from 'react-bootstrap';
 
 

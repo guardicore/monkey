@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
-import ManualRunOptions from './ManualRunOptions';
 import DropdownSelect from '../../ui-components/DropdownSelect';
 import {OS_TYPES} from './OsTypes';
 import GenerateLocalWindowsCmd from './commands/local_windows_cmd';

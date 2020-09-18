@@ -3,13 +3,12 @@ import NextSelectionButton from '../../ui-components/inline-selection/NextSelect
 import LocalManualRunOptions from './LocalManualRunOptions';
 import AuthComponent from '../../AuthComponent';
 import {faLaptopCode} from '@fortawesome/free-solid-svg-icons/faLaptopCode';
-import {faNetworkWired} from '@fortawesome/free-solid-svg-icons/faNetworkWired';
-import {faCogs} from '@fortawesome/free-solid-svg-icons/faCogs';
-import {Container} from 'react-bootstrap';
 import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
 import {cloneDeep} from 'lodash';
+import {faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
+import RunOnIslandButton from './RunOnIslandButton';
 
-function ManualRunOptions(props) {
+function RunOptions(props) {
 
   const [currentContent, setCurrentContent] = useState(loadingContents());
   const [ips, setIps] = useState([]);
@@ -45,29 +44,22 @@ function ManualRunOptions(props) {
   }
 
   function getDefaultContents() {
-    const newProps = cloneDeep({...props, onBackButtonClick: props.disableManualOptions});
+    const newProps = cloneDeep({...props});
     return InlineSelection(defaultContents, newProps);
   }
 
   function defaultContents() {
     return (
       <>
-        <NextSelectionButton text={'Local'}
+        <RunOnIslandButton title={'From Island'}
+                           description={'Start on Monkey Island server.'}
+                           icon={faExpandArrowsAlt}/>
+        <NextSelectionButton title={'Manual'}
                              description={'Run on a machine via command.'}
                              icon={faLaptopCode}
                              onButtonClick={() => {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
-                             }}/>
-        <NextSelectionButton text={'Remote'}
-                             description={'Run using remote command execution.'}
-                             icon={faNetworkWired}
-                             onButtonClick={() => {
-                             }}/>
-        <NextSelectionButton text={'Automation'}
-                             description={'Run using automation tools like ansible or chef.'}
-                             icon={faCogs}
-                             onButtonClick={() => {
                              }}/>
       </>
     );
@@ -76,4 +68,4 @@ function ManualRunOptions(props) {
   return currentContent;
 }
 
-export default ManualRunOptions;
+export default RunOptions;

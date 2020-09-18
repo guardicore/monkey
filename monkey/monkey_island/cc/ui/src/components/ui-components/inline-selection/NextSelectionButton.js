@@ -13,7 +13,7 @@ export default function nextSelectionButton(props) {
         <Button variant={'outline-monkey'} size='lg' className={'selection-button'}
                 onClick={props.onButtonClick}>
           {icon}
-          <h1>{props.text}</h1>
+          <h1>{props.title}</h1>
           {description}
           <FontAwesomeIcon icon={faAngleRight} className={'angle-right'}/>
         </Button>
@@ -23,7 +23,8 @@ export default function nextSelectionButton(props) {
 }
 
 nextSelectionButton.propTypes = {
-  text: PropTypes.string,
+  title: PropTypes.string,
   icon: FontAwesomeIcon,
+  description: PropTypes.string,
   onButtonClick: PropTypes.func
 }
