@@ -16,7 +16,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.report !== prevProps.report) {
-     this.setState(this.props.report)
+      this.setState(this.props.report)
     }
   }
 
@@ -29,7 +29,9 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         <SummarySection allMonkeysAreDead={this.state.allMonkeysAreDead} pillars={this.state.pillars}/>
         <PrinciplesSection principles={this.state.principles}
                            pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
-        <FindingsSection pillarsToStatuses={this.state.pillars.pillarsToStatuses} findings={this.state.findings}/>
+        <FindingsSection pillarsToStatuses={this.state.pillars.pillarsToStatuses}
+                         findings={this.state.findings}
+                         scoutsuite_data={this.state.scoutsuite_data}/>
       </div>;
     }
 
@@ -57,7 +59,8 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   stillLoadingDataFromServer() {
     return typeof this.state.findings === 'undefined'
       || typeof this.state.pillars === 'undefined'
-      || typeof this.state.principles === 'undefined';
+      || typeof this.state.principles === 'undefined'
+      || typeof this.state.scoutsuite_data === 'undefined';
   }
 
 

@@ -1,8 +1,9 @@
 from typing import List
 
-from mongoengine import DateTimeField, Document, StringField, EmbeddedDocumentListField
+from mongoengine import Document, EmbeddedDocumentListField
 
 from monkey_island.cc.models.zero_trust.event import Event
+
 
 class MonkeyFindingDetails(Document):
     """
