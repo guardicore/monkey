@@ -8,6 +8,7 @@ from werkzeug.exceptions import NotFound
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.custom_json_encoder import CustomJSONEncoder
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
@@ -84,6 +85,8 @@ def init_app_config(app, mongo_url):
     # By default, Flask sorts keys of JSON objects alphabetically, which messes with the ATT&CK matrix in the
     # configuration. See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config['JSON_SORT_KEYS'] = False
+
+    app.json_encoder = CustomJSONEncoder
 
 
 def init_app_services(app):
