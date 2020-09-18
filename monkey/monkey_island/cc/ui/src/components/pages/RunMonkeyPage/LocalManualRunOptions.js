@@ -7,7 +7,6 @@ import GenerateLocalWindowsPowershell from './commands/local_windows_powershell'
 import GenerateLocalLinuxWget from './commands/local_linux_wget';
 import GenerateLocalLinuxCurl from './commands/local_linux_curl';
 import CommandDisplay from './CommandDisplay';
-import RunOptions from './RunOptions';
 
 
 const LocalManualRunOptions = (props) => {
