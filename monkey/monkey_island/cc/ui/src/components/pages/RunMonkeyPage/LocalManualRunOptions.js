@@ -7,10 +7,14 @@ import GenerateLocalWindowsPowershell from './commands/local_windows_powershell'
 import GenerateLocalLinuxWget from './commands/local_linux_wget';
 import GenerateLocalLinuxCurl from './commands/local_linux_curl';
 import CommandDisplay from './CommandDisplay';
+import RunOptions from './RunOptions';
 
 
 const LocalManualRunOptions = (props) => {
-  return InlineSelection(getContents, props)
+  return InlineSelection(getContents, {
+    ...props,
+    onBackButtonClick: () => {props.setComponent()}
+  })
 }
 
 const getContents = (props) => {
@@ -35,12 +39,12 @@ const getContents = (props) => {
   }
 
   function generateCommands() {
-    if(osType === OS_TYPES.WINDOWS_64 || osType === OS_TYPES.WINDOWS_32) {
+    if (osType === OS_TYPES.WINDOWS_64 || osType === OS_TYPES.WINDOWS_32) {
       return [{type: 'CMD', command: GenerateLocalWindowsCmd(selectedIp, osType)},
-              {type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, osType)}]
+        {type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, osType)}]
     } else {
       return [{type: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, osType)},
-              {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, osType)}]
+        {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, osType)}]
     }
   }
 
