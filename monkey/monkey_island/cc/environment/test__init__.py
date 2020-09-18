@@ -112,4 +112,3 @@ class TestEnvironment(TestCase):
             self.assertTrue(method())
         else:
             self.assertFalse(method())
-

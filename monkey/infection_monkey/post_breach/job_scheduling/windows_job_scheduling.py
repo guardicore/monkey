@@ -1,5 +1,5 @@
 SCHEDULED_TASK_NAME = 'monkey-spawn-cmd'
-SCHEDULED_TASK_COMMAND = 'C:\windows\system32\cmd.exe'
+SCHEDULED_TASK_COMMAND = r'C:\windows\system32\cmd.exe'
 
 # Commands from: https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1053.005/T1053.005.md
 

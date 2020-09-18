@@ -1,7 +1,5 @@
 import logging
 
-env = None
-
 import monkey_island.cc.resources.auth.user_store as user_store
 from monkey_island.cc.environment import (EnvironmentConfig, aws, password,
                                           standard, testing)
@@ -21,6 +19,8 @@ ENV_DICT = {
     PASSWORD: password.PasswordEnvironment,
     TESTING: testing.TestingEnvironment
 }
+
+env = None
 
 
 def set_env(env_type: str, env_config: EnvironmentConfig):

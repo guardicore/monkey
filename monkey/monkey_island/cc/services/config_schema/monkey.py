@@ -67,7 +67,9 @@ MONKEY = {
                         "HiddenFiles",
                         "TrapCommand",
                         "ChangeSetuidSetgid",
-                        "ScheduleJobs"
+                        "ScheduleJobs",
+                        "Timestomping",
+                        "AccountDiscovery"
                     ]
                 },
             }

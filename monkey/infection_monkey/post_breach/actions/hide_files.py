@@ -4,8 +4,9 @@ from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.hidden_files import (cleanup_hidden_files,
                                                  get_commands_to_hide_files,
-                                                 get_commands_to_hide_folders,
-                                                 get_winAPI_to_hide_files)
+                                                 get_commands_to_hide_folders)
+from infection_monkey.utils.windows.hidden_files import \
+    get_winAPI_to_hide_files
 
 HIDDEN_FSO_CREATION_COMMANDS = [get_commands_to_hide_files,
                                 get_commands_to_hide_folders]

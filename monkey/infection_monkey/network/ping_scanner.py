@@ -12,7 +12,7 @@ __author__ = 'itamar'
 
 PING_COUNT_FLAG = "-n" if "win32" == sys.platform else "-c"
 PING_TIMEOUT_FLAG = "-w" if "win32" == sys.platform else "-W"
-TTL_REGEX_STR = '(?<=TTL\=)[0-9]+'
+TTL_REGEX_STR = r'(?<=TTL\=)[0-9]+'
 LINUX_TTL = 64
 WINDOWS_TTL = 128
 

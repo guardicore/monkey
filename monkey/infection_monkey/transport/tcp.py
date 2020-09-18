@@ -65,7 +65,7 @@ class TcpProxy(TransportProxyBase):
             dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
                 dest.connect((self.dest_host, self.dest_port))
-            except socket.error as ex:
+            except socket.error:
                 source.close()
                 dest.close()
                 continue

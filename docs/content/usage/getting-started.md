@@ -7,11 +7,13 @@ pre: "<i class='fas fa-play-circle'></i> "
 tags: ["usage"]
 ---
 
+If you haven't deployed the Monkey Island yet, please [refer to our setup documentation](/setup)
+
 ## Using the Infection Monkey
 
-After deploying the Monkey Island in your environment, navigate to `https://<server-ip>:5000`.
+After deploying the Monkey Island in your environment, navigate to `https://<server-ip>:5000`. 
 
-### First-time setup
+### First-time login
 
 On your first login, you'll be asked to set up a username and password for the Monkey Island server. [See this page for more details](../accounts-and-security).
 

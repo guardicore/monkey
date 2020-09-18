@@ -1,13 +1,13 @@
 // colors
-$disabled: #f4f4f4;
-$not-attempted: #cbcbcb;
+$disabled: #f2f2f2;
+$not-attempted: #8c8c8c;
 $attempted: #ffe28d;
 $used: #ebbcba;
 $black: #3a3a3a;
 
 .attack-matrix .status-0 {
   background-color: $not-attempted !important;
-  color: $black;
+  color: #ffffff;
 }
 
 .attack-matrix .status-1 {
@@ -23,6 +23,7 @@ $black: #3a3a3a;
 .attack-matrix .status-3 {
   background-color: $disabled !important;
   color: $black;
+  text-decoration: line-through;
 }
 
 .attack-matrix div.rt-td:hover {
