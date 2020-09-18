@@ -20,3 +20,7 @@ class CredentialsNotRequiredError(RegistrationNotNeededError):
 
 class AlreadyRegisteredError(RegistrationNotNeededError):
     """ Raise to indicate the reason why registration is not required """
+
+
+class RulePathCreatorNotFound(Exception):
+    """ Raise to indicate that ScoutSuite rule doesn't have a path creator"""
