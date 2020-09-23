@@ -43,7 +43,7 @@ export default function commandDisplay(props) {
       {renderNav()}
       <Card>
         <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
-          <CopyToClipboard text={selectedCommand.type} className="pull-right btn-sm">
+          <CopyToClipboard text={selectedCommand.command} className="pull-right btn-sm">
             <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
               <FontAwesomeIcon icon={faClipboard}/>
             </Button>

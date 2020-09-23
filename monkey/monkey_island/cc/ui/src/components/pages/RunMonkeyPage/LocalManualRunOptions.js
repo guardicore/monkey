@@ -49,7 +49,7 @@ const getContents = (props) => {
 
   return (
     <>
-      <DropdownSelect defaultKey={'win64'} options={osTypes} onClick={setOsType} variant={'outline-monkey'}/>
+      <DropdownSelect defaultKey={OS_TYPES.WINDOWS_64} options={osTypes} onClick={setOsType} variant={'outline-monkey'}/>
       <DropdownSelect defaultKey={0} options={props.ips} onClick={setIp} variant={'outline-monkey'}/>
       <CommandDisplay commands={commands}/>
     </>

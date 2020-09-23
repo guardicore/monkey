@@ -6,16 +6,24 @@ import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faSync} from '@fortawesome/free-solid-svg-icons/faSync';
 import AuthComponent from '../../AuthComponent';
 
-import MissingBinariesModal from '../../ui-components/MissingBinariesModal';
+import IslandMonkeyRunErrorModal from '../../ui-components/IslandMonkeyRunErrorModal';
 import '../../../styles/components/RunOnIslandButton.scss';
+import {faTimes} from '@fortawesome/free-solid-svg-icons';
 
+
+const MONKEY_STATES = {
+  RUNNING: 'running',
+  NOT_RUNNING: 'not_running',
+  STARTING: 'starting',
+  FAILED: 'failed'
+}
 
 class RunOnIslandButton extends AuthComponent {
 
   constructor(props) {
     super(props);
     this.state = {
-      runningOnIslandState: 'not_running',
+      runningOnIslandState: MONKEY_STATES.NOT_RUNNING,
       showModal: false,
       errorDetails: ''
     };
@@ -28,19 +36,19 @@ class RunOnIslandButton extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         if (res['is_running']) {
-          this.setState({runningOnIslandState: 'running'});
+          this.setState({runningOnIslandState: MONKEY_STATES.RUNNING});
         } else {
-          this.setState({runningOnIslandState: 'not_running'});
+          this.setState({runningOnIslandState: MONKEY_STATES.NOT_RUNNING});
         }
       });
   }
 
   runIslandMonkey = () => {
-    this.setState({runningOnIslandState: 'installing'}, this.sendRunMonkeyRequest)
+    this.setState({runningOnIslandState: MONKEY_STATES.STARTING}, this.sendRunMonkeyRequest)
 
   };
 
-  sendRunMonkeyRequest = () => {
+  sendRunMonkeyRequest() {
     this.authFetch('/api/local-monkey',
       {
         method: 'POST',
@@ -48,23 +56,22 @@ class RunOnIslandButton extends AuthComponent {
         body: JSON.stringify({action: 'run'})
       })
       .then(res => res.json())
-      .then(res => {
+      .then(async res => {
         if (res['is_running']) {
+          await new Promise(r => setTimeout(r, 1000));
           this.setState({
-            runningOnIslandState: 'running'
+            runningOnIslandState: MONKEY_STATES.RUNNING
           });
         } else {
           /* If Monkey binaries are missing, change the state accordingly */
-          if (res['error_text'].startsWith('Copy file failed')) {
+          if (res['error_text'] !== '') {
             this.setState({
                 showModal: true,
-                errorDetails: res['error_text']
+                errorDetails: res['error_text'],
+                runningOnIslandState: MONKEY_STATES.FAILED
               }
             );
           }
-          this.setState({
-            runningOnIslandState: 'not_running'
-          });
         }
       });
   }
@@ -76,12 +83,15 @@ class RunOnIslandButton extends AuthComponent {
   };
 
   getMonkeyRunStateIcon = () => {
-    if (this.state.runningOnIslandState === 'running') {
+    if (this.state.runningOnIslandState === MONKEY_STATES.RUNNING) {
       return (<FontAwesomeIcon icon={faCheck}
                                className={`monkey-on-island-run-state-icon text-success`}/>)
-    } else if (this.state.runningOnIslandState === 'installing') {
+    } else if (this.state.runningOnIslandState === MONKEY_STATES.STARTING) {
       return (<FontAwesomeIcon icon={faSync}
                                className={`monkey-on-island-run-state-icon text-success spinning-icon`}/>)
+    } else if (this.state.runningOnIslandState === MONKEY_STATES.FAILED) {
+      return (<FontAwesomeIcon icon={faTimes}
+                               className={`monkey-on-island-run-state-icon text-danger`}/>)
     } else {
       return '';
     }
@@ -93,7 +103,7 @@ class RunOnIslandButton extends AuthComponent {
     return (
       <Row>
         <Col>
-          <MissingBinariesModal
+          <IslandMonkeyRunErrorModal
             showModal={this.state.showModal}
             onClose={this.closeModal}
             errorDetails={this.state.errorDetails}/>

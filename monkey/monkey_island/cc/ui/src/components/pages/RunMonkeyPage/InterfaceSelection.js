@@ -8,7 +8,7 @@ function InterfaceSelection(props) {
 
 const getContents = (props) => {
   const ips = props.ips.map((ip) =>
-    <div>{ip}</div>
+    <div key={ip}>{ip}</div>
   );
   return (<div>{ips}</div>);
 }
