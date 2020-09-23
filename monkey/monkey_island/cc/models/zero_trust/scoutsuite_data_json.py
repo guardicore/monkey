@@ -12,8 +12,9 @@ class ScoutSuiteDataJson(Document):
     # LOGIC
     @staticmethod
     def add_scoutsuite_data(scoutsuite_data: str) -> None:
-        current_data = ScoutSuiteDataJson.objects()
-        if not current_data:
+        try:
+            current_data = ScoutSuiteDataJson.objects()[0]
+        except IndexError:
             current_data = ScoutSuiteDataJson()
         current_data.scoutsuite_data = scoutsuite_data
         current_data.save()

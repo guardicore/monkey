@@ -1,5 +1,5 @@
 from mongoengine import StringField, EmbeddedDocument, ListField, \
-    IntField
+    IntField, DynamicField
 
 from monkey_island.cc.services.zero_trust.scoutsuite.consts import rule_consts
 
@@ -22,5 +22,5 @@ class ScoutSuiteRule(EmbeddedDocument):
     service = StringField(required=True)
     rationale = StringField(required=True)
     remediation = StringField(required=False)
-    compliance = StringField(required=False)
+    compliance = DynamicField(required=False)
     references = ListField(required=False)

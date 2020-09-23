@@ -43,7 +43,7 @@ class Report(flask_restful.Resource):
                 try:
                     data = ScoutSuiteDataJson.objects.get().scoutsuite_data
                 except Exception:
-                    data = {}
+                    data = "{}"
                 return Response(data, mimetype='application/json')
 
         flask_restful.abort(http.client.NOT_FOUND)
