@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import RULE_LEVELS from '../../common/consts/ScoutSuiteConsts/RuleLevels';
 import STATUSES from '../../common/consts/StatusConsts';
-import {faCheckCircle, faCircle, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
+import {faCheckCircle, faCircle, faExclamationCircle, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import RuleDisplay from './RuleDisplay';
 
 export default function ScoutSuiteSingleRuleDropdown(props) {
@@ -41,7 +41,7 @@ export default function ScoutSuiteSingleRuleDropdown(props) {
       case STATUSES.STATUS_PASSED:
         return faCheckCircle;
       case STATUSES.STATUS_VERIFY:
-        return faExclamationCircle;
+        return faQuestionCircle;
       case STATUSES.STATUS_FAILED:
         return faExclamationCircle;
       case STATUSES.STATUS_UNEXECUTED:

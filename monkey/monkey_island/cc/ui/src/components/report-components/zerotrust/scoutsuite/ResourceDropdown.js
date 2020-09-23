@@ -50,18 +50,29 @@ export default function ResourceDropdown(props) {
     return JSON.stringify(data, null, 4);
   }
 
-  function getResourceDropdownContents() {
+  function getResourceValueDisplay() {
     let parser = new ScoutSuiteDataParser(props.scoutsuite_data.data.services);
+    let resource_value = parser.getValueAt(props.resource_path);
+    if (resource_value) {
+      return(
+        <div>
+          <p className={'resource-value-title'}>Value:</p>
+          <pre className={'resource-value-json'}>{prettyPrintJson(resource_value)}</pre>
+        </div>
+      )
+    } else {
+      return ''
+    }
+  }
+
+  function getResourceDropdownContents() {
     return (
       <div className={'resource-display'}>
         <div>
           <p className={'resource-path-title'}>Path:</p>
           <p className={'resource-path-contents'}>{replacePathDotsWithArrows(props.resource_path)}</p>
         </div>
-        <div>
-          <p className={'resource-value-title'}>Value:</p>
-          <pre className={'resource-value-json'}>{prettyPrintJson(parser.getValueAt(props.resource_path))}</pre>
-        </div>
+        {getResourceValueDisplay()}
       </div>
     );
   }

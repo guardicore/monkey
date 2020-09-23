@@ -40,7 +40,7 @@ export default function ScoutSuiteRuleModal(props) {
           <p>
             There {Pluralize('is', props.scoutsuite_rules.length)} {
             <div className={'badge badge-primary'}>{props.scoutsuite_rules.length}</div>
-          } ScoutSuite {Pluralize('rule', props.scoutsuite_rules.length)} associated with finding.
+          } ScoutSuite {Pluralize('rule', props.scoutsuite_rules.length)} associated with this finding.
           </p>
           {renderRuleDropdowns()}
         </Modal.Body>
