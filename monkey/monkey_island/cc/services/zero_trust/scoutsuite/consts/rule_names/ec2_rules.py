@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class EC2Rules(Enum):
+    # Ports
     SECURITY_GROUP_ALL_PORTS_TO_ALL = 'ec2-security-group-opens-all-ports-to-all'
     SECURITY_GROUP_OPENS_TCP_PORT_TO_ALL = 'ec2-security-group-opens-TCP-port-to-all'
     SECURITY_GROUP_OPENS_UDP_PORT_TO_ALL = 'ec2-security-group-opens-UDP-port-to-all'
@@ -20,3 +21,7 @@ class EC2Rules(Enum):
     SECURITY_GROUP_OPENS_PLAINTEXT_PORT_FTP = 'ec2-security-group-opens-plaintext-port-FTP'
     SECURITY_GROUP_OPENS_PLAINTEXT_PORT_TELNET = 'ec2-security-group-opens-plaintext-port-Telnet'
     SECURITY_GROUP_OPENS_PORT_RANGE = 'ec2-security-group-opens-port-range'
+
+    # Encryption
+    EC2_EBS_SNAPSHOT_NOT_ENCRYPTED = 'ec2-ebs-snapshot-not-encrypted'
+    EC2_EBS_VOLUME_NOT_ENCRYPTED = 'ec2-ebs-volume-not-encrypted'
