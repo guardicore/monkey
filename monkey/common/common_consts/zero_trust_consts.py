@@ -26,7 +26,6 @@ MONKEY_FINDING = "monkey_finding"
 SCOUTSUITE_FINDING = "scoutsuite_finding"
 FINDING_TYPES = [MONKEY_FINDING, SCOUTSUITE_FINDING]
 
-
 TEST_DATA_ENDPOINT_ELASTIC = "unencrypted_data_endpoint_elastic"
 TEST_DATA_ENDPOINT_HTTP = "unencrypted_data_endpoint_http"
 TEST_MACHINE_EXPLOITED = "machine_exploited"
@@ -37,6 +36,12 @@ TEST_SEGMENTATION = "segmentation"
 TEST_TUNNELING = "tunneling"
 TEST_COMMUNICATE_AS_NEW_USER = "communicate_as_new_user"
 TEST_SCOUTSUITE_PERMISSIVE_FIREWALL_RULES = "scoutsuite_permissive_firewall_rules"
+TEST_SCOUTSUITE_UNENCRYPTED_DATA = "scoutsuite_unencrypted_data"
+TEST_SCOUTSUITE_DATA_LOSS_PREVENTION = "scoutsuite_data_loss_prevention"
+TEST_SCOUTSUITE_SECURE_AUTHENTICATION = "scoutsuite_secure_authentication"
+TEST_SCOUTSUITE_RESTRICTIVE_POLICIES = "scoutsuite_unrestrictive_policies"
+TEST_SCOUTSUITE_LOGGING = "scoutsuite_logging"
+
 TESTS = (
     TEST_SEGMENTATION,
     TEST_MALICIOUS_ACTIVITY_TIMELINE,
@@ -47,25 +52,36 @@ TESTS = (
     TEST_DATA_ENDPOINT_ELASTIC,
     TEST_TUNNELING,
     TEST_COMMUNICATE_AS_NEW_USER,
-    TEST_SCOUTSUITE_PERMISSIVE_FIREWALL_RULES
+    TEST_SCOUTSUITE_PERMISSIVE_FIREWALL_RULES,
+    TEST_SCOUTSUITE_UNENCRYPTED_DATA,
+    TEST_SCOUTSUITE_DATA_LOSS_PREVENTION,
+    TEST_SCOUTSUITE_SECURE_AUTHENTICATION,
+    TEST_SCOUTSUITE_RESTRICTIVE_POLICIES,
+    TEST_SCOUTSUITE_LOGGING
 )
 
-PRINCIPLE_DATA_TRANSIT = "data_transit"
+PRINCIPLE_DATA_CONFIDENTIALITY = "data_transit"
 PRINCIPLE_ENDPOINT_SECURITY = "endpoint_security"
 PRINCIPLE_USER_BEHAVIOUR = "user_behaviour"
 PRINCIPLE_ANALYZE_NETWORK_TRAFFIC = "analyze_network_traffic"
 PRINCIPLE_SEGMENTATION = "segmentation"
 PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES = "network_policies"
 PRINCIPLE_USERS_MAC_POLICIES = "users_mac_policies"
+PRINCIPLE_DISASTER_RECOVERY = "data_backup"
+PRINCIPLE_SECURE_AUTHENTICATION = "secure_authentication"
+PRINCIPLE_MONITORING_AND_LOGGING = "monitoring_and_logging"
 PRINCIPLES = {
     PRINCIPLE_SEGMENTATION: "Apply segmentation and micro-segmentation inside your network.",
     PRINCIPLE_ANALYZE_NETWORK_TRAFFIC: "Analyze network traffic for malicious activity.",
     PRINCIPLE_USER_BEHAVIOUR: "Adopt security user behavior analytics.",
     PRINCIPLE_ENDPOINT_SECURITY: "Use anti-virus and other traditional endpoint security solutions.",
-    PRINCIPLE_DATA_TRANSIT: "Secure data at transit by encrypting it.",
+    PRINCIPLE_DATA_CONFIDENTIALITY: "Ensure data's confidentiality by encrypting it.",
     PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES: "Configure network policies to be as restrictive as possible.",
     PRINCIPLE_USERS_MAC_POLICIES: "Users' permissions to the network and to resources should be MAC (Mandatory "
                                   "Access Control) only.",
+    PRINCIPLE_DISASTER_RECOVERY: "Ensure data and infrastructure backups for disaster recovery scenarios.",
+    PRINCIPLE_SECURE_AUTHENTICATION: "Ensure secure authentication process's.",
+    PRINCIPLE_MONITORING_AND_LOGGING: "Ensure monitoring and logging in network resources."
 }
 
 POSSIBLE_STATUSES_KEY = "possible_statuses"
@@ -136,7 +152,7 @@ TESTS_MAP = {
             STATUS_PASSED: "Monkey didn't find open ElasticSearch instances. If you have such instances, look for alerts "
                            "that indicate attempts to access them. "
         },
-        PRINCIPLE_KEY: PRINCIPLE_DATA_TRANSIT,
+        PRINCIPLE_KEY: PRINCIPLE_DATA_CONFIDENTIALITY,
         PILLARS_KEY: [DATA],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     },
@@ -147,7 +163,7 @@ TESTS_MAP = {
             STATUS_PASSED: "Monkey didn't find open HTTP servers. If you have such servers, look for alerts that indicate "
                            "attempts to access them. "
         },
-        PRINCIPLE_KEY: PRINCIPLE_DATA_TRANSIT,
+        PRINCIPLE_KEY: PRINCIPLE_DATA_CONFIDENTIALITY,
         PILLARS_KEY: [DATA],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     },
@@ -176,12 +192,68 @@ TESTS_MAP = {
         TEST_EXPLANATION_KEY: "ScoutSuite assessed cloud firewall rules and settings.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_FAILED: "ScoutSuite found overly permissive firewall rules.",
+            STATUS_VERIFY: "ScoutSuite found potentially dangerous firewall rules you need to verify.",
             STATUS_PASSED: "ScoutSuite found no problems with cloud firewall rules."
         },
         PRINCIPLE_KEY: PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES,
         PILLARS_KEY: [NETWORKS],
-        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
     },
+    TEST_SCOUTSUITE_UNENCRYPTED_DATA: {
+        TEST_EXPLANATION_KEY: "ScoutSuite searched for resources containing unencrypted data.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_FAILED: "ScoutSuite found resources with unencrypted data.",
+            STATUS_VERIFY: "ScoutSuite found resources which could have unencrypted data.",
+            STATUS_PASSED: "ScoutSuite found no resources with unencrypted data."
+        },
+        PRINCIPLE_KEY: PRINCIPLE_DATA_CONFIDENTIALITY,
+        PILLARS_KEY: [DATA],
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+    },
+    TEST_SCOUTSUITE_DATA_LOSS_PREVENTION: {
+        TEST_EXPLANATION_KEY: "ScoutSuite searched for resources which are not protected against data loss.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_FAILED: "ScoutSuite found resources not protected against data loss.",
+            STATUS_VERIFY: "ScoutSuite found resources which might not be protected against data loss.",
+            STATUS_PASSED: "ScoutSuite found that all resources are secured against data loss."
+        },
+        PRINCIPLE_KEY: PRINCIPLE_DISASTER_RECOVERY,
+        PILLARS_KEY: [DATA],
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+    },
+    TEST_SCOUTSUITE_SECURE_AUTHENTICATION: {
+        TEST_EXPLANATION_KEY: "ScoutSuite searched for issues related to users' authentication.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_FAILED: "ScoutSuite found issues related to users' authentication.",
+            STATUS_VERIFY: "ScoutSuite found potential issues related to users' authentication.",
+            STATUS_PASSED: "ScoutSuite found no issues related to users' authentication."
+        },
+        PRINCIPLE_KEY: PRINCIPLE_SECURE_AUTHENTICATION,
+        PILLARS_KEY: [PEOPLE, WORKLOADS],
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+    },
+    TEST_SCOUTSUITE_RESTRICTIVE_POLICIES: {
+        TEST_EXPLANATION_KEY: "ScoutSuite searched for permissive user access policies.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_FAILED: "ScoutSuite found permissive user access policies.",
+            STATUS_VERIFY: "ScoutSuite found potential issues related to user access policies.",
+            STATUS_PASSED: "ScoutSuite found no issues related to user access policies."
+        },
+        PRINCIPLE_KEY: PRINCIPLE_USERS_MAC_POLICIES,
+        PILLARS_KEY: [PEOPLE, WORKLOADS],
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+    },
+    TEST_SCOUTSUITE_LOGGING: {
+        TEST_EXPLANATION_KEY: "ScoutSuite searched for issues, related to logging.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_FAILED: "ScoutSuite found logging issues.",
+            STATUS_VERIFY: "ScoutSuite found potential logging issues.",
+            STATUS_PASSED: "ScoutSuite found no logging issues."
+        },
+        PRINCIPLE_KEY: PRINCIPLE_MONITORING_AND_LOGGING,
+        PILLARS_KEY: [AUTOMATION_ORCHESTRATION, VISIBILITY_ANALYTICS],
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+    }
 }
 
 EVENT_TYPE_MONKEY_NETWORK = "monkey_network"

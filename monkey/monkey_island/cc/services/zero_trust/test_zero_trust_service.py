@@ -9,7 +9,7 @@ EXPECTED_DICT = {
     zero_trust_consts.AUTOMATION_ORCHESTRATION: [],
     zero_trust_consts.DATA: [
         {
-            "principle": zero_trust_consts.PRINCIPLES[zero_trust_consts.PRINCIPLE_DATA_TRANSIT],
+            "principle": zero_trust_consts.PRINCIPLES[zero_trust_consts.PRINCIPLE_DATA_CONFIDENTIALITY],
             "status": zero_trust_consts.STATUS_FAILED,
             "tests": [
                 {

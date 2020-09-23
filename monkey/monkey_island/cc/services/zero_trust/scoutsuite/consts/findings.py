@@ -1,6 +1,14 @@
 from common.common_consts import zero_trust_consts
-from common.common_consts.zero_trust_consts import NETWORKS
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.ec2_rules import EC2Rules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudtrail_rules import CloudTrailRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudwatch_rules import CloudWatchRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.ec2_rules import EC2Rules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.elb_rules import ELBRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.elbv2_rules import ELBv2Rules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rds_rules import RDSRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.redshift_rules import RedshiftRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.s3_rules import S3Rules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.iam_rules import IAMRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.vpc_rules import VPCRules
 
 
 class PERMISSIVE_FIREWALL_RULES:
@@ -14,6 +22,84 @@ class PERMISSIVE_FIREWALL_RULES:
              EC2Rules.SECURITY_GROUP_OPENS_ALL_PORTS, EC2Rules.SECURITY_GROUP_OPENS_PLAINTEXT_PORT_FTP,
              EC2Rules.SECURITY_GROUP_OPENS_PLAINTEXT_PORT_TELNET, EC2Rules.SECURITY_GROUP_OPENS_PORT_RANGE]
 
-    pillars = [NETWORKS]
-
     test = zero_trust_consts.TEST_SCOUTSUITE_PERMISSIVE_FIREWALL_RULES
+
+
+class UNENCRYPTED_DATA:
+    rules = [EC2Rules.EC2_EBS_SNAPSHOT_NOT_ENCRYPTED, EC2Rules.EC2_EBS_VOLUME_NOT_ENCRYPTED,
+             ELBv2Rules.ELBV2_LISTENER_ALLOWING_CLEARTEXT, ELBv2Rules.ELBV2_OLDER_SSL_POLICY,
+             RDSRules.RDS_INSTANCE_STORAGE_NOT_ENCRYPTED, RedshiftRules.REDSHIFT_CLUSTER_DATABASE_NOT_ENCRYPTED,
+             S3Rules.S3_BUCKET_ALLOWING_CLEARTEXT, S3Rules.S3_BUCKET_NO_DEFAULT_ENCRYPTION]
+
+    test = zero_trust_consts.TEST_SCOUTSUITE_UNENCRYPTED_DATA
+
+
+class DATA_LOSS_PREVENTION:
+    rules = [RDSRules.RDS_INSTANCE_BACKUP_DISABLED, RDSRules.RDS_INSTANCE_SHORT_BACKUP_RETENTION_PERIOD,
+             RDSRules.RDS_INSTANCE_SINGLE_AZ, S3Rules.S3_BUCKET_NO_MFA_DELETE, S3Rules.S3_BUCKET_NO_VERSIONING]
+
+    test = zero_trust_consts.TEST_SCOUTSUITE_DATA_LOSS_PREVENTION
+
+
+class SECURE_AUTHENTICATION:
+    rules = [
+        IAMRules.IAM_USER_NO_ACTIVE_KEY_ROTATION,
+        IAMRules.IAM_PASSWORD_POLICY_MINIMUM_LENGTH,
+        IAMRules.IAM_PASSWORD_POLICY_NO_EXPIRATION,
+        IAMRules.IAM_PASSWORD_POLICY_REUSE_ENABLED,
+        IAMRules.IAM_USER_WITH_PASSWORD_AND_KEY,
+        IAMRules.IAM_ASSUME_ROLE_LACKS_EXTERNAL_ID_AND_MFA,
+        IAMRules.IAM_USER_WITHOUT_MFA,
+        IAMRules.IAM_ROOT_ACCOUNT_NO_MFA,
+        IAMRules.IAM_ROOT_ACCOUNT_WITH_ACTIVE_KEYS,
+        IAMRules.IAM_USER_NO_INACTIVE_KEY_ROTATION,
+        IAMRules.IAM_USER_WITH_MULTIPLE_ACCESS_KEYS
+    ]
+
+    test = zero_trust_consts.TEST_SCOUTSUITE_SECURE_AUTHENTICATION
+
+
+class RESTRICTIVE_POLICIES:
+    rules = [
+        IAMRules.IAM_ASSUME_ROLE_POLICY_ALLOWS_ALL,
+        IAMRules.IAM_EC2_ROLE_WITHOUT_INSTANCES,
+        IAMRules.IAM_GROUP_WITH_INLINE_POLICIES,
+        IAMRules.IAM_GROUP_WITH_NO_USERS,
+        IAMRules.IAM_INLINE_GROUP_POLICY_ALLOWS_IAM_PASSROLE,
+        IAMRules.IAM_INLINE_GROUP_POLICY_ALLOWS_NOTACTIONS,
+        IAMRules.IAM_INLINE_GROUP_POLICY_ALLOWS_STS_ASSUMEROLE,
+        IAMRules.IAM_INLINE_ROLE_POLICY_ALLOWS_IAM_PASSROLE,
+        IAMRules.IAM_INLINE_ROLE_POLICY_ALLOWS_NOTACTIONS,
+        IAMRules.IAM_INLINE_ROLE_POLICY_ALLOWS_STS_ASSUMEROLE,
+        IAMRules.IAM_INLINE_USER_POLICY_ALLOWS_IAM_PASSROLE,
+        IAMRules.IAM_INLINE_USER_POLICY_ALLOWS_NOTACTIONS,
+        IAMRules.IAM_INLINE_USER_POLICY_ALLOWS_STS_ASSUMEROLE,
+        IAMRules.IAM_MANAGED_POLICY_ALLOWS_IAM_PASSROLE,
+        IAMRules.IAM_MANAGED_POLICY_ALLOWS_NOTACTIONS,
+        IAMRules.IAM_MANAGED_POLICY_ALLOWS_STS_ASSUMEROLE,
+        IAMRules.IAM_MANAGED_POLICY_NO_ATTACHMENTS,
+        IAMRules.IAM_ROLE_WITH_INLINE_POLICIES,
+        IAMRules.IAM_ROOT_ACCOUNT_USED_RECENTLY,
+        IAMRules.IAM_ROOT_ACCOUNT_WITH_ACTIVE_CERTS,
+        IAMRules.IAM_USER_WITH_INLINE_POLICIES,
+    ]
+
+    test = zero_trust_consts.TEST_SCOUTSUITE_RESTRICTIVE_POLICIES
+
+
+class LOGGING:
+    rules = [
+        CloudTrailRules.CLOUDTRAIL_DUPLICATED_GLOBAL_SERVICES_LOGGING,
+        CloudTrailRules.CLOUDTRAIL_NO_DATA_LOGGING,
+        CloudTrailRules.CLOUDTRAIL_NO_GLOBAL_SERVICES_LOGGING,
+        CloudTrailRules.CLOUDTRAIL_NO_LOG_FILE_VALIDATION,
+        CloudTrailRules.CLOUDTRAIL_NO_LOGGING,
+        CloudTrailRules.CLOUDTRAIL_NOT_CONFIGURED,
+        CloudWatchRules.CLOUDWATCH_ALARM_WITHOUT_ACTIONS,
+        ELBRules.ELB_NO_ACCESS_LOGS,
+        S3Rules.S3_BUCKET_NO_LOGGING,
+        ELBv2Rules.ELBV2_NO_ACCESS_LOGS,
+        VPCRules.VPC_SUBNET_WITHOUT_FLOW_LOG,
+    ]
+
+    test = zero_trust_consts.TEST_SCOUTSUITE_LOGGING
