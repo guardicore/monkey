@@ -16,19 +16,11 @@ export default function DropdownSelect(props) {
   }
 
   function generateDropdownItemsFromArray(data) {
-    const dropdownItems = [];
-    for (let i = 0; i < data.length; i++) {
-      dropdownItems.push(generateDropdownItem(i, data[i]));
-    }
-    return dropdownItems;
+    return data.map((x, i) => generateDropdownItem(i, x));
   }
 
   function generateDropdownItemsFromObject(data) {
-    const dropdownItems = [];
-    for (let [key, value] of Object.entries(data)) {
-      dropdownItems.push(generateDropdownItem(key, value));
-    }
-    return dropdownItems;
+    return Object.entries(data).map(([key, value]) => generateDropdownItem(key, value));
   }
 
   function generateDropdownItem(key, value) {
