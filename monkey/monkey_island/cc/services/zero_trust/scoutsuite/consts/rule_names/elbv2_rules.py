@@ -8,3 +8,6 @@ class ELBv2Rules(Enum):
 
     # Logging
     ELBV2_NO_ACCESS_LOGS = 'elbv2-no-access-logs'
+
+    # Data loss prevention
+    ELBV2_NO_DELETION_PROTECTION = 'elbv2-no-deletion-protection'

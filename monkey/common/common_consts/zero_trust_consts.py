@@ -41,6 +41,7 @@ TEST_SCOUTSUITE_DATA_LOSS_PREVENTION = "scoutsuite_data_loss_prevention"
 TEST_SCOUTSUITE_SECURE_AUTHENTICATION = "scoutsuite_secure_authentication"
 TEST_SCOUTSUITE_RESTRICTIVE_POLICIES = "scoutsuite_unrestrictive_policies"
 TEST_SCOUTSUITE_LOGGING = "scoutsuite_logging"
+TEST_SCOUTSUITE_SERVICE_SECURITY = "scoutsuite_service_security"
 
 TESTS = (
     TEST_SEGMENTATION,
@@ -57,7 +58,8 @@ TESTS = (
     TEST_SCOUTSUITE_DATA_LOSS_PREVENTION,
     TEST_SCOUTSUITE_SECURE_AUTHENTICATION,
     TEST_SCOUTSUITE_RESTRICTIVE_POLICIES,
-    TEST_SCOUTSUITE_LOGGING
+    TEST_SCOUTSUITE_LOGGING,
+    TEST_SCOUTSUITE_SERVICE_SECURITY
 )
 
 PRINCIPLE_DATA_CONFIDENTIALITY = "data_transit"
@@ -192,67 +194,71 @@ TESTS_MAP = {
         TEST_EXPLANATION_KEY: "ScoutSuite assessed cloud firewall rules and settings.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_FAILED: "ScoutSuite found overly permissive firewall rules.",
-            STATUS_VERIFY: "ScoutSuite found potentially dangerous firewall rules you need to verify.",
             STATUS_PASSED: "ScoutSuite found no problems with cloud firewall rules."
         },
         PRINCIPLE_KEY: PRINCIPLE_RESTRICTIVE_NETWORK_POLICIES,
         PILLARS_KEY: [NETWORKS],
-        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     },
     TEST_SCOUTSUITE_UNENCRYPTED_DATA: {
         TEST_EXPLANATION_KEY: "ScoutSuite searched for resources containing unencrypted data.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_FAILED: "ScoutSuite found resources with unencrypted data.",
-            STATUS_VERIFY: "ScoutSuite found resources which could have unencrypted data.",
             STATUS_PASSED: "ScoutSuite found no resources with unencrypted data."
         },
         PRINCIPLE_KEY: PRINCIPLE_DATA_CONFIDENTIALITY,
         PILLARS_KEY: [DATA],
-        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     },
     TEST_SCOUTSUITE_DATA_LOSS_PREVENTION: {
         TEST_EXPLANATION_KEY: "ScoutSuite searched for resources which are not protected against data loss.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_FAILED: "ScoutSuite found resources not protected against data loss.",
-            STATUS_VERIFY: "ScoutSuite found resources which might not be protected against data loss.",
             STATUS_PASSED: "ScoutSuite found that all resources are secured against data loss."
         },
         PRINCIPLE_KEY: PRINCIPLE_DISASTER_RECOVERY,
         PILLARS_KEY: [DATA],
-        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     },
     TEST_SCOUTSUITE_SECURE_AUTHENTICATION: {
         TEST_EXPLANATION_KEY: "ScoutSuite searched for issues related to users' authentication.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_FAILED: "ScoutSuite found issues related to users' authentication.",
-            STATUS_VERIFY: "ScoutSuite found potential issues related to users' authentication.",
             STATUS_PASSED: "ScoutSuite found no issues related to users' authentication."
         },
         PRINCIPLE_KEY: PRINCIPLE_SECURE_AUTHENTICATION,
         PILLARS_KEY: [PEOPLE, WORKLOADS],
-        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     },
     TEST_SCOUTSUITE_RESTRICTIVE_POLICIES: {
         TEST_EXPLANATION_KEY: "ScoutSuite searched for permissive user access policies.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_FAILED: "ScoutSuite found permissive user access policies.",
-            STATUS_VERIFY: "ScoutSuite found potential issues related to user access policies.",
             STATUS_PASSED: "ScoutSuite found no issues related to user access policies."
         },
         PRINCIPLE_KEY: PRINCIPLE_USERS_MAC_POLICIES,
         PILLARS_KEY: [PEOPLE, WORKLOADS],
-        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     },
     TEST_SCOUTSUITE_LOGGING: {
         TEST_EXPLANATION_KEY: "ScoutSuite searched for issues, related to logging.",
         FINDING_EXPLANATION_BY_STATUS_KEY: {
             STATUS_FAILED: "ScoutSuite found logging issues.",
-            STATUS_VERIFY: "ScoutSuite found potential logging issues.",
             STATUS_PASSED: "ScoutSuite found no logging issues."
         },
         PRINCIPLE_KEY: PRINCIPLE_MONITORING_AND_LOGGING,
         PILLARS_KEY: [AUTOMATION_ORCHESTRATION, VISIBILITY_ANALYTICS],
-        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED, STATUS_VERIFY]
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
+    },
+    TEST_SCOUTSUITE_SERVICE_SECURITY: {
+        TEST_EXPLANATION_KEY: "ScoutSuite searched for service security issues.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_FAILED: "ScoutSuite found service security issues.",
+            STATUS_PASSED: "ScoutSuite found no service security issues."
+        },
+        PRINCIPLE_KEY: PRINCIPLE_MONITORING_AND_LOGGING,
+        PILLARS_KEY: [DEVICES, NETWORKS],
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     }
 }
 
