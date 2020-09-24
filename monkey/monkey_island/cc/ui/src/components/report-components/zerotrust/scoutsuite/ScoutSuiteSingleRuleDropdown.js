@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import RULE_LEVELS from '../../common/consts/ScoutSuiteConsts/RuleLevels';
 import STATUSES from '../../common/consts/StatusConsts';
-import {faCheckCircle, faCircle, faExclamationCircle, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
+import {faCheckCircle, faCircle, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import RuleDisplay from './RuleDisplay';
 
 export default function ScoutSuiteSingleRuleDropdown(props) {
@@ -20,7 +20,7 @@ export default function ScoutSuiteSingleRuleDropdown(props) {
         <button className={classNames('btn-collapse', getDropdownClass())}
                 onClick={props.toggleCallback}>
           <span>
-            <FontAwesomeIcon icon={getRuleIcon()} />
+            <FontAwesomeIcon icon={getRuleIcon()}/>
             {props.rule.description}
           </span>
           <span>
@@ -36,12 +36,12 @@ export default function ScoutSuiteSingleRuleDropdown(props) {
   }
 
   function getRuleIcon() {
-    let ruleStatus = getRuleStatus()
-    switch(ruleStatus) {
+    let ruleStatus = getRuleStatus(props.rule);
+    switch (ruleStatus) {
       case STATUSES.STATUS_PASSED:
         return faCheckCircle;
       case STATUSES.STATUS_VERIFY:
-        return faQuestionCircle;
+        return faExclamationCircle;
       case STATUSES.STATUS_FAILED:
         return faExclamationCircle;
       case STATUSES.STATUS_UNEXECUTED:
@@ -49,29 +49,17 @@ export default function ScoutSuiteSingleRuleDropdown(props) {
     }
   }
 
-  function getDropdownClass(){
-    let ruleStatus = getRuleStatus()
-    switch(ruleStatus) {
+  function getDropdownClass() {
+    let ruleStatus = getRuleStatus(props.rule);
+    switch (ruleStatus) {
       case STATUSES.STATUS_PASSED:
         return "collapse-success";
       case STATUSES.STATUS_VERIFY:
-        return "collapse-warning";
+        return "collapse-danger";
       case STATUSES.STATUS_FAILED:
         return "collapse-danger";
       case STATUSES.STATUS_UNEXECUTED:
         return "collapse-default";
-    }
-  }
-
-  function getRuleStatus(){
-    if(props.rule.checked_items === 0) {
-      return STATUSES.STATUS_UNEXECUTED
-    } else if (props.rule.items.length === 0) {
-      return STATUSES.STATUS_PASSED
-    } else if (props.rule.level === RULE_LEVELS.LEVEL_WARNING) {
-      return STATUSES.STATUS_VERIFY
-    } else {
-      return STATUSES.STATUS_FAILED
     }
   }
 
@@ -81,6 +69,19 @@ export default function ScoutSuiteSingleRuleDropdown(props) {
 
   return getRuleCollapse();
 }
+
+export function getRuleStatus(rule) {
+  if (rule.checked_items.length === 0) {
+    return STATUSES.STATUS_UNEXECUTED
+  } else if (rule.items.length === 0) {
+    return STATUSES.STATUS_PASSED
+  } else if (rule.level === RULE_LEVELS.LEVEL_WARNING) {
+    return STATUSES.STATUS_VERIFY
+  } else {
+    return STATUSES.STATUS_FAILED
+  }
+}
+
 
 ScoutSuiteSingleRuleDropdown.propTypes = {
   isCollapseOpen: PropTypes.bool,
