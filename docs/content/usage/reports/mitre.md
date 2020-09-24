@@ -5,7 +5,7 @@ draft: false
 ---
 
 {{% notice info %}}
-Check out [the documentation for the other reports as well](../).
+Check out [the documentation for the other reports](../) and [the documentation for supported ATT&CK techniques as well](../../../reference/mitre_techniques).
 {{% /notice %}}
 
 The Monkey maps its actions to the [MITRE ATT&CK](https://attack.mitre.org/) knowledge base: It provides a new report with the utilized techniques and recommended mitigations, to help you simulate an APT attack on your network and mitigate real attack paths intelligently.
