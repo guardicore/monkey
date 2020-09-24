@@ -53,7 +53,7 @@ class IslandMonkeyRunErrorModal extends React.PureComponent {
   }
 
   getDisplayContentByError(errorMsg) {
-    if (errorMsg.includes('Permission denied:')) {
+    if (errorMsg.includes('Permission denied:') || errorMsg.includes('Text file busy')) {
       return this.getMonkeyAlreadyRunningContent()
     } else if (errorMsg.startsWith('Copy file failed')) {
       return this.getMissingBinariesContent()
