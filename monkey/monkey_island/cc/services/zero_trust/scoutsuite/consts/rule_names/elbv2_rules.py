@@ -11,3 +11,6 @@ class ELBv2Rules(Enum):
 
     # Data loss prevention
     ELBV2_NO_DELETION_PROTECTION = 'elbv2-no-deletion-protection'
+
+    # Service security
+    ELBV2_HTTP_REQUEST_SMUGGLING = 'elbv2-http-request-smuggling'

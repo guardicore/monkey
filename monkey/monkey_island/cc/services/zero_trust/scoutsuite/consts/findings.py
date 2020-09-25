@@ -161,9 +161,14 @@ class LOGGING:
 
     test = zero_trust_consts.TEST_SCOUTSUITE_LOGGING
 
+
 class SERVICE_SECURITY:
     rules = [
-        CloudformationRules.CLOUDFORMATION_STACK_WITH_ROLE
+        CloudformationRules.CLOUDFORMATION_STACK_WITH_ROLE,
+        ELBv2Rules.ELBV2_HTTP_REQUEST_SMUGGLING,
+        RDSRules.RDS_INSTANCE_CA_CERTIFICATE_DEPRECATED,
+        RDSRules.RDS_INSTANCE_NO_MINOR_UPGRADE,
+        RedshiftRules.REDSHIFT_CLUSTER_NO_VERSION_UPGRADE
     ]
 
     test = zero_trust_consts.TEST_SCOUTSUITE_SERVICE_SECURITY

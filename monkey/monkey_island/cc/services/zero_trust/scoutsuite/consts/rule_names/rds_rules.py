@@ -13,3 +13,7 @@ class RDSRules(Enum):
     # Firewalls
     RDS_SECURITY_GROUP_ALLOWS_ALL = 'rds-security-group-allows-all'
     RDS_SNAPSHOT_PUBLIC = 'rds-snapshot-public'
+
+    # Service security
+    RDS_INSTANCE_CA_CERTIFICATE_DEPRECATED = 'rds-instance-ca-certificate-deprecated'
+    RDS_INSTANCE_NO_MINOR_UPGRADE = 'rds-instance-no-minor-upgrade'

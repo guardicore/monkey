@@ -14,3 +14,6 @@ class RedshiftRules(Enum):
 
     # Logging
     REDSHIFT_PARAMETER_GROUP_LOGGING_DISABLED = 'redshift-parameter-group-logging-disabled'
+
+    # Service security
+    REDSHIFT_CLUSTER_NO_VERSION_UPGRADE = 'redshift-cluster-no-version-upgrade'
