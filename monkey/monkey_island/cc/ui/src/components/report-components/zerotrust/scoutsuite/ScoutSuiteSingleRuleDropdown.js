@@ -71,7 +71,7 @@ export default function ScoutSuiteSingleRuleDropdown(props) {
 }
 
 export function getRuleStatus(rule) {
-  if (rule.checked_items.length === 0) {
+  if (rule.checked_items === 0) {
     return STATUSES.STATUS_UNEXECUTED
   } else if (rule.items.length === 0) {
     return STATUSES.STATUS_PASSED
