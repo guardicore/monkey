@@ -51,7 +51,7 @@ def run_local_monkey():
         logger.error('popen failed', exc_info=True)
         return False, "popen failed: %s" % exc
 
-    return True, "pis: %s" % pid
+    return True, ""
 
 
 class LocalRun(flask_restful.Resource):
