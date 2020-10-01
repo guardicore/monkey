@@ -83,7 +83,7 @@ const getContents = (props) => {
 
         <h5>Keys for custom user</h5>
         <p>1. Open the IAM console at <a href={'https://console.aws.amazon.com/iam/'}
-                                         target={'_blank'}>https://console.aws.amazon.com/iam/</a> .</p>
+                                         target={'_blank'}>https://console.aws.amazon.com/iam/</a>.</p>
         <p>2. In the navigation pane, choose Users.</p>
         <p>3. Choose the name of the user whose access keys you want to create, and then choose the Security credentials
           tab.</p>

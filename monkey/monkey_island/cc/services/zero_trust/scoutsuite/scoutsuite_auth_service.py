@@ -23,12 +23,13 @@ _add_scoutsuite_to_python_path()
 def is_cloud_authentication_setup(provider: PROVIDERS) -> Tuple[bool, str]:
     if provider == PROVIDERS.AWS.value:
         if is_aws_keys_setup():
-            return True, "AWS keys already setup. Run monkey on Island to scan."
+            return True, "AWS keys already setup. Run Monkey on Island to start the scan."
 
         import common.cloud.scoutsuite.ScoutSuite.providers.aws.authentication_strategy as auth_strategy
         try:
             profile = auth_strategy.AWSAuthenticationStrategy().authenticate()
-            return True, f" Profile \"{profile.session.profile_name}\" is already setup. Run monkey on Island to scan."
+            return True, f" Profile \"{profile.session.profile_name}\" is already setup. " \
+                         f"Run Monkey on Island to start the scan."
         except Exception:
             return False, ""
 

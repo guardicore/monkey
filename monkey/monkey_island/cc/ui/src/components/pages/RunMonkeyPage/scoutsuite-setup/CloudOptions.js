@@ -29,7 +29,7 @@ const getContents = (props) => {
       .then(res => res.json())
       .then(res => {
         if(res.is_setup){
-          setDescription(res.message + 'Click next to change the configuration.');
+          setDescription(res.message + ' Click next to change the configuration.');
           setIconType('icon-success');
           setIcon(faCheck);
         } else {

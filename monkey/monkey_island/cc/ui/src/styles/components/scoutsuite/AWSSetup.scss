@@ -13,7 +13,19 @@
 }
 
 .aws-scoutsuite-configuration li {
+  margin-bottom: 0;
+}
+
+.aws-scoutsuite-configuration h2 {
+  margin-bottom: 20px;
+}
+
+.aws-scoutsuite-configuration p {
   margin-bottom: 5px;
+}
+
+.aws-scoutsuite-configuration .cli-link {
+  padding: 0 0 4px 0;
 }
 
 .monkey-submit-button {
