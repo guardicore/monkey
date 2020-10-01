@@ -12,6 +12,8 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.network_utils import get_subnets, local_ip_addresses
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.config_schema.config_value_paths import USER_LIST_PATH, \
+    PASSWORD_LIST_PATH, EXPLOITER_CLASSES_PATH, SUBNET_SCAN_LIST_PATH, LOCAL_NETWORK_SCAN_PATH
 from monkey_island.cc.services.configuration.utils import \
     get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.node import NodeService
@@ -619,15 +621,15 @@ class ReportService:
 
     @staticmethod
     def get_config_users():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_user_list'], True, True)
+        return ConfigService.get_config_value(USER_LIST_PATH, True, True)
 
     @staticmethod
     def get_config_passwords():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'], True, True)
+        return ConfigService.get_config_value(PASSWORD_LIST_PATH, True, True)
 
     @staticmethod
     def get_config_exploits():
-        exploits_config_value = ['basic', 'exploiters', 'exploiter_classes']
+        exploits_config_value = EXPLOITER_CLASSES_PATH
         default_exploits = ConfigService.get_default_config(False)
         for namespace in exploits_config_value:
             default_exploits = default_exploits[namespace]
@@ -641,11 +643,11 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        return ConfigService.get_config_value(['basic_network', 'scope', 'subnet_scan_list'], True, True)
+        return ConfigService.get_config_value(SUBNET_SCAN_LIST_PATH, True, True)
 
     @staticmethod
     def get_config_scan():
-        return ConfigService.get_config_value(['basic_network', 'scope', 'local_network_scan'], True, True)
+        return ConfigService.get_config_value(LOCAL_NETWORK_SCAN_PATH, True, True)
 
     @staticmethod
     def get_issues_overview(issues, config_users, config_passwords):

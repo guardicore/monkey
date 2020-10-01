@@ -36,16 +36,6 @@ class Configuration(object):
             self.max_depth = self.depth
         return unknown_items
 
-    def from_json(self, json_data):
-        """
-        Gets a json data object, parses it and applies it to the configuration
-        :param json_data:
-        :return:
-        """
-        formatted_data = json.loads(json_data)
-        result = self.from_kv(formatted_data)
-        return result
-
     @staticmethod
     def hide_sensitive_info(config_dict):
         for field in SENSITIVE_FIELDS:
