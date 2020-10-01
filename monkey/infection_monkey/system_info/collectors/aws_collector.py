@@ -1,10 +1,12 @@
 import logging
 
 from common.cloud.aws.aws_instance import AwsInstance
+from common.cloud.scoutsuite_consts import PROVIDERS
 from common.common_consts.system_info_collectors_names import AWS_COLLECTOR
+from infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite_collector import scan_cloud_security
 from infection_monkey.system_info.system_info_collector import \
     SystemInfoCollector
-from infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite_collector import CLOUD_TYPES, scan_cloud_security
+from infection_monkey.config import WormConfiguration
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +20,11 @@ class AwsCollector(SystemInfoCollector):
 
     def collect(self) -> dict:
         logger.info("Collecting AWS info")
+        if WormConfiguration.started_on_island:
+            logger.info("Attempting to scan AWS security with ScoutSuite.")
+            scan_cloud_security(cloud_type=PROVIDERS.AWS)
+        else:
+            logger.info("Didn't scan AWS security with ScoutSuite, because not on island.")
         aws = AwsInstance()
         info = {}
         if aws.is_instance():
@@ -26,8 +33,6 @@ class AwsCollector(SystemInfoCollector):
                 {
                     'instance_id': aws.get_instance_id()
                 }
-            # TODO add IF ON ISLAND check
-            scan_cloud_security(cloud_type=CLOUD_TYPES.AWS)
         else:
             logger.info("Machine is NOT an AWS instance")
 
