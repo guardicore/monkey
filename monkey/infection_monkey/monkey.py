@@ -126,6 +126,7 @@ class InfectionMonkey(object):
             self.shutdown_by_not_alive_config()
 
             if self.is_started_on_island():
+                WormConfiguration.started_on_island = True
                 ControlClient.report_start_on_island()
             ControlClient.should_monkey_run(self._opts.vulnerable_port)
 
