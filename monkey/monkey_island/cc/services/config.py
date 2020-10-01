@@ -21,12 +21,15 @@ from monkey_island.cc.services.config_schema.config_value_paths import STARTED_O
 logger = logging.getLogger(__name__)
 
 # This should be used for config values of array type (array of strings only)
-ENCRYPTED_CONFIG_ARRAYS = \
+ENCRYPTED_CONFIG_VALUES = \
     [
-        ['basic', 'credentials', 'exploit_password_list'],
-        ['internal', 'exploits', 'exploit_lm_hash_list'],
-        ['internal', 'exploits', 'exploit_ntlm_hash_list'],
-        ['internal', 'exploits', 'exploit_ssh_keys']
+        PASSWORD_LIST_PATH,
+        LM_HASH_LIST_PATH,
+        NTLM_HASH_LIST_PATH,
+        SSH_KEYS_PATH,
+        AWS_KEYS_PATH + ['access_key_id'],
+        AWS_KEYS_PATH + ['secret_access_key'],
+        AWS_KEYS_PATH + ['session_token']
     ]
 
 
@@ -69,8 +72,11 @@ class ConfigService:
         for config_key_part in config_key_as_arr:
             config = config[config_key_part]
         if should_decrypt:
-            if config_key_as_arr in ENCRYPTED_CONFIG_ARRAYS:
-                config = [encryptor.dec(x) for x in config]
+            if config_key_as_arr in ENCRYPTED_CONFIG_VALUES:
+                if isinstance(config, str):
+                    config = encryptor.dec(config)
+                elif isinstance(config, list):
+                    config = [encryptor.dec(x) for x in config]
         return config
 
     @staticmethod
@@ -80,19 +86,17 @@ class ConfigService:
                                {"$set": {mongo_key: value}})
 
     @staticmethod
-    def append_to_config_array(config_key_as_arr, value):
-        mongo_key = ".".join(config_key_as_arr)
-        mongo.db.config.update({'name': 'newconfig'},
-                               {"$push": {mongo_key: value}})
-
-    @staticmethod
     def get_flat_config(is_initial_config=False, should_decrypt=True):
         config_json = ConfigService.get_config(is_initial_config, should_decrypt)
         flat_config_json = {}
         for i in config_json:
             for j in config_json[i]:
                 for k in config_json[i][j]:
-                    flat_config_json[k] = config_json[i][j][k]
+                    if isinstance(config_json[i][j][k], dict):
+                        for key, value in config_json[i][j][k].items():
+                            flat_config_json[key] = value
+                    else:
+                        flat_config_json[k] = config_json[i][j][k]
 
         return flat_config_json
 
@@ -101,8 +105,8 @@ class ConfigService:
         return SCHEMA
 
     @staticmethod
-    def add_item_to_config_set_if_dont_exist(item_key, item_value, should_encrypt):
-        item_path_array = item_key.split('.')
+    def add_item_to_config_set_if_dont_exist(item_path_array, item_value, should_encrypt):
+        item_key = '.'.join(item_path_array)
         items_from_config = ConfigService.get_config_value(item_path_array, False, should_encrypt)
         if item_value in items_from_config:
             return

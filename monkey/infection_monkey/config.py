@@ -246,6 +246,10 @@ class Configuration(object):
     exploit_ntlm_hash_list = []
     exploit_ssh_keys = []
 
+    access_key_id = ''
+    secret_access_key = ''
+    session_token = ''
+
     # smb/wmi exploiter
     smb_download_timeout = 300  # timeout in seconds
     smb_service_name = "InfectionMonkey"

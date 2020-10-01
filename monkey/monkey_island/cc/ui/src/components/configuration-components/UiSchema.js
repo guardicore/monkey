@@ -84,6 +84,9 @@ export default function UiSchema(props) {
       monkey: {
         alive: {
           classNames: 'config-field-hidden'
+        },
+        aws_keys: {
+          classNames: 'config-field-hidden'
         }
       }
     }

@@ -94,6 +94,23 @@ INTERNAL = {
                     "type": "boolean",
                     "default": True,
                     "description": "Is the monkey alive"
+                },
+                "aws_keys": {
+                    "type": "object",
+                    "properties": {
+                        "access_key_id": {
+                            "type": "string",
+                            "default": ""
+                        },
+                        "secret_access_key": {
+                            "type": "string",
+                            "default": ""
+                        },
+                        "session_token": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
                 }
             }
         },
