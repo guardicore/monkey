@@ -1,5 +1,5 @@
 from common.common_consts.telem_categories import TelemCategoryEnum
-from infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite.ScoutSuite.output.result_encoder import \
+from common.cloud.scoutsuite.ScoutSuite.output.result_encoder import \
     ScoutJsonEncoder
 from infection_monkey.telemetry.base_telem import BaseTelem
 

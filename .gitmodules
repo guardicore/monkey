@@ -5,5 +5,5 @@
 	path = docs/themes/learn
 	url = https://github.com/guardicode/hugo-theme-learn.git
 [submodule "monkey/infection_monkey/system_info/collectors/scoutsuite"]
-	path = monkey/infection_monkey/system_info/collectors/scoutsuite_collector/scoutsuite
+	path = monkey/common/cloud/scoutsuite
 	url = https://github.com/ShayNehmad/ScoutSuite.git
