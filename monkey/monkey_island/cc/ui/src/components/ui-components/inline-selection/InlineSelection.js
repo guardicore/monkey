@@ -18,8 +18,8 @@ export default function InlineSelection(WrappedComponent, props) {
   )
 }
 
-function renderBackButton(props){
-  if(props.onBackButtonClick !== undefined){
+function renderBackButton(props) {
+  if (props.onBackButtonClick !== undefined) {
     return (<BackButton onClick={props.onBackButtonClick}/>);
   }
 }

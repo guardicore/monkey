@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
 import NextSelectionButton from '../../../ui-components/inline-selection/NextSelectionButton';
-import {faCloud} from '@fortawesome/free-solid-svg-icons';
-import AWSSetup from './AWSSetup';
+import {faCheck, faCloud, faSync} from '@fortawesome/free-solid-svg-icons';
+import AWSSetupOptions from './AWSConfiguration/AWSSetupOptions';
+import {PROVIDERS} from './ProvidersEnum';
+import AuthComponent from '../../../AuthComponent';
 
 
 const CloudOptions = (props) => {
@@ -14,14 +16,38 @@ const CloudOptions = (props) => {
   })
 }
 
+const authComponent = new AuthComponent({})
+
 const getContents = (props) => {
+
+  const [description, setDescription] = useState("Loading...");
+  const [iconType, setIconType] = useState('spinning-icon');
+  const [icon, setIcon] = useState(faSync);
+
+  useEffect(() => {
+    authComponent.authFetch('/api/scoutsuite_auth/' + PROVIDERS.AWS)
+      .then(res => res.json())
+      .then(res => {
+        if(res.is_setup){
+          setDescription(res.message + 'Click next to change the configuration.');
+          setIconType('icon-success');
+          setIcon(faCheck);
+        } else {
+          setDescription('Setup Amazon Web Services infrastructure scan.');
+          setIconType('')
+          setIcon(faCloud);
+        }
+      });
+  }, [props]);
+
   return (
     <>
       <NextSelectionButton title={'AWS'}
-                           description={'Setup Amazon Web Services infrastructure scan.'}
-                           icon={faCloud}
+                           description={description}
+                           icon={icon}
+                           iconType={iconType}
                            onButtonClick={() => {
-                             props.setComponent(AWSSetup,
+                             props.setComponent(AWSSetupOptions,
                                {setComponent: props.setComponent})
                            }}/>
     </>

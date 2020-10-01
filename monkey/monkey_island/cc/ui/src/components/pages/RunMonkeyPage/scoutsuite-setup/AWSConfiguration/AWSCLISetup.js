@@ -1,16 +1,17 @@
 import {Button} from 'react-bootstrap';
 import React from 'react';
-import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
-import CloudOptions from './CloudOptions';
-import {COLUMN_SIZES} from '../../../ui-components/inline-selection/utils';
-import '../../../../styles/components/scoutsuite/AWSSetup.scss';
+import InlineSelection from '../../../../ui-components/inline-selection/InlineSelection';
+import {COLUMN_SIZES} from '../../../../ui-components/inline-selection/utils';
+import '../../../../../styles/components/scoutsuite/AWSSetup.scss';
+import AWSSetupOptions from './AWSSetupOptions';
 
-export default function AWSSetup(props) {
+
+export default function AWSCLISetup(props) {
   return InlineSelection(getContents, {
     ...props,
     collumnSize: COLUMN_SIZES.LARGE,
     onBackButtonClick: () => {
-      props.setComponent(CloudOptions, props)
+      props.setComponent(AWSSetupOptions, props);
     }
   })
 }
@@ -33,9 +34,11 @@ const getContents = (props) => {
             <li>
               2. Run <code>aws configure</code>. It's important to configure credentials, which
               allows ScoutSuite to get information about your cloud configuration. The most trivial way to do so is to
-              provide <Button
-              href={'https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds'}
-              variant={'link'}>
+              provide
+              <Button
+                href={'https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds'}
+                variant={'link'}
+                target={'_blank'}>
               Access key ID and secret access key
             </Button>.
             </li>

@@ -7,7 +7,6 @@ import InlineSelection from '../../ui-components/inline-selection/InlineSelectio
 import {cloneDeep} from 'lodash';
 import {faCloud, faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
-import AWSSetup from './scoutsuite-setup/AWSSetup';
 import CloudOptions from './scoutsuite-setup/CloudOptions';
 
 function RunOptions(props) {

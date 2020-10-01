@@ -3,6 +3,7 @@
 @import '../../node_modules/bootstrap/scss/bootstrap';
 
 // Imports that require variables
+@import 'components/Buttons';
 @import 'pages/report/ReportPage.scss';
 @import 'pages/report/AttackReport.scss';
 @import 'pages/ConfigurationPage';
@@ -13,11 +14,12 @@
 @import 'components/AdvancedMultiSelect';
 @import 'components/particle-component/ParticleBackground';
 @import 'components/scoutsuite/ResourceDropdown';
+@import 'components/ImageModal';
+@import 'components/Icons';
 @import 'components/inline-selection/InlineSelection';
 @import 'components/inline-selection/NextSelectionButton';
 @import 'components/inline-selection/BackButton';
 @import 'components/inline-selection/CommandDisplay';
-@import 'components/Icons';
 
 
 // Define custom elements after bootstrap import

@@ -47,6 +47,8 @@ from monkey_island.cc.resources.test.monkey_test import MonkeyTest
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.zero_trust.finding_event import \
     ZeroTrustFindingEvent
+from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
+from monkey_island.cc.resources.zero_trust.scoutsuite_auth.scoutsuite_auth import ScoutSuiteAuth
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
@@ -146,6 +148,8 @@ def init_api_resources(api):
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
     api.add_resource(RemotePortCheck, '/api/monkey_control/check_remote_port/<string:port>')
     api.add_resource(StartedOnIsland, '/api/monkey_control/started_on_island')
+    api.add_resource(ScoutSuiteAuth, '/api/scoutsuite_auth/<string:provider>')
+    api.add_resource(AWSKeys, '/api/aws_keys')
 
     api.add_resource(MonkeyTest, '/api/test/monkey')
     api.add_resource(ClearCaches, '/api/test/clear_caches')
