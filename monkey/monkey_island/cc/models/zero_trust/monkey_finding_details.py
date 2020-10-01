@@ -17,3 +17,4 @@ class MonkeyFindingDetails(Document):
     # LOGIC
     def add_events(self, events: List[Event]) -> None:
         self.update(push_all__events=events)
+        return self
