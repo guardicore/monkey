@@ -26,7 +26,7 @@ To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonk
 <img src=".github/map-full.png"  width="800" height="600">
 
 ### Security report
-<img src=".github/security-report.png"  width="800" height="500">
+<img src=".github/security-report.png"  width="800" height="600">
 
 ### Zero trust report
 <img src=".github/zero-trust-report.png"  width="800" height="500">
