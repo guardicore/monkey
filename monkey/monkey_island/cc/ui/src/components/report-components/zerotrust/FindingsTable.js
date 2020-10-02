@@ -7,7 +7,7 @@ import EventsButton from './EventsButton';
 import ScoutSuiteRuleButton from './scoutsuite/ScoutSuiteRuleButton';
 
 const EVENTS_COLUMN_MAX_WIDTH = 250;
-const PILLARS_COLUMN_MAX_WIDTH = 200;
+const PILLARS_COLUMN_MAX_WIDTH = 260;
 
 
 export class FindingsTable extends Component {
