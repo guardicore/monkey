@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def scan_cloud_security(cloud_type: PROVIDERS):
     try:
         results = run_scoutsuite(cloud_type.value)
-        if 'error' in results and results['error']:
+        if isinstance(results, dict) and 'error' in results and results['error']:
             raise Exception(results['error'])
         send_results(results)
     except Exception as e:

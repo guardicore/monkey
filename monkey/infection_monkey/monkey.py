@@ -250,7 +250,7 @@ class InfectionMonkey(object):
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
     def collect_system_info_if_configured(self):
-        LOG.debug("Calling system info collection")
+        LOG.debug("Calling for system info collection")
         system_info_collector = SystemInfoCollector()
         system_info = system_info_collector.get_info()
         SystemInfoTelem(system_info).send()
