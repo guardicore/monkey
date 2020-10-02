@@ -12,6 +12,8 @@ import {faArrowRight} from '@fortawesome/free-solid-svg-icons';
 export default function ResourceDropdown(props) {
 
   const [isCollapseOpen, setIsCollapseOpen] = useState(false);
+  let parser = new ScoutSuiteDataParser(props.scoutsuite_data.data.services);
+  let resource_value = parser.getResourceValue(props.resource_path, props.template_path);
 
   function getResourceDropdown() {
     return (
@@ -20,7 +22,7 @@ export default function ResourceDropdown(props) {
         <button className={'btn-collapse'}
                 onClick={() => setIsCollapseOpen(!isCollapseOpen)}>
           <span>
-            {props.resource_path}
+            {resource_value.hasOwnProperty('name') ? resource_value.name : props.resource_path}
           </span>
           <span>
               <FontAwesomeIcon icon={isCollapseOpen ? faChevronDown : faChevronUp}/>
@@ -51,8 +53,6 @@ export default function ResourceDropdown(props) {
   }
 
   function getResourceValueDisplay() {
-    let parser = new ScoutSuiteDataParser(props.scoutsuite_data.data.services);
-    let resource_value = parser.getValueAt(props.resource_path);
     if (resource_value) {
       return(
         <div>
@@ -81,6 +81,7 @@ export default function ResourceDropdown(props) {
 }
 
 ResourceDropdown.propTypes = {
-  resource_path: PropTypes.object,
+  template_path: PropTypes.string,
+  resource_path: PropTypes.string,
   scoutsuite_data: PropTypes.object
 };

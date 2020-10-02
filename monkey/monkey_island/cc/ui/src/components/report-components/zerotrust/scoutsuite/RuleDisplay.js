@@ -40,7 +40,10 @@ export default function RuleDisplay(props) {
   function getResources() {
     let resources = []
     props.rule.items.forEach(item => {
-      resources.push(<ResourceDropdown resource_path={item} scoutsuite_data={props.scoutsuite_data}/>)
+      let template_path = props.rule.hasOwnProperty('display_path') ? props.rule.display_path : props.rule.path;
+      resources.push(<ResourceDropdown resource_path={item}
+                                       template_path={template_path}
+                                       scoutsuite_data={props.scoutsuite_data}/>)
     })
     return (
       <div className={'reference-list'}>

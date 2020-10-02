@@ -3,6 +3,22 @@ export default class ScoutSuiteDataParser {
     this.runResults = runResults
   }
 
+  /*
+  itemPath contains path to a specific value e.g. s3.buckets.da1e7081077ce92.secure_transport_enabled"
+  templatePath contains a template path for resource we would want to display e.g. s3.buckets.id
+   */
+  getResourceValue(itemPath, templatePath) {
+    let resourcePath = this.fillTemplatePath(itemPath, templatePath);
+    return this.getValueAt(resourcePath);
+  }
+
+  fillTemplatePath(itemPath, templatePath) {
+    let itemPathArray = itemPath.split('.');
+    let templatePathArray = templatePath.split('.');
+    let resourcePathArray = templatePathArray.map((val, i) => {return val === 'id' ? itemPathArray[i] : val})
+    return resourcePathArray.join('.');
+  }
+
   getValueAt(path) {
     return this.getValueAtRecursive(path, this.runResults)
   }
