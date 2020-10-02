@@ -11,7 +11,7 @@ export default function RuleDisplay(props) {
         <h3>{props.rule.description}({props.rule.service})</h3>
       </div>
       <div className={'rationale'}>
-        <p>{props.rule.rationale}</p>
+        <p dangerouslySetInnerHTML={{__html: props.rule.rationale}} />
       </div>
       <div className={'checked-resources'}>
         <p className={'checked-resources-title'}>Resources checked: </p>
