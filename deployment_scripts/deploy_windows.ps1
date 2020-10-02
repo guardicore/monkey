@@ -115,6 +115,9 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     "Installing python packages for monkey"
     $monkeyRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\requirements.txt"
     & python -m pip install --user -r $monkeyRequirements
+    "Installing python packages for ScoutSuite"
+    $scoutsuiteRequirements = Join-Path -Path $monkey_home -ChildPath $SCOUTSUITE_DIR | Join-Path -ChildPath "\requirements.txt"
+    & python -m pip install --user -r $scoutsuiteRequirements
 
     $user_python_dir = cmd.exe /c 'py -m site --user-site'
     $user_python_dir = Join-Path (Split-Path $user_python_dir) -ChildPath "\Scripts"

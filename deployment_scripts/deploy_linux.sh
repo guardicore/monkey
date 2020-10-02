@@ -61,6 +61,7 @@ MONGO_PATH="$ISLAND_PATH/bin/mongodb"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
+SCOUTSUITE_DIR="$monkey_home/monkey/common/cloud/scoutsuite"
 
 if is_root; then
   log_message "Please don't run this script as root"
@@ -138,6 +139,9 @@ sudo apt-get install libffi-dev upx libssl-dev libc++1
 requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
 
+log_message "Installing ScoutSuite requirements"
+requirements_scoutsuite="$SCOUTSUITE_DIR/requirements.txt"
+${python_cmd} -m pip install -r "${requirements_scoutsuite}" --user --upgrade || handle_error
 
 agents=${3:-true}
 # Download binaries
