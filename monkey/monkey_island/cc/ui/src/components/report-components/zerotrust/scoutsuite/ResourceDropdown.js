@@ -39,10 +39,10 @@ export default function ResourceDropdown(props) {
   function replacePathDotsWithArrows(resourcePath) {
     let path_vars = resourcePath.split('.')
     let display_path = []
-    for(let i = 0; i < path_vars.length; i++){
+    for (let i = 0; i < path_vars.length; i++) {
       display_path.push(path_vars[i])
-      if( i !== path_vars.length - 1) {
-        display_path.push(<FontAwesomeIcon icon={faArrowRight} />)
+      if (i !== path_vars.length - 1) {
+        display_path.push(<FontAwesomeIcon icon={faArrowRight}/>)
       }
     }
     return display_path;
@@ -54,14 +54,14 @@ export default function ResourceDropdown(props) {
 
   function getResourceValueDisplay() {
     if (resource_value) {
-      return(
+      return (
         <div>
           <p className={'resource-value-title'}>Value:</p>
           <pre className={'resource-value-json'}>{prettyPrintJson(resource_value)}</pre>
         </div>
-      )
+      );
     } else {
-      return ''
+      return '';
     }
   }
 
