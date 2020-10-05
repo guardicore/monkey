@@ -34,11 +34,11 @@ export WINDOWS_64_BINARY_URL
 export WINDOWS_64_BINARY_NAME
 
 # Other binaries for monkey
-TRACEROUTE_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/traceroute64"
+TRACEROUTE_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/v1.8.0/traceroute64"
 export TRACEROUTE_64_BINARY_URL
-TRACEROUTE_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/traceroute32"
+TRACEROUTE_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/v1.8.0/traceroute32"
 export TRACEROUTE_32_BINARY_URL
-SAMBACRY_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/sc_monkey_runner64.so"
+SAMBACRY_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/v1.8.0/sc_monkey_runner64.so"
 export SAMBACRY_64_BINARY_URL
-SAMBACRY_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/sc_monkey_runner32.so"
+SAMBACRY_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/v1.8.0/sc_monkey_runner32.so"
 export SAMBACRY_32_BINARY_URL
