@@ -10,7 +10,7 @@ get_latest_release() {
     sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
 }
 
-MONKEY_LATEST_RELEASE=$(get_latest_release "monkey/guardicore")
+MONKEY_LATEST_RELEASE=$(get_latest_release "guardicore/monkey")
 
 # Monkey binaries
 LINUX_32_BINARY_NAME="monkey-linux-32"
