@@ -46,7 +46,7 @@ def run_local_monkey():
         args = ['"%s" m0nk3y -s %s:%s' % (target_path, local_ip_addresses()[0], env_singleton.env.get_island_port())]
         if sys.platform == "win32":
             args = "".join(args)
-        pid = subprocess.Popen(args, shell=True).pid
+        subprocess.Popen(args, shell=True).pid
     except Exception as exc:
         logger.error('popen failed', exc_info=True)
         return False, "popen failed: %s" % exc

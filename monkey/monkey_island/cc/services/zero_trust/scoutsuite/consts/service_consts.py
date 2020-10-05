@@ -30,4 +30,3 @@ class SERVICE_TYPES(Enum):
     SQS = 'sqs'
     VPC = 'vpc'
     SECRETSMANAGER = 'secretsmanager'
-

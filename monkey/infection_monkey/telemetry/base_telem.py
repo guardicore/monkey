@@ -5,7 +5,7 @@ import logging
 from infection_monkey.control import ControlClient
 
 logger = logging.getLogger(__name__)
-LOGGED_DATA_LENGTH = 300 # How many characters of telemetry data will be logged
+LOGGED_DATA_LENGTH = 300  # How many characters of telemetry data will be logged
 
 __author__ = 'itay.mizeretz'
 
