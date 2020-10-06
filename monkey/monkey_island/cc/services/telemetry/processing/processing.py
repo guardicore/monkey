@@ -7,14 +7,14 @@ from monkey_island.cc.services.telemetry.processing.post_breach import \
     process_post_breach_telemetry
 from monkey_island.cc.services.telemetry.processing.scan import \
     process_scan_telemetry
+from monkey_island.cc.services.telemetry.processing.scoutsuite import \
+    process_scoutsuite_telemetry
 from monkey_island.cc.services.telemetry.processing.state import \
     process_state_telemetry
 from monkey_island.cc.services.telemetry.processing.system_info import \
     process_system_info_telemetry
 from monkey_island.cc.services.telemetry.processing.tunnel import \
     process_tunnel_telemetry
-from monkey_island.cc.services.telemetry.processing.scoutsuite import \
-    process_scoutsuite_telemetry
 
 logger = logging.getLogger(__name__)
 

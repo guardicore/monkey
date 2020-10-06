@@ -4,7 +4,8 @@ import common.common_consts.zero_trust_consts as zero_trust_consts
 from common.common_consts.network_consts import ES_SERVICE
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_finding_service import \
+    MonkeyFindingService
 
 HTTP_SERVERS_SERVICES_NAMES = ['tcp-80']
 

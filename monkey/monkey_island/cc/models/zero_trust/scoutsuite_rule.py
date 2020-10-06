@@ -1,5 +1,5 @@
-from mongoengine import StringField, EmbeddedDocument, ListField, \
-    IntField, DynamicField
+from mongoengine import (DynamicField, EmbeddedDocument, IntField, ListField,
+                         StringField)
 
 from monkey_island.cc.services.zero_trust.scoutsuite.consts import rule_consts
 

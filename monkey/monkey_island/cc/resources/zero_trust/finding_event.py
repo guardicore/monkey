@@ -3,7 +3,8 @@ import json
 import flask_restful
 
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_finding_service import \
+    MonkeyFindingService
 
 
 class ZeroTrustFindingEvent(flask_restful.Resource):

@@ -2,8 +2,8 @@ import logging
 
 import infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite_api as scoutsuite_api
 from common.cloud.scoutsuite_consts import PROVIDERS
-from infection_monkey.telemetry.scoutsuite_telem import ScoutSuiteTelem
 from infection_monkey.config import WormConfiguration
+from infection_monkey.telemetry.scoutsuite_telem import ScoutSuiteTelem
 
 logger = logging.getLogger(__name__)
 

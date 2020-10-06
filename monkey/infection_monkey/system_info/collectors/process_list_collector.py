@@ -2,7 +2,8 @@ import logging
 
 import psutil
 
-from common.common_consts.system_info_collectors_names import PROCESS_LIST_COLLECTOR
+from common.common_consts.system_info_collectors_names import \
+    PROCESS_LIST_COLLECTOR
 from infection_monkey.system_info.system_info_collector import \
     SystemInfoCollector
 

@@ -47,8 +47,10 @@ from monkey_island.cc.resources.test.monkey_test import MonkeyTest
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.zero_trust.finding_event import \
     ZeroTrustFindingEvent
-from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
-from monkey_island.cc.resources.zero_trust.scoutsuite_auth.scoutsuite_auth import ScoutSuiteAuth
+from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import \
+    AWSKeys
+from monkey_island.cc.resources.zero_trust.scoutsuite_auth.scoutsuite_auth import \
+    ScoutSuiteAuth
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json

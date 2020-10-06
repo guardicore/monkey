@@ -1,6 +1,7 @@
 import common.common_consts.zero_trust_consts as zero_trust_consts
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
 from monkey_island.cc.models.zero_trust.event import Event
+from monkey_island.cc.services.zero_trust.monkey_finding_service import \
+    MonkeyFindingService
 
 COMM_AS_NEW_USER_FAILED_FORMAT = "Monkey on {} couldn't communicate as new user. Details: {}"
 COMM_AS_NEW_USER_SUCCEEDED_FORMAT = \

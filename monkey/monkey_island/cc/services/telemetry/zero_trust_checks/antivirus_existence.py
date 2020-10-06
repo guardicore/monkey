@@ -5,7 +5,8 @@ from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.services.telemetry.zero_trust_checks.known_anti_viruses import \
     ANTI_VIRUS_KNOWN_PROCESS_NAMES
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_finding_service import \
+    MonkeyFindingService
 
 
 def check_antivirus_existence(process_list_json, monkey_guid):

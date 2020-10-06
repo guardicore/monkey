@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.service_consts import SERVICES, FINDINGS, SERVICE_TYPES
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.service_consts import (
+    FINDINGS, SERVICE_TYPES, SERVICES)
 
 
 class AbstractRulePathCreator(ABC):

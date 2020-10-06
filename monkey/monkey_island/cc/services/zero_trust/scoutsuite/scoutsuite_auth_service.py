@@ -7,7 +7,8 @@ from common.cloud.scoutsuite_consts import PROVIDERS
 from common.utils.exceptions import InvalidAWSKeys
 from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.config_schema.config_value_paths import AWS_KEYS_PATH
+from monkey_island.cc.services.config_schema.config_value_paths import \
+    AWS_KEYS_PATH
 
 _scoutsuite_api_package = pkgutil.get_loader('common.cloud.scoutsuite.ScoutSuite.__main__')
 

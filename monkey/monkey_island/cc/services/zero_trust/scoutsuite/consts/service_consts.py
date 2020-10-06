@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 SERVICES = 'services'
 FINDINGS = 'findings'
 

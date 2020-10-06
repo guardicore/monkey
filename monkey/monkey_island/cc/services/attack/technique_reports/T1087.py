@@ -1,4 +1,5 @@
-from common.common_consts.post_breach_consts import POST_BREACH_ACCOUNT_DISCOVERY
+from common.common_consts.post_breach_consts import \
+    POST_BREACH_ACCOUNT_DISCOVERY
 from monkey_island.cc.services.attack.technique_reports.pba_technique import \
     PostBreachTechnique
 

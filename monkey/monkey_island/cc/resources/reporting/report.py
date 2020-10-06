@@ -1,9 +1,10 @@
 import http.client
 
 import flask_restful
-from flask import jsonify, Response
+from flask import Response, jsonify
 
-from monkey_island.cc.models.zero_trust.scoutsuite_data_json import ScoutSuiteDataJson
+from monkey_island.cc.models.zero_trust.scoutsuite_data_json import \
+    ScoutSuiteDataJson
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.reporting.report import ReportService
 from monkey_island.cc.services.zero_trust.finding_service import FindingService
