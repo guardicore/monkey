@@ -20,7 +20,7 @@ const authComponent = new AuthComponent({})
 
 const getContents = (props) => {
 
-  const [description, setDescription] = useState("Loading...");
+  const [description, setDescription] = useState('Loading...');
   const [iconType, setIconType] = useState('spinning-icon');
   const [icon, setIcon] = useState(faSync);
 

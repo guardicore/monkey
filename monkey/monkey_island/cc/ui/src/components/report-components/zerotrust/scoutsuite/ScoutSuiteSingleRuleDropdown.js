@@ -53,13 +53,13 @@ export default function ScoutSuiteSingleRuleDropdown(props) {
     let ruleStatus = getRuleStatus(props.rule);
     switch (ruleStatus) {
       case STATUSES.STATUS_PASSED:
-        return "collapse-success";
+        return 'collapse-success';
       case STATUSES.STATUS_VERIFY:
-        return "collapse-danger";
+        return 'collapse-danger';
       case STATUSES.STATUS_FAILED:
-        return "collapse-danger";
+        return 'collapse-danger';
       case STATUSES.STATUS_UNEXECUTED:
-        return "collapse-default";
+        return 'collapse-default';
     }
   }
 

@@ -22,7 +22,8 @@ export default function ResourceDropdown(props) {
         <button className={'btn-collapse'}
                 onClick={() => setIsCollapseOpen(!isCollapseOpen)}>
           <span>
-            {resource_value.hasOwnProperty('name') ? resource_value.name : props.resource_path}
+            {Object.prototype.hasOwnProperty.call(resource_value, 'name') ?
+              resource_value.name : props.resource_path}
           </span>
           <span>
               <FontAwesomeIcon icon={isCollapseOpen ? faChevronDown : faChevronUp}/>

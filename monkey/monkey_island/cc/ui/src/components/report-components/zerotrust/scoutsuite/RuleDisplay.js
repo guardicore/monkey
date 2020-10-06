@@ -11,7 +11,7 @@ export default function RuleDisplay(props) {
         <h3>{props.rule.description}({props.rule.service})</h3>
       </div>
       <div className={'rationale'}>
-        <p dangerouslySetInnerHTML={{__html: props.rule.rationale}} />
+        <p dangerouslySetInnerHTML={{__html: props.rule.rationale}}/>
       </div>
       <div className={'checked-resources'}>
         <p className={'checked-resources-title'}>Resources checked: </p>
@@ -28,7 +28,10 @@ export default function RuleDisplay(props) {
   function getReferences() {
     let references = []
     props.rule.references.forEach(reference => {
-      references.push(<a href={reference} className={'reference-link'} target={'_blank'}>{reference}</a>)
+      references.push(<a href={reference}
+                         className={'reference-link'}
+                         target={'_blank'}
+                         rel="noopener noreferrer">{reference}</a>)
     })
     return (
       <div className={'reference-list'}>
@@ -40,7 +43,8 @@ export default function RuleDisplay(props) {
   function getResources() {
     let resources = []
     props.rule.items.forEach(item => {
-      let template_path = props.rule.hasOwnProperty('display_path') ? props.rule.display_path : props.rule.path;
+      let template_path = Object.prototype.hasOwnProperty.call(props.rule, 'display_path')
+        ? props.rule.display_path : props.rule.path;
       resources.push(<ResourceDropdown resource_path={item}
                                        template_path={template_path}
                                        scoutsuite_data={props.scoutsuite_data}/>)
