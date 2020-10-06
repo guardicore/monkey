@@ -4,8 +4,7 @@ from monkey_island.cc.services.config import ConfigService
 
 __author__ = "VakarisZ"
 
-from monkey_island.cc.services.config_schema.config_value_paths import \
-    CURRENT_SERVER_PATH
+from monkey_island.cc.services.config_schema.config_value_paths import CURRENT_SERVER_PATH
 
 
 class T1065(AttackTechnique):

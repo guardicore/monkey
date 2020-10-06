@@ -12,8 +12,7 @@ from monkey_island.cc.models.monkey import Monkey
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.processing import \
-    process_telemetry
+from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
 
 __author__ = 'Barak'
 

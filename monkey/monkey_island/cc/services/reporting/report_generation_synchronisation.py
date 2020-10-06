@@ -37,8 +37,7 @@ def safe_generate_regular_report():
 
 def safe_generate_attack_report():
     # Local import to avoid circular imports
-    from monkey_island.cc.services.attack.attack_report import \
-        AttackReportService
+    from monkey_island.cc.services.attack.attack_report import AttackReportService
     try:
         __attack_report_generating_lock.acquire()
         attack_report = AttackReportService.generate_new_report()

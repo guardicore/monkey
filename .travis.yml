@@ -77,7 +77,7 @@ script:
 - if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
 ## Check import order
-- python -m isort . -c -p common -p infection_monkey -p monkey_island --skip common/cloud/scoutsuite
+- python -m isort . -c -p common -p infection_monkey -p monkey_island --skip-glob ./common/cloud/scoutsuite --skip ./monkey_island/cc/services/zero_trust/scoutsuite/data_parsing/rule_path_building/rule_path_creators_list.py  -l 120 --wl 120
 
 ## Run unit tests
 - cd monkey  # This is our source dir

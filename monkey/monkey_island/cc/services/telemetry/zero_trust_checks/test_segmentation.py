@@ -4,10 +4,8 @@ import common.common_consts.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
-from monkey_island.cc.models.zero_trust.segmentation_finding import \
-    SegmentationFinding
-from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import \
-    create_or_add_findings_for_all_pairs
+from monkey_island.cc.models.zero_trust.segmentation_finding import SegmentationFinding
+from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import create_or_add_findings_for_all_pairs
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 FIRST_SUBNET = "1.1.1.1"

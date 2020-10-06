@@ -1,7 +1,6 @@
 from unittest import TestCase
 
-from monkey_island.cc.services.attack.mitre_api_interface import \
-    MitreApiInterface
+from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterface
 
 
 class TestMitreApiInterface(TestCase):

@@ -1,8 +1,6 @@
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.utils import \
-    get_tunnel_host_ip_from_proxy_field
-from monkey_island.cc.services.telemetry.zero_trust_checks.tunneling import \
-    check_tunneling_violation
+from monkey_island.cc.services.telemetry.processing.utils import get_tunnel_host_ip_from_proxy_field
+from monkey_island.cc.services.telemetry.zero_trust_checks.tunneling import check_tunneling_violation
 
 
 def process_tunnel_telemetry(telemetry_json):

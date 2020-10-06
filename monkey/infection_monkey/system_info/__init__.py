@@ -4,13 +4,11 @@ from enum import IntEnum
 
 import psutil
 
-from common.common_consts.system_info_collectors_names import \
-    AZURE_CRED_COLLECTOR
+from common.common_consts.system_info_collectors_names import AZURE_CRED_COLLECTOR
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
 from infection_monkey.system_info.netstat_collector import NetstatCollector
-from infection_monkey.system_info.system_info_collectors_handler import \
-    SystemInfoCollectorsHandler
+from infection_monkey.system_info.system_info_collectors_handler import SystemInfoCollectorsHandler
 
 LOG = logging.getLogger(__name__)
 

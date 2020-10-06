@@ -2,18 +2,14 @@ import logging
 import typing
 
 from common.common_consts.system_info_collectors_names import (
-    AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR,
-    PROCESS_LIST_COLLECTOR, SCOUTSUITE_COLLECTOR)
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import \
-    process_aws_telemetry
+    AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR, PROCESS_LIST_COLLECTOR, SCOUTSUITE_COLLECTOR)
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import process_aws_telemetry
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import \
     process_environment_telemetry
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.hostname import \
-    process_hostname_telemetry
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.hostname import process_hostname_telemetry
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.scoutsuite import \
     process_scout_suite_telemetry
-from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import \
-    check_antivirus_existence
+from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import check_antivirus_existence
 
 logger = logging.getLogger(__name__)
 

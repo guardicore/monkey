@@ -3,8 +3,7 @@ from typing import Any, Dict, List, NewType
 
 from pypykatz.pypykatz import pypykatz
 
-from infection_monkey.system_info.windows_cred_collector.windows_credentials import \
-    WindowsCredentials
+from infection_monkey.system_info.windows_cred_collector.windows_credentials import WindowsCredentials
 
 CREDENTIAL_TYPES = ['msv_creds', 'wdigest_creds', 'ssp_creds', 'livessp_creds', 'dpapi_creds',
                     'kerberos_creds', 'credman_creds', 'tspkg_creds']

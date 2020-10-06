@@ -2,14 +2,11 @@ import itertools
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
 from common.network.network_range import NetworkRange
-from common.network.segmentation_utils import (get_ip_if_in_subnet,
-                                               get_ip_in_src_and_not_in_dst)
+from common.network.segmentation_utils import get_ip_if_in_subnet, get_ip_in_src_and_not_in_dst
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
-from monkey_island.cc.models.zero_trust.segmentation_finding import \
-    SegmentationFinding
-from monkey_island.cc.services.configuration.utils import \
-    get_config_network_segments_as_subnet_groups
+from monkey_island.cc.models.zero_trust.segmentation_finding import SegmentationFinding
+from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 
 SEGMENTATION_DONE_EVENT_TEXT = "Monkey on {hostname} is done attempting cross-segment communications " \
                                "from `{src_seg}` segments to `{dst_seg}` segments."

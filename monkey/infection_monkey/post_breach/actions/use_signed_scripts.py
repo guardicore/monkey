@@ -1,8 +1,7 @@
 import logging
 import subprocess
 
-from common.common_consts.post_breach_consts import \
-    POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC
+from common.common_consts.post_breach_consts import POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.signed_script_proxy.signed_script_proxy import (
     cleanup_changes, get_commands_to_proxy_execution_using_signed_script)

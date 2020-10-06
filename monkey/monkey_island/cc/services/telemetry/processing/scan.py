@@ -1,12 +1,9 @@
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.utils import \
-    get_edge_by_scan_or_exploit_telemetry
-from monkey_island.cc.services.telemetry.zero_trust_checks.data_endpoints import \
-    check_open_data_endpoints
-from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import \
-    check_segmentation_violation
+from monkey_island.cc.services.telemetry.processing.utils import get_edge_by_scan_or_exploit_telemetry
+from monkey_island.cc.services.telemetry.zero_trust_checks.data_endpoints import check_open_data_endpoints
+from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import check_segmentation_violation
 
 
 def process_scan_telemetry(telemetry_json):

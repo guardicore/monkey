@@ -1,6 +1,5 @@
 from common.common_consts.post_breach_consts import POST_BREACH_TRAP_COMMAND
-from monkey_island.cc.services.attack.technique_reports.pba_technique import \
-    PostBreachTechnique
+from monkey_island.cc.services.attack.technique_reports.pba_technique import PostBreachTechnique
 
 __author__ = "shreyamalviya"
 

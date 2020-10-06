@@ -4,8 +4,7 @@ from pymongo import errors
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
-from monkey_island.cc.services.attack.mitre_api_interface import \
-    MitreApiInterface
+from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterface
 
 logger = logging.getLogger(__name__)
 

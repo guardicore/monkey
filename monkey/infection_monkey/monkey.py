@@ -9,8 +9,7 @@ from threading import Thread
 import infection_monkey.tunnel as tunnel
 from common.network.network_utils import is_running_on_island
 from common.utils.attack_utils import ScanStatus, UsageEnum
-from common.utils.exceptions import (ExploitingVulnerableMachineError,
-                                     FailedExploitationError)
+from common.utils.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from common.version import get_version
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
@@ -32,11 +31,8 @@ from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.exceptions.planned_shutdown_exception import \
-    PlannedShutdownException
-from infection_monkey.utils.monkey_dir import (create_monkey_dir,
-                                               get_monkey_dir_path,
-                                               remove_monkey_dir)
+from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
+from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.windows_upgrader import WindowsUpgrader
 
@@ -302,8 +298,7 @@ class InfectionMonkey(object):
             try:
                 status = None
                 if "win32" == sys.platform:
-                    from subprocess import (CREATE_NEW_CONSOLE,
-                                            STARTF_USESHOWWINDOW, SW_HIDE)
+                    from subprocess import CREATE_NEW_CONSOLE, STARTF_USESHOWWINDOW, SW_HIDE
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = SW_HIDE

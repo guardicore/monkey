@@ -2,10 +2,8 @@ import logging
 import os
 import sys
 
-from common.common_consts.system_info_collectors_names import \
-    MIMIKATZ_COLLECTOR
-from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import \
-    MimikatzCredentialCollector
+from common.common_consts.system_info_collectors_names import MIMIKATZ_COLLECTOR
+from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import MimikatzCredentialCollector
 
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 import infection_monkey.config  # noqa: E402

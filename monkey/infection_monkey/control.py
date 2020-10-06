@@ -14,8 +14,7 @@ from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import check_internet_access, local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
-from infection_monkey.utils.exceptions.planned_shutdown_exception import \
-    PlannedShutdownException
+from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 
 __author__ = 'hoffer'
 

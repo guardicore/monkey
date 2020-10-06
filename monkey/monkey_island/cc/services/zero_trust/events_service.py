@@ -2,8 +2,7 @@ from typing import List
 
 from bson import ObjectId
 
-from monkey_island.cc.models.zero_trust.monkey_finding_details import \
-    MonkeyFindingDetails
+from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
 
 # How many events of a single finding to return to UI.
 # 50 will return 50 latest and 50 oldest events from a finding

@@ -5,8 +5,7 @@ from bson import ObjectId
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
-from monkey_island.cc.models.zero_trust.monkey_finding_details import \
-    MonkeyFindingDetails
+from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
 
 
 class MonkeyFindingService:

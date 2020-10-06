@@ -9,10 +9,8 @@ from mongoengine import Document, GenericLazyReferenceField, StringField
 import common.common_consts.zero_trust_consts as zero_trust_consts
 # Dummy import for mongoengine.
 # noinspection PyUnresolvedReferences
-from monkey_island.cc.models.zero_trust.monkey_finding_details import \
-    MonkeyFindingDetails
-from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import \
-    ScoutSuiteFindingDetails
+from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
+from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutSuiteFindingDetails
 
 
 class Finding(Document):

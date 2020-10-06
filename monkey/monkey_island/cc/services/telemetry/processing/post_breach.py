@@ -1,11 +1,9 @@
 import copy
 
-from common.common_consts.post_breach_consts import \
-    POST_BREACH_COMMUNICATE_AS_NEW_USER
+from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.telemetry.zero_trust_checks.communicate_as_new_user import \
-    check_new_user_communication
+from monkey_island.cc.services.telemetry.zero_trust_checks.communicate_as_new_user import check_new_user_communication
 
 EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 

@@ -21,15 +21,12 @@ logger = logging.getLogger(__name__)
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
-from monkey_island.cc.bootloader_server import \
-    BootloaderHttpServer  # noqa: E402
+from monkey_island.cc.bootloader_server import BootloaderHttpServer  # noqa: E402
 from monkey_island.cc.database import get_db_version  # noqa: E402
 from monkey_island.cc.database import is_db_server_up  # noqa: E402
 from monkey_island.cc.network_utils import local_ip_addresses  # noqa: E402
-from monkey_island.cc.resources.monkey_download import \
-    MonkeyDownload  # noqa: E402
-from monkey_island.cc.services.reporting.exporter_init import \
-    populate_exporter_list  # noqa: E402
+from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
+from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.setup import setup  # noqa: E402
 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
