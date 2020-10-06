@@ -81,7 +81,7 @@ script:
 
 ## Run unit tests
 - cd monkey  # This is our source dir
-- python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+- python -m pytest  --ignore=./common/cloud/scoutsuite # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
 ## Calculate Code Coverage
 - coverage run -m pytest
