@@ -7,13 +7,13 @@
         "Make sure to add the PBA to the configuration as well."
     ],
     "files": {
-        "monkey/common/data/post_breach_consts.py": {
+        "monkey/common/common_consts/post_breach_consts.py": {
             "index": [
                 "c3bba995..031f9ad0",
                 "100644"
             ],
-            "fileA": "monkey/common/data/post_breach_consts.py",
-            "fileB": "monkey/common/data/post_breach_consts.py",
+            "fileA": "monkey/common/common_consts/post_breach_consts.py",
+            "fileB": "monkey/common/common_consts/post_breach_consts.py",
             "status": "MODIFIED",
             "numLineDeletions": 1,
             "numLineAdditions": 1,

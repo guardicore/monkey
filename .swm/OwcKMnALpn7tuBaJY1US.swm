@@ -9,13 +9,13 @@
         "Make sure you add the new collector to the configuration in all relevant places, including making it ON by default!"
     ],
     "files": {
-        "monkey/common/data/system_info_collectors_names.py": {
+        "monkey/common/common_consts/system_info_collectors_names.py": {
             "index": [
                 "175a054e..3b478dc9",
                 "100644"
             ],
-            "fileA": "monkey/common/data/system_info_collectors_names.py",
-            "fileB": "monkey/common/data/system_info_collectors_names.py",
+            "fileA": "monkey/common/common_consts/system_info_collectors_names.py",
+            "fileB": "monkey/common/common_consts/system_info_collectors_names.py",
             "status": "MODIFIED",
             "numLineDeletions": 1,
             "numLineAdditions": 1,
