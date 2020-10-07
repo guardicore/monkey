@@ -81,11 +81,10 @@ script:
 
 ## Run unit tests
 - cd monkey  # This is our source dir
-- python -m pytest  --ignore=./monkey/
-  common/cloud/scoutsuite # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+- python -m pytest --ignore=./common/cloud/scoutsuite # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
 ## Calculate Code Coverage
-- coverage run -m pytest
+- coverage run -m pytest --ignore=./common/cloud/scoutsuite
 
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui
