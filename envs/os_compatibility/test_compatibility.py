@@ -1,7 +1,6 @@
 import pytest
 
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import \
-    MonkeyIslandClient
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
 machine_list = {
     "10.0.0.36": "centos_6",

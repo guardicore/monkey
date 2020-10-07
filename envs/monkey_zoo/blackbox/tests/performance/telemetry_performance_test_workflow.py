@@ -1,10 +1,7 @@
 from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
-from envs.monkey_zoo.blackbox.tests.performance.endpoint_performance_test import \
-    EndpointPerformanceTest
-from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import \
-    PerformanceTestConfig
-from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import \
-    TelemetryPerformanceTest
+from envs.monkey_zoo.blackbox.tests.performance.endpoint_performance_test import EndpointPerformanceTest
+from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
+from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import TelemetryPerformanceTest
 
 
 class TelemetryPerformanceTestWorkflow(BasicTest):

@@ -4,8 +4,7 @@ from time import sleep
 
 from bson import json_util
 
-from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import \
-    MonkeyIslandRequests
+from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 MONKEY_TEST_ENDPOINT = 'api/test/monkey'
