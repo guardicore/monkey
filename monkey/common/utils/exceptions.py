@@ -28,3 +28,7 @@ class RulePathCreatorNotFound(Exception):
 
 class InvalidAWSKeys(Exception):
     """ Raise to indicate that AWS API keys are invalid"""
+
+
+class NoInternetError(Exception):
+    """ Raise to indicate problems caused when no internet connection is present"""
