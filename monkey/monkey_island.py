@@ -1,3 +1,6 @@
+from gevent import monkey
+monkey.patch_all()
+
 from monkey_island.cc.main import main
 
 
