@@ -2,7 +2,7 @@ from typing import List
 
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
-from monkey_island.cc.services.zero_trust.events_service import EventsService
+from monkey_island.cc.services.zero_trust.monkey_details_service import MonkeyDetailsService
 
 
 class FindingService:
@@ -13,7 +13,7 @@ class FindingService:
         details = []
         for i in range(len(findings)):
             if findings[i].type == zero_trust_consts.MONKEY_FINDING:
-                details = EventsService.fetch_events_for_display(findings[i].details.id)
+                details = MonkeyDetailsService.fetch_details_for_display(findings[i].details.id)
             elif findings[i].type == zero_trust_consts.SCOUTSUITE_FINDING:
                 details = findings[i].details.fetch().to_mongo()
             findings[i] = findings[i].to_mongo()
