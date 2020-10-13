@@ -55,16 +55,10 @@ def check_open_data_endpoints(telemetry_json):
                 event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK
             ))
 
-    MonkeyFindingService.create_or_add_to_existing(
-        test=zero_trust_consts.TEST_DATA_ENDPOINT_HTTP,
-        status=found_http_server_status,
-        events=events
-    )
+    MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_DATA_ENDPOINT_HTTP,
+                                                   status=found_http_server_status, events=events)
 
-    MonkeyFindingService.create_or_add_to_existing(
-        test=zero_trust_consts.TEST_DATA_ENDPOINT_ELASTIC,
-        status=found_elastic_search_server,
-        events=events
-    )
+    MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_DATA_ENDPOINT_ELASTIC,
+                                                   status=found_elastic_search_server, events=events)
 
     MonkeyFindingService.add_malicious_activity_to_timeline(events)

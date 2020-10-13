@@ -30,9 +30,8 @@ def check_antivirus_existence(process_list_json, monkey_guid):
         test_status = zero_trust_consts.STATUS_PASSED
     else:
         test_status = zero_trust_consts.STATUS_FAILED
-    MonkeyFindingService.create_or_add_to_existing(
-        test=zero_trust_consts.TEST_ENDPOINT_SECURITY_EXISTS, status=test_status, events=events
-    )
+    MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_ENDPOINT_SECURITY_EXISTS,
+                                                   status=test_status, events=events)
 
 
 def filter_av_processes(process_list):

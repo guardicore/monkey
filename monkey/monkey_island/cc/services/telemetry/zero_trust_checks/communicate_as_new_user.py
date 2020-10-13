@@ -8,15 +8,12 @@ COMM_AS_NEW_USER_SUCCEEDED_FORMAT = \
 
 
 def check_new_user_communication(current_monkey, success, message):
-    MonkeyFindingService.create_or_add_to_existing(
-        test=zero_trust_consts.TEST_COMMUNICATE_AS_NEW_USER,
-        # If the monkey succeeded to create a user, then the test failed.
-        status=zero_trust_consts.STATUS_FAILED if success else zero_trust_consts.STATUS_PASSED,
-        events=[
-            get_attempt_event(current_monkey),
-            get_result_event(current_monkey, message, success)
-        ]
-    )
+    MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_COMMUNICATE_AS_NEW_USER,
+                                                   status=zero_trust_consts.STATUS_FAILED if success else zero_trust_consts.STATUS_PASSED,
+                                                   events=[
+                                                       get_attempt_event(current_monkey),
+                                                       get_result_event(current_monkey, message, success)
+                                                   ])
 
 
 def get_attempt_event(current_monkey):

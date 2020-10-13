@@ -18,10 +18,7 @@ def check_tunneling_violation(tunnel_telemetry_json):
             timestamp=tunnel_telemetry_json['timestamp']
         )]
 
-        MonkeyFindingService.create_or_add_to_existing(
-            test=zero_trust_consts.TEST_TUNNELING,
-            status=zero_trust_consts.STATUS_FAILED,
-            events=tunneling_events
-        )
+        MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_TUNNELING,
+                                                       status=zero_trust_consts.STATUS_FAILED, events=tunneling_events)
 
         MonkeyFindingService.add_malicious_activity_to_timeline(tunneling_events)
