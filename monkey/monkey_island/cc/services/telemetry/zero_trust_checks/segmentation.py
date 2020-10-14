@@ -28,7 +28,6 @@ def check_segmentation_violation(current_monkey, target_ip):
                 event = get_segmentation_violation_event(current_monkey, source_subnet, target_ip, target_subnet)
                 MonkeyFindingService.create_or_add_to_existing(
                     test=zero_trust_consts.TEST_SEGMENTATION,
-                    subnet_pairs=[[source_subnet, target_subnet]],
                     status=zero_trust_consts.STATUS_FAILED,
                     events=[event]
                 )
@@ -92,7 +91,6 @@ def create_or_add_findings_for_all_pairs(all_subnets, current_monkey):
 
     for subnet_pair in all_subnets_pairs_for_this_monkey:
         MonkeyFindingService.create_or_add_to_existing(
-            subnet_pairs=[list(subnet_pair)],
             status=zero_trust_consts.STATUS_PASSED,
             events=[get_segmentation_done_event(current_monkey, subnet_pair)],
             test=zero_trust_consts.TEST_SEGMENTATION
