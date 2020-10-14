@@ -27,13 +27,13 @@ const getContents = (props) => {
           1. Configure AWS CLI on Monkey Island Server (if you already have a configured CLI you can skip this step).
           <ol className={'nested-ol'}>
             <li>
-              1. Download <Button href={'https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html'}
+              a. Download <Button href={'https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html'}
                                   target={'_blank'} variant={'link'}>AWS CLI</Button> and
               install it on the Monkey Island server (machine running this page).
             </li>
             <li>
-              2. Run <code>aws configure</code>. It's important to configure credentials, which
-              allows ScoutSuite to get information about your cloud configuration. The most trivial way to do so is to
+              b. Run <code>aws configure</code>. It's important to configure credentials as it
+              allows ScoutSuite to get information about your cloud configuration. The simplest way to do so is to
               provide&nbsp;
               <Button
                 href={'https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds'}

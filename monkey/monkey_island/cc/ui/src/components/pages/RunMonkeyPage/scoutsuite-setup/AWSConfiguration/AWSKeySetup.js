@@ -87,7 +87,7 @@ const getContents = (props) => {
         <p>2. In the navigation pane, choose Users.</p>
         <p>3. Choose the name of the user whose access keys you want to create, and then choose the Security credentials
           tab.</p>
-        <p>4. In the Access keys section, choose Create access key.</p>
+        <p>4. In the Access keys section, choose Create Access key.</p>
         <p>To view the new access key pair, choose Show. Your credentials will look something like this:</p>
         <p>Access key ID: AKIAIOSFODNN7EXAMPLE</p>
         <p>Secret access key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</p>
@@ -100,8 +100,8 @@ const getContents = (props) => {
         <h5>Keys for current user</h5>
         <p>1. Click on your username in the upper right corner.</p>
         <p>2. Click on "My security credentials".</p>
-        <p>3. In the Access keys section, choose Create access key.</p>
-        <p>To view the new access key pair, choose Show. Your credentials will look something like this:</p>
+        <p>3. In the Access keys section, choose Create Access key.</p>
+        <p>To view the new Access key pair, choose Show. Your credentials will look something like this:</p>
         <p>Access key ID: AKIAIOSFODNN7EXAMPLE</p>
         <p>Secret access key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</p>
         <Row>
