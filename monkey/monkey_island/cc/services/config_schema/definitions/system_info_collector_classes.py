@@ -31,7 +31,8 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
                 AWS_COLLECTOR
             ],
             "title": "AWS collector",
-            "info": "If on AWS, collects more information about the AWS instance currently running on.",
+            "info": "If on AWS, collects more information about the AWS instance currently running on. "
+                    "Also responsible for running ScoutSuite cloud security check.",
             "attack_techniques": ["T1082"]
         },
         {
