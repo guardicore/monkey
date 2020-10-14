@@ -1,6 +1,5 @@
 import logging
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.reporting.aws_exporter import AWSExporter
 from monkey_island.cc.services.reporting.report_exporter_manager import \
@@ -22,7 +21,7 @@ def try_add_aws_exporter_to_manager(manager):
     # noinspection PyBroadException
     try:
         RemoteRunAwsService.init()
-        if RemoteRunAwsService.is_running_on_aws() and ('aws' == env_singleton.env.get_deployment()):
+        if RemoteRunAwsService.is_running_on_aws():
             manager.add_exporter_to_list(AWSExporter)
     except Exception:
         logger.error("Failed adding aws exporter to manager. Exception info:", exc_info=True)
