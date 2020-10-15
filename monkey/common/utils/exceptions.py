@@ -22,5 +22,5 @@ class AlreadyRegisteredError(RegistrationNotNeededError):
     """ Raise to indicate the reason why registration is not required """
 
 
-class NoInternetError(Exception):
-    """ Raise to indicate problems caused when no internet connection is present"""
+class VersionServerConnectionError(Exception):
+    """ Raise to indicate that connection to version update server failed """

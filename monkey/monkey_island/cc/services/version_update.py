@@ -3,7 +3,7 @@ import logging
 import requests
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from common.utils.exceptions import NoInternetError
+from common.utils.exceptions import VersionServerConnectionError
 from common.version import get_version
 
 __author__ = "itay.mizeretz"
@@ -30,7 +30,7 @@ class VersionUpdateService:
         if VersionUpdateService.newer_version is None:
             try:
                 VersionUpdateService.newer_version = VersionUpdateService._check_new_version()
-            except NoInternetError:
+            except VersionServerConnectionError:
                 logger.info('Failed updating version number')
 
         return VersionUpdateService.newer_version
@@ -47,7 +47,7 @@ class VersionUpdateService:
             reply = requests.get(url, timeout=7)
         except requests.exceptions.RequestException:
             logger.info("Can't get latest monkey version, probably no connection to the internet.")
-            raise NoInternetError
+            raise VersionServerConnectionError
 
         res = reply.json().get('newer_version', None)
 
