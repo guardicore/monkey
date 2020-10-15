@@ -23,6 +23,13 @@ If the correct permissions have been set on the AWS IAM role of the Monkey Islan
 
 Note that the integration is specifically between your Monkey Island and the security hub. The Infection Monkey is an free project and there is no centralised infrastructure.
 
+### Enabling finding reception
+
+Before starting the scan, make sure that AWS Security Hub is accepting findings by enabling Infection Monkey
+ integration. Find **GuardiCore: AWS Infection Monkey** integration on the list and click on **Accept findings**.
+
+![Enabled integration](/images/usage/integrations/security-hub-enable-accepting-findings.png "Enabled integration")
+
 ## Integration details
 
 The Infection Monkey reports the following types of issues to the AWS security hub: `Software and Configuration Checks/Vulnerabilities/CVE`.
