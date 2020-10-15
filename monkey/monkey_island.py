@@ -1,4 +1,5 @@
 from gevent import monkey as gevent_monkey
+
 gevent_monkey.patch_all()
 
 from monkey_island.cc.main import main

@@ -8,8 +8,8 @@ from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.report import ReportService
-from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_reports, \
-    is_report_being_generated
+from monkey_island.cc.services.reporting.report_generation_synchronisation import (
+    is_report_being_generated, safe_generate_reports)
 
 logger = logging.getLogger(__name__)
 
