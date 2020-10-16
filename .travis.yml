@@ -99,7 +99,7 @@ script:
 
 # verify swimm
 - cd $TRAVIS_BUILD_DIR
-- wget https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv021%2FSwimm_0.2.1_amd64.deb\?alt\=media\&token\=d42813a1-839f-46ff-9fc3-65ada41551ca -O swimm
+- wget https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv021%2FSwimm_0.2.1_amd64.deb\?alt\=media\&token\=cabf1a19-fd2f-43f5-becf-22c3ace55a57 -O swimm
 - chmod +x ./swimm
 - sudo dpkg -i ./swimm
 - sudo apt-get -f install -y
