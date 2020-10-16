@@ -12,8 +12,9 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.network_utils import get_subnets, local_ip_addresses
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.config_schema.config_value_paths import (
-    EXPLOITER_CLASSES_PATH, LOCAL_NETWORK_SCAN_PATH, PASSWORD_LIST_PATH, SUBNET_SCAN_LIST_PATH, USER_LIST_PATH)
+from monkey_island.cc.services.config_schema.config_value_paths import (EXPLOITER_CLASSES_PATH, LOCAL_NETWORK_SCAN_PATH,
+                                                                        PASSWORD_LIST_PATH, SUBNET_SCAN_LIST_PATH,
+                                                                        USER_LIST_PATH)
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.pth_report import PTHReportService

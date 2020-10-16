@@ -1,8 +1,8 @@
 import logging
 import typing
 
-from common.common_consts.system_info_collectors_names import (
-    AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR, PROCESS_LIST_COLLECTOR, SCOUTSUITE_COLLECTOR)
+from common.common_consts.system_info_collectors_names import (AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR,
+                                                               PROCESS_LIST_COLLECTOR, SCOUTSUITE_COLLECTOR)
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import process_aws_telemetry
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import \
     process_environment_telemetry
