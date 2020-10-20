@@ -18,6 +18,22 @@ class WindowsServerFinger(HostFinger):
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
 
+    def get_dc_name(self, DC_IP):
+        """
+        Gets NetBIOS name of the DC.
+        """
+        name = ''
+        try:
+            if is_windows_os():
+                cmd = f'nbtstat -A {DC_IP} | findstr "<00>"'
+                name = subprocess.check_output(cmd, shell=True).decode().split('\n')[0].strip(' ').split(' ')[0]
+            else:
+                cmd = f'nmblookup -A {DC_IP} | grep "<00>"'
+                name = subprocess.check_output(cmd, shell=True).decode().split('\n')[0].strip('\t').strip(' ').split(' ')[0]
+        except BaseException as ex:
+            LOG.info(f'Exception: {ex} Most likely not a Windows DC.')
+        return name
+
     def get_host_fingerprint(self, host):
         """
         Checks if the Windows Server is vulnerable to Zerologon.
@@ -71,33 +87,26 @@ class WindowsServerFinger(HostFinger):
         DC_NAME = self.get_dc_name(DC_IP)
         DC_HANDLE = '\\\\' + DC_NAME
 
-        # Keep authenticating until successful. Expected average number of attempts needed: 256.
-        LOG.info('Performing Zerologon authentication attempts...')
-        rpc_con = None
-        for attempt in range(0, self.MAX_ATTEMPTS):
-            rpc_con = try_zero_authenticate(DC_HANDLE, DC_IP, DC_NAME)
-            if (rpc_con is not None) or (unexpected_error_encountered):
-                break
+        if DC_NAME:  # if it is a Windows DC
+            # Keep authenticating until successful. Expected average number of attempts needed: 256.
+            LOG.info('Performing Zerologon authentication attempts...')
+            rpc_con = None
+            for attempt in range(0, self.MAX_ATTEMPTS):
+                rpc_con = try_zero_authenticate(DC_HANDLE, DC_IP, DC_NAME)
+                if (rpc_con is not None) or (unexpected_error_encountered):
+                    break
 
-        self.init_service(host.services, self._SCANNED_SERVICE, None)
+            self.init_service(host.services, self._SCANNED_SERVICE, '')
 
-        if rpc_con:
-            LOG.info('Success: DC can be fully compromised by a Zerologon attack.')
-            host.services[self._SCANNED_SERVICE]['is_vulnerable'] = True
-            return True
+            if rpc_con:
+                LOG.info('Success: DC can be fully compromised by a Zerologon attack.')
+                host.services[self._SCANNED_SERVICE]['is_vulnerable'] = True
+                return True
+            else:
+                LOG.info('Failure: Target is either patched or an unexpected error was encountered.')
+                host.services[self._SCANNED_SERVICE]['is_vulnerable'] = False
+                return False
+
         else:
-            LOG.info('Failure: Target is either patched or an unexpected error was encountered.')
-            host.services[self._SCANNED_SERVICE]['is_vulnerable'] = False
+            LOG.info('Error encountered; most likely not a Windows DC.')
             return False
-
-    def get_dc_name(self, DC_IP):
-        """
-        Gets NetBIOS name of the DC.
-        """
-        if is_windows_os():
-            cmd = f'nbtstat -A {DC_IP} | findstr "<00>"'
-            name = subprocess.check_output(cmd, shell=True).decode().split('\n')[0].strip(' ').split(' ')[0]
-        else:
-            cmd = f'nmblookup -A {DC_IP} | grep "<00>"'
-            name = subprocess.check_output(cmd, shell=True).decode().split('\n')[0].strip('\t').strip(' ').split(' ')[0]
-        return name
