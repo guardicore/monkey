@@ -5,6 +5,7 @@ import {faCloud} from '@fortawesome/free-solid-svg-icons';
 import AWSRunInstances from './AWSRunInstances';
 import NextSelectionButton from '../../ui-components/inline-selection/NextSelectionButton';
 import {Alert, Button} from 'react-bootstrap';
+import LoadingIcon from '../../ui-components/LoadingIcon';
 
 
 function AWSRunButton(props) {
@@ -14,6 +15,7 @@ function AWSRunButton(props) {
   const [isOnAWS, setIsOnAWS] = useState(false);
   const [AWSInstances, setAWSInstances] = useState([]);
   const [awsMachineCollectionError, setAwsMachineCollectionError] = useState('');
+  const [componentLoading, setComponentLoading] = useState(true);
 
   useEffect(() => {
     checkIsOnAWS();
@@ -24,7 +26,7 @@ function AWSRunButton(props) {
       .then(res => res.json())
       .then(res => {
         let isAws = res['is_aws'];
-
+        setComponentLoading(false);
         if (isAws) {
           // On AWS!
           // Checks if there was an error while collecting the aws machines.
@@ -64,6 +66,9 @@ function AWSRunButton(props) {
   }
 
   let displayed = '';
+  if (componentLoading) {
+    displayed = LoadingIcon();
+  }
   if (awsMachineCollectionError !== '') {
     displayed = getErrorDisplay();
   } else if (isOnAWS) {
