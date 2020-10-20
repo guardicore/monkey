@@ -7,6 +7,7 @@ import InlineSelection from '../../ui-components/inline-selection/InlineSelectio
 import {cloneDeep} from 'lodash';
 import {faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
+import AWSRunButton from './AWSRunButton';
 
 function RunOptions(props) {
 
@@ -61,6 +62,7 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
+                             <AWSRunButton setComponent={setComponent}/>
       </>
     );
   }
