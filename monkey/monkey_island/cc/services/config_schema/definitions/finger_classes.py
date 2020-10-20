@@ -56,7 +56,6 @@ FINGER_CLASSES = {
             "info": "Checks if Microsoft SQL service is running and tries to gather information about it.",
             "attack_techniques": ["T1210"]
         },
-
         {
             "type": "string",
             "enum": [
@@ -64,6 +63,15 @@ FINGER_CLASSES = {
             ],
             "title": "ElasticFinger",
             "info": "Checks if ElasticSearch is running and attempts to find it's version.",
+            "attack_techniques": ["T1210"]
+        },
+        {
+            "type": "string",
+            "enum": [
+                "WindowsServerFinger"
+            ],
+            "title": "WindowsServerFinger",
+            "info": "Checks if server is a Windows Server and tests if it is vulnerable to Zerologon.",
             "attack_techniques": ["T1210"]
         }
     ]
