@@ -1,3 +1,7 @@
+"""
+Implementation from https://github.com/SecuraBV/CVE-2020-1472
+"""
+
 import logging
 import subprocess
 
