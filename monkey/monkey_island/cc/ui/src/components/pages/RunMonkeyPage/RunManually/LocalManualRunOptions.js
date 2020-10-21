@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
-import DropdownSelect from '../../ui-components/DropdownSelect';
-import {OS_TYPES} from './OsTypes';
-import GenerateLocalWindowsCmd from './commands/local_windows_cmd';
-import GenerateLocalWindowsPowershell from './commands/local_windows_powershell';
-import GenerateLocalLinuxWget from './commands/local_linux_wget';
-import GenerateLocalLinuxCurl from './commands/local_linux_curl';
-import CommandDisplay from './CommandDisplay';
+import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
+import DropdownSelect from '../../../ui-components/DropdownSelect';
+import {OS_TYPES} from '../utils/OsTypes';
+import GenerateLocalWindowsCmd from '../commands/local_windows_cmd';
+import GenerateLocalWindowsPowershell from '../commands/local_windows_powershell';
+import GenerateLocalLinuxWget from '../commands/local_linux_wget';
+import GenerateLocalLinuxCurl from '../commands/local_linux_curl';
+import CommandDisplay from '../utils/CommandDisplay';
 
 
 const LocalManualRunOptions = (props) => {
