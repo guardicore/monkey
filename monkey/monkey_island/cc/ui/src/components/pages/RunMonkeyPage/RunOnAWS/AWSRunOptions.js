@@ -3,27 +3,36 @@ import {Button, Nav} from 'react-bootstrap';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSync} from '@fortawesome/free-solid-svg-icons/faSync';
-import '../../../styles/components/RunOnIslandButton.scss';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
-import AwsRunTable from './AwsRunTable';
-import AuthComponent from '../../AuthComponent';
+import AwsRunTable from './AWSInstanceTable';
+import AuthComponent from '../../../AuthComponent';
+import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
 
 
-function AWSRunInstances(props) {
+const AWSRunOptions = (props) => {
+  return InlineSelection(getContents, {
+    ...props,
+    onBackButtonClick: () => {props.setComponent()}
+  })
+}
+
+
+const getContents = (props) => {
 
   const authComponent = new AuthComponent({});
 
-  let awsTable = null
   let [allIPs, setAllIPs] = useState([]);
   let [selectedIp, setSelectedIp] = useState(null);
   let [AWSClicked, setAWSClicked] = useState(false);
+  let [runResults, setRunResults] = useState([]);
+  let [selectedInstances, setSelectedInstances] = useState([]);
 
   useEffect(() => {
     getIps();
-  }, [allIPs]);
+  }, []);
 
   function getIps() {
-    this.authFetch('/api')
+    authComponent.authFetch('/api')
       .then(res => res.json())
       .then(res => {
         setAllIPs(res['ip_addresses']);
@@ -33,7 +42,7 @@ function AWSRunInstances(props) {
 
   function runOnAws() {
     setAWSClicked(true);
-    let instances = awsTable.state.selection.map(x => instanceIdToInstance(x));
+    let instances = selectedInstances.map(x => instanceIdToInstance(x));
 
     authComponent.authFetch('/api/remote-monkey',
       {
@@ -45,17 +54,14 @@ function AWSRunInstances(props) {
         let result = res['result'];
 
         // update existing state, not run-over
-        let prevRes = awsTable.state.result;
+        let prevRes = result;
         for (let key in result) {
           if (result.hasOwnProperty(key)) {
             prevRes[key] = result[key];
           }
         }
-        awsTable.setState({
-          result: prevRes,
-          selection: [],
-          selectAll: false
-        });
+        setRunResults(prevRes);
+        setSelectedInstances([]);
         setAWSClicked(false);
       });
   }
@@ -89,10 +95,13 @@ function AWSRunInstances(props) {
       }
       <AwsRunTable
         data={props.AWSInstances}
-        ref={r => (awsTable = r)}
+        results={runResults}
+        selection={selectedInstances}
+        setSelection={setSelectedInstances}
       />
-      <div style={{'marginTop': '1em'}}>
+      <div className={'aws-run-button-container'}>
         <Button
+          size={'lg'}
           onClick={runOnAws}
           className={'btn btn-default btn-md center-block'}
           disabled={AWSClicked}>
@@ -105,4 +114,4 @@ function AWSRunInstances(props) {
   );
 }
 
-export default AWSRunInstances;
+export default AWSRunOptions;

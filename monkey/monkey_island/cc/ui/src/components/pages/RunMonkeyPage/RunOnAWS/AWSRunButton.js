@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import AuthComponent from '../../AuthComponent';
-import '../../../styles/components/RunOnIslandButton.scss';
+import AuthComponent from '../../../AuthComponent';
+import '../../../../styles/components/RunOnIslandButton.scss';
 import {faCloud} from '@fortawesome/free-solid-svg-icons';
-import AWSRunInstances from './AWSRunInstances';
-import NextSelectionButton from '../../ui-components/inline-selection/NextSelectionButton';
+import AWSRunOptions from './AWSRunOptions';
+import NextSelectionButton from '../../../ui-components/inline-selection/NextSelectionButton';
 import {Alert, Button} from 'react-bootstrap';
-import LoadingIcon from '../../ui-components/LoadingIcon';
+import LoadingIcon from '../../../ui-components/LoadingIcon';
 
 
 function AWSRunButton(props) {
@@ -49,7 +49,7 @@ function AWSRunButton(props) {
                                 description={'Run on a chosen AWS instance in the cloud.'}
                                 icon={faCloud}
                                 onButtonClick={() => {
-                                  props.setComponent(AWSRunInstances,
+                                  props.setComponent(AWSRunOptions,
                                     {AWSInstances: AWSInstances, setComponent: props.setComponent})
                                 }}/>
   }
