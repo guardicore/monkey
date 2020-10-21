@@ -107,7 +107,7 @@ const getContents = (props) => {
           disabled={AWSClicked}>
           Run on selected machines
           {AWSClicked ?
-            <FontAwesomeIcon icon={faSync} className="text-success" style={{'marginLeft': '5px'}}/> : null}
+            <FontAwesomeIcon icon={faSync} className={`text-success spinning-icon`} style={{'marginLeft': '5px'}}/> : null}
         </Button>
       </div>
     </div>
