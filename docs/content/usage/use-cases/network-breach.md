@@ -3,7 +3,7 @@ title: "Network Breach"
 date: 2020-08-12T13:04:55+03:00
 draft: false
 description: "Simulate an internal network breach and assess the potential impact."
-weight: 1
+weight: 3
 ---
 
 ## Overview 
@@ -35,9 +35,11 @@ all post breach actions. These actions simulate attacker's behaviour after getti
 
 ## Suggested run mode
 
-To simulate a foreign device you could introduce the Island server to the network and run monkey from it. 
-Alternatively, for a malicious agent simulation, you should run monkey manually on a machine that’s already running in 
-the network. Combining both, as always, will give you the best coverage.
+Decide which machines you want to simulate a breach on and use the “Manual” run option to start Monkeys there. 
+Use high privileges to run the Monkey to simulate an attacker that was able to elevate its privileges. 
+You could also simulate an attack initiated from an unidentified machine connected to the network (a technician 
+laptop, 3rd party vendor machine, etc) by running the Monkey on a dedicated machine with an IP in the network you 
+wish to test.
 
 
 ## Assessing results

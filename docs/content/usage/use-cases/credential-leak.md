@@ -1,9 +1,9 @@
 ---
-title: "Credential Leak"
+title: "Credentials Leak"
 date: 2020-08-12T13:04:25+03:00
 draft: false
 description: "Assess the impact of a successful phishing attack, insider threat, or other form of credentials leak."
-weight: 4
+weight: 5
 ---
 
 ## Overview 
@@ -26,17 +26,12 @@ To make sure SSH keys were gathered successfully, refresh the page and check thi
 
 ## Suggested run mode
 
-To simulate the damage from a successful phishing attack using the Infection Monkey, choose machines in your network 
-from potentially problematic group of machines, such as the laptop of one of your heavy email users or 
-one of your strong IT users (think of people who are more likely to correspond with people outside of 
-your organization). Execute the Monkey on chosen machines by clicking on “**1. Run Monkey**” from the left sidebar menu 
-and choosing “**Run on machine of your choice**”. Since Infection Monkey is safe, feel free to run Monkeys as a 
-privileged user. Doing so will make sure that Monkey gathers credentials from a local machine.
-
+Execute the Monkey on a chosen machine in your network using the “Manual” run option. 
+Run the Monkey as a privileged user to make sure it gathers as many credentials from the system as possible.
 
 ![Exploit password and user lists](/images/usage/scenarios/user-password-lists.png "Exploit password and user lists")
 
 ## Assessing results
 
-To assess the impact of leaked credentials see Security report. It's possible, that credential leak resulted in even
+To assess the impact of leaked credentials see Security report. It's possible that credential leak resulted in even
 more leaked credentials, for that look into **Security report -> Stolen credentials**. 

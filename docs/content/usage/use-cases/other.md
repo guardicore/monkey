@@ -16,11 +16,11 @@ If you want Monkey to run some kind of script or a tool after it breaches a mach
 **Configuration -> Monkey -> Post breach**. Just input commands you want executed in the corresponding fields. 
 You can also upload files and call them through commands you entered in command fields.
 
-## Speed and coverage
+## Accelerate the test
 
-There are some trivial ways to increase the coverage, for example you can **run the Monkey as a privileged user since 
-it’s safe**. To improve scanning speed you could **specify a subnet instead of scanning all of the local network**. 
-The following configuration values have a significant impact on speed/coverage:
+To improve scanning speed you could **specify a subnet instead of scanning all of the local network**. 
+
+The following configuration values also have an impact on scanning speed:
 - **Credentials** - the more usernames and passwords you input, the longer it will take the Monkey to scan machines having 
 remote access services. Monkeys try to stay elusive and leave a low impact, thus brute forcing takes longer than with 
 loud conventional tools.
@@ -37,7 +37,7 @@ Security, ATT&CK and Zero Trust reports will be waiting for you!
 
 ## Persistent scanning
 
-Use Monkey -> Persistent scanning configuration section to either have periodic scans or to increase reliability of 
+Use **Monkey -> Persistent** scanning configuration section to either have periodic scans or to increase reliability of 
 exploitations by running consecutive Infection Monkey scans.
 
 ## Credentials
@@ -50,7 +50,6 @@ configuration:
 
 ![Exploit password and user lists](/images/usage/scenarios/user-password-lists.png "Exploit password and user lists")
 
-
 ## Check logged and monitored terminals
 
 To see the Monkey executing in real-time on your servers, add the **post-breach action** command: 
@@ -60,27 +59,3 @@ Let you follow the breach “live” alongside the infection map, and check whic
 inside your network. See below:
 
 ![How to configure post breach commands](/images/usage/scenarios/pba-example.png "How to configure post breach commands.")
-
-## ATT&CK & Zero Trust scanning
-
-You can use **ATT&CK** configuration section to select which techniques you want to scan. Keep in mind that ATT&CK
- matrix configuration just changes the overall configuration by modifying related fields, thus you should start by
- modifying and saving the matrix. After that you can change credentials and scope of the scan, but exploiters,
- post breach actions and other configuration values will be already chosen based on ATT&CK matrix and shouldn't be
- modified.
- 
-There's currently no way to configure monkey using Zero Trust framework, but regardless of configuration options,
- you'll always be able to see ATT&CK and Zero Trust reports.
-
-## Tips and tricks
-
-- Use **Monkey -> Persistent scanning** configuration section to either have periodic scans or to increase
- reliability of exploitations.
- 
-- To increase propagation run monkey as root/administrator. This will ensure that monkey will gather credentials
- on current system and use them to move laterally.
-
-
-- If you're scanning a large network, consider narrowing the scope and scanning it bit by bit if scan times become too
- long. Lowering the amount of credentials, exploiters or post breach actions can also help to lower scanning times.
-

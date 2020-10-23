@@ -2,18 +2,18 @@
 title: "Network Segmentation"
 date: 2020-08-12T13:05:05+03:00
 draft: false
-description: "Test network segmentation policies for apps that need ring fencing or tiers that require microsegmentation."
-weight: 3
+description: "Verify your network is properly segmented."
+weight: 4
 ---
 
 ## Overview 
 
 Segmentation is a method of creating secure zones in data centers and cloud deployments that allows companies to 
-isolate workloads from one another and secure them individually, typically using policies. A useful way to test the 
-effectiveness of your segmentation is to ensure that your network segments are properly separated, e,g, your 
-Development is separated from your Production, your applications are separated from one another etc. To test the 
-security is to verify that your network segmentation is configured properly. This way you make sure that even if a 
-certain attacker has breached your defenses, it can’t move laterally from point A to point B.
+isolate workloads from one another and secure them individually, typically using policies. A useful way to test 
+the effectiveness of your segmentation is to ensure that your network segments are properly separated, e,g, your 
+Development is separated from your Production, your applications are separated from one another etc. Use the 
+Infection Monkey to verify that your network segmentation is configured properly. This way you make sure that 
+even if a certain attacker has breached your defenses, it can’t move laterally between segments.
 
 [Segmentation is key](https://www.guardicore.com/use-cases/micro-segmentation/) to protecting your network, reducing 
 the attack surface and minimizing the damage of a breach. The Monkey can help you test your segmentation settings with 
@@ -32,9 +32,7 @@ all post breach actions. These actions simulate attacker's behaviour after getti
 
 ## Suggested run mode
 
-Execute Monkeys on machines in different subnetworks manually, by choosing “**1. Run Monkey**” from the left sidebar 
-menu and clicking on “**Run on machine of your choice**”. 
- Alternatively, you could provide valid credentials and allow Monkey to propagate to relevant subnetworks by itself. 
+Execute Monkeys on machines in different subnetworks using the “Manual” run option. 
  
  Note that if Monkey can't communicate to the Island, it will
  not be able to send scan results, so make sure all machines can reach the island.
