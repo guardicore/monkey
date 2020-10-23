@@ -17,7 +17,6 @@ Infection Monkey will help you assess the impact of internal network breach, by 
 
 ## Configuration
 
-#### Important configuration values:
 - **Exploits -> Exploits** You can review the exploits Infection Monkey will be using. By default all 
 safe exploiters are selected.
 - **Exploits -> Credentials** This configuration value will be used for brute-forcing. We use most popular passwords
@@ -33,6 +32,13 @@ all post breach actions. These actions simulate attacker's behaviour after getti
  way helps to exploit new machines.
 
 ![Exploiter selector](/images/usage/use-cases/network-breach.PNG "Exploiter selector")
+
+## Suggested run mode
+
+To simulate a foreign device you could introduce the Island server to the network and run monkey from it. 
+Alternatively, for a malicious agent simulation, you should run monkey manually on a machine that’s already running in 
+the network. Combining both, as always, will give you the best coverage.
+
 
 ## Assessing results
 
