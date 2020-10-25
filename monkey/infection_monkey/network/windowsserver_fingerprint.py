@@ -39,7 +39,6 @@ class WindowsServerFinger(HostFinger):
         """
         Checks if the Windows Server is vulnerable to Zerologon.
         """
-        unexpected_error_encountered = False
 
         def try_zero_authenticate(DC_HANDLE, DC_IP, DC_NAME):
             # Connect to the DC's Netlogon service.
@@ -75,12 +74,10 @@ class WindowsServerFinger(HostFinger):
                 if ex.get_error_code() == 0xc0000022:  # STATUS_ACCESS_DENIED error; if not this, probably some other issue.
                     pass
                 else:
-                    LOG.error(f'Unexpected error code: {ex.get_error_code()}.')
-                    unexpected_error_encountered = True
+                    raise Exception(f'Unexpected error code: {ex.get_error_code()}.')
 
             except BaseException as ex:
-                LOG.error(f'Unexpected error: {ex}.')
-                unexpected_error_encountered = True
+                raise Exception(f'Unexpected error: {ex}.')
 
         DC_IP = host.ip_addr
         DC_NAME = self.get_dc_name(DC_IP)
@@ -93,8 +90,12 @@ class WindowsServerFinger(HostFinger):
             LOG.info('Performing Zerologon authentication attempts...')
             rpc_con = None
             for _ in range(0, self.MAX_ATTEMPTS):
-                rpc_con = try_zero_authenticate(DC_HANDLE, DC_IP, DC_NAME)
-                if (rpc_con is not None) or (unexpected_error_encountered):
+                try:
+                    rpc_con = try_zero_authenticate(DC_HANDLE, DC_IP, DC_NAME)
+                    if rpc_con is not None:
+                        break
+                except Exception as ex:
+                    LOG.info(ex)
                     break
 
             self.init_service(host.services, self._SCANNED_SERVICE, '')
