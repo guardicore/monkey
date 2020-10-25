@@ -17,14 +17,11 @@ LOG = logging.getLogger(__name__)
 class WindowsServerFinger(HostFinger):
     # Class related consts
     MAX_ATTEMPTS = 2000
-    _SCANNED_SERVICE = "Windows Server"
-
-    def __init__(self):
-        self._config = infection_monkey.config.WormConfiguration
+    _SCANNED_SERVICE = "NTLM (NT LAN Manager)"
 
     def get_dc_name(self, DC_IP):
         """
-        Gets NetBIOS name of the DC.
+        Gets NetBIOS name of the Domain Controller (DC).
         """
         name = ''
         try:
@@ -35,7 +32,7 @@ class WindowsServerFinger(HostFinger):
                 cmd = f'nmblookup -A {DC_IP} | grep "<00>"'
                 name = subprocess.check_output(cmd, shell=True).decode().split('\n')[0].strip('\t').strip(' ').split(' ')[0]
         except BaseException as ex:
-            LOG.info(f'Exception: {ex} Most likely not a Windows DC.')
+            LOG.info(f'Exception: {ex} Most likely not a Windows Domain Controller.')
         return name
 
     def get_host_fingerprint(self, host):
@@ -85,17 +82,17 @@ class WindowsServerFinger(HostFinger):
                 LOG.error(f'Unexpected error: {ex}.')
                 unexpected_error_encountered = True
 
-            return None
-
         DC_IP = host.ip_addr
         DC_NAME = self.get_dc_name(DC_IP)
         DC_HANDLE = '\\\\' + DC_NAME
 
         if DC_NAME:  # if it is a Windows DC
-            # Keep authenticating until successful. Expected average number of attempts needed: 256.
+            # Keep authenticating until successful.
+            # Expected average number of attempts needed: 256.
+            # Approximate time taken by 2000 attempts: 40 seconds.
             LOG.info('Performing Zerologon authentication attempts...')
             rpc_con = None
-            for attempt in range(0, self.MAX_ATTEMPTS):
+            for _ in range(0, self.MAX_ATTEMPTS):
                 rpc_con = try_zero_authenticate(DC_HANDLE, DC_IP, DC_NAME)
                 if (rpc_con is not None) or (unexpected_error_encountered):
                     break
@@ -103,7 +100,7 @@ class WindowsServerFinger(HostFinger):
             self.init_service(host.services, self._SCANNED_SERVICE, '')
 
             if rpc_con:
-                LOG.info('Success: DC can be fully compromised by a Zerologon attack.')
+                LOG.info('Success: Domain Controller can be fully compromised by a Zerologon attack.')
                 host.services[self._SCANNED_SERVICE]['is_vulnerable'] = True
                 return True
             else:
@@ -112,5 +109,5 @@ class WindowsServerFinger(HostFinger):
                 return False
 
         else:
-            LOG.info('Error encountered; most likely not a Windows DC.')
+            LOG.info('Error encountered; most likely not a Windows Domain Controller.')
             return False
