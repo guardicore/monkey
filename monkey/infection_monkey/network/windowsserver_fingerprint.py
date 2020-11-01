@@ -5,6 +5,7 @@ Implementation from https://github.com/SecuraBV/CVE-2020-1472
 import logging
 import subprocess
 
+import nmb.NetBIOS
 from impacket.dcerpc.v5 import epm, nrpc, transport
 
 import infection_monkey.config
@@ -25,15 +26,11 @@ class WindowsServerFinger(HostFinger):
         """
         name = ''
         try:
-            if is_windows_os():
-                cmd = f'nbtstat -A {DC_IP} | findstr "<00>"'
-                name = subprocess.check_output(cmd, shell=True).decode().split('\n')[0].strip(' ').split(' ')[0]
-            else:
-                cmd = f'nmblookup -A {DC_IP} | grep "<00>"'
-                name = subprocess.check_output(cmd, shell=True).decode().split('\n')[0].strip('\t').strip(' ').split(' ')[0]
+            nb = nmb.NetBIOS.NetBIOS()
+            name = nb.queryIPForName(ip=DC_IP)  # returns either a list of NetBIOS names or None
+            return name[0] if name else None
         except BaseException as ex:
-            LOG.info(f'Exception: {ex} Most likely not a Windows Domain Controller.')
-        return name
+            LOG.info(f'Exception: {ex}')
 
     def get_host_fingerprint(self, host):
         """
