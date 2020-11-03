@@ -85,6 +85,10 @@ data "google_compute_image" "struts2-24" {
   name = "struts2-24"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "zerologon-25" {
+  name = "zerologon-25"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "island-linux-250" {
   name = "island-linux-250"
   project = local.monkeyzoo_project
