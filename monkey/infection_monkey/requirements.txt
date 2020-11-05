@@ -12,5 +12,6 @@ pycryptodome==3.9.8
 pyftpdlib==1.5.6
 pymssql<3.0
 pypykatz==0.3.12
+pysmb==1.2.5
 requests>=2.24
 wmi==1.5.1 ; sys_platform == 'win32'
