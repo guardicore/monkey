@@ -27,12 +27,13 @@ class WindowsServerFinger(HostFinger):
 
         DC_IP = host.ip_addr
         DC_NAME = self.get_dc_name(DC_IP)
-        DC_HANDLE = '\\\\' + DC_NAME
 
         if DC_NAME:  # if it is a Windows DC
             # Keep authenticating until successful.
             # Expected average number of attempts needed: 256.
             # Approximate time taken by 2000 attempts: 40 seconds.
+            DC_HANDLE = '\\\\' + DC_NAME
+
             LOG.info('Performing Zerologon authentication attempts...')
             rpc_con = None
             for _ in range(0, self.MAX_ATTEMPTS):
