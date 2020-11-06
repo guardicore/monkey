@@ -60,12 +60,12 @@ before_script:
 
 script:
 # Check Python code
-- flake8 ./monkey --config ./ci_scripts/flake8_syntax_check.config
+- flake8 ./monkey --config=./ci_scripts/flake8_syntax_check.ini
 
 ## Warn about linter issues.
 ### --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
 ### The output is redirected to a file.
-- flake8 ./monkey --exit-zero --config ./ci_scripts/flake8_linter_check.config > ./ci_scripts/flake8_warnings.txt
+- flake8 ./monkey --exit-zero --config=./ci_scripts/flake8_linter_check.ini > ./ci_scripts/flake8_warnings.txt
 ## Display the linter issues
 - cat ./ci_scripts/flake8_warnings.txt
 ## Make sure that we haven't increased the amount of warnings.
