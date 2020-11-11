@@ -3,14 +3,11 @@ Implementation from https://github.com/SecuraBV/CVE-2020-1472
 """
 
 import logging
-import subprocess
 
 import nmb.NetBIOS
 from impacket.dcerpc.v5 import epm, nrpc, transport
 
-import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
-from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
 
