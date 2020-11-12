@@ -7,6 +7,7 @@ Add any further explanations here.
 ## PR Checklist
 * [ ] Have you added an explanation of what your changes do and why you'd like to include them?
 * [ ] Is the TravisCI build passing? 
+* [ ] Was the documentation framework updated to reflect the changes?
 
 ## Testing Checklist
 
