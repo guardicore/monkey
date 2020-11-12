@@ -9,7 +9,9 @@ from requests.exceptions import ConnectionError
 
 import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
-from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT, LONG_REQUEST_TIMEOUT, SHORT_REQUEST_TIMEOUT
+from common.common_consts.timeouts import (LONG_REQUEST_TIMEOUT,
+                                           MEDIUM_REQUEST_TIMEOUT,
+                                           SHORT_REQUEST_TIMEOUT)
 from common.data.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import check_internet_access, local_ips
