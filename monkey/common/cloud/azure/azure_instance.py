@@ -4,6 +4,7 @@ import requests
 
 from common.cloud.environment_names import Environment
 from common.cloud.instance import CloudInstance
+from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 
 LATEST_AZURE_METADATA_API_VERSION = "2019-04-30"
 AZURE_METADATA_SERVICE_URL = "http://169.254.169.254/metadata/instance?api-version=%s" % LATEST_AZURE_METADATA_API_VERSION
@@ -32,7 +33,9 @@ class AzureInstance(CloudInstance):
         self.on_azure = False
 
         try:
-            response = requests.get(AZURE_METADATA_SERVICE_URL, headers={"Metadata": "true"})
+            response = requests.get(AZURE_METADATA_SERVICE_URL,
+                                    headers={"Metadata": "true"},
+                                    timeout=SHORT_REQUEST_TIMEOUT)
             self.on_azure = True
 
             # If not on cloud, the metadata URL is non-routable and the connection will fail.

@@ -11,6 +11,7 @@ import requests
 
 import infection_monkey.control
 import infection_monkey.monkeyfs as monkeyfs
+from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.transport.base import (TransportProxyBase,
                                              update_last_serve_time)
@@ -123,7 +124,8 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
                 r = requests.post(url=dest_path,
                                   data=post_data,
                                   verify=False,
-                                  proxies=infection_monkey.control.ControlClient.proxies)
+                                  proxies=infection_monkey.control.ControlClient.proxies,
+                                  timeout=SHORT_REQUEST_TIMEOUT)
                 self.send_response(r.status_code)
             except requests.exceptions.ConnectionError as e:
                 LOG.error("Couldn't forward request to the island: {}".format(e))
