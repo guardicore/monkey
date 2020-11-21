@@ -1,7 +1,3 @@
-"""
-Implementation from https://github.com/SecuraBV/CVE-2020-1472
-"""
-
 import logging
 
 import psycopg2
@@ -18,8 +14,8 @@ class PostgreSQLFinger(HostFinger):
     # Class related consts
     _SCANNED_SERVICE = 'PostgreSQL'
     POSTGRESQL_DEFAULT_PORT = 5432
-    CREDS = {'username': 'monkeySaysHello',
-             'password': 'monkeySaysXXX'}
+    CREDS = {'username': "monkeySaysHello",
+             'password': "monkeySaysXXX"}
 
     def get_host_fingerprint(self, host):
         try:
@@ -31,50 +27,60 @@ class PostgreSQLFinger(HostFinger):
 
         except psycopg2.OperationalError as ex:
             # try block will throw an OperationalError since the credentials are wrong, which we then analyze
-            self.relevant_ex_substrings = ["password authentication failed",
-                                           "entry for host"]  # "no pg_hba.conf entry for host" but filename may be diff
-            exception_string = str(ex)
+            try:
+                self.relevant_ex_substrings = ["password authentication failed",
+                                               "entry for host"]  # "no pg_hba.conf entry for host" but filename may be diff
+                exception_string = str(ex)
 
-            if not any(substr in exception_string for substr in self.relevant_ex_substrings):
-                # OperationalError due to some other reason
-                return False
+                if not any(substr in exception_string for substr in self.relevant_ex_substrings):
+                    # OperationalError due to some other reason
+                    return False
 
-            self.init_service(host.services, self._SCANNED_SERVICE, self.POSTGRESQL_DEFAULT_PORT)
+                # all's well; start analysing errors
+                self.init_service(host.services, self._SCANNED_SERVICE, self.POSTGRESQL_DEFAULT_PORT)
 
-            ssl_connection_details = []
-            exceptions = exception_string.split("\n")
-            ssl_conf_on_server = self.is_ssl_configured(exceptions)
+                exceptions = exception_string.split("\n")
+                connection_details = {'ssl_conf': "SSL is configured on the PostgreSQL server.\n",
+                                      'ssl_not_conf': "SSL is NOT configured on the PostgreSQL server.\n",
+                                      'all_ssl': "SSL connections can be made by all.\n",
+                                      'all_non_ssl': "Non-SSL connections can be made by all.\n",
+                                      'selected_ssl': "SSL connections can be made by selected hosts only OR "
+                                                      "non-SSL usage is forced.\n",
+                                      'selected_non_ssl': "Non-SSL connections can be made by selected hosts only OR "
+                                                          "SSL usage is forced.\n"}
 
-            """ Make this part cleaner and better! """
+                ssl_connection_details = []
+                ssl_conf_on_server = self.is_ssl_configured(exceptions)
 
-            # SSL configured
-            if ssl_conf_on_server:
-                ssl_connection_details.append("SSL is configured on the PostgreSQL server.\n")
-                # SSL
-                if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
-                    ssl_connection_details.append("SSL connections can be made by all.\n")
+                # SSL configured
+                if ssl_conf_on_server:
+                    ssl_connection_details.append(connection_details['ssl_conf'])
+                    # SSL
+                    if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
+                        ssl_connection_details.append(connection_details['all_ssl'])
+                    else:
+                        ssl_connection_details.append(connection_details['selected_ssl'])
+                    # non-SSL
+                    if self.found_entry_for_host_but_pwd_auth_failed(exceptions[1]):
+                        ssl_connection_details.append(connection_details['all_non_ssl'])
+                    else:
+                        ssl_connection_details.append(connection_details['selected_non_ssl'])
+
+                # SSL not configured
                 else:
-                    ssl_connection_details.append(
-                        "SSL connections can be made by selected hosts only OR non-SSL usage is forced.\n")
-                # non-SSL
-                if self.found_entry_for_host_but_pwd_auth_failed(exceptions[1]):
-                    ssl_connection_details.append("Non-SSL connections can be made by all.\n")
-                else:
-                    ssl_connection_details.append(
-                        "Non-SSL connections can be made by selected hosts only OR SSL usage is forced.\n")
+                    ssl_connection_details.append(connection_details['ssl_not_conf'])
+                    if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
+                        ssl_connection_details.append(connection_details['all_non_ssl'])
+                    else:
+                        ssl_connection_details.append(connection_details['selected_non_ssl'])
 
-            # SSL not configured
-            else:
-                ssl_connection_details.append("SSL is NOT configured on the PostgreSQL server.\n")
-                if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
-                    ssl_connection_details.append("Non-SSL connections can be made by all.\n")
-                else:
-                    ssl_connection_details.append(
-                        "Non-SSL connections can be made by selected hosts only OR SSL usage is forced.\n")
+                host.services[self._SCANNED_SERVICE]['communication_encryption_details'] = ''.join(ssl_connection_details)
+                return True
 
-            host.services[self._SCANNED_SERVICE]['communication_encryption_details'] = ''.join(ssl_connection_details)
+            except Exception as err:
+                LOG.debug("Error getting PostgreSQL fingerprint: %s", err)
 
-            return True
+            return False
 
     def is_ssl_configured(self, exceptions):
         # when trying to authenticate, it checks pg_hba.conf file:

@@ -8,6 +8,7 @@ netifaces>=0.10.9
 odict==1.7.0
 paramiko>=2.7.1
 psutil>=5.7.0
+psycopg2-binary==2.8.6
 pycryptodome==3.9.8
 pyftpdlib==1.5.6
 pymssql<3.0
