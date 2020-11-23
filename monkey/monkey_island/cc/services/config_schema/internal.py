@@ -223,7 +223,8 @@ INTERNAL = {
                         "MySQLFinger",
                         "MSSQLFinger",
                         "ElasticFinger",
-                        "WindowsServerFinger"
+                        "WindowsServerFinger",
+                        "PostgreSQLFinger"
                     ]
                 }
             }

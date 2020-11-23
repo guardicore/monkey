@@ -73,6 +73,15 @@ FINGER_CLASSES = {
             "title": "WindowsServerFinger",
             "info": "Checks if server is a Windows Server and tests if it is vulnerable to Zerologon.",
             "attack_techniques": ["T1210"]
+        },
+        {
+            "type": "string",
+            "enum": [
+                "PostgreSQLFinger"
+            ],
+            "title": "PostgreSQLFinger",
+            "info": "Checks if PostgreSQL service is running and if its communication is encrypted.",
+            "attack_techniques": ["T1210"]
         }
     ]
 }

@@ -22,6 +22,7 @@ STATUS_FAILED = "Failed"
 # Don't change order! The statuses are ordered by importance/severity.
 ORDERED_TEST_STATUSES = [STATUS_FAILED, STATUS_VERIFY, STATUS_PASSED, STATUS_UNEXECUTED]
 
+TEST_DATA_ENDPOINT_POSTGRESQL = "unencrypted_data_endpoint_postgresql"
 TEST_DATA_ENDPOINT_ELASTIC = "unencrypted_data_endpoint_elastic"
 TEST_DATA_ENDPOINT_HTTP = "unencrypted_data_endpoint_http"
 TEST_MACHINE_EXPLOITED = "machine_exploited"
@@ -39,6 +40,7 @@ TESTS = (
     TEST_MACHINE_EXPLOITED,
     TEST_DATA_ENDPOINT_HTTP,
     TEST_DATA_ENDPOINT_ELASTIC,
+    TEST_DATA_ENDPOINT_POSTGRESQL,
     TEST_TUNNELING,
     TEST_COMMUNICATE_AS_NEW_USER
 )
@@ -139,6 +141,17 @@ TESTS_MAP = {
             STATUS_FAILED: "Monkey accessed HTTP servers. Limit access to data by encrypting it in in-transit.",
             STATUS_PASSED: "Monkey didn't find open HTTP servers. If you have such servers, look for alerts that indicate "
                            "attempts to access them. "
+        },
+        PRINCIPLE_KEY: PRINCIPLE_DATA_TRANSIT,
+        PILLARS_KEY: [DATA],
+        POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
+    },
+    TEST_DATA_ENDPOINT_POSTGRESQL: {
+        TEST_EXPLANATION_KEY: "The Monkey scanned for unencrypted access to PostgreSQL servers.",
+        FINDING_EXPLANATION_BY_STATUS_KEY: {
+            STATUS_FAILED: "Monkey accessed PostgreSQL servers. Limit access to data by encrypting it in in-transit.",
+            STATUS_PASSED: "Monkey didn't find open PostgreSQL servers. If you have such servers, look for alerts that "
+                           "indicate attempts to access them. "
         },
         PRINCIPLE_KEY: PRINCIPLE_DATA_TRANSIT,
         PILLARS_KEY: [DATA],

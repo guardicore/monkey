@@ -22,6 +22,11 @@ EXPECTED_DICT = {
                     "test": zero_trust_consts.TESTS_MAP
                     [zero_trust_consts.TEST_DATA_ENDPOINT_ELASTIC][zero_trust_consts.TEST_EXPLANATION_KEY]
                 },
+                {
+                    "status": zero_trust_consts.STATUS_UNEXECUTED,
+                    "test": zero_trust_consts.TESTS_MAP
+                    [zero_trust_consts.TEST_DATA_ENDPOINT_POSTGRESQL][zero_trust_consts.TEST_EXPLANATION_KEY]
+                }
             ]
         }
     ],
