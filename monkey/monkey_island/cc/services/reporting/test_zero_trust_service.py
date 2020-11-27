@@ -213,7 +213,7 @@ class TestZeroTrustService(IslandTestCase):
                 zero_trust_consts.STATUS_FAILED: 5,
                 zero_trust_consts.STATUS_VERIFY: 2,
                 zero_trust_consts.STATUS_PASSED: 1,
-                zero_trust_consts.STATUS_UNEXECUTED: 1,
+                zero_trust_consts.STATUS_UNEXECUTED: 2,
                 "pillar": "Data"
             },
             {
