@@ -47,7 +47,8 @@ class PostgreSQLFinger(HostFinger):
                                       'selected_ssl': "SSL connections can be made by selected hosts only OR "
                                                       "non-SSL usage is forced.\n",
                                       'selected_non_ssl': "Non-SSL connections can be made by selected hosts only OR "
-                                                          "SSL usage is forced.\n"}
+                                                          "SSL usage is forced.\n",
+                                      'only_selected': "Only selected hosts can make connections (SSL or non-SSL).\n"}
 
                 ssl_connection_details = []
                 ssl_conf_on_server = self.is_ssl_configured(exceptions)
@@ -56,15 +57,20 @@ class PostgreSQLFinger(HostFinger):
                 if ssl_conf_on_server:
                     ssl_connection_details.append(connection_details['ssl_conf'])
                     # SSL
+                    ssl_selected_comms_only = False
                     if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
                         ssl_connection_details.append(connection_details['all_ssl'])
                     else:
                         ssl_connection_details.append(connection_details['selected_ssl'])
+                        ssl_selected_comms_only = True
                     # non-SSL
                     if self.found_entry_for_host_but_pwd_auth_failed(exceptions[1]):
                         ssl_connection_details.append(connection_details['all_non_ssl'])
                     else:
-                        ssl_connection_details.append(connection_details['selected_non_ssl'])
+                        if ssl_selected_comms_only:  # if only selected SSL allowed and only selected non-SSL allowed
+                            ssl_connection_details[-1] = connection_details['only_selected']
+                        else:
+                            ssl_connection_details.append(connection_details['selected_non_ssl'])
 
                 # SSL not configured
                 else:
