@@ -202,7 +202,7 @@ class MonkeyDrops(object):
                     )
 
                     # mark the file for removal on next boot
-                    dropper_source_path_ctypes = c_char_p(self._config["source_path"])
+                    dropper_source_path_ctypes = c_char_p(self._config["source_path"].encode())
                     if 0 == ctypes.windll.kernel32.MoveFileExA(
                         dropper_source_path_ctypes, None, MOVEFILE_DELAY_UNTIL_REBOOT
                     ):
@@ -218,7 +218,6 @@ class MonkeyDrops(object):
                             self._config["source_path"],
                         )
                         T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
-
             LOG.info("Dropper cleanup complete")
         except AttributeError:
             LOG.error("Invalid configuration options. Failing")
