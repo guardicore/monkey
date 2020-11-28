@@ -189,7 +189,8 @@ class Configuration(object):
                         443,
                         8008,
                         3306,
-                        9200]
+                        9200,
+                        5432]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
     tcp_scan_interval = 0  # in milliseconds
