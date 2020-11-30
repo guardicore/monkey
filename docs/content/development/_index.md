@@ -15,7 +15,7 @@ Want to help secure networks? That's great!
 
 Here's a few short links to help you get started.
 
-* [Getting up and running](../setup-development-environment) - To help you get a working development setup.
+* [Getting up and running](./setup-development-environment) - To help you get a working development setup.
 * [Contributing guidelines](https://github.com/guardicore/monkey/blob/master/CONTRIBUTING.md) - Some guidelines to help you submit.
 
 ## What are we looking for?
