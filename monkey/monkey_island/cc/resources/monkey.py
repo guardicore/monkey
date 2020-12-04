@@ -87,20 +87,18 @@ class Monkey(flask_restful.Resource):
         parent = monkey_json.get('parent')
         parent_to_add = (monkey_json.get('guid'), None)  # default values in case of manual run
         if parent and parent != monkey_json.get('guid'):  # current parent is known
-            exploit_telem = [x for x in
-                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'},
+            exploit_telem = list(mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'},
                                                       'data.result': {'$eq': True},
                                                       'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']},
-                                                      'monkey_guid': {'$eq': parent}})]
+                                                      'monkey_guid': {'$eq': parent}}))
             if 1 == len(exploit_telem):
                 parent_to_add = (exploit_telem[0].get('monkey_guid'), exploit_telem[0].get('data').get('exploiter'))
             else:
                 parent_to_add = (parent, None)
         elif (not parent or parent == monkey_json.get('guid')) and 'ip_addresses' in monkey_json:
-            exploit_telem = [x for x in
-                             mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'},
+            exploit_telem = list(mongo.db.telemetry.find({'telem_category': {'$eq': 'exploit'},
                                                       'data.result': {'$eq': True},
-                                                      'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}})]
+                                                      'data.machine.ip_addr': {'$in': monkey_json['ip_addresses']}}))
 
             if 1 == len(exploit_telem):
                 parent_to_add = (exploit_telem[0].get('monkey_guid'), exploit_telem[0].get('data').get('exploiter'))
