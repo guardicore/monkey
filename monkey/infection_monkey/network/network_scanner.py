@@ -113,7 +113,7 @@ class NetworkScanner(object):
         :return: Victim or None if victim isn't alive
         """
         LOG.debug("Scanning target address: %r", victim)
-        if any([scanner.is_host_alive(victim) for scanner in self.scanners]):
+        if any(scanner.is_host_alive(victim) for scanner in self.scanners):
             LOG.debug("Found potential target_ip: %r", victim)
             return victim
         else:
