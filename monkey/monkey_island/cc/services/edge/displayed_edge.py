@@ -63,7 +63,7 @@ class DisplayedEdgeService:
     @staticmethod
     def services_to_displayed_services(services, for_report=False):
         if for_report:
-            return list(services)
+            return [x for x in services]
         else:
             return [x + ": " + (services[x]['name'] if 'name' in services[x] else 'unknown') for x in services]
 
