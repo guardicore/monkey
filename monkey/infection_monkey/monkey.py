@@ -170,7 +170,11 @@ class InfectionMonkey(object):
                     for finger in self._fingerprint:
                         LOG.info("Trying to get OS fingerprint from %r with module %s",
                                  machine, finger.__class__.__name__)
-                        finger.get_host_fingerprint(machine)
+                        try:
+                            finger.get_host_fingerprint(machine)
+                        except BaseException as exc:
+                            LOG.error("Failed to run fingerprinter %s, exception %s" % finger.__class__.__name__,
+                                      str(exc))
 
                     ScanTelem(machine).send()
 
