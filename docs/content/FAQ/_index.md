@@ -41,7 +41,8 @@ The Monkey shuts off either when it can't find new victims, or when it has excee
 On your first access of Monkey Island server, you'll be prompted to create an account. If you forgot the credentials you
  entered or just want to change them, you need to manually alter the `server_config.json` file. On Linux, this file is 
  located on `/var/monkey/monkey_island/cc/server_config.json`. On windows, it's based on your install directory (typically 
- `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file back to
+ `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file 
+ leaving the **deployment option unchanged** (it might be "vmware" or "linux" in your case):
 
 ```json
 {
@@ -49,9 +50,8 @@ On your first access of Monkey Island server, you'll be prompted to create an ac
   "deployment": "windows"
 }
 ```
-Leave the deployment option unchanged (it might be "vmware" or "linux" in your case). Then reset the Island process
-(`sudo systemctl restart monkey-island.service` for linux, restart program for windows). Go to the island's URL and create 
-a new account.
+ Then reset the Island process (`sudo systemctl restart monkey-island.service` for linux, restart program for windows). 
+ Finally, go to the Island's URL and create a new account.
 
 ## Should I run the Monkey continuously?
 
