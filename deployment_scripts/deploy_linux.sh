@@ -68,7 +68,8 @@ INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
 
 if ! has_sudo; then
-  log_message "You need root permissions for some of this script operations. Quiting."
+  log_message "You need root permissions for some of this script operations. \
+Run \`sudo -v\`, enter your password, and then re-run this script."
   exit 1
 fi
 
