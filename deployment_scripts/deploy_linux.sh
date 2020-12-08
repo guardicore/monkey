@@ -118,6 +118,9 @@ fi
 log_message "Installing build-essential"
 sudo apt install build-essential
 
+log_message "Installing python3-distutils"
+sudo apt install python3-distutils
+
 log_message "Installing or updating pip"
 # shellcheck disable=SC2086
 pip_url=https://bootstrap.pypa.io/get-pip.py
