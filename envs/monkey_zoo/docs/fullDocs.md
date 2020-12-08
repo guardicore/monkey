@@ -1101,6 +1101,26 @@ fullTest.conf is a good config to start, because it covers all machines.
 <table>
 <thead>
 <tr class="header">
+<th><p>Nr. <strong>25</strong> ZeroLogon</p>
+<p>(10.2.2.25)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Server 2016</strong></td>
+</tr>
+<tr class="even">
+<td>Default server’s port:</td>
+<td>135</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
 <th><p><span id="_Toc536021478" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
 <p>(10.2.2.250)</p></th>
 <th></th>

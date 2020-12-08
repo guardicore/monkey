@@ -11,4 +11,4 @@ pre: "<i class='fas fa-directions'></i> "
 
 The Monkey likes working together. See these documentation pages for information on each integration the Monkey currently offers:
 
-{{% children description=true %}}
+{{% children description=true style="p"%}}

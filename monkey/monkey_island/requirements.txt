@@ -11,7 +11,7 @@ flask>=1.1
 gevent>=20.9.0
 ipaddress>=1.0.23
 jsonschema==3.2.0
-mongoengine>=0.20
+mongoengine==0.20
 mongomock==3.19.0
 netifaces>=0.10.9
 pycryptodome==3.9.8

@@ -432,6 +432,21 @@ resource "google_compute_instance_from_template" "struts2-24" {
   }
 }
 
+resource "google_compute_instance_from_template" "zerologon-25" {
+  name = "${local.resource_prefix}zerologon-25"
+  source_instance_template = local.default_windows
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.zerologon-25.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    network_ip="10.2.2.25"
+  }
+}
+
 resource "google_compute_instance_from_template" "island-linux-250" {
   name = "${local.resource_prefix}island-linux-250"
   machine_type         = "n1-standard-2"
