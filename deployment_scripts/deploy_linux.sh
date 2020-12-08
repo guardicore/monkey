@@ -23,6 +23,11 @@ log_message() {
   echo -e "DEPLOYMENT SCRIPT: $1"
 }
 
+if is_root; then
+  log_message "Please don't run this script as root"
+  exit 1
+fi
+
 config_branch=${2:-"develop"}
 config_url="https://raw.githubusercontent.com/guardicore/monkey/${config_branch}/deployment_scripts/config"
 
@@ -61,11 +66,6 @@ MONGO_PATH="$ISLAND_PATH/bin/mongodb"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
-
-if is_root; then
-  log_message "Please don't run this script as root"
-  exit 1
-fi
 
 HAS_SUDO=$(has_sudo)
 if [[ ! $HAS_SUDO ]]; then
