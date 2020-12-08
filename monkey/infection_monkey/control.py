@@ -84,7 +84,7 @@ class ControlClient(object):
                 if ControlClient.proxies:
                     debug_message += " through proxies: %s" % ControlClient.proxies
                 LOG.debug(debug_message)
-                requests.get("https://%s/api?action=is-up" % (server,),  # noqa: DUO123
+                requests.get(f"https://{server}/api?action=is-up",  # noqa: DUO123
                              verify=False,
                              proxies=ControlClient.proxies,
                              timeout=TIMEOUT_IN_SECONDS)

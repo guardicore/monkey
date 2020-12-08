@@ -25,9 +25,9 @@ class PostBreach(object):
         """
         Executes all post breach actions.
         """
-        pool = Pool(5)
-        pool.map(self.run_pba, self.pba_list)
-        LOG.info("All PBAs executed. Total {} executed.".format(len(self.pba_list)))
+        with Pool(5) as pool:
+            pool.map(self.run_pba, self.pba_list)
+            LOG.info("All PBAs executed. Total {} executed.".format(len(self.pba_list)))
 
     @staticmethod
     def config_to_pba_list() -> Sequence[PBA]:
@@ -40,5 +40,6 @@ class PostBreach(object):
         try:
             LOG.debug("Executing PBA: '{}'".format(pba.name))
             pba.run()
+            LOG.debug(f"Execution of {pba.name} finished")
         except Exception as e:
             LOG.error("PBA {} failed. Error info: {}".format(pba.name, e))
