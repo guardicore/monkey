@@ -165,6 +165,9 @@ chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
 
 # If a user haven't installed mongo manually check if we can install it with our script
 if ! exists mongod; then
+  log_message "Installing libcurl4"
+  sudo apt install libcurl4
+
   log_message "Installing MongoDB"
   "${ISLAND_PATH}"/linux/install_mongo.sh ${MONGO_PATH} || handle_error
 fi
