@@ -110,16 +110,16 @@ if [[ ${python_cmd} == "" ]]; then
   log_message "Python 3.7 command not found. Installing python 3.7."
   sudo add-apt-repository ppa:deadsnakes/ppa
   sudo apt-get update
-  sudo apt install python3.7 python3.7-dev
+  sudo apt install -y python3.7 python3.7-dev
   log_message "Python 3.7 is now available with command 'python3.7'."
   python_cmd="python3.7"
 fi
 
 log_message "Installing build-essential"
-sudo apt install build-essential
+sudo apt install -y build-essential
 
 log_message "Installing python3-distutils"
-sudo apt install python3-distutils
+sudo apt install -y python3-distutils
 
 log_message "Installing or updating pip"
 # shellcheck disable=SC2086
@@ -137,7 +137,7 @@ requirements_island="$ISLAND_PATH/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_island}" --user --upgrade || handle_error
 
 log_message "Installing monkey requirements"
-sudo apt-get install libffi-dev upx libssl-dev libc++1
+sudo apt install -y libffi-dev upx libssl-dev libc++1
 requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
 
@@ -166,13 +166,13 @@ chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
 # If a user haven't installed mongo manually check if we can install it with our script
 if ! exists mongod; then
   log_message "Installing libcurl4"
-  sudo apt install libcurl4
+  sudo apt install -y libcurl4
 
   log_message "Installing MongoDB"
   "${ISLAND_PATH}"/linux/install_mongo.sh ${MONGO_PATH} || handle_error
 fi
 log_message "Installing openssl"
-sudo apt-get install openssl
+sudo apt install -y openssl
 
 # Generate SSL certificate
 log_message "Generating certificate"
@@ -189,7 +189,7 @@ if ! exists npm; then
   else
     wget -q -O - $node_src | sudo -E bash -
   fi
-  sudo apt-get install -y nodejs
+  sudo apt install -y nodejs
 fi
 
 pushd "$ISLAND_PATH/cc/ui" || handle_error
