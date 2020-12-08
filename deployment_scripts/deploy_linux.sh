@@ -10,7 +10,7 @@ is_root() {
 
 has_sudo() {
   # 0 true, 1 false
-  timeout 1 sudo id && return 0 || return 1
+  return $(sudo -nv > /dev/null 2>&1)
 }
 
 handle_error() {
@@ -67,8 +67,7 @@ ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
 
-HAS_SUDO=$(has_sudo)
-if [[ ! $HAS_SUDO ]]; then
+if ! has_sudo; then
   log_message "You need root permissions for some of this script operations. Quiting."
   exit 1
 fi
