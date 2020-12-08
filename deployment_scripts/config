@@ -4,10 +4,22 @@ export MONKEY_FOLDER_NAME="infection_monkey"
 # Url of public git repository that contains monkey's source code
 export MONKEY_GIT_URL="https://github.com/guardicore/monkey"
 
+exists() {
+  command -v "$1" >/dev/null 2>&1
+}
+
 get_latest_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub API
-    grep '"tag_name":' |                                            # Get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
+  RELEASE_URL="https://api.github.com/repos/$1/releases/latest"
+
+  if exists wget; then
+    RELEASE_INFO=$(wget --quiet -O - "$RELEASE_URL")          # Get latest release from GitHub API
+  else
+    RELEASE_INFO=$(curl --silent "$RELEASE_URL")				# Get latest release from GitHub API
+  fi
+
+  echo "$RELEASE_INFO" |
+      grep '"tag_name":' |                      # Get tag line
+      sed -E 's/.*"([^"]+)".*/\1/'   # Pluck JSON value
 }
 
 MONKEY_LATEST_RELEASE=$(get_latest_release "guardicore/monkey")
