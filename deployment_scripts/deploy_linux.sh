@@ -174,6 +174,7 @@ sudo apt-get install openssl
 # Generate SSL certificate
 log_message "Generating certificate"
 
+chmod u+x "${ISLAND_PATH}"/linux/create_certificate.sh
 "${ISLAND_PATH}"/linux/create_certificate.sh ${ISLAND_PATH}/cc
 
 # Update node
