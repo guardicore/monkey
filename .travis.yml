@@ -52,6 +52,11 @@ install:
 # print hugo version (useful for debugging documentation build errors)
 - hugo version
 
+# dependencies for swimm
+- sudo apt-get update
+- sudo apt-get -y install libappindicator3-1
+- sudo apt-get -y install libsecret-1-0
+
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
 - pushd /home/travis/build/guardicore/monkey/monkey
