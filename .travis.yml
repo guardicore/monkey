@@ -52,11 +52,6 @@ install:
 # print hugo version (useful for debugging documentation build errors)
 - hugo version
 
-# dependencies for swimm
-- sudo apt-get update
-- sudo apt-get -y install libappindicator3-1
-- sudo apt-get -y install libsecret-1-0
-
 before_script:
 # Set the server config to `testing`. This is required for for the UTs to pass.
 - pushd /home/travis/build/guardicore/monkey/monkey
@@ -104,7 +99,7 @@ script:
 # verify swimm
 - cd $TRAVIS_BUILD_DIR
 - wget "https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv029%2FSwimm_0.2.9_Setup.deb?alt=media&token=774ebd98-cb4e-4615-900c-aada224c1608" -O swimm
-- sudo dpkg -i swimm
+- sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)
 - chmod +x ./swimm
 - swimm --version
 - swimm verify
