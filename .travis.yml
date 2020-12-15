@@ -98,10 +98,11 @@ script:
 
 # verify swimm
 - cd $TRAVIS_BUILD_DIR
-- wget https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv018%2Fswimm-0.1.8-linux-executable\?alt\=media\&token\=e59c0a18-577f-4b77-bb3b-91b22c3d8b2a -O swimm
+- wget "https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv029%2FSwimm_0.2.9_Setup.deb?alt=media&token=774ebd98-cb4e-4615-900c-aada224c1608" -O swimm
+- sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)
 - chmod +x ./swimm
-- ./swimm --version
-- ./swimm verify
+- swimm --version
+- swimm verify
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
