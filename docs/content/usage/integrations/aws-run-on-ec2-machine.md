@@ -54,16 +54,15 @@ See [Amazon's documentation about working with SSM agents](https://docs.aws.amaz
 
 ### Running the monkey
 
-When you run the monkey island on an AWS instance, the island detects it's running on AWS and present the following option in the _"Run Monkey"_ page, like so:
+When you run the Monkey Island on an AWS instance, the island detects it's running on AWS and present the following option in the _"Run Monkey"_ page, like so:
 
 ![Running a Monkey on EC2 Instance](/images/usage/integrations/monkey-island-aws-screenshot-1.png "Running a Monkey on EC2 Instance")
 
-And then you can choose one of the available instances as "patient zero" like so:
+After you click on "AWS run" you can choose one of the available instances as "patient zero" like so:
 
-1. Click on "Run on AWS"
-2. Choose the relevant Network Interface
-3. Select the machines you'd like to run the Monkey on
-4. Click "Run on Selected Machines", and watch the monkey go! 🐒
+1. Choose the relevant Network Interface
+2. Select the machines you'd like to run the Monkey on
+3. Click "Run on Selected Machines", and watch the monkey go! 🐒
 
 ![Running a Monkey on EC2 Instance](/images/usage/integrations/monkey-island-aws-screenshot-2.png "Running a Monkey on EC2 Instance")
 

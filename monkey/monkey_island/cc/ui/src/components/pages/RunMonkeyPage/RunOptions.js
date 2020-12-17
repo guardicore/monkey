@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import NextSelectionButton from '../../ui-components/inline-selection/NextSelectionButton';
-import LocalManualRunOptions from './LocalManualRunOptions';
+import LocalManualRunOptions from './RunManually/LocalManualRunOptions';
 import AuthComponent from '../../AuthComponent';
 import {faLaptopCode} from '@fortawesome/free-solid-svg-icons/faLaptopCode';
 import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
 import {cloneDeep} from 'lodash';
 import {faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
+import AWSRunButton from './RunOnAWS/AWSRunButton';
 
 function RunOptions(props) {
 
@@ -61,6 +62,7 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
+                             <AWSRunButton setComponent={setComponent}/>
       </>
     );
   }

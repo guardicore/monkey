@@ -10,7 +10,7 @@ is_root() {
 
 has_sudo() {
   # 0 true, 1 false
-  timeout 1 sudo id && return 0 || return 1
+  return $(sudo -nv > /dev/null 2>&1)
 }
 
 handle_error() {
@@ -22,6 +22,11 @@ log_message() {
   echo -e "\n\n"
   echo -e "DEPLOYMENT SCRIPT: $1"
 }
+
+if is_root; then
+  log_message "Please don't run this script as root"
+  exit 1
+fi
 
 config_branch=${2:-"develop"}
 config_url="https://raw.githubusercontent.com/guardicore/monkey/${config_branch}/deployment_scripts/config"
@@ -62,14 +67,9 @@ ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
 
-if is_root; then
-  log_message "Please don't run this script as root"
-  exit 1
-fi
-
-HAS_SUDO=$(has_sudo)
-if [[ ! $HAS_SUDO ]]; then
-  log_message "You need root permissions for some of this script operations. Quiting."
+if ! has_sudo; then
+  log_message "You need root permissions for some of this script operations. \
+Run \`sudo -v\`, enter your password, and then re-run this script."
   exit 1
 fi
 
@@ -110,13 +110,16 @@ if [[ ${python_cmd} == "" ]]; then
   log_message "Python 3.7 command not found. Installing python 3.7."
   sudo add-apt-repository ppa:deadsnakes/ppa
   sudo apt-get update
-  sudo apt install python3.7 python3.7-dev
+  sudo apt-get install -y python3.7 python3.7-dev
   log_message "Python 3.7 is now available with command 'python3.7'."
   python_cmd="python3.7"
 fi
 
 log_message "Installing build-essential"
-sudo apt install build-essential
+sudo apt-get install -y build-essential
+
+log_message "Installing python3-distutils"
+sudo apt-get install -y python3-distutils
 
 log_message "Installing or updating pip"
 # shellcheck disable=SC2086
@@ -134,7 +137,7 @@ requirements_island="$ISLAND_PATH/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_island}" --user --upgrade || handle_error
 
 log_message "Installing monkey requirements"
-sudo apt-get install libffi-dev upx libssl-dev libc++1
+sudo apt-get install -y libffi-dev upx libssl-dev libc++1
 requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
 
@@ -162,15 +165,19 @@ chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
 
 # If a user haven't installed mongo manually check if we can install it with our script
 if ! exists mongod; then
+  log_message "Installing libcurl4"
+  sudo apt-get install -y libcurl4
+
   log_message "Installing MongoDB"
   "${ISLAND_PATH}"/linux/install_mongo.sh ${MONGO_PATH} || handle_error
 fi
 log_message "Installing openssl"
-sudo apt-get install openssl
+sudo apt-get install -y openssl
 
 # Generate SSL certificate
 log_message "Generating certificate"
 
+chmod u+x "${ISLAND_PATH}"/linux/create_certificate.sh
 "${ISLAND_PATH}"/linux/create_certificate.sh ${ISLAND_PATH}/cc
 
 # Update node

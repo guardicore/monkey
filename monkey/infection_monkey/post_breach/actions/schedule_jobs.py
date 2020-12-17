@@ -15,5 +15,7 @@ class ScheduleJobs(PBA):
         super(ScheduleJobs, self).__init__(name=POST_BREACH_JOB_SCHEDULING,
                                            linux_cmd=' '.join(linux_cmds),
                                            windows_cmd=windows_cmds)
-
+    
+    def run(self):
+        super(ScheduleJobs, self).run()
         remove_scheduled_jobs()
