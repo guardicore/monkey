@@ -60,23 +60,20 @@ before_script:
 
 script:
 # Check Python code
-## Check syntax errors and fail the build if any are found.
-- flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
+- flake8 ./monkey --config=./ci_scripts/flake8_syntax_check.ini
 
 ## Warn about linter issues.
 ### --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
-### --count will print the total number of errors.
-### --statistics Count the number of occurrences of each error/warning code and print a report.
 ### The output is redirected to a file.
-- flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics > flake8_warnings.txt
+- flake8 ./monkey --exit-zero --config=./ci_scripts/flake8_linter_check.ini > ./ci_scripts/flake8_warnings.txt
 ## Display the linter issues
-- cat flake8_warnings.txt
+- cat ./ci_scripts/flake8_warnings.txt
 ## Make sure that we haven't increased the amount of warnings.
 - PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=80
-- if [ $(tail -n 1 flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
+- if [ $(tail -n 1 ./ci_scripts/flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
 ## Check import order
-- python -m isort . -c -p common -p infection_monkey -p monkey_island
+- python -m isort ./monkey --settings-file ./ci_scripts/isort.cfg
 
 ## Run unit tests
 - cd monkey  # This is our source dir

@@ -3,6 +3,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from shutil import move
 
 
 def add_monkey_dir_to_sys_path():
@@ -16,6 +17,7 @@ add_monkey_dir_to_sys_path()
 from monkey_island.cc.environment.environment_config import EnvironmentConfig  # noqa: E402 isort:skip
 
 SERVER_CONFIG = "server_config"
+BACKUP_CONFIG_FILENAME = "./server_config.backup"
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -26,9 +28,18 @@ def main():
     args = parse_args()
     file_path = EnvironmentConfig.get_config_file_path()
 
+    if args.server_config == "restore":
+        restore_previous_config(file_path)
+        quit()
+
     # Read config
     with open(file_path) as config_file:
         config_data = json.load(config_file)
+
+    # Backup the config
+    with open(BACKUP_CONFIG_FILENAME, "w") as backup_file:
+        json.dump(config_data, backup_file, indent=4)
+        backup_file.write("\n")
 
     # Edit the config
     config_data[SERVER_CONFIG] = args.server_config
@@ -42,9 +53,13 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("server_config", choices=["standard", "testing", "password"])
+    parser.add_argument("server_config", choices=["standard", "testing", "password", "restore"])
     args = parser.parse_args()
     return args
+
+
+def restore_previous_config(config_path):
+    move(BACKUP_CONFIG_FILENAME, config_path)
 
 
 if __name__ == '__main__':
