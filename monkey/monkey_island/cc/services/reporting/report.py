@@ -44,7 +44,8 @@ class ReportService:
             'HadoopExploiter': 'Hadoop/Yarn Exploiter',
             'MSSQLExploiter': 'MSSQL Exploiter',
             'VSFTPDExploiter': 'VSFTPD Backdoor Exploiter',
-            'DrupalExploiter': 'Drupal Server Exploiter'
+            'DrupalExploiter': 'Drupal Server Exploiter',
+            'ZerologonExploiter': 'Windows Server Zerologon Exploiter'
         }
 
     class ISSUES_DICT(Enum):
@@ -63,6 +64,7 @@ class ReportService:
         MSSQL = 12
         VSFTPD = 13
         DRUPAL = 14
+        ZEROLOGON = 15
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -364,6 +366,12 @@ class ReportService:
         return processed_exploit
 
     @staticmethod
+    def process_zerologon_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'zerologon'
+        return processed_exploit
+
+    @staticmethod
     def process_exploit(exploit):
         exploiter_type = exploit['data']['exploiter']
         EXPLOIT_PROCESS_FUNCTION_DICT = {
@@ -379,7 +387,8 @@ class ReportService:
             'HadoopExploiter': ReportService.process_hadoop_exploit,
             'MSSQLExploiter': ReportService.process_mssql_exploit,
             'VSFTPDExploiter': ReportService.process_vsftpd_exploit,
-            'DrupalExploiter': ReportService.process_drupal_exploit
+            'DrupalExploiter': ReportService.process_drupal_exploit,
+            'ZerologonExploiter': ReportService.process_zerologon_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
@@ -678,6 +687,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
                 elif issue['type'] == 'drupal':
                     issues_byte_array[ReportService.ISSUES_DICT.DRUPAL.value] = True
+                elif issue['type'] == 'zerologon':
+                    issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
