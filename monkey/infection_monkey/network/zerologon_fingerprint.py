@@ -12,7 +12,7 @@ from infection_monkey.network.HostFinger import HostFinger
 LOG = logging.getLogger(__name__)
 
 
-class WindowsServerFinger(HostFinger):
+class ZerologonFinger(HostFinger):
     # Class related consts
     MAX_ATTEMPTS = 2000
     _SCANNED_SERVICE = "NTLM (NT LAN Manager)"
