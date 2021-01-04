@@ -2,6 +2,7 @@
 title: "Zero Trust report"
 date: 2020-06-24T21:16:18+03:00
 draft: false
+description: "Generates a status report with detailed explanations of Zero Trust security gaps and prescriptive instructions on how to rectify them"
 ---
 
 {{% notice info %}}
