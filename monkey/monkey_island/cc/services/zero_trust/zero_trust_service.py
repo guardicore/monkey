@@ -33,8 +33,7 @@ class ZeroTrustService:
             if pillar in test_info[zero_trust_consts.PILLARS_KEY]:
                 pillar_grade[finding.status] += 1
 
-        pillar_grade[zero_trust_consts.STATUS_UNEXECUTED] = sum(1 for condition in
-                                                                list(test_unexecuted.values()) if condition)
+        pillar_grade[zero_trust_consts.STATUS_UNEXECUTED] = list(test_unexecuted.values()).count(True)
 
         return pillar_grade
 

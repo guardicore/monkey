@@ -3,7 +3,7 @@ import sys
 from pathlib import PurePath
 from typing import Tuple
 
-from common.cloud.scoutsuite_consts import PROVIDERS
+from common.cloud.scoutsuite_consts import CloudProviders
 from common.utils.exceptions import InvalidAWSKeys
 from monkey_island.cc.encryptor import encryptor
 from monkey_island.cc.services.config import ConfigService
@@ -20,8 +20,8 @@ def _add_scoutsuite_to_python_path():
 _add_scoutsuite_to_python_path()
 
 
-def is_cloud_authentication_setup(provider: PROVIDERS) -> Tuple[bool, str]:
-    if provider == PROVIDERS.AWS.value:
+def is_cloud_authentication_setup(provider: CloudProviders) -> Tuple[bool, str]:
+    if provider == CloudProviders.AWS.value:
         if is_aws_keys_setup():
             return True, "AWS keys already setup. Run Monkey on Island to start the scan."
 

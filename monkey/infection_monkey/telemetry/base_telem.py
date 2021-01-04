@@ -24,7 +24,7 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
         """
         data = self.get_data()
         serialized_data = json.dumps(data, cls=self.json_encoder)
-        self.log_telem_sending(serialized_data, log_data)
+        self._log_telem_sending(serialized_data, log_data)
         ControlClient.send_telemetry(self.telem_category, serialized_data)
 
     @abc.abstractmethod
@@ -38,10 +38,10 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
     def json_encoder(self):
         return json.JSONEncoder
 
-    def log_telem_sending(self, serialized_data: str, log_data=True):
+    def _log_telem_sending(self, serialized_data: str, log_data=True):
         logger.debug(f"Sending {self.telem_category} telemetry.")
         if log_data:
-            logger.debug(f"Telemetry contents: {BaseTelem.truncate_data(serialized_data)}")
+            logger.debug(f"Telemetry contents: {BaseTelem._truncate_data(serialized_data)}")
 
     @property
     @abc.abstractmethod
@@ -52,7 +52,7 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
         pass
 
     @staticmethod
-    def truncate_data(data: str):
+    def _truncate_data(data: str):
         if len(data) <= LOGGED_DATA_LENGTH:
             return data
         else:

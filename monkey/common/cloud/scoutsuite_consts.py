@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class PROVIDERS(Enum):
+class CloudProviders(Enum):
     AWS = 'aws'
     AZURE = 'azure'
     GCP = 'gcp'
