@@ -7,7 +7,7 @@ import time
 from threading import Thread
 
 import infection_monkey.tunnel as tunnel
-from common.network.network_utils import is_running_on_island
+from infection_monkey.network.tools import is_running_on_island
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.utils.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from common.version import get_version
