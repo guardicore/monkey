@@ -6,8 +6,6 @@ from pathlib import Path
 from threading import Thread
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with "monkey_island." work.
-from gevent.pywsgi import WSGIServer
-
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
@@ -48,6 +46,9 @@ def main(should_setup_only=False):
 
 
 def start_island_server(should_setup_only):
+    from tornado.httpserver import HTTPServer
+    from tornado.ioloop import IOLoop
+    from tornado.wsgi import WSGIContainer
 
     mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)
@@ -68,11 +69,12 @@ def start_island_server(should_setup_only):
     if env_singleton.env.is_debug():
         app.run(host='0.0.0.0', debug=True, ssl_context=(crt_path, key_path))
     else:
-        http_server = WSGIServer(('0.0.0.0', env_singleton.env.get_island_port()), app,
-                                 certfile=os.environ.get('SERVER_CRT', crt_path),
-                                 keyfile=os.environ.get('SERVER_KEY', key_path))
+        http_server = HTTPServer(WSGIContainer(app),
+                                 ssl_options={'certfile': os.environ.get('SERVER_CRT', crt_path),
+                                              'keyfile': os.environ.get('SERVER_KEY', key_path)})
+        http_server.listen(env_singleton.env.get_island_port())
         log_init_info()
-        http_server.serve_forever()
+        IOLoop.instance().start()
 
 
 def log_init_info():
