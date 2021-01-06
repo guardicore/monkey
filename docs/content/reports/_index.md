@@ -10,4 +10,4 @@ pre = "<i class='fas fa-scroll'></i> "
 
 The Monkey offers three reports:
 
-{{% children description="true" %}}
+{{% children description=true style="p"%}}
