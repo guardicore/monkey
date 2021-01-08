@@ -42,6 +42,27 @@ function getDefaultPaneParams(refString, registry) {
   return ({title: configSection.title, content: configSection.description});
 }
 
+function MasterCheckbox(props) {
+    const {
+        title,
+        value,
+        disabled,
+        onClick,
+        checkboxState
+    } = props;
+
+    return (
+        <Card.Header>
+            <Button key={`${title}-button`} value={value}
+                variant={'link'} disabled={disabled}
+                onClick={onClick}>
+                <FontAwesomeIcon icon={checkboxState ? faCheckSquare : faSquare} />
+            </Button>
+            <span className={'header-title'}>{title}</span>
+        </Card.Header>
+    );
+}
+
 class AdvancedMultiSelect extends React.Component {
     constructor(props) {
         super(props)
@@ -69,6 +90,7 @@ class AdvancedMultiSelect extends React.Component {
         let definitionObj = getFullDefinitionByKey(refString, registry, itemKey);
         this.setState({infoPaneParams: {title: definitionObj.title, content: definitionObj.info, link: definitionObj.link}});
     }
+
     render() {
         const {
             schema,
@@ -88,14 +110,9 @@ class AdvancedMultiSelect extends React.Component {
         const selectValue = cloneDeep(value);
         return (
             <div className={'advanced-multi-select'}>
-                <Card.Header>
-                    <Button key={`${schema.title}-button`} value={value}
-                        variant={'link'} disabled={disabled}
-                        onClick={this.onMasterCheckboxClick}>
-                        <FontAwesomeIcon icon={this.state.masterCheckbox ? faCheckSquare : faSquare}/>
-                    </Button>
-                    <span className={'header-title'}>{schema.title}</span>
-                </Card.Header>
+                <MasterCheckbox title={schema.title} value={value}
+                    disabled={disabled} onClick={this.onMasterCheckboxClick}
+                    checkboxState={this.state.masterCheckbox} />
                 <Form.Group
                     style={{height: `${getComponentHeight(enumOptions.length)}px`}}
                     id={id}
