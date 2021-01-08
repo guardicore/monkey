@@ -7,7 +7,10 @@ export default function generateLocalWindowsPowershell(ip, osType, username) {
     + `(New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/ `
     + `monkey-windows-${bitText}.exe','.\\monkey.exe'); `
     + `;Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`;
-  if (username != '')
-      command = `Start-Process powershell.exe -ArgumentList "-noexit ${command}" -Credential ${username}`;
-    return command;
+
+  if (username != '') {
+    command = `Start-Process powershell.exe -ArgumentList "-noexit ${command}" -Credential ${username}`;
+  }
+
+  return command;
 }

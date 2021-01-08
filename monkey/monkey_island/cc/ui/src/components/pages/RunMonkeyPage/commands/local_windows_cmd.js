@@ -8,7 +8,9 @@ export default function generateLocalWindowsCmd(ip, osType, username) {
     + `monkey-windows-${bitText}.exe','.\\monkey.exe'); `
     + `;Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`;
 
-  if (username != '')
-	command = `runas /user:${username} "cmd /K ${command}"`;
-    return command;
+  if (username != '') {
+    command = `runas /user:${username} "cmd /K ${command}"`;
+  }
+
+  return command;
 }
