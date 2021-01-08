@@ -9,8 +9,7 @@ from werkzeug.utils import secure_filename
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.post_breach_files import (
-    PBA_LINUX_FILENAME_PATH, PBA_UPLOAD_PATH, PBA_WINDOWS_FILENAME_PATH,
-    UPLOADS_DIR)
+    ABS_UPLOAD_PATH, PBA_LINUX_FILENAME_PATH, PBA_WINDOWS_FILENAME_PATH)
 
 __author__ = 'VakarisZ'
 
@@ -19,9 +18,6 @@ LOG = logging.getLogger(__name__)
 LINUX_PBA_TYPE = 'PBAlinux'
 WINDOWS_PBA_TYPE = 'PBAwindows'
 
-# This path is used by flask, which means that local directory is different from UPLOADS_DIR
-FLASK_UPLOAD_PATH = PBA_UPLOAD_PATH[-1]
-
 
 class FileUpload(flask_restful.Resource):
     """
@@ -29,7 +25,7 @@ class FileUpload(flask_restful.Resource):
     """
     def __init__(self):
         # Create all directories on the way if they don't exist
-        UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+        ABS_UPLOAD_PATH.mkdir(parents=True, exist_ok=True)
 
     @jwt_required
     def get(self, file_type):
@@ -43,7 +39,8 @@ class FileUpload(flask_restful.Resource):
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_LINUX_FILENAME_PATH))
         else:
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_WINDOWS_FILENAME_PATH))
-        return send_from_directory(FLASK_UPLOAD_PATH, filename)
+        LOG.info(f"Current dir:{os.getcwd()}")
+        return send_from_directory(ABS_UPLOAD_PATH, filename)
 
     @jwt_required
     def post(self, file_type):
@@ -68,7 +65,7 @@ class FileUpload(flask_restful.Resource):
         """
         filename_path = PBA_LINUX_FILENAME_PATH if file_type == 'PBAlinux' else PBA_WINDOWS_FILENAME_PATH
         filename = ConfigService.get_config_value(filename_path)
-        file_path = UPLOADS_DIR.joinpath(filename)
+        file_path = ABS_UPLOAD_PATH.joinpath(filename)
         try:
             if os.path.exists(file_path):
                 os.remove(file_path)
@@ -87,7 +84,7 @@ class FileUpload(flask_restful.Resource):
         :return: filename string
         """
         filename = secure_filename(request_.files['filepond'].filename)
-        file_path = UPLOADS_DIR.joinpath(filename).absolute()
+        file_path = ABS_UPLOAD_PATH.joinpath(filename).absolute()
         request_.files['filepond'].save(str(file_path))
         ConfigService.set_config_value((PBA_LINUX_FILENAME_PATH if is_linux else PBA_WINDOWS_FILENAME_PATH), filename)
         return filename
