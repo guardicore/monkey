@@ -5,7 +5,7 @@ from typing import Tuple
 
 from common.cloud.scoutsuite_consts import CloudProviders
 from common.utils.exceptions import InvalidAWSKeys
-from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.server_utils.encryptor import encryptor
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.config_schema.config_value_paths import AWS_KEYS_PATH
 

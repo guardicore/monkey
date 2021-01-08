@@ -10,7 +10,7 @@ from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.network_utils import get_subnets, local_ip_addresses
+from monkey_island.cc.services.utils.network_utils import get_subnets, local_ip_addresses
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.config_schema.config_value_paths import (EXPLOITER_CLASSES_PATH, LOCAL_NETWORK_SCAN_PATH,
                                                                         PASSWORD_LIST_PATH, SUBNET_SCAN_LIST_PATH,

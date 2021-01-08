@@ -5,7 +5,7 @@ import os
 from Crypto import Random  # noqa: DOU133
 from Crypto.Cipher import AES  # noqa: DOU133
 
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = "itay.mizeretz"
 

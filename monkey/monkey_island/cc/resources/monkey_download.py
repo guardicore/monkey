@@ -6,7 +6,7 @@ import os
 import flask_restful
 from flask import request, send_from_directory
 
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 __author__ = 'Barak'
 
