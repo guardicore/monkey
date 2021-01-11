@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudformation_rules import CloudformationRules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudtrail_rules import CloudTrailRules
@@ -16,7 +18,19 @@ from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.sqs_rules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.vpc_rules import VPCRules
 
 
-class PERMISSIVE_FIREWALL_RULES:
+class ScoutSuiteFinding(ABC):
+    @property
+    @abstractmethod
+    def rules(self):
+        pass
+
+    @property
+    @abstractmethod
+    def test(self):
+        pass
+
+
+class PermissiveFirewallRules(ScoutSuiteFinding):
     rules = [EC2Rules.SECURITY_GROUP_ALL_PORTS_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_TCP_PORT_TO_ALL,
              EC2Rules.SECURITY_GROUP_OPENS_UDP_PORT_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_RDP_PORT_TO_ALL,
              EC2Rules.SECURITY_GROUP_OPENS_SSH_PORT_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_MYSQL_PORT_TO_ALL,
@@ -41,7 +55,7 @@ class PERMISSIVE_FIREWALL_RULES:
     test = zero_trust_consts.TEST_SCOUTSUITE_PERMISSIVE_FIREWALL_RULES
 
 
-class UNENCRYPTED_DATA:
+class UnencryptedData(ScoutSuiteFinding):
     rules = [EC2Rules.EBS_SNAPSHOT_NOT_ENCRYPTED, EC2Rules.EBS_VOLUME_NOT_ENCRYPTED,
              EC2Rules.EC2_INSTANCE_WITH_USER_DATA_SECRETS,
              ELBv2Rules.ELBV2_LISTENER_ALLOWING_CLEARTEXT, ELBv2Rules.ELBV2_OLDER_SSL_POLICY,
@@ -54,7 +68,7 @@ class UNENCRYPTED_DATA:
     test = zero_trust_consts.TEST_SCOUTSUITE_UNENCRYPTED_DATA
 
 
-class DATA_LOSS_PREVENTION:
+class DataLossPrevention(ScoutSuiteFinding):
     rules = [RDSRules.RDS_INSTANCE_BACKUP_DISABLED, RDSRules.RDS_INSTANCE_SHORT_BACKUP_RETENTION_PERIOD,
              RDSRules.RDS_INSTANCE_SINGLE_AZ, S3Rules.S3_BUCKET_NO_MFA_DELETE, S3Rules.S3_BUCKET_NO_VERSIONING,
              ELBv2Rules.ELBV2_NO_DELETION_PROTECTION]
@@ -62,7 +76,7 @@ class DATA_LOSS_PREVENTION:
     test = zero_trust_consts.TEST_SCOUTSUITE_DATA_LOSS_PREVENTION
 
 
-class SECURE_AUTHENTICATION:
+class SecureAuthentication(ScoutSuiteFinding):
     rules = [
         IAMRules.IAM_USER_NO_ACTIVE_KEY_ROTATION,
         IAMRules.IAM_PASSWORD_POLICY_MINIMUM_LENGTH,
@@ -80,7 +94,7 @@ class SECURE_AUTHENTICATION:
     test = zero_trust_consts.TEST_SCOUTSUITE_SECURE_AUTHENTICATION
 
 
-class RESTRICTIVE_POLICIES:
+class RestrictivePolicies(ScoutSuiteFinding):
     rules = [
         IAMRules.IAM_ASSUME_ROLE_POLICY_ALLOWS_ALL,
         IAMRules.IAM_EC2_ROLE_WITHOUT_INSTANCES,
@@ -142,7 +156,7 @@ class RESTRICTIVE_POLICIES:
     test = zero_trust_consts.TEST_SCOUTSUITE_RESTRICTIVE_POLICIES
 
 
-class LOGGING:
+class Logging(ScoutSuiteFinding):
     rules = [
         CloudTrailRules.CLOUDTRAIL_DUPLICATED_GLOBAL_SERVICES_LOGGING,
         CloudTrailRules.CLOUDTRAIL_NO_DATA_LOGGING,
@@ -162,7 +176,7 @@ class LOGGING:
     test = zero_trust_consts.TEST_SCOUTSUITE_LOGGING
 
 
-class SERVICE_SECURITY:
+class ServiceSecurity(ScoutSuiteFinding):
     rules = [
         CloudformationRules.CLOUDFORMATION_STACK_WITH_ROLE,
         ELBv2Rules.ELBV2_HTTP_REQUEST_SMUGGLING,

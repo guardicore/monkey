@@ -4,14 +4,14 @@ from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutSuiteFindingDetails
 from monkey_island.cc.models.zero_trust.scoutsuite_rule import ScoutSuiteRule
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.findings import ScoutSuiteFinding
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_rule_service import ScoutSuiteRuleService
 
 
 class ScoutSuiteFindingService:
 
     @staticmethod
-    # TODO add type hinting like finding: Union[SCOUTSUITE_FINDINGS]?
-    def process_rule(finding, rule: ScoutSuiteRule):
+    def process_rule(finding: ScoutSuiteFinding, rule: ScoutSuiteRule):
         existing_findings = Finding.objects(test=finding.test, finding_type=zero_trust_consts.SCOUTSUITE_FINDING)
         assert (len(existing_findings) < 2), "More than one finding exists for {}".format(finding.test)
 
@@ -21,7 +21,7 @@ class ScoutSuiteFindingService:
             ScoutSuiteFindingService.add_rule(existing_findings[0], rule)
 
     @staticmethod
-    def create_new_finding_from_rule(finding, rule: ScoutSuiteRule):
+    def create_new_finding_from_rule(finding: ScoutSuiteFinding, rule: ScoutSuiteRule):
         details = ScoutSuiteFindingDetails()
         details.scoutsuite_rules = [rule]
         details.save()

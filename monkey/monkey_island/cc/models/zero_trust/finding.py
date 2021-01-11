@@ -2,6 +2,8 @@
 """
 Define a Document Schema for Zero Trust findings.
 """
+
+from __future__ import annotations
 from typing import Union
 
 from mongoengine import Document, GenericLazyReferenceField, StringField
@@ -50,13 +52,13 @@ class Finding(Document):
     @staticmethod
     def save_finding(test: str,
                      status: str,
-                     detail_ref: Union[MonkeyFindingDetails, ScoutSuiteFindingDetails]):
-        temp_finding = Finding(test=test,
-                               status=status,
-                               details=detail_ref,
-                               finding_type=Finding._get_finding_type_by_details(detail_ref))
-        temp_finding.save()
-        return temp_finding
+                     detail_ref: Union[MonkeyFindingDetails, ScoutSuiteFindingDetails]) -> Finding:
+        finding = Finding(test=test,
+                          status=status,
+                          details=detail_ref,
+                          finding_type=Finding._get_finding_type_by_details(detail_ref))
+        finding.save()
+        return finding
 
     @staticmethod
     def _get_finding_type_by_details(details: Union[MonkeyFindingDetails, ScoutSuiteFindingDetails]) -> str:
