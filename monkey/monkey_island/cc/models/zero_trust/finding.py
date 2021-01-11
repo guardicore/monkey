@@ -34,7 +34,7 @@ class Finding(Document):
     # SCHEMA
     test = StringField(required=True, choices=zero_trust_consts.TESTS)
     status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)
-    type = StringField(required=True, choices=zero_trust_consts.FINDING_TYPES)
+    finding_type = StringField(required=True, choices=zero_trust_consts.FINDING_TYPES)
     details = GenericLazyReferenceField(choices=[MonkeyFindingDetails, ScoutSuiteFindingDetails], required=True)
     # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
     meta = {'allow_inheritance': True}
@@ -54,7 +54,7 @@ class Finding(Document):
         temp_finding = Finding(test=test,
                                status=status,
                                details=detail_ref,
-                               type=Finding._get_finding_type_by_details(detail_ref))
+                               finding_type=Finding._get_finding_type_by_details(detail_ref))
         temp_finding.save()
         return temp_finding
 

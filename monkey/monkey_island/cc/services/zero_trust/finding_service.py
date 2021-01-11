@@ -12,9 +12,9 @@ class FindingService:
         findings = list(Finding.objects)
         details = []
         for i in range(len(findings)):
-            if findings[i].type == zero_trust_consts.MONKEY_FINDING:
+            if findings[i].finding_type == zero_trust_consts.MONKEY_FINDING:
                 details = MonkeyDetailsService.fetch_details_for_display(findings[i].details.id)
-            elif findings[i].type == zero_trust_consts.SCOUTSUITE_FINDING:
+            elif findings[i].finding_type == zero_trust_consts.SCOUTSUITE_FINDING:
                 details = findings[i].details.fetch().to_mongo()
             findings[i] = findings[i].to_mongo()
             findings[i] = FindingService.get_enriched_finding(findings[i])
@@ -30,6 +30,6 @@ class FindingService:
             'test_key': finding['test'],
             'pillars': test_info[zero_trust_consts.PILLARS_KEY],
             'status': finding['status'],
-            'type': finding['type']
+            'finding_type': finding['finding_type']
         }
         return enriched_finding

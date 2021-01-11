@@ -12,7 +12,7 @@ class ScoutSuiteFindingService:
     @staticmethod
     # TODO add type hinting like finding: Union[SCOUTSUITE_FINDINGS]?
     def process_rule(finding, rule: ScoutSuiteRule):
-        existing_findings = Finding.objects(test=finding.test, type=zero_trust_consts.SCOUTSUITE_FINDING)
+        existing_findings = Finding.objects(test=finding.test, finding_type=zero_trust_consts.SCOUTSUITE_FINDING)
         assert (len(existing_findings) < 2), "More than one finding exists for {}".format(finding.test)
 
         if len(existing_findings) == 0:

@@ -22,10 +22,10 @@ export class FindingsTable extends Component {
         {
           Header: 'Details', id: 'details',
           accessor: x => {
-            if (x.type === 'scoutsuite_finding') {
+            if (x.finding_type === 'scoutsuite_finding') {
               return <ScoutSuiteRuleButton scoutsuite_rules={x.details.scoutsuite_rules}
                                            scoutsuite_data={this.props.scoutsuite_data}/>;
-            } else if (x.type === 'monkey_finding') {
+            } else if (x.finding_type === 'monkey_finding') {
               return <EventsButton finding_id={x.finding_id}
                                    latest_events={x.details.latest_events}
                                    oldest_events={x.details.oldest_events}
