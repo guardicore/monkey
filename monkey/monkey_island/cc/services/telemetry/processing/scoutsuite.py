@@ -3,7 +3,7 @@ import json
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.zero_trust.scoutsuite_data_json import ScoutSuiteDataJson
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.findings_list import SCOUTSUITE_FINDINGS
-from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_parsing import RuleParser
+from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_parser import RuleParser
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_finding_service import ScoutSuiteFindingService
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_rule_service import ScoutSuiteRuleService
 
