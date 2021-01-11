@@ -7,6 +7,7 @@ import GenerateLocalWindowsPowershell from '../commands/local_windows_powershell
 import GenerateLocalLinuxWget from '../commands/local_linux_wget';
 import GenerateLocalLinuxCurl from '../commands/local_linux_curl';
 import CommandDisplay from '../utils/CommandDisplay';
+import {Form} from 'react-bootstrap';
 
 
 const LocalManualRunOptions = (props) => {
@@ -28,22 +29,32 @@ const getContents = (props) => {
   const [osType, setOsType] = useState(OS_TYPES.WINDOWS_64);
   const [selectedIp, setSelectedIp] = useState(props.ips[0]);
   const [commands, setCommands] = useState(generateCommands());
+  const [customUsername, setCustomUsername] = useState('');
 
   useEffect(() => {
     setCommands(generateCommands());
-  }, [osType, selectedIp])
+  }, [osType, selectedIp, customUsername])
 
   function setIp(index) {
     setSelectedIp(props.ips[index]);
   }
 
+  function setUsername(inputVal) {
+    if (inputVal) {  // checks that it's not just whitespaces
+      setCustomUsername(inputVal);
+    }
+    else {
+      setCustomUsername('');
+    }
+  }
+
   function generateCommands() {
     if (osType === OS_TYPES.WINDOWS_64 || osType === OS_TYPES.WINDOWS_32) {
-      return [{type: 'CMD', command: GenerateLocalWindowsCmd(selectedIp, osType)},
-        {type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, osType)}]
+      return [{type: 'CMD', command: GenerateLocalWindowsCmd(selectedIp, osType, customUsername)},
+        {type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, osType, customUsername)}]
     } else {
-      return [{type: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, osType)},
-        {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, osType)}]
+      return [{type: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, osType, customUsername)},
+        {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, osType, customUsername)}]
     }
   }
 
@@ -51,6 +62,19 @@ const getContents = (props) => {
     <>
       <DropdownSelect defaultKey={OS_TYPES.WINDOWS_64} options={osTypes} onClick={setOsType} variant={'outline-monkey'}/>
       <DropdownSelect defaultKey={0} options={props.ips} onClick={setIp} variant={'outline-monkey'}/>
+      <div style={{'marginTop': '1.4em'}}>
+        <p style={{'fontSize': '1.2em'}}>
+          Run as a user by entering their username:
+        </p>
+        <div>
+          <Form>
+            <Form.Control
+              type="text"
+              onChange={input => setUsername(input.target.value.trim())}
+            />
+          </Form>
+        </div>
+      </div>
       <CommandDisplay commands={commands}/>
     </>
   )
