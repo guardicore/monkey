@@ -276,12 +276,21 @@ class ConfigurePageComponent extends AuthComponent {
 
   setConfigOnImport = (event) => {
     try {
+      let parsedConfig = JSON.parse(event.target.result);
+
+      let importedAttackConfig = parsedConfig.attack;
+      delete parsedConfig.attack;
+      let importedMonkeyConfig = parsedConfig;
+
       this.setState({
-        configuration: JSON.parse(event.target.result),
+        configuration: importedMonkeyConfig,
+        attackConfig: importedAttackConfig,
         lastAction: 'import_success'
       }, () => {
         this.sendConfig();
-        this.setInitialConfig(JSON.parse(event.target.result))
+        this.matrixSubmit();
+        this.setInitialConfig(importedMonkeyConfig);
+        this.setInitialAttackConfig(importedAttackConfig);
       });
       this.currentFormData = {};
     } catch (SyntaxError) {
@@ -291,10 +300,12 @@ class ConfigurePageComponent extends AuthComponent {
 
   exportConfig = () => {
     this.updateConfigSection();
-    const configAsJson = JSON.stringify(this.state.configuration, null, 2);
-    const configAsBinary = new Blob([configAsJson], {type: 'text/plain;charset=utf-8'});
+    let allConfig = this.state.configuration;
+    allConfig.attack = this.state.attackConfig;
+    let allConfigAsJson = JSON.stringify(allConfig, null, 2);
+    const allConfigAsBinary = new Blob([allConfigAsJson], {type: 'text/plain;charset=utf-8'});
 
-    FileSaver.saveAs(configAsBinary, 'monkey.conf');
+    FileSaver.saveAs(allConfigAsBinary, 'monkey.conf');
   };
 
   sendConfig() {
