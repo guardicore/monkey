@@ -51,7 +51,8 @@ export default function ScoutSuiteRuleModal(props) {
       let dropdown = (<ScoutSuiteSingleRuleDropdown isCollapseOpen={openRuleId === rule.description}
                                                     toggleCallback={() => toggleRuleDropdown(rule.description)}
                                                     rule={rule}
-                                                    scoutsuite_data={props.scoutsuite_data}/>)
+                                                    scoutsuite_data={props.scoutsuite_data}
+                                                    key={rule.description+rule.path}/>)
       dropdowns.push(dropdown)
     });
     return dropdowns;
@@ -67,7 +68,7 @@ export default function ScoutSuiteRuleModal(props) {
           <hr/>
           <p>
             There {Pluralize('is', props.scoutsuite_rules.length)} {
-            <div className={'badge badge-primary'}>{props.scoutsuite_rules.length}</div>
+            <span className={'badge badge-primary'}>{props.scoutsuite_rules.length}</span>
           } ScoutSuite {Pluralize('rule', props.scoutsuite_rules.length)} associated with this finding.
           </p>
           {renderRuleDropdowns()}

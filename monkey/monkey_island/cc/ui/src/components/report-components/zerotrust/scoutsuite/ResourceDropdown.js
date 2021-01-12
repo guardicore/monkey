@@ -43,7 +43,7 @@ export default function ResourceDropdown(props) {
     for (let i = 0; i < path_vars.length; i++) {
       display_path.push(path_vars[i])
       if (i !== path_vars.length - 1) {
-        display_path.push(<FontAwesomeIcon icon={faArrowRight}/>)
+        display_path.push(<FontAwesomeIcon icon={faArrowRight} key={'arrow-'+i}/>)
       }
     }
     return display_path;

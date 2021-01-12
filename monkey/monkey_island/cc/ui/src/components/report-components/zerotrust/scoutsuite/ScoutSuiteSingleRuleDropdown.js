@@ -15,7 +15,7 @@ export default function ScoutSuiteSingleRuleDropdown(props) {
 
   function getRuleCollapse() {
     return (
-      <div key={props.rule.description} className={classNames('collapse-item',
+      <div className={classNames('collapse-item',
         'rule-collapse', {'item--active': props.isCollapseOpen})}>
         <button className={classNames('btn-collapse', getDropdownClass())}
                 onClick={props.toggleCallback}>

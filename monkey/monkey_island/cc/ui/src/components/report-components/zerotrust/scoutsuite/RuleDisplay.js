@@ -31,7 +31,8 @@ export default function RuleDisplay(props) {
       references.push(<a href={reference}
                          className={'reference-link'}
                          target={'_blank'}
-                         rel="noopener noreferrer">{reference}</a>)
+                         rel="noopener noreferrer"
+                         key={reference}>{reference}</a>)
     })
     return (
       <div className={'reference-list'}>
@@ -42,13 +43,15 @@ export default function RuleDisplay(props) {
 
   function getResources() {
     let resources = []
-    props.rule.items.forEach(item => {
+    for (let i = 0; i < props.rule.items.length; i++) {
+      let item = props.rule.items[i];
       let template_path = Object.prototype.hasOwnProperty.call(props.rule, 'display_path')
         ? props.rule.display_path : props.rule.path;
       resources.push(<ResourceDropdown resource_path={item}
                                        template_path={template_path}
-                                       scoutsuite_data={props.scoutsuite_data}/>)
-    })
+                                       scoutsuite_data={props.scoutsuite_data}
+                                       key={template_path+i}/>)
+    }
     return (
       <div className={'reference-list'}>
         <p className={'reference-list-title'}>Resources:</p>
