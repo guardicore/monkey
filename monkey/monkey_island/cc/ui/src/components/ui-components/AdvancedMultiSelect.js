@@ -16,6 +16,10 @@ const MasterCheckboxState = {
   ALL: 2
 }
 
+function getFullDefinitionByKey(refString, registry, itemKey) {
+  let fullArray = getFullDefinitionsFromRegistry(refString, registry);
+  return fullArray.filter(e => (e.enum[0] === itemKey))[0];
+}
 
 // Definitions passed to components only contains value and label,
 // custom fields like "info" or "links" must be pulled from registry object using this function
@@ -28,14 +32,119 @@ function getObjectFromRegistryByRef(refString, registry) {
   return resolveObjectPath(refArray, registry);
 }
 
-function getFullDefinitionByKey(refString, registry, itemKey) {
-  let fullArray = getFullDefinitionsFromRegistry(refString, registry);
-  return fullArray.filter(e => (e.enum[0] === itemKey))[0];
-}
-
 function getDefaultPaneParams(refString, registry) {
   let configSection = getObjectFromRegistryByRef(refString, registry);
   return ({title: configSection.title, content: configSection.description});
+}
+
+class AdvancedMultiSelect extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      masterCheckboxState: this.getMasterCheckboxState(props.value),
+      infoPaneParams: getDefaultPaneParams(props.schema.items.$ref, props.registry)
+    };
+
+    this.onMasterCheckboxClick = this.onMasterCheckboxClick.bind(this);
+    this.onChildCheckboxClick = this.onChildCheckboxClick.bind(this);
+    this.setPaneInfo = this.setPaneInfo.bind(this, props.schema.items.$ref, props.registry);
+  }
+
+  onMasterCheckboxClick() {
+    let newValues = this.props.options.enumOptions.map(({value}) => value);
+
+    if (this.state.masterCheckboxState == MasterCheckboxState.ALL) {
+      newValues = [];
+    }
+
+    this.props.onChange(newValues);
+    this.setMasterCheckboxState(newValues);
+  }
+
+  onChildCheckboxClick(value) {
+    let selectValues = this.getSelectValuesAfterClick(value)
+    this.props.onChange(selectValues);
+
+    this.setMasterCheckboxState(selectValues);
+  }
+
+  getSelectValuesAfterClick(clickedValue) {
+    const valueArray = cloneDeep(this.props.value);
+
+    if (valueArray.includes(clickedValue)) {
+      return valueArray.filter(e => e !== clickedValue);
+    } else {
+      valueArray.push(clickedValue);
+      return valueArray;
+    }
+  }
+
+  setMasterCheckboxState(selectValues) {
+    this.setState(() => ({
+      masterCheckboxState: this.getMasterCheckboxState(selectValues)
+    }));
+  }
+
+  getMasterCheckboxState(selectValues) {
+    if (selectValues.length == 0) {
+      return MasterCheckboxState.NONE;
+    }
+
+    if (selectValues.length != this.props.options.enumOptions.length) {
+      return MasterCheckboxState.MIXED;
+    }
+
+    return MasterCheckboxState.ALL;
+  }
+
+  setPaneInfo(refString, registry, itemKey) {
+    let definitionObj = getFullDefinitionByKey(refString, registry, itemKey);
+    this.setState({infoPaneParams: {title: definitionObj.title, content: definitionObj.info, link: definitionObj.link}});
+  }
+
+  render() {
+    const {
+      schema,
+      id,
+      options,
+      value,
+      required,
+      disabled,
+      readonly,
+      multiple,
+      autofocus,
+      registry
+    } = this.props;
+
+    const {enumOptions} = options;
+    getDefaultPaneParams(schema.items.$ref, registry);
+
+    return (
+      <div className={'advanced-multi-select'}>
+        <MasterCheckbox title={schema.title} value={value}
+          disabled={disabled} onClick={this.onMasterCheckboxClick}
+          checkboxState={this.state.masterCheckboxState}/>
+        <Form.Group
+          style={{height: `${getComponentHeight(enumOptions.length)}px`}}
+          id={id} multiple={multiple} className='choice-block form-control'
+          required={required} disabled={disabled || readonly} autoFocus={autofocus}>
+          {
+            enumOptions.map(({value, label}, i) => {
+              return (
+                <ChildCheckbox key={i} onPaneClick={this.setPaneInfo}
+                onClick={this.onChildCheckboxClick} value={value}
+                disabled={disabled} label={label} checkboxState={this.props.value.includes(value)}/>
+              );
+            }
+          )}
+        </Form.Group>
+        <InfoPane title={this.state.infoPaneParams.title}
+          body={this.state.infoPaneParams.content}
+          link={this.state.infoPaneParams.link}/>
+      </div>
+    );
+  }
 }
 
 function MasterCheckbox(props) {
@@ -47,12 +156,13 @@ function MasterCheckbox(props) {
         checkboxState
     } = props;
 
-    var newCheckboxIcon = faCheckSquare;
+    let newCheckboxIcon = faCheckSquare;
 
-    if (checkboxState == MasterCheckboxState.NONE)
+    if (checkboxState == MasterCheckboxState.NONE) {
       newCheckboxIcon = faSquare;
-    else if (checkboxState == MasterCheckboxState.MIXED)
+    } else if (checkboxState == MasterCheckboxState.MIXED) {
       newCheckboxIcon = faMinusSquare;
+    }
 
     return (
         <Card.Header>
@@ -86,116 +196,6 @@ function ChildCheckbox(props) {
             </span>
         </Form.Group>
     );
-}
-
-class AdvancedMultiSelect extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      masterCheckboxState: this.getMasterCheckboxState(props.value),
-      infoPaneParams: getDefaultPaneParams(props.schema.items.$ref, props.registry)
-    };
-    this.onMasterCheckboxClick = this.onMasterCheckboxClick.bind(this);
-    this.onChildCheckboxClick = this.onChildCheckboxClick.bind(this);
-    this.setPaneInfo = this.setPaneInfo.bind(this, props.schema.items.$ref, props.registry);
-  }
-
-  onMasterCheckboxClick() {
-    var newValues = this.props.options.enumOptions.map(({value}) => value);
-
-    if (this.state.masterCheckboxState == MasterCheckboxState.ALL) {
-      newValues = [];
-    }
-
-    this.props.onChange(newValues);
-    this.setMasterCheckboxState(newValues);
-  }
-
-  onChildCheckboxClick(value) {
-    var selectValues = this.getSelectValuesAfterClick(value)
-    this.props.onChange(selectValues);
-
-    this.setMasterCheckboxState(selectValues);
-  }
-
-  getSelectValuesAfterClick(clickedValue) {
-    const valueArray = cloneDeep(this.props.value);
-
-    if (valueArray.includes(clickedValue)) {
-      return valueArray.filter(e => e !== clickedValue);
-    } else {
-      valueArray.push(clickedValue);
-      return valueArray;
-    }
-  }
-
-  getMasterCheckboxState(selectValues) {
-    if (selectValues.length == 0)
-      return MasterCheckboxState.NONE;
-
-    if (selectValues.length != this.props.options.enumOptions.length)
-      return MasterCheckboxState.MIXED;
-
-    return MasterCheckboxState.ALL;
-  }
-
-  setMasterCheckboxState(selectValues) {
-    this.setState(() => ({
-      masterCheckboxState: this.getMasterCheckboxState(selectValues)
-    }));
-  }
-
-  setPaneInfo(refString, registry, itemKey) {
-    let definitionObj = getFullDefinitionByKey(refString, registry, itemKey);
-    this.setState({infoPaneParams: {title: definitionObj.title, content: definitionObj.info, link: definitionObj.link}});
-  }
-
-  render() {
-    const {
-      schema,
-      id,
-      options,
-      value,
-      required,
-      disabled,
-      readonly,
-      multiple,
-      autofocus,
-      registry
-    } = this.props;
-
-    const {enumOptions} = options;
-    getDefaultPaneParams(schema.items.$ref, registry);
-
-    return (
-      <div className={'advanced-multi-select'}>
-        <MasterCheckbox title={schema.title} value={value}
-          disabled={disabled} onClick={this.onMasterCheckboxClick}
-          checkboxState={this.state.masterCheckboxState}/>
-        <Form.Group
-          style={{height: `${getComponentHeight(enumOptions.length)}px`}}
-          id={id}
-          multiple={multiple}
-          className='choice-block form-control'
-          required={required}
-          disabled={disabled || readonly}
-          autoFocus={autofocus}>
-          {
-            enumOptions.map(({value, label}, i) => {
-              return (
-                <ChildCheckbox key={i} onPaneClick={this.setPaneInfo}
-                onClick={this.onChildCheckboxClick} value={value}
-                disabled={disabled} label={label} checkboxState={this.props.value.includes(value)}/>
-              );
-            }
-          )}
-        </Form.Group>
-        <InfoPane title={this.state.infoPaneParams.title}
-          body={this.state.infoPaneParams.content}
-          link={this.state.infoPaneParams.link}/>
-      </div>
-    );
-  }
 }
 
 export default AdvancedMultiSelect;
