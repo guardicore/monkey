@@ -113,12 +113,10 @@ class AdvancedMultiSelect extends React.Component {
       disabled,
       readonly,
       multiple,
-      autofocus,
-      registry
+      autofocus
     } = this.props;
 
     const {enumOptions} = options;
-    getDefaultPaneParams(schema.items.$ref, registry);
 
     return (
       <div className={'advanced-multi-select'}>
