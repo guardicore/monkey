@@ -278,8 +278,8 @@ class ConfigurePageComponent extends AuthComponent {
     try {
       let parsedConfig = JSON.parse(event.target.result);
 
-      let importedAttackConfig = parsedConfig.attack;
-      delete parsedConfig.attack;
+      let importedAttackConfig = parsedConfig.attack_matrix_ui_state;
+      delete parsedConfig.attack_matrix_ui_state;
       let importedMonkeyConfig = parsedConfig;
 
       this.setState({
@@ -300,12 +300,12 @@ class ConfigurePageComponent extends AuthComponent {
 
   exportConfig = () => {
     this.updateConfigSection();
-    let allConfig = this.state.configuration;
-    allConfig.attack = this.state.attackConfig;
-    let allConfigAsJson = JSON.stringify(allConfig, null, 2);
-    const allConfigAsBinary = new Blob([allConfigAsJson], {type: 'text/plain;charset=utf-8'});
+    let config = this.state.configuration;
+    config.attack_matrix_ui_state = this.state.attackConfig;
+    let configAsJson = JSON.stringify(config, null, 2);
+    const configAsBinary = new Blob([configAsJson], {type: 'text/plain;charset=utf-8'});
 
-    FileSaver.saveAs(allConfigAsBinary, 'monkey.conf');
+    FileSaver.saveAs(configAsBinary, 'monkey.conf');
   };
 
   sendConfig() {
