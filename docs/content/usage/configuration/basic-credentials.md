@@ -7,4 +7,4 @@ description: "Configure credentials that the Monkey will use for propagation."
 
 In this screen you can feed the Monkey with “stolen” credentials for your network, simulating an attacker with inside knowledge.
 
-![Configure credentials](/images/usage/configruation/credentials.png "Configure credentials")
+![Configure credentials](/images/usage/configuration/credentials.png "Configure credentials")
