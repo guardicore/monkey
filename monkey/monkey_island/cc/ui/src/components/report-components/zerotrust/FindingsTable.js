@@ -21,36 +21,40 @@ export class FindingsTable extends Component {
 
         {
           Header: 'Details', id: 'details',
-          accessor: x => {
-            if (x.finding_type === 'scoutsuite_finding') {
-              return <ScoutSuiteRuleButton scoutsuite_rules={x.details.scoutsuite_rules}
-                                           scoutsuite_data={this.props.scoutsuite_data}/>;
-            } else if (x.finding_type === 'monkey_finding') {
-              return <EventsButton finding_id={x.finding_id}
-                                   latest_events={x.details.latest_events}
-                                   oldest_events={x.details.oldest_events}
-                                   event_count={x.details.event_count}
-                                   exportFilename={'Events_' + x.test_key}/>;
-            }
-          },
+          accessor: x => this.getFindingDetails(x),
           maxWidth: EVENTS_COLUMN_MAX_WIDTH
         },
 
         {
           Header: 'Pillars', id: 'pillars',
-          accessor: x => {
-            const pillars = x.pillars;
-            const pillarLabels = pillars.map((pillar) =>
-              <PillarLabel key={pillar.name} pillar={pillar.name} status={pillar.status}/>
-            );
-            return <div style={{textAlign: 'center'}}>{pillarLabels}</div>;
-          },
+          accessor: x => this.getFindingPillars(x),
           maxWidth: PILLARS_COLUMN_MAX_WIDTH,
           style: {'whiteSpace': 'unset'}
         }
       ]
     }
   ];
+
+  getFindingDetails(finding) {
+    if (finding.finding_type === 'scoutsuite_finding') {
+      return <ScoutSuiteRuleButton scoutsuite_rules={finding.details.scoutsuite_rules}
+                                   scoutsuite_data={this.props.scoutsuite_data}/>;
+    } else if (finding.finding_type === 'monkey_finding') {
+      return <EventsButton finding_id={finding.finding_id}
+                           latest_events={finding.details.latest_events}
+                           oldest_events={finding.details.oldest_events}
+                           event_count={finding.details.event_count}
+                           exportFilename={'Events_' + finding.test_key}/>;
+    }
+  }
+
+  getFindingPillars(finding) {
+    const pillars = finding.pillars;
+    const pillarLabels = pillars.map((pillar) =>
+      <PillarLabel key={pillar.name} pillar={pillar.name} status={pillar.status}/>
+    );
+    return <div style={{textAlign: 'center'}}>{pillarLabels}</div>;
+  }
 
   render() {
     return <Fragment>
