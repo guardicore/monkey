@@ -17,10 +17,6 @@ export default function RuleDisplay(props) {
         <p className={'checked-resources-title'}>Resources checked: </p>
         <p>{props.rule.checked_items}</p>
       </div>
-      <div className={'flagged-resources'}>
-        <p className={'checked-resources-title'}>Resources flagged: </p>
-        <p>{props.rule.flagged_items}</p>
-      </div>
       {props.rule.references.length !== 0 ? getReferences() : ''}
       {props.rule.items.length !== 0 ? getResources() : ''}
     </div>);
@@ -54,7 +50,7 @@ export default function RuleDisplay(props) {
     }
     return (
       <div className={'reference-list'}>
-        <p className={'reference-list-title'}>Resources:</p>
+        <p className={'reference-list-title'}>Flagged resources (<b>{props.rule.flagged_items}</b>):</p>
         {resources}
       </div>)
   }
