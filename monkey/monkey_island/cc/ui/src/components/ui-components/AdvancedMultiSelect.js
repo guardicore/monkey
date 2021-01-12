@@ -2,12 +2,19 @@ import React from "react";
 import {Card, Button, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheckSquare} from '@fortawesome/free-solid-svg-icons';
+import {faMinusSquare} from '@fortawesome/free-solid-svg-icons';
 import {faSquare} from '@fortawesome/free-regular-svg-icons';
 import {cloneDeep} from 'lodash';
 
 import {getComponentHeight} from './utils/HeightCalculator';
 import {resolveObjectPath} from './utils/ObjectPathResolver';
 import InfoPane from './InfoPane';
+
+const MasterCheckboxState = {
+  NONE: 0,
+  MIXED: 1,
+  ALL: 2
+}
 
 
 // Definitions passed to components only contains value and label,
@@ -40,12 +47,19 @@ function MasterCheckbox(props) {
         checkboxState
     } = props;
 
+    var newCheckboxIcon = faCheckSquare;
+
+    if (checkboxState == MasterCheckboxState.NONE)
+      newCheckboxIcon = faSquare;
+    else if (checkboxState == MasterCheckboxState.MIXED)
+      newCheckboxIcon = faMinusSquare;
+
     return (
         <Card.Header>
             <Button key={`${title}-button`} value={value}
                 variant={'link'} disabled={disabled}
                 onClick={onClick}>
-                <FontAwesomeIcon icon={checkboxState ? faCheckSquare : faSquare}/>
+                <FontAwesomeIcon icon={newCheckboxIcon}/>
             </Button>
             <span className={'header-title'}>{title}</span>
         </Card.Header>
@@ -77,42 +91,57 @@ function ChildCheckbox(props) {
 class AdvancedMultiSelect extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {masterCheckbox: true, infoPaneParams: getDefaultPaneParams(props.schema.items.$ref, props.registry)};
+    this.state = {
+      masterCheckboxState: this.getMasterCheckboxState(props.value),
+      infoPaneParams: getDefaultPaneParams(props.schema.items.$ref, props.registry)
+    };
     this.onMasterCheckboxClick = this.onMasterCheckboxClick.bind(this);
     this.onChildCheckboxClick = this.onChildCheckboxClick.bind(this);
     this.setPaneInfo = this.setPaneInfo.bind(this, props.schema.items.$ref, props.registry);
   }
 
   onMasterCheckboxClick() {
-    if (this.state.masterCheckbox) {
-      this.props.onChange([]);
-    } else {
-      this.props.onChange(this.props.schema.default);
+    var newValues = this.props.options.enumOptions.map(({value}) => value);
+
+    if (this.state.masterCheckboxState == MasterCheckboxState.ALL) {
+      newValues = [];
     }
 
-    this.toggleMasterCheckbox();
+    this.props.onChange(newValues);
+    this.setMasterCheckboxState(newValues);
   }
 
   onChildCheckboxClick(value) {
-    this.props.onChange(this.getSelectValuesAfterClick(value));
+    var selectValues = this.getSelectValuesAfterClick(value)
+    this.props.onChange(selectValues);
+
+    this.setMasterCheckboxState(selectValues);
   }
 
   getSelectValuesAfterClick(clickedValue) {
     const valueArray = cloneDeep(this.props.value);
 
     if (valueArray.includes(clickedValue)) {
-      return valueArray.filter((e) => {
-        return e !== clickedValue;
-      });
+      return valueArray.filter(e => e !== clickedValue);
     } else {
       valueArray.push(clickedValue);
       return valueArray;
     }
   }
 
-  toggleMasterCheckbox() {
-    this.setState((state) => ({
-      masterCheckbox: !state.masterCheckbox
+  getMasterCheckboxState(selectValues) {
+    if (selectValues.length == 0)
+      return MasterCheckboxState.NONE;
+
+    if (selectValues.length != this.props.options.enumOptions.length)
+      return MasterCheckboxState.MIXED;
+
+    return MasterCheckboxState.ALL;
+  }
+
+  setMasterCheckboxState(selectValues) {
+    this.setState(() => ({
+      masterCheckboxState: this.getMasterCheckboxState(selectValues)
     }));
   }
 
@@ -132,7 +161,6 @@ class AdvancedMultiSelect extends React.Component {
       readonly,
       multiple,
       autofocus,
-      onChange,
       registry
     } = this.props;
 
@@ -143,7 +171,7 @@ class AdvancedMultiSelect extends React.Component {
       <div className={'advanced-multi-select'}>
         <MasterCheckbox title={schema.title} value={value}
           disabled={disabled} onClick={this.onMasterCheckboxClick}
-          checkboxState={this.state.masterCheckbox}/>
+          checkboxState={this.state.masterCheckboxState}/>
         <Form.Group
           style={{height: `${getComponentHeight(enumOptions.length)}px`}}
           id={id}
