@@ -17,8 +17,8 @@ export default function RuleDisplay(props) {
         <p className={'checked-resources-title'}>Resources checked: </p>
         <p>{props.rule.checked_items}</p>
       </div>
-      {props.rule.references.length !== 0 ? getReferences() : ''}
-      {props.rule.items.length !== 0 ? getResources() : ''}
+      {getReferences()}
+      {getResources()}
     </div>);
 
   function getReferences() {
@@ -30,11 +30,13 @@ export default function RuleDisplay(props) {
                          rel="noopener noreferrer"
                          key={reference}>{reference}</a>)
     })
-    return (
-      <div className={'reference-list'}>
-        <p className={'reference-list-title'}>References:</p>
-        {references}
-      </div>)
+    if (references.length) {
+      return (
+        <div className={'reference-list'}>
+          <p className={'reference-list-title'}>References:</p>
+          {references}
+        </div>)
+    }
   }
 
   function getResources() {
@@ -46,13 +48,15 @@ export default function RuleDisplay(props) {
       resources.push(<ResourceDropdown resource_path={item}
                                        template_path={template_path}
                                        scoutsuite_data={props.scoutsuite_data}
-                                       key={template_path+i}/>)
+                                       key={template_path + i}/>)
     }
-    return (
-      <div className={'reference-list'}>
-        <p className={'reference-list-title'}>Flagged resources (<b>{props.rule.flagged_items}</b>):</p>
-        {resources}
-      </div>)
+    if (resources.length) {
+      return (
+        <div className={'reference-list'}>
+          <p className={'reference-list-title'}>Flagged resources (<b>{props.rule.flagged_items}</b>):</p>
+          {resources}
+        </div>)
+    }
   }
 }
 
