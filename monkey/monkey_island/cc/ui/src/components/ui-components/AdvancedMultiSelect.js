@@ -41,6 +41,8 @@ class AdvancedMultiSelect extends React.Component {
   constructor(props) {
     super(props)
 
+    this.enumOptions = props.options.enumOptions;
+
     this.state = {
       masterCheckboxState: this.getMasterCheckboxState(props.value),
       infoPaneParams: getDefaultPaneParams(props.schema.items.$ref, props.registry)
@@ -52,10 +54,10 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   onMasterCheckboxClick() {
-    let newValues = this.props.options.enumOptions.map(({value}) => value);
-
-    if (this.state.masterCheckboxState == MasterCheckboxState.ALL) {
-      newValues = [];
+    if (this.state.masterCheckboxState === MasterCheckboxState.ALL) {
+      var newValues = [];
+    } else {
+      newValues = this.enumOptions.map(({value}) => value);
     }
 
     this.props.onChange(newValues);
@@ -87,11 +89,11 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   getMasterCheckboxState(selectValues) {
-    if (selectValues.length == 0) {
+    if (selectValues.length === 0) {
       return MasterCheckboxState.NONE;
     }
 
-    if (selectValues.length != this.props.options.enumOptions.length) {
+    if (selectValues.length != this.enumOptions.length) {
       return MasterCheckboxState.MIXED;
     }
 
@@ -107,8 +109,6 @@ class AdvancedMultiSelect extends React.Component {
     const {
       schema,
       id,
-      options,
-      value,
       required,
       disabled,
       readonly,
@@ -116,19 +116,17 @@ class AdvancedMultiSelect extends React.Component {
       autofocus
     } = this.props;
 
-    const {enumOptions} = options;
-
     return (
       <div className={'advanced-multi-select'}>
-        <MasterCheckbox title={schema.title} value={value}
+        <MasterCheckbox title={schema.title}
           disabled={disabled} onClick={this.onMasterCheckboxClick}
           checkboxState={this.state.masterCheckboxState}/>
         <Form.Group
-          style={{height: `${getComponentHeight(enumOptions.length)}px`}}
+          style={{height: `${getComponentHeight(this.enumOptions.length)}px`}}
           id={id} multiple={multiple} className='choice-block form-control'
           required={required} disabled={disabled || readonly} autoFocus={autofocus}>
           {
-            enumOptions.map(({value, label}, i) => {
+            this.enumOptions.map(({value, label}, i) => {
               return (
                 <ChildCheckbox key={i} onPaneClick={this.setPaneInfo}
                 onClick={this.onChildCheckboxClick} value={value}
@@ -148,7 +146,6 @@ class AdvancedMultiSelect extends React.Component {
 function MasterCheckbox(props) {
     const {
         title,
-        value,
         disabled,
         onClick,
         checkboxState
@@ -156,17 +153,15 @@ function MasterCheckbox(props) {
 
     let newCheckboxIcon = faCheckSquare;
 
-    if (checkboxState == MasterCheckboxState.NONE) {
+    if (checkboxState === MasterCheckboxState.NONE) {
       newCheckboxIcon = faSquare;
-    } else if (checkboxState == MasterCheckboxState.MIXED) {
+    } else if (checkboxState === MasterCheckboxState.MIXED) {
       newCheckboxIcon = faMinusSquare;
     }
 
     return (
         <Card.Header>
-            <Button key={`${title}-button`} value={value}
-                variant={'link'} disabled={disabled}
-                onClick={onClick}>
+            <Button key={`${title}-button`} variant={'link'} disabled={disabled} onClick={onClick}>
                 <FontAwesomeIcon icon={newCheckboxIcon}/>
             </Button>
             <span className={'header-title'}>{title}</span>
