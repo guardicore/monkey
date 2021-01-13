@@ -27,16 +27,25 @@ export default class ScoutSuiteRuleButton extends Component {
                              hideCallback={this.toggleModal} />
         <div className="text-center" style={{'display': 'grid'}}>
           <Button variant={'monkey-info'} size={'lg'} onClick={this.toggleModal}>
-            <FontAwesomeIcon icon={faList}/> ScoutSuite rules {this.createRuleCountBadge()}
+            <FontAwesomeIcon icon={faList}/> ScoutSuite rules
+            &nbsp;<RuleCountBadge count={this.props.scoutsuite_rules.length}/>
           </Button>
         </div>
       </>);
   }
 
   createRuleCountBadge() {
-    const ruleCount = this.props.scoutsuite_rules.length > 9 ? '9+' : this.props.scoutsuite_rules.length;
-    return <Badge variant={'monkey-info-light'}>{ruleCount}</Badge>;
+
   }
+}
+
+function RuleCountBadge(props) {
+  const maxRuleCountToShow = 9;
+  const textForMoreThanMaxRuleCount = maxRuleCountToShow + '+';
+
+  const ruleCountText = props.count > maxRuleCountToShow ?
+    textForMoreThanMaxRuleCount : props.count;
+  return <Badge variant={'monkey-info-light'}>{ruleCountText}</Badge>;
 }
 
 ScoutSuiteRuleButton.propTypes = {
