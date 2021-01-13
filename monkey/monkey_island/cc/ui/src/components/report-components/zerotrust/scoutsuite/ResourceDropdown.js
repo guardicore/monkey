@@ -43,7 +43,7 @@ export default function ResourceDropdown(props) {
     for (let i = 0; i < path_vars.length; i++) {
       display_path.push(path_vars[i])
       if (i !== path_vars.length - 1) {
-        display_path.push(<FontAwesomeIcon icon={faArrowRight} key={'arrow-'+i}/>)
+        display_path.push(<FontAwesomeIcon icon={faArrowRight} key={'arrow-' + i}/>)
       }
     }
     return display_path;
@@ -54,16 +54,12 @@ export default function ResourceDropdown(props) {
   }
 
   function getResourceValueDisplay() {
-    if (resource_value) {
-      return (
-        <div>
-          <p className={'resource-value-title'}>Value:</p>
-          <pre className={'resource-value-json'}>{prettyPrintJson(resource_value)}</pre>
-        </div>
-      );
-    } else {
-      return '';
-    }
+    return (
+      <div>
+        <p className={'resource-value-title'}>Value:</p>
+        <pre className={'resource-value-json'}>{prettyPrintJson(resource_value)}</pre>
+      </div>
+    );
   }
 
   function getResourceDropdownContents() {
