@@ -109,7 +109,8 @@ class PostgreSQLFinger(HostFinger):
         elif len(exceptions) == 2:  # SSL configured so checks for both
             return True
 
-    def found_entry_for_host_but_pwd_auth_failed(self, exception):
-        if self.RELEVANT_EX_SUBSTRINGS[0] in exception:
+    @staticmethod
+    def found_entry_for_host_but_pwd_auth_failed(exception):
+        if PostgreSQLFinger.RELEVANT_EX_SUBSTRINGS[0] in exception:
             return True  # entry found in pg_hba.conf file but password authentication failed
         return False  # entry not found in pg_hba.conf file
