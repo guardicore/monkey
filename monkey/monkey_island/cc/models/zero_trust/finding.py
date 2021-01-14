@@ -37,6 +37,9 @@ class Finding(Document):
     test = StringField(required=True, choices=zero_trust_consts.TESTS)
     status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)
     finding_type = StringField(required=True, choices=zero_trust_consts.FINDING_TYPES)
+
+    # Details are in a separate document in order to discourage pulling them when not needed
+    # due to performance.
     details = GenericLazyReferenceField(choices=[MonkeyFindingDetails, ScoutSuiteFindingDetails], required=True)
     # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
     meta = {'allow_inheritance': True}
