@@ -29,19 +29,12 @@ function compareRules(firstRule, secondRule) {
 }
 
 function compareRuleStatuses(ruleStatusOne, ruleStatusTwo) {
-  if (ruleStatusOne === ruleStatusTwo) {
-    return 0;
-  } else if (ruleStatusOne === STATUSES.STATUS_FAILED) {
-    return -1;
-  } else if (ruleStatusTwo === STATUSES.STATUS_FAILED) {
-    return 1;
-  } else if (ruleStatusOne === STATUSES.STATUS_VERIFY) {
-    return -1;
-  } else if (ruleStatusTwo === STATUSES.STATUS_VERIFY) {
-    return 1;
-  } else if (ruleStatusOne === STATUSES.STATUS_PASSED) {
-    return -1;
-  } else if (ruleStatusTwo === STATUSES.STATUS_PASSED) {
-    return 1;
+  const severity_order = {
+    [STATUSES.STATUS_FAILED]: 1,
+    [STATUSES.STATUS_VERIFY]: 2,
+    [STATUSES.STATUS_PASSED]: 3,
+    [STATUSES.STATUS_UNEXECUTED]: 4
   }
+
+  return severity_order[ruleStatusOne] - severity_order[ruleStatusTwo]
 }
