@@ -73,30 +73,6 @@ EXAMPLE_EXCEPTIONS_WITH_EXPECTED_RESULTS =\
         ]
     }
 
-# EXPECTED_RESULTS =\
-#     [
-        # [RESULT_STRINGS['ssl_not_conf'],
-        #  RESULT_STRINGS['all_non_ssl']],  # SSL not configured, all non-SSL allowed
-
-        # [RESULT_STRINGS['ssl_not_conf'],
-        #  RESULT_STRINGS['selected_non_ssl']],  # SSL not configured, selected non-SSL allowed
-
-        # [RESULT_STRINGS['ssl_conf'],
-        #  RESULT_STRINGS['all_ssl'],
-        #  RESULT_STRINGS['all_non_ssl']],  # all SSL allowed, all non-SSL allowed
-
-        # [RESULT_STRINGS['ssl_conf'],
-        #  RESULT_STRINGS['all_ssl'],
-        #  RESULT_STRINGS['selected_non_ssl']],  # all SSL allowed, selected non-SSL allowed
-
-        # [RESULT_STRINGS['ssl_conf'],
-        #  RESULT_STRINGS['selected_ssl'],
-        #  RESULT_STRINGS['all_non_ssl']],  # selected SSL allowed, all non-SSL allowed
-
-    #     [RESULT_STRINGS['ssl_conf'],
-    #      RESULT_STRINGS['only_selected']]  # selected SSL allowed, selected non-SSL allowed
-    # ]  # don't change order!
-
 
 class TestPostgreSQLFinger(TestCase):
     def test_is_relevant_exception(self):
