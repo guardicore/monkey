@@ -6,5 +6,5 @@ from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_path_buil
 
 class ELBv2RulePathCreator(AbstractRulePathCreator):
 
-    service_type = SERVICE_TYPES.ELBv2
+    service_type = SERVICE_TYPES.ELB_V2
     supported_rules = ELBv2Rules

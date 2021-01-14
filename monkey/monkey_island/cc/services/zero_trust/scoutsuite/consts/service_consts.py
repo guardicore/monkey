@@ -16,7 +16,7 @@ class SERVICE_TYPES(Enum):
     EFS = 'efs'
     ELASTICACHE = 'elasticache'
     ELB = 'elb'
-    ELBv2 = 'elbv2'
+    ELB_V2 = 'elbv2'
     EMR = 'emr'
     IAM = 'iam'
     KMS = 'kms'
