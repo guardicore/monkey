@@ -28,9 +28,9 @@ ENCRYPTED_CONFIG_VALUES = \
         LM_HASH_LIST_PATH,
         NTLM_HASH_LIST_PATH,
         SSH_KEYS_PATH,
-        AWS_KEYS_PATH + ['access_key_id'],
-        AWS_KEYS_PATH + ['secret_access_key'],
-        AWS_KEYS_PATH + ['session_token']
+        AWS_KEYS_PATH + ['aws_access_key_id'],
+        AWS_KEYS_PATH + ['aws_secret_access_key'],
+        AWS_KEYS_PATH + ['aws_session_token']
     ]
 
 

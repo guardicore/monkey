@@ -32,3 +32,7 @@ class InvalidAWSKeys(Exception):
 
 class NoInternetError(Exception):
     """ Raise to indicate problems caused when no internet connection is present"""
+
+
+class ScoutSuiteScanError(Exception):
+    """ Raise to indicate problems ScoutSuite encountered during scanning"""

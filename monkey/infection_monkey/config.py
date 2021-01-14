@@ -11,7 +11,8 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
-SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list", "exploit_ssh_keys"]
+SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list", "exploit_ssh_keys", "aws_secret_access_key",
+                    "aws_session_token"]
 LOCAL_CONFIG_VARS = ["name", "id", "current_server", "max_depth"]
 HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
 
@@ -245,9 +246,9 @@ class Configuration(object):
     exploit_ntlm_hash_list = []
     exploit_ssh_keys = []
 
-    access_key_id = ''
-    secret_access_key = ''
-    session_token = ''
+    aws_access_key_id = ''
+    aws_secret_access_key = ''
+    aws_session_token = ''
 
     # smb/wmi exploiter
     smb_download_timeout = 300  # timeout in seconds

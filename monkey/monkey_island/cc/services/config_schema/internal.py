@@ -98,15 +98,15 @@ INTERNAL = {
                 "aws_keys": {
                     "type": "object",
                     "properties": {
-                        "access_key_id": {
+                        "aws_access_key_id": {
                             "type": "string",
                             "default": ""
                         },
-                        "secret_access_key": {
+                        "aws_secret_access_key": {
                             "type": "string",
                             "default": ""
                         },
-                        "session_token": {
+                        "aws_session_token": {
                             "type": "string",
                             "default": ""
                         }
