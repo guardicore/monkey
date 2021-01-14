@@ -8,7 +8,7 @@ class ScoutSuiteTelem(BaseTelem):
     def __init__(self, data):
         """
         Default ScoutSuite telemetry constructor
-        :param data: Data gathered via ScoutSuite (
+        :param data: Data gathered via ScoutSuite
         """
         super().__init__()
         self.data = data

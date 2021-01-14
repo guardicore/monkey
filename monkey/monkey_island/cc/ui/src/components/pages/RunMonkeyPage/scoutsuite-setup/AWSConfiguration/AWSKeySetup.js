@@ -56,6 +56,8 @@ const getContents = (props) => {
       .then(res => {
         if (res['error_msg'] === '') {
           setSuccessMessage('AWS keys saved!');
+        } else if (res['message'] === 'Internal Server Error') {
+          setErrorMessage('Something went wrong, double check keys and contact support if problem persists.');
         } else {
           setErrorMessage(res['error_msg']);
         }
@@ -79,11 +81,12 @@ const getContents = (props) => {
       <div className={'key-creation-tutorial'}>
         <h5>Tips</h5>
         <p>Consider creating a new user account just for this activity. Assign only <b>ReadOnlyAccess</b> and&nbsp;
-        <b>SecurityAudit</b> policies.</p>
+          <b>SecurityAudit</b> policies.</p>
 
         <h5>Keys for custom user</h5>
         <p>1. Open the IAM console at <a href={'https://console.aws.amazon.com/iam/'}
-                                         target={'_blank'} rel="noopener noreferrer">https://console.aws.amazon.com/iam/</a>.</p>
+                                         target={'_blank'}
+                                         rel="noopener noreferrer">https://console.aws.amazon.com/iam/</a>.</p>
         <p>2. In the navigation pane, choose Users.</p>
         <p>3. Choose the name of the user whose access keys you want to create, and then choose the Security credentials
           tab.</p>
@@ -157,7 +160,7 @@ const getContents = (props) => {
         {
           successMessage ?
             <div className="alert alert-success" role="alert">{successMessage}&nbsp;
-            Go back and&nbsp;
+              Go back and&nbsp;
               <Button variant={'link'} onClick={() => props.setComponent()} className={'link-in-success-message'}>
                 run Monkey from the Island server </Button> to start AWS scan!</div>
             :

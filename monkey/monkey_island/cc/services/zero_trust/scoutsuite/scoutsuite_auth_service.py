@@ -1,23 +1,12 @@
-import pkgutil
-import sys
-from pathlib import PurePath
 from typing import Tuple
+
+from ScoutSuite.providers.base.authentication_strategy import AuthenticationException
 
 from common.cloud.scoutsuite_consts import CloudProviders
 from common.utils.exceptions import InvalidAWSKeys
 from monkey_island.cc.server_utils.encryptor import encryptor
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.config_schema.config_value_paths import AWS_KEYS_PATH
-
-_scoutsuite_api_package = pkgutil.get_loader('common.cloud.scoutsuite.ScoutSuite.__main__')
-
-
-def _add_scoutsuite_to_python_path():
-    scoutsuite_path = PurePath(_scoutsuite_api_package.path).parent.parent.__str__()
-    sys.path.append(scoutsuite_path)
-
-
-_add_scoutsuite_to_python_path()
 
 
 def is_cloud_authentication_setup(provider: CloudProviders) -> Tuple[bool, str]:
@@ -30,7 +19,7 @@ def is_cloud_authentication_setup(provider: CloudProviders) -> Tuple[bool, str]:
             profile = auth_strategy.AWSAuthenticationStrategy().authenticate()
             return True, f" Profile \"{profile.session.profile_name}\" is already setup. " \
                          f"Run Monkey on Island to start the scan."
-        except Exception:
+        except AuthenticationException:
             return False, ""
 
 

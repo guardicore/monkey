@@ -29,5 +29,5 @@ const ImageModal = (props) => {
 export default ImageModal;
 
 ImageModal.propTypes = {
-  image: PropTypes.element
+  image: PropTypes.string
 }
