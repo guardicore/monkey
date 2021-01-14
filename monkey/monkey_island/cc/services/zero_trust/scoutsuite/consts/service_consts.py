@@ -8,7 +8,7 @@ class SERVICE_TYPES(Enum):
     ACM = 'acm'
     AWSLAMBDA = 'awslambda'
     CLOUDFORMATION = 'cloudformation'
-    CLOUSDTRAIL = 'cloudtrail'
+    CLOUDTRAIL = 'cloudtrail'
     CLOUDWATCH = 'cloudwatch'
     CONFIG = 'config'
     DIRECTCONNECT = 'directconnect'

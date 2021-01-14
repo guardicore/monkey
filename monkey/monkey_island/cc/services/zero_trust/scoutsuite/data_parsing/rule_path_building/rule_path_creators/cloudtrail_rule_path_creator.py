@@ -6,5 +6,5 @@ from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_path_buil
 
 class CloudTrailRulePathCreator(AbstractRulePathCreator):
 
-    service_type = SERVICE_TYPES.CLOUSDTRAIL
+    service_type = SERVICE_TYPES.CLOUDTRAIL
     supported_rules = CloudTrailRules

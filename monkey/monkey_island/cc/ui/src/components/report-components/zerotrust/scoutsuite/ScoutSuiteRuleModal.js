@@ -12,11 +12,8 @@ export default function ScoutSuiteRuleModal(props) {
   const [openRuleId, setOpenRuleId] = useState(null)
 
   function toggleRuleDropdown(ruleId) {
-    if (openRuleId === ruleId) {
-      setOpenRuleId(null);
-    } else {
-      setOpenRuleId(ruleId);
-    }
+    let ruleIdToSet = (openRuleId === ruleId) ? null : ruleId;
+    setOpenRuleId(ruleIdToSet);
   }
 
   function renderRuleDropdowns() {
