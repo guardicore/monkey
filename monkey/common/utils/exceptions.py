@@ -36,3 +36,7 @@ class NoInternetError(Exception):
 
 class ScoutSuiteScanError(Exception):
     """ Raise to indicate problems ScoutSuite encountered during scanning"""
+
+
+class UnknownFindingError(Exception):
+    """ Raise when provided finding is of unknown type"""

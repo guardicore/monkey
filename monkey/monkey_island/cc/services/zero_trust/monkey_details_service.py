@@ -12,7 +12,7 @@ EVENT_FETCH_CNT = 50
 class MonkeyDetailsService:
 
     @staticmethod
-    def fetch_details_for_display(finding_id: ObjectId):
+    def fetch_details_for_display(finding_id: ObjectId) -> dict:
         pipeline = [{'$match': {'_id': finding_id}},
                     {'$addFields': {'oldest_events': {'$slice': ['$events', EVENT_FETCH_CNT]},
                                     'latest_events': {'$slice': ['$events', -1 * EVENT_FETCH_CNT]},
