@@ -27,7 +27,7 @@ export default class ScoutSuiteRuleButton extends Component {
                              hideCallback={this.toggleModal} />
         <div className="text-center" style={{'display': 'grid'}}>
           <Button variant={'monkey-info'} size={'lg'} onClick={this.toggleModal}>
-            <FontAwesomeIcon icon={faList}/> ScoutSuite rules
+            <FontAwesomeIcon icon={faList}/> Rules
             &nbsp;<RuleCountBadge count={this.props.scoutsuite_rules.length}/>
           </Button>
         </div>

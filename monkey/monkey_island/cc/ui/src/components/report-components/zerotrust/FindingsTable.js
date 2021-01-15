@@ -6,7 +6,7 @@ import PillarLabel from './PillarLabel';
 import EventsButton from './EventsButton';
 import ScoutSuiteRuleButton from './scoutsuite/ScoutSuiteRuleButton';
 
-const EVENTS_COLUMN_MAX_WIDTH = 250;
+const EVENTS_COLUMN_MAX_WIDTH = 180;
 const PILLARS_COLUMN_MAX_WIDTH = 260;
 
 
