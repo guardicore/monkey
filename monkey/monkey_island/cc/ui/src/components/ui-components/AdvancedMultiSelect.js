@@ -11,7 +11,7 @@ import {getFullDefinitionByKey, getDefaultPaneParams} from './JsonSchemaHelpers.
 
 class AdvancedMultiSelect extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.enumOptions = props.options.enumOptions;
 
@@ -37,7 +37,7 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   onChildCheckboxClick(value) {
-    let selectValues = this.getSelectValuesAfterClick(value)
+    let selectValues = this.getSelectValuesAfterClick(value);
     this.props.onChange(selectValues);
 
     this.setMasterCheckboxState(selectValues);
