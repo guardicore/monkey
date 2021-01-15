@@ -5,7 +5,7 @@ from flask import Response, jsonify
 
 from monkey_island.cc.models.zero_trust.scoutsuite_data_json import ScoutSuiteDataJson
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services.zero_trust.zero_trust_finding_service import ZeroTrustFindingService
+from monkey_island.cc.services.zero_trust.report_data.finding_service import FindingService
 from monkey_island.cc.services.zero_trust.zero_trust_service import ZeroTrustService
 
 REPORT_DATA_PILLARS = "pillars"
@@ -27,7 +27,7 @@ class ZeroTrustReport(flask_restful.Resource):
         elif report_data == REPORT_DATA_PRINCIPLES_STATUS:
             return jsonify(ZeroTrustService.get_principles_status())
         elif report_data == REPORT_DATA_FINDINGS:
-            return jsonify(ZeroTrustFindingService.get_all_findings())
+            return jsonify(FindingService.get_all_findings())
         elif report_data == REPORT_DATA_SCOUTSUITE:
             try:
                 data = ScoutSuiteDataJson.objects.get().scoutsuite_data

@@ -6,7 +6,7 @@ from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_details_service import MonkeyZTDetailsService
 
 
-class ZeroTrustFindingService:
+class FindingService:
 
     @staticmethod
     def get_all_findings() -> List[Finding]:
@@ -19,7 +19,7 @@ class ZeroTrustFindingService:
             else:
                 raise UnknownFindingError(f"Unknown finding type {findings[i].finding_type}")
             findings[i] = findings[i].to_mongo()
-            findings[i] = ZeroTrustFindingService._get_enriched_finding(findings[i])
+            findings[i] = FindingService._get_enriched_finding(findings[i])
             findings[i]['details'] = details
         return findings
 
