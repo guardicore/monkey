@@ -46,7 +46,7 @@ class ReportPageComponent extends AuthComponent {
             securityReport: res
           });
         });
-      this.authFetch('/api/attack/report')
+      this.authFetch('/api/report/attack')
         .then(res => res.json())
         .then(res => {
           this.setState({
@@ -61,22 +61,22 @@ class ReportPageComponent extends AuthComponent {
 
   getZeroTrustReportFromServer = async () => {
     let ztReport = {findings: {}, principles: {}, pillars: {}, scoutsuite_data: {}};
-    await this.authFetch('/api/report/zero_trust/findings')
+    await this.authFetch('/api/report/zero-trust/findings')
       .then(res => res.json())
       .then(res => {
         ztReport.findings = res;
       });
-    await this.authFetch('/api/report/zero_trust/principles')
+    await this.authFetch('/api/report/zero-trust/principles')
       .then(res => res.json())
       .then(res => {
         ztReport.principles = res;
       });
-    await this.authFetch('/api/report/zero_trust/pillars')
+    await this.authFetch('/api/report/zero-trust/pillars')
       .then(res => res.json())
       .then(res => {
         ztReport.pillars = res;
       });
-    await this.authFetch('/api/report/zero_trust/scoutsuite')
+    await this.authFetch('/api/report/zero-trust/scoutsuite')
       .then(res => res.json())
       .then(res => {
         ztReport.scoutsuite_data = res;
