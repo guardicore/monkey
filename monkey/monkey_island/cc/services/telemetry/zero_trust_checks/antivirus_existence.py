@@ -4,7 +4,7 @@ import common.common_consts.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.services.telemetry.zero_trust_checks.known_anti_viruses import ANTI_VIRUS_KNOWN_PROCESS_NAMES
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
 
 
 def check_antivirus_existence(process_list_json, monkey_guid):
@@ -30,8 +30,8 @@ def check_antivirus_existence(process_list_json, monkey_guid):
         test_status = zero_trust_consts.STATUS_PASSED
     else:
         test_status = zero_trust_consts.STATUS_FAILED
-    MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_ENDPOINT_SECURITY_EXISTS,
-                                                   status=test_status, events=events)
+    MonkeyZTFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_ENDPOINT_SECURITY_EXISTS,
+                                                     status=test_status, events=events)
 
 
 def filter_av_processes(process_list):

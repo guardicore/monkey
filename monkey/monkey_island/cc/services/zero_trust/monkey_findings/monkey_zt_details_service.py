@@ -9,7 +9,7 @@ from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFind
 EVENT_FETCH_CNT = 50
 
 
-class MonkeyDetailsService:
+class MonkeyZTDetailsService:
 
     @staticmethod
     def fetch_details_for_display(finding_id: ObjectId) -> dict:
@@ -21,8 +21,8 @@ class MonkeyDetailsService:
         details = list(MonkeyFindingDetails.objects.aggregate(*pipeline))
         if details:
             details = details[0]
-            details['latest_events'] = MonkeyDetailsService._get_events_without_overlap(details['event_count'],
-                                                                                        details['latest_events'])
+            details['latest_events'] = MonkeyZTDetailsService._get_events_without_overlap(details['event_count'],
+                                                                                          details['latest_events'])
         return details
 
     @staticmethod

@@ -6,7 +6,7 @@ from common.network.segmentation_utils import get_ip_if_in_subnet, get_ip_in_src
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
 
 SEGMENTATION_DONE_EVENT_TEXT = "Monkey on {hostname} is done attempting cross-segment communications " \
                                "from `{src_seg}` segments to `{dst_seg}` segments."
@@ -26,7 +26,7 @@ def check_segmentation_violation(current_monkey, target_ip):
             target_subnet = subnet_pair[1]
             if is_segmentation_violation(current_monkey, target_ip, source_subnet, target_subnet):
                 event = get_segmentation_violation_event(current_monkey, source_subnet, target_ip, target_subnet)
-                MonkeyFindingService.create_or_add_to_existing(
+                MonkeyZTFindingService.create_or_add_to_existing(
                     test=zero_trust_consts.TEST_SEGMENTATION,
                     status=zero_trust_consts.STATUS_FAILED,
                     events=[event]
@@ -90,7 +90,7 @@ def create_or_add_findings_for_all_pairs(all_subnets, current_monkey):
     all_subnets_pairs_for_this_monkey = itertools.product(this_monkey_subnets, other_subnets)
 
     for subnet_pair in all_subnets_pairs_for_this_monkey:
-        MonkeyFindingService.create_or_add_to_existing(
+        MonkeyZTFindingService.create_or_add_to_existing(
             status=zero_trust_consts.STATUS_PASSED,
             events=[get_segmentation_done_event(current_monkey, subnet_pair)],
             test=zero_trust_consts.TEST_SEGMENTATION

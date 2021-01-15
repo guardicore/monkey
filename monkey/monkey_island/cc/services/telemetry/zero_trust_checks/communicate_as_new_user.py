@@ -1,6 +1,6 @@
 import common.common_consts.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
 
 COMM_AS_NEW_USER_FAILED_FORMAT = "Monkey on {} couldn't communicate as new user. Details: {}"
 COMM_AS_NEW_USER_SUCCEEDED_FORMAT = \
@@ -8,9 +8,10 @@ COMM_AS_NEW_USER_SUCCEEDED_FORMAT = \
 
 
 def check_new_user_communication(current_monkey, success, message):
-    MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_COMMUNICATE_AS_NEW_USER,
-                                                   status=zero_trust_consts.STATUS_FAILED if success else zero_trust_consts.STATUS_PASSED,
-                                                   events=[
+    status = zero_trust_consts.STATUS_FAILED if success else zero_trust_consts.STATUS_PASSED
+    MonkeyZTFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_COMMUNICATE_AS_NEW_USER,
+                                                     status=status,
+                                                     events=[
                                                        get_attempt_event(current_monkey),
                                                        get_result_event(current_monkey, message, success)
                                                    ])

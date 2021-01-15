@@ -8,7 +8,7 @@ from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
 
 
-class MonkeyFindingService:
+class MonkeyZTFindingService:
 
     @staticmethod
     def create_or_add_to_existing(test, status, events):
@@ -23,10 +23,10 @@ class MonkeyFindingService:
         assert (len(existing_findings) < 2), "More than one finding exists for {}:{}".format(test, status)
 
         if len(existing_findings) == 0:
-            MonkeyFindingService.create_new_finding(test, status, events)
+            MonkeyZTFindingService.create_new_finding(test, status, events)
         else:
             # Now we know for sure this is the only one
-            MonkeyFindingService.add_events(existing_findings[0], events)
+            MonkeyZTFindingService.add_events(existing_findings[0], events)
 
     @staticmethod
     def create_new_finding(test: str, status: str, events: List[Event]):
@@ -50,5 +50,5 @@ class MonkeyFindingService:
 
     @staticmethod
     def add_malicious_activity_to_timeline(events):
-        MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_MALICIOUS_ACTIVITY_TIMELINE,
-                                                       status=zero_trust_consts.STATUS_VERIFY, events=events)
+        MonkeyZTFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_MALICIOUS_ACTIVITY_TIMELINE,
+                                                         status=zero_trust_consts.STATUS_VERIFY, events=events)

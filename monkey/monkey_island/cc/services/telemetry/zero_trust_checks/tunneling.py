@@ -2,7 +2,7 @@ import common.common_consts.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.services.telemetry.processing.utils import get_tunnel_host_ip_from_proxy_field
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
 
 
 def check_tunneling_violation(tunnel_telemetry_json):
@@ -18,7 +18,7 @@ def check_tunneling_violation(tunnel_telemetry_json):
             timestamp=tunnel_telemetry_json['timestamp']
         )]
 
-        MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_TUNNELING,
-                                                       status=zero_trust_consts.STATUS_FAILED, events=tunneling_events)
+        MonkeyZTFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_TUNNELING,
+                                                         status=zero_trust_consts.STATUS_FAILED, events=tunneling_events)
 
-        MonkeyFindingService.add_malicious_activity_to_timeline(tunneling_events)
+        MonkeyZTFindingService.add_malicious_activity_to_timeline(tunneling_events)

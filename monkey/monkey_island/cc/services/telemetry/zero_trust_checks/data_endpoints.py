@@ -4,7 +4,7 @@ import common.common_consts.zero_trust_consts as zero_trust_consts
 from common.common_consts.network_consts import ES_SERVICE
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
 
 HTTP_SERVERS_SERVICES_NAMES = ['tcp-80']
 
@@ -55,10 +55,10 @@ def check_open_data_endpoints(telemetry_json):
                 event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK
             ))
 
-    MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_DATA_ENDPOINT_HTTP,
-                                                   status=found_http_server_status, events=events)
+    MonkeyZTFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_DATA_ENDPOINT_HTTP,
+                                                     status=found_http_server_status, events=events)
 
-    MonkeyFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_DATA_ENDPOINT_ELASTIC,
-                                                   status=found_elastic_search_server, events=events)
+    MonkeyZTFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_DATA_ENDPOINT_ELASTIC,
+                                                     status=found_elastic_search_server, events=events)
 
-    MonkeyFindingService.add_malicious_activity_to_timeline(events)
+    MonkeyZTFindingService.add_malicious_activity_to_timeline(events)

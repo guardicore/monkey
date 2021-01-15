@@ -5,7 +5,7 @@ from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import create_or_add_findings_for_all_pairs
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 FIRST_SUBNET = "1.1.1.1"
@@ -37,7 +37,7 @@ class TestSegmentationChecks(IslandTestCase):
             2)
 
         # This is a monkey from 2nd subnet communicated with 1st subnet.
-        MonkeyFindingService.create_or_add_to_existing(
+        MonkeyZTFindingService.create_or_add_to_existing(
             status=zero_trust_consts.STATUS_FAILED,
             test=zero_trust_consts.TEST_SEGMENTATION,
             events=[Event.create_event(title="sdf",

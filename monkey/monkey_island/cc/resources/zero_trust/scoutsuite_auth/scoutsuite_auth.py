@@ -6,8 +6,8 @@ from flask import request
 from common.cloud.scoutsuite_consts import CloudProviders
 from common.utils.exceptions import InvalidAWSKeys
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_auth_service import (is_cloud_authentication_setup,
-                                                                                     set_aws_keys)
+from monkey_island.cc.services.zero_trust.scoutsuite_findings.scoutsuite_auth_service import (is_cloud_authentication_setup,
+                                                                                              set_aws_keys)
 
 
 class ScoutSuiteAuth(flask_restful.Resource):

@@ -1,5 +1,5 @@
 from monkey_island.cc.models.zero_trust.scoutsuite_rule import ScoutSuiteRule
-from monkey_island.cc.services.zero_trust.scoutsuite.consts import rule_consts
+from monkey_island.cc.services.zero_trust.scoutsuite_findings.consts import rule_consts
 
 
 class ScoutSuiteRuleService:

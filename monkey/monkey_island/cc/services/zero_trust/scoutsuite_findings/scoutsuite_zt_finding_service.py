@@ -4,11 +4,11 @@ from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutSuiteFindingDetails
 from monkey_island.cc.models.zero_trust.scoutsuite_rule import ScoutSuiteRule
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.findings import ScoutSuiteFinding
-from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_rule_service import ScoutSuiteRuleService
+from monkey_island.cc.services.zero_trust.scoutsuite_findings.consts.findings import ScoutSuiteFinding
+from monkey_island.cc.services.zero_trust.scoutsuite_findings.scoutsuite_rule_service import ScoutSuiteRuleService
 
 
-class ScoutSuiteFindingService:
+class ScoutSuiteZTFindingService:
 
     @staticmethod
     def process_rule(finding: ScoutSuiteFinding, rule: ScoutSuiteRule):
@@ -16,16 +16,16 @@ class ScoutSuiteFindingService:
         assert (len(existing_findings) < 2), "More than one finding exists for {}".format(finding.test)
 
         if len(existing_findings) == 0:
-            ScoutSuiteFindingService.create_new_finding_from_rule(finding, rule)
+            ScoutSuiteZTFindingService.create_new_finding_from_rule(finding, rule)
         else:
-            ScoutSuiteFindingService.add_rule(existing_findings[0], rule)
+            ScoutSuiteZTFindingService.add_rule(existing_findings[0], rule)
 
     @staticmethod
     def create_new_finding_from_rule(finding: ScoutSuiteFinding, rule: ScoutSuiteRule):
         details = ScoutSuiteFindingDetails()
         details.scoutsuite_rules = [rule]
         details.save()
-        status = ScoutSuiteFindingService.get_finding_status_from_rules(details.scoutsuite_rules)
+        status = ScoutSuiteZTFindingService.get_finding_status_from_rules(details.scoutsuite_rules)
         Finding.save_finding(finding.test, status, details)
 
     @staticmethod
@@ -41,15 +41,15 @@ class ScoutSuiteFindingService:
 
     @staticmethod
     def add_rule(finding: Finding, rule: ScoutSuiteRule):
-        ScoutSuiteFindingService.change_finding_status_by_rule(finding, rule)
+        ScoutSuiteZTFindingService.change_finding_status_by_rule(finding, rule)
         finding.save()
         finding.details.fetch().add_rule(rule)
 
     @staticmethod
     def change_finding_status_by_rule(finding: Finding, rule: ScoutSuiteRule):
-        rule_status = ScoutSuiteFindingService.get_finding_status_from_rules([rule])
+        rule_status = ScoutSuiteZTFindingService.get_finding_status_from_rules([rule])
         finding_status = finding.status
-        new_finding_status = ScoutSuiteFindingService.get_finding_status_from_rule_status(finding_status, rule_status)
+        new_finding_status = ScoutSuiteZTFindingService.get_finding_status_from_rule_status(finding_status, rule_status)
         if finding_status != new_finding_status:
             finding.status = new_finding_status
 

@@ -6,7 +6,7 @@ from packaging import version
 import common.common_consts.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
-from monkey_island.cc.services.zero_trust.monkey_finding_service import MonkeyFindingService
+from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
 from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 
@@ -23,12 +23,12 @@ class TestAggregateFinding(IslandTestCase):
         events = [Event.create_event("t", "t", zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK)]
         self.assertEqual(len(Finding.objects(test=test, status=status)), 0)
 
-        MonkeyFindingService.create_or_add_to_existing(test, status, events)
+        MonkeyZTFindingService.create_or_add_to_existing(test, status, events)
 
         self.assertEqual(len(Finding.objects(test=test, status=status)), 1)
         self.assertEqual(len(Finding.objects(test=test, status=status)[0].events), 1)
 
-        MonkeyFindingService.create_or_add_to_existing(test, status, events)
+        MonkeyZTFindingService.create_or_add_to_existing(test, status, events)
 
         self.assertEqual(len(Finding.objects(test=test, status=status)), 1)
         self.assertEqual(len(Finding.objects(test=test, status=status)[0].events), 2)
@@ -50,7 +50,7 @@ class TestAggregateFinding(IslandTestCase):
         self.assertEqual(len(Finding.objects(test=test, status=status)), 1)
         self.assertEqual(len(Finding.objects(test=test, status=status)[0].events), 1)
 
-        MonkeyFindingService.create_or_add_to_existing(test, status, events)
+        MonkeyZTFindingService.create_or_add_to_existing(test, status, events)
 
         self.assertEqual(len(Finding.objects(test=test, status=status)), 1)
         self.assertEqual(len(Finding.objects(test=test, status=status)[0].events), 2)
@@ -60,4 +60,4 @@ class TestAggregateFinding(IslandTestCase):
         self.assertEqual(len(Finding.objects(test=test, status=status)), 2)
 
         with self.assertRaises(AssertionError):
-            MonkeyFindingService.create_or_add_to_existing(test, status, events)
+            MonkeyZTFindingService.create_or_add_to_existing(test, status, events)
