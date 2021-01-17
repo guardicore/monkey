@@ -1,6 +1,7 @@
 import logging
 
 import requests
+import simplejson
 
 from common.cloud.environment_names import Environment
 from common.cloud.instance import CloudInstance
@@ -41,10 +42,10 @@ class AzureInstance(CloudInstance):
             # If not on cloud, the metadata URL is non-routable and the connection will fail.
             # If on AWS, should get 404 since the metadata service URL is different, so bool(response) will be false.
             if response:
-                logger.debug("On Azure. Trying to parse metadata.")
+                logger.debug("Trying to parse Azure metadata.")
                 self.try_parse_response(response)
             else:
-                logger.warning("On Azure, but metadata response not ok: {}".format(response.status_code))
+                logger.warning(f"On Azure, but metadata response not ok: {response.status_code}")
         except requests.RequestException:
             logger.debug("Failed to get response from Azure metadata service: This instance is not on Azure.")
             self.on_azure = False
@@ -55,5 +56,5 @@ class AzureInstance(CloudInstance):
             self.instance_name = response_data["compute"]["name"]
             self.instance_id = response_data["compute"]["vmId"]
             self.location = response_data["compute"]["location"]
-        except KeyError:
-            logger.exception("Error while parsing response from Azure metadata service.")
+        except (KeyError, simplejson.errors.JSONDecodeError) as e:
+            logger.exception(f"Error while parsing response from Azure metadata service: {e}")

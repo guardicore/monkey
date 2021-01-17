@@ -45,7 +45,7 @@ class AwsInstance(CloudInstance):
             self.account_id = self._extract_account_id(
                 urllib.request.urlopen(
                     AWS_LATEST_METADATA_URI_PREFIX + 'dynamic/instance-identity/document', timeout=2).read().decode())
-        except (urllib.error.URLError, IOError) as e:
+        except (urllib.error.URLError, json.decoder.JSONDecodeError, IOError) as e:
             logger.debug("Failed init of AwsInstance while getting dynamic instance data: {}".format(e))
 
     @staticmethod
