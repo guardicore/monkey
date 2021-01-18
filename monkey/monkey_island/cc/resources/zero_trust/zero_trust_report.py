@@ -5,8 +5,9 @@ from flask import Response, jsonify
 
 from monkey_island.cc.models.zero_trust.scoutsuite_data_json import ScoutSuiteDataJson
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services.zero_trust.report_data.finding_service import FindingService
-from monkey_island.cc.services.zero_trust.zero_trust_service import ZeroTrustService
+from monkey_island.cc.services.zero_trust.zero_trust_report.finding_service import FindingService
+from monkey_island.cc.services.zero_trust.zero_trust_report.pillar_service import PillarService
+from monkey_island.cc.services.zero_trust.zero_trust_report.principle_service import PrincipleService
 
 REPORT_DATA_PILLARS = "pillars"
 REPORT_DATA_FINDINGS = "findings"
@@ -20,12 +21,12 @@ class ZeroTrustReport(flask_restful.Resource):
     def get(self, report_data=None):
         if report_data == REPORT_DATA_PILLARS:
             return jsonify({
-                "statusesToPillars": ZeroTrustService.get_statuses_to_pillars(),
-                "pillarsToStatuses": ZeroTrustService.get_pillars_to_statuses(),
-                "grades": ZeroTrustService.get_pillars_grades()
+                "statusesToPillars": PillarService.get_statuses_to_pillars(),
+                "pillarsToStatuses": PillarService.get_pillars_to_statuses(),
+                "grades": PillarService.get_pillars_grades()
             })
         elif report_data == REPORT_DATA_PRINCIPLES_STATUS:
-            return jsonify(ZeroTrustService.get_principles_status())
+            return jsonify(PrincipleService.get_principles_status())
         elif report_data == REPORT_DATA_FINDINGS:
             return jsonify(FindingService.get_all_findings())
         elif report_data == REPORT_DATA_SCOUTSUITE:
