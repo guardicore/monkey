@@ -10,13 +10,11 @@ logger = logging.getLogger(__name__)
 AWS = 'aws'
 STANDARD = 'standard'
 PASSWORD = 'password'
-TESTING = 'testing'
 
 ENV_DICT = {
     STANDARD: standard.StandardEnvironment,
     AWS: aws.AwsEnvironment,
-    PASSWORD: password.PasswordEnvironment,
-    TESTING: testing.TestingEnvironment
+    PASSWORD: password.PasswordEnvironment
 }
 
 env = None

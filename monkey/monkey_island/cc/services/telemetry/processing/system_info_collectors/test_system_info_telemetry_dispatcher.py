@@ -36,9 +36,6 @@ class SystemInfoTelemetryDispatcherTest(IslandTestCase):
         dispatcher.dispatch_collector_results_to_relevant_processors(good_telem_empty_collectors)
 
     def test_dispatch_to_relevant_collector(self):
-        self.fail_if_not_testing_env()
-        self.clean_monkey_db()
-
         a_monkey = Monkey(guid=str(uuid.uuid4()))
         a_monkey.save()
 

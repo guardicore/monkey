@@ -47,7 +47,6 @@ EXPLOIT_DATA_MOCK = [{
 
 class TestDisplayedEdgeService(IslandTestCase):
     def test_get_displayed_edges_by_to(self):
-        self.clean_edge_db()
 
         dst_id = ObjectId()
 

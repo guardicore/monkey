@@ -16,9 +16,6 @@ THIRD_SUBNET = "3.3.3.3-3.3.3.200"
 class TestSegmentationChecks(IslandTestCase):
 
     def test_create_findings_for_all_done_pairs(self):
-        self.fail_if_not_testing_env()
-        self.clean_finding_db()
-
         all_subnets = [FIRST_SUBNET, SECOND_SUBNET, THIRD_SUBNET]
 
         monkey = Monkey(

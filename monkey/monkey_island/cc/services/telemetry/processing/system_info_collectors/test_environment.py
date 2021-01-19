@@ -8,9 +8,6 @@ from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 class TestEnvironmentTelemetryProcessing(IslandTestCase):
     def test_process_environment_telemetry(self):
-        self.fail_if_not_testing_env()
-        self.clean_monkey_db()
-
         # Arrange
         monkey_guid = str(uuid.uuid4())
         a_monkey = Monkey(guid=monkey_guid)

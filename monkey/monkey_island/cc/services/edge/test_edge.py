@@ -19,9 +19,6 @@ class TestEdgeService(IslandTestCase):
     """
 
     def test_get_or_create_edge(self):
-        self.fail_if_not_testing_env()
-        self.clean_edge_db()
-
         src_id = ObjectId()
         dst_id = ObjectId()
 

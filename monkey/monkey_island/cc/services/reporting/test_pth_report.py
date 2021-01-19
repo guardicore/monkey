@@ -7,9 +7,6 @@ from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 class TestPTHReportServiceGenerateMapNodes(IslandTestCase):
     def test_generate_map_nodes(self):
-        self.fail_if_not_testing_env()
-        self.clean_monkey_db()
-
         self.assertEqual(PTHReportService.generate_map_nodes(), [])
 
         windows_monkey_with_services = Monkey(
@@ -43,9 +40,6 @@ class TestPTHReportServiceGenerateMapNodes(IslandTestCase):
         self.assertEqual(2, len(map_nodes))
 
     def test_generate_map_nodes_parsing(self):
-        self.fail_if_not_testing_env()
-        self.clean_monkey_db()
-
         monkey_id = str(uuid.uuid4())
         hostname = "A_Windows_PC_1"
         windows_monkey_with_services = Monkey(

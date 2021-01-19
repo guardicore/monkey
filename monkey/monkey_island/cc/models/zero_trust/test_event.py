@@ -7,9 +7,6 @@ from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 class TestEvent(IslandTestCase):
     def test_create_event(self):
-        self.fail_if_not_testing_env()
-        self.clean_finding_db()
-
         with self.assertRaises(ValidationError):
             _ = Event.create_event(
                 title=None,  # title required
