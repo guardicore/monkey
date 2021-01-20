@@ -5,7 +5,7 @@ from typing import Dict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-import monkey_island.cc.testing.environment.server_config_mocks as config_mocks
+import monkey_island.cc.test_common.environment.server_config_mocks as config_mocks
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds

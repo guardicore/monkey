@@ -2,12 +2,11 @@ import uuid
 
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
-from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 
-class TestPTHReportServiceGenerateMapNodes(IslandTestCase):
+class TestPTHReportServiceGenerateMapNodes():
     def test_generate_map_nodes(self):
-        self.assertEqual(PTHReportService.generate_map_nodes(), [])
+        assert PTHReportService.generate_map_nodes() == []
 
         windows_monkey_with_services = Monkey(
             guid=str(uuid.uuid4()),
@@ -37,7 +36,7 @@ class TestPTHReportServiceGenerateMapNodes(IslandTestCase):
 
         map_nodes = PTHReportService.generate_map_nodes()
 
-        self.assertEqual(2, len(map_nodes))
+        assert 2 == len(map_nodes)
 
     def test_generate_map_nodes_parsing(self):
         monkey_id = str(uuid.uuid4())
@@ -53,8 +52,8 @@ class TestPTHReportServiceGenerateMapNodes(IslandTestCase):
 
         map_nodes = PTHReportService.generate_map_nodes()
 
-        self.assertEqual(map_nodes[0]["id"], monkey_id)
-        self.assertEqual(map_nodes[0]["label"], "A_Windows_PC_1 : 1.1.1.1")
-        self.assertEqual(map_nodes[0]["group"], "critical")
-        self.assertEqual(len(map_nodes[0]["services"]), 2)
-        self.assertEqual(map_nodes[0]["hostname"], hostname)
+        assert map_nodes[0]["id"] == monkey_id
+        assert map_nodes[0]["label"] == "A_Windows_PC_1 : 1.1.1.1"
+        assert map_nodes[0]["group"] == "critical"
+        assert len(map_nodes[0]["services"]) == 2
+        assert map_nodes[0]["hostname"] == hostname

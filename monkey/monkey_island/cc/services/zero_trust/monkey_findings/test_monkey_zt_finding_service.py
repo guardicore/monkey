@@ -1,14 +1,8 @@
 from datetime import datetime
-from typing import List
-
-from bson import ObjectId
 
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
-from monkey_island.cc.models.zero_trust.finding import Finding
-from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
-from monkey_island.cc.testing.IslandTestCase import IslandTestCase
 
 EVENTS = [
     Event.create_event(
@@ -38,7 +32,7 @@ STATUS = [
 ]
 
 
-class TestMonkeyZTFindingService(IslandTestCase):
+class TestMonkeyZTFindingService:
 
     def test_create_or_add_to_existing(self):
 
