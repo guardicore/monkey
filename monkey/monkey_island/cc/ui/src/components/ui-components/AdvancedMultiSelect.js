@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form} from 'react-bootstrap';
+import {Button, Card, Form} from 'react-bootstrap';
 
 import {cloneDeep} from 'lodash';
 
@@ -7,21 +7,45 @@ import {getComponentHeight} from './utils/HeightCalculator';
 import InfoPane from './InfoPane';
 import {MasterCheckbox, MasterCheckboxState} from './MasterCheckbox';
 import ChildCheckbox from './ChildCheckbox';
-import {getFullDefinitionByKey, getDefaultPaneParams} from './JsonSchemaHelpers.js';
+import {getFullDefinitionByKey, getDefaultPaneParams} from './JsonSchemaHelpers';
+
+function AdvancedMultiSelectHeader(props) {
+  const {
+    title,
+    disabled,
+    onCheckboxClick,
+    checkboxState,
+    hideReset,
+    onResetClick
+  } = props;
+
+  return (
+    <Card.Header className="d-flex justify-content-between">
+      <MasterCheckbox title={title} disabled={disabled} onClick={onCheckboxClick} checkboxState={checkboxState}/>
+      <Button className={'reset-safe-defaults'} type={'reset'} variant={'warning'}
+        hidden={hideReset} onClick={onResetClick}>
+        Reset to safe defaults
+      </Button>
+    </Card.Header>
+  );
+}
 
 class AdvancedMultiSelect extends React.Component {
   constructor(props) {
     super(props);
 
     this.enumOptions = props.options.enumOptions;
+    this.defaultValues = props.schema.default;
 
     this.state = {
       masterCheckboxState: this.getMasterCheckboxState(props.value),
+      hideReset: this.getHideResetState(props.value),
       infoPaneParams: getDefaultPaneParams(props.schema.items.$ref, props.registry)
     };
 
     this.onMasterCheckboxClick = this.onMasterCheckboxClick.bind(this);
     this.onChildCheckboxClick = this.onChildCheckboxClick.bind(this);
+    this.onResetClick = this.onResetClick.bind(this);
     this.setPaneInfo = this.setPaneInfo.bind(this, props.schema.items.$ref, props.registry);
   }
 
@@ -34,6 +58,7 @@ class AdvancedMultiSelect extends React.Component {
 
     this.props.onChange(newValues);
     this.setMasterCheckboxState(newValues);
+    this.setHideResetState(newValues);
   }
 
   onChildCheckboxClick(value) {
@@ -41,6 +66,7 @@ class AdvancedMultiSelect extends React.Component {
     this.props.onChange(selectValues);
 
     this.setMasterCheckboxState(selectValues);
+    this.setHideResetState(selectValues);
   }
 
   getSelectValuesAfterClick(clickedValue) {
@@ -72,9 +98,32 @@ class AdvancedMultiSelect extends React.Component {
     return MasterCheckboxState.ALL;
   }
 
+  onResetClick() {
+    this.props.onChange(this.defaultValues);
+    this.setHideResetState(this.defaultValues);
+    this.setMasterCheckboxState(this.defaultValues);
+    this.setPaneInfoToDefault();
+  }
+
+  setHideResetState(selectValues) {
+    this.setState(() => ({
+      hideReset: this.getHideResetState(selectValues)
+    }));
+  }
+
+  getHideResetState(selectValues) {
+    return selectValues.every((value) => this.defaultValues.includes(value));
+  }
+
   setPaneInfo(refString, registry, itemKey) {
     let definitionObj = getFullDefinitionByKey(refString, registry, itemKey);
     this.setState({infoPaneParams: {title: definitionObj.title, content: definitionObj.info, link: definitionObj.link}});
+  }
+
+  setPaneInfoToDefault() {
+    this.setState(() => ({
+      infoPaneParams: getDefaultPaneParams(this.props.schema.items.$ref, this.props.registry)
+    }));
   }
 
   render() {
@@ -90,9 +139,10 @@ class AdvancedMultiSelect extends React.Component {
 
     return (
       <div className={'advanced-multi-select'}>
-        <MasterCheckbox title={schema.title}
-          disabled={disabled} onClick={this.onMasterCheckboxClick}
-          checkboxState={this.state.masterCheckboxState}/>
+        <AdvancedMultiSelectHeader title={schema.title}
+          disabled={disabled} onCheckboxClick={this.onMasterCheckboxClick}
+          checkboxState={this.state.masterCheckboxState}
+          hideReset={this.state.hideReset} onResetClick={this.onResetClick}/>
         <Form.Group
           style={{height: `${getComponentHeight(this.enumOptions.length)}px`}}
           id={id} multiple={multiple} className='choice-block form-control'

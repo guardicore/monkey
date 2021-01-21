@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Button} from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheckSquare} from '@fortawesome/free-solid-svg-icons';
@@ -29,12 +29,12 @@ function MasterCheckbox(props) {
   }
 
   return (
-    <Card.Header>
+    <div className={'master-checkbox'}>
       <Button key={`${title}-button`} variant={'link'} disabled={disabled} onClick={onClick}>
         <FontAwesomeIcon icon={newCheckboxIcon}/>
       </Button>
       <span className={'header-title'}>{title}</span>
-    </Card.Header>
+    </div>
   );
 }
 
