@@ -27,7 +27,7 @@ You can use the OVA in one of two modes:
     sudo nano /etc/network/interfaces
     ```
 
-    And change the lines:
+    Change the lines:
 
     ```sh
     auto ens160
