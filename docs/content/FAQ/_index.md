@@ -5,7 +5,7 @@ draft: false
 pre: "<i class='fas fa-question'></i> "
 ---
 
-Here are some of the most common questions we receive about the Infection Monkey. If the answer you’re looking for isn’t here, talk with us [on our Slack channel](https://infectionmonkey.slack.com/), email us at [support@infectionmonkey.com](mailto:support@infectionmonkey.com) or [open an issue on GitHub](https://github.com/guardicore/monkey).
+Here are some of the most common questions we receive about the Infection Monkey. If the answer you’re looking for isn’t here, talk with us [on our Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU), email us at [support@infectionmonkey.com](mailto:support@infectionmonkey.com) or [open an issue on GitHub](https://github.com/guardicore/monkey).
 
 - [Where can I get the latest Monkey version? 📰](#where-can-i-get-the-latest-monkey-version)
 - [How long does a single Monkey run for? Is there a time limit?](#how-long-does-a-single-monkey-run-for-is-there-a-time-limit)
