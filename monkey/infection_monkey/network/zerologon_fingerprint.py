@@ -22,14 +22,12 @@ class ZerologonFinger(HostFinger):
         Checks if the Windows Server is vulnerable to Zerologon.
         """
 
-        DC_IP = host.ip_addr
-        DC_NAME = self.get_dc_name(DC_IP)
+        DC_IP, DC_NAME, DC_HANDLE = self.get_dc_details()
 
         if DC_NAME:  # if it is a Windows DC
             # Keep authenticating until successful.
             # Expected average number of attempts needed: 256.
             # Approximate time taken by 2000 attempts: 40 seconds.
-            DC_HANDLE = '\\\\' + DC_NAME
 
             LOG.info('Performing Zerologon authentication attempts...')
             rpc_con = None
@@ -56,6 +54,12 @@ class ZerologonFinger(HostFinger):
         else:
             LOG.info('Error encountered; most likely not a Windows Domain Controller.')
             return False
+
+    def get_dc_details(self):
+        DC_IP = self.host.ip_addr
+        DC_NAME = self.get_dc_name(DC_IP)
+        DC_HANDLE = '\\\\' + DC_NAME
+        return DC_IP, DC_NAME, DC_HANDLE
 
     def get_dc_name(self, DC_IP):
         """
