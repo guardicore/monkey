@@ -10,18 +10,18 @@ tags: ["setup", "vmware"]
 ## Deployment
 
 1. Deploy the Infection Monkey OVA by choosing **Deploy OVF Template** and following the wizard instructions. *Note: make sure ports 5000 and 5001 on the machine are accessible for inbound TCP traffic.*
-2. Turn on the Infection Monkey VM.
-3. Log in to the machine with the following credentials:
+1. Turn on the Infection Monkey VM.
+1. Log in to the machine with the following credentials:
    1. Username: **monkeyuser**
-   2. Password: **Noon.Earth.Always**
-4. It's recommended you change the machine passwords by running the following commands: `sudo passwd monkeyuser`, `sudo passwd root`.
+   1. Password: **Noon.Earth.Always**
+1. It's recommended you change the machine passwords by running the following commands: `sudo passwd monkeyuser`, `sudo passwd root`.
 
 ## OVA network modes
 
 You can use the OVA in one of two modes:
 
-1. In a network with the DHCP configured— In this case, the Monkey Island will automatically query and receive an IP address from the network.
-2. With a static IP address — For this case, you should login to the VM console with the username `root` and the password `G3aJ9szrvkxTmfAG`. After logging in, edit the interfaces file by writing the following command in the prompt:
+1. In a network with the DHCP configured — In this case, the Monkey Island will automatically query and receive an IP address from the network.
+1. With a static IP address — In this case, you should log in to the VM console with the username `root` and the password `G3aJ9szrvkxTmfAG`. After logging in, edit the interfaces file by writing the following command in the prompt:
 
     ```sh
     sudo nano /etc/network/interfaces
@@ -52,6 +52,6 @@ You can use the OVA in one of two modes:
 
 ## Upgrading
 
-There's no "upgrade-in-place" option for VMware. To get the new version, download the updated file. If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new server.
+Currently, there's no "upgrade-in-place" option when a new version is released. To get an updated version, download the updated OVA file. If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
