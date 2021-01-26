@@ -4,10 +4,10 @@ import {Button, Card, Form} from 'react-bootstrap';
 import {cloneDeep} from 'lodash';
 
 import {getComponentHeight} from './utils/HeightCalculator';
-import InfoPane from './InfoPane';
+import {getDefaultPaneParams, InfoPane} from './InfoPane';
 import {MasterCheckbox, MasterCheckboxState} from './MasterCheckbox';
 import ChildCheckbox from './ChildCheckbox';
-import {getFullDefinitionByKey, getDefaultPaneParams} from './JsonSchemaHelpers';
+import {getFullDefinitionByKey} from './JsonSchemaHelpers';
 
 function AdvancedMultiSelectHeader(props) {
   const {

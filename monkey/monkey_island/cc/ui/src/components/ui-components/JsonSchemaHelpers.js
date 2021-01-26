@@ -16,9 +16,4 @@ function getObjectFromRegistryByRef(refString, registry) {
   return resolveObjectPath(refArray, registry);
 }
 
-function getDefaultPaneParams(refString, registry) {
-  let configSection = getObjectFromRegistryByRef(refString, registry);
-  return ({title: configSection.title, content: configSection.description});
-}
-
-export {getFullDefinitionByKey, getDefaultPaneParams};
+export {getFullDefinitionByKey, getObjectFromRegistryByRef};

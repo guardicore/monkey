@@ -3,6 +3,12 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 
+import {getObjectFromRegistryByRef} from './JsonSchemaHelpers';
+
+function getDefaultPaneParams(refString, registry) {
+  let configSection = getObjectFromRegistryByRef(refString, registry);
+  return ({title: configSection.title, content: configSection.description});
+}
 
 function InfoPane(props) {
   return (
@@ -49,4 +55,4 @@ function getBody(props) {
   )
 }
 
-export default InfoPane
+export {getDefaultPaneParams, InfoPane}
