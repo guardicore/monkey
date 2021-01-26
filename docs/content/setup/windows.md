@@ -28,8 +28,8 @@ The Monkey Island supports Chrome (and Chrome-based) browsers. If your Windows s
 
 ## Upgrading
 
-To upgrade the Infection Monkey on Windows, download the new installer and run it. The new Monkey version will install over the old one.
+To upgrade the Infection Monkey on Windows, download the new installer and run it. The new Monkey version will be installed over the old version.
 
-If you'd like to keep your existing configuration, you can export it to a file using the export button and then import it to the new server.
+If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new server.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
