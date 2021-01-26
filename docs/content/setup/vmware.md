@@ -20,8 +20,8 @@ tags: ["setup", "vmware"]
 
 You can use the OVA in one of two modes:
 
-1. In a network with the DHCP configured— In this case, the Monkey Island will automatically query and receive an IP address from the network.
-1. With a static IP address — For this case, you should login to the VM console with the username `root` and the password `G3aJ9szrvkxTmfAG`. After logging in, edit the interfaces file by writing the following command in the prompt:
+1. In a network with the DHCP configured — In this case, the Monkey Island will automatically query and receive an IP address from the network.
+1. With a static IP address — In this case, you should log in to the VM console with the username `root` and the password `G3aJ9szrvkxTmfAG`. After logging in, edit the interfaces file by writing the following command in the prompt:
 
     ```sh
     sudo nano /etc/network/interfaces
@@ -52,6 +52,6 @@ You can use the OVA in one of two modes:
 
 ## Upgrading
 
-There's no "upgrade-in-place" option for VMware. To get the new version, download the updated OVA file. If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new Monkey Island.
+Currently, there's no "upgrade-in-place" option when a new version is released. To get an updated version, download the updated OVA file. If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
