@@ -12,7 +12,7 @@ tags: ["setup", "aws"]
 On the [Infection Monkey’s AWS Marketplace page](https://aws.amazon.com/marketplace/pp/GuardiCore-Infection-Monkey/B07B3J7K6D), click **Continue to Subscribe**.
 
 1. Choose the desired region.
-1. Choose an EC2 instance type with at least 1GB of RAM for optimal performance or stick with the default reccomendation.
+1. Choose an EC2 instance type with at least 1GB of RAM for optimal performance or stick with the default recommendation.
 1. Select the VPC and subnet you want to use for your instance.
 1. In the Security Group section, make sure ports 5000 and 5001 on the machine are accessible for inbound TCP traffic.
 1. Choose an existing EC2 key pair for authenticating with your new instance.
@@ -30,10 +30,11 @@ You will be presented with a login page. Enter the username **monkey**, and the 
 
 ## Integration with AWS services
 
-The Monkey has built-in integrations with AWS services for better execution and reporting. See [Usage -> Integrations](../../usage/integrations) for more details.
+The Infection Monkey has built-in integrations with AWS services for better execution and reporting. See [Usage -> Integrations](../../usage/integrations) for more details.
 
 ## Upgrading
 
-Currently, there's no "upgrade-in-place" option when a new version comes out. To get an updated version, you can deploy a new machine from the marketplace. If you'd like to keep your existing configuration, you can export it to a file using the export button and then import it to the new Monkey Island.
+
+Currently, there's no "upgrade-in-place" option when a new version is released. To get an updated version, you can deploy a new machine from the marketplace. If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
