@@ -36,20 +36,17 @@ class AdvancedMultiSelect extends React.Component {
 
     this.enumOptions = props.options.enumOptions;
     this.defaultValues = props.schema.default;
+    this.infoPaneRefString = props.schema.items.$ref;
+    this.registry = props.registry;
 
     this.state = {
       masterCheckboxState: this.getMasterCheckboxState(props.value),
       hideReset: this.getHideResetState(props.value),
-      infoPaneParams: getDefaultPaneParams(props.schema.items.$ref, props.registry)
+      infoPaneParams: getDefaultPaneParams(this.infoPaneRefString, this.registry)
     };
-
-    this.onMasterCheckboxClick = this.onMasterCheckboxClick.bind(this);
-    this.onChildCheckboxClick = this.onChildCheckboxClick.bind(this);
-    this.onResetClick = this.onResetClick.bind(this);
-    this.setPaneInfo = this.setPaneInfo.bind(this, props.schema.items.$ref, props.registry);
   }
 
-  onMasterCheckboxClick() {
+  onMasterCheckboxClick = () => {
     if (this.state.masterCheckboxState === MasterCheckboxState.ALL) {
       var newValues = [];
     } else {
@@ -61,7 +58,7 @@ class AdvancedMultiSelect extends React.Component {
     this.setHideResetState(newValues);
   }
 
-  onChildCheckboxClick(value) {
+  onChildCheckboxClick = (value) => {
     let selectValues = this.getSelectValuesAfterClick(value);
     this.props.onChange(selectValues);
 
@@ -98,7 +95,7 @@ class AdvancedMultiSelect extends React.Component {
     return MasterCheckboxState.ALL;
   }
 
-  onResetClick() {
+  onResetClick = () => {
     this.props.onChange(this.defaultValues);
     this.setHideResetState(this.defaultValues);
     this.setMasterCheckboxState(this.defaultValues);
@@ -115,8 +112,8 @@ class AdvancedMultiSelect extends React.Component {
     return selectValues.every((value) => this.defaultValues.includes(value));
   }
 
-  setPaneInfo(refString, registry, itemKey) {
-    let definitionObj = getFullDefinitionByKey(refString, registry, itemKey);
+  setPaneInfo = (itemKey) =>  {
+    let definitionObj = getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey);
     this.setState({infoPaneParams: {title: definitionObj.title, content: definitionObj.info, link: definitionObj.link}});
   }
 
