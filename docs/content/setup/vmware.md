@@ -52,6 +52,6 @@ You can use the OVA in one of two modes:
 
 ## Upgrading
 
-There's no "upgrade-in-place" option for VMware. To get the new version, download the updated file. If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new server.
+There's no "upgrade-in-place" option for VMware. To get the new version, download the updated OVA file. If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
