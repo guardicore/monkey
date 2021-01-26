@@ -24,7 +24,7 @@ The installer requires [Windows update #2999226](https://support.microsoft.com/e
 
 ### Supported browsers
 
-The Monkey Island supports Chrome (and Chrome-based) browsers. Some Windows Servers only have Internet Explorer installed, so make sure you're using Chrome or a similar modern browser. [You can download Google Chrome here](https://www.google.com/chrome/).
+The Monkey Island supports Chrome (and Chrome-based) browsers. If your Windows server only has Internet Explorer installed, please install Chrome or a similar modern browser. [You can download Google Chrome here](https://www.google.com/chrome/).
 
 ## Upgrading
 
