@@ -15,7 +15,9 @@ If you want an island to be accessible without credentials, press *I want anyone
 
 ## Resetting your account credentials
 
-To reset your credentials, edit `monkey_island\cc\server_config.json` by deleting the `user` and `password_hash` variables. Then restart the Monkey Island server, and you should be prompted with a registration form again.
+To reset your credentials, edit `monkey_island\cc\server_config.json` by deleting the `user` and `password_hash` variables. 
+
+When you restart the Monkey Island server, you will again be prompted with the registration form.
 
 Example `server_config.json` for account reset:
 
