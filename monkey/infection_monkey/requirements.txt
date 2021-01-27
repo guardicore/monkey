@@ -14,4 +14,3 @@ pymssql<3.0
 pypykatz==0.3.12
 requests>=2.24
 wmi==1.5.1 ; sys_platform == 'win32'
-ScoutSuite
