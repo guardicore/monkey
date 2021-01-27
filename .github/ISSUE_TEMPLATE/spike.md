@@ -1,5 +1,5 @@
 ---
-name: Spike
+name: "⌛Spike"
 about: Create a spike.
 title: ''
 labels: Spike
