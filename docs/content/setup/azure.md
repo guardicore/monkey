@@ -4,7 +4,7 @@ date: 2020-05-26T20:57:39+03:00
 draft: false
 pre: '<i class="fab fa-microsoft"></i> '
 weight: 6
-tags: ["setup", "azure"] 
+tags: ["setup", "azure"]
 ---
 
 ## Deployment
@@ -12,18 +12,19 @@ tags: ["setup", "azure"]
 Select the [Infection Monkey from the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/guardicore.infection_monkey) and click **GET IT NOW**.
 
 1. Under **Basics**:
-    1. Choose a name for the Infection Monkey instance, such as InfectionMonkey.
-    1. Choose a username and password or provide an SSH public key for authentication.
+    1. Choose a name for the new Infection Monkey instance, such as InfectionMonkey.
+    1. Choose a username and password, or provide an SSH public key for authentication.
     1. Choose a resource group and the location for the Infection Monkey instance.
 1. Under **Size**
     1. Choose a machine size with at least 1GB of RAM for optimal performance.
 1. Under **Settings**
-    1. Choose the network for your new instance.
+    1. Choose the network for the new instance.
     1. In the **Network Security Group** field, make sure ports 5000 and 5001 on the machine are accessible for inbound TCP traffic.
 1. Under **Summary**
     1. Review the details of the offer and click **Create**.
 
-At this point, Azure will instance and deploy your new machine. When ready, you can browse to the Infection Monkey running on your fresh deployment at:
+At this point, Azure will provision and deploy your new machine. When ready,
+you can browse to the Infection Monkey running on your fresh deployment at:
 
 `https://{public-ip-address}:5000`
 
