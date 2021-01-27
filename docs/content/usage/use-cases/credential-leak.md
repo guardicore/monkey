@@ -16,9 +16,9 @@ where these credentials can be reused.
 
 ## Configuration
 
-- **Exploits -> Credentials** After setting up the Island add the users’ **real** credentials 
-(usernames and passwords) to the Monkey’s configuration (Don’t worry, this sensitive data is not accessible and is not
- distributed or used in any way other than being sent to the monkeys, and can be easily eliminated by resetting the Monkey Island’s configuration).
+- **Exploits -> Credentials** After setting up the Island add the users' **real** credentials 
+(usernames and passwords) to the Monkey's configuration (Don't worry, this sensitive data is not accessible and is not
+ distributed or used in any way other than being sent to the monkeys, and can be easily eliminated by resetting the Monkey Island's configuration).
 - **Internal -> Exploits -> SSH keypair list** Monkey automatically gathers SSH keys on the current system. 
 For this to work, Monkey Island or initial Monkey needs to have access to SSH key files(grant permission or run Monkey as root).
 To make sure SSH keys were gathered successfully, refresh the page and check this configuration value after you run the Monkey

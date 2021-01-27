@@ -4,14 +4,14 @@ date: 2020-05-26T20:57:28+03:00
 draft: false
 pre: '<i class="fab fa-docker"></i> '
 weight: 4
-tags: ["setup", "docker", "linux", "windows"] 
+tags: ["setup", "docker", "linux", "windows"]
 ---
 
 ## Deployment
 
 To extract the `tar.gz` file, run `tar -xvzf monkey-island-docker.tar.gz`.
 
-Once you’ve extracted the container from the tar.gz file, run the following commands:
+Once you've extracted the container from the tar.gz file, run the following commands:
 
 ```sh
 sudo docker load -i dk.monkeyisland.1.9.0.tar
@@ -23,8 +23,11 @@ sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:
 
 ## Upgrading
 
-There's no "upgrade-in-place" option for Docker. To get the new version, download it, stop the current container, and run the installation commands again with the new file.
+Currently, there's no "upgrade-in-place" option when a new version is released.
+To get an updated version, download it, stop the current container and run the
+installation commands again with the new file.
 
-If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new server.
+If you'd like to keep your existing configuration, you can export it to a file
+using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")

@@ -5,7 +5,7 @@ draft: false
 pre: "<i class='fas fa-question'></i> "
 ---
 
-Here are some of the most common questions we receive about the Infection Monkey. If the answer you’re looking for isn’t here, talk with us [on our Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU), email us at [support@infectionmonkey.com](mailto:support@infectionmonkey.com) or [open an issue on GitHub](https://github.com/guardicore/monkey).
+Here are some of the most common questions we receive about the Infection Monkey. If the answer you're looking for isn't here, talk with us [on our Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU), email us at [support@infectionmonkey.com](mailto:support@infectionmonkey.com) or [open an issue on GitHub](https://github.com/guardicore/monkey).
 
 - [Where can I get the latest Monkey version? 📰](#where-can-i-get-the-latest-monkey-version)
 - [How long does a single Monkey run for? Is there a time limit?](#how-long-does-a-single-monkey-run-for-is-there-a-time-limit)
@@ -17,11 +17,11 @@ Here are some of the most common questions we receive about the Infection Monkey
   - [Monkey agent](#monkey-agent)
 - [Running the Monkey in a production environment](#running-the-monkey-in-a-production-environment)
   - [How much of a footprint does the Monkey leave?](#how-much-of-a-footprint-does-the-monkey-leave)
-  - [What’s the Monkey’s impact on system resources usage?](#whats-the-monkeys-impact-on-system-resources-usage)
-  - [Is it safe to use real passwords and usernames in the Monkey’s configuration?](#is-it-safe-to-use-real-passwords-and-usernames-in-the-monkeys-configuration)
+  - [What's the Monkey's impact on system resources usage?](#whats-the-monkeys-impact-on-system-resources-usage)
+  - [Is it safe to use real passwords and usernames in the Monkey's configuration?](#is-it-safe-to-use-real-passwords-and-usernames-in-the-monkeys-configuration)
   - [How do you store sensitive information on Monkey Island?](#how-do-you-store-sensitive-information-on-monkey-island)
   - [How stable are the exploitations used by the Monkey? Will the Monkey crash my systems with its exploits?](#how-stable-are-the-exploitations-used-by-the-monkey-will-the-monkey-crash-my-systems-with-its-exploits)
-- [After I’ve set up Monkey Island, how can I execute the Monkey?](#after-ive-set-up-monkey-island-how-can-i-execute-the-monkey)
+- [After I've set up Monkey Island, how can I execute the Monkey?](#after-ive-set-up-monkey-island-how-can-i-execute-the-monkey)
 - [How can I make the monkey propagate “deeper” into the network?](#how-can-i-make-the-monkey-propagate-deeper-into-the-network)
 - [The report returns a blank screen](#the-report-returns-a-blank-screen)
 - [How can I get involved with the project? 👩‍💻👨‍💻](#how-can-i-get-involved-with-the-project)
@@ -77,7 +77,7 @@ The Monkey performs queries out to the Internet on two separate occasions:
 
 ### Monkey Island
 
-The Monkey Island’s log file can be downloaded directly from the UI. Click the “log” section and choose “Download Monkey Island internal logfile”, like so:
+The Monkey Island's log file can be downloaded directly from the UI. Click the “log” section and choose “Download Monkey Island internal logfile”, like so:
 
 ![How to download Monkey Island internal log file](/images/faq/download_log_monkey_island.png "How to download Monkey Island internal log file")
 
@@ -98,7 +98,7 @@ The Monkey log file can be found in the following paths on machines where it was
 - Path on Linux: `/tmp/user-1563`
 - Path on Windows: `%temp%\\~df1563.tmp`
 
-The logs contain information about the internals of the Monkey’s execution. The log will contain entries like these ones for example:
+The logs contain information about the internals of the Monkey's execution. The log will contain entries like these ones for example:
 
 ```log
 2019-07-22 19:16:44,228 [77598:140654230214464:INFO] main.main.116: >>>>>>>>>> Initializing monkey (InfectionMonkey): PID 77598 <<<<<<<<<<
@@ -124,13 +124,13 @@ The Monkey leaves hardly any trace on the target system. It will leave:
   - Path on Linux: `/tmp/user-1563`
   - Path on Windows: `%temp%\\~df1563.tmp`
 
-### What’s the Monkey’s impact on system resources usage?
+### What's the Monkey's impact on system resources usage?
 
 The Infection Monkey uses less than single-digit percent of CPU time and very low RAM usage. For example, on a single-core Windows Server machine, the Monkey consistently uses 0.06% CPU, less than 80MB of RAM and a small amount of I/O periodically.
 
 If you do experience any performance issues please let us know on [our Slack channel](https://infectionmonkey.slack.com/) or via [opening an issue on GitHub](https://github.com/guardicore/monkey).
 
-### Is it safe to use real passwords and usernames in the Monkey’s configuration?
+### Is it safe to use real passwords and usernames in the Monkey's configuration?
 
 Absolutely! User credentials are stored encrypted in the Monkey Island server. This information is then accessible only to users that have access to the Island.
 
@@ -138,7 +138,7 @@ We advise to limit access to the Monkey Island server by following our [password
 
 ### How do you store sensitive information on Monkey Island?
 
-Sensitive data such as passwords, SSH keys and hashes are stored on the Monkey Island’s database in an encrypted fashion. This data is transmitted to the Infection Monkeys in an encrypted fashion (HTTPS) and is not stored locally on the victim machines.
+Sensitive data such as passwords, SSH keys and hashes are stored on the Monkey Island's database in an encrypted fashion. This data is transmitted to the Infection Monkeys in an encrypted fashion (HTTPS) and is not stored locally on the victim machines.
 
 When you reset the Monkey Island configuration, the Monkey Island wipes the information.
 
@@ -146,9 +146,9 @@ When you reset the Monkey Island configuration, the Monkey Island wipes the info
 
 The Monkey does not use any exploits or attacks that may impact the victim system.
 
-This means we avoid using some very strong (and famous) exploits such as [EternalBlue](https://www.guardicore.com/2017/05/detecting-mitigating-wannacry-copycat-attacks-using-guardicore-centra-platform/). This exploit was used in WannaCry and NotPetya with huge impact. But because it may crash a production system, we aren’t using it.
+This means we avoid using some very strong (and famous) exploits such as [EternalBlue](https://www.guardicore.com/2017/05/detecting-mitigating-wannacry-copycat-attacks-using-guardicore-centra-platform/). This exploit was used in WannaCry and NotPetya with huge impact. But because it may crash a production system, we aren't using it.
 
-## After I’ve set up Monkey Island, how can I execute the Monkey?
+## After I've set up Monkey Island, how can I execute the Monkey?
 
 See our detailed [getting started](../content/usage/getting-started) guide.
 
@@ -175,6 +175,6 @@ The Monkey is an open-source project, and we weclome contributions and contribut
 
 ### How did you come up with the Infection Monkey?
 
-Oddly enough, the idea of proactively breaking the network to test its survival wasn’t born in the security industry. In 2011, the streaming giant Netflix released Chaos Monkey, a tool that was designed to randomly disable the company’s production servers to verify they could survive network failures without any customer impact. Netflix's Chaos Monkey became a popular network resilience tool, breaking the network in a variety of failure modes, including connectivity issues, invalid SSL certificates and randomly deleting VMs.
+Oddly enough, the idea of proactively breaking the network to test its survival wasn't born in the security industry. In 2011, the streaming giant Netflix released Chaos Monkey, a tool that was designed to randomly disable the company's production servers to verify they could survive network failures without any customer impact. Netflix's Chaos Monkey became a popular network resilience tool, breaking the network in a variety of failure modes, including connectivity issues, invalid SSL certificates and randomly deleting VMs.
 
 Inspired by this concept, Guardicore Labs developed its own attack simulator - Infection Monkey - to run non-intrusively within existing production environments. The idea was to test the resiliency of modern data centers against attack and give security teams the insights they need to make informed decisions and enforce tighter security policies. Since its launch in 2017 (?) the Infection Monkey has been used by hundreds of information technology teams from across the world to find weaknesses in their on-premises and cloud-based data centers.
