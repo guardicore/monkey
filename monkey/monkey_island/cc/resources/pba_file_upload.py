@@ -39,7 +39,6 @@ class FileUpload(flask_restful.Resource):
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_LINUX_FILENAME_PATH))
         else:
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_WINDOWS_FILENAME_PATH))
-        LOG.info(f"Current dir:{os.getcwd()}")
         return send_from_directory(ABS_UPLOAD_PATH, filename)
 
     @jwt_required
