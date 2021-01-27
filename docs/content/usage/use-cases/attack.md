@@ -9,7 +9,7 @@ weight: 2
 ## Overview 
 
 Infection Monkey can simulate various [ATT&CK](https://attack.mitre.org/matrices/enterprise/) techniques on the network. 
-Use it to assess your security solutions’ detection and prevention capabilities. Infection Monkey will help you find 
+Use it to assess your security solutions' detection and prevention capabilities. Infection Monkey will help you find 
 which ATT&CK techniques go unnoticed and will provide recommendations about preventing them.
 
 

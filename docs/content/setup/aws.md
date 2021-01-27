@@ -9,7 +9,7 @@ tags: ["setup", "aws"]
 
 ## Deployment
 
-On the [Infection Monkey’s AWS Marketplace page](https://aws.amazon.com/marketplace/pp/GuardiCore-Infection-Monkey/B07B3J7K6D), click **Continue to Subscribe**.
+On the [Infection Monkey's AWS Marketplace page](https://aws.amazon.com/marketplace/pp/GuardiCore-Infection-Monkey/B07B3J7K6D), click **Continue to Subscribe**.
 
 1. Choose the desired region.
 1. Choose an EC2 instance type with at least 1GB of RAM for optimal performance or stick with the default recommendation.

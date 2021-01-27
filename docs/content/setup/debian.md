@@ -29,7 +29,7 @@ Errors were encountered while processing:
 ```
 
 It just means that not all dependencies were pre-installed on your system.
-That’s no problem! Just run the following command, which will install all
+That's no problem! Just run the following command, which will install all
 dependencies, and then install the Monkey Island:
 
 ```sh
@@ -40,7 +40,7 @@ sudo apt install -f
 
 ### Trying to install on Ubuntu <16.04
 
-If you’re trying to install the Monkey Island on Ubuntu 16.04 or older, you
+If you're trying to install the Monkey Island on Ubuntu 16.04 or older, you
 need to install the dependencies yourself, since Python 3.7 is only installable
 from the `deadsnakes` PPA. To install the Monkey Island on Ubuntu 16.04, follow
 these steps:

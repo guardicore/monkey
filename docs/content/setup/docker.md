@@ -11,7 +11,7 @@ tags: ["setup", "docker", "linux", "windows"]
 
 To extract the `tar.gz` file, run `tar -xvzf monkey-island-docker.tar.gz`.
 
-Once you’ve extracted the container from the tar.gz file, run the following commands:
+Once you've extracted the container from the tar.gz file, run the following commands:
 
 ```sh
 sudo docker load -i dk.monkeyisland.1.9.0.tar

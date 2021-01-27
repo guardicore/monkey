@@ -4,7 +4,7 @@ date: 2020-05-26T20:57:10+03:00
 draft: false
 pre: '<i class="fab fa-windows"></i> '
 weight: 2
-tags: ["setup", "windows"] 
+tags: ["setup", "windows"]
 ---
 
 ## Deployment
@@ -20,7 +20,7 @@ After running the installer, the following prompt should appear on the screen:
 
 ### Missing Windows update
 
-The installer requires [Windows update #2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows). If you’re having trouble running the installer, please make sure to install the update via Windows Update or manually from the link above.
+The installer requires [Windows update #2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows). If you're having trouble running the installer, please make sure to install the update via Windows Update or manually from the link above.
 
 ### Supported browsers
 
