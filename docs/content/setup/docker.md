@@ -23,8 +23,11 @@ sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:
 
 ## Upgrading
 
-Currently, there's no "upgrade-in-place" option when a new version is released. To get an updated version, download it, stop the current container and run the installation commands again with the new file.
+Currently, there's no "upgrade-in-place" option when a new version is released.
+To get an updated version, download it, stop the current container and run the
+installation commands again with the new file.
 
-If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new Monkey Island.
+If you'd like to keep your existing configuration, you can export it to a file
+using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")

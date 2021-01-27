@@ -35,6 +35,10 @@ The Infection Monkey has built-in integrations with AWS services for better exec
 ## Upgrading
 
 
-Currently, there's no "upgrade-in-place" option when a new version is released. To get an updated version, you can deploy a new machine from the marketplace. If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new Monkey Island.
+Currently, there's no "upgrade-in-place" option when a new version is released.
+To get an updated version, you can deploy a new machine from the marketplace.
+
+If you'd like to keep your existing configuration, you can export it to a file
+using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")

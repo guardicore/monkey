@@ -57,9 +57,13 @@ To check the status of the Monkey Island after the installation, run the followi
 
 ## Upgrading
 
-Currently, there's no "upgrade-in-place" option when a new version is released. To get the updated version, download the new `.deb` file and install it. You should see a message like `Unpacking monkey-island (1.8.2) over (1.8.0)`. After which, the installation should complete successfully.
+Currently, there's no "upgrade-in-place" option when a new version is released.
+To get the updated version, download the new `.deb` file and install it. You
+should see a message like `Unpacking monkey-island (1.8.2) over (1.8.0)`. After
+which, the installation should complete successfully.
 
-If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new Monkey Island.
+If you'd like to keep your existing configuration, you can export it to a file
+using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
 
