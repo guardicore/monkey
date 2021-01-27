@@ -12,7 +12,7 @@ tags: ["setup", "debian", "linux"]
 
 To extract the `tar.gz` file, run `tar -xvzf monkey-island-debian.tar.gz`.
 
-To deploy the package, once you’ve extracted it, run the following commands:
+Once you've extracted the package, deploy it using run the following commands:
 
 ```sh
 sudo apt update
@@ -28,7 +28,9 @@ Errors were encountered while processing:
     gc-monkey-island
 ```
 
-It just means that not all dependencies were pre-installed on your system. That’s no problem! Just run the following command, which will install all dependencies, and then install the Monkey Island:
+It just means that not all dependencies were pre-installed on your system.
+That’s no problem! Just run the following command, which will install all
+dependencies, and then install the Monkey Island:
 
 ```sh
 sudo apt install -f
@@ -38,7 +40,10 @@ sudo apt install -f
 
 ### Trying to install on Ubuntu <16.04
 
-If you’re trying to install the Monkey Island on Ubuntu 16.04 or older, you need to install the dependencies yourself, since Python 3.7 is only installable from the `deadsnakes` PPA. To install the Monkey Island on Ubuntu 16.04, follow these steps:
+If you’re trying to install the Monkey Island on Ubuntu 16.04 or older, you
+need to install the dependencies yourself, since Python 3.7 is only installable
+from the `deadsnakes` PPA. To install the Monkey Island on Ubuntu 16.04, follow
+these steps:
 
 ```sh
 sudo apt update
