@@ -8,10 +8,6 @@ from monkey_island.cc.models.zero_trust.event import Event
 
 
 class MonkeyFindingDetails(Document):
-    """
-    This model represents additional information about monkey finding:
-    Events
-    """
 
     # SCHEMA
     events = EmbeddedDocumentListField(document_type=Event, required=False)
