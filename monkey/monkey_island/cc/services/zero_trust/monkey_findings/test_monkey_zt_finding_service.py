@@ -1,8 +1,12 @@
 from datetime import datetime
 
+import pytest
+
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
+from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
+from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 EVENTS = [
     Event.create_event(
@@ -34,13 +38,33 @@ STATUS = [
 
 class TestMonkeyZTFindingService:
 
-    def test_create_or_add_to_existing(self):
-
+    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    def test_create_or_add_to_existing_creation(self):
         # Create new finding
-        MonkeyZTFindingService.create_or_add_to_existing(test=TESTS[0], status=STATUS[0], events=EVENTS[0])
+        MonkeyZTFindingService.create_or_add_to_existing(test=TESTS[0], status=STATUS[0], events=[EVENTS[0]])
+        # Assert that it was properly created
+        findings = list(Finding.objects())
+        assert len(findings) == 1
+        assert findings[0].test == TESTS[0]
+        assert findings[0].status == STATUS[0]
+        finding_details = findings[0].details.fetch()
+        assert len(finding_details.events) == 1
+        assert finding_details.events[0].message == EVENTS[0].message
+
+    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    def test_create_or_add_to_existing_addition(self):
+        # Create new finding
+        MonkeyZTFindingService.create_or_add_to_existing(test=TESTS[0], status=STATUS[0], events=[EVENTS[0]])
+        # Assert that there's only one finding
+        assert len(Finding.objects()) == 1
 
         # Add events to an existing finding
-        MonkeyZTFindingService.create_or_add_to_existing(test=TESTS[0], status=STATUS[0], events=EVENTS[1])
+        MonkeyZTFindingService.create_or_add_to_existing(test=TESTS[0], status=STATUS[0], events=[EVENTS[1]])
+        # Assert there's still only one finding, only events got appended
+        assert len(Finding.objects()) == 1
+        assert len(Finding.objects()[0].details.fetch().events) == 2
 
         # Create new finding
-        MonkeyZTFindingService.create_or_add_to_existing(test=TESTS[1], status=STATUS[1], events=EVENTS[1])
+        MonkeyZTFindingService.create_or_add_to_existing(test=TESTS[1], status=STATUS[1], events=[EVENTS[1]])
+        # Assert there was a new finding created, because test and status is different
+        assert len(Finding.objects()) == 2

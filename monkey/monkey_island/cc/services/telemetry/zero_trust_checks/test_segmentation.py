@@ -30,7 +30,10 @@ class TestSegmentationChecks:
         # There are 2 subnets in which the monkey is NOT
         zt_seg_findings = Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION,
                                           status=zero_trust_consts.STATUS_PASSED)
-        assert len(zt_seg_findings) == 2
+
+        # Assert that there's only one finding with multiple events (one for each subnet)
+        assert len(zt_seg_findings) == 1
+        assert len(Finding.objects().get().details.fetch().events) == 2
 
         # This is a monkey from 2nd subnet communicated with 1st subnet.
         MonkeyZTFindingService.create_or_add_to_existing(
@@ -39,7 +42,6 @@ class TestSegmentationChecks:
             events=[Event.create_event(title="sdf",
                                        message="asd",
                                        event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK)]
-
         )
 
         zt_seg_findings = Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION,

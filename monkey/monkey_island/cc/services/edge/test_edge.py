@@ -5,13 +5,14 @@ from mongomock import ObjectId
 
 from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.services.edge.edge import EdgeService
+from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 logger = logging.getLogger(__name__)
 
 
 class TestEdgeService:
 
-    @pytest.mark.usefixtures('uses_database')
+    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
     def test_get_or_create_edge(self):
         src_id = ObjectId()
         dst_id = ObjectId()
