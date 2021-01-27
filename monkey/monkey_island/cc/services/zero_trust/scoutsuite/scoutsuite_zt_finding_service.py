@@ -16,12 +16,12 @@ class ScoutSuiteZTFindingService:
         assert (len(existing_findings) < 2), "More than one finding exists for {}".format(finding.test)
 
         if len(existing_findings) == 0:
-            ScoutSuiteZTFindingService.create_new_finding_from_rule(finding, rule)
+            ScoutSuiteZTFindingService._create_new_finding_from_rule(finding, rule)
         else:
             ScoutSuiteZTFindingService.add_rule(existing_findings[0], rule)
 
     @staticmethod
-    def create_new_finding_from_rule(finding: ScoutSuiteFinding, rule: ScoutSuiteRule):
+    def _create_new_finding_from_rule(finding: ScoutSuiteFinding, rule: ScoutSuiteRule):
         details = ScoutSuiteFindingDetails()
         details.scoutsuite_rules = [rule]
         details.save()
