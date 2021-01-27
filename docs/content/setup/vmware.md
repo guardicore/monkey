@@ -21,7 +21,7 @@ tags: ["setup", "vmware"]
 You can use the OVA in one of two modes:
 
 1. In a network with the DHCP configured — In this case, the Monkey Island will automatically query and receive an IP address from the network.
-1. With a static IP address — In this case, you should log in to the VM console with the username `root` and the password `G3aJ9szrvkxTmfAG`. After logging in, edit the interfaces file by writing the following command in the prompt:
+1. With a static IP address — In this case, you should log in to the VM console with the username `root` and the password `G3aJ9szrvkxTmfAG`. After logging in, edit the interfaces file by entering the following command in the prompt:
 
     ```sh
     sudo nano /etc/network/interfaces
