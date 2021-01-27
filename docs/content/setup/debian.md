@@ -8,6 +8,16 @@ disableToc: false
 tags: ["setup", "debian", "linux"]
 ---
 
+---
+title: "Debian"
+date: 2020-05-26T20:57:19+03:00
+draft: false
+pre: '<i class="fab fa-linux"></i> '
+weight: 1
+disableToc: false
+tags: ["setup", "debian", "linux"]
+---
+
 ## Deployment
 
 To extract the `tar.gz` file, run `tar -xvzf monkey-island-debian.tar.gz`.
@@ -62,3 +72,4 @@ Currently, there's no "upgrade-in-place" option when a new version is released. 
 If you'd like to keep your existing configuration, you can export it to a file using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
+
