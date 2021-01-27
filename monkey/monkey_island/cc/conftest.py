@@ -1,1 +1,1 @@
-from .test_common.mongomock_fixtures import *
+from monkey_island.cc.test_common.fixtures import *
