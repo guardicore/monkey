@@ -8,16 +8,6 @@ disableToc: false
 tags: ["setup", "debian", "linux"]
 ---
 
----
-title: "Debian"
-date: 2020-05-26T20:57:19+03:00
-draft: false
-pre: '<i class="fab fa-linux"></i> '
-weight: 1
-disableToc: false
-tags: ["setup", "debian", "linux"]
----
-
 ## Deployment
 
 To extract the `tar.gz` file, run `tar -xvzf monkey-island-debian.tar.gz`.
