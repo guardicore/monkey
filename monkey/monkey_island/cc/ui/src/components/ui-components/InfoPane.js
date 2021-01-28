@@ -6,13 +6,19 @@ import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import {getObjectFromRegistryByRef} from './JsonSchemaHelpers';
 import WarningIcon from './WarningIcon';
 
-function getDefaultPaneParams(refString, registry) {
+const WarningType = {
+  NONE: 0,
+  SINGLE: 1,
+  MULTIPLE: 2
+}
+
+function getDefaultPaneParams(refString, registry, unsafeOptionsSelected) {
   let configSection = getObjectFromRegistryByRef(refString, registry);
   return (
     {
       title: configSection.title,
       content: configSection.description,
-      showWarning: false
+      warningType: unsafeOptionsSelected ? WarningType.Multiple : WarningType.NONE
     });
 }
 
@@ -56,8 +62,8 @@ function getSubtitle(props) {
 function getBody(props) {
   let body = [<span key={'body'}>{props.body}</span>];
 
-  if (props.showWarning) {
-    body.push(getWarning());
+  if (props.warningType != WarningType.NONE) {
+    body.push(getWarning(props.warningType));
   }
 
   return (
@@ -67,14 +73,25 @@ function getBody(props) {
   )
 }
 
-function getWarning() {
-  return (
-    <div className={'info-pane-warning'} key={'warning'}>
-      <WarningIcon/>This option may cause a system to become unstable or
-      change the system's state in undesirable ways. Therefore, this option
-      is not recommended for use in production or other sensitive environments.
-    </div>
-  );
+function getWarning(warningType) {
+  if (warningType == WarningType.SINGLE) {
+    return (
+      <div className={'info-pane-warning'} key={'warning'}>
+        <WarningIcon/>This option may cause a system to become unstable or may
+        change a system's state in undesirable ways. Therefore, this option
+        is not recommended for use in production or other sensitive environments.
+      </div>
+    );
+  } else {
+    return (
+      <div className={'info-pane-warning'} key={'warning'}>
+        <WarningIcon/>Some options have been selected that may cause a system
+        to become unstable or may change a system's state in undesirable ways.
+        Running Infection Monkey in a production or other sensitive environment
+        with this configuration is not recommended.
+      </div>
+    );
+  }
 }
 
-export {getDefaultPaneParams, InfoPane}
+export {getDefaultPaneParams, InfoPane, WarningType}

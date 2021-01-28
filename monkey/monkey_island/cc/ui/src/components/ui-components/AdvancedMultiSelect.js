@@ -3,7 +3,7 @@ import {Button, Card} from 'react-bootstrap';
 
 import {cloneDeep} from 'lodash';
 
-import {getDefaultPaneParams, InfoPane} from './InfoPane';
+import {getDefaultPaneParams, InfoPane, WarningType} from './InfoPane';
 import {MasterCheckbox, MasterCheckboxState} from './MasterCheckbox';
 import ChildCheckboxContainer from './ChildCheckbox';
 import {getFullDefinitionByKey} from './JsonSchemaHelpers';
@@ -41,7 +41,11 @@ class AdvancedMultiSelect extends React.Component {
     this.state = {
       masterCheckboxState: this.getMasterCheckboxState(props.value),
       hideReset: this.getHideResetState(props.value),
-      infoPaneParams: getDefaultPaneParams(this.infoPaneRefString, this.registry)
+      infoPaneParams: getDefaultPaneParams(
+        this.infoPaneRefString,
+        this.registry,
+        this.unsafeOptionsSelected(this.props.value)
+      )
     };
   }
 
@@ -55,6 +59,7 @@ class AdvancedMultiSelect extends React.Component {
     this.props.onChange(newValues);
     this.setMasterCheckboxState(newValues);
     this.setHideResetState(newValues);
+    this.setPaneInfoToDefault(this.unsafeOptionsSelected(newValues));
   }
 
   onChildCheckboxClick = (value) => {
@@ -98,7 +103,7 @@ class AdvancedMultiSelect extends React.Component {
     this.props.onChange(this.defaultValues);
     this.setHideResetState(this.defaultValues);
     this.setMasterCheckboxState(this.defaultValues);
-    this.setPaneInfoToDefault();
+    this.setPaneInfoToDefault(this.unsafeOptionsSelected(this.defaultValues));
   }
 
   setHideResetState(selectValues) {
@@ -108,7 +113,15 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   getHideResetState(selectValues) {
-    return selectValues.every((value) => this.isSafe(value));
+    return !(this.unsafeOptionsSelected(selectValues))
+  }
+
+  unsafeOptionsSelected(selectValues) {
+    return !(selectValues.every((value) => this.isSafe(value)));
+  }
+
+  isSafe = (itemKey) => {
+    return getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey).safe;
   }
 
   setPaneInfo = (itemKey) =>  {
@@ -119,20 +132,20 @@ class AdvancedMultiSelect extends React.Component {
           title: definitionObj.title,
           content: definitionObj.info,
           link: definitionObj.link,
-          showWarning: !(this.isSafe(itemKey))
+          warningType: !(this.isSafe(itemKey)) ? WarningType.SINGLE : WarningType.NONE
         }
       }
     );
   }
 
-  setPaneInfoToDefault() {
+  setPaneInfoToDefault(unsafeOptionsSelected) {
     this.setState(() => ({
-      infoPaneParams: getDefaultPaneParams(this.props.schema.items.$ref, this.props.registry)
+      infoPaneParams: getDefaultPaneParams(
+        this.props.schema.items.$ref,
+        this.props.registry,
+        unsafeOptionsSelected
+      )
     }));
-  }
-
-  isSafe = (itemKey) => {
-    return getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey).safe;
   }
 
   render() {
@@ -161,7 +174,7 @@ class AdvancedMultiSelect extends React.Component {
         <InfoPane title={this.state.infoPaneParams.title}
           body={this.state.infoPaneParams.content}
           link={this.state.infoPaneParams.link}
-          showWarning={this.state.infoPaneParams.showWarning}/>
+          warningType={this.state.infoPaneParams.warningType}/>
       </div>
     );
   }
