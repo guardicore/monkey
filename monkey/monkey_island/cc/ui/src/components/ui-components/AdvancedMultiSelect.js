@@ -33,10 +33,10 @@ class AdvancedMultiSelect extends React.Component {
   constructor(props) {
     super(props);
 
-    this.enumOptions = props.options.enumOptions;
     this.defaultValues = props.schema.default;
     this.infoPaneRefString = props.schema.items.$ref;
     this.registry = props.registry;
+    this.enumOptions = props.options.enumOptions.sort(this.compareOptions);
 
     this.state = {
       masterCheckboxState: this.getMasterCheckboxState(props.value),
@@ -47,6 +47,27 @@ class AdvancedMultiSelect extends React.Component {
         this.unsafeOptionsSelected(this.props.value)
       )
     };
+  }
+
+  // Sort options alphabetically. "Unsafe" options float to the bottom"
+  compareOptions = (a, b) => {
+    if (!this.isSafe(a.value) && this.isSafe(b.value)) {
+      return 1;
+    }
+
+    if (this.isSafe(a.value) && !this.isSafe(b.value)) {
+      return -1;
+    }
+
+    if (a.value < b.value) {
+      return -1
+    }
+
+    if (a.value > b.value) {
+      return 1
+    }
+
+    return 0;
   }
 
   onMasterCheckboxClick = () => {
