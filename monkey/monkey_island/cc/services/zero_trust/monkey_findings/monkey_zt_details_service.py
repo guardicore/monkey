@@ -23,7 +23,9 @@ class MonkeyZTDetailsService:
             details = details[0]
             details['latest_events'] = MonkeyZTDetailsService._get_events_without_overlap(details['event_count'],
                                                                                           details['latest_events'])
-        return details
+            return details
+        else:
+            return {}
 
     @staticmethod
     def _get_events_without_overlap(event_count: int, events: List[object]) -> List[object]:
