@@ -15,7 +15,7 @@ from monkey_island.cc.test_common.fixtures import FixtureEnum
 def test_get_pillars_grades():
     save_example_findings()
     expected_grades = _get_expected_pillar_grades()
-    computed_grades = PillarService.get_pillars_grades()
+    computed_grades = PillarService._get_pillars_grades()
     assert expected_grades == computed_grades
 
 
@@ -97,7 +97,7 @@ def test_get_pillars_to_statuses():
         zero_trust_consts.WORKLOADS: zero_trust_consts.STATUS_UNEXECUTED,
         zero_trust_consts.DATA: zero_trust_consts.STATUS_UNEXECUTED
     }
-    assert PillarService.get_pillars_to_statuses() == expected
+    assert PillarService._get_pillars_to_statuses() == expected
 
     # Test with example finding set
     save_example_findings()
@@ -110,4 +110,4 @@ def test_get_pillars_to_statuses():
         zero_trust_consts.WORKLOADS: zero_trust_consts.STATUS_UNEXECUTED,
         zero_trust_consts.DATA: zero_trust_consts.STATUS_FAILED
     }
-    assert PillarService.get_pillars_to_statuses() == expected
+    assert PillarService._get_pillars_to_statuses() == expected

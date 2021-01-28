@@ -5,7 +5,13 @@ from monkey_island.cc.models.zero_trust.finding import Finding
 class PillarService:
 
     @staticmethod
-    def get_pillars_grades():
+    def get_pillar_report_data():
+        return {"statusesToPillars": PillarService._get_statuses_to_pillars(),
+                "pillarsToStatuses": PillarService._get_pillars_to_statuses(),
+                "grades": PillarService._get_pillars_grades()}
+
+    @staticmethod
+    def _get_pillars_grades():
         pillars_grades = []
         all_findings = Finding.objects()
         for pillar in zero_trust_consts.PILLARS:
@@ -39,7 +45,7 @@ class PillarService:
         return pillar_grade
 
     @staticmethod
-    def get_statuses_to_pillars():
+    def _get_statuses_to_pillars():
         results = {
             zero_trust_consts.STATUS_FAILED: [],
             zero_trust_consts.STATUS_VERIFY: [],
@@ -52,7 +58,7 @@ class PillarService:
         return results
 
     @staticmethod
-    def get_pillars_to_statuses():
+    def _get_pillars_to_statuses():
         results = {}
         for pillar in zero_trust_consts.PILLARS:
             results[pillar] = PillarService.__get_status_of_single_pillar(pillar)
