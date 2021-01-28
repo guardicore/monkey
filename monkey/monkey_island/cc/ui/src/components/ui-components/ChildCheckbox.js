@@ -55,7 +55,7 @@ function ChildCheckbox(props) {
   let displayLabel = [<span key={'label'} className={'option-text'}>{label}</span>];
 
   if (!safe) {
-    displayLabel.push(<WarningIcon key="unsafe-indicator"/>)
+    displayLabel.push(<WarningIcon key="warning-icon"/>)
   }
 
   return (

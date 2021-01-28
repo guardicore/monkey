@@ -4,7 +4,7 @@ import React from 'react';
 
 function WarningIcon() {
   return (
-    <FontAwesomeIcon className="unsafe-indicator" icon={faExclamationTriangle}/>
+    <FontAwesomeIcon className="warning-icon" icon={faExclamationTriangle}/>
   );
 }
 
