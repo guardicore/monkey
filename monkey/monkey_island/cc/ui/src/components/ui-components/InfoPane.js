@@ -75,23 +75,22 @@ function getBody(props) {
 
 function getWarning(warningType) {
   if (warningType == WarningType.SINGLE) {
-    return (
-      <div className={'info-pane-warning'} key={'warning'}>
-        <WarningIcon/>This option may cause a system to become unstable or may
-        change a system's state in undesirable ways. Therefore, this option
-        is not recommended for use in production or other sensitive environments.
-      </div>
-    );
+    var warning = <span>This option may cause a system to become unstable or
+      may change a system's state in undesirable ways. Therefore, this option
+      is not recommended for use in production or other sensitive
+      environments.</span>;
   } else {
-    return (
-      <div className={'info-pane-warning'} key={'warning'}>
-        <WarningIcon/>Some options have been selected that may cause a system
-        to become unstable or may change a system's state in undesirable ways.
-        Running Infection Monkey in a production or other sensitive environment
-        with this configuration is not recommended.
-      </div>
-    );
+    warning = <span>Some options have been selected that may cause a system
+      to become unstable or may change a system's state in undesirable ways.
+      Running Infection Monkey in a production or other sensitive environment
+      with this configuration is not recommended.</span>;
   }
+
+  return (
+    <div className={'info-pane-warning'} key={'warning'}>
+      <WarningIcon/>{warning}
+    </div>
+  );
 }
 
 export {getDefaultPaneParams, InfoPane, WarningType}
