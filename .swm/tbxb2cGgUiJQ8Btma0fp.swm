@@ -4,19 +4,24 @@
     "dod": "You should add a new PBA to the Monkey which creates a new user on the machine.",
     "description": "Read [our documentation about adding a new PBA](https://www.guardicore.com/infectionmonkey/docs/development/adding-post-breach-actions/).\n\nAfter that we want you to add the BackdoorUser PBA. The commands that add users for Win and Linux can be retrieved from `get_commands_to_add_user` - make sure you see how to use this function correctly. \n\nNote that the PBA should impact the T1136 MITRE technique as well! \n\n# Manual test to confirm\n\n1. Run the Monkey Island\n2. Make sure your new PBA is enabled by default in the config - for this test, disable network scanning, exploiting, and all other PBAs\n3. Run Monkey\n4. See the PBA in the security report\n5, See the PBA in the MITRE report in the relevant technique\n",
     "summary": "Take a look at the configuration of the island again - see the \"command to run after breach\" option we offer the user? It's implemented exactly like you did right now but each user can do it for themselves. \n\nHowever, what if the PBA needs to do stuff which is more complex than just running a few commands? In that case... ",
-    "diff": "diff --git a/monkey/common/data/post_breach_consts.py b/monkey/common/data/post_breach_consts.py\nindex c3bba995..031f9ad0 100644\n--- a/monkey/common/data/post_breach_consts.py\n+++ b/monkey/common/data/post_breach_consts.py\n@@ -1,5 +1,5 @@\n POST_BREACH_COMMUNICATE_AS_NEW_USER = \"Communicate as new user\"\n-POST_BREACH_BACKDOOR_USER = \"Backdoor user\"\n+# Swimmer: PUT THE NEW CONST HERE!\n POST_BREACH_FILE_EXECUTION = \"File execution\"\n POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION = \"Modify shell startup file\"\n POST_BREACH_HIDDEN_FILES = \"Hide files and directories\"\ndiff --git a/monkey/infection_monkey/post_breach/actions/add_user.py b/monkey/infection_monkey/post_breach/actions/add_user.py\nindex 58be89a1..d8476a97 100644\n--- a/monkey/infection_monkey/post_breach/actions/add_user.py\n+++ b/monkey/infection_monkey/post_breach/actions/add_user.py\n@@ -1,15 +1,7 @@\n-from common.data.post_breach_consts import POST_BREACH_BACKDOOR_USER\n-from infection_monkey.config import WormConfiguration\n from infection_monkey.post_breach.pba import PBA\n from infection_monkey.utils.users import get_commands_to_add_user\n \n \n class BackdoorUser(PBA):\n     def __init__(self):\n-        linux_cmds, windows_cmds = get_commands_to_add_user(\n+        pass  # Swimmer: Impl here!\n-            WormConfiguration.user_to_add,\n-            WormConfiguration.remote_user_pass)\n-        super(BackdoorUser, self).__init__(\n-            POST_BREACH_BACKDOOR_USER,\n-            linux_cmd=' '.join(linux_cmds),\n-            windows_cmd=windows_cmds)\ndiff --git a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\nindex 086a1c13..da99e86c 100644\n--- a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\n+++ b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\n@@ -1,5 +1,5 @@\n from common.data.post_breach_consts import (\n-    POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER)\n+    POST_BREACH_COMMUNICATE_AS_NEW_USER)\n from monkey_island.cc.services.attack.technique_reports.pba_technique import \\\n     PostBreachTechnique\n \n@@ -11,4 +11,4 @@\n     unscanned_msg = \"Monkey didn't try creating a new user on the network's systems.\"\n     scanned_msg = \"Monkey tried creating a new user on the network's systems, but failed.\"\n     used_msg = \"Monkey created a new user on the network's systems.\"\n-    pba_names = [POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER]\n+    pba_names = [POST_BREACH_COMMUNICATE_AS_NEW_USER]\ndiff --git a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\nindex f3e2a9bf..2c4aa664 100644\n--- a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\n+++ b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\n@@ -4,16 +4,7 @@\n                    \"might do after breaching a new machine. Used in ATT&CK and Zero trust reports.\",\n     \"type\": \"string\",\n     \"anyOf\": [\n-        {\n+        # Swimmer: Add new PBA here to config!\n-            \"type\": \"string\",\n-            \"enum\": [\n-                \"BackdoorUser\"\n-            ],\n-            \"title\": \"Back door user\",\n-            \"safe\": True,\n-            \"info\": \"Attempts to create a new user on the system and delete it afterwards.\",\n-            \"attack_techniques\": [\"T1136\"]\n-        },\n         {\n             \"type\": \"string\",\n             \"enum\": [\n",
+    "hunksOrder": [
+        "monkey/common/data/post_breach_consts.py_0",
+        "monkey/infection_monkey/post_breach/actions/add_user.py_0",
+        "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py_0",
+        "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py_1",
+        "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py_0"
+    ],
     "tests": [],
     "hints": [
         "See `ScheduleJobs` PBA for an example of a PBA which only uses shell commands.",
         "Make sure to add the PBA to the configuration as well.",
         "MITRE ATT&CK technique T1136 articulates that adversaries may create an account to maintain access to victim systems, therefore, the BackdoorUser PBA is relevant to it. Make sure to map this PBA to the MITRE ATT&CK configuration and report."
     ],
-    "app_version": "0.3.2",
-    "file_version": "1.0.4",
+    "play_mode": "all",
     "swimmPatch": {
         "monkey/common/data/post_breach_consts.py": {
             "diffType": "MODIFIED",
-            "fileDiffHeader": "diff --git a/monkey/common/data/post_breach_consts.py b/monkey/common/data/post_breach_consts.py\nindex c3bba995..031f9ad0 100644\n--- a/monkey/common/data/post_breach_consts.py\n+++ b/monkey/common/data/post_breach_consts.py",
+            "fileDiffHeader": "diff --git a/monkey/common/data/post_breach_consts.py b/monkey/common/data/post_breach_consts.py\nindex 25e6679c..05980288 100644\n--- a/monkey/common/data/post_breach_consts.py\n+++ b/monkey/common/data/post_breach_consts.py",
             "hunks": [
                 {
                     "swimmHunkMetadata": {
@@ -66,7 +71,7 @@
         },
         "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py": {
             "diffType": "MODIFIED",
-            "fileDiffHeader": "diff --git a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\nindex 086a1c13..da99e86c 100644\n--- a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\n+++ b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py",
+            "fileDiffHeader": "diff --git a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\nindex 086a1c13..9f23bb8d 100644\n--- a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\n+++ b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py",
             "hunks": [
                 {
                     "swimmHunkMetadata": {
@@ -99,7 +104,7 @@
         },
         "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": {
             "diffType": "MODIFIED",
-            "fileDiffHeader": "diff --git a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\nindex f3e2a9bf..2c4aa664 100644\n--- a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\n+++ b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
+            "fileDiffHeader": "diff --git a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\nindex f1fe0f6f..39ebd33a 100644\n--- a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\n+++ b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
             "hunks": [
                 {
                     "swimmHunkMetadata": {
@@ -129,6 +134,8 @@
             ]
         }
     },
+    "app_version": "0.3.5-1",
+    "file_version": "1.0.4",
     "hunksOrder": [
         "monkey/common/data/post_breach_consts.py_0",
         "monkey/infection_monkey/post_breach/actions/add_user.py_0",
