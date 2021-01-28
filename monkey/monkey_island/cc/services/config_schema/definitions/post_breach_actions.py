@@ -95,7 +95,7 @@ POST_BREACH_ACTIONS = {
             ],
             "title": "Signed script proxy execution",
             "safe": False,
-            "info": "On Windows systems, attemps to execute an arbitrary file "
+            "info": "On Windows systems, attempts to execute an arbitrary file "
                     "with the help of a pre-existing signed script.",
             "attack_techniques": ["T1216"]
         },
