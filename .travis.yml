@@ -61,8 +61,7 @@ script:
 ## Warn about linter issues.
 ### --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
 ### The output is redirected to a file.
-# TODO move scoutsuite stuff to config
-- flake8 ./monkey --exit-zero --exclude=monkey/common/cloud/scoutsuite --config=./ci_scripts/flake8_linter_check.ini > ./ci_scripts/flake8_warnings.txt
+- flake8 ./monkey --exit-zero --config=./ci_scripts/flake8_linter_check.ini > ./ci_scripts/flake8_warnings.txt
 ## Display the linter issues
 - cat ./ci_scripts/flake8_warnings.txt
 ## Make sure that we haven't increased the amount of warnings.
@@ -70,13 +69,11 @@ script:
 - if [ $(tail -n 1 ./ci_scripts/flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
 ## Check import order
-# TODO move scoutsuite stuff to config
-- python -m isort ./monkey --settings-file ./ci_scripts/isort.cfg --skip ./monkey/common/cloud/scoutsuite --skip ./monkey/monkey_island/cc/services/zero_trust/scoutsuite/data_parsing/rule_path_building/rule_path_creators_list.py
+- python -m isort ./monkey --settings-file ./ci_scripts/isort.cfg
 
 ## Run unit tests and generate coverage data
 - cd monkey  # This is our source dir
-# TODO move scoutsuite stuff to config file
-- python -m pytest --ignore=./common/cloud/scoutsuite --cov=. # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+- python -m pytest --cov=. # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui
