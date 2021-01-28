@@ -30,7 +30,10 @@
 
 .info-pane-warning {
     margin-top: 1em;
+    display: flex;
 }
 .info-pane-warning .warning-icon {
+    margin-top: .188em;
     margin-left: 0em;
+    margin-right: .75em;
 }
