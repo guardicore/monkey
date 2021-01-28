@@ -3,6 +3,18 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 
+import {getObjectFromRegistryByRef} from './JsonSchemaHelpers';
+import WarningIcon from './WarningIcon';
+
+function getDefaultPaneParams(refString, registry) {
+  let configSection = getObjectFromRegistryByRef(refString, registry);
+  return (
+    {
+      title: configSection.title,
+      content: configSection.description,
+      showWarning: false
+    });
+}
 
 function InfoPane(props) {
   return (
@@ -42,11 +54,27 @@ function getSubtitle(props) {
 }
 
 function getBody(props) {
+  let body = [<span key={'body'}>{props.body}</span>];
+
+  if (props.showWarning) {
+    body.push(getWarning());
+  }
+
   return (
     <Card.Body className={'pane-body'}>
-      {props.body}
+      {body}
     </Card.Body>
   )
 }
 
-export default InfoPane
+function getWarning() {
+  return (
+    <div className={'info-pane-warning'} key={'warning'}>
+      <WarningIcon/>This option may cause a system to become unstable or
+      change the system's state in undesirable ways. Therefore, this option
+      is not recommended for use in production or other sensitive environments.
+    </div>
+  );
+}
+
+export {getDefaultPaneParams, InfoPane}

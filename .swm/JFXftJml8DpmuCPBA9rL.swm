@@ -22,17 +22,18 @@
                         "hunkComments": []
                     },
                     "hunkDiffLines": [
-                        "@@ -62,15 +62,7 @@",
+                        "@@ -68,16 +68,7 @@",
                         "                     \"Removes the file afterwards.\",",
                         "             \"attack_techniques\": [\"T1166\"]",
                         "         },",
                         "-        {",
-                        "+        # Swimmer: ADD DETAILS HERE!\",",
+                        "+        # Swimmer: ADD DETAILS HERE!",
                         "-            \"type\": \"string\",",
                         "-            \"enum\": [",
                         "-                \"ScheduleJobs\"",
                         "-            ],",
                         "-            \"title\": \"Job scheduling\",",
+                        "-            \"safe\": True,",
                         "-            \"info\": \"Attempts to create a scheduled job on the system and remove it.\",",
                         "-            \"attack_techniques\": [\"T1168\", \"T1053\"]",
                         "-        },",
@@ -45,5 +46,9 @@
         }
     },
     "app_version": "0.3.5-1",
-    "file_version": "1.0.4"
+    "file_version": "1.0.4",
+    "hunksOrder": [
+        "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py_0"
+    ],
+    "last_commit_sha_for_swimm_patch": "9d9e8168fb2c23367b9947273aa1a041687b3e2e"
 }

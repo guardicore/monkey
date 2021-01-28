@@ -139,7 +139,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
             timeout = int(round(timeout))  # clamp to integer, to avoid checking input
             sockets_to_try = possible_ports[:]
             connected_ports_sockets = []
-            while (timeout >= 0) and len(sockets_to_try):
+            while (timeout >= 0) and sockets_to_try:
                 sock_objects = [s[1] for s in sockets_to_try]
 
                 _, writeable_sockets, _ = select.select(sock_objects, sock_objects, sock_objects, 0)

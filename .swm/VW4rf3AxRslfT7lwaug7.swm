@@ -23,26 +23,29 @@
                         "hunkComments": []
                     },
                     "hunkDiffLines": [
-                        "@@ -10,12 +10,6 @@",
+                        "@@ -10,11 +10,5 @@",
                         "     \"\"\"",
                         " ",
                         "     def __init__(self):",
                         "-        linux_cmds, windows_cmds = get_commands_to_schedule_jobs()",
                         "+        pass",
-                        " ",
-                        "-        super(ScheduleJobs, self).__init__(name=POST_BREACH_JOB_SCHEDULING,",
+                        "-",
                         "+        # Swimmer: IMPLEMENT HERE!",
+                        "-        super(ScheduleJobs, self).__init__(name=POST_BREACH_JOB_SCHEDULING,",
                         "-                                           linux_cmd=' '.join(linux_cmds),",
                         "-                                           windows_cmd=windows_cmds)",
                         "-    ",
                         "-    def run(self):",
-                        "-        super(ScheduleJobs, self).run()",
-                        "-        remove_scheduled_jobs()"
+                        "-        super(ScheduleJobs, self).run()"
                     ]
                 }
             ]
         }
     },
     "app_version": "0.3.5-1",
-    "file_version": "1.0.4"
+    "file_version": "1.0.4",
+    "hunksOrder": [
+        "monkey/infection_monkey/post_breach/actions/schedule_jobs.py_0"
+    ],
+    "last_commit_sha_for_swimm_patch": "44fd1ab69cfbab33cec638dcbbaa8831992a9a9f"
 }

@@ -67,8 +67,8 @@ def _get_windows_cred(pypykatz_cred: PypykatzCredential):
 
 
 def _hash_to_string(hash_: Any):
-    if type(hash_) == str:
+    if type(hash_) is str:
         return hash_
-    if type(hash_) == bytes:
+    if type(hash_) is bytes:
         return binascii.hexlify(bytearray(hash_)).decode()
     raise Exception(f"Can't convert hash_ to string, unsupported hash_ type {type(hash_)}")

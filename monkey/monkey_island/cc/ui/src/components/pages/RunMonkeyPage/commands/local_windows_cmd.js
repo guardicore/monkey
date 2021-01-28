@@ -1,4 +1,4 @@
-import {OS_TYPES} from '../OsTypes';
+import {OS_TYPES} from '../utils/OsTypes';
 
 
 export default function generateLocalWindowsCmd(ip, osType) {

@@ -81,7 +81,7 @@
                         "@@ -1,5 +1,5 @@",
                         " from common.data.post_breach_consts import (",
                         "-    POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER)",
-                        "+    POST_BREACH_BACKDOOR_USER)",
+                        "+    POST_BREACH_COMMUNICATE_AS_NEW_USER)",
                         " from monkey_island.cc.services.attack.technique_reports.pba_technique import \\",
                         "     PostBreachTechnique",
                         " "
@@ -97,7 +97,7 @@
                         "     scanned_msg = \"Monkey tried creating a new user on the network's systems, but failed.\"",
                         "     used_msg = \"Monkey created a new user on the network's systems.\"",
                         "-    pba_names = [POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER]",
-                        "+    pba_names = [POST_BREACH_BACKDOOR_USER]"
+                        "+    pba_names = [POST_BREACH_COMMUNICATE_AS_NEW_USER]"
                     ]
                 }
             ]
@@ -111,7 +111,7 @@
                         "hunkComments": []
                     },
                     "hunkDiffLines": [
-                        "@@ -4,15 +4,7 @@",
+                        "@@ -4,16 +4,7 @@",
                         "                    \"might do after breaching a new machine. Used in ATT&CK and Zero trust reports.\",",
                         "     \"type\": \"string\",",
                         "     \"anyOf\": [",
@@ -122,6 +122,7 @@
                         "-                \"BackdoorUser\"",
                         "-            ],",
                         "-            \"title\": \"Back door user\",",
+                        "-            \"safe\": True,",
                         "-            \"info\": \"Attempts to create a new user on the system and delete it afterwards.\",",
                         "-            \"attack_techniques\": [\"T1136\"]",
                         "-        },",
@@ -134,5 +135,13 @@
         }
     },
     "app_version": "0.3.5-1",
-    "file_version": "1.0.4"
+    "file_version": "1.0.4",
+    "hunksOrder": [
+        "monkey/common/data/post_breach_consts.py_0",
+        "monkey/infection_monkey/post_breach/actions/add_user.py_0",
+        "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py_0",
+        "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py_1",
+        "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py_0"
+    ],
+    "last_commit_sha_for_swimm_patch": "9d9e8168fb2c23367b9947273aa1a041687b3e2e"
 }

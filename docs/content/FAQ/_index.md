@@ -9,6 +9,7 @@ Here are some of the most common questions we receive about the Infection Monkey
 
 - [Where can I get the latest Monkey version? 📰](#where-can-i-get-the-latest-monkey-version)
 - [How long does a single Monkey run for? Is there a time limit?](#how-long-does-a-single-monkey-run-for-is-there-a-time-limit)
+- [How to reset the password?](#how-to-reset-the-password)
 - [Should I run the Monkey continuously?](#should-i-run-the-monkey-continuously)
   - [Which queries does Monkey perform to the Internet exactly?](#which-queries-does-monkey-perform-to-the-internet-exactly)
 - [Where can I find the log files of the Monkey and the Monkey Island, and how can I read them?](#where-can-i-find-the-log-files-of-the-monkey-and-the-monkey-island-and-how-can-i-read-them)
@@ -34,6 +35,23 @@ If you want to see what has changed between versions, refer to the [releases pag
 ## How long does a single Monkey run for? Is there a time limit?
 
 The Monkey shuts off either when it can't find new victims, or when it has exceeded the quota of victims as defined in the configuration.
+
+## How to reset the password?
+
+On your first access of Monkey Island server, you'll be prompted to create an account. If you forgot the credentials you
+ entered or just want to change them, you need to manually alter the `server_config.json` file. On Linux, this file is 
+ located on `/var/monkey/monkey_island/cc/server_config.json`. On windows, it's based on your install directory (typically 
+ `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file 
+ leaving the **deployment option unchanged** (it might be "vmware" or "linux" in your case):
+
+```json
+{
+  "server_config": "password",
+  "deployment": "windows"
+}
+```
+ Then reset the Island process (`sudo systemctl restart monkey-island.service` for linux, restart program for windows). 
+ Finally, go to the Island's URL and create a new account.
 
 ## Should I run the Monkey continuously?
 

@@ -4,41 +4,42 @@ export MONKEY_FOLDER_NAME="infection_monkey"
 # Url of public git repository that contains monkey's source code
 export MONKEY_GIT_URL="https://github.com/guardicore/monkey"
 
-get_latest_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub API
-    grep '"tag_name":' |                                            # Get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
+exists() {
+  command -v "$1" >/dev/null 2>&1
 }
 
-MONKEY_LATEST_RELEASE=$(get_latest_release "monkey/guardicore")
+get_latest_release() {
+  RELEASE_URL="https://api.github.com/repos/$1/releases/latest"
+
+  if exists wget; then
+    RELEASE_INFO=$(wget --quiet -O - "$RELEASE_URL")          # Get latest release from GitHub API
+  else
+    RELEASE_INFO=$(curl --silent "$RELEASE_URL")				# Get latest release from GitHub API
+  fi
+
+  echo "$RELEASE_INFO" |
+      grep '"tag_name":' |                      # Get tag line
+      sed -E 's/.*"([^"]+)".*/\1/'   # Pluck JSON value
+}
+
+MONKEY_LATEST_RELEASE=$(get_latest_release "guardicore/monkey")
 
 # Monkey binaries
-LINUX_32_BINARY_NAME="monkey-linux-32"
-LINUX_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$($MONKEY_LATEST_RELEASE)/monkey-linux-32"
-export LINUX_32_BINARY_URL
-export LINUX_32_BINARY_NAME
+export LINUX_32_BINARY_NAME="monkey-linux-32"
+export LINUX_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/monkey-linux-32"
 
-LINUX_64_BINARY_NAME="monkey-linux-64"
-LINUX_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$($MONKEY_LATEST_RELEASE)/monkey-linux-64"
-export LINUX_64_BINARY_URL
-export LINUX_64_BINARY_NAME
+export LINUX_64_BINARY_NAME="monkey-linux-64"
+export LINUX_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/monkey-linux-64"
 
-WINDOWS_32_BINARY_NAME="monkey-windows-32.exe"
-WINDOWS_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$($MONKEY_LATEST_RELEASE)/monkey-windows-32.exe"
-export WINDOWS_32_BINARY_URL
-export WINDOWS_32_BINARY_NAME
+export WINDOWS_32_BINARY_NAME="monkey-windows-32.exe"
+export WINDOWS_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/monkey-windows-32.exe"
 
-WINDOWS_64_BINARY_NAME="monkey-windows-64.exe"
-WINDOWS_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$($MONKEY_LATEST_RELEASE)/monkey-windows-64.exe"
-export WINDOWS_64_BINARY_URL
-export WINDOWS_64_BINARY_NAME
+export WINDOWS_64_BINARY_NAME="monkey-windows-64.exe"
+export WINDOWS_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/monkey-windows-64.exe"
 
 # Other binaries for monkey
-TRACEROUTE_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$($MONKEY_LATEST_RELEASE)/traceroute64"
-export TRACEROUTE_64_BINARY_URL
-TRACEROUTE_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$($MONKEY_LATEST_RELEASE)/traceroute32"
-export TRACEROUTE_32_BINARY_URL
-SAMBACRY_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$($MONKEY_LATEST_RELEASE)/sc_monkey_runner64.so"
-export SAMBACRY_64_BINARY_URL
-SAMBACRY_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$($MONKEY_LATEST_RELEASE)/sc_monkey_runner32.so"
-export SAMBACRY_32_BINARY_URL
+export TRACEROUTE_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/traceroute64"
+export TRACEROUTE_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/traceroute32"
+
+export SAMBACRY_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/sc_monkey_runner64.so"
+export SAMBACRY_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/sc_monkey_runner32.so"

@@ -1,5 +1,6 @@
 ---
 title: "MITRE ATT&CK report"
+description: "Maps the Monkey's actions to the MITRE ATT&CK knowledge base"
 date: 2020-06-24T21:17:18+03:00
 draft: false
 ---
