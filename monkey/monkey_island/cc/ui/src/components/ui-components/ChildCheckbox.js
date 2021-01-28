@@ -2,10 +2,11 @@ import React from 'react';
 import {Button, Form} from 'react-bootstrap';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheckSquare, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
+import {faCheckSquare} from '@fortawesome/free-solid-svg-icons';
 import {faSquare} from '@fortawesome/free-regular-svg-icons';
 
 import {getComponentHeight} from './utils/HeightCalculator';
+import WarningIcon from './WarningIcon';
 
 function ChildCheckboxContainer(props) {
   const {
@@ -54,7 +55,7 @@ function ChildCheckbox(props) {
   let displayLabel = [<span key={'label'} className={'option-text'}>{label}</span>];
 
   if (!safe) {
-    displayLabel.push(<FontAwesomeIcon key="unsafe-indicator" className="unsafe-indicator" icon={faExclamationTriangle}/>)
+    displayLabel.push(<WarningIcon key="unsafe-indicator"/>)
   }
 
   return (

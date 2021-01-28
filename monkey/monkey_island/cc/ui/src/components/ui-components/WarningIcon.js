@@ -1,0 +1,11 @@
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
+import React from 'react';
+
+function WarningIcon() {
+  return (
+    <FontAwesomeIcon className="unsafe-indicator" icon={faExclamationTriangle}/>
+  );
+}
+
+export default WarningIcon;
