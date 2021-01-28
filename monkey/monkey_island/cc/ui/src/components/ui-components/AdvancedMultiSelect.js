@@ -113,7 +113,16 @@ class AdvancedMultiSelect extends React.Component {
 
   setPaneInfo = (itemKey) =>  {
     let definitionObj = getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey);
-    this.setState({infoPaneParams: {title: definitionObj.title, content: definitionObj.info, link: definitionObj.link}});
+    this.setState(
+      {
+        infoPaneParams: {
+          title: definitionObj.title,
+          content: definitionObj.info,
+          link: definitionObj.link,
+          showWarning: !(this.isSafe(itemKey))
+        }
+      }
+    );
   }
 
   setPaneInfoToDefault() {
@@ -151,7 +160,8 @@ class AdvancedMultiSelect extends React.Component {
 
         <InfoPane title={this.state.infoPaneParams.title}
           body={this.state.infoPaneParams.content}
-          link={this.state.infoPaneParams.link}/>
+          link={this.state.infoPaneParams.link}
+          showWarning={this.state.infoPaneParams.showWarning}/>
       </div>
     );
   }
