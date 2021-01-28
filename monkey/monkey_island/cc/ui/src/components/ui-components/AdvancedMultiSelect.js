@@ -123,6 +123,10 @@ class AdvancedMultiSelect extends React.Component {
     }));
   }
 
+  isSafe(itemKey) {
+    return getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey).safe;
+  }
+
   render() {
     const {
       schema,
@@ -149,7 +153,8 @@ class AdvancedMultiSelect extends React.Component {
               return (
                 <ChildCheckbox key={i} onPaneClick={this.setPaneInfo}
                 onClick={this.onChildCheckboxClick} value={value}
-                disabled={disabled} label={label} checkboxState={this.props.value.includes(value)}/>
+                disabled={disabled} label={label} checkboxState={this.props.value.includes(value)}
+                safe={this.isSafe(value)}/>
               );
             }
           )}

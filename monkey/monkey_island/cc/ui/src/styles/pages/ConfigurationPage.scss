@@ -57,3 +57,10 @@
   white-space: pre-wrap;
 }
 
+.unsafe-indicator {
+    text-transform: uppercase;
+    color: #ffc107;
+    font-weight: 900;
+    margin-left: .75em;
+    margin-right: .75em;
+}
