@@ -1,6 +1,7 @@
 import logging
 
 import infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite_api as scoutsuite_api
+from common.cloud.scoutsuite.ScoutSuite.providers.aws.provider import AWSProvider
 from common.cloud.scoutsuite_consts import CloudProviders
 from common.utils.exceptions import ScoutSuiteScanError
 from infection_monkey.config import WormConfiguration
@@ -26,5 +27,5 @@ def run_scoutsuite(cloud_type: str):
                               aws_session_token=WormConfiguration.aws_session_token)
 
 
-def send_results(results):
+def send_results(results: AWSProvider):
     ScoutSuiteTelem(results).send()

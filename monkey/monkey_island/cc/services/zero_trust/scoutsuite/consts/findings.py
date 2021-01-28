@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 from common.common_consts import zero_trust_consts
 from .rule_names.cloudformation_rules import CloudformationRules
@@ -21,12 +22,12 @@ from .rule_names.vpc_rules import VPCRules
 class ScoutSuiteFinding(ABC):
     @property
     @abstractmethod
-    def rules(self):
+    def rules(self) -> List[str]:
         pass
 
     @property
     @abstractmethod
-    def test(self):
+    def test(self) -> str:
         pass
 
 

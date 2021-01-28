@@ -40,11 +40,11 @@ export default class ScoutSuiteRuleButton extends Component {
 }
 
 function RuleCountBadge(props) {
-  const maxRuleCountToShow = 9;
-  const textForMoreThanMaxRuleCount = maxRuleCountToShow + '+';
+  const MAX_RULE_COUNT_TO_SHOW = 9;
+  const TEXT_FOR_LARGE_RULE_COUNT = MAX_RULE_COUNT_TO_SHOW + '+';
 
-  const ruleCountText = props.count > maxRuleCountToShow ?
-    textForMoreThanMaxRuleCount : props.count;
+  const ruleCountText = props.count > MAX_RULE_COUNT_TO_SHOW ?
+    TEXT_FOR_LARGE_RULE_COUNT : props.count;
   return <Badge variant={'monkey-info-light'}>{ruleCountText}</Badge>;
 }
 

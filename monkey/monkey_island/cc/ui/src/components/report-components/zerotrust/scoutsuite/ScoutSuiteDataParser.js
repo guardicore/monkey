@@ -4,10 +4,11 @@ export default class ScoutSuiteDataParser {
   }
 
   /**
-   *
+   * Gets value of cloud resource based on path of specific checked field and more abstract template path,
+   * which describes the scope of resource values.
    * @param itemPath contains path to a specific value e.g. s3.buckets.da1e7081077ce92.secure_transport_enabled
    * @param templatePath contains a template path for resource we would want to display e.g. s3.buckets.id
-   * @returns {*[]|*}
+   * @returns {*[]|*} resource value e.g. {'bucket_id': 123, 'bucket_max_size': '123GB'}
    */
   getResourceValue(itemPath, templatePath) {
     let resourcePath = this.fillTemplatePath(itemPath, templatePath);
