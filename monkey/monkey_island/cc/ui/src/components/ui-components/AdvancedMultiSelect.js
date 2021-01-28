@@ -108,7 +108,7 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   getHideResetState(selectValues) {
-    return selectValues.every((value) => this.defaultValues.includes(value));
+    return selectValues.every((value) => this.isSafe(value));
   }
 
   setPaneInfo = (itemKey) =>  {
