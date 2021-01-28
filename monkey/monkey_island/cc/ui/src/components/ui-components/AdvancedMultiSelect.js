@@ -1,12 +1,11 @@
 import React from 'react';
-import {Button, Card, Form} from 'react-bootstrap';
+import {Button, Card} from 'react-bootstrap';
 
 import {cloneDeep} from 'lodash';
 
-import {getComponentHeight} from './utils/HeightCalculator';
 import {getDefaultPaneParams, InfoPane} from './InfoPane';
 import {MasterCheckbox, MasterCheckboxState} from './MasterCheckbox';
-import ChildCheckbox from './ChildCheckbox';
+import ChildCheckboxContainer from './ChildCheckbox';
 import {getFullDefinitionByKey} from './JsonSchemaHelpers';
 
 function AdvancedMultiSelectHeader(props) {
@@ -123,7 +122,7 @@ class AdvancedMultiSelect extends React.Component {
     }));
   }
 
-  isSafe(itemKey) {
+  isSafe = (itemKey) => {
     return getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey).safe;
   }
 
@@ -144,21 +143,12 @@ class AdvancedMultiSelect extends React.Component {
           disabled={disabled} onCheckboxClick={this.onMasterCheckboxClick}
           checkboxState={this.state.masterCheckboxState}
           hideReset={this.state.hideReset} onResetClick={this.onResetClick}/>
-        <Form.Group
-          style={{height: `${getComponentHeight(this.enumOptions.length)}px`}}
-          id={id} multiple={multiple} className='choice-block form-control'
-          required={required} disabled={disabled || readonly} autoFocus={autofocus}>
-          {
-            this.enumOptions.map(({value, label}, i) => {
-              return (
-                <ChildCheckbox key={i} onPaneClick={this.setPaneInfo}
-                onClick={this.onChildCheckboxClick} value={value}
-                disabled={disabled} label={label} checkboxState={this.props.value.includes(value)}
-                safe={this.isSafe(value)}/>
-              );
-            }
-          )}
-        </Form.Group>
+
+        <ChildCheckboxContainer id={id} multiple={multiple} required={required}
+          disabled={disabled || readonly} autoFocus={autofocus} isSafe={this.isSafe}
+          onPaneClick={this.setPaneInfo} onCheckboxClick={this.onChildCheckboxClick}
+          selectedValues={this.props.value} enumOptions={this.enumOptions}/>
+
         <InfoPane title={this.state.infoPaneParams.title}
           body={this.state.infoPaneParams.content}
           link={this.state.infoPaneParams.link}/>

@@ -5,6 +5,41 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheckSquare, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import {faSquare} from '@fortawesome/free-regular-svg-icons';
 
+import {getComponentHeight} from './utils/HeightCalculator';
+
+function ChildCheckboxContainer(props) {
+  const {
+    enumOptions,
+    id,
+    multiple,
+    required,
+    disabled,
+    autofocus,
+    onPaneClick,
+    onCheckboxClick,
+    selectedValues,
+    isSafe
+  } = props;
+
+  return(
+    <Form.Group
+      style={{height: `${getComponentHeight(enumOptions.length)}px`}}
+      id={id} multiple={multiple} className='choice-block form-control'
+      required={required} disabled={disabled} autoFocus={autofocus}>
+      {
+        enumOptions.map(({value, label}, i) => {
+          return (
+            <ChildCheckbox key={i} onPaneClick={onPaneClick}
+            onClick={onCheckboxClick} value={value}
+            disabled={disabled} label={label} checkboxState={selectedValues.includes(value)}
+            safe={isSafe(value)}/>
+          );
+        }
+      )}
+    </Form.Group>
+  );
+}
+
 function ChildCheckbox(props) {
   const {
     onPaneClick,
@@ -32,4 +67,4 @@ function ChildCheckbox(props) {
   );
 }
 
-export default ChildCheckbox;
+export default ChildCheckboxContainer;
