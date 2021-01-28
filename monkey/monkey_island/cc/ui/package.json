@@ -59,13 +59,13 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@emotion/core": "^10.0.22",
+    "@emotion/core": "^10.0.34",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-regular-svg-icons": "^5.13.1",
     "@fortawesome/free-solid-svg-icons": "^5.13.1",
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@kunukn/react-collapse": "^1.2.7",
-    "bootstrap": "^4.5.1",
+    "bootstrap": "^4.5.2",
     "classnames": "^2.2.6",
     "core-js": "^3.6.5",
     "d3": "^5.14.1",
@@ -105,7 +105,7 @@
     "react-tooltip-lite": "^1.12.0",
     "redux": "^4.0.4",
     "sha3": "^2.1.3",
-    "snyk": "^1.373.0"
+    "snyk": "^1.373.1"
   },
   "snyk": true
 }

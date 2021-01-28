@@ -6,13 +6,17 @@ import monkey_island.cc.services.config
 
 __author__ = "VakarisZ"
 
+from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+
 logger = logging.getLogger(__name__)
 
 # Where to find file names in config
 PBA_WINDOWS_FILENAME_PATH = ['monkey', 'post_breach', 'PBA_windows_filename']
 PBA_LINUX_FILENAME_PATH = ['monkey', 'post_breach', 'PBA_linux_filename']
-PBA_UPLOAD_PATH = ['monkey_island', 'cc', 'userUploads']
-UPLOADS_DIR = Path(*PBA_UPLOAD_PATH)
+UPLOADS_DIR_NAME = 'userUploads'
+
+
+ABS_UPLOAD_PATH = Path(MONKEY_ISLAND_ABS_PATH, 'cc', UPLOADS_DIR_NAME)
 
 
 def remove_PBA_files():
@@ -26,7 +30,7 @@ def remove_PBA_files():
 
 
 def remove_file(file_name):
-    file_path = os.path.join(UPLOADS_DIR, file_name)
+    file_path = os.path.join(ABS_UPLOAD_PATH, file_name)
     try:
         if os.path.exists(file_path):
             os.remove(file_path)

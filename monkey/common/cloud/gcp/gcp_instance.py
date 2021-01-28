@@ -4,6 +4,7 @@ import requests
 
 from common.cloud.environment_names import Environment
 from common.cloud.instance import CloudInstance
+from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ class GcpInstance(CloudInstance):
 
         try:
             # If not on GCP, this domain shouldn't resolve.
-            response = requests.get(GCP_METADATA_SERVICE_URL)
+            response = requests.get(GCP_METADATA_SERVICE_URL, timeout=SHORT_REQUEST_TIMEOUT)
 
             if response:
                 logger.debug("Got ok metadata response: on GCP")

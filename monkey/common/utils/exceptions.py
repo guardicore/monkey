@@ -40,3 +40,7 @@ class ScoutSuiteScanError(Exception):
 
 class UnknownFindingError(Exception):
     """ Raise when provided finding is of unknown type"""
+
+
+class VersionServerConnectionError(Exception):
+    """ Raise to indicate that connection to version update server failed """

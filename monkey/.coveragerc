@@ -1,0 +1,4 @@
+[run]
+omit =
+    */test_*.py
+    */*_test.py

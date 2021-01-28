@@ -6,12 +6,13 @@ import boto3
 from botocore.exceptions import UnknownServiceError
 
 from common.cloud.aws.aws_instance import AwsInstance
-from monkey_island.cc.environment import EnvironmentConfig
 from monkey_island.cc.services.reporting.exporter import Exporter
 
 __authors__ = ['maor.rayzin', 'shay.nehmad']
 
 logger = logging.getLogger(__name__)
+
+INFECTION_MONKEY_ARN = "324264561773:product/guardicore/aws-infection-monkey"
 
 
 class AWSExporter(Exporter):
@@ -68,7 +69,7 @@ class AWSExporter(Exporter):
             # azure and conficker are not relevant issues for an AWS env
         }
 
-        configured_product_arn = EnvironmentConfig.get_from_file().aws.get('sec_hub_product_arn', '')
+        configured_product_arn = INFECTION_MONKEY_ARN
         product_arn = 'arn:aws:securityhub:{region}:{arn}'.format(region=region, arn=configured_product_arn)
         instance_arn = 'arn:aws:ec2:' + str(region) + ':instance:{instance_id}'
         # Not suppressing error here on purpose.

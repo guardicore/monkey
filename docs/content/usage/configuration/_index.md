@@ -17,4 +17,4 @@ This section of the documentation is incomplete and under active construction.
 
 See these documentation pages for information on each configuration value:
 
-{{% children description=true %}}
+{{% children description=true style="p"%}}

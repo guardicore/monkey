@@ -15,7 +15,7 @@ After deploying the Monkey Island in your environment, navigate to `https://<ser
 
 ### First-time login
 
-On your first login, you'll be asked to set up a username and password for the Monkey Island server. [See this page for more details](../accounts-and-security).
+On your first login, you'll be asked to set up a username and password for the Monkey Island server. [See this page for more details](../../setup/accounts-and-security).
 
 ### Run the Monkey
 

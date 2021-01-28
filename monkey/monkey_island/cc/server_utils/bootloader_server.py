@@ -7,6 +7,7 @@ import pymongo
 import requests
 import urllib3
 
+from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from monkey_island.cc.environment import Environment
 
 # Disable "unverified certificate" warnings when sending requests to island
@@ -32,7 +33,10 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
         # The island server doesn't always have a correct SSL cert installed
         # (By default it comes with a self signed one),
         # that's why we're not verifying the cert in this request.
-        r = requests.post(url=island_server_path, data=post_data, verify=False)  # noqa: DUO123
+        r = requests.post(url=island_server_path,
+                          data=post_data,
+                          verify=False,
+                          timeout=SHORT_REQUEST_TIMEOUT)  # noqa: DUO123
 
         try:
             if r.status_code != 200:

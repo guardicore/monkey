@@ -18,4 +18,4 @@ No worries! The Monkey uses safe exploiters and does not cause any permanent sys
 
 ## Section contents
 
-{{% children description=True %}}
+{{% children description=True style="p"%}}

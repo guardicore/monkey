@@ -14,3 +14,10 @@
   background-color: $monkey-yellow;
   color: #000000;
 }
+
+a.inline-link {
+  position: relative;
+  top: -1px;
+  margin: 0;
+  padding: 0;
+}

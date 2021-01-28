@@ -1,5 +1,6 @@
 import logging
-import threading
+
+from gevent.lock import BoundedSemaphore
 
 logger = logging.getLogger(__name__)
 
@@ -7,9 +8,9 @@ logger = logging.getLogger(__name__)
 # Report generation can be quite slow if there is a lot of data, and the UI queries the Root service often; without
 # the locks, these requests would accumulate, overload the server, eventually causing it to crash.
 logger.debug("Initializing report generation locks.")
-__report_generating_lock = threading.Semaphore()
-__attack_report_generating_lock = threading.Semaphore()
-__regular_report_generating_lock = threading.Semaphore()
+__report_generating_lock = BoundedSemaphore()
+__attack_report_generating_lock = BoundedSemaphore()
+__regular_report_generating_lock = BoundedSemaphore()
 
 
 def safe_generate_reports():

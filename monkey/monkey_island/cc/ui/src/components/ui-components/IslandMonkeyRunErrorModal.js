@@ -26,29 +26,29 @@ class IslandMonkeyRunErrorModal extends React.PureComponent {
 
   getMissingBinariesContent() {
     return (
-      <div>
+      <span>
         Some Monkey binaries are not found where they should be...<br/>
         You can download the files from <a href="https://github.com/guardicore/monkey/releases/latest"
                                            target="blank">here</a>,
         at the bottommost section titled "Assets", and place them under the
         directory <code>monkey/monkey_island/cc/binaries</code>.
-      </div>
+      </span>
     )
   }
 
   getMonkeyAlreadyRunningContent() {
     return (
-      <div>
+      <span>
         Most likely, monkey is already running on the Island. Wait until it finishes or kill the process to run again.
-      </div>
+      </span>
     )
   }
 
   getUndefinedErrorContent() {
     return (
-      <div>
+      <span>
         You encountered an undefined error. Please report it to support@infectionmonkey.com or our slack channel.
-      </div>
+      </span>
     )
   }
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
-import LocalManualRunOptions from './LocalManualRunOptions';
+import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
+import LocalManualRunOptions from '../RunManually/LocalManualRunOptions';
 
 function InterfaceSelection(props) {
   return InlineSelection(getContents, props, LocalManualRunOptions)

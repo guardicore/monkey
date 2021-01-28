@@ -1,3 +1,10 @@
+.loading-icon {
+  color: $monkey-yellow;
+  font-size: 20px;
+  margin-left: 50%;
+  margin-right: 50%;
+}
+
 .spinning-icon {
   animation: spin-animation 0.5s infinite;
   display: inline-block;

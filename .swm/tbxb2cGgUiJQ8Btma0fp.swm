@@ -6,8 +6,9 @@
     "summary": "Take a look at the configuration of the island again - see the \"command to run after breach\" option we offer the user? It's implemented exactly like you did right now but each user can do it for themselves. \n\nHowever, what if the PBA needs to do stuff which is more complex than just running a few commands? In that case... ",
     "tests": [],
     "hints": [
-        "See `ScheduleJobs` PBA for an example of a PBA which only uses shell commands",
-        "Make sure to add the PBA to the configuration as well."
+        "See `ScheduleJobs` PBA for an example of a PBA which only uses shell commands.",
+        "Make sure to add the PBA to the configuration as well.",
+        "MITRE ATT&CK technique T1136 articulates that adversaries may create an account to maintain access to victim systems, therefore, the BackdoorUser PBA is relevant to it. Make sure to map this PBA to the MITRE ATT&CK configuration and report."
     ],
     "swimmPatch": {
         "monkey/common/common_consts/post_breach_consts.py": {

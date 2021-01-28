@@ -6,9 +6,9 @@
     "summary": "System info collectors are useful to get more data for various things, such as ZT tests or MITRE techniques. Take a look at some other techniques!",
     "tests": [],
     "hints": [
-        "First thing you should do is take a look at a different collector (like EnvironemntCollector) and 100% understand how it runs, how results are relayed back to the server, and how the server processes the data.",
+        "First thing you should do is take a look at a different collector (like EnvironmentCollector) and 100% understand how it runs, how results are relayed back to the server, and how the server processes the data.",
         "Try to run \"socket.getfqdn()\".",
-        "Take a look at SystemInfoCollector - that's the base class you'll need to implement",
+        "Take a look at SystemInfoCollector - that's the base class you'll need to implement.",
         "Make sure you add the new collector to the configuration in all relevant places, including making it ON by default!"
     ],
     "swimmPatch": {

@@ -8,7 +8,7 @@ Please try to be as specific as you can about your problem; try to include steps
 to reproduce. While we'll try to help anyway, focusing us will help us help you faster.
 
 If you want to contribute new code or fix bugs, please read the following sections. You can also contact us (the 
-maintainers of this project) at our [Slack channel](https://join.slack.com/t/infectionmonkey/shared_invite/enQtNDU5MjAxMjg1MjU1LTM2ZTg0ZDlmNWNlZjQ5NDI5NTM1NWJlYTRlMGIwY2VmZGMxZDlhMTE2OTYwYmZhZjM1MGZhZjA2ZjI4MzA1NDk). 
+maintainers of this project) at our [Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU).
 
 ## Submitting Issues
 * **Do** write a detailed description of your bug and use a descriptive title.

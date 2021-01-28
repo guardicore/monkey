@@ -3,7 +3,7 @@ title: "Network Breach"
 date: 2020-08-12T13:04:55+03:00
 draft: false
 description: "Simulate an internal network breach and assess the potential impact."
-weight: 1
+weight: 3
 ---
 
 ## Overview 
@@ -17,7 +17,6 @@ Infection Monkey will help you assess the impact of internal network breach, by 
 
 ## Configuration
 
-#### Important configuration values:
 - **Exploits -> Exploits** You can review the exploits Infection Monkey will be using. By default all 
 safe exploiters are selected.
 - **Exploits -> Credentials** This configuration value will be used for brute-forcing. We use most popular passwords
@@ -33,6 +32,15 @@ all post breach actions. These actions simulate attacker's behaviour after getti
  way helps to exploit new machines.
 
 ![Exploiter selector](/images/usage/use-cases/network-breach.PNG "Exploiter selector")
+
+## Suggested run mode
+
+Decide which machines you want to simulate a breach on and use the “Manual” run option to start Monkeys there. 
+Use high privileges to run the Monkey to simulate an attacker that was able to elevate its privileges. 
+You could also simulate an attack initiated from an unidentified machine connected to the network (a technician 
+laptop, 3rd party vendor machine, etc) by running the Monkey on a dedicated machine with an IP in the network you 
+wish to test.
+
 
 ## Assessing results
 
