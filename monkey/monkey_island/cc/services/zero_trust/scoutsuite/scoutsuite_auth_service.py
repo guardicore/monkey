@@ -12,13 +12,12 @@ from monkey_island.cc.services.config_schema.config_value_paths import AWS_KEYS_
 def is_cloud_authentication_setup(provider: CloudProviders) -> Tuple[bool, str]:
     if provider == CloudProviders.AWS.value:
         if is_aws_keys_setup():
-            return True, "AWS keys already setup. Run Monkey on Island to start the scan."
+            return True, "AWS keys already setup."
 
         import common.cloud.scoutsuite.ScoutSuite.providers.aws.authentication_strategy as auth_strategy
         try:
             profile = auth_strategy.AWSAuthenticationStrategy().authenticate()
-            return True, f" Profile \"{profile.session.profile_name}\" is already setup. " \
-                         f"Run Monkey on Island to start the scan."
+            return True, f" Profile \"{profile.session.profile_name}\" is already setup. "
         except AuthenticationException:
             return False, ""
 

@@ -29,7 +29,7 @@ const getContents = (props) => {
       .then(res => res.json())
       .then(res => {
         if(res.is_setup){
-          setDescription(res.message + ' Click next to change the configuration.');
+          setDescription(getDescription(res.message));
           setIconType('icon-success');
           setIcon(faCheck);
         } else {
@@ -39,6 +39,14 @@ const getContents = (props) => {
         }
       });
   }, [props]);
+
+  function getDescription(message){
+    return (
+      <>
+        {message} Run <b>from the Island</b> to start the scan. Click next to change the configuration.
+      </>
+    )
+  }
 
   return (
     <>
