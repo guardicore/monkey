@@ -23,7 +23,7 @@ The MITRE ATT&CK report is centred around the ATT&CK matrix:
 
 The Infection Monkey rates your network on the attack techniques it attempted, assigning one of the corresponding labels to each:
 
-- {{< label danger Red >}}: The Infection Monkey **successfully used** this technique in the simulation. This means your network is vulnerable to the technique being employed.
+- {{< label danger Red >}}: The Infection Monkey **successfully used** this technique in the simulation. This means your network is vulnerable to the technique.
 - {{< label warning Yellow >}}: The Infection Monkey **tried to use** the technique, but wasn’t successful. This means your network isn't vulnerable to the way Infection Monkey employed this technique.
 - {{< label unused "Dark Gray" >}}: The Monkey **didn't try** the technique. Perhaps it wasn't relevant to this network.
 - {{< label disabled "Light Gray" >}}: The Monkey **didn't try** the technique since it wasn't configured.
