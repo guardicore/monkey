@@ -16,7 +16,7 @@ The results will be exported to the AWS security hub automatically as well. To l
 
 ## Setup
 
-Assuming your network is already set up in AWS EC2, follow these quick steps below to get up and running.
+Assuming your network is already set up in AWS EC2, follow the steps below to get up and running quickly.
 
 ### Monkey Island deployment
 
@@ -44,7 +44,7 @@ After applying the IAM role you should see this screen:
 
 **Note: after setting IAM roles, the roles might take a few minutes (up to 10 minutes sometimes) to effectively kick in.** This is how AWS works and is not related to the Infection Monkey implementation. See [this StackOverflow thread for more details.](https://stackoverflow.com/questions/20156043/how-long-should-i-wait-after-applying-an-aws-iam-policy-before-it-is-valid)
 
-### Setup SSM agent
+### Setup the SSM agent
 
 If your EC2 instances don't have the _SSM agent_ installed, they will not be able to execute SSM commands, which means you won't see them in the AWS machines table on the Monkey Island. Generally speaking, most new EC2 instances should have SSM pre-installed. The SSM Agent is installed, by default, on Amazon Linux base AMIs dated 2017.09 and later, on Amazon Linux 2, Ubuntu Server 16.04 and Ubuntu Server 18.04 LTS AMIs.
 
@@ -58,22 +58,22 @@ When you run the Monkey Island on an AWS instance, the island detects it's runni
 
 ![Running a Monkey on EC2 Instance](/images/usage/integrations/monkey-island-aws-screenshot-1.png "Running a Monkey on EC2 Instance")
 
-After you click on **AWS run** you can choose one of the available instances as "patient zero" by:
+After you click on **Run on AWS machine of your choice** you can choose one of the available instances as "patient zero" by:
 
-1. Choosing the relevant Network Interface
-2. Selecting the machines you'd like to run the Monkey on
-3. Clicking "Run on Selected Machines", and watch the monkey go! 🐒
+1. Choosing the relevant network interface
+2. Selecting the machines you'd like to run the Infection Monkey on
+3. Clicking **Run on Selected Machines** — now watch the Infection Monkey go! 🐒
 
 ![Running a Monkey on EC2 Instance](/images/usage/integrations/monkey-island-aws-screenshot-2.png "Running a Monkey on EC2 Instance")
 
 ## Notes
 
-- The machines which can use IAM roles and be listed MUST be internet connected (or you can set up a proxy for IAM). This is standard AWS practice and you can read about it (and about how to set up the required proxy machines) in AWS IAM documentation.
-- You can see the Infection Monkey in [the AWS marketplace](https://aws.amazon.com/marketplace/pp/B07B3J7K6D).
+- The machines which can use IAM roles and be listed MUST be internet connected (or you can set up a proxy for IAM). This is standard AWS practice and you can read about it (and about how to set up the required proxy machines) in the AWS IAM documentation.
+- You can view the Infection Monkey in [the AWS marketplace](https://aws.amazon.com/marketplace/pp/B07B3J7K6D).
 
 ### Appendix A: Specific policy permissions required
 
-The IAM role will need to have, at least, the following specific permissions: 
+The IAM role will need to have, at minimum, the following specific permissions: 
 
 #### For executing the Monkey on other machines - SSM
 
@@ -100,7 +100,7 @@ Here's the policy of the IAM role, as a JSON object:
 }
 ```
 
-#### For exporting security findings to the Security Hub - security hub
+#### For exporting security findings to the AWS Security Hub - security hub
 
 _Note: these can be set on the Monkey Island machine alone, since it's the only one exporting findings to the AWS secutiry hub._
 
@@ -126,7 +126,7 @@ Here's the policy for SecurityHub, as a JSON object:
 }
 ```
 
-The JSON object for both of the policies combined therefore is:
+The JSON object for both of the policies combined is:
 
 ```json
 {
