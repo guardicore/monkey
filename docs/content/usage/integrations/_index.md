@@ -7,8 +7,8 @@ weight: 10
 pre: "<i class='fas fa-directions'></i> "
 ---
 
-# Integrate the Monkey with 3rd party software
+# Integrate the Infection Monkey with third-party software
 
-The Monkey likes working together. See these documentation pages for information on each integration the Monkey currently offers:
+The Infection Monkey likes working together! See these documentation pages for information on each integration the Infection Monkey currently offers:
 
 {{% children description=true style="p"%}}
