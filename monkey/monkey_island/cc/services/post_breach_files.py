@@ -6,7 +6,7 @@ import monkey_island.cc.services.config
 
 __author__ = "VakarisZ"
 
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 logger = logging.getLogger(__name__)
 

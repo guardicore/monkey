@@ -1,7 +1,7 @@
 from mongoengine import Document, DynamicField
 
 
-class ScoutSuiteDataJson(Document):
+class ScoutSuiteRawDataJson(Document):
     """
     This model is a container for ScoutSuite report data dump.
     """
@@ -13,8 +13,8 @@ class ScoutSuiteDataJson(Document):
     @staticmethod
     def add_scoutsuite_data(scoutsuite_data: str) -> None:
         try:
-            current_data = ScoutSuiteDataJson.objects()[0]
+            current_data = ScoutSuiteRawDataJson.objects()[0]
         except IndexError:
-            current_data = ScoutSuiteDataJson()
+            current_data = ScoutSuiteRawDataJson()
         current_data.scoutsuite_data = scoutsuite_data
         current_data.save()

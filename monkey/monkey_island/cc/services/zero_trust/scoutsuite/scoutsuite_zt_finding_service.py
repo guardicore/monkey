@@ -4,7 +4,7 @@ from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutSuiteFindingDetails
 from monkey_island.cc.models.zero_trust.scoutsuite_rule import ScoutSuiteRule
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.findings import ScoutSuiteFinding
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.scoutsuite_findings import ScoutSuiteFinding
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_rule_service import ScoutSuiteRuleService
 
 

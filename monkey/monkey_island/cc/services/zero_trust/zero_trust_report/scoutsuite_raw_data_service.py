@@ -1,4 +1,4 @@
-from monkey_island.cc.models.zero_trust.scoutsuite_data_json import ScoutSuiteDataJson
+from monkey_island.cc.models.zero_trust.scoutsuite_data_json import ScoutSuiteRawDataJson
 
 
 class ScoutSuiteRawDataService:
@@ -8,6 +8,6 @@ class ScoutSuiteRawDataService:
     @staticmethod
     def get_scoutsuite_data_json() -> str:
         try:
-            return ScoutSuiteDataJson.objects.get().scoutsuite_data
+            return ScoutSuiteRawDataJson.objects.get().scoutsuite_data
         except Exception:
             return "{}"
