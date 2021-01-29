@@ -8,9 +8,9 @@ tags: ["aws", "integration"]
 
 ## When to use this feature
 
-If your network is deployed on Amazon Web Services (with EC2 instances), and you'd like to run the Infection Monkey to test it, this page is for you. You can easily run the Infection Monkey on various instances within your network in a secure fashion, without feeding it credentials or running shell commands on the machines you want to test.
+If your network is deployed on Amazon Web Services (with EC2 instances) and you'd like to run the Infection Monkey to test it, this page is for you. You can easily run the Infection Monkey on various instances within your network in a secure fashion, without feeding it credentials or running shell commands on the machines you want to test.
 
-The results will be exported to the AWS security hub automatically as well. To see more information about that topic, see the [Infection Monkey and AWS Security Hub documentation](https://github.com/guardicore/monkey/wiki/Infection-Monkey-and-AWS-Security-Hub).
+The results will be exported to the AWS security hub automatically as well. To learn more about that topic, see the [Infection Monkey and AWS Security Hub documentation](https://github.com/guardicore/monkey/wiki/Infection-Monkey-and-AWS-Security-Hub).
 
 ![AWS EC2 logo](/images/usage/integrations/aws-ec2.svg?height=250px "AWS EC2 logo")
 
@@ -24,7 +24,7 @@ In order to run the Infection Monkey agents directly from the Monkey Island serv
 
 ### Setup IAM roles
 
-In order for the Monkey Island to successfully view your instances, you'll need to set appropriate IAM roles to your instances. You can read more about IAM roles [in Amazon's documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html), but it's not necessary in order to follow this setup.
+In order for the Infection Monkey to successfully view your instances, you'll need to set appropriate IAM roles for your instances. You can read more about IAM roles [in Amazon's documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html), but it's not necessary in order to follow this setup.
 
 #### Creating a custom IAM role
 
@@ -42,11 +42,11 @@ After applying the IAM role you should see this screen:
 
 ![Applying a custom IAM role](/images/usage/integrations/monkey-island-aws-screenshot-5.png "Applying a custom IAM role")
 
-**Note: after setting IAM roles, the roles might take a few minutes (up to 10 minutes sometimes) to effectively kick in.** This is how AWS works and is not related to the Monkey implementation. See [this StackOverflow thread for more details.](https://stackoverflow.com/questions/20156043/how-long-should-i-wait-after-applying-an-aws-iam-policy-before-it-is-valid)
+**Note: after setting IAM roles, the roles might take a few minutes (up to 10 minutes sometimes) to effectively kick in.** This is how AWS works and is not related to the Infection Monkey implementation. See [this StackOverflow thread for more details.](https://stackoverflow.com/questions/20156043/how-long-should-i-wait-after-applying-an-aws-iam-policy-before-it-is-valid)
 
 ### Setup SSM agent
 
-If your EC2 instances don't have the _SSM agent_ installed, they will not be able to execute SSM commands, which means you won't see them in the AWS machines table on the Monkey Island. Generally speaking, most new EC2 instances ought to have SSM pre-installed; The SSM Agent is installed, by default, on Amazon Linux base AMIs dated 2017.09 and later, on Amazon Linux 2, Ubuntu Server 16.04 and Ubuntu Server 18.04 LTS AMIs.
+If your EC2 instances don't have the _SSM agent_ installed, they will not be able to execute SSM commands, which means you won't see them in the AWS machines table on the Monkey Island. Generally speaking, most new EC2 instances should have SSM pre-installed. The SSM Agent is installed, by default, on Amazon Linux base AMIs dated 2017.09 and later, on Amazon Linux 2, Ubuntu Server 16.04 and Ubuntu Server 18.04 LTS AMIs.
 
 See [Amazon's documentation about working with SSM agents](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) for more details on how to check if you have an SSM agent and how to manually install one if you don't yet have it.
 
@@ -58,7 +58,7 @@ When you run the Monkey Island on an AWS instance, the island detects it's runni
 
 ![Running a Monkey on EC2 Instance](/images/usage/integrations/monkey-island-aws-screenshot-1.png "Running a Monkey on EC2 Instance")
 
-After you click on "AWS run" you can choose one of the available instances as "patient zero" by:
+After you click on **AWS run** you can choose one of the available instances as "patient zero" by:
 
 1. Choosing the relevant Network Interface
 2. Selecting the machines you'd like to run the Monkey on
