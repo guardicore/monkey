@@ -21,14 +21,14 @@ The MITRE ATT&CK report is centred around the ATT&CK matrix:
 
 ![MITRE Report](/images/usage/reports/mitre-report-0.png "MITRE Report")
 
-The Infection Monkey rates your network on the attack techniques it attempted, assigning one of the corresponding labels based on the outcomes:
+The Infection Monkey rates your network on the attack techniques it attempted, assigning one of the corresponding labels to each:
 
 - {{< label danger Red >}}: The Infection Monkey **successfully used** this technique in the simulation. This means your network is vulnerable to the technique being employed.
 - {{< label warning Yellow >}}: The Infection Monkey **tried to use** the technique, but wasn’t successful. This means your network isn't vulnerable to the way Infection Monkey employed this technique.
 - {{< label unused "Dark Gray" >}}: The Monkey **didn't try** the technique. Perhaps it wasn't relevant to this network.
 - {{< label disabled "Light Gray" >}}: The Monkey **didn't try** the technique since it wasn't configured.
 
-By clicking each of the listed techniques, you can see exactly how the Infection Monkey used it and any recommended mitigation steps. For example, let's look at the [**Brute Force**](https://attack.mitre.org/techniques/T1110/) technique that's a part of employing the [**Credentials Access**](https://attack.mitre.org/tactics/TA0006/) tactic:
+By clicking on each of the listed techniques, you can see exactly how the Infection Monkey used it and any recommended mitigation steps. For example, let's look at the [**Brute Force**](https://attack.mitre.org/techniques/T1110/) technique that's a part of employing the [**Credentials Access**](https://attack.mitre.org/tactics/TA0006/) tactic:
 
 ![MITRE Report Credentials Access technique](/images/usage/reports/mitre-report-cred-access.png "MITRE Report Credentials Access technique")
 
