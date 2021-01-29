@@ -44,7 +44,7 @@ class AdvancedMultiSelect extends React.Component {
       infoPaneParams: getDefaultPaneParams(
         this.infoPaneRefString,
         this.registry,
-        this.unsafeOptionsSelected(this.props.value)
+        this.isUnsafeOptionSelected(this.props.value)
       )
     };
   }
@@ -71,7 +71,7 @@ class AdvancedMultiSelect extends React.Component {
     this.props.onChange(newValues);
     this.setMasterCheckboxState(newValues);
     this.setHideResetState(newValues);
-    this.setPaneInfoToDefault(this.unsafeOptionsSelected(newValues));
+    this.setPaneInfoToDefault(this.isUnsafeOptionSelected(newValues));
   }
 
   onChildCheckboxClick = (value) => {
@@ -115,7 +115,7 @@ class AdvancedMultiSelect extends React.Component {
     this.props.onChange(this.defaultValues);
     this.setHideResetState(this.defaultValues);
     this.setMasterCheckboxState(this.defaultValues);
-    this.setPaneInfoToDefault(this.unsafeOptionsSelected(this.defaultValues));
+    this.setPaneInfoToDefault(this.isUnsafeOptionSelected(this.defaultValues));
   }
 
   setHideResetState(selectValues) {
@@ -125,10 +125,10 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   getHideResetState(selectValues) {
-    return !(this.unsafeOptionsSelected(selectValues))
+    return !(this.isUnsafeOptionSelected(selectValues))
   }
 
-  unsafeOptionsSelected(selectValues) {
+  isUnsafeOptionSelected(selectValues) {
     return !(selectValues.every((value) => this.isSafe(value)));
   }
 
@@ -150,12 +150,12 @@ class AdvancedMultiSelect extends React.Component {
     );
   }
 
-  setPaneInfoToDefault(unsafeOptionsSelected) {
+  setPaneInfoToDefault(isUnsafeOptionSelected) {
     this.setState(() => ({
       infoPaneParams: getDefaultPaneParams(
         this.props.schema.items.$ref,
         this.props.registry,
-        unsafeOptionsSelected
+        isUnsafeOptionSelected
       )
     }));
   }

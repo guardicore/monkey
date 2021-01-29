@@ -12,13 +12,13 @@ const WarningType = {
   MULTIPLE: 2
 }
 
-function getDefaultPaneParams(refString, registry, unsafeOptionsSelected) {
+function getDefaultPaneParams(refString, registry, isUnsafeOptionSelected) {
   let configSection = getObjectFromRegistryByRef(refString, registry);
   return (
     {
       title: configSection.title,
       content: configSection.description,
-      warningType: unsafeOptionsSelected ? WarningType.Multiple : WarningType.NONE
+      warningType: isUnsafeOptionSelected ? WarningType.Multiple : WarningType.NONE
     });
 }
 
