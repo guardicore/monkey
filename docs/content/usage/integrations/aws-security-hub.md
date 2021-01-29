@@ -10,7 +10,7 @@ The Infection Monkey integration with the [AWS Security Hub](https://docs.aws.am
 
 ![AWS security hub logo](/images/usage/integrations/AWS-Security-Hub-logo.png "AWS security hub logo")
 
-The integration will send all Infection Monkey findings (typically in the low tens) to the AWS Security Hub at the end of a breach simulation.
+The integration will send all Infection Monkey findings (typically 10 to 40) to the AWS Security Hub at the end of a breach simulation.
 
 ## Setup
 
