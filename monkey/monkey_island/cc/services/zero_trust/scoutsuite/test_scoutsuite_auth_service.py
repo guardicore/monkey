@@ -14,6 +14,7 @@ from monkey_island.cc.test_common.fixtures import FixtureEnum
 class MockObject:
     pass
 
+
 @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
 def test_is_aws_keys_setup():
     # Mock default configuration

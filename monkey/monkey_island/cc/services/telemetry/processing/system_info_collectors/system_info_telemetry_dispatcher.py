@@ -6,7 +6,6 @@ from common.common_consts.system_info_collectors_names import (AWS_COLLECTOR, EN
 from .aws import process_aws_telemetry
 from .environment import process_environment_telemetry
 from .hostname import process_hostname_telemetry
-from .scoutsuite import process_scout_suite_telemetry
 from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import check_antivirus_existence
 
 logger = logging.getLogger(__name__)
@@ -15,8 +14,7 @@ SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {
     AWS_COLLECTOR: [process_aws_telemetry],
     ENVIRONMENT_COLLECTOR: [process_environment_telemetry],
     HOSTNAME_COLLECTOR: [process_hostname_telemetry],
-    PROCESS_LIST_COLLECTOR: [check_antivirus_existence],
-    SCOUTSUITE_COLLECTOR: [process_scout_suite_telemetry]
+    PROCESS_LIST_COLLECTOR: [check_antivirus_existence]
 }
 
 

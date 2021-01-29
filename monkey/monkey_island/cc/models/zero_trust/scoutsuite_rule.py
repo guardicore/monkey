@@ -5,9 +5,9 @@ from monkey_island.cc.services.zero_trust.scoutsuite.consts import rule_consts
 
 class ScoutSuiteRule(EmbeddedDocument):
     """
-    This model represents additional information about monkey finding:
-    Events if monkey finding
-    Scoutsuite findings if scoutsuite finding
+    This model represents ScoutSuite security rule check results:
+    how many resources break the security rule
+    security rule description and remediation and etc.
     """
 
     # SCHEMA
