@@ -1,4 +1,5 @@
-from common.utils.code_utils import get_dict_value_by_path
+import dpath.util
+
 from common.utils.exceptions import RulePathCreatorNotFound
 from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_path_building.rule_path_creators_list import \
     RULE_PATH_CREATORS_LIST
@@ -9,7 +10,7 @@ class RuleParser:
     @staticmethod
     def get_rule_data(scoutsuite_data, rule_name):
         rule_path = RuleParser.get_rule_path(rule_name)
-        return get_dict_value_by_path(data=scoutsuite_data, path=rule_path)
+        return dpath.util.get(scoutsuite_data, rule_path)
 
     @staticmethod
     def get_rule_path(rule_name):
