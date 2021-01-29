@@ -157,9 +157,9 @@ class AttackReport extends React.Component {
         }
       }
     }
-    // modify techniques' messages
+    // compiles techniques' message string from markdown to HTML
     for (const tech_id in techniques){
-      techniques[tech_id]['message'] = <div dangerouslySetInnerHTML={{__html: marked(techniques[tech_id]['message'])}} />;
+      techniques[tech_id]['message_html'] = <div dangerouslySetInnerHTML={{__html: marked(techniques[tech_id]['message'])}} />;
     }
 
     return techniques

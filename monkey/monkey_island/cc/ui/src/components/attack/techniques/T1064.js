@@ -13,7 +13,7 @@ class T1064 extends React.Component {
   render() {
     return (
       <div>
-        <div>{this.props.data.message}</div>
+        <div>{this.props.data.message_html}</div>
         <br/>
         {this.props.data.scripts.length !== 0 ?
           <ReactTable
