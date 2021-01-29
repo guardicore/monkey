@@ -27,15 +27,15 @@ The report is split into three main categories:
   - [Network infection map](#network-infection-map)
   - [Scanned servers](#scanned-servers)
   - [Exploits and post-breach actions](#exploits-and-post-breach-actions)
-  - [Stolen Credentials](#stolen-credentials)
+  - [Stolen credentials](#stolen-credentials)
 
 ## Overview
 
-The overview section of the report provides high-level information about the Infection Monkey's execution and the main security findings.
+The overview section of the report provides high-level information about the Infection Monkey's execution and main security findings.
 
 ### High-level information
 
-This section shoows general information about the Infection Monkey's execution, including which machine the infection originated from and how long the breach simulation took.
+This section shows general information about the Infection Monkey's execution, including which machine the infection originated from and how long the breach simulation took.
 
 ![Overview](/images/usage/reports/sec_report_1_overview.png "Overview")
 
@@ -47,7 +47,7 @@ This section shows which credentials were used for brute-forcing.
 
 ### Exploits and targets
 
-This section shows which exploits were attempted in this simulation and which targets the Monkey scanned and tried to exploit.
+This section shows which exploits were attempted in this simulation and which targets the Infection Monkey scanned and tried to exploit.
 
 ![Exploits and Targets](/images/usage/reports/sec_report_3_exploits_ips.png "Exploits and Targets")
 
@@ -59,7 +59,7 @@ This section highlights the most important security threats and issues discovere
 
 ## Recommendations
 
-This section contains recommendations for improving your security, including recommended mitigation steps.
+This section contains recommendations for improving your security, including actionable mitigation steps.
 
 ### Machine-related recommendations relating to specific CVEs
 
