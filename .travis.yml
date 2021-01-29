@@ -24,7 +24,7 @@ install:
 # Python
 - pip freeze
 - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
-- pip install flake8 pytest dlint isort # for next stages
+- pip install flake8 pytest pytest-cov dlint isort # for next stages
 - pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
 - pip install pipdeptree
@@ -75,12 +75,9 @@ script:
 ## Check import order
 - python -m isort ./monkey --settings-file ./ci_scripts/isort.cfg
 
-## Run unit tests
+## Run unit tests and generate coverage data
 - cd monkey  # This is our source dir
-- python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
-
-## Calculate Code Coverage
-- coverage run -m pytest
+- python -m pytest --cov=. # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui

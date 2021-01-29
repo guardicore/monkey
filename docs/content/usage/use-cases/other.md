@@ -43,7 +43,7 @@ exploitations by running consecutive Infection Monkey scans.
 ## Credentials
 
 Every network has its old “skeleton keys” that should have long been discarded. Configure the Monkey with old and stale 
-passwords, but make sure that they were really discarded using the Monkey. To add the old passwords, in the island’s 
+passwords, but make sure that they were really discarded using the Monkey. To add the old passwords, in the island's 
 configuration, go to the “Exploit password list” under “Basic - Credentials” and use the “+” button to add the old 
 passwords to the configuration. For example, here we added a few extra passwords (and a username as well) to the 
 configuration:

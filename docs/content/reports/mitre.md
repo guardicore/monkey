@@ -24,11 +24,11 @@ The MITRE ATT&CK report is centred around the ATT&CK matrix:
 The Monkey rates your network on the attack techniques it attempted. For each technique, you can get
 
 - {{< label danger Red >}}: The Monkey **successfully used** the technique in the simulation. That means your network is vulnerable to this technique being employed.
-- {{< label warning Yellow >}}: The Monkey **tried to use** the technique, but didn’t manage to. That means your network isn’t vulnerable to the way Monkey employs this technique.
+- {{< label warning Yellow >}}: The Monkey **tried to use** the technique, but didn't manage to. That means your network isn't vulnerable to the way Monkey employs this technique.
 - {{< label unused "Dark Gray" >}}: The Monkey **didn't try** the technique. Perhaps it wasn't relevant to this network.
 - {{< label disabled "Light Gray" >}}: The Monkey **didn't try** the technique since it wasn't configured.
 
-Then, you can see exactly HOW the technique was used in this attack, and also what you should do to mitigate it, by clicking on the technique and seeing the details. For example, let’s look at the [**Brute Force**](https://attack.mitre.org/techniques/T1110/) technique that’s a part of employing the [**Credentials Access**](https://attack.mitre.org/tactics/TA0006/) tactic:
+Then, you can see exactly HOW the technique was used in this attack, and also what you should do to mitigate it, by clicking on the technique and seeing the details. For example, let's look at the [**Brute Force**](https://attack.mitre.org/techniques/T1110/) technique that's a part of employing the [**Credentials Access**](https://attack.mitre.org/tactics/TA0006/) tactic:
 
 ![MITRE Report Credentials Access technique](/images/usage/reports/mitre-report-cred-access.png "MITRE Report Credentials Access technique")
 

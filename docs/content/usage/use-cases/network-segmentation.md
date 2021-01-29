@@ -13,7 +13,7 @@ isolate workloads from one another and secure them individually, typically using
 the effectiveness of your segmentation is to ensure that your network segments are properly separated, e,g, your 
 Development is separated from your Production, your applications are separated from one another etc. Use the 
 Infection Monkey to verify that your network segmentation is configured properly. This way you make sure that 
-even if a certain attacker has breached your defenses, it can’t move laterally between segments.
+even if a certain attacker has breached your defenses, it can't move laterally between segments.
 
 [Segmentation is key](https://www.guardicore.com/use-cases/micro-segmentation/) to protecting your network, reducing 
 the attack surface and minimizing the damage of a breach. The Monkey can help you test your segmentation settings with 
