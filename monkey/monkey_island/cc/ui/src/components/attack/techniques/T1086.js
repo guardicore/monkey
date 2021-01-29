@@ -35,7 +35,7 @@ class T1086 extends React.Component {
   render() {
     return (
       <div>
-        <div>{this.props.data.message}</div>
+        <div>{this.props.data.message_html}</div>
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
