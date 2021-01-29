@@ -75,7 +75,7 @@ This section contains the infection map and summary tables on servers the Infect
 
 ### Network infection map
 
-This section shows the network map and a breakdown of how many machines were breached.
+This section shows the network map and a breakdown of how many machines the Infection Monkey breached.
 
 ![Network map](/images/usage/reports/sec_report_7_network_map.png "Network map")
 
