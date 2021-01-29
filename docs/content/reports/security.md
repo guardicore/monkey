@@ -9,7 +9,7 @@ description: "Provides actionable recommendations and insight into an attacker's
 Check out [the documentation for other reports available in the Infection Monkey](../).
 {{% /notice %}}
 
-The Infection Monkey's Security Report provides you with actionable recommendations and insight into an attacker's view of your network. You can download a PDF of an example report here:
+The Infection Monkey's **Security Report** provides you with actionable recommendations and insight into an attacker's view of your network. You can download a PDF of an example report here:
 
 {{%attachments title="Download the PDF" pattern=".*(pdf)"/%}}
 
@@ -35,7 +35,7 @@ The overview section of the report provides high-level information about the Inf
 
 ### High-level information
 
-The report starts with general information about the Infection Monkey's execution, including which machine the infection originated from and how long the breach simulation took.
+This section shoows general information about the Infection Monkey's execution, including which machine the infection originated from and how long the breach simulation took.
 
 ![Overview](/images/usage/reports/sec_report_1_overview.png "Overview")
 
