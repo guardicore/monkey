@@ -13,7 +13,7 @@ The Infection Monkey's **Security Report** provides you with actionable recommen
 
 {{%attachments title="Download the PDF" pattern=".*(pdf)"/%}}
 
-The report is split into three main categories: "Overview", "Recommendations" and "The network from the Monkey's eyes."
+The report is split into three main categories:
 
 - [Overview](#overview)
   - [High-level information](#high-level-information)
