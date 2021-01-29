@@ -62,7 +62,7 @@ function getSubtitle(props) {
 function getBody(props) {
   let body = [<span key={'body'}>{props.body}</span>];
 
-  if (props.warningType != WarningType.NONE) {
+  if (props.warningType !== WarningType.NONE) {
     body.push(getWarning(props.warningType));
   }
 
@@ -74,7 +74,7 @@ function getBody(props) {
 }
 
 function getWarning(warningType) {
-  if (warningType == WarningType.SINGLE) {
+  if (warningType === WarningType.SINGLE) {
     var warning = <span>This option may cause a system to become unstable or
       may change a system's state in undesirable ways. Therefore, this option
       is not recommended for use in production or other sensitive

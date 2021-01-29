@@ -104,7 +104,7 @@ class AdvancedMultiSelect extends React.Component {
       return MasterCheckboxState.NONE;
     }
 
-    if (selectValues.length != this.enumOptions.length) {
+    if (selectValues.length !== this.enumOptions.length) {
       return MasterCheckboxState.MIXED;
     }
 
@@ -144,7 +144,7 @@ class AdvancedMultiSelect extends React.Component {
           title: definitionObj.title,
           content: definitionObj.info,
           link: definitionObj.link,
-          warningType: !(this.isSafe(itemKey)) ? WarningType.SINGLE : WarningType.NONE
+          warningType: this.isSafe(itemKey) ? WarningType.NONE : WarningType.SINGLE
         }
       }
     );
