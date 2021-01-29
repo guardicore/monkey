@@ -13,7 +13,7 @@ The Infection Monkey's Security Report provides you with actionable recommendati
 
 {{%attachments title="Download the PDF" pattern=".*(pdf)"/%}}
 
-The report is split into three main categories: "Overview", "Recommendations" and "The network from the Monkey's eyes".
+The report is split into three main categories: "Overview", "Recommendations" and "The network from the Monkey's eyes."
 
 - [Overview](#overview)
   - [High-level information](#high-level-information)
@@ -31,29 +31,29 @@ The report is split into three main categories: "Overview", "Recommendations" an
 
 ## Overview
 
-The overview section of the report provides high-level information about the Monkey execution and the main security findings that the Monkey has found.
+The overview section of the report provides high-level information about the Infection Monkey's execution and the main security findings.
 
 ### High-level information
 
-The report starts with information about the execution, including how long the simulation took and from which machine the infection started from.
+The report starts with general information about the Infection Monkey's execution, including which machine the infection originated from and how long the breach simulation took.
 
 ![Overview](/images/usage/reports/sec_report_1_overview.png "Overview")
 
 ### Used credentials
 
-The report will show which credentials were used for brute-forcing.
+This section shows which credentials were used for brute-forcing.
 
 ![Used Credentials](/images/usage/reports/sec_report_2_users_passwords.png "Used Credentials")
 
 ### Exploits and targets
 
-The report shows which exploits were attempted in this simulation and which targets the Monkey scanned and tried to exploit.
+This section shows which exploits were attempted in this simulation and which targets the Monkey scanned and tried to exploit.
 
 ![Exploits and Targets](/images/usage/reports/sec_report_3_exploits_ips.png "Exploits and Targets")
 
 ### Security findings
 
-The report highlights the most important security threats and issues discovered during the attack.
+This section highlights the most important security threats and issues discovered during the attack.
 
 ![Threats and issues](/images/usage/reports/sec_report_4_threats_and_issues.png "Threats and issues")
 
@@ -75,24 +75,24 @@ This section contains the infection map and summary tables on servers the Infect
 
 ### Network infection map
 
-This part shows the network map and a breakdown of how many machines were breached.
+This section shows the network map and a breakdown of how many machines were breached.
 
 ![Network map](/images/usage/reports/sec_report_7_network_map.png "Network map")
 
 ### Scanned servers
 
-This part shows the attack surface the Infection Monkey discovered.
+This section shows the attack surface the Infection Monkey discovered.
 
 ![Scanned servers](/images/usage/reports/sec_report_8_network_services.png "Scanned servers")
 
 ### Exploits and post-breach actions
 
-This part shows which exploits and post-beach ctions the Infection Monkey performed in the simulation.
+This section shows which exploits and post-beach ctions the Infection Monkey performed in the simulation.
 
 ![Exploits and PBAs](/images/usage/reports/sec_report_9_exploits_pbas.png "Exploits and PBAs")
 
 ### Stolen Credentials
 
-This part shows which credentials the Infection Monkey was able to steal from breached machines in this simulation.
+This section shows which credentials the Infection Monkey was able to steal from breached machines in this simulation.
 
 ![Stolen creds](/images/usage/reports/sec_report_10_stolen_credentials.png "Stolen creds")
