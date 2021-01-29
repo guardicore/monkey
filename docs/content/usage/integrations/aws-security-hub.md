@@ -14,27 +14,27 @@ The integration will send all Infection Monkey findings (typically in the low te
 
 ## Setup
 
-If the correct permissions have been set on the AWS IAM role of the Monkey Island machine, then the Island will automatically export its findings to the AWS security hub.
+If the correct permissions have been set on the Monkey Island machine's AWS IAM role, it will automatically export its findings to the AWS Security Hub.
 
-### Specific permissions required for security hub
+### Specific permissions required for the AWS Security Hub
 
 - `"securityhub:UpdateFindings"`
 - `"securityhub:BatchImportFindings"`
 
-Note that the integration is specifically between your Monkey Island and the security hub. The Infection Monkey is an free project and there is no centralised infrastructure.
+
+Note that this integration is specifically between your Monkey Island and the AWS Security Hub. The Infection Monkey is a free project, and there is no centralized infrastructure.
 
 ### Enabling finding reception
 
-Before starting the scan, make sure that AWS Security Hub is accepting findings by enabling Infection Monkey
- integration. Find **GuardiCore: AWS Infection Monkey** integration on the list and click on **Accept findings**.
+Before starting the scan, make sure that the AWS Security Hub is accepting findings by enabling the Infection Monkey integration. Find **GuardiCore: AWS Infection Monkey** integration on the list and click on **Accept findings**.
 
 ![Enabled integration](/images/usage/integrations/security-hub-enable-accepting-findings.png "Enabled integration")
 
 ## Integration details
 
-The Infection Monkey reports the following types of issues to the AWS security hub: `Software and Configuration Checks/Vulnerabilities/CVE`.
+The Infection Monkey reports the following types of issues to the AWS Security Hub: `Software and Configuration Checks/Vulnerabilities/CVE`.
 
-Specifically, the Island sends findings for all vulnerabilities it finds along with generic findings on the network (such as segmentation issues). Our normalized severity is 100, while most issues we report range between 1 and 10.
+Specifically, the Island sends findings for all vulnerabilities it finds along with generic findings on the network (such as segmentation issues). Our normalized severity is 100, while most issues we report range between one and 10.
 
 ## Regions
 
@@ -42,9 +42,9 @@ The Infection Monkey is usable on all public AWS instances.
 
 ## Example
 
-After setting up a monkey environment in AWS and attaching the correct IAM roles to the monkey island machine, the report findings were exported to the security hub.
+After setting up an Infection Monkey environment in AWS and attaching the correct IAM roles to your Monkey Island machine, the report findings were exported to the AWS Security Hub.
 
 1. Navigate to `Findings`.
-2. Press on a specific finding to see more details and possible solutions.
+2. Click on a specific finding to see more details and possible solutions.
 
 ![AWS Security hub console example](/images/usage/integrations/security-hub-console-example.png "AWS Security hub console example")
