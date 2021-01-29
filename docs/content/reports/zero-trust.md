@@ -17,7 +17,7 @@ Watch the overview video here:
 
 ## Summary
 
-This diagram provides a quick glance at how your organization scores on each component of the Forrester Zero Trust model with **Failed**, **Verify**, **Passed** and **Unexecuted** verdicts.
+This diagram provides you with a quick glance at how your organization scores on each component of the Forrester Zero Trust model with **Failed**, **Verify**, **Passed** and **Unexecuted** verdicts.
 
 - {{< label danger Failed >}} At least one of the tests related to this component failed. This means that the Infection Monkey detected an unmet Zero Trust requirement.
 - {{< label warning Verify >}} At least one of the tests' results related to this component requires further manual verification.
@@ -40,7 +40,7 @@ This section shows each test's details, including the explicit events and exact 
 
 ## Events
 
-The results are exportable. Click **Export** after clicking on **Events** to view them in a machine-readable format.
+Your results are exportable. Click **Export** after clicking on **Events** to view them in a machine-readable format.
 
 ![Zero Trust Report events](/images/usage/reports/ztreport4.png "Zero Trust Report events")
 
