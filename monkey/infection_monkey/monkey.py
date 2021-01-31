@@ -208,7 +208,8 @@ class InfectionMonkey(object):
                         if self.try_exploiting(machine, exploiter):
                             host_exploited = True
                             VictimHostTelem('T1210', ScanStatus.USED, machine=machine).send()
-                            break
+                            if exploiter.SHOULD_ADD_MACHINE_TO_EXPLOITED_SET:
+                                break  # if adding machine to exploited, won't try other exploits on it
                     if not host_exploited:
                         self._fail_exploitation_machines.add(machine)
                         VictimHostTelem('T1210', ScanStatus.SCANNED, machine=machine).send()
@@ -351,7 +352,8 @@ class InfectionMonkey(object):
         try:
             result = exploiter.exploit_host()
             if result:
-                self.successfully_exploited(machine, exploiter)
+                self.successfully_exploited(machine, exploiter) if exploiter.SHOULD_ADD_MACHINE_TO_EXPLOITED_SET else\
+                    self.successfully_exploited(machine, exploiter, False)
                 return True
             else:
                 LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
@@ -369,13 +371,14 @@ class InfectionMonkey(object):
             exploiter.send_exploit_telemetry(result)
         return False
 
-    def successfully_exploited(self, machine, exploiter):
+    def successfully_exploited(self, machine, exploiter, should_add_machine_to_exploited_set=True):
         """
         Workflow of registering successfully exploited machine
         :param machine: machine that was exploited
         :param exploiter: exploiter that succeeded
         """
-        self._exploited_machines.add(machine)
+        if should_add_machine_to_exploited_set:
+            self._exploited_machines.add(machine)
 
         LOG.info("Successfully propagated to %s using %s",
                  machine, exploiter.__class__.__name__)
