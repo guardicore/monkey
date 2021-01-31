@@ -188,7 +188,9 @@ class ReportService:
                 {'data.credentials': 1, 'monkey_guid': 1}
         ):
             monkey_creds = telem['data']['credentials']
-            creds.append(ReportService._format_creds_for_reporting(telem, monkey_creds))
+            formatted_creds = ReportService._format_creds_for_reporting(telem, monkey_creds)
+            if formatted_creds:
+                creds.extend(formatted_creds)
 
         # stolen creds from exploiters
         for telem in mongo.db.telemetry.find(
@@ -196,7 +198,9 @@ class ReportService:
                 {'data.info.credentials': 1, 'monkey_guid': 1}
         ):
             monkey_creds = telem['data']['info']['credentials']
-            creds.append(ReportService._format_creds_for_reporting(telem, monkey_creds))
+            formatted_creds = ReportService._format_creds_for_reporting(telem, monkey_creds)
+            if formatted_creds:
+                creds.extend(formatted_creds)
 
         logger.info('Stolen creds generated for reporting')
         return creds
@@ -206,7 +210,7 @@ class ReportService:
         creds = []
         PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
         if len(monkey_creds) == 0:
-            continue
+            return
         origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
         for user in monkey_creds:
             for pass_type in PASS_TYPE_DICT:
