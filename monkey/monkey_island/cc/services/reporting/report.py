@@ -180,30 +180,47 @@ class ReportService:
 
     @staticmethod
     def get_stolen_creds():
-        PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
         creds = []
+
+        # stolen creds from system info collectors
         for telem in mongo.db.telemetry.find(
                 {'telem_category': 'system_info', 'data.credentials': {'$exists': True}},
                 {'data.credentials': 1, 'monkey_guid': 1}
         ):
             monkey_creds = telem['data']['credentials']
-            if len(monkey_creds) == 0:
-                continue
-            origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
-            for user in monkey_creds:
-                for pass_type in PASS_TYPE_DICT:
-                    if pass_type not in monkey_creds[user] or not monkey_creds[user][pass_type]:
-                        continue
-                    username = monkey_creds[user]['username'] if 'username' in monkey_creds[user] else user
-                    cred_row = \
-                        {
-                            'username': username,
-                            'type': PASS_TYPE_DICT[pass_type],
-                            'origin': origin
-                        }
-                    if cred_row not in creds:
-                        creds.append(cred_row)
+            creds.append(ReportService._format_creds_for_reporting(telem, monkey_creds))
+
+        # stolen creds from exploiters
+        for telem in mongo.db.telemetry.find(
+                {'telem_category': 'exploit', 'data.info.credentials': {'$exists': True}},
+                {'data.info.credentials': 1, 'monkey_guid': 1}
+        ):
+            monkey_creds = telem['data']['info']['credentials']
+            creds.append(ReportService._format_creds_for_reporting(telem, monkey_creds))
+
         logger.info('Stolen creds generated for reporting')
+        return creds
+
+    @staticmethod
+    def _format_creds_for_reporting(telem, monkey_creds):
+        creds = []
+        PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
+        if len(monkey_creds) == 0:
+            continue
+        origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+        for user in monkey_creds:
+            for pass_type in PASS_TYPE_DICT:
+                if pass_type not in monkey_creds[user] or not monkey_creds[user][pass_type]:
+                    continue
+                username = monkey_creds[user]['username'] if 'username' in monkey_creds[user] else user
+                cred_row = \
+                    {
+                        'username': username,
+                        'type': PASS_TYPE_DICT[pass_type],
+                        'origin': origin
+                    }
+                if cred_row not in creds:
+                    creds.append(cred_row)
         return creds
 
     @staticmethod
