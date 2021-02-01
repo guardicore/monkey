@@ -60,36 +60,37 @@ function getSubtitle(props) {
 }
 
 function getBody(props) {
-  let body = [<span key={'body'}>{props.body}</span>];
-
-  if (props.warningType !== WarningType.NONE) {
-    body.push(getWarning(props.warningType));
-  }
-
   return (
     <Card.Body className={'pane-body'}>
-      {body}
+      <span key={'body'}>{props.body}</span>
+      {props.warningType !== WarningType.NONE && getWarning(props.warningType)}
     </Card.Body>
   )
 }
 
 function getWarning(warningType) {
-  if (warningType === WarningType.SINGLE) {
-    var warning = <span>This option may cause a system to become unstable or
-      may change a system's state in undesirable ways. Therefore, this option
-      is not recommended for use in production or other sensitive
-      environments.</span>;
-  } else {
-    warning = <span>Some options have been selected that may cause a system
-      to become unstable or may change a system's state in undesirable ways.
-      Running Infection Monkey in a production or other sensitive environment
-      with this configuration is not recommended.</span>;
-  }
-
   return (
     <div className={'info-pane-warning'} key={'warning'}>
-      <WarningIcon/>{warning}
+      <WarningIcon/>{warningType === WarningType.SINGLE ? getSingleOptionWarning() : getMultipleOptionsWarning()}
     </div>
+  );
+}
+
+function getSingleOptionWarning() {
+  return (
+    <span>This option may cause a system to become unstable or
+    may change a system's state in undesirable ways. Therefore, this option
+    is not recommended for use in production or other sensitive
+    environments.</span>
+  );
+}
+
+function getMultipleOptionsWarning() {
+  return (
+    <span>Some options have been selected that may cause a system
+    to become unstable or may change a system's state in undesirable ways.
+    Running Infection Monkey in a production or other sensitive environment
+    with this configuration is not recommended.</span>
   );
 }
 

@@ -52,18 +52,13 @@ function ChildCheckbox(props) {
     safe
   } = props;
 
-  let displayLabel = [<span key={'label'} className={'option-text'}>{label}</span>];
-
-  if (!safe) {
-    displayLabel.push(<WarningIcon key="warning-icon"/>)
-  }
-
   return (
     <Form.Group onClick={() => onPaneClick(value)}>
       <Button value={value} variant={'link'} disabled={disabled} onClick={() => onClick(value)}>
         <FontAwesomeIcon icon={checkboxState ? faCheckSquare : faSquare}/>
       </Button>
-      {displayLabel}
+      <span key={'label'} className={'option-text'}>{label}</span>
+      {!safe && <WarningIcon key="warning-icon"/>}
     </Form.Group>
   );
 }
