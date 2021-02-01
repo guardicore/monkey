@@ -452,24 +452,58 @@ class ReportPageComponent extends AuthComponent {
 
   generateCrossSegmentIssue(crossSegmentIssue) {
     let crossSegmentIssueOverview = 'Communication possible from ' + crossSegmentIssue['source_subnet'] + ' to ' + crossSegmentIssue['target_subnet']
-    return <li key={crossSegmentIssueOverview}>
-      {crossSegmentIssueOverview}
-      <CollapsibleWellComponent>
-        <ul>
-          {crossSegmentIssue['issues'].map(x =>
-            x['is_self'] ?
-              <li key={x['hostname']}>
-                {'Machine ' + x['hostname'] + ' has both ips: ' + x['source'] + ' and ' + x['target']}
-              </li>
-              :
-              <li key={x['source'] + x['target']}>
-                {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
-                + ' using the services: ' + Object.keys(x['services']).join(', ')}
-              </li>
-          )}
-        </ul>
-      </CollapsibleWellComponent>
-    </li>;
+
+    return (
+      <li key={crossSegmentIssueOverview}>
+        {crossSegmentIssueOverview}
+        <CollapsibleWellComponent>
+          <ul>
+            {crossSegmentIssue['issues'].map(issue => this.generateCrossSegmentIssueListItem(issue))}
+          </ul>
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateCrossSegmentIssueListItem(issue) {
+    if (issue['is_self']) {
+      return this.generateCrossSegmentSingleHostMessage(issue);
+    }
+
+    return this.generateCrossSegmentMultiHostMessage(issue);
+  }
+
+  generateCrossSegmentSingleHostMessage(issue) {
+    return (
+      <li key={issue['hostname']}>
+        {'Machine ' + issue['hostname'] + ' has both ips: ' + issue['source'] + ' and ' + issue['target']}
+      </li>
+    );
+  }
+
+  generateCrossSegmentMultiHostMessage(issue) {
+    return (
+      <li key={issue['source'] + issue['target']}>
+        {
+          Object.keys(issue['services']).length > 0 ?
+            this.generateCrossSegmentServiceMessage(issue) :
+            this.generateCrossSegmentPingMessage(issue)
+        }
+      </li>
+    );
+  }
+
+  generateCrossSegmentServiceMessage(issue) {
+    return (
+      'IP ' + issue['source'] + ' (' + issue['hostname'] + ') connected to IP ' + issue['target']
+        + ' using the services: ' + Object.keys(issue['services']).join(', ')
+    );
+  }
+
+  generateCrossSegmentPingMessage(issue) {
+    return (
+      `IP ${issue['source']} (${issue['hostname']}) successfully pinged IP ${issue['target']}`
+    );
   }
 
   generateShellshockPathListBadges(paths) {
