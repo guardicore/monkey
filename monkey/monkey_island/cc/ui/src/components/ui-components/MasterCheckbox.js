@@ -15,7 +15,6 @@ const MasterCheckboxState = {
 function MasterCheckbox(props) {
   const {
     title,
-    disabled,
     onClick,
     checkboxState
   } = props;
@@ -30,7 +29,7 @@ function MasterCheckbox(props) {
 
   return (
     <div className={'master-checkbox'}>
-      <Button key={`${title}-button`} variant={'link'} disabled={disabled} onClick={onClick}>
+      <Button key={`${title}-button`} variant={'link'} onClick={onClick}>
         <FontAwesomeIcon icon={newCheckboxIcon}/>
       </Button>
       <span className={'header-title'}>{title}</span>

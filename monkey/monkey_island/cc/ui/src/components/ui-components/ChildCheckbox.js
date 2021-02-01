@@ -14,7 +14,6 @@ function ChildCheckboxContainer(props) {
     id,
     multiple,
     required,
-    disabled,
     autofocus,
     onPaneClick,
     onCheckboxClick,
@@ -26,13 +25,13 @@ function ChildCheckboxContainer(props) {
     <Form.Group
       style={{height: `${getComponentHeight(enumOptions.length)}px`}}
       id={id} multiple={multiple} className='choice-block form-control'
-      required={required} disabled={disabled} autoFocus={autofocus}>
+      required={required} autoFocus={autofocus}>
       {
         enumOptions.map(({value, label}, i) => {
           return (
             <ChildCheckbox key={i} onPaneClick={onPaneClick}
             onClick={onCheckboxClick} value={value}
-            disabled={disabled} label={label} checkboxState={selectedValues.includes(value)}
+            label={label} checkboxState={selectedValues.includes(value)}
             safe={isSafe(value)}/>
           );
         }
@@ -46,7 +45,6 @@ function ChildCheckbox(props) {
     onPaneClick,
     onClick,
     value,
-    disabled,
     label,
     checkboxState,
     safe
@@ -54,7 +52,7 @@ function ChildCheckbox(props) {
 
   return (
     <Form.Group onClick={() => onPaneClick(value)}>
-      <Button value={value} variant={'link'} disabled={disabled} onClick={() => onClick(value)}>
+      <Button value={value} variant={'link'} onClick={() => onClick(value)}>
         <FontAwesomeIcon icon={checkboxState ? faCheckSquare : faSquare}/>
       </Button>
       <span key={'label'} className={'option-text'}>{label}</span>

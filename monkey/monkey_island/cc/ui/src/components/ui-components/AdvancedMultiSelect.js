@@ -11,7 +11,6 @@ import {getFullDefinitionByKey} from './JsonSchemaHelpers';
 function AdvancedMultiSelectHeader(props) {
   const {
     title,
-    disabled,
     onCheckboxClick,
     checkboxState,
     hideReset,
@@ -20,7 +19,7 @@ function AdvancedMultiSelectHeader(props) {
 
   return (
     <Card.Header className="d-flex justify-content-between">
-      <MasterCheckbox title={title} disabled={disabled} onClick={onCheckboxClick} checkboxState={checkboxState}/>
+      <MasterCheckbox title={title} onClick={onCheckboxClick} checkboxState={checkboxState}/>
       <Button className={'reset-safe-defaults'} type={'reset'} variant={'warning'}
         hidden={hideReset} onClick={onResetClick}>
         Reset to safe defaults
@@ -165,8 +164,6 @@ class AdvancedMultiSelect extends React.Component {
       schema,
       id,
       required,
-      disabled,
-      readonly,
       multiple,
       autofocus
     } = this.props;
@@ -174,12 +171,12 @@ class AdvancedMultiSelect extends React.Component {
     return (
       <div className={'advanced-multi-select'}>
         <AdvancedMultiSelectHeader title={schema.title}
-          disabled={disabled} onCheckboxClick={this.onMasterCheckboxClick}
+          onCheckboxClick={this.onMasterCheckboxClick}
           checkboxState={this.state.masterCheckboxState}
           hideReset={this.state.hideReset} onResetClick={this.onResetClick}/>
 
         <ChildCheckboxContainer id={id} multiple={multiple} required={required}
-          disabled={disabled || readonly} autoFocus={autofocus} isSafe={this.isSafe}
+          autoFocus={autofocus} isSafe={this.isSafe}
           onPaneClick={this.setPaneInfo} onCheckboxClick={this.onChildCheckboxClick}
           selectedValues={this.props.value} enumOptions={this.enumOptions}/>
 
