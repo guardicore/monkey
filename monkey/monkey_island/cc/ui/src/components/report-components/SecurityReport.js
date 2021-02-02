@@ -451,7 +451,8 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateCrossSegmentIssue(crossSegmentIssue) {
-    let crossSegmentIssueOverview = 'Communication possible from ' + crossSegmentIssue['source_subnet'] + ' to ' + crossSegmentIssue['target_subnet']
+    let crossSegmentIssueOverview = 'Communication possible from '
+      + `${crossSegmentIssue['source_subnet']} to ${crossSegmentIssue['target_subnet']}`;
 
     return (
       <li key={crossSegmentIssueOverview}>
@@ -476,7 +477,7 @@ class ReportPageComponent extends AuthComponent {
   generateCrossSegmentSingleHostMessage(issue) {
     return (
       <li key={issue['hostname']}>
-        {'Machine ' + issue['hostname'] + ' has both ips: ' + issue['source'] + ' and ' + issue['target']}
+        {`Machine ${issue['hostname']} has both ips: ${issue['source']} and ${issue['target']}`}
       </li>
     );
   }
@@ -495,8 +496,8 @@ class ReportPageComponent extends AuthComponent {
 
   generateCrossSegmentServiceMessage(issue) {
     return (
-      'IP ' + issue['source'] + ' (' + issue['hostname'] + ') connected to IP ' + issue['target']
-        + ' using the services: ' + Object.keys(issue['services']).join(', ')
+      `IP ${issue['source']} (${issue['hostname']}) connected to IP ${issue['target']}`
+        + ` using the services: ${Object.keys(issue['services']).join(', ')}`
     );
   }
 
