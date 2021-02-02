@@ -7,6 +7,7 @@ class VictimHost(object):
         self.domain_name = str(domain_name)
         self.os = {}
         self.services = {}
+        self.icmp = False
         self.monkey_exe = None
         self.default_tunnel = None
         self.default_server = None
@@ -40,7 +41,7 @@ class VictimHost(object):
         victim += "] Services - ["
         for k, v in list(self.services.items()):
             victim += "%s-%s " % (k, v)
-        victim += '] '
+        victim += '] ICMP: %s ' % (self.icmp)
         victim += "target monkey: %s" % self.monkey_exe
         return victim
 
