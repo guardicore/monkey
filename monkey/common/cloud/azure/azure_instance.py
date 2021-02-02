@@ -19,7 +19,7 @@ class AzureInstance(CloudInstance):
     Based on Azure metadata service: https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service
     """
     def is_instance(self):
-        return self.on_azure
+        return self._on_azure
 
     def get_cloud_provider_name(self) -> Environment:
         return Environment.AZURE
@@ -31,13 +31,12 @@ class AzureInstance(CloudInstance):
         self.instance_name = None
         self.instance_id = None
         self.location = None
-        self.on_azure = False
+        self._on_azure = False
 
         try:
             response = requests.get(AZURE_METADATA_SERVICE_URL,
                                     headers={"Metadata": "true"},
                                     timeout=SHORT_REQUEST_TIMEOUT)
-            self.on_azure = True
 
             # If not on cloud, the metadata URL is non-routable and the connection will fail.
             # If on AWS, should get 404 since the metadata service URL is different, so bool(response) will be false.
@@ -48,7 +47,6 @@ class AzureInstance(CloudInstance):
                 logger.warning(f"On Azure, but metadata response not ok: {response.status_code}")
         except requests.RequestException:
             logger.debug("Failed to get response from Azure metadata service: This instance is not on Azure.")
-            self.on_azure = False
 
     def try_parse_response(self, response):
         try:
@@ -56,5 +54,6 @@ class AzureInstance(CloudInstance):
             self.instance_name = response_data["compute"]["name"]
             self.instance_id = response_data["compute"]["vmId"]
             self.location = response_data["compute"]["location"]
+            self._on_azure = True
         except (KeyError, simplejson.errors.JSONDecodeError) as e:
             logger.exception(f"Error while parsing response from Azure metadata service: {e}")
