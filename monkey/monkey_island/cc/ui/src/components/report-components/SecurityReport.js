@@ -458,8 +458,10 @@ class ReportPageComponent extends AuthComponent {
       <li key={crossSegmentIssueOverview}>
         {crossSegmentIssueOverview}
         <CollapsibleWellComponent>
-          <ul>
-            {crossSegmentIssue['issues'].map(issue => this.generateCrossSegmentIssueListItem(issue))}
+          <ul className='cross-segment-issues'>
+            {crossSegmentIssue['issues'].map(
+              issue => this.generateCrossSegmentIssueListItem(issue)
+            )}
           </ul>
         </CollapsibleWellComponent>
       </li>
@@ -485,26 +487,28 @@ class ReportPageComponent extends AuthComponent {
   generateCrossSegmentMultiHostMessage(issue) {
     return (
       <li key={issue['source'] + issue['target']}>
-        {
-          Object.keys(issue['services']).length > 0 ?
-            this.generateCrossSegmentServiceMessage(issue) :
-            this.generateCrossSegmentPingMessage(issue)
-        }
+        IP {issue['source']} ({issue['hostname']}) was able to communicate with
+        IP {issue['target']} using:
+        <ul>
+          {issue['icmp'] && <li key='icmp'>ICMP</li>}
+          {this.generateCrossSegmentServiceListItems(issue)}
+        </ul>
       </li>
     );
   }
 
-  generateCrossSegmentServiceMessage(issue) {
-    return (
-      `IP ${issue['source']} (${issue['hostname']}) connected to IP ${issue['target']}`
-        + ` using the services: ${Object.keys(issue['services']).join(', ')}`
-    );
-  }
+  generateCrossSegmentServiceListItems(issue) {
+    let service_list_items = [];
 
-  generateCrossSegmentPingMessage(issue) {
-    return (
-      `IP ${issue['source']} (${issue['hostname']}) successfully pinged IP ${issue['target']}`
-    );
+    for (const [service, info] of Object.entries(issue['services'])) {
+      service_list_items.push(
+        <li key={service}>
+          <span className='cross-segment-service'>{service}</span> ({info['display_name']})
+        </li>
+      );
+    }
+
+    return service_list_items;
   }
 
   generateShellshockPathListBadges(paths) {
