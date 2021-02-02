@@ -182,28 +182,32 @@ class ReportService:
     def get_stolen_creds():
         creds = []
 
-        # stolen creds from system info collectors
-        for telem in mongo.db.telemetry.find(
-                {'telem_category': 'system_info', 'data.credentials': {'$exists': True}},
-                {'data.credentials': 1, 'monkey_guid': 1}
-        ):
-            monkey_creds = telem['data']['credentials']
-            formatted_creds = ReportService._format_creds_for_reporting(telem, monkey_creds)
-            if formatted_creds:
-                creds.extend(formatted_creds)
+        stolen_system_info_creds = ReportService.get_credentials_from_system_info_telems()
+        creds.extend(stolen_system_info_creds)
 
-        # stolen creds from exploiters
-        for telem in mongo.db.telemetry.find(
-                {'telem_category': 'exploit', 'data.info.credentials': {'$exists': True}},
-                {'data.info.credentials': 1, 'monkey_guid': 1}
-        ):
-            monkey_creds = telem['data']['info']['credentials']
-            formatted_creds = ReportService._format_creds_for_reporting(telem, monkey_creds)
-            if formatted_creds:
-                creds.extend(formatted_creds)
+        stolen_exploit_creds = ReportService.get_credentials_from_exploit_telems()
+        creds.extend(stolen_exploit_creds)
 
         logger.info('Stolen creds generated for reporting')
         return creds
+
+    @staticmethod
+    def get_credentials_from_system_info_telems():
+        formatted_creds = []
+        for telem in mongo.db.telemetry.find({'telem_category': 'system_info', 'data.credentials': {'$exists': True}},
+                                             {'data.credentials': 1, 'monkey_guid': 1}):
+            creds = telem['data']['credentials']
+            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds))
+        return formatted_creds
+
+    @staticmethod
+    def get_credentials_from_exploit_telems():
+        formatted_creds = []
+        for telem in mongo.db.telemetry.find({'telem_category': 'exploit', 'data.info.credentials': {'$exists': True}},
+                                             {'data.info.credentials': 1, 'monkey_guid': 1}):
+            creds = telem['data']['info']['credentials']
+            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds))
+        return formatted_creds
 
     @staticmethod
     def _format_creds_for_reporting(telem, monkey_creds):

@@ -352,15 +352,14 @@ class InfectionMonkey(object):
         try:
             result = exploiter.exploit_host()
             if result:
-                self.successfully_exploited(machine, exploiter) if exploiter.SHOULD_ADD_MACHINE_TO_EXPLOITED_SET else\
-                    self.successfully_exploited(machine, exploiter, False)
+                self.successfully_exploited(machine, exploiter, exploiter.SHOULD_ADD_MACHINE_TO_EXPLOITED_SET)
                 return True
             else:
                 LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
         except ExploitingVulnerableMachineError as exc:
             LOG.error("Exception while attacking %s using %s: %s",
                       machine, exploiter.__class__.__name__, exc)
-            self.successfully_exploited(machine, exploiter)
+            self.successfully_exploited(machine, exploiter, exploiter.SHOULD_ADD_MACHINE_TO_EXPLOITED_SET)
             return True
         except FailedExploitationError as e:
             LOG.info("Failed exploiting %r with exploiter %s, %s", machine, exploiter.__class__.__name__, e)

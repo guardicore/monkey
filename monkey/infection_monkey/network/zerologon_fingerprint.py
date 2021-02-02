@@ -17,14 +17,14 @@ class ZerologonFinger(HostFinger):
     MAX_ATTEMPTS = 2000
     _SCANNED_SERVICE = "NTLM (NT LAN Manager)"
 
-    def get_host_fingerprint(self, host):
+    def get_host_fingerprint(self, host) -> bool:
         """
         Checks if the Windows Server is vulnerable to Zerologon.
         """
 
-        DC_IP, DC_NAME, DC_HANDLE = self.get_dc_details(host)
+        dc_ip, dc_name, dc_handle = self._get_dc_details(host)
 
-        if DC_NAME:  # if it is a Windows DC
+        if dc_name:  # if it is a Windows DC
             # Keep authenticating until successful.
             # Expected average number of attempts needed: 256.
             # Approximate time taken by 2000 attempts: 40 seconds.
@@ -33,7 +33,7 @@ class ZerologonFinger(HostFinger):
             rpc_con = None
             for _ in range(0, self.MAX_ATTEMPTS):
                 try:
-                    rpc_con = self.try_zero_authenticate(DC_HANDLE, DC_IP, DC_NAME)
+                    rpc_con = self.try_zero_authenticate(dc_handle, dc_ip, dc_name)
                     if rpc_con is not None:
                         break
                 except Exception as ex:
@@ -55,27 +55,27 @@ class ZerologonFinger(HostFinger):
             LOG.info('Error encountered; most likely not a Windows Domain Controller.')
             return False
 
-    def get_dc_details(self, host):
-        DC_IP = host.ip_addr
-        DC_NAME = self.get_dc_name(DC_IP)
-        DC_HANDLE = '\\\\' + DC_NAME
-        return DC_IP, DC_NAME, DC_HANDLE
+    def _get_dc_details(self, host) -> (str, str, str):
+        dc_ip = host.ip_addr
+        dc_name = self._get_dc_name(dc_ip)
+        dc_handle = '\\\\' + dc_name
+        return dc_ip, dc_name, dc_handle
 
-    def get_dc_name(self, DC_IP):
+    def _get_dc_name(self, dc_ip: str) -> str:
         """
         Gets NetBIOS name of the Domain Controller (DC).
         """
 
         try:
             nb = nmb.NetBIOS.NetBIOS()
-            name = nb.queryIPForName(ip=DC_IP)  # returns either a list of NetBIOS names or None
-            return name[0] if name else None
+            name = nb.queryIPForName(ip=dc_ip)  # returns either a list of NetBIOS names or None
+            return name[0] if name else ''
         except BaseException as ex:
             LOG.info(f'Exception: {ex}')
 
-    def try_zero_authenticate(self, DC_HANDLE, DC_IP, DC_NAME):
+    def try_zero_authenticate(self, dc_handle: str, dc_ip: str, dc_name: str):
         # Connect to the DC's Netlogon service.
-        binding = epm.hept_map(DC_IP, nrpc.MSRPC_UUID_NRPC,
+        binding = epm.hept_map(dc_ip, nrpc.MSRPC_UUID_NRPC,
                                protocol='ncacn_ip_tcp')
         rpc_con = transport.DCERPCTransportFactory(binding).get_dce_rpc()
         rpc_con.connect()
@@ -90,13 +90,13 @@ class ZerologonFinger(HostFinger):
 
         # Send challenge and authentication request.
         nrpc.hNetrServerReqChallenge(
-            rpc_con, DC_HANDLE + '\x00', DC_NAME + '\x00', plaintext)
+            rpc_con, dc_handle + '\x00', dc_name + '\x00', plaintext)
 
         try:
             server_auth = nrpc.hNetrServerAuthenticate3(
-                rpc_con, DC_HANDLE + '\x00', DC_NAME +
+                rpc_con, dc_handle + '\x00', dc_name +
                 '$\x00', nrpc.NETLOGON_SECURE_CHANNEL_TYPE.ServerSecureChannel,
-                DC_NAME + '\x00', ciphertext, flags
+                dc_name + '\x00', ciphertext, flags
             )
 
             # It worked!
