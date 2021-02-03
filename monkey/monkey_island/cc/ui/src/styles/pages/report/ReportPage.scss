@@ -76,3 +76,12 @@ div.report-wrapper .nav-tabs > .nav-item > a:hover:not(.active),  .nav-tabs > .n
     text-decoration: none;
     background-color: $light-gray;
 }
+
+ul.cross-segment-issues {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+span.cross-segment-service {
+    text-transform: uppercase;
+}

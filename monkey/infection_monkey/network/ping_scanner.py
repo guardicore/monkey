@@ -62,6 +62,9 @@ class PingScanner(HostScanner, HostFinger):
                     host.os['type'] = 'linux'
                 else:  # as far we we know, could also be OSX/BSD but lets handle that when it comes up.
                     host.os['type'] = 'windows'
+
+                host.icmp = True
+
                 return True
             except Exception as exc:
                 LOG.debug("Error parsing ping fingerprint: %s", exc)
