@@ -1,6 +1,6 @@
 ---
 name: "⌛Spike"
-about: Create a spike.
+about: Create a spike to investigate a cool idea.
 title: ''
 labels: Spike
 assignees: ''
@@ -8,6 +8,11 @@ assignees: ''
 ---
 
 # Spike
+
+<!--
+    A spike is a small chunk of work with the objective of gathering information.
+    Fill in the details below to set the parameters and expectations for the spike.
+-->
 
 ## Objective
 _A description of this spike's objective._

@@ -510,6 +510,7 @@ class ReportService:
                             'hostname': monkey['hostname'],
                             'target': target_ip,
                             'services': scan['data']['machine']['services'],
+                            'icmp': scan['data']['machine']['icmp'],
                             'is_self': False
                         })
 
@@ -544,7 +545,7 @@ class ReportService:
     @staticmethod
     def get_cross_segment_issues():
         scans = mongo.db.telemetry.find({'telem_category': 'scan'},
-                                        {'monkey_guid': 1, 'data.machine.ip_addr': 1, 'data.machine.services': 1})
+                                        {'monkey_guid': 1, 'data.machine.ip_addr': 1, 'data.machine.services': 1, 'data.machine.icmp': 1})
 
         cross_segment_issues = []
 

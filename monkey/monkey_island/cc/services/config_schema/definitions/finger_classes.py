@@ -10,6 +10,7 @@ FINGER_CLASSES = {
                 "SMBFinger"
             ],
             "title": "SMBFinger",
+            "safe": True,
             "info": "Figures out if SMB is running and what's the version of it.",
             "attack_techniques": ["T1210"]
         },
@@ -19,6 +20,7 @@ FINGER_CLASSES = {
                 "SSHFinger"
             ],
             "title": "SSHFinger",
+            "safe": True,
             "info": "Figures out if SSH is running.",
             "attack_techniques": ["T1210"]
         },
@@ -28,6 +30,7 @@ FINGER_CLASSES = {
                 "PingScanner"
             ],
             "title": "PingScanner",
+            "safe": True,
             "info": "Tries to identify if host is alive and which OS it's running by ping scan."
         },
         {
@@ -36,6 +39,7 @@ FINGER_CLASSES = {
                 "HTTPFinger"
             ],
             "title": "HTTPFinger",
+            "safe": True,
             "info": "Checks if host has HTTP/HTTPS ports open."
         },
         {
@@ -44,6 +48,7 @@ FINGER_CLASSES = {
                 "MySQLFinger"
             ],
             "title": "MySQLFinger",
+            "safe": True,
             "info": "Checks if MySQL server is running and tries to get it's version.",
             "attack_techniques": ["T1210"]
         },
@@ -53,6 +58,7 @@ FINGER_CLASSES = {
                 "MSSQLFinger"
             ],
             "title": "MSSQLFinger",
+            "safe": True,
             "info": "Checks if Microsoft SQL service is running and tries to gather information about it.",
             "attack_techniques": ["T1210"]
         },
@@ -62,6 +68,7 @@ FINGER_CLASSES = {
                 "ElasticFinger"
             ],
             "title": "ElasticFinger",
+            "safe": True,
             "info": "Checks if ElasticSearch is running and attempts to find it's version.",
             "attack_techniques": ["T1210"]
         },
@@ -71,6 +78,7 @@ FINGER_CLASSES = {
                 "WindowsServerFinger"
             ],
             "title": "WindowsServerFinger",
+            "safe": True,
             "info": "Checks if server is a Windows Server and tests if it is vulnerable to Zerologon.",
             "attack_techniques": ["T1210"]
         }

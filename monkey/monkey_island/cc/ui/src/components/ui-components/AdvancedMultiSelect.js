@@ -1,121 +1,192 @@
-import React, {useState} from 'react';
+import React from 'react';
+import {Button, Card} from 'react-bootstrap';
 
-import {Card, Button, Form} from 'react-bootstrap';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheckSquare} from '@fortawesome/free-solid-svg-icons';
-import {faSquare} from '@fortawesome/free-regular-svg-icons';
 import {cloneDeep} from 'lodash';
 
-import {getComponentHeight} from './utils/HeightCalculator';
-import {resolveObjectPath} from './utils/ObjectPathResolver';
-import InfoPane from './InfoPane';
+import {getDefaultPaneParams, InfoPane, WarningType} from './InfoPane';
+import {MasterCheckbox, MasterCheckboxState} from './MasterCheckbox';
+import ChildCheckboxContainer from './ChildCheckbox';
+import {getFullDefinitionByKey} from './JsonSchemaHelpers';
 
-
-function getSelectValuesAfterClick(valueArray, clickedValue) {
-  if (valueArray.includes(clickedValue)) {
-    return valueArray.filter((e) => {
-      return e !== clickedValue;
-    });
-  } else {
-    valueArray.push(clickedValue);
-    return valueArray;
-  }
-}
-
-function onMasterCheckboxClick(checkboxValue, defaultArray, onChangeFnc) {
-  if (checkboxValue) {
-    onChangeFnc([]);
-  } else {
-    onChangeFnc(defaultArray);
-  }
-}
-
-// Definitions passed to components only contains value and label,
-// custom fields like "info" or "links" must be pulled from registry object using this function
-function getFullDefinitionsFromRegistry(refString, registry) {
-  return getObjectFromRegistryByRef(refString, registry).anyOf;
-}
-
-function getObjectFromRegistryByRef(refString, registry) {
-  let refArray = refString.replace('#', '').split('/');
-  return resolveObjectPath(refArray, registry);
-}
-
-function getFullDefinitionByKey(refString, registry, itemKey) {
-  let fullArray = getFullDefinitionsFromRegistry(refString, registry);
-  return fullArray.filter(e => (e.enum[0] === itemKey))[0];
-}
-
-function setPaneInfo(refString, registry, itemKey, setPaneInfoFnc) {
-  let definitionObj = getFullDefinitionByKey(refString, registry, itemKey);
-  setPaneInfoFnc({title: definitionObj.title, content: definitionObj.info, link: definitionObj.link});
-}
-
-function getDefaultPaneParams(refString, registry) {
-  let configSection = getObjectFromRegistryByRef(refString, registry);
-  return ({title: configSection.title, content: configSection.description});
-}
-
-function AdvancedMultiSelect(props) {
-  const [masterCheckbox, setMasterCheckbox] = useState(true);
+function AdvancedMultiSelectHeader(props) {
   const {
-    schema,
-    id,
-    options,
-    value,
-    required,
-    disabled,
-    readonly,
-    multiple,
-    autofocus,
-    onChange,
-    registry
+    title,
+    onCheckboxClick,
+    checkboxState,
+    hideReset,
+    onResetClick
   } = props;
-  const {enumOptions} = options;
-  const [infoPaneParams, setInfoPaneParams] = useState(getDefaultPaneParams(schema.items.$ref, registry));
-  getDefaultPaneParams(schema.items.$ref, registry);
-  const selectValue = cloneDeep(value);
+
   return (
-    <div className={'advanced-multi-select'}>
-      <Card.Header>
-        <Button key={`${props.schema.title}-button`} value={value}
-                variant={'link'} disabled={disabled}
-                onClick={() => {
-                  onMasterCheckboxClick(masterCheckbox, schema.default, onChange);
-                  setMasterCheckbox(!masterCheckbox);
-                }}
-        >
-          <FontAwesomeIcon icon={masterCheckbox ? faCheckSquare : faSquare}/>
-        </Button>
-        <span className={'header-title'}>{props.schema.title}</span>
-      </Card.Header>
-      <Form.Group
-        style={{height: `${getComponentHeight(enumOptions.length)}px`}}
-        id={id}
-        multiple={multiple}
-        className='choice-block form-control'
-        required={required}
-        disabled={disabled || readonly}
-        autoFocus={autofocus}>
-        {enumOptions.map(({value, label}, i) => {
-          return (
-            <Form.Group
-              key={i}
-              onClick={() => setPaneInfo(schema.items.$ref, registry, value, setInfoPaneParams)}>
-              <Button value={value} variant={'link'} disabled={disabled}
-                      onClick={() => onChange(getSelectValuesAfterClick(selectValue, value))}>
-                <FontAwesomeIcon icon={selectValue.includes(value) ? faCheckSquare : faSquare}/>
-              </Button>
-              <span className={'option-text'}>
-                {label}
-              </span>
-            </Form.Group>
-          );
-        })}
-      </Form.Group>
-      <InfoPane title={infoPaneParams.title} body={infoPaneParams.content} link={infoPaneParams.link}/>
-    </div>
+    <Card.Header className="d-flex justify-content-between">
+      <MasterCheckbox title={title} onClick={onCheckboxClick} checkboxState={checkboxState}/>
+      <Button className={'reset-safe-defaults'} type={'reset'} variant={'warning'}
+        hidden={hideReset} onClick={onResetClick}>
+        Reset to safe defaults
+      </Button>
+    </Card.Header>
   );
+}
+
+class AdvancedMultiSelect extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.defaultValues = props.schema.default;
+    this.infoPaneRefString = props.schema.items.$ref;
+    this.registry = props.registry;
+    this.enumOptions = props.options.enumOptions.sort(this.compareOptions);
+
+    this.state = {
+      masterCheckboxState: this.getMasterCheckboxState(props.value),
+      hideReset: this.getHideResetState(props.value),
+      infoPaneParams: getDefaultPaneParams(
+        this.infoPaneRefString,
+        this.registry,
+        this.isUnsafeOptionSelected(this.props.value)
+      )
+    };
+  }
+
+  // Sort options alphabetically. "Unsafe" options float to the bottom"
+  compareOptions = (a, b) => {
+    // Apparently, you can use additive operators with boolean types. Ultimately,
+    // the ToNumber() abstraction operation is called to convert the booleans to
+    // numbers: https://tc39.es/ecma262/#sec-tonumeric
+    if (this.isSafe(b.value) - this.isSafe(a.value) !== 0) {
+      return this.isSafe(b.value) - this.isSafe(a.value);
+    }
+
+    return a.value.localeCompare(b.value);
+  }
+
+  onMasterCheckboxClick = () => {
+    if (this.state.masterCheckboxState === MasterCheckboxState.ALL) {
+      var newValues = [];
+    } else {
+      newValues = this.enumOptions.map(({value}) => value);
+    }
+
+    this.props.onChange(newValues);
+    this.setMasterCheckboxState(newValues);
+    this.setHideResetState(newValues);
+    this.setPaneInfoToDefault(this.isUnsafeOptionSelected(newValues));
+  }
+
+  onChildCheckboxClick = (value) => {
+    let selectValues = this.getSelectValuesAfterClick(value);
+    this.props.onChange(selectValues);
+
+    this.setMasterCheckboxState(selectValues);
+    this.setHideResetState(selectValues);
+  }
+
+  getSelectValuesAfterClick(clickedValue) {
+    const valueArray = cloneDeep(this.props.value);
+
+    if (valueArray.includes(clickedValue)) {
+      return valueArray.filter(e => e !== clickedValue);
+    } else {
+      valueArray.push(clickedValue);
+      return valueArray;
+    }
+  }
+
+  setMasterCheckboxState(selectValues) {
+    this.setState(() => ({
+      masterCheckboxState: this.getMasterCheckboxState(selectValues)
+    }));
+  }
+
+  getMasterCheckboxState(selectValues) {
+    if (selectValues.length === 0) {
+      return MasterCheckboxState.NONE;
+    }
+
+    if (selectValues.length !== this.enumOptions.length) {
+      return MasterCheckboxState.MIXED;
+    }
+
+    return MasterCheckboxState.ALL;
+  }
+
+  onResetClick = () => {
+    this.props.onChange(this.defaultValues);
+    this.setHideResetState(this.defaultValues);
+    this.setMasterCheckboxState(this.defaultValues);
+    this.setPaneInfoToDefault(this.isUnsafeOptionSelected(this.defaultValues));
+  }
+
+  setHideResetState(selectValues) {
+    this.setState(() => ({
+      hideReset: this.getHideResetState(selectValues)
+    }));
+  }
+
+  getHideResetState(selectValues) {
+    return !(this.isUnsafeOptionSelected(selectValues))
+  }
+
+  isUnsafeOptionSelected(selectValues) {
+    return !(selectValues.every((value) => this.isSafe(value)));
+  }
+
+  isSafe = (itemKey) => {
+    return getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey).safe;
+  }
+
+  setPaneInfo = (itemKey) =>  {
+    let definitionObj = getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey);
+    this.setState(
+      {
+        infoPaneParams: {
+          title: definitionObj.title,
+          content: definitionObj.info,
+          link: definitionObj.link,
+          warningType: this.isSafe(itemKey) ? WarningType.NONE : WarningType.SINGLE
+        }
+      }
+    );
+  }
+
+  setPaneInfoToDefault(isUnsafeOptionSelected) {
+    this.setState(() => ({
+      infoPaneParams: getDefaultPaneParams(
+        this.props.schema.items.$ref,
+        this.props.registry,
+        isUnsafeOptionSelected
+      )
+    }));
+  }
+
+  render() {
+    const {
+      schema,
+      id,
+      required,
+      multiple,
+      autofocus
+    } = this.props;
+
+    return (
+      <div className={'advanced-multi-select'}>
+        <AdvancedMultiSelectHeader title={schema.title}
+          onCheckboxClick={this.onMasterCheckboxClick}
+          checkboxState={this.state.masterCheckboxState}
+          hideReset={this.state.hideReset} onResetClick={this.onResetClick}/>
+
+        <ChildCheckboxContainer id={id} multiple={multiple} required={required}
+          autoFocus={autofocus} isSafe={this.isSafe}
+          onPaneClick={this.setPaneInfo} onCheckboxClick={this.onChildCheckboxClick}
+          selectedValues={this.props.value} enumOptions={this.enumOptions}/>
+
+        <InfoPane title={this.state.infoPaneParams.title}
+          body={this.state.infoPaneParams.content}
+          link={this.state.infoPaneParams.link}
+          warningType={this.state.infoPaneParams.warningType}/>
+      </div>
+    );
+  }
 }
 
 export default AdvancedMultiSelect;

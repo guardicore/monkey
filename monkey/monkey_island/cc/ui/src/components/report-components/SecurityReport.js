@@ -451,25 +451,64 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateCrossSegmentIssue(crossSegmentIssue) {
-    let crossSegmentIssueOverview = 'Communication possible from ' + crossSegmentIssue['source_subnet'] + ' to ' + crossSegmentIssue['target_subnet']
-    return <li key={crossSegmentIssueOverview}>
-      {crossSegmentIssueOverview}
-      <CollapsibleWellComponent>
+    let crossSegmentIssueOverview = 'Communication possible from '
+      + `${crossSegmentIssue['source_subnet']} to ${crossSegmentIssue['target_subnet']}`;
+
+    return (
+      <li key={crossSegmentIssueOverview}>
+        {crossSegmentIssueOverview}
+        <CollapsibleWellComponent>
+          <ul className='cross-segment-issues'>
+            {crossSegmentIssue['issues'].map(
+              issue => this.generateCrossSegmentIssueListItem(issue)
+            )}
+          </ul>
+        </CollapsibleWellComponent>
+      </li>
+    );
+  }
+
+  generateCrossSegmentIssueListItem(issue) {
+    if (issue['is_self']) {
+      return this.generateCrossSegmentSingleHostMessage(issue);
+    }
+
+    return this.generateCrossSegmentMultiHostMessage(issue);
+  }
+
+  generateCrossSegmentSingleHostMessage(issue) {
+    return (
+      <li key={issue['hostname']}>
+        {`Machine ${issue['hostname']} has both ips: ${issue['source']} and ${issue['target']}`}
+      </li>
+    );
+  }
+
+  generateCrossSegmentMultiHostMessage(issue) {
+    return (
+      <li key={issue['source'] + issue['target']}>
+        IP {issue['source']} ({issue['hostname']}) was able to communicate with
+        IP {issue['target']} using:
         <ul>
-          {crossSegmentIssue['issues'].map(x =>
-            x['is_self'] ?
-              <li key={x['hostname']}>
-                {'Machine ' + x['hostname'] + ' has both ips: ' + x['source'] + ' and ' + x['target']}
-              </li>
-              :
-              <li key={x['source'] + x['target']}>
-                {'IP ' + x['source'] + ' (' + x['hostname'] + ') connected to IP ' + x['target']
-                + ' using the services: ' + Object.keys(x['services']).join(', ')}
-              </li>
-          )}
+          {issue['icmp'] && <li key='icmp'>ICMP</li>}
+          {this.generateCrossSegmentServiceListItems(issue)}
         </ul>
-      </CollapsibleWellComponent>
-    </li>;
+      </li>
+    );
+  }
+
+  generateCrossSegmentServiceListItems(issue) {
+    let service_list_items = [];
+
+    for (const [service, info] of Object.entries(issue['services'])) {
+      service_list_items.push(
+        <li key={service}>
+          <span className='cross-segment-service'>{service}</span> ({info['display_name']})
+        </li>
+      );
+    }
+
+    return service_list_items;
   }
 
   generateShellshockPathListBadges(paths) {

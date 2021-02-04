@@ -4,23 +4,34 @@
     "dod": "You should add a new PBA to the Monkey which creates a new user on the machine.",
     "description": "Read [our documentation about adding a new PBA](https://www.guardicore.com/infectionmonkey/docs/development/adding-post-breach-actions/).\n\nAfter that we want you to add the BackdoorUser PBA. The commands that add users for Win and Linux can be retrieved from `get_commands_to_add_user` - make sure you see how to use this function correctly. \n\nNote that the PBA should impact the T1136 MITRE technique as well! \n\n# Manual test to confirm\n\n1. Run the Monkey Island\n2. Make sure your new PBA is enabled by default in the config - for this test, disable network scanning, exploiting, and all other PBAs\n3. Run Monkey\n4. See the PBA in the security report\n5, See the PBA in the MITRE report in the relevant technique\n",
     "summary": "Take a look at the configuration of the island again - see the \"command to run after breach\" option we offer the user? It's implemented exactly like you did right now but each user can do it for themselves. \n\nHowever, what if the PBA needs to do stuff which is more complex than just running a few commands? In that case... ",
+    "hunksOrder": [
+        "monkey/common/data/post_breach_consts.py_0",
+        "monkey/infection_monkey/post_breach/actions/add_user.py_0",
+        "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py_0",
+        "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py_1",
+        "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py_0"
+    ],
     "tests": [],
     "hints": [
         "See `ScheduleJobs` PBA for an example of a PBA which only uses shell commands.",
         "Make sure to add the PBA to the configuration as well.",
         "MITRE ATT&CK technique T1136 articulates that adversaries may create an account to maintain access to victim systems, therefore, the BackdoorUser PBA is relevant to it. Make sure to map this PBA to the MITRE ATT&CK configuration and report."
     ],
+    "play_mode": "all",
     "swimmPatch": {
-        "monkey/common/common_consts/post_breach_consts.py": {
+        "monkey/common/data/post_breach_consts.py": {
             "diffType": "MODIFIED",
-            "fileDiffHeader": "diff --git a/monkey/common/common_consts/post_breach_consts.py b/monkey/common/common_consts/post_breach_consts.py\nindex 25e6679c..5198f006 100644\n--- a/monkey/common/common_consts/post_breach_consts.py\n+++ b/monkey/common/common_consts/post_breach_consts.py",
+            "fileDiffHeader": "diff --git a/monkey/common/data/post_breach_consts.py b/monkey/common/data/post_breach_consts.py\nindex 25e6679c..05980288 100644\n--- a/monkey/common/data/post_breach_consts.py\n+++ b/monkey/common/data/post_breach_consts.py",
             "hunks": [
                 {
-                    "swimmHunkMetadata": {},
+                    "swimmHunkMetadata": {
+                        "hunkComments": []
+                    },
                     "hunkDiffLines": [
-                        "@@ -1,5 +1,4 @@",
+                        "@@ -1,5 +1,5 @@",
                         " POST_BREACH_COMMUNICATE_AS_NEW_USER = \"Communicate as new user\"",
                         "-POST_BREACH_BACKDOOR_USER = \"Backdoor user\"",
+                        "+# Swimmer: PUT THE NEW CONST HERE!",
                         " POST_BREACH_FILE_EXECUTION = \"File execution\"",
                         " POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION = \"Modify shell startup file\"",
                         " POST_BREACH_HIDDEN_FILES = \"Hide files and directories\""
@@ -30,13 +41,15 @@
         },
         "monkey/infection_monkey/post_breach/actions/add_user.py": {
             "diffType": "MODIFIED",
-            "fileDiffHeader": "diff --git a/monkey/infection_monkey/post_breach/actions/add_user.py b/monkey/infection_monkey/post_breach/actions/add_user.py\nindex a8584584..d8476a97 100644\n--- a/monkey/infection_monkey/post_breach/actions/add_user.py\n+++ b/monkey/infection_monkey/post_breach/actions/add_user.py",
+            "fileDiffHeader": "diff --git a/monkey/infection_monkey/post_breach/actions/add_user.py b/monkey/infection_monkey/post_breach/actions/add_user.py\nindex 58be89a1..d8476a97 100644\n--- a/monkey/infection_monkey/post_breach/actions/add_user.py\n+++ b/monkey/infection_monkey/post_breach/actions/add_user.py",
             "hunks": [
                 {
-                    "swimmHunkMetadata": {},
+                    "swimmHunkMetadata": {
+                        "hunkComments": []
+                    },
                     "hunkDiffLines": [
                         "@@ -1,15 +1,7 @@",
-                        "-from common.common_consts.post_breach_consts import POST_BREACH_BACKDOOR_USER",
+                        "-from common.data.post_breach_consts import POST_BREACH_BACKDOOR_USER",
                         "-from infection_monkey.config import WormConfiguration",
                         " from infection_monkey.post_breach.pba import PBA",
                         " from infection_monkey.utils.users import get_commands_to_add_user",
@@ -58,23 +71,28 @@
         },
         "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py": {
             "diffType": "MODIFIED",
-            "fileDiffHeader": "diff --git a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\nindex d9d86e08..0abe6a02 100644\n--- a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\n+++ b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py",
+            "fileDiffHeader": "diff --git a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\nindex 086a1c13..9f23bb8d 100644\n--- a/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py\n+++ b/monkey/monkey_island/cc/services/attack/technique_reports/T1136.py",
             "hunks": [
                 {
-                    "swimmHunkMetadata": {},
+                    "swimmHunkMetadata": {
+                        "hunkComments": []
+                    },
                     "hunkDiffLines": [
-                        "@@ -1,4 +1,4 @@",
-                        "-from common.common_consts.post_breach_consts import POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER",
-                        "+from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER",
-                        " from monkey_island.cc.services.attack.technique_reports.pba_technique import PostBreachTechnique",
-                        " ",
-                        " __author__ = \"shreyamalviya\""
+                        "@@ -1,5 +1,5 @@",
+                        " from common.data.post_breach_consts import (",
+                        "-    POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER)",
+                        "+    POST_BREACH_COMMUNICATE_AS_NEW_USER)",
+                        " from monkey_island.cc.services.attack.technique_reports.pba_technique import \\",
+                        "     PostBreachTechnique",
+                        " "
                     ]
                 },
                 {
-                    "swimmHunkMetadata": {},
+                    "swimmHunkMetadata": {
+                        "hunkComments": []
+                    },
                     "hunkDiffLines": [
-                        "@@ -9,4 +9,4 @@",
+                        "@@ -11,4 +11,4 @@",
                         "     unscanned_msg = \"Monkey didn't try creating a new user on the network's systems.\"",
                         "     scanned_msg = \"Monkey tried creating a new user on the network's systems, but failed.\"",
                         "     used_msg = \"Monkey created a new user on the network's systems.\"",
@@ -89,9 +107,11 @@
             "fileDiffHeader": "diff --git a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\nindex f1fe0f6f..39ebd33a 100644\n--- a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\n+++ b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
             "hunks": [
                 {
-                    "swimmHunkMetadata": {},
+                    "swimmHunkMetadata": {
+                        "hunkComments": []
+                    },
                     "hunkDiffLines": [
-                        "@@ -4,15 +4,7 @@",
+                        "@@ -4,16 +4,7 @@",
                         "                    \"might do after breaching a new machine. Used in ATT&CK and Zero trust reports.\",",
                         "     \"type\": \"string\",",
                         "     \"anyOf\": [",
@@ -102,6 +122,7 @@
                         "-                \"BackdoorUser\"",
                         "-            ],",
                         "-            \"title\": \"Back door user\",",
+                        "-            \"safe\": True,",
                         "-            \"info\": \"Attempts to create a new user on the system and delete it afterwards.\",",
                         "-            \"attack_techniques\": [\"T1136\"]",
                         "-        },",
@@ -113,6 +134,14 @@
             ]
         }
     },
-    "app_version": "0.2.1",
-    "file_version": "1.0.3"
+    "app_version": "0.3.5-1",
+    "file_version": "1.0.4",
+    "hunksOrder": [
+        "monkey/common/data/post_breach_consts.py_0",
+        "monkey/infection_monkey/post_breach/actions/add_user.py_0",
+        "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py_0",
+        "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py_1",
+        "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py_0"
+    ],
+    "last_commit_sha_for_swimm_patch": "9d9e8168fb2c23367b9947273aa1a041687b3e2e"
 }

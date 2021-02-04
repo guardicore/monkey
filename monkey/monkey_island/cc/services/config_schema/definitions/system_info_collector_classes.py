@@ -13,6 +13,7 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
                 ENVIRONMENT_COLLECTOR
             ],
             "title": "Environment collector",
+            "safe": True,
             "info": "Collects information about machine's environment (on premise/GCP/AWS).",
             "attack_techniques": ["T1082"]
         },
@@ -22,6 +23,7 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
                 MIMIKATZ_COLLECTOR
             ],
             "title": "Mimikatz collector",
+            "safe": True,
             "info": "Collects credentials from Windows credential manager.",
             "attack_techniques": ["T1003", "T1005"]
         },
@@ -31,8 +33,8 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
                 AWS_COLLECTOR
             ],
             "title": "AWS collector",
-            "info": "If on AWS, collects more information about the AWS instance currently running on. "
-                    "Also responsible for running ScoutSuite cloud security check.",
+            "safe": True,
+            "info": "If on AWS, collects more information about the AWS instance currently running on.",
             "attack_techniques": ["T1082"]
         },
         {
@@ -41,6 +43,7 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
                 HOSTNAME_COLLECTOR
             ],
             "title": "Hostname collector",
+            "safe": True,
             "info": "Collects machine's hostname.",
             "attack_techniques": ["T1082", "T1016"]
         },
@@ -50,6 +53,7 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
                 PROCESS_LIST_COLLECTOR
             ],
             "title": "Process list collector",
+            "safe": True,
             "info": "Collects a list of running processes on the machine.",
             "attack_techniques": ["T1082"]
         },
@@ -59,6 +63,7 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
                 AZURE_CRED_COLLECTOR
             ],
             "title": "Azure credential collector",
+            "safe": True,
             "info": "Collects password credentials from Azure VMs",
             "attack_techniques": ["T1003", "T1005"]
         }
