@@ -5,6 +5,7 @@ import * as PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faList} from '@fortawesome/free-solid-svg-icons/faList';
 import ScoutSuiteRuleModal from './ScoutSuiteRuleModal';
+import CountBadge from '../../../ui-components/CountBadge';
 
 export default class ScoutSuiteRuleButton extends Component {
   constructor(props) {
@@ -28,7 +29,7 @@ export default class ScoutSuiteRuleButton extends Component {
         <div className="text-center" style={{'display': 'grid'}}>
           <Button variant={'monkey-info'} size={'lg'} onClick={this.toggleModal}>
             <FontAwesomeIcon icon={faList}/> Rules
-            &nbsp;<RuleCountBadge count={this.props.scoutsuite_rules.length}/>
+            &nbsp;<CountBadge count={this.props.scoutsuite_rules.length}/>
           </Button>
         </div>
       </>);
@@ -37,15 +38,6 @@ export default class ScoutSuiteRuleButton extends Component {
   createRuleCountBadge() {
 
   }
-}
-
-function RuleCountBadge(props) {
-  const MAX_RULE_COUNT_TO_SHOW = 9;
-  const TEXT_FOR_LARGE_RULE_COUNT = MAX_RULE_COUNT_TO_SHOW + '+';
-
-  const ruleCountText = props.count > MAX_RULE_COUNT_TO_SHOW ?
-    TEXT_FOR_LARGE_RULE_COUNT : props.count;
-  return <Badge variant={'monkey-info-light'}>{ruleCountText}</Badge>;
 }
 
 ScoutSuiteRuleButton.propTypes = {
