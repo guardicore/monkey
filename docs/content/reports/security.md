@@ -91,7 +91,7 @@ This section shows which exploits and post-beach actions the Infection Monkey pe
 
 ![Exploits and PBAs](/images/usage/reports/sec_report_9_exploits_pbas.png "Exploits and PBAs")
 
-### Stolen Credentials
+### Stolen credentials
 
 This section shows which credentials the Infection Monkey was able to steal from breached machines in this simulation.
 
