@@ -15,6 +15,12 @@ export default class ScoutSuiteDataParser {
     return this.getObjectValueByPath(resourcePath, this.runResults);
   }
 
+  /**
+   * Replaces id's in template path with id's from item path to form actual path to the object
+   * @param itemPath e.g.     s3.buckets.da1e7081077ce92.secure_transport_enabled
+   * @param templatePath e.g. s3.buckets.id
+   * @returns {*} e.g.        s3.buckets.da1e7081077ce92
+   */
   fillTemplatePath(itemPath, templatePath) {
     let itemPathArray = itemPath.split('.');
     let templatePathArray = templatePath.split('.');
@@ -42,6 +48,11 @@ export default class ScoutSuiteDataParser {
     return source;
   }
 
+  /**
+   * Gets next key from the path
+   * @param path e.g. s3.buckets.id
+   * @returns {string|*} s3
+   */
   getNextKeyInPath(path) {
     if (path.indexOf('.') !== -1) {
       return path.substr(0, path.indexOf('.'));

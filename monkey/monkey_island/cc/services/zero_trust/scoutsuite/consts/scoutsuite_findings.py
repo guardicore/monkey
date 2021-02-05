@@ -22,7 +22,7 @@ from .rule_names.vpc_rules import VPCRules
 class ScoutSuiteFinding(ABC):
     @property
     @abstractmethod
-    def rules(self) -> List[str]:
+    def rules(self) -> List[EC2Rules]:
         pass
 
     @property

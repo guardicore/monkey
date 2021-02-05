@@ -5,7 +5,7 @@ EVENTS = [
     {
         "timestamp": "2021-01-20T15:40:28.357Z",
         "title": "Process list",
-        "message": "Monkey on gc-pc-244 scanned the process list",
+        "message": "Monkey on pc-24 scanned the process list",
         "event_type": "monkey_local"
     },
     {

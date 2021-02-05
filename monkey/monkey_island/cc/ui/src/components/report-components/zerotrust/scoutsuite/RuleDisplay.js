@@ -36,6 +36,8 @@ export default function RuleDisplay(props) {
           <p className={'reference-list-title'}>References:</p>
           {references}
         </div>)
+    } else {
+      return null;
     }
   }
 
@@ -56,6 +58,8 @@ export default function RuleDisplay(props) {
           <p className={'reference-list-title'}>Flagged resources (<b>{props.rule.flagged_items}</b>):</p>
           {resources}
         </div>)
+    } else {
+      return null;
     }
   }
 }

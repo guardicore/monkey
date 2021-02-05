@@ -11,7 +11,7 @@ from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFind
 class MonkeyZTFindingService:
 
     @staticmethod
-    def create_or_add_to_existing(test, status, events):
+    def create_or_add_to_existing(test: str, status: str, events: str):
         """
         Create a new finding or add the events to an existing one if it's the same (same meaning same status and same
         test).
