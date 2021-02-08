@@ -1,6 +1,6 @@
 from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutSuiteFindingDetails
 from monkey_island.cc.models.zero_trust.scoutsuite_rule import ScoutSuiteRule
-from ..scoutsuite.consts.scoutsuite_findings import PermissiveFirewallRules, UnencryptedData
+from ..scoutsuite.consts.scoutsuite_finding_maps import PermissiveFirewallRules, UnencryptedData
 
 SCOUTSUITE_FINDINGS = [
     PermissiveFirewallRules,

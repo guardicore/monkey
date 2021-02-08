@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import List
 
 from ...consts.service_consts import FINDINGS, SERVICE_TYPES, SERVICES
@@ -17,6 +18,6 @@ class AbstractRulePathCreator(ABC):
         pass
 
     @classmethod
-    def build_rule_path(cls, rule_name) -> List[str]:
+    def build_rule_path(cls, rule_name: Enum) -> List[str]:
         assert(rule_name in cls.supported_rules)
         return [SERVICES, cls.service_type.value, FINDINGS, rule_name.value]
