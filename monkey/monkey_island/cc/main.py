@@ -21,6 +21,7 @@ json_setup_logging(default_path=Path(MONKEY_ISLAND_ABS_PATH, 'cc', 'island_logge
 logger = logging.getLogger(__name__)
 
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
+from monkey_island.cc.environment.environment_config import DEFAULT_SERVER_CONFIG_PATH
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.bootloader_server import \
@@ -37,8 +38,10 @@ from monkey_island.cc.setup import setup  # noqa: E402
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 
-def main(should_setup_only=False):
+def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_PATH):
     logger.info("Starting bootloader server")
+    env_singleton.initialize_from_file(server_config_filename)
+
     mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True)
 

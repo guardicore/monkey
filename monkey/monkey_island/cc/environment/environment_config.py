@@ -12,6 +12,7 @@ from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.resources.auth.user_store import UserStore
 
 SERVER_CONFIG_FILENAME = "server_config.json"
+DEFAULT_SERVER_CONFIG_PATH = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', SERVER_CONFIG_FILENAME)
 
 
 class EnvironmentConfig:
@@ -20,6 +21,7 @@ class EnvironmentConfig:
                  deployment: str,
                  user_creds: UserCreds,
                  aws=None):
+        self.server_config_path = None
         self.server_config = server_config
         self.deployment = deployment
         self.user_creds = user_creds
@@ -40,22 +42,24 @@ class EnvironmentConfig:
                                  aws=aws)
 
     def save_to_file(self):
-        file_path = EnvironmentConfig.get_config_file_path()
-        with open(file_path, 'w') as f:
+        with open(self.server_config_path, 'w') as f:
             f.write(json.dumps(self.to_dict(), indent=2))
 
     @staticmethod
-    def get_from_file() -> EnvironmentConfig:
-        file_path = EnvironmentConfig.get_config_file_path()
+    def get_from_file(file_path=DEFAULT_SERVER_CONFIG_PATH) -> EnvironmentConfig:
+        file_path = os.path.expanduser(file_path)
+
         if not Path(file_path).is_file():
             server_config_generator.create_default_config_file(file_path)
         with open(file_path, 'r') as f:
             config_content = f.read()
-        return EnvironmentConfig.get_from_json(config_content)
 
-    @staticmethod
-    def get_config_file_path() -> str:
-        return os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', SERVER_CONFIG_FILENAME)
+        environment_config = EnvironmentConfig.get_from_json(config_content)
+        # TODO: Populating this property is not ideal. Revisit this when you
+        #       make the logger config file configurable at runtime.
+        environment_config.server_config_path = file_path
+
+        return environment_config
 
     def to_dict(self) -> Dict:
         config_dict = {'server_config': self.server_config,
