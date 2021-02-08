@@ -3,7 +3,7 @@ import logging
 import monkey_island.cc.resources.auth.user_store as user_store
 from monkey_island.cc.environment import (EnvironmentConfig, aws, password,
                                           standard, testing)
-from monkey_island.cc.environment.environment_config import DEFAULT_SERVER_CONFIG_PATH
+from monkey_island.cc.consts import DEFAULT_SERVER_CONFIG_PATH
 
 __author__ = 'itay.mizeretz'
 
