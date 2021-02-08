@@ -6,13 +6,11 @@ from pathlib import Path
 from typing import Dict, List
 
 import monkey_island.cc.environment.server_config_generator as server_config_generator
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.consts import DEFAULT_SERVER_CONFIG_PATH
 from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.resources.auth.user_store import UserStore
 
-SERVER_CONFIG_FILENAME = "server_config.json"
-DEFAULT_SERVER_CONFIG_PATH = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', SERVER_CONFIG_FILENAME)
 
 
 class EnvironmentConfig:

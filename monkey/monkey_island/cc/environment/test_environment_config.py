@@ -1,13 +1,12 @@
 import json
 import os
-import platform
 from typing import Dict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 import monkey_island.cc.testing.environment.server_config_mocks as config_mocks
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.environment.environment_config import EnvironmentConfig, DEFAULT_SERVER_CONFIG_PATH
+from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
 
 
@@ -53,13 +52,6 @@ class TestEnvironmentConfig(TestCase):
         os.remove(file_path)
 
         self.assertDictEqual(config, json.loads(content_from_file))
-
-    def test_default_server_config_file_path(self):
-        if platform.system() == "Windows":
-            server_file_path = MONKEY_ISLAND_ABS_PATH + r"\cc\server_config.json"
-        else:
-            server_file_path = MONKEY_ISLAND_ABS_PATH + "/cc/server_config.json"
-        self.assertEqual(DEFAULT_SERVER_CONFIG_PATH, server_file_path)
 
     def test_get_from_dict(self):
         config_dict = config_mocks.CONFIG_WITH_CREDENTIALS
