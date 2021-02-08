@@ -119,3 +119,15 @@ def test_get_users():
     assert users[0].id == 1
     assert users[0].username == user
     assert users[0].secret == password_hash
+
+def test_generate_default_file(config_file):
+    environment_config = EnvironmentConfig.get_from_file(config_file)
+
+    assert os.path.isfile(config_file)
+
+    assert environment_config.server_config == "password"
+    assert environment_config.deployment == "standard"
+    assert environment_config.user_creds.username == ""
+    assert environment_config.user_creds.password_hash == ""
+    assert environment_config.aws is None
+    environment_config.server_config_path == config_file
