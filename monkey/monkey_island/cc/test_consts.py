@@ -1,5 +1,5 @@
 import platform
-import monkey_island.cc.consts as consts
+import monkey_island.cc.server_utils.consts as consts
 
 
 def test_default_server_config_file_path():
