@@ -4,7 +4,8 @@ Define a Document Schema for Zero Trust findings.
 """
 
 from __future__ import annotations
-from typing import Union
+
+import abc
 
 from mongoengine import Document, GenericLazyReferenceField, StringField
 
@@ -12,7 +13,6 @@ import common.common_consts.zero_trust_consts as zero_trust_consts
 # Dummy import for mongoengine.
 # noinspection PyUnresolvedReferences
 from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
-from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutSuiteFindingDetails
 
 
 class Finding(Document):
@@ -33,39 +33,21 @@ class Finding(Document):
         *   The logic section defines complex questions we can ask about a single document which are asked multiple
             times, or complex action we will perform - somewhat like an API.
     """
-    # SCHEMA
-    test = StringField(required=True, choices=zero_trust_consts.TESTS)
-    status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)
-    finding_type = StringField(required=True, choices=zero_trust_consts.FINDING_TYPES)
-
-    # Details are in a separate document in order to discourage pulling them when not needed
-    # due to performance.
-    details = GenericLazyReferenceField(choices=[MonkeyFindingDetails, ScoutSuiteFindingDetails], required=True)
     # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
     meta = {'allow_inheritance': True}
 
-    # LOGIC
-    def get_test_explanation(self):
-        return zero_trust_consts.TESTS_MAP[self.test][zero_trust_consts.TEST_EXPLANATION_KEY]
+    # SCHEMA
+    test = StringField(required=True, choices=zero_trust_consts.TESTS)
+    status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)
 
-    def get_pillars(self):
-        return zero_trust_consts.TESTS_MAP[self.test][zero_trust_consts.PILLARS_KEY]
+    # Details are in a separate document in order to discourage pulling them when not needed
+    # due to performance.
+    details = GenericLazyReferenceField(required=True)
 
     # Creation methods
     @staticmethod
+    @abc.abstractmethod
     def save_finding(test: str,
                      status: str,
-                     detail_ref: Union[MonkeyFindingDetails, ScoutSuiteFindingDetails]) -> Finding:
-        finding = Finding(test=test,
-                          status=status,
-                          details=detail_ref,
-                          finding_type=Finding._get_finding_type_by_details(detail_ref))
-        finding.save()
-        return finding
-
-    @staticmethod
-    def _get_finding_type_by_details(details: Union[MonkeyFindingDetails, ScoutSuiteFindingDetails]) -> str:
-        if type(details) == MonkeyFindingDetails:
-            return zero_trust_consts.MONKEY_FINDING
-        else:
-            return zero_trust_consts.SCOUTSUITE_FINDING
+                     detail_ref) -> Finding:
+        pass

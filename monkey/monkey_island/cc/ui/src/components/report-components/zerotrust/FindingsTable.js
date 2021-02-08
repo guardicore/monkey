@@ -36,10 +36,10 @@ export class FindingsTable extends Component {
   ];
 
   getFindingDetails(finding) {
-    if (finding.finding_type === 'scoutsuite_finding') {
+    if ('scoutsuite_rules' in finding.details) {
       return <ScoutSuiteRuleButton scoutsuite_rules={finding.details.scoutsuite_rules}
                                    scoutsuite_data={this.props.scoutsuite_data}/>;
-    } else if (finding.finding_type === 'monkey_finding') {
+    } else {
       return <EventsButton finding_id={finding.finding_id}
                            latest_events={finding.details.latest_events}
                            oldest_events={finding.details.oldest_events}

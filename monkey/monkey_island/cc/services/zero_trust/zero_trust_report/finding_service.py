@@ -6,6 +6,8 @@ from bson import SON
 from common.common_consts import zero_trust_consts
 from common.utils.exceptions import UnknownFindingError
 from monkey_island.cc.models.zero_trust.finding import Finding
+from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
+from monkey_island.cc.models.zero_trust.scoutsuite_finding import ScoutSuiteFinding
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_details_service import MonkeyZTDetailsService
 
 
@@ -16,15 +18,18 @@ class EnrichedFinding:
     test_key: str
     pillars: List[str]
     status: str
-    finding_type: str
     details: Union[dict, None]
 
 
 class FindingService:
 
     @staticmethod
-    def get_all_findings() -> List[EnrichedFinding]:
-        findings = list(Finding.objects)
+    def get_all_findings_from_db() -> List[Finding]:
+        return list(Finding.objects)
+
+    @staticmethod
+    def get_all_findings_for_ui() -> List[EnrichedFinding]:
+        findings = FindingService.get_all_findings_from_db()
         for i in range(len(findings)):
             details = FindingService._get_finding_details(findings[i])
             findings[i] = findings[i].to_mongo()
@@ -41,16 +46,15 @@ class FindingService:
             test_key=finding['test'],
             pillars=test_info[zero_trust_consts.PILLARS_KEY],
             status=finding['status'],
-            finding_type=finding['finding_type'],
             details=None
         )
         return enriched_finding
 
     @staticmethod
     def _get_finding_details(finding: Finding) -> Union[dict, SON]:
-        if finding.finding_type == zero_trust_consts.MONKEY_FINDING:
+        if type(finding) == MonkeyFinding:
             return MonkeyZTDetailsService.fetch_details_for_display(finding.details.id)
-        elif finding.finding_type == zero_trust_consts.SCOUTSUITE_FINDING:
+        elif type(finding) == ScoutSuiteFinding:
             return finding.details.fetch().to_mongo()
         else:
-            raise UnknownFindingError(f"Unknown finding type {finding.finding_type}")
+            raise UnknownFindingError(f"Unknown finding type {str(type(finding))}")

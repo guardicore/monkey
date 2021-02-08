@@ -1,5 +1,5 @@
 import common.common_consts.zero_trust_consts as zero_trust_consts
-from monkey_island.cc.models.zero_trust.finding import Finding
+from monkey_island.cc.services.zero_trust.zero_trust_report.finding_service import FindingService
 
 
 class PillarService:
@@ -13,7 +13,7 @@ class PillarService:
     @staticmethod
     def _get_pillars_grades():
         pillars_grades = []
-        all_findings = Finding.objects()
+        all_findings = FindingService.get_all_findings_from_db()
         for pillar in zero_trust_consts.PILLARS:
             pillars_grades.append(PillarService.__get_pillar_grade(pillar, all_findings))
         return pillars_grades
@@ -67,7 +67,7 @@ class PillarService:
 
     @staticmethod
     def __get_status_of_single_pillar(pillar):
-        all_findings = Finding.objects()
+        all_findings = FindingService.get_all_findings_from_db()
         grade = PillarService.__get_pillar_grade(pillar, all_findings)
         for status in zero_trust_consts.ORDERED_TEST_STATUSES:
             if grade[status] > 0:

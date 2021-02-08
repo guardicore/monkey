@@ -24,7 +24,7 @@ class ZeroTrustReport(flask_restful.Resource):
         elif report_data == REPORT_DATA_PRINCIPLES_STATUS:
             return jsonify(PrincipleService.get_principles_status())
         elif report_data == REPORT_DATA_FINDINGS:
-            return jsonify(FindingService.get_all_findings())
+            return jsonify(FindingService.get_all_findings_for_ui())
         elif report_data == REPORT_DATA_SCOUTSUITE:
             # Raw ScoutSuite data is already solved as json, no need to jsonify
             return Response(ScoutSuiteRawDataService.get_scoutsuite_data_json(),

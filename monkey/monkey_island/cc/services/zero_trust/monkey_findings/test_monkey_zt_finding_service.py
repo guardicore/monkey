@@ -5,6 +5,7 @@ import pytest
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
+from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import MonkeyZTFindingService
 from monkey_island.cc.test_common.fixtures import FixtureEnum
 
@@ -67,4 +68,4 @@ class TestMonkeyZTFindingService:
         # Create new finding
         MonkeyZTFindingService.create_or_add_to_existing(test=TESTS[1], status=STATUS[1], events=[EVENTS[1]])
         # Assert there was a new finding created, because test and status is different
-        assert len(Finding.objects()) == 2
+        assert len(MonkeyFinding.objects()) == 2

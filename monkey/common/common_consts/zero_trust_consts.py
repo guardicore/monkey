@@ -22,10 +22,6 @@ STATUS_FAILED = "Failed"
 # Don't change order! The statuses are ordered by importance/severity.
 ORDERED_TEST_STATUSES = [STATUS_FAILED, STATUS_VERIFY, STATUS_PASSED, STATUS_UNEXECUTED]
 
-MONKEY_FINDING = "monkey_finding"
-SCOUTSUITE_FINDING = "scoutsuite_finding"
-FINDING_TYPES = [MONKEY_FINDING, SCOUTSUITE_FINDING]
-
 TEST_DATA_ENDPOINT_ELASTIC = "unencrypted_data_endpoint_elastic"
 TEST_DATA_ENDPOINT_HTTP = "unencrypted_data_endpoint_http"
 TEST_MACHINE_EXPLOITED = "machine_exploited"
