@@ -1,0 +1,44 @@
+version: 1
+
+AppDir:
+  path: '../monkey-appdir'
+
+  app_info:
+    id: org.guardicore.monkey-island
+    name: Monkey Island
+    icon: monkey-icon
+    version: 1.10.0
+    exec: bin/bash
+    exec_args: "$APPDIR/usr/src/monkey_island/linux/run.sh $HOME/.monkey_island/db"
+
+
+  apt:
+    arch: amd64
+    sources:
+      - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ bionic main restricted
+        key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3B4FE6ACC0B21F32
+      - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ bionic universe
+      - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ bionic-security main restricted
+      - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ bionic-security universe
+      - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ bionic-updates main restricted
+      - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ bionic-updates universe
+
+    include:
+      - libc6
+      - bash
+      - curl
+      - libcurl4
+      - coreutils
+      - python3.7
+      - nodejs
+
+  runtime:
+    env:
+      PATH: '${APPDIR}/usr/bin:${PATH}'
+      PYTHONHOME: '${APPDIR}/usr'
+      PYTHONPATH: '${APPDIR}/usr/lib/python3.7/site-packages'
+
+AppImage:
+  update-information: None
+  sign-key: None
+  arch: x86_64

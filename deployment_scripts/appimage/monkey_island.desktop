@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.10
+Type=Application
+Name=Monkey Island
+Comment=FILL ME IN
+TryExec=fooview
+Exec=AppRun
+Icon=monkey_island.svg
+Terminal=true;
+Category=Security;

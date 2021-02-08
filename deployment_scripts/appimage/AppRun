@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd ./usr/src
+
+bash monkey_island/linux/run.sh $HOME/.monkey_island/db
