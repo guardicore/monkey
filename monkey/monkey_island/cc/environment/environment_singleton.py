@@ -41,7 +41,7 @@ def set_to_standard():
 
 def initialize_from_file(file_path):
     try:
-        config = EnvironmentConfig.get_from_file(file_path)
+        config = EnvironmentConfig(file_path)
 
         __env_type = config.server_config
         set_env(__env_type, config)
