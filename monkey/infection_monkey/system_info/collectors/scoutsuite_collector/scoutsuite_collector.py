@@ -1,7 +1,8 @@
 import logging
+from typing import Union
 
 import infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite_api as scoutsuite_api
-from common.cloud.scoutsuite.ScoutSuite.providers.aws.provider import AWSProvider
+from common.cloud.scoutsuite.ScoutSuite.providers.base.provider import BaseProvider
 from common.cloud.scoutsuite_consts import CloudProviders
 from common.utils.exceptions import ScoutSuiteScanError
 from infection_monkey.config import WormConfiguration
@@ -20,12 +21,12 @@ def scan_cloud_security(cloud_type: CloudProviders):
         logger.error(f"ScoutSuite didn't scan {cloud_type.value} security because: {e}")
 
 
-def run_scoutsuite(cloud_type: str):
+def run_scoutsuite(cloud_type: str) -> Union[BaseProvider, dict]:
     return scoutsuite_api.run(provider=cloud_type,
                               aws_access_key_id=WormConfiguration.aws_access_key_id,
                               aws_secret_access_key=WormConfiguration.aws_secret_access_key,
                               aws_session_token=WormConfiguration.aws_session_token)
 
 
-def send_results(results: AWSProvider):
+def send_results(results: BaseProvider):
     ScoutSuiteTelem(results).send()

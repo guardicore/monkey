@@ -2,6 +2,7 @@ from typing import List
 
 from bson import ObjectId
 
+from common.utils.exceptions import FindingWithoutDetailsError
 from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
 
 
@@ -19,14 +20,13 @@ class MonkeyZTDetailsService:
                                     'latest_events': {'$slice': ['$events', int(-1 * MAX_EVENT_FETCH_CNT / 2)]},
                                     'event_count': {'$size': '$events'}}},
                     {'$unset': ['events']}]
-        details = list(MonkeyFindingDetails.objects.aggregate(*pipeline))
+        details = list(MonkeyFindingDetails.objects.aggregate(*pipeline))[0]
         if details:
-            details = details[0]
             details['latest_events'] = MonkeyZTDetailsService._remove_redundant_events(details['event_count'],
                                                                                        details['latest_events'])
             return details
         else:
-            return {}
+            raise FindingWithoutDetailsError(f"Finding {finding_id} had no details.")
 
     @staticmethod
     def _remove_redundant_events(fetched_event_count: int, latest_events: List[object]) -> List[object]:

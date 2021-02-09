@@ -44,3 +44,7 @@ class UnknownFindingError(Exception):
 
 class VersionServerConnectionError(Exception):
     """ Raise to indicate that connection to version update server failed """
+
+
+class FindingWithoutDetailsError(Exception):
+    """ Raise when pulling events for a finding, but get none """
