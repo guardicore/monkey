@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from monkey_island.cc.consts import DEFAULT_STANDARD_SERVER_CONFIG
+from monkey_island.cc.server_utils.consts import DEFAULT_STANDARD_SERVER_CONFIG
 
 
 def create_default_config_file(path):
