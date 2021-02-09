@@ -214,7 +214,7 @@ class ReportService:
         creds = []
         PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
         if len(monkey_creds) == 0:
-            return
+            return []
         origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
         for user in monkey_creds:
             for pass_type in PASS_TYPE_DICT:
