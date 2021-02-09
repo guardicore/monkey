@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
-from ...consts.service_consts import FINDINGS, SERVICE_TYPES, SERVICES
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.service_consts import FINDINGS, SERVICES, SERVICE_TYPES
 
 
 class AbstractRulePathCreator(ABC):

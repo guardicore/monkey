@@ -2,21 +2,21 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from common.common_consts import zero_trust_consts
-from .rule_names.cloudformation_rules import CloudformationRules
-from .rule_names.cloudtrail_rules import CloudTrailRules
-from .rule_names.cloudwatch_rules import CloudWatchRules
-from .rule_names.config_rules import ConfigRules
-from .rule_names.ec2_rules import EC2Rules
-from .rule_names.elb_rules import ELBRules
-from .rule_names.elbv2_rules import ELBv2Rules
-from .rule_names.iam_rules import IAMRules
-from .rule_names.rds_rules import RDSRules
-from .rule_names.redshift_rules import RedshiftRules
-from .rule_names.s3_rules import S3Rules
-from .rule_names.ses_rules import SESRules
-from .rule_names.sns_rules import SNSRules
-from .rule_names.sqs_rules import SQSRules
-from .rule_names.vpc_rules import VPCRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudformation_rules import CloudformationRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudtrail_rules import CloudTrailRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudwatch_rules import CloudWatchRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.config_rules import ConfigRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.ec2_rules import EC2Rules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.elb_rules import ELBRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.elbv2_rules import ELBv2Rules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.iam_rules import IAMRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rds_rules import RDSRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.redshift_rules import RedshiftRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.s3_rules import S3Rules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.ses_rules import SESRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.sns_rules import SNSRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.sqs_rules import SQSRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.vpc_rules import VPCRules
 
 
 # Class which links ZT tests and rules to ScoutSuite finding

@@ -2,10 +2,10 @@ import json
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.zero_trust.scoutsuite_data_json import ScoutSuiteRawDataJson
-from ...zero_trust.scoutsuite.consts.scoutsuite_findings_list import SCOUTSUITE_FINDINGS
-from ...zero_trust.scoutsuite.data_parsing.rule_parser import RuleParser
-from ...zero_trust.scoutsuite.scoutsuite_zt_finding_service import ScoutSuiteZTFindingService
-from ...zero_trust.scoutsuite.scoutsuite_rule_service import ScoutSuiteRuleService
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.scoutsuite_findings_list import SCOUTSUITE_FINDINGS
+from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_parser import RuleParser
+from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_rule_service import ScoutSuiteRuleService
+from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_zt_finding_service import ScoutSuiteZTFindingService
 
 
 def process_scoutsuite_telemetry(telemetry_json):
