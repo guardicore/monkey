@@ -14,7 +14,7 @@ def add_monkey_dir_to_sys_path():
 
 add_monkey_dir_to_sys_path()
 
-from monkey_island.cc.environment.environment_config import EnvironmentConfig  # noqa: E402 isort:skip
+from monkey_island.cc.consts import DEFAULT_SERVER_CONFIG_PATH  # noqa: E402 isort:skip
 
 SERVER_CONFIG = "server_config"
 BACKUP_CONFIG_FILENAME = "./server_config.backup"
@@ -26,7 +26,7 @@ logger.setLevel(logging.DEBUG)
 
 def main():
     args = parse_args()
-    file_path = EnvironmentConfig.get_config_file_path()
+    file_path = DEFAULT_SERVER_CONFIG_PATH
 
     if args.server_config == "restore":
         restore_previous_config(file_path)
