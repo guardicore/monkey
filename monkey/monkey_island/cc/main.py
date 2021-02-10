@@ -21,7 +21,7 @@ json_setup_logging(default_path=Path(MONKEY_ISLAND_ABS_PATH, 'cc', 'island_logge
 logger = logging.getLogger(__name__)
 
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
-from monkey_island.cc.consts import DEFAULT_SERVER_CONFIG_PATH
+from monkey_island.cc.consts import DEFAULT_SERVER_CONFIG_PATH  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.bootloader_server import \

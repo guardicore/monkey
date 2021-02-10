@@ -1,4 +1,3 @@
-import json
 import os
 import tempfile
 from typing import Dict
@@ -6,7 +5,6 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
-import monkey_island.cc.testing.environment.server_config_mocks as config_mocks
 from common.utils.exceptions import (AlreadyRegisteredError,
                                      CredentialsNotRequiredError,
                                      InvalidRegistrationCredentialsError,
@@ -22,11 +20,13 @@ PARTIAL_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_partial_cr
 STANDARD_WITH_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR,
                                          "server_config_standard_with_credentials.json")
 STANDARD_ENV = os.path.join(TEST_RESOURCES_DIR,
-                                   "server_config_standard_env.json")
+                            "server_config_standard_env.json")
+
 
 def get_tmp_file():
     with tempfile.NamedTemporaryFile(delete=False) as f:
         return f.name
+
 
 class StubEnvironmentConfig(EnvironmentConfig):
     def __init__(self, server_config, deployment, user_creds):

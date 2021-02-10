@@ -39,6 +39,7 @@ def set_to_standard():
         env.save_config()
         user_store.UserStore.set_users(env.get_auth_users())
 
+
 def initialize_from_file(file_path):
     try:
         config = EnvironmentConfig(file_path)
@@ -50,5 +51,6 @@ def initialize_from_file(file_path):
     except Exception:
         logger.error('Failed initializing environment', exc_info=True)
         raise
+
 
 initialize_from_file(DEFAULT_SERVER_CONFIG_PATH)
