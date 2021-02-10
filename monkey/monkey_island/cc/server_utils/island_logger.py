@@ -2,11 +2,15 @@ import json
 import logging.config
 import os
 
+from monkey_island.cc.consts import DEFAULT_LOGGING_CONFIG_PATH
+
 __author__ = "Maor.Rayzin"
 
 
 def json_setup_logging(
-    default_path="logging.json", default_level=logging.INFO, env_key="LOG_CFG"
+    default_path=DEFAULT_LOGGING_CONFIG_PATH,
+    default_level=logging.INFO,
+    env_key="LOG_CFG",
 ):
     """
     Setup the logging configuration
@@ -15,7 +19,7 @@ def json_setup_logging(
     :param env_key: SYS ENV key to use for external configuration file path
     :return:
     """
-    path = default_path
+    path = os.path.expanduser(default_path)
     value = os.getenv(env_key, None)
 
     if value:
