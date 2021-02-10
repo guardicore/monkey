@@ -2,8 +2,8 @@ from gevent import monkey as gevent_monkey
 
 gevent_monkey.patch_all()
 
-from monkey_island.cc.main import main
-from monkey_island.cc.environment.environment_config import DEFAULT_SERVER_CONFIG_PATH
+from monkey_island.cc.main import main  # noqa: E402
+from monkey_island.cc.environment.environment_config import DEFAULT_SERVER_CONFIG_PATH  # noqa: E402
 
 
 def parse_cli_args():
