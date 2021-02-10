@@ -4,7 +4,6 @@ gevent_monkey.patch_all()
 
 import json  # noqa: E402
 
-from monkey_island.cc.main import main  # noqa: E402
 from monkey_island.cc.consts import (
     DEFAULT_SERVER_CONFIG_PATH,
     DEFAULT_LOGGER_CONFIG_PATH,
@@ -55,6 +54,6 @@ if "__main__" == __name__:
         print(f"Error loading logging config: {ex}")
         exit(1)
 
-    from monkey_island.cc.main import main
+    from monkey_island.cc.main import main  # noqa: E402
 
     main(is_setup_only, server_config)
