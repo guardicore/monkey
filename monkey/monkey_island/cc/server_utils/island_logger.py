@@ -1,6 +1,7 @@
 import json
 import logging.config
 import os
+from typing import Dict
 
 from monkey_island.cc.consts import DEFAULT_LOGGING_CONFIG_PATH
 
@@ -28,6 +29,17 @@ def json_setup_logging(
     if os.path.exists(path):
         with open(path, "rt") as f:
             config = json.load(f)
+            _expanduser_log_file_paths(config)
             logging.config.dictConfig(config)
     else:
         logging.basicConfig(level=default_level)
+
+
+def _expanduser_log_file_paths(config: Dict):
+    handlers = config.get("handlers", {})
+
+    for handler_settings in handlers.values():
+        if "filename" in handler_settings:
+            handler_settings["filename"] = os.path.expanduser(
+                handler_settings["filename"]
+            )
