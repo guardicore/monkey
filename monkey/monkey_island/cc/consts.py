@@ -12,3 +12,7 @@ DEFAULT_SERVER_CONFIG_PATH = os.path.join(
 DEFAULT_STANDARD_SERVER_CONFIG_PATH = os.path.join(
     MONKEY_ISLAND_ABS_PATH, "cc", "server_config.json.standard"
 )
+
+DEFAULT_LOGGING_CONFIG_PATH = os.path.join(
+    MONKEY_ISLAND_ABS_PATH, "cc", "island_logger_default_config.json"
+)
