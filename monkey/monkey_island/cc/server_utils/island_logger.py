@@ -3,13 +3,13 @@ import logging.config
 import os
 from typing import Dict
 
-from monkey_island.cc.consts import DEFAULT_LOGGING_CONFIG_PATH
+from monkey_island.cc.consts import DEFAULT_LOGGER_CONFIG_PATH
 
 __author__ = "Maor.Rayzin"
 
 
 def json_setup_logging(
-    default_path=DEFAULT_LOGGING_CONFIG_PATH,
+    default_path=DEFAULT_LOGGER_CONFIG_PATH,
     default_level=logging.INFO,
     env_key="LOG_CFG",
 ):

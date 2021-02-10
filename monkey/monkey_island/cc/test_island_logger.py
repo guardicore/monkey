@@ -4,7 +4,7 @@ import os
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.island_logger import json_setup_logging
 
-TEST_LOGGING_CONFIG_PATH = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "testing",
+TEST_LOGGER_CONFIG_PATH = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "testing",
                                         "logger_config.json")
 
 
@@ -18,7 +18,7 @@ def test_expanduser_filename(monkeypatch, tmpdir):
 
     set_home_env(monkeypatch, tmpdir)
 
-    json_setup_logging(TEST_LOGGING_CONFIG_PATH)
+    json_setup_logging(TEST_LOGGER_CONFIG_PATH)
 
     logger = logging.getLogger("TestLogger")
     logger.info(TEST_STRING)
