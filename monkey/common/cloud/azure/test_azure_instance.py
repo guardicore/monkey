@@ -177,3 +177,23 @@ def test_instance_attributes_bad_request(bad_request_mock_instance):
     assert bad_request_mock_instance.instance_name is None
     assert bad_request_mock_instance.instance_id is None
     assert bad_request_mock_instance.location is None
+
+
+# not found request
+@pytest.fixture
+def not_found_request_mock_instance():
+    return get_test_azure_instance(AZURE_METADATA_SERVICE_URL, status_code=404)
+
+
+def test_is_instance_not_found_request(not_found_request_mock_instance):
+    assert not_found_request_mock_instance.is_instance() is False
+
+
+def test_get_cloud_provider_name_not_found_request(not_found_request_mock_instance):
+    assert not_found_request_mock_instance.get_cloud_provider_name() == Environment.AZURE
+
+
+def test_instance_attributes_not_found_request(not_found_request_mock_instance):
+    assert not_found_request_mock_instance.instance_name is None
+    assert not_found_request_mock_instance.instance_id is None
+    assert not_found_request_mock_instance.location is None

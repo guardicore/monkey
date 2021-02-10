@@ -44,7 +44,7 @@ class AzureInstance(CloudInstance):
                 logger.debug("Trying to parse Azure metadata.")
                 self.try_parse_response(response)
             else:
-                logger.warning(f"On Azure, but metadata response not ok: {response.status_code}")
+                logger.warning(f"Metadata response not ok: {response.status_code}")
         except requests.RequestException:
             logger.debug("Failed to get response from Azure metadata service: This instance is not on Azure.")
 

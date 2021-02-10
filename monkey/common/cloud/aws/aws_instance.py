@@ -32,7 +32,8 @@ class AwsInstance(CloudInstance):
         self.account_id = None
 
         try:
-            self.instance_id = requests.get(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2).text
+            response = requests.get(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2)
+            self.instance_id = response.text if response else None
             self.region = self._parse_region(
                 requests.get(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').text)
         except (requests.RequestException, IOError) as e:
