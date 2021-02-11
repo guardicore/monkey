@@ -4,7 +4,8 @@
 
 import sys
 
-from Crypto.Cipher import AES
+# PyCrypto is deprecated, but we use pycryptodome, which uses the exact same imports
+from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
 # We only encrypt payloads to hide them from static analysis
 # it's OK to have these keys plaintext
