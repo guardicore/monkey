@@ -182,17 +182,17 @@ class ReportService:
     def get_stolen_creds():
         creds = []
 
-        stolen_system_info_creds = ReportService.get_credentials_from_system_info_telems()
+        stolen_system_info_creds = ReportService._get_credentials_from_system_info_telems()
         creds.extend(stolen_system_info_creds)
 
-        stolen_exploit_creds = ReportService.get_credentials_from_exploit_telems()
+        stolen_exploit_creds = ReportService._get_credentials_from_exploit_telems()
         creds.extend(stolen_exploit_creds)
 
         logger.info('Stolen creds generated for reporting')
         return creds
 
     @staticmethod
-    def get_credentials_from_system_info_telems():
+    def _get_credentials_from_system_info_telems():
         formatted_creds = []
         for telem in mongo.db.telemetry.find({'telem_category': 'system_info', 'data.credentials': {'$exists': True}},
                                              {'data.credentials': 1, 'monkey_guid': 1}):
@@ -201,7 +201,7 @@ class ReportService:
         return formatted_creds
 
     @staticmethod
-    def get_credentials_from_exploit_telems():
+    def _get_credentials_from_exploit_telems():
         formatted_creds = []
         for telem in mongo.db.telemetry.find({'telem_category': 'exploit', 'data.info.credentials': {'$exists': True}},
                                              {'data.info.credentials': 1, 'monkey_guid': 1}):
@@ -212,19 +212,19 @@ class ReportService:
     @staticmethod
     def _format_creds_for_reporting(telem, monkey_creds):
         creds = []
-        PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
+        CRED_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
         if len(monkey_creds) == 0:
             return []
         origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
         for user in monkey_creds:
-            for pass_type in PASS_TYPE_DICT:
-                if pass_type not in monkey_creds[user] or not monkey_creds[user][pass_type]:
+            for cred_type in CRED_TYPE_DICT:
+                if cred_type not in monkey_creds[user] or not monkey_creds[user][cred_type]:
                     continue
                 username = monkey_creds[user]['username'] if 'username' in monkey_creds[user] else user
                 cred_row = \
                     {
                         'username': username,
-                        'type': PASS_TYPE_DICT[pass_type],
+                        'type': CRED_TYPE_DICT[cred_type],
                         'origin': origin
                     }
                 if cred_row not in creds:

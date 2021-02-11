@@ -75,11 +75,7 @@ class ZerologonFinger(HostFinger):
 
     def try_zero_authenticate(self, dc_handle: str, dc_ip: str, dc_name: str):
         # Connect to the DC's Netlogon service.
-        binding = epm.hept_map(dc_ip, nrpc.MSRPC_UUID_NRPC,
-                               protocol='ncacn_ip_tcp')
-        rpc_con = transport.DCERPCTransportFactory(binding).get_dce_rpc()
-        rpc_con.connect()
-        rpc_con.bind(nrpc.MSRPC_UUID_NRPC)
+        rpc_con = self.connect_to_dc(dc_ip)
 
         # Use an all-zero challenge and credential.
         plaintext = b'\x00' * 8
@@ -111,3 +107,10 @@ class ZerologonFinger(HostFinger):
 
         except BaseException as ex:
             raise Exception(f'Unexpected error: {ex}.')
+
+    def connect_to_dc(self, dc_ip: str) -> object:
+        binding = epm.hept_map(dc_ip, nrpc.MSRPC_UUID_NRPC, protocol='ncacn_ip_tcp')
+        rpc_con = transport.DCERPCTransportFactory(binding).get_dce_rpc()
+        rpc_con.connect()
+        rpc_con.bind(nrpc.MSRPC_UUID_NRPC)
+        return rpc_con
