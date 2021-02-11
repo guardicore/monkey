@@ -22,6 +22,7 @@ ENV_DICT = {
 }
 
 env = None
+config = None
 
 
 def set_env(env_type: str, env_config: EnvironmentConfig):
@@ -41,6 +42,8 @@ def set_to_standard():
 
 
 def initialize_from_file(file_path):
+    global config
+
     try:
         config = EnvironmentConfig(file_path)
 
