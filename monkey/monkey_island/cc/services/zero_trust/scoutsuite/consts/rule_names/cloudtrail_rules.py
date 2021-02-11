@@ -1,7 +1,7 @@
-from enum import Enum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 
 
-class CloudTrailRules(Enum):
+class CloudTrailRules(RuleNameEnum):
     # Logging
     CLOUDTRAIL_DUPLICATED_GLOBAL_SERVICES_LOGGING = 'cloudtrail-duplicated-global-services-logging'
     CLOUDTRAIL_NO_DATA_LOGGING = 'cloudtrail-no-data-logging'

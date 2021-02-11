@@ -12,6 +12,7 @@ from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.elbv2_rul
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.iam_rules import IAMRules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rds_rules import RDSRules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.redshift_rules import RedshiftRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.s3_rules import S3Rules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.ses_rules import SESRules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.sns_rules import SNSRules
@@ -23,7 +24,7 @@ from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.vpc_rules
 class ScoutSuiteFindingMap(ABC):
     @property
     @abstractmethod
-    def rules(self) -> List[EC2Rules]:
+    def rules(self) -> List[RuleNameEnum]:
         pass
 
     @property

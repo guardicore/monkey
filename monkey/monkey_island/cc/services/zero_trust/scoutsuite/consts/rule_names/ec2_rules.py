@@ -1,7 +1,7 @@
-from enum import Enum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 
 
-class EC2Rules(Enum):
+class EC2Rules(RuleNameEnum):
     # Permissive firewall rules
     SECURITY_GROUP_ALL_PORTS_TO_ALL = 'ec2-security-group-opens-all-ports-to-all'
     SECURITY_GROUP_OPENS_TCP_PORT_TO_ALL = 'ec2-security-group-opens-TCP-port-to-all'

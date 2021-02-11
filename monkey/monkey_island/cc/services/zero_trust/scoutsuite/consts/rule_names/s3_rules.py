@@ -1,7 +1,7 @@
-from enum import Enum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 
 
-class S3Rules(Enum):
+class S3Rules(RuleNameEnum):
     # Encryption
     S3_BUCKET_ALLOWING_CLEARTEXT = 's3-bucket-allowing-cleartext'
     S3_BUCKET_NO_DEFAULT_ENCRYPTION = 's3-bucket-no-default-encryption'

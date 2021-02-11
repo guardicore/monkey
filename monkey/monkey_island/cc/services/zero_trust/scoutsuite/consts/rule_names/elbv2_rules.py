@@ -1,7 +1,7 @@
-from enum import Enum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 
 
-class ELBv2Rules(Enum):
+class ELBv2Rules(RuleNameEnum):
     # Encryption
     ELBV2_LISTENER_ALLOWING_CLEARTEXT = 'elbv2-listener-allowing-cleartext'
     ELBV2_OLDER_SSL_POLICY = 'elbv2-older-ssl-policy'

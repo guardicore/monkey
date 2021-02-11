@@ -1,7 +1,7 @@
-from enum import Enum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 
 
-class SQSRules(Enum):
+class SQSRules(RuleNameEnum):
 
     # Permissive policies
     SQS_QUEUE_WORLD_SENDMESSAGE_POLICY = 'sqs-queue-world-SendMessage-policy'

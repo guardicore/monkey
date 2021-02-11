@@ -1,7 +1,7 @@
-from enum import Enum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 
 
-class IAMRules(Enum):
+class IAMRules(RuleNameEnum):
     # Authentication/authorization
     IAM_USER_NO_ACTIVE_KEY_ROTATION = 'iam-user-no-Active-key-rotation'
     IAM_PASSWORD_POLICY_MINIMUM_LENGTH = 'iam-password-policy-minimum-length'

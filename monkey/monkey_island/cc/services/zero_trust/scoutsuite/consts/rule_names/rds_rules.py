@@ -1,7 +1,7 @@
-from enum import Enum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 
 
-class RDSRules(Enum):
+class RDSRules(RuleNameEnum):
     # Encryption
     RDS_INSTANCE_STORAGE_NOT_ENCRYPTED = 'rds-instance-storage-not-encrypted'
 

@@ -1,7 +1,7 @@
-from enum import Enum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 
 
-class RedshiftRules(Enum):
+class RedshiftRules(RuleNameEnum):
     # Encryption
     REDSHIFT_CLUSTER_DATABASE_NOT_ENCRYPTED = 'redshift-cluster-database-not-encrypted'
     REDSHIFT_PARAMETER_GROUP_SSL_NOT_REQUIRED = 'redshift-parameter-group-ssl-not-required'

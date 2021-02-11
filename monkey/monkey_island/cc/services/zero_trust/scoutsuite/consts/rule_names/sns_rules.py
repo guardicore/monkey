@@ -1,7 +1,7 @@
-from enum import Enum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 
 
-class SNSRules(Enum):
+class SNSRules(RuleNameEnum):
 
     # Permissive policies
     SNS_TOPIC_WORLD_SUBSCRIBE_POLICY = 'sns-topic-world-Subscribe-policy'
