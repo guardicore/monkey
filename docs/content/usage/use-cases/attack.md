@@ -8,13 +8,13 @@ weight: 2
 
 ## Overview 
 
-The Infection Monkey can simulate various [ATT&CK](https://attack.mitre.org/matrices/enterprise/) techniques on the network. Use it to assess your security solutions' detection and prevention capabilities. The Infection Monkey will help you find which ATT&CK techniques go unnoticed and provide recommendations along with suggested mitigations.
+The Infection Monkey can simulate various [ATT&CK](https://attack.mitre.org/matrices/enterprise/) techniques on the network. Use it to assess your security solutions' detection and prevention capabilities. The Infection Monkey will help you find which ATT&CK techniques go unnoticed and provide specific details along with suggested mitigations.
 
 
 ## Configuration
 
 - **ATT&CK matrix** You can use the ATT&CK configuration section to select which techniques you want the Infection Monkey to simulate. 
-Leave default settings for the full simulation.
+For the full simulation, use the default settings.
 - **Exploits -> Credentials** This configuration value will be used for brute-forcing. The Infection Monkey uses the most popular default passwords and usernames, but feel free to adjust it according to the default passwords common in your network. Keep in mind a longer list means longer scanning times.
 - **Network -> Scope** Disable “Local network scan” and instead provide specific network ranges in the “Scan target list”.
 
