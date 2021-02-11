@@ -19,7 +19,7 @@ On your first login, you'll be asked to create a username and password for the M
 
 ### Running the Infection Monkey
 
-To get the Infection Monkey running as fast as possible, click **Run Monkey**. Optionally, you can configure the Infection Monkey before you continue by clicking on **Configuration** (see [how to configure the monkey](../configuration)).
+To get the Infection Monkey running as fast as possible, click **Run Monkey**. Optionally, you can configure the Infection Monkey before you continue by clicking on **Configuration** (see [how to configure the Infection Monkey](../configuration)).
 
 To run the Infection Monkey, select one of the following options:
 
