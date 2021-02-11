@@ -20,8 +20,9 @@ class MonkeyZTDetailsService:
                                     'latest_events': {'$slice': ['$events', int(-1 * MAX_EVENT_FETCH_CNT / 2)]},
                                     'event_count': {'$size': '$events'}}},
                     {'$unset': ['events']}]
-        details = list(MonkeyFindingDetails.objects.aggregate(*pipeline))[0]
-        if details:
+        detail_list = list(MonkeyFindingDetails.objects.aggregate(*pipeline))
+        if detail_list:
+            details = detail_list[0]
             details['latest_events'] = MonkeyZTDetailsService._remove_redundant_events(details['event_count'],
                                                                                        details['latest_events'])
             return details

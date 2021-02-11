@@ -16,7 +16,7 @@ def scan_cloud_security(cloud_type: CloudProviders):
         results = run_scoutsuite(cloud_type.value)
         if isinstance(results, dict) and 'error' in results and results['error']:
             raise ScoutSuiteScanError(results['error'])
-        send_results(results)
+        send_scoutsuite_run_results(results)
     except (Exception, ScoutSuiteScanError) as e:
         logger.error(f"ScoutSuite didn't scan {cloud_type.value} security because: {e}")
 
@@ -28,5 +28,5 @@ def run_scoutsuite(cloud_type: str) -> Union[BaseProvider, dict]:
                               aws_session_token=WormConfiguration.aws_session_token)
 
 
-def send_results(results: BaseProvider):
-    ScoutSuiteTelem(results).send()
+def send_scoutsuite_run_results(run_results: BaseProvider):
+    ScoutSuiteTelem(run_results).send()
