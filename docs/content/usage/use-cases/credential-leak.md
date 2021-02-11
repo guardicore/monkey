@@ -32,5 +32,5 @@ Run the Infection Monkey as a privileged user to make sure it gathers as many cr
 
 ## Assessing results
 
-To assess the impact of leaked credentials see the security report. It's possible that credential leak resulted in even
+To assess the impact of leaked credentials see the Security report. It's possible that credential leak resulted in even
 more leaked credentials. Examine **Security report -> Stolen credentials** to confirm. 
