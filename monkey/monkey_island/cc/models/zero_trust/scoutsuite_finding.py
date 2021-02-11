@@ -6,13 +6,3 @@ from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutS
 
 class ScoutSuiteFinding(Finding):
     details = LazyReferenceField(ScoutSuiteFindingDetails, required=True)
-
-    @staticmethod
-    def save_finding(test: str,
-                     status: str,
-                     detail_ref: ScoutSuiteFindingDetails) -> Finding:
-        scoutsuite_finding = ScoutSuiteFinding(test=test,
-                                               status=status,
-                                               details=detail_ref)
-        scoutsuite_finding.save()
-        return scoutsuite_finding

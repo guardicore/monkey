@@ -5,8 +5,6 @@ Define a Document Schema for Zero Trust findings.
 
 from __future__ import annotations
 
-import abc
-
 from mongoengine import Document, GenericLazyReferenceField, StringField
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
@@ -45,9 +43,11 @@ class Finding(Document):
     details = GenericLazyReferenceField(required=True)
 
     # Creation methods
-    @staticmethod
-    @abc.abstractmethod
-    def save_finding(test: str,
+    @classmethod
+    def save_finding(cls,
+                     test: str,
                      status: str,
                      detail_ref) -> Finding:
-        pass
+        finding = cls(test=test, status=status, details=detail_ref)
+        finding.save()
+        return finding
