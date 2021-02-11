@@ -94,7 +94,7 @@ clone_monkey_repo() {
   fi
 
   log_message "Cloning files from git"
-  branch=${2:-"develop"}
+  branch=${2:-"select-logger-config-at-runtime"}
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
 
   chmod 774 -R "${MONKEY_HOME}"
@@ -105,7 +105,12 @@ copy_monkey_island_to_appdir() {
   cp $REPO_MONKEY_SRC/monkey_island.py $INSTALL_DIR
   cp -r $REPO_MONKEY_SRC/common $INSTALL_DIR
   cp -r $REPO_MONKEY_SRC/monkey_island $INSTALL_DIR
-  cp ./run.sh $INSTALL_DIR/monkey_island/linux/
+  cp ./run_appimage.sh $INSTALL_DIR/monkey_island/linux/
+  cp ./island_logger_config.json $INSTALL_DIR/
+
+  # TODO: This is a workaround that may be able to be removed after PR #848 is
+  # merged. See monkey_island/cc/environment_singleton.py for more information.
+  cp $INSTALL_DIR/monkey_island/cc/server_config.json.standard $INSTALL_DIR/monkey_island/cc/server_config.json
 }
 
 install_monkey_island_python_dependencies() {
@@ -231,7 +236,7 @@ cp $REPO_MONKEY_SRC/monkey_island/cc/ui/src/images/monkey-icon.svg $APPDIR/usr/s
 #cp ./monkey_island.desktop $APPDIR
 
 log_message "Building AppImage"
-appimage-builder --recipe monkey_island_builder.yml --skip-appimage
+appimage-builder --recipe monkey_island_builder.yml
 
 
 log_message "Deployment script finished."
