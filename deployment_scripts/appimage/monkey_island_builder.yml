@@ -9,7 +9,7 @@ AppDir:
     icon: monkey-icon
     version: 1.10.0
     exec: bin/bash
-    exec_args: "$APPDIR/usr/src/monkey_island/linux/run.sh $HOME/.monkey_island/db"
+    exec_args: "$APPDIR/usr/src/monkey_island/linux/run_appimage.sh"
 
 
   apt:

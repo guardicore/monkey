@@ -53,4 +53,6 @@ def initialize_from_file(file_path):
         raise
 
 
+# TODO: This is only needed so that unit tests pass. After PR #848 is merged, we may be
+# able to remove this line.
 initialize_from_file(DEFAULT_SERVER_CONFIG_PATH)
