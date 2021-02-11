@@ -1,9 +1,10 @@
 import base64
 import os
 
-# PyCrypto is deprecated, but we use pycryptodome, which uses the exact same imports but it maintained
-from Crypto import Random  # noqa: DOU133  # nosec: B413
-from Crypto.Cipher import AES  # noqa: DOU133  # nosec: B413
+# PyCrypto is deprecated, but we use pycryptodome, which uses the exact same imports but
+# is maintained.
+from Crypto import Random  # noqa: DUO133  # nosec: B413
+from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 

@@ -7,6 +7,8 @@ for more details.
 
 import argparse
 
+# PyCrypto is deprecated, but we use pycryptodome, which uses the exact same imports but
+# is maintained.
 from Crypto.Hash import SHA3_512  # noqa: DUO133  # nosec: B413
 
 
