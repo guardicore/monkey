@@ -8,7 +8,7 @@ pre = "<i class='fas fa-map-marked-alt'></i> "
 
 # Use cases
 
-This section describes possible use cases for the Infection Monkey and how you can configure it. 
+This section describes possible use cases for the Infection Monkey and how you can configure the tool. 
 You can also refer to [our FAQ](../../faq) for more specific questions and answers.
 
 {{% notice note %}}
