@@ -3,8 +3,8 @@ import os
 
 import pytest
 
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.island_logger import json_setup_logging
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.island_logger import json_setup_logging
 
 TEST_LOGGER_CONFIG_PATH = os.path.join(
     MONKEY_ISLAND_ABS_PATH, "cc", "testing", "logger_config.json"

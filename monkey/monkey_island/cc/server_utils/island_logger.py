@@ -3,7 +3,7 @@ import logging.config
 import os
 from typing import Dict
 
-from monkey_island.cc.consts import DEFAULT_LOGGER_CONFIG_PATH
+from monkey_island.cc.server_utils.consts import DEFAULT_LOGGER_CONFIG_PATH
 
 __author__ = "Maor.Rayzin"
 
