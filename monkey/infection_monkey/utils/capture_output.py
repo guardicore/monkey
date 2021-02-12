@@ -2,7 +2,7 @@ import io
 import sys
 
 
-class StdoutOutputCaptor:
+class StdoutCapture:
     def __init__(self):
         _orig_stdout = None
         _new_stdout = None

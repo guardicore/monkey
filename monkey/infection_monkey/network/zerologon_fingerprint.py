@@ -30,19 +30,11 @@ class ZerologonFinger(HostFinger):
             # Approximate time taken by 2000 attempts: 40 seconds.
 
             LOG.info('Performing Zerologon authentication attempts...')
-            rpc_con = None
-            for _ in range(0, self.MAX_ATTEMPTS):
-                try:
-                    rpc_con = self.try_zero_authenticate(dc_handle, dc_ip, dc_name)
-                    if rpc_con is not None:
-                        break
-                except Exception as ex:
-                    LOG.info(ex)
-                    break
+            auth_successful = self.attempt_authentication(dc_handle, dc_ip, dc_name)
 
             self.init_service(host.services, self._SCANNED_SERVICE, '')
 
-            if rpc_con:
+            if auth_successful:
                 LOG.info('Success: Domain Controller can be fully compromised by a Zerologon attack.')
                 host.services[self._SCANNED_SERVICE]['is_vulnerable'] = True
                 return True
@@ -72,6 +64,18 @@ class ZerologonFinger(HostFinger):
             return name[0] if name else ''
         except BaseException as ex:
             LOG.info(f'Exception: {ex}')
+
+    def attempt_authentication(self, dc_handle: str, dc_ip: str, dc_name: str) -> bool:
+        for _ in range(0, self.MAX_ATTEMPTS):
+            try:
+                rpc_con = self.try_zero_authenticate(dc_handle, dc_ip, dc_name)
+                if rpc_con is not None:
+                    rpc_con.disconnect()
+                    return True
+            except Exception as ex:
+                LOG.info(ex)
+                return False
+        return False
 
     def try_zero_authenticate(self, dc_handle: str, dc_ip: str, dc_name: str):
         # Connect to the DC's Netlogon service.
