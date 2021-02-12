@@ -44,6 +44,8 @@ def parse_cli_args():
 
 
 if "__main__" == __name__:
+    # TODO: Address https://github.com/guardicore/monkey/pull/963#discussion_r575022748
+    # before merging appimage PR
     (is_setup_only, server_config, logger_config) = parse_cli_args()
 
     # This is here in order to catch EVERYTHING, some functions are being called on
