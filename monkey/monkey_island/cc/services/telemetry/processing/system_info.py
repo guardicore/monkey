@@ -63,7 +63,7 @@ def encrypt_system_info_ssh_keys(ssh_info):
     for idx, user in enumerate(ssh_info):
         for field in ['public_key', 'private_key', 'known_hosts']:
             if ssh_info[idx][field]:
-                ssh_info[idx][field] = encryptor.enc(ssh_info[idx][field])
+                ssh_info[idx][field] = encryptor().enc(ssh_info[idx][field])
 
 
 def process_credential_info(telemetry_json):

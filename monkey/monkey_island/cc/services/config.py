@@ -66,7 +66,7 @@ class ConfigService:
             config = config[config_key_part]
         if should_decrypt:
             if config_key_as_arr in ENCRYPTED_CONFIG_ARRAYS:
-                config = [encryptor.dec(x) for x in config]
+                config = [encryptor().dec(x) for x in config]
         return config
 
     @staticmethod
@@ -103,7 +103,7 @@ class ConfigService:
         if item_value in items_from_config:
             return
         if should_encrypt:
-            item_value = encryptor.enc(item_value)
+            item_value = encryptor().enc(item_value)
         mongo.db.config.update(
             {'name': 'newconfig'},
             {'$addToSet': {item_key: item_value}},
@@ -288,9 +288,9 @@ class ConfigService:
                 if flat_config[key] and isinstance(flat_config[key][0], dict) and 'public_key' in flat_config[key][0]:
                     flat_config[key] = [ConfigService.decrypt_ssh_key_pair(item) for item in flat_config[key]]
                 else:
-                    flat_config[key] = [encryptor.dec(item) for item in flat_config[key]]
+                    flat_config[key] = [encryptor().dec(item) for item in flat_config[key]]
             else:
-                flat_config[key] = encryptor.dec(flat_config[key])
+                flat_config[key] = encryptor().dec(flat_config[key])
         return flat_config
 
     @staticmethod
@@ -311,19 +311,19 @@ class ConfigService:
                         config_arr[i] = ConfigService.decrypt_ssh_key_pair(config_arr[i]) if is_decrypt else \
                             ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
                     else:
-                        config_arr[i] = encryptor.dec(config_arr[i]) if is_decrypt else encryptor.enc(config_arr[i])
+                        config_arr[i] = encryptor().dec(config_arr[i]) if is_decrypt else encryptor().enc(config_arr[i])
             else:
                 parent_config_arr[config_arr_as_array[-1]] = \
-                    encryptor.dec(config_arr) if is_decrypt else encryptor.enc(config_arr)
+                    encryptor().dec(config_arr) if is_decrypt else encryptor().enc(config_arr)
 
     @staticmethod
     def decrypt_ssh_key_pair(pair, encrypt=False):
         if encrypt:
-            pair['public_key'] = encryptor.enc(pair['public_key'])
-            pair['private_key'] = encryptor.enc(pair['private_key'])
+            pair['public_key'] = encryptor().enc(pair['public_key'])
+            pair['private_key'] = encryptor().enc(pair['private_key'])
         else:
-            pair['public_key'] = encryptor.dec(pair['public_key'])
-            pair['private_key'] = encryptor.dec(pair['private_key'])
+            pair['public_key'] = encryptor().dec(pair['public_key'])
+            pair['private_key'] = encryptor().dec(pair['private_key'])
         return pair
 
     @staticmethod

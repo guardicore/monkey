@@ -24,6 +24,7 @@ from monkey_island.cc.bootloader_server import \
     BootloaderHttpServer  # noqa: E402
 from monkey_island.cc.database import get_db_version  # noqa: E402
 from monkey_island.cc.database import is_db_server_up  # noqa: E402
+from monkey_island.cc.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.network_utils import local_ip_addresses  # noqa: E402
 from monkey_island.cc.resources.monkey_download import \
     MonkeyDownload  # noqa: E402
@@ -37,6 +38,7 @@ MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_PATH):
     logger.info("Starting bootloader server")
     env_singleton.initialize_from_file(server_config_filename)
+    initialize_encryptor(env_singleton.config.data_dir)
 
     mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True)
