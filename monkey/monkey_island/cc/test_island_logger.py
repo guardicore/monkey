@@ -10,7 +10,7 @@ TEST_LOGGER_CONFIG_PATH = os.path.join(
 
 
 def set_home_env(monkeypatch, tmpdir):
-    monkeypatch.setenv("HOME", tmpdir)
+    monkeypatch.setenv("HOME", str(tmpdir))
 
 
 def test_expanduser_filename(monkeypatch, tmpdir):
