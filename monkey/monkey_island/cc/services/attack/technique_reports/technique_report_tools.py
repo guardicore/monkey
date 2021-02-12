@@ -29,7 +29,7 @@ def censor_password(password, plain_chars=3, secret_chars=5):
     """
     if not password:
         return ""
-    password = encryptor.dec(password)
+    password = encryptor().dec(password)
     return password[0:plain_chars] + '*' * secret_chars
 
 
@@ -42,5 +42,5 @@ def censor_hash(hash_, plain_chars=5):
     """
     if not hash_:
         return ""
-    hash_ = encryptor.dec(hash_)
+    hash_ = encryptor().dec(hash_)
     return hash_[0: plain_chars] + ' ...'

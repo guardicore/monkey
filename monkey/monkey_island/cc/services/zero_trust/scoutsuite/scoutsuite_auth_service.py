@@ -37,7 +37,7 @@ def set_aws_keys(access_key_id: str, secret_access_key: str, session_token: str)
 
 def _set_aws_key(key_type: str, key_value: str):
     path_to_keys = AWS_KEYS_PATH
-    encrypted_key = encryptor.enc(key_value)
+    encrypted_key = encryptor().enc(key_value)
     ConfigService.set_config_value(path_to_keys + [key_type], encrypted_key)
 
 
