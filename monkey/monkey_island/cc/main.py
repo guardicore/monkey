@@ -38,7 +38,7 @@ MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_PATH):
     logger.info("Starting bootloader server")
     env_singleton.initialize_from_file(server_config_filename)
-    initialize_encryptor(env_singleton.config.data_dir_abs_path)
+    initialize_encryptor(env_singleton.env.get_config().data_dir_abs_path)
 
     mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True)
