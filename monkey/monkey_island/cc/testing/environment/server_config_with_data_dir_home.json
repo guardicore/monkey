@@ -1,0 +1,7 @@
+{
+    "server_config": "password",
+    "deployment": "develop",
+    "user": "test",
+    "password_hash": "abcdef",
+    "data_dir": "~/data_dir"
+}

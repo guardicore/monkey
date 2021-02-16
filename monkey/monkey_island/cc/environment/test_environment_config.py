@@ -23,7 +23,7 @@ STANDARD_WITH_CREDENTIALS = os.path.join(
     TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
 )
 WITH_DATA_DIR = os.path.join(TEST_RESOURCES_DIR, "server_config_with_data_dir.json")
-
+WITH_DATA_DIR_HOME = os.path.join(TEST_RESOURCES_DIR, "server_config_with_data_dir_home.json")
 
 @pytest.fixture
 def config_file(tmpdir):
@@ -123,3 +123,14 @@ def test_generate_default_file(config_file):
 def test_data_dir():
     environment_config = EnvironmentConfig(WITH_DATA_DIR)
     assert environment_config.data_dir == "/test/data/dir"
+
+
+def set_home_env(monkeypatch, tmpdir):
+    monkeypatch.setenv("HOME", str(tmpdir))
+
+
+def test_data_dir_abs_path_from_file(monkeypatch, tmpdir):
+    set_home_env(monkeypatch, tmpdir)
+
+    config = EnvironmentConfig(WITH_DATA_DIR_HOME)
+    assert config.data_dir_abs_path == os.path.join(tmpdir, "data_dir")

@@ -50,6 +50,10 @@ class EnvironmentConfig:
         self.aws = aws
         self.data_dir = data_dir
 
+    @property
+    def data_dir_abs_path(self):
+        return os.path.abspath(os.path.expanduser(os.path.expandvars(self.data_dir)))
+
     def save_to_file(self):
         with open(self._server_config_path, "w") as f:
             f.write(json.dumps(self.to_dict(), indent=2))
