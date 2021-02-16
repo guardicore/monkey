@@ -33,11 +33,3 @@ def test_create_new_password_file(tmpdir):
     initialize_encryptor(tmpdir)
 
     assert os.path.isfile(os.path.join(tmpdir, PASSWORD_FILENAME))
-
-
-def test_expand_home(monkeypatch, tmpdir):
-    monkeypatch.setenv("HOME", str(tmpdir))
-
-    initialize_encryptor("~/")
-
-    assert os.path.isfile(os.path.join(tmpdir, "mongo_key.bin"))
