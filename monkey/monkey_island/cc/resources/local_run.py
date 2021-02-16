@@ -31,7 +31,7 @@ def run_local_monkey():
         return False, "OS Type not found"
 
     monkey_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'binaries', result['filename'])
-    target_path = os.path.join(MONKEY_ISLAND_ABS_PATH, result['filename'])
+    target_path = os.path.join(env_singleton.config.data_dir_abs_path, result['filename'])
 
     # copy the executable to temp path (don't run the monkey from its current location as it may delete itself)
     try:
