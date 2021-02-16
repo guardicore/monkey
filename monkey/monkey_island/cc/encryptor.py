@@ -15,7 +15,9 @@ class Encryptor:
     _PASSWORD_FILENAME = "mongo_key.bin"
 
     def __init__(self, data_dir):
-        password_file = os.path.join(data_dir, self._PASSWORD_FILENAME)
+        password_file = os.path.expanduser(
+            os.path.join(data_dir, self._PASSWORD_FILENAME)
+        )
 
         if os.path.exists(password_file):
             self._load_existing_key(password_file)
