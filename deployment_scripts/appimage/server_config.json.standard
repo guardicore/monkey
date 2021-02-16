@@ -1,0 +1,5 @@
+{
+  "server_config": "password",
+  "deployment": "standard",
+  "data_dir": "~/.monkey_island"
+}

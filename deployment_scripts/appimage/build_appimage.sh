@@ -94,7 +94,7 @@ clone_monkey_repo() {
   fi
 
   log_message "Cloning files from git"
-  branch=${2:-"select-logger-config-at-runtime"}
+  branch=${2:-"data-dir"}
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
 
   chmod 774 -R "${MONKEY_HOME}"
@@ -107,10 +107,11 @@ copy_monkey_island_to_appdir() {
   cp -r $REPO_MONKEY_SRC/monkey_island $INSTALL_DIR
   cp ./run_appimage.sh $INSTALL_DIR/monkey_island/linux/
   cp ./island_logger_config.json $INSTALL_DIR/
+  cp ./server_config.json.standard $INSTALL_DIR/monkey_island/cc/
 
   # TODO: This is a workaround that may be able to be removed after PR #848 is
   # merged. See monkey_island/cc/environment_singleton.py for more information.
-  cp $INSTALL_DIR/monkey_island/cc/server_config.json.standard $INSTALL_DIR/monkey_island/cc/server_config.json
+  cp ./server_config.json.standard $INSTALL_DIR/monkey_island/cc/server_config.json
 }
 
 install_monkey_island_python_dependencies() {
