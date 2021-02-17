@@ -87,7 +87,7 @@ This section shows the attack surface the Infection Monkey discovered.
 
 ### Exploits and post-breach actions
 
-This section shows which exploits and post-beach actions the Infection Monkey performed in the simulation.
+This section shows which exploits and post-beach actions the Infection Monkey performed during the simulation.
 
 ![Exploits and PBAs](/images/usage/reports/sec_report_9_exploits_pbas.png "Exploits and PBAs")
 
