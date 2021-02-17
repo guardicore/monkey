@@ -93,6 +93,6 @@ This section shows which exploits and post-beach actions the Infection Monkey pe
 
 ### Stolen credentials
 
-This section shows which credentials the Infection Monkey was able to steal from breached machines in this simulation.
+This section shows which credentials the Infection Monkey was able to steal from breached machines during this simulation.
 
 ![Stolen creds](/images/usage/reports/sec_report_10_stolen_credentials.png "Stolen creds")
