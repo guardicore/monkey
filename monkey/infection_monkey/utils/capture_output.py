@@ -3,20 +3,16 @@ import sys
 
 
 class StdoutCapture:
-    def __init__(self):
-        _orig_stdout = None
-        _new_stdout = None
-
-    def capture_stdout_output(self) -> None:
+    def __enter__(self) -> None:
         self._orig_stdout = sys.stdout
         self._new_stdout = io.StringIO()
         sys.stdout = self._new_stdout
+        return self
 
     def get_captured_stdout_output(self) -> str:
-        self._reset_stdout_to_original()
         self._new_stdout.seek(0)
-        info = self._new_stdout.read()
-        return info
+        output = self._new_stdout.read()
+        return output
 
-    def _reset_stdout_to_original(self) -> None:
+    def __exit__(self, _, __, ___) -> None:
         sys.stdout = self._orig_stdout
