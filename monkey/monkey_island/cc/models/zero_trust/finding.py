@@ -5,7 +5,7 @@ Define a Document Schema for Zero Trust findings.
 
 from __future__ import annotations
 
-from mongoengine import Document, GenericLazyReferenceField, StringField
+from mongoengine import Document, StringField
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
 # Dummy import for mongoengine.
@@ -37,17 +37,3 @@ class Finding(Document):
     # SCHEMA
     test = StringField(required=True, choices=zero_trust_consts.TESTS)
     status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)
-
-    # Details are in a separate document in order to discourage pulling them when not needed
-    # due to performance.
-    details = GenericLazyReferenceField(required=True)
-
-    # Creation methods
-    @classmethod
-    def save_finding(cls,
-                     test: str,
-                     status: str,
-                     detail_ref) -> Finding:
-        finding = cls(test=test, status=status, details=detail_ref)
-        finding.save()
-        return finding

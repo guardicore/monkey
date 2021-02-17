@@ -19,7 +19,7 @@ class MonkeyZTFindingService:
         :raises: Assertion error if this is used when there's more then one finding which fits the query - this is not
         when this function should be used.
         """
-        existing_findings = MonkeyFinding.objects(test=test, status=status)
+        existing_findings = list(MonkeyFinding.objects(test=test, status=status))
         assert (len(existing_findings) < 2), "More than one finding exists for {}:{}".format(test, status)
 
         if len(existing_findings) == 0:
