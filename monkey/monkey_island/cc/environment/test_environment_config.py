@@ -108,7 +108,7 @@ def test_generate_default_file(config_file):
     assert os.path.isfile(config_file)
 
     assert environment_config.server_config == "password"
-    assert environment_config.deployment == "standard"
+    assert environment_config.deployment == "develop"
     assert environment_config.user_creds.username == ""
     assert environment_config.user_creds.password_hash == ""
     assert environment_config.aws is None
