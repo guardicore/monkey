@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from enum import Enum, EnumMeta
-from typing import List
+from enum import Enum
+from typing import List, Type
 
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.service_consts import FINDINGS, SERVICES, SERVICE_TYPES
 
 
@@ -14,7 +15,7 @@ class AbstractRulePathCreator(ABC):
 
     @property
     @abstractmethod
-    def supported_rules(self) -> EnumMeta:
+    def supported_rules(self) -> Type[RuleNameEnum]:
         pass
 
     @classmethod
