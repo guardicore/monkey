@@ -6,6 +6,7 @@ from infection_monkey.telemetry.attack.attack_telem import AttackTelem
 from infection_monkey.telemetry.attack.usage_telem import UsageTelem
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
 
+
 MACHINE = VictimHost('127.0.0.1')
 STATUS = ScanStatus.USED
 TECHNIQUE = 'T9999'

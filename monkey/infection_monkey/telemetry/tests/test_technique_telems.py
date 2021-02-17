@@ -12,6 +12,7 @@ from infection_monkey.telemetry.attack.t1129_telem import T1129Telem
 from infection_monkey.telemetry.attack.t1197_telem import T1197Telem
 from infection_monkey.telemetry.attack.t1222_telem import T1222Telem
 
+
 GATHERED_DATA_TYPE = '[Type of data collected]'
 INFO = '[Additional info]'
 MACHINE = VictimHost('127.0.0.1')
