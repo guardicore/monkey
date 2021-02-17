@@ -28,7 +28,7 @@ This diagram provides you with a quick glance at how your organization scores on
 
 ## Test Results
 
-This section shows how your network fared against each of the tests the Infection Monkey ran. The tests are ordered by Zero Trust components, so you can quickly navigate to the category you want to prioritize. 
+This section shows how your network fared against each of the tests the Infection Monkey ran. The tests are ordered by Zero Trust pillar, so you can quickly navigate to the category you want to prioritize. 
 
 ![Zero Trust Report test results](/images/usage/reports/ztreport2.png "Zero Trust Report test results")
 
@@ -43,4 +43,3 @@ This section shows each test's details, including the explicit events and exact 
 Your results are exportable. Click **Export** after clicking on **Events** to view them in a machine-readable format.
 
 ![Zero Trust Report events](/images/usage/reports/ztreport4.png "Zero Trust Report events")
-
