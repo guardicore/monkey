@@ -58,7 +58,7 @@ install_build_prereqs() {
     sudo apt install -y python3 python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace
 
     #monkey island prereqs
-    sudo apt install -y curl libcurl4 python3.7 python3.7-dev openssl git build-essential
+    sudo apt install -y curl libcurl4 python3.7 python3.7-dev openssl git build-essential moreutils
     install_pip_37
     install_nodejs
 }
@@ -94,7 +94,7 @@ clone_monkey_repo() {
   fi
 
   log_message "Cloning files from git"
-  branch=${2:-"data-dir"}
+  branch=${2:-"local-run-data-dir"}
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
 
   chmod 774 -R "${MONKEY_HOME}"
@@ -116,9 +116,15 @@ copy_monkey_island_to_appdir() {
 
 install_monkey_island_python_dependencies() {
   log_message "Installing island requirements"
+
   requirements_island="$ISLAND_PATH/requirements.txt"
+  # TODO: This is an ugly hack. PyInstaller is a build-time dependency and should
+  #		  not be installed as a runtime requirement.
+  sed '4d' $requirements_island | sponge $requirements_island
+
   ${python_cmd} -m pip install -r "${requirements_island}"  --ignore-installed --prefix /usr --root=$APPDIR || handle_error
   ${python_cmd} -m pip install pyjwt==1.7 --ignore-installed -U --prefix /usr --root=$APPDIR || handle_error
+
   #${python_cmd} -m pip install PyNacl --user --upgrade || handle_error
 }
 
