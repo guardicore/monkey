@@ -1,99 +1,114 @@
 import json
 import os
-import platform
-from typing import Dict
-from unittest import TestCase
-from unittest.mock import MagicMock, patch
+import shutil
 
-import monkey_island.cc.testing.environment.server_config_mocks as config_mocks
+import pytest
+
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
 
+TEST_RESOURCES_DIR = os.path.join(
+    MONKEY_ISLAND_ABS_PATH, "cc", "testing", "environment"
+)
 
-def get_server_config_file_path_test_version():
-    return os.path.join(os.getcwd(), 'test_config.json')
+WITH_CREDENTIALS = os.path.join(
+    TEST_RESOURCES_DIR, "server_config_with_credentials.json"
+)
+NO_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_no_credentials.json")
+PARTIAL_CREDENTIALS = os.path.join(
+    TEST_RESOURCES_DIR, "server_config_partial_credentials.json"
+)
+STANDARD_WITH_CREDENTIALS = os.path.join(
+    TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
+)
 
 
-class TestEnvironmentConfig(TestCase):
+@pytest.fixture
+def config_file(tmpdir):
+    return os.path.join(tmpdir, "test_config.json")
 
-    def test_get_from_json(self):
-        self._test_get_from_json(config_mocks.CONFIG_WITH_CREDENTIALS)
-        self._test_get_from_json(config_mocks.CONFIG_NO_CREDENTIALS)
-        self._test_get_from_json(config_mocks.CONFIG_PARTIAL_CREDENTIALS)
 
-    def _test_get_from_json(self, config: Dict):
-        config_json = json.dumps(config)
-        env_config_object = EnvironmentConfig.get_from_json(config_json)
-        self.assertEqual(config['server_config'], env_config_object.server_config)
-        self.assertEqual(config['deployment'], env_config_object.deployment)
-        if 'user' in config:
-            self.assertEqual(config['user'], env_config_object.user_creds.username)
-        if 'password_hash' in config:
-            self.assertEqual(config['password_hash'], env_config_object.user_creds.password_hash)
-        if 'aws' in config:
-            self.assertEqual(config['aws'], env_config_object.aws)
+def test_get_with_credentials():
+    config_dict = EnvironmentConfig(WITH_CREDENTIALS).to_dict()
 
-    def test_save_to_file(self):
-        self._test_save_to_file(config_mocks.CONFIG_WITH_CREDENTIALS)
-        self._test_save_to_file(config_mocks.CONFIG_NO_CREDENTIALS)
-        self._test_save_to_file(config_mocks.CONFIG_PARTIAL_CREDENTIALS)
+    assert len(config_dict.keys()) == 4
+    assert config_dict["server_config"] == "password"
+    assert config_dict["deployment"] == "develop"
+    assert config_dict["user"] == "test"
+    assert config_dict["password_hash"] == "abcdef"
 
-    @patch.object(target=EnvironmentConfig, attribute="get_config_file_path",
-                  new=MagicMock(return_value=get_server_config_file_path_test_version()))
-    def _test_save_to_file(self, config: Dict):
-        user_creds = UserCreds.get_from_dict(config)
-        env_config = EnvironmentConfig(server_config=config['server_config'],
-                                       deployment=config['deployment'],
-                                       user_creds=user_creds)
 
-        env_config.save_to_file()
-        file_path = get_server_config_file_path_test_version()
-        with open(file_path, 'r') as f:
-            content_from_file = f.read()
-        os.remove(file_path)
+def test_get_with_no_credentials():
+    config_dict = EnvironmentConfig(NO_CREDENTIALS).to_dict()
 
-        self.assertDictEqual(config, json.loads(content_from_file))
+    assert len(config_dict.keys()) == 2
+    assert config_dict["server_config"] == "password"
+    assert config_dict["deployment"] == "develop"
 
-    def test_get_server_config_file_path(self):
-        if platform.system() == "Windows":
-            server_file_path = MONKEY_ISLAND_ABS_PATH + r"\cc\server_config.json"
-        else:
-            server_file_path = MONKEY_ISLAND_ABS_PATH + "/cc/server_config.json"
-        self.assertEqual(EnvironmentConfig.get_config_file_path(), server_file_path)
 
-    def test_get_from_dict(self):
-        config_dict = config_mocks.CONFIG_WITH_CREDENTIALS
-        env_conf = EnvironmentConfig.get_from_dict(config_dict)
-        self.assertEqual(env_conf.server_config, config_dict['server_config'])
-        self.assertEqual(env_conf.deployment, config_dict['deployment'])
-        self.assertEqual(env_conf.user_creds.username, config_dict['user'])
-        self.assertEqual(env_conf.aws, None)
+def test_get_with_partial_credentials():
+    config_dict = EnvironmentConfig(PARTIAL_CREDENTIALS).to_dict()
 
-        config_dict = config_mocks.CONFIG_BOGUS_VALUES
-        env_conf = EnvironmentConfig.get_from_dict(config_dict)
-        self.assertEqual(env_conf.server_config, config_dict['server_config'])
-        self.assertEqual(env_conf.deployment, config_dict['deployment'])
-        self.assertEqual(env_conf.user_creds.username, config_dict['user'])
-        self.assertEqual(env_conf.aws, config_dict['aws'])
+    assert len(config_dict.keys()) == 3
+    assert config_dict["server_config"] == "password"
+    assert config_dict["deployment"] == "develop"
+    assert config_dict["user"] == "test"
 
-    def test_to_dict(self):
-        conf_json1 = json.dumps(config_mocks.CONFIG_WITH_CREDENTIALS)
-        self._test_to_dict(EnvironmentConfig.get_from_json(conf_json1))
 
-        conf_json2 = json.dumps(config_mocks.CONFIG_NO_CREDENTIALS)
-        self._test_to_dict(EnvironmentConfig.get_from_json(conf_json2))
+def test_save_to_file(config_file):
+    shutil.copyfile(STANDARD_WITH_CREDENTIALS, config_file)
 
-        conf_json3 = json.dumps(config_mocks.CONFIG_PARTIAL_CREDENTIALS)
-        self._test_to_dict(EnvironmentConfig.get_from_json(conf_json3))
+    environment_config = EnvironmentConfig(config_file)
+    environment_config.aws = "test_aws"
+    environment_config.save_to_file()
 
-    def _test_to_dict(self, env_config_object: EnvironmentConfig):
-        test_dict = {'server_config': env_config_object.server_config,
-                     'deployment': env_config_object.deployment}
-        user_creds = env_config_object.user_creds
-        if user_creds.username:
-            test_dict.update({'user': user_creds.username})
-        if user_creds.password_hash:
-            test_dict.update({'password_hash': user_creds.password_hash})
+    with open(config_file, "r") as f:
+        from_file = json.load(f)
 
-        self.assertDictEqual(test_dict, env_config_object.to_dict())
+    assert len(from_file.keys()) == 5
+    assert from_file["server_config"] == "standard"
+    assert from_file["deployment"] == "develop"
+    assert from_file["user"] == "test"
+    assert from_file["password_hash"] == "abcdef"
+    assert from_file["aws"] == "test_aws"
+
+
+def test_add_user(config_file):
+    new_user = "new_user"
+    new_password_hash = "fedcba"
+    new_user_creds = UserCreds(new_user, new_password_hash)
+
+    shutil.copyfile(STANDARD_WITH_CREDENTIALS, config_file)
+
+    environment_config = EnvironmentConfig(config_file)
+    environment_config.add_user(new_user_creds)
+
+    with open(config_file, "r") as f:
+        from_file = json.load(f)
+
+    assert len(from_file.keys()) == 4
+    assert from_file["user"] == new_user
+    assert from_file["password_hash"] == new_password_hash
+
+
+def test_get_users():
+    environment_config = EnvironmentConfig(STANDARD_WITH_CREDENTIALS)
+    users = environment_config.get_users()
+
+    assert len(users) == 1
+    assert users[0].id == 1
+    assert users[0].username == "test"
+    assert users[0].secret == "abcdef"
+
+
+def test_generate_default_file(config_file):
+    environment_config = EnvironmentConfig(config_file)
+
+    assert os.path.isfile(config_file)
+
+    assert environment_config.server_config == "password"
+    assert environment_config.deployment == "develop"
+    assert environment_config.user_creds.username == ""
+    assert environment_config.user_creds.password_hash == ""
+    assert environment_config.aws is None
