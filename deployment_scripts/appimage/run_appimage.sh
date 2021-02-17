@@ -21,7 +21,7 @@ if [[ $(python3.7 --version 2>&1) == *"Python 3.7"* ]]; then
   python_cmd="python3.7"
 fi
 
-mkdir -p $DOT_MONKEY
+mkdir --mode=0700 --parents $DOT_MONKEY
 
 DB_DIR=$DOT_MONKEY/db
 mkdir -p $DB_DIR
