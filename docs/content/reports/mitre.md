@@ -32,6 +32,6 @@ By clicking on each of the listed techniques, you can see exactly how the Infect
 
 ![MITRE Report Credentials Access technique](/images/usage/reports/mitre-report-cred-access.png "MITRE Report Credentials Access technique")
 
-In this example, you can see how the Infection Monkey was able to use an old `root` password to access all machines in the network. When scrolling to the bottom of this list, you can also see the mitigation steps recommended, including reconfiguring your **Account Use Policies** and implementing **Multiple Factor Authentication**.
+In this example, you can see how the Infection Monkey was able to use an old `root` password to access all machines in the network. When scrolling to the bottom of this list, you can also see the mitigation steps recommended, including reconfiguring your **Account Use Policies** and implementing **Multi-factor Authentication**.
 
 ![MITRE Report Credentials Access technique](/images/usage/reports/mitre-report-cred-access-mitigations.png "MITRE Report Credentials Access technique")
