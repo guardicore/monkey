@@ -124,8 +124,6 @@ install_monkey_island_python_dependencies() {
 
   ${python_cmd} -m pip install -r "${requirements_island}"  --ignore-installed --prefix /usr --root=$APPDIR || handle_error
   ${python_cmd} -m pip install pyjwt==1.7 --ignore-installed -U --prefix /usr --root=$APPDIR || handle_error
-
-  #${python_cmd} -m pip install PyNacl --user --upgrade || handle_error
 }
 
 download_monkey_agent_binaries() {
@@ -142,9 +140,6 @@ log_message "Downloading monkey agent binaries to ${ISLAND_BINARIES_PATH}"
 }
 
 install_mongodb() {
-  #log_message "Installing libcurl4"
-  #sudo apt-get install -y libcurl4
-
   log_message "Installing MongoDB"
 
   mkdir -p $MONGO_PATH
@@ -152,7 +147,6 @@ install_mongodb() {
 }
 
 generate_ssl_cert() {
-  # Generate SSL certificate
   log_message "Generating certificate"
 
   chmod u+x "${ISLAND_PATH}"/linux/create_certificate.sh
@@ -235,19 +229,12 @@ clone_monkey_repo
 download_monkey_helper_binaries
 
 copy_monkey_island_to_appdir
+
 # Create folders
 log_message "Creating island dirs under $ISLAND_PATH"
 mkdir -p "${MONGO_PATH}" || handle_error
 
-#log_message "Installing python3-distutils"
-#sudo apt-get install -y python3-distutils
 install_monkey_island_python_dependencies
-
-#log_message "Installing monkey requirements"
-#sudo apt-get install -y libffi-dev upx libssl-dev libc++1
-#requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
-#${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
-
 
 install_mongodb
 
@@ -255,11 +242,8 @@ generate_ssl_cert
 
 build_frontend
 
-#cp ./AppRun $APPDIR
-
 mkdir -p $APPDIR/usr/share/icons
 cp $REPO_MONKEY_SRC/monkey_island/cc/ui/src/images/monkey-icon.svg $APPDIR/usr/share/icons/monkey-icon.svg
-#cp ./monkey_island.desktop $APPDIR
 
 build_appimage
 
