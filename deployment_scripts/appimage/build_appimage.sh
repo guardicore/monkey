@@ -169,6 +169,26 @@ build_frontend() {
     popd || handle_error
 }
 
+build_appimage() {
+	log_message "Building AppImage"
+	appimage-builder --recipe monkey_island_builder.yml --log DEBUG --skip-appimage
+
+	# There is a bug or unwanted behavior in appimage-builder that causes issues
+	# if 32-bit binaries are present in the appimage. To work around this, we:
+	# 	1. Build the AppDir with appimage-builder and skip building the appimage
+	#   2. Add the 32-bit binaries to the AppDir
+	#   3. Build the AppImage with appimage-builder from the already-built AppDir
+	#
+	# Note that appimage-builder replaces the interpreter on the monkey agent binaries
+	# when building the AppDir. This is unwanted as the monkey agents may execute in 
+	# environments where the AppImage isn't loaded.
+	#
+	# See https://github.com/AppImageCrafters/appimage-builder/issues/93 for more info.
+	download_monkey_agent_binaries
+
+	appimage-builder --recipe monkey_island_builder.yml --log DEBUG --skip-build
+}
+
 download_monkey_helper_binaries() {
   # Making dir for binaries
   mkdir "${MONKEY_BIN_DIR}"
@@ -228,7 +248,6 @@ install_monkey_island_python_dependencies
 #requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
 #${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
 
-download_monkey_agent_binaries
 
 install_mongodb
 
@@ -242,9 +261,7 @@ mkdir -p $APPDIR/usr/share/icons
 cp $REPO_MONKEY_SRC/monkey_island/cc/ui/src/images/monkey-icon.svg $APPDIR/usr/share/icons/monkey-icon.svg
 #cp ./monkey_island.desktop $APPDIR
 
-log_message "Building AppImage"
-appimage-builder --recipe monkey_island_builder.yml
-
+build_appimage
 
 log_message "Deployment script finished."
 exit 0
