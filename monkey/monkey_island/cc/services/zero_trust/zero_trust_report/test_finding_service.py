@@ -45,6 +45,3 @@ def test_get_all_findings():
 
     assert findings[0] == expected_finding0
     assert findings[1] == expected_finding1
-
-
-

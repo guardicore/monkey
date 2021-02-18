@@ -1,6 +1,5 @@
 import pytest
 
-from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.scoutsuite_finding import ScoutSuiteFinding
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_zt_finding_service import ScoutSuiteZTFindingService

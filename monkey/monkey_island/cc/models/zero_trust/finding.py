@@ -8,9 +8,6 @@ from __future__ import annotations
 from mongoengine import Document, StringField
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
-# Dummy import for mongoengine.
-# noinspection PyUnresolvedReferences
-from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
 
 
 class Finding(Document):

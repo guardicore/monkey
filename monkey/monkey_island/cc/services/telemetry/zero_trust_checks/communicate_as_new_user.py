@@ -12,9 +12,9 @@ def check_new_user_communication(current_monkey, success, message):
     MonkeyZTFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_COMMUNICATE_AS_NEW_USER,
                                                      status=status,
                                                      events=[
-                                                       get_attempt_event(current_monkey),
-                                                       get_result_event(current_monkey, message, success)
-                                                   ])
+                                                         get_attempt_event(current_monkey),
+                                                         get_result_event(current_monkey, message, success)
+                                                     ])
 
 
 def get_attempt_event(current_monkey):

@@ -11,6 +11,7 @@ from monkey_island.cc.services.zero_trust.test_common.raw_scoutsute_data import 
 class ExampleRules(Enum):
     NON_EXSISTENT_RULE = 'bogus_rule'
 
+
 ALL_PORTS_OPEN = EC2Rules.SECURITY_GROUP_ALL_PORTS_TO_ALL
 
 EXPECTED_RESULT = {'description': 'Security Group Opens All Ports to All',

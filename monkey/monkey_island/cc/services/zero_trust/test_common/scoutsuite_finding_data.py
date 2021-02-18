@@ -73,5 +73,3 @@ def get_scoutsuite_details_dto() -> ScoutSuiteFindingDetails:
     scoutsuite_details.scoutsuite_rules.append(RULES[0])
     scoutsuite_details.scoutsuite_rules.append(RULES[1])
     return scoutsuite_details
-
-
