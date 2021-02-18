@@ -1,30 +1,44 @@
 {
     "id": "xYkxB76pK0peJj2tSxBJ",
     "name": "Define what your new PBA does",
-    "dod": "WW91JTIwc2hvdWxkJTIwYWRkJTIwYSUyMG5ldyUyMFBCQSUyMGNvbnN0JTIwdGhhdCUyMGRlZmluZXMlMjB3aGF0JTIwdGhlJTIwUEJBJTIwZG9lcy4=",
-    "description": "VGhlJTIwbmFtZSUyMG9mJTIweW91ciUyMG5ldyUyMFBCQSUyMCh3aGljaCUyMGNyZWF0ZXMlMjBzY2hlZHVsZWQlMjBqb2JzJTIwb24lMjB0aGUlMjBtYWNoaW5lKSUyMHdpbGwlMjBiZSUyMHVzZWQlMjBpbiUyMGElMjBmZXclMjBwbGFjZXMlMkMlMjBpbmNsdWRpbmclMjB0aGUlMjByZXBvcnQuJTIwJTNDYnIlM0UlM0NiciUzRSUwQVlvdSUyMHNob3VsZCUyMGJyaWVmbHklMjBkZWZpbmUlMjB3aGF0JTIweW91ciUyMFBCQSUyMGRvZXMlMjBpbiUyMGElMjBjb25zdGFudCUyMHZhcmlhYmxlJTJDJTIwc3VjaCUyMHRoYXQlMjBpdCUyMGNhbiUyMGJlJTIwdXNlZCUyMGJ5JTIwYm90aCUyMHRoZSUyME1vbmtleSUyMGFuZCUyMHRoZSUyME1vbmtleSUyMElzbGFuZC4lMEElMEElMjMlMjMlMjBNYW51YWwlMjB0ZXN0JTIwJTIwJTBBT25jZSUyMHlvdSUyMHRoaW5rJTIweW91J3JlJTIwZG9uZS4uLiUwQS0lMjBSdW4lMjB0aGUlMjBNb25rZXklMjBJc2xhbmQlMEEtJTIwTWFrZSUyMHN1cmUlMjB0aGUlMjAlMjJKb2IlMjBzY2hlZHVsaW5nJTIyJTIwUEJBJTIwaXMlMjBlbmFibGVkJTIwaW4lMjB0aGUlMjAlMjJNb25rZXklMjIlMjB0YWIlMjBpbiUyMHRoZSUyMGNvbmZpZ3VyYXRpb24lMjAlRTIlODAlOTQlMjBmb3IlMjB0aGlzJTIwdGVzdCUyQyUyMGRpc2FibGUlMjBuZXR3b3JrJTIwc2Nhbm5pbmclMkMlMjBleHBsb2l0aW5nJTJDJTIwYW5kJTIwYWxsJTIwb3RoZXIlMjBQQkFzJTBBLSUyMFJ1biUyMHRoZSUyME1vbmtleSUwQS0lMjBDaGVjayUyMHRoZSUyMFBCQSUyMHNlY3Rpb24lMjBpbiUyMHRoZSUyMFNlY3VyaXR5JTIwcmVwb3J0JTIwZm9yJTIwdGhlJTIwbmFtZSUyMHlvdSUyMGdhdmUlMjB0byUyMHRoZSUyMG5ldyUyMFBCQSUyMCUyMCUwQSUwQSUzQ2ltZyUyMHNyYyUzRCUyMmh0dHBzJTNBJTJGJTJGZmlyZWJhc2VzdG9yYWdlLmdvb2dsZWFwaXMuY29tJTJGdjAlMkZiJTJGc3dpbW1pby1jb250ZW50JTJGbyUyRnJlcG9zaXRvcmllcyUyNTJGNk5sYjk5TnRZNUZjM2JTZDhzdUglMjUyRmltZyUyNTJGZjBlNTNlNmMtOWRiZS00MWQ4LTk0NTQtMmI1NzYxYzNmNTNhLnBuZyUzRmFsdCUzRG1lZGlhJTI2dG9rZW4lM0QyMWFhNGJiOC03ZWJlLTRkYWItYTczOS1jNzdlMDU5MTQ0ZGQlMjIlMjBoZWlnaHQlM0Q0MDAlM0U=",
-    "summary": "LSUyMFRoZSUyMG5hbWUlMjBkZWZpbmVkJTIwaGVyZSUyMGZvciUyMHlvdXIlMjBQQkElMjBjYW4lMjBiZSUyMHNlZW4lMjBvbiUyMHRoZSUyME1vbmtleSUyMElzbGFuZCUyMGluJTIwdGhlJTIwUEJBJTIwc2VjdGlvbiUyMGluJTIwdGhlJTIwU2VjdXJpdHklMjByZXBvcnQuJTBBLSUyMFRoZSUyMHJlc3VsdHMlMjBvZiUyMGVhY2glMjBQQkElMjBzdG9yZWQlMjBpbiUyMHRoZSUyMHRlbGVtZXRyeSUyMGFyZSUyMGFsc28lMjBpZGVudGlmaWVkJTIwYnklMjB0aGUlMjBzdHJpbmclMjBkZWZpbmVkJTIwaGVyZSUyMGZvciUyMHRoYXQlMjBQQkEu",
-    "diff": "ZGlmZiUyMC0tZ2l0JTIwYSUyRm1vbmtleSUyRmNvbW1vbiUyRmRhdGElMkZwb3N0X2JyZWFjaF9jb25zdHMucHklMjBiJTJGbW9ua2V5JTJGY29tbW9uJTJGZGF0YSUyRnBvc3RfYnJlYWNoX2NvbnN0cy5weSUwQWluZGV4JTIwMjVlNjY3OWMuLjQ2ZDgwMmRlJTIwMTAwNjQ0JTBBLS0tJTIwYSUyRm1vbmtleSUyRmNvbW1vbiUyRmRhdGElMkZwb3N0X2JyZWFjaF9jb25zdHMucHklMEElMkIlMkIlMkIlMjBiJTJGbW9ua2V5JTJGY29tbW9uJTJGZGF0YSUyRnBvc3RfYnJlYWNoX2NvbnN0cy5weSUwQSU0MCU0MCUyMC01JTJDNyUyMCUyQjUlMkM3JTIwJTQwJTQwJTIwUE9TVF9CUkVBQ0hfU0hFTExfU1RBUlRVUF9GSUxFX01PRElGSUNBVElPTiUyMCUzRCUyMCUyMk1vZGlmeSUyMHNoZWxsJTIwc3RhcnR1cCUyMGZpbGUlMjIlMEElMjBQT1NUX0JSRUFDSF9ISURERU5fRklMRVMlMjAlM0QlMjAlMjJIaWRlJTIwZmlsZXMlMjBhbmQlMjBkaXJlY3RvcmllcyUyMiUwQSUyMFBPU1RfQlJFQUNIX1RSQVBfQ09NTUFORCUyMCUzRCUyMCUyMkV4ZWN1dGUlMjBjb21tYW5kJTIwd2hlbiUyMGElMjBwYXJ0aWN1bGFyJTIwc2lnbmFsJTIwaXMlMjByZWNlaXZlZCUyMiUwQSUyMFBPU1RfQlJFQUNIX1NFVFVJRF9TRVRHSUQlMjAlM0QlMjAlMjJTZXR1aWQlMjBhbmQlMjBTZXRnaWQlMjIlMEEtUE9TVF9CUkVBQ0hfSk9CX1NDSEVEVUxJTkclMjAlM0QlMjAlMjJTY2hlZHVsZSUyMGpvYnMlMjIlMEElMkIlMjMlMjBTd2ltbWVyJTNBJTIwUFVUJTIwVEhFJTIwTkVXJTIwQ09OU1QlMjBIRVJFISUwQSUyMFBPU1RfQlJFQUNIX1RJTUVTVE9NUElORyUyMCUzRCUyMCUyMk1vZGlmeSUyMGZpbGVzJyUyMHRpbWVzdGFtcHMlMjIlMEElMjBQT1NUX0JSRUFDSF9TSUdORURfU0NSSVBUX1BST1hZX0VYRUMlMjAlM0QlMjAlMjJTaWduZWQlMjBzY3JpcHQlMjBwcm94eSUyMGV4ZWN1dGlvbiUyMiUwQSUyMFBPU1RfQlJFQUNIX0FDQ09VTlRfRElTQ09WRVJZJTIwJTNEJTIwJTIyQWNjb3VudCUyMGRpc2NvdmVyeSUyMiUwQQ==",
-    "tests": [],
-    "hints": [
-        "See the `Timestomping` PBA. How is the name of the PBA set?"
-    ],
-    "files": {
-        "monkey/common/data/post_breach_consts.py": {
-            "index": [
-                "25e6679c..46d802de",
-                "100644"
-            ],
-            "fileA": "monkey/common/data/post_breach_consts.py",
-            "fileB": "monkey/common/data/post_breach_consts.py",
-            "status": "MODIFIED",
-            "numLineDeletions": 1,
-            "numLineAdditions": 1,
-            "hunkContainers": [
-                "JTdCJTIyaHVuayUyMiUzQSU3QiUyMmhlYWRlciUyMiUzQSUyMiU0MCU0MCUyMC01JTJDNyUyMCUyQjUlMkM3JTIwJTQwJTQwJTIwUE9TVF9CUkVBQ0hfU0hFTExfU1RBUlRVUF9GSUxFX01PRElGSUNBVElPTiUyMCUzRCUyMCU1QyUyMk1vZGlmeSUyMHNoZWxsJTIwc3RhcnR1cCUyMGZpbGUlNUMlMjIlMjIlMkMlMjJjaGFuZ2VzJTIyJTNBJTVCJTdCJTIydHlwZSUyMiUzQSUyMmNvbnRleHQlMjIlMkMlMjJkYXRhJTIyJTNBJTIyJTIwUE9TVF9CUkVBQ0hfSElEREVOX0ZJTEVTJTIwJTNEJTIwJTVDJTIySGlkZSUyMGZpbGVzJTIwYW5kJTIwZGlyZWN0b3JpZXMlNUMlMjIlMjIlMkMlMjJsaW5lTnVtYmVycyUyMiUzQSU3QiUyMmElMjIlM0E1JTJDJTIyYiUyMiUzQTUlN0QlN0QlMkMlN0IlMjJ0eXBlJTIyJTNBJTIyY29udGV4dCUyMiUyQyUyMmRhdGElMjIlM0ElMjIlMjBQT1NUX0JSRUFDSF9UUkFQX0NPTU1BTkQlMjAlM0QlMjAlNUMlMjJFeGVjdXRlJTIwY29tbWFuZCUyMHdoZW4lMjBhJTIwcGFydGljdWxhciUyMHNpZ25hbCUyMGlzJTIwcmVjZWl2ZWQlNUMlMjIlMjIlMkMlMjJsaW5lTnVtYmVycyUyMiUzQSU3QiUyMmElMjIlM0E2JTJDJTIyYiUyMiUzQTYlN0QlN0QlMkMlN0IlMjJ0eXBlJTIyJTNBJTIyY29udGV4dCUyMiUyQyUyMmRhdGElMjIlM0ElMjIlMjBQT1NUX0JSRUFDSF9TRVRVSURfU0VUR0lEJTIwJTNEJTIwJTVDJTIyU2V0dWlkJTIwYW5kJTIwU2V0Z2lkJTVDJTIyJTIyJTJDJTIybGluZU51bWJlcnMlMjIlM0ElN0IlMjJhJTIyJTNBNyUyQyUyMmIlMjIlM0E3JTdEJTdEJTJDJTdCJTIydHlwZSUyMiUzQSUyMmRlbCUyMiUyQyUyMm1hcmslMjIlM0ElMjItJTIyJTJDJTIyZGF0YSUyMiUzQSUyMlBPU1RfQlJFQUNIX0pPQl9TQ0hFRFVMSU5HJTIwJTNEJTIwJTVDJTIyU2NoZWR1bGUlMjBqb2JzJTVDJTIyJTIyJTJDJTIybGluZU51bWJlcnMlMjIlM0ElN0IlMjJhJTIyJTNBOCU3RCU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJhZGQlMjIlMkMlMjJtYXJrJTIyJTNBJTIyJTJCJTIyJTJDJTIyZGF0YSUyMiUzQSUyMiUyMyUyMFN3aW1tZXIlM0ElMjBQVVQlMjBUSEUlMjBORVclMjBDT05TVCUyMEhFUkUhJTIyJTJDJTIybGluZU51bWJlcnMlMjIlM0ElN0IlMjJiJTIyJTNBOCU3RCU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJjb250ZXh0JTIyJTJDJTIyZGF0YSUyMiUzQSUyMiUyMFBPU1RfQlJFQUNIX1RJTUVTVE9NUElORyUyMCUzRCUyMCU1QyUyMk1vZGlmeSUyMGZpbGVzJyUyMHRpbWVzdGFtcHMlNUMlMjIlMjIlMkMlMjJsaW5lTnVtYmVycyUyMiUzQSU3QiUyMmElMjIlM0E5JTJDJTIyYiUyMiUzQTklN0QlN0QlMkMlN0IlMjJ0eXBlJTIyJTNBJTIyY29udGV4dCUyMiUyQyUyMmRhdGElMjIlM0ElMjIlMjBQT1NUX0JSRUFDSF9TSUdORURfU0NSSVBUX1BST1hZX0VYRUMlMjAlM0QlMjAlNUMlMjJTaWduZWQlMjBzY3JpcHQlMjBwcm94eSUyMGV4ZWN1dGlvbiU1QyUyMiUyMiUyQyUyMmxpbmVOdW1iZXJzJTIyJTNBJTdCJTIyYSUyMiUzQTEwJTJDJTIyYiUyMiUzQTEwJTdEJTdEJTJDJTdCJTIydHlwZSUyMiUzQSUyMmNvbnRleHQlMjIlMkMlMjJkYXRhJTIyJTNBJTIyJTIwUE9TVF9CUkVBQ0hfQUNDT1VOVF9ESVNDT1ZFUlklMjAlM0QlMjAlNUMlMjJBY2NvdW50JTIwZGlzY292ZXJ5JTVDJTIyJTIyJTJDJTIybGluZU51bWJlcnMlMjIlM0ElN0IlMjJhJTIyJTNBMTElMkMlMjJiJTIyJTNBMTElN0QlN0QlNUQlMkMlMjJsaW5lTnVtYmVycyUyMiUzQSU3QiUyMmElMjIlM0ElN0IlMjJzdGFydExpbmUlMjIlM0E1JTJDJTIybGluZXNDb3VudCUyMiUzQTclN0QlMkMlMjJiJTIyJTNBJTdCJTIyc3RhcnRMaW5lJTIyJTNBNSUyQyUyMmxpbmVzQ291bnQlMjIlM0E3JTdEJTdEJTdEJTdE"
-            ]
-        }
+    "task": {
+        "dod": "You should add a new PBA const that defines what the PBA does.",
+        "tests": [],
+        "hints": [
+            "See the `Timestomping` PBA. How is the name of the PBA set?"
+        ]
     },
-    "app_version": "0.1.90",
-    "file_version": "1.0.2"
+    "content": [
+        {
+            "type": "text",
+            "text": "The name of your new PBA (which creates scheduled jobs on the machine) will be used in a few places, including the report. <br><br>\nYou should briefly define what your PBA does in a constant variable, such that it can be used by both the Monkey and the Monkey Island.\n\n## Manual test  \nOnce you think you're done...\n- Run the Monkey Island\n- Make sure the \"Job scheduling\" PBA is enabled in the \"Monkey\" tab in the configuration — for this test, disable network scanning, exploiting, and all other PBAs\n- Run the Monkey\n- Check the PBA section in the Security report for the name you gave to the new PBA  \n\n<img src=\"https://firebasestorage.googleapis.com/v0/b/swimmio-content/o/repositories%2F6Nlb99NtY5Fc3bSd8suH%2Fimg%2Ff0e53e6c-9dbe-41d8-9454-2b5761c3f53a.png?alt=media&token=21aa4bb8-7ebe-4dab-a739-c77e059144dd\" height=400>"
+        },
+        {
+            "firstLineNumber": 5,
+            "path": "monkey/common/common_consts/post_breach_consts.py",
+            "type": "snippet",
+            "lines": [
+                " POST_BREACH_HIDDEN_FILES = \"Hide files and directories\"",
+                " POST_BREACH_TRAP_COMMAND = \"Execute command when a particular signal is received\"",
+                " POST_BREACH_SETUID_SETGID = \"Setuid and Setgid\"",
+                "*POST_BREACH_JOB_SCHEDULING = \"Schedule jobs\"",
+                "+# Swimmer: PUT THE NEW CONST HERE!",
+                " POST_BREACH_TIMESTOMPING = \"Modify files' timestamps\"",
+                " POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC = \"Signed script proxy execution\"",
+                " POST_BREACH_ACCOUNT_DISCOVERY = \"Account discovery\""
+            ],
+            "comments": []
+        },
+        {
+            "type": "text",
+            "text": "- The name defined here for your PBA can be seen on the Monkey Island in the PBA section in the Security report.\n- The results of each PBA stored in the telemetry are also identified by the string defined here for that PBA."
+        }
+    ],
+    "file_version": "2.0.0",
+    "meta": {
+        "app_version": "0.3.7-0",
+        "file_blobs": {
+            "monkey/common/common_consts/post_breach_consts.py": "25e6679cb1623aae1a732deb05cc011a452743e3"
+        }
+    }
 }
