@@ -30,18 +30,15 @@ def exploit_telem_test_instance():
     return ExploitTelem(EXPLOITER, RESULT)
 
 
-def test_exploit_telem_category(exploit_telem_test_instance):
-    assert exploit_telem_test_instance.telem_category == 'exploit'
-
-
-def test_exploit_telem_get_data(exploit_telem_test_instance):
-    actual_data = exploit_telem_test_instance.get_data()
+def test_exploit_telem_send(exploit_telem_test_instance, spy_send_telemetry):
+    exploit_telem_test_instance.send()
     expected_data = {'result': RESULT,
                      'machine': HOST.as_dict(),
                      'exploiter': EXPLOITER.__class__.__name__,
                      'info': EXPLOITER.exploit_info,
                      'attempts': EXPLOITER.exploit_attempts}
-    assert actual_data == expected_data
+    assert spy_send_telemetry.data == expected_data
+    assert spy_send_telemetry.telem_category == "exploit"
 
 
 @pytest.fixture
@@ -55,14 +52,15 @@ def test_post_breach_telem_category(post_breach_telem_test_instance):
     assert post_breach_telem_test_instance.telem_category == 'post_breach'
 
 
-def test_post_breach_telem_get_data(post_breach_telem_test_instance):
-    actual_data = post_breach_telem_test_instance.get_data()
+def test_post_breach_telem_send(post_breach_telem_test_instance, spy_send_telemetry):
+    post_breach_telem_test_instance.send()
     expected_data = {'command': PBA.command,
                      'result': RESULT,
                      'name': PBA.name,
                      'hostname': HOSTNAME,
                      'ip': IP}
-    assert actual_data == expected_data
+    assert spy_send_telemetry.data == expected_data
+    assert spy_send_telemetry.telem_category == "post_breach"
 
 
 @pytest.fixture
@@ -70,15 +68,12 @@ def scan_telem_test_instance():
     return ScanTelem(HOST)
 
 
-def test_scan_telem_category(scan_telem_test_instance):
-    assert scan_telem_test_instance.telem_category == 'scan'
-
-
-def test_scan_telem_get_data(scan_telem_test_instance):
-    actual_data = scan_telem_test_instance.get_data()
+def test_scan_telem_send(scan_telem_test_instance, spy_send_telemetry):
+    scan_telem_test_instance.send()
     expected_data = {'machine': HOST.as_dict(),
                      'service_count': len(HOST.services)}
-    assert actual_data == expected_data
+    assert spy_send_telemetry.data == expected_data
+    assert spy_send_telemetry.telem_category == "scan"
 
 
 @pytest.fixture
@@ -86,15 +81,12 @@ def state_telem_test_instance():
     return StateTelem(IS_DONE, VERSION)
 
 
-def test_state_telem_category(state_telem_test_instance):
-    assert state_telem_test_instance.telem_category == 'state'
-
-
-def test_state_telem_get_data(state_telem_test_instance):
-    actual_data = state_telem_test_instance.get_data()
+def test_state_telem_send(state_telem_test_instance, spy_send_telemetry):
+    state_telem_test_instance.send()
     expected_data = {'done': IS_DONE,
                      'version': VERSION}
-    assert actual_data == expected_data
+    assert spy_send_telemetry.data == expected_data
+    assert spy_send_telemetry.telem_category == "state"
 
 
 @pytest.fixture
@@ -102,14 +94,11 @@ def system_info_telem_test_instance():
     return SystemInfoTelem(SYSTEM_INFO)
 
 
-def test_system_info_telem_category(system_info_telem_test_instance):
-    assert system_info_telem_test_instance.telem_category == 'system_info'
-
-
-def test_system_info_telem_get_data(system_info_telem_test_instance):
-    actual_data = system_info_telem_test_instance.get_data()
+def test_system_info_telem_send(system_info_telem_test_instance, spy_send_telemetry):
+    system_info_telem_test_instance.send()
     expected_data = SYSTEM_INFO
-    assert actual_data == expected_data
+    assert spy_send_telemetry.data == expected_data
+    assert spy_send_telemetry.telem_category == "system_info"
 
 
 @pytest.fixture
@@ -117,14 +106,11 @@ def trace_telem_test_instance():
     return TraceTelem(MSG)
 
 
-def test_trace_telem_category(trace_telem_test_instance):
-    assert trace_telem_test_instance.telem_category == 'trace'
-
-
-def test_trace_telem_get_data(trace_telem_test_instance):
-    actual_data = trace_telem_test_instance.get_data()
+def test_trace_telem_send(trace_telem_test_instance, spy_send_telemetry):
+    trace_telem_test_instance.send()
     expected_data = {'msg': MSG}
-    assert actual_data == expected_data
+    assert spy_send_telemetry.data == expected_data
+    assert spy_send_telemetry.telem_category == "trace"
 
 
 @pytest.fixture
@@ -132,11 +118,8 @@ def tunnel_telem_test_instance():
     return TunnelTelem()
 
 
-def test_tunnel_telem_category(tunnel_telem_test_instance):
-    assert tunnel_telem_test_instance.telem_category == 'tunnel'
-
-
-def test_tunnel_telem_get_data(tunnel_telem_test_instance):
-    actual_data = tunnel_telem_test_instance.get_data()
+def test_tunnel_telem_send(tunnel_telem_test_instance, spy_send_telemetry):
+    tunnel_telem_test_instance.send()
     expected_data = {'proxy': None}
-    assert actual_data == expected_data
+    assert spy_send_telemetry.data == expected_data
+    assert spy_send_telemetry.telem_category == "tunnel"
