@@ -2,6 +2,7 @@ import pytest
 
 from infection_monkey.telemetry.trace_telem import TraceTelem
 
+
 MSG = "message"
 
 

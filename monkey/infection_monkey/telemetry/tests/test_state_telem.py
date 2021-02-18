@@ -2,6 +2,7 @@ import pytest
 
 from infection_monkey.telemetry.state_telem import StateTelem
 
+
 IS_DONE = True
 VERSION = "version"
 

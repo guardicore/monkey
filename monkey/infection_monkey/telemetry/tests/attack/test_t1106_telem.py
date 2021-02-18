@@ -15,8 +15,6 @@ def T1106_telem_test_instance():
 
 def test_T1106_send(T1106_telem_test_instance, spy_send_telemetry):
     T1106_telem_test_instance.send()
-    expected_data = {'status': STATUS.value,
-                     'technique': 'T1106',
-                     'usage': USAGE.name}
+    expected_data = {"status": STATUS.value, "technique": "T1106", "usage": USAGE.name}
     assert spy_send_telemetry.data == expected_data
-    assert spy_send_telemetry.telem_category == 'attack'
+    assert spy_send_telemetry.telem_category == "attack"

@@ -11,5 +11,5 @@ def spy_send_telemetry(monkeypatch):
 
     _spy_send_telemetry.telem_category = None
     _spy_send_telemetry.data = None
-    monkeypatch.setattr(ControlClient, 'send_telemetry', _spy_send_telemetry)
+    monkeypatch.setattr(ControlClient, "send_telemetry", _spy_send_telemetry)
     return _spy_send_telemetry

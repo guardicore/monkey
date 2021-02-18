@@ -2,10 +2,12 @@ import pytest
 
 from common.data.post_breach_consts import POST_BREACH_JOB_SCHEDULING
 from infection_monkey.post_breach.actions.schedule_jobs import ScheduleJobs
-from infection_monkey.post_breach.job_scheduling.linux_job_scheduling import \
-    get_linux_commands_to_schedule_jobs
-from infection_monkey.post_breach.job_scheduling.windows_job_scheduling import \
-    get_windows_commands_to_schedule_jobs
+from infection_monkey.post_breach.job_scheduling.linux_job_scheduling import (
+    get_linux_commands_to_schedule_jobs,
+)
+from infection_monkey.post_breach.job_scheduling.windows_job_scheduling import (
+    get_windows_commands_to_schedule_jobs,
+)
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 
@@ -13,8 +15,11 @@ from infection_monkey.utils.environment import is_windows_os
 HOSTNAME = "hostname"
 IP = "0.0.0.0"
 PBA = ScheduleJobs()
-PBA_COMMAND = get_windows_commands_to_schedule_jobs() if is_windows_os() else\
-     ' '.join(get_linux_commands_to_schedule_jobs())
+PBA_COMMAND = (
+    get_windows_commands_to_schedule_jobs()
+    if is_windows_os()
+    else " ".join(get_linux_commands_to_schedule_jobs())
+)
 PBA_NAME = POST_BREACH_JOB_SCHEDULING
 RESULT = False
 
