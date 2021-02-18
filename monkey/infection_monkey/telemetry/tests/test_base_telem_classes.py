@@ -12,14 +12,14 @@ from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 
 
-DOMAIN_NAME = 'domain-name'
-HOSTNAME = 'hostname'
-IP = '0.0.0.0'
+DOMAIN_NAME = "domain-name"
+HOSTNAME = "hostname"
+IP = "0.0.0.0"
 IS_DONE = True
-MSG = 'message'
+MSG = "message"
 RESULT = False
 SYSTEM_INFO = {}
-VERSION = 'version'
+VERSION = "version"
 HOST = VictimHost(IP, DOMAIN_NAME)
 EXPLOITER = WmiExploiter(HOST)
 PBA = ScheduleJobs()
@@ -32,33 +32,39 @@ def exploit_telem_test_instance():
 
 def test_exploit_telem_send(exploit_telem_test_instance, spy_send_telemetry):
     exploit_telem_test_instance.send()
-    expected_data = {'result': RESULT,
-                     'machine': HOST.as_dict(),
-                     'exploiter': EXPLOITER.__class__.__name__,
-                     'info': EXPLOITER.exploit_info,
-                     'attempts': EXPLOITER.exploit_attempts}
+    expected_data = {
+        "result": RESULT,
+        "machine": HOST.as_dict(),
+        "exploiter": EXPLOITER.__class__.__name__,
+        "info": EXPLOITER.exploit_info,
+        "attempts": EXPLOITER.exploit_attempts,
+    }
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "exploit"
 
 
 @pytest.fixture
 def post_breach_telem_test_instance(mocker):
-    mocker.patch('infection_monkey.telemetry.post_breach_telem.PostBreachTelem._get_hostname_and_ip',
-                 return_value=(HOSTNAME, IP))
+    mocker.patch(
+        "infection_monkey.telemetry.post_breach_telem.PostBreachTelem._get_hostname_and_ip",
+        return_value=(HOSTNAME, IP),
+    )
     return PostBreachTelem(PBA, RESULT)
 
 
 def test_post_breach_telem_category(post_breach_telem_test_instance):
-    assert post_breach_telem_test_instance.telem_category == 'post_breach'
+    assert post_breach_telem_test_instance.telem_category == "post_breach"
 
 
 def test_post_breach_telem_send(post_breach_telem_test_instance, spy_send_telemetry):
     post_breach_telem_test_instance.send()
-    expected_data = {'command': PBA.command,
-                     'result': RESULT,
-                     'name': PBA.name,
-                     'hostname': HOSTNAME,
-                     'ip': IP}
+    expected_data = {
+        "command": PBA.command,
+        "result": RESULT,
+        "name": PBA.name,
+        "hostname": HOSTNAME,
+        "ip": IP,
+    }
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "post_breach"
 
@@ -70,8 +76,7 @@ def scan_telem_test_instance():
 
 def test_scan_telem_send(scan_telem_test_instance, spy_send_telemetry):
     scan_telem_test_instance.send()
-    expected_data = {'machine': HOST.as_dict(),
-                     'service_count': len(HOST.services)}
+    expected_data = {"machine": HOST.as_dict(), "service_count": len(HOST.services)}
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "scan"
 
@@ -83,8 +88,7 @@ def state_telem_test_instance():
 
 def test_state_telem_send(state_telem_test_instance, spy_send_telemetry):
     state_telem_test_instance.send()
-    expected_data = {'done': IS_DONE,
-                     'version': VERSION}
+    expected_data = {"done": IS_DONE, "version": VERSION}
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "state"
 
@@ -108,7 +112,7 @@ def trace_telem_test_instance():
 
 def test_trace_telem_send(trace_telem_test_instance, spy_send_telemetry):
     trace_telem_test_instance.send()
-    expected_data = {'msg': MSG}
+    expected_data = {"msg": MSG}
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "trace"
 
@@ -120,6 +124,6 @@ def tunnel_telem_test_instance():
 
 def test_tunnel_telem_send(tunnel_telem_test_instance, spy_send_telemetry):
     tunnel_telem_test_instance.send()
-    expected_data = {'proxy': None}
+    expected_data = {"proxy": None}
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "tunnel"
