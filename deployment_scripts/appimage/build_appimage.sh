@@ -12,8 +12,6 @@ REPO_MONKEY_SRC=$REPO_MONKEY_HOME/monkey
 ISLAND_PATH="$INSTALL_DIR/monkey_island"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
-INFECTION_MONKEY_DIR="$MONKEY_HOME/monkey/infection_monkey"
-MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
 
 is_root() {
   return $(id -u)
@@ -169,7 +167,7 @@ build_appimage() {
 
 	# There is a bug or unwanted behavior in appimage-builder that causes issues
 	# if 32-bit binaries are present in the appimage. To work around this, we:
-	# 	1. Build the AppDir with appimage-builder and skip building the appimage
+	#   1. Build the AppDir with appimage-builder and skip building the appimage
 	#   2. Add the 32-bit binaries to the AppDir
 	#   3. Build the AppImage with appimage-builder from the already-built AppDir
 	#
@@ -181,28 +179,6 @@ build_appimage() {
 	download_monkey_agent_binaries
 
 	appimage-builder --recipe monkey_island_builder.yml --log DEBUG --skip-build
-}
-
-download_monkey_helper_binaries() {
-  # Making dir for binaries
-  mkdir "${MONKEY_BIN_DIR}"
-
-  download_sambacry_binaries
-  download_tracerout_binaries
-}
-
-download_sambacry_binaries() {
-  # Download sambacry binaries
-  log_message "Downloading sambacry binaries"
-  curl -L -o ${MONKEY_BIN_DIR}/sc_monkey_runner64.so ${SAMBACRY_64_BINARY_URL}
-  curl -L -o ${MONKEY_BIN_DIR}/sc_monkey_runner32.so ${SAMBACRY_32_BINARY_URL}
-}
-
-download_tracerout_binaries() {
-  # Download traceroute binaries
-  log_message "Downloading traceroute binaries"
-  curl -L -o ${MONKEY_BIN_DIR}/traceroute64 ${TRACEROUTE_64_BINARY_URL}
-  curl -L -o ${MONKEY_BIN_DIR}/traceroute32 ${TRACEROUTE_32_BINARY_URL}
 }
 
 if is_root; then
@@ -226,7 +202,6 @@ install_appimage_builder
 
 load_monkey_binary_config
 clone_monkey_repo
-download_monkey_helper_binaries
 
 copy_monkey_island_to_appdir
 
