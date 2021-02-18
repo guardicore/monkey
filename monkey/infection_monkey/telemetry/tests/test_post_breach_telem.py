@@ -11,11 +11,8 @@ RESULT = False
 
 
 @pytest.fixture
-def post_breach_telem_test_instance(mocker):
-    mocker.patch(
-        "infection_monkey.telemetry.post_breach_telem.PostBreachTelem._get_hostname_and_ip",
-        return_value=(HOSTNAME, IP),
-    )
+def post_breach_telem_test_instance(monkeypatch):
+    monkeypatch.setattr(PostBreachTelem, "_get_hostname_and_ip", lambda: (HOSTNAME, IP))
     return PostBreachTelem(PBA, RESULT)
 
 
