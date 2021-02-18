@@ -5,7 +5,9 @@ from infection_monkey.model import VictimHost
 from infection_monkey.telemetry.attack.t1197_telem import T1197Telem
 
 
-MACHINE = VictimHost('127.0.0.1')
+DOMAIN_NAME = 'domain-name'
+IP = '127.0.0.1'
+MACHINE = VictimHost(IP, DOMAIN_NAME)
 STATUS = ScanStatus.USED
 USAGE_STR = '[Usage info]'
 
@@ -17,8 +19,8 @@ def T1197_telem_test_instance():
 
 def test_T1197_send(T1197_telem_test_instance, spy_send_telemetry):
     T1197_telem_test_instance.send()
-    expected_data = {'machine': {'domain_name': MACHINE.domain_name,
-                                 'ip_addr': MACHINE.ip_addr},
+    expected_data = {'machine': {'domain_name': DOMAIN_NAME,
+                                 'ip_addr': IP},
                      'status': STATUS.value,
                      'technique': 'T1197',
                      'usage': USAGE_STR}
