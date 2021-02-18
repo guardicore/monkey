@@ -3,6 +3,7 @@ from infection_monkey.telemetry.attack.usage_telem import AttackTelem
 
 class T1064Telem(AttackTelem):
     def __init__(self, status, usage):
+        # TODO: rename parameter "usage" to avoid confusion with parameter "usage" in UsageTelem techniques
         """
         T1064 telemetry.
         :param status: ScanStatus of technique
