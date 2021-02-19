@@ -34,7 +34,7 @@ Before starting the scan, make sure that the AWS Security Hub is accepting findi
 
 The Infection Monkey reports the following types of issues to the AWS Security Hub: `Software and Configuration Checks/Vulnerabilities/CVE`.
 
-Specifically, the Infection Monkey sends findings for all vulnerabilities it finds along with generic findings on the network (such as segmentation issues). Our normalized severity is 100, while most issues we report range between one and 10.
+Specifically, the Infection Monkey sends findings for all vulnerabilities it finds along with generic findings on the network (such as segmentation issues). Our normalized severity is 100, while most issues we report range between 1 and 10.
 
 ## Regions
 
