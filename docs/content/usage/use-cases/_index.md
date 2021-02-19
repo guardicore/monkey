@@ -12,7 +12,7 @@ This section describes possible use cases for the Infection Monkey and how you c
 You can also refer to [our FAQ](../../faq) for more specific questions and answers.
 
 {{% notice note %}}
-Don't worry! The Infection Monkey uses safe exploiters and does not cause any permanent system modifications that impact security or operations.
+Don't worry! The Infection Monkey uses safe exploiters and does not cause any permanent system modifications that could impact security or operations.
 {{% /notice %}}
 
 ## Section contents
