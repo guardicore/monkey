@@ -10,7 +10,7 @@ The `/docs` folder contains the Infection Monkey Documentation site.
 
 The site is based on [Hugo](https://gohugo.io/) and the [learn](https://themes.gohugo.io/theme/hugo-theme-learn/en) theme.
 
-- [Directory Structure](#directory-structure)
+- [Directory structure](#directory-structure)
   - [content](#content)
   - [static](#static)
   - [config](#config)
@@ -36,11 +36,11 @@ By order of importance:
 
 ### Content
 
-The most important directory is `/content`: This is the directory which contains the content files. [Read this to understand how pages are organized in that folder](https://themes.gohugo.io//theme/hugo-theme-learn/en/cont/pages/).
+The most important directory is `/content`. This is the directory which contains the content files. [Read this to understand how pages are organized in that folder](https://themes.gohugo.io//theme/hugo-theme-learn/en/cont/pages/).
 
 ### Static
 
-In this directory you should place images, `css` files, `js` files, and other static content the site should serve. To access that static content in a page, use something similar to this:
+In this directory you should place images, `css` files, `js` files and other static content the site should serve. To access that static content in a page, use something similar to this:
 
 ```markdown
 ![AWS instance ID](../../images/setup/aws/aws-instance-id.png "AWS instance ID")
@@ -48,11 +48,11 @@ In this directory you should place images, `css` files, `js` files, and other st
 
 ### Config
 
-This folder controls a lot of parameters regarding the site generation.
+This folder controls many of the parameters regarding the site generation.
 
 ### Themes
 
-This is the theme we're using. It's a submodule (so to get it you need to run `git submodule update`). It's our own fork of the [learn](https://themes.gohugo.io/hugo-theme-learn/) theme. If you want to make changes to the theme itself or pull updates from the upstream you'll do it here. 
+This is the theme we're using. It's a submodule (to get it you need to run `git submodule update`). It's our own fork of the [learn](https://themes.gohugo.io/hugo-theme-learn/) theme. If you want to make changes to the theme itself, or pull updates from the upstream, you'll do it here. 
 
 ### Layouts and archtypes
 
@@ -66,7 +66,7 @@ These are the build output of `hugo` and should never be `commit`-ed to git.
 
 ### Requirements
 
-You have to [install `hugo`](https://gohugo.io/getting-started/installing/), a text editor that's good for markdown (`vscode` and `vim` are good options), and `git`.
+You'll have to [install `hugo`](https://gohugo.io/getting-started/installing/), a text editor that's good for markdown (`vscode` and `vim` are good options) and `git`.
 
 ### Adding and editing content
 
