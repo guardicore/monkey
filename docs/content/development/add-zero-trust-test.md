@@ -19,7 +19,7 @@ In the file `/monkey/common/data/zero_trust_consts.py`:
 
 ### `telemetry/processing.py`
 
-Find the relevant telemetry type you wish to test the finding in next. This can be found in `/monkey/monkey_island/cc/services/telemetry/processing.py`. In the relevant `process_*_telemetry` function, add your Zero Trust testing code. Please put the Zero Trust tests under the `/monkey/monkey_island/cc/services/telemetry/zero_trust_tests` directory. There you can find examples of existing tests as well, so you'll have a reference for what you need to write.
+Find the relevant telemetry type you wish to test the finding in next. These can be found in `/monkey/monkey_island/cc/services/telemetry/processing.py`. In the relevant `process_*_telemetry` function, add your Zero Trust testing code. Please put the Zero Trust tests under the `/monkey/monkey_island/cc/services/telemetry/zero_trust_tests` directory. There you can also find examples of existing tests as well, so you'll have a reference for what you need to write.
 
 ## How do I test the new Zero Trust test I've implemented?
 
