@@ -9,7 +9,7 @@ weight: 3
 ## Overview 
 
 From the [Hex-Men campaign](https://www.guardicore.com/2017/12/beware-the-hex-men/) that hit
-internet-facing DB servers, to a [cryptomining operation that attacks WordPress sites](https://www.guardicore.com/2018/06/operation-prowli-traffic-manipulation-cryptocurrency-mining-2/) or any other malicious campaign – attackers are now trying to go deeper into your network.
+internet-facing DB servers to a [cryptomining operation that attacks WordPress sites](https://www.guardicore.com/2018/06/operation-prowli-traffic-manipulation-cryptocurrency-mining-2/) or any other malicious campaign – attackers are now trying to go deeper into your network.
 
 Infection Monkey will help you assess the impact of a future breach by attempting to propagate within your internal network using service vulnerabilities, brute-forcing and other safe exploiters.
 
@@ -24,7 +24,7 @@ safe exploiters are selected.
  targets will make the scanning process substantially faster.
 - **(Optional) Internal -> Network -> TCP scanner** Here you can add custom ports your organization is using.
 - **(Optional) Monkey -> Post-Breach Actions** If you only want to test propagation in the network, you can turn off 
-all post-breach actions. These actions simulate an attacker's behaviour after getting access to a new system but in no
+all post-breach actions. These actions simulate an attacker's behavior after getting access to a new system but in no
  way helps the Infection Monkey exploit new machines.
 
 ![Exploiter selector](/images/usage/use-cases/network-breach.PNG "Exploiter selector")
