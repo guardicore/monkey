@@ -10,11 +10,11 @@ weight: 80
 
 This guide will show you how to create a new _System Info Collector_ for the Infection Monkey. System Info Collectors are modules that each of the Infection Monkey agents runs that collect specific information and send it back to the Monkey Island as part of the System Info Telemetry.
 
-### Do I need a new System Info Controller?
+### Do I need a new System Info Collector?
 
 If all you want to do is execute a shell command, then there's no need to add a new System Info Collector - just configure the required commands in the Monkey Island's post-breach action (PBA) section! Also, if there is a relevant System Info Collector and you only need to add more information to it, simply expand the existing one. Otherwise, you must add a new System Info Collector.
 
-## How to add a new System Info Collector
+## How to add a new System Info Collector 
 
 ### From the Monkey Island Side
 
