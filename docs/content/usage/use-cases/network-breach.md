@@ -32,7 +32,7 @@ all post-breach actions. These actions simulate an attacker's behaviour after ge
 ## Suggested run mode
 
 Decide which machines you want to simulate a breach on and use the “Manual” run option to start the Infection Monkey on them. 
-Use high privileges to run the Infection Monkey to simulate an attacker that was able to elevate their privileges. 
+Use administrative privileges to run the Infection Monkey to simulate an attacker that was able to elevate their privileges. 
 You could also simulate an attack initiated from an unidentified machine connected to the network (e.g., a technician 
 laptop or third-party vendor machine) by running the Infection Monkey on a dedicated machine with an IP in the network you 
 wish to test.
