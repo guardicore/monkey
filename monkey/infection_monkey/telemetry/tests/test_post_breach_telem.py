@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
@@ -32,5 +34,6 @@ def test_post_breach_telem_send(post_breach_telem_test_instance, spy_send_teleme
         "hostname": HOSTNAME,
         "ip": IP,
     }
+    expected_data = json.dumps(expected_data, cls=post_breach_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "post_breach"

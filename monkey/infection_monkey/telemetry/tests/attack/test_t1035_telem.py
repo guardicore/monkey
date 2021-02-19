@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from common.utils.attack_utils import ScanStatus, UsageEnum
@@ -16,5 +18,6 @@ def T1035_telem_test_instance():
 def test_T1035_send(T1035_telem_test_instance, spy_send_telemetry):
     T1035_telem_test_instance.send()
     expected_data = {"status": STATUS.value, "technique": "T1035", "usage": USAGE.name}
+    expected_data = json.dumps(expected_data, cls=T1035_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "attack"

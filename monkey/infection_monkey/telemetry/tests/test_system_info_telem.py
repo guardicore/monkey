@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
@@ -14,5 +16,6 @@ def system_info_telem_test_instance():
 def test_system_info_telem_send(system_info_telem_test_instance, spy_send_telemetry):
     system_info_telem_test_instance.send()
     expected_data = SYSTEM_INFO
+    expected_data = json.dumps(expected_data, cls=system_info_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "system_info"

@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from common.utils.attack_utils import ScanStatus
@@ -22,5 +24,6 @@ def test_T1005_send(T1005_telem_test_instance, spy_send_telemetry):
         "gathered_data_type": GATHERED_DATA_TYPE,
         "info": INFO,
     }
+    expected_data = json.dumps(expected_data, cls=T1005_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "attack"
