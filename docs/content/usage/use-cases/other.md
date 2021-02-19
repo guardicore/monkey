@@ -11,7 +11,7 @@ This page provides additional information about configuring the Infection Monkey
 
 ## Custom behaviour
 
-If you want the Infection Monkey to run a specific script or a tool after it breaches a machine, you can configure it in 
+If you want the Infection Monkey to run a specific script or tool after it breaches a machine, you can configure it in 
 **Configuration -> Monkey -> Post-breach**. Input commands you want to execute in the corresponding fields. 
 You can also upload files and call them through the commands you entered.
 
