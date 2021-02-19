@@ -12,9 +12,9 @@ To set up a development environment using scripts, look at the readme under [`/d
 
 ## Agent
 
-The agent (which we sometimes refer to as the Infection Monkey) is a single Python project under the [`infection_monkey`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey) folder. The Infection Monkey agent was built for Python 3.7. You can get it up and running by setting up a [virtual environment](https://docs.python-guide.org/dev/virtualenvs/) and installing the requirements listed under [`requirements.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/requirements.txt) inside it.
+The agent (which we sometimes refer to as the Infection Monkey) is a single Python project under the [`infection_monkey`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey) folder. The Infection Monkey agent was built for Python 3.7. You can get it up and running by setting up a [virtual environment](https://docs.python-guide.org/dev/virtualenvs/) and installing the requirements listed in the [`requirements.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/requirements.txt) inside it.
 
-In order to compile the Infection Monkey for distribution by the Monkey Island, you'll need to run the instructions listed in [`readme.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/readme.txt) on each supported environment.
+In order to compile the Infection Monkey for distribution by the Monkey Island, you'll need to run the instructions listed in the [`readme.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/readme.txt) on each supported environment.
 
 This means setting up an environment with Linux 32/64-bit with Python installed and a Windows 64-bit machine with developer tools, along with 32/64-bit Python versions.
 
