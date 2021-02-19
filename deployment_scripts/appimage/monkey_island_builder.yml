@@ -22,18 +22,11 @@ AppDir:
       - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ bionic-security universe
       - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ bionic-updates main restricted
       - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ bionic-updates universe
-      - sourceline: deb [arch=amd64] http://deb.nodesource.com/node_12.x bionic main
-        key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x1655A0AB68576280
 
 
     include:
-      - libc6
       - bash
-      - curl
-      - libcurl4
-      - coreutils
       - python3.7
-      - nodejs
 
   runtime:
     env:
