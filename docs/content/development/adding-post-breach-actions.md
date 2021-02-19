@@ -12,7 +12,7 @@ This guide will show you how to create a new _post-breach action_ (PBA) for the 
 
 ## Do I need a new PBA?
 
-If all you want to do is execute shell commands, then there's no need to add a new PBA - just configure the required commands in the Infection Monkey Island configuration! If you think that those specific commands have reuse value in other deployments besides your own, you can add a new PBA. Additionally, if you need to run actual Python code, you must add a new PBA.
+If all you want to do is execute shell commands, then there's no need to add a new PBA - just configure the required commands in the Monkey Island configuration! If you think that those specific commands have reuse value in other deployments besides your own, you can add a new PBA. Additionally, if you need to run actual Python code, you must add a new PBA.
 
 ## How to add a new PBA
 
