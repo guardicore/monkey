@@ -12,13 +12,13 @@ To set up a development environment using scripts, look at the readme under [`/d
 
 ## Agent
 
-The agent, (what we somes refer to as the Infection Monkey), is a single Python project under the [`infection_monkey`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey) folder. The Infection Monkey agent was built for Python 3.7. You can get it up and running by setting up a [virtual environment](https://docs.python-guide.org/dev/virtualenvs/) and installing the requirements listed under [`requirements.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/requirements.txt) inside it.
+The agent (which we sometimes refer to as the Infection Monkey) is a single Python project under the [`infection_monkey`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey) folder. The Infection Monkey agent was built for Python 3.7. You can get it up and running by setting up a [virtual environment](https://docs.python-guide.org/dev/virtualenvs/) and installing the requirements listed under [`requirements.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/requirements.txt) inside it.
 
 In order to compile the Infection Monkey for distribution by the Monkey Island, you'll need to run the instructions listed in [`readme.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/readme.txt) on each supported environment.
 
 This means setting up an environment with Linux 32/64-bit with Python installed and a Windows 64-bit machine with developer tools, along with 32/64-bit Python versions.
 
-## Monkey Island
+## The Monkey Island
 
 The Monkey Island is a Python backend React frontend project. Similar to the agent, the backend's requirements are listed in the matching [`requirements.txt`](https://github.com/guardicore/monkey/blob/master/monkey/monkey_island/requirements.txt).
 
