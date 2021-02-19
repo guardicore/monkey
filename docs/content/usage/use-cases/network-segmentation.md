@@ -8,7 +8,7 @@ weight: 4
 
 ## Overview 
 
-Segmentation is a method of creating secure zones in data centers and cloud deployments that allows organizations to isolate workloads from one another and secure them individually, typically using policies. A useful way to test your company's segmentation effectiveness is to ensure that your network segments are properly separated (e.g., your development environment is isolated from your production environment and your applications are isolated from one another).
+Segmentation is a method of creating secure zones in data centers and cloud deployments. It allows organizations to isolate workloads from one another and secure them individually, typically using policies. A useful way to test your company's segmentation effectiveness is to ensure that your network segments are properly separated (e.g., your development environment is isolated from your production environment and your applications are isolated from one another).
 
 [Segmentation is key](https://www.guardicore.com/use-cases/micro-segmentation/) to protecting your network. It can reduce the network's attack surface and minimize the damage caused during a breach.
 
