@@ -25,7 +25,7 @@ remote access services. The Infection Monkey agents try to stay elusive and leav
 - **Network scope** - Scanning large networks with a lot of propagations can become unwieldy. Instead, try to scan your 
 networks bit by bit with multiple runs.
 - **Post-breach actions** - If you only care about propagation, you can disable most of these.
-- **Internal -> TCP scanner** - Here you can trim down the list of ports the Infection Monkey tries to scan, increasing performance.
+- **Internal -> TCP scanner** - Here you can trim down the list of ports the Infection Monkey tries to scan, improving performance.
 
 ## Combining different scenarios
 
