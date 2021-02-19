@@ -52,4 +52,4 @@ As the simulation continues, the Infection Monkey will fill in the map with data
 
 ![End of Monkey execution](/images/usage/getting-started/exploitation_tunneling_arrow.jpg "End of Monkey execution")
 
-Congratulations, you finished your first successful execution of the Infection Monkey 🎉 ! To thoroughly test your network, you can run the Infection Monkey from different starting locations and using different configurations.
+Congratulations, you finished your first successful execution of the Infection Monkey 🎉 ! To thoroughly test your network, you can run the Infection Monkey from different starting locations and use different configurations.
