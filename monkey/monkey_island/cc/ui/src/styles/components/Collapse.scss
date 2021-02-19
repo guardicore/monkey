@@ -5,6 +5,7 @@ $disabled-color: #f2f2f2;
 $info-color: #ade3eb;
 $default-color: #8c8c8c;
 $warning-color: #ffe28d;
+$success-color: #adf6a9;
 
 .collapse-item button {
   font-size: inherit;
@@ -37,6 +38,10 @@ $warning-color: #ffe28d;
       flex: 3;
     }
   }
+}
+
+.collapse-success {
+  background-color: $success-color !important;
 }
 
 .collapse-danger {
@@ -98,4 +103,8 @@ $warning-color: #ffe28d;
 .collapse-item .state {
   display: inline-block;
   min-width: 6em;
+}
+
+.rule-collapse svg{
+  margin-right: 10px;
 }

@@ -10,16 +10,16 @@ from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.network_utils import get_subnets, local_ip_addresses
+from monkey_island.cc.services.utils.network_utils import get_subnets, local_ip_addresses
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.configuration.utils import \
-    get_config_network_segments_as_subnet_groups
+from monkey_island.cc.services.config_schema.config_value_paths import (EXPLOITER_CLASSES_PATH, LOCAL_NETWORK_SCAN_PATH,
+                                                                        PASSWORD_LIST_PATH, SUBNET_SCAN_LIST_PATH,
+                                                                        USER_LIST_PATH)
+from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
-from monkey_island.cc.services.reporting.report_exporter_manager import \
-    ReportExporterManager
-from monkey_island.cc.services.reporting.report_generation_synchronisation import \
-    safe_generate_regular_report
+from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
+from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_regular_report
 
 __author__ = "itay.mizeretz"
 
@@ -620,15 +620,15 @@ class ReportService:
 
     @staticmethod
     def get_config_users():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_user_list'], True, True)
+        return ConfigService.get_config_value(USER_LIST_PATH, True, True)
 
     @staticmethod
     def get_config_passwords():
-        return ConfigService.get_config_value(['basic', 'credentials', 'exploit_password_list'], True, True)
+        return ConfigService.get_config_value(PASSWORD_LIST_PATH, True, True)
 
     @staticmethod
     def get_config_exploits():
-        exploits_config_value = ['basic', 'exploiters', 'exploiter_classes']
+        exploits_config_value = EXPLOITER_CLASSES_PATH
         default_exploits = ConfigService.get_default_config(False)
         for namespace in exploits_config_value:
             default_exploits = default_exploits[namespace]
@@ -642,11 +642,11 @@ class ReportService:
 
     @staticmethod
     def get_config_ips():
-        return ConfigService.get_config_value(['basic_network', 'scope', 'subnet_scan_list'], True, True)
+        return ConfigService.get_config_value(SUBNET_SCAN_LIST_PATH, True, True)
 
     @staticmethod
     def get_config_scan():
-        return ConfigService.get_config_value(['basic_network', 'scope', 'local_network_scan'], True, True)
+        return ConfigService.get_config_value(LOCAL_NETWORK_SCAN_PATH, True, True)
 
     @staticmethod
     def get_issues_overview(issues, config_users, config_passwords):

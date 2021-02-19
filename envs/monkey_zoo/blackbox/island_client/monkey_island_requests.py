@@ -5,8 +5,7 @@ from typing import Dict
 
 import requests
 
-from envs.monkey_zoo.blackbox.island_client.supported_request_method import \
-    SupportedRequestMethod
+from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
 
 # SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
 NO_AUTH_CREDS = '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062' \

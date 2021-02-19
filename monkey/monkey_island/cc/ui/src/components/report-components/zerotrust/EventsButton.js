@@ -1,10 +1,11 @@
 import React, {Component, Fragment} from 'react';
 import EventsModal from './EventsModal';
-import {Badge, Button} from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 import * as PropTypes from 'prop-types';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList } from '@fortawesome/free-solid-svg-icons/faList';
+import CountBadge from '../../ui-components/CountBadge';
 
 export default class EventsButton extends Component {
   constructor(props) {
@@ -33,15 +34,10 @@ export default class EventsButton extends Component {
                    exportFilename={this.props.exportFilename}/>
       <div className="text-center" style={{'display': 'grid'}}>
         <Button variant={'monkey-info'} size={'lg'} onClick={this.show}>
-          <FontAwesomeIcon icon={faList}/> Events {this.createEventsAmountBadge()}
+          <FontAwesomeIcon icon={faList}/> Events <CountBadge count={this.props.event_count} />
         </Button>
       </div>
     </Fragment>;
-  }
-
-  createEventsAmountBadge() {
-    const eventsAmountBadgeContent = this.props.event_count > 9 ? '9+' : this.props.event_count;
-    return <Badge variant={'monkey-info-light'}>{eventsAmountBadgeContent}</Badge>;
   }
 }
 

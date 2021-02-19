@@ -10,6 +10,14 @@
   display: inline-block;
 }
 
+.icon-success {
+  color: $success
+}
+
+.icon-failed {
+  color: $danger;
+}
+
 @keyframes spin-animation {
   0% {
     transform: rotate(0deg);

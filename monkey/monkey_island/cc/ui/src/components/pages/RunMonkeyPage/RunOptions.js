@@ -5,9 +5,10 @@ import AuthComponent from '../../AuthComponent';
 import {faLaptopCode} from '@fortawesome/free-solid-svg-icons/faLaptopCode';
 import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
 import {cloneDeep} from 'lodash';
-import {faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
+import {faCloud, faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
 import AWSRunButton from './RunOnAWS/AWSRunButton';
+import CloudOptions from './scoutsuite-setup/CloudOptions';
 
 function RunOptions(props) {
 
@@ -62,7 +63,14 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
-                             <AWSRunButton setComponent={setComponent}/>
+        <AWSRunButton setComponent={setComponent}/>
+        <NextSelectionButton title={'Cloud security scan'}
+                             description={'Explains how to enable cloud security scan.'}
+                             icon={faCloud}
+                             onButtonClick={() => {
+                               setComponent(CloudOptions,
+                                 {ips: ips, setComponent: setComponent})
+                             }}/>
       </>
     );
   }

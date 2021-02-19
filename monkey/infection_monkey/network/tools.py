@@ -7,6 +7,8 @@ import subprocess
 import sys
 import time
 
+from common.network.network_utils import get_host_from_network_location
+from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import get_routes, local_ips
 from infection_monkey.pyinstaller_utils import get_binary_file_path
 from infection_monkey.utils.environment import is_64bit_python
@@ -309,6 +311,12 @@ def get_interface_to_target(dst):
         paths.sort()
         ret = paths[-1][1]
         return ret[1]
+
+
+def is_running_on_island():
+    current_server_without_port = get_host_from_network_location(WormConfiguration.current_server)
+    running_on_island = is_running_on_server(current_server_without_port)
+    return running_on_island and WormConfiguration.depth == WormConfiguration.max_depth
 
 
 def is_running_on_server(ip: str) -> bool:

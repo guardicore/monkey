@@ -2,8 +2,7 @@ import abc
 
 from common.utils.attack_utils import UsageEnum
 from monkey_island.cc.database import mongo
-from monkey_island.cc.services.attack.technique_reports import (
-    AttackTechnique, logger)
+from monkey_island.cc.services.attack.technique_reports import AttackTechnique, logger
 
 
 class UsageTechnique(AttackTechnique, metaclass=abc.ABCMeta):

@@ -8,21 +8,29 @@ from jsonschema import Draft4Validator, validators
 import monkey_island.cc.environment.environment_singleton as env_singleton
 import monkey_island.cc.services.post_breach_files
 from monkey_island.cc.database import mongo
-from monkey_island.cc.encryptor import encryptor
-from monkey_island.cc.network_utils import local_ip_addresses
+from monkey_island.cc.server_utils.encryptor import encryptor
+from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
 
+from monkey_island.cc.services.config_schema.config_value_paths import (AWS_KEYS_PATH, EXPORT_MONKEY_TELEMS_PATH,
+                                                                        LM_HASH_LIST_PATH, NTLM_HASH_LIST_PATH,
+                                                                        PASSWORD_LIST_PATH, SSH_KEYS_PATH,
+                                                                        STARTED_ON_ISLAND_PATH, USER_LIST_PATH)
+
 logger = logging.getLogger(__name__)
 
 # This should be used for config values of array type (array of strings only)
-ENCRYPTED_CONFIG_ARRAYS = \
+ENCRYPTED_CONFIG_VALUES = \
     [
-        ['basic', 'credentials', 'exploit_password_list'],
-        ['internal', 'exploits', 'exploit_lm_hash_list'],
-        ['internal', 'exploits', 'exploit_ntlm_hash_list'],
-        ['internal', 'exploits', 'exploit_ssh_keys']
+        PASSWORD_LIST_PATH,
+        LM_HASH_LIST_PATH,
+        NTLM_HASH_LIST_PATH,
+        SSH_KEYS_PATH,
+        AWS_KEYS_PATH + ['aws_access_key_id'],
+        AWS_KEYS_PATH + ['aws_secret_access_key'],
+        AWS_KEYS_PATH + ['aws_session_token']
     ]
 
 
@@ -65,8 +73,11 @@ class ConfigService:
         for config_key_part in config_key_as_arr:
             config = config[config_key_part]
         if should_decrypt:
-            if config_key_as_arr in ENCRYPTED_CONFIG_ARRAYS:
-                config = [encryptor.dec(x) for x in config]
+            if config_key_as_arr in ENCRYPTED_CONFIG_VALUES:
+                if isinstance(config, str):
+                    config = encryptor.dec(config)
+                elif isinstance(config, list):
+                    config = [encryptor.dec(x) for x in config]
         return config
 
     @staticmethod
@@ -76,19 +87,17 @@ class ConfigService:
                                {"$set": {mongo_key: value}})
 
     @staticmethod
-    def append_to_config_array(config_key_as_arr, value):
-        mongo_key = ".".join(config_key_as_arr)
-        mongo.db.config.update({'name': 'newconfig'},
-                               {"$push": {mongo_key: value}})
-
-    @staticmethod
     def get_flat_config(is_initial_config=False, should_decrypt=True):
         config_json = ConfigService.get_config(is_initial_config, should_decrypt)
         flat_config_json = {}
         for i in config_json:
             for j in config_json[i]:
                 for k in config_json[i][j]:
-                    flat_config_json[k] = config_json[i][j][k]
+                    if isinstance(config_json[i][j][k], dict):
+                        for key, value in config_json[i][j][k].items():
+                            flat_config_json[key] = value
+                    else:
+                        flat_config_json[k] = config_json[i][j][k]
 
         return flat_config_json
 
@@ -97,8 +106,8 @@ class ConfigService:
         return SCHEMA
 
     @staticmethod
-    def add_item_to_config_set_if_dont_exist(item_key, item_value, should_encrypt):
-        item_path_array = item_key.split('.')
+    def add_item_to_config_set_if_dont_exist(item_path_array, item_value, should_encrypt):
+        item_key = '.'.join(item_path_array)
         items_from_config = ConfigService.get_config_value(item_path_array, False, should_encrypt)
         if item_value in items_from_config:
             return
@@ -118,34 +127,34 @@ class ConfigService:
 
     @staticmethod
     def creds_add_username(username):
-        ConfigService.add_item_to_config_set_if_dont_exist('basic.credentials.exploit_user_list',
+        ConfigService.add_item_to_config_set_if_dont_exist(USER_LIST_PATH,
                                                            username,
                                                            should_encrypt=False)
 
     @staticmethod
     def creds_add_password(password):
-        ConfigService.add_item_to_config_set_if_dont_exist('basic.credentials.exploit_password_list',
+        ConfigService.add_item_to_config_set_if_dont_exist(PASSWORD_LIST_PATH,
                                                            password,
                                                            should_encrypt=True)
 
     @staticmethod
     def creds_add_lm_hash(lm_hash):
-        ConfigService.add_item_to_config_set_if_dont_exist('internal.exploits.exploit_lm_hash_list',
+        ConfigService.add_item_to_config_set_if_dont_exist(LM_HASH_LIST_PATH,
                                                            lm_hash,
                                                            should_encrypt=True)
 
     @staticmethod
     def creds_add_ntlm_hash(ntlm_hash):
-        ConfigService.add_item_to_config_set_if_dont_exist('internal.exploits.exploit_ntlm_hash_list',
+        ConfigService.add_item_to_config_set_if_dont_exist(NTLM_HASH_LIST_PATH,
                                                            ntlm_hash,
                                                            should_encrypt=True)
 
     @staticmethod
     def ssh_add_keys(public_key, private_key, user, ip):
         if not ConfigService.ssh_key_exists(
-                ConfigService.get_config_value(['internal', 'exploits', 'exploit_ssh_keys'], False, False), user, ip):
+                ConfigService.get_config_value(SSH_KEYS_PATH, False, False), user, ip):
             ConfigService.add_item_to_config_set_if_dont_exist(
-                'internal.exploits.exploit_ssh_keys',
+                SSH_KEYS_PATH,
                 {
                     "public_key": public_key,
                     "private_key": private_key,
@@ -280,7 +289,7 @@ class ConfigService:
         """
         Same as decrypt_config but for a flat configuration
         """
-        keys = [config_arr_as_array[2] for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS]
+        keys = [config_arr_as_array[-1] for config_arr_as_array in ENCRYPTED_CONFIG_VALUES]
 
         for key in keys:
             if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], str):
@@ -295,7 +304,7 @@ class ConfigService:
 
     @staticmethod
     def _encrypt_or_decrypt_config(config, is_decrypt=False):
-        for config_arr_as_array in ENCRYPTED_CONFIG_ARRAYS:
+        for config_arr_as_array in ENCRYPTED_CONFIG_VALUES:
             config_arr = config
             parent_config_arr = None
 
@@ -328,8 +337,8 @@ class ConfigService:
 
     @staticmethod
     def is_test_telem_export_enabled():
-        return ConfigService.get_config_value(['internal', 'testing', 'export_monkey_telems'])
+        return ConfigService.get_config_value(EXPORT_MONKEY_TELEMS_PATH)
 
     @staticmethod
     def set_started_on_island(value: bool):
-        ConfigService.set_config_value(['internal', 'general', 'started_on_island'], value)
+        ConfigService.set_config_value(STARTED_ON_ISLAND_PATH, value)

@@ -1,0 +1,7 @@
+AWS_COLLECTOR = "AwsCollector"
+HOSTNAME_COLLECTOR = "HostnameCollector"
+ENVIRONMENT_COLLECTOR = "EnvironmentCollector"
+PROCESS_LIST_COLLECTOR = "ProcessListCollector"
+MIMIKATZ_COLLECTOR = "MimikatzCollector"
+AZURE_CRED_COLLECTOR = "AzureCollector"
+SCOUTSUITE_COLLECTOR = "ScoutSuiteCollector"

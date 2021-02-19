@@ -7,10 +7,9 @@ import time
 from threading import Thread
 
 import infection_monkey.tunnel as tunnel
-from common.network.network_utils import get_host_from_network_location
+from infection_monkey.network.tools import is_running_on_island
 from common.utils.attack_utils import ScanStatus, UsageEnum
-from common.utils.exceptions import (ExploitingVulnerableMachineError,
-                                     FailedExploitationError)
+from common.utils.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from common.version import get_version
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
@@ -19,8 +18,7 @@ from infection_monkey.model import DELAY_DELETE_CMD
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
-from infection_monkey.network.tools import (get_interface_to_target,
-                                            is_running_on_server)
+from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.post_breach.post_breach_handler import PostBreach
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
@@ -33,11 +31,8 @@ from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.exceptions.planned_shutdown_exception import \
-    PlannedShutdownException
-from infection_monkey.utils.monkey_dir import (create_monkey_dir,
-                                               get_monkey_dir_path,
-                                               remove_monkey_dir)
+from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
+from infection_monkey.utils.monkey_dir import create_monkey_dir, get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.windows_upgrader import WindowsUpgrader
 
@@ -125,7 +120,8 @@ class InfectionMonkey(object):
 
             self.shutdown_by_not_alive_config()
 
-            if self.is_started_on_island():
+            if is_running_on_island():
+                WormConfiguration.started_on_island = True
                 ControlClient.report_start_on_island()
             ControlClient.should_monkey_run(self._opts.vulnerable_port)
 
@@ -195,8 +191,8 @@ class InfectionMonkey(object):
                     if self._default_server:
                         if self._network.on_island(self._default_server):
                             machine.set_default_server(get_interface_to_target(machine.ip_addr) +
-                                                       (
-                                                           ':' + self._default_server_port if self._default_server_port else ''))
+                                                       (':' + self._default_server_port
+                                                        if self._default_server_port else ''))
                         else:
                             machine.set_default_server(self._default_server)
                         LOG.debug("Default server for machine: %r set to %s" % (machine, machine.default_server))
@@ -254,7 +250,7 @@ class InfectionMonkey(object):
             LOG.debug("Running with depth: %d" % WormConfiguration.depth)
 
     def collect_system_info_if_configured(self):
-        LOG.debug("Calling system info collection")
+        LOG.debug("Calling for system info collection")
         system_info_collector = SystemInfoCollector()
         system_info = system_info_collector.get_info()
         SystemInfoTelem(system_info).send()
@@ -306,8 +302,7 @@ class InfectionMonkey(object):
             try:
                 status = None
                 if "win32" == sys.platform:
-                    from subprocess import (CREATE_NEW_CONSOLE,
-                                            STARTF_USESHOWWINDOW, SW_HIDE)
+                    from subprocess import CREATE_NEW_CONSOLE, STARTF_USESHOWWINDOW, SW_HIDE
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = SW_HIDE
@@ -402,10 +397,6 @@ class InfectionMonkey(object):
                 "Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel))
         self._default_server = WormConfiguration.current_server
         LOG.debug("default server set to: %s" % self._default_server)
-
-    def is_started_on_island(self):
-        island_ip = get_host_from_network_location(self._default_server)
-        return is_running_on_server(island_ip) and WormConfiguration.depth == WormConfiguration.max_depth
 
     def log_arguments(self):
         arg_string = " ".join([f"{key}: {value}" for key, value in vars(self._opts).items()])

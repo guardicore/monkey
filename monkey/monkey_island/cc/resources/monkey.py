@@ -5,8 +5,7 @@ import dateutil.parser
 import flask_restful
 from flask import request
 
-from monkey_island.cc.consts import \
-    DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
+from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
 from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore

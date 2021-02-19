@@ -1,7 +1,7 @@
 import logging
 import os
 
-from common.data.post_breach_consts import POST_BREACH_FILE_EXECUTION
+from common.common_consts.post_breach_consts import POST_BREACH_FILE_EXECUTION
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient

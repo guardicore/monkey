@@ -1,3 +1,4 @@
+from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 
 __author__ = "itay.mizeretz"
@@ -13,7 +14,7 @@ class ScanTelem(BaseTelem):
         super(ScanTelem, self).__init__()
         self.machine = machine
 
-    telem_category = 'scan'
+    telem_category = TelemCategoryEnum.SCAN
 
     def get_data(self):
         return {

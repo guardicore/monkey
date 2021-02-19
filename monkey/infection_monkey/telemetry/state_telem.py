@@ -1,3 +1,4 @@
+from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 
 __author__ = "itay.mizeretz"
@@ -14,7 +15,7 @@ class StateTelem(BaseTelem):
         self.is_done = is_done
         self.version = version
 
-    telem_category = 'state'
+    telem_category = TelemCategoryEnum.STATE
 
     def get_data(self):
         return {

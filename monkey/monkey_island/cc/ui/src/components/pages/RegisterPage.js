@@ -92,7 +92,7 @@ class RegisterPageComponent extends React.Component {
                   <Form className={'auth-form'} onSubmit={this.register} >
                     <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
                     <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
-                    <Button id={'auth-button'} type={'submit'} >
+                    <Button className={'monkey-submit-button'} type={'submit'} >
                       Let's go!
                     </Button>
                     <Row>

@@ -5,6 +5,7 @@ import logging
 from infection_monkey.control import ControlClient
 
 logger = logging.getLogger(__name__)
+LOGGED_DATA_LENGTH = 300  # How many characters of telemetry data will be logged
 
 __author__ = 'itay.mizeretz'
 
@@ -22,12 +23,25 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
         Sends telemetry to island
         """
         data = self.get_data()
+        serialized_data = json.dumps(data, cls=self.json_encoder)
+        self._log_telem_sending(serialized_data, log_data)
+        ControlClient.send_telemetry(self.telem_category, serialized_data)
+
+    @abc.abstractmethod
+    def get_data(self) -> dict:
+        """
+        :return: Data of telemetry (should be dict)
+        """
+        pass
+
+    @property
+    def json_encoder(self):
+        return json.JSONEncoder
+
+    def _log_telem_sending(self, serialized_data: str, log_data=True):
+        logger.debug(f"Sending {self.telem_category} telemetry.")
         if log_data:
-            data_to_log = json.dumps(data)
-        else:
-            data_to_log = 'redacted'
-        logger.debug("Sending {} telemetry. Data: {}".format(self.telem_category, data_to_log))
-        ControlClient.send_telemetry(self.telem_category, data)
+            logger.debug(f"Telemetry contents: {BaseTelem._truncate_data(serialized_data)}")
 
     @property
     @abc.abstractmethod
@@ -37,9 +51,9 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
         """
         pass
 
-    @abc.abstractmethod
-    def get_data(self) -> dict:
-        """
-        :return: Data of telemetry (should be dict)
-        """
-        pass
+    @staticmethod
+    def _truncate_data(data: str):
+        if len(data) <= LOGGED_DATA_LENGTH:
+            return data
+        else:
+            return f"{data[:LOGGED_DATA_LENGTH]}..."

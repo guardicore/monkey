@@ -4,8 +4,7 @@ from bson import ObjectId
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.node import NodeCreationException, NodeService
-from monkey_island.cc.services.utils.bootloader_config import (
-    MIN_GLIBC_VERSION, SUPPORTED_WINDOWS_VERSIONS)
+from monkey_island.cc.services.utils.bootloader_config import MIN_GLIBC_VERSION, SUPPORTED_WINDOWS_VERSIONS
 from monkey_island.cc.services.utils.node_states import NodeStates
 
 

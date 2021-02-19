@@ -6,8 +6,10 @@ from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from common.data.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
+from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
@@ -23,10 +25,8 @@ from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.monkey import Monkey
 from monkey_island.cc.resources.monkey_configuration import MonkeyConfiguration
-from monkey_island.cc.resources.monkey_control.remote_port_check import \
-    RemotePortCheck
-from monkey_island.cc.resources.monkey_control.started_on_island import \
-    StartedOnIsland
+from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
+from monkey_island.cc.resources.monkey_control.started_on_island import StartedOnIsland
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
@@ -34,18 +34,18 @@ from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.remote_run import RemoteRun
-from monkey_island.cc.resources.reporting.report import Report
+from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.root import Root
-from monkey_island.cc.resources.T1216_pba_file_download import \
-    T1216PBAFileDownload
+from monkey_island.cc.resources.T1216_pba_file_download import T1216PBAFileDownload
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.test.clear_caches import ClearCaches
 from monkey_island.cc.resources.test.log_test import LogTest
 from monkey_island.cc.resources.test.monkey_test import MonkeyTest
 from monkey_island.cc.resources.version_update import VersionUpdate
-from monkey_island.cc.resources.zero_trust.finding_event import \
-    ZeroTrustFindingEvent
+from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
+from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
+from monkey_island.cc.resources.zero_trust.scoutsuite_auth.scoutsuite_auth import ScoutSuiteAuth
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
@@ -85,6 +85,8 @@ def init_app_config(app, mongo_url):
     # configuration. See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config['JSON_SORT_KEYS'] = False
 
+    app.json_encoder = CustomJSONEncoder
+
 
 def init_app_services(app):
     init_jwt(app)
@@ -122,13 +124,11 @@ def init_api_resources(api):
     api.add_resource(Node, '/api/netmap/node', '/api/netmap/node/')
     api.add_resource(NodeStates, '/api/netmap/nodeStates')
 
-    # report_type: zero_trust or security
-    api.add_resource(
-        Report,
-        '/api/report/<string:report_type>',
-        '/api/report/<string:report_type>/<string:report_data>')
-    api.add_resource(ZeroTrustFindingEvent, '/api/zero-trust/finding-event/<string:finding_id>')
+    api.add_resource(SecurityReport, '/api/report/security')
+    api.add_resource(ZeroTrustReport, '/api/report/zero-trust/<string:report_data>')
+    api.add_resource(AttackReport, '/api/report/attack')
 
+    api.add_resource(ZeroTrustFindingEvent, '/api/zero-trust/finding-event/<string:finding_id>')
     api.add_resource(TelemetryFeed, '/api/telemetry-feed', '/api/telemetry-feed/')
     api.add_resource(Log, '/api/log', '/api/log/')
     api.add_resource(IslandLog, '/api/log/island/download', '/api/log/island/download/')
@@ -139,10 +139,11 @@ def init_api_resources(api):
                      '/api/fileUpload/<string:file_type>?restore=<string:filename>')
     api.add_resource(RemoteRun, '/api/remote-monkey', '/api/remote-monkey/')
     api.add_resource(AttackConfiguration, '/api/attack')
-    api.add_resource(AttackReport, '/api/attack/report')
     api.add_resource(VersionUpdate, '/api/version-update', '/api/version-update/')
     api.add_resource(RemotePortCheck, '/api/monkey_control/check_remote_port/<string:port>')
     api.add_resource(StartedOnIsland, '/api/monkey_control/started_on_island')
+    api.add_resource(ScoutSuiteAuth, '/api/scoutsuite_auth/<string:provider>')
+    api.add_resource(AWSKeys, '/api/aws_keys')
 
     api.add_resource(MonkeyTest, '/api/test/monkey')
     api.add_resource(ClearCaches, '/api/test/clear_caches')
