@@ -71,16 +71,6 @@ FINGER_CLASSES = {
             "safe": True,
             "info": "Checks if ElasticSearch is running and attempts to find it's version.",
             "attack_techniques": ["T1210"]
-        },
-        {
-            "type": "string",
-            "enum": [
-                "ZerologonFinger"
-            ],
-            "title": "ZerologonFinger",
-            "safe": True,
-            "info": "Checks if server is a Windows Server and tests if it is vulnerable to Zerologon.",
-            "attack_techniques": ["T1210"]
         }
     ]
 }
