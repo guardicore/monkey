@@ -6,7 +6,7 @@ weight: 3
 tags: ["contribute"]
 ---
 
-The Infection Monkey has development tutorials that use [`swimm.io`](https://swimm.io/) to help teach new developers how to perform common code tasks in the Infection Monkey codebase and help accelerate the ramp-up process. The tutorials include adding new configuration values, new system info collectors and more.
+The Infection Monkey has development tutorials that use [`swimm.io`](https://swimm.io/) to help teach new developers how to perform common code tasks in the Infection Monkey codebase and accelerate the ramp-up process. The tutorials include adding new configuration values, new system info collectors and more.
 
  ![swimm logo](https://swimm.io/img/squarelogo.png "swimm logo")
 
@@ -20,7 +20,7 @@ After you've downloaded and installed `swimm`, open a shell in the Infeciton Mon
 swimm start
 ``` 
 
-A local web server with the currently available tutorials should show up, and look something like this:
+A local web server with the currently available tutorials should show up, and will look something like this:
 
 ![swimm server](https://i.imgur.com/NFBH4Vr.png "swimm server")
 
