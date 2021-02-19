@@ -10,7 +10,7 @@ weight: 4
 
 Segmentation is a method of creating secure zones in data centers and cloud deployments that allows organizations to isolate workloads from one another and secure them individually, typically using policies. A useful way to test your company's segmentation effectiveness is to ensure that your network segments are properly separated (e.g., your development environment is isolated from your production environment and your applications are isolated from one another).
 
-[Segmentation is key](https://www.guardicore.com/use-cases/micro-segmentation/) to protecting your network, reducing the attack surface and minimizing the damage a breach can cause.
+[Segmentation is key](https://www.guardicore.com/use-cases/micro-segmentation/) to protecting your network. It can reduce the network's attack surface and minimize the damage caused during a breach.
 
 You can use the Infection Monkey's cross-segment traffic feature to verify that your network segmentation configuration is adequate. This way, you can ensure that, even if a bad actor breaches your defenses, they can't move laterally between segments.
 
@@ -38,4 +38,3 @@ Execute The Infection Monkey on machines in different subnetworks using the “M
 Check the infection map and security report for segmentation problems. Ideally, all scanned nodes should only have edges with the Monkey Island Server.
 
 ![Map](/images/usage/use-cases/segmentation-map.PNG "Map")
-
