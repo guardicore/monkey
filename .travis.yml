@@ -88,7 +88,7 @@ script:
 
 # verify swimm
 - cd $TRAVIS_BUILD_DIR
-- wget "https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv029%2FSwimm_0.2.9_Setup.deb?alt=media&token=774ebd98-cb4e-4615-900c-aada224c1608" -O swimm
+- wget "https://github.com/swimmio/SwimmReleases/releases/download/v0.3.7-0/Swimm_0.3.7-0_Setup.deb" -O swimm
 - sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)
 - chmod +x ./swimm
 - swimm --version
