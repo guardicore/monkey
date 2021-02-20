@@ -9,6 +9,19 @@ LOGGED_DATA_LENGTH = 300  # How many characters of telemetry data will be logged
 
 __author__ = 'itay.mizeretz'
 
+# TODO: Rework the interface for telemetry; this class has too many responsibilities
+#       (i.e. too many reasons to change):
+#
+#       1. Store telemetry data
+#       2. Serialize telemetry data
+#       3. Send telemetry data
+#       4. Log telemetry data
+#
+#       One appaoach is that Telemetry objects should be immutable after construction
+#       and the only necessary public method be a `serialize()` method. Telemetry
+#       objects can be passed to other objects or functions that are responsible for
+#       logging and sending them.
+
 
 class BaseTelem(object, metaclass=abc.ABCMeta):
     """
