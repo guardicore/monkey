@@ -30,7 +30,7 @@ class Authenticate(flask_restful.Resource):
     @staticmethod
     def _authenticate(username, secret):
         user = user_store.UserStore.username_table.get(username, None)
-        if user and safe_str_cmp(user.secret, secret):
+        if user and safe_str_cmp(user.secret.encode('utf-8'), secret.encode('utf-8')):
             return user
 
     def post(self):
