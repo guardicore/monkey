@@ -2,7 +2,7 @@ import {SHA3} from 'sha3';
 import decode from 'jwt-decode';
 
 export default class AuthService {
-  NO_AUTH_CREDS = 'loginwithoutpassword';
+  NO_AUTH_CREDS = '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()';
 
   SECONDS_BEFORE_JWT_EXPIRES = 20;
   AUTHENTICATION_API_ENDPOINT = '/api/auth';
