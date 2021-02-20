@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from hashlib import sha3_512
 from typing import Dict
 
 from monkey_island.cc.resources.auth.auth_user import User
@@ -30,8 +31,8 @@ class UserCreds:
         creds = UserCreds()
         if "user" in data_dict:
             creds.username = data_dict["user"]
-        if "password_hash" in data_dict:
-            creds.password_hash = data_dict["password_hash"]
+        if "password" in data_dict:
+            creds.password_hash = sha3_512(data_dict["password"].encode("utf-8")).hexdigest()
         return creds
 
     @staticmethod
