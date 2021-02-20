@@ -1,6 +1,7 @@
 import json
 import logging
 from functools import wraps
+from hashlib import sha3_512
 
 import flask_jwt_extended
 import flask_restful
@@ -23,13 +24,13 @@ def init_jwt(app):
 
 class Authenticate(flask_restful.Resource):
     """
-    Resource for user authentication. The user provides the username and hashed password and we give them a JWT.
+    Resource for user authentication. The user provides the username and password and we give them a JWT.
     See `AuthService.js` file for the frontend counterpart for this code.
     """
     @staticmethod
     def _authenticate(username, secret):
         user = user_store.UserStore.username_table.get(username, None)
-        if user and safe_str_cmp(user.secret.encode('utf-8'), secret.encode('utf-8')):
+        if user and safe_str_cmp(user.secret, secret):
             return user
 
     def post(self):
@@ -37,13 +38,14 @@ class Authenticate(flask_restful.Resource):
         Example request:
         {
             "username": "my_user",
-            "password": "343bb87e553b05430e5c44baf99569d4b66..."
+            "password": "mypassword...."
         }
         """
         credentials = json.loads(request.data)
         # Unpack auth info from request
         username = credentials["username"]
-        secret = credentials["password"]
+        password = credentials["password"]
+        secret = sha3_512(password.encode('utf-8')).hexdigest()
         # If the user and password have been previously registered
         if self._authenticate(username, secret):
             access_token = flask_jwt_extended.create_access_token(

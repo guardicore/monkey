@@ -2,17 +2,14 @@ import {SHA3} from 'sha3';
 import decode from 'jwt-decode';
 
 export default class AuthService {
-  // SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
-  NO_AUTH_CREDS =
-    '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062' +
-    '8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557';
+  NO_AUTH_CREDS = 'loginwithoutpassword';
 
   SECONDS_BEFORE_JWT_EXPIRES = 20;
   AUTHENTICATION_API_ENDPOINT = '/api/auth';
   REGISTRATION_API_ENDPOINT = '/api/registration';
 
   login = (username, password) => {
-    return this._login(username, this.hashSha3(password));
+    return this._login(username, password);
   };
 
   authFetch = (url, options) => {
@@ -24,12 +21,6 @@ export default class AuthService {
       return 'Bearer ' + this._getToken();
     }
   };
-
-  hashSha3(text) {
-    let hash = new SHA3(512);
-    hash.update(text);
-    return this._toHexStr(hash.digest());
-  }
 
   _login = (username, password) => {
     return this._authFetch(this.AUTHENTICATION_API_ENDPOINT, {
@@ -52,7 +43,7 @@ export default class AuthService {
 
   register = (username, password) => {
     if (password !== '') {
-      return this._register(username, this.hashSha3(password));
+      return this._register(username, password);
     } else {
       return this._register(username, password);
     }
@@ -63,7 +54,7 @@ export default class AuthService {
       method: 'POST',
       body: JSON.stringify({
         'user': username,
-        'password_hash': password
+        'password': password
       })
     }).then(res => {
       if (res.status === 200) {
@@ -156,7 +147,4 @@ export default class AuthService {
     return localStorage.getItem('jwt')
   }
 
-  _toHexStr(byteArr) {
-    return byteArr.reduce((acc, x) => (acc + ('0' + x.toString(0x10)).slice(-2)), '');
-  }
 }
