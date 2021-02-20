@@ -42,7 +42,7 @@ $UPX_FOLDER = "upx-3.96-win64"
 
 # Other url's
 $MONGODB_URL = "https://downloads.mongodb.org/win32/mongodb-win32-x86_64-2012plus-v4.2-latest.zip"
-$OPEN_SSL_URL = "https://indy.fulgan.com/SSL/openssl-1.0.2u-x64_86-win64.zip"
+$OPEN_SSL_URL = "https://indy.fulgan.com/SSL/Archive/openssl-0.9.8zg-x64_86-win64.zip"
 $CPP_URL = "https://go.microsoft.com/fwlink/?LinkId=746572"
 $NPM_URL = "https://nodejs.org/dist/v12.14.1/node-v12.14.1-x64.msi"
 $UPX_URL = "https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip"
