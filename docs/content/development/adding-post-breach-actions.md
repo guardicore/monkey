@@ -6,17 +6,17 @@ tags: ["contribute"]
 weight: 90
 ---
 
-## What's this?
+## What does this guide cover?
 
-This guide will show you how to create a new _Post Breach action_ for the Infection Monkey. _Post Breach actions_ are "extra" actions that the Monkey can perform on the victim machines after it propagated to them.
+This guide will show you how to create a new _post-breach action_ (PBA) for the Infection Monkey. PBA are "extra" actions that the Infection Monkey can perform on victim machines after propagating to them.
 
 ## Do I need a new PBA?
 
-If all you want is to execute shell commands, then there's no need to add a new PBA - just configure the required commands in the Monkey Island configuration! If you think that those specific commands have reuse value in all deployments and not just your own, you can add a new PBA. If you need to run actual Python code, you must add a new PBA.
+If all you want to do is execute shell commands, then there's no need to add a new PBA - just configure the required commands in the Monkey Island configuration! If you think that those specific commands have reuse value in other deployments besides your own, you can add a new PBA. Additionally, if you need to run actual Python code, you must add a new PBA.
 
 ## How to add a new PBA
 
-### Monkey side
+### From the Infection Monkey Side
 
 #### Framework
 
@@ -43,7 +43,7 @@ If your PBA consists only of simple shell commands, you can reuse the generic PB
 
 Otherwise, you'll need to override the `run` method with your own implementation. See the `communicate_as_new_user.py` PBA for reference. Make sure to send the relevant PostBreachTelem upon success/failure. You can log during the PBA as well.
 
-### Island side
+### From the Monkey Island Side
 
 #### Configuration
 
@@ -67,10 +67,10 @@ You'll need to add your PBA to the `config_schema.py` file, under `post_breach_a
         },
 ```
 
-Now you can choose your PBA when configuring the Monkey on the Monkey island:
+Now you can choose your PBA when configuring the Infection Monkey on the Monkey island:
 
 ![PBA in configuration](https://i.imgur.com/9PrcWr0.png)
 
 #### Telemetry processing
 
-If you wish to process your Post Breach action telemetry (for example, to analyze it for report data), add a processing function to the `POST_BREACH_TELEMETRY_PROCESSING_FUNCS` which can be found at `monkey/monkey_island/cc/services/telemetry/processing/post_breach.py`. You can look at the `process_communicate_as_new_user_telemetry` method as an example.
+If you wish to process your PBA telemetry (for example, to analyze it for report data), add a processing function to the `POST_BREACH_TELEMETRY_PROCESSING_FUNCS`, which can be found at `monkey/monkey_island/cc/services/telemetry/processing/post_breach.py`. You can reference the `process_communicate_as_new_user_telemetry` method as an example.

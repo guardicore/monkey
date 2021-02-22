@@ -7,9 +7,9 @@ weight: 3
 pre: "<i class='fas fa-sliders-h'></i> "
 ---
 
-# Configure the Monkey
+# Configure the Infection Monkey
 
-The Monkey is highly configurable. Nearly every part of it can be modified to turn it to a fast acting worm or into a port scanning and system information collecting machine.
+The Infection Monkey is highly configurable. Nearly every part of it can be modified to turn it into a fast-acting worm or a port scanning and system information collecting machine.
 
 {{% notice warning %}}
 This section of the documentation is incomplete and under active construction.
