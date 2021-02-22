@@ -6,6 +6,9 @@ group: travis_latest
 
 language: python
 
+git:
+  depth: false
+
 cache:
   - pip
   - directories:
