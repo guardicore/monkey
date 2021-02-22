@@ -69,7 +69,7 @@ script:
 ## Display the linter issues
 - cat ./ci_scripts/flake8_warnings.txt
 ## Make sure that we haven't increased the amount of warnings.
-- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=81
+- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=80
 - if [ $(tail -n 1 ./ci_scripts/flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
 
 ## Check import order
