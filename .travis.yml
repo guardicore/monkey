@@ -95,6 +95,7 @@ script:
 - sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)
 - chmod +x ./swimm
 - swimm --version
+- git fetch --unshallow
 - swimm verify
 
 after_success:
