@@ -90,13 +90,14 @@ script:
 - hugo --verbose --environment staging
 
 # verify swimm	
-- cd $TRAVIS_BUILD_DIR
-- curl -s https://api.github.com/repos/swimmio/SwimmReleases/releases/latest | grep 'browser_download_url.*swimm-cli' | cut -d '"' -f 4 | wget -O swimm_cli -qi -
-- chmod +x swimm_cli
-- node swimm_cli --version
-- node swimm_cli verify
-- node swimm_cli log -n 20
-- node swimm_cli verify
+- cd $TRAVIS_BUILD_DIR	
+- wget "https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv038%2FSwimm_0.3.8-0_Setup.deb?alt=media&token=09c97a33-52e1-42ab-b95c-98db8e50e148" -O swimm	
+- sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)	
+- chmod +x ./swimm	
+- swimm --version	
+- swimm verify
+- swimm log -200
+- swimm verify 
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
