@@ -5,7 +5,6 @@ import PostBreach from 'components/report-components/security/PostBreach';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, getOptions} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/security/StolenPasswords';
-import CollapsibleWellComponent from 'components/report-components/security/CollapsibleWell';
 import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
 import StrongUsers from 'components/report-components/security/StrongUsers';
@@ -21,41 +20,141 @@ import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
+import {generateSmbPasswordReport, generateSmbPthReport} from './security/issues/SmbIssue';
+import {Struts2IssueOverview, Struts2IssueReport} from './security/issues/Struts2Issue';
+import {WebLogicIssueOverview, WebLogicIssueReport} from './security/issues/WebLogicIssue';
+import {HadoopIssueOverview, HadoopIssueReport} from './security/issues/HadoopIssue';
+import {MssqlIssueOverview, MssqlIssueReport} from './security/issues/MssqlIssue';
+import {DrupalIssueOverview, DrupalIssueReport} from './security/issues/DrupalIssue';
+import {VsftpdIssueOverview, VsftpdIssueReport} from './security/issues/VsftpdIssue';
+import {generateWmiPasswordIssue, generateWmiPthIssue} from './security/issues/WmiIssue';
+import {ShhIssueReport, SshIssueOverview} from './security/issues/SshIssue';
+import {SambacryIssueOverview, SambacryIssueReport} from './security/issues/SambacryIssue';
+import {ElasticIssueOverview, ElasticIssueReport} from './security/issues/ElasticIssue';
+import {ShellShockIssueOverview, ShellShockIssueReport} from './security/issues/ShellShockIssue';
+import {MS08_067IssueOverview, MS08_067IssueReport} from './security/issues/MS08_067Issue';
+import {
+  crossSegmentIssueOverview,
+  generateCrossSegmentIssue
+} from './security/issues/CrossSegmentIssue';
+import {sharedAdminsDomainIssueOverview, sharedPasswordsIssueOverview} from './security/issues/SharedPasswordsIssue';
+import {generateTunnelIssue, generateTunnelIssueOverview} from './security/issues/TunnelIssue';
 
 
 class ReportPageComponent extends AuthComponent {
 
-  Issue =
-    {
-      WEAK_PASSWORD: 0,
-      STOLEN_CREDS: 1,
-      ELASTIC: 2,
-      SAMBACRY: 3,
-      SHELLSHOCK: 4,
-      CONFICKER: 5,
-      AZURE: 6,
-      STOLEN_SSH_KEYS: 7,
-      STRUTS2: 8,
-      WEBLOGIC: 9,
-      HADOOP: 10,
-      PTH_CRIT_SERVICES_ACCESS: 11,
-      MSSQL: 12,
-      VSFTPD: 13,
-      DRUPAL: 14,
-      ZEROLOGON: 15,
-      ZEROLOGON_PASSWORD_RESTORE_FAILED: 16
-    };
+  credentialTypes = {
+    PASSWORD: 'password',
+    HASH: 'hash',
+    KEY: 'key',
+  }
 
-  NotThreats = [this.Issue.ZEROLOGON_PASSWORD_RESTORE_FAILED];
+  issueContentTypes = {
+    OVERVIEW: 'overview',
+    REPORT: 'report',
+    TYPE: 'type'
+  }
 
-  Warning =
+  issueTypes = {
+    WARNING: 'warning',
+    DANGER: 'danger'
+  }
+
+  IssueDescriptorEnum =
     {
-      CROSS_SEGMENT: 0,
-      TUNNEL: 1,
-      SHARED_LOCAL_ADMIN: 2,
-      SHARED_PASSWORDS: 3,
-      SHARED_PASSWORDS_DOMAIN: 4
-    };
+      'SmbExploiter': {
+        [this.issueContentTypes.REPORT]: {
+          [this.credentialTypes.PASSWORD]: generateSmbPasswordReport,
+          [this.credentialTypes.HASH]: generateSmbPthReport
+        },
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'Struts2Exploiter': {
+        [this.issueContentTypes.OVERVIEW]: Struts2IssueOverview,
+        [this.issueContentTypes.REPORT]: Struts2IssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'WebLogicExploiter': {
+        [this.issueContentTypes.OVERVIEW]: WebLogicIssueOverview,
+        [this.issueContentTypes.REPORT]: WebLogicIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'HadoopExploiter': {
+        [this.issueContentTypes.OVERVIEW]: HadoopIssueOverview,
+        [this.issueContentTypes.REPORT]: HadoopIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'MSSQLExploiter': {
+        [this.issueContentTypes.OVERVIEW]: MssqlIssueOverview,
+        [this.issueContentTypes.REPORT]: MssqlIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'DrupalExploiter': {
+        [this.issueContentTypes.OVERVIEW]: DrupalIssueOverview,
+        [this.issueContentTypes.REPORT]: DrupalIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'VSFTPDExploiter': {
+        [this.issueContentTypes.OVERVIEW]: VsftpdIssueOverview,
+        [this.issueContentTypes.REPORT]: VsftpdIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'WmiExploiter': {
+        [this.issueContentTypes.REPORT]: {
+          [this.credentialTypes.PASSWORD]: generateWmiPasswordIssue,
+          [this.credentialTypes.HASH]: generateWmiPthIssue
+        },
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'SSHExploiter': {
+        [this.issueContentTypes.OVERVIEW]: SshIssueOverview,
+        [this.issueContentTypes.REPORT]: ShhIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'SambaCryExploiter': {
+        [this.issueContentTypes.OVERVIEW]: SambacryIssueOverview,
+        [this.issueContentTypes.REPORT]: SambacryIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'ElasticGroovyExploiter': {
+        [this.issueContentTypes.OVERVIEW]: ElasticIssueOverview,
+        [this.issueContentTypes.REPORT]: ElasticIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'ShellShockExploiter': {
+        [this.issueContentTypes.OVERVIEW]: ShellShockIssueOverview,
+        [this.issueContentTypes.REPORT]: ShellShockIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'Ms08_067_Exploiter': {
+        [this.issueContentTypes.OVERVIEW]: MS08_067IssueOverview,
+        [this.issueContentTypes.REPORT]: MS08_067IssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'island_cross_segment': {
+        [this.issueContentTypes.OVERVIEW]: crossSegmentIssueOverview,
+        [this.issueContentTypes.REPORT]: generateCrossSegmentIssue,
+        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
+      },
+      'tunnel': {
+        [this.issueContentTypes.OVERVIEW]: generateTunnelIssueOverview,
+        [this.issueContentTypes.REPORT]: generateTunnelIssue,
+        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
+      },
+      'shared_passwords': {
+        [this.issueContentTypes.OVERVIEW]: sharedPasswordsIssueOverview,
+        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
+      },
+      'shared_admins_domain': {
+        [this.issueContentTypes.OVERVIEW]: sharedAdminsDomainIssueOverview,
+        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
+      },
+      'shared_passwords_domain': {},
+      'strong_users_on_crit': {},
+      'azure_password': {},
+      'weak_password': {},
+      'stolen_creds': {}
+    }
 
   constructor(props) {
     super(props);
@@ -91,6 +190,8 @@ class ReportPageComponent extends AuthComponent {
 
   render() {
     let content;
+
+    console.log(this.state.report);
 
     if (this.stillLoadingDataFromServer()) {
       content = <ReportLoader loading={true}/>;
@@ -239,156 +340,24 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportFindingsSection() {
+    let overviews = this.getPotentialSecurityIssuesOverviews()
+
     return (
       <div id='findings'>
         <h3>
           Security Findings
         </h3>
-        <div>
-          <h3>
-            Immediate Threats
-          </h3>
-          {
-            this.state.report.overview.issues.filter(function (x) {
-              return x === true;
-            }).length > 0 ?
-              <div>
-                During this simulated attack the Monkey uncovered <span
-                className='badge badge-warning'>
-                  {this.getThreatCount()}
-                </span>:
-                <ul>
-                  {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] &&
-                  <li>Stolen SSH keys are used to exploit other machines.</li>}
-                  {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] &&
-                  <li>Stolen credentials are used to exploit other machines.</li>}
-                  {this.state.report.overview.issues[this.Issue.ELASTIC] &&
-                  <li>Elasticsearch servers are vulnerable to
-                    <Button
-                      variant={'link'}
-                      href='https://www.cvedetails.com/cve/cve-2015-1427'
-                      target={'_blank'}
-                      className={'security-report-link'}>
-                      CVE-2015-1427
-                    </Button>.
-                  </li>}
-                  {this.state.report.overview.issues[this.Issue.VSFTPD] &&
-                  <li>VSFTPD is vulnerable to
-                    <Button
-                      variant={'link'}
-                      href='https://www.rapid7.com/db/modules/exploit/unix/ftp/vsftpd_234_backdoor'
-                      target={'_blank'}
-                      className={'security-report-link'}>
-                      CVE-2011-2523
-                    </Button>.
-                  </li>}
-                  {this.state.report.overview.issues[this.Issue.SAMBACRY] &&
-                  <li>Samba servers are vulnerable to ‘SambaCry’ (
-                    <Button
-                      variant={'link'}
-                      href='https://www.samba.org/samba/security/CVE-2017-7494.html'
-                      target={'_blank'}
-                      className={'security-report-link'}>
-                      CVE-2017-7494
-                    </Button>).
-                  </li>}
-                  {this.state.report.overview.issues[this.Issue.SHELLSHOCK] &&
-                  <li>Machines are vulnerable to ‘Shellshock’ (
-                    <Button
-                      variant={'link'}
-                      href='https://www.cvedetails.com/cve/CVE-2014-6271'
-                      target={'_blank'}
-                      className={'security-report-link'}>
-                      CVE-2014-6271
-                    </Button>).
-                  </li>}
-                  {this.state.report.overview.issues[this.Issue.CONFICKER] &&
-                  <li>Machines are vulnerable to ‘Conficker’ (
-                    <Button
-                      variant={'link'}
-                      href='https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067'
-                      target={'_blank'}
-                      className={'security-report-link'}>
-                      MS08-067
-                    </Button>).
-                  </li>}
-                  {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] &&
-                  <li>Machines are accessible using passwords supplied by the user during the Monkey’s
-                    configuration.</li>}
-                  {this.state.report.overview.issues[this.Issue.AZURE] &&
-                  <li>Azure machines expose plaintext passwords (
-                    <Button
-                      variant={'link'}
-                      href='https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/'
-                      target={'_blank'}
-                      className={'security-report-link'}>
-                      more info
-                    </Button>).
-                  </li>}
-                  {this.state.report.overview.issues[this.Issue.STRUTS2] &&
-                  <li>Struts2 servers are vulnerable to remote code execution (
-                    <Button
-                      variant={'link'}
-                      href='https://cwiki.apache.org/confluence/display/WW/S2-045'
-                      target={'_blank'}
-                      className={'security-report-link'}>
-                      CVE-2017-5638
-                    </Button>).
-                  </li>}
-                  {this.state.report.overview.issues[this.Issue.WEBLOGIC] &&
-                  <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li>}
-                  {this.state.report.overview.issues[this.Issue.HADOOP] &&
-                  <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li>}
-                  {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] &&
-                  <li>Mimikatz found login credentials of a user who has admin access to a server defined as
-                    critical.</li>}
-                  {this.state.report.overview.issues[this.Issue.MSSQL] &&
-                  <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li>}
-                  {this.state.report.overview.issues[this.Issue.DRUPAL] &&
-                  <li>Drupal servers are susceptible to a remote code execution vulnerability
-                    (<Button
-                      variant={'link'}
-                      href='https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340'
-                      target={'_blank'}
-                      className={'security-report-link'}>
-                      CVE-2019-6340
-                    </Button>).
-                  </li>
-                  }
-                  {this.generateZerologonOverview()}
-                </ul>
-              </div>
-              :
-              <div>
-                During this simulated attack the Monkey uncovered <span
-                className='badge badge-success'>0 threats</span>.
-              </div>
-          }
-        </div>
+        {this.getImmediateThreats()}
         <div>
           <h3>
             Potential Security Issues
           </h3>
           {
-            this.state.report.overview.warnings.filter(function (x) {
-              return x === true;
-            }).length > 0 ?
+            overviews.length > 0 ?
               <div>
                 The Monkey uncovered the following possible set of issues:
                 <ul>
-                  {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
-                    <li key={this.Warning.CROSS_SEGMENT}>Weak segmentation - Machines from different segments are able
-                      to
-                      communicate.</li> : null}
-                  {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                    <li key={this.Warning.TUNNEL}>Weak segmentation - Machines were able to communicate over unused
-                      ports.</li> : null}
-                  {this.state.report.overview.warnings[this.Warning.SHARED_LOCAL_ADMIN] ?
-                    <li key={this.Warning.SHARED_LOCAL_ADMIN}>Shared local administrator account - Different machines
-                      have the same account as a local
-                      administrator.</li> : null}
-                  {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS] ?
-                    <li key={this.Warning.SHARED_PASSWORDS}>Multiple users have the same password</li> : null}
+                  {overviews}
                 </ul>
               </div>
               :
@@ -405,7 +374,7 @@ class ReportPageComponent extends AuthComponent {
             <div>
               The Monkey uncovered the following set of segmentation issues:
               <ul>
-                {this.state.report.overview.cross_segment_issues.map(x => this.generateCrossSegmentIssue(x))}
+                {this.state.report.overview.cross_segment_issues.map(x => generateCrossSegmentIssue(x))}
               </ul>
             </div>
           </div>
@@ -416,53 +385,40 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-  getThreatCount() {
-    let threatCount = this.state.report.overview.issues.filter(function (x) {
-      return x === true;
-    }).length
+  getPotentialSecurityIssuesOverviews(){
+    let overviews = [];
 
-    this.NotThreats.forEach(x => {
-      if (this.state.report.overview.issues[x] === true) {
-        threatCount -= 1;
+    for( let key of this.IssueDescriptorEnum) {
+      if(this.WARNING_ISSUE_LIST[i] in this.state.report.issues) {
+        overviews.push(this.IssueDescriptorEnum[this.WARNING_ISSUE_LIST[i]][this.issueContentTypes.OVERVIEW])
       }
-    });
-
-    if (threatCount === 1)
-      return '1 threat'
-    else
-      return threatCount + ' threats'
+    }
+    return overviews;
   }
 
-  generateZerologonOverview() {
-    let zerologonOverview = [];
-    if (this.state.report.overview.issues[this.Issue.ZEROLOGON]) {
-      zerologonOverview.push(<>
-        Some Windows domain controllers are vulnerable to 'Zerologon' (
-        <Button variant={'link'}
-                href='https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472'
-                target={'_blank'}
-                className={'security-report-link'}>
-          CVE-2020-1472
-        </Button>).
-      </>)
-    }
-    if (this.state.report.overview.issues[this.Issue.ZEROLOGON_PASSWORD_RESTORE_FAILED]) {
-      zerologonOverview.push(
-      <span className={'zero-logon-overview-pass-restore-failed'}><br/>
-        <WarningIcon/>
-        Automatic password restoration on a domain controller failed!
-        <Button variant={'link'}
-                href={'https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/zerologon/'}
-                target={'_blank'}
-                className={'security-report-link'}>
-        Restore your domain controller's password manually.
-        </Button>
-      </span>)
-    }
-    else {
-      return null;
-    }
-    return (<li>{zerologonOverview}</li>)
+  getImmediateThreats() {
+    return (
+      <div>
+        <h3>
+          Immediate Threats
+        </h3>
+        <div>During this simulated attack the Monkey uncovered
+          {
+            this.state.report.overview.issues.length > 0 ?
+              <>
+             <span
+               className="badge badge-warning">
+                    {this.state.report.overview.issues.length} threats</span>:
+
+              </>
+              :
+              <>
+          <span
+            className="badge badge-success">0 threats</span>.
+              </>
+          }
+        </div>
+      </div>)
   }
 
   generateReportRecommendationsSection() {
@@ -558,578 +514,17 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-  generateInfoBadges(data_array) {
-    return data_array.map(badge_data => <span key={badge_data} className='badge badge-info'
-                                              style={{margin: '2px'}}>{badge_data}</span>);
-  }
-
-  generateCrossSegmentIssue(crossSegmentIssue) {
-    let crossSegmentIssueOverview = 'Communication possible from '
-      + `${crossSegmentIssue['source_subnet']} to ${crossSegmentIssue['target_subnet']}`;
-
-    return (
-      <li key={crossSegmentIssueOverview}>
-        {crossSegmentIssueOverview}
-        <CollapsibleWellComponent>
-          <ul className='cross-segment-issues'>
-            {crossSegmentIssue['issues'].map(
-              issue => this.generateCrossSegmentIssueListItem(issue)
-            )}
-          </ul>
-        </CollapsibleWellComponent>
-      </li>
-    );
-  }
-
-  generateCrossSegmentIssueListItem(issue) {
-    if (issue['is_self']) {
-      return this.generateCrossSegmentSingleHostMessage(issue);
-    }
-
-    return this.generateCrossSegmentMultiHostMessage(issue);
-  }
-
-  generateCrossSegmentSingleHostMessage(issue) {
-    return (
-      <li key={issue['hostname']}>
-        {`Machine ${issue['hostname']} has both ips: ${issue['source']} and ${issue['target']}`}
-      </li>
-    );
-  }
-
-  generateCrossSegmentMultiHostMessage(issue) {
-    return (
-      <li key={issue['source'] + issue['target']}>
-        IP {issue['source']} ({issue['hostname']}) was able to communicate with
-        IP {issue['target']} using:
-        <ul>
-          {issue['icmp'] && <li key='icmp'>ICMP</li>}
-          {this.generateCrossSegmentServiceListItems(issue)}
-        </ul>
-      </li>
-    );
-  }
-
-  generateCrossSegmentServiceListItems(issue) {
-    let service_list_items = [];
-
-    for (const [service, info] of Object.entries(issue['services'])) {
-      service_list_items.push(
-        <li key={service}>
-          <span className='cross-segment-service'>{service}</span> ({info['display_name']})
-        </li>
-      );
-    }
-
-    return service_list_items;
-  }
-
-  generateShellshockPathListBadges(paths) {
-    return paths.map(path => <span className='badge badge-warning' style={{margin: '2px'}} key={path}>{path}</span>);
-  }
-
-  generateSmbPasswordIssue(issue) {
-    return (
-      <>
-        Change <span className='badge badge-success'>{issue.username}</span>'s password to a complex one-use password
-        that is not shared with other computers on the network.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>SMB</span> attack.
-          <br/>
-          The Monkey authenticated over the SMB protocol with user <span
-          className='badge badge-success'>{issue.username}</span> and its password.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateSmbPthIssue(issue) {
-    return (
-      <>
-        Change <span className='badge badge-success'>{issue.username}</span>'s password to a complex one-use password
-        that is not shared with other computers on the network.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>SMB</span> attack.
-          <br/>
-          The Monkey used a pass-the-hash attack over SMB protocol with user <span
-          className='badge badge-success'>{issue.username}</span>.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateWmiPasswordIssue(issue) {
-    return (
-      <>
-        Change <span className='badge badge-success'>{issue.username}</span>'s password to a complex one-use password
-        that is not shared with other computers on the network.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>WMI</span> attack.
-          <br/>
-          The Monkey authenticated over the WMI protocol with user <span
-          className='badge badge-success'>{issue.username}</span> and its password.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateWmiPthIssue(issue) {
-    return (
-      <>
-        Change <span className='badge badge-success'>{issue.username}</span>'s password to a complex one-use password
-        that is not shared with other computers on the network.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>WMI</span> attack.
-          <br/>
-          The Monkey used a pass-the-hash attack over WMI protocol with user <span
-          className='badge badge-success'>{issue.username}</span>.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateSshIssue(issue) {
-    return (
-      <>
-        Change <span className='badge badge-success'>{issue.username}</span>'s password to a complex one-use password
-        that is not shared with other computers on the network.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>SSH</span> attack.
-          <br/>
-          The Monkey authenticated over the SSH protocol with user <span
-          className='badge badge-success'>{issue.username}</span> and its password.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateSshKeysIssue(issue) {
-    return (
-      <>
-        Protect <span className='badge badge-success'>{issue.ssh_key}</span> private key with a pass phrase.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>SSH</span> attack.
-          <br/>
-          The Monkey authenticated over the SSH protocol with private key <span
-          className='badge badge-success'>{issue.ssh_key}</span>.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-
-  generateSambaCryIssue(issue) {
-    return (
-      <>
-        Change <span className='badge badge-success'>{issue.username}</span>'s password to a complex one-use password
-        that is not shared with other computers on the network.
-        <br/>
-        Update your Samba server to 4.4.14 and up, 4.5.10 and up, or 4.6.4 and up.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>SambaCry</span> attack.
-          <br/>
-          The Monkey authenticated over the SMB protocol with user <span
-          className='badge badge-success'>{issue.username}</span> and its password, and used the SambaCry
-          vulnerability.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateVsftpdBackdoorIssue(issue) {
-    return (
-      <>
-        Update your VSFTPD server to the latest version vsftpd-3.0.3.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) has a backdoor running at
-          port <span
-          className='badge badge-danger'>6200</span>.
-          <br/>
-          The attack was made possible because the VSFTPD server was not patched against CVE-2011-2523.
-          <br/><br/>In July 2011, it was discovered that vsftpd version 2.3.4 downloadable from the master site had been
-          compromised.
-          Users logging into a compromised vsftpd-2.3.4 server may issue a ":)" smileyface as the username and gain a
-          command
-          shell on port 6200.
-          <br/><br/>
-          The Monkey executed commands by first logging in with ":)" in the username and then sending commands to the
-          backdoor
-          at port 6200.
-          <br/><br/>Read more about the security issue and remediation <a
-          href='https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2523'
-        >here</a>.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateElasticIssue(issue) {
-    return (
-      <>
-        Update your Elastic Search server to version 1.4.3 and up.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to an <span
-          className='badge badge-danger'>Elastic Groovy</span> attack.
-          <br/>
-          The attack was made possible because the Elastic Search server was not patched against CVE-2015-1427.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateShellshockIssue(issue) {
-    return (
-      <>
-        Update your Bash to a ShellShock-patched version.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>ShellShock</span> attack.
-          <br/>
-          The attack was made possible because the HTTP server running on TCP port <span
-          className='badge badge-info'>{issue.port}</span> was vulnerable to a shell injection attack on the
-          paths: {this.generateShellshockPathListBadges(issue.paths)}.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateAzureIssue(issue) {
-    return (
-      <>
-        Delete VM Access plugin configuration files.
-        <CollapsibleWellComponent>
-          Credentials could be stolen from <span
-          className='badge badge-primary'>{issue.machine}</span> for the following users <span
-          className='badge badge-primary'>{issue.users}</span>. Read more about the security issue and remediation <a
-          href='https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/'
-        >here</a>.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateConfickerIssue(issue) {
-    return (
-      <>
-        Install the latest Windows updates or upgrade to a newer operating system.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>Conficker</span> attack.
-          <br/>
-          The attack was made possible because the target machine used an outdated and unpatched operating system
-          vulnerable to Conficker.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateIslandCrossSegmentIssue(issue) {
-    return (
-      <>
-        Segment your network and make sure there is no communication between machines from different segments.
-        <CollapsibleWellComponent>
-          The network can probably be segmented. A monkey instance on <span
-          className='badge badge-primary'>{issue.machine}</span> in the
-          networks {this.generateInfoBadges(issue.networks)}
-          could directly access the Monkey Island server in the
-          networks {this.generateInfoBadges(issue.server_networks)}.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateSharedCredsDomainIssue(issue) {
-    return (
-      <>
-        Some domain users are sharing passwords, this should be fixed by changing passwords.
-        <CollapsibleWellComponent>
-          These users are sharing access password:
-          {this.generateInfoBadges(issue.shared_with)}.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateSharedCredsIssue(issue) {
-    return (
-      <>
-        Some users are sharing passwords, this should be fixed by changing passwords.
-        <CollapsibleWellComponent>
-          These users are sharing access password:
-          {this.generateInfoBadges(issue.shared_with)}.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateSharedLocalAdminsIssue(issue) {
-    return (
-      <>
-        Make sure the right administrator accounts are managing the right machines, and that there isn’t an
-        unintentional local
-        admin sharing.
-        <CollapsibleWellComponent>
-          Here is a list of machines which the account <span
-          className='badge badge-primary'>{issue.username}</span> is defined as an administrator:
-          {this.generateInfoBadges(issue.shared_machines)}
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateStrongUsersOnCritIssue(issue) {
-    return (
-      <>
-        This critical machine is open to attacks via strong users with access to it.
-        <CollapsibleWellComponent>
-          The services: {this.generateInfoBadges(issue.services)} have been found on the machine
-          thus classifying it as a critical machine.
-          These users has access to it:
-          {this.generateInfoBadges(issue.threatening_users)}.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateTunnelIssue(issue) {
-    return (
-      <>
-        Use micro-segmentation policies to disable communication other than the required.
-        <CollapsibleWellComponent>
-          Machines are not locked down at port level. Network tunnel was set up from <span
-          className='badge badge-primary'>{issue.machine}</span> to <span
-          className='badge badge-primary'>{issue.dest}</span>.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateStruts2Issue(issue) {
-    return (
-      <>
-        Upgrade Struts2 to version 2.3.32 or 2.5.10.1 or any later versions.
-        <CollapsibleWellComponent>
-          Struts2 server at <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
-          className='badge badge-danger'>remote code execution</span> attack.
-          <br/>
-          The attack was made possible because the server is using an old version of Jakarta based file upload
-          Multipart parser. For possible work-arounds and more info read <a
-          href='https://cwiki.apache.org/confluence/display/WW/S2-045'
-        >here</a>.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateDrupalIssue(issue) {
-    return (
-      <>
-        Upgrade Drupal server to versions 8.5.11, 8.6.10, or later.
-        <CollapsibleWellComponent>
-          Drupal server at <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
-          className='badge badge-danger'>remote command execution</span> attack.
-          <br/>
-          The attack was made possible because the server is using an old version of Drupal, for which REST API is
-          enabled. For possible workarounds, fixes and more info read
-          <a href='https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340'>here</a>.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateWebLogicIssue(issue) {
-    return (
-      <>
-        Update Oracle WebLogic server to the latest supported version.
-        <CollapsibleWellComponent>
-          Oracle WebLogic server at <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to one of <span
-          className='badge badge-danger'>remote code execution</span> attacks.
-          <br/>
-          The attack was made possible due to one of the following vulnerabilities:
-          <a href={'https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-10271'}> CVE-2017-10271</a> or
-          <a href={'https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-2725'}> CVE-2019-2725</a>
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateHadoopIssue(issue) {
-    return (
-      <>
-        Run Hadoop in secure mode (<a
-        href='http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html'>
-        add Kerberos authentication</a>).
-        <CollapsibleWellComponent>
-          The Hadoop server at <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to <span
-          className='badge badge-danger'>remote code execution</span> attack.
-          <br/>
-          The attack was made possible due to default Hadoop/Yarn configuration being insecure.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateMSSQLIssue(issue) {
-    return (
-      <>
-        Disable the xp_cmdshell option.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>MSSQL exploit attack</span>.
-          <br/>
-          The attack was made possible because the target machine used an outdated MSSQL server configuration allowing
-          the usage of the xp_cmdshell command. To learn more about how to disable this feature, read
-          <Button
-            variant={'link'}
-            href='https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017'
-            target={'_blank'}
-            className={'security-report-link'}>
-            Microsoft's documentation
-          </Button>.
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
-  generateZerologonIssue(issue) {
-    return (
-      <>
-        Install Windows security updates.
-        <CollapsibleWellComponent>
-          The machine <span className='badge badge-primary'>{issue.machine}</span> (<span
-          className='badge badge-info' style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
-          className='badge badge-danger'>Zerologon exploit</span>.
-          <br/>
-          The attack was possible because the latest security updates from Microsoft
-          have not been applied to this machine. For more information about this
-          vulnerability, read
-          <Button
-            variant={'link'}
-            href='https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472'
-            target={'_blank'}
-            className={'security-report-link'}>
-            Microsoft's documentation
-          </Button>.
-          {!issue.password_restored &&
-            <div className={'info-pane-warning'} key={'warning'}>
-              <br/><WarningIcon/>
-              <span>
-              The domain controller's password was changed during the exploit and could not be restored successfully.
-              Instructions on how to manually reset the domain controller's password can be found
-                <Button
-                  variant={'link'}
-                  href='https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/zerologon/'
-                  target={'_blank'}
-                  className={'security-report-link'}>
-                  here
-                </Button>.
-            </span>
-            </div>}
-        </CollapsibleWellComponent>
-      </>
-    );
-  }
-
   generateIssue = (issue) => {
-    let issueData;
-    switch (issue.type) {
-      case 'vsftp':
-        issueData = this.generateVsftpdBackdoorIssue(issue);
-        break;
-      case 'smb_password':
-        issueData = this.generateSmbPasswordIssue(issue);
-        break;
-      case 'smb_pth':
-        issueData = this.generateSmbPthIssue(issue);
-        break;
-      case 'wmi_password':
-        issueData = this.generateWmiPasswordIssue(issue);
-        break;
-      case 'wmi_pth':
-        issueData = this.generateWmiPthIssue(issue);
-        break;
-      case 'ssh':
-        issueData = this.generateSshIssue(issue);
-        break;
-      case 'ssh_key':
-        issueData = this.generateSshKeysIssue(issue);
-        break;
-      case 'sambacry':
-        issueData = this.generateSambaCryIssue(issue);
-        break;
-      case 'elastic':
-        issueData = this.generateElasticIssue(issue);
-        break;
-      case 'shellshock':
-        issueData = this.generateShellshockIssue(issue);
-        break;
-      case 'conficker':
-        issueData = this.generateConfickerIssue(issue);
-        break;
-      case 'island_cross_segment':
-        issueData = this.generateIslandCrossSegmentIssue(issue);
-        break;
-      case 'shared_passwords':
-        issueData = this.generateSharedCredsIssue(issue);
-        break;
-      case 'shared_passwords_domain':
-        issueData = this.generateSharedCredsDomainIssue(issue);
-        break;
-      case 'shared_admins_domain':
-        issueData = this.generateSharedLocalAdminsIssue(issue);
-        break;
-      case 'strong_users_on_crit':
-        issueData = this.generateStrongUsersOnCritIssue(issue);
-        break;
-      case 'tunnel':
-        issueData = this.generateTunnelIssue(issue);
-        break;
-      case 'azure_password':
-        issueData = this.generateAzureIssue(issue);
-        break;
-      case 'struts2':
-        issueData = this.generateStruts2Issue(issue);
-        break;
-      case 'weblogic':
-        issueData = this.generateWebLogicIssue(issue);
-        break;
-      case 'hadoop':
-        issueData = this.generateHadoopIssue(issue);
-        break;
-      case 'mssql':
-        issueData = this.generateMSSQLIssue(issue);
-        break;
-      case 'drupal':
-        issueData = this.generateDrupalIssue(issue);
-        break;
-      case 'zerologon':
-        issueData = this.generateZerologonIssue(issue);
-        break;
+    let issueDescriptor = this.IssueDescriptorEnum[issue.type];
+
+    let reportFnc = (issue) => {};
+    if(issue.hasOwnProperty('credential_type')) {
+      reportFnc = issueDescriptor[this.issueContentTypes.REPORT][issue.credential_type];
+    } else {
+      reportFnc = issueDescriptor[this.issueContentTypes.REPORT];
     }
-    return <li key={JSON.stringify(issue)}>{issueData}</li>;
+    let reportContents = reportFnc(issue);
+    return <li key={JSON.stringify(issue)}>{reportContents}</li>;
   };
 
   generateIssues = (issues) => {
