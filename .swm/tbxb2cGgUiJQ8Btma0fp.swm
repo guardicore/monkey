@@ -67,19 +67,6 @@
         },
         {
             "type": "snippet",
-            "lines": [
-                "     unscanned_msg = \"Monkey didn't try creating a new user on the network's systems.\"",
-                "     scanned_msg = \"Monkey tried creating a new user on the network's systems, but failed.\"",
-                "     used_msg = \"Monkey created a new user on the network's systems.\"",
-                "*    pba_names = [POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER]",
-                " "
-            ],
-            "firstLineNumber": 9,
-            "path": "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py",
-            "comments": []
-        },
-        {
-            "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
             "comments": [],
             "firstLineNumber": 4,
