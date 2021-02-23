@@ -91,7 +91,7 @@ script:
 
 # verify swimm	
 - cd $TRAVIS_BUILD_DIR	
-- wget "https://github.com/swimmio/SwimmReleases/releases/download/v0.3.8-0/Swimm-0.3.8-0.dmg" -O swimm	
+- wget "https://github.com/swimmio/SwimmReleases/releases/download/v0.3.8-0/Swimm_0.3.8-0_Setup.deb" -O swimm	
 - sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)	
 - chmod +x ./swimm	
 - swimm --version	
