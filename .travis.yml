@@ -94,7 +94,8 @@ script:
 - wget "https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv038%2FSwimm_0.3.8-0_Setup.deb?alt=media&token=cbe91194-99c5-430d-bd4f-25931fcd375b" -O swimm	
 - sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)	
 - chmod +x ./swimm	
-- swimm --version	
+- swimm --version
+- git --version
 - swimm verify
 - swimm log -n 300
 - swimm verify 
