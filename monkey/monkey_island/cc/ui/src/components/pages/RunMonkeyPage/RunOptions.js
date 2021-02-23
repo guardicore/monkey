@@ -10,6 +10,8 @@ import RunOnIslandButton from './RunOnIslandButton';
 import AWSRunButton from './RunOnAWS/AWSRunButton';
 import CloudOptions from './scoutsuite-setup/CloudOptions';
 
+const CONFIG_URL = '/api/configuration/island';
+
 function RunOptions(props) {
 
   const [currentContent, setCurrentContent] = useState(loadingContents());
@@ -20,12 +22,16 @@ function RunOptions(props) {
 
   useEffect(() => {
     if (initialized === false) {
-      authComponent.authFetch('/api')
-        .then(res => res.json())
-        .then(res => {
-          setIps([res['ip_addresses']][0]);
-          setInitialized(true);
+      authComponent.authFetch(CONFIG_URL)
+      .then(res => res.json())
+      .then(res => {
+        let commandServers = res.configuration.internal.island_server.command_servers;
+        let ipAddresses = commandServers.map(ip => {
+          return ip.split(":", 1);
         });
+        setIps(ipAddresses);
+        setInitialized(true);
+      });
     }
   })
 
