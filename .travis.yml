@@ -90,12 +90,11 @@ script:
 - hugo --verbose --environment staging
 
 # verify swimm	
-- cd $TRAVIS_BUILD_DIR	
-- wget "https://github.com/swimmio/SwimmReleases/releases/download/v0.3.8-0/Swimm_0.3.8-0_Setup.deb" -O swimm	
-- sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)	
-- chmod +x ./swimm	
-- swimm --version	
-- swimm verify	
+- cd $TRAVIS_BUILD_DIR
+- curl -s https://api.github.com/repos/swimmio/SwimmReleases/releases/latest | grep 'browser_download_url.*swimm-cli' | cut -d '"' -f 4 | wget -O swimm_cli -qi -
+- chmod +x swimm_cli
+- node swimm_cli --version
+- node swimm_cli verify	
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
