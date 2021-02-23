@@ -6,6 +6,9 @@ group: travis_latest
 
 language: python
 
+git:
+  depth: false
+
 cache:
   - pip
   - directories:
@@ -85,6 +88,15 @@ script:
 # Build documentation
 - cd $TRAVIS_BUILD_DIR/docs
 - hugo --verbose --environment staging
+
+# verify swimm	
+- cd $TRAVIS_BUILD_DIR	
+- wget "https://github.com/swimmio/SwimmReleases/releases/download/v0.3.7-0/Swimm_0.3.7-0_Setup.deb" -O swimm	
+- sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)	
+- chmod +x ./swimm	
+- swimm --version	
+- swimm verify	
+
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
