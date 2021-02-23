@@ -1,54 +1,53 @@
 {
     "id": "JFXftJml8DpmuCPBA9rL",
     "name": "Add details about your new PBA",
-    "dod": "You should add your new PBA's details to the configuration.",
-    "description": "In order to make sure that the new `ScheduleJobs` PBA is shown in the configuration on the Monkey Island, you need to add its details to the configuration file(s). <br><br>\n\nSince this particular PBA is related to the MITRE techniques [T1168](https://attack.mitre.org/techniques/T1168) and [T1053](https://attack.mitre.org/techniques/T1053), make sure to link the PBA with these techniques in the configuration as well. <br><br>\n\nEach part of the configuration has an important role  \n- *enum* — contains the relevant PBA's class name(s)\n- *title* — holds the name of the PBA which is displayed in the configuration on the Monkey Island\n- *info* — consists of an elaboration on the PBA's working which is displayed in the configuration on the Monkey Island\n- *attack_techniques* — has the IDs of the MITRE techniques associated with the PBA\n\n## Manual test  \nOnce you think you're done...\n- Run the Monkey Island\n- You should be able to see your new PBA under the \"Monkey\" tab in the configuration, along with its information when you click on it\n- Further, when you enable/disable the associated MITRE techniques under the ATT&CK tab in the configuration, the PBA should also be enabled/disabled\n\n<img src=\"https://i.imgur.com/a5VSkL5.gif\" height=400>",
-    "summary": "- The PBA details in this file are reflected on the Monkey Island in the PBA configuration.\n- PBAs are also linked to the relevant MITRE techniques in this file, whose results can then be seen in the MITRE ATT&CK report on the Monkey Island.",
-    "hunksOrder": [
-        "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py_0"
-    ],
-    "tests": [],
-    "hints": [
-        "Have a look at the details of the other techniques."
-    ],
-    "play_mode": "all",
-    "swimmPatch": {
-        "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": {
-            "diffType": "MODIFIED",
-            "fileDiffHeader": "diff --git a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\nindex f1fe0f6f..b231f96c 100644\n--- a/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py\n+++ b/monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
-            "hunks": [
-                {
-                    "swimmHunkMetadata": {
-                        "hunkComments": []
-                    },
-                    "hunkDiffLines": [
-                        "@@ -68,16 +68,7 @@",
-                        "                     \"Removes the file afterwards.\",",
-                        "             \"attack_techniques\": [\"T1166\"]",
-                        "         },",
-                        "-        {",
-                        "+        # Swimmer: ADD DETAILS HERE!",
-                        "-            \"type\": \"string\",",
-                        "-            \"enum\": [",
-                        "-                \"ScheduleJobs\"",
-                        "-            ],",
-                        "-            \"title\": \"Job scheduling\",",
-                        "-            \"safe\": True,",
-                        "-            \"info\": \"Attempts to create a scheduled job on the system and remove it.\",",
-                        "-            \"attack_techniques\": [\"T1168\", \"T1053\"]",
-                        "-        },",
-                        "         {",
-                        "             \"type\": \"string\",",
-                        "             \"enum\": ["
-                    ]
-                }
-            ]
+    "file_version": "2.0.0",
+    "meta": {
+        "app_version": "0.3.8-0",
+        "file_blobs": {
+            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "857e80da477ab31dbc00ed0a3f1cd49b69b505fa"
         }
     },
-    "app_version": "0.3.5-1",
-    "file_version": "1.0.4",
-    "hunksOrder": [
-        "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py_0"
+    "content": [
+        {
+            "type": "text",
+            "text": "In order to make sure that the new `ScheduleJobs` PBA is shown in the configuration on the Monkey Island, you need to add its details to the configuration file(s). <br><br>\n\nSince this particular PBA is related to the MITRE techniques [T1168](https://attack.mitre.org/techniques/T1168) and [T1053](https://attack.mitre.org/techniques/T1053), make sure to link the PBA with these techniques in the configuration as well. <br><br>\n\nEach part of the configuration has an important role  \n- *enum* — contains the relevant PBA's class name(s)\n- *title* — holds the name of the PBA which is displayed in the configuration on the Monkey Island\n- *info* — consists of an elaboration on the PBA's working which is displayed in the configuration on the Monkey Island\n- *attack_techniques* — has the IDs of the MITRE techniques associated with the PBA\n\n## Manual test  \nOnce you think you're done...\n- Run the Monkey Island\n- You should be able to see your new PBA under the \"Monkey\" tab in the configuration, along with its information when you click on it\n- Further, when you enable/disable the associated MITRE techniques under the ATT&CK tab in the configuration, the PBA should also be enabled/disabled\n\n<img src=\"https://i.imgur.com/a5VSkL5.gif\" height=400>"
+        },
+        {
+            "type": "snippet",
+            "path": "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
+            "comments": [],
+            "firstLineNumber": 68,
+            "lines": [
+                "                     \"Removes the file afterwards.\",",
+                "             \"attack_techniques\": [\"T1166\"]",
+                "         },",
+                "*        {",
+                "+        # Swimmer: ADD DETAILS HERE!",
+                "*            \"type\": \"string\",",
+                "*            \"enum\": [",
+                "*                \"ScheduleJobs\"",
+                "*            ],",
+                "*            \"title\": \"Job scheduling\",",
+                "*            \"safe\": True,",
+                "*            \"info\": \"Attempts to create a scheduled job on the system and remove it.\",",
+                "*            \"attack_techniques\": [\"T1168\", \"T1053\"]",
+                "*        },",
+                "         {",
+                "             \"type\": \"string\",",
+                "             \"enum\": ["
+            ]
+        },
+        {
+            "type": "text",
+            "text": "- The PBA details in this file are reflected on the Monkey Island in the PBA configuration.\n- PBAs are also linked to the relevant MITRE techniques in this file, whose results can then be seen in the MITRE ATT&CK report on the Monkey Island."
+        }
     ],
-    "last_commit_sha_for_swimm_patch": "9d9e8168fb2c23367b9947273aa1a041687b3e2e"
+    "task": {
+        "dod": "You should add your new PBA's details to the configuration.",
+        "hints": [
+            "Have a look at the details of the other techniques."
+        ],
+        "tests": []
+    }
 }

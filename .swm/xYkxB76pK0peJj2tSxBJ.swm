@@ -36,7 +36,7 @@
     ],
     "file_version": "2.0.0",
     "meta": {
-        "app_version": "0.3.7-0",
+        "app_version": "0.3.8-0",
         "file_blobs": {
             "monkey/common/common_consts/post_breach_consts.py": "25e6679cb1623aae1a732deb05cc011a452743e3"
         }

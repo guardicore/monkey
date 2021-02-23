@@ -1,51 +1,50 @@
 {
     "id": "VW4rf3AxRslfT7lwaug7",
     "name": "Implement a new PBA —  `ScheduleJobs`",
-    "dod": "You should implement a new PBA in Monkey which schedules jobs on the machine.",
-    "description": "You need to implement the `ScheduleJobs` PBA which creates scheduled jobs on the machine. <br><br>\n<img src=\"https://media.giphy.com/media/l0K4mVE5b5WZ1sctW/giphy.gif\" height=175><br><br>\nThe commands that add scheduled jobs for Windows and Linux can be retrieved from `get_commands_to_schedule_jobs` — make sure you understand how to use this function correctly.\n\n## Manual test  \nOnce you think you're done...\n- Run the Monkey Island\n- Make sure the \"Job scheduling\" PBA is enabled in the \"Monkey\" tab in the configuration — for this test, disable network scanning, exploiting, and all other PBAs\n- Run the Monkey\n- Make sure you see the PBA with its results in the Security report as well as in the ATT&CK report under the relevant MITRE technique\n\n<img src=\"https://firebasestorage.googleapis.com/v0/b/swimmio-content/o/repositories%2F6Nlb99NtY5Fc3bSd8suH%2Fimg%2Ff0e53e6c-9dbe-41d8-9454-2b5761c3f53a.png?alt=media&token=21aa4bb8-7ebe-4dab-a739-c77e059144dd\" height=400>\n<br><br>\n<img src=\"https://firebasestorage.googleapis.com/v0/b/swimmio-content/o/repositories%2F6Nlb99NtY5Fc3bSd8suH%2Fimg%2F528389a0-35c8-4380-b6e2-353068ed01e4.png?alt=media&token=08767f55-86e2-4f51-8ecf-13fd6cc25ad5\" height=400>",
-    "summary": "Many other PBAs are as simple as this one, using shell commands or scripts — see `Timestomping` and `AccountDiscovery`. <br><br>\n\nHowever, for less straightforward ones, you can override functions and implement new classes depending on what is required — see `SignedScriptProxyExecution` and `ModifyShellStartupFiles`.<br><br>\n\nThis PBA, along with all the other PBAs, will run on a system after it has been breached. The purpose of this code is to test whether target systems allow attackers to schedule jobs, which they could use to run malicious code at some specified date and time.",
-    "hunksOrder": [
-        "monkey/infection_monkey/post_breach/actions/schedule_jobs.py_0"
-    ],
-    "tests": [],
-    "hints": [
-        "Check out the `Timestomping` PBA to get an idea about the implementation.",
-        "Don't forget to add code to remove the scheduled jobs!"
-    ],
-    "play_mode": "all",
-    "swimmPatch": {
-        "monkey/infection_monkey/post_breach/actions/schedule_jobs.py": {
-            "diffType": "MODIFIED",
-            "fileDiffHeader": "diff --git a/monkey/infection_monkey/post_breach/actions/schedule_jobs.py b/monkey/infection_monkey/post_breach/actions/schedule_jobs.py\nindex f7d8d805..06839463 100644\n--- a/monkey/infection_monkey/post_breach/actions/schedule_jobs.py\n+++ b/monkey/infection_monkey/post_breach/actions/schedule_jobs.py",
-            "hunks": [
-                {
-                    "swimmHunkMetadata": {
-                        "hunkComments": []
-                    },
-                    "hunkDiffLines": [
-                        "@@ -10,11 +10,5 @@",
-                        "     \"\"\"",
-                        " ",
-                        "     def __init__(self):",
-                        "-        linux_cmds, windows_cmds = get_commands_to_schedule_jobs()",
-                        "+        pass",
-                        "-",
-                        "+        # Swimmer: IMPLEMENT HERE!",
-                        "-        super(ScheduleJobs, self).__init__(name=POST_BREACH_JOB_SCHEDULING,",
-                        "-                                           linux_cmd=' '.join(linux_cmds),",
-                        "-                                           windows_cmd=windows_cmds)",
-                        "-    ",
-                        "-    def run(self):",
-                        "-        super(ScheduleJobs, self).run()"
-                    ]
-                }
-            ]
+    "file_version": "2.0.0",
+    "meta": {
+        "app_version": "0.3.8-0",
+        "file_blobs": {
+            "monkey/infection_monkey/post_breach/actions/schedule_jobs.py": "97ad75923f49e1a1b4d5823ca6553541cd550392"
         }
     },
-    "app_version": "0.3.5-1",
-    "file_version": "1.0.4",
-    "hunksOrder": [
-        "monkey/infection_monkey/post_breach/actions/schedule_jobs.py_0"
+    "content": [
+        {
+            "type": "text",
+            "text": "You need to implement the `ScheduleJobs` PBA which creates scheduled jobs on the machine. <br><br>\n<img src=\"https://media.giphy.com/media/l0K4mVE5b5WZ1sctW/giphy.gif\" height=175><br><br>\nThe commands that add scheduled jobs for Windows and Linux can be retrieved from `get_commands_to_schedule_jobs` — make sure you understand how to use this function correctly.\n\n## Manual test  \nOnce you think you're done...\n- Run the Monkey Island\n- Make sure the \"Job scheduling\" PBA is enabled in the \"Monkey\" tab in the configuration — for this test, disable network scanning, exploiting, and all other PBAs\n- Run the Monkey\n- Make sure you see the PBA with its results in the Security report as well as in the ATT&CK report under the relevant MITRE technique\n\n<img src=\"https://firebasestorage.googleapis.com/v0/b/swimmio-content/o/repositories%2F6Nlb99NtY5Fc3bSd8suH%2Fimg%2Ff0e53e6c-9dbe-41d8-9454-2b5761c3f53a.png?alt=media&token=21aa4bb8-7ebe-4dab-a739-c77e059144dd\" height=400>\n<br><br>\n<img src=\"https://firebasestorage.googleapis.com/v0/b/swimmio-content/o/repositories%2F6Nlb99NtY5Fc3bSd8suH%2Fimg%2F528389a0-35c8-4380-b6e2-353068ed01e4.png?alt=media&token=08767f55-86e2-4f51-8ecf-13fd6cc25ad5\" height=400>"
+        },
+        {
+            "type": "snippet",
+            "path": "monkey/infection_monkey/post_breach/actions/schedule_jobs.py",
+            "comments": [],
+            "firstLineNumber": 10,
+            "lines": [
+                "     \"\"\"",
+                " ",
+                "     def __init__(self):",
+                "*        linux_cmds, windows_cmds = get_commands_to_schedule_jobs()",
+                "+        pass",
+                "*",
+                "+        # Swimmer: IMPLEMENT HERE!",
+                "*        super(ScheduleJobs, self).__init__(name=POST_BREACH_JOB_SCHEDULING,",
+                "*                                           linux_cmd=' '.join(linux_cmds),",
+                "*                                           windows_cmd=windows_cmds)",
+                "*    ",
+                "*    def run(self):",
+                "*        super(ScheduleJobs, self).run()"
+            ]
+        },
+        {
+            "type": "text",
+            "text": "Many other PBAs are as simple as this one, using shell commands or scripts — see `Timestomping` and `AccountDiscovery`. <br><br>\n\nHowever, for less straightforward ones, you can override functions and implement new classes depending on what is required — see `SignedScriptProxyExecution` and `ModifyShellStartupFiles`.<br><br>\n\nThis PBA, along with all the other PBAs, will run on a system after it has been breached. The purpose of this code is to test whether target systems allow attackers to schedule jobs, which they could use to run malicious code at some specified date and time."
+        }
     ],
-    "last_commit_sha_for_swimm_patch": "44fd1ab69cfbab33cec638dcbbaa8831992a9a9f"
+    "task": {
+        "dod": "You should implement a new PBA in Monkey which schedules jobs on the machine.",
+        "hints": [
+            "Check out the `Timestomping` PBA to get an idea about the implementation.",
+            "Don't forget to add code to remove the scheduled jobs!"
+        ],
+        "tests": []
+    }
 }

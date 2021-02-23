@@ -59,10 +59,10 @@
             "comments": [],
             "firstLineNumber": 1,
             "lines": [
-                "*from common.common_consts.post_breach_consts import POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER\r",
-                " from monkey_island.cc.services.attack.technique_reports.pba_technique import PostBreachTechnique\r",
-                " \r",
-                " __author__ = \"shreyamalviya\"\r"
+                "*from common.common_consts.post_breach_consts import POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER",
+                " from monkey_island.cc.services.attack.technique_reports.pba_technique import PostBreachTechnique",
+                " ",
+                " __author__ = \"shreyamalviya\""
             ]
         },
         {
@@ -110,7 +110,7 @@
     ],
     "file_version": "2.0.0",
     "meta": {
-        "app_version": "0.3.7-0",
+        "app_version": "0.3.8-0",
         "file_blobs": {
             "monkey/common/common_consts/post_breach_consts.py": "25e6679cb1623aae1a732deb05cc011a452743e3",
             "monkey/infection_monkey/post_breach/actions/add_user.py": "a85845840d9cb37529ad367e159cd9001929e759",
