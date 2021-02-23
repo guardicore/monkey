@@ -94,7 +94,9 @@ script:
 - curl -s https://api.github.com/repos/swimmio/SwimmReleases/releases/latest | grep 'browser_download_url.*swimm-cli' | cut -d '"' -f 4 | wget -O swimm_cli -qi -
 - chmod +x swimm_cli
 - node swimm_cli --version
-- node swimm_cli verify	
+- node swimm_cli verify
+- node swimm_cli log -n 20
+- node swimm_cli verify
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
