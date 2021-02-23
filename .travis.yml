@@ -96,6 +96,7 @@ script:
 - chmod +x ./swimm	
 - swimm --version
 - git --version
+- git config -l
 - swimm verify
 - swimm log -n 300
 - swimm verify 
