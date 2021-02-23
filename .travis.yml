@@ -97,7 +97,6 @@ script:
 - swimm --version	
 - swimm verify	
 
-
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
   - bash <(curl -s https://codecov.io/bash)
