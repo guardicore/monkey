@@ -63,32 +63,34 @@ script:
 - sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)
 - chmod +x ./swimm
 - swimm --version
-- git --version
-- git config -l
-- swimm verify
-- swimm log -n 300
 - swimm verify
 
 # Check Python code
 ## Check syntax errors and fail the build if any are found.
 - flake8 ./monkey --exclude=monkey/common/cloud/scoutsuite --config=./ci_scripts/flake8_syntax_check.ini
-
+- swimm verify
 ## Warn about linter issues.
 ### --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
 ### The output is redirected to a file.
 - flake8 ./monkey --exit-zero --config=./ci_scripts/flake8_linter_check.ini > ./ci_scripts/flake8_warnings.txt
+- swimm verify
 ## Display the linter issues
 - cat ./ci_scripts/flake8_warnings.txt
+- swimm verify
 ## Make sure that we haven't increased the amount of warnings.
 - PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=80
 - if [ $(tail -n 1 ./ci_scripts/flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
+- swimm verify
 
 ## Check import order
 - python -m isort ./monkey --settings-file ./ci_scripts/isort.cfg
+- swimm verify
 
 ## Run unit tests and generate coverage data
 - cd monkey  # This is our source dir
 - python -m pytest --cov=. # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+- cd $TRAVIS_BUILD_DIR
+- swimm verify
 
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui
@@ -96,10 +98,14 @@ script:
 - eslint ./src --quiet  # Test for errors
 - JS_WARNINGS_AMOUNT_UPPER_LIMIT=7
 - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # Test for max warnings
+- cd $TRAVIS_BUILD_DIR
+- swimm verify
 
 # Build documentation
 - cd $TRAVIS_BUILD_DIR/docs
 - hugo --verbose --environment staging
+- cd $TRAVIS_BUILD_DIR
+- swimm verify
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
