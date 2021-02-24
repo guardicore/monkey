@@ -1,11 +1,18 @@
 import json
 import logging.config
 import os
+from typing import Dict
 
-__author__ = 'Maor.Rayzin'
+from monkey_island.cc.consts import DEFAULT_LOGGER_CONFIG_PATH
+
+__author__ = "Maor.Rayzin"
 
 
-def json_setup_logging(default_path='logging.json', default_level=logging.INFO, env_key='LOG_CFG'):
+def json_setup_logging(
+    default_path=DEFAULT_LOGGER_CONFIG_PATH,
+    default_level=logging.INFO,
+    env_key="LOG_CFG",
+):
     """
     Setup the logging configuration
     :param default_path: the default log configuration file path
@@ -13,13 +20,26 @@ def json_setup_logging(default_path='logging.json', default_level=logging.INFO, 
     :param env_key: SYS ENV key to use for external configuration file path
     :return:
     """
-    path = default_path
+    path = os.path.expanduser(default_path)
     value = os.getenv(env_key, None)
+
     if value:
         path = value
+
     if os.path.exists(path):
-        with open(path, 'rt') as f:
+        with open(path, "rt") as f:
             config = json.load(f)
-        logging.config.dictConfig(config)
+            _expanduser_log_file_paths(config)
+            logging.config.dictConfig(config)
     else:
         logging.basicConfig(level=default_level)
+
+
+def _expanduser_log_file_paths(config: Dict):
+    handlers = config.get("handlers", {})
+
+    for handler_settings in handlers.values():
+        if "filename" in handler_settings:
+            handler_settings["filename"] = os.path.expanduser(
+                handler_settings["filename"]
+            )

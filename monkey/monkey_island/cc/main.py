@@ -13,11 +13,7 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
 from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH  # noqa: E402
-from monkey_island.cc.island_logger import json_setup_logging  # noqa: E402
 
-# This is here in order to catch EVERYTHING, some functions are being called on imports the log init needs to be on top.
-json_setup_logging(default_path=Path(MONKEY_ISLAND_ABS_PATH, 'cc', 'island_logger_default_config.json'),
-                   default_level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
