@@ -394,6 +394,7 @@ class ReportService:
     def process_zerologon_exploit(exploit):
         processed_exploit = ReportService.process_general_exploit(exploit)
         processed_exploit['type'] = 'zerologon'
+        processed_exploit['password_restore_success'] = exploit['data']['info']['password_restore_success']
         return processed_exploit
 
     @staticmethod
