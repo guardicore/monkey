@@ -892,6 +892,24 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
+  generateZerologonIssue(issue) {
+    return (
+      <>
+        Install Windows security updates.
+        <CollapsibleWellComponent>
+          The machine <span className="badge badge-primary">{issue.machine}</span> (<span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) is vulnerable to a <span
+          className="badge badge-danger">Zerologon exploit</span>.
+          <br/>
+          The attack was possible because the latest security updates from Microsoft
+          have not been applied to this machine. For more information about this
+          vulnerability, read <a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472">
+          Microsoft's documentation.</a>
+        </CollapsibleWellComponent>
+      </>
+    );
+  }
+
   generateIssue = (issue) => {
     let issueData;
     switch (issue.type) {
@@ -963,6 +981,9 @@ class ReportPageComponent extends AuthComponent {
         break;
       case 'drupal':
         issueData = this.generateDrupalIssue(issue);
+        break;
+      case 'zerologon':
+        issueData = this.generateZerologonIssue(issue);
         break;
     }
     return <li key={JSON.stringify(issue)}>{issueData}</li>;
