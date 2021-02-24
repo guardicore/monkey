@@ -204,7 +204,8 @@ class InfectionMonkey(object):
                         if self.try_exploiting(machine, exploiter):
                             host_exploited = True
                             VictimHostTelem('T1210', ScanStatus.USED, machine=machine).send()
-                            break
+                            if exploiter.RUNS_AGENT_ON_SUCCESS:
+                                break  # if adding machine to exploited, won't try other exploits on it
                     if not host_exploited:
                         self._fail_exploitation_machines.add(machine)
                         VictimHostTelem('T1210', ScanStatus.SCANNED, machine=machine).send()
@@ -346,14 +347,14 @@ class InfectionMonkey(object):
         try:
             result = exploiter.exploit_host()
             if result:
-                self.successfully_exploited(machine, exploiter)
+                self.successfully_exploited(machine, exploiter, exploiter.RUNS_AGENT_ON_SUCCESS)
                 return True
             else:
                 LOG.info("Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__)
         except ExploitingVulnerableMachineError as exc:
             LOG.error("Exception while attacking %s using %s: %s",
                       machine, exploiter.__class__.__name__, exc)
-            self.successfully_exploited(machine, exploiter)
+            self.successfully_exploited(machine, exploiter, exploiter.RUNS_AGENT_ON_SUCCESS)
             return True
         except FailedExploitationError as e:
             LOG.info("Failed exploiting %r with exploiter %s, %s", machine, exploiter.__class__.__name__, e)
@@ -364,13 +365,14 @@ class InfectionMonkey(object):
             exploiter.send_exploit_telemetry(result)
         return False
 
-    def successfully_exploited(self, machine, exploiter):
+    def successfully_exploited(self, machine, exploiter, RUNS_AGENT_ON_SUCCESS=True):
         """
         Workflow of registering successfully exploited machine
         :param machine: machine that was exploited
         :param exploiter: exploiter that succeeded
         """
-        self._exploited_machines.add(machine)
+        if RUNS_AGENT_ON_SUCCESS:
+            self._exploited_machines.add(machine)
 
         LOG.info("Successfully propagated to %s using %s",
                  machine, exploiter.__class__.__name__)

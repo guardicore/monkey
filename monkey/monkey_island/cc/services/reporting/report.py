@@ -44,7 +44,8 @@ class ReportService:
             'HadoopExploiter': 'Hadoop/Yarn Exploiter',
             'MSSQLExploiter': 'MSSQL Exploiter',
             'VSFTPDExploiter': 'VSFTPD Backdoor Exploiter',
-            'DrupalExploiter': 'Drupal Server Exploiter'
+            'DrupalExploiter': 'Drupal Server Exploiter',
+            'ZerologonExploiter': 'Windows Server Zerologon Exploiter'
         }
 
     class ISSUES_DICT(Enum):
@@ -63,6 +64,7 @@ class ReportService:
         MSSQL = 12
         VSFTPD = 13
         DRUPAL = 14
+        ZEROLOGON = 15
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -178,30 +180,55 @@ class ReportService:
 
     @staticmethod
     def get_stolen_creds():
-        PASS_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
         creds = []
-        for telem in mongo.db.telemetry.find(
-                {'telem_category': 'system_info', 'data.credentials': {'$exists': True}},
-                {'data.credentials': 1, 'monkey_guid': 1}
-        ):
-            monkey_creds = telem['data']['credentials']
-            if len(monkey_creds) == 0:
-                continue
-            origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
-            for user in monkey_creds:
-                for pass_type in PASS_TYPE_DICT:
-                    if pass_type not in monkey_creds[user] or not monkey_creds[user][pass_type]:
-                        continue
-                    username = monkey_creds[user]['username'] if 'username' in monkey_creds[user] else user
-                    cred_row = \
-                        {
-                            'username': username,
-                            'type': PASS_TYPE_DICT[pass_type],
-                            'origin': origin
-                        }
-                    if cred_row not in creds:
-                        creds.append(cred_row)
+
+        stolen_system_info_creds = ReportService._get_credentials_from_system_info_telems()
+        creds.extend(stolen_system_info_creds)
+
+        stolen_exploit_creds = ReportService._get_credentials_from_exploit_telems()
+        creds.extend(stolen_exploit_creds)
+
         logger.info('Stolen creds generated for reporting')
+        return creds
+
+    @staticmethod
+    def _get_credentials_from_system_info_telems():
+        formatted_creds = []
+        for telem in mongo.db.telemetry.find({'telem_category': 'system_info', 'data.credentials': {'$exists': True}},
+                                             {'data.credentials': 1, 'monkey_guid': 1}):
+            creds = telem['data']['credentials']
+            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds))
+        return formatted_creds
+
+    @staticmethod
+    def _get_credentials_from_exploit_telems():
+        formatted_creds = []
+        for telem in mongo.db.telemetry.find({'telem_category': 'exploit', 'data.info.credentials': {'$exists': True}},
+                                             {'data.info.credentials': 1, 'monkey_guid': 1}):
+            creds = telem['data']['info']['credentials']
+            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds))
+        return formatted_creds
+
+    @staticmethod
+    def _format_creds_for_reporting(telem, monkey_creds):
+        creds = []
+        CRED_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
+        if len(monkey_creds) == 0:
+            return []
+        origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+        for user in monkey_creds:
+            for cred_type in CRED_TYPE_DICT:
+                if cred_type not in monkey_creds[user] or not monkey_creds[user][cred_type]:
+                    continue
+                username = monkey_creds[user]['username'] if 'username' in monkey_creds[user] else user
+                cred_row = \
+                    {
+                        'username': username,
+                        'type': CRED_TYPE_DICT[cred_type],
+                        'origin': origin
+                    }
+                if cred_row not in creds:
+                    creds.append(cred_row)
         return creds
 
     @staticmethod
@@ -364,6 +391,12 @@ class ReportService:
         return processed_exploit
 
     @staticmethod
+    def process_zerologon_exploit(exploit):
+        processed_exploit = ReportService.process_general_exploit(exploit)
+        processed_exploit['type'] = 'zerologon'
+        return processed_exploit
+
+    @staticmethod
     def process_exploit(exploit):
         exploiter_type = exploit['data']['exploiter']
         EXPLOIT_PROCESS_FUNCTION_DICT = {
@@ -379,7 +412,8 @@ class ReportService:
             'HadoopExploiter': ReportService.process_hadoop_exploit,
             'MSSQLExploiter': ReportService.process_mssql_exploit,
             'VSFTPDExploiter': ReportService.process_vsftpd_exploit,
-            'DrupalExploiter': ReportService.process_drupal_exploit
+            'DrupalExploiter': ReportService.process_drupal_exploit,
+            'ZerologonExploiter': ReportService.process_zerologon_exploit
         }
 
         return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
@@ -678,6 +712,8 @@ class ReportService:
                     issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
                 elif issue['type'] == 'drupal':
                     issues_byte_array[ReportService.ISSUES_DICT.DRUPAL.value] = True
+                elif issue['type'] == 'zerologon':
+                    issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':
                     issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
