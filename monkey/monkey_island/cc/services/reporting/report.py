@@ -715,8 +715,7 @@ class ReportService:
                 elif issue['type'] == 'drupal':
                     issues_byte_array[ReportService.ISSUES_DICT.DRUPAL.value] = True
                 elif issue['type'] == 'zerologon':
-                    # TODO fix to propperly set restoration flag
-                    if issue['info']['zero_logon_restore_failed']:
+                    if issue['password_restored']:
                         issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON_CRED_RESTORE_FAILED.value] = True
                     issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \

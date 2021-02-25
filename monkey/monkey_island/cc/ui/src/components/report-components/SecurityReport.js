@@ -306,10 +306,6 @@ class ReportPageComponent extends AuthComponent {
                     <li>Drupal servers are susceptible to a remote code execution vulnerability
                       (<a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340">
                       CVE-2019-6340</a>).</li> : null}
-                  {this.state.report.overview.issues[this.Issue.ZEROLOGON] ?
-                    <li>Machines are vulnerable to 'Zerologon'
-                      (<a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472">
-                      CVE-2020-1472</a>).</li> : null}
                   {this.generateZeroLogonOverview()}
                 </ul>
               </div>
@@ -375,14 +371,14 @@ class ReportPageComponent extends AuthComponent {
     if(this.state.report.overview.issues[this.Issue.ZEROLOGON_CRED_RESTORE_FAILED]) {
       zeroLogonOverview.push(<span>
         <WarningIcon/> Automatic password restoration on a domain controller failed!
-        <Button variant={"link"} href={"#"} className={'security-report-link'}>
+        <Button variant={"link"} href={"#"} target={"_blank"} className={"security-report-link"}>
         Restore your domain controller's password manually.</Button>
         </span>)
     }
     if(this.state.report.overview.issues[this.Issue.ZEROLOGON]) {
       zeroLogonOverview.push(<>
           Some domain controllers are vulnerable to ZeroLogon exploiter(
-        <a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472">
+        <a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472" target={"_blank"}>
                       CVE-2020-1472</a>)!
         </>)
     } else {
