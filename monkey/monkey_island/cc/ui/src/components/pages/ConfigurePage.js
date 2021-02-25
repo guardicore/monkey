@@ -34,7 +34,9 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       sections: [],
       selectedSection: 'attack',
-      showAttackAlert: false
+      showAttackAlert: false,
+      showUnsafeOptionsConfirmation: false,
+      unsafeOptionsConfirmed: false
     };
   }
 
@@ -84,12 +86,27 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onSubmit = () => {
+    if (!this.canSafelySubmitConfig()) {
+      this.setState({showUnsafeOptionsConfirmation: true});
+      return;
+    }
+
     if (this.state.selectedSection === 'attack') {
       this.matrixSubmit()
     } else {
       this.configSubmit()
     }
+
+    this.setState({unsafeOptionsConfirmed: false})
   };
+
+  canSafelySubmitConfig() {
+    return !this.unsafeOptionsSelected() || this.state.unsafeOptionsConfirmed
+  }
+
+  unsafeOptionsSelected() {
+    return true;
+  }
 
   matrixSubmit = () => {
     // Submit attack matrix
@@ -200,6 +217,45 @@ class ConfigurePageComponent extends AuthComponent {
       </Modal.Body>
     </Modal>)
   };
+
+  renderUnsafeOptionsConfirmationModal = () => {
+    return (
+      <Modal show={this.state.showUnsafeOptionsConfirmation}>
+        <Modal.Body>
+          <h2>
+            <div className='text-center'>Warning</div>
+          </h2>
+          <p className='text-center' style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
+            You have selected some options which are not safe for all environments.
+            These options could cause some systems to become unstable or malfunction.
+            Are you sure you want to use the selected settings?
+          </p>
+          <div className='text-center'>
+            <Button type='button'
+                    className='btn btn-success'
+                    size='lg'
+                    style={{margin: '5px'}}
+                    onClick={() => {
+                      this.setState({showUnsafeOptionsConfirmation: false})
+                    }}>
+              Cancel
+            </Button>
+            <Button type='button'
+                    className='btn btn-danger'
+                    size='lg'
+                    style={{margin: '5px'}}
+                    onClick={() => {
+                      this.setState(
+                        {unsafeOptionsConfirmed: true, showUnsafeOptionsConfirmation: false},
+                        () => {this.onSubmit()});
+                    }}>
+              I know what I'm doing.
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    )
+  }
 
   userChangedConfig() {
     if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
@@ -410,6 +466,7 @@ class ConfigurePageComponent extends AuthComponent {
            lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
            className={'main'}>
         {this.renderAttackAlertModal()}
+        {this.renderUnsafeOptionsConfirmationModal()}
         <h1 className='page-title'>Monkey Configuration</h1>
         {this.renderNav()}
         {content}
