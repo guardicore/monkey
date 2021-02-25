@@ -86,26 +86,55 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onSubmit = () => {
-    if (!this.canSafelySubmitConfig()) {
-      this.setState({showUnsafeOptionsConfirmation: true});
-      return;
-    }
-
     if (this.state.selectedSection === 'attack') {
       this.matrixSubmit()
     } else {
       this.configSubmit()
     }
-
-    this.setState({unsafeOptionsConfirmed: false})
   };
 
   canSafelySubmitConfig() {
-    return !this.unsafeOptionsSelected() || this.state.unsafeOptionsConfirmed
+    return !this.unsafeOptionsSelected() || this.state.unsafeOptionsConfirmed;
   }
 
   unsafeOptionsSelected() {
-    return true;
+    return (this.unsafeExploiterSelected()
+              || this.unsafePostBreachActionSelected()
+              || this.unsafeSystemInfoCollectorSelected());
+  }
+
+  unsafeExploiterSelected() {
+    return this.unsafeItemSelected(
+      this.state.schema.definitions.exploiter_classes.anyOf,
+      this.state.configuration.basic.exploiters.exploiter_classes
+    );
+  }
+
+  unsafePostBreachActionSelected() {
+    return this.unsafeItemSelected(
+      this.state.schema.definitions.post_breach_actions.anyOf,
+      this.state.configuration.monkey.post_breach.post_breach_actions
+    );
+  }
+
+  unsafeSystemInfoCollectorSelected() {
+    return this.unsafeItemSelected(
+      this.state.schema.definitions.system_info_collector_classes.anyOf,
+      this.state.configuration.monkey.system_info.system_info_collector_classes
+    );
+  }
+
+  unsafeItemSelected(options, selectedOptions) {
+    let item_safety = new Map();
+    options.forEach(i => item_safety[i.enum[0]] = i.safe);
+
+    for (let selected of selectedOptions) {
+      if (!item_safety[selected]) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   matrixSubmit = () => {
@@ -136,6 +165,12 @@ class ConfigurePageComponent extends AuthComponent {
   configSubmit = () => {
     // Submit monkey configuration
     this.updateConfigSection();
+
+    if (!this.canSafelySubmitConfig()) {
+      this.setState({showUnsafeOptionsConfirmation: true});
+      return;
+    }
+
     this.sendConfig()
       .then(res => res.json())
       .then(res => {
@@ -150,6 +185,8 @@ class ConfigurePageComponent extends AuthComponent {
       console.log('Bad configuration: ' + error.toString());
       this.setState({lastAction: 'invalid_configuration'});
     });
+
+    this.setState({unsafeOptionsConfirmed: false})
   };
 
   // Alters attack configuration when user toggles technique
