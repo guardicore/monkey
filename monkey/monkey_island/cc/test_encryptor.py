@@ -23,6 +23,12 @@ def test_aes_cbc_decryption():
     assert get_encryptor().dec(CYPHERTEXT) == PLAINTEXT
 
 
+def test_aes_cbc_enc_dec():
+    initialize_encryptor(TEST_DATA_DIR)
+
+    assert get_encryptor().dec(get_encryptor().enc(PLAINTEXT)) == PLAINTEXT
+
+
 def test_create_new_password_file(tmpdir):
     initialize_encryptor(tmpdir)
 
