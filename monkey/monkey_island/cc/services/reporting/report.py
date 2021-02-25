@@ -65,6 +65,7 @@ class ReportService:
         VSFTPD = 13
         DRUPAL = 14
         ZEROLOGON = 15
+        ZEROLOGON_CRED_RESTORE_FAILED = 16
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -714,6 +715,9 @@ class ReportService:
                 elif issue['type'] == 'drupal':
                     issues_byte_array[ReportService.ISSUES_DICT.DRUPAL.value] = True
                 elif issue['type'] == 'zerologon':
+                    # TODO fix to propperly set restoration flag
+                    if issue['info']['zero_logon_restore_failed']:
+                        issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON_CRED_RESTORE_FAILED.value] = True
                     issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':

@@ -14,6 +14,7 @@ import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
 import WarningIcon from '../ui-components/WarningIcon';
+import {Button} from 'react-bootstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
@@ -42,7 +43,8 @@ class ReportPageComponent extends AuthComponent {
       MSSQL: 12,
       VSFTPD: 13,
       DRUPAL: 14,
-      ZEROLOGON: 15
+      ZEROLOGON: 15,
+      ZEROLOGON_CRED_RESTORE_FAILED: 16
     };
 
   Warning =
@@ -308,6 +310,7 @@ class ReportPageComponent extends AuthComponent {
                     <li>Machines are vulnerable to 'Zerologon'
                       (<a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472">
                       CVE-2020-1472</a>).</li> : null}
+                  {this.generateZeroLogonOverview()}
                 </ul>
               </div>
               :
@@ -363,6 +366,29 @@ class ReportPageComponent extends AuthComponent {
         }
       </div>
     );
+  }
+
+  generateZeroLogonOverview() {
+    let zeroLogonOverview = [];
+
+    // TODO finish this by linking to the documentation
+    if(this.state.report.overview.issues[this.Issue.ZEROLOGON_CRED_RESTORE_FAILED]) {
+      zeroLogonOverview.push(<span>
+        <WarningIcon/> Automatic password restoration on a domain controller failed!
+        <Button variant={"link"} href={"#"} className={'security-report-link'}>
+        Restore your domain controller's password manually.</Button>
+        </span>)
+    }
+    if(this.state.report.overview.issues[this.Issue.ZEROLOGON]) {
+      zeroLogonOverview.push(<>
+          Some domain controllers are vulnerable to ZeroLogon exploiter(
+        <a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472">
+                      CVE-2020-1472</a>)!
+        </>)
+    } else {
+      return none;
+    }
+    return (<li>{zeroLogonOverview}</li>)
   }
 
   generateReportRecommendationsSection() {
