@@ -51,4 +51,4 @@ class FindingWithoutDetailsError(Exception):
 
 
 class DomainControllerNameFetchError(FailedExploitationError):
-    """ Raise on failed attemt to extract domain controller's name """
+    """ Raise on failed attempt to extract domain controller's name """
