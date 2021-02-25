@@ -14,9 +14,9 @@ class Encryptor:
     _BLOCK_SIZE = 32
     _PASSWORD_FILENAME = "mongo_key.bin"
 
-    def __init__(self, data_dir):
+    def __init__(self, password_file_dir):
         password_file = os.path.expanduser(
-            os.path.join(data_dir, self._PASSWORD_FILENAME)
+            os.path.join(password_file_dir, self._PASSWORD_FILENAME)
         )
 
         if os.path.exists(password_file):
@@ -55,10 +55,10 @@ class Encryptor:
         return self._unpad(cipher.decrypt(enc_message[AES.block_size :]).decode())
 
 
-def initialize_encryptor(data_dir):
+def initialize_encryptor(password_file_dir):
     global _encryptor
 
-    _encryptor = Encryptor(data_dir)
+    _encryptor = Encryptor(password_file_dir)
 
 
 def get_encryptor():
