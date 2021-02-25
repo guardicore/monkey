@@ -61,5 +61,5 @@ def initialize_encryptor(data_dir):
     _encryptor = Encryptor(data_dir)
 
 
-def encryptor():
+def get_encryptor():
     return _encryptor
