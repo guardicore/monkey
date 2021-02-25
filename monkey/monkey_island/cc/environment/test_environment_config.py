@@ -22,7 +22,7 @@ PARTIAL_CREDENTIALS = os.path.join(
 STANDARD_WITH_CREDENTIALS = os.path.join(
     TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
 )
-WITH_DATA_DIR = os.path.join(TEST_RESOURCES_DIR, "server_config_data_dir.json")
+WITH_DATA_DIR = os.path.join(TEST_RESOURCES_DIR, "server_config_with_data_dir.json")
 
 
 @pytest.fixture
