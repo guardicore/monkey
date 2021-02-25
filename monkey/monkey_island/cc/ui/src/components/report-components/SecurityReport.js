@@ -13,12 +13,14 @@ import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
+import WarningIcon from '../ui-components/WarningIcon';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
+
 
 
 class ReportPageComponent extends AuthComponent {
@@ -915,6 +917,15 @@ class ReportPageComponent extends AuthComponent {
           have not been applied to this machine. For more information about this
           vulnerability, read <a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472">
           Microsoft's documentation.</a>
+          {!issue.password_restored ?
+          <div className={'info-pane-warning'} key={'warning'}>
+            <br/><WarningIcon/>
+            <span>
+              The domain controller's password was changed during the exploit and could not be restored successfully.
+              Instructions on how to manually reset the domain controller's password can be found <a
+              href="https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/zerologon/">here</a>.
+            </span>
+          </div> : null}
         </CollapsibleWellComponent>
       </>
     );
