@@ -1,6 +1,6 @@
 import logging
 
-from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.encryptor import get_encryptor
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
@@ -63,7 +63,7 @@ def encrypt_system_info_ssh_keys(ssh_info):
     for idx, user in enumerate(ssh_info):
         for field in ['public_key', 'private_key', 'known_hosts']:
             if ssh_info[idx][field]:
-                ssh_info[idx][field] = encryptor.enc(ssh_info[idx][field])
+                ssh_info[idx][field] = get_encryptor().enc(ssh_info[idx][field])
 
 
 def process_credential_info(telemetry_json):

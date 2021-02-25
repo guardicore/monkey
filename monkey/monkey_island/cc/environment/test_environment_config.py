@@ -4,7 +4,7 @@ import shutil
 
 import pytest
 
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.consts import DEFAULT_DATA_DIR, MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
 
@@ -22,6 +22,7 @@ PARTIAL_CREDENTIALS = os.path.join(
 STANDARD_WITH_CREDENTIALS = os.path.join(
     TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
 )
+WITH_DATA_DIR = os.path.join(TEST_RESOURCES_DIR, "server_config_with_data_dir.json")
 
 
 @pytest.fixture
@@ -32,28 +33,31 @@ def config_file(tmpdir):
 def test_get_with_credentials():
     config_dict = EnvironmentConfig(WITH_CREDENTIALS).to_dict()
 
-    assert len(config_dict.keys()) == 4
+    assert len(config_dict.keys()) == 5
     assert config_dict["server_config"] == "password"
     assert config_dict["deployment"] == "develop"
     assert config_dict["user"] == "test"
     assert config_dict["password_hash"] == "abcdef"
+    assert config_dict["data_dir"] == DEFAULT_DATA_DIR
 
 
 def test_get_with_no_credentials():
     config_dict = EnvironmentConfig(NO_CREDENTIALS).to_dict()
 
-    assert len(config_dict.keys()) == 2
+    assert len(config_dict.keys()) == 3
     assert config_dict["server_config"] == "password"
     assert config_dict["deployment"] == "develop"
+    assert config_dict["data_dir"] == DEFAULT_DATA_DIR
 
 
 def test_get_with_partial_credentials():
     config_dict = EnvironmentConfig(PARTIAL_CREDENTIALS).to_dict()
 
-    assert len(config_dict.keys()) == 3
+    assert len(config_dict.keys()) == 4
     assert config_dict["server_config"] == "password"
     assert config_dict["deployment"] == "develop"
     assert config_dict["user"] == "test"
+    assert config_dict["data_dir"] == DEFAULT_DATA_DIR
 
 
 def test_save_to_file(config_file):
@@ -66,12 +70,13 @@ def test_save_to_file(config_file):
     with open(config_file, "r") as f:
         from_file = json.load(f)
 
-    assert len(from_file.keys()) == 5
+    assert len(from_file.keys()) == 6
     assert from_file["server_config"] == "standard"
     assert from_file["deployment"] == "develop"
     assert from_file["user"] == "test"
     assert from_file["password_hash"] == "abcdef"
     assert from_file["aws"] == "test_aws"
+    assert from_file["data_dir"] == DEFAULT_DATA_DIR
 
 
 def test_add_user(config_file):
@@ -87,7 +92,7 @@ def test_add_user(config_file):
     with open(config_file, "r") as f:
         from_file = json.load(f)
 
-    assert len(from_file.keys()) == 4
+    assert len(from_file.keys()) == 5
     assert from_file["user"] == new_user
     assert from_file["password_hash"] == new_password_hash
 
@@ -112,3 +117,9 @@ def test_generate_default_file(config_file):
     assert environment_config.user_creds.username == ""
     assert environment_config.user_creds.password_hash == ""
     assert environment_config.aws is None
+    assert environment_config.data_dir == DEFAULT_DATA_DIR
+
+
+def test_data_dir():
+    environment_config = EnvironmentConfig(WITH_DATA_DIR)
+    assert environment_config.data_dir == "/test/data/dir"
