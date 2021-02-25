@@ -4,7 +4,7 @@ from ScoutSuite.providers.base.authentication_strategy import AuthenticationExce
 
 from common.cloud.scoutsuite_consts import CloudProviders
 from common.utils.exceptions import InvalidAWSKeys
-from monkey_island.cc.server_utils.encryptor import encryptor
+from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config import ConfigService
 from common.config_value_paths import AWS_KEYS_PATH
 
@@ -37,7 +37,7 @@ def set_aws_keys(access_key_id: str, secret_access_key: str, session_token: str)
 
 def _set_aws_key(key_type: str, key_value: str):
     path_to_keys = AWS_KEYS_PATH
-    encrypted_key = encryptor().enc(key_value)
+    encrypted_key = get_encryptor().enc(key_value)
     ConfigService.set_config_value(path_to_keys + [key_type], encrypted_key)
 
 
