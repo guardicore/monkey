@@ -22,7 +22,7 @@ PARTIAL_CREDENTIALS = os.path.join(
 STANDARD_WITH_CREDENTIALS = os.path.join(
     TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
 )
-DATA_DIR = os.path.join(TEST_RESOURCES_DIR, "server_config_data_dir.json")
+WITH_DATA_DIR = os.path.join(TEST_RESOURCES_DIR, "server_config_data_dir.json")
 
 
 @pytest.fixture
@@ -121,5 +121,5 @@ def test_generate_default_file(config_file):
 
 
 def test_data_dir():
-    environment_config = EnvironmentConfig(DATA_DIR)
+    environment_config = EnvironmentConfig(WITH_DATA_DIR)
     assert environment_config.data_dir == "/test/data/dir"
