@@ -38,7 +38,9 @@ class ReportPageComponent extends AuthComponent {
       HADOOP: 10,
       PTH_CRIT_SERVICES_ACCESS: 11,
       MSSQL: 12,
-      VSFTPD: 13
+      VSFTPD: 13,
+      DRUPAL: 14,
+      ZEROLOGON: 15
     };
 
   Warning =
@@ -296,6 +298,14 @@ class ReportPageComponent extends AuthComponent {
                       critical.</li> : null}
                   {this.state.report.overview.issues[this.Issue.MSSQL] ?
                     <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li> : null}
+                  {this.state.report.overview.issues[this.Issue.DRUPAL] ?
+                    <li>Drupal servers are susceptible to a remote code execution vulnerability
+                      (<a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340">
+                      CVE-2019-6340</a>).</li> : null}
+                  {this.state.report.overview.issues[this.Issue.ZEROLOGON] ?
+                    <li>Machines are vulnerable to 'Zerologon'
+                      (<a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472">
+                      CVE-2020-1472</a>).</li> : null}
                 </ul>
               </div>
               :
