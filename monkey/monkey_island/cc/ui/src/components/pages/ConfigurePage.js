@@ -182,7 +182,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   attemptConfigSubmit() {
     this.updateConfigSection();
-    this.setState({lastAction: 'submit_attempt'}, this.configSubmit());
+    this.setState({lastAction: 'submit_attempt'}, this.configSubmit);
   }
 
   configSubmit() {
