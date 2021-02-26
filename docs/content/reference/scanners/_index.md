@@ -11,13 +11,13 @@ The Infection Monkey agent takes two steps before attempting to exploit a victim
 
 ## Scanning
 
-Currently there are two scanners, [`PingScanner`][ping-scanner] and [`TcpScanner`][tcp-scanner] both inheriting from [`HostScanner`][host-scanner].
+Currently there are two scanners, [`PingScanner`][ping-scanner] and [`TcpScanner`][tcp-scanner], both inheriting from [`HostScanner`][host-scanner].
 
 The sole interface required is the `is_host_alive` interface, which needs to return True/False.
 
-[`TcpScanner`][tcp-scanner] is the default scanner and it checks for open ports based on the `tcp_target_ports` configuration setting.
+[`TcpScanner`][tcp-scanner] is the default scanner. It checks for open ports based on the `tcp_target_ports` configuration setting.
 
-[`PingScanner`][ping-scanner] sends a ping message using the host OS utility `ping`.
+[`PingScanner`][ping-scanner] sends a ping message using the host OS utility `ping.`
 
 ## Fingerprinting
 
@@ -34,7 +34,7 @@ The currently implemented Fingerprint modules are:
 
 ## Adding a scanner/fingerprinter
 
-To add a new scanner/fingerprinter, create a new class that inherits from [`HostScanner`][host-scanner] or [`HostFinger`][host-finger] (depending on the interface). The class should be under the network module and should be imported under [`network/__init__.py`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/network/__init__.py).
+To add a new scanner/fingerprinter, create a new class that inherits from [`HostScanner`][host-scanner] or [`HostFinger`][host-finger] (depending on the interface). The class should be under the network module and imported under [`network/__init__.py`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/network/__init__.py).
 
 To use the new scanner/fingerprinter by default, two files need to be changed - [`infection_monkey/config.py`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/config.py) and [`infection_monkey/example.conf`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/example.conf) to add references to the new class.
 
