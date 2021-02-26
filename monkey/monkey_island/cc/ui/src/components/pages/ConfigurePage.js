@@ -355,14 +355,13 @@ class ConfigurePageComponent extends AuthComponent {
 
   attemptSetConfigFromCandidateJson(newConfigCandidateJson){
       this.setState({lastAction: 'import_attempt', candidateConfigJson: newConfigCandidateJson},
-        this.setConfigFromCandidateJson(newConfigCandidateJson)
+        this.setConfigFromCandidateJson
       );
   }
 
-  setConfigFromCandidateJson(newConfigCandidateJson){
+  setConfigFromCandidateJson(){
     try {
-      this.setState({lastAction: 'import_attempt', candidateConfigJson: newConfigCandidateJson})
-      let newConfig = JSON.parse(newConfigCandidateJson);
+      let newConfig = JSON.parse(this.state.candidateConfigJson);
 
       if (!this.canSafelySubmitConfig(newConfig)) {
         this.setState({showUnsafeOptionsConfirmation: true});
