@@ -86,9 +86,9 @@ class ConfigurePageComponent extends AuthComponent {
       {unsafeOptionsConfirmed: true, showUnsafeOptionsConfirmation: false},
       () => {
         if (this.state.lastAction == 'submit_attempt') {
-          this.onSubmit();
+          this.attemptConfigSubmit();
         } else if (this.state.lastAction == 'import_attempt') {
-          this.setConfigFromCandidateJson(this.state.candidateConfigJson);
+          this.attemptSetConfigFromCandidateJson(this.state.candidateConfigJson);
         }
       }
     );
@@ -107,7 +107,7 @@ class ConfigurePageComponent extends AuthComponent {
     if (this.state.selectedSection === 'attack') {
       this.matrixSubmit()
     } else {
-      this.configSubmit()
+      this.attemptConfigSubmit()
     }
   };
 
@@ -180,11 +180,13 @@ class ConfigurePageComponent extends AuthComponent {
       });
   };
 
-  configSubmit = () => {
-    // Submit monkey configuration
-    this.setState({lastAction: 'submit_attempt'});
+  attemptConfigSubmit() {
     this.updateConfigSection();
+    this.setState({lastAction: 'submit_attempt'}, this.configSubmit());
+  }
 
+  configSubmit() {
+    // Submit monkey configuration
     if (!this.canSafelySubmitConfig(this.state.configuration)) {
       this.setState({showUnsafeOptionsConfirmation: true});
       return;
@@ -348,7 +350,13 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   setConfigOnImport = (event) => {
-    this.setConfigFromCandidateJson(event.target.result);
+    this.attemptSetConfigFromCandidateJson(event.target.result);
+  }
+
+  attemptSetConfigFromCandidateJson(newConfigCandidateJson){
+      this.setState({lastAction: 'import_attempt', candidateConfigJson: newConfigCandidateJson},
+        this.setConfigFromCandidateJson(newConfigCandidateJson)
+      );
   }
 
   setConfigFromCandidateJson(newConfigCandidateJson){
