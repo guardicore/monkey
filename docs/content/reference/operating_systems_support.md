@@ -42,7 +42,7 @@ Compatibility depends on GLIBC version (2.14+)[^1]. By default, these distributi
 - Windows Server 2012 R2
 - Windows Server 2016
 
-We also provide a dockerfile on our [website](http://infectionmonkey.com/) that lets the Monkey Island run inside a container.
+We also provide a Dockerfile on our [website](http://infectionmonkey.com/) that lets the Monkey Island run inside a container.
 
 ### Old machine bootloader
 
