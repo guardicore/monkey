@@ -186,7 +186,6 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   configSubmit() {
-    // Submit monkey configuration
     if (!this.canSafelySubmitConfig(this.state.configuration)) {
       this.setState({showUnsafeOptionsConfirmation: true});
       return;
@@ -275,6 +274,16 @@ class ConfigurePageComponent extends AuthComponent {
       </Modal.Body>
     </Modal>)
   };
+
+  renderUnsafeOptionsConfirmationModal() {
+    return (
+      <UnsafeOptionsConfirmationModal
+        show={this.state.showUnsafeOptionsConfirmation}
+        onCancelClick={this.onUnsafeConfirmationCancelClick}
+        onContinueClick={this.onUnsafeConfirmationContinueClick}
+      />
+    )
+  }
 
   userChangedConfig() {
     if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
@@ -504,11 +513,7 @@ class ConfigurePageComponent extends AuthComponent {
            lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
            className={'main'}>
         {this.renderAttackAlertModal()}
-        <UnsafeOptionsConfirmationModal
-          show={this.state.showUnsafeOptionsConfirmation}
-          onCancelClick={this.onUnsafeConfirmationCancelClick}
-          onContinueClick={this.onUnsafeConfirmationContinueClick}
-        />
+        {this.renderUnsafeOptionsConfirmationModal()}
         <h1 className='page-title'>Monkey Configuration</h1>
         {this.renderNav()}
         {content}
