@@ -9,6 +9,6 @@ tags = ["reference"]
 
 # Reference
 
-Find detailed information about Infection Monkey.
+Find detailed information about the Infection Monkey.
 
 {{% children %}}
