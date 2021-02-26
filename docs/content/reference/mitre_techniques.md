@@ -12,7 +12,7 @@ Check out [the documentation for the MITRE ATT&CK report as well](../../usage/re
 
 The Infection Monkey maps its actions to the [MITRE ATT&CK](https://attack.mitre.org/) knowledge base and, based on this, provides a report detailing the techniques it used along with any recommended mitigations. This helps you simulate an advanced persistent threat (APT) attack on your network and mitigate real attack paths intelligently.
 
-In the following table, we provide the list of all the MITRE ATT&CK techniques the Monkey provides info about, categorized by the tactic. You can follow any of the links below to learn more about a specific technique or tactic.
+In the following table, we list all the MITRE ATT&CK techniques the Infection Monkey provides info about, categorized by the tactic. You can follow any of the links below to learn more about a specific technique or tactic.
 
 
 | TACTIC                                                            | TECHNIQUES                                                                                 |
