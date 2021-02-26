@@ -17,14 +17,14 @@ function UnsafeOptionsConfirmationModal(props) {
                   className='btn btn-success'
                   size='lg'
                   style={{margin: '5px'}}
-                  onClick={() => {props.onCancelClick()}}>
+                  onClick={props.onCancelClick}>
             Cancel
           </Button>
           <Button type='button'
                   className='btn btn-danger'
                   size='lg'
                   style={{margin: '5px'}}
-                  onClick={() => {props.onContinueClick()}}>
+                  onClick={props.onContinueClick}>
             Submit
           </Button>
         </div>
