@@ -75,7 +75,7 @@ The Monkey performs queries out to the Internet on two separate occasions:
 
 ### Monkey Island server
 
-You can download the Monkey Island's log file directly from the UI. Click the "log" section and choose "Download Monkey Island internal logfile", like so:
+You can download the Monkey Island's log file directly from the UI. Click the "log" section and choose **Download Monkey Island internal logfile**, like so:
 
 ![How to download Monkey Island internal log file](/images/faq/download_log_monkey_island.png "How to download Monkey Island internal log file")
 
