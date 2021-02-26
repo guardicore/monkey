@@ -7,7 +7,7 @@ pre: "<i class='fas fa-question'></i> "
 
 Below are some of the most common questions we receive about the Infection Monkey. If the answer you're looking for isn't here, talk with us [on our Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU), email us at [support@infectionmonkey.com](mailto:support@infectionmonkey.com) or [open an issue on GitHub](https://github.com/guardicore/monkey).
 
-- [Where can I get the latest version of the Infection Monkey? 📰](#where-can-i-get-the-latest-monkey-version)
+- [Where can I get the latest version of the Infection Monkey? 📰](#where-can-i-get-the-latest-version-of-the-infection-monkey)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-monkey-run-for-is-there-a-time-limit)
 - [How do I reset the Monkey Island password?](#how-to-reset-the-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-monkey-continuously)
