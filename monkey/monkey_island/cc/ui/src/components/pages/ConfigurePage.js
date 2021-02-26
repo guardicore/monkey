@@ -42,15 +42,15 @@ class ConfigurePageComponent extends AuthComponent {
     this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'internal'];
 
     this.state = {
-      schema: {},
-      configuration: {},
       attackConfig: {},
+      configuration: {},
+      importCandidateConfig: null,
       lastAction: 'none',
+      schema: {},
       sections: [],
       selectedSection: 'attack',
       showAttackAlert: false,
-      showUnsafeOptionsConfirmation: false,
-      unsafeOptionsConfirmed: false
+      showUnsafeOptionsConfirmation: false
     };
   }
 
@@ -95,16 +95,13 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   onUnsafeConfirmationContinueClick = () => {
-    this.setState(
-      {unsafeOptionsConfirmed: true, showUnsafeOptionsConfirmation: false},
-      () => {
-        if (this.state.lastAction == 'submit_attempt') {
-          this.attemptConfigSubmit();
-        } else if (this.state.lastAction == 'import_attempt') {
-          this.attemptSetConfigFromCandidateJson(this.state.candidateConfigJson);
-        }
-      }
-    );
+    this.setState({showUnsafeOptionsConfirmation: false});
+
+    if (this.state.lastAction == 'submit_attempt') {
+      this.configSubmit();
+    } else if (this.state.lastAction == 'import_attempt') {
+      this.setConfigFromImportCandidate();
+    }
   }
 
   updateConfig = () => {
@@ -125,7 +122,7 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   canSafelySubmitConfig(config) {
-    return !this.unsafeOptionsSelected(config) || this.state.unsafeOptionsConfirmed;
+    return !this.unsafeOptionsSelected(config);
   }
 
   unsafeOptionsSelected(config) {
@@ -182,15 +179,17 @@ class ConfigurePageComponent extends AuthComponent {
 
   attemptConfigSubmit() {
     this.updateConfigSection();
-    this.setState({lastAction: 'submit_attempt'}, this.configSubmit);
+    this.setState({lastAction: 'submit_attempt'}, () => {
+        if (this.canSafelySubmitConfig(this.state.configuration)) {
+          this.configSubmit()
+        } else {
+          this.setState({showUnsafeOptionsConfirmation: true});
+        }
+      }
+    );
   }
 
   configSubmit() {
-    if (!this.canSafelySubmitConfig(this.state.configuration)) {
-      this.setState({showUnsafeOptionsConfirmation: true});
-      return;
-    }
-
     this.sendConfig()
       .then(res => res.json())
       .then(res => {
@@ -205,8 +204,6 @@ class ConfigurePageComponent extends AuthComponent {
       console.log('Bad configuration: ' + error.toString());
       this.setState({lastAction: 'invalid_configuration'});
     });
-
-    this.setState({unsafeOptionsConfirmed: false})
   }
 
   // Alters attack configuration when user toggles technique
@@ -359,37 +356,33 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   setConfigOnImport = (event) => {
-    this.attemptSetConfigFromCandidateJson(event.target.result);
-  }
-
-  attemptSetConfigFromCandidateJson(newConfigCandidateJson){
-      this.setState({lastAction: 'import_attempt', candidateConfigJson: newConfigCandidateJson},
-        this.setConfigFromCandidateJson
-      );
-  }
-
-  setConfigFromCandidateJson(){
     try {
-      let newConfig = JSON.parse(this.state.candidateConfigJson);
-
-      if (!this.canSafelySubmitConfig(newConfig)) {
-        this.setState({showUnsafeOptionsConfirmation: true});
-        return;
-      }
-
-      this.setState({
-        configuration: newConfig,
-        lastAction: 'import_success'
-      }, () => {
-        this.sendConfig();
-        this.setInitialConfig(newConfig)
-      });
-      this.currentFormData = {};
+      var newConfig = JSON.parse(event.target.result);
     } catch (SyntaxError) {
       this.setState({lastAction: 'import_failure'});
+      return;
     }
 
-    this.setState({unsafeOptionsConfirmed: false})
+    this.setState({lastAction: 'import_attempt', importCandidateConfig: newConfig},
+      () => {
+        if (this.canSafelySubmitConfig(newConfig)) {
+          this.setConfigFromImportCandidate();
+        } else {
+          this.setState({showUnsafeOptionsConfirmation: true});
+        }
+      }
+    );
+  }
+
+  setConfigFromImportCandidate(){
+    this.setState({
+      configuration: this.state.importCandidateConfig,
+      lastAction: 'import_success'
+    }, () => {
+      this.sendConfig();
+      this.setInitialConfig(this.state.importCandidateConfig)
+    });
+    this.currentFormData = {};
   }
 
   exportConfig = () => {
