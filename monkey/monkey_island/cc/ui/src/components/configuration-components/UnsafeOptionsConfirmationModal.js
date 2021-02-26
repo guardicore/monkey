@@ -14,7 +14,7 @@ function UnsafeOptionsConfirmationModal(props) {
         </p>
         <div className='text-center'>
           <Button type='button'
-                  className='btn btn-success'
+                  className='btn btn-secondary'
                   size='lg'
                   style={{margin: '5px'}}
                   onClick={props.onCancelClick}>
