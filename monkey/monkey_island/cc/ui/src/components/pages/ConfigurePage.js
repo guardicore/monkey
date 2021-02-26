@@ -84,7 +84,13 @@ class ConfigurePageComponent extends AuthComponent {
   onUnsafeConfirmationContinueClick = () => {
     this.setState(
       {unsafeOptionsConfirmed: true, showUnsafeOptionsConfirmation: false},
-      () => {this.onSubmit()}
+      () => {
+        if (this.state.lastAction == 'submit_attempt') {
+          this.onSubmit();
+        } else if (this.state.lastAction == 'import_attempt') {
+          this.setConfigFromCandidateJson(this.state.candidateConfigJson);
+        }
+      }
     );
   }
 
@@ -105,34 +111,34 @@ class ConfigurePageComponent extends AuthComponent {
     }
   };
 
-  canSafelySubmitConfig() {
-    return !this.unsafeOptionsSelected() || this.state.unsafeOptionsConfirmed;
+  canSafelySubmitConfig(config) {
+    return !this.unsafeOptionsSelected(config) || this.state.unsafeOptionsConfirmed;
   }
 
-  unsafeOptionsSelected() {
-    return (this.unsafeExploiterSelected()
-              || this.unsafePostBreachActionSelected()
-              || this.unsafeSystemInfoCollectorSelected());
+  unsafeOptionsSelected(config) {
+    return (this.unsafeExploiterSelected(config)
+              || this.unsafePostBreachActionSelected(config)
+              || this.unsafeSystemInfoCollectorSelected(config));
   }
 
-  unsafeExploiterSelected() {
+  unsafeExploiterSelected(config) {
     return this.unsafeItemSelected(
       this.state.schema.definitions.exploiter_classes.anyOf,
-      this.state.configuration.basic.exploiters.exploiter_classes
+      config.basic.exploiters.exploiter_classes
     );
   }
 
-  unsafePostBreachActionSelected() {
+  unsafePostBreachActionSelected(config) {
     return this.unsafeItemSelected(
       this.state.schema.definitions.post_breach_actions.anyOf,
-      this.state.configuration.monkey.post_breach.post_breach_actions
+      config.monkey.post_breach.post_breach_actions
     );
   }
 
-  unsafeSystemInfoCollectorSelected() {
+  unsafeSystemInfoCollectorSelected(config) {
     return this.unsafeItemSelected(
       this.state.schema.definitions.system_info_collector_classes.anyOf,
-      this.state.configuration.monkey.system_info.system_info_collector_classes
+      config.monkey.system_info.system_info_collector_classes
     );
   }
 
@@ -176,9 +182,10 @@ class ConfigurePageComponent extends AuthComponent {
 
   configSubmit = () => {
     // Submit monkey configuration
+    this.setState({lastAction: 'submit_attempt'});
     this.updateConfigSection();
 
-    if (!this.canSafelySubmitConfig()) {
+    if (!this.canSafelySubmitConfig(this.state.configuration)) {
       this.setState({showUnsafeOptionsConfirmation: true});
       return;
     }
@@ -341,18 +348,32 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   setConfigOnImport = (event) => {
+    this.setConfigFromCandidateJson(event.target.result);
+  }
+
+  setConfigFromCandidateJson(newConfigCandidateJson){
     try {
+      this.setState({lastAction: 'import_attempt', candidateConfigJson: newConfigCandidateJson})
+      let newConfig = JSON.parse(newConfigCandidateJson);
+
+      if (!this.canSafelySubmitConfig(newConfig)) {
+        this.setState({showUnsafeOptionsConfirmation: true});
+        return;
+      }
+
       this.setState({
-        configuration: JSON.parse(event.target.result),
+        configuration: newConfig,
         lastAction: 'import_success'
       }, () => {
         this.sendConfig();
-        this.setInitialConfig(JSON.parse(event.target.result))
+        this.setInitialConfig(newConfig)
       });
       this.currentFormData = {};
     } catch (SyntaxError) {
       this.setState({lastAction: 'import_failure'});
     }
+
+    this.setState({unsafeOptionsConfirmed: false})
   };
 
   exportConfig = () => {
