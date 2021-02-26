@@ -524,7 +524,7 @@ class ConfigurePageComponent extends AuthComponent {
         <div className='text-center'>
           <button onClick={() => document.getElementById('uploadInputInternal').click()}
                   className='btn btn-info btn-lg' style={{margin: '5px'}}>
-            Import Config
+            Import config
           </button>
           <input id='uploadInputInternal' type='file' accept='.conf' onChange={this.importConfig}
                  style={{display: 'none'}}/>
