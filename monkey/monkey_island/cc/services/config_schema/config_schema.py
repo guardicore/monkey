@@ -11,6 +11,9 @@ from monkey_island.cc.services.config_schema.monkey import MONKEY
 SCHEMA = {
     "title": "Monkey",
     "type": "object",
+    # Newly added definitions should also be added to
+    # monkey/monkey_island/cc/ui/src/components/utils/SafeOptionValidator.js so that
+    # users will not accidentally chose unsafe options
     "definitions": {
         "exploiter_classes": EXPLOITER_CLASSES,
         "system_info_collector_classes": SYSTEM_INFO_COLLECTOR_CLASSES,

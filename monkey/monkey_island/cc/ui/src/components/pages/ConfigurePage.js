@@ -12,24 +12,12 @@ import {formValidationFormats} from '../configuration-components/ValidationForma
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import InternalConfig from '../configuration-components/InternalConfig';
 import UnsafeOptionsConfirmationModal from '../configuration-components/UnsafeOptionsConfirmationModal.js';
+import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js'
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
 export const API_PBA_LINUX = '/api/fileUpload/PBAlinux';
 export const API_PBA_WINDOWS = '/api/fileUpload/PBAwindows';
-
-function isUnsafeItemSelected(allOptions, selectedOptions) {
-  let optionSafety = new Map();
-  allOptions.forEach(i => optionSafety[i.enum[0]] = i.safe);
-
-  for (let selected of selectedOptions) {
-    if (!optionSafety[selected]) {
-      return true;
-    }
-  }
-
-  return false;
-}
 
 class ConfigurePageComponent extends AuthComponent {
 
@@ -122,34 +110,7 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   canSafelySubmitConfig(config) {
-    return !this.unsafeOptionsSelected(config);
-  }
-
-  unsafeOptionsSelected(config) {
-    return (this.unsafeExploiterSelected(config)
-              || this.unsafePostBreachActionSelected(config)
-              || this.unsafeSystemInfoCollectorSelected(config));
-  }
-
-  unsafeExploiterSelected(config) {
-    return isUnsafeItemSelected(
-      this.state.schema.definitions.exploiter_classes.anyOf,
-      config.basic.exploiters.exploiter_classes
-    );
-  }
-
-  unsafePostBreachActionSelected(config) {
-    return isUnsafeItemSelected(
-      this.state.schema.definitions.post_breach_actions.anyOf,
-      config.monkey.post_breach.post_breach_actions
-    );
-  }
-
-  unsafeSystemInfoCollectorSelected(config) {
-    return isUnsafeItemSelected(
-      this.state.schema.definitions.system_info_collector_classes.anyOf,
-      config.monkey.system_info.system_info_collector_classes
-    );
+    return !isUnsafeOptionSelected(this.state.schema, config);
   }
 
   matrixSubmit = () => {
