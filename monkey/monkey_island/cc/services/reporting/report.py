@@ -198,7 +198,8 @@ class ReportService:
         for telem in mongo.db.telemetry.find({'telem_category': 'system_info', 'data.credentials': {'$exists': True}},
                                              {'data.credentials': 1, 'monkey_guid': 1}):
             creds = telem['data']['credentials']
-            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds))
+            origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds, origin))
         return formatted_creds
 
     @staticmethod
@@ -207,16 +208,17 @@ class ReportService:
         for telem in mongo.db.telemetry.find({'telem_category': 'exploit', 'data.info.credentials': {'$exists': True}},
                                              {'data.info.credentials': 1, 'monkey_guid': 1}):
             creds = telem['data']['info']['credentials']
-            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds))
+            origin = telem['data']['machine']['domain_name']
+            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds, origin))
         return formatted_creds
 
     @staticmethod
-    def _format_creds_for_reporting(telem, monkey_creds):
+    def _format_creds_for_reporting(telem, monkey_creds, origin):
         creds = []
         CRED_TYPE_DICT = {'password': 'Clear Password', 'lm_hash': 'LM hash', 'ntlm_hash': 'NTLM hash'}
         if len(monkey_creds) == 0:
             return []
-        origin = NodeService.get_monkey_by_guid(telem['monkey_guid'])['hostname']
+
         for user in monkey_creds:
             for cred_type in CRED_TYPE_DICT:
                 if cred_type not in monkey_creds[user] or not monkey_creds[user][cred_type]:
