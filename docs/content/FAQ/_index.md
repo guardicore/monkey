@@ -9,7 +9,7 @@ Below are some of the most common questions we receive about the Infection Monke
 
 - [Where can I get the latest version of the Infection Monkey? 📰](#where-can-i-get-the-latest-monkey-version)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-monkey-run-for-is-there-a-time-limit)
-- [How do I reset the password?](#how-to-reset-the-password)
+- [How do I reset the Monkey Island password?](#how-to-reset-the-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-monkey-perform-to-the-internet-exactly)
 - [Where can I find the log files of the Infection Monkey agents and the Monkey Island, and how can I read them?](#where-can-i-find-the-log-files-of-the-monkey-and-the-monkey-island-and-how-can-i-read-them)
@@ -36,7 +36,7 @@ If you want to see what has changed between versions, refer to the [releases pag
 
 The Infection Monkey agent shuts off either when it can't find new victims or exceeded the quota of victims as defined in the configuration.
 
-## How to reset the password?
+## How do I reset the Monkey Island password?
 
 When you first access the Monkey Island server, you'll be prompted to create an account. If you forgot the credentials you entered, or just want to change them, you need to alter the `server_config.json` file manually. On Linux, this file is located in `/var/monkey/monkey_island/cc/server_config.json`. On Windows, it's based on your install directory (typically it is `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file leaving the **deployment option unchanged** (it might be "VMware" or "Linux" in your case):
 
