@@ -160,7 +160,7 @@ To do this, change the *Distance from Island* parameter in the “Basic - Networ
 
 This is sometimes caused when Monkey Island is installed with an old version of MongoDB. Make sure your MongoDB version is up to date using the `mongod --version` command on Linux or the `mongod -version` command on Windows. If your version is older than **4.0.10**, this might be the problem. To update your Mongo version:
 
-- **Linux**: First, uninstall the current version with `sudo apt uninstall mongodb` and then install the latest version using the [official mongodb manual](https://docs.mongodb.com/manual/administration/install-community/).
+- **Linux**: First, uninstall the current version with `sudo apt uninstall mongodb` and then install the latest version using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/).
 - **Windows**: First, remove the MongoDB binaries from the `monkey\monkey_island\bin\mongodb` folder. Download and install the latest version of MongoDB using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/). After installation is complete, copy the files from the `C:\Program Files\MongoDB\Server\4.2\bin` folder to the `monkey\monkey_island\bin\mongodb folder`. Try to run the Monkey Island again and everything should work.
 
 ## How can I get involved with the project? 👩‍💻👨‍💻
