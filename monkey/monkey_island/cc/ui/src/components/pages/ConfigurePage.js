@@ -208,7 +208,7 @@ class ConfigurePageComponent extends AuthComponent {
     });
 
     this.setState({unsafeOptionsConfirmed: false})
-  };
+  }
 
   // Alters attack configuration when user toggles technique
   attackTechniqueChange = (technique, value, mapped = false) => {
@@ -382,7 +382,7 @@ class ConfigurePageComponent extends AuthComponent {
     }
 
     this.setState({unsafeOptionsConfirmed: false})
-  };
+  }
 
   exportConfig = () => {
     this.updateConfigSection();
