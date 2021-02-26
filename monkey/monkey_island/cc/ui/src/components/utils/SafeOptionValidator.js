@@ -6,6 +6,11 @@ function getPluginDescriptors(schema, config) {
       selectedPlugins: config.basic.exploiters.exploiter_classes
     },
     {
+      name: 'Fingerprinters',
+      allPlugins: schema.definitions.finger_classes.anyOf,
+      selectedPlugins: config.internal.classes.finger_classes
+    },
+    {
       name: 'PostBreachActions',
       allPlugins: schema.definitions.post_breach_actions.anyOf,
       selectedPlugins: config.monkey.post_breach.post_breach_actions
