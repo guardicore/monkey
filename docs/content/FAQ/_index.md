@@ -12,7 +12,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [How do I reset the Monkey Island password?](#how-to-reset-the-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-monkey-perform-to-the-internet-exactly)
-- [Where can I find the log files of the Infection Monkey agents and the Monkey Island, and how can I read them?](#where-can-i-find-the-log-files-of-the-monkey-and-the-monkey-island-and-how-can-i-read-them)
+- [Where can I find the log files of the Infection Monkey agent and the Monkey Island server, and how can I read them?](#where-can-i-find-the-log-files-of-the-monkey-and-the-monkey-island-and-how-can-i-read-them)
   - [Monkey Island](#monkey-island)
   - [Monkey agent](#monkey-agent)
 - [Running the Infection Monkey in a production environment](#running-the-monkey-in-a-production-environment)
