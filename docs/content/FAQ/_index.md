@@ -10,7 +10,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [Where can I get the latest version of the Infection Monkey? 📰](#where-can-i-get-the-latest-version-of-the-infection-monkey)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-monkey-run-for-is-there-a-time-limit)
 - [How do I reset the Monkey Island password?](#how-to-reset-the-password)
-- [Should I run the Infection Monkey continuously?](#should-i-run-the-monkey-continuously)
+- [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-monkey-perform-to-the-internet-exactly)
 - [Where can I find the log files of the Infection Monkey agent and the Monkey Island server, and how can I read them?](#where-can-i-find-the-log-files-of-the-monkey-and-the-monkey-island-and-how-can-i-read-them)
   - [Monkey Island](#monkey-island)
