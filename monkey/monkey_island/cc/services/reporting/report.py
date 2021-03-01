@@ -208,9 +208,9 @@ class ReportService:
         for telem in mongo.db.telemetry.find({'telem_category': 'exploit', 'data.info.credentials': {'$exists': True}},
                                              {'data.info.credentials': 1, 'data.machine': 1, 'monkey_guid': 1}):
             creds = telem['data']['info']['credentials']
-            _domain_name = telem['data']['machine']['domain_name']
-            _ip = telem['data']['machine']['ip_addr']
-            origin = _domain_name if _domain_name else _ip
+            domain_name = telem['data']['machine']['domain_name']
+            ip = telem['data']['machine']['ip_addr']
+            origin = domain_name if domain_name else ip
             formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds, origin))
         return formatted_creds
 
