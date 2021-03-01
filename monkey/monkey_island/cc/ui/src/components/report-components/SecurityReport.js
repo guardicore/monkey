@@ -16,12 +16,11 @@ import PrintReportButton from './common/PrintReportButton';
 import WarningIcon from '../ui-components/WarningIcon';
 import {Button} from 'react-bootstrap';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
-
 
 
 class ReportPageComponent extends AuthComponent {
@@ -84,7 +83,7 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.report !== prevProps.report) {
-     this.setState({ report: this.props.report })
+      this.setState({report: this.props.report})
     }
   }
 
@@ -181,7 +180,7 @@ class ReportPageComponent extends AuthComponent {
                 Usernames used for brute-forcing:
               </p>
               <ul>
-                  {this.state.report.overview.config_users.map(x => <li key={x}>{x}</li>)}
+                {this.state.report.overview.config_users.map(x => <li key={x}>{x}</li>)}
               </ul>
               <p>
                 Passwords used for brute-forcing:
@@ -258,54 +257,102 @@ class ReportPageComponent extends AuthComponent {
                       return x === true;
                     }).length} threats</span>:
                 <ul>
-                  {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] ?
-                    <li>Stolen SSH keys are used to exploit other machines.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] ?
-                    <li>Stolen credentials are used to exploit other machines.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.ELASTIC] ?
-                    <li>Elasticsearch servers are vulnerable to <a
-                      href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
-                    </li> : null}
-                  {this.state.report.overview.issues[this.Issue.VSFTPD] ?
-                    <li>VSFTPD is vulnerable to <a
-                      href="https://www.rapid7.com/db/modules/exploit/unix/ftp/vsftpd_234_backdoor">CVE-2011-2523</a>.
-                    </li> : null}
-                  {this.state.report.overview.issues[this.Issue.SAMBACRY] ?
-                    <li>Samba servers are vulnerable to ‘SambaCry’ (<a
+                  {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] &&
+                    <li>Stolen SSH keys are used to exploit other machines.</li>}
+                  {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] &&
+                    <li>Stolen credentials are used to exploit other machines.</li>}
+                  {this.state.report.overview.issues[this.Issue.ELASTIC] &&
+                  <li>Elasticsearch servers are vulnerable to
+                    <Button
+                      variant={"link"}
+                      href="https://www.cvedetails.com/cve/cve-2015-1427"
+                      target={"_blank"}
+                      className={"security-report-link"}>CVE-2015-1427
+                    </Button>.
+                  </li>}
+                  {this.state.report.overview.issues[this.Issue.VSFTPD] &&
+                  <li>VSFTPD is vulnerable to
+                    <Button
+                      variant={"link"}
+                      href="https://www.rapid7.com/db/modules/exploit/unix/ftp/vsftpd_234_backdoor"
+                      target={"_blank"}
+                      className={"security-report-link"}>
+                      CVE-2011-2523
+                    </Button>.
+                  </li>}
+                  {this.state.report.overview.issues[this.Issue.SAMBACRY] &&
+                  <li>Samba servers are vulnerable to ‘SambaCry’ (
+                    <Button
+                      variant={"link"}
                       href="https://www.samba.org/samba/security/CVE-2017-7494.html"
-                    >CVE-2017-7494</a>).</li> : null}
-                  {this.state.report.overview.issues[this.Issue.SHELLSHOCK] ?
-                    <li>Machines are vulnerable to ‘Shellshock’ (<a
-                      href="https://www.cvedetails.com/cve/CVE-2014-6271">CVE-2014-6271</a>).
-                    </li> : null}
-                  {this.state.report.overview.issues[this.Issue.CONFICKER] ?
-                    <li>Machines are vulnerable to ‘Conficker’ (<a
+                      target={"_blank"}
+                      className={"security-report-link"}>
+                      CVE-2017-7494
+                    </Button>).
+                  </li>}
+                  {this.state.report.overview.issues[this.Issue.SHELLSHOCK] &&
+                  <li>Machines are vulnerable to ‘Shellshock’ (
+                    <Button
+                      variant={"link"}
+                      href="https://www.cvedetails.com/cve/CVE-2014-6271"
+                      target={"_blank"}
+                      className={"security-report-link"}>
+                      CVE-2014-6271
+                    </Button>).
+                  </li>}
+                  {this.state.report.overview.issues[this.Issue.CONFICKER] &&
+                  <li>Machines are vulnerable to ‘Conficker’ (
+                    <Button
+                      variant={"link"}
                       href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
-                    >MS08-067</a>).</li> : null}
-                  {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] ?
+                      target={"_blank"}
+                      className={"security-report-link"}>
+                      MS08-067
+                    </Button>).
+                  </li>}
+                  {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] &&
                     <li>Machines are accessible using passwords supplied by the user during the Monkey’s
-                      configuration.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.AZURE] ?
-                    <li>Azure machines expose plaintext passwords. (<a
+                      configuration.</li>}
+                  {this.state.report.overview.issues[this.Issue.AZURE] &&
+                    <li>Azure machines expose plaintext passwords. (
+                      <Button
+                      variant={"link"}
                       href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
-                    >More info</a>)</li> : null}
-                  {this.state.report.overview.issues[this.Issue.STRUTS2] ?
-                    <li>Struts2 servers are vulnerable to remote code execution. (<a
-                      href="https://cwiki.apache.org/confluence/display/WW/S2-045">
-                      CVE-2017-5638</a>)</li> : null}
-                  {this.state.report.overview.issues[this.Issue.WEBLOGIC] ?
-                    <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.HADOOP] ?
-                    <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] ?
+                      target={"_blank"}
+                      className={"security-report-link"}>
+                      More info
+                      </Button>)
+                    </li>}
+                  {this.state.report.overview.issues[this.Issue.STRUTS2] &&
+                    <li>Struts2 servers are vulnerable to remote code execution. (
+                      <Button
+                      variant={"link"}
+                      href="https://cwiki.apache.org/confluence/display/WW/S2-045"
+                      target={"_blank"}
+                      className={"security-report-link"}>
+                      CVE-2017-5638
+                      </Button>)
+                    </li>}
+                  {this.state.report.overview.issues[this.Issue.WEBLOGIC] &&
+                    <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li>}
+                  {this.state.report.overview.issues[this.Issue.HADOOP] &&
+                    <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li>}
+                  {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] &&
                     <li>Mimikatz found login credentials of a user who has admin access to a server defined as
-                      critical.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.MSSQL] ?
-                    <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li> : null}
-                  {this.state.report.overview.issues[this.Issue.DRUPAL] ?
+                      critical.</li>}
+                  {this.state.report.overview.issues[this.Issue.MSSQL] &&
+                    <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li>}
+                  {this.state.report.overview.issues[this.Issue.DRUPAL] &&
                     <li>Drupal servers are susceptible to a remote code execution vulnerability
-                      (<a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340">
-                      CVE-2019-6340</a>).</li> : null}
+                      (<Button
+                      variant={"link"}
+                      href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340"
+                      target={"_blank"}
+                      className={"security-report-link"}>
+                        CVE-2019-6340
+                      </Button>).
+                    </li>
+                  }
                   {this.generateZerologonOverview()}
                 </ul>
               </div>
@@ -328,12 +375,15 @@ class ReportPageComponent extends AuthComponent {
                 The Monkey uncovered the following possible set of issues:
                 <ul>
                   {this.state.report.overview.warnings[this.Warning.CROSS_SEGMENT] ?
-                    <li key={this.Warning.CROSS_SEGMENT}>Weak segmentation - Machines from different segments are able to
+                    <li key={this.Warning.CROSS_SEGMENT}>Weak segmentation - Machines from different segments are able
+                      to
                       communicate.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.TUNNEL] ?
-                    <li key={this.Warning.TUNNEL}>Weak segmentation - Machines were able to communicate over unused ports.</li> : null}
+                    <li key={this.Warning.TUNNEL}>Weak segmentation - Machines were able to communicate over unused
+                      ports.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_LOCAL_ADMIN] ?
-                    <li key={this.Warning.SHARED_LOCAL_ADMIN}>Shared local administrator account - Different machines have the same account as a local
+                    <li key={this.Warning.SHARED_LOCAL_ADMIN}>Shared local administrator account - Different machines
+                      have the same account as a local
                       administrator.</li> : null}
                   {this.state.report.overview.warnings[this.Warning.SHARED_PASSWORDS] ?
                     <li key={this.Warning.SHARED_PASSWORDS}>Multiple users have the same password</li> : null}
@@ -378,7 +428,7 @@ class ReportPageComponent extends AuthComponent {
         </Button>
         </span>)
     }
-    if(this.state.report.overview.issues[this.Issue.ZEROLOGON]) {
+    if (this.state.report.overview.issues[this.Issue.ZEROLOGON]) {
       zerologonOverview.push(<>
         Some domain controllers are vulnerable to Zerologon exploiter(
         <Button variant={"link"}
@@ -447,7 +497,7 @@ class ReportPageComponent extends AuthComponent {
           <b style={{color: '#aeaeae'}}> | </b>
           <span>Tunnel <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#0158aa'}}/></span>
           <b style={{color: '#aeaeae'}}> | </b>
-          <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg"  style={{color: '#a9aaa9'}}/></span>
+          <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#a9aaa9'}}/></span>
         </div>
         <div style={{position: 'relative', height: '80vh'}}>
           <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)}/>
@@ -487,7 +537,8 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateInfoBadges(data_array) {
-    return data_array.map(badge_data => <span key={badge_data} className="badge badge-info" style={{margin: '2px'}}>{badge_data}</span>);
+    return data_array.map(badge_data => <span key={badge_data} className="badge badge-info"
+                                              style={{margin: '2px'}}>{badge_data}</span>);
   }
 
   generateCrossSegmentIssue(crossSegmentIssue) {
@@ -683,16 +734,19 @@ class ReportPageComponent extends AuthComponent {
         Update your VSFTPD server to the latest version vsftpd-3.0.3.
         <CollapsibleWellComponent>
           The machine <span className="badge badge-primary">{issue.machine}</span> (<span
-          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) has a backdoor running at port <span
+          className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) has a backdoor running at
+          port <span
           className="badge badge-danger">6200</span>.
           <br/>
           The attack was made possible because the VSFTPD server was not patched against CVE-2011-2523.
           <br/><br/>In July 2011, it was discovered that vsftpd version 2.3.4 downloadable from the master site had been
           compromised.
-          Users logging into a compromised vsftpd-2.3.4 server may issue a ":)" smileyface as the username and gain a command
+          Users logging into a compromised vsftpd-2.3.4 server may issue a ":)" smileyface as the username and gain a
+          command
           shell on port 6200.
           <br/><br/>
-          The Monkey executed commands by first logging in with ":)" in the username and then sending commands to the backdoor
+          The Monkey executed commands by first logging in with ":)" in the username and then sending commands to the
+          backdoor
           at port 6200.
           <br/><br/>Read more about the security issue and remediation <a
           href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2523"
@@ -807,7 +861,8 @@ class ReportPageComponent extends AuthComponent {
   generateSharedLocalAdminsIssue(issue) {
     return (
       <>
-        Make sure the right administrator accounts are managing the right machines, and that there isn’t an unintentional local
+        Make sure the right administrator accounts are managing the right machines, and that there isn’t an
+        unintentional local
         admin sharing.
         <CollapsibleWellComponent>
           Here is a list of machines which the account <span
@@ -924,9 +979,13 @@ class ReportPageComponent extends AuthComponent {
           className="badge badge-danger">MSSQL exploit attack</span>.
           <br/>
           The attack was made possible because the target machine used an outdated MSSQL server configuration allowing
-          the usage of the xp_cmdshell command. To learn more about how to disable this feature, read <a
-          href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017">
-          Microsoft's documentation. </a>
+          the usage of the xp_cmdshell command. To learn more about how to disable this feature, read
+          <Button
+            variant={"link"}
+            href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017"
+            target={"_blank"}
+            className={"security-report-link"}>
+            Microsoft's documentation. </Button>
         </CollapsibleWellComponent>
       </>
     );
@@ -952,9 +1011,9 @@ class ReportPageComponent extends AuthComponent {
           >
             Microsoft's documentation.</Button>
           {!issue.password_restored ?
-          <div className={'info-pane-warning'} key={'warning'}>
-            <br/><WarningIcon/>
-            <span>
+            <div className={'info-pane-warning'} key={'warning'}>
+              <br/><WarningIcon/>
+              <span>
               The domain controller's password was changed during the exploit and could not be restored successfully.
               Instructions on how to manually reset the domain controller's password can be found
                 <Button
@@ -966,7 +1025,7 @@ class ReportPageComponent extends AuthComponent {
                   here
                 </Button>.
             </span>
-          </div> : null}
+            </div> : null}
         </CollapsibleWellComponent>
       </>
     );
