@@ -44,7 +44,7 @@ class ReportPageComponent extends AuthComponent {
       VSFTPD: 13,
       DRUPAL: 14,
       ZEROLOGON: 15,
-      ZEROLOGON_PASSWORD_RESTORED: 16
+      ZEROLOGON_PASSWORD_RESTORE_FAILED: 16
     };
 
   Warning =
@@ -367,8 +367,7 @@ class ReportPageComponent extends AuthComponent {
   generateZerologonOverview() {
     let zerologonOverview = [];
 
-    // TODO finish this by linking to the documentation
-    if(!this.state.report.overview.issues[this.Issue.ZEROLOGON_PASSWORD_RESTORED]) {
+    if (this.state.report.overview.issues[this.Issue.ZEROLOGON_PASSWORD_RESTORE_FAILED]) {
       zerologonOverview.push(<span>
         <WarningIcon/> Automatic password restoration on a domain controller failed!
         <Button variant={"link"} href={"#"} target={"_blank"} className={"security-report-link"}>
