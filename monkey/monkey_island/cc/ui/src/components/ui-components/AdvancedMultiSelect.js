@@ -48,13 +48,14 @@ class AdvancedMultiSelect extends React.Component {
     };
   }
 
-  // Sort options alphabetically. "Unsafe" options float to the bottom"
+  // Sort options alphabetically. "Unsafe" options float to the top so that they
+  // do not get selected and hidden at the bottom of the list.
   compareOptions = (a, b) => {
     // Apparently, you can use additive operators with boolean types. Ultimately,
     // the ToNumber() abstraction operation is called to convert the booleans to
     // numbers: https://tc39.es/ecma262/#sec-tonumeric
-    if (this.isSafe(b.value) - this.isSafe(a.value) !== 0) {
-      return this.isSafe(b.value) - this.isSafe(a.value);
+    if (this.isSafe(a.value) - this.isSafe(b.value) !== 0) {
+      return this.isSafe(a.value) - this.isSafe(b.value);
     }
 
     return a.value.localeCompare(b.value);

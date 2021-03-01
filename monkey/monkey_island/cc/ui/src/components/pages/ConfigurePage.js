@@ -11,6 +11,8 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamati
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import InternalConfig from '../configuration-components/InternalConfig';
+import UnsafeOptionsConfirmationModal from '../configuration-components/UnsafeOptionsConfirmationModal.js';
+import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -28,13 +30,15 @@ class ConfigurePageComponent extends AuthComponent {
     this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'internal'];
 
     this.state = {
-      schema: {},
-      configuration: {},
       attackConfig: {},
+      configuration: {},
+      importCandidateConfig: null,
       lastAction: 'none',
+      schema: {},
       sections: [],
       selectedSection: 'attack',
-      showAttackAlert: false
+      showAttackAlert: false,
+      showUnsafeOptionsConfirmation: false
     };
   }
 
@@ -74,6 +78,20 @@ class ConfigurePageComponent extends AuthComponent {
       });
   };
 
+  onUnsafeConfirmationCancelClick = () => {
+    this.setState({showUnsafeOptionsConfirmation: false});
+  }
+
+  onUnsafeConfirmationContinueClick = () => {
+    this.setState({showUnsafeOptionsConfirmation: false});
+
+    if (this.state.lastAction == 'submit_attempt') {
+      this.configSubmit();
+    } else if (this.state.lastAction == 'import_attempt') {
+      this.setConfigFromImportCandidate();
+    }
+  }
+
   updateConfig = () => {
     this.authFetch(CONFIG_URL)
       .then(res => res.json())
@@ -85,11 +103,15 @@ class ConfigurePageComponent extends AuthComponent {
 
   onSubmit = () => {
     if (this.state.selectedSection === 'attack') {
-      this.matrixSubmit()
+      this.matrixSubmit();
     } else {
-      this.configSubmit()
+      this.attemptConfigSubmit();
     }
   };
+
+  canSafelySubmitConfig(config) {
+    return !isUnsafeOptionSelected(this.state.schema, config);
+  }
 
   matrixSubmit = () => {
     // Submit attack matrix
@@ -116,9 +138,19 @@ class ConfigurePageComponent extends AuthComponent {
       });
   };
 
-  configSubmit = () => {
-    // Submit monkey configuration
+  attemptConfigSubmit() {
     this.updateConfigSection();
+    this.setState({lastAction: 'submit_attempt'}, () => {
+        if (this.canSafelySubmitConfig(this.state.configuration)) {
+          this.configSubmit();
+        } else {
+          this.setState({showUnsafeOptionsConfirmation: true});
+        }
+      }
+    );
+  }
+
+  configSubmit() {
     this.sendConfig()
       .then(res => res.json())
       .then(res => {
@@ -133,7 +165,7 @@ class ConfigurePageComponent extends AuthComponent {
       console.log('Bad configuration: ' + error.toString());
       this.setState({lastAction: 'invalid_configuration'});
     });
-  };
+  }
 
   // Alters attack configuration when user toggles technique
   attackTechniqueChange = (technique, value, mapped = false) => {
@@ -200,6 +232,16 @@ class ConfigurePageComponent extends AuthComponent {
       </Modal.Body>
     </Modal>)
   };
+
+  renderUnsafeOptionsConfirmationModal() {
+    return (
+      <UnsafeOptionsConfirmationModal
+        show={this.state.showUnsafeOptionsConfirmation}
+        onCancelClick={this.onUnsafeConfirmationCancelClick}
+        onContinueClick={this.onUnsafeConfirmationContinueClick}
+      />
+    );
+  }
 
   userChangedConfig() {
     if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
@@ -276,18 +318,33 @@ class ConfigurePageComponent extends AuthComponent {
 
   setConfigOnImport = (event) => {
     try {
-      this.setState({
-        configuration: JSON.parse(event.target.result),
-        lastAction: 'import_success'
-      }, () => {
-        this.sendConfig();
-        this.setInitialConfig(JSON.parse(event.target.result))
-      });
-      this.currentFormData = {};
+      var newConfig = JSON.parse(event.target.result);
     } catch (SyntaxError) {
       this.setState({lastAction: 'import_failure'});
+      return;
     }
-  };
+
+    this.setState({lastAction: 'import_attempt', importCandidateConfig: newConfig},
+      () => {
+        if (this.canSafelySubmitConfig(newConfig)) {
+          this.setConfigFromImportCandidate();
+        } else {
+          this.setState({showUnsafeOptionsConfirmation: true});
+        }
+      }
+    );
+  }
+
+  setConfigFromImportCandidate(){
+    this.setState({
+      configuration: this.state.importCandidateConfig,
+      lastAction: 'import_success'
+    }, () => {
+      this.sendConfig();
+      this.setInitialConfig(this.state.importCandidateConfig);
+    });
+    this.currentFormData = {};
+  }
 
   exportConfig = () => {
     this.updateConfigSection();
@@ -410,6 +467,7 @@ class ConfigurePageComponent extends AuthComponent {
            lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
            className={'main'}>
         {this.renderAttackAlertModal()}
+        {this.renderUnsafeOptionsConfirmationModal()}
         <h1 className='page-title'>Monkey Configuration</h1>
         {this.renderNav()}
         {content}
@@ -424,7 +482,7 @@ class ConfigurePageComponent extends AuthComponent {
         <div className='text-center'>
           <button onClick={() => document.getElementById('uploadInputInternal').click()}
                   className='btn btn-info btn-lg' style={{margin: '5px'}}>
-            Import Config
+            Import config
           </button>
           <input id='uploadInputInternal' type='file' accept='.conf' onChange={this.importConfig}
                  style={{display: 'none'}}/>
