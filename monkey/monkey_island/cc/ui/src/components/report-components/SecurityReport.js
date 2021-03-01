@@ -370,16 +370,23 @@ class ReportPageComponent extends AuthComponent {
     if (this.state.report.overview.issues[this.Issue.ZEROLOGON_PASSWORD_RESTORE_FAILED]) {
       zerologonOverview.push(<span>
         <WarningIcon/> Automatic password restoration on a domain controller failed!
-        <Button variant={"link"} href={"#"} target={"_blank"} className={"security-report-link"}>
-        Restore your domain controller's password manually.</Button>
+        <Button variant={"link"}
+                href={"https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/zerologon/"}
+                target={"_blank"}
+                className={"security-report-link"}>
+        Restore your domain controller's password manually.
+        </Button>
         </span>)
     }
     if(this.state.report.overview.issues[this.Issue.ZEROLOGON]) {
       zerologonOverview.push(<>
-          Some domain controllers are vulnerable to Zerologon exploiter(
-        <a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472" target={"_blank"}>
-                      CVE-2020-1472</a>)!
-        </>)
+        Some domain controllers are vulnerable to Zerologon exploiter(
+        <Button variant={"link"}
+                href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472"
+                target={"_blank"}
+                className={"security-report-link"}>
+          CVE-2020-1472</Button>)!
+      </>)
     } else {
       return none;
     }
@@ -936,15 +943,28 @@ class ReportPageComponent extends AuthComponent {
           <br/>
           The attack was possible because the latest security updates from Microsoft
           have not been applied to this machine. For more information about this
-          vulnerability, read <a href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472">
-          Microsoft's documentation.</a>
+          vulnerability, read
+          <Button
+            variant={"link"}
+            href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472"
+            target={"_blank"}
+            className={"security-report-link"}
+          >
+            Microsoft's documentation.</Button>
           {!issue.password_restored ?
           <div className={'info-pane-warning'} key={'warning'}>
             <br/><WarningIcon/>
             <span>
               The domain controller's password was changed during the exploit and could not be restored successfully.
-              Instructions on how to manually reset the domain controller's password can be found <a
-              href="https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/zerologon/">here</a>.
+              Instructions on how to manually reset the domain controller's password can be found
+                <Button
+                  variant={"link"}
+                  href="https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/zerologon/"
+                  target={"_blank"}
+                  className={"security-report-link"}
+                >
+                  here
+                </Button>.
             </span>
           </div> : null}
         </CollapsibleWellComponent>
