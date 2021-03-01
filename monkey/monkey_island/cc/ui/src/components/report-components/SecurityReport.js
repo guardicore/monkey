@@ -258,16 +258,17 @@ class ReportPageComponent extends AuthComponent {
                     }).length} threats</span>:
                 <ul>
                   {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] &&
-                    <li>Stolen SSH keys are used to exploit other machines.</li>}
+                  <li>Stolen SSH keys are used to exploit other machines.</li>}
                   {this.state.report.overview.issues[this.Issue.STOLEN_CREDS] &&
-                    <li>Stolen credentials are used to exploit other machines.</li>}
+                  <li>Stolen credentials are used to exploit other machines.</li>}
                   {this.state.report.overview.issues[this.Issue.ELASTIC] &&
                   <li>Elasticsearch servers are vulnerable to
                     <Button
                       variant={"link"}
                       href="https://www.cvedetails.com/cve/cve-2015-1427"
                       target={"_blank"}
-                      className={"security-report-link"}>CVE-2015-1427
+                      className={"security-report-link"}>
+                      CVE-2015-1427
                     </Button>.
                   </li>}
                   {this.state.report.overview.issues[this.Issue.VSFTPD] &&
@@ -311,47 +312,47 @@ class ReportPageComponent extends AuthComponent {
                     </Button>).
                   </li>}
                   {this.state.report.overview.issues[this.Issue.WEAK_PASSWORD] &&
-                    <li>Machines are accessible using passwords supplied by the user during the Monkey’s
-                      configuration.</li>}
+                  <li>Machines are accessible using passwords supplied by the user during the Monkey’s
+                    configuration.</li>}
                   {this.state.report.overview.issues[this.Issue.AZURE] &&
-                    <li>Azure machines expose plaintext passwords. (
-                      <Button
+                  <li>Azure machines expose plaintext passwords. (
+                    <Button
                       variant={"link"}
                       href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
                       target={"_blank"}
                       className={"security-report-link"}>
                       More info
-                      </Button>)
-                    </li>}
+                    </Button>)
+                  </li>}
                   {this.state.report.overview.issues[this.Issue.STRUTS2] &&
-                    <li>Struts2 servers are vulnerable to remote code execution. (
-                      <Button
+                  <li>Struts2 servers are vulnerable to remote code execution. (
+                    <Button
                       variant={"link"}
                       href="https://cwiki.apache.org/confluence/display/WW/S2-045"
                       target={"_blank"}
                       className={"security-report-link"}>
                       CVE-2017-5638
-                      </Button>)
-                    </li>}
+                    </Button>)
+                  </li>}
                   {this.state.report.overview.issues[this.Issue.WEBLOGIC] &&
-                    <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li>}
+                  <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li>}
                   {this.state.report.overview.issues[this.Issue.HADOOP] &&
-                    <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li>}
+                  <li>Hadoop/Yarn servers are vulnerable to remote code execution.</li>}
                   {this.state.report.overview.issues[this.Issue.PTH_CRIT_SERVICES_ACCESS] &&
-                    <li>Mimikatz found login credentials of a user who has admin access to a server defined as
-                      critical.</li>}
+                  <li>Mimikatz found login credentials of a user who has admin access to a server defined as
+                    critical.</li>}
                   {this.state.report.overview.issues[this.Issue.MSSQL] &&
-                    <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li>}
+                  <li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li>}
                   {this.state.report.overview.issues[this.Issue.DRUPAL] &&
-                    <li>Drupal servers are susceptible to a remote code execution vulnerability
-                      (<Button
+                  <li>Drupal servers are susceptible to a remote code execution vulnerability
+                    (<Button
                       variant={"link"}
                       href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340"
                       target={"_blank"}
                       className={"security-report-link"}>
-                        CVE-2019-6340
-                      </Button>).
-                    </li>
+                      CVE-2019-6340
+                    </Button>).
+                  </li>
                   }
                   {this.generateZerologonOverview()}
                 </ul>
@@ -435,10 +436,11 @@ class ReportPageComponent extends AuthComponent {
                 href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472"
                 target={"_blank"}
                 className={"security-report-link"}>
-          CVE-2020-1472</Button>)!
+          CVE-2020-1472
+        </Button>)!
       </>)
     } else {
-      return none;
+      return null;
     }
     return (<li>{zerologonOverview}</li>)
   }
@@ -985,7 +987,8 @@ class ReportPageComponent extends AuthComponent {
             href="https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017"
             target={"_blank"}
             className={"security-report-link"}>
-            Microsoft's documentation. </Button>
+            Microsoft's documentation.
+          </Button>
         </CollapsibleWellComponent>
       </>
     );
@@ -1007,9 +1010,9 @@ class ReportPageComponent extends AuthComponent {
             variant={"link"}
             href="https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472"
             target={"_blank"}
-            className={"security-report-link"}
-          >
-            Microsoft's documentation.</Button>
+            className={"security-report-link"}>
+            Microsoft's documentation.
+          </Button>
           {!issue.password_restored ?
             <div className={'info-pane-warning'} key={'warning'}>
               <br/><WarningIcon/>
@@ -1020,8 +1023,7 @@ class ReportPageComponent extends AuthComponent {
                   variant={"link"}
                   href="https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/zerologon/"
                   target={"_blank"}
-                  className={"security-report-link"}
-                >
+                  className={"security-report-link"}>
                   here
                 </Button>.
             </span>
@@ -1034,76 +1036,76 @@ class ReportPageComponent extends AuthComponent {
   generateIssue = (issue) => {
     let issueData;
     switch (issue.type) {
-      case 'vsftp':
+      case "vsftp":
         issueData = this.generateVsftpdBackdoorIssue(issue);
         break;
-      case 'smb_password':
+      case "smb_password":
         issueData = this.generateSmbPasswordIssue(issue);
         break;
-      case 'smb_pth':
+      case "smb_pth":
         issueData = this.generateSmbPthIssue(issue);
         break;
-      case 'wmi_password':
+      case "wmi_password":
         issueData = this.generateWmiPasswordIssue(issue);
         break;
-      case 'wmi_pth':
+      case "wmi_pth":
         issueData = this.generateWmiPthIssue(issue);
         break;
-      case 'ssh':
+      case "ssh":
         issueData = this.generateSshIssue(issue);
         break;
-      case 'ssh_key':
+      case "ssh_key":
         issueData = this.generateSshKeysIssue(issue);
         break;
-      case 'sambacry':
+      case "sambacry":
         issueData = this.generateSambaCryIssue(issue);
         break;
-      case 'elastic':
+      case "elastic":
         issueData = this.generateElasticIssue(issue);
         break;
-      case 'shellshock':
+      case "shellshock":
         issueData = this.generateShellshockIssue(issue);
         break;
-      case 'conficker':
+      case "conficker":
         issueData = this.generateConfickerIssue(issue);
         break;
-      case 'island_cross_segment':
+      case "island_cross_segment":
         issueData = this.generateIslandCrossSegmentIssue(issue);
         break;
-      case 'shared_passwords':
+      case "shared_passwords":
         issueData = this.generateSharedCredsIssue(issue);
         break;
-      case 'shared_passwords_domain':
+      case "shared_passwords_domain":
         issueData = this.generateSharedCredsDomainIssue(issue);
         break;
-      case 'shared_admins_domain':
+      case "shared_admins_domain":
         issueData = this.generateSharedLocalAdminsIssue(issue);
         break;
-      case 'strong_users_on_crit':
+      case "strong_users_on_crit":
         issueData = this.generateStrongUsersOnCritIssue(issue);
         break;
-      case 'tunnel':
+      case "tunnel":
         issueData = this.generateTunnelIssue(issue);
         break;
-      case 'azure_password':
+      case "azure_password":
         issueData = this.generateAzureIssue(issue);
         break;
-      case 'struts2':
+      case "struts2":
         issueData = this.generateStruts2Issue(issue);
         break;
-      case 'weblogic':
+      case "weblogic":
         issueData = this.generateWebLogicIssue(issue);
         break;
-      case 'hadoop':
+      case "hadoop":
         issueData = this.generateHadoopIssue(issue);
         break;
-      case 'mssql':
+      case "mssql":
         issueData = this.generateMSSQLIssue(issue);
         break;
-      case 'drupal':
+      case "drupal":
         issueData = this.generateDrupalIssue(issue);
         break;
-      case 'zerologon':
+      case "zerologon":
         issueData = this.generateZerologonIssue(issue);
         break;
     }
