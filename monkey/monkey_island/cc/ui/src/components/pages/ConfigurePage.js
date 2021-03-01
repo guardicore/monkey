@@ -12,7 +12,7 @@ import {formValidationFormats} from '../configuration-components/ValidationForma
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import InternalConfig from '../configuration-components/InternalConfig';
 import UnsafeOptionsConfirmationModal from '../configuration-components/UnsafeOptionsConfirmationModal.js';
-import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js'
+import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -79,7 +79,7 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onUnsafeConfirmationCancelClick = () => {
-    this.setState({showUnsafeOptionsConfirmation: false})
+    this.setState({showUnsafeOptionsConfirmation: false});
   }
 
   onUnsafeConfirmationContinueClick = () => {
@@ -103,9 +103,9 @@ class ConfigurePageComponent extends AuthComponent {
 
   onSubmit = () => {
     if (this.state.selectedSection === 'attack') {
-      this.matrixSubmit()
+      this.matrixSubmit();
     } else {
-      this.attemptConfigSubmit()
+      this.attemptConfigSubmit();
     }
   };
 
@@ -142,7 +142,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.updateConfigSection();
     this.setState({lastAction: 'submit_attempt'}, () => {
         if (this.canSafelySubmitConfig(this.state.configuration)) {
-          this.configSubmit()
+          this.configSubmit();
         } else {
           this.setState({showUnsafeOptionsConfirmation: true});
         }
@@ -240,7 +240,7 @@ class ConfigurePageComponent extends AuthComponent {
         onCancelClick={this.onUnsafeConfirmationCancelClick}
         onContinueClick={this.onUnsafeConfirmationContinueClick}
       />
-    )
+    );
   }
 
   userChangedConfig() {
@@ -341,7 +341,7 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'import_success'
     }, () => {
       this.sendConfig();
-      this.setInitialConfig(this.state.importCandidateConfig)
+      this.setInitialConfig(this.state.importCandidateConfig);
     });
     this.currentFormData = {};
   }
