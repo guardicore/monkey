@@ -7,6 +7,9 @@ from monkey_island.cc.services.config import ConfigService
 IPS = ["0.0.0.0", "9.9.9.9"]
 PORT = 9999
 
+# If tests fail because config path is changed, sync with
+# monkey/monkey_island/cc/ui/src/components/pages/RunMonkeyPage/RunOptions.js
+
 
 @pytest.fixture
 def config(monkeypatch):
