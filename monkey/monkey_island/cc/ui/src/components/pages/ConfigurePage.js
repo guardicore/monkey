@@ -130,8 +130,8 @@ class ConfigurePageComponent extends AuthComponent {
       .then(() => {
         this.setInitialAttackConfig(this.state.attackConfig);
       })
-      .then(this.updateConfig())
-      .then(this.setState({lastAction: 'saved'}))
+      .then(() => this.updateConfig())
+      .then(() => this.setState({lastAction: 'saved'}))
       .catch(error => {
         console.log('Bad configuration: ' + error.toString());
         this.setState({lastAction: 'invalid_configuration'});
