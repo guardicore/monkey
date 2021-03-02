@@ -65,6 +65,7 @@ class ReportService:
         VSFTPD = 13
         DRUPAL = 14
         ZEROLOGON = 15
+        ZEROLOGON_PASSWORD_RESTORE_FAILED = 16
 
     class WARNINGS_DICT(Enum):
         CROSS_SEGMENT = 0
@@ -394,6 +395,7 @@ class ReportService:
     def process_zerologon_exploit(exploit):
         processed_exploit = ReportService.process_general_exploit(exploit)
         processed_exploit['type'] = 'zerologon'
+        processed_exploit['password_restored'] = exploit['data']['info']['password_restored']
         return processed_exploit
 
     @staticmethod
@@ -713,6 +715,8 @@ class ReportService:
                 elif issue['type'] == 'drupal':
                     issues_byte_array[ReportService.ISSUES_DICT.DRUPAL.value] = True
                 elif issue['type'] == 'zerologon':
+                    if not issue['password_restored']:
+                        issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON_PASSWORD_RESTORE_FAILED.value] = True
                     issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON.value] = True
                 elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
                         issue['username'] in config_users or issue['type'] == 'ssh':

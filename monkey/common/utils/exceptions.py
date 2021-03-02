@@ -48,3 +48,7 @@ class VersionServerConnectionError(Exception):
 
 class FindingWithoutDetailsError(Exception):
     """ Raise when pulling events for a finding, but get none """
+
+
+class DomainControllerNameFetchError(FailedExploitationError):
+    """ Raise on failed attempt to extract domain controller's name """
