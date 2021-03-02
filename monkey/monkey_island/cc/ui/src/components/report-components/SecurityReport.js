@@ -419,15 +419,17 @@ class ReportPageComponent extends AuthComponent {
     let zerologonOverview = [];
 
     if (this.state.report.overview.issues[this.Issue.ZEROLOGON_PASSWORD_RESTORE_FAILED]) {
-      zerologonOverview.push(<span>
-        <WarningIcon/> Automatic password restoration on a domain controller failed!
+      zerologonOverview.push(
+      <span className={'zero-logon-overview-pass-restore-failed'}>
+        <WarningIcon/>
+        Automatic password restoration on a domain controller failed!
         <Button variant={'link'}
                 href={'https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/zerologon/'}
                 target={'_blank'}
                 className={'security-report-link'}>
         Restore your domain controller's password manually.
         </Button>
-        </span>)
+      </span>)
     }
     if (this.state.report.overview.issues[this.Issue.ZEROLOGON]) {
       zerologonOverview.push(<>
@@ -1013,7 +1015,7 @@ class ReportPageComponent extends AuthComponent {
             className={'security-report-link'}>
             Microsoft's documentation.
           </Button>
-          {!issue.password_restored ?
+          {!issue.password_restored &&
             <div className={'info-pane-warning'} key={'warning'}>
               <br/><WarningIcon/>
               <span>
@@ -1027,7 +1029,7 @@ class ReportPageComponent extends AuthComponent {
                   here
                 </Button>.
             </span>
-            </div> : null}
+            </div>}
         </CollapsibleWellComponent>
       </>
     );
