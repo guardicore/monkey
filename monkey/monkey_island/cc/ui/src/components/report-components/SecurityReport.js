@@ -428,9 +428,9 @@ class ReportPageComponent extends AuthComponent {
     });
 
     if (threatCount === 1)
-      return "1 threat"
+      return '1 threat'
     else
-      return threatCount + " threats"
+      return threatCount + ' threats'
   }
 
   generateZerologonOverview() {
