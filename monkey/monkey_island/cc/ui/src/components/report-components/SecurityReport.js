@@ -46,6 +46,8 @@ class ReportPageComponent extends AuthComponent {
       ZEROLOGON_PASSWORD_RESTORE_FAILED: 16
     };
 
+  NotThreats = [this.Issue.ZEROLOGON_PASSWORD_RESTORE_FAILED];
+
   Warning =
     {
       CROSS_SEGMENT: 0,
@@ -253,9 +255,8 @@ class ReportPageComponent extends AuthComponent {
               <div>
                 During this simulated attack the Monkey uncovered <span
                 className='badge badge-warning'>
-                    {this.state.report.overview.issues.filter(function (x) {
-                      return x === true;
-                    }).length} threats</span>:
+                  {this.getThreatCount()}
+                </span>:
                 <ul>
                   {this.state.report.overview.issues[this.Issue.STOLEN_SSH_KEYS] &&
                   <li>Stolen SSH keys are used to exploit other machines.</li>}
@@ -413,6 +414,23 @@ class ReportPageComponent extends AuthComponent {
         }
       </div>
     );
+  }
+
+  getThreatCount() {
+    let threatCount = this.state.report.overview.issues.filter(function (x) {
+      return x === true;
+    }).length
+
+    this.NotThreats.forEach(x => {
+      if (this.state.report.overview.issues[x] === true) {
+        threatCount -= 1;
+      }
+    });
+
+    if (threatCount === 1)
+      return "1 threat"
+    else
+      return threatCount + " threats"
   }
 
   generateZerologonOverview() {
