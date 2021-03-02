@@ -315,24 +315,24 @@ class ReportPageComponent extends AuthComponent {
                   <li>Machines are accessible using passwords supplied by the user during the Monkey’s
                     configuration.</li>}
                   {this.state.report.overview.issues[this.Issue.AZURE] &&
-                  <li>Azure machines expose plaintext passwords. (
+                  <li>Azure machines expose plaintext passwords (
                     <Button
                       variant={'link'}
                       href='https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/'
                       target={'_blank'}
                       className={'security-report-link'}>
-                      More info
-                    </Button>)
+                      more info
+                    </Button>).
                   </li>}
                   {this.state.report.overview.issues[this.Issue.STRUTS2] &&
-                  <li>Struts2 servers are vulnerable to remote code execution. (
+                  <li>Struts2 servers are vulnerable to remote code execution (
                     <Button
                       variant={'link'}
                       href='https://cwiki.apache.org/confluence/display/WW/S2-045'
                       target={'_blank'}
                       className={'security-report-link'}>
                       CVE-2017-5638
-                    </Button>)
+                    </Button>).
                   </li>}
                   {this.state.report.overview.issues[this.Issue.WEBLOGIC] &&
                   <li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li>}
@@ -417,10 +417,20 @@ class ReportPageComponent extends AuthComponent {
 
   generateZerologonOverview() {
     let zerologonOverview = [];
-
+    if (this.state.report.overview.issues[this.Issue.ZEROLOGON]) {
+      zerologonOverview.push(<>
+        Some Windows domain controllers are vulnerable to 'Zerologon' (
+        <Button variant={'link'}
+                href='https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472'
+                target={'_blank'}
+                className={'security-report-link'}>
+          CVE-2020-1472
+        </Button>).
+      </>)
+    }
     if (this.state.report.overview.issues[this.Issue.ZEROLOGON_PASSWORD_RESTORE_FAILED]) {
       zerologonOverview.push(
-      <span className={'zero-logon-overview-pass-restore-failed'}>
+      <span className={'zero-logon-overview-pass-restore-failed'}><br/>
         <WarningIcon/>
         Automatic password restoration on a domain controller failed!
         <Button variant={'link'}
@@ -431,17 +441,7 @@ class ReportPageComponent extends AuthComponent {
         </Button>
       </span>)
     }
-    if (this.state.report.overview.issues[this.Issue.ZEROLOGON]) {
-      zerologonOverview.push(<>
-        Some domain controllers are vulnerable to Zerologon exploiter(
-        <Button variant={'link'}
-                href='https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472'
-                target={'_blank'}
-                className={'security-report-link'}>
-          CVE-2020-1472
-        </Button>)!
-      </>)
-    } else {
+    else {
       return null;
     }
     return (<li>{zerologonOverview}</li>)
@@ -989,8 +989,8 @@ class ReportPageComponent extends AuthComponent {
             href='https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017'
             target={'_blank'}
             className={'security-report-link'}>
-            Microsoft's documentation.
-          </Button>
+            Microsoft's documentation
+          </Button>.
         </CollapsibleWellComponent>
       </>
     );
@@ -1013,8 +1013,8 @@ class ReportPageComponent extends AuthComponent {
             href='https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472'
             target={'_blank'}
             className={'security-report-link'}>
-            Microsoft's documentation.
-          </Button>
+            Microsoft's documentation
+          </Button>.
           {!issue.password_restored &&
             <div className={'info-pane-warning'} key={'warning'}>
               <br/><WarningIcon/>
