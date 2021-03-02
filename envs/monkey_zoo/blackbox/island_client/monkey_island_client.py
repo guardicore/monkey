@@ -24,6 +24,9 @@ class MonkeyIslandClient(object):
     def get_api_status(self):
         return self.requests.get("api")
 
+    def get_config(self):
+        return json.loads(self.requests.get("api/configuration/island").content)
+
     @avoid_race_condition
     def import_config(self, config_contents):
         _ = self.requests.post("api/configuration/island", data=config_contents)

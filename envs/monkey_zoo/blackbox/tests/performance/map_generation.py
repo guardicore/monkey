@@ -17,12 +17,11 @@ class MapGenerationTest(PerformanceTest):
 
     TEST_NAME = "Map generation performance test"
 
-    def __init__(self, island_client, config_parser, analyzers,
+    def __init__(self, island_client, raw_config, analyzers,
                  timeout, log_handler, break_on_timeout):
         self.island_client = island_client
-        self.config_parser = config_parser
         exploitation_test = ExploitationTest(MapGenerationTest.TEST_NAME, island_client,
-                                             config_parser, analyzers, timeout, log_handler)
+                                             raw_config, analyzers, timeout, log_handler)
         performance_config = PerformanceTestConfig(max_allowed_single_page_time=MAX_ALLOWED_SINGLE_PAGE_TIME,
                                                    max_allowed_total_time=MAX_ALLOWED_TOTAL_TIME,
                                                    endpoints_to_test=MAP_RESOURCES,
