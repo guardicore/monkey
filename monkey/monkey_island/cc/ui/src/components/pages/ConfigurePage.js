@@ -12,6 +12,7 @@ import {formValidationFormats} from '../configuration-components/ValidationForma
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import InternalConfig from '../configuration-components/InternalConfig';
 import UnsafeOptionsConfirmationModal from '../configuration-components/UnsafeOptionsConfirmationModal.js';
+import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 
 const ATTACK_URL = '/api/attack';
@@ -38,7 +39,8 @@ class ConfigurePageComponent extends AuthComponent {
       sections: [],
       selectedSection: 'attack',
       showAttackAlert: false,
-      showUnsafeOptionsConfirmation: false
+      showUnsafeOptionsConfirmation: false,
+      showUnsafeAttackOptionsWarning: false
     };
   }
 
@@ -92,12 +94,17 @@ class ConfigurePageComponent extends AuthComponent {
     }
   }
 
-  updateConfig = () => {
+  onUnsafeAttackContinueClick = () => {
+    this.setState({showUnsafeAttackOptionsWarning: false});
+  }
+
+
+  updateConfig = (callback=null) => {
     this.authFetch(CONFIG_URL)
       .then(res => res.json())
       .then(data => {
         this.setInitialConfig(data.configuration);
-        this.setState({configuration: data.configuration});
+        this.setState({configuration: data.configuration}, callback);
       })
   };
 
@@ -130,13 +137,19 @@ class ConfigurePageComponent extends AuthComponent {
       .then(() => {
         this.setInitialAttackConfig(this.state.attackConfig);
       })
-      .then(this.updateConfig())
-      .then(this.setState({lastAction: 'saved'}))
+      .then(() => this.updateConfig(this.checkAndShowUnsafeAttackWarning))
+      .then(() => this.setState({lastAction: 'saved'}))
       .catch(error => {
         console.log('Bad configuration: ' + error.toString());
         this.setState({lastAction: 'invalid_configuration'});
       });
   };
+
+  checkAndShowUnsafeAttackWarning = () => {
+    if (isUnsafeOptionSelected(this.state.schema, this.state.configuration)) {
+      this.setState({showUnsafeAttackOptionsWarning: true});
+    }
+  }
 
   attemptConfigSubmit() {
     this.updateConfigSection();
@@ -239,6 +252,15 @@ class ConfigurePageComponent extends AuthComponent {
         show={this.state.showUnsafeOptionsConfirmation}
         onCancelClick={this.onUnsafeConfirmationCancelClick}
         onContinueClick={this.onUnsafeConfirmationContinueClick}
+      />
+    );
+  }
+
+  renderUnsafeAttackOptionsWarningModal() {
+    return (
+      <UnsafeOptionsWarningModal
+        show={this.state.showUnsafeAttackOptionsWarning}
+        onContinueClick={this.onUnsafeAttackContinueClick}
       />
     );
   }
@@ -468,6 +490,7 @@ class ConfigurePageComponent extends AuthComponent {
            className={'main'}>
         {this.renderAttackAlertModal()}
         {this.renderUnsafeOptionsConfirmationModal()}
+        {this.renderUnsafeAttackOptionsWarningModal()}
         <h1 className='page-title'>Monkey Configuration</h1>
         {this.renderNav()}
         {content}
