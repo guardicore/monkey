@@ -2,22 +2,23 @@
 title: "Scoutsuite"
 date: 2021-03-02T16:23:06+02:00
 draft: false
+description: "Scout Suite is an open-source cloud security-auditing tool."
 weight: 10
 ---
 
-### What is ScoutSuite?
+### About ScoutSuite
 
 <a href="https://github.com/nccgroup/ScoutSuite" target="_blank" >Scout Suite</a> is an open-source cloud security-auditing tool.
-It queries the cloud API to gather configuration data of the cloud infrastructure. Based on configuration
-data gathered ScoutSuite shows security issues and risks present in your infrastructure.
+It queries the cloud API to gather configuration data. Based on configuration
+data gathered, ScoutSuite shows security issues and risks present in your infrastructure.
 
-### Which cloud providers are supported?
+### Supported cloud providers
 
-So far the Infection Monkey only supports AWS.
+Currently, the Infection Monkey only supports AWS.
 
-### How to enable ScoutSuite?
+### Enabling ScoutSuite
 
-First of all, Infection Monkey needs access to your cloud API. You can provide access
+First, Infection Monkey needs access to your cloud API. You can provide access
 in the following ways:
 
  - Provide access keys:
@@ -30,21 +31,27 @@ in the following ways:
 More details about configuring ScoutSuite can be found in the tool itself, by choosing 
 "Cloud Security Scan" in the "Run Monkey" options. 
 
-After you're done with the setup, make sure that a checkmark appears next to the AWS option to 
-verify that ScoutSuite can access the API.
+![Cloud scan option in run page](/images/usage/integrations/scoutsuite_run_page.png 
+"Successful setup indicator")
+
+After you're done with the setup, make sure that a checkmark appears next to the AWS option. This 
+verifies that ScoutSuite can access the API.
 
 ![Successfull setup indicator](/images/usage/integrations/scoutsuite_aws_configured.png 
 "Successful setup indicator")
 
-### How to run cloud scan?
+### Running a cloud security scan
 
-If you have successfully configured cloud scan, once the Monkey Agent is run **on the Island**, 
-the cloud infrastructure will get scanned. To make this happen, you can simply click on "From Island" 
-in the run options. The scope of network scan and other activities you configured the Agent to 
-do are irrelevant for cloud security scan, except 
-**Monkey Configuration -> System info collectors -> AWS collector** which needs to remain **enabled**.
+If you have successfully configured the cloud scan, Infection Monkey will scan
+your cloud infrastructure when the Monkey Agent is run **on the Island**. You
+can simply click on "From Island" in the run options to start the scan. The
+scope of the network scan and other activities you may have configured the Agent
+to perform are ignored by the ScoutSuite integration, except **Monkey
+Configuration -> System info collectors -> AWS collector**, which needs to
+remain **enabled**.
 
-### How to assess cloud scan results?
+
+### Assessing scan results
 
 After the scan is done, ScoutSuite results will be sorted and applied to the ZeroTrust Extended framework 
 and displayed as a part of the ZeroTrust report. The main difference between Infection Monkey findings and 
