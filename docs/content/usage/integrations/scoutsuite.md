@@ -53,13 +53,15 @@ remain **enabled**.
 
 ### Assessing scan results
 
-After the scan is done, ScoutSuite results will be categorized according to the ZeroTrust Extended framework 
-and displayed as a part of the ZeroTrust report. The main difference between Infection Monkey findings and 
-ScoutSuite findings is that ScoutSuite findings contain security rules. To see which rules were 
-checked, click on the "Rules" button next to the relevant test. You'll see a list of rule dropdowns color coated 
-according to their status. Expand a rule to see its description, remediation and 
-more details about resources flagged. Each flagged resource has a path so you can easily locate 
-it in the cloud and remediate the issue.
+After the scan is done, ScoutSuite results will be categorized according to the
+ZeroTrust Extended framework and displayed as a part of the ZeroTrust report.
+The main difference between Infection Monkey findings and ScoutSuite findings
+is that ScoutSuite findings contain security rules. To see which rules were
+checked, click on the "Rules" button next to the relevant test. You'll see a
+list of rule dropdowns that are color coded according to their status. Expand a
+rule to see its description, remediation and more details about resources
+flagged. Each flagged resource has a path so you can easily locate it in the
+cloud and remediate the issue.
 
 ![Open ScoutSuite rule](/images/usage/integrations/scoutsuite_report_rule.png 
 "Successful setup indicator")
