@@ -2,6 +2,7 @@
 title: "Scoutsuite"
 date: 2021-03-02T16:23:06+02:00
 draft: false
+weight: 10
 ---
 
 ### What is ScoutSuite?
@@ -32,7 +33,7 @@ More details about configuring ScoutSuite can be found in the tool itself, by ch
 After you're done with the setup, make sure that a checkmark appears next to the AWS option to 
 verify that ScoutSuite can access the API.
 
-![Successfull setup indicator](/images/reference/zero-trust/scoutsuite_aws_configured.png 
+![Successfull setup indicator](/images/usage/integrations/scoutsuite_aws_configured.png 
 "Successful setup indicator")
 
 ### How to run cloud scan?
@@ -53,5 +54,5 @@ related to the test and a list of those rules. Expand a rule to see its descript
 more details about resources flagged. Each flagged resource has a path so you can easily locate 
 them in the cloud and change the value that is deemed insecure.
 
-![Open ScoutSuite rule](/images/reference/zero-trust/scoutsuite_report_rule.png 
+![Open ScoutSuite rule](/images/usage/integrations/scoutsuite_report_rule.png 
 "Successful setup indicator")

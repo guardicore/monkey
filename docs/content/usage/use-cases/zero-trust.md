@@ -11,7 +11,7 @@ weight: 1
 Want to assess your progress in achieving a Zero Trust network? The Infection Monkey can automatically evaluate your readiness across the different
 [Zero Trust Extended Framework](https://www.forrester.com/report/The+Zero+Trust+eXtended+ZTX+Ecosystem/-/E-RES137210) principles.
 
-You can additionally scan your cloud infrastructure's compliance to ZeroTrust principles using [ScoutSuite integration.](/reference/zero-trust/scoutsuite)
+You can additionally scan your cloud infrastructure's compliance to ZeroTrust principles using [ScoutSuite integration.](/usage/integrations/scoutsuite)
 
 ## Configuration
 
