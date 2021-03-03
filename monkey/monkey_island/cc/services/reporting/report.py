@@ -181,6 +181,7 @@ class ReportService:
 
     @staticmethod
     def get_stolen_creds():
+        print(f"\n\n{list(mongo.db.telemetry.find())}\n\n")
         creds = []
 
         stolen_system_info_creds = ReportService._get_credentials_from_system_info_telems()
