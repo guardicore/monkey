@@ -2,7 +2,7 @@ import mongomock
 import pytest
 from bson import ObjectId
 
-import monkey_island.cc.database
+from monkey_island.cc.services.reporting.report import ReportService
 
 TELEM_ID = {
     "exploit_creds": ObjectId(b"123456789000"),
@@ -78,23 +78,15 @@ MONKEY_TELEM = {"_id": TELEM_ID["monkey"], "guid": MONKEY_GUID, "hostname": HOST
 @pytest.fixture
 def fake_mongo(monkeypatch):
     mongo = mongomock.MongoClient()
-    monkeypatch.setattr("monkey_island.cc.database.mongo", mongo)
+    monkeypatch.setattr("monkey_island.cc.services.reporting.report.mongo", mongo)
+    monkeypatch.setattr("monkey_island.cc.services.node.mongo", mongo)
     return mongo
 
 
-@pytest.fixture
-def report_service():
-    # can't be imported before monkeypatching since mongo connection is made at module level
-    # see https://stackoverflow.com/a/51994349/
-    from monkey_island.cc.services.reporting.report import ReportService
-
-    return ReportService
-
-
-def test_get_stolen_creds_exploit(fake_mongo, report_service):
+def test_get_stolen_creds_exploit(fake_mongo):
     fake_mongo.db.telemetry.insert_one(EXPLOIT_TELEMETRY_TELEM)
 
-    stolen_creds_exploit = report_service.get_stolen_creds()
+    stolen_creds_exploit = ReportService.get_stolen_creds()
     expected_stolen_creds_exploit = [
         {"origin": VICTIM_DOMAIN_NAME, "type": "LM hash", "username": USER},
         {"origin": VICTIM_DOMAIN_NAME, "type": "NTLM hash", "username": USER},
@@ -103,10 +95,11 @@ def test_get_stolen_creds_exploit(fake_mongo, report_service):
     assert expected_stolen_creds_exploit == stolen_creds_exploit
 
 
-def test_get_stolen_creds_system_info(fake_mongo, report_service):
+def test_get_stolen_creds_system_info(fake_mongo):
     fake_mongo.db.monkey.insert_one(MONKEY_TELEM)
     fake_mongo.db.telemetry.insert_one(SYSTEM_INFO_TELEMETRY_TELEM)
 
+    stolen_creds_system_info = ReportService.get_stolen_creds()
     expected_stolen_creds_system_info = [
         {"origin": HOSTNAME, "type": "Clear Password", "username": USER},
         {"origin": HOSTNAME, "type": "LM hash", "username": USER},
@@ -116,10 +109,10 @@ def test_get_stolen_creds_system_info(fake_mongo, report_service):
     assert expected_stolen_creds_system_info == stolen_creds_system_info
 
 
-def test_get_stolen_creds_no_creds(fake_mongo, report_service):
+def test_get_stolen_creds_no_creds(fake_mongo):
     fake_mongo.db.telemetry.insert_one(NO_CREDS_TELEMETRY_TELEM)
 
-    stolen_creds_no_creds = report_service.get_stolen_creds()
+    stolen_creds_no_creds = ReportService.get_stolen_creds()
     expected_stolen_creds_no_creds = []
 
     assert expected_stolen_creds_no_creds == stolen_creds_no_creds
