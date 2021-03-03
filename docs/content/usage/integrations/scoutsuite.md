@@ -14,7 +14,7 @@ data gathered, ScoutSuite shows security issues and risks present in your infras
 
 ### Supported cloud providers
 
-Currently, the Infection Monkey only supports AWS.
+Currently, ScoutSuite integration only supports AWS environments.
 
 ### Enabling ScoutSuite
 
@@ -53,13 +53,13 @@ remain **enabled**.
 
 ### Assessing scan results
 
-After the scan is done, ScoutSuite results will be sorted and applied to the ZeroTrust Extended framework 
+After the scan is done, ScoutSuite results will be categorized according to the ZeroTrust Extended framework 
 and displayed as a part of the ZeroTrust report. The main difference between Infection Monkey findings and 
 ScoutSuite findings is that ScoutSuite findings contain security rules. To see which rules were 
-checked click on the "Rules" button next to the relevant test. You'll see a brief overview of the rules 
-related to the test and a list of those rules. Expand a rule to see its description, remediation and 
+checked, click on the "Rules" button next to the relevant test. You'll see a list of rule dropdowns color coated 
+according to their status. Expand a rule to see its description, remediation and 
 more details about resources flagged. Each flagged resource has a path so you can easily locate 
-them in the cloud and change the value that is deemed insecure.
+it in the cloud and remediate the issue.
 
 ![Open ScoutSuite rule](/images/usage/integrations/scoutsuite_report_rule.png 
 "Successful setup indicator")
