@@ -1,3 +1,4 @@
+cryptography==2.5
 WinSys-3.x>=0.5.2
 cffi>=1.14
 ecdsa==0.15
