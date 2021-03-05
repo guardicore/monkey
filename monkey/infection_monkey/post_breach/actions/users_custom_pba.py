@@ -1,6 +1,5 @@
 import logging
 import os
-import subprocess
 
 from common.common_consts.post_breach_consts import POST_BREACH_FILE_EXECUTION
 from common.utils.attack_utils import ScanStatus
