@@ -1,8 +1,10 @@
+from copy import copy
+
 from envs.monkey_zoo.blackbox.island_configs.base_template import BaseTemplate
 
 
 class Ssh(BaseTemplate):
-    config_values = BaseTemplate.config_values
+    config_values = copy(BaseTemplate.config_values)
 
     config_values.update({
         "basic.exploiters.exploiter_classes": ["SSHExploiter"],
