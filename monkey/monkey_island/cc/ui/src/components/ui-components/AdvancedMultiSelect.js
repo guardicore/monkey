@@ -94,9 +94,11 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   setMasterCheckboxState(selectValues) {
-    this.setState(() => ({
-      masterCheckboxState: this.getMasterCheckboxState(selectValues)
-    }));
+    let newState = this.getMasterCheckboxState(selectValues);
+
+    if (newState != this.state.masterCheckboxState) {
+      this.setState({masterCheckboxState: newState});
+    }
   }
 
   getMasterCheckboxState(selectValues) {
@@ -187,6 +189,10 @@ class AdvancedMultiSelect extends React.Component {
           warningType={this.state.infoPaneParams.warningType}/>
       </div>
     );
+  }
+
+  componentDidUpdate(_prevProps) {
+    this.setMasterCheckboxState(this.props.value);
   }
 }
 
