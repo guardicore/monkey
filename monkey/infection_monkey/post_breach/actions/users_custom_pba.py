@@ -1,5 +1,6 @@
 import logging
 import os
+import subprocess
 
 from common.common_consts.post_breach_consts import POST_BREACH_FILE_EXECUTION
 from common.utils.attack_utils import ScanStatus
@@ -8,6 +9,7 @@ from infection_monkey.control import ControlClient
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
+from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path
 
@@ -31,37 +33,49 @@ class UsersPBA(PBA):
     def __init__(self):
         super(UsersPBA, self).__init__(POST_BREACH_FILE_EXECUTION)
         self.filename = ''
+        self.command_list = []
         if not is_windows_os():
             # Add linux commands to PBA's
             if WormConfiguration.PBA_linux_filename:
                 if WormConfiguration.custom_PBA_linux_cmd:
                     # Add change dir command, because user will try to access his file
-                    self.command = (DIR_CHANGE_LINUX % get_monkey_dir_path()) + WormConfiguration.custom_PBA_linux_cmd
+                    cmd = (DIR_CHANGE_LINUX % get_monkey_dir_path()) + WormConfiguration.custom_PBA_linux_cmd
+                    self.command_list.append(cmd)
                     self.filename = WormConfiguration.PBA_linux_filename
+                    if self.filename not in cmd:  # PBA command is not about uploaded PBA file
+                        file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_linux_filename)
+                        self.command_list.append(DEFAULT_LINUX_COMMAND.format(file_path))
                 else:
                     file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_linux_filename)
-                    self.command = DEFAULT_LINUX_COMMAND.format(file_path)
+                    self.command_list.append(DEFAULT_LINUX_COMMAND.format(file_path))
                     self.filename = WormConfiguration.PBA_linux_filename
             elif WormConfiguration.custom_PBA_linux_cmd:
-                self.command = WormConfiguration.custom_PBA_linux_cmd
+                self.command_list.append(WormConfiguration.custom_PBA_linux_cmd)
         else:
             # Add windows commands to PBA's
             if WormConfiguration.PBA_windows_filename:
                 if WormConfiguration.custom_PBA_windows_cmd:
                     # Add change dir command, because user will try to access his file
-                    self.command = (DIR_CHANGE_WINDOWS % get_monkey_dir_path()) + WormConfiguration.custom_PBA_windows_cmd
+                    cmd = (DIR_CHANGE_WINDOWS % get_monkey_dir_path()) + WormConfiguration.custom_PBA_windows_cmd
+                    self.command_list.append(cmd)
                     self.filename = WormConfiguration.PBA_windows_filename
+                    if self.filename not in cmd:  # PBA command is not about uploaded PBA file
+                        file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_windows_filename)
+                        self.command_list.append(DEFAULT_WINDOWS_COMMAND.format(file_path))
                 else:
                     file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_windows_filename)
-                    self.command = DEFAULT_WINDOWS_COMMAND.format(file_path)
+                    self.command_list.append(DEFAULT_WINDOWS_COMMAND.format(file_path))
                     self.filename = WormConfiguration.PBA_windows_filename
             elif WormConfiguration.custom_PBA_windows_cmd:
-                self.command = WormConfiguration.custom_PBA_windows_cmd
+                self.command_list.append(WormConfiguration.custom_PBA_windows_cmd)
 
-    def _execute_default(self):
+    def run(self):
         if self.filename:
             UsersPBA.download_pba_file(get_monkey_dir_path(), self.filename)
-        return super(UsersPBA, self)._execute_default()
+        for command in self.command_list:
+            self.command = command  # needs to be an object variable since PostBreachTelem needs it
+            result = self._execute_default()
+            PostBreachTelem(self, result).send()
 
     @staticmethod
     def should_run(class_name):
