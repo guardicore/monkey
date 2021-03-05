@@ -43,7 +43,7 @@ class AdvancedMultiSelect extends React.Component {
       infoPaneParams: getDefaultPaneParams(
         this.infoPaneRefString,
         this.registry,
-        this.isUnsafeOptionSelected(this.props.value)
+        this.isUnsafeOptionSelected(props.value)
       )
     };
   }
@@ -164,11 +164,12 @@ class AdvancedMultiSelect extends React.Component {
 
   render() {
     const {
-      schema,
+      autofocus,
       id,
-      required,
       multiple,
-      autofocus
+      required,
+      schema,
+      value
     } = this.props;
 
     return (
@@ -181,7 +182,7 @@ class AdvancedMultiSelect extends React.Component {
         <ChildCheckboxContainer id={id} multiple={multiple} required={required}
           autoFocus={autofocus} isSafe={this.isSafe}
           onPaneClick={this.setPaneInfo} onCheckboxClick={this.onChildCheckboxClick}
-          selectedValues={this.props.value} enumOptions={this.enumOptions}/>
+          selectedValues={value} enumOptions={this.enumOptions}/>
 
         <InfoPane title={this.state.infoPaneParams.title}
           body={this.state.infoPaneParams.content}
