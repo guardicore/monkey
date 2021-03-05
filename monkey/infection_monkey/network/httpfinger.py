@@ -43,8 +43,8 @@ class HTTPFinger(HostFinger):
                         LOG.info("Port %d is open on host %s " % (port[0], host))
                         break  # https will be the same on the same port
                 except Timeout:
-                    pass
+                    LOG.debug(f"Timout while requesting headers from {url}")
                 except ConnectionError:  # Someone doesn't like us
-                    pass
+                    LOG.debug(f"ConnetionError while requesting headers from {url}")
 
         return True
