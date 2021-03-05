@@ -46,6 +46,7 @@ GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', '
                          'mimikatz-14', 'mimikatz-15', 'struts2-23', 'struts2-24', 'tunneling-9', 'tunneling-10',
                          'tunneling-11', 'tunneling-12', 'weblogic-18', 'weblogic-19', 'shellshock-8', 'zerologon-25']
 LOG_DIR_PATH = "./logs"
+logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
