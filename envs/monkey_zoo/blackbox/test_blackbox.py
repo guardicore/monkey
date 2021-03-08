@@ -13,6 +13,7 @@ from envs.monkey_zoo.blackbox.island_client.island_config_parser import \
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import \
     MonkeyIslandClient
 from envs.monkey_zoo.blackbox.island_configs.config_template import ConfigTemplate
+from envs.monkey_zoo.blackbox.island_configs.drupal import Drupal
 from envs.monkey_zoo.blackbox.island_configs.elastic import Elastic
 from envs.monkey_zoo.blackbox.island_configs.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.island_configs.mssql import Mssql
@@ -46,7 +47,8 @@ DEFAULT_TIMEOUT_SECONDS = 5*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'hadoop-2', 'hadoop-3', 'mssql-16',
                          'mimikatz-14', 'mimikatz-15', 'struts2-23', 'struts2-24', 'tunneling-9', 'tunneling-10',
-                         'tunneling-11', 'tunneling-12', 'weblogic-18', 'weblogic-19', 'shellshock-8', 'zerologon-25']
+                         'tunneling-11', 'tunneling-12', 'weblogic-18', 'weblogic-19', 'shellshock-8', 'zerologon-25',
+                         'drupal-28']
 LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
@@ -140,6 +142,9 @@ class TestMonkeyBlackbox:
 
     def test_smb_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, SmbPth, "SMB_PTH")
+
+    def test_drupal_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Drupal, "Drupal_exploiter")
 
     def test_elastic_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Elastic, "Elastic_exploiter")
