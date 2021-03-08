@@ -164,7 +164,9 @@ class TestMonkeyBlackbox:
 
     def test_zerologon_exploiter(self, island_client):
         test_name = "ZeroLogon_exploiter"
-        expected_creds = ["test_username", "test_ntlm_hash"]
+        expected_creds = ["Administrator",
+                          "aad3b435b51404eeaad3b435b51404ee",
+                          "2864b62ea4496934a5d6e86f50b834a5"]
         raw_config = IslandConfigParser.get_raw_config(ZeroLogon, island_client)
         analyzer = ZeroLogonAnalyzer(island_client, expected_creds)
         log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
