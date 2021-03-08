@@ -7,6 +7,7 @@ from typing_extensions import Type
 
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import \
     CommunicationAnalyzer
+from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZeroLogonAnalyzer
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import \
     IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import \
@@ -25,6 +26,7 @@ from envs.monkey_zoo.blackbox.island_configs.tunneling import Tunneling
 from envs.monkey_zoo.blackbox.island_configs.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.island_configs.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.island_configs.wmi_pth import WmiPth
+from envs.monkey_zoo.blackbox.island_configs.zerologon import ZeroLogon
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import \
     TestLogsHandler
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
@@ -159,6 +161,21 @@ class TestMonkeyBlackbox:
 
     def test_wmi_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, WmiPth, "WMI_PTH")
+
+    def test_zerologon_exploiter(self, island_client):
+        test_name = "ZeroLogon_exploiter"
+        expected_creds = ["test_username", "test_ntlm_hash"]
+        raw_config = IslandConfigParser.get_raw_config(ZeroLogon, island_client)
+        analyzer = ZeroLogonAnalyzer(island_client, expected_creds)
+        log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
+        ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            raw_config=raw_config,
+            analyzers=[analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS,
+            log_handler=log_handler).run()
+        TestMonkeyBlackbox.run_exploitation_test(island_client, ZeroLogon, "ZeroLogon_exploiter")
 
     @pytest.mark.skip(reason="Perfomance test that creates env from fake telemetries is faster, use that instead.")
     def test_report_generation_performance(self, island_client, quick_performance_tests):
