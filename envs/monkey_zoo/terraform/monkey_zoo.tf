@@ -447,6 +447,21 @@ resource "google_compute_instance_from_template" "zerologon-25" {
   }
 }
 
+resource "google_compute_instance_from_template" "drupal-28" {
+  name = "${local.resource_prefix}drupal-28"
+  source_instance_template = local.default_windows
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.drupal-28.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    network_ip="10.2.2.28"
+  }
+}
+
 resource "google_compute_instance_from_template" "island-linux-250" {
   name = "${local.resource_prefix}island-linux-250"
   machine_type         = "n1-standard-2"
