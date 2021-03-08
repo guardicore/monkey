@@ -1,4 +1,5 @@
 from typing import List
+from pprint import pformat
 
 import dpath.util
 
@@ -22,7 +23,9 @@ class ZeroLogonAnalyzer(Analyzer):
 
     def analyze_test_results(self):
         self.log.clear()
-        return self._analyze_credential_gathering() and self._analyze_credential_restore()
+        is_creds_gathered = self._analyze_credential_gathering()
+        is_creds_restored = self._analyze_credential_restore()
+        return is_creds_gathered and is_creds_restored
 
     def _analyze_credential_gathering(self) -> bool:
         credentials_on_island = []
@@ -30,13 +33,33 @@ class ZeroLogonAnalyzer(Analyzer):
         credentials_on_island.extend(dpath.util.get(config['configuration'], USER_LIST_PATH))
         credentials_on_island.extend(dpath.util.get(config['configuration'], NTLM_HASH_LIST_PATH))
         credentials_on_island.extend(dpath.util.get(config['configuration'], LM_HASH_LIST_PATH))
-        return ZeroLogonAnalyzer._is_all_credentials_in_list(self.expected_credentials,
-                                                             credentials_on_island)
+        return self._is_all_credentials_in_list(credentials_on_island)
 
-    @staticmethod
-    def _is_all_credentials_in_list(expected_creds: List[str],
+    def _is_all_credentials_in_list(self,
                                     all_creds: List[str]) -> bool:
-        return all((cred in all_creds) for cred in expected_creds)
+        credentials_missing = [cred for cred in self.expected_credentials if cred not in all_creds]
+        self._log_creds_not_gathered(credentials_missing)
+        return not credentials_missing
+
+    def _log_creds_not_gathered(self, missing_creds: List[str]):
+        if not missing_creds:
+            self.log.add_entry("ZeroLogon exploiter gathered all credentials expected.")
+        else:
+            for cred in missing_creds:
+                self.log.add_entry(f"Credential ZeroLogon exploiter failed to gathered:{cred}.")
 
     def _analyze_credential_restore(self) -> bool:
-        return bool(self.island_client.find_telems_in_db(TELEM_QUERY))
+        cred_restore_telems = self.island_client.find_telems_in_db(TELEM_QUERY)
+        self._log_credential_restore(cred_restore_telems)
+        return bool(cred_restore_telems)
+
+    def _log_credential_restore(self, telem_list: List[dict]):
+        if telem_list:
+            self.log.add_entry("ZeroLogon exploiter telemetry contains indicators that credentials "
+                               "were successfully restored.")
+        else:
+            self.log.add_entry("Credential restore failed or credential restore "
+                               "telemetry not found on the Monkey Island.")
+            self.log.add_entry(f"Query for credential restore telem: {pformat(TELEM_QUERY)}")
+
+
