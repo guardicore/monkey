@@ -19,7 +19,7 @@ instead will just test performance of endpoints in already present island state.
 
 Example run command:
 
-`monkey\envs\monkey_zoo\blackbox>python -m pytest -s --island=35.207.152.72:5000 test_blackbox.py`
+`monkey\monkey>python -m pytest -s --island=35.207.152.72:5000 ..\envs\monkey_zoo\blackbox\test_blackbox.py`
 
 #### Running in PyCharm
 Configure a PyTest configuration with the additional arguments `-s --island=35.207.152.72:5000`, and to run from
