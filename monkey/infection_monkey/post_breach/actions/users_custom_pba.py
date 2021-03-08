@@ -34,39 +34,40 @@ class UsersPBA(PBA):
         self.filename = ''
         self.command_list = []
         if not is_windows_os():
-            # Add linux commands to PBA's
-            if WormConfiguration.PBA_linux_filename:
-                if WormConfiguration.custom_PBA_linux_cmd:
-                    # Add change dir command, because user will try to access his file
-                    cmd = (DIR_CHANGE_LINUX % get_monkey_dir_path()) + WormConfiguration.custom_PBA_linux_cmd
-                    self.command_list.append(cmd)
-                    self.filename = WormConfiguration.PBA_linux_filename
-                    if self.filename not in cmd:  # PBA command is not about uploaded PBA file
-                        file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_linux_filename)
-                        self.command_list.append(DEFAULT_LINUX_COMMAND.format(file_path))
-                else:
-                    file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_linux_filename)
-                    self.command_list.append(DEFAULT_LINUX_COMMAND.format(file_path))
-                    self.filename = WormConfiguration.PBA_linux_filename
-            elif WormConfiguration.custom_PBA_linux_cmd:
-                self.command_list.append(WormConfiguration.custom_PBA_linux_cmd)
+            # Add linux commands to PBAs
+            self._set_default_commands(is_windows=False)
+            self._set_command_list(custom_filename=WormConfiguration.PBA_linux_filename,
+                                   custom_cmd=WormConfiguration.custom_PBA_linux_cmd)
         else:
-            # Add windows commands to PBA's
-            if WormConfiguration.PBA_windows_filename:
-                if WormConfiguration.custom_PBA_windows_cmd:
-                    # Add change dir command, because user will try to access his file
-                    cmd = (DIR_CHANGE_WINDOWS % get_monkey_dir_path()) + WormConfiguration.custom_PBA_windows_cmd
-                    self.command_list.append(cmd)
-                    self.filename = WormConfiguration.PBA_windows_filename
-                    if self.filename not in cmd:  # PBA command is not about uploaded PBA file
-                        file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_windows_filename)
-                        self.command_list.append(DEFAULT_WINDOWS_COMMAND.format(file_path))
-                else:
-                    file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_windows_filename)
-                    self.command_list.append(DEFAULT_WINDOWS_COMMAND.format(file_path))
-                    self.filename = WormConfiguration.PBA_windows_filename
-            elif WormConfiguration.custom_PBA_windows_cmd:
-                self.command_list.append(WormConfiguration.custom_PBA_windows_cmd)
+            # Add windows commands to PBAs
+            self._set_default_commands(is_windows=True)
+            self._set_command_list(custom_filename=WormConfiguration.PBA_windows_filename,
+                                   custom_cmd=WormConfiguration.custom_PBA_windows_cmd)
+
+    def _set_default_commands(self, is_windows):
+        if is_windows:
+            self.dir_change_command = DIR_CHANGE_WINDOWS
+            self.default_command = DEFAULT_WINDOWS_COMMAND
+        else:
+            self.dir_change_command = DIR_CHANGE_LINUX
+            self.default_command = DEFAULT_LINUX_COMMAND
+
+    def _set_command_list(self, custom_filename, custom_cmd):
+        if custom_filename:
+            if custom_cmd:
+                # Add change dir command, because user will try to access his file
+                cmd = (self.dir_change_command % get_monkey_dir_path()) + custom_cmd
+                self.command_list.append(cmd)
+                self.filename = custom_filename
+                if self.filename not in cmd:  # PBA command is not about uploaded PBA file
+                    file_path = os.path.join(get_monkey_dir_path(), self.filename)
+                    self.command_list.append(self.default_command.format(file_path))
+            else:
+                file_path = os.path.join(get_monkey_dir_path(), custom_filename)
+                self.command_list.append(self.default_command.format(file_path))
+                self.filename = custom_filename
+        elif custom_cmd:
+            self.command_list.append(custom_cmd)
 
     def run(self):
         if self.filename:
