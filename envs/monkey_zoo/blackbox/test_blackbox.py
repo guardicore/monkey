@@ -177,7 +177,6 @@ class TestMonkeyBlackbox:
             analyzers=[analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS,
             log_handler=log_handler).run()
-        TestMonkeyBlackbox.run_exploitation_test(island_client, ZeroLogon, "ZeroLogon_exploiter")
 
     @pytest.mark.skip(reason="Perfomance test that creates env from fake telemetries is faster, use that instead.")
     def test_report_generation_performance(self, island_client, quick_performance_tests):
