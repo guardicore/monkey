@@ -14,7 +14,7 @@ TELEM_QUERY = {'telem_category': 'exploit',
                'data.info.password_restored': True}
 
 
-class ZeroLogonAnalyzer(Analyzer):
+class ZerologonAnalyzer(Analyzer):
 
     def __init__(self, island_client: MonkeyIslandClient, expected_credentials: List[str]):
         self.island_client = island_client
@@ -28,12 +28,17 @@ class ZeroLogonAnalyzer(Analyzer):
         return is_creds_gathered and is_creds_restored
 
     def _analyze_credential_gathering(self) -> bool:
-        credentials_on_island = []
         config = self.island_client.get_config()
+        credentials_on_island = ZerologonAnalyzer._get_relevant_credentials(config)
+        return self._is_all_credentials_in_list(credentials_on_island)
+
+    @staticmethod
+    def _get_relevant_credentials(config: dict):
+        credentials_on_island = []
         credentials_on_island.extend(dpath.util.get(config['configuration'], USER_LIST_PATH))
         credentials_on_island.extend(dpath.util.get(config['configuration'], NTLM_HASH_LIST_PATH))
         credentials_on_island.extend(dpath.util.get(config['configuration'], LM_HASH_LIST_PATH))
-        return self._is_all_credentials_in_list(credentials_on_island)
+        return credentials_on_island
 
     def _is_all_credentials_in_list(self,
                                     all_creds: List[str]) -> bool:
@@ -43,10 +48,10 @@ class ZeroLogonAnalyzer(Analyzer):
 
     def _log_creds_not_gathered(self, missing_creds: List[str]):
         if not missing_creds:
-            self.log.add_entry("ZeroLogon exploiter gathered all credentials expected.")
+            self.log.add_entry("Zerologon exploiter gathered all credentials expected.")
         else:
             for cred in missing_creds:
-                self.log.add_entry(f"Credential ZeroLogon exploiter failed to gathered:{cred}.")
+                self.log.add_entry(f"Credential Zerologon exploiter failed to gathered:{cred}.")
 
     def _analyze_credential_restore(self) -> bool:
         cred_restore_telems = self.island_client.find_telems_in_db(TELEM_QUERY)
@@ -55,7 +60,7 @@ class ZeroLogonAnalyzer(Analyzer):
 
     def _log_credential_restore(self, telem_list: List[dict]):
         if telem_list:
-            self.log.add_entry("ZeroLogon exploiter telemetry contains indicators that credentials "
+            self.log.add_entry("Zerologon exploiter telemetry contains indicators that credentials "
                                "were successfully restored.")
         else:
             self.log.add_entry("Credential restore failed or credential restore "

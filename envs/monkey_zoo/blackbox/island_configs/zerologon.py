@@ -3,7 +3,7 @@ from copy import copy
 from envs.monkey_zoo.blackbox.island_configs.base_template import BaseTemplate
 
 
-class ZeroLogon(BaseTemplate):
+class Zerologon(BaseTemplate):
 
     config_values = copy(BaseTemplate.config_values)
 

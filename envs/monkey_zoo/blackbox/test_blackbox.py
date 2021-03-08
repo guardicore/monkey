@@ -7,7 +7,7 @@ from typing_extensions import Type
 
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import \
     CommunicationAnalyzer
-from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZeroLogonAnalyzer
+from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import \
     IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import \
@@ -26,7 +26,7 @@ from envs.monkey_zoo.blackbox.island_configs.tunneling import Tunneling
 from envs.monkey_zoo.blackbox.island_configs.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.island_configs.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.island_configs.wmi_pth import WmiPth
-from envs.monkey_zoo.blackbox.island_configs.zerologon import ZeroLogon
+from envs.monkey_zoo.blackbox.island_configs.zerologon import Zerologon
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import \
     TestLogsHandler
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
@@ -163,12 +163,12 @@ class TestMonkeyBlackbox:
         TestMonkeyBlackbox.run_exploitation_test(island_client, WmiPth, "WMI_PTH")
 
     def test_zerologon_exploiter(self, island_client):
-        test_name = "ZeroLogon_exploiter"
+        test_name = "Zerologon_exploiter"
         expected_creds = ["Administrator",
                           "aad3b435b51404eeaad3b435b51404ee",
                           "2864b62ea4496934a5d6e86f50b834a5"]
-        raw_config = IslandConfigParser.get_raw_config(ZeroLogon, island_client)
-        analyzer = ZeroLogonAnalyzer(island_client, expected_creds)
+        raw_config = IslandConfigParser.get_raw_config(Zerologon, island_client)
+        analyzer = ZerologonAnalyzer(island_client, expected_creds)
         log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
         ExploitationTest(
             name=test_name,
