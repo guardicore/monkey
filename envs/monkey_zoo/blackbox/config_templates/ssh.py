@@ -1,6 +1,6 @@
 from copy import copy
 
-from envs.monkey_zoo.blackbox.island_configs.base_template import BaseTemplate
+from envs.monkey_zoo.blackbox.config_templates.base_template import BaseTemplate
 
 
 class Ssh(BaseTemplate):
