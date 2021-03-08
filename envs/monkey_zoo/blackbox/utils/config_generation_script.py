@@ -3,6 +3,7 @@ import pathlib
 from typing import Type
 
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
+from envs.monkey_zoo.blackbox.config_templates.drupal import Drupal
 from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
@@ -45,7 +46,8 @@ CONFIG_TEMPLATES = [
     Weblogic,
     WmiMimikatz,
     WmiPth,
-    Zerologon
+    Zerologon,
+    Drupal
 ]
 
 

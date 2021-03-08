@@ -5,5 +5,5 @@
 This script is used to generate config files for manual tests.
 Config file will be generated according to the templates in `envs/monkey_zoo/blackbox/config_templates`.
 
-Run `envs/monkey_zoo/blackbox/utils/config_generation_script.py` to populate 
+Run `envs/monkey_zoo/blackbox/utils/config_generation_script.py island_ip:5000` to populate 
 `envs/monkey_zoo/blackbox/utils/generated_configs` directory with configuration files.
