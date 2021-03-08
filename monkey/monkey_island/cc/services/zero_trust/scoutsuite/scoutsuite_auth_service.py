@@ -6,7 +6,7 @@ from common.cloud.scoutsuite_consts import CloudProviders
 from common.utils.exceptions import InvalidAWSKeys
 from monkey_island.cc.server_utils.encryptor import encryptor
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.config_schema.config_value_paths import AWS_KEYS_PATH
+from common.config_value_paths import AWS_KEYS_PATH
 
 
 def is_cloud_authentication_setup(provider: CloudProviders) -> Tuple[bool, str]:

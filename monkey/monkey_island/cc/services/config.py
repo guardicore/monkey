@@ -14,10 +14,10 @@ from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
 
-from monkey_island.cc.services.config_schema.config_value_paths import (AWS_KEYS_PATH, EXPORT_MONKEY_TELEMS_PATH,
-                                                                        LM_HASH_LIST_PATH, NTLM_HASH_LIST_PATH,
-                                                                        PASSWORD_LIST_PATH, SSH_KEYS_PATH,
-                                                                        STARTED_ON_ISLAND_PATH, USER_LIST_PATH)
+from common.config_value_paths import (AWS_KEYS_PATH, EXPORT_MONKEY_TELEMS_PATH,
+                                       LM_HASH_LIST_PATH, NTLM_HASH_LIST_PATH,
+                                       PASSWORD_LIST_PATH, SSH_KEYS_PATH,
+                                       STARTED_ON_ISLAND_PATH, USER_LIST_PATH)
 
 logger = logging.getLogger(__name__)
 
