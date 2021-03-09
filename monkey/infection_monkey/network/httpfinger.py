@@ -45,6 +45,6 @@ class HTTPFinger(HostFinger):
                 except Timeout:
                     LOG.debug(f"Timout while requesting headers from {url}")
                 except ConnectionError:  # Someone doesn't like us
-                    LOG.debug(f"ConnetionError while requesting headers from {url}")
+                    LOG.debug(f"Connection error while requesting headers from {url}")
 
         return True
