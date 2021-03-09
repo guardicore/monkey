@@ -12,22 +12,22 @@ from envs.monkey_zoo.blackbox.island_client.island_config_parser import \
     IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import \
     MonkeyIslandClient
-from envs.monkey_zoo.blackbox.island_configs.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.island_configs.drupal import Drupal
-from envs.monkey_zoo.blackbox.island_configs.elastic import Elastic
-from envs.monkey_zoo.blackbox.island_configs.hadoop import Hadoop
-from envs.monkey_zoo.blackbox.island_configs.mssql import Mssql
-from envs.monkey_zoo.blackbox.island_configs.performance import Performance
-from envs.monkey_zoo.blackbox.island_configs.shellshock import ShellShock
-from envs.monkey_zoo.blackbox.island_configs.smb_mimikatz import SmbMimikatz
-from envs.monkey_zoo.blackbox.island_configs.smb_pth import SmbPth
-from envs.monkey_zoo.blackbox.island_configs.ssh import Ssh
-from envs.monkey_zoo.blackbox.island_configs.struts2 import Struts2
-from envs.monkey_zoo.blackbox.island_configs.tunneling import Tunneling
-from envs.monkey_zoo.blackbox.island_configs.weblogic import Weblogic
-from envs.monkey_zoo.blackbox.island_configs.wmi_mimikatz import WmiMimikatz
-from envs.monkey_zoo.blackbox.island_configs.wmi_pth import WmiPth
-from envs.monkey_zoo.blackbox.island_configs.zerologon import Zerologon
+from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
+from envs.monkey_zoo.blackbox.config_templates.drupal import Drupal
+from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
+from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
+from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
+from envs.monkey_zoo.blackbox.config_templates.performance import Performance
+from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
+from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
+from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
+from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
+from envs.monkey_zoo.blackbox.config_templates.struts2 import Struts2
+from envs.monkey_zoo.blackbox.config_templates.tunneling import Tunneling
+from envs.monkey_zoo.blackbox.config_templates.weblogic import Weblogic
+from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
+from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
+from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import \
     TestLogsHandler
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest

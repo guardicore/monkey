@@ -1,7 +1,7 @@
 from copy import copy
 
-from envs.monkey_zoo.blackbox.island_configs.base_template import BaseTemplate
-from envs.monkey_zoo.blackbox.island_configs.config_template import ConfigTemplate
+from envs.monkey_zoo.blackbox.config_templates.base_template import BaseTemplate
+from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 
 
 class Elastic(ConfigTemplate):
