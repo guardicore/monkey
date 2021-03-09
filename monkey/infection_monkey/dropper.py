@@ -134,7 +134,9 @@ class MonkeyDrops(object):
                                                       'monkey_commandline': inner_monkey_cmdline}
 
         monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
-                                          stdin=None, stdout=None, stderr=None,
+                                          stdin=subprocess.PIPE,
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE,
                                           close_fds=True, creationflags=DETACHED_PROCESS)
 
         LOG.info("Executed monkey process (PID=%d) with command line: %s",
