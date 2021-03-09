@@ -20,9 +20,9 @@ MONKEY = {
                     "title": "Linux post breach file",
                     "type": "string",
                     "format": "data-url",
-                    "description": "File to be executed after breaching. "
-                                   "If you want custom execution behavior, "
-                                   "specify it in 'Linux post breach command' field. "
+                    "description": "File to be uploaded after breaching. "
+                                   "If you want the file to be executed, "
+                                   "specify it in the 'Linux post breach command' field. "
                                    "Reference your file by filename."
                 },
                 "custom_PBA_windows_cmd": {
@@ -35,9 +35,9 @@ MONKEY = {
                     "title": "Windows post breach file",
                     "type": "string",
                     "format": "data-url",
-                    "description": "File to be executed after breaching. "
-                                   "If you want custom execution behavior, "
-                                   "specify it in 'Windows post breach command' field. "
+                    "description": "File to be uploaded after breaching. "
+                                   "If you want the file to be executed, "
+                                   "specify it in the 'Windows post breach command' field. "
                                    "Reference your file by filename."
                 },
                 "PBA_windows_filename": {
