@@ -15,10 +15,6 @@ LOG = logging.getLogger(__name__)
 
 __author__ = 'VakarisZ'
 
-# Default commands for executing PBA file and then removing it
-DEFAULT_LINUX_COMMAND = "chmod +x {0} ; {0} ; rm {0}"
-DEFAULT_WINDOWS_COMMAND = "{0} & del {0}"
-
 DIR_CHANGE_WINDOWS = 'cd %s & '
 DIR_CHANGE_LINUX = 'cd %s ; '
 
@@ -31,37 +27,28 @@ class UsersPBA(PBA):
     def __init__(self):
         super(UsersPBA, self).__init__(POST_BREACH_FILE_EXECUTION)
         self.filename = ''
+
         if not is_windows_os():
             # Add linux commands to PBA's
             if WormConfiguration.PBA_linux_filename:
+                self.filename = WormConfiguration.PBA_linux_filename
                 if WormConfiguration.custom_PBA_linux_cmd:
                     # Add change dir command, because user will try to access his file
                     self.command = (DIR_CHANGE_LINUX % get_monkey_dir_path()) + WormConfiguration.custom_PBA_linux_cmd
-                    self.filename = WormConfiguration.PBA_linux_filename
-                else:
-                    file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_linux_filename)
-                    self.command = DEFAULT_LINUX_COMMAND.format(file_path)
-                    self.filename = WormConfiguration.PBA_linux_filename
             elif WormConfiguration.custom_PBA_linux_cmd:
                 self.command = WormConfiguration.custom_PBA_linux_cmd
         else:
             # Add windows commands to PBA's
             if WormConfiguration.PBA_windows_filename:
+                self.filename = WormConfiguration.PBA_windows_filename
                 if WormConfiguration.custom_PBA_windows_cmd:
                     # Add change dir command, because user will try to access his file
                     self.command = (DIR_CHANGE_WINDOWS % get_monkey_dir_path()) + WormConfiguration.custom_PBA_windows_cmd
-                    self.filename = WormConfiguration.PBA_windows_filename
-                else:
-                    file_path = os.path.join(get_monkey_dir_path(), WormConfiguration.PBA_windows_filename)
-                    self.command = DEFAULT_WINDOWS_COMMAND.format(file_path)
-                    self.filename = WormConfiguration.PBA_windows_filename
             elif WormConfiguration.custom_PBA_windows_cmd:
                 self.command = WormConfiguration.custom_PBA_windows_cmd
 
-    def _execute_default(self):
         if self.filename:
             UsersPBA.download_pba_file(get_monkey_dir_path(), self.filename)
-        return super(UsersPBA, self)._execute_default()
 
     @staticmethod
     def should_run(class_name):
