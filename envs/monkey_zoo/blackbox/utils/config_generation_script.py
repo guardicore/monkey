@@ -18,15 +18,22 @@ from envs.monkey_zoo.blackbox.config_templates.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
 from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
-from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
+from envs.monkey_zoo.blackbox.island_client.island_config_parser import (
+    IslandConfigParser,
+)
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import (
+    MonkeyIslandClient,
+)
 
-DST_DIR_NAME = 'generated_configs'
+DST_DIR_NAME = "generated_configs"
 DST_DIR_PATH = pathlib.Path(pathlib.Path(__file__).parent.absolute(), DST_DIR_NAME)
 
-parser = argparse.ArgumentParser(description='Generate config files.')
-parser.add_argument('island_ip', metavar='IP:PORT',
-                    help='Island endpoint. Example: 123.123.123.123:5000')
+parser = argparse.ArgumentParser(description="Generate config files.")
+parser.add_argument(
+    "island_ip",
+    metavar="IP:PORT",
+    help="Island endpoint. Example: 123.123.123.123:5000",
+)
 
 args = parser.parse_args()
 island_client = MonkeyIslandClient(args.island_ip)
@@ -47,7 +54,7 @@ CONFIG_TEMPLATES = [
     WmiMimikatz,
     WmiPth,
     Zerologon,
-    Drupal
+    Drupal,
 ]
 
 
@@ -63,9 +70,9 @@ def save_template_as_config(template: Type[ConfigTemplate]):
 
 
 def save_to_file(file_path, contents):
-    with open(file_path, 'w') as file:
+    with open(file_path, "w") as file:
         file.write(contents)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     generate_templates()
