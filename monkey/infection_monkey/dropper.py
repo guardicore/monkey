@@ -145,6 +145,8 @@ class MonkeyDrops(object):
             LOG.warning("Seems like monkey died too soon")
 
     def cleanup(self):
+        LOG.info("Cleaning up the dropper")
+
         try:
             if (self._config['source_path'].lower() != self._config['destination_path'].lower()) and \
                     os.path.exists(self._config['source_path']) and \
@@ -166,5 +168,7 @@ class MonkeyDrops(object):
                         LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
                                   self._config['source_path'])
                         T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
+
+            LOG.info("Dropper cleanup complete")
         except AttributeError:
             LOG.error("Invalid configuration options. Failing")
