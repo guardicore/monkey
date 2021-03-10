@@ -47,8 +47,10 @@ class UsersPBA(PBA):
             elif WormConfiguration.custom_PBA_windows_cmd:
                 self.command = WormConfiguration.custom_PBA_windows_cmd
 
+    def _execute_default(self):
         if self.filename:
             UsersPBA.download_pba_file(get_monkey_dir_path(), self.filename)
+        return super(UsersPBA, self)._execute_default()
 
     @staticmethod
     def should_run(class_name):
