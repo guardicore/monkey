@@ -14,7 +14,10 @@ MONKEY = {
                     "title": "Linux post-breach command",
                     "type": "string",
                     "default": "",
-                    "description": "Linux command to be executed after breaching."
+                    "description": "Command to be executed after breaching. "
+                                   "Use this field to run custom commands or execute uploaded "
+                                   "files on exploited machines.\nExample: "
+                                   "\"chmod +x ./my_script.sh; ./my_script.sh ; rm ./my_script.sh\""
                 },
                 "PBA_linux_file": {
                     "title": "Linux post-breach file",
@@ -29,7 +32,10 @@ MONKEY = {
                     "title": "Windows post-breach command",
                     "type": "string",
                     "default": "",
-                    "description": "Windows command to be executed after breaching."
+                    "description": "Command to be executed after breaching. "
+                                   "Use this field to run custom commands or execute uploaded "
+                                   "files on exploited machines.\nExample: "
+                                   "\"my_script.bat & del my_script.bat\""
                 },
                 "PBA_windows_file": {
                     "title": "Windows post-breach file",
