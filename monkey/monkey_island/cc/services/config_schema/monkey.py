@@ -11,33 +11,33 @@ MONKEY = {
             "type": "object",
             "properties": {
                 "custom_PBA_linux_cmd": {
-                    "title": "Linux post breach command",
+                    "title": "Linux post-breach command",
                     "type": "string",
                     "default": "",
                     "description": "Linux command to be executed after breaching."
                 },
                 "PBA_linux_file": {
-                    "title": "Linux post breach file",
+                    "title": "Linux post-breach file",
                     "type": "string",
                     "format": "data-url",
                     "description": "File to be uploaded after breaching. "
-                                   "If you want the file to be executed, "
-                                   "specify it in the 'Linux post breach command' field. "
+                                   "Use the 'Linux post-breach command' field to "
+                                   "change permissions, run, or delete the file. "
                                    "Reference your file by filename."
                 },
                 "custom_PBA_windows_cmd": {
-                    "title": "Windows post breach command",
+                    "title": "Windows post-breach command",
                     "type": "string",
                     "default": "",
                     "description": "Windows command to be executed after breaching."
                 },
                 "PBA_windows_file": {
-                    "title": "Windows post breach file",
+                    "title": "Windows post-breach file",
                     "type": "string",
                     "format": "data-url",
                     "description": "File to be uploaded after breaching. "
-                                   "If you want the file to be executed, "
-                                   "specify it in the 'Windows post breach command' field. "
+                                   "Use the 'Windows post-breach command' field to "
+                                   "change permissions, run, or delete the file. "
                                    "Reference your file by filename."
                 },
                 "PBA_windows_filename": {
