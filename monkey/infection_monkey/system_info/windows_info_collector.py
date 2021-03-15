@@ -47,8 +47,19 @@ class WindowsInfoCollector(InfoCollector):
 
     def get_installed_packages(self):
         LOG.info('getting installed packages')
-        self.info["installed_packages"] = os.popen("dism /online /get-packages").read()
-        self.info["installed_features"] = os.popen("dism /online /get-features").read()
+
+        packages = subprocess.Popen("dism /online /get-packages", shell=True, stdout=subprocess.PIPE).stdout.read()
+        try:
+            self.info["installed_packages"] = packages.decode('utf-8')
+        except UnicodeDecodeError:
+            self.info["installed_packages"] = packages.decode('raw-unicode-escape')
+
+        features = subprocess.Popen("dism /online /get-features", shell=True, stdout=subprocess.PIPE).stdout.read()
+        try:
+            self.info["installed_features"] = features.decode('utf-8')
+        except UnicodeDecodeError:
+            self.info["installed_features"] = features.decode('raw-unicode-escape')
+
         LOG.debug('Got installed packages')
 
     def get_wmi_info(self):
