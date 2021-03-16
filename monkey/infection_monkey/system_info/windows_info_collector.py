@@ -46,7 +46,7 @@ class WindowsInfoCollector(InfoCollector):
         return self.info
 
     def get_installed_packages(self):
-        LOG.info('getting installed packages')
+        LOG.info('Getting installed packages')
 
         packages = subprocess.Popen("dism /online /get-packages", shell=True, stdout=subprocess.PIPE).stdout.read()
         try:
@@ -63,10 +63,10 @@ class WindowsInfoCollector(InfoCollector):
         LOG.debug('Got installed packages')
 
     def get_wmi_info(self):
-        LOG.info('getting wmi info')
+        LOG.info('Getting wmi info')
         for wmi_class_name in WMI_CLASSES:
             self.info['wmi'][wmi_class_name] = WMIUtils.get_wmi_class(wmi_class_name)
-        LOG.debug('finished get_wmi_info')
+        LOG.debug('Finished get_wmi_info')
 
     def get_mimikatz_info(self):
         LOG.info("Gathering mimikatz info")
