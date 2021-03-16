@@ -26,5 +26,6 @@ tqdm>=4.47
 virtualenv>=20.0.26
 werkzeug>=1.0.1
 wheel>=0.34.2
+git+https://github.com/guardicode/ScoutSuite
 
 pyjwt>=1.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
