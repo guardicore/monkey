@@ -1,5 +1,5 @@
 import logging
-import os
+import subprocess
 import sys
 
 from common.common_consts.system_info_collectors_names import MIMIKATZ_COLLECTOR
