@@ -1,7 +1,6 @@
 from enum import Enum
 
-import dpath.util
-
+from common.utils.code_utils import get_value_from_dict
 from common.utils.exceptions import RulePathCreatorNotFound
 from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_path_building.rule_path_creators_list import \
     RULE_PATH_CREATORS_LIST
@@ -23,7 +22,7 @@ class RuleParser:
     @staticmethod
     def get_rule_data(scoutsuite_data: dict, rule_name: Enum) -> dict:
         rule_path = RuleParser._get_rule_path(rule_name)
-        return dpath.util.get(scoutsuite_data, rule_path)
+        return get_value_from_dict(scoutsuite_data, rule_path)
 
     @staticmethod
     def _get_rule_path(rule_name: Enum):
