@@ -27,7 +27,6 @@ install:
 - pip install flake8 pytest pytest-cov dlint isort # for next stages
 - pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
-- pip install -r monkey/common/cloud/scoutsuite/requirements.txt
 - pip install pipdeptree
 # Fail builds on possible conflicting dependencies.
 - pipdeptree --warn fail
@@ -56,7 +55,7 @@ install:
 script:
 # Check Python code
 ## Check syntax errors and fail the build if any are found.
-- flake8 ./monkey --exclude=monkey/common/cloud/scoutsuite --config=./ci_scripts/flake8_syntax_check.ini
+- flake8 ./monkey --config=./ci_scripts/flake8_syntax_check.ini
 
 ## Warn about linter issues.
 ### --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
