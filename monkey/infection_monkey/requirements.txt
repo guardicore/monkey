@@ -16,3 +16,4 @@ pypykatz==0.3.12
 pysmb==1.2.5
 requests>=2.24
 wmi==1.5.1 ; sys_platform == 'win32'
+git+https://github.com/guardicode/ScoutSuite

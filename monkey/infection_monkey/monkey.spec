@@ -1,24 +1,24 @@
 # -*- mode: python -*-
 import os
-import sys
 import platform
-
+import sys
 
 __author__ = 'itay.mizeretz'
+
+from PyInstaller.utils.hooks import collect_data_files
 
 block_cipher = None
 
 
 def main():
+    print(collect_data_files('policyuniverse'))
     a = Analysis(['main.py'],
                  pathex=['..'],
                  hiddenimports=get_hidden_imports(),
                  hookspath=['./pyinstaller_hooks'],
                  runtime_hooks=None,
                  binaries=None,
-                 datas=[
-                    ("../common/BUILD", "/common")
-                 ],
+                 datas=[("../common/BUILD", "/common")],
                  excludes=None,
                  win_no_prefer_redirects=None,
                  win_private_assemblies=None,
@@ -48,7 +48,7 @@ def is_windows():
 
 
 def is_32_bit():
-    return sys.maxsize <= 2**32
+    return sys.maxsize <= 2 ** 32
 
 
 def get_bin_folder():
@@ -79,7 +79,12 @@ def get_linux_only_binaries():
 
 
 def get_hidden_imports():
-    return ['_cffi_backend', 'queue', '_mssql'] if is_windows() else ['_cffi_backend','_mssql']
+    imports = ['ScoutSuite']
+    if is_windows():
+        imports.extend(['_cffi_backend', 'queue', '_mssql'])
+    else:
+        imports.extend(['_cffi_backend', '_mssql'])
+    return imports
 
 
 def get_sc_binaries():
@@ -94,15 +99,15 @@ def get_traceroute_binaries():
 def get_monkey_filename():
     name = 'monkey-'
     if is_windows():
-        name = name+"windows-"
+        name = name + "windows-"
     else:
-        name = name+"linux-"
+        name = name + "linux-"
     if is_32_bit():
-        name = name+"32"
+        name = name + "32"
     else:
-        name = name+"64"
+        name = name + "64"
     if is_windows():
-        name = name+".exe"
+        name = name + ".exe"
     return name
 
 
