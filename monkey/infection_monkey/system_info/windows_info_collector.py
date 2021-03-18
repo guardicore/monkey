@@ -48,17 +48,11 @@ class WindowsInfoCollector(InfoCollector):
     def get_installed_packages(self):
         LOG.info('Getting installed packages')
 
-        packages = subprocess.Popen("dism /online /get-packages", shell=True, stdout=subprocess.PIPE).stdout.read()
-        try:
-            self.info["installed_packages"] = packages.decode('utf-8')
-        except UnicodeDecodeError:
-            self.info["installed_packages"] = packages.decode('raw-unicode-escape')
+        packages = subprocess.check_output("dism /online /get-packages", shell=True)
+        self.info["installed_packages"] = packages.decode('utf-8', errors='ignore')
 
-        features = subprocess.Popen("dism /online /get-features", shell=True, stdout=subprocess.PIPE).stdout.read()
-        try:
-            self.info["installed_features"] = features.decode('utf-8')
-        except UnicodeDecodeError:
-            self.info["installed_features"] = features.decode('raw-unicode-escape')
+        features = subprocess.check_output("dism /online /get-features", shell=True)
+        self.info["installed_features"] = features.decode('utf-8', errors='ignore')
 
         LOG.debug('Got installed packages')
 
