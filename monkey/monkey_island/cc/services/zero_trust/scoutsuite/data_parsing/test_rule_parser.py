@@ -4,6 +4,7 @@ import pytest
 
 from common.utils.exceptions import RulePathCreatorNotFound
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.ec2_rules import EC2Rules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.service_consts import SERVICES
 from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_parser import RuleParser
 from monkey_island.cc.services.zero_trust.test_common.raw_scoutsute_data import RAW_SCOUTSUITE_DATA
 
@@ -28,9 +29,9 @@ EXPECTED_RESULT = {'description': 'Security Group Opens All Ports to All',
 
 def test_get_rule_data():
     # Test proper parsing of the raw data to rule
-    results = RuleParser.get_rule_data(RAW_SCOUTSUITE_DATA, ALL_PORTS_OPEN)
+    results = RuleParser.get_rule_data(RAW_SCOUTSUITE_DATA[SERVICES], ALL_PORTS_OPEN)
     assert results == EXPECTED_RESULT
 
     with pytest.raises(RulePathCreatorNotFound):
-        RuleParser.get_rule_data(RAW_SCOUTSUITE_DATA, ExampleRules.NON_EXSISTENT_RULE)
+        RuleParser.get_rule_data(RAW_SCOUTSUITE_DATA[SERVICES], ExampleRules.NON_EXSISTENT_RULE)
     pass
