@@ -252,9 +252,12 @@ class InfectionMonkey(object):
 
     def collect_system_info_if_configured(self):
         LOG.debug("Calling for system info collection")
-        system_info_collector = SystemInfoCollector()
-        system_info = system_info_collector.get_info()
-        SystemInfoTelem(system_info).send()
+        try:
+            system_info_collector = SystemInfoCollector()
+            system_info = system_info_collector.get_info()
+            SystemInfoTelem(system_info).send()
+        except Exception as e:
+            LOG.exception(f"Exception encountered during system info collection: {str(e)}")
 
     def shutdown_by_not_alive_config(self):
         if not WormConfiguration.alive:
