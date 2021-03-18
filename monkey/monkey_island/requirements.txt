@@ -28,4 +28,4 @@ werkzeug>=1.0.1
 wheel>=0.34.2
 git+https://github.com/guardicode/ScoutSuite
 
-pyjwt>=1.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
+pyjwt==1.7 # not directly required, pinned by Snyk to avoid a vulnerability
