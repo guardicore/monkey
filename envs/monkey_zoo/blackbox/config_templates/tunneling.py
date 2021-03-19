@@ -16,6 +16,8 @@ class Tunneling(ConfigTemplate):
                                                  "10.2.1.10",
                                                  "10.2.0.11",
                                                  "10.2.0.12"],
+        "basic_network.scope.depth": 3,
+        "internal.general.keep_tunnel_open_time": 180,
         "basic.credentials.exploit_password_list": ["Password1!",
                                                     "3Q=(Ge(+&w]*",
                                                     "`))jU7L(w}",
