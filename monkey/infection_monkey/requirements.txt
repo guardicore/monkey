@@ -18,3 +18,4 @@ requests>=2.24
 wmi==1.5.1 ; sys_platform == 'win32'
 urllib3==1.25.8
 git+https://github.com/guardicode/ScoutSuite
+simplejson
