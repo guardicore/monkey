@@ -79,11 +79,9 @@ def get_linux_only_binaries():
 
 
 def get_hidden_imports():
-    imports = ['ScoutSuite']
+    imports = ['_cffi_backend', '_mssql']
     if is_windows():
-        imports.extend(['_cffi_backend', 'queue', '_mssql'])
-    else:
-        imports.extend(['_cffi_backend', '_mssql'])
+        imports.append('queue')
     return imports
 
 
