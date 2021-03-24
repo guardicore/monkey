@@ -10,16 +10,33 @@ draft: false
 
 ## What is Guardicore Infection Monkey?
 
-The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island Command and Control server.
+The Infection Monkey is an open source breach and attack simulation tool for testing a data center's resiliency to perimeter breaches and internal server infection.
+Infection Monkey will help you test implemented security solutions and will provide visibility of the internal network through the eyes of an attacker.
+
+Infection Monkey is free and can be downloaded from [our homepage](https://infectionmonkey.com/).
 
 ![Infection Monkey Documentation Hub Logo](/images/monkey-teacher.svg?height=400px "Infection Monkey Documentation Hub Logo")
 
-The Infection Monkey is comprised of two parts:
+## How it works
 
-* Monkey - A tool which infects other machines and propagates to them.
-* Monkey Island - A dedicated UI to visualize the Infection Monkey's progress inside the data center.
+Architecturally Infection Monkey tool is comprised of two parts:
 
-To read more about the Monkey and download it, visit [our homepage](https://infectionmonkey.com/).
+* Monkey Agent (Monkey for short) - a safe, worm like binary program which scans, spreads and simulates attack techniques on the **local network**.
+* Monkey Island Server (Island for short) - a C&C web server which serves GUI for users and interacts with Monkey Agents.
+
+User runs Monkey Agent on the Island server machine or distributes Monkey Agent binaries on the network manually. Based on 
+the configuration parameters, Monkey Agents scan, propagate and simulate attackers behaviour on the local network. All of the 
+information gathered about the network is aggregated in the Island Server and displayed once all Monkey Agents are finished.
+
+## Results
+
+Results of running Monkey Agents are:
+ - A map which displays how much of the network attacker can see, services accessible and potential propagation routes.
+ - Security report, which displays security issues Monkey Agents found and/or exploited.
+ - Mitre ATT&CK report, which displays the outcomes of ATT&CK techniques Monkey Agents tried to use.
+ - Zero Trust report, which displays violations of Zero Trust principles that Agents found.
+ 
+More in depth description of reports generated can be found in [reports documentation page](/reports)
 
 ## Getting Started
 
