@@ -9,7 +9,7 @@ tags: ["setup", "reference", "windows", "linux"]
 
 The Infection Monkey project supports many popular OSes (but we are always interested in supporting more).
 
-The Infection Monkey agent has been tested to run on the following operating systems (on x64 architecture):
+The Infection Monkey agent has been tested to run on the following operating systems (on the x86_64 architecture):
 
 ### Agent support
 
@@ -46,7 +46,7 @@ We also provide a Dockerfile on our [website](http://infectionmonkey.com/) that 
 
 ### Old machine bootloader
 
-Some **older machines** still have partial compatibility and will be exploited and reported, but the Infection Monkey agent can't run on them. In these cases, old machine bootloader (a small c program) will be run, which reports some minor info like network interface configuration, GLIBC version, OS, etc.
+Some **older machines** still have partial compatibility and will be exploited and reported, but the Infection Monkey agent can't run on them. In these cases, old machine bootloader (a small C program) will be run, which reports some minor info like network interface configuration, GLIBC version, OS, etc.
 
 **Old machine bootloader** also has a GLIBC 2.14+ requirement for Linux because the bootloader is included in the Pyinstaller bootloader, which uses Python 3.7 that in turn requires GLIBC 2.14+. If you think partial support for older machines is important, don't hesitate to open a new issue about it.
 
@@ -61,4 +61,4 @@ Some **older machines** still have partial compatibility and will be exploited a
 - Ubuntu 14+
 - **Windows XP/Server 2003+**
 
-[^1]: The GLIBC >= 2.14 requirement exists because the Infection Monkey was built using this GLIBC version, and GLIBC is not backward compatible. We are also limited to the oldest GLIBC version compatible with Ptyhon 3.7.
+[^1]: The GLIBC >= 2.14 requirement exists because the Infection Monkey was built using this GLIBC version, and GLIBC is not backward compatible. We are also limited to the oldest GLIBC version compatible with Python 3.7.
