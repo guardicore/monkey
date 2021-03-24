@@ -25,12 +25,12 @@ Fingerprinters are modules that collect server information from a specific victi
 
 The currently implemented Fingerprint modules are:
 
-1. [`SMBFinger`][smb-finger] - Fingerprints will target machines over SMB and extract the computer name and OS version.
-2. [`SSHFinger`][ssh-finger] - Fingerprints will target machines over SSH (port 22) and extract the computer version and SSH banner.
-3. [`PingScanner`][ping-scanner] - Fingerprints will use the machine's TTL to differentiate between Linux and Windows hosts.
-4. [`HTTPFinger`][http-finger] - Fingerprints over HTTP/HTTPS, using the ports listed in `HTTP_PORTS` in the configuration, will return the server type and if it supports SSL.
-5. [`MySQLFinger`][mysql-finger] - Fingerprints over MySQL (port 3306) will extract MySQL banner info - version, major/minor/build and capabilities.
-6. [`ElasticFinger`][elastic-finger] - Fingerprints over ElasticSearch (port 9200) will extract the cluster name, node name and node version.
+1. [`SMBFinger`][smb-finger] - Fingerprints target machines over SMB and extracts the computer name and OS version.
+2. [`SSHFinger`][ssh-finger] - Fingerprints target machines over SSH (port 22) and extracts the computer version and SSH banner.
+3. [`PingScanner`][ping-scanner] - Fingerprints target machine's TTL to differentiate between Linux and Windows hosts.
+4. [`HTTPFinger`][http-finger] - Detects HTTP/HTTPS services, using the ports listed in `HTTP_PORTS` in the configuration, will return the server type and if it supports SSL.
+5. [`MySQLFinger`][mysql-finger] - Fingerprints MySQL (port 3306) and will extract MySQL banner info - version, major/minor/build and capabilities.
+6. [`ElasticFinger`][elastic-finger] - Fingerprints ElasticSearch (port 9200) will extract the cluster name, node name and node version.
 
 ## Adding a scanner/fingerprinter
 
