@@ -26,6 +26,7 @@ STANDARD_WITH_CREDENTIALS = os.path.join(
 WITH_DATA_DIR = os.path.join(TEST_RESOURCES_DIR, "server_config_with_data_dir.json")
 WITH_DATA_DIR_HOME = os.path.join(TEST_RESOURCES_DIR, "server_config_with_data_dir_home.json")
 
+
 @pytest.fixture
 def config_file(tmpdir):
     return os.path.join(tmpdir, "test_config.json")

@@ -6,10 +6,6 @@ gevent_monkey.patch_all()
 
 import json  # noqa: E402
 
-from monkey_island.cc.consts import (
-    DEFAULT_SERVER_CONFIG_PATH,
-    DEFAULT_LOGGER_CONFIG_PATH,
-)  # noqa: E402
 from monkey_island.cc.island_logger import json_setup_logging  # noqa: E402
 
 
