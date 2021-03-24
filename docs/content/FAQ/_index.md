@@ -7,14 +7,14 @@ pre: "<i class='fas fa-question'></i> "
 
 Below are some of the most common questions we receive about the Infection Monkey. If the answer you're looking for isn't here, talk with us [on our Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU), email us at [support@infectionmonkey.com](mailto:support@infectionmonkey.com) or [open an issue on GitHub](https://github.com/guardicore/monkey).
 
-- [Where can I get the latest version of the Infection Monkey? 📰](#where-can-i-get-the-latest-version-of-the-infection-monkey-)
+- [Where can I get the latest version of the Infection Monkey?](#where-can-i-get-the-latest-version-of-the-infection-monkey)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
 - [How do I reset the Monkey Island password?](#how-do-i-reset-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
 - [Where can I find the log files of the Infection Monkey agent and the Monkey Island server, and how can I read them?](#where-can-i-find-the-log-files-of-the-infection-monkey-agent-and-the-monkey-island-and-how-can-i-read-them)
-  - [Monkey Island](#monkey-island)
-  - [Monkey agent](#monkey-agent)
+  - [Monkey Island server](#monkey-island-server)
+  - [Infection Monkey agent](#infection-monkey-agent)
 - [Running the Infection Monkey in a production environment](#running-the-infection-monkey-in-a-production-environment)
   - [How much of a footprint does the Infection Monkey leave?](#how-much-of-a-footprint-does-the-infection-monkey-leave)
   - [What's the Infection Monkey's impact on system resources usage?](#whats-the-infection-monkeys-impact-on-system-resources-usage)
@@ -24,9 +24,9 @@ Below are some of the most common questions we receive about the Infection Monke
 - [After I've set up Monkey Island, how can I execute the Infection Monkey?](#after-ive-set-up-monkey-island-how-can-i-execute-the-infection-monkey-agent)
 - [How can I make the Infection Monkey agents propagate “deeper” into the network?](#how-can-i-make-the-infection-monkey-agent-propagate-deeper-into-the-network)
 - [What if the report returns a blank screen?](#what-if-the-report-returns-a-blank-screen)
-- [How can I get involved with the project? 👩‍💻👨‍💻](#how-can-i-get-involved-with-the-project-)
+- [How can I get involved with the project?](#how-can-i-get-involved-with-the-project)
 
-## Where can I get the latest version of the Infection Monkey? 📰
+## Where can I get the latest version of the Infection Monkey?
 
 For the latest **stable** release, visit [our downloads page](https://www.guardicore.com/infectionmonkey/#download). **This is the recommended and supported version**!
 
@@ -34,13 +34,13 @@ If you want to see what has changed between versions, refer to the [releases pag
 
 ## How long does a single Infection Monkey agent run? Is there a time limit?
 
-The Infection Monkey agent shuts off either when it can't find new victims or it exceeded the quota of victims as defined in the configuration.
+The Infection Monkey agent shuts off either when it can't find new victims or it has exceeded the quota of victims as defined in the configuration.
 
 ## How do I reset the Monkey Island password?
 
-When you first access the Monkey Island server, you'll be prompted to create an account. If you forgot the credentials you entered, or just want to change them, you need to alter the `server_config.json` file manually.
+When you first access the Monkey Island server, you'll be prompted to create an account. If you forget the credentials you entered, or just want to change them, you need to alter the `server_config.json` file manually.
 
-On Linux, this file is located in `/var/monkey/monkey_island/cc/server_config.json`. On Windows, it's based on your install directory (typically it is `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file leaving the **deployment option unchanged** (it might be "VMware" or "Linux" in your case):
+On Linux, this file is located at `/var/monkey/monkey_island/cc/server_config.json`. On Windows, it's based on your install directory (typically it is `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file leaving the **deployment option unchanged** (it might be "VMware" or "Linux" in your case):
 
 ```json
 {
@@ -64,7 +64,7 @@ If internet access is available, the Infection Monkey will use the internet for 
 - To check for updates.
 - To check if machines can reach the internet.
 
-### Which queries does the Infection Monkey perform to the internet exactly?
+### Exactly what internet queries does the Infection Monkey perform?
 
 The Monkey performs queries out to the Internet on two separate occasions:
 
@@ -89,7 +89,7 @@ The log enables you to see which requests were requested from the server and ext
 2019-07-23 10:52:24,027 - report.py:580 - get_domain_issues() - INFO - Domain issues generated for reporting
 ```
 
-### The Infection Monkey agent
+### Infection Monkey agent
 
 The Infection Monkey agent log file can be found in the following paths on machines where it was executed:
 
@@ -140,7 +140,7 @@ Sensitive data such as passwords, SSH keys and hashes are stored on the Monkey I
 
 When you reset the Monkey Island configuration, the Monkey Island wipes the information.
 
-### How stable are the exploitations used by the Infection Monkey? Will the Infection Monkey crash my systems with its exploits?
+### How stable are the exploits used by the Infection Monkey? Will the Infection Monkey crash my systems with its exploits?
 
 The Infection Monkey does not use any exploits or attacks that may impact the victim system.
 
@@ -152,7 +152,7 @@ See our detailed [getting started](../content/usage/getting-started) guide.
 
 ## How can I make the Infection Monkey agent propagate “deeper” into the network?
 
-If you wish to simulate a very “deep” attack into your network, you can increase the *propagation depth* parameter in the configuration. This parameter tells the Infection Monkey how far to propagate into your network from the “patient zero” machine, from which it was launched manually.
+If you wish to simulate a very “deep” attack into your network, you can increase the *propagation depth* parameter in the configuration. This parameter tells the Infection Monkey how far to propagate into your network from the “patient zero” machine.
 
 To do this, change the *Distance from Island* parameter in the “Basic - Network” tab of the configuration:
 
@@ -165,9 +165,9 @@ This is sometimes caused when Monkey Island is installed with an old version of 
 - **Linux**: First, uninstall the current version with `sudo apt uninstall mongodb` and then install the latest version using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/).
 - **Windows**: First, remove the MongoDB binaries from the `monkey\monkey_island\bin\mongodb` folder. Download and install the latest version of MongoDB using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/). After installation is complete, copy the files from the `C:\Program Files\MongoDB\Server\4.2\bin` folder to the `monkey\monkey_island\bin\mongodb folder`. Try to run the Monkey Island again and everything should work.
 
-## How can I get involved with the project? 👩‍💻👨‍💻
+## How can I get involved with the project?
 
-The Monkey is an open-source project, and we weclome contributions and contributors. Check out the [contribution documentation](../development) for more information.
+The Monkey is an open-source project, and we welcome contributions and contributors. Check out the [contribution documentation](../development) for more information.
 
 ## About the project 🐵
 
