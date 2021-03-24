@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 MAJOR = "1"
-MINOR = "9"
+MINOR = "10"
 PATCH = "0"
 build_file_path = Path(__file__).parent.joinpath("BUILD")
 with open(build_file_path, "r") as build_file:
