@@ -69,13 +69,14 @@ class FileUpload(flask_restful.Resource):
             PBA_LINUX_FILENAME_PATH if file_type == "PBAlinux" else PBA_WINDOWS_FILENAME_PATH
         )
         filename = ConfigService.get_config_value(filename_path)
-        file_path = Path(env_singleton.env.get_config().data_dir_abs_path).joinpath(filename)
-        try:
-            if os.path.exists(file_path):
-                os.remove(file_path)
-            ConfigService.set_config_value(filename_path, "")
-        except OSError as e:
-            LOG.error("Can't remove previously uploaded post breach files: %s" % e)
+        if filename:
+            file_path = Path(env_singleton.env.get_config().data_dir_abs_path).joinpath(filename)
+            try:
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                ConfigService.set_config_value(filename_path, "")
+            except OSError as e:
+                LOG.error("Can't remove previously uploaded post breach files: %s" % e)
 
         return {}
 
