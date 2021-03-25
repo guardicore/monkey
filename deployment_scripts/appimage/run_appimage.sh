@@ -8,6 +8,13 @@ configure_default_logging() {
     fi
 }
 
+configure_default_server() {
+    if [ ! -f $DOT_MONKEY/server_config.json ]; then
+        cp $APPDIR/usr/src/monkey_island/cc/server_config.json.standard $DOT_MONKEY/server_config.json
+    fi
+}
+
+
 
 # Detecting command that calls python 3.7
 python_cmd=""
@@ -27,6 +34,7 @@ DB_DIR=$DOT_MONKEY/db
 mkdir -p $DB_DIR
 
 configure_default_logging
+configure_default_server
 
 cd $APPDIR/usr/src
 ./monkey_island/bin/mongodb/bin/mongod --dbpath $DB_DIR &
