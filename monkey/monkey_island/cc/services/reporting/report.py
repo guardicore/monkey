@@ -19,8 +19,10 @@ from monkey_island.cc.services.configuration.utils import get_config_network_seg
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum, \
     ExploiterDescriptor
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing import CredentialType
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing import ExploiterReportInfo
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.cred_exploit import \
+    CredentialType
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.exploit import \
+    ExploiterReportInfo
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_regular_report
@@ -544,6 +546,7 @@ class ReportService:
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
+        issue_set = ReportService.get_issue_set(issues, config_users, config_passwords)
         cross_segment_issues = ReportService.get_cross_segment_issues()
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
 
@@ -561,7 +564,7 @@ class ReportService:
                         'config_scan': ReportService.get_config_scan(),
                         'monkey_start_time': ReportService.get_first_monkey_time().strftime("%d/%m/%Y %H:%M:%S"),
                         'monkey_duration': ReportService.get_monkey_duration(),
-                        'issues': ReportService.get_issue_set(issues, config_users, config_passwords),
+                        'issues': issue_set,
                         'cross_segment_issues': cross_segment_issues
                     },
                 'glance':
@@ -588,6 +591,32 @@ class ReportService:
         mongo.db.report.insert_one(ReportService.encode_dot_char_before_mongo_insert(report))
 
         return report
+
+    @staticmethod
+    def get_issues():
+        ISSUE_GENERATORS = [
+            ReportService.get_exploits,
+            ReportService.get_tunnels,
+            ReportService.get_island_cross_segment_issues,
+            ReportService.get_azure_issues,
+            PTHReportService.get_duplicated_passwords_issues,
+            PTHReportService.get_strong_users_on_crit_issues
+        ]
+
+        issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
+
+        issues_dict = {}
+        for issue in issues:
+            if issue.get('is_local', True):
+                machine = issue.get('machine').upper()
+                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get('machine'))
+                if machine not in issues_dict:
+                    issues_dict[machine] = []
+                if aws_instance_id:
+                    issue['aws_instance_id'] = aws_instance_id
+                issues_dict[machine].append(issue)
+        logger.info('Issues generated for reporting')
+        return issues_dict
 
     @staticmethod
     def encode_dot_char_before_mongo_insert(report_dict):
