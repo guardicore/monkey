@@ -25,7 +25,7 @@ Architecturally, Infection Monkey is comprised of two components:
 * Monkey Island Server (Island for short) - a C&C web server which provides a GUI for users and interacts with the Monkey Agents.
 
 The user can run the Monkey Agent on the Island server machine or distribute Monkey Agent binaries on the network manually. Based on 
-the configuration parameters, Monkey Agents scan, propagate and simulate attacker's behavior on the local network. All of the 
+the configuration parameters, Monkey Agents scan, propagate and simulate an attacker's behavior on the local network. All of the 
 information gathered about the network is aggregated in the Island Server and displayed once all Monkey Agents are finished.
 
 ## Results
