@@ -32,30 +32,23 @@ You can use the OVA in one of two modes:
    prompt:
 
     ```sh
-    sudo nano /etc/netplan/50-cloud-init.yaml
+    sudo nano /etc/netplan/00-installer-config.yaml
     ```
 
     Make the following changes:
 
     ```diff
-      # This file is generated from information provided by
-      # the datasource.  Changes to it will not persist across an instance.
-      # To disable cloud-init's network configuration capabilities, write a file
-      # /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
-      # network: {config: disabled}
-      network:
-          version: 2
-          ethernets:
-              ens192:
-    -             dhcp4: true
-    -             dhcp-identifier: mac
-    +             dhcp4: false
-    +             addresses: [XXX.XXX.XXX.XXX/24]
-    +             gateway4: YYY.YYY.YYY.YYY
-                  nameservers:
-                       search: [gc.guardicore.com]
-    -                  addresses: [10.0.0.8, 10.0.0.5]
-    +                  addresses: [1.1.1.1]
+     # This is the network config written by 'subiquity'
+     network:
+       ethernets:
+         ens160:
+    -      dhcp4: true
+    +      dhcp4: false
+    +      addresses: [XXX.XXX.XXX.XXX/24]
+    +      gateway4: YYY.YYY.YYY.YYY
+    +      nameservers:
+    +        addresses: [1.1.1.1]
+       version: 2
     ```
 
     Replace `XXX.XXX.XXX.XXX` with the desired IP addess of the VM. Replace
