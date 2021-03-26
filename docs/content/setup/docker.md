@@ -14,11 +14,11 @@ To extract the `tar.gz` file, run `tar -xvzf monkey-island-docker.tar.gz`.
 Once you've extracted the container from the tar.gz file, run the following commands:
 
 ```sh
-sudo docker load -i dk.monkeyisland.1.9.0.tar
-sudo docker pull mongo
+sudo docker load -i dk.monkeyisland.1.10.0.tar
+sudo docker pull mongo:4.2
 sudo mkdir -p /var/monkey-mongo/data/db
-sudo docker run --name monkey-mongo --network=host -v /var/monkey-mongo/data/db:/data/db -d mongo
-sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:1.9.0
+sudo docker run --name monkey-mongo --network=host -v /var/monkey-mongo/data/db:/data/db -d mongo:4.2
+sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:1.10.0
 ```
 
 ## Upgrading
