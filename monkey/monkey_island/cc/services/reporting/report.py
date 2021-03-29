@@ -264,7 +264,7 @@ class ReportService:
         return exploiter_info
 
     @staticmethod
-    def get_exploits():
+    def get_exploits() -> dict:
         query = [{'$match': {'telem_category': 'exploit', 'data.result': True}},
                  {'$group': {'_id': {'ip_address': '$data.machine.ip_addr'},
                              'data': {'$first': '$$ROOT'},
@@ -274,7 +274,7 @@ class ReportService:
         for exploit in mongo.db.telemetry.aggregate(query):
             new_exploit = ReportService.process_exploit(exploit)
             if new_exploit not in exploits:
-                exploits.append(new_exploit)
+                exploits.append(new_exploit.__dict__)
         return exploits
 
     @staticmethod
@@ -594,6 +594,7 @@ class ReportService:
 
     @staticmethod
     def get_issues():
+        # Todo refactor these into separate files with a method signature -> dict
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
             ReportService.get_tunnels,
