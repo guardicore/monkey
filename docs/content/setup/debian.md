@@ -8,33 +8,48 @@ disableToc: false
 tags: ["setup", "debian", "linux"]
 ---
 
+
+## Supported Distros
+
+This Debian package has been tested on Ubuntu Bionic 18.04 LTS and Ubuntu Focal 20.04 LTS.
+
 ## Deployment
 
-To extract the `tar.gz` file, run `tar -xvzf monkey-island-debian.tar.gz`.
+1. Update your package list by running:
+    ```sh
+    sudo apt update
+    ```
+1. If you are using Ubuntu Focal 20.04, run the following commands to install
+   Python 3.7:
+    ```sh
+    sudo apt install software-properties-common
+    sudo add-apt-repository ppa:deadsnakes/ppa
+    sudo apt install python3.7 python3.7-dev
+    ```
+1. Extract the tarball by running:
+    ```sh
+    tar -xvzf monkey-island-debian.tgz
+    ```
+1. Install the Monkey Island Debian package:
+    ```sh
+    sudo dpkg -i monkey_island.deb  # this might print errors
+    ```
+1. If, at this point, you receive dpkg errors that look like this:
 
-Once you've extracted the package, deploy it using run the following commands:
+    ```sh
+    dpkg: error processing package gc-monkey-island (--install):
+        dependency problems - leaving unconfigured
+    Errors were encountered while processing:
+        gc-monkey-island
+    ```
 
-```sh
-sudo apt update
-sudo dpkg -i monkey_island.deb  # this might print errors
-```
+    It just means that not all dependencies were pre-installed on your system.
+    That's no problem! Just run the following command, which will install all
+    dependencies, and then install the Monkey Island:
 
-If, at this point, you receive dpkg printed errors that look like this:
-
-```sh
-dpkg: error processing package gc-monkey-island (--install):
-    dependency problems - leaving unconfigured
-Errors were encountered while processing:
-    gc-monkey-island
-```
-
-It just means that not all dependencies were pre-installed on your system.
-That's no problem! Just run the following command, which will install all
-dependencies, and then install the Monkey Island:
-
-```sh
-sudo apt install -f
-```
+    ```sh
+    sudo apt install -f
+    ```
 
 ## Troubleshooting
 
