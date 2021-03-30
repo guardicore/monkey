@@ -224,6 +224,8 @@ class ReportPageComponent extends AuthComponent {
     if (this.stillLoadingDataFromServer()) {
       content = <ReportLoader loading={true}/>;
     } else {
+
+      console.log(this.state.report);
       content =
         <div>
           {this.generateReportOverviewSection()}
@@ -430,22 +432,28 @@ class ReportPageComponent extends AuthComponent {
         </h3>
         <div>During this simulated attack the Monkey uncovered
           {
-            this.state.report.overview.issues.length > 0 ?
-              <>
-             <span
-               className="badge badge-warning">
-                    {this.state.report.overview.issues.length} threats</span>:
-
-              </>
-              :
-              <>
-          <span
-            className="badge badge-success">0 threats</span>.
-              </>
+            <>
+             <span className="badge badge-warning">
+               {threatCount} threats
+             </span>:
+            </>
           }
         </div>
       </div>)
   }
+
+  countImmediateThreats() {
+    let threatCount = 0;
+    let issues = this.state.report.overview.issues;
+
+    for(let i=0; i < issues.length; i++) {
+      if (this.IssueDescriptorEnum[issues[i]][this.issueContentTypes.TYPE] === this.issueTypes.DANGER) {
+        threatCount++;
+      }
+    }
+    return threatCount;
+  }
+
 
   generateReportRecommendationsSection() {
     return (
@@ -543,8 +551,9 @@ class ReportPageComponent extends AuthComponent {
   generateIssue = (issue) => {
     let issueDescriptor = this.IssueDescriptorEnum[issue.type];
 
-    let reportFnc = (issue) => {};
-    if(issue.hasOwnProperty('credential_type')) {
+    let reportFnc = (issue) => {
+    };
+    if (issue.hasOwnProperty('credential_type')) {
       reportFnc = issueDescriptor[this.issueContentTypes.REPORT][issue.credential_type];
     } else {
       reportFnc = issueDescriptor[this.issueContentTypes.REPORT];
