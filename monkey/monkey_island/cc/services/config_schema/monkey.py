@@ -11,33 +11,39 @@ MONKEY = {
             "type": "object",
             "properties": {
                 "custom_PBA_linux_cmd": {
-                    "title": "Linux post breach command",
+                    "title": "Linux post-breach command",
                     "type": "string",
                     "default": "",
-                    "description": "Linux command to be executed after breaching."
+                    "description": "Command to be executed after breaching. "
+                                   "Use this field to run custom commands or execute uploaded "
+                                   "files on exploited machines.\nExample: "
+                                   "\"chmod +x ./my_script.sh; ./my_script.sh ; rm ./my_script.sh\""
                 },
                 "PBA_linux_file": {
-                    "title": "Linux post breach file",
+                    "title": "Linux post-breach file",
                     "type": "string",
                     "format": "data-url",
-                    "description": "File to be executed after breaching. "
-                                   "If you want custom execution behavior, "
-                                   "specify it in 'Linux post breach command' field. "
+                    "description": "File to be uploaded after breaching. "
+                                   "Use the 'Linux post-breach command' field to "
+                                   "change permissions, run, or delete the file. "
                                    "Reference your file by filename."
                 },
                 "custom_PBA_windows_cmd": {
-                    "title": "Windows post breach command",
+                    "title": "Windows post-breach command",
                     "type": "string",
                     "default": "",
-                    "description": "Windows command to be executed after breaching."
+                    "description": "Command to be executed after breaching. "
+                                   "Use this field to run custom commands or execute uploaded "
+                                   "files on exploited machines.\nExample: "
+                                   "\"my_script.bat & del my_script.bat\""
                 },
                 "PBA_windows_file": {
-                    "title": "Windows post breach file",
+                    "title": "Windows post-breach file",
                     "type": "string",
                     "format": "data-url",
-                    "description": "File to be executed after breaching. "
-                                   "If you want custom execution behavior, "
-                                   "specify it in 'Windows post breach command' field. "
+                    "description": "File to be uploaded after breaching. "
+                                   "Use the 'Windows post-breach command' field to "
+                                   "change permissions, run, or delete the file. "
                                    "Reference your file by filename."
                 },
                 "PBA_windows_filename": {

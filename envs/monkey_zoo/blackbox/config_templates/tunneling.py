@@ -1,8 +1,11 @@
-from envs.monkey_zoo.blackbox.island_configs.base_template import BaseTemplate
+from copy import copy
+
+from envs.monkey_zoo.blackbox.config_templates.base_template import BaseTemplate
+from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 
 
-class Tunneling(BaseTemplate):
-    config_values = BaseTemplate.config_values
+class Tunneling(ConfigTemplate):
+    config_values = copy(BaseTemplate.config_values)
 
     config_values.update({
         "basic.exploiters.exploiter_classes": ["SmbExploiter",
@@ -13,6 +16,8 @@ class Tunneling(BaseTemplate):
                                                  "10.2.1.10",
                                                  "10.2.0.11",
                                                  "10.2.0.12"],
+        "basic_network.scope.depth": 3,
+        "internal.general.keep_tunnel_open_time": 180,
         "basic.credentials.exploit_password_list": ["Password1!",
                                                     "3Q=(Ge(+&w]*",
                                                     "`))jU7L(w}",

@@ -1,4 +1,4 @@
-from envs.monkey_zoo.blackbox.island_configs.config_template import ConfigTemplate
+from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 
 
 class Performance(ConfigTemplate):

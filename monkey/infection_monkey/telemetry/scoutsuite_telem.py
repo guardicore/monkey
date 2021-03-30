@@ -1,5 +1,5 @@
-from common.cloud.scoutsuite.ScoutSuite.output.result_encoder import ScoutJsonEncoder
-from common.cloud.scoutsuite.ScoutSuite.providers.base.provider import BaseProvider
+from ScoutSuite.output.result_encoder import ScoutJsonEncoder
+from ScoutSuite.providers.base.provider import BaseProvider
 from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 

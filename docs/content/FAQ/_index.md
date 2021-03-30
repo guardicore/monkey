@@ -7,7 +7,7 @@ pre: "<i class='fas fa-question'></i> "
 
 Here are some of the most common questions we receive about the Infection Monkey. If the answer you're looking for isn't here, talk with us [on our Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU), email us at [support@infectionmonkey.com](mailto:support@infectionmonkey.com) or [open an issue on GitHub](https://github.com/guardicore/monkey).
 
-- [Where can I get the latest Monkey version? 📰](#where-can-i-get-the-latest-monkey-version)
+- [Where can I get the latest Monkey version?](#where-can-i-get-the-latest-monkey-version)
 - [How long does a single Monkey run for? Is there a time limit?](#how-long-does-a-single-monkey-run-for-is-there-a-time-limit)
 - [How to reset the password?](#how-to-reset-the-password)
 - [Should I run the Monkey continuously?](#should-i-run-the-monkey-continuously)
@@ -24,9 +24,9 @@ Here are some of the most common questions we receive about the Infection Monkey
 - [After I've set up Monkey Island, how can I execute the Monkey?](#after-ive-set-up-monkey-island-how-can-i-execute-the-monkey)
 - [How can I make the monkey propagate “deeper” into the network?](#how-can-i-make-the-monkey-propagate-deeper-into-the-network)
 - [The report returns a blank screen](#the-report-returns-a-blank-screen)
-- [How can I get involved with the project? 👩‍💻👨‍💻](#how-can-i-get-involved-with-the-project)
+- [How can I get involved with the project?](#how-can-i-get-involved-with-the-project)
 
-## Where can I get the latest Monkey version? 📰
+## Where can I get the latest Monkey version?
 
 For the latest **stable** release for users, visit [our downloads page](https://www.guardicore.com/infectionmonkey/#download). **This is the recommended and supported version**!
 
@@ -167,7 +167,7 @@ This is sometimes caused when Monkey Island is installed with an old version of 
 - **Linux**: First, uninstall the current version with `sudo apt uninstall mongodb` and then install the latest version using the [official mongodb manual](https://docs.mongodb.com/manual/administration/install-community/).
 - **Windows**: First, remove the MongoDB binaries from the `monkey\monkey_island\bin\mongodb` folder. Download and install the latest version of mongodb using the [official mongodb manual](https://docs.mongodb.com/manual/administration/install-community/). After installation is complete, copy the files from the `C:\Program Files\MongoDB\Server\4.2\bin` folder to the `monkey\monkey_island\bin\mongodb folder`. Try to run the Island again and everything should work.
 
-## How can I get involved with the project? 👩‍💻👨‍💻
+## How can I get involved with the project?
 
 The Monkey is an open-source project, and we weclome contributions and contributors. Check out the [contribution documentation](../development) for more information.
 

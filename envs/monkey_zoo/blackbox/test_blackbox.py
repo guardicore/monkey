@@ -7,24 +7,27 @@ from typing_extensions import Type
 
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import \
     CommunicationAnalyzer
+from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import \
     IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import \
     MonkeyIslandClient
-from envs.monkey_zoo.blackbox.island_configs.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.island_configs.elastic import Elastic
-from envs.monkey_zoo.blackbox.island_configs.hadoop import Hadoop
-from envs.monkey_zoo.blackbox.island_configs.mssql import Mssql
-from envs.monkey_zoo.blackbox.island_configs.performance import Performance
-from envs.monkey_zoo.blackbox.island_configs.shellshock import ShellShock
-from envs.monkey_zoo.blackbox.island_configs.smb_mimikatz import SmbMimikatz
-from envs.monkey_zoo.blackbox.island_configs.smb_pth import SmbPth
-from envs.monkey_zoo.blackbox.island_configs.ssh import Ssh
-from envs.monkey_zoo.blackbox.island_configs.struts2 import Struts2
-from envs.monkey_zoo.blackbox.island_configs.tunneling import Tunneling
-from envs.monkey_zoo.blackbox.island_configs.weblogic import Weblogic
-from envs.monkey_zoo.blackbox.island_configs.wmi_mimikatz import WmiMimikatz
-from envs.monkey_zoo.blackbox.island_configs.wmi_pth import WmiPth
+from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
+from envs.monkey_zoo.blackbox.config_templates.drupal import Drupal
+from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
+from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
+from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
+from envs.monkey_zoo.blackbox.config_templates.performance import Performance
+from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
+from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
+from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
+from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
+from envs.monkey_zoo.blackbox.config_templates.struts2 import Struts2
+from envs.monkey_zoo.blackbox.config_templates.tunneling import Tunneling
+from envs.monkey_zoo.blackbox.config_templates.weblogic import Weblogic
+from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
+from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
+from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import \
     TestLogsHandler
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
@@ -44,8 +47,10 @@ DEFAULT_TIMEOUT_SECONDS = 5*60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 GCP_TEST_MACHINE_LIST = ['sshkeys-11', 'sshkeys-12', 'elastic-4', 'elastic-5', 'hadoop-2', 'hadoop-3', 'mssql-16',
                          'mimikatz-14', 'mimikatz-15', 'struts2-23', 'struts2-24', 'tunneling-9', 'tunneling-10',
-                         'tunneling-11', 'tunneling-12', 'weblogic-18', 'weblogic-19', 'shellshock-8', 'zerologon-25']
+                         'tunneling-11', 'tunneling-12', 'weblogic-18', 'weblogic-19', 'shellshock-8', 'zerologon-25',
+                         'drupal-28']
 LOG_DIR_PATH = "./logs"
+logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
@@ -138,6 +143,9 @@ class TestMonkeyBlackbox:
     def test_smb_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, SmbPth, "SMB_PTH")
 
+    def test_drupal_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Drupal, "Drupal_exploiter")
+
     def test_elastic_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Elastic, "Elastic_exploiter")
 
@@ -158,6 +166,22 @@ class TestMonkeyBlackbox:
 
     def test_wmi_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, WmiPth, "WMI_PTH")
+
+    def test_zerologon_exploiter(self, island_client):
+        test_name = "Zerologon_exploiter"
+        expected_creds = ["Administrator",
+                          "aad3b435b51404eeaad3b435b51404ee",
+                          "2864b62ea4496934a5d6e86f50b834a5"]
+        raw_config = IslandConfigParser.get_raw_config(Zerologon, island_client)
+        analyzer = ZerologonAnalyzer(island_client, expected_creds)
+        log_handler = TestLogsHandler(test_name, island_client, TestMonkeyBlackbox.get_log_dir_path())
+        ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            raw_config=raw_config,
+            analyzers=[analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS,
+            log_handler=log_handler).run()
 
     @pytest.mark.skip(reason="Perfomance test that creates env from fake telemetries is faster, use that instead.")
     def test_report_generation_performance(self, island_client, quick_performance_tests):

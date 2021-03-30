@@ -7,6 +7,7 @@ from werkzeug.exceptions import NotFound
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
+from monkey_island.cc.resources.test.telemetry_test import TelemetryTest
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
@@ -145,9 +146,11 @@ def init_api_resources(api):
     api.add_resource(ScoutSuiteAuth, '/api/scoutsuite_auth/<string:provider>')
     api.add_resource(AWSKeys, '/api/aws_keys')
 
+    # Resources used by black box tests
     api.add_resource(MonkeyTest, '/api/test/monkey')
     api.add_resource(ClearCaches, '/api/test/clear_caches')
     api.add_resource(LogTest, '/api/test/log')
+    api.add_resource(TelemetryTest, '/api/test/telemetry')
 
 
 def init_app(mongo_url):

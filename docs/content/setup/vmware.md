@@ -16,8 +16,9 @@ tags: ["setup", "vmware"]
 1. Log in to the machine with the following credentials:
    1. Username: **monkeyuser**
    1. Password: **Noon.Earth.Always**
-1. It's recommended you change the machine passwords by running the following
-   commands: `sudo passwd monkeyuser`, `sudo passwd root`.
+1. For security purposes, it's recommended that you change the machine
+   passwords by running the following commands: `sudo passwd monkeyuser`, `sudo
+   passwd root`.
 
 ## OVA network modes
 
@@ -26,36 +27,42 @@ You can use the OVA in one of two modes:
 1. In a network with the DHCP configured — In this case, the Monkey Island will
    automatically query and receive an IP address from the network.
 1. With a static IP address — In this case, you should log in to the VM console
-   with the username `root` and the password `G3aJ9szrvkxTmfAG`. After logging
-   in, edit the interfaces file by entering the following command in the
+   with the username `monkeyuser` and the password `Noon.Earth.Always`. After logging
+   in, edit the Netplan configuration by entering the following command in the
    prompt:
 
     ```sh
-    sudo nano /etc/network/interfaces
+    sudo nano /etc/netplan/00-installer-config.yaml
     ```
 
-    Change the lines:
+    Make the following changes:
 
-    ```sh
-    auto ens160
-    iface ens160 inet dhcp
+    ```diff
+     # This is the network config written by 'subiquity'
+     network:
+       ethernets:
+         ens160:
+    -      dhcp4: true
+    +      dhcp4: false
+    +      addresses: [XXX.XXX.XXX.XXX/24]
+    +      gateway4: YYY.YYY.YYY.YYY
+    +      nameservers:
+    +        addresses: [1.1.1.1]
+       version: 2
     ```
 
-    to the following:
-
-    ```sh
-    auto ens160
-    iface ens160 inet static
-    address AAA.BBB.CCC.DDD
-    netmask XXX.XXX.XXX.XXX
-    gateway YYY.YYY.YYY.YYY
-    ```
+    Replace `XXX.XXX.XXX.XXX` with the desired IP addess of the VM. Replace
+    `YYY.YYY.YYY.YYY` with the default gateway.
 
     Save the changes then run the command:
 
     ```sh
-    sudo ifdown ens160 && ifup ens160
+    sudo netplan apply
     ```
+
+    If this configuration does not suit your needs, see
+    https://netplan.io/examples/ for more information about how to configure
+    Netplan.
 
 ## Upgrading
 

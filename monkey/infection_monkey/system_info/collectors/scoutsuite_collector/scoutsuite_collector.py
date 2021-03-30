@@ -1,8 +1,9 @@
 import logging
 from typing import Union
 
-import infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite_api as scoutsuite_api
-from common.cloud.scoutsuite.ScoutSuite.providers.base.provider import BaseProvider
+import ScoutSuite.api_run
+from ScoutSuite.providers.base.provider import BaseProvider
+
 from common.cloud.scoutsuite_consts import CloudProviders
 from common.utils.exceptions import ScoutSuiteScanError
 from infection_monkey.config import WormConfiguration
@@ -22,10 +23,10 @@ def scan_cloud_security(cloud_type: CloudProviders):
 
 
 def run_scoutsuite(cloud_type: str) -> Union[BaseProvider, dict]:
-    return scoutsuite_api.run(provider=cloud_type,
-                              aws_access_key_id=WormConfiguration.aws_access_key_id,
-                              aws_secret_access_key=WormConfiguration.aws_secret_access_key,
-                              aws_session_token=WormConfiguration.aws_session_token)
+    return ScoutSuite.api_run.run(provider=cloud_type,
+                                  aws_access_key_id=WormConfiguration.aws_access_key_id,
+                                  aws_secret_access_key=WormConfiguration.aws_secret_access_key,
+                                  aws_session_token=WormConfiguration.aws_session_token)
 
 
 def send_scoutsuite_run_results(run_results: BaseProvider):

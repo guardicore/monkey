@@ -134,7 +134,9 @@ class MonkeyDrops(object):
                                                       'monkey_commandline': inner_monkey_cmdline}
 
         monkey_process = subprocess.Popen(monkey_cmdline, shell=True,
-                                          stdin=None, stdout=None, stderr=None,
+                                          stdin=subprocess.PIPE,
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE,
                                           close_fds=True, creationflags=DETACHED_PROCESS)
 
         LOG.info("Executed monkey process (PID=%d) with command line: %s",
@@ -145,6 +147,8 @@ class MonkeyDrops(object):
             LOG.warning("Seems like monkey died too soon")
 
     def cleanup(self):
+        LOG.info("Cleaning up the dropper")
+
         try:
             if (self._config['source_path'].lower() != self._config['destination_path'].lower()) and \
                     os.path.exists(self._config['source_path']) and \
@@ -166,5 +170,7 @@ class MonkeyDrops(object):
                         LOG.debug("Dropper source file '%s' is marked for deletion on next boot",
                                   self._config['source_path'])
                         T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
+
+            LOG.info("Dropper cleanup complete")
         except AttributeError:
             LOG.error("Invalid configuration options. Failing")
