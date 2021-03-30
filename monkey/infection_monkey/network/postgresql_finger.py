@@ -29,8 +29,11 @@ class PostgreSQLFinger(HostFinger):
                                 "SSL usage is forced.\n",
             'only_selected': "Only selected hosts can make connections (SSL or non-SSL).\n"
         }
-    RELEVANT_EX_SUBSTRINGS = ["password authentication failed",
-                              "entry for host"]  # "no pg_hba.conf entry for host" but filename may be diff
+    RELEVANT_EX_SUBSTRINGS =\
+        {
+            'no_auth': "password authentication failed",
+            'no_entry': "entry for host"  # "no pg_hba.conf entry for host" but filename may be diff
+        }
 
     def get_host_fingerprint(self, host):
         try:
@@ -45,7 +48,7 @@ class PostgreSQLFinger(HostFinger):
             try:
                 exception_string = str(ex)
 
-                if not self.is_relevant_exception(exception_string):
+                if not self._is_relevant_exception(exception_string):
                     return False
 
                 # all's well; start analyzing errors
@@ -57,8 +60,8 @@ class PostgreSQLFinger(HostFinger):
 
             return False
 
-    def is_relevant_exception(self, exception_string):
-        if not any(substr in exception_string for substr in self.RELEVANT_EX_SUBSTRINGS):
+    def _is_relevant_exception(self, exception_string):
+        if not any(substr in exception_string for substr in self.RELEVANT_EX_SUBSTRINGS.values()):
             # OperationalError due to some other reason - irrelevant exception
             return False
         return True
@@ -71,32 +74,10 @@ class PostgreSQLFinger(HostFinger):
         ssl_connection_details = []
         ssl_conf_on_server = self.is_ssl_configured(exceptions)
 
-        # SSL configured
-        if ssl_conf_on_server:
-            ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_conf'])
-            # SSL
-            ssl_selected_comms_only = False
-            if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
-                ssl_connection_details.append(self.CONNECTION_DETAILS['all_ssl'])
-            else:
-                ssl_connection_details.append(self.CONNECTION_DETAILS['selected_ssl'])
-                ssl_selected_comms_only = True
-            # non-SSL
-            if self.found_entry_for_host_but_pwd_auth_failed(exceptions[1]):
-                ssl_connection_details.append(self.CONNECTION_DETAILS['all_non_ssl'])
-            else:
-                if ssl_selected_comms_only:  # if only selected SSL allowed and only selected non-SSL allowed
-                    ssl_connection_details[-1] = self.CONNECTION_DETAILS['only_selected']
-                else:
-                    ssl_connection_details.append(self.CONNECTION_DETAILS['selected_non_ssl'])
-
-        # SSL not configured
-        else:
-            ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_not_conf'])
-            if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
-                ssl_connection_details.append(self.CONNECTION_DETAILS['all_non_ssl'])
-            else:
-                ssl_connection_details.append(self.CONNECTION_DETAILS['selected_non_ssl'])
+        if ssl_conf_on_server:  # SSL configured
+            self.get_connection_details_ssl_configured()
+        else:  # SSL not configured
+            self.get_connection_details_ssl_not_configured()
 
         host.services[self._SCANNED_SERVICE]['communication_encryption_details'] = ''.join(ssl_connection_details)
 
@@ -109,8 +90,35 @@ class PostgreSQLFinger(HostFinger):
         elif len(exceptions) == 2:  # SSL configured so checks for both
             return True
 
+    def get_connection_details_ssl_configured(self):
+        ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_conf'])
+        ssl_selected_comms_only = False
+
+        # check exception message for SSL connection
+        if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
+            ssl_connection_details.append(self.CONNECTION_DETAILS['all_ssl'])
+        else:
+            ssl_connection_details.append(self.CONNECTION_DETAILS['selected_ssl'])
+            ssl_selected_comms_only = True
+
+        # check exception message for non-SSL connection
+        if self.found_entry_for_host_but_pwd_auth_failed(exceptions[1]):
+            ssl_connection_details.append(self.CONNECTION_DETAILS['all_non_ssl'])
+        else:
+            if ssl_selected_comms_only:  # if only selected SSL allowed and only selected non-SSL allowed
+                ssl_connection_details[-1] = self.CONNECTION_DETAILS['only_selected']
+            else:
+                ssl_connection_details.append(self.CONNECTION_DETAILS['selected_non_ssl'])
+
+    def get_connection_details_ssl_not_configured(self):
+        ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_not_conf'])
+        if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
+            ssl_connection_details.append(self.CONNECTION_DETAILS['all_non_ssl'])
+        else:
+            ssl_connection_details.append(self.CONNECTION_DETAILS['selected_non_ssl'])
+
     @staticmethod
     def found_entry_for_host_but_pwd_auth_failed(exception):
-        if PostgreSQLFinger.RELEVANT_EX_SUBSTRINGS[0] in exception:
+        if PostgreSQLFinger.RELEVANT_EX_SUBSTRINGS['no_auth'] in exception:
             return True  # entry found in pg_hba.conf file but password authentication failed
         return False  # entry not found in pg_hba.conf file

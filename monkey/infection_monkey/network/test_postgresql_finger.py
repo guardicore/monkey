@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
-from infection_monkey.network.postgresql_fingerprint import PostgreSQLFinger
+from infection_monkey.network.postgresql_finger import PostgreSQLFinger
 
 IRRELEVANT_EXCEPTION_STRING = "This is an irrelevant exception string."
 
@@ -76,9 +76,9 @@ EXAMPLE_EXCEPTIONS_WITH_EXPECTED_RESULTS =\
 
 class TestPostgreSQLFinger(TestCase):
     def test_is_relevant_exception(self):
-        assert PostgreSQLFinger().is_relevant_exception(IRRELEVANT_EXCEPTION_STRING) is False
+        assert PostgreSQLFinger()._is_relevant_exception(IRRELEVANT_EXCEPTION_STRING) is False
         for exception_string in EXAMPLE_EXCEPTIONS_WITH_EXPECTED_RESULTS:
-            assert PostgreSQLFinger().is_relevant_exception(exception_string) is True
+            assert PostgreSQLFinger()._is_relevant_exception(exception_string) is True
 
     def test_analyze_operational_error(self):
         host = Mock(['services'])
