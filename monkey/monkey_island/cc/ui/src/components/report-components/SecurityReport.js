@@ -12,8 +12,6 @@ import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
-import WarningIcon from '../ui-components/WarningIcon';
-import {Button} from 'react-bootstrap';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
@@ -35,10 +33,19 @@ import {ShellShockIssueOverview, ShellShockIssueReport} from './security/issues/
 import {MS08_067IssueOverview, MS08_067IssueReport} from './security/issues/MS08_067Issue';
 import {
   crossSegmentIssueOverview,
-  generateCrossSegmentIssue
+  generateCrossSegmentIssue,
+  generateIslandCrossSegmentIssue
 } from './security/issues/CrossSegmentIssue';
-import {sharedAdminsDomainIssueOverview, sharedPasswordsIssueOverview} from './security/issues/SharedPasswordsIssue';
+import {
+  generateSharedCredsDomainIssue, generateSharedCredsIssue, generateSharedLocalAdminsIssue,
+  sharedAdminsDomainIssueOverview,
+  sharedPasswordsIssueOverview
+} from './security/issues/SharedPasswordsIssue';
 import {generateTunnelIssue, generateTunnelIssueOverview} from './security/issues/TunnelIssue';
+import {StolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
+import {WeakPasswordIssueOverview} from './security/issues/WeakPasswordIssue';
+import {AzurePasswordIssueOverview, AzurePasswordIssueReport} from './security/issues/AzurePasswordIssue';
+import {generateStrongUsersOnCritIssue} from './security/issues/StrongUsersOnCritIssue';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -131,9 +138,12 @@ class ReportPageComponent extends AuthComponent {
         [this.issueContentTypes.REPORT]: MS08_067IssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
+      'ZerologonExploiter': {
+        //TODO add
+      },
       'island_cross_segment': {
         [this.issueContentTypes.OVERVIEW]: crossSegmentIssueOverview,
-        [this.issueContentTypes.REPORT]: generateCrossSegmentIssue,
+        [this.issueContentTypes.REPORT]: generateIslandCrossSegmentIssue,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'tunnel': {
@@ -143,17 +153,37 @@ class ReportPageComponent extends AuthComponent {
       },
       'shared_passwords': {
         [this.issueContentTypes.OVERVIEW]: sharedPasswordsIssueOverview,
+        [this.issueContentTypes.REPORT]: generateSharedCredsIssue,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_admins_domain': {
         [this.issueContentTypes.OVERVIEW]: sharedAdminsDomainIssueOverview,
+        [this.issueContentTypes.REPORT]: generateSharedLocalAdminsIssue,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
-      'shared_passwords_domain': {},
-      'strong_users_on_crit': {},
-      'azure_password': {},
-      'weak_password': {},
-      'stolen_creds': {}
+      'shared_passwords_domain': {
+        [this.issueContentTypes.REPORT]: generateSharedCredsDomainIssue(),
+        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
+      },
+
+      // This issue was missing overview section
+      'strong_users_on_crit': {
+        [this.issueContentTypes.REPORT]: generateStrongUsersOnCritIssue,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'azure_password': {
+        [this.issueContentTypes.OVERVIEW]: AzurePasswordIssueOverview,
+        [this.issueContentTypes.REPORT]: AzurePasswordIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'weak_password': {
+        [this.issueContentTypes.OVERVIEW]: WeakPasswordIssueOverview,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'stolen_creds': {
+        [this.issueContentTypes.OVERVIEW]: StolenCredsIssueOverview,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      }
     }
 
   constructor(props) {
@@ -190,8 +220,6 @@ class ReportPageComponent extends AuthComponent {
 
   render() {
     let content;
-
-    console.log(this.state.report);
 
     if (this.stillLoadingDataFromServer()) {
       content = <ReportLoader loading={true}/>;
@@ -341,7 +369,6 @@ class ReportPageComponent extends AuthComponent {
 
   generateReportFindingsSection() {
     let overviews = this.getPotentialSecurityIssuesOverviews()
-
     return (
       <div id='findings'>
         <h3>
@@ -385,18 +412,17 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-  getPotentialSecurityIssuesOverviews(){
+  getPotentialSecurityIssuesOverviews() {
     let overviews = [];
 
-    for( let key of this.IssueDescriptorEnum) {
-      if(this.WARNING_ISSUE_LIST[i] in this.state.report.issues) {
-        overviews.push(this.IssueDescriptorEnum[this.WARNING_ISSUE_LIST[i]][this.issueContentTypes.OVERVIEW])
-      }
+    for (let issueKey of this.state.report.overview.issues) {
+      overviews.push(this.IssueDescriptorEnum[issueKey][this.issueContentTypes.OVERVIEW]);
     }
     return overviews;
   }
 
   getImmediateThreats() {
+    let threatCount = this.countImmediateThreats()
     return (
       <div>
         <h3>
