@@ -2,6 +2,7 @@ import logging
 
 import psycopg2
 
+from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.model import ID_STRING
 from infection_monkey.network.HostFinger import HostFinger
 
@@ -41,7 +42,8 @@ class PostgreSQLFinger(HostFinger):
                              port=self.POSTGRESQL_DEFAULT_PORT,
                              user=self.CREDS['username'],
                              password=self.CREDS['password'],
-                             sslmode='prefer')  # don't need to worry about DB name; creds are wrong, won't check
+                             sslmode='prefer',
+                             connect_timeout=MEDIUM_REQUEST_TIMEOUT)  # don't need to worry about DB name; creds are wrong, won't check
 
         except psycopg2.OperationalError as ex:
             # try block will throw an OperationalError since the credentials are wrong, which we then analyze
@@ -71,7 +73,7 @@ class PostgreSQLFinger(HostFinger):
 
         exceptions = exception_string.split("\n")
 
-        ssl_connection_details = []
+        self.ssl_connection_details = []
         ssl_conf_on_server = self.is_ssl_configured(exceptions)
 
         if ssl_conf_on_server:  # SSL configured
@@ -79,7 +81,7 @@ class PostgreSQLFinger(HostFinger):
         else:  # SSL not configured
             self.get_connection_details_ssl_not_configured()
 
-        host.services[self._SCANNED_SERVICE]['communication_encryption_details'] = ''.join(ssl_connection_details)
+        host.services[self._SCANNED_SERVICE]['communication_encryption_details'] = ''.join(self.ssl_connection_details)
 
     @staticmethod
     def is_ssl_configured(exceptions):
@@ -91,31 +93,31 @@ class PostgreSQLFinger(HostFinger):
             return True
 
     def get_connection_details_ssl_configured(self):
-        ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_conf'])
+        self.ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_conf'])
         ssl_selected_comms_only = False
 
         # check exception message for SSL connection
         if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
-            ssl_connection_details.append(self.CONNECTION_DETAILS['all_ssl'])
+            self.ssl_connection_details.append(self.CONNECTION_DETAILS['all_ssl'])
         else:
-            ssl_connection_details.append(self.CONNECTION_DETAILS['selected_ssl'])
+            self.ssl_connection_details.append(self.CONNECTION_DETAILS['selected_ssl'])
             ssl_selected_comms_only = True
 
         # check exception message for non-SSL connection
         if self.found_entry_for_host_but_pwd_auth_failed(exceptions[1]):
-            ssl_connection_details.append(self.CONNECTION_DETAILS['all_non_ssl'])
+            self.ssl_connection_details.append(self.CONNECTION_DETAILS['all_non_ssl'])
         else:
             if ssl_selected_comms_only:  # if only selected SSL allowed and only selected non-SSL allowed
-                ssl_connection_details[-1] = self.CONNECTION_DETAILS['only_selected']
+                self.ssl_connection_details[-1] = self.CONNECTION_DETAILS['only_selected']
             else:
-                ssl_connection_details.append(self.CONNECTION_DETAILS['selected_non_ssl'])
+                self.ssl_connection_details.append(self.CONNECTION_DETAILS['selected_non_ssl'])
 
     def get_connection_details_ssl_not_configured(self):
-        ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_not_conf'])
+        self.ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_not_conf'])
         if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
-            ssl_connection_details.append(self.CONNECTION_DETAILS['all_non_ssl'])
+            self.ssl_connection_details.append(self.CONNECTION_DETAILS['all_non_ssl'])
         else:
-            ssl_connection_details.append(self.CONNECTION_DETAILS['selected_non_ssl'])
+            self.ssl_connection_details.append(self.CONNECTION_DETAILS['selected_non_ssl'])
 
     @staticmethod
     def found_entry_for_host_but_pwd_auth_failed(exception):
