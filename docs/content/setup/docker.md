@@ -31,3 +31,16 @@ If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
+
+## Troubleshooting
+
+### The Monkey Island container crashes due to a 'UnicodeDecodeError'
+`UnicodeDecodeError: 'utf-8' codec can't decode byte 0xee in position 0: invalid continuation byte`
+
+You may encounter this error because of the existence of different MongoDB keys in the `monkey-island` and `monkey-mongo` containers.
+
+Starting a new container from the `guardicore/monkey-island:1.10.0` image generates a new secret key for storing sensitive information in MongoDB. If you have an old database instance running (from a previous run of Monkey), the key in the `monkey-mongo` container is different than the newly generated key in the `monkey-island` container. Since encrypted data (obtained from the previous run) is stored in MongoDB with the old key, decryption fails and you get this error.
+
+You can fix this in two ways:
+1. Instead of starting a new container for the Monkey Island, you can run `docker container start -a monkey-island` to restart the existing container, which will contain the correct key material.
+2. Kill and remove the existing MongoDB container, and start a new one. This will remove the old database entirely. Then, start the new Monkey Island container.
