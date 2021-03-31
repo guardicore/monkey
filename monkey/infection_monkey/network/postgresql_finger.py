@@ -45,6 +45,14 @@ class PostgreSQLFinger(HostFinger):
                              sslmode='prefer',
                              connect_timeout=MEDIUM_REQUEST_TIMEOUT)  # don't need to worry about DB name; creds are wrong, won't check
 
+            # if it comes here, the creds worked
+            # this shouldn't happen since capital letters are not supported in postgres usernames
+            # perhaps the service is a honeypot
+            host.services[self._SCANNED_SERVICE]['communication_encryption_details'] =\
+                f'The PostgreSQL server was unexpectedly accessible with the credentials - ' +\
+                'user: \'{self.CREDS['username']}\' and password: \'{self.CREDS['password']}\'. Is this a honeypot?'
+            return True
+
         except psycopg2.OperationalError as ex:
             # try block will throw an OperationalError since the credentials are wrong, which we then analyze
             try:
