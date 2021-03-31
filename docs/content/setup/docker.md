@@ -43,4 +43,4 @@ Starting a new container from the `guardicore/monkey-island:1.10.0` image genera
 
 You can fix this in two ways:
 1. Instead of starting a new container for the Monkey Island, you can run `docker container start -a monkey-island` to restart the existing container, which will contain the correct key material.
-2. Restart the MongoDB container. This will remove the old database entirely. Then, start the new Monkey Island container.
+2. Kill and remove the existing MongoDB container, and start a new one. This will remove the old database entirely. Then, start the new Monkey Island container.
