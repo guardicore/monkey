@@ -7,7 +7,7 @@ class T1065 extends React.Component {
   render() {
     return (
       <div>
-        <div>{this.props.data.message}</div>
+        <div>{this.props.data.message_html}</div>
         <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );

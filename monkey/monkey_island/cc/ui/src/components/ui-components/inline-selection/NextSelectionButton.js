@@ -6,7 +6,8 @@ import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
 
 export default function nextSelectionButton(props) {
   let description = props.description !== undefined ? (<p>{props.description}</p>) : ''
-  let icon = props.icon !== undefined ? (<FontAwesomeIcon icon={props.icon}/>) : ''
+  let iconType = props.iconType !== undefined ? props.iconType : ''
+  let icon = props.icon !== undefined ? (<FontAwesomeIcon className={iconType} icon={props.icon}/>) : ''
   return (
     <Row>
       <Col>
@@ -24,6 +25,7 @@ export default function nextSelectionButton(props) {
 
 nextSelectionButton.propTypes = {
   title: PropTypes.string,
+  iconType: PropTypes.string,
   icon: FontAwesomeIcon,
   description: PropTypes.string,
   onButtonClick: PropTypes.func

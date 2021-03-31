@@ -2,14 +2,12 @@
 """
 Define a Document Schema for Zero Trust findings.
 """
-from typing import List
 
-from mongoengine import Document, EmbeddedDocumentListField, StringField
+from __future__ import annotations
 
-import common.data.zero_trust_consts as zero_trust_consts
-# Dummy import for mongoengine.
-# noinspection PyUnresolvedReferences
-from monkey_island.cc.models.zero_trust.event import Event
+from mongoengine import Document, StringField
+
+import common.common_consts.zero_trust_consts as zero_trust_consts
 
 
 class Finding(Document):
@@ -30,31 +28,9 @@ class Finding(Document):
         *   The logic section defines complex questions we can ask about a single document which are asked multiple
             times, or complex action we will perform - somewhat like an API.
     """
-    # SCHEMA
-    test = StringField(required=True, choices=zero_trust_consts.TESTS)
-    status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)
-    events = EmbeddedDocumentListField(document_type=Event)
     # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
     meta = {'allow_inheritance': True}
 
-    # LOGIC
-    def get_test_explanation(self):
-        return zero_trust_consts.TESTS_MAP[self.test][zero_trust_consts.TEST_EXPLANATION_KEY]
-
-    def get_pillars(self):
-        return zero_trust_consts.TESTS_MAP[self.test][zero_trust_consts.PILLARS_KEY]
-
-    # Creation methods
-    @staticmethod
-    def save_finding(test, status, events):
-        finding = Finding(
-            test=test,
-            status=status,
-            events=events)
-
-        finding.save()
-
-        return finding
-
-    def add_events(self, events: List) -> None:
-        self.update(push_all__events=events)
+    # SCHEMA
+    test = StringField(required=True, choices=zero_trust_consts.TESTS)
+    status = StringField(required=True, choices=zero_trust_consts.ORDERED_TEST_STATUSES)

@@ -58,13 +58,13 @@ Requirements:
 To deploy:
 1.  Configure service account for your project:
 
-    a. Create a service account (GCP website -> IAM -> service accounts) and name it “your\_name-monkeyZoo-user” 
+    a. Create a service account (GCP website -> IAM & Admin -> Service Accounts -> + CREATE SERVICE ACCOUNT) and name it “your\_name-monkeyZoo-user”
     
     b. Give these permissions to your service account:
     
     **Compute Engine -> Compute Network Admin**
     and
-    **Compute Engine -> Compute Instance Admin**
+    **Compute Engine -> Compute Instance Admin (v1)**
     and
     **Compute Engine -> Compute Security Admin**
     and
@@ -74,10 +74,12 @@ To deploy:
     
     **Project -> Owner**
     
-    c. Download its **Service account key** in JSON and place it in **/gcp_keys** as **gcp_key.json**.
-2.  Get these permissions in monkeyZoo project for your service account (ask monkey developers to add them):
+    c. Create and download its **Service account key** in JSON and place it in **monkey_zoo/gcp_keys** as **gcp_key.json**.
+
+2.  Get these permissions in the monkeyZoo project (guardicore-22050661) for your service account (ask monkey developers to add them):
 
     a.  **Compute Engine -\> Compute image user**
+
 3.  Change configurations located in the
     ../monkey/envs/monkey\_zoo/terraform/config.tf file (don’t forget to
     link to your service account key file):

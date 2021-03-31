@@ -2,13 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import BackButton from './BackButton';
 import {Col, Row, Container} from 'react-bootstrap';
+import {getColumnSize} from './utils';
 
 
 export default function InlineSelection(WrappedComponent, props) {
   return (
     <Container className={'inline-selection-component'}>
       <Row>
-        <Col lg={8} md={10} sm={12}>
+        <Col {...getColumnSize(props.collumnSize)}>
           <WrappedComponent {...props}/>
           {renderBackButton(props)}
         </Col>
@@ -17,8 +18,8 @@ export default function InlineSelection(WrappedComponent, props) {
   )
 }
 
-function renderBackButton(props){
-  if(props.onBackButtonClick !== undefined){
+function renderBackButton(props) {
+  if (props.onBackButtonClick !== undefined) {
     return (<BackButton onClick={props.onBackButtonClick}/>);
   }
 }

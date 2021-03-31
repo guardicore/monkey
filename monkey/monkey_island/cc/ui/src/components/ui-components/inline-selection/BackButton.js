@@ -7,7 +7,7 @@ import {faCaretLeft} from '@fortawesome/free-solid-svg-icons/faCaretLeft';
 export default function backButton(props) {
   return (
     <Row>
-      <Col>
+      <Col lg={3} md={4} sm={4} xs={12}>
         <Button variant={'outline-dark'} onClick={props.onClick} className={'back-button'}>
           <FontAwesomeIcon icon={faCaretLeft} />
           <h1>Back</h1>

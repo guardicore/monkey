@@ -1,23 +1,30 @@
 # This code is used to obfuscate shellcode
 # Usage:
 # shellcode_obfuscator.py [your normal shellcode].
-# For example:
-# shellcode_obfuscator.py "\x52\x3d\xf6\xc9\x4b\x5d\xe0\x62\x7e\x3d\xa8\x07\x7b\x76\x30"
-# This returns "\x30\x76\x7b\x07\xa8\x3d\x7e\x62\xe0\x5d\x4b\xc9\xf6\x3d\x52"
-# Verify that it's the same shellcode, just reversed and paste it in code.
-# Then clarify it before usage to reverse it on runtime.
 
 import sys
 
+# PyCrypto is deprecated, but we use pycryptodome, which uses the exact same imports
+from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
-def obfuscate(shellcode: str) -> str:
-    shellcode = shellcode.split('\\')[::-1]
-    return '\\'+'\\'.join(shellcode)[:-1]
+# We only encrypt payloads to hide them from static analysis
+# it's OK to have these keys plaintext
+KEY = b'1234567890123456'
+NONCE = b'\x93n2\xbc\xf5\x8d:\xc2fP\xabn\x02\xb3\x17f'
 
 
-def clarify(shellcode: str) -> str:
-    return shellcode[::-1]
+# Use this manually to get obfuscated bytes of shellcode
+def obfuscate(shellcode: bytes) -> bytes:
+    cipher = AES.new(KEY, AES.MODE_EAX, nonce=NONCE)
+    ciphertext, _ = cipher.encrypt_and_digest(shellcode)
+    return ciphertext
+
+
+def clarify(shellcode: bytes) -> bytes:
+    cipher = AES.new(KEY, AES.MODE_EAX, nonce=NONCE)
+    plaintext = cipher.decrypt(shellcode)
+    return plaintext
 
 
 if __name__ == "__main__":
-    print(obfuscate(sys.argv[1]))
+    print(obfuscate(sys.argv[1].encode()))

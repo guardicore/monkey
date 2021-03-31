@@ -1,6 +1,6 @@
 import logging
 
-from monkey_island.cc.encryptor import encryptor
+from monkey_island.cc.server_utils.encryptor import encryptor
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \

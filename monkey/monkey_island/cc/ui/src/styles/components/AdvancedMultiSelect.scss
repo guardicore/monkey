@@ -18,12 +18,14 @@
   padding-bottom: 5px;
 }
 
-.advanced-multi-select .card-header button {
-  padding-top: 0;
+.advanced-multi-select .card-header .master-checkbox span {
+  padding-bottom: 0.188rem;
 }
 
 .advanced-multi-select .card-header .header-title {
   font-size: 1.2em;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .advanced-multi-select .choice-block .form-group {

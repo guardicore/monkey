@@ -6,6 +6,7 @@ import flask_pymongo
 import flask_restful
 from flask import request
 
+from common.common_consts.telem_categories import TelemCategoryEnum
 from monkey_island.cc.database import mongo
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.node import NodeService
@@ -109,11 +110,11 @@ class TelemetryFeed(flask_restful.Resource):
 
 TELEM_PROCESS_DICT = \
     {
-        'tunnel': TelemetryFeed.get_tunnel_telem_brief,
-        'state': TelemetryFeed.get_state_telem_brief,
-        'exploit': TelemetryFeed.get_exploit_telem_brief,
-        'scan': TelemetryFeed.get_scan_telem_brief,
-        'system_info': TelemetryFeed.get_systeminfo_telem_brief,
-        'trace': TelemetryFeed.get_trace_telem_brief,
-        'post_breach': TelemetryFeed.get_post_breach_telem_brief
+        TelemCategoryEnum.TUNNEL: TelemetryFeed.get_tunnel_telem_brief,
+        TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
+        TelemCategoryEnum.EXPLOIT: TelemetryFeed.get_exploit_telem_brief,
+        TelemCategoryEnum.SCAN: TelemetryFeed.get_scan_telem_brief,
+        TelemCategoryEnum.SYSTEM_INFO: TelemetryFeed.get_systeminfo_telem_brief,
+        TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
+        TelemCategoryEnum.POST_BREACH: TelemetryFeed.get_post_breach_telem_brief
     }

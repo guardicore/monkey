@@ -13,31 +13,31 @@ Want to help secure networks? That's great!
 
 ## How should I start?
 
-Here's a few short links to help you get started.
+Here are a few short links to help you get started:
 
-* [Getting up and running](./setup-development-environment) - To help you get a working development setup.
-* [Contributing guidelines](https://github.com/guardicore/monkey/blob/master/CONTRIBUTING.md) - Some guidelines to help you submit.
+* [Getting up and running](./setup-development-environment) - These instructions will help you get a working development setup.
+* [Contributing guidelines](https://github.com/guardicore/monkey/blob/master/CONTRIBUTING.md) - These guidelines will help you submit.
 
 ## What are we looking for?
 
-You can take a look at [our roadmap](https://github.com/guardicore/monkey/projects/5) to see what issues we're thinking about doing soon. We are looking for:
+You can take a look at [our roadmap](https://github.com/guardicore/monkey/projects/5) to see what issues we're thinking about tackling soon. We are always looking for:
 
 ### More exploits! 💥
 
-The best way to find weak spots in the network is by attacking it. The [Exploit template](https://github.com/guardicore/monkey/wiki/Exploit-templates) page will help you add exploits.
+The best way to find weak spots in a network is by attacking it. The [exploit template](https://github.com/guardicore/monkey/wiki/Exploit-templates) page will help you add exploits.
 
-It's important to note that the Infection Monkey must be perfectly reliable otherwise no one will use it, so avoid memory corruption exploits _unless they're rock solid_ and focus on the logical vulns such as Shellshock.
+It's important to note that the Infection Monkey must be absolutely reliable. Otherwise, no one will use it, so avoid memory corruption exploits unless they're rock solid and focus on the logical vulns such as Shellshock.
 
 ### Analysis plugins 🔬
 
-Successfully attacking every server in the network is no good unless the Monkey can explain how to prevent the attack. Whether it's detecting when the Monkey is using stolen credentials or when the Monkey can escape locked down networks, this is the part that actually helps secure different parts.
+Successfully attacking every server in the network has little value if the Infection Monkey can't provide recommendations for reducing future risk. Whether it's explaining how the Infection Monkey used stolen credentials or escaped from locked-down networks, analysis is what helps users translate the Infection Monkey's activities into actionable next steps for improving security. 
 
 ### Better code 💪
 
-We always want to improve the core Monkey code, to make it smaller, faster and more reliable. If you have an idea of how to do it, or just want to modularise/improve test coverage for the code, do share!
+We always want to improve the core Infection Monkey code to make it smaller, faster and more reliable. Please share if you have an idea that will help us meet these goals or modularize/improve test coverage.
 
 ### Documentation 📚
 
-Every project requires better documentation. The Monkey is no different, so feel free to open PRs with suggestions, improvements or issues asking us to document different parts of the Monkey.
+Every project requires excellent documentation. The Infection Monkey is no different. Please feel free to open pull requests with suggestions, improvements or issues and asking us to document various parts of the Monkey.
 
-The Monkey's documentation is stored in the `/docs/content` directory.
+The Infection Monkey's documentation is stored in the `/docs/content` directory.

@@ -8,37 +8,57 @@ disableToc: false
 tags: ["setup", "debian", "linux"]
 ---
 
+
+## Supported Distros
+
+This Debian package has been tested on Ubuntu Bionic 18.04 LTS and Ubuntu Focal 20.04 LTS.
+
 ## Deployment
 
-To extract the `tar.gz` file, run `tar -xvzf monkey-island-debian.tar.gz`.
+1. Update your package list by running:
+    ```sh
+    sudo apt update
+    ```
+1. If you are using Ubuntu Focal 20.04, run the following commands to install
+   Python 3.7:
+    ```sh
+    sudo apt install software-properties-common
+    sudo add-apt-repository ppa:deadsnakes/ppa
+    sudo apt install python3.7 python3.7-dev
+    ```
+1. Extract the tarball by running:
+    ```sh
+    tar -xvzf monkey-island-debian.tgz
+    ```
+1. Install the Monkey Island Debian package:
+    ```sh
+    sudo dpkg -i monkey_island.deb  # this might print errors
+    ```
+1. If, at this point, you receive dpkg errors that look like this:
 
-To deploy the package, once you’ve extracted it, run the following commands:
+    ```sh
+    dpkg: error processing package gc-monkey-island (--install):
+        dependency problems - leaving unconfigured
+    Errors were encountered while processing:
+        gc-monkey-island
+    ```
 
-```sh
-sudo apt update
-sudo dpkg -i monkey_island.deb  # this might print errors
-```
+    It just means that not all dependencies were pre-installed on your system.
+    That's no problem! Just run the following command, which will install all
+    dependencies, and then install the Monkey Island:
 
-If at this point, dpkg printed errors that look like this:
-
-```sh
-dpkg: error processing package gc-monkey-island (--install):
-    dependency problems - leaving unconfigured
-Errors were encountered while processing:
-    gc-monkey-island
-```
-
-That just means that not all dependencies were pre-installed on your system. That’s no problem! Just run the following command, which will install all dependencies and then install the Monkey Island:
-
-```sh
-sudo apt install -f
-```
+    ```sh
+    sudo apt install -f
+    ```
 
 ## Troubleshooting
 
 ### Trying to install on Ubuntu <16.04
 
-If you’re trying to install the Monkey Island on Ubuntu 16.04 or older, you need to install the dependencies yourself, since Python 3.7 is only installable from the `deadsnakes` PPA. To install the Monkey Island on Ubuntu 16.04, follow the following steps:
+If you're trying to install the Monkey Island on Ubuntu 16.04 or older, you
+need to install the dependencies yourself, since Python 3.7 is only installable
+from the `deadsnakes` PPA. To install the Monkey Island on Ubuntu 16.04, follow
+these steps:
 
 ```sh
 sudo apt update
@@ -57,8 +77,13 @@ To check the status of the Monkey Island after the installation, run the followi
 
 ## Upgrading
 
-To upgrade when a new version comes out, download the new Monkey `.deb` file and install it. You should see a message like `Unpacking monkey-island (1.8.2) over (1.8.0)`. After which, the installation should complete successfully.
+Currently, there's no "upgrade-in-place" option when a new version is released.
+To get the updated version, download the new `.deb` file and install it. You
+should see a message like `Unpacking monkey-island (1.8.2) over (1.8.0)`. After
+which, the installation should complete successfully.
 
-If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new server.
+If you'd like to keep your existing configuration, you can export it to a file
+using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
+

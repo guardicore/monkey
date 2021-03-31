@@ -2,8 +2,7 @@ import flask_restful
 from flask import make_response, request
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from common.utils.exceptions import (InvalidRegistrationCredentialsError,
-                                     RegistrationNotNeededError)
+from common.utils.exceptions import InvalidRegistrationCredentialsError, RegistrationNotNeededError
 from monkey_island.cc.environment.user_creds import UserCreds
 
 

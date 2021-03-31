@@ -1,8 +1,7 @@
 import json
 import logging
 import re
-import urllib.error
-import urllib.request
+import requests
 
 from common.cloud.environment_names import Environment
 from common.cloud.instance import CloudInstance
@@ -33,19 +32,17 @@ class AwsInstance(CloudInstance):
         self.account_id = None
 
         try:
-            self.instance_id = urllib.request.urlopen(
-                AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2).read().decode()
+            response = requests.get(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/instance-id', timeout=2)
+            self.instance_id = response.text if response else None
             self.region = self._parse_region(
-                urllib.request.urlopen(
-                    AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').read().decode())
-        except (urllib.error.URLError, IOError) as e:
+                requests.get(AWS_LATEST_METADATA_URI_PREFIX + 'meta-data/placement/availability-zone').text)
+        except (requests.RequestException, IOError) as e:
             logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e))
 
         try:
             self.account_id = self._extract_account_id(
-                urllib.request.urlopen(
-                    AWS_LATEST_METADATA_URI_PREFIX + 'dynamic/instance-identity/document', timeout=2).read().decode())
-        except (urllib.error.URLError, IOError) as e:
+                requests.get(AWS_LATEST_METADATA_URI_PREFIX + 'dynamic/instance-identity/document', timeout=2).text)
+        except (requests.RequestException, json.decoder.JSONDecodeError, IOError) as e:
             logger.debug("Failed init of AwsInstance while getting dynamic instance data: {}".format(e))
 
     @staticmethod

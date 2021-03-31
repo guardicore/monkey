@@ -24,7 +24,7 @@ install:
 # Python
 - pip freeze
 - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
-- pip install flake8 pytest dlint isort # for next stages
+- pip install flake8 pytest pytest-cov dlint isort # for next stages
 - pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
 - pip install pipdeptree
@@ -52,14 +52,9 @@ install:
 # print hugo version (useful for debugging documentation build errors)
 - hugo version
 
-before_script:
-# Set the server config to `testing`. This is required for for the UTs to pass.
-- pushd /home/travis/build/guardicore/monkey/monkey
-- python monkey_island/cc/environment/set_server_config.py testing
-- popd
-
 script:
 # Check Python code
+## Check syntax errors and fail the build if any are found.
 - flake8 ./monkey --config=./ci_scripts/flake8_syntax_check.ini
 
 ## Warn about linter issues.
@@ -75,12 +70,9 @@ script:
 ## Check import order
 - python -m isort ./monkey --settings-file ./ci_scripts/isort.cfg
 
-## Run unit tests
+## Run unit tests and generate coverage data
 - cd monkey  # This is our source dir
-- python -m pytest  # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
-
-## Calculate Code Coverage
-- coverage run -m pytest
+- python -m pytest --cov=. # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui
@@ -92,14 +84,6 @@ script:
 # Build documentation
 - cd $TRAVIS_BUILD_DIR/docs
 - hugo --verbose --environment staging
-
-# verify swimm
-- cd $TRAVIS_BUILD_DIR
-- wget "https://firebasestorage.googleapis.com/v0/b/swimmio.appspot.com/o/Release%2Fv029%2FSwimm_0.2.9_Setup.deb?alt=media&token=774ebd98-cb4e-4615-900c-aada224c1608" -O swimm
-- sudo dpkg -i swimm || (sudo apt-get update && sudo apt-get -f install)
-- chmod +x ./swimm
-- swimm --version
-- swimm verify
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information

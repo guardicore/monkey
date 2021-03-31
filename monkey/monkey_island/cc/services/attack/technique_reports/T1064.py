@@ -1,6 +1,5 @@
 from monkey_island.cc.database import mongo
-from monkey_island.cc.services.attack.technique_reports.usage_technique import \
-    UsageTechnique
+from monkey_island.cc.services.attack.technique_reports.usage_technique import UsageTechnique
 
 __author__ = "VakarisZ"
 

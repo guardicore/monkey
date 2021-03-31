@@ -32,9 +32,15 @@ class FindingsSection extends Component {
           insight as to what exactly happened during this test.
         </p>
 
-        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.failed]} status={ZeroTrustStatuses.failed}/>
-        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.verify]} status={ZeroTrustStatuses.verify}/>
-        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.passed]} status={ZeroTrustStatuses.passed}/>
+        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.failed]}
+                       scoutsuite_data={this.props.scoutsuite_data}
+                       status={ZeroTrustStatuses.failed}/>
+        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.verify]}
+                       scoutsuite_data={this.props.scoutsuite_data}
+                       status={ZeroTrustStatuses.verify}/>
+        <FindingsTable data={findingsByStatus[ZeroTrustStatuses.passed]}
+                       scoutsuite_data={this.props.scoutsuite_data}
+                       status={ZeroTrustStatuses.passed}/>
       </div>
     );
   }

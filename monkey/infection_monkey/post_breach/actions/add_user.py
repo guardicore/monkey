@@ -1,4 +1,4 @@
-from common.data.post_breach_consts import POST_BREACH_BACKDOOR_USER
+from common.common_consts.post_breach_consts import POST_BREACH_BACKDOOR_USER
 from infection_monkey.config import WormConfiguration
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.utils.users import get_commands_to_add_user

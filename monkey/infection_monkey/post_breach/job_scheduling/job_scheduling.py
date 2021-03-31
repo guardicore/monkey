@@ -1,10 +1,8 @@
 import subprocess
 
-from infection_monkey.post_breach.job_scheduling.linux_job_scheduling import \
-    get_linux_commands_to_schedule_jobs
+from infection_monkey.post_breach.job_scheduling.linux_job_scheduling import get_linux_commands_to_schedule_jobs
 from infection_monkey.post_breach.job_scheduling.windows_job_scheduling import (
-    get_windows_commands_to_remove_scheduled_jobs,
-    get_windows_commands_to_schedule_jobs)
+    get_windows_commands_to_remove_scheduled_jobs, get_windows_commands_to_schedule_jobs)
 from infection_monkey.utils.environment import is_windows_os
 
 

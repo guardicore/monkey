@@ -12,12 +12,14 @@ class GraphWrapper extends React.Component {
     let newOptions = null;
     if(this.props.options !== undefined){
       newOptions = this.props.options;
-      newOptions.height = this.props.containerHeight.toString() + 'px';
-      newOptions.width = this.props.containerWidth.toString() + 'px';
     }
-    return (<Graph graph={this.props.graph} options={newOptions} events={this.props.events}/>)
+    return (
+      <div class={'net-graph-wrapper'}>
+        <Graph graph={this.props.graph} options={newOptions} events={this.props.events}/>
+      </div>
+    )
   }
 }
 
-let ReactiveGraph = Dimensions()(GraphWrapper);
+let ReactiveGraph = GraphWrapper;
 export {ReactiveGraph};

@@ -1,9 +1,7 @@
 from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
-from envs.monkey_zoo.blackbox.tests.performance.endpoint_performance_test import \
-    EndpointPerformanceTest
-from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import \
-    PerformanceTestConfig
+from envs.monkey_zoo.blackbox.tests.performance.endpoint_performance_test import EndpointPerformanceTest
+from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
 
 
 class PerformanceTestWorkflow(BasicTest):
@@ -12,11 +10,11 @@ class PerformanceTestWorkflow(BasicTest):
         self.name = name
         self.exploitation_test = exploitation_test
         self.island_client = exploitation_test.island_client
-        self.config_parser = exploitation_test.config_parser
+        self.raw_config = exploitation_test.raw_config
         self.performance_config = performance_config
 
     def run(self):
-        self.island_client.import_config(self.config_parser.config_raw)
+        self.island_client.import_config(self.raw_config)
         self.exploitation_test.print_test_starting_info()
         try:
             self.island_client.run_monkey_local()

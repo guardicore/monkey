@@ -141,7 +141,6 @@ sudo apt-get install -y libffi-dev upx libssl-dev libc++1
 requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
 ${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
 
-
 agents=${3:-true}
 # Download binaries
 if [ "$agents" = true ] ; then

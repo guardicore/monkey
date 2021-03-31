@@ -12,13 +12,12 @@ import infection_monkey.tunnel as tunnel
 from common.common_consts.timeouts import (LONG_REQUEST_TIMEOUT,
                                            MEDIUM_REQUEST_TIMEOUT,
                                            SHORT_REQUEST_TIMEOUT)
-from common.data.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
+from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import check_internet_access, local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
-from infection_monkey.utils.exceptions.planned_shutdown_exception import \
-    PlannedShutdownException
+from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 
 __author__ = 'hoffer'
 
@@ -132,12 +131,12 @@ class ControlClient(object):
             return {}
 
     @staticmethod
-    def send_telemetry(telem_category, data):
+    def send_telemetry(telem_category, json_data: str):
         if not WormConfiguration.current_server:
             LOG.error("Trying to send %s telemetry before current server is established, aborting." % telem_category)
             return
         try:
-            telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': data}
+            telemetry = {'monkey_guid': GUID, 'telem_category': telem_category, 'data': json_data}
             requests.post("https://%s/api/telemetry" % (WormConfiguration.current_server,),  # noqa: DUO123
                           data=json.dumps(telemetry),
                           headers={'content-type': 'application/json'},

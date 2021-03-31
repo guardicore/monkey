@@ -95,7 +95,7 @@ class T1210 extends React.Component {
     let scanned_services = this.props.data.scanned_services.map(T1210.formatScanned).flat();
     return (
       <div>
-        <div>{this.props.data.message}</div>
+        <div>{this.props.data.message_html}</div>
         {scanned_services.length > 0 ?
           this.renderScannedServices(scanned_services) : ''}
         {this.props.data.exploited_services.length > 0 ?

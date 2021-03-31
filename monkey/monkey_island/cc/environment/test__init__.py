@@ -4,13 +4,10 @@ from typing import Dict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-import monkey_island.cc.testing.environment.server_config_mocks as config_mocks
-from common.utils.exceptions import (AlreadyRegisteredError,
-                                     CredentialsNotRequiredError,
-                                     InvalidRegistrationCredentialsError,
-                                     RegistrationNotNeededError)
-from monkey_island.cc.environment import (Environment, EnvironmentConfig,
-                                          UserCreds)
+import monkey_island.cc.test_common.environment.server_config_mocks as config_mocks
+from common.utils.exceptions import (AlreadyRegisteredError, CredentialsNotRequiredError,
+                                     InvalidRegistrationCredentialsError, RegistrationNotNeededError)
+from monkey_island.cc.environment import Environment, EnvironmentConfig, UserCreds
 
 
 def get_server_config_file_path_test_version():

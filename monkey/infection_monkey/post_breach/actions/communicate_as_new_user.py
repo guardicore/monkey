@@ -3,7 +3,7 @@ import random
 import string
 import subprocess
 
-from common.data.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
+from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.auto_new_user_factory import create_auto_new_user

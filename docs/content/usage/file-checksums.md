@@ -37,6 +37,24 @@ $ sha256sum monkey-linux-64
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
+| monkey-windows-64.exe                                | Windows Agent     | 1.10.0  | `3b499a4cf1a67a33a91c73b05884e4d6749e990e444fa1d2a3281af4db833fa1` |
+| monkey-windows-32.exe                                | Windows Agent     | 1.10.0  | `8e891e90b11b97fbbef27f1408c1fcad486b19c612773f2d6a9edac5d4cdb47f` |
+| monkey-linux-64                                      | Linux Agent       | 1.10.0  | `932f703510b6484c3824fc797f90f99722e38a7f8956cf6fa58fdecb3790ab93` |
+| monkey-linux-32                                      | Linux Agent       | 1.10.0  | `a6de7d571051292b9db966afe025413dc20b214c4aab53e48d90d8e04264f4f5` |
+| infection_monkey_deb.tgz                             | Debian Package    | 1.10.0  | `534d85c4abc78e2c86a74d8b88759b091b62077dd9e32f02eeb43d716d359ff6` |
+| infection_monkey_debzt.tgz                           | Debian Package    | 1.10.0  | `bd01d8482f80990e6cc0ed654c07dbd80da71eebe3dd244365e9bc00f86b1c03` |
+| Monkey Island v1.10.0_3593_windows.exe	           | Windows Installer | 1.10.0  | `ebd2c5627d21dd8670def02c3a5a995f9e799ba567cf4caacd702654264ddf06` |
+| Monkey Island v1.10.0_3593_windowszt.exe             | Windows Installer | 1.10.0  | `60aaf3b32e5d06c91fe0d4f1b950529517ac33796f67e9ccfef0e8ce1c5372d8` |
+| infection_monkey_docker_docker_20210326_171631.tgz   | Docker            | 1.10.0  | `e4f9c7c5aafe7e38b33d2927a9c0cf6a3ac27858d3d0e3f2252c2e91809a78db` |
+| infection_monkey_docker_dockerzt_20210326_172035.tgz | Docker            | 1.10.0  | `248640e9eaa18e4c27f67237f0594d9533732f372ba4674d5d1bea43ab498cf5` |
+| monkey-island-vmware.ova                             | OVA               | 1.10.0  | `3472ad4ae557ddad7d7db8fbbfcfd33c4f2d95d870b18fa4cab49af6b562009c` |
+| monkey-island-vmwarezt.ova                           | OVA               | 1.10.0  | `3472ad4ae557ddad7d7db8fbbfcfd33c4f2d95d870b18fa4cab49af6b562009c` |
+
+
+## Older checksums
+
+| Filename                                             | Type              | Version | SHA256                                                             |
+|------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
 | monkey-windows-64.exe                                | Windows Agent     | 1.9.0   | `24622cb8dbabb0cf4b25ecd3c13800c72ec5b59b76895b737ece509640d4c068` |
 | monkey-windows-32.exe                                | Windows Agent     | 1.9.0   | `67f12171c3859a21fc8f54c5b2299790985453e9ac028bb80efc7328927be3d8` |
 | monkey-linux-64                                      | Linux Agent       | 1.9.0   | `aec6b14dc2bea694eb01b517cca70477deeb695f39d40b1d9e5ce02a8075c956` |
@@ -49,12 +67,6 @@ $ sha256sum monkey-linux-64
 | infection_monkey_docker_dockerzt_20200806_154742.tgz | Docker            | 1.9.0   | `a84dbaad32ae42cc2d359ffbe062aec493a7253cf706a2d45f0d0b1c230f9348` |
 | monkey-island-vmware.ova                             | OVA               | 1.9.0   | `3861d46518e8a92e49992b26dbff9fe8e8a4ac5fd24d68e68b13e7fd3fa22247` |
 | monkey-island-vmwarezt.ova                           | OVA               | 1.9.0   | `03d356eb35e6515146f5bd798bb62cb15c56fcdf83a5281cf6cdc9b901586026` |
-
-
-## Older checksums
-
-| Filename                                             | Type              | Version | SHA256                                                             |
-|------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
 | monkey-windows-64.exe                                | Windows Agent     | 1.8.2   | `2e6a1cb5523d87ddfd48f75b10114617343fbac8125fa950ba7f00289b38b550` |
 | monkey-windows-32.exe                                | Windows Agent     | 1.8.2   | `86a7d7065e73b795e38f2033be0c53f3ac808cc67478aed794a7a6c89123979f` |
 | monkey-linux-64                                      | Linux Agent       | 1.8.2   | `4dce4a115d41b43adffc11672fae2164265f8902267f1355d02bebb802bd45c5` |

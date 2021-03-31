@@ -12,8 +12,8 @@ MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH  # noqa: E402
-from monkey_island.cc.island_logger import json_setup_logging  # noqa: E402
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH  # noqa: E402
+from monkey_island.cc.server_utils.island_logger import json_setup_logging  # noqa: E402
 
 # This is here in order to catch EVERYTHING, some functions are being called on imports the log init needs to be on top.
 json_setup_logging(default_path=Path(MONKEY_ISLAND_ABS_PATH, 'cc', 'island_logger_default_config.json'),
@@ -23,15 +23,12 @@ logger = logging.getLogger(__name__)
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
-from monkey_island.cc.bootloader_server import \
-    BootloaderHttpServer  # noqa: E402
+from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
 from monkey_island.cc.database import get_db_version  # noqa: E402
 from monkey_island.cc.database import is_db_server_up  # noqa: E402
-from monkey_island.cc.network_utils import local_ip_addresses  # noqa: E402
-from monkey_island.cc.resources.monkey_download import \
-    MonkeyDownload  # noqa: E402
-from monkey_island.cc.services.reporting.exporter_init import \
-    populate_exporter_list  # noqa: E402
+from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
+from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
+from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.setup import setup  # noqa: E402
 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"

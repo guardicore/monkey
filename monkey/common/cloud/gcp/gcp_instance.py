@@ -17,13 +17,13 @@ class GcpInstance(CloudInstance):
     Used to determine if on GCP. See https://cloud.google.com/compute/docs/storing-retrieving-metadata#runninggce
     """
     def is_instance(self):
-        return self.on_gcp
+        return self._on_gcp
 
     def get_cloud_provider_name(self) -> Environment:
         return Environment.GCP
 
     def __init__(self):
-        self.on_gcp = False
+        self._on_gcp = False
 
         try:
             # If not on GCP, this domain shouldn't resolve.
@@ -31,7 +31,7 @@ class GcpInstance(CloudInstance):
 
             if response:
                 logger.debug("Got ok metadata response: on GCP")
-                self.on_gcp = True
+                self._on_gcp = True
 
                 if "Metadata-Flavor" not in response.headers:
                     logger.warning("Got unexpected GCP Metadata format")
@@ -42,4 +42,4 @@ class GcpInstance(CloudInstance):
                 logger.warning("On GCP, but metadata response not ok: {}".format(response.status_code))
         except requests.RequestException:
             logger.debug("Failed to get response from GCP metadata service: This instance is not on GCP")
-            self.on_gcp = False
+            self._on_gcp = False

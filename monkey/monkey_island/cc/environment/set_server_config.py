@@ -53,7 +53,7 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("server_config", choices=["standard", "testing", "password", "restore"])
+    parser.add_argument("server_config", choices=["standard", "password", "restore"])
     args = parser.parse_args()
     return args
 

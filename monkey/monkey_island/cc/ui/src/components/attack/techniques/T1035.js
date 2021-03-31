@@ -13,7 +13,7 @@ class T1035 extends React.Component {
   render() {
     return (
       <div>
-        <div>{this.props.data.message}</div>
+        <div>{this.props.data.message_html}</div>
         <br/>
         {this.props.data.services.length !== 0 ?
           <ReactTable
