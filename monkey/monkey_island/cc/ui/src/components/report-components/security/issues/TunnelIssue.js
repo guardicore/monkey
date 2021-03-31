@@ -1,4 +1,5 @@
 import React from 'react';
+import CollapsibleWellComponent from '../CollapsibleWell';
 
 export function generateTunnelIssueOverview(){
   return (<li key="tunnel">Weak segmentation - Machines were able to communicate over unused ports.</li>)

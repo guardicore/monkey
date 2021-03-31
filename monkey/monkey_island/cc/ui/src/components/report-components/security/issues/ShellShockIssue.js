@@ -1,4 +1,5 @@
 import React from 'react';
+import CollapsibleWellComponent from '../CollapsibleWell';
 
 export function ShellShockIssueOverview() {
   return (<li>Machines are vulnerable to ‘Shellshock’ (<a

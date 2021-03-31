@@ -1,4 +1,5 @@
 import React from 'react';
+import CollapsibleWellComponent from '../CollapsibleWell';
 
 export function HadoopIssueOverview() {
   return (<li>Hadoop/Yarn servers are vulnerable to remote code execution.</li>)

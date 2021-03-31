@@ -1,4 +1,5 @@
 import React from 'react';
+import CollapsibleWellComponent from '../CollapsibleWell';
 
 export function DrupalIssueOverview() {
   return (<li>Drupal server/s are vulnerable to <a

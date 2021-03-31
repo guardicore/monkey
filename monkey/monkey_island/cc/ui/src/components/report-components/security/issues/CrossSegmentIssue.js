@@ -27,10 +27,10 @@ export function generateCrossSegmentIssue(crossSegmentIssue) {
 
 export function generateCrossSegmentIssueListItem(issue) {
     if (issue['is_self']) {
-      return this.generateCrossSegmentSingleHostMessage(issue);
+      return generateCrossSegmentSingleHostMessage(issue);
     }
 
-    return this.generateCrossSegmentMultiHostMessage(issue);
+    return generateCrossSegmentMultiHostMessage(issue);
   }
 
 export function generateCrossSegmentSingleHostMessage(issue) {

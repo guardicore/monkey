@@ -1,4 +1,6 @@
 import React from 'react';
+import CollapsibleWellComponent from '../CollapsibleWell';
+import {generateInfoBadges} from './utils';
 
 export function sharedPasswordsIssueOverview() {
    return (<li key={"shared_passwords"}>Multiple users have the same password</li>)
@@ -15,7 +17,7 @@ export function generateSharedCredsDomainIssue(issue) {
         Some domain users are sharing passwords, this should be fixed by changing passwords.
         <CollapsibleWellComponent>
           These users are sharing access password:
-          {this.generateInfoBadges(issue.shared_with)}.
+          {generateInfoBadges(issue.shared_with)}.
         </CollapsibleWellComponent>
       </>
     );
@@ -27,7 +29,7 @@ export function generateSharedCredsIssue(issue) {
         Some users are sharing passwords, this should be fixed by changing passwords.
         <CollapsibleWellComponent>
           These users are sharing access password:
-          {this.generateInfoBadges(issue.shared_with)}.
+          {generateInfoBadges(issue.shared_with)}.
         </CollapsibleWellComponent>
       </>
     );
@@ -42,7 +44,7 @@ export function generateSharedLocalAdminsIssue(issue) {
         <CollapsibleWellComponent>
           Here is a list of machines which the account <span
           className="badge badge-primary">{issue.username}</span> is defined as an administrator:
-          {this.generateInfoBadges(issue.shared_machines)}
+          {generateInfoBadges(issue.shared_machines)}
         </CollapsibleWellComponent>
       </>
     );

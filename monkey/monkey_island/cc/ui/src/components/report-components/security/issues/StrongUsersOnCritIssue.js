@@ -1,4 +1,5 @@
 import React from 'react';
+import CollapsibleWellComponent from '../CollapsibleWell';
 
 export function generateStrongUsersOnCritIssue(issue) {
     return (

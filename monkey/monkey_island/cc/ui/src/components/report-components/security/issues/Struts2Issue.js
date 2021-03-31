@@ -1,4 +1,5 @@
 import React from 'react';
+import CollapsibleWellComponent from '../CollapsibleWell';
 
 export function Struts2IssueOverview() {
   return (<li>Struts2 servers are vulnerable to remote code execution. (<a

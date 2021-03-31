@@ -1,4 +1,5 @@
 import React from 'react';
+import CollapsibleWellComponent from '../CollapsibleWell';
 
 export function WebLogicIssueOverview() {
   return (<li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li>)
