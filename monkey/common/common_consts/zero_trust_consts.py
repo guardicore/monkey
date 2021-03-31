@@ -174,7 +174,7 @@ TESTS_MAP = {
             STATUS_PASSED: "Monkey didn't find open PostgreSQL servers. If you have such servers, look for alerts that "
                            "indicate attempts to access them. "
         },
-        PRINCIPLE_KEY: PRINCIPLE_DATA_TRANSIT,
+        PRINCIPLE_KEY: PRINCIPLE_DATA_CONFIDENTIALITY,
         PILLARS_KEY: [DATA],
         POSSIBLE_STATUSES_KEY: [STATUS_UNEXECUTED, STATUS_FAILED, STATUS_PASSED]
     },

@@ -119,7 +119,7 @@ def test_exception_ssl_not_configured_all_non_ssl_allowed(mock_PostgreSQLFinger,
     exception = _RELEVANT_EXCEPTION_STRINGS["pwd_auth_failed"]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
-    result = mock_PostgreSQLFinger.analyze_operational_error(host, exception)
+    mock_PostgreSQLFinger.analyze_operational_error(host, exception)
     assert host.services[mock_PostgreSQLFinger._SCANNED_SERVICE][
         "communication_encryption_details"
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])
@@ -131,7 +131,7 @@ def test_exception_ssl_not_configured_selected_non_ssl_allowed(
     exception = _RELEVANT_EXCEPTION_STRINGS["ssl_off_entry_not_found"]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
-    result = mock_PostgreSQLFinger.analyze_operational_error(host, exception)
+    mock_PostgreSQLFinger.analyze_operational_error(host, exception)
     assert host.services[mock_PostgreSQLFinger._SCANNED_SERVICE][
         "communication_encryption_details"
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])
@@ -141,7 +141,7 @@ def test_exception_all_ssl_allowed_all_non_ssl_allowed(mock_PostgreSQLFinger, ho
     exception = _RELEVANT_EXCEPTION_STRINGS["pwd_auth_failed_pwd_auth_failed"]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
-    result = mock_PostgreSQLFinger.analyze_operational_error(host, exception)
+    mock_PostgreSQLFinger.analyze_operational_error(host, exception)
     assert host.services[mock_PostgreSQLFinger._SCANNED_SERVICE][
         "communication_encryption_details"
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])
@@ -153,7 +153,7 @@ def test_exception_all_ssl_allowed_selected_non_ssl_allowed(
     exception = _RELEVANT_EXCEPTION_STRINGS["pwd_auth_failed_ssl_off_entry_not_found"]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
-    result = mock_PostgreSQLFinger.analyze_operational_error(host, exception)
+    mock_PostgreSQLFinger.analyze_operational_error(host, exception)
     assert host.services[mock_PostgreSQLFinger._SCANNED_SERVICE][
         "communication_encryption_details"
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])
@@ -165,7 +165,7 @@ def test_exception_selected_ssl_allowed_all_non_ssl_allowed(
     exception = _RELEVANT_EXCEPTION_STRINGS["ssl_on_entry_not_found_pwd_auth_failed"]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
-    result = mock_PostgreSQLFinger.analyze_operational_error(host, exception)
+    mock_PostgreSQLFinger.analyze_operational_error(host, exception)
     assert host.services[mock_PostgreSQLFinger._SCANNED_SERVICE][
         "communication_encryption_details"
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])
@@ -179,7 +179,7 @@ def test_exception_selected_ssl_allowed_selected_non_ssl_allowed(
     ]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
-    result = mock_PostgreSQLFinger.analyze_operational_error(host, exception)
+    mock_PostgreSQLFinger.analyze_operational_error(host, exception)
     assert host.services[mock_PostgreSQLFinger._SCANNED_SERVICE][
         "communication_encryption_details"
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])

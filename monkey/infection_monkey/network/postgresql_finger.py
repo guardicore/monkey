@@ -52,7 +52,7 @@ class PostgreSQLFinger(HostFinger):
                 host.services, self._SCANNED_SERVICE, self.POSTGRESQL_DEFAULT_PORT
             )
             host.services[self._SCANNED_SERVICE]["communication_encryption_details"] = (
-                f"The PostgreSQL server was unexpectedly accessible with the credentials - "
+                "The PostgreSQL server was unexpectedly accessible with the credentials - "
                 + f"user: '{self.CREDS['username']}' and password: '{self.CREDS['password']}'. Is this a honeypot?"
             )
             return True
