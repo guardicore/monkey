@@ -435,6 +435,13 @@ class ReportPageComponent extends AuthComponent {
     return overviews;
   }
 
+  isIssuePotentialSecurityIssue(issueName) {
+    let issueDescriptor = this.IssueDescriptorEnum[issueName];
+    return issueDescriptor.hasOwnProperty(this.issueContentTypes.TYPE) &&
+      issueDescriptor[this.issueContentTypes.TYPE] === this.issueTypes.WARNING &&
+      issueDescriptor.hasOwnProperty(this.issueContentTypes.OVERVIEW);
+  }
+
   getImmediateThreats() {
     let threatCount = this.getImmediateThreatCount()
     return (
@@ -467,6 +474,32 @@ class ReportPageComponent extends AuthComponent {
     return threatCount;
   }
 
+  isIssueImmediateThreat(issueName) {
+    let issueDescriptor = this.IssueDescriptorEnum[issueName];
+    return issueDescriptor.hasOwnProperty(this.issueContentTypes.TYPE) &&
+      issueDescriptor[this.issueContentTypes.TYPE] === this.issueTypes.DANGER &&
+      issueDescriptor.hasOwnProperty(this.issueContentTypes.OVERVIEW);
+  }
+
+  getImmediateThreatsOverviews() {
+    let overviews = [];
+    let issues = this.state.report.overview.issues;
+
+    for(let i=0; i < issues.length; i++) {
+      if (this.isIssueImmediateThreat(issues[i])) {
+        if (issues[i] === 'ZerologonExploiter' && issues.includes('zerologon_pass_restore_failed')){
+          overviews.push(this.getIssueOverview(this.IssueDescriptorEnum['zerologon_pass_restore_failed']));
+        } else {
+          overviews.push(this.getIssueOverview(this.IssueDescriptorEnum[issues[i]]));
+        }
+      }
+    }
+    return overviews;
+  }
+
+  getIssueOverview(issueDescriptor) {
+    return issueDescriptor[this.issueContentTypes.OVERVIEW]();
+  }
 
   generateReportRecommendationsSection() {
     return (
