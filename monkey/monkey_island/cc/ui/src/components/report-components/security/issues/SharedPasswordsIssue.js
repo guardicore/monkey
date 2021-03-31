@@ -11,7 +11,7 @@ export function sharedAdminsDomainIssueOverview() {
                       administrator.</li>)
 }
 
-export function generateSharedCredsDomainIssue(issue) {
+export function sharedCredsDomainIssueReport(issue) {
     return (
       <>
         Some domain users are sharing passwords, this should be fixed by changing passwords.
@@ -23,7 +23,7 @@ export function generateSharedCredsDomainIssue(issue) {
     );
   }
 
-export function generateSharedCredsIssue(issue) {
+export function sharedCredsIssueReport(issue) {
     return (
       <>
         Some users are sharing passwords, this should be fixed by changing passwords.
@@ -35,7 +35,7 @@ export function generateSharedCredsIssue(issue) {
     );
   }
 
-export function generateSharedLocalAdminsIssue(issue) {
+export function sharedLocalAdminsIssueReport(issue) {
     return (
       <>
         Make sure the right administrator accounts are managing the right machines, and that there isn’t an

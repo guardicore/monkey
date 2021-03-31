@@ -1,11 +1,11 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function WebLogicIssueOverview() {
+export function webLogicIssueOverview() {
   return (<li>Oracle WebLogic servers are susceptible to a remote code execution vulnerability.</li>)
 }
 
-export function WebLogicIssueReport(issue) {
+export function webLogicIssueReport(issue) {
   return (
       <>
         Update Oracle WebLogic server to the latest supported version.

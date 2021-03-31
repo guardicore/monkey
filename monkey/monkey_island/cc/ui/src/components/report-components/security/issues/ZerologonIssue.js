@@ -3,7 +3,7 @@ import CollapsibleWellComponent from '../CollapsibleWell';
 import WarningIcon from '../../../ui-components/WarningIcon';
 import {Button} from 'react-bootstrap';
 
-export function ZerologonIssueOverview() {
+export function zerologonIssueOverview() {
   return (
     <li>
       Some Windows domain controllers are vulnerable to 'Zerologon' (
@@ -17,8 +17,8 @@ export function ZerologonIssueOverview() {
   )
 }
 
-export function ZerologonOverviewWithFailedPassResetWarning() {
-  let overview = [ZerologonIssueOverview()];
+export function zerologonOverviewWithFailedPassResetWarning() {
+  let overview = [zerologonIssueOverview()];
   overview.push(
     <li>
       <span className={'zero-logon-overview-pass-restore-failed'}>
@@ -36,7 +36,7 @@ export function ZerologonOverviewWithFailedPassResetWarning() {
   return overview;
 }
 
-export function ZerologonIssueReport(issue) {
+export function zerologonIssueReport(issue) {
   return (
     <>
       Install Windows security updates.

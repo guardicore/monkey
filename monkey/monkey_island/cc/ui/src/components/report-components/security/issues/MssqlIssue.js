@@ -1,11 +1,11 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function MssqlIssueOverview() {
+export function mssqlIssueOverview() {
   return (<li>MS-SQL servers are vulnerable to remote code execution via xp_cmdshell command.</li>)
 }
 
-export function MssqlIssueReport(issue) {
+export function mssqlIssueReport(issue) {
   return (
       <>
         Disable the xp_cmdshell option.

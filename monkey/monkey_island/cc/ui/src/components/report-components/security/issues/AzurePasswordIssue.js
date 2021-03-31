@@ -1,13 +1,13 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function AzurePasswordIssueOverview() {
+export function azurePasswordIssueOverview() {
   return (<li>Azure machines expose plaintext passwords. (<a
                       href="https://www.guardicore.com/2018/03/recovering-plaintext-passwords-azure/"
                     >More info</a>)</li>)
 }
 
-export function AzurePasswordIssueReport(issue) {
+export function azurePasswordIssueReport(issue) {
   return (
       <>
         Delete VM Access plugin configuration files.

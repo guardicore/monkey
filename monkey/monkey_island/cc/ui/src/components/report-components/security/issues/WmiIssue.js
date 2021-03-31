@@ -1,7 +1,7 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function generateWmiPasswordIssue(issue) {
+export function wmiPasswordIssueReport(issue) {
     return (
       <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
@@ -18,7 +18,7 @@ export function generateWmiPasswordIssue(issue) {
     );
   }
 
-export function generateWmiPthIssue(issue) {
+export function wmiPthIssueReport(issue) {
     return (
       <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password

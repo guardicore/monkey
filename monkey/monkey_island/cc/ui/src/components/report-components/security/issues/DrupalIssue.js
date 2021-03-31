@@ -1,12 +1,12 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function DrupalIssueOverview() {
+export function drupalIssueOverview() {
   return (<li>Drupal server/s are vulnerable to <a
     href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-6340">CVE-2019-6340</a>.</li>)
 }
 
-export function DrupalIssueReport(issue) {
+export function drupalIssueReport(issue) {
   return (
       <>
         Upgrade Drupal server to versions 8.5.11, 8.6.10, or later.

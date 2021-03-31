@@ -1,13 +1,13 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function VsftpdIssueOverview() {
+export function vsftpdIssueOverview() {
   return (<li>VSFTPD is vulnerable to <a
                       href="https://www.rapid7.com/db/modules/exploit/unix/ftp/vsftpd_234_backdoor">CVE-2011-2523</a>.
                     </li>)
 }
 
-export function VsftpdIssueReport(issue) {
+export function vsftpdIssueReport(issue) {
   return (
       <>
         Update your VSFTPD server to the latest version vsftpd-3.0.3.

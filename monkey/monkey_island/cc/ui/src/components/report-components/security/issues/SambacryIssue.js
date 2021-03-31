@@ -1,13 +1,13 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function SambacryIssueOverview() {
+export function sambacryIssueOverview() {
    return (<li>Samba servers are vulnerable to ‘SambaCry’ (<a
                       href="https://www.samba.org/samba/security/CVE-2017-7494.html"
                     >CVE-2017-7494</a>).</li>)
 }
 
-export function SambacryIssueReport(issue) {
+export function sambacryIssueReport(issue) {
   return (
       <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password

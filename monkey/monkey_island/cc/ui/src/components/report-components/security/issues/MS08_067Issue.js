@@ -1,13 +1,13 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function MS08_067IssueOverview() {
+export function ms08_067IssueOverview() {
   return (<li>Machines are vulnerable to ‘Conficker’ (<a
                       href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067"
   >MS08-067</a>). </li>)
 }
 
-export function MS08_067IssueReport(issue) {
+export function ms08_067IssueReport(issue) {
   return (
       <>
         Install the latest Windows updates or upgrade to a newer operating system.

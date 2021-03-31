@@ -7,7 +7,7 @@ export function crossSegmentIssueOverview() {
     different segments are able to communicate.</li>)
 }
 
-export function generateCrossSegmentIssue(crossSegmentIssue) {
+export function crossSegmentIssueReport(crossSegmentIssue) {
     let crossSegmentIssueOverview = 'Communication possible from '
       + `${crossSegmentIssue['source_subnet']} to ${crossSegmentIssue['target_subnet']}`;
 
@@ -17,7 +17,7 @@ export function generateCrossSegmentIssue(crossSegmentIssue) {
         <CollapsibleWellComponent>
           <ul className='cross-segment-issues'>
             {crossSegmentIssue['issues'].map(
-              issue => generateCrossSegmentIssueListItem(issue)
+              issue => getCrossSegmentIssueListItem(issue)
             )}
           </ul>
         </CollapsibleWellComponent>
@@ -25,15 +25,15 @@ export function generateCrossSegmentIssue(crossSegmentIssue) {
     );
   }
 
-export function generateCrossSegmentIssueListItem(issue) {
+export function getCrossSegmentIssueListItem(issue) {
     if (issue['is_self']) {
-      return generateCrossSegmentSingleHostMessage(issue);
+      return getCrossSegmentSingleHostMessage(issue);
     }
 
-    return generateCrossSegmentMultiHostMessage(issue);
+    return getCrossSegmentMultiHostMessage(issue);
   }
 
-export function generateCrossSegmentSingleHostMessage(issue) {
+export function getCrossSegmentSingleHostMessage(issue) {
     return (
       <li key={issue['hostname']}>
         {`Machine ${issue['hostname']} has both ips: ${issue['source']} and ${issue['target']}`}
@@ -41,20 +41,20 @@ export function generateCrossSegmentSingleHostMessage(issue) {
     );
   }
 
-export function generateCrossSegmentMultiHostMessage(issue) {
+export function getCrossSegmentMultiHostMessage(issue) {
     return (
       <li key={issue['source'] + issue['target']}>
         IP {issue['source']} ({issue['hostname']}) was able to communicate with
         IP {issue['target']} using:
         <ul>
           {issue['icmp'] && <li key='icmp'>ICMP</li>}
-          {this.generateCrossSegmentServiceListItems(issue)}
+          {getCrossSegmentServiceListItems(issue)}
         </ul>
       </li>
     );
   }
 
-export function generateCrossSegmentServiceListItems(issue) {
+export function getCrossSegmentServiceListItems(issue) {
     let service_list_items = [];
 
     for (const [service, info] of Object.entries(issue['services'])) {
@@ -68,7 +68,7 @@ export function generateCrossSegmentServiceListItems(issue) {
     return service_list_items;
   }
 
-export function generateIslandCrossSegmentIssue(issue) {
+export function islandCrossSegmentIssueReport(issue) {
     return (
       <>
         Segment your network and make sure there is no communication between machines from different segments.

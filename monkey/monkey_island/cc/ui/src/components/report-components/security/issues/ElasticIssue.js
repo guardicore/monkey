@@ -1,13 +1,13 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function ElasticIssueOverview() {
+export function elasticIssueOverview() {
   return (<li>Elasticsearch servers are vulnerable to <a
                       href="https://www.cvedetails.com/cve/cve-2015-1427">CVE-2015-1427</a>.
                     </li>)
 }
 
-export function ElasticIssueReport(issue) {
+export function elasticIssueReport(issue) {
   return (
       <>
         Update your Elastic Search server to version 1.4.3 and up.

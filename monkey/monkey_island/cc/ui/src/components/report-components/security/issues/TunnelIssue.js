@@ -1,11 +1,11 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function generateTunnelIssueOverview(){
+export function tunnelIssueOverview(){
   return (<li key="tunnel">Weak segmentation - Machines were able to communicate over unused ports.</li>)
 }
 
-export function generateTunnelIssue(issue) {
+export function tunnelIssueReport(issue) {
     return (
       <>
         Use micro-segmentation policies to disable communication other than the required.

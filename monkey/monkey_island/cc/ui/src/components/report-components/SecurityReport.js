@@ -18,38 +18,38 @@ import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
-import {generateSmbPasswordReport, generateSmbPthReport} from './security/issues/SmbIssue';
-import {Struts2IssueOverview, Struts2IssueReport} from './security/issues/Struts2Issue';
-import {WebLogicIssueOverview, WebLogicIssueReport} from './security/issues/WebLogicIssue';
-import {HadoopIssueOverview, HadoopIssueReport} from './security/issues/HadoopIssue';
-import {MssqlIssueOverview, MssqlIssueReport} from './security/issues/MssqlIssue';
-import {DrupalIssueOverview, DrupalIssueReport} from './security/issues/DrupalIssue';
-import {VsftpdIssueOverview, VsftpdIssueReport} from './security/issues/VsftpdIssue';
-import {generateWmiPasswordIssue, generateWmiPthIssue} from './security/issues/WmiIssue';
-import {generateSshKeysReport, ShhIssueReport, SshIssueOverview} from './security/issues/SshIssue';
-import {SambacryIssueOverview, SambacryIssueReport} from './security/issues/SambacryIssue';
-import {ElasticIssueOverview, ElasticIssueReport} from './security/issues/ElasticIssue';
-import {ShellShockIssueOverview, ShellShockIssueReport} from './security/issues/ShellShockIssue';
-import {MS08_067IssueOverview, MS08_067IssueReport} from './security/issues/MS08_067Issue';
+import {smbPasswordReport, smbPthReport} from './security/issues/SmbIssue';
+import {struts2IssueOverview, struts2IssueReport} from './security/issues/Struts2Issue';
+import {webLogicIssueOverview, webLogicIssueReport} from './security/issues/WebLogicIssue';
+import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
+import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
+import {drupalIssueOverview, drupalIssueReport} from './security/issues/DrupalIssue';
+import {vsftpdIssueOverview, vsftpdIssueReport} from './security/issues/VsftpdIssue';
+import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIssue';
+import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
+import {sambacryIssueOverview, sambacryIssueReport} from './security/issues/SambacryIssue';
+import {elasticIssueOverview, elasticIssueReport} from './security/issues/ElasticIssue';
+import {shellShockIssueOverview, shellShockIssueReport} from './security/issues/ShellShockIssue';
+import {ms08_067IssueOverview, ms08_067IssueReport} from './security/issues/MS08_067Issue';
 import {
   crossSegmentIssueOverview,
-  generateCrossSegmentIssue,
-  generateIslandCrossSegmentIssue
+  crossSegmentIssueReport,
+  islandCrossSegmentIssueReport
 } from './security/issues/CrossSegmentIssue';
 import {
-  generateSharedCredsDomainIssue, generateSharedCredsIssue, generateSharedLocalAdminsIssue,
+  sharedCredsDomainIssueReport, sharedCredsIssueReport, sharedLocalAdminsIssueReport,
   sharedAdminsDomainIssueOverview,
   sharedPasswordsIssueOverview
 } from './security/issues/SharedPasswordsIssue';
-import {generateTunnelIssue, generateTunnelIssueOverview} from './security/issues/TunnelIssue';
-import {StolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
-import {WeakPasswordIssueOverview} from './security/issues/WeakPasswordIssue';
-import {AzurePasswordIssueOverview, AzurePasswordIssueReport} from './security/issues/AzurePasswordIssue';
-import {generateStrongUsersOnCritIssue} from './security/issues/StrongUsersOnCritIssue';
+import {tunnelIssueReport, tunnelIssueOverview} from './security/issues/TunnelIssue';
+import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
+import {weakPasswordIssueOverview} from './security/issues/WeakPasswordIssue';
+import {azurePasswordIssueOverview, azurePasswordIssueReport} from './security/issues/AzurePasswordIssue';
+import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
-  ZerologonIssueOverview,
-  ZerologonIssueReport,
-  ZerologonOverviewWithFailedPassResetWarning
+  zerologonIssueOverview,
+  zerologonIssueReport,
+  zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
 
 
@@ -76,123 +76,123 @@ class ReportPageComponent extends AuthComponent {
     {
       'SmbExploiter': {
         [this.issueContentTypes.REPORT]: {
-          [this.credentialTypes.PASSWORD]: generateSmbPasswordReport,
-          [this.credentialTypes.HASH]: generateSmbPthReport
+          [this.credentialTypes.PASSWORD]: smbPasswordReport,
+          [this.credentialTypes.HASH]: smbPthReport
         },
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'Struts2Exploiter': {
-        [this.issueContentTypes.OVERVIEW]: Struts2IssueOverview,
-        [this.issueContentTypes.REPORT]: Struts2IssueReport,
+        [this.issueContentTypes.OVERVIEW]: struts2IssueOverview,
+        [this.issueContentTypes.REPORT]: struts2IssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'WebLogicExploiter': {
-        [this.issueContentTypes.OVERVIEW]: WebLogicIssueOverview,
-        [this.issueContentTypes.REPORT]: WebLogicIssueReport,
+        [this.issueContentTypes.OVERVIEW]: webLogicIssueOverview,
+        [this.issueContentTypes.REPORT]: webLogicIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'HadoopExploiter': {
-        [this.issueContentTypes.OVERVIEW]: HadoopIssueOverview,
-        [this.issueContentTypes.REPORT]: HadoopIssueReport,
+        [this.issueContentTypes.OVERVIEW]: hadoopIssueOverview,
+        [this.issueContentTypes.REPORT]: hadoopIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'MSSQLExploiter': {
-        [this.issueContentTypes.OVERVIEW]: MssqlIssueOverview,
-        [this.issueContentTypes.REPORT]: MssqlIssueReport,
+        [this.issueContentTypes.OVERVIEW]: mssqlIssueOverview,
+        [this.issueContentTypes.REPORT]: mssqlIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'DrupalExploiter': {
-        [this.issueContentTypes.OVERVIEW]: DrupalIssueOverview,
-        [this.issueContentTypes.REPORT]: DrupalIssueReport,
+        [this.issueContentTypes.OVERVIEW]: drupalIssueOverview,
+        [this.issueContentTypes.REPORT]: drupalIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'VSFTPDExploiter': {
-        [this.issueContentTypes.OVERVIEW]: VsftpdIssueOverview,
-        [this.issueContentTypes.REPORT]: VsftpdIssueReport,
+        [this.issueContentTypes.OVERVIEW]: vsftpdIssueOverview,
+        [this.issueContentTypes.REPORT]: vsftpdIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'WmiExploiter': {
         [this.issueContentTypes.REPORT]: {
-          [this.credentialTypes.PASSWORD]: generateWmiPasswordIssue,
-          [this.credentialTypes.HASH]: generateWmiPthIssue
+          [this.credentialTypes.PASSWORD]: wmiPasswordIssueReport,
+          [this.credentialTypes.HASH]: wmiPthIssueReport
         },
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'SSHExploiter': {
-        [this.issueContentTypes.OVERVIEW]: SshIssueOverview,
+        [this.issueContentTypes.OVERVIEW]: sshIssueOverview,
         [this.issueContentTypes.REPORT]: {
-          [this.credentialTypes.PASSWORD]: ShhIssueReport,
-          [this.credentialTypes.KEY]: generateSshKeysReport
+          [this.credentialTypes.PASSWORD]: shhIssueReport,
+          [this.credentialTypes.KEY]: sshKeysReport
         },
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'SambaCryExploiter': {
-        [this.issueContentTypes.OVERVIEW]: SambacryIssueOverview,
-        [this.issueContentTypes.REPORT]: SambacryIssueReport,
+        [this.issueContentTypes.OVERVIEW]: sambacryIssueOverview,
+        [this.issueContentTypes.REPORT]: sambacryIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'ElasticGroovyExploiter': {
-        [this.issueContentTypes.OVERVIEW]: ElasticIssueOverview,
-        [this.issueContentTypes.REPORT]: ElasticIssueReport,
+        [this.issueContentTypes.OVERVIEW]: elasticIssueOverview,
+        [this.issueContentTypes.REPORT]: elasticIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'ShellShockExploiter': {
-        [this.issueContentTypes.OVERVIEW]: ShellShockIssueOverview,
-        [this.issueContentTypes.REPORT]: ShellShockIssueReport,
+        [this.issueContentTypes.OVERVIEW]: shellShockIssueOverview,
+        [this.issueContentTypes.REPORT]: shellShockIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'Ms08_067_Exploiter': {
-        [this.issueContentTypes.OVERVIEW]: MS08_067IssueOverview,
-        [this.issueContentTypes.REPORT]: MS08_067IssueReport,
+        [this.issueContentTypes.OVERVIEW]: ms08_067IssueOverview,
+        [this.issueContentTypes.REPORT]: ms08_067IssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'ZerologonExploiter': {
-        [this.issueContentTypes.OVERVIEW]: ZerologonIssueOverview,
-        [this.issueContentTypes.REPORT]: ZerologonIssueReport,
+        [this.issueContentTypes.OVERVIEW]: zerologonIssueOverview,
+        [this.issueContentTypes.REPORT]: zerologonIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'zerologon_pass_restore_failed': {
-        [this.issueContentTypes.OVERVIEW]: ZerologonOverviewWithFailedPassResetWarning,
+        [this.issueContentTypes.OVERVIEW]: zerologonOverviewWithFailedPassResetWarning,
       },
       'island_cross_segment': {
         [this.issueContentTypes.OVERVIEW]: crossSegmentIssueOverview,
-        [this.issueContentTypes.REPORT]: generateIslandCrossSegmentIssue,
+        [this.issueContentTypes.REPORT]: islandCrossSegmentIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'tunnel': {
-        [this.issueContentTypes.OVERVIEW]: generateTunnelIssueOverview,
-        [this.issueContentTypes.REPORT]: generateTunnelIssue,
+        [this.issueContentTypes.OVERVIEW]: tunnelIssueOverview,
+        [this.issueContentTypes.REPORT]: tunnelIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_passwords': {
         [this.issueContentTypes.OVERVIEW]: sharedPasswordsIssueOverview,
-        [this.issueContentTypes.REPORT]: generateSharedCredsIssue,
+        [this.issueContentTypes.REPORT]: sharedCredsIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_admins_domain': {
         [this.issueContentTypes.OVERVIEW]: sharedAdminsDomainIssueOverview,
-        [this.issueContentTypes.REPORT]: generateSharedLocalAdminsIssue,
+        [this.issueContentTypes.REPORT]: sharedLocalAdminsIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_passwords_domain': {
-        [this.issueContentTypes.REPORT]: generateSharedCredsDomainIssue,
+        [this.issueContentTypes.REPORT]: sharedCredsDomainIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'strong_users_on_crit': {
-        [this.issueContentTypes.REPORT]: generateStrongUsersOnCritIssue,
+        [this.issueContentTypes.REPORT]: strongUsersOnCritIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'azure_password': {
-        [this.issueContentTypes.OVERVIEW]: AzurePasswordIssueOverview,
-        [this.issueContentTypes.REPORT]: AzurePasswordIssueReport,
+        [this.issueContentTypes.OVERVIEW]: azurePasswordIssueOverview,
+        [this.issueContentTypes.REPORT]: azurePasswordIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'weak_password': {
-        [this.issueContentTypes.OVERVIEW]: WeakPasswordIssueOverview,
+        [this.issueContentTypes.OVERVIEW]: weakPasswordIssueOverview,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'stolen_creds': {
-        [this.issueContentTypes.OVERVIEW]: StolenCredsIssueOverview,
+        [this.issueContentTypes.OVERVIEW]: stolenCredsIssueOverview,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       }
     }
@@ -412,7 +412,7 @@ class ReportPageComponent extends AuthComponent {
             <div>
               The Monkey uncovered the following set of segmentation issues:
               <ul>
-                {this.state.report.overview.cross_segment_issues.map(x => generateCrossSegmentIssue(x))}
+                {this.state.report.overview.cross_segment_issues.map(x => crossSegmentIssueReport(x))}
               </ul>
             </div>
           </div>

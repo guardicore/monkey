@@ -1,13 +1,13 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function Struts2IssueOverview() {
+export function struts2IssueOverview() {
   return (<li>Struts2 servers are vulnerable to remote code execution. (<a
                       href="https://cwiki.apache.org/confluence/display/WW/S2-045">
                       CVE-2017-5638</a>)</li>)
 }
 
-export function Struts2IssueReport(issue) {
+export function struts2IssueReport(issue) {
   return (
       <>
         Upgrade Struts2 to version 2.3.32 or 2.5.10.1 or any later versions.

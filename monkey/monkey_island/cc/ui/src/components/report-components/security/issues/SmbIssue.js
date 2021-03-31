@@ -1,7 +1,7 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function generateSmbPasswordReport(issue) {
+export function smbPasswordReport(issue) {
   return (
     <>
       Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
@@ -18,7 +18,7 @@ export function generateSmbPasswordReport(issue) {
   );
 }
 
-export function generateSmbPthReport(issue) {
+export function smbPthReport(issue) {
   return (
     <>
       Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password

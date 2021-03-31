@@ -1,7 +1,7 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function generateStrongUsersOnCritIssue(issue) {
+export function strongUsersOnCritIssueReport(issue) {
     return (
       <>
         This critical machine is open to attacks via strong users with access to it.

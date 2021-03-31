@@ -1,11 +1,11 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function SshIssueOverview() {
+export function sshIssueOverview() {
   return (<li>Stolen SSH keys are used to exploit other machines.</li>)
 }
 
-export function ShhIssueReport(issue) {
+export function shhIssueReport(issue) {
   return (
       <>
         Change <span className="badge badge-success">{issue.username}</span>'s password to a complex one-use password
@@ -22,7 +22,7 @@ export function ShhIssueReport(issue) {
     );
 }
 
-export function generateSshKeysReport(issue) {
+export function sshKeysReport(issue) {
     return (
       <>
         Protect <span className="badge badge-success">{issue.ssh_key}</span> private key with a pass phrase.
