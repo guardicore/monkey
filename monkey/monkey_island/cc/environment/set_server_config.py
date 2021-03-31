@@ -14,7 +14,7 @@ def add_monkey_dir_to_sys_path():
 
 add_monkey_dir_to_sys_path()
 
-from monkey_island.cc.consts import DEFAULT_SERVER_CONFIG_PATH  # noqa: E402 isort:skip
+from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH  # noqa: E402 isort:skip
 
 SERVER_CONFIG = "server_config"
 BACKUP_CONFIG_FILENAME = "./server_config.backup"

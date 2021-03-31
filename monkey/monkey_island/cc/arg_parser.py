@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from monkey_island.cc.consts import DEFAULT_SERVER_CONFIG_PATH, DEFAULT_LOGGER_CONFIG_PATH
+from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH, DEFAULT_LOGGER_CONFIG_PATH
 
 
 @dataclass
