@@ -121,7 +121,6 @@ install_monkey_island_python_dependencies() {
   sed '4d' $requirements_island | sponge $requirements_island
 
   ${python_cmd} -m pip install -r "${requirements_island}"  --ignore-installed --prefix /usr --root=$APPDIR || handle_error
-  ${python_cmd} -m pip install pyjwt==1.7 --ignore-installed -U --prefix /usr --root=$APPDIR || handle_error
 }
 
 download_monkey_agent_binaries() {
