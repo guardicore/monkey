@@ -46,6 +46,11 @@ import {StolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
 import {WeakPasswordIssueOverview} from './security/issues/WeakPasswordIssue';
 import {AzurePasswordIssueOverview, AzurePasswordIssueReport} from './security/issues/AzurePasswordIssue';
 import {generateStrongUsersOnCritIssue} from './security/issues/StrongUsersOnCritIssue';
+import {
+  ZerologonIssueOverview,
+  ZerologonIssueReport,
+  ZerologonOverviewWithFailedPassResetWarning
+} from './security/issues/ZerologonIssue';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -139,7 +144,12 @@ class ReportPageComponent extends AuthComponent {
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'ZerologonExploiter': {
-        //TODO add
+        [this.issueContentTypes.OVERVIEW]: ZerologonIssueOverview,
+        [this.issueContentTypes.REPORT]: ZerologonIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'zerologon_pass_restore_failed': {
+        [this.issueContentTypes.OVERVIEW]: ZerologonOverviewWithFailedPassResetWarning,
       },
       'island_cross_segment': {
         [this.issueContentTypes.OVERVIEW]: crossSegmentIssueOverview,
@@ -162,11 +172,9 @@ class ReportPageComponent extends AuthComponent {
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_passwords_domain': {
-        [this.issueContentTypes.REPORT]: generateSharedCredsDomainIssue(),
+        [this.issueContentTypes.REPORT]: generateSharedCredsDomainIssue,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
-
-      // This issue was missing overview section
       'strong_users_on_crit': {
         [this.issueContentTypes.REPORT]: generateStrongUsersOnCritIssue,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
@@ -224,8 +232,6 @@ class ReportPageComponent extends AuthComponent {
     if (this.stillLoadingDataFromServer()) {
       content = <ReportLoader loading={true}/>;
     } else {
-
-      console.log(this.state.report);
       content =
         <div>
           {this.generateReportOverviewSection()}
@@ -386,7 +392,7 @@ class ReportPageComponent extends AuthComponent {
               <div>
                 The Monkey uncovered the following possible set of issues:
                 <ul>
-                  {overviews}
+                  {this.getPotentialSecurityIssuesOverviews()}
                 </ul>
               </div>
               :
@@ -416,15 +422,18 @@ class ReportPageComponent extends AuthComponent {
 
   getPotentialSecurityIssuesOverviews() {
     let overviews = [];
+    let issues = this.state.report.overview.issues;
 
-    for (let issueKey of this.state.report.overview.issues) {
-      overviews.push(this.IssueDescriptorEnum[issueKey][this.issueContentTypes.OVERVIEW]);
+    for(let i=0; i < issues.length; i++) {
+      if (this.isIssuePotentialSecurityIssue(issues[i])) {
+        overviews.push(this.getIssueOverview(this.IssueDescriptorEnum[issues[i]]));
+      }
     }
     return overviews;
   }
 
   getImmediateThreats() {
-    let threatCount = this.countImmediateThreats()
+    let threatCount = this.getImmediateThreatCount()
     return (
       <div>
         <h3>
@@ -436,18 +445,19 @@ class ReportPageComponent extends AuthComponent {
              <span className="badge badge-warning">
                {threatCount} threats
              </span>:
+              {this.getImmediateThreatsOverviews()}
             </>
           }
         </div>
       </div>)
   }
 
-  countImmediateThreats() {
+  getImmediateThreatCount() {
     let threatCount = 0;
     let issues = this.state.report.overview.issues;
 
     for(let i=0; i < issues.length; i++) {
-      if (this.IssueDescriptorEnum[issues[i]][this.issueContentTypes.TYPE] === this.issueTypes.DANGER) {
+      if(this.isIssueImmediateThreat(issues[i])) {
         threatCount++;
       }
     }
@@ -551,8 +561,7 @@ class ReportPageComponent extends AuthComponent {
   generateIssue = (issue) => {
     let issueDescriptor = this.IssueDescriptorEnum[issue.type];
 
-    let reportFnc = (issue) => {
-    };
+    let reportFnc = (issue) => {};
     if (issue.hasOwnProperty('credential_type')) {
       reportFnc = issueDescriptor[this.issueContentTypes.REPORT][issue.credential_type];
     } else {

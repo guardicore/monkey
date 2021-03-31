@@ -45,6 +45,7 @@ class ReportService:
     class DerivedIssueEnum:
         WEAK_PASSWORD = "weak_password"
         STOLEN_CREDS = "stolen_creds"
+        ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
 
     @staticmethod
     def get_first_monkey_time():
@@ -264,7 +265,7 @@ class ReportService:
         return exploiter_info
 
     @staticmethod
-    def get_exploits() -> dict:
+    def get_exploits() -> List[dict]:
         query = [{'$match': {'telem_category': 'exploit', 'data.result': True}},
                  {'$group': {'_id': {'ip_address': '$data.machine.ip_addr'},
                              'data': {'$first': '$$ROOT'},
@@ -439,7 +440,6 @@ class ReportService:
 
     @staticmethod
     def get_domain_issues():
-
         ISSUE_GENERATORS = [
             PTHReportService.get_duplicated_passwords_issues,
             PTHReportService.get_shared_admins_issues,
@@ -491,8 +491,7 @@ class ReportService:
         if exploits == default_exploits:
             return ['default']
 
-        # TODO investigate strange code
-        return [exploit for exploit in exploits]
+        return exploits
 
     @staticmethod
     def get_config_ips():
@@ -508,13 +507,12 @@ class ReportService:
 
         for machine in issues:
             for issue in issues[machine]:
-                # TODO check if this actually works, because stolen passwords get added to config
-                # so any password will be in config. We need to separate stolen passwords from initial
-                # passwords in config.
                 if ReportService._is_weak_credential_issue(issue, config_users, config_passwords):
                     issue_set.add(ReportService.DerivedIssueEnum.WEAK_PASSWORD)
                 elif ReportService._is_stolen_credential_issue(issue):
                     issue_set.add(ReportService.DerivedIssueEnum.STOLEN_CREDS)
+                elif ReportService._is_zerologon_pass_restore_failed(issue):
+                    issue_set.add(ReportService.DerivedIssueEnum.ZEROLOGON_PASS_RESTORE_FAILED)
 
                 issue_set.add(issue['type'])
 
@@ -534,6 +532,11 @@ class ReportService:
         return 'credential_type' in issue and \
                (issue['credential_type'] == CredentialType.PASSWORD.value or
                 issue['credential_type'] == CredentialType.HASH.value)
+
+    @staticmethod
+    def _is_zerologon_pass_restore_failed(issue: dict):
+        return issue['type'] == ExploiterDescriptorEnum.ZEROLOGON.value.class_name \
+               and not issue['password_restored']
 
     @staticmethod
     def is_report_generated():
@@ -594,7 +597,6 @@ class ReportService:
 
     @staticmethod
     def get_issues():
-        # Todo refactor these into separate files with a method signature -> dict
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
             ReportService.get_tunnels,
