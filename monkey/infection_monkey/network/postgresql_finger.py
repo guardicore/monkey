@@ -48,9 +48,10 @@ class PostgreSQLFinger(HostFinger):
             # if it comes here, the creds worked
             # this shouldn't happen since capital letters are not supported in postgres usernames
             # perhaps the service is a honeypot
+            self.init_service(host.services, self._SCANNED_SERVICE, self.POSTGRESQL_DEFAULT_PORT)
             host.services[self._SCANNED_SERVICE]['communication_encryption_details'] =\
                 f'The PostgreSQL server was unexpectedly accessible with the credentials - ' +\
-                'user: \'{self.CREDS['username']}\' and password: \'{self.CREDS['password']}\'. Is this a honeypot?'
+                f"user: \'{self.CREDS['username']}\' and password: \'{self.CREDS['password']}\'. Is this a honeypot?"
             return True
 
         except psycopg2.OperationalError as ex:
@@ -85,9 +86,9 @@ class PostgreSQLFinger(HostFinger):
         ssl_conf_on_server = self.is_ssl_configured(exceptions)
 
         if ssl_conf_on_server:  # SSL configured
-            self.get_connection_details_ssl_configured()
+            self.get_connection_details_ssl_configured(exceptions)
         else:  # SSL not configured
-            self.get_connection_details_ssl_not_configured()
+            self.get_connection_details_ssl_not_configured(exceptions)
 
         host.services[self._SCANNED_SERVICE]['communication_encryption_details'] = ''.join(self.ssl_connection_details)
 
@@ -100,7 +101,7 @@ class PostgreSQLFinger(HostFinger):
         elif len(exceptions) == 2:  # SSL configured so checks for both
             return True
 
-    def get_connection_details_ssl_configured(self):
+    def get_connection_details_ssl_configured(self, exceptions):
         self.ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_conf'])
         ssl_selected_comms_only = False
 
@@ -120,7 +121,7 @@ class PostgreSQLFinger(HostFinger):
             else:
                 self.ssl_connection_details.append(self.CONNECTION_DETAILS['selected_non_ssl'])
 
-    def get_connection_details_ssl_not_configured(self):
+    def get_connection_details_ssl_not_configured(self, exceptions):
         self.ssl_connection_details.append(self.CONNECTION_DETAILS['ssl_not_conf'])
         if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
             self.ssl_connection_details.append(self.CONNECTION_DETAILS['all_non_ssl'])
