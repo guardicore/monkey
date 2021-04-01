@@ -45,13 +45,17 @@ install_pip_37() {
 }
 
 install_nodejs() {
+  NODE_SRC=https://deb.nodesource.com/setup_12.x
+
   log_message "Installing nodejs"
-  node_src=https://deb.nodesource.com/setup_12.x
-  curl -sL $node_src | sudo -E bash -
+
+  curl -sL $NODE_SRC | sudo -E bash -
   sudo apt-get install -y nodejs
 }
 
 install_build_prereqs() {
+    sudo apt update
+
     # appimage-builder prereqs
     sudo apt install -y python3 python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace
 
@@ -69,8 +73,10 @@ install_appimage_builder() {
 
 install_appimage_tool() {
     APP_TOOL_BIN=$HOME/bin/appimagetool
+    APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
+
     mkdir $HOME/bin
-    curl -L -o $APP_TOOL_BIN https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
+    curl -L -o $APP_TOOL_BIN $APP_TOOL_URL
     chmod u+x $APP_TOOL_BIN
 
     PATH=$PATH:$HOME/bin
@@ -92,7 +98,7 @@ clone_monkey_repo() {
   fi
 
   log_message "Cloning files from git"
-  branch=${2:-"local-run-data-dir"}
+  branch=${2:-"develop"}
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
 
   chmod 774 -R "${MONKEY_HOME}"
@@ -116,9 +122,9 @@ install_monkey_island_python_dependencies() {
   log_message "Installing island requirements"
 
   requirements_island="$ISLAND_PATH/requirements.txt"
-  # TODO: This is an ugly hack. PyInstaller is a build-time dependency and should
-  #		  not be installed as a runtime requirement.
-  sed '4d' $requirements_island | sponge $requirements_island
+  # TODO: This is an ugly hack. PyInstaller and VirtualEnv are build-time
+  #       dependencies and should not be installed as a runtime requirement.
+  cat $requirements_island | grep -Piv "virtualenv|pyinstaller" | sponge $requirements_island
 
   ${python_cmd} -m pip install -r "${requirements_island}"  --ignore-installed --prefix /usr --root=$APPDIR || handle_error
 }
@@ -161,23 +167,23 @@ build_frontend() {
 }
 
 build_appimage() {
-	log_message "Building AppImage"
-	appimage-builder --recipe monkey_island_builder.yml --log DEBUG --skip-appimage
+    log_message "Building AppImage"
+    appimage-builder --recipe monkey_island_builder.yml --log DEBUG --skip-appimage
 
-	# There is a bug or unwanted behavior in appimage-builder that causes issues
-	# if 32-bit binaries are present in the appimage. To work around this, we:
-	#   1. Build the AppDir with appimage-builder and skip building the appimage
-	#   2. Add the 32-bit binaries to the AppDir
-	#   3. Build the AppImage with appimage-builder from the already-built AppDir
-	#
-	# Note that appimage-builder replaces the interpreter on the monkey agent binaries
-	# when building the AppDir. This is unwanted as the monkey agents may execute in 
-	# environments where the AppImage isn't loaded.
-	#
-	# See https://github.com/AppImageCrafters/appimage-builder/issues/93 for more info.
-	download_monkey_agent_binaries
+    # There is a bug or unwanted behavior in appimage-builder that causes issues
+    # if 32-bit binaries are present in the appimage. To work around this, we:
+    #   1. Build the AppDir with appimage-builder and skip building the appimage
+    #   2. Add the 32-bit binaries to the AppDir
+    #   3. Build the AppImage with appimage-builder from the already-built AppDir
+    #
+    # Note that appimage-builder replaces the interpreter on the monkey agent binaries
+    # when building the AppDir. This is unwanted as the monkey agents may execute in
+    # environments where the AppImage isn't loaded.
+    #
+    # See https://github.com/AppImageCrafters/appimage-builder/issues/93 for more info.
+    download_monkey_agent_binaries
 
-	appimage-builder --recipe monkey_island_builder.yml --log DEBUG --skip-build
+    appimage-builder --recipe monkey_island_builder.yml --log DEBUG --skip-build
 }
 
 if is_root; then
