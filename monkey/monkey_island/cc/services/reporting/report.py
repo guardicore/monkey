@@ -2,7 +2,7 @@ import functools
 import ipaddress
 import itertools
 import logging
-from typing import Dict, List
+from typing import List
 
 from bson import json_util
 
@@ -17,8 +17,7 @@ from common.config_value_paths import (EXPLOITER_CLASSES_PATH, LOCAL_NETWORK_SCA
                                        USER_LIST_PATH)
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum, \
-    ExploiterDescriptor
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.cred_exploit import \
     CredentialType
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.exploit import \
@@ -32,15 +31,8 @@ __author__ = "itay.mizeretz"
 logger = logging.getLogger(__name__)
 
 
-def build_exploiter_descriptor_dict() -> Dict[str, ExploiterDescriptor]:
-    descriptor_dict = {}
-    for descriptor in ExploiterDescriptorEnum:
-        descriptor_dict[descriptor.value.class_name] = descriptor
-    return descriptor_dict
-
-
 class ReportService:
-    exploiter_descriptors = build_exploiter_descriptor_dict()
+    exploiter_descriptors = ExploiterDescriptorEnum.__dict__
 
     class DerivedIssueEnum:
         WEAK_PASSWORD = "weak_password"
