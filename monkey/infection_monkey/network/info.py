@@ -1,4 +1,3 @@
-import ipaddress
 import itertools
 import socket
 import struct

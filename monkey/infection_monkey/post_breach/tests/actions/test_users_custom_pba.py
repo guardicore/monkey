@@ -1,7 +1,6 @@
 import pytest
 
-from infection_monkey.post_breach.actions.users_custom_pba import (
-    DIR_CHANGE_LINUX, DIR_CHANGE_WINDOWS, UsersPBA)
+from infection_monkey.post_breach.actions.users_custom_pba import UsersPBA
 
 MONKEY_DIR_PATH = "/dir/to/monkey/"
 CUSTOM_LINUX_CMD = "command-for-linux"
