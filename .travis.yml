@@ -55,17 +55,7 @@ install:
 script:
 # Check Python code
 ## Check syntax errors and fail the build if any are found.
-- flake8 ./monkey --config=./ci_scripts/flake8_syntax_check.ini
-
-## Warn about linter issues.
-### --exit-zero forces Flake8 to use the exit status code 0 even if there are errors, which means this will NOT fail the build.
-### The output is redirected to a file.
-- flake8 ./monkey --exit-zero --config=./ci_scripts/flake8_linter_check.ini > ./ci_scripts/flake8_warnings.txt
-## Display the linter issues
-- cat ./ci_scripts/flake8_warnings.txt
-## Make sure that we haven't increased the amount of warnings.
-- PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT=80
-- if [ $(tail -n 1 ./ci_scripts/flake8_warnings.txt) -gt $PYTHON_WARNINGS_AMOUNT_UPPER_LIMIT ]; then echo "Too many python linter warnings! Failing this build. Lower the amount of linter errors in this and try again. " && exit 1; fi
+- flake8 ./monkey
 
 ## Check import order
 - python -m isort ./monkey --settings-file ./ci_scripts/isort.cfg
