@@ -14,12 +14,13 @@ MONGO_PATH="$ISLAND_PATH/bin/mongodb"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 
 is_root() {
-  return $(id -u)
+  return "$(id -u)"
 }
 
 has_sudo() {
   # 0 true, 1 false
-  return $(sudo -nv > /dev/null 2>&1)
+  sudo -nv > /dev/null 2>&1
+  return $?
 }
 
 handle_error() {
@@ -33,8 +34,8 @@ log_message() {
 }
 
 setup_appdir() {
-    rm -rf $APPDIR | true
-    mkdir -p $INSTALL_DIR
+    rm -rf "$APPDIR" || true
+    mkdir -p "$INSTALL_DIR"
 }
 
 install_pip_37() {
@@ -76,9 +77,9 @@ install_appimage_tool() {
     APP_TOOL_BIN=$HOME/bin/appimagetool
     APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
 
-    mkdir $HOME/bin
-    curl -L -o $APP_TOOL_BIN $APP_TOOL_URL
-    chmod u+x $APP_TOOL_BIN
+    mkdir "$HOME"/bin
+    curl -L -o "$APP_TOOL_BIN" "$APP_TOOL_URL"
+    chmod u+x "$APP_TOOL_BIN"
 
     PATH=$PATH:$HOME/bin
 }
@@ -87,10 +88,10 @@ load_monkey_binary_config() {
   tmpfile=$(mktemp)
 
   log_message "downloading configuration"
-  curl -L -s -o $tmpfile "$config_url"
+  curl -L -s -o "$tmpfile" "$config_url"
 
   log_message "loading configuration"
-  source $tmpfile
+  source "$tmpfile"
 }
 
 clone_monkey_repo() {
@@ -106,17 +107,17 @@ clone_monkey_repo() {
 }
 
 copy_monkey_island_to_appdir() {
-  cp $REPO_MONKEY_SRC/__init__.py $INSTALL_DIR
-  cp $REPO_MONKEY_SRC/monkey_island.py $INSTALL_DIR
-  cp -r $REPO_MONKEY_SRC/common $INSTALL_DIR
-  cp -r $REPO_MONKEY_SRC/monkey_island $INSTALL_DIR
-  cp ./run_appimage.sh $INSTALL_DIR/monkey_island/linux/
-  cp ./island_logger_config.json $INSTALL_DIR/
-  cp ./server_config.json.standard $INSTALL_DIR/monkey_island/cc/
+  cp "$REPO_MONKEY_SRC"/__init__.py "$INSTALL_DIR"
+  cp "$REPO_MONKEY_SRC"/monkey_island.py "$INSTALL_DIR"
+  cp -r "$REPO_MONKEY_SRC"/common "$INSTALL_DIR"
+  cp -r "$REPO_MONKEY_SRC"/monkey_island "$INSTALL_DIR"
+  cp ./run_appimage.sh "$INSTALL_DIR"/monkey_island/linux/
+  cp ./island_logger_config.json "$INSTALL_DIR"/
+  cp ./server_config.json.standard "$INSTALL_DIR"/monkey_island/cc/
 
   # TODO: This is a workaround that may be able to be removed after PR #848 is
   # merged. See monkey_island/cc/environment_singleton.py for more information.
-  cp ./server_config.json.standard $INSTALL_DIR/monkey_island/cc/server_config.json
+  cp ./server_config.json.standard "$INSTALL_DIR"/monkey_island/cc/server_config.json
 }
 
 install_monkey_island_python_dependencies() {
@@ -125,18 +126,18 @@ install_monkey_island_python_dependencies() {
   requirements_island="$ISLAND_PATH/requirements.txt"
   # TODO: This is an ugly hack. PyInstaller and VirtualEnv are build-time
   #       dependencies and should not be installed as a runtime requirement.
-  cat $requirements_island | grep -Piv "virtualenv|pyinstaller" | sponge $requirements_island
+  cat "$requirements_island" | grep -Piv "virtualenv|pyinstaller" | sponge "$requirements_island"
 
-  ${python_cmd} -m pip install -r "${requirements_island}"  --ignore-installed --prefix /usr --root=$APPDIR || handle_error
+  ${python_cmd} -m pip install -r "${requirements_island}"  --ignore-installed --prefix /usr --root="$APPDIR" || handle_error
 }
 
 download_monkey_agent_binaries() {
 log_message "Downloading monkey agent binaries to ${ISLAND_BINARIES_PATH}"
   mkdir -p "${ISLAND_BINARIES_PATH}" || handle_error
-  curl -L -o ${ISLAND_BINARIES_PATH}/${LINUX_32_BINARY_NAME} ${LINUX_32_BINARY_URL}
-  curl -L -o ${ISLAND_BINARIES_PATH}/${LINUX_64_BINARY_NAME} ${LINUX_64_BINARY_URL}
-  curl -L -o ${ISLAND_BINARIES_PATH}/${WINDOWS_32_BINARY_NAME} ${WINDOWS_32_BINARY_URL}
-  curl -L -o ${ISLAND_BINARIES_PATH}/${WINDOWS_64_BINARY_NAME} ${WINDOWS_64_BINARY_URL}
+  curl -L -o "${ISLAND_BINARIES_PATH}/${LINUX_32_BINARY_NAME}" "${LINUX_32_BINARY_URL}"
+  curl -L -o "${ISLAND_BINARIES_PATH}/${LINUX_64_BINARY_NAME}" "${LINUX_64_BINARY_URL}"
+  curl -L -o "${ISLAND_BINARIES_PATH}/${WINDOWS_32_BINARY_NAME}" "${WINDOWS_32_BINARY_URL}"
+  curl -L -o "${ISLAND_BINARIES_PATH}/${WINDOWS_64_BINARY_NAME}" "${WINDOWS_64_BINARY_URL}"
 
   # Allow them to be executed
   chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
@@ -146,15 +147,15 @@ log_message "Downloading monkey agent binaries to ${ISLAND_BINARIES_PATH}"
 install_mongodb() {
   log_message "Installing MongoDB"
 
-  mkdir -p $MONGO_PATH
-  "${ISLAND_PATH}"/linux/install_mongo.sh ${MONGO_PATH} || handle_error
+  mkdir -p "$MONGO_PATH"
+  "${ISLAND_PATH}"/linux/install_mongo.sh "${MONGO_PATH}" || handle_error
 }
 
 generate_ssl_cert() {
   log_message "Generating certificate"
 
   chmod u+x "${ISLAND_PATH}"/linux/create_certificate.sh
-  "${ISLAND_PATH}"/linux/create_certificate.sh ${ISLAND_PATH}/cc
+  "${ISLAND_PATH}"/linux/create_certificate.sh "${ISLAND_PATH}"/cc
 }
 
 build_frontend() {
@@ -207,7 +208,7 @@ install_appimage_builder
 
 
 load_monkey_binary_config
-clone_monkey_repo
+clone_monkey_repo "$@"
 
 copy_monkey_island_to_appdir
 
@@ -223,8 +224,8 @@ generate_ssl_cert
 
 build_frontend
 
-mkdir -p $APPDIR/usr/share/icons
-cp $REPO_MONKEY_SRC/monkey_island/cc/ui/src/images/monkey-icon.svg $APPDIR/usr/share/icons/monkey-icon.svg
+mkdir -p "$APPDIR"/usr/share/icons
+cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/monkey-icon.svg
 
 build_appimage
 
