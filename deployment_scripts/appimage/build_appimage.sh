@@ -55,6 +55,7 @@ install_nodejs() {
 
 install_build_prereqs() {
     sudo apt update
+    sudo apt upgrade
 
     # appimage-builder prereqs
     sudo apt install -y python3 python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace

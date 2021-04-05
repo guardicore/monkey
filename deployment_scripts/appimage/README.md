@@ -8,7 +8,6 @@ monkey_island AppImage using appimage-builder.
 ## Building an AppImage
 
 1. Create a clean VM or LXC (not docker!) based on Ubuntu 18.04.
-1. Update the OS with `sudo apt update && sudo apt upgrade`
 1. Copy the `deployment_scripts/appimage` directory to `$HOME/` in the VM.
 1. Run `sudo -v`.
 1. On the VM, `cd $HOME/appimage`
