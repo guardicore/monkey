@@ -23,6 +23,13 @@ log_message() {
   echo -e "DEPLOYMENT SCRIPT: $1"
 }
 
+configure_precommit() {
+    $1 -m pip install --user pre-commit
+    pushd "$2"
+    $HOME/.local/bin/pre-commit install
+    popd
+}
+
 if is_root; then
   log_message "Please don't run this script as root"
   exit 1
@@ -224,6 +231,8 @@ else
 fi
 
 sudo chmod +x "${INFECTION_MONKEY_DIR}/build_linux.sh"
+
+configure_precommit ${python_cmd} ${monkey_home}
 
 log_message "Deployment script finished."
 exit 0
