@@ -41,9 +41,9 @@ class WinAdvFirewall(FirewallApp):
             cmd = subprocess.Popen('netsh advfirewall show currentprofile', stdout=subprocess.PIPE)
             out = cmd.stdout.readlines()
 
-            for l in out:
-                if l.startswith('State'):
-                    state = l.split()[-1].strip()
+            for line in out:
+                if line.startswith('State'):
+                    state = line.split()[-1].strip()
 
             return state == "ON"
         except Exception:
@@ -107,10 +107,10 @@ class WinFirewall(FirewallApp):
             cmd = subprocess.Popen('netsh firewall show state', stdout=subprocess.PIPE)
             out = cmd.stdout.readlines()
 
-            for l in out:
-                if l.startswith('Operational mode'):
-                    state = l.split('=')[-1].strip()
-                elif l.startswith('The service has not been started.'):
+            for line in out:
+                if line.startswith('Operational mode'):
+                    state = line.split('=')[-1].strip()
+                elif line.startswith('The service has not been started.'):
                     return False
 
             return state == "Enable"
