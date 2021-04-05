@@ -37,12 +37,12 @@ class MongoUtils:
                 # ISWbemObjectEx interface. Class Uint8Array ?
                 if str(o._oleobj_.GetTypeInfo().GetTypeAttr().iid) == "{269AD56A-8A67-4129-BC8C-0506DCFE9880}":
                     return o.Value
-            except:
+            except Exception:
                 pass
 
             try:
                 return o.GetObjectText_()
-            except:
+            except Exception:
                 pass
 
             return repr(o)

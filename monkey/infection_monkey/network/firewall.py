@@ -46,7 +46,7 @@ class WinAdvFirewall(FirewallApp):
                     state = l.split()[-1].strip()
 
             return state == "ON"
-        except:
+        except Exception:
             return None
 
     def add_firewall_rule(self, name="Firewall", direction="in", action="allow", program=sys.executable, **kwargs):
@@ -61,7 +61,7 @@ class WinAdvFirewall(FirewallApp):
                 return True
             else:
                 return False
-        except:
+        except Exception:
             return None
 
     def remove_firewall_rule(self, name="Firewall", **kwargs):
@@ -75,7 +75,7 @@ class WinAdvFirewall(FirewallApp):
                 return True
             else:
                 return False
-        except:
+        except Exception:
             return None
 
     def listen_allowed(self, **kwargs):
@@ -94,7 +94,7 @@ class WinAdvFirewall(FirewallApp):
         try:
             for rule in list(self._rules.keys()):
                 self.remove_firewall_rule(name=rule)
-        except:
+        except Exception:
             pass
 
 
@@ -114,7 +114,7 @@ class WinFirewall(FirewallApp):
                     return False
 
             return state == "Enable"
-        except:
+        except Exception:
             return None
 
     def add_firewall_rule(self, rule='allowedprogram', name="Firewall", mode="ENABLE", program=sys.executable,
@@ -131,7 +131,7 @@ class WinFirewall(FirewallApp):
                 return True
             else:
                 return False
-        except:
+        except Exception:
             return None
 
     def remove_firewall_rule(self, rule='allowedprogram', name="Firewall", mode="ENABLE", program=sys.executable,
@@ -145,7 +145,7 @@ class WinFirewall(FirewallApp):
                 return True
             else:
                 return False
-        except:
+        except Exception:
             return None
 
     def listen_allowed(self, **kwargs):
@@ -161,14 +161,14 @@ class WinFirewall(FirewallApp):
         try:
             for rule in list(self._rules.values()):
                 self.remove_firewall_rule(**rule)
-        except:
+        except Exception:
             pass
 
 
 if sys.platform == "win32":
     try:
         win_ver = int(platform.version().split('.')[0])
-    except:
+    except Exception:
         win_ver = 0
     if win_ver > 5:
         app = WinAdvFirewall()
