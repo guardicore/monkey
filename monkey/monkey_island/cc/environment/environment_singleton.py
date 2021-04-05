@@ -1,7 +1,9 @@
 import logging
 
 import monkey_island.cc.resources.auth.user_store as user_store
-from monkey_island.cc.environment import EnvironmentConfig, aws, password, standard, testing
+from monkey_island.cc.environment import (EnvironmentConfig, aws, password,
+                                          standard, testing)
+from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH
 
 __author__ = 'itay.mizeretz'
 
@@ -36,12 +38,19 @@ def set_to_standard():
         user_store.UserStore.set_users(env.get_auth_users())
 
 
-try:
-    config = EnvironmentConfig.get_from_file()
-    __env_type = config.server_config
-    set_env(__env_type, config)
-    # noinspection PyUnresolvedReferences
-    logger.info('Monkey\'s env is: {0}'.format(env.__class__.__name__))
-except Exception:
-    logger.error('Failed initializing environment', exc_info=True)
-    raise
+def initialize_from_file(file_path):
+    try:
+        config = EnvironmentConfig(file_path)
+
+        __env_type = config.server_config
+        set_env(__env_type, config)
+        # noinspection PyUnresolvedReferences
+        logger.info('Monkey\'s env is: {0}'.format(env.__class__.__name__))
+    except Exception:
+        logger.error('Failed initializing environment', exc_info=True)
+        raise
+
+
+# TODO: This is only needed so that unit tests pass. After PR #848 is merged, we may be
+# able to remove this line.
+initialize_from_file(DEFAULT_SERVER_CONFIG_PATH)
