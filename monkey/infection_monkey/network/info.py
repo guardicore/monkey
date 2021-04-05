@@ -144,7 +144,6 @@ def get_interfaces_ranges():
     for net_interface in ifs:
         address_str = net_interface['addr']
         netmask_str = net_interface['netmask']
-        ip_interface = ipaddress.ip_interface("%s/%s" % (address_str, netmask_str))
         # limit subnet scans to class C only
         res.append(CidrRange(cidr_range="%s/%s" % (address_str, netmask_str)))
     return res
