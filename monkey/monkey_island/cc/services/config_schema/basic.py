@@ -26,7 +26,8 @@ BASIC = {
                         "WebLogicExploiter",
                         "HadoopExploiter",
                         "VSFTPDExploiter",
-                        "MSSQLExploiter"
+                        "MSSQLExploiter",
+                        "DrupalExploiter"
                     ]
                 }
             }

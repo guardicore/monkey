@@ -64,7 +64,7 @@ class MapPageComponent extends AuthComponent {
     this.authFetch('/api/netmap')
       .then(res => res.json())
       .then(res => {
-        if (res.hasOwnProperty('edges')) {
+        if (Object.prototype.hasOwnProperty.call(res, 'edges')) {
           res.edges.forEach(edge => {
             edge.color = {'color': edgeGroupToColor(edge.group)};
           });

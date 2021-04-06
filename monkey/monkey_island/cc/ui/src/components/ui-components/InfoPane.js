@@ -3,6 +3,24 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 
+import {getObjectFromRegistryByRef} from './JsonSchemaHelpers';
+import WarningIcon from './WarningIcon';
+
+const WarningType = {
+  NONE: 0,
+  SINGLE: 1,
+  MULTIPLE: 2
+}
+
+function getDefaultPaneParams(refString, registry, isUnsafeOptionSelected) {
+  let configSection = getObjectFromRegistryByRef(refString, registry);
+  return (
+    {
+      title: configSection.title,
+      content: configSection.description,
+      warningType: isUnsafeOptionSelected ? WarningType.Multiple : WarningType.NONE
+    });
+}
 
 function InfoPane(props) {
   return (
@@ -44,9 +62,36 @@ function getSubtitle(props) {
 function getBody(props) {
   return (
     <Card.Body className={'pane-body'}>
-      {props.body}
+      <span key={'body'}>{props.body}</span>
+      {props.warningType !== WarningType.NONE && getWarning(props.warningType)}
     </Card.Body>
   )
 }
 
-export default InfoPane
+function getWarning(warningType) {
+  return (
+    <div className={'info-pane-warning'} key={'warning'}>
+      <WarningIcon/>{warningType === WarningType.SINGLE ? getSingleOptionWarning() : getMultipleOptionsWarning()}
+    </div>
+  );
+}
+
+function getSingleOptionWarning() {
+  return (
+    <span>This option may cause a system to become unstable or
+    may change a system's state in undesirable ways. Therefore, this option
+    is not recommended for use in production or other sensitive
+    environments.</span>
+  );
+}
+
+function getMultipleOptionsWarning() {
+  return (
+    <span>Some options have been selected that may cause a system
+    to become unstable or may change a system's state in undesirable ways.
+    Running Infection Monkey in a production or other sensitive environment
+    with this configuration is not recommended.</span>
+  );
+}
+
+export {getDefaultPaneParams, InfoPane, WarningType}

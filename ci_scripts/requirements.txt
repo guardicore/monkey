@@ -1,0 +1,6 @@
+flake8
+pytest
+dlint
+isort
+coverage
+black

@@ -9,4 +9,5 @@
   .info {background-color: #2196F3;} /* Blue */
   .warning {background-color: #ff9800;} /* Orange */
   .danger {background-color: #f44336;} /* Red */
-  .other {background-color: #e7e7e7; color: black;} /* Gray */
+  .unused {background-color: #8d8d8d;} /* Dark Gray */
+  .disabled {background-color: #cfcfcf; color: black;} /* Light Gray */

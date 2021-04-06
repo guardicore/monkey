@@ -5,8 +5,7 @@ from typing import Dict
 
 import requests
 
-from envs.monkey_zoo.blackbox.island_client.supported_request_method import \
-    SupportedRequestMethod
+from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
 
 # SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
 NO_AUTH_CREDS = '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062' \
@@ -91,16 +90,14 @@ class MonkeyIslandRequests(object):
         return requests.patch(self.addr + url,  # noqa: DUO123
                               data=data,
                               headers=self.get_jwt_header(),
-                              verify=False
-        )
+                              verify=False)
 
     @_Decorators.refresh_jwt_token
     def delete(self, url):
         return requests.delete(  # noqa: DOU123
             self.addr + url,
             headers=self.get_jwt_header(),
-            verify=False
-        )
+            verify=False)
 
     @_Decorators.refresh_jwt_token
     def get_jwt_header(self):

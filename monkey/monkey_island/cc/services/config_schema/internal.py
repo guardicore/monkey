@@ -94,6 +94,23 @@ INTERNAL = {
                     "type": "boolean",
                     "default": True,
                     "description": "Is the monkey alive"
+                },
+                "aws_keys": {
+                    "type": "object",
+                    "properties": {
+                        "aws_access_key_id": {
+                            "type": "string",
+                            "default": ""
+                        },
+                        "aws_secret_access_key": {
+                            "type": "string",
+                            "default": ""
+                        },
+                        "aws_session_token": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
                 }
             }
         },
@@ -142,7 +159,8 @@ INTERNAL = {
                                 8080,
                                 443,
                                 8008,
-                                7001
+                                7001,
+                                9200
                             ],
                             "description": "List of ports the monkey will check if are being used for HTTP"
                         },
@@ -164,7 +182,6 @@ INTERNAL = {
                                 443,
                                 8008,
                                 3306,
-                                9200,
                                 7001,
                                 8088
                             ],

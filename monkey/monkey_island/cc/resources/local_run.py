@@ -8,9 +8,10 @@ import flask_restful
 from flask import jsonify, make_response, request
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.network_utils import local_ip_addresses
+from monkey_island.cc.services.utils.network_utils import local_ip_addresses
+from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.monkey_download import get_monkey_executable
 from monkey_island.cc.services.node import NodeService
 
@@ -46,15 +47,16 @@ def run_local_monkey():
         args = ['"%s" m0nk3y -s %s:%s' % (target_path, local_ip_addresses()[0], env_singleton.env.get_island_port())]
         if sys.platform == "win32":
             args = "".join(args)
-        pid = subprocess.Popen(args, shell=True).pid
+        subprocess.Popen(args, shell=True).pid
     except Exception as exc:
         logger.error('popen failed', exc_info=True)
         return False, "popen failed: %s" % exc
 
-    return True, "pis: %s" % pid
+    return True, ""
 
 
 class LocalRun(flask_restful.Resource):
+    @jwt_required
     def get(self):
         NodeService.update_dead_monkeys()
         island_monkey = NodeService.get_monkey_island_monkey()
@@ -65,6 +67,7 @@ class LocalRun(flask_restful.Resource):
 
         return jsonify(is_running=is_monkey_running)
 
+    @jwt_required
     def post(self):
         body = json.loads(request.data)
         if body.get('action') == 'run':

@@ -3,8 +3,7 @@ import socket
 
 import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
-from infection_monkey.network.tools import (struct_unpack_tracker,
-                                            struct_unpack_tracker_string)
+from infection_monkey.network.tools import struct_unpack_tracker, struct_unpack_tracker_string
 
 MYSQL_PORT = 3306
 SQL_SERVICE = 'mysqld-3306'

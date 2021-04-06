@@ -6,13 +6,13 @@ import dateutil
 import flask_restful
 from flask import request
 
+from common.common_consts.telem_categories import TelemCategoryEnum
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey import Monkey
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.processing import \
-    process_telemetry
+from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
 
 __author__ = 'Barak'
 
@@ -45,6 +45,7 @@ class Telemetry(flask_restful.Resource):
     @TestTelemStore.store_test_telem
     def post(self):
         telemetry_json = json.loads(request.data)
+        telemetry_json['data'] = json.loads(telemetry_json['data'])
         telemetry_json['timestamp'] = datetime.now()
         telemetry_json['command_control_channel'] = {'src': request.remote_addr, 'dst': request.host}
 
@@ -74,7 +75,7 @@ class Telemetry(flask_restful.Resource):
                 monkey_label = telem_monkey_guid
             x["monkey"] = monkey_label
             objects.append(x)
-            if x['telem_category'] == 'system_info' and 'credentials' in x['data']:
+            if x['telem_category'] == TelemCategoryEnum.SYSTEM_INFO and 'credentials' in x['data']:
                 for user in x['data']['credentials']:
                     if -1 != user.find(','):
                         new_user = user.replace(',', '.')

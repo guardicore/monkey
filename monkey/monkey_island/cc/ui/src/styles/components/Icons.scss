@@ -1,0 +1,28 @@
+.loading-icon {
+  color: $monkey-yellow;
+  font-size: 20px;
+  margin-left: 50%;
+  margin-right: 50%;
+}
+
+.spinning-icon {
+  animation: spin-animation 0.5s infinite;
+  display: inline-block;
+}
+
+.icon-success {
+  color: $success
+}
+
+.icon-failed {
+  color: $danger;
+}
+
+@keyframes spin-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}

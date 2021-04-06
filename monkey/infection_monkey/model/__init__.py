@@ -1,4 +1,4 @@
-from infection_monkey.model.host import VictimHost
+from infection_monkey.model.host import VictimHost  # noqa: F401
 
 __author__ = 'itamar'
 

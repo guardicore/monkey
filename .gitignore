@@ -91,7 +91,7 @@ profiler_logs/
 # vim swap files
 *.swp
 
-# Server config might contain credentials. Don't commit by default.
+# Server config might contain credentials
 /monkey/monkey_island/cc/server_config.json
 
 # Virtualenv

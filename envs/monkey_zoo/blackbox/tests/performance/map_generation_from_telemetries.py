@@ -1,9 +1,7 @@
 from datetime import timedelta
 
-from envs.monkey_zoo.blackbox.tests.performance.performance_test import \
-    PerformanceTest
-from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import \
-    PerformanceTestConfig
+from envs.monkey_zoo.blackbox.tests.performance.performance_test import PerformanceTest
+from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
 from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test_workflow import \
     TelemetryPerformanceTestWorkflow
 

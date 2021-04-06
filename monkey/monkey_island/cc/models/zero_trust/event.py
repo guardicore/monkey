@@ -2,7 +2,7 @@ from datetime import datetime
 
 from mongoengine import DateTimeField, EmbeddedDocument, StringField
 
-import common.data.zero_trust_consts as zero_trust_consts
+import common.common_consts.zero_trust_consts as zero_trust_consts
 
 
 class Event(EmbeddedDocument):

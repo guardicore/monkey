@@ -15,7 +15,7 @@ class ReportMatrixComponent extends React.Component {
   getColumns() {
     let columns = [];
     for(const type_key in this.state.schema.properties){
-      if (! this.state.schema.properties.hasOwnProperty(type_key)){
+      if (! Object.prototype.hasOwnProperty.call(this.state.schema.properties, type_key)){
         continue;
       }
       let tech_type = this.state.schema.properties[type_key];
@@ -32,11 +32,11 @@ class ReportMatrixComponent extends React.Component {
   getTableRows() {
     let rows = [];
     for (const tech_id in this.state.techniques) {
-      if (this.state.techniques.hasOwnProperty(tech_id)){
+      if (Object.prototype.hasOwnProperty.call(this.state.techniques, tech_id)){
         let technique_added = false;
         let technique = this.state.techniques[tech_id];
         for(const row of rows){
-          if (! row.hasOwnProperty(technique.type)){
+          if (! Object.prototype.hasOwnProperty.call(row, technique.type)){
             row[technique.type] = technique;
             technique_added = true;
             break;

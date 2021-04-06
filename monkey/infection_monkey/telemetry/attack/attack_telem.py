@@ -1,3 +1,4 @@
+from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 
 __author__ = "VakarisZ"
@@ -15,7 +16,7 @@ class AttackTelem(BaseTelem):
         self.technique = technique
         self.status = status
 
-    telem_category = 'attack'
+    telem_category = TelemCategoryEnum.ATTACK
 
     def get_data(self):
         return {

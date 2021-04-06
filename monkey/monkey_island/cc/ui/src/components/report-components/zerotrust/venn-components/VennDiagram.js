@@ -209,7 +209,7 @@ class VennDiagram extends React.Component {
 
     if (key_ === 'Data') {
       this.layout[key_].fontStyle = this.fontStyles[0];
-    } else if (this.layout[key_].hasOwnProperty('cx')) {
+    } else if (Object.prototype.hasOwnProperty.call(this.layout[key_], 'cx')) {
       this.layout[key_].fontStyle = this.fontStyles[1];
     } else {
       this.layout[key_].fontStyle = this.fontStyles[2];
@@ -229,7 +229,7 @@ class VennDiagram extends React.Component {
       // equivalent to center translate (width/2, height/2)
       let viewPortParameters = (-this.width / 2) + ' ' + (-this.height / 2) + ' ' + this.width + ' ' + this.height;
       let nodes = Object.values(this.layout).map((d_, i_) => {
-        if (d_.hasOwnProperty('cx')) {
+        if (Object.prototype.hasOwnProperty.call(d_, 'cx')) {
           return (
             <CircularNode
               prefix={this.prefix}

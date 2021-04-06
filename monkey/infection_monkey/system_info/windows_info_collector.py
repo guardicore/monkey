@@ -1,20 +1,15 @@
 import logging
-import os
+import subprocess
 import sys
 
-from common.data.system_info_collectors_names import MIMIKATZ_COLLECTOR
-from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import \
-    MimikatzCredentialCollector
+from common.common_consts.system_info_collectors_names import MIMIKATZ_COLLECTOR
+from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import MimikatzCredentialCollector
 
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
-# noinspection PyPep8
-import infection_monkey.config
-# noinspection PyPep8
-from common.utils.wmi_utils import WMIUtils
-# noinspection PyPep8
-from infection_monkey.system_info import InfoCollector
-# noinspection PyPep8
-from infection_monkey.system_info.wmi_consts import WMI_CLASSES
+import infection_monkey.config  # noqa: E402
+from common.utils.wmi_utils import WMIUtils  # noqa: E402
+from infection_monkey.system_info import InfoCollector  # noqa: E402
+from infection_monkey.system_info.wmi_consts import WMI_CLASSES  # noqa: E402
 
 LOG = logging.getLogger(__name__)
 LOG.info('started windows info collector')
@@ -51,16 +46,21 @@ class WindowsInfoCollector(InfoCollector):
         return self.info
 
     def get_installed_packages(self):
-        LOG.info('getting installed packages')
-        self.info["installed_packages"] = os.popen("dism /online /get-packages").read()
-        self.info["installed_features"] = os.popen("dism /online /get-features").read()
+        LOG.info('Getting installed packages')
+
+        packages = subprocess.check_output("dism /online /get-packages", shell=True)
+        self.info["installed_packages"] = packages.decode('utf-8', errors='ignore')
+
+        features = subprocess.check_output("dism /online /get-features", shell=True)
+        self.info["installed_features"] = features.decode('utf-8', errors='ignore')
+
         LOG.debug('Got installed packages')
 
     def get_wmi_info(self):
-        LOG.info('getting wmi info')
+        LOG.info('Getting wmi info')
         for wmi_class_name in WMI_CLASSES:
             self.info['wmi'][wmi_class_name] = WMIUtils.get_wmi_class(wmi_class_name)
-        LOG.debug('finished get_wmi_info')
+        LOG.debug('Finished get_wmi_info')
 
     def get_mimikatz_info(self):
         LOG.info("Gathering mimikatz info")

@@ -1,0 +1,29 @@
+.loading-screen {
+  height: 100%;
+}
+
+.loading-screen div.loading-component {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.loading-screen div.loading-component .loading-image img {
+  border: 5px solid #363536;
+  border-radius: 70px;
+}
+
+.loading-screen div.loading-component .loading-text {
+  margin-top: 15px;
+  text-align: center;
+  font-weight: bold;
+  background: #ffcc00;
+  padding: 0 5px 0 5px;
+  border-radius: 5px;
+  font-size: 1.2em;
+}

@@ -7,8 +7,7 @@ from threading import Thread
 from infection_monkey.model import VictimHost
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port, local_ips
-from infection_monkey.network.tools import (check_tcp_port,
-                                            get_interface_to_target)
+from infection_monkey.network.tools import check_tcp_port, get_interface_to_target
 from infection_monkey.transport.base import get_last_serve_time
 
 __author__ = 'hoffer'

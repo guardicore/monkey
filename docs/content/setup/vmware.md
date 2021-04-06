@@ -4,59 +4,72 @@ date: 2020-05-26T20:57:14+03:00
 draft: false
 pre: '<i class="fas fa-laptop-code"></i> '
 weight: 3
-tags: ["setup", "vmware"] 
+tags: ["setup", "vmware"]
 ---
 
 ## Deployment
 
-1. Deploy the Infection Monkey OVA by choosing Deploy OVF Template and follow the wizard instructions. *Note: make sure port 5000 and 5001 on the machine are accessible for inbound TCP traffic.*
-2. Turn on the Infection Monkey VM.
-3. Log in to the machine with the following credentials:
+1. Deploy the Infection Monkey OVA by choosing **Deploy OVF Template** and
+   following the wizard instructions. *Note: make sure ports 5000 and 5001 on
+   the machine are accessible for inbound TCP traffic.*
+1. Turn on the Infection Monkey VM.
+1. Log in to the machine with the following credentials:
    1. Username: **monkeyuser**
-   2. Password: **Noon.Earth.Always**
-4. It's recommended to change the machine passwords by running the following commands: `sudo passwd monkeyuser`, `sudo passwd root`.
+   1. Password: **Noon.Earth.Always**
+1. For security purposes, it's recommended that you change the machine
+   passwords by running the following commands: `sudo passwd monkeyuser`, `sudo
+   passwd root`.
 
 ## OVA network modes
 
-The OVA can be used in one of two modes:
+You can use the OVA in one of two modes:
 
-1. In a network with DHCP configured. In this case, the Monkey Island will automatically query and receive an IP address from the network.
-1. With a static IP address.
-
-    In this case, you should login to the VM console with
-username `root` and password `G3aJ9szrvkxTmfAG`. After logging in, edit the interfaces file. You can do that by writing the following command in the prompt:
-
-    ```sh
-    sudo nano /etc/network/interfaces
-    ```
-
-    And change the lines:
+1. In a network with the DHCP configured — In this case, the Monkey Island will
+   automatically query and receive an IP address from the network.
+1. With a static IP address — In this case, you should log in to the VM console
+   with the username `monkeyuser` and the password `Noon.Earth.Always`. After logging
+   in, edit the Netplan configuration by entering the following command in the
+   prompt:
 
     ```sh
-    auto ens160
-    iface ens160 inet dhcp
+    sudo nano /etc/netplan/00-installer-config.yaml
     ```
 
-    to the following:
+    Make the following changes:
+
+    ```diff
+     # This is the network config written by 'subiquity'
+     network:
+       ethernets:
+         ens160:
+    -      dhcp4: true
+    +      dhcp4: false
+    +      addresses: [XXX.XXX.XXX.XXX/24]
+    +      gateway4: YYY.YYY.YYY.YYY
+    +      nameservers:
+    +        addresses: [1.1.1.1]
+       version: 2
+    ```
+
+    Replace `XXX.XXX.XXX.XXX` with the desired IP addess of the VM. Replace
+    `YYY.YYY.YYY.YYY` with the default gateway.
+
+    Save the changes then run the command:
 
     ```sh
-    auto ens160
-    iface ens160 inet static
-    address AAA.BBB.CCC.DDD
-    netmask XXX.XXX.XXX.XXX
-    gateway YYY.YYY.YYY.YYY
+    sudo netplan apply
     ```
 
-    Save the changes then run the command
-
-    ```sh
-    sudo ifdown ens160 && ifup ens160
-    ```
+    If this configuration does not suit your needs, see
+    https://netplan.io/examples/ for more information about how to configure
+    Netplan.
 
 ## Upgrading
 
-There's no "upgrade-in-place" option for Docker. To get the new version, download it, stop the current container, and run the installation commands again with the new file.
+Currently, there's no "upgrade-in-place" option when a new version is released.
+To get an updated version, download the updated OVA file.
 
-If you'd like to keep your existing configuration, you can export it to a file by using the Export button and then import it to the new server.
+If you'd like to keep your existing configuration, you can export it to a file
+using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")

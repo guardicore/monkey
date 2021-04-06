@@ -1,35 +1,37 @@
 import logging
 import os
-import os.path
 import sys
 import time
+from pathlib import Path
 from threading import Thread
 
-MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
+# Add the monkey_island directory to the path, to make sure imports that don't start with "monkey_island." work.
+from gevent.pywsgi import WSGIServer
 
-BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
+if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
+    sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
-if BASE_PATH not in sys.path:
-    sys.path.insert(0, BASE_PATH)
-
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.island_logger import json_setup_logging
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH  # noqa: E402
+from monkey_island.cc.server_utils.island_logger import json_setup_logging  # noqa: E402
 
 # This is here in order to catch EVERYTHING, some functions are being called on imports the log init needs to be on top.
-json_setup_logging(default_path=os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'island_logger_default_config.json'),
+json_setup_logging(default_path=Path(MONKEY_ISLAND_ABS_PATH, 'cc', 'island_logger_default_config.json'),
                    default_level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
-from common.version import get_version
-from monkey_island.cc.app import init_app
-from monkey_island.cc.bootloader_server import BootloaderHttpServer
-from monkey_island.cc.database import get_db_version, is_db_server_up
-from monkey_island.cc.network_utils import local_ip_addresses
-from monkey_island.cc.resources.monkey_download import MonkeyDownload
-from monkey_island.cc.services.reporting.exporter_init import \
-    populate_exporter_list
-from monkey_island.cc.setup import setup
+import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
+from common.version import get_version  # noqa: E402
+from monkey_island.cc.app import init_app  # noqa: E402
+from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
+from monkey_island.cc.database import get_db_version  # noqa: E402
+from monkey_island.cc.database import is_db_server_up  # noqa: E402
+from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
+from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
+from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
+from monkey_island.cc.setup import setup  # noqa: E402
+
+MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 
 def main(should_setup_only=False):
@@ -43,9 +45,6 @@ def main(should_setup_only=False):
 
 
 def start_island_server(should_setup_only):
-    from tornado.httpserver import HTTPServer
-    from tornado.ioloop import IOLoop
-    from tornado.wsgi import WSGIContainer
 
     mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)
@@ -54,8 +53,8 @@ def start_island_server(should_setup_only):
     populate_exporter_list()
     app = init_app(mongo_url)
 
-    crt_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.crt')
-    key_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.key')
+    crt_path = str(Path(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.crt'))
+    key_path = str(Path(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.key'))
 
     setup()
 
@@ -66,12 +65,11 @@ def start_island_server(should_setup_only):
     if env_singleton.env.is_debug():
         app.run(host='0.0.0.0', debug=True, ssl_context=(crt_path, key_path))
     else:
-        http_server = HTTPServer(WSGIContainer(app),
-                                 ssl_options={'certfile': os.environ.get('SERVER_CRT', crt_path),
-                                              'keyfile': os.environ.get('SERVER_KEY', key_path)})
-        http_server.listen(env_singleton.env.get_island_port())
+        http_server = WSGIServer(('0.0.0.0', env_singleton.env.get_island_port()), app,
+                                 certfile=os.environ.get('SERVER_CRT', crt_path),
+                                 keyfile=os.environ.get('SERVER_KEY', key_path))
         log_init_info()
-        IOLoop.instance().start()
+        http_server.serve_forever()
 
 
 def log_init_info():

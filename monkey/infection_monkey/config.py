@@ -1,5 +1,4 @@
 import hashlib
-import json
 import os
 import sys
 import uuid
@@ -12,7 +11,8 @@ GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'monkey.bin')
 
-SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list", "exploit_ssh_keys"]
+SENSITIVE_FIELDS = ["exploit_password_list", "exploit_user_list", "exploit_ssh_keys", "aws_secret_access_key",
+                    "aws_session_token"]
 LOCAL_CONFIG_VARS = ["name", "id", "current_server", "max_depth"]
 HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
 
@@ -35,16 +35,6 @@ class Configuration(object):
         if not self.max_depth:
             self.max_depth = self.depth
         return unknown_items
-
-    def from_json(self, json_data):
-        """
-        Gets a json data object, parses it and applies it to the configuration
-        :param json_data:
-        :return:
-        """
-        formatted_data = json.loads(json_data)
-        result = self.from_kv(formatted_data)
-        return result
 
     @staticmethod
     def hide_sensitive_info(config_dict):
@@ -255,6 +245,10 @@ class Configuration(object):
     exploit_lm_hash_list = []
     exploit_ntlm_hash_list = []
     exploit_ssh_keys = []
+
+    aws_access_key_id = ''
+    aws_secret_access_key = ''
+    aws_session_token = ''
 
     # smb/wmi exploiter
     smb_download_timeout = 300  # timeout in seconds

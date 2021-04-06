@@ -1,10 +1,7 @@
 import logging
 
-env = None
-
 import monkey_island.cc.resources.auth.user_store as user_store
-from monkey_island.cc.environment import (EnvironmentConfig, aws, password,
-                                          standard, testing)
+from monkey_island.cc.environment import EnvironmentConfig, aws, password, standard, testing
 
 __author__ = 'itay.mizeretz'
 
@@ -13,14 +10,14 @@ logger = logging.getLogger(__name__)
 AWS = 'aws'
 STANDARD = 'standard'
 PASSWORD = 'password'
-TESTING = 'testing'
 
 ENV_DICT = {
     STANDARD: standard.StandardEnvironment,
     AWS: aws.AwsEnvironment,
-    PASSWORD: password.PasswordEnvironment,
-    TESTING: testing.TestingEnvironment
+    PASSWORD: password.PasswordEnvironment
 }
+
+env = None
 
 
 def set_env(env_type: str, env_config: EnvironmentConfig):

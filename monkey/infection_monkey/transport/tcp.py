@@ -3,8 +3,7 @@ import socket
 from logging import getLogger
 from threading import Thread
 
-from infection_monkey.transport.base import (TransportProxyBase,
-                                             update_last_serve_time)
+from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 
 READ_BUFFER_SIZE = 8192
 DEFAULT_TIMEOUT = 30
@@ -65,7 +64,7 @@ class TcpProxy(TransportProxyBase):
             dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
                 dest.connect((self.dest_host, self.dest_port))
-            except socket.error as ex:
+            except socket.error:
                 source.close()
                 dest.close()
                 continue

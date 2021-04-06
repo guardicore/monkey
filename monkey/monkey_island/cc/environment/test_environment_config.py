@@ -5,8 +5,8 @@ from typing import Dict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-import monkey_island.cc.testing.environment.server_config_mocks as config_mocks
-from monkey_island.cc.consts import MONKEY_ISLAND_ABS_PATH
+import monkey_island.cc.test_common.environment.server_config_mocks as config_mocks
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
 
@@ -57,7 +57,7 @@ class TestEnvironmentConfig(TestCase):
 
     def test_get_server_config_file_path(self):
         if platform.system() == "Windows":
-            server_file_path = MONKEY_ISLAND_ABS_PATH + "\cc\server_config.json"
+            server_file_path = MONKEY_ISLAND_ABS_PATH + r"\cc\server_config.json"
         else:
             server_file_path = MONKEY_ISLAND_ABS_PATH + "/cc/server_config.json"
         self.assertEqual(EnvironmentConfig.get_config_file_path(), server_file_path)

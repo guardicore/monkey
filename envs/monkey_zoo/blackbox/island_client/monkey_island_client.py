@@ -1,14 +1,15 @@
 import json
 import logging
 from time import sleep
+from typing import Union
 
 from bson import json_util
 
-from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import \
-    MonkeyIslandRequests
+from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 MONKEY_TEST_ENDPOINT = 'api/test/monkey'
+TELEMETRY_TEST_ENDPOINT = 'api/test/telemetry'
 LOG_TEST_ENDPOINT = 'api/test/log'
 LOGGER = logging.getLogger(__name__)
 
@@ -24,6 +25,9 @@ class MonkeyIslandClient(object):
 
     def get_api_status(self):
         return self.requests.get("api")
+
+    def get_config(self):
+        return json.loads(self.requests.get("api/configuration/island").content)
 
     @avoid_race_condition
     def import_config(self, config_contents):
@@ -65,6 +69,13 @@ class MonkeyIslandClient(object):
                                      MonkeyIslandClient.form_find_query_for_request(query))
         return MonkeyIslandClient.get_test_query_results(response)
 
+    def find_telems_in_db(self, query: dict):
+        if query is None:
+            raise TypeError
+        response = self.requests.get(TELEMETRY_TEST_ENDPOINT,
+                                     MonkeyIslandClient.form_find_query_for_request(query))
+        return MonkeyIslandClient.get_test_query_results(response)
+
     def get_all_monkeys_from_db(self):
         response = self.requests.get(MONKEY_TEST_ENDPOINT,
                                      MonkeyIslandClient.form_find_query_for_request(None))
@@ -76,7 +87,7 @@ class MonkeyIslandClient(object):
         return MonkeyIslandClient.get_test_query_results(response)
 
     @staticmethod
-    def form_find_query_for_request(query):
+    def form_find_query_for_request(query: Union[dict, None]) -> dict:
         return {'find_query': json_util.dumps(query)}
 
     @staticmethod

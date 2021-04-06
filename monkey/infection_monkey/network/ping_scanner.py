@@ -12,7 +12,7 @@ __author__ = 'itamar'
 
 PING_COUNT_FLAG = "-n" if "win32" == sys.platform else "-c"
 PING_TIMEOUT_FLAG = "-w" if "win32" == sys.platform else "-W"
-TTL_REGEX_STR = '(?<=TTL\=)[0-9]+'
+TTL_REGEX_STR = r'(?<=TTL\=)[0-9]+'
 LINUX_TTL = 64
 WINDOWS_TTL = 128
 
@@ -62,6 +62,9 @@ class PingScanner(HostScanner, HostFinger):
                     host.os['type'] = 'linux'
                 else:  # as far we we know, could also be OSX/BSD but lets handle that when it comes up.
                     host.os['type'] = 'windows'
+
+                host.icmp = True
+
                 return True
             except Exception as exc:
                 LOG.debug("Error parsing ping fingerprint: %s", exc)

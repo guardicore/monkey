@@ -1,6 +1,6 @@
-from common.data.post_breach_consts import POST_BREACH_JOB_SCHEDULING
-from infection_monkey.post_breach.job_scheduling.job_scheduling import (
-    get_commands_to_schedule_jobs, remove_scheduled_jobs)
+from common.common_consts.post_breach_consts import POST_BREACH_JOB_SCHEDULING
+from infection_monkey.post_breach.job_scheduling.job_scheduling import (get_commands_to_schedule_jobs,
+                                                                        remove_scheduled_jobs)
 from infection_monkey.post_breach.pba import PBA
 
 
@@ -15,5 +15,7 @@ class ScheduleJobs(PBA):
         super(ScheduleJobs, self).__init__(name=POST_BREACH_JOB_SCHEDULING,
                                            linux_cmd=' '.join(linux_cmds),
                                            windows_cmd=windows_cmds)
-
+    
+    def run(self):
+        super(ScheduleJobs, self).run()
         remove_scheduled_jobs()

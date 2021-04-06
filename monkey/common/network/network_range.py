@@ -28,7 +28,7 @@ class NetworkRange(object, metaclass=ABCMeta):
         """
         base_range = self.get_range()
         if self._shuffle:
-            random.shuffle(base_range)
+            random.shuffle(base_range)  # noqa: DUO102
 
         for x in base_range:
             yield self._number_to_ip(x)

@@ -6,8 +6,7 @@ from datetime import timedelta
 
 __author__ = 'itay.mizeretz'
 
-from common.utils.exceptions import (AlreadyRegisteredError,
-                                     CredentialsNotRequiredError,
+from common.utils.exceptions import (AlreadyRegisteredError, CredentialsNotRequiredError,
                                      InvalidRegistrationCredentialsError)
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds

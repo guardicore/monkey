@@ -3,8 +3,7 @@ from datetime import timedelta
 from typing import Dict
 
 from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
-from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import \
-    PerformanceTestConfig
+from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
 
 LOGGER = logging.getLogger(__name__)
 

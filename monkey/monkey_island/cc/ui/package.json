@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "1.9.0",
+  "version": "1.10.0",
   "name": "infection-monkey",
   "description": "Infection Monkey C&C UI",
   "scripts": {
@@ -59,23 +59,23 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@emotion/core": "^10.0.22",
+    "@emotion/core": "^10.0.34",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-regular-svg-icons": "^5.13.1",
     "@fortawesome/free-solid-svg-icons": "^5.13.1",
     "@fortawesome/react-fontawesome": "^0.1.11",
     "@kunukn/react-collapse": "^1.2.7",
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^4.5.2",
     "classnames": "^2.2.6",
     "core-js": "^3.6.5",
     "d3": "^5.14.1",
     "downloadjs": "^1.4.7",
     "fetch": "^1.1.0",
     "file-saver": "^2.0.2",
-    "filepond": "^4.18.0",
+    "filepond": "^4.19.2",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.15",
-    "marked": "^1.1.1",
+    "lodash": "^4.17.20",
+    "marked": "^2.0.0",
     "normalize.css": "^8.0.0",
     "npm": "^6.14.7",
     "pluralize": "^7.0.0",
@@ -94,9 +94,9 @@
     "react-filepond": "^7.0.1",
     "react-graph-vis": "^1.0.5",
     "react-hot-loader": "^4.12.20",
-    "react-json-tree": "^0.11.2",
+    "react-json-tree": "^0.12.0",
     "react-jsonschema-form-bs4": "^1.7.1",
-    "react-particles-js": "^3.2.1",
+    "react-particles-js": "^3.3.0",
     "react-redux": "^5.1.2",
     "react-router-dom": "^4.3.1",
     "react-spinners": "^0.9.0",
@@ -104,8 +104,8 @@
     "react-toggle": "^4.1.1",
     "react-tooltip-lite": "^1.12.0",
     "redux": "^4.0.4",
-    "sha3": "^2.0.7",
-    "snyk": "^1.361.3"
+    "sha3": "^2.1.3",
+    "snyk": "^1.373.1"
   },
   "snyk": true
 }

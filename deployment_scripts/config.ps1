@@ -30,6 +30,7 @@ $TRACEROUTE_32_BINARY_URL = $MONKEY_DOWNLOAD_URL + "traceroute32"
 # Other directories and paths ( most likely you dont need to configure)
 $MONKEY_ISLAND_DIR = Join-Path "\monkey" -ChildPath "monkey_island"
 $MONKEY_DIR = Join-Path "\monkey" -ChildPath "infection_monkey"
+$SCOUTSUITE_DIR = Join-Path "\monkey" "common" "cloud" "scoutsuite"
 $SAMBA_BINARIES_DIR = Join-Path -Path $MONKEY_DIR -ChildPath "\bin"
 $TEMP_PYTHON_INSTALLER = ".\python.exe"
 $TEMP_MONGODB_ZIP = ".\mongodb.zip"

@@ -4,7 +4,7 @@ import {Container} from 'react-bootstrap';
 
 import RunServerPage from 'components/pages/RunServerPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
-import RunMonkeyPage from 'components/pages/RunMonkeyPage';
+import RunMonkeyPage from 'components/pages/RunMonkeyPage/RunMonkeyPage';
 import MapPage from 'components/pages/MapPage';
 import TelemetryPage from 'components/pages/TelemetryPage';
 import StartOverPage from 'components/pages/StartOverPage';
@@ -24,12 +24,13 @@ import 'react-toggle/style.css';
 import 'react-table/react-table.css';
 import notificationIcon from '../images/notification-logo-512x512.png';
 import {StandardLayoutComponent} from './layouts/StandardLayoutComponent';
+import LoadingScreen from './ui-components/LoadingScreen';
 
 const reportZeroTrustRoute = '/report/zeroTrust';
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
-    if (this.state.isLoggedIn === false){
+    if (this.state.isLoggedIn === false) {
       return
     }
     this.auth.loggedIn()
@@ -82,10 +83,10 @@ class AppComponent extends AuthComponent {
             case false:
               return <Redirect to={{pathname: '/login'}}/>;
             default:
-              return page_component;
+              return <LoadingScreen text={'Loading page...'}/>;
           }
         default:
-          return page_component;
+          return <LoadingScreen text={'Loading page...'}/>;
       }
     };
 

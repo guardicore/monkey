@@ -6,7 +6,7 @@ from infection_monkey.network.tools import check_tcp_port
 
 SSH_PORT = 22
 SSH_SERVICE_DEFAULT = 'tcp-22'
-SSH_REGEX = 'SSH-\d\.\d-OpenSSH'
+SSH_REGEX = r'SSH-\d\.\d-OpenSSH'
 TIMEOUT = 10
 BANNER_READ = 1024
 LINUX_DIST_SSH = ['ubuntu', 'debian']

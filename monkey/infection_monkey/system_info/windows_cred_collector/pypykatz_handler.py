@@ -3,8 +3,7 @@ from typing import Any, Dict, List, NewType
 
 from pypykatz.pypykatz import pypykatz
 
-from infection_monkey.system_info.windows_cred_collector.windows_credentials import \
-    WindowsCredentials
+from infection_monkey.system_info.windows_cred_collector.windows_credentials import WindowsCredentials
 
 CREDENTIAL_TYPES = ['msv_creds', 'wdigest_creds', 'ssp_creds', 'livessp_creds', 'dpapi_creds',
                     'kerberos_creds', 'credman_creds', 'tspkg_creds']
@@ -67,8 +66,8 @@ def _get_windows_cred(pypykatz_cred: PypykatzCredential):
 
 
 def _hash_to_string(hash_: Any):
-    if type(hash_) == str:
+    if type(hash_) is str:
         return hash_
-    if type(hash_) == bytes:
+    if type(hash_) is bytes:
         return binascii.hexlify(bytearray(hash_)).decode()
     raise Exception(f"Can't convert hash_ to string, unsupported hash_ type {type(hash_)}")

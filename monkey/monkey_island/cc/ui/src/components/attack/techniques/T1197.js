@@ -45,7 +45,7 @@ class T1210 extends React.Component {
     return (
       <div className="data-table-container">
         <div>
-          <div>{this.props.data.message}</div>
+          <div>{this.props.data.message_html}</div>
           {this.props.data.bits_jobs.length > 0 ? <div>BITS jobs were used in these machines: </div> : ''}
         </div>
         <br/>

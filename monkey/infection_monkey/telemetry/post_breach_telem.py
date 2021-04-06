@@ -1,5 +1,6 @@
 import socket
 
+from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 
 __author__ = "itay.mizeretz"
@@ -18,7 +19,7 @@ class PostBreachTelem(BaseTelem):
         self.result = result
         self.hostname, self.ip = PostBreachTelem._get_hostname_and_ip()
 
-    telem_category = 'post_breach'
+    telem_category = TelemCategoryEnum.POST_BREACH
 
     def get_data(self):
         return {

@@ -39,6 +39,7 @@ Your user must have root permissions; however, don't run the script as root!
 
 ```sh
 wget https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/deploy_linux.sh
+chmod u+x ./deploy_linux.sh
 ```
 
 This will download our deploy script. It's a good idea to read it quickly before executing it!
@@ -53,3 +54,12 @@ After downloading that script, execute it in a shell. The first argument should 
 - `./deploy_linux.sh "/home/user/new" "master"` (if directory "new" is not found creates it and clones master branch into it)
 
 You may also pass in an optional third `false` parameter to disable downloading the latest agent binaries.
+
+### Run on Linux
+
+After the `deploy_linux.sh` script completes, you can start the monkey island.
+
+```sh
+cd infection_monkey/monkey
+./monkey_island/linux/run.sh
+```

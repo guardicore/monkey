@@ -1,10 +1,11 @@
 $transition: 300ms cubic-bezier(0.6, 0.3, 0.3, 0.6);
 
 $danger-color: #ebbcba;
-$disabled-color: #f4f4f4;
+$disabled-color: #f2f2f2;
 $info-color: #ade3eb;
-$default-color: #cbcbcb;
+$default-color: #8c8c8c;
 $warning-color: #ffe28d;
+$success-color: #adf6a9;
 
 .collapse-item button {
   font-size: inherit;
@@ -39,6 +40,10 @@ $warning-color: #ffe28d;
   }
 }
 
+.collapse-success {
+  background-color: $success-color !important;
+}
+
 .collapse-danger {
   background-color: $danger-color !important;
 }
@@ -53,6 +58,7 @@ $warning-color: #ffe28d;
 
 .collapse-default {
   background-color: $default-color !important;
+  color: #ffffff;
 }
 
 .collapse-disabled {
@@ -97,4 +103,8 @@ $warning-color: #ffe28d;
 .collapse-item .state {
   display: inline-block;
   min-width: 6em;
+}
+
+.rule-collapse svg{
+  margin-right: 10px;
 }
