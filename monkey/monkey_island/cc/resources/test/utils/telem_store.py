@@ -30,8 +30,16 @@ class TestTelemStore:
                 method = request.method
                 content = request.data.decode()
                 endpoint = request.path
-                name = str(request.url_rule).replace('/', '_').replace('<', '_').replace('>', '_').replace(':', '_')
-                TestTelem(name=name, method=method, endpoint=endpoint, content=content, time=time).save()
+                name = (
+                    str(request.url_rule)
+                    .replace("/", "_")
+                    .replace("<", "_")
+                    .replace(">", "_")
+                    .replace(":", "_")
+                )
+                TestTelem(
+                    name=name, method=method, endpoint=endpoint, content=content, time=time
+                ).save()
             return f(*args, **kwargs)
 
         return decorated_function
@@ -46,7 +54,10 @@ class TestTelemStore:
             shutil.rmtree(TELEM_SAMPLE_DIR)
             mkdir(TELEM_SAMPLE_DIR)
         for test_telem in TestTelem.objects():
-            with open(TestTelemStore.get_unique_file_path_for_test_telem(TELEM_SAMPLE_DIR, test_telem), 'w') as file:
+            with open(
+                TestTelemStore.get_unique_file_path_for_test_telem(TELEM_SAMPLE_DIR, test_telem),
+                "w",
+            ) as file:
                 file.write(test_telem.to_json(indent=2))
         TestTelemStore.TELEMS_EXPORTED = True
         logger.info("Telemetries exported!")
@@ -59,13 +70,15 @@ class TestTelemStore:
             if path.exists(potential_filepath):
                 continue
             return potential_filepath
-        raise Exception(f"Too many telemetries of the same category. Max amount {MAX_SAME_CATEGORY_TELEMS}")
+        raise Exception(
+            f"Too many telemetries of the same category. Max amount {MAX_SAME_CATEGORY_TELEMS}"
+        )
 
     @staticmethod
     def _get_filename_by_test_telem(test_telem: TestTelem):
         endpoint_part = test_telem.name
-        return endpoint_part + '_' + test_telem.method
+        return endpoint_part + "_" + test_telem.method
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     TestTelemStore.export_test_telems()

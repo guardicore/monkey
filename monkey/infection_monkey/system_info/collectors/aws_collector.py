@@ -4,7 +4,9 @@ from common.cloud.aws.aws_instance import AwsInstance
 from common.cloud.scoutsuite_consts import CloudProviders
 from common.common_consts.system_info_collectors_names import AWS_COLLECTOR
 from infection_monkey.network.tools import is_running_on_island
-from infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite_collector import scan_cloud_security
+from infection_monkey.system_info.collectors.scoutsuite_collector.scoutsuite_collector import (
+    scan_cloud_security,
+)
 from infection_monkey.system_info.system_info_collector import SystemInfoCollector
 
 logger = logging.getLogger(__name__)
@@ -14,6 +16,7 @@ class AwsCollector(SystemInfoCollector):
     """
     Extract info from AWS machines.
     """
+
     def __init__(self):
         super().__init__(name=AWS_COLLECTOR)
 
@@ -28,10 +31,7 @@ class AwsCollector(SystemInfoCollector):
         info = {}
         if aws.is_instance():
             logger.info("Machine is an AWS instance")
-            info = \
-                {
-                    'instance_id': aws.get_instance_id()
-                }
+            info = {"instance_id": aws.get_instance_id()}
         else:
             logger.info("Machine is NOT an AWS instance")
 

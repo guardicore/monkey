@@ -9,7 +9,6 @@ from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFind
 
 
 class MonkeyZTFindingService:
-
     @staticmethod
     def create_or_add_to_existing(test: str, status: str, events: List[Event]):
         """
@@ -20,7 +19,9 @@ class MonkeyZTFindingService:
         when this function should be used.
         """
         existing_findings = list(MonkeyFinding.objects(test=test, status=status))
-        assert (len(existing_findings) < 2), "More than one finding exists for {}:{}".format(test, status)
+        assert len(existing_findings) < 2, "More than one finding exists for {}:{}".format(
+            test, status
+        )
 
         if len(existing_findings) == 0:
             MonkeyZTFindingService.create_new_finding(test, status, events)
@@ -42,13 +43,18 @@ class MonkeyZTFindingService:
     @staticmethod
     def get_events_by_finding(finding_id: str) -> List[object]:
         finding = MonkeyFinding.objects.get(id=finding_id)
-        pipeline = [{'$match': {'_id': ObjectId(finding.details.id)}},
-                    {'$unwind': '$events'},
-                    {'$project': {'events': '$events'}},
-                    {'$replaceRoot': {'newRoot': '$events'}}]
+        pipeline = [
+            {"$match": {"_id": ObjectId(finding.details.id)}},
+            {"$unwind": "$events"},
+            {"$project": {"events": "$events"}},
+            {"$replaceRoot": {"newRoot": "$events"}},
+        ]
         return list(MonkeyFindingDetails.objects.aggregate(*pipeline))
 
     @staticmethod
     def add_malicious_activity_to_timeline(events):
-        MonkeyZTFindingService.create_or_add_to_existing(test=zero_trust_consts.TEST_MALICIOUS_ACTIVITY_TIMELINE,
-                                                         status=zero_trust_consts.STATUS_VERIFY, events=events)
+        MonkeyZTFindingService.create_or_add_to_existing(
+            test=zero_trust_consts.TEST_MALICIOUS_ACTIVITY_TIMELINE,
+            status=zero_trust_consts.STATUS_VERIFY,
+            events=events,
+        )

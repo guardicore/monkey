@@ -15,18 +15,20 @@ logger = logging.getLogger(__name__)
 def scan_cloud_security(cloud_type: CloudProviders):
     try:
         results = run_scoutsuite(cloud_type.value)
-        if isinstance(results, dict) and 'error' in results and results['error']:
-            raise ScoutSuiteScanError(results['error'])
+        if isinstance(results, dict) and "error" in results and results["error"]:
+            raise ScoutSuiteScanError(results["error"])
         send_scoutsuite_run_results(results)
     except (Exception, ScoutSuiteScanError) as e:
         logger.error(f"ScoutSuite didn't scan {cloud_type.value} security because: {e}")
 
 
 def run_scoutsuite(cloud_type: str) -> Union[BaseProvider, dict]:
-    return ScoutSuite.api_run.run(provider=cloud_type,
-                                  aws_access_key_id=WormConfiguration.aws_access_key_id,
-                                  aws_secret_access_key=WormConfiguration.aws_secret_access_key,
-                                  aws_session_token=WormConfiguration.aws_session_token)
+    return ScoutSuite.api_run.run(
+        provider=cloud_type,
+        aws_access_key_id=WormConfiguration.aws_access_key_id,
+        aws_secret_access_key=WormConfiguration.aws_secret_access_key,
+        aws_session_token=WormConfiguration.aws_session_token,
+    )
 
 
 def send_scoutsuite_run_results(run_results: BaseProvider):

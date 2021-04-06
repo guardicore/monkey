@@ -6,13 +6,13 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.HostScanner import HostScanner
 from infection_monkey.network.tools import check_tcp_ports, tcp_port_to_service
 
-__author__ = 'itamar'
+__author__ = "itamar"
 
 BANNER_READ = 1024
 
 
 class TcpScanner(HostScanner, HostFinger):
-    _SCANNED_SERVICE = 'unknown(TCP)'
+    _SCANNED_SERVICE = "unknown(TCP)"
 
     def __init__(self):
         self._config = infection_monkey.config.WormConfiguration
@@ -33,13 +33,17 @@ class TcpScanner(HostScanner, HostFinger):
         target_ports = self._config.tcp_target_ports[:]
         shuffle(target_ports)
 
-        ports, banners = check_tcp_ports(host.ip_addr, target_ports, self._config.tcp_scan_timeout / 1000.0,
-                                         self._config.tcp_scan_get_banner)
+        ports, banners = check_tcp_ports(
+            host.ip_addr,
+            target_ports,
+            self._config.tcp_scan_timeout / 1000.0,
+            self._config.tcp_scan_get_banner,
+        )
         for target_port, banner in zip_longest(ports, banners, fillvalue=None):
             service = tcp_port_to_service(target_port)
             self.init_service(host.services, service, target_port)
             if banner:
-                host.services[service]['banner'] = banner
+                host.services[service]["banner"] = banner
             if only_one_port:
                 break
 

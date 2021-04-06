@@ -14,24 +14,29 @@ from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 
 __author__ = "itay.mizeretz"
 
-from common.config_value_paths import (AWS_KEYS_PATH, EXPORT_MONKEY_TELEMS_PATH,
-                                       LM_HASH_LIST_PATH, NTLM_HASH_LIST_PATH,
-                                       PASSWORD_LIST_PATH, SSH_KEYS_PATH,
-                                       STARTED_ON_ISLAND_PATH, USER_LIST_PATH)
+from common.config_value_paths import (
+    AWS_KEYS_PATH,
+    EXPORT_MONKEY_TELEMS_PATH,
+    LM_HASH_LIST_PATH,
+    NTLM_HASH_LIST_PATH,
+    PASSWORD_LIST_PATH,
+    SSH_KEYS_PATH,
+    STARTED_ON_ISLAND_PATH,
+    USER_LIST_PATH,
+)
 
 logger = logging.getLogger(__name__)
 
 # This should be used for config values of array type (array of strings only)
-ENCRYPTED_CONFIG_VALUES = \
-    [
-        PASSWORD_LIST_PATH,
-        LM_HASH_LIST_PATH,
-        NTLM_HASH_LIST_PATH,
-        SSH_KEYS_PATH,
-        AWS_KEYS_PATH + ['aws_access_key_id'],
-        AWS_KEYS_PATH + ['aws_secret_access_key'],
-        AWS_KEYS_PATH + ['aws_session_token']
-    ]
+ENCRYPTED_CONFIG_VALUES = [
+    PASSWORD_LIST_PATH,
+    LM_HASH_LIST_PATH,
+    NTLM_HASH_LIST_PATH,
+    SSH_KEYS_PATH,
+    AWS_KEYS_PATH + ["aws_access_key_id"],
+    AWS_KEYS_PATH + ["aws_secret_access_key"],
+    AWS_KEYS_PATH + ["aws_session_token"],
+]
 
 
 class ConfigService:
@@ -49,13 +54,16 @@ class ConfigService:
         :param is_island: If True, will include island specific configuration parameters.
         :return: The entire global config.
         """
-        config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}) or {}
-        for field in ('name', '_id'):
+        config = (
+            mongo.db.config.find_one({"name": "initial" if is_initial_config else "newconfig"})
+            or {}
+        )
+        for field in ("name", "_id"):
             config.pop(field, None)
         if should_decrypt and len(config) > 0:
             ConfigService.decrypt_config(config)
         if not is_island:
-            config.get('cnc', {}).pop('aws_config', None)
+            config.get("cnc", {}).pop("aws_config", None)
         return config
 
     @staticmethod
@@ -68,8 +76,10 @@ class ConfigService:
                                (if it's in the list of encrypted config values).
         :return: The value of the requested config key.
         """
-        config_key = functools.reduce(lambda x, y: x + '.' + y, config_key_as_arr)
-        config = mongo.db.config.find_one({'name': 'initial' if is_initial_config else 'newconfig'}, {config_key: 1})
+        config_key = functools.reduce(lambda x, y: x + "." + y, config_key_as_arr)
+        config = mongo.db.config.find_one(
+            {"name": "initial" if is_initial_config else "newconfig"}, {config_key: 1}
+        )
         for config_key_part in config_key_as_arr:
             config = config[config_key_part]
         if should_decrypt:
@@ -83,8 +93,7 @@ class ConfigService:
     @staticmethod
     def set_config_value(config_key_as_arr, value):
         mongo_key = ".".join(config_key_as_arr)
-        mongo.db.config.update({'name': 'newconfig'},
-                               {"$set": {mongo_key: value}})
+        mongo.db.config.update({"name": "newconfig"}, {"$set": {mongo_key: value}})
 
     @staticmethod
     def get_flat_config(is_initial_config=False, should_decrypt=True):
@@ -107,71 +116,67 @@ class ConfigService:
 
     @staticmethod
     def add_item_to_config_set_if_dont_exist(item_path_array, item_value, should_encrypt):
-        item_key = '.'.join(item_path_array)
+        item_key = ".".join(item_path_array)
         items_from_config = ConfigService.get_config_value(item_path_array, False, should_encrypt)
         if item_value in items_from_config:
             return
         if should_encrypt:
             item_value = get_encryptor().enc(item_value)
         mongo.db.config.update(
-            {'name': 'newconfig'},
-            {'$addToSet': {item_key: item_value}},
-            upsert=False
+            {"name": "newconfig"}, {"$addToSet": {item_key: item_value}}, upsert=False
         )
 
         mongo.db.monkey.update(
-            {},
-            {'$addToSet': {'config.' + item_key.split('.')[-1]: item_value}},
-            multi=True
+            {}, {"$addToSet": {"config." + item_key.split(".")[-1]: item_value}}, multi=True
         )
 
     @staticmethod
     def creds_add_username(username):
-        ConfigService.add_item_to_config_set_if_dont_exist(USER_LIST_PATH,
-                                                           username,
-                                                           should_encrypt=False)
+        ConfigService.add_item_to_config_set_if_dont_exist(
+            USER_LIST_PATH, username, should_encrypt=False
+        )
 
     @staticmethod
     def creds_add_password(password):
-        ConfigService.add_item_to_config_set_if_dont_exist(PASSWORD_LIST_PATH,
-                                                           password,
-                                                           should_encrypt=True)
+        ConfigService.add_item_to_config_set_if_dont_exist(
+            PASSWORD_LIST_PATH, password, should_encrypt=True
+        )
 
     @staticmethod
     def creds_add_lm_hash(lm_hash):
-        ConfigService.add_item_to_config_set_if_dont_exist(LM_HASH_LIST_PATH,
-                                                           lm_hash,
-                                                           should_encrypt=True)
+        ConfigService.add_item_to_config_set_if_dont_exist(
+            LM_HASH_LIST_PATH, lm_hash, should_encrypt=True
+        )
 
     @staticmethod
     def creds_add_ntlm_hash(ntlm_hash):
-        ConfigService.add_item_to_config_set_if_dont_exist(NTLM_HASH_LIST_PATH,
-                                                           ntlm_hash,
-                                                           should_encrypt=True)
+        ConfigService.add_item_to_config_set_if_dont_exist(
+            NTLM_HASH_LIST_PATH, ntlm_hash, should_encrypt=True
+        )
 
     @staticmethod
     def ssh_add_keys(public_key, private_key, user, ip):
         if not ConfigService.ssh_key_exists(
-                ConfigService.get_config_value(SSH_KEYS_PATH, False, False), user, ip):
+            ConfigService.get_config_value(SSH_KEYS_PATH, False, False), user, ip
+        ):
             ConfigService.add_item_to_config_set_if_dont_exist(
                 SSH_KEYS_PATH,
-                {
-                    "public_key": public_key,
-                    "private_key": private_key,
-                    "user": user, "ip": ip
-                },
+                {"public_key": public_key, "private_key": private_key, "user": user, "ip": ip},
                 # SSH keys already encrypted in process_ssh_info()
-                should_encrypt=False
-
+                should_encrypt=False,
             )
 
     @staticmethod
     def ssh_key_exists(keys, user, ip):
-        return [key for key in keys if key['user'] == user and key['ip'] == ip]
+        return [key for key in keys if key["user"] == user and key["ip"] == ip]
 
     def _filter_none_values(data):
         if isinstance(data, dict):
-            return {k: ConfigService._filter_none_values(v) for k, v in data.items() if k is not None and v is not None}
+            return {
+                k: ConfigService._filter_none_values(v)
+                for k, v in data.items()
+                if k is not None and v is not None
+            }
         elif isinstance(data, list):
             return [ConfigService._filter_none_values(item) for item in data if item is not None]
         else:
@@ -186,16 +191,18 @@ class ConfigService:
             try:
                 ConfigService.encrypt_config(config_json)
             except KeyError:
-                logger.error('Bad configuration file was submitted.')
+                logger.error("Bad configuration file was submitted.")
                 return False
-        mongo.db.config.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
-        logger.info('monkey config was updated')
+        mongo.db.config.update({"name": "newconfig"}, {"$set": config_json}, upsert=True)
+        logger.info("monkey config was updated")
         return True
 
     @staticmethod
     def init_default_config():
         if ConfigService.default_config is None:
-            default_validating_draft4_validator = ConfigService._extend_config_with_default(Draft4Validator)
+            default_validating_draft4_validator = ConfigService._extend_config_with_default(
+                Draft4Validator
+            )
             config = {}
             default_validating_draft4_validator(SCHEMA).validate(config)
             ConfigService.default_config = config
@@ -221,25 +228,29 @@ class ConfigService:
         config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
         ConfigService.update_config(config, should_encrypt=False)
-        logger.info('Monkey config reset was called')
+        logger.info("Monkey config reset was called")
 
     @staticmethod
     def set_server_ips_in_config(config):
         ips = local_ip_addresses()
-        config["internal"]["island_server"]["command_servers"] = \
-            ["%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips]
-        config["internal"]["island_server"]["current_server"] = "%s:%d" % (ips[0], env_singleton.env.get_island_port())
+        config["internal"]["island_server"]["command_servers"] = [
+            "%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips
+        ]
+        config["internal"]["island_server"]["current_server"] = "%s:%d" % (
+            ips[0],
+            env_singleton.env.get_island_port(),
+        )
 
     @staticmethod
     def save_initial_config_if_needed():
-        if mongo.db.config.find_one({'name': 'initial'}) is not None:
+        if mongo.db.config.find_one({"name": "initial"}) is not None:
             return
 
-        initial_config = mongo.db.config.find_one({'name': 'newconfig'})
-        initial_config['name'] = 'initial'
-        initial_config.pop('_id')
+        initial_config = mongo.db.config.find_one({"name": "newconfig"})
+        initial_config["name"] = "initial"
+        initial_config.pop("_id")
         mongo.db.config.insert(initial_config)
-        logger.info('Monkey config was inserted to mongo and saved')
+        logger.info("Monkey config was inserted to mongo and saved")
 
     @staticmethod
     def _extend_config_with_default(validator_class):
@@ -260,9 +271,11 @@ class ConfigService:
                             layer_3_dict = {}
                             for property4, subschema4 in list(subschema3["properties"].items()):
                                 if "properties" in subschema4:
-                                    raise ValueError("monkey/monkey_island/cc/services/config.py "
-                                                     "can't handle 5 level config. "
-                                                     "Either change back the config or refactor.")
+                                    raise ValueError(
+                                        "monkey/monkey_island/cc/services/config.py "
+                                        "can't handle 5 level config. "
+                                        "Either change back the config or refactor."
+                                    )
                                 if "default" in subschema4:
                                     layer_3_dict[property4] = subschema4["default"]
                             sub_dict[property3] = layer_3_dict
@@ -273,7 +286,8 @@ class ConfigService:
                 yield error
 
         return validators.extend(
-            validator_class, {"properties": set_defaults},
+            validator_class,
+            {"properties": set_defaults},
         )
 
     @staticmethod
@@ -292,10 +306,18 @@ class ConfigService:
         keys = [config_arr_as_array[-1] for config_arr_as_array in ENCRYPTED_CONFIG_VALUES]
 
         for key in keys:
-            if isinstance(flat_config[key], collections.Sequence) and not isinstance(flat_config[key], str):
+            if isinstance(flat_config[key], collections.Sequence) and not isinstance(
+                flat_config[key], str
+            ):
                 # Check if we are decrypting ssh key pair
-                if flat_config[key] and isinstance(flat_config[key][0], dict) and 'public_key' in flat_config[key][0]:
-                    flat_config[key] = [ConfigService.decrypt_ssh_key_pair(item) for item in flat_config[key]]
+                if (
+                    flat_config[key]
+                    and isinstance(flat_config[key][0], dict)
+                    and "public_key" in flat_config[key][0]
+                ):
+                    flat_config[key] = [
+                        ConfigService.decrypt_ssh_key_pair(item) for item in flat_config[key]
+                    ]
                 else:
                     flat_config[key] = [get_encryptor().dec(item) for item in flat_config[key]]
             else:
@@ -316,23 +338,33 @@ class ConfigService:
             if isinstance(config_arr, collections.Sequence) and not isinstance(config_arr, str):
                 for i in range(len(config_arr)):
                     # Check if array of shh key pairs and then decrypt
-                    if isinstance(config_arr[i], dict) and 'public_key' in config_arr[i]:
-                        config_arr[i] = ConfigService.decrypt_ssh_key_pair(config_arr[i]) if is_decrypt else \
-                            ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
+                    if isinstance(config_arr[i], dict) and "public_key" in config_arr[i]:
+                        config_arr[i] = (
+                            ConfigService.decrypt_ssh_key_pair(config_arr[i])
+                            if is_decrypt
+                            else ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
+                        )
                     else:
-                        config_arr[i] = get_encryptor().dec(config_arr[i]) if is_decrypt else get_encryptor().enc(config_arr[i])
+                        config_arr[i] = (
+                            get_encryptor().dec(config_arr[i])
+                            if is_decrypt
+                            else get_encryptor().enc(config_arr[i])
+                        )
             else:
-                parent_config_arr[config_arr_as_array[-1]] = \
-                    get_encryptor().dec(config_arr) if is_decrypt else get_encryptor().enc(config_arr)
+                parent_config_arr[config_arr_as_array[-1]] = (
+                    get_encryptor().dec(config_arr)
+                    if is_decrypt
+                    else get_encryptor().enc(config_arr)
+                )
 
     @staticmethod
     def decrypt_ssh_key_pair(pair, encrypt=False):
         if encrypt:
-            pair['public_key'] = get_encryptor().enc(pair['public_key'])
-            pair['private_key'] = get_encryptor().enc(pair['private_key'])
+            pair["public_key"] = get_encryptor().enc(pair["public_key"])
+            pair["private_key"] = get_encryptor().enc(pair["private_key"])
         else:
-            pair['public_key'] = get_encryptor().dec(pair['public_key'])
-            pair['private_key'] = get_encryptor().dec(pair['private_key'])
+            pair["public_key"] = get_encryptor().dec(pair["public_key"])
+            pair["private_key"] = get_encryptor().dec(pair["private_key"])
         return pair
 
     @staticmethod

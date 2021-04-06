@@ -23,8 +23,11 @@ class SystemInfoCollectorsHandler(object):
             except Exception as e:
                 # If we failed one collector, no need to stop execution. Log and continue.
                 LOG.error("Collector {} failed. Error info: {}".format(collector.name, e))
-        LOG.info("All system info collectors executed. Total {} executed, out of which {} collected successfully.".
-                 format(len(self.collectors_list), successful_collections))
+        LOG.info(
+            "All system info collectors executed. Total {} executed, out of which {} collected successfully.".format(
+                len(self.collectors_list), successful_collections
+            )
+        )
 
         SystemInfoTelem({"collectors": system_info_telemetry}).send()
 

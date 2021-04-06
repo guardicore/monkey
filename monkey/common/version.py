@@ -16,10 +16,12 @@ def get_version(build=BUILD):
 
 def print_version():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-b", "--build", default=BUILD, help="Choose the build string for this version.", type=str)
+    parser.add_argument(
+        "-b", "--build", default=BUILD, help="Choose the build string for this version.", type=str
+    )
     args = parser.parse_args()
     print(get_version(args.build))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print_version()

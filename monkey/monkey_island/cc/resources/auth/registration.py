@@ -8,7 +8,7 @@ from monkey_island.cc.environment.user_creds import UserCreds
 
 class Registration(flask_restful.Resource):
     def get(self):
-        return {'needs_registration': env_singleton.env.needs_registration()}
+        return {"needs_registration": env_singleton.env.needs_registration()}
 
     def post(self):
         credentials = UserCreds.get_from_json(request.data)

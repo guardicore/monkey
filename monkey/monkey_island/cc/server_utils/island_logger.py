@@ -40,6 +40,4 @@ def _expanduser_log_file_paths(config: Dict):
 
     for handler_settings in handlers.values():
         if "filename" in handler_settings:
-            handler_settings["filename"] = os.path.expanduser(
-                handler_settings["filename"]
-            )
+            handler_settings["filename"] = os.path.expanduser(handler_settings["filename"])

@@ -11,19 +11,37 @@ class T1016(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey gathered network configurations on systems in the network."
 
-    query = [{'$match': {'telem_category': 'system_info', 'data.network_info': {'$exists': True}}},
-             {'$project': {'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
-                           'networks': '$data.network_info.networks',
-                           'netstat': '$data.network_info.netstat'}},
-             {'$addFields': {'_id': 0,
-                             'netstat': 0,
-                             'networks': 0,
-                             'info': [
-                                 {'used': {'$and': [{'$ifNull': ['$netstat', False]}, {'$gt': ['$netstat', {}]}]},
-                                  'name': {'$literal': 'Network connections (netstat)'}},
-                                 {'used': {'$and': [{'$ifNull': ['$networks', False]}, {'$gt': ['$networks', {}]}]},
-                                  'name': {'$literal': 'Network interface info'}},
-                             ]}}]
+    query = [
+        {"$match": {"telem_category": "system_info", "data.network_info": {"$exists": True}}},
+        {
+            "$project": {
+                "machine": {"hostname": "$data.hostname", "ips": "$data.network_info.networks"},
+                "networks": "$data.network_info.networks",
+                "netstat": "$data.network_info.netstat",
+            }
+        },
+        {
+            "$addFields": {
+                "_id": 0,
+                "netstat": 0,
+                "networks": 0,
+                "info": [
+                    {
+                        "used": {
+                            "$and": [{"$ifNull": ["$netstat", False]}, {"$gt": ["$netstat", {}]}]
+                        },
+                        "name": {"$literal": "Network connections (netstat)"},
+                    },
+                    {
+                        "used": {
+                            "$and": [{"$ifNull": ["$networks", False]}, {"$gt": ["$networks", {}]}]
+                        },
+                        "name": {"$literal": "Network interface info"},
+                    },
+                ],
+            }
+        },
+    ]
 
     @staticmethod
     def get_report_data():
@@ -36,5 +54,5 @@ class T1016(AttackTechnique):
         status, network_info = get_technique_status_and_data()
 
         data = T1016.get_base_data_by_status(status)
-        data.update({'network_info': network_info})
+        data.update({"network_info": network_info})
         return data

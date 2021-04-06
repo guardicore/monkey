@@ -1,7 +1,9 @@
-from infection_monkey.post_breach.account_discovery.linux_account_discovery import \
-    get_linux_commands_to_discover_accounts
-from infection_monkey.post_breach.account_discovery.windows_account_discovery import \
-    get_windows_commands_to_discover_accounts
+from infection_monkey.post_breach.account_discovery.linux_account_discovery import (
+    get_linux_commands_to_discover_accounts,
+)
+from infection_monkey.post_breach.account_discovery.windows_account_discovery import (
+    get_windows_commands_to_discover_accounts,
+)
 
 
 def get_commands_to_discover_accounts():

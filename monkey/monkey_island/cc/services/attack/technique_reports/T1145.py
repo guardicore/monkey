@@ -12,11 +12,21 @@ class T1145(AttackTechnique):
     used_msg = "Monkey found ssh keys on machines in the network."
 
     # Gets data about ssh keys found
-    query = [{'$match': {'telem_category': 'system_info',
-                         'data.ssh_info': {'$elemMatch': {'private_key': {'$exists': True}}}}},
-             {'$project': {'_id': 0,
-                           'machine': {'hostname': '$data.hostname', 'ips': '$data.network_info.networks'},
-                           'ssh_info': '$data.ssh_info'}}]
+    query = [
+        {
+            "$match": {
+                "telem_category": "system_info",
+                "data.ssh_info": {"$elemMatch": {"private_key": {"$exists": True}}},
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "machine": {"hostname": "$data.hostname", "ips": "$data.network_info.networks"},
+                "ssh_info": "$data.ssh_info",
+            }
+        },
+    ]
 
     @staticmethod
     def get_report_data():
@@ -32,5 +42,5 @@ class T1145(AttackTechnique):
         status, ssh_info = get_technique_status_and_data()
 
         data = T1145.get_base_data_by_status(status)
-        data.update({'ssh_info': ssh_info})
+        data.update({"ssh_info": ssh_info})
         return data

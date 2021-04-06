@@ -2,13 +2,17 @@ import pytest
 
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.scoutsuite_finding import ScoutSuiteFinding
-from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_zt_finding_service import ScoutSuiteZTFindingService
-from monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data import RULES, SCOUTSUITE_FINDINGS
+from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_zt_finding_service import (
+    ScoutSuiteZTFindingService,
+)
+from monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data import (
+    RULES,
+    SCOUTSUITE_FINDINGS,
+)
 from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 
 class TestScoutSuiteZTFindingService:
-
     @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
     def test_process_rule(self):
         # Creates new PermissiveFirewallRules finding with a rule

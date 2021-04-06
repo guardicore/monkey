@@ -1,8 +1,9 @@
 import uuid
 
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import \
-    SystemInfoTelemetryDispatcher
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (
+    SystemInfoTelemetryDispatcher,
+)
 
 
 class TestEnvironmentTelemetryProcessing:
@@ -20,7 +21,7 @@ class TestEnvironmentTelemetryProcessing:
                     "EnvironmentCollector": {"environment": on_premise},
                 }
             },
-            "monkey_guid": monkey_guid
+            "monkey_guid": monkey_guid,
         }
         dispatcher.dispatch_collector_results_to_relevant_processors(telem_json)
 

@@ -4,7 +4,9 @@ import pytest
 
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (
-    SystemInfoTelemetryDispatcher, process_aws_telemetry)
+    SystemInfoTelemetryDispatcher,
+    process_aws_telemetry,
+)
 
 TEST_SYS_INFO_TO_PROCESSING = {
     "AwsCollector": [process_aws_telemetry],
@@ -31,7 +33,10 @@ class TestSystemInfoTelemetryDispatcher:
 
         # Telem JSON with no collectors - nothing gets dispatched
         good_telem_no_collectors = {"monkey_guid": "bla", "data": {"bla": "bla"}}
-        good_telem_empty_collectors = {"monkey_guid": "bla", "data": {"bla": "bla", "collectors": {}}}
+        good_telem_empty_collectors = {
+            "monkey_guid": "bla",
+            "data": {"bla": "bla", "collectors": {}},
+        }
 
         dispatcher.dispatch_collector_results_to_relevant_processors(good_telem_no_collectors)
         dispatcher.dispatch_collector_results_to_relevant_processors(good_telem_empty_collectors)
@@ -50,7 +55,7 @@ class TestSystemInfoTelemetryDispatcher:
                     "AwsCollector": {"instance_id": instance_id},
                 }
             },
-            "monkey_guid": a_monkey.guid
+            "monkey_guid": a_monkey.guid,
         }
         dispatcher.dispatch_collector_results_to_relevant_processors(telem_json)
 

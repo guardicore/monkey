@@ -11,14 +11,28 @@ class T1222(AttackTechnique):
     scanned_msg = "Monkey tried to change file permissions, but failed."
     used_msg = "Monkey successfully changed file permissions in network systems."
 
-    query = [{'$match': {'telem_category': 'attack',
-                         'data.technique': 'T1222',
-                         'data.status': ScanStatus.USED.value}},
-             {'$group': {'_id': {'machine': '$data.machine', 'status': '$data.status', 'command': '$data.command'}}},
-             {"$replaceRoot": {"newRoot": "$_id"}}]
+    query = [
+        {
+            "$match": {
+                "telem_category": "attack",
+                "data.technique": "T1222",
+                "data.status": ScanStatus.USED.value,
+            }
+        },
+        {
+            "$group": {
+                "_id": {
+                    "machine": "$data.machine",
+                    "status": "$data.status",
+                    "command": "$data.command",
+                }
+            }
+        },
+        {"$replaceRoot": {"newRoot": "$_id"}},
+    ]
 
     @staticmethod
     def get_report_data():
         data = T1222.get_tech_base_data()
-        data.update({'commands': list(mongo.db.telemetry.aggregate(T1222.query))})
+        data.update({"commands": list(mongo.db.telemetry.aggregate(T1222.query))})
         return data

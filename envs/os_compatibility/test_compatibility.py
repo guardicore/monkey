@@ -31,22 +31,21 @@ machine_list = {
 }
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def island_client(island):
     island_client_object = MonkeyIslandClient(island)
     yield island_client_object
 
 
-@pytest.mark.usefixtures('island_client')
+@pytest.mark.usefixtures("island_client")
 # noinspection PyUnresolvedReferences
 class TestOSCompatibility(object):
-
     def test_os_compat(self, island_client):
         print()
         all_monkeys = island_client.get_all_monkeys_from_db()
         ips_that_communicated = []
         for monkey in all_monkeys:
-            for ip in monkey['ip_addresses']:
+            for ip in monkey["ip_addresses"]:
                 if ip in machine_list:
                     ips_that_communicated.append(ip)
                     break

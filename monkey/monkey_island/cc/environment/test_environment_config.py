@@ -9,17 +9,11 @@ from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
 
 
-TEST_RESOURCES_DIR = os.path.join(
-    MONKEY_ISLAND_ABS_PATH, "cc", "testing", "environment"
-)
+TEST_RESOURCES_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "testing", "environment")
 
-WITH_CREDENTIALS = os.path.join(
-    TEST_RESOURCES_DIR, "server_config_with_credentials.json"
-)
+WITH_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_with_credentials.json")
 NO_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_no_credentials.json")
-PARTIAL_CREDENTIALS = os.path.join(
-    TEST_RESOURCES_DIR, "server_config_partial_credentials.json"
-)
+PARTIAL_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_partial_credentials.json")
 STANDARD_WITH_CREDENTIALS = os.path.join(
     TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
 )

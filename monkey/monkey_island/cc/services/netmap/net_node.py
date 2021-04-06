@@ -3,7 +3,6 @@ from monkey_island.cc.services.node import NodeService
 
 
 class NetNodeService:
-
     @staticmethod
     def get_all_net_nodes():
         monkeys = NetNodeService._get_monkey_net_nodes()

@@ -7,7 +7,7 @@ from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
 
-__author__ = 'VakarisZ'
+__author__ = "VakarisZ"
 
 PATH_TO_ACTIONS = "infection_monkey.post_breach.actions."
 

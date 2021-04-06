@@ -12,6 +12,6 @@ class TestNetworkUtils(TestCase):
         assert get_host_from_network_location("user:password@host:8080") == "host"
 
     def test_remove_port_from_url(self):
-        assert remove_port('https://google.com:80') == 'https://google.com'
-        assert remove_port('https://8.8.8.8:65336') == 'https://8.8.8.8'
-        assert remove_port('ftp://ftpserver.com:21/hello/world') == 'ftp://ftpserver.com'
+        assert remove_port("https://google.com:80") == "https://google.com"
+        assert remove_port("https://8.8.8.8:65336") == "https://8.8.8.8"
+        assert remove_port("ftp://ftpserver.com:21/hello/world") == "ftp://ftpserver.com"

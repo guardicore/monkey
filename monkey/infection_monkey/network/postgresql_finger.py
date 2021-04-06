@@ -48,9 +48,7 @@ class PostgreSQLFinger(HostFinger):
             # if it comes here, the creds worked
             # this shouldn't happen since capital letters are not supported in postgres usernames
             # perhaps the service is a honeypot
-            self.init_service(
-                host.services, self._SCANNED_SERVICE, self.POSTGRESQL_DEFAULT_PORT
-            )
+            self.init_service(host.services, self._SCANNED_SERVICE, self.POSTGRESQL_DEFAULT_PORT)
             host.services[self._SCANNED_SERVICE]["communication_encryption_details"] = (
                 "The PostgreSQL server was unexpectedly accessible with the credentials - "
                 + f"user: '{self.CREDS['username']}' and password: '{self.CREDS['password']}'. Is this a honeypot?"
@@ -75,18 +73,13 @@ class PostgreSQLFinger(HostFinger):
             return False
 
     def _is_relevant_exception(self, exception_string):
-        if not any(
-            substr in exception_string
-            for substr in self.RELEVANT_EX_SUBSTRINGS.values()
-        ):
+        if not any(substr in exception_string for substr in self.RELEVANT_EX_SUBSTRINGS.values()):
             # OperationalError due to some other reason - irrelevant exception
             return False
         return True
 
     def analyze_operational_error(self, host, exception_string):
-        self.init_service(
-            host.services, self._SCANNED_SERVICE, self.POSTGRESQL_DEFAULT_PORT
-        )
+        self.init_service(host.services, self._SCANNED_SERVICE, self.POSTGRESQL_DEFAULT_PORT)
 
         exceptions = exception_string.split("\n")
 
@@ -98,17 +91,15 @@ class PostgreSQLFinger(HostFinger):
         else:  # SSL not configured
             self.get_connection_details_ssl_not_configured(exceptions)
 
-        host.services[self._SCANNED_SERVICE][
-            "communication_encryption_details"
-        ] = "".join(self.ssl_connection_details)
+        host.services[self._SCANNED_SERVICE]["communication_encryption_details"] = "".join(
+            self.ssl_connection_details
+        )
 
     @staticmethod
     def is_ssl_configured(exceptions):
         # when trying to authenticate, it checks pg_hba.conf file:
         # first, for a record where it can connect with SSL and second, without SSL
-        if (
-            len(exceptions) == 1
-        ):  # SSL not configured on server so only checks for non-SSL record
+        if len(exceptions) == 1:  # SSL not configured on server so only checks for non-SSL record
             return False
         elif len(exceptions) == 2:  # SSL configured so checks for both
             return True
@@ -131,22 +122,16 @@ class PostgreSQLFinger(HostFinger):
             if (
                 ssl_selected_comms_only
             ):  # if only selected SSL allowed and only selected non-SSL allowed
-                self.ssl_connection_details[-1] = self.CONNECTION_DETAILS[
-                    "only_selected"
-                ]
+                self.ssl_connection_details[-1] = self.CONNECTION_DETAILS["only_selected"]
             else:
-                self.ssl_connection_details.append(
-                    self.CONNECTION_DETAILS["selected_non_ssl"]
-                )
+                self.ssl_connection_details.append(self.CONNECTION_DETAILS["selected_non_ssl"])
 
     def get_connection_details_ssl_not_configured(self, exceptions):
         self.ssl_connection_details.append(self.CONNECTION_DETAILS["ssl_not_conf"])
         if self.found_entry_for_host_but_pwd_auth_failed(exceptions[0]):
             self.ssl_connection_details.append(self.CONNECTION_DETAILS["all_non_ssl"])
         else:
-            self.ssl_connection_details.append(
-                self.CONNECTION_DETAILS["selected_non_ssl"]
-            )
+            self.ssl_connection_details.append(self.CONNECTION_DETAILS["selected_non_ssl"])
 
     @staticmethod
     def found_entry_for_host_but_pwd_auth_failed(exception):

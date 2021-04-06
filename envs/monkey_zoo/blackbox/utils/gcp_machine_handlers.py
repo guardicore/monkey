@@ -11,14 +11,21 @@ class GCPHandler(object):
     MACHINE_STARTING_COMMAND = "gcloud compute instances start %s --zone=%s"
     MACHINE_STOPPING_COMMAND = "gcloud compute instances stop %s --zone=%s"
 
-    def __init__(self, key_path="../gcp_keys/gcp_key.json", zone="europe-west3-a", project_id="guardicore-22050661"):
+    def __init__(
+        self,
+        key_path="../gcp_keys/gcp_key.json",
+        zone="europe-west3-a",
+        project_id="guardicore-22050661",
+    ):
         self.zone = zone
         try:
             # pass the key file to gcp
             subprocess.call(GCPHandler.get_auth_command(key_path), shell=True)  # noqa: DUO116
             LOGGER.info("GCP Handler passed key")
             # set project
-            subprocess.call(GCPHandler.get_set_project_command(project_id), shell=True)  # noqa: DUO116
+            subprocess.call(
+                GCPHandler.get_set_project_command(project_id), shell=True
+            )  # noqa: DUO116
             LOGGER.info("GCP Handler set project")
             LOGGER.info("GCP Handler initialized successfully")
         except Exception as e:
@@ -32,14 +39,18 @@ class GCPHandler(object):
         """
         LOGGER.info("Setting up all GCP machines...")
         try:
-            subprocess.call((GCPHandler.MACHINE_STARTING_COMMAND % (machine_list, self.zone)), shell=True)  # noqa: DUO116
+            subprocess.call(
+                (GCPHandler.MACHINE_STARTING_COMMAND % (machine_list, self.zone)), shell=True
+            )  # noqa: DUO116
             LOGGER.info("GCP machines successfully started.")
         except Exception as e:
             LOGGER.error("GCP Handler failed to start GCP machines: %s" % e)
 
     def stop_machines(self, machine_list):
         try:
-            subprocess.call((GCPHandler.MACHINE_STOPPING_COMMAND % (machine_list, self.zone)), shell=True)  # noqa: DUO116
+            subprocess.call(
+                (GCPHandler.MACHINE_STOPPING_COMMAND % (machine_list, self.zone)), shell=True
+            )  # noqa: DUO116
             LOGGER.info("GCP machines stopped successfully.")
         except Exception as e:
             LOGGER.error("GCP Handler failed to stop network machines: %s" % e)

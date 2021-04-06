@@ -7,8 +7,10 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 class Drupal(ConfigTemplate):
     config_values = copy(BaseTemplate.config_values)
 
-    config_values.update({
-        "internal.classes.finger_classes": ["PingScanner", "HTTPFinger"],
-        "basic.exploiters.exploiter_classes": ["DrupalExploiter"],
-        "basic_network.scope.subnet_scan_list": ["10.2.2.28"]
-    })
+    config_values.update(
+        {
+            "internal.classes.finger_classes": ["PingScanner", "HTTPFinger"],
+            "basic.exploiters.exploiter_classes": ["DrupalExploiter"],
+            "basic_network.scope.subnet_scan_list": ["10.2.2.28"],
+        }
+    )

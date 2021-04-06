@@ -9,8 +9,8 @@ from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
 # We only encrypt payloads to hide them from static analysis
 # it's OK to have these keys plaintext
-KEY = b'1234567890123456'
-NONCE = b'\x93n2\xbc\xf5\x8d:\xc2fP\xabn\x02\xb3\x17f'
+KEY = b"1234567890123456"
+NONCE = b"\x93n2\xbc\xf5\x8d:\xc2fP\xabn\x02\xb3\x17f"
 
 
 # Use this manually to get obfuscated bytes of shellcode

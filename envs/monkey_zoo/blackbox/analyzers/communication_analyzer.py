@@ -3,7 +3,6 @@ from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 
 
 class CommunicationAnalyzer(Analyzer):
-
     def __init__(self, island_client, machine_ips):
         self.island_client = island_client
         self.machine_ips = machine_ips
@@ -21,5 +20,5 @@ class CommunicationAnalyzer(Analyzer):
         return all_monkeys_communicated
 
     def did_monkey_communicate_back(self, machine_ip):
-        query = {'ip_addresses': {'$elemMatch': {'$eq': machine_ip}}}
+        query = {"ip_addresses": {"$elemMatch": {"$eq": machine_ip}}}
         return len(self.island_client.find_monkeys_in_db(query)) > 0

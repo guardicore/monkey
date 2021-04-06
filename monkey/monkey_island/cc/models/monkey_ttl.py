@@ -27,15 +27,7 @@ class MonkeyTtl(Document):
         # https://stackoverflow.com/questions/55994379/mongodb-ttl-index-doesnt-delete-expired-documents.
         return MonkeyTtl(expire_at=datetime.utcnow() + timedelta(seconds=expiry_in_seconds))
 
-    meta = {
-        'indexes': [
-            {
-                'name': 'TTL_index',
-                'fields': ['expire_at'],
-                'expireAfterSeconds': 0
-            }
-        ]
-    }
+    meta = {"indexes": [{"name": "TTL_index", "fields": ["expire_at"], "expireAfterSeconds": 0}]}
 
     expire_at = DateTimeField()
 

@@ -6,7 +6,6 @@ class NoInheritance:
 
 
 class BadInit(TestPlugin):
-
     def __init__(self):
         raise Exception("TestException")
 

@@ -7,16 +7,16 @@ def parse_creds(attempt):
     :param attempt: login attempt from database
     :return: string with username and used password/hash
     """
-    username = attempt['user']
-    creds = {'lm_hash': {'type': 'LM hash', 'output': censor_hash(attempt['lm_hash'])},
-             'ntlm_hash': {'type': 'NTLM hash', 'output': censor_hash(attempt['ntlm_hash'], 20)},
-             'ssh_key': {'type': 'SSH key', 'output': attempt['ssh_key']},
-             'password': {'type': 'Plaintext password', 'output': censor_password(attempt['password'])}}
+    username = attempt["user"]
+    creds = {
+        "lm_hash": {"type": "LM hash", "output": censor_hash(attempt["lm_hash"])},
+        "ntlm_hash": {"type": "NTLM hash", "output": censor_hash(attempt["ntlm_hash"], 20)},
+        "ssh_key": {"type": "SSH key", "output": attempt["ssh_key"]},
+        "password": {"type": "Plaintext password", "output": censor_password(attempt["password"])},
+    }
     for key, cred in list(creds.items()):
         if attempt[key]:
-            return '%s ; %s : %s' % (username,
-                                     cred['type'],
-                                     cred['output'])
+            return "%s ; %s : %s" % (username, cred["type"], cred["output"])
 
 
 def censor_password(password, plain_chars=3, secret_chars=5):
@@ -30,7 +30,7 @@ def censor_password(password, plain_chars=3, secret_chars=5):
     if not password:
         return ""
     password = get_encryptor().dec(password)
-    return password[0:plain_chars] + '*' * secret_chars
+    return password[0:plain_chars] + "*" * secret_chars
 
 
 def censor_hash(hash_, plain_chars=5):
@@ -43,4 +43,4 @@ def censor_hash(hash_, plain_chars=5):
     if not hash_:
         return ""
     hash_ = get_encryptor().dec(hash_)
-    return hash_[0: plain_chars] + ' ...'
+    return hash_[0:plain_chars] + " ..."

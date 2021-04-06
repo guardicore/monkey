@@ -7,6 +7,7 @@ class CloudInstance(object):
 
     The current machine can be a cloud instance (for example EC2 instance or Azure VM).
     """
+
     def is_instance(self) -> bool:
         raise NotImplementedError()
 

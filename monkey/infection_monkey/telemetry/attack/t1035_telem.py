@@ -8,4 +8,4 @@ class T1035Telem(UsageTelem):
         :param status: ScanStatus of technique
         :param usage: Enum of UsageEnum type
         """
-        super(T1035Telem, self).__init__('T1035', status, usage)
+        super(T1035Telem, self).__init__("T1035", status, usage)

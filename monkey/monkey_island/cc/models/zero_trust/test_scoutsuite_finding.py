@@ -10,19 +10,20 @@ from monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data im
 from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 MONKEY_FINDING_DETAIL_MOCK = MonkeyFindingDetails()
-MONKEY_FINDING_DETAIL_MOCK.events = ['mock1', 'mock2']
+MONKEY_FINDING_DETAIL_MOCK.events = ["mock1", "mock2"]
 SCOUTSUITE_FINDING_DETAIL_MOCK = ScoutSuiteFindingDetails()
 SCOUTSUITE_FINDING_DETAIL_MOCK.scoutsuite_rules = []
 
 
 class TestScoutSuiteFinding:
-
     @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
     def test_save_finding_validation(self):
         with pytest.raises(ValidationError):
-            _ = ScoutSuiteFinding.save_finding(test=zero_trust_consts.TEST_SEGMENTATION,
-                                               status="bla bla",
-                                               detail_ref=SCOUTSUITE_FINDING_DETAIL_MOCK)
+            _ = ScoutSuiteFinding.save_finding(
+                test=zero_trust_consts.TEST_SEGMENTATION,
+                status="bla bla",
+                detail_ref=SCOUTSUITE_FINDING_DETAIL_MOCK,
+            )
 
     @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
     def test_save_finding_sanity(self):
@@ -32,9 +33,11 @@ class TestScoutSuiteFinding:
         scoutsuite_details_example = ScoutSuiteFindingDetails()
         scoutsuite_details_example.scoutsuite_rules.append(rule_example)
         scoutsuite_details_example.save()
-        ScoutSuiteFinding.save_finding(test=zero_trust_consts.TEST_SEGMENTATION,
-                                       status=zero_trust_consts.STATUS_FAILED,
-                                       detail_ref=scoutsuite_details_example)
+        ScoutSuiteFinding.save_finding(
+            test=zero_trust_consts.TEST_SEGMENTATION,
+            status=zero_trust_consts.STATUS_FAILED,
+            detail_ref=scoutsuite_details_example,
+        )
 
         assert len(ScoutSuiteFinding.objects(test=zero_trust_consts.TEST_SEGMENTATION)) == 1
         assert len(ScoutSuiteFinding.objects(status=zero_trust_consts.STATUS_FAILED)) == 1

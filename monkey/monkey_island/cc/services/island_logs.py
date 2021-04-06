@@ -20,14 +20,12 @@ class IslandLogService:
         """
         logger_handlers = logger.parent.handlers
         for handler in logger_handlers:
-            if hasattr(handler, 'baseFilename'):
-                logger.info('Log file found: {0}'.format(handler.baseFilename))
+            if hasattr(handler, "baseFilename"):
+                logger.info("Log file found: {0}".format(handler.baseFilename))
                 log_file_path = handler.baseFilename
-                with open(log_file_path, 'rt') as f:
+                with open(log_file_path, "rt") as f:
                     log_file = f.read()
-                return {
-                    'log_file': log_file
-                }
+                return {"log_file": log_file}
 
-        logger.warning('No log file could be found, check logger config.')
+        logger.warning("No log file could be found, check logger config.")
         return None

@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class TestEdgeService:
-
     @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
     def test_get_or_create_edge(self):
         src_id = ObjectId()
@@ -34,9 +33,7 @@ class TestEdgeService:
         assert len(Edge.objects()) == 1
 
     def test_get_edge_group(self):
-        edge = Edge(src_node_id=ObjectId(),
-                    dst_node_id=ObjectId(),
-                    exploited=True)
+        edge = Edge(src_node_id=ObjectId(), dst_node_id=ObjectId(), exploited=True)
         assert "exploited" == EdgeService.get_group(edge)
 
         edge.exploited = False

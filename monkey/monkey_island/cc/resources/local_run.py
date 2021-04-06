@@ -15,7 +15,7 @@ from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.monkey_download import get_monkey_executable
 from monkey_island.cc.services.node import NodeService
 
-__author__ = 'Barak'
+__author__ = "Barak"
 
 
 logger = logging.getLogger(__name__)
@@ -31,25 +31,28 @@ def run_local_monkey():
     if not result:
         return False, "OS Type not found"
 
-    monkey_path = os.path.join(MONKEY_ISLAND_ABS_PATH, 'cc', 'binaries', result['filename'])
-    target_path = os.path.join(env_singleton.env.get_config().data_dir_abs_path, result['filename'])
+    monkey_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "binaries", result["filename"])
+    target_path = os.path.join(env_singleton.env.get_config().data_dir_abs_path, result["filename"])
 
     # copy the executable to temp path (don't run the monkey from its current location as it may delete itself)
     try:
         copyfile(monkey_path, target_path)
         os.chmod(target_path, stat.S_IRWXU | stat.S_IRWXG)
     except Exception as exc:
-        logger.error('Copy file failed', exc_info=True)
+        logger.error("Copy file failed", exc_info=True)
         return False, "Copy file failed: %s" % exc
 
     # run the monkey
     try:
-        args = ['"%s" m0nk3y -s %s:%s' % (target_path, local_ip_addresses()[0], env_singleton.env.get_island_port())]
+        args = [
+            '"%s" m0nk3y -s %s:%s'
+            % (target_path, local_ip_addresses()[0], env_singleton.env.get_island_port())
+        ]
         if sys.platform == "win32":
             args = "".join(args)
         subprocess.Popen(args, shell=True).pid
     except Exception as exc:
-        logger.error('popen failed', exc_info=True)
+        logger.error("popen failed", exc_info=True)
         return False, "popen failed: %s" % exc
 
     return True, ""
@@ -70,9 +73,9 @@ class LocalRun(flask_restful.Resource):
     @jwt_required
     def post(self):
         body = json.loads(request.data)
-        if body.get('action') == 'run':
+        if body.get("action") == "run":
             local_run = run_local_monkey()
             return jsonify(is_running=local_run[0], error_text=local_run[1])
 
         # default action
-        return make_response({'error': 'Invalid action'}, 500)
+        return make_response({"error": "Invalid action"}, 500)

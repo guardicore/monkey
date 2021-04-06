@@ -13,10 +13,10 @@ from infection_monkey.utils.monkey_dir import get_monkey_dir_path
 
 LOG = logging.getLogger(__name__)
 
-__author__ = 'VakarisZ'
+__author__ = "VakarisZ"
 
-DIR_CHANGE_WINDOWS = 'cd %s & '
-DIR_CHANGE_LINUX = 'cd %s ; '
+DIR_CHANGE_WINDOWS = "cd %s & "
+DIR_CHANGE_LINUX = "cd %s ; "
 
 
 class UsersPBA(PBA):
@@ -26,7 +26,7 @@ class UsersPBA(PBA):
 
     def __init__(self):
         super(UsersPBA, self).__init__(POST_BREACH_FILE_EXECUTION)
-        self.filename = ''
+        self.filename = ""
 
         if not is_windows_os():
             # Add linux commands to PBA's
@@ -34,7 +34,9 @@ class UsersPBA(PBA):
                 self.filename = WormConfiguration.PBA_linux_filename
                 if WormConfiguration.custom_PBA_linux_cmd:
                     # Add change dir command, because user will try to access his file
-                    self.command = (DIR_CHANGE_LINUX % get_monkey_dir_path()) + WormConfiguration.custom_PBA_linux_cmd
+                    self.command = (
+                        DIR_CHANGE_LINUX % get_monkey_dir_path()
+                    ) + WormConfiguration.custom_PBA_linux_cmd
             elif WormConfiguration.custom_PBA_linux_cmd:
                 self.command = WormConfiguration.custom_PBA_linux_cmd
         else:
@@ -43,7 +45,9 @@ class UsersPBA(PBA):
                 self.filename = WormConfiguration.PBA_windows_filename
                 if WormConfiguration.custom_PBA_windows_cmd:
                     # Add change dir command, because user will try to access his file
-                    self.command = (DIR_CHANGE_WINDOWS % get_monkey_dir_path()) + WormConfiguration.custom_PBA_windows_cmd
+                    self.command = (
+                        DIR_CHANGE_WINDOWS % get_monkey_dir_path()
+                    ) + WormConfiguration.custom_PBA_windows_cmd
             elif WormConfiguration.custom_PBA_windows_cmd:
                 self.command = WormConfiguration.custom_PBA_windows_cmd
 
@@ -81,16 +85,18 @@ class UsersPBA(PBA):
         if not status:
             status = ScanStatus.USED
 
-        T1105Telem(status,
-                   WormConfiguration.current_server.split(':')[0],
-                   get_interface_to_target(WormConfiguration.current_server.split(':')[0]),
-                   filename).send()
+        T1105Telem(
+            status,
+            WormConfiguration.current_server.split(":")[0],
+            get_interface_to_target(WormConfiguration.current_server.split(":")[0]),
+            filename,
+        ).send()
 
         if status == ScanStatus.SCANNED:
             return False
 
         try:
-            with open(os.path.join(dst_dir, filename), 'wb') as written_PBA_file:
+            with open(os.path.join(dst_dir, filename), "wb") as written_PBA_file:
                 written_PBA_file.write(pba_file_contents.content)
             return True
         except IOError as e:

@@ -6,7 +6,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 class MonkeyLogsDownloader(object):
-
     def __init__(self, island_client, log_dir_path):
         self.island_client = island_client
         self.log_dir_path = log_dir_path

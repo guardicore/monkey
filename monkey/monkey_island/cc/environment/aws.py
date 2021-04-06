@@ -1,7 +1,7 @@
 from common.cloud.aws.aws_instance import AwsInstance
 from monkey_island.cc.environment import Environment
 
-__author__ = 'itay.mizeretz'
+__author__ = "itay.mizeretz"
 
 
 class AwsEnvironment(Environment):

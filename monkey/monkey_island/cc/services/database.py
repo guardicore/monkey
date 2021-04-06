@@ -17,15 +17,18 @@ class Database(object):
 
     @staticmethod
     def reset_db():
-        logger.info('Resetting database')
+        logger.info("Resetting database")
         remove_PBA_files()
         # We can't drop system collections.
-        [Database.drop_collection(x) for x in mongo.db.collection_names() if not x.startswith('system.')
-         and not x == AttackMitigations.COLLECTION_NAME]
+        [
+            Database.drop_collection(x)
+            for x in mongo.db.collection_names()
+            if not x.startswith("system.") and not x == AttackMitigations.COLLECTION_NAME
+        ]
         ConfigService.init_config()
         AttackConfig.reset_config()
-        logger.info('DB was reset')
-        return jsonify(status='OK')
+        logger.info("DB was reset")
+        return jsonify(status="OK")
 
     @staticmethod
     def drop_collection(collection_name: str):

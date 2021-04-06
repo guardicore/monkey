@@ -1,2 +1,2 @@
 class FixtureEnum:
-    USES_DATABASE = 'uses_database'
+    USES_DATABASE = "uses_database"

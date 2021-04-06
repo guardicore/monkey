@@ -5,7 +5,6 @@ __author__ = "itay.mizeretz"
 
 
 class SystemInfoTelem(BaseTelem):
-
     def __init__(self, system_info):
         """
         Default system info telemetry constructor

@@ -40,9 +40,7 @@ class EnvironmentConfig:
     def _load_from_dict(self, dict_data: Dict):
         user_creds = UserCreds.get_from_dict(dict_data)
         aws = dict_data["aws"] if "aws" in dict_data else None
-        data_dir = (
-            dict_data["data_dir"] if "data_dir" in dict_data else DEFAULT_DATA_DIR
-        )
+        data_dir = dict_data["data_dir"] if "data_dir" in dict_data else DEFAULT_DATA_DIR
 
         self.server_config = dict_data["server_config"]
         self.deployment = dict_data["deployment"]

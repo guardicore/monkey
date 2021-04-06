@@ -5,22 +5,23 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
-from common.utils.exceptions import (AlreadyRegisteredError,
-                                     CredentialsNotRequiredError,
-                                     InvalidRegistrationCredentialsError,
-                                     RegistrationNotNeededError)
-from monkey_island.cc.environment import (Environment, EnvironmentConfig,
-                                          UserCreds)
+from common.utils.exceptions import (
+    AlreadyRegisteredError,
+    CredentialsNotRequiredError,
+    InvalidRegistrationCredentialsError,
+    RegistrationNotNeededError,
+)
+from monkey_island.cc.environment import Environment, EnvironmentConfig, UserCreds
 
 TEST_RESOURCES_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "testing", "environment")
 
 WITH_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_with_credentials.json")
 NO_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_no_credentials.json")
 PARTIAL_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_partial_credentials.json")
-STANDARD_WITH_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR,
-                                         "server_config_standard_with_credentials.json")
-STANDARD_ENV = os.path.join(TEST_RESOURCES_DIR,
-                            "server_config_standard_env.json")
+STANDARD_WITH_CREDENTIALS = os.path.join(
+    TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
+)
+STANDARD_ENV = os.path.join(TEST_RESOURCES_DIR, "server_config_standard_env.json")
 
 
 def get_tmp_file():
@@ -40,14 +41,13 @@ class StubEnvironmentConfig(EnvironmentConfig):
 
 
 def get_server_config_file_path_test_version():
-    return os.path.join(os.getcwd(), 'test_config.json')
+    return os.path.join(os.getcwd(), "test_config.json")
 
 
 class TestEnvironment(TestCase):
-
     class EnvironmentCredentialsNotRequired(Environment):
         def __init__(self):
-            config = StubEnvironmentConfig('test', 'test', UserCreds())
+            config = StubEnvironmentConfig("test", "test", UserCreds())
             super().__init__(config)
 
         _credentials_required = False
@@ -57,7 +57,7 @@ class TestEnvironment(TestCase):
 
     class EnvironmentCredentialsRequired(Environment):
         def __init__(self):
-            config = StubEnvironmentConfig('test', 'test', UserCreds())
+            config = StubEnvironmentConfig("test", "test", UserCreds())
             super().__init__(config)
 
         _credentials_required = True
@@ -67,7 +67,7 @@ class TestEnvironment(TestCase):
 
     class EnvironmentAlreadyRegistered(Environment):
         def __init__(self):
-            config = StubEnvironmentConfig('test', 'test', UserCreds('test_user', 'test_secret'))
+            config = StubEnvironmentConfig("test", "test", UserCreds("test_user", "test_secret"))
             super().__init__(config)
 
         _credentials_required = True
@@ -131,7 +131,9 @@ class TestEnvironment(TestCase):
         env = TestEnvironment.EnvironmentCredentialsNotRequired()
         self._test_bool_env_method("_is_credentials_set_up", env, STANDARD_ENV, False)
 
-    def _test_bool_env_method(self, method_name: str, env: Environment, config: Dict, expected_result: bool):
+    def _test_bool_env_method(
+        self, method_name: str, env: Environment, config: Dict, expected_result: bool
+    ):
         env._config = EnvironmentConfig(config)
         method = getattr(env, method_name)
         if expected_result:

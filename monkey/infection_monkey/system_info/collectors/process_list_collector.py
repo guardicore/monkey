@@ -48,4 +48,4 @@ class ProcessListCollector(SystemInfoCollector):
                 }
                 continue
 
-        return {'process_list': processes}
+        return {"process_list": processes}

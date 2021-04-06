@@ -1,6 +1,6 @@
 from enum import Enum
 
-__author__ = 'itay.mizeretz'
+__author__ = "itay.mizeretz"
 
 
 class CmdStatus(Enum):

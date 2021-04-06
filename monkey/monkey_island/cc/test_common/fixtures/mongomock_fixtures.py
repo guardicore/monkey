@@ -6,14 +6,14 @@ from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.models.zero_trust.finding import Finding
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def change_to_mongo_mock():
     # Make sure tests are working with mongomock
     mongoengine.disconnect()
-    mongoengine.connect('mongoenginetest', host='mongomock://localhost')
+    mongoengine.connect("mongoenginetest", host="mongomock://localhost")
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def uses_database():
     _clean_edge_db()
     _clean_monkey_db()

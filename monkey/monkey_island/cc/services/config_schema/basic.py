@@ -12,9 +12,7 @@ BASIC = {
                     "title": "Exploiters",
                     "type": "array",
                     "uniqueItems": True,
-                    "items": {
-                        "$ref": "#/definitions/exploiter_classes"
-                    },
+                    "items": {"$ref": "#/definitions/exploiter_classes"},
                     "default": [
                         "SmbExploiter",
                         "WmiExploiter",
@@ -27,10 +25,10 @@ BASIC = {
                         "HadoopExploiter",
                         "VSFTPDExploiter",
                         "MSSQLExploiter",
-                        "DrupalExploiter"
-                    ]
+                        "DrupalExploiter",
+                    ],
                 }
-            }
+            },
         },
         "credentials": {
             "title": "Credentials",
@@ -40,24 +38,16 @@ BASIC = {
                     "title": "Exploit user list",
                     "type": "array",
                     "uniqueItems": True,
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [
-                        "Administrator",
-                        "root",
-                        "user"
-                    ],
+                    "items": {"type": "string"},
+                    "default": ["Administrator", "root", "user"],
                     "description": "List of user names that will be used by exploiters that need credentials, like "
-                                   "SSH brute-forcing."
+                    "SSH brute-forcing.",
                 },
                 "exploit_password_list": {
                     "title": "Exploit password list",
                     "type": "array",
                     "uniqueItems": True,
-                    "items": {
-                        "type": "string"
-                    },
+                    "items": {"type": "string"},
                     "default": [
                         "root",
                         "123456",
@@ -65,12 +55,12 @@ BASIC = {
                         "123456789",
                         "qwerty",
                         "111111",
-                        "iloveyou"
+                        "iloveyou",
                     ],
                     "description": "List of passwords that will be used by exploiters that need credentials, like "
-                                   "SSH brute-forcing."
-                }
-            }
-        }
-    }
+                    "SSH brute-forcing.",
+                },
+            },
+        },
+    },
 }

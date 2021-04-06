@@ -5,7 +5,7 @@ from flask import jsonify, request
 
 from monkey_island.cc.services.node import NodeService
 
-__author__ = 'itay.mizeretz'
+__author__ = "itay.mizeretz"
 
 logger = logging.getLogger(__name__)
 

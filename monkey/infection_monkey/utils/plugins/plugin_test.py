@@ -8,7 +8,6 @@ from infection_monkey.utils.plugins.pluginTests.PluginWorking import PluginWorki
 
 
 class PluginTester(TestCase):
-
     def test_combo_file(self):
         TestPlugin.classes_to_load = [BadInit.__name__, ProperClass.__name__]
         to_init = TestPlugin.get_classes()

@@ -9,7 +9,9 @@ class WindowsCredentials:
         self.lm_hash = lm_hash
 
     def to_dict(self) -> Dict:
-        return {'username': self.username,
-                'password': self.password,
-                'ntlm_hash': self.ntlm_hash,
-                'lm_hash': self.lm_hash}
+        return {
+            "username": self.username,
+            "password": self.password,
+            "ntlm_hash": self.ntlm_hash,
+            "lm_hash": self.lm_hash,
+        }

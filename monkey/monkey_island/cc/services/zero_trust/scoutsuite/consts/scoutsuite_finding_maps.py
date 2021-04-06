@@ -2,17 +2,29 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from common.common_consts import zero_trust_consts
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudformation_rules import CloudformationRules
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudtrail_rules import CloudTrailRules
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudwatch_rules import CloudWatchRules
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.config_rules import ConfigRules
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudformation_rules import (
+    CloudformationRules,
+)
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudtrail_rules import (
+    CloudTrailRules,
+)
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.cloudwatch_rules import (
+    CloudWatchRules,
+)
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.config_rules import (
+    ConfigRules,
+)
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.ec2_rules import EC2Rules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.elb_rules import ELBRules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.elbv2_rules import ELBv2Rules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.iam_rules import IAMRules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rds_rules import RDSRules
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.redshift_rules import RedshiftRules
-from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import RuleNameEnum
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.redshift_rules import (
+    RedshiftRules,
+)
+from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name_enum import (
+    RuleNameEnum,
+)
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.s3_rules import S3Rules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.ses_rules import SESRules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.sns_rules import SNSRules
@@ -34,47 +46,68 @@ class ScoutSuiteFindingMap(ABC):
 
 
 class PermissiveFirewallRules(ScoutSuiteFindingMap):
-    rules = [EC2Rules.SECURITY_GROUP_ALL_PORTS_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_TCP_PORT_TO_ALL,
-             EC2Rules.SECURITY_GROUP_OPENS_UDP_PORT_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_RDP_PORT_TO_ALL,
-             EC2Rules.SECURITY_GROUP_OPENS_SSH_PORT_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_MYSQL_PORT_TO_ALL,
-             EC2Rules.SECURITY_GROUP_OPENS_MSSQL_PORT_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_MONGODB_PORT_TO_ALL,
-             EC2Rules.SECURITY_GROUP_OPENS_ORACLE_DB_PORT_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_POSTGRESQL_PORT_TO_ALL,
-             EC2Rules.SECURITY_GROUP_OPENS_NFS_PORT_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_SMTP_PORT_TO_ALL,
-             EC2Rules.SECURITY_GROUP_OPENS_DNS_PORT_TO_ALL, EC2Rules.SECURITY_GROUP_OPENS_ALL_PORTS_TO_SELF,
-             EC2Rules.SECURITY_GROUP_OPENS_ALL_PORTS, EC2Rules.SECURITY_GROUP_OPENS_PLAINTEXT_PORT_FTP,
-             EC2Rules.SECURITY_GROUP_OPENS_PLAINTEXT_PORT_TELNET, EC2Rules.SECURITY_GROUP_OPENS_PORT_RANGE,
-             EC2Rules.EC2_SECURITY_GROUP_WHITELISTS_AWS,
-             VPCRules.SUBNET_WITH_ALLOW_ALL_INGRESS_ACLS,
-             VPCRules.SUBNET_WITH_ALLOW_ALL_EGRESS_ACLS,
-             VPCRules.NETWORK_ACL_NOT_USED,
-             VPCRules.DEFAULT_NETWORK_ACLS_ALLOW_ALL_INGRESS,
-             VPCRules.DEFAULT_NETWORK_ACLS_ALLOW_ALL_EGRESS,
-             VPCRules.CUSTOM_NETWORK_ACLS_ALLOW_ALL_INGRESS,
-             VPCRules.CUSTOM_NETWORK_ACLS_ALLOW_ALL_EGRESS,
-             RDSRules.RDS_SECURITY_GROUP_ALLOWS_ALL,
-             RedshiftRules.REDSHIFT_SECURITY_GROUP_WHITELISTS_ALL
-             ]
+    rules = [
+        EC2Rules.SECURITY_GROUP_ALL_PORTS_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_TCP_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_UDP_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_RDP_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_SSH_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_MYSQL_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_MSSQL_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_MONGODB_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_ORACLE_DB_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_POSTGRESQL_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_NFS_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_SMTP_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_DNS_PORT_TO_ALL,
+        EC2Rules.SECURITY_GROUP_OPENS_ALL_PORTS_TO_SELF,
+        EC2Rules.SECURITY_GROUP_OPENS_ALL_PORTS,
+        EC2Rules.SECURITY_GROUP_OPENS_PLAINTEXT_PORT_FTP,
+        EC2Rules.SECURITY_GROUP_OPENS_PLAINTEXT_PORT_TELNET,
+        EC2Rules.SECURITY_GROUP_OPENS_PORT_RANGE,
+        EC2Rules.EC2_SECURITY_GROUP_WHITELISTS_AWS,
+        VPCRules.SUBNET_WITH_ALLOW_ALL_INGRESS_ACLS,
+        VPCRules.SUBNET_WITH_ALLOW_ALL_EGRESS_ACLS,
+        VPCRules.NETWORK_ACL_NOT_USED,
+        VPCRules.DEFAULT_NETWORK_ACLS_ALLOW_ALL_INGRESS,
+        VPCRules.DEFAULT_NETWORK_ACLS_ALLOW_ALL_EGRESS,
+        VPCRules.CUSTOM_NETWORK_ACLS_ALLOW_ALL_INGRESS,
+        VPCRules.CUSTOM_NETWORK_ACLS_ALLOW_ALL_EGRESS,
+        RDSRules.RDS_SECURITY_GROUP_ALLOWS_ALL,
+        RedshiftRules.REDSHIFT_SECURITY_GROUP_WHITELISTS_ALL,
+    ]
 
     test = zero_trust_consts.TEST_SCOUTSUITE_PERMISSIVE_FIREWALL_RULES
 
 
 class UnencryptedData(ScoutSuiteFindingMap):
-    rules = [EC2Rules.EBS_SNAPSHOT_NOT_ENCRYPTED, EC2Rules.EBS_VOLUME_NOT_ENCRYPTED,
-             EC2Rules.EC2_INSTANCE_WITH_USER_DATA_SECRETS,
-             ELBv2Rules.ELBV2_LISTENER_ALLOWING_CLEARTEXT, ELBv2Rules.ELBV2_OLDER_SSL_POLICY,
-             RDSRules.RDS_INSTANCE_STORAGE_NOT_ENCRYPTED, RedshiftRules.REDSHIFT_CLUSTER_DATABASE_NOT_ENCRYPTED,
-             RedshiftRules.REDSHIFT_PARAMETER_GROUP_SSL_NOT_REQUIRED,
-             S3Rules.S3_BUCKET_ALLOWING_CLEARTEXT, S3Rules.S3_BUCKET_NO_DEFAULT_ENCRYPTION,
-             ELBRules.ELB_LISTENER_ALLOWING_CLEARTEXT,
-             ELBRules.ELB_OLDER_SSL_POLICY]
+    rules = [
+        EC2Rules.EBS_SNAPSHOT_NOT_ENCRYPTED,
+        EC2Rules.EBS_VOLUME_NOT_ENCRYPTED,
+        EC2Rules.EC2_INSTANCE_WITH_USER_DATA_SECRETS,
+        ELBv2Rules.ELBV2_LISTENER_ALLOWING_CLEARTEXT,
+        ELBv2Rules.ELBV2_OLDER_SSL_POLICY,
+        RDSRules.RDS_INSTANCE_STORAGE_NOT_ENCRYPTED,
+        RedshiftRules.REDSHIFT_CLUSTER_DATABASE_NOT_ENCRYPTED,
+        RedshiftRules.REDSHIFT_PARAMETER_GROUP_SSL_NOT_REQUIRED,
+        S3Rules.S3_BUCKET_ALLOWING_CLEARTEXT,
+        S3Rules.S3_BUCKET_NO_DEFAULT_ENCRYPTION,
+        ELBRules.ELB_LISTENER_ALLOWING_CLEARTEXT,
+        ELBRules.ELB_OLDER_SSL_POLICY,
+    ]
 
     test = zero_trust_consts.TEST_SCOUTSUITE_UNENCRYPTED_DATA
 
 
 class DataLossPrevention(ScoutSuiteFindingMap):
-    rules = [RDSRules.RDS_INSTANCE_BACKUP_DISABLED, RDSRules.RDS_INSTANCE_SHORT_BACKUP_RETENTION_PERIOD,
-             RDSRules.RDS_INSTANCE_SINGLE_AZ, S3Rules.S3_BUCKET_NO_MFA_DELETE, S3Rules.S3_BUCKET_NO_VERSIONING,
-             ELBv2Rules.ELBV2_NO_DELETION_PROTECTION]
+    rules = [
+        RDSRules.RDS_INSTANCE_BACKUP_DISABLED,
+        RDSRules.RDS_INSTANCE_SHORT_BACKUP_RETENTION_PERIOD,
+        RDSRules.RDS_INSTANCE_SINGLE_AZ,
+        S3Rules.S3_BUCKET_NO_MFA_DELETE,
+        S3Rules.S3_BUCKET_NO_VERSIONING,
+        ELBv2Rules.ELBV2_NO_DELETION_PROTECTION,
+    ]
 
     test = zero_trust_consts.TEST_SCOUTSUITE_DATA_LOSS_PREVENTION
 
@@ -91,7 +124,7 @@ class SecureAuthentication(ScoutSuiteFindingMap):
         IAMRules.IAM_ROOT_ACCOUNT_NO_MFA,
         IAMRules.IAM_ROOT_ACCOUNT_WITH_ACTIVE_KEYS,
         IAMRules.IAM_USER_NO_INACTIVE_KEY_ROTATION,
-        IAMRules.IAM_USER_WITH_MULTIPLE_ACCESS_KEYS
+        IAMRules.IAM_USER_WITH_MULTIPLE_ACCESS_KEYS,
     ]
 
     test = zero_trust_consts.TEST_SCOUTSUITE_SECURE_AUTHENTICATION
@@ -153,7 +186,7 @@ class RestrictivePolicies(ScoutSuiteFindingMap):
         SNSRules.SNS_TOPIC_WORLD_ADDPERMISSION_POLICY,
         SESRules.SES_IDENTITY_WORLD_SENDRAWEMAIL_POLICY,
         SESRules.SES_IDENTITY_WORLD_SENDEMAIL_POLICY,
-        RedshiftRules.REDSHIFT_CLUSTER_PUBLICLY_ACCESSIBLE
+        RedshiftRules.REDSHIFT_CLUSTER_PUBLICLY_ACCESSIBLE,
     ]
 
     test = zero_trust_consts.TEST_SCOUTSUITE_RESTRICTIVE_POLICIES
@@ -173,7 +206,7 @@ class Logging(ScoutSuiteFindingMap):
         ELBv2Rules.ELBV2_NO_ACCESS_LOGS,
         VPCRules.SUBNET_WITHOUT_FLOW_LOG,
         ConfigRules.CONFIG_RECORDER_NOT_CONFIGURED,
-        RedshiftRules.REDSHIFT_PARAMETER_GROUP_LOGGING_DISABLED
+        RedshiftRules.REDSHIFT_PARAMETER_GROUP_LOGGING_DISABLED,
     ]
 
     test = zero_trust_consts.TEST_SCOUTSUITE_LOGGING
@@ -185,7 +218,7 @@ class ServiceSecurity(ScoutSuiteFindingMap):
         ELBv2Rules.ELBV2_HTTP_REQUEST_SMUGGLING,
         RDSRules.RDS_INSTANCE_CA_CERTIFICATE_DEPRECATED,
         RDSRules.RDS_INSTANCE_NO_MINOR_UPGRADE,
-        RedshiftRules.REDSHIFT_CLUSTER_NO_VERSION_UPGRADE
+        RedshiftRules.REDSHIFT_CLUSTER_NO_VERSION_UPGRADE,
     ]
 
     test = zero_trust_consts.TEST_SCOUTSUITE_SERVICE_SECURITY

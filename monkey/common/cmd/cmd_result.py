@@ -1,4 +1,4 @@
-__author__ = 'itay.mizeretz'
+__author__ = "itay.mizeretz"
 
 
 class CmdResult(object):

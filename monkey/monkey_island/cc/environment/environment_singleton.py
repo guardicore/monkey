@@ -1,22 +1,21 @@
 import logging
 
 import monkey_island.cc.resources.auth.user_store as user_store
-from monkey_island.cc.environment import (EnvironmentConfig, aws, password,
-                                          standard)
+from monkey_island.cc.environment import EnvironmentConfig, aws, password, standard
 from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH
 
-__author__ = 'itay.mizeretz'
+__author__ = "itay.mizeretz"
 
 logger = logging.getLogger(__name__)
 
-AWS = 'aws'
-STANDARD = 'standard'
-PASSWORD = 'password'
+AWS = "aws"
+STANDARD = "standard"
+PASSWORD = "password"
 
 ENV_DICT = {
     STANDARD: standard.StandardEnvironment,
     AWS: aws.AwsEnvironment,
-    PASSWORD: password.PasswordEnvironment
+    PASSWORD: password.PasswordEnvironment,
 }
 
 env = None
@@ -32,8 +31,8 @@ def set_to_standard():
     global env
     if env:
         env_config = env.get_config()
-        env_config.server_config = 'standard'
-        set_env('standard', env_config)
+        env_config.server_config = "standard"
+        set_env("standard", env_config)
         env.save_config()
         user_store.UserStore.set_users(env.get_auth_users())
 
@@ -45,9 +44,9 @@ def initialize_from_file(file_path):
         __env_type = config.server_config
         set_env(__env_type, config)
         # noinspection PyUnresolvedReferences
-        logger.info('Monkey\'s env is: {0}'.format(env.__class__.__name__))
+        logger.info("Monkey's env is: {0}".format(env.__class__.__name__))
     except Exception:
-        logger.error('Failed initializing environment', exc_info=True)
+        logger.error("Failed initializing environment", exc_info=True)
         raise
 
 

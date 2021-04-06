@@ -8,11 +8,10 @@ if sys.platform.startswith("win"):
 
 from .mongo_utils import MongoUtils
 
-__author__ = 'maor.rayzin'
+__author__ = "maor.rayzin"
 
 
 class WMIUtils:
-
     def __init__(self):
         # Static class
         pass

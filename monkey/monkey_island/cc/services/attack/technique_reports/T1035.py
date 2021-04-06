@@ -12,5 +12,5 @@ class T1035(UsageTechnique):
     @staticmethod
     def get_report_data():
         data = T1035.get_tech_base_data()
-        data.update({'services': T1035.get_usage_data()})
+        data.update({"services": T1035.get_usage_data()})
         return data

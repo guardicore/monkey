@@ -24,14 +24,18 @@ class T1188(AttackTechnique):
                     proxy_count += 1
                     proxy = proxy.tunnel
                 if proxy_count > 1:
-                    hops.append({'from': initial.get_network_info(),
-                                 'to': proxy.get_network_info(),
-                                 'count': proxy_count})
+                    hops.append(
+                        {
+                            "from": initial.get_network_info(),
+                            "to": proxy.get_network_info(),
+                            "count": proxy_count,
+                        }
+                    )
             status = ScanStatus.USED.value if hops else ScanStatus.UNSCANNED.value
             return (status, hops)
 
         status, hops = get_technique_status_and_data()
 
         data = T1188.get_base_data_by_status(status)
-        data.update({'hops': hops})
+        data.update({"hops": hops})
         return data

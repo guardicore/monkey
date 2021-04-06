@@ -8,7 +8,9 @@ class BaseTemplate(ConfigTemplate):
         "basic.exploiters.exploiter_classes": [],
         "basic_network.scope.local_network_scan": False,
         "internal.classes.finger_classes": ["PingScanner", "HTTPFinger"],
-        "internal.monkey.system_info.system_info_collector_classes":
-            ["EnvironmentCollector", "HostnameCollector"],
-        "monkey.post_breach.post_breach_actions": []
+        "internal.monkey.system_info.system_info_collector_classes": [
+            "EnvironmentCollector",
+            "HostnameCollector",
+        ],
+        "monkey.post_breach.post_breach_actions": [],
     }

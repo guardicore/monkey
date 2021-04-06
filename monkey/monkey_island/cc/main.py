@@ -37,8 +37,10 @@ def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_P
     env_singleton.initialize_from_file(server_config_filename)
     initialize_encryptor(env_singleton.env.get_config().data_dir_abs_path)
 
-    mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
-    bootloader_server_thread = Thread(target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True)
+    mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
+    bootloader_server_thread = Thread(
+        target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True
+    )
 
     bootloader_server_thread.start()
     start_island_server(should_setup_only)
@@ -47,15 +49,15 @@ def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_P
 
 def start_island_server(should_setup_only):
 
-    mongo_url = os.environ.get('MONGO_URL', env_singleton.env.get_mongo_url())
+    mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)
     assert_mongo_db_version(mongo_url)
 
     populate_exporter_list()
     app = init_app(mongo_url)
 
-    crt_path = str(Path(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.crt'))
-    key_path = str(Path(MONKEY_ISLAND_ABS_PATH, 'cc', 'server.key'))
+    crt_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
+    key_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
 
     setup()
 
@@ -64,20 +66,29 @@ def start_island_server(should_setup_only):
         return
 
     if env_singleton.env.is_debug():
-        app.run(host='0.0.0.0', debug=True, ssl_context=(crt_path, key_path))
+        app.run(host="0.0.0.0", debug=True, ssl_context=(crt_path, key_path))
     else:
-        http_server = WSGIServer(('0.0.0.0', env_singleton.env.get_island_port()), app,
-                                 certfile=os.environ.get('SERVER_CRT', crt_path),
-                                 keyfile=os.environ.get('SERVER_KEY', key_path))
+        http_server = WSGIServer(
+            ("0.0.0.0", env_singleton.env.get_island_port()),
+            app,
+            certfile=os.environ.get("SERVER_CRT", crt_path),
+            keyfile=os.environ.get("SERVER_KEY", key_path),
+        )
         log_init_info()
         http_server.serve_forever()
 
 
 def log_init_info():
-    logger.info('Monkey Island Server is running!')
+    logger.info("Monkey Island Server is running!")
     logger.info(f"version: {get_version()}")
-    logger.info('Listening on the following URLs: {}'.format(
-            ", ".join(["https://{}:{}".format(x, env_singleton.env.get_island_port()) for x in local_ip_addresses()])
+    logger.info(
+        "Listening on the following URLs: {}".format(
+            ", ".join(
+                [
+                    "https://{}:{}".format(x, env_singleton.env.get_island_port())
+                    for x in local_ip_addresses()
+                ]
+            )
         )
     )
     MonkeyDownload.log_executable_hashes()
@@ -85,7 +96,7 @@ def log_init_info():
 
 def wait_for_mongo_db_server(mongo_url):
     while not is_db_server_up(mongo_url):
-        logger.info('Waiting for MongoDB server on {0}'.format(mongo_url))
+        logger.info("Waiting for MongoDB server on {0}".format(mongo_url))
         time.sleep(1)
 
 
@@ -99,11 +110,14 @@ def assert_mongo_db_version(mongo_url):
     server_version = get_db_version(mongo_url)
     if server_version < required_version:
         logger.error(
-            'Mongo DB version too old. {0} is required, but got {1}'.format(str(required_version), str(server_version)))
+            "Mongo DB version too old. {0} is required, but got {1}".format(
+                str(required_version), str(server_version)
+            )
+        )
         sys.exit(-1)
     else:
-        logger.info('Mongo DB version OK. Got {0}'.format(str(server_version)))
+        logger.info("Mongo DB version OK. Got {0}".format(str(server_version)))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

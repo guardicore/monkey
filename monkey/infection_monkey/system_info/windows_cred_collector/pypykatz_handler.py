@@ -3,11 +3,21 @@ from typing import Any, Dict, List, NewType
 
 from pypykatz.pypykatz import pypykatz
 
-from infection_monkey.system_info.windows_cred_collector.windows_credentials import WindowsCredentials
+from infection_monkey.system_info.windows_cred_collector.windows_credentials import (
+    WindowsCredentials,
+)
 
-CREDENTIAL_TYPES = ['msv_creds', 'wdigest_creds', 'ssp_creds', 'livessp_creds', 'dpapi_creds',
-                    'kerberos_creds', 'credman_creds', 'tspkg_creds']
-PypykatzCredential = NewType('PypykatzCredential', Dict)
+CREDENTIAL_TYPES = [
+    "msv_creds",
+    "wdigest_creds",
+    "ssp_creds",
+    "livessp_creds",
+    "dpapi_creds",
+    "kerberos_creds",
+    "credman_creds",
+    "tspkg_creds",
+]
+PypykatzCredential = NewType("PypykatzCredential", Dict)
 
 
 def get_windows_creds() -> List[WindowsCredentials]:
@@ -19,7 +29,7 @@ def get_windows_creds() -> List[WindowsCredentials]:
 
 def _parse_pypykatz_results(pypykatz_data: Dict) -> List[WindowsCredentials]:
     windows_creds = []
-    for session in pypykatz_data['logon_sessions'].values():
+    for session in pypykatz_data["logon_sessions"].values():
         windows_creds.extend(_get_creds_from_pypykatz_session(session))
     return windows_creds
 
@@ -32,7 +42,9 @@ def _get_creds_from_pypykatz_session(pypykatz_session: Dict) -> List[WindowsCred
     return windows_creds
 
 
-def _get_creds_from_pypykatz_creds(pypykatz_creds: List[PypykatzCredential]) -> List[WindowsCredentials]:
+def _get_creds_from_pypykatz_creds(
+    pypykatz_creds: List[PypykatzCredential],
+) -> List[WindowsCredentials]:
     creds = _filter_empty_creds(pypykatz_creds)
     return [_get_windows_cred(cred) for cred in creds]
 
@@ -42,27 +54,26 @@ def _filter_empty_creds(pypykatz_creds: List[PypykatzCredential]) -> List[Pypyka
 
 
 def _is_cred_empty(pypykatz_cred: PypykatzCredential):
-    password_empty = 'password' not in pypykatz_cred or not pypykatz_cred['password']
-    ntlm_hash_empty = 'NThash' not in pypykatz_cred or not pypykatz_cred['NThash']
-    lm_hash_empty = 'LMhash' not in pypykatz_cred or not pypykatz_cred['LMhash']
+    password_empty = "password" not in pypykatz_cred or not pypykatz_cred["password"]
+    ntlm_hash_empty = "NThash" not in pypykatz_cred or not pypykatz_cred["NThash"]
+    lm_hash_empty = "LMhash" not in pypykatz_cred or not pypykatz_cred["LMhash"]
     return password_empty and ntlm_hash_empty and lm_hash_empty
 
 
 def _get_windows_cred(pypykatz_cred: PypykatzCredential):
-    password = ''
-    ntlm_hash = ''
-    lm_hash = ''
-    username = pypykatz_cred['username']
-    if 'password' in pypykatz_cred:
-        password = pypykatz_cred['password']
-    if 'NThash' in pypykatz_cred:
-        ntlm_hash = _hash_to_string(pypykatz_cred['NThash'])
-    if 'LMhash' in pypykatz_cred:
-        lm_hash = _hash_to_string(pypykatz_cred['LMhash'])
-    return WindowsCredentials(username=username,
-                              password=password,
-                              ntlm_hash=ntlm_hash,
-                              lm_hash=lm_hash)
+    password = ""
+    ntlm_hash = ""
+    lm_hash = ""
+    username = pypykatz_cred["username"]
+    if "password" in pypykatz_cred:
+        password = pypykatz_cred["password"]
+    if "NThash" in pypykatz_cred:
+        ntlm_hash = _hash_to_string(pypykatz_cred["NThash"])
+    if "LMhash" in pypykatz_cred:
+        lm_hash = _hash_to_string(pypykatz_cred["LMhash"])
+    return WindowsCredentials(
+        username=username, password=password, ntlm_hash=ntlm_hash, lm_hash=lm_hash
+    )
 
 
 def _hash_to_string(hash_: Any):

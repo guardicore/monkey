@@ -6,24 +6,27 @@ from botocore.exceptions import ClientError
 
 from common.cloud.aws.aws_instance import AwsInstance
 
-__author__ = ['itay.mizeretz', 'shay.nehmad']
+__author__ = ["itay.mizeretz", "shay.nehmad"]
 
-INSTANCE_INFORMATION_LIST_KEY = 'InstanceInformationList'
-INSTANCE_ID_KEY = 'InstanceId'
-COMPUTER_NAME_KEY = 'ComputerName'
-PLATFORM_TYPE_KEY = 'PlatformType'
-IP_ADDRESS_KEY = 'IPAddress'
+INSTANCE_INFORMATION_LIST_KEY = "InstanceInformationList"
+INSTANCE_ID_KEY = "InstanceId"
+COMPUTER_NAME_KEY = "ComputerName"
+PLATFORM_TYPE_KEY = "PlatformType"
+IP_ADDRESS_KEY = "IPAddress"
 
 logger = logging.getLogger(__name__)
 
 
 def filter_instance_data_from_aws_response(response):
-    return [{
-        'instance_id': x[INSTANCE_ID_KEY],
-        'name': x[COMPUTER_NAME_KEY],
-        'os': x[PLATFORM_TYPE_KEY].lower(),
-        'ip_address': x[IP_ADDRESS_KEY]
-    } for x in response[INSTANCE_INFORMATION_LIST_KEY]]
+    return [
+        {
+            "instance_id": x[INSTANCE_ID_KEY],
+            "name": x[COMPUTER_NAME_KEY],
+            "os": x[PLATFORM_TYPE_KEY].lower(),
+            "ip_address": x[IP_ADDRESS_KEY],
+        }
+        for x in response[INSTANCE_INFORMATION_LIST_KEY]
+    ]
 
 
 class AwsService(object):
@@ -45,8 +48,8 @@ class AwsService(object):
     @staticmethod
     def get_client(client_type, region=None):
         return boto3.client(
-            client_type,
-            region_name=region if region is not None else AwsService.region)
+            client_type, region_name=region if region is not None else AwsService.region
+        )
 
     @staticmethod
     def get_session():
@@ -54,12 +57,12 @@ class AwsService(object):
 
     @staticmethod
     def get_regions():
-        return AwsService.get_session().get_available_regions('ssm')
+        return AwsService.get_session().get_available_regions("ssm")
 
     @staticmethod
     def test_client():
         try:
-            AwsService.get_client('ssm').describe_instance_information()
+            AwsService.get_client("ssm").describe_instance_information()
             return True
         except ClientError:
             return False

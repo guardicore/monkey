@@ -28,8 +28,9 @@ class Finding(Document):
         *   The logic section defines complex questions we can ask about a single document which are asked multiple
             times, or complex action we will perform - somewhat like an API.
     """
+
     # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
-    meta = {'allow_inheritance': True}
+    meta = {"allow_inheritance": True}
 
     # SCHEMA
     test = StringField(required=True, choices=zero_trust_consts.TESTS)

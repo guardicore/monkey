@@ -4,5 +4,5 @@ import os
 
 from PyInstaller.utils.hooks import get_module_file_attribute
 
-stix2_dir = os.path.dirname(get_module_file_attribute('stix2'))
-datas = [(stix2_dir, 'stix2')]
+stix2_dir = os.path.dirname(get_module_file_attribute("stix2"))
+datas = [(stix2_dir, "stix2")]

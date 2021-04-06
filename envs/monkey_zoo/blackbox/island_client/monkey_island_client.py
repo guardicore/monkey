@@ -8,9 +8,9 @@ from bson import json_util
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
-MONKEY_TEST_ENDPOINT = 'api/test/monkey'
-TELEMETRY_TEST_ENDPOINT = 'api/test/telemetry'
-LOG_TEST_ENDPOINT = 'api/test/log'
+MONKEY_TEST_ENDPOINT = "api/test/monkey"
+TELEMETRY_TEST_ENDPOINT = "api/test/telemetry"
+LOG_TEST_ENDPOINT = "api/test/log"
 LOGGER = logging.getLogger(__name__)
 
 
@@ -44,7 +44,7 @@ class MonkeyIslandClient(object):
 
     @staticmethod
     def monkey_ran_successfully(response):
-        return response.ok and json.loads(response.content)['is_running']
+        return response.ok and json.loads(response.content)["is_running"]
 
     @avoid_race_condition
     def kill_all_monkeys(self):
@@ -65,37 +65,41 @@ class MonkeyIslandClient(object):
     def find_monkeys_in_db(self, query):
         if query is None:
             raise TypeError
-        response = self.requests.get(MONKEY_TEST_ENDPOINT,
-                                     MonkeyIslandClient.form_find_query_for_request(query))
+        response = self.requests.get(
+            MONKEY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
+        )
         return MonkeyIslandClient.get_test_query_results(response)
 
     def find_telems_in_db(self, query: dict):
         if query is None:
             raise TypeError
-        response = self.requests.get(TELEMETRY_TEST_ENDPOINT,
-                                     MonkeyIslandClient.form_find_query_for_request(query))
+        response = self.requests.get(
+            TELEMETRY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
+        )
         return MonkeyIslandClient.get_test_query_results(response)
 
     def get_all_monkeys_from_db(self):
-        response = self.requests.get(MONKEY_TEST_ENDPOINT,
-                                     MonkeyIslandClient.form_find_query_for_request(None))
+        response = self.requests.get(
+            MONKEY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(None)
+        )
         return MonkeyIslandClient.get_test_query_results(response)
 
     def find_log_in_db(self, query):
-        response = self.requests.get(LOG_TEST_ENDPOINT,
-                                     MonkeyIslandClient.form_find_query_for_request(query))
+        response = self.requests.get(
+            LOG_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
+        )
         return MonkeyIslandClient.get_test_query_results(response)
 
     @staticmethod
     def form_find_query_for_request(query: Union[dict, None]) -> dict:
-        return {'find_query': json_util.dumps(query)}
+        return {"find_query": json_util.dumps(query)}
 
     @staticmethod
     def get_test_query_results(response):
-        return json.loads(response.content)['results']
+        return json.loads(response.content)["results"]
 
     def is_all_monkeys_dead(self):
-        query = {'dead': False}
+        query = {"dead": False}
         return len(self.find_monkeys_in_db(query)) == 0
 
     def clear_caches(self):
