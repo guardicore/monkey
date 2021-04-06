@@ -1,6 +1,5 @@
 import pytest
 
-import infection_monkey.network.postgresql_finger
 from infection_monkey.network.postgresql_finger import PostgreSQLFinger
 
 IRRELEVANT_EXCEPTION_STRING = "This is an irrelevant exception string."

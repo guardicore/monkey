@@ -1,6 +1,5 @@
 import pytest
 
-import monkey_island.cc.services.config
 from monkey_island.cc.environment import Environment
 from monkey_island.cc.services.config import ConfigService
 

@@ -32,13 +32,13 @@ class SocketsPipe(Thread):
                 other = self.dest if r is self.source else self.source
                 try:
                     data = r.recv(READ_BUFFER_SIZE)
-                except:
+                except Exception:
                     break
                 if data:
                     try:
                         other.sendall(data)
                         update_last_serve_time()
-                    except:
+                    except Exception:
                         break
                     self._keep_connection = True
 

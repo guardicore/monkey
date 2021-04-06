@@ -47,7 +47,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     chunk = end_range - start_range
                 try:
                     self.wfile.write(f.read(chunk))
-                except:
+                except Exception:
                     break
                 total += chunk
                 start_range += chunk

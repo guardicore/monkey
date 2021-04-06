@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from common.utils.attack_utils import ScanStatus, UsageEnum
+from common.utils.attack_utils import ScanStatus
 from infection_monkey.model import VictimHost
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
 
