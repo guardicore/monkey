@@ -6,10 +6,10 @@ from pathlib import Path
 from typing import Dict, List
 
 import monkey_island.cc.environment.server_config_generator as server_config_generator
-from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR
 from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.resources.auth.user_store import UserStore
+from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR
 
 
 class EnvironmentConfig:

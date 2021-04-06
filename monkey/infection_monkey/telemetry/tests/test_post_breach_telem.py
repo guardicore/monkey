@@ -4,7 +4,6 @@ import pytest
 
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 
-
 HOSTNAME = "hostname"
 IP = "0.0.0.0"
 PBA_COMMAND = "run some pba"

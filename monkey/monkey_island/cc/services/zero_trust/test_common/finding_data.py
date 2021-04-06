@@ -1,8 +1,8 @@
 from common.common_consts.zero_trust_consts import (
-    TEST_SCOUTSUITE_SERVICE_SECURITY,
     STATUS_FAILED,
-    TEST_ENDPOINT_SECURITY_EXISTS,
     STATUS_PASSED,
+    TEST_ENDPOINT_SECURITY_EXISTS,
+    TEST_SCOUTSUITE_SERVICE_SECURITY,
 )
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding

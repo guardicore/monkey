@@ -8,7 +8,6 @@ import json  # noqa: E402
 
 from monkey_island.cc.server_utils.island_logger import json_setup_logging  # noqa: E402
 
-
 if "__main__" == __name__:
     island_args = parse_cli_args()
 

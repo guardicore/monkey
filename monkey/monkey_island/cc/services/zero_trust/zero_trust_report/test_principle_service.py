@@ -10,7 +10,6 @@ from monkey_island.cc.services.zero_trust.zero_trust_report.principle_service im
 )
 from monkey_island.cc.test_common.fixtures import FixtureEnum
 
-
 EXPECTED_DICT = {
     "test_pillar1": [
         {

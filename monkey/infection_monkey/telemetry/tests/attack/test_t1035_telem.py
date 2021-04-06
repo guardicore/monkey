@@ -5,7 +5,6 @@ import pytest
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from infection_monkey.telemetry.attack.t1035_telem import T1035Telem
 
-
 STATUS = ScanStatus.USED
 USAGE = UsageEnum.SMB
 

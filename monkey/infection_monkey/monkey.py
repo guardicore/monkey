@@ -7,7 +7,6 @@ import time
 from threading import Thread
 
 import infection_monkey.tunnel as tunnel
-from infection_monkey.network.tools import is_running_on_island
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.utils.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
 from common.version import get_version
@@ -18,7 +17,7 @@ from infection_monkey.model import DELAY_DELETE_CMD
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
-from infection_monkey.network.tools import get_interface_to_target
+from infection_monkey.network.tools import get_interface_to_target, is_running_on_island
 from infection_monkey.post_breach.post_breach_handler import PostBreach
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton

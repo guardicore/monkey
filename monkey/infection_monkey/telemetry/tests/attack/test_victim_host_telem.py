@@ -6,7 +6,6 @@ from common.utils.attack_utils import ScanStatus
 from infection_monkey.model import VictimHost
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
 
-
 DOMAIN_NAME = "domain-name"
 IP = "127.0.0.1"
 MACHINE = VictimHost(IP, DOMAIN_NAME)

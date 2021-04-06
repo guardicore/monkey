@@ -7,10 +7,6 @@ from werkzeug.exceptions import NotFound
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
-from monkey_island.cc.resources.test.telemetry_test import TelemetryTest
-from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
@@ -35,18 +31,22 @@ from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.remote_run import RemoteRun
-from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.root import Root
+from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.T1216_pba_file_download import T1216PBAFileDownload
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.test.clear_caches import ClearCaches
 from monkey_island.cc.resources.test.log_test import LogTest
 from monkey_island.cc.resources.test.monkey_test import MonkeyTest
+from monkey_island.cc.resources.test.telemetry_test import TelemetryTest
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
 from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
 from monkey_island.cc.resources.zero_trust.scoutsuite_auth.scoutsuite_auth import ScoutSuiteAuth
+from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json

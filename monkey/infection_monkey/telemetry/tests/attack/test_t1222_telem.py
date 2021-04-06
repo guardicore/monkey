@@ -6,7 +6,6 @@ from common.utils.attack_utils import ScanStatus
 from infection_monkey.model import VictimHost
 from infection_monkey.telemetry.attack.t1222_telem import T1222Telem
 
-
 COMMAND = "echo hi"
 DOMAIN_NAME = "domain-name"
 IP = "127.0.0.1"

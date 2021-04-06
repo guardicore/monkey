@@ -4,7 +4,6 @@ from typing import Dict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from common.utils.exceptions import (
     AlreadyRegisteredError,
     CredentialsNotRequiredError,
@@ -12,6 +11,7 @@ from common.utils.exceptions import (
     RegistrationNotNeededError,
 )
 from monkey_island.cc.environment import Environment, EnvironmentConfig, UserCreds
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 TEST_RESOURCES_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "testing", "environment")
 

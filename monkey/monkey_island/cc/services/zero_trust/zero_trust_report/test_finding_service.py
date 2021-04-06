@@ -3,24 +3,24 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.common_consts.zero_trust_consts import (
-    TESTS_MAP,
-    TEST_SCOUTSUITE_SERVICE_SECURITY,
-    STATUS_FAILED,
     DEVICES,
     NETWORKS,
+    STATUS_FAILED,
     STATUS_PASSED,
     TEST_ENDPOINT_SECURITY_EXISTS,
+    TEST_SCOUTSUITE_SERVICE_SECURITY,
+    TESTS_MAP,
 )
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_details_service import (
     MonkeyZTDetailsService,
 )
 from monkey_island.cc.services.zero_trust.test_common.finding_data import (
-    get_scoutsuite_finding_dto,
     get_monkey_finding_dto,
+    get_scoutsuite_finding_dto,
 )
 from monkey_island.cc.services.zero_trust.zero_trust_report.finding_service import (
-    FindingService,
     EnrichedFinding,
+    FindingService,
 )
 from monkey_island.cc.test_common.fixtures.fixture_enum import FixtureEnum
 

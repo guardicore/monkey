@@ -5,7 +5,6 @@ import pytest
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 
-
 STATUS = ScanStatus.USED
 USAGE_STR = "[Usage info]"
 

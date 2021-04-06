@@ -1,8 +1,7 @@
 import os
 
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.server_utils.encryptor import initialize_encryptor, get_encryptor
-
+from monkey_island.cc.server_utils.encryptor import get_encryptor, initialize_encryptor
 
 TEST_DATA_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "testing")
 PASSWORD_FILENAME = "mongo_key.bin"

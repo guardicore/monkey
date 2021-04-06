@@ -9,8 +9,8 @@ import monkey_island.cc.environment.environment_singleton as env_singleton
 import monkey_island.cc.services.post_breach_files
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
-from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
+from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
 

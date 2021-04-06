@@ -4,10 +4,9 @@ import shutil
 
 import pytest
 
-from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR, MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
-
+from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR, MONKEY_ISLAND_ABS_PATH
 
 TEST_RESOURCES_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "testing", "environment")
 

@@ -6,12 +6,6 @@ from typing import List
 
 from bson import json_util
 
-from common.network.network_range import NetworkRange
-from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
-from monkey_island.cc.database import mongo
-from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.utils.network_utils import get_subnets, local_ip_addresses
-from monkey_island.cc.services.config import ConfigService
 from common.config_value_paths import (
     EXPLOITER_CLASSES_PATH,
     LOCAL_NETWORK_SCAN_PATH,
@@ -19,6 +13,11 @@ from common.config_value_paths import (
     SUBNET_SCAN_LIST_PATH,
     USER_LIST_PATH,
 )
+from common.network.network_range import NetworkRange
+from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
+from monkey_island.cc.database import mongo
+from monkey_island.cc.models import Monkey
+from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
 )
@@ -37,6 +36,7 @@ from monkey_island.cc.services.reporting.report_exporter_manager import ReportEx
 from monkey_island.cc.services.reporting.report_generation_synchronisation import (
     safe_generate_regular_report,
 )
+from monkey_island.cc.services.utils.network_utils import get_subnets, local_ip_addresses
 
 __author__ = "itay.mizeretz"
 
