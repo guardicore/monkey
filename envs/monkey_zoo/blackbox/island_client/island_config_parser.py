@@ -8,23 +8,22 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 
 
 class IslandConfigParser:
-
     @staticmethod
-    def get_raw_config(config_template: Type[ConfigTemplate],
-                       island_client: MonkeyIslandClient) -> str:
+    def get_raw_config(
+        config_template: Type[ConfigTemplate], island_client: MonkeyIslandClient
+    ) -> str:
         response = island_client.get_config()
-        config = IslandConfigParser.apply_template_to_config(config_template, response['configuration'])
+        config = IslandConfigParser.apply_template_to_config(
+            config_template, response["configuration"]
+        )
         return json.dumps(config)
 
     @staticmethod
-    def apply_template_to_config(config_template: Type[ConfigTemplate],
-                                 config: dict) -> dict:
+    def apply_template_to_config(config_template: Type[ConfigTemplate], config: dict) -> dict:
         for path, value in config_template.config_values.items():
-            dpath.util.set(config, path, value, '.')
+            dpath.util.set(config, path, value, ".")
         return config
 
     @staticmethod
     def get_ips_of_targets(raw_config):
-        return dpath.util.get(json.loads(raw_config),
-                              "basic_network.scope.subnet_scan_list",
-                              '.')
+        return dpath.util.get(json.loads(raw_config), "basic_network.scope.subnet_scan_list", ".")

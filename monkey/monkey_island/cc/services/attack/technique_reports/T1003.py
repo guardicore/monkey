@@ -12,14 +12,24 @@ class T1003(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey successfully obtained some credentials from systems on the network."
 
-    query = {'$or': [
-        {'telem_category': 'system_info',
-         '$and': [{'data.credentials': {'$exists': True}},
-                  {'data.credentials': {'$gt': {}}}]},  # $gt: {} checks if field is not an empty object
-        {'telem_category': 'exploit',
-         '$and': [{'data.info.credentials': {'$exists': True}},
-                  {'data.info.credentials': {'$gt': {}}}]}
-    ]}
+    query = {
+        "$or": [
+            {
+                "telem_category": "system_info",
+                "$and": [
+                    {"data.credentials": {"$exists": True}},
+                    {"data.credentials": {"$gt": {}}},
+                ],
+            },  # $gt: {} checks if field is not an empty object
+            {
+                "telem_category": "exploit",
+                "$and": [
+                    {"data.info.credentials": {"$exists": True}},
+                    {"data.info.credentials": {"$gt": {}}},
+                ],
+            },
+        ]
+    }
 
     @staticmethod
     def get_report_data():
@@ -31,11 +41,11 @@ class T1003(AttackTechnique):
                 status = ScanStatus.UNSCANNED.value
             return (status, [])
 
-        data = {'title': T1003.technique_title()}
+        data = {"title": T1003.technique_title()}
         status, _ = get_technique_status_and_data()
 
         data.update(T1003.get_message_and_status(status))
         data.update(T1003.get_mitigation_by_status(status))
-        data['stolen_creds'] = ReportService.get_stolen_creds()
-        data['stolen_creds'].extend(ReportService.get_ssh_keys())
+        data["stolen_creds"] = ReportService.get_stolen_creds()
+        data["stolen_creds"].extend(ReportService.get_ssh_keys())
         return data

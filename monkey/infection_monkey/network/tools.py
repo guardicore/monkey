@@ -15,8 +15,8 @@ from infection_monkey.utils.environment import is_64bit_python
 
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
-IP_ADDR_RE = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
-IP_ADDR_PARENTHESES_RE = r'\(' + IP_ADDR_RE + r'\)'
+IP_ADDR_RE = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+IP_ADDR_PARENTHESES_RE = r"\(" + IP_ADDR_RE + r"\)"
 
 LOG = logging.getLogger(__name__)
 SLEEP_BETWEEN_POLL = 0.5
@@ -43,7 +43,7 @@ def struct_unpack_tracker_string(data, index):
     :param index: Position index
     :return: (Data, new index)
     """
-    ascii_len = data[index:].find(b'\0')
+    ascii_len = data[index:].find(b"\0")
     fmt = "%ds" % ascii_len
     return struct_unpack_tracker(data, index, fmt)
 
@@ -156,14 +156,21 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                     timeout -= SLEEP_BETWEEN_POLL
 
             LOG.debug(
-                "On host %s discovered the following ports %s" %
-                (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets])))
+                "On host %s discovered the following ports %s"
+                % (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets]))
+            )
             banners = []
             if get_banner and (len(connected_ports_sockets) != 0):
-                readable_sockets, _, _ = select.select([s[1] for s in connected_ports_sockets], [], [], 0)
+                readable_sockets, _, _ = select.select(
+                    [s[1] for s in connected_ports_sockets], [], [], 0
+                )
                 # read first BANNER_READ bytes. We ignore errors because service might not send a decodable byte string.
-                banners = [sock.recv(BANNER_READ).decode(errors='ignore') if sock in readable_sockets else ""
-                           for port, sock in connected_ports_sockets]
+                banners = [
+                    sock.recv(BANNER_READ).decode(errors="ignore")
+                    if sock in readable_sockets
+                    else ""
+                    for port, sock in connected_ports_sockets
+                ]
                 pass
             # try to cleanup
             [s[1].close() for s in possible_ports]
@@ -177,7 +184,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
 
 
 def tcp_port_to_service(port):
-    return 'tcp-' + str(port)
+    return "tcp-" + str(port)
 
 
 def traceroute(target_ip, ttl=64):
@@ -218,17 +225,19 @@ def _parse_traceroute(output, regex, ttl):
     :return:        List of ips which are the hops on the way to the traceroute destination.
                     If a hop's IP wasn't found by traceroute, instead of an IP, the array will contain None
     """
-    ip_lines = output.split('\n')
+    ip_lines = output.split("\n")
     trace_list = []
 
     first_line_index = None
     for i in range(len(ip_lines)):
-        if re.search(r'^\s*1', ip_lines[i]) is not None:
+        if re.search(r"^\s*1", ip_lines[i]) is not None:
             first_line_index = i
             break
 
     for i in range(first_line_index, first_line_index + ttl):
-        if re.search(r'^\s*' + str(i - first_line_index + 1), ip_lines[i]) is None:  # If trace is finished
+        if (
+            re.search(r"^\s*" + str(i - first_line_index + 1), ip_lines[i]) is None
+        ):  # If trace is finished
             break
 
         re_res = re.search(regex, ip_lines[i])
@@ -246,14 +255,10 @@ def _traceroute_windows(target_ip, ttl):
     Traceroute for a specific IP/name - Windows implementation
     """
     # we'll just use tracert because that's always there
-    cli = ["tracert",
-           "-d",
-           "-w", "250",
-           "-h", str(ttl),
-           target_ip]
+    cli = ["tracert", "-d", "-w", "250", "-h", str(ttl), target_ip]
     proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
     stdout, stderr = proc_obj.communicate()
-    stdout = stdout.replace('\r', '')
+    stdout = stdout.replace("\r", "")
     return _parse_traceroute(stdout, IP_ADDR_RE, ttl)
 
 
@@ -262,15 +267,12 @@ def _traceroute_linux(target_ip, ttl):
     Traceroute for a specific IP/name - Linux implementation
     """
 
-    cli = [_get_traceroute_bin_path(),
-           "-m", str(ttl),
-           target_ip]
+    cli = [_get_traceroute_bin_path(), "-m", str(ttl), target_ip]
     proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
     stdout, stderr = proc_obj.communicate()
 
     lines = _parse_traceroute(stdout, IP_ADDR_PARENTHESES_RE, ttl)
-    lines = [x[1:-1] if x else None  # Removes parenthesis
-             for x in lines]
+    lines = [x[1:-1] if x else None for x in lines]  # Removes parenthesis
     return lines
 
 
@@ -285,8 +287,10 @@ def get_interface_to_target(dst):
             s.connect((dst, 1))
             ip_to_dst = s.getsockname()[0]
         except KeyError:
-            LOG.debug("Couldn't get an interface to the target, presuming that target is localhost.")
-            ip_to_dst = '127.0.0.1'
+            LOG.debug(
+                "Couldn't get an interface to the target, presuming that target is localhost."
+            )
+            ip_to_dst = "127.0.0.1"
         finally:
             s.close()
         return ip_to_dst
@@ -303,7 +307,7 @@ def get_interface_to_target(dst):
         for d, m, gw, i, a in routes:
             aa = atol(a)
             if aa == dst:
-                paths.append((0xffffffff, ("lo", a, "0.0.0.0")))
+                paths.append((0xFFFFFFFF, ("lo", a, "0.0.0.0")))
             if (dst & m) == (d & m):
                 paths.append((m, (i, a, gw)))
         if not paths:

@@ -62,5 +62,5 @@ def restore_previous_config(config_path):
     move(BACKUP_CONFIG_FILENAME, config_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

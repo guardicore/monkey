@@ -3,7 +3,7 @@ import logging
 from infection_monkey.system_info import InfoCollector
 from infection_monkey.system_info.SSH_info_collector import SSHCollector
 
-__author__ = 'uri'
+__author__ = "uri"
 
 LOG = logging.getLogger(__name__)
 
@@ -24,5 +24,5 @@ class LinuxInfoCollector(InfoCollector):
         """
         LOG.debug("Running Linux collector")
         super(LinuxInfoCollector, self).get_info()
-        self.info['ssh_info'] = SSHCollector.get_info()
+        self.info["ssh_info"] = SSHCollector.get_info()
         return self.info

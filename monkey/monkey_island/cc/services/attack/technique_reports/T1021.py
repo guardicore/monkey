@@ -13,22 +13,26 @@ class T1021(AttackTechnique):
     used_msg = "Monkey successfully logged into remote services on the network."
 
     # Gets data about brute force attempts
-    query = [{'$match': {'telem_category': 'exploit',
-                         'data.attempts': {'$not': {'$size': 0}}}},
-             {'$project': {'_id': 0,
-                           'machine': '$data.machine',
-                           'info': '$data.info',
-                           'attempt_cnt': {'$size': '$data.attempts'},
-                           'attempts': {'$filter': {'input': '$data.attempts',
-                                                    'as': 'attempt',
-                                                    'cond': {'$eq': ['$$attempt.result', True]}
-                                                    }
-                                        }
-                           }
-              }]
+    query = [
+        {"$match": {"telem_category": "exploit", "data.attempts": {"$not": {"$size": 0}}}},
+        {
+            "$project": {
+                "_id": 0,
+                "machine": "$data.machine",
+                "info": "$data.info",
+                "attempt_cnt": {"$size": "$data.attempts"},
+                "attempts": {
+                    "$filter": {
+                        "input": "$data.attempts",
+                        "as": "attempt",
+                        "cond": {"$eq": ["$$attempt.result", True]},
+                    }
+                },
+            }
+        },
+    ]
 
-    scanned_query = {'telem_category': 'exploit',
-                     'data.attempts': {'$elemMatch': {'result': True}}}
+    scanned_query = {"telem_category": "exploit", "data.attempts": {"$elemMatch": {"result": True}}}
 
     @staticmethod
     def get_report_data():
@@ -40,9 +44,9 @@ class T1021(AttackTechnique):
                 if attempts:
                     status = ScanStatus.USED.value
                     for result in attempts:
-                        result['successful_creds'] = []
-                        for attempt in result['attempts']:
-                            result['successful_creds'].append(parse_creds(attempt))
+                        result["successful_creds"] = []
+                        for attempt in result["attempts"]:
+                            result["successful_creds"].append(parse_creds(attempt))
                 else:
                     status = ScanStatus.SCANNED.value
             else:
@@ -52,5 +56,5 @@ class T1021(AttackTechnique):
         status, attempts = get_technique_status_and_data()
 
         data = T1021.get_base_data_by_status(status)
-        data.update({'services': attempts})
+        data.update({"services": attempts})
         return data

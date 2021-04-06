@@ -15,6 +15,7 @@ class Event(EmbeddedDocument):
         *   The logic section defines complex questions we can ask about a single document which are asked multiple
             times, or complex action we will perform - somewhat like an API.
     """
+
     # SCHEMA
     timestamp = DateTimeField(required=True)
     title = StringField(required=True)
@@ -26,12 +27,7 @@ class Event(EmbeddedDocument):
     def create_event(title, message, event_type, timestamp=None):
         if not timestamp:
             timestamp = datetime.now()
-        event = Event(
-            timestamp=timestamp,
-            title=title,
-            message=message,
-            event_type=event_type
-        )
+        event = Event(timestamp=timestamp, title=title, message=message, event_type=event_type)
 
         event.validate(clean=True)
 

@@ -16,7 +16,7 @@ from infection_monkey.utils.environment import is_windows_os
 TIMEOUT = 15
 LOOPBACK_NAME = b"lo"
 SIOCGIFADDR = 0x8915  # get PA address
-SIOCGIFNETMASK = 0x891b  # get network PA mask
+SIOCGIFNETMASK = 0x891B  # get network PA mask
 RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
 
@@ -27,36 +27,40 @@ def get_host_subnets():
     Each subnet item contains the host IP in that network + the subnet.
     :return: List of dict, keys are "addr" and "subnet"
     """
-    ipv4_nets = [netifaces.ifaddresses(interface)[netifaces.AF_INET]
-                 for interface in netifaces.interfaces()
-                 if netifaces.AF_INET in netifaces.ifaddresses(interface)
-                 ]
+    ipv4_nets = [
+        netifaces.ifaddresses(interface)[netifaces.AF_INET]
+        for interface in netifaces.interfaces()
+        if netifaces.AF_INET in netifaces.ifaddresses(interface)
+    ]
     # flatten
     ipv4_nets = itertools.chain.from_iterable(ipv4_nets)
     # remove loopback
-    ipv4_nets = [network for network in ipv4_nets if network['addr'] != '127.0.0.1']
+    ipv4_nets = [network for network in ipv4_nets if network["addr"] != "127.0.0.1"]
     # remove auto conf
-    ipv4_nets = [network for network in ipv4_nets if not network['addr'].startswith('169.254')]
+    ipv4_nets = [network for network in ipv4_nets if not network["addr"].startswith("169.254")]
     for network in ipv4_nets:
-        if 'broadcast' in network:
-            network.pop('broadcast')
+        if "broadcast" in network:
+            network.pop("broadcast")
         for attr in network:
             network[attr] = network[attr]
     return ipv4_nets
 
 
 if is_windows_os():
+
     def local_ips():
         local_hostname = socket.gethostname()
         return socket.gethostbyname_ex(local_hostname)[2]
 
     def get_routes():
         raise NotImplementedError()
+
+
 else:
     from fcntl import ioctl
 
     def local_ips():
-        valid_ips = [network['addr'] for network in get_host_subnets()]
+        valid_ips = [network["addr"] for network in get_host_subnets()]
         return valid_ips
 
     def get_routes():  # based on scapy implementation for route parsing
@@ -92,10 +96,15 @@ else:
                     ifaddr = socket.inet_ntoa(ifreq[20:24])
                 else:
                     continue
-            routes.append((socket.htonl(int(dst, 16)) & 0xffffffff,
-                           socket.htonl(int(msk, 16)) & 0xffffffff,
-                           socket.inet_ntoa(struct.pack("I", int(gw, 16))),
-                           iff, ifaddr))
+            routes.append(
+                (
+                    socket.htonl(int(dst, 16)) & 0xFFFFFFFF,
+                    socket.htonl(int(msk, 16)) & 0xFFFFFFFF,
+                    socket.inet_ntoa(struct.pack("I", int(gw, 16))),
+                    iff,
+                    ifaddr,
+                )
+            )
 
         f.close()
         return routes
@@ -142,23 +151,27 @@ def get_interfaces_ranges():
     res = []
     ifs = get_host_subnets()
     for net_interface in ifs:
-        address_str = net_interface['addr']
-        netmask_str = net_interface['netmask']
+        address_str = net_interface["addr"]
+        netmask_str = net_interface["netmask"]
         # limit subnet scans to class C only
         res.append(CidrRange(cidr_range="%s/%s" % (address_str, netmask_str)))
     return res
 
 
 if is_windows_os():
+
     def get_ip_for_connection(target_ip):
         return None
+
+
 else:
+
     def get_ip_for_connection(target_ip):
         try:
-            query_str = 'ip route get %s' % target_ip
+            query_str = "ip route get %s" % target_ip
             resp = check_output(query_str.split())
             substr = resp.split()
-            src = substr[substr.index('src') + 1]
+            src = substr[substr.index("src") + 1]
             return src
         except Exception:
             return None

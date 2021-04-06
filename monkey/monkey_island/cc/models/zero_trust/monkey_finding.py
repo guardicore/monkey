@@ -12,9 +12,7 @@ class MonkeyFinding(Finding):
     details = LazyReferenceField(MonkeyFindingDetails, required=True)
 
     @staticmethod
-    def save_finding(test: str,
-                     status: str,
-                     detail_ref: MonkeyFindingDetails) -> MonkeyFinding:
+    def save_finding(test: str, status: str, detail_ref: MonkeyFindingDetails) -> MonkeyFinding:
         finding = MonkeyFinding(test=test, status=status, details=detail_ref)
         finding.save()
         return finding

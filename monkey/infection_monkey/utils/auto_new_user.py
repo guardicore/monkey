@@ -18,7 +18,7 @@ class AutoNewUser(metaclass=abc.ABCMeta):
             ...
         # Logged off and deleted
         ...
-        """
+    """
 
     def __init__(self, username, password):
         self.username = username

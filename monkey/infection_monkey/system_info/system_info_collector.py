@@ -14,6 +14,7 @@ class SystemInfoCollector(Plugin, metaclass=ABCMeta):
 
     See the Wiki page "How to add a new System Info Collector to the Monkey?" for a detailed guide.
     """
+
     def __init__(self, name="unknown"):
         self.name = name
 

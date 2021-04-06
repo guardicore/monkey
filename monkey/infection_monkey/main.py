@@ -17,29 +17,29 @@ from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
 from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
 
-__author__ = 'itamar'
+__author__ = "itamar"
 
 LOG = None
 
-LOG_CONFIG = {'version': 1,
-              'disable_existing_loggers': False,
-              'formatters': {
-                  'standard': {
-                      'format':
-                          '%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s'
-                  },
-              },
-              'handlers': {'console': {'class': 'logging.StreamHandler',
-                                       'level': 'DEBUG',
-                                       'formatter': 'standard'},
-                           'file': {'class': 'logging.FileHandler',
-                                    'level': 'DEBUG',
-                                    'formatter': 'standard',
-                                    'filename': None}
-                           },
-              'root': {'level': 'DEBUG',
-                       'handlers': ['console']},
-              }
+LOG_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s"
+        },
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "level": "DEBUG", "formatter": "standard"},
+        "file": {
+            "class": "logging.FileHandler",
+            "level": "DEBUG",
+            "formatter": "standard",
+            "filename": None,
+        },
+    },
+    "root": {"level": "DEBUG", "handlers": ["console"]},
+}
 
 
 def main():
@@ -56,7 +56,7 @@ def main():
     config_file = EXTERNAL_CONFIG_FILE
 
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('-c', '--config')
+    arg_parser.add_argument("-c", "--config")
     opts, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
     if opts.config:
         config_file = opts.config
@@ -70,13 +70,22 @@ def main():
         except ValueError as e:
             print("Error loading config: %s, using default" % (e,))
     else:
-        print("Config file wasn't supplied and default path: %s wasn't found, using internal default" % (config_file,))
+        print(
+            "Config file wasn't supplied and default path: %s wasn't found, using internal default"
+            % (config_file,)
+        )
 
-    print("Loaded Configuration: %r" % WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()))
+    print(
+        "Loaded Configuration: %r"
+        % WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict())
+    )
 
     # Make sure we're not in a machine that has the kill file
-    kill_path = os.path.expandvars(
-        WormConfiguration.kill_file_path_windows) if sys.platform == "win32" else WormConfiguration.kill_file_path_linux
+    kill_path = (
+        os.path.expandvars(WormConfiguration.kill_file_path_windows)
+        if sys.platform == "win32"
+        else WormConfiguration.kill_file_path_linux
+    )
     if os.path.exists(kill_path):
         print("Kill path found, finished run")
         return True
@@ -101,23 +110,24 @@ def main():
                 os.remove(log_path)
             except OSError:
                 pass
-        LOG_CONFIG['handlers']['file']['filename'] = log_path
+        LOG_CONFIG["handlers"]["file"]["filename"] = log_path
         # noinspection PyUnresolvedReferences
-        LOG_CONFIG['root']['handlers'].append('file')
+        LOG_CONFIG["root"]["handlers"].append("file")
     else:
-        del LOG_CONFIG['handlers']['file']
+        del LOG_CONFIG["handlers"]["file"]
 
     logging.config.dictConfig(LOG_CONFIG)
     LOG = logging.getLogger()
 
     def log_uncaught_exceptions(ex_cls, ex, tb):
-        LOG.critical(''.join(traceback.format_tb(tb)))
-        LOG.critical('{0}: {1}'.format(ex_cls, ex))
+        LOG.critical("".join(traceback.format_tb(tb)))
+        LOG.critical("{0}: {1}".format(ex_cls, ex))
 
     sys.excepthook = log_uncaught_exceptions
 
-    LOG.info(">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<",
-             monkey_cls.__name__, os.getpid())
+    LOG.info(
+        ">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<", monkey_cls.__name__, os.getpid()
+    )
 
     LOG.info(f"version: {get_version()}")
 
@@ -128,9 +138,16 @@ def main():
         monkey.start()
 
         if WormConfiguration.serialize_config:
-            with open(config_file, 'w') as config_fo:
+            with open(config_file, "w") as config_fo:
                 json_dict = WormConfiguration.as_dict()
-                json.dump(json_dict, config_fo, skipkeys=True, sort_keys=True, indent=4, separators=(',', ': '))
+                json.dump(
+                    json_dict,
+                    config_fo,
+                    skipkeys=True,
+                    sort_keys=True,
+                    indent=4,
+                    separators=(",", ": "),
+                )
 
         return True
     except Exception as e:

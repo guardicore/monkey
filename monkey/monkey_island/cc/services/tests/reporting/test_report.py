@@ -39,8 +39,8 @@ EXPLOIT_TELEMETRY_TELEM = {
                     "ntlm_hash": NT_HASH,
                 }
             }
-        }
-    }
+        },
+    },
 }
 
 
@@ -56,7 +56,7 @@ SYSTEM_INFO_TELEMETRY_TELEM = {
                 "ntlm_hash": NT_HASH,
             }
         }
-    }
+    },
 }
 
 NO_CREDS_TELEMETRY_TELEM = {
@@ -68,8 +68,8 @@ NO_CREDS_TELEMETRY_TELEM = {
             "ip_addr": VICTIM_IP,
             "domain_name": VICTIM_DOMAIN_NAME,
         },
-        "info": {"credentials": {}}
-    }
+        "info": {"credentials": {}},
+    },
 }
 
 MONKEY_TELEM = {"_id": TELEM_ID["monkey"], "guid": MONKEY_GUID, "hostname": HOSTNAME}

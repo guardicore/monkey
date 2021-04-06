@@ -7,7 +7,9 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 class ShellShock(ConfigTemplate):
     config_values = copy(BaseTemplate.config_values)
 
-    config_values.update({
-        "basic.exploiters.exploiter_classes": ["ShellShockExploiter"],
-        "basic_network.scope.subnet_scan_list": ["10.2.2.8"]
-    })
+    config_values.update(
+        {
+            "basic.exploiters.exploiter_classes": ["ShellShockExploiter"],
+            "basic_network.scope.subnet_scan_list": ["10.2.2.8"],
+        }
+    )

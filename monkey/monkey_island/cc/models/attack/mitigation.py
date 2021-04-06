@@ -12,7 +12,7 @@ class Mitigation(EmbeddedDocument):
 
     @staticmethod
     def get_from_stix2_data(mitigation: CourseOfAction):
-        name = mitigation['name']
-        description = mitigation['description']
+        name = mitigation["name"]
+        description = mitigation["description"]
         url = MitreApiInterface.get_stix2_external_reference_url(mitigation)
         return Mitigation(name=name, description=description, url=url)

@@ -5,7 +5,6 @@ __author__ = "VakarisZ"
 
 
 class AttackTelem(BaseTelem):
-
     def __init__(self, technique, status):
         """
         Default ATT&CK telemetry constructor
@@ -19,7 +18,4 @@ class AttackTelem(BaseTelem):
     telem_category = TelemCategoryEnum.ATTACK
 
     def get_data(self):
-        return {
-            'status': self.status.value,
-            'technique': self.technique
-        }
+        return {"status": self.status.value, "technique": self.technique}

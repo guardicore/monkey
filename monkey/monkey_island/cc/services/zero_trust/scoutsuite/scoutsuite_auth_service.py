@@ -15,24 +15,28 @@ def is_cloud_authentication_setup(provider: CloudProviders) -> Tuple[bool, str]:
             return True, "AWS keys already setup."
 
         import ScoutSuite.providers.aws.authentication_strategy as auth_strategy
+
         try:
             profile = auth_strategy.AWSAuthenticationStrategy().authenticate()
-            return True, f" Profile \"{profile.session.profile_name}\" is already setup. "
+            return True, f' Profile "{profile.session.profile_name}" is already setup. '
         except AuthenticationException:
             return False, ""
 
 
 def is_aws_keys_setup():
-    return (ConfigService.get_config_value(AWS_KEYS_PATH + ['aws_access_key_id']) and
-            ConfigService.get_config_value(AWS_KEYS_PATH + ['aws_secret_access_key']))
+    return ConfigService.get_config_value(
+        AWS_KEYS_PATH + ["aws_access_key_id"]
+    ) and ConfigService.get_config_value(AWS_KEYS_PATH + ["aws_secret_access_key"])
 
 
 def set_aws_keys(access_key_id: str, secret_access_key: str, session_token: str):
     if not access_key_id or not secret_access_key:
-        raise InvalidAWSKeys("Missing some of the following fields: access key ID, secret access key.")
-    _set_aws_key('aws_access_key_id', access_key_id)
-    _set_aws_key('aws_secret_access_key', secret_access_key)
-    _set_aws_key('aws_session_token', session_token)
+        raise InvalidAWSKeys(
+            "Missing some of the following fields: access key ID, secret access key."
+        )
+    _set_aws_key("aws_access_key_id", access_key_id)
+    _set_aws_key("aws_secret_access_key", secret_access_key)
+    _set_aws_key("aws_session_token", session_token)
 
 
 def _set_aws_key(key_type: str, key_value: str):
@@ -42,9 +46,11 @@ def _set_aws_key(key_type: str, key_value: str):
 
 
 def get_aws_keys():
-    return {'access_key_id': _get_aws_key('aws_access_key_id'),
-            'secret_access_key': _get_aws_key('aws_secret_access_key'),
-            'session_token': _get_aws_key('aws_session_token')}
+    return {
+        "access_key_id": _get_aws_key("aws_access_key_id"),
+        "secret_access_key": _get_aws_key("aws_secret_access_key"),
+        "session_token": _get_aws_key("aws_session_token"),
+    }
 
 
 def _get_aws_key(key_type: str):

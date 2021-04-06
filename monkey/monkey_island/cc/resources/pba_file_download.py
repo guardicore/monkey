@@ -3,7 +3,7 @@ from flask import send_from_directory
 
 from monkey_island.cc.services.post_breach_files import ABS_UPLOAD_PATH
 
-__author__ = 'VakarisZ'
+__author__ = "VakarisZ"
 
 
 class PBAFileDownload(flask_restful.Resource):

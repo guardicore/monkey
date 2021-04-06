@@ -24,7 +24,7 @@ def test_victim_host_telem_send(victim_host_telem_test_instance, spy_send_teleme
     expected_data = {
         "status": STATUS.value,
         "technique": TECHNIQUE,
-        "machine": {"domain_name": DOMAIN_NAME, "ip_addr": IP}
+        "machine": {"domain_name": DOMAIN_NAME, "ip_addr": IP},
     }
     expected_data = json.dumps(expected_data, cls=victim_host_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data

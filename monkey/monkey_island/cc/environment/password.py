@@ -1,6 +1,6 @@
 from monkey_island.cc.environment import Environment
 
-__author__ = 'itay.mizeretz'
+__author__ = "itay.mizeretz"
 
 
 class PasswordEnvironment(Environment):

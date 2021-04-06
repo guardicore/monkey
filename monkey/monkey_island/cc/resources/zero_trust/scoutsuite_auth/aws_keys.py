@@ -5,7 +5,6 @@ from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_auth_service imp
 
 
 class AWSKeys(flask_restful.Resource):
-
     @jwt_required
     def get(self):
         return get_aws_keys()

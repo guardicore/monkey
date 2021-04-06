@@ -14,9 +14,7 @@ _RELEVANT_EXCEPTION_STRING_PARTS = {
 
 _RELEVANT_EXCEPTION_STRINGS = {
     "pwd_auth_failed": _RELEVANT_EXCEPTION_STRING_PARTS["pwd_auth_failed"],
-    "ssl_off_entry_not_found": _RELEVANT_EXCEPTION_STRING_PARTS[
-        "ssl_off_entry_not_found"
-    ],
+    "ssl_off_entry_not_found": _RELEVANT_EXCEPTION_STRING_PARTS["ssl_off_entry_not_found"],
     "pwd_auth_failed_pwd_auth_failed": "\n".join(
         [
             _RELEVANT_EXCEPTION_STRING_PARTS["pwd_auth_failed"],
@@ -108,10 +106,7 @@ def host():
 
 
 def test_irrelevant_exception(mock_PostgreSQLFinger):
-    assert (
-        mock_PostgreSQLFinger._is_relevant_exception(IRRELEVANT_EXCEPTION_STRING)
-        is False
-    )
+    assert mock_PostgreSQLFinger._is_relevant_exception(IRRELEVANT_EXCEPTION_STRING) is False
 
 
 def test_exception_ssl_not_configured_all_non_ssl_allowed(mock_PostgreSQLFinger, host):
@@ -124,9 +119,7 @@ def test_exception_ssl_not_configured_all_non_ssl_allowed(mock_PostgreSQLFinger,
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])
 
 
-def test_exception_ssl_not_configured_selected_non_ssl_allowed(
-    mock_PostgreSQLFinger, host
-):
+def test_exception_ssl_not_configured_selected_non_ssl_allowed(mock_PostgreSQLFinger, host):
     exception = _RELEVANT_EXCEPTION_STRINGS["ssl_off_entry_not_found"]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
@@ -146,9 +139,7 @@ def test_exception_all_ssl_allowed_all_non_ssl_allowed(mock_PostgreSQLFinger, ho
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])
 
 
-def test_exception_all_ssl_allowed_selected_non_ssl_allowed(
-    mock_PostgreSQLFinger, host
-):
+def test_exception_all_ssl_allowed_selected_non_ssl_allowed(mock_PostgreSQLFinger, host):
     exception = _RELEVANT_EXCEPTION_STRINGS["pwd_auth_failed_ssl_off_entry_not_found"]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
@@ -158,9 +149,7 @@ def test_exception_all_ssl_allowed_selected_non_ssl_allowed(
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])
 
 
-def test_exception_selected_ssl_allowed_all_non_ssl_allowed(
-    mock_PostgreSQLFinger, host
-):
+def test_exception_selected_ssl_allowed_all_non_ssl_allowed(mock_PostgreSQLFinger, host):
     exception = _RELEVANT_EXCEPTION_STRINGS["ssl_on_entry_not_found_pwd_auth_failed"]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
@@ -170,12 +159,8 @@ def test_exception_selected_ssl_allowed_all_non_ssl_allowed(
     ] == "".join(RELEVANT_EXCEPTIONS_WITH_EXPECTED_RESULTS[exception])
 
 
-def test_exception_selected_ssl_allowed_selected_non_ssl_allowed(
-    mock_PostgreSQLFinger, host
-):
-    exception = _RELEVANT_EXCEPTION_STRINGS[
-        "ssl_on_entry_not_found_ssl_off_entry_not_found"
-    ]
+def test_exception_selected_ssl_allowed_selected_non_ssl_allowed(mock_PostgreSQLFinger, host):
+    exception = _RELEVANT_EXCEPTION_STRINGS["ssl_on_entry_not_found_ssl_off_entry_not_found"]
     assert mock_PostgreSQLFinger._is_relevant_exception(exception) is True
 
     mock_PostgreSQLFinger.analyze_operational_error(host, exception)

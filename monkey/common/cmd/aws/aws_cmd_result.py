@@ -1,6 +1,6 @@
 from common.cmd.cmd_result import CmdResult
 
-__author__ = 'itay.mizeretz'
+__author__ = "itay.mizeretz"
 
 
 class AwsCmdResult(CmdResult):
@@ -10,8 +10,11 @@ class AwsCmdResult(CmdResult):
 
     def __init__(self, command_info):
         super(AwsCmdResult, self).__init__(
-            self.is_successful(command_info, True), command_info['ResponseCode'], command_info['StandardOutputContent'],
-            command_info['StandardErrorContent'])
+            self.is_successful(command_info, True),
+            command_info["ResponseCode"],
+            command_info["StandardOutputContent"],
+            command_info["StandardErrorContent"],
+        )
         self.command_info = command_info
 
     @staticmethod
@@ -22,4 +25,6 @@ class AwsCmdResult(CmdResult):
         :param is_timeout:      Whether the given command timed out
         :return:                True if successful, False otherwise.
         """
-        return (command_info['Status'] == 'Success') or (is_timeout and (command_info['Status'] == 'InProgress'))
+        return (command_info["Status"] == "Success") or (
+            is_timeout and (command_info["Status"] == "InProgress")
+        )

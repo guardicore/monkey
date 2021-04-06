@@ -2,6 +2,5 @@ from infection_monkey.utils.plugins.pluginTests.PluginTestClass import TestPlugi
 
 
 class BadPluginInit(TestPlugin):
-
     def __init__(self):
         raise Exception("TestException")

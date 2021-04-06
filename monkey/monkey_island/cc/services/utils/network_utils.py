@@ -9,13 +9,16 @@ from typing import List
 from netifaces import AF_INET, ifaddresses, interfaces
 from ring import lru
 
-__author__ = 'Barak'
+__author__ = "Barak"
 
 # Local ips function
 if sys.platform == "win32":
+
     def local_ips():
         local_hostname = socket.gethostname()
         return socket.gethostbyname_ex(local_hostname)[2]
+
+
 else:
     import fcntl
 
@@ -28,12 +31,15 @@ else:
             max_possible = 8  # initial value
             while True:
                 struct_bytes = max_possible * struct_size
-                names = array.array('B', '\0' * struct_bytes)
-                outbytes = struct.unpack('iL', fcntl.ioctl(
-                    s.fileno(),
-                    0x8912,  # SIOCGIFCONF
-                    struct.pack('iL', struct_bytes, names.buffer_info()[0])
-                ))[0]
+                names = array.array("B", "\0" * struct_bytes)
+                outbytes = struct.unpack(
+                    "iL",
+                    fcntl.ioctl(
+                        s.fileno(),
+                        0x8912,  # SIOCGIFCONF
+                        struct.pack("iL", struct_bytes, names.buffer_info()[0]),
+                    ),
+                )[0]
                 if outbytes == struct_bytes:
                     max_possible *= 2
                 else:
@@ -41,8 +47,8 @@ else:
             namestr = names.tostring()
 
             for i in range(0, outbytes, struct_size):
-                addr = socket.inet_ntoa(namestr[i + 20:i + 24])
-                if not addr.startswith('127'):
+                addr = socket.inet_ntoa(namestr[i + 20 : i + 24])
+                if not addr.startswith("127"):
                     result.append(addr)
                     # name of interface is (namestr[i:i+16].split('\0', 1)[0]
         finally:
@@ -50,7 +56,7 @@ else:
 
 
 def is_local_ips(ips: List) -> bool:
-    filtered_local_ips = [ip for ip in local_ip_addresses() if not ip.startswith('169.254')]
+    filtered_local_ips = [ip for ip in local_ip_addresses() if not ip.startswith("169.254")]
     return collections.Counter(ips) == collections.Counter(filtered_local_ips)
 
 
@@ -63,7 +69,7 @@ def local_ip_addresses():
     ip_list = []
     for interface in interfaces():
         addresses = ifaddresses(interface).get(AF_INET, [])
-        ip_list.extend([link['addr'] for link in addresses if link['addr'] != '127.0.0.1'])
+        ip_list.extend([link["addr"] for link in addresses if link["addr"] != "127.0.0.1"])
     return ip_list
 
 
@@ -78,10 +84,9 @@ def get_subnets():
         addresses = ifaddresses(interface).get(AF_INET, [])
         subnets.extend(
             [
-                ipaddress.ip_interface(link['addr'] + '/' + link['netmask']).network
-                for link
-                in addresses
-                if link['addr'] != '127.0.0.1'
+                ipaddress.ip_interface(link["addr"] + "/" + link["netmask"]).network
+                for link in addresses
+                if link["addr"] != "127.0.0.1"
             ]
         )
     return subnets

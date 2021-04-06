@@ -3,84 +3,104 @@ import requests
 import requests_mock
 import simplejson
 
-from common.cloud.azure.azure_instance import (AZURE_METADATA_SERVICE_URL,
-                                               AzureInstance)
+from common.cloud.azure.azure_instance import AZURE_METADATA_SERVICE_URL, AzureInstance
 from common.cloud.environment_names import Environment
 
 
 GOOD_DATA = {
-    'compute': {'azEnvironment': 'AZUREPUBLICCLOUD',
-                'isHostCompatibilityLayerVm': 'true',
-                'licenseType': 'Windows_Client',
-                'location': 'westus',
-                'name': 'examplevmname',
-                'offer': 'Windows',
-                'osProfile': {'adminUsername': 'admin',
-                              'computerName': 'examplevmname',
-                              'disablePasswordAuthentication': 'true'},
-                'osType': 'linux',
-                'placementGroupId': 'f67c14ab-e92c-408c-ae2d-da15866ec79a',
-                'plan': {'name': 'planName',
-                         'product': 'planProduct',
-                         'publisher': 'planPublisher'},
-                'platformFaultDomain': '36',
-                'platformUpdateDomain': '42',
-                'publicKeys': [{'keyData': 'ssh-rsa 0',
-                                'path': '/home/user/.ssh/authorized_keys0'},
-                               {'keyData': 'ssh-rsa 1',
-                                'path': '/home/user/.ssh/authorized_keys1'}],
-                'publisher': 'RDFE-Test-Microsoft-Windows-Server-Group',
-                'resourceGroupName': 'macikgo-test-may-23',
-                'resourceId': '/subscriptions/xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/resourceGroups/macikgo-test-may-23/'
-                              'providers/Microsoft.Compute/virtualMachines/examplevmname',
-                'securityProfile': {'secureBootEnabled': 'true',
-                                    'virtualTpmEnabled': 'false'},
-                'sku': 'Windows-Server-2012-R2-Datacenter',
-                'storageProfile': {'dataDisks': [{'caching': 'None',
-                                                  'createOption': 'Empty',
-                                                  'diskSizeGB': '1024',
-                                                  'image': {'uri': ''},
-                                                  'lun': '0',
-                                                  'managedDisk': {'id': '/subscriptions/xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/'
-                                                                        'resourceGroups/macikgo-test-may-23/providers/'
-                                                                        'Microsoft.Compute/disks/exampledatadiskname',
-                                                                  'storageAccountType': 'Standard_LRS'},
-                                                  'name': 'exampledatadiskname',
-                                                  'vhd': {'uri': ''},
-                                                  'writeAcceleratorEnabled': 'false'}],
-                                   'imageReference': {'id': '',
-                                                      'offer': 'UbuntuServer',
-                                                      'publisher': 'Canonical',
-                                                      'sku': '16.04.0-LTS',
-                                                      'version': 'latest'},
-                                   'osDisk': {'caching': 'ReadWrite',
-                                              'createOption': 'FromImage',
-                                              'diskSizeGB': '30',
-                                              'diffDiskSettings': {'option': 'Local'},
-                                              'encryptionSettings': {'enabled': 'false'},
-                                              'image': {'uri': ''},
-                                              'managedDisk': {'id': '/subscriptions/xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/'
-                                                              'resourceGroups/macikgo-test-may-23/providers/'
-                                                              'Microsoft.Compute/disks/exampleosdiskname',
-                                                              'storageAccountType': 'Standard_LRS'},
-                                              'name': 'exampleosdiskname',
-                                              'osType': 'Linux',
-                                              'vhd': {'uri': ''},
-                                              'writeAcceleratorEnabled': 'false'}},
-                'subscriptionId': 'xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx',
-                'tags': 'baz:bash;foo:bar',
-                'version': '15.05.22',
-                'vmId': '02aab8a4-74ef-476e-8182-f6d2ba4166a6',
-                'vmScaleSetName': 'crpteste9vflji9',
-                'vmSize': 'Standard_A3',
-                'zone': ''},
-    'network': {'interface': [{'ipv4': {'ipAddress': [{'privateIpAddress': '10.144.133.132',
-                                                       'publicIpAddress': ''}],
-                                        'subnet': [{'address': '10.144.133.128',
-                                                    'prefix': '26'}]},
-                               'ipv6': {'ipAddress': []},
-                               'macAddress': '0011AAFFBB22'}]}
- }
+    "compute": {
+        "azEnvironment": "AZUREPUBLICCLOUD",
+        "isHostCompatibilityLayerVm": "true",
+        "licenseType": "Windows_Client",
+        "location": "westus",
+        "name": "examplevmname",
+        "offer": "Windows",
+        "osProfile": {
+            "adminUsername": "admin",
+            "computerName": "examplevmname",
+            "disablePasswordAuthentication": "true",
+        },
+        "osType": "linux",
+        "placementGroupId": "f67c14ab-e92c-408c-ae2d-da15866ec79a",
+        "plan": {"name": "planName", "product": "planProduct", "publisher": "planPublisher"},
+        "platformFaultDomain": "36",
+        "platformUpdateDomain": "42",
+        "publicKeys": [
+            {"keyData": "ssh-rsa 0", "path": "/home/user/.ssh/authorized_keys0"},
+            {"keyData": "ssh-rsa 1", "path": "/home/user/.ssh/authorized_keys1"},
+        ],
+        "publisher": "RDFE-Test-Microsoft-Windows-Server-Group",
+        "resourceGroupName": "macikgo-test-may-23",
+        "resourceId": "/subscriptions/xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/resourceGroups/macikgo-test-may-23/"
+        "providers/Microsoft.Compute/virtualMachines/examplevmname",
+        "securityProfile": {"secureBootEnabled": "true", "virtualTpmEnabled": "false"},
+        "sku": "Windows-Server-2012-R2-Datacenter",
+        "storageProfile": {
+            "dataDisks": [
+                {
+                    "caching": "None",
+                    "createOption": "Empty",
+                    "diskSizeGB": "1024",
+                    "image": {"uri": ""},
+                    "lun": "0",
+                    "managedDisk": {
+                        "id": "/subscriptions/xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/"
+                        "resourceGroups/macikgo-test-may-23/providers/"
+                        "Microsoft.Compute/disks/exampledatadiskname",
+                        "storageAccountType": "Standard_LRS",
+                    },
+                    "name": "exampledatadiskname",
+                    "vhd": {"uri": ""},
+                    "writeAcceleratorEnabled": "false",
+                }
+            ],
+            "imageReference": {
+                "id": "",
+                "offer": "UbuntuServer",
+                "publisher": "Canonical",
+                "sku": "16.04.0-LTS",
+                "version": "latest",
+            },
+            "osDisk": {
+                "caching": "ReadWrite",
+                "createOption": "FromImage",
+                "diskSizeGB": "30",
+                "diffDiskSettings": {"option": "Local"},
+                "encryptionSettings": {"enabled": "false"},
+                "image": {"uri": ""},
+                "managedDisk": {
+                    "id": "/subscriptions/xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/"
+                    "resourceGroups/macikgo-test-may-23/providers/"
+                    "Microsoft.Compute/disks/exampleosdiskname",
+                    "storageAccountType": "Standard_LRS",
+                },
+                "name": "exampleosdiskname",
+                "osType": "Linux",
+                "vhd": {"uri": ""},
+                "writeAcceleratorEnabled": "false",
+            },
+        },
+        "subscriptionId": "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx",
+        "tags": "baz:bash;foo:bar",
+        "version": "15.05.22",
+        "vmId": "02aab8a4-74ef-476e-8182-f6d2ba4166a6",
+        "vmScaleSetName": "crpteste9vflji9",
+        "vmSize": "Standard_A3",
+        "zone": "",
+    },
+    "network": {
+        "interface": [
+            {
+                "ipv4": {
+                    "ipAddress": [{"privateIpAddress": "10.144.133.132", "publicIpAddress": ""}],
+                    "subnet": [{"address": "10.144.133.128", "prefix": "26"}],
+                },
+                "ipv6": {"ipAddress": []},
+                "macAddress": "0011AAFFBB22",
+            }
+        ]
+    },
+}
 
 
 BAD_DATA_NOT_JSON = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/\
@@ -89,7 +109,7 @@ http-equiv="Content-Type" />\n<meta content="no-cache" http-equiv="Pragma" />\n<
 javascript">\nvar pageName = \'/\';\ntop.location.replace(pageName);\n</script>\n</head>\n<body> </body>\n</html>\n'
 
 
-BAD_DATA_JSON = {'': ''}
+BAD_DATA_JSON = {"": ""}
 
 
 def get_test_azure_instance(url, **kwargs):
@@ -114,9 +134,9 @@ def test_get_cloud_provider_name_good_data(good_data_mock_instance):
 
 
 def test_try_parse_response_good_data(good_data_mock_instance):
-    assert good_data_mock_instance.instance_name == GOOD_DATA['compute']['name']
-    assert good_data_mock_instance.instance_id == GOOD_DATA['compute']['vmId']
-    assert good_data_mock_instance.location == GOOD_DATA['compute']['location']
+    assert good_data_mock_instance.instance_name == GOOD_DATA["compute"]["name"]
+    assert good_data_mock_instance.instance_id == GOOD_DATA["compute"]["vmId"]
+    assert good_data_mock_instance.location == GOOD_DATA["compute"]["location"]
 
 
 # good request, bad data (json)

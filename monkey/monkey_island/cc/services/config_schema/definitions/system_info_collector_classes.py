@@ -1,6 +1,11 @@
-from common.common_consts.system_info_collectors_names import (AWS_COLLECTOR, AZURE_CRED_COLLECTOR,
-                                                               ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR,
-                                                               MIMIKATZ_COLLECTOR, PROCESS_LIST_COLLECTOR)
+from common.common_consts.system_info_collectors_names import (
+    AWS_COLLECTOR,
+    AZURE_CRED_COLLECTOR,
+    ENVIRONMENT_COLLECTOR,
+    HOSTNAME_COLLECTOR,
+    MIMIKATZ_COLLECTOR,
+    PROCESS_LIST_COLLECTOR,
+)
 
 SYSTEM_INFO_COLLECTOR_CLASSES = {
     "title": "System Information Collectors",
@@ -9,63 +14,51 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
     "anyOf": [
         {
             "type": "string",
-            "enum": [
-                ENVIRONMENT_COLLECTOR
-            ],
+            "enum": [ENVIRONMENT_COLLECTOR],
             "title": "Environment collector",
             "safe": True,
             "info": "Collects information about machine's environment (on premise/GCP/AWS).",
-            "attack_techniques": ["T1082"]
+            "attack_techniques": ["T1082"],
         },
         {
             "type": "string",
-            "enum": [
-                MIMIKATZ_COLLECTOR
-            ],
+            "enum": [MIMIKATZ_COLLECTOR],
             "title": "Mimikatz collector",
             "safe": True,
             "info": "Collects credentials from Windows credential manager.",
-            "attack_techniques": ["T1003", "T1005"]
+            "attack_techniques": ["T1003", "T1005"],
         },
         {
             "type": "string",
-            "enum": [
-                AWS_COLLECTOR
-            ],
+            "enum": [AWS_COLLECTOR],
             "title": "AWS collector",
             "safe": True,
             "info": "If on AWS, collects more information about the AWS instance currently running on.",
-            "attack_techniques": ["T1082"]
+            "attack_techniques": ["T1082"],
         },
         {
             "type": "string",
-            "enum": [
-                HOSTNAME_COLLECTOR
-            ],
+            "enum": [HOSTNAME_COLLECTOR],
             "title": "Hostname collector",
             "safe": True,
             "info": "Collects machine's hostname.",
-            "attack_techniques": ["T1082", "T1016"]
+            "attack_techniques": ["T1082", "T1016"],
         },
         {
             "type": "string",
-            "enum": [
-                PROCESS_LIST_COLLECTOR
-            ],
+            "enum": [PROCESS_LIST_COLLECTOR],
             "title": "Process list collector",
             "safe": True,
             "info": "Collects a list of running processes on the machine.",
-            "attack_techniques": ["T1082"]
+            "attack_techniques": ["T1082"],
         },
         {
             "type": "string",
-            "enum": [
-                AZURE_CRED_COLLECTOR
-            ],
+            "enum": [AZURE_CRED_COLLECTOR],
             "title": "Azure credential collector",
             "safe": True,
             "info": "Collects password credentials from Azure VMs",
-            "attack_techniques": ["T1003", "T1005"]
-        }
-    ]
+            "attack_techniques": ["T1003", "T1005"],
+        },
+    ],
 }

@@ -16,8 +16,8 @@ __author__ = "itay.mizeretz"
 class Log(flask_restful.Resource):
     @jwt_required
     def get(self):
-        monkey_id = request.args.get('id')
-        exists_monkey_id = request.args.get('exists')
+        monkey_id = request.args.get("id")
+        exists_monkey_id = request.args.get("exists")
         if monkey_id:
             return LogService.get_log_by_monkey_id(ObjectId(monkey_id))
         else:
@@ -28,9 +28,9 @@ class Log(flask_restful.Resource):
     def post(self):
         telemetry_json = json.loads(request.data)
 
-        monkey_id = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])['_id']
+        monkey_id = NodeService.get_monkey_by_guid(telemetry_json["monkey_guid"])["_id"]
         # This shouldn't contain any unicode characters. this'll take 2 time less space.
-        log_data = str(telemetry_json['log'])
+        log_data = str(telemetry_json["log"])
         log_id = LogService.add_log(monkey_id, log_data)
 
         return mongo.db.log.find_one_or_404({"_id": log_id})

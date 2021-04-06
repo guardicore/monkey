@@ -9,8 +9,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class PerformanceAnalyzer(Analyzer):
-
-    def __init__(self, performance_test_config: PerformanceTestConfig, endpoint_timings: Dict[str, timedelta]):
+    def __init__(
+        self, performance_test_config: PerformanceTestConfig, endpoint_timings: Dict[str, timedelta]
+    ):
         self.performance_test_config = performance_test_config
         self.endpoint_timings = endpoint_timings
 

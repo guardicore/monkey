@@ -2,8 +2,17 @@
 Define a Document Schema for the Monkey document.
 """
 import ring
-from mongoengine import (BooleanField, DateTimeField, Document, DoesNotExist, DynamicField, EmbeddedDocumentField,
-                         ListField, ReferenceField, StringField)
+from mongoengine import (
+    BooleanField,
+    DateTimeField,
+    Document,
+    DoesNotExist,
+    DynamicField,
+    EmbeddedDocumentField,
+    ListField,
+    ReferenceField,
+    StringField,
+)
 
 from common.cloud import environment_names
 from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
@@ -21,10 +30,11 @@ class Monkey(Document):
         *   The logic section defines complex questions we can ask about a single document which are asked multiple
             times, somewhat like an API.
     """
+
     # SCHEMA
     guid = StringField(required=True)
-    config = EmbeddedDocumentField('Config')
-    creds = ListField(EmbeddedDocumentField('Creds'))
+    config = EmbeddedDocumentField("Config")
+    creds = ListField(EmbeddedDocumentField("Creds"))
     dead = BooleanField()
     description = StringField()
     hostname = StringField()
@@ -45,9 +55,13 @@ class Monkey(Document):
     command_control_channel = EmbeddedDocumentField(CommandControlChannel)
 
     # Environment related fields
-    environment = StringField(default=environment_names.Environment.UNKNOWN.value,
-                              choices=environment_names.ALL_ENVIRONMENTS_NAMES)
-    aws_instance_id = StringField(required=False)  # This field only exists when the monkey is running on an AWS
+    environment = StringField(
+        default=environment_names.Environment.UNKNOWN.value,
+        choices=environment_names.ALL_ENVIRONMENTS_NAMES,
+    )
+    aws_instance_id = StringField(
+        required=False
+    )  # This field only exists when the monkey is running on an AWS
 
     # instance. See https://github.com/guardicore/monkey/issues/426.
 
@@ -61,7 +75,7 @@ class Monkey(Document):
 
     @staticmethod
     # See https://www.python.org/dev/peps/pep-0484/#forward-references
-    def get_single_monkey_by_guid(monkey_guid) -> 'Monkey':
+    def get_single_monkey_by_guid(monkey_guid) -> "Monkey":
         try:
             return Monkey.objects.get(guid=monkey_guid)
         except DoesNotExist as ex:
@@ -70,7 +84,7 @@ class Monkey(Document):
     @staticmethod
     def get_latest_modifytime():
         if Monkey.objects.count() > 0:
-            return Monkey.objects.order_by('-modifytime').first().modifytime
+            return Monkey.objects.order_by("-modifytime").first().modifytime
         return None
 
     def is_dead(self):
@@ -129,7 +143,7 @@ class Monkey(Document):
         Formats network info from monkey's model
         :return: dictionary with an array of IP's and a hostname
         """
-        return {'ips': self.ip_addresses, 'hostname': self.hostname}
+        return {"ips": self.ip_addresses, "hostname": self.hostname}
 
     @ring.lru(
         expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.

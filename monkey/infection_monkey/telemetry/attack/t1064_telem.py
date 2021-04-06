@@ -9,12 +9,10 @@ class T1064Telem(AttackTelem):
         :param status: ScanStatus of technique
         :param usage: Usage string
         """
-        super(T1064Telem, self).__init__('T1064', status)
+        super(T1064Telem, self).__init__("T1064", status)
         self.usage = usage
 
     def get_data(self):
         data = super(T1064Telem, self).get_data()
-        data.update({
-            'usage': self.usage
-        })
+        data.update({"usage": self.usage})
         return data

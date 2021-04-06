@@ -10,11 +10,16 @@ __author__ = "VakarisZ"
 class AttackConfiguration(flask_restful.Resource):
     @jwt_required
     def get(self):
-        return current_app.response_class(json.dumps({"configuration": AttackConfig.get_config()},
-                                                     indent=None,
-                                                     separators=(",", ":"),
-                                                     sort_keys=False) + "\n",
-                                          mimetype=current_app.config['JSONIFY_MIMETYPE'])
+        return current_app.response_class(
+            json.dumps(
+                {"configuration": AttackConfig.get_config()},
+                indent=None,
+                separators=(",", ":"),
+                sort_keys=False,
+            )
+            + "\n",
+            mimetype=current_app.config["JSONIFY_MIMETYPE"],
+        )
 
     @jwt_required
     def post(self):
@@ -23,10 +28,10 @@ class AttackConfiguration(flask_restful.Resource):
         :return: Technique types dict with techniques on reset and nothing on update
         """
         config_json = json.loads(request.data)
-        if 'reset_attack_matrix' in config_json:
+        if "reset_attack_matrix" in config_json:
             AttackConfig.reset_config()
             return jsonify(configuration=AttackConfig.get_config())
         else:
-            AttackConfig.update_config({'properties': json.loads(request.data)})
+            AttackConfig.update_config({"properties": json.loads(request.data)})
             AttackConfig.apply_to_monkey_config()
             return {}

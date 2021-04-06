@@ -7,5 +7,6 @@ class Config(EmbeddedDocument):
     monkey_island.cc.services.config_schema.
     See https://mongoengine-odm.readthedocs.io/apireference.html#mongoengine.FieldDoesNotExist
     """
-    meta = {'strict': False}
+
+    meta = {"strict": False}
     pass

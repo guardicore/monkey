@@ -33,7 +33,9 @@ class NetworkScanner(object):
 
         LOG.info("Found local IP addresses of the machine: %r", self._ip_addresses)
         # for fixed range, only scan once.
-        self._ranges = [NetworkRange.get_range_obj(address_str=x) for x in WormConfiguration.subnet_scan_list]
+        self._ranges = [
+            NetworkRange.get_range_obj(address_str=x) for x in WormConfiguration.subnet_scan_list
+        ]
         if WormConfiguration.local_network_scan:
             self._ranges += get_interfaces_ranges()
         self._ranges += self._get_inaccessible_subnets_ips()
@@ -49,14 +51,17 @@ class NetworkScanner(object):
         subnets_to_scan = []
         if len(WormConfiguration.inaccessible_subnets) > 1:
             for subnet_str in WormConfiguration.inaccessible_subnets:
-                if NetworkScanner._is_any_ip_in_subnet([str(x) for x in self._ip_addresses], subnet_str):
+                if NetworkScanner._is_any_ip_in_subnet(
+                    [str(x) for x in self._ip_addresses], subnet_str
+                ):
                     # If machine has IPs from 2 different subnets in the same group, there's no point checking the other
                     # subnet.
                     for other_subnet_str in WormConfiguration.inaccessible_subnets:
                         if other_subnet_str == subnet_str:
                             continue
-                        if not NetworkScanner._is_any_ip_in_subnet([str(x) for x in self._ip_addresses],
-                                                                   other_subnet_str):
+                        if not NetworkScanner._is_any_ip_in_subnet(
+                            [str(x) for x in self._ip_addresses], other_subnet_str
+                        ):
                             subnets_to_scan.append(NetworkRange.get_range_obj(other_subnet_str))
                     break
 
@@ -74,7 +79,9 @@ class NetworkScanner(object):
         # Because we are using this to spread out IO heavy tasks, we can probably go a lot higher than CPU core size
         # But again, balance
         pool = Pool(ITERATION_BLOCK_SIZE)
-        victim_generator = VictimHostGenerator(self._ranges, WormConfiguration.blocked_ips, local_ips())
+        victim_generator = VictimHostGenerator(
+            self._ranges, WormConfiguration.blocked_ips, local_ips()
+        )
 
         victims_count = 0
         for victim_chunk in victim_generator.generate_victims(ITERATION_BLOCK_SIZE):

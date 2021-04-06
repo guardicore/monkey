@@ -12,8 +12,7 @@ PORT = 9999
 
 @pytest.fixture
 def config(monkeypatch):
-    monkeypatch.setattr("monkey_island.cc.services.config.local_ip_addresses",
-                        lambda: IPS)
+    monkeypatch.setattr("monkey_island.cc.services.config.local_ip_addresses", lambda: IPS)
     monkeypatch.setattr(Environment, "_ISLAND_PORT", PORT)
     config = ConfigService.get_default_config(True)
     return config
@@ -22,12 +21,10 @@ def config(monkeypatch):
 def test_set_server_ips_in_config_command_servers(config):
     ConfigService.set_server_ips_in_config(config)
     expected_config_command_servers = [f"{ip}:{PORT}" for ip in IPS]
-    assert config["internal"]["island_server"]["command_servers"] ==\
-        expected_config_command_servers
+    assert config["internal"]["island_server"]["command_servers"] == expected_config_command_servers
 
 
 def test_set_server_ips_in_config_current_server(config):
     ConfigService.set_server_ips_in_config(config)
     expected_config_current_server = f"{IPS[0]}:{PORT}"
-    assert config["internal"]["island_server"]["current_server"] ==\
-        expected_config_current_server
+    assert config["internal"]["island_server"]["current_server"] == expected_config_current_server

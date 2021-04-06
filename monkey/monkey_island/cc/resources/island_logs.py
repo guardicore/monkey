@@ -16,4 +16,4 @@ class IslandLog(flask_restful.Resource):
         try:
             return IslandLogService.get_log_file()
         except Exception:
-            logger.error('Monkey Island logs failed to download', exc_info=True)
+            logger.error("Monkey Island logs failed to download", exc_info=True)

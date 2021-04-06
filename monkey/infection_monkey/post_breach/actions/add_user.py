@@ -7,9 +7,8 @@ from infection_monkey.utils.users import get_commands_to_add_user
 class BackdoorUser(PBA):
     def __init__(self):
         linux_cmds, windows_cmds = get_commands_to_add_user(
-            WormConfiguration.user_to_add,
-            WormConfiguration.remote_user_pass)
+            WormConfiguration.user_to_add, WormConfiguration.remote_user_pass
+        )
         super(BackdoorUser, self).__init__(
-            POST_BREACH_BACKDOOR_USER,
-            linux_cmd=' '.join(linux_cmds),
-            windows_cmd=windows_cmds)
+            POST_BREACH_BACKDOOR_USER, linux_cmd=" ".join(linux_cmds), windows_cmd=windows_cmds
+        )

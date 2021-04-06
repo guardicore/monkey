@@ -16,27 +16,26 @@ logger = logging.getLogger(__name__)
 
 
 class BootloaderHttpServer(ThreadingMixIn, HTTPServer):
-
     def __init__(self, mongo_url):
         self.mongo_client = pymongo.MongoClient(mongo_url)
-        server_address = ('', 5001)
+        server_address = ("", 5001)
         super().__init__(server_address, BootloaderHTTPRequestHandler)
 
 
 class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
-
     def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
+        content_length = int(self.headers["Content-Length"])
         post_data = self.rfile.read(content_length).decode()
-        island_server_path = BootloaderHTTPRequestHandler.get_bootloader_resource_url(self.request.getsockname()[0])
+        island_server_path = BootloaderHTTPRequestHandler.get_bootloader_resource_url(
+            self.request.getsockname()[0]
+        )
         island_server_path = parse.urljoin(island_server_path, self.path[1:])
         # The island server doesn't always have a correct SSL cert installed
         # (By default it comes with a self signed one),
         # that's why we're not verifying the cert in this request.
-        r = requests.post(url=island_server_path,
-                          data=post_data,
-                          verify=False,
-                          timeout=SHORT_REQUEST_TIMEOUT)  # noqa: DUO123
+        r = requests.post(
+            url=island_server_path, data=post_data, verify=False, timeout=SHORT_REQUEST_TIMEOUT
+        )  # noqa: DUO123
 
         try:
             if r.status_code != 200:

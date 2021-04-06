@@ -8,12 +8,10 @@ class T1107Telem(AttackTelem):
         :param status: ScanStatus of technique
         :param path: Path of deleted dir/file
         """
-        super(T1107Telem, self).__init__('T1107', status)
+        super(T1107Telem, self).__init__("T1107", status)
         self.path = path
 
     def get_data(self):
         data = super(T1107Telem, self).get_data()
-        data.update({
-            'path': self.path
-        })
+        data.update({"path": self.path})
         return data

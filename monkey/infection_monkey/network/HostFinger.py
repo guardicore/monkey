@@ -21,8 +21,8 @@ class HostFinger(Plugin):
 
     def init_service(self, services, service_key, port):
         services[service_key] = {}
-        services[service_key]['display_name'] = self._SCANNED_SERVICE
-        services[service_key]['port'] = port
+        services[service_key]["display_name"] = self._SCANNED_SERVICE
+        services[service_key]["port"] = port
 
     @abstractmethod
     def get_host_fingerprint(self, host):

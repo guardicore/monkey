@@ -9,7 +9,6 @@ LOG = logging.getLogger(__name__)
 
 
 class TraceTelem(BaseTelem):
-
     def __init__(self, msg):
         """
         Default trace telemetry constructor
@@ -22,6 +21,4 @@ class TraceTelem(BaseTelem):
     telem_category = TelemCategoryEnum.TRACE
 
     def get_data(self):
-        return {
-            'msg': self.msg
-        }
+        return {"msg": self.msg}

@@ -8,8 +8,10 @@ import requests
 from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
 
 # SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
-NO_AUTH_CREDS = '55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062' \
-                '8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557'
+NO_AUTH_CREDS = (
+    "55e97c9dcfd22b8079189ddaeea9bce8125887e3237b800c6176c9afa80d2062"
+    "8d2c8d0b1538d2208c1444ac66535b764a3d902b35e751df3faec1e477ed3557"
+)
 LOGGER = logging.getLogger(__name__)
 
 
@@ -18,10 +20,12 @@ class MonkeyIslandRequests(object):
     def __init__(self, server_address):
         self.addr = "https://{IP}/".format(IP=server_address)
         self.token = self.try_get_jwt_from_server()
-        self.supported_request_methods = {SupportedRequestMethod.GET: self.get,
-                                          SupportedRequestMethod.POST: self.post,
-                                          SupportedRequestMethod.PATCH: self.patch,
-                                          SupportedRequestMethod.DELETE: self.delete}
+        self.supported_request_methods = {
+            SupportedRequestMethod.GET: self.get,
+            SupportedRequestMethod.POST: self.post,
+            SupportedRequestMethod.PATCH: self.patch,
+            SupportedRequestMethod.DELETE: self.delete,
+        }
 
     def get_request_time(self, url, method: SupportedRequestMethod, data=None):
         response = self.send_request_by_method(url, method, data)
@@ -44,7 +48,10 @@ class MonkeyIslandRequests(object):
             return self.get_jwt_from_server()
         except requests.ConnectionError as err:
             LOGGER.error(
-                "Unable to connect to island, aborting! Error information: {}. Server: {}".format(err, self.addr))
+                "Unable to connect to island, aborting! Error information: {}. Server: {}".format(
+                    err, self.addr
+                )
+            )
             assert False
 
     class _Decorators:
@@ -59,45 +66,45 @@ class MonkeyIslandRequests(object):
             return request_function_wrapper
 
     def get_jwt_from_server(self):
-        resp = requests.post(self.addr + "api/auth",  # noqa: DUO123
-                             json={"username": NO_AUTH_CREDS, "password": NO_AUTH_CREDS},
-                             verify=False)
+        resp = requests.post(
+            self.addr + "api/auth",  # noqa: DUO123
+            json={"username": NO_AUTH_CREDS, "password": NO_AUTH_CREDS},
+            verify=False,
+        )
         return resp.json()["access_token"]
 
     @_Decorators.refresh_jwt_token
     def get(self, url, data=None):
-        return requests.get(self.addr + url,  # noqa: DUO123
-                            headers=self.get_jwt_header(),
-                            params=data,
-                            verify=False)
+        return requests.get(
+            self.addr + url,  # noqa: DUO123
+            headers=self.get_jwt_header(),
+            params=data,
+            verify=False,
+        )
 
     @_Decorators.refresh_jwt_token
     def post(self, url, data):
-        return requests.post(self.addr + url,  # noqa: DUO123
-                             data=data,
-                             headers=self.get_jwt_header(),
-                             verify=False)
+        return requests.post(
+            self.addr + url, data=data, headers=self.get_jwt_header(), verify=False  # noqa: DUO123
+        )
 
     @_Decorators.refresh_jwt_token
     def post_json(self, url, data: Dict):
-        return requests.post(self.addr + url,  # noqa: DUO123
-                             json=data,
-                             headers=self.get_jwt_header(),
-                             verify=False)
+        return requests.post(
+            self.addr + url, json=data, headers=self.get_jwt_header(), verify=False  # noqa: DUO123
+        )
 
     @_Decorators.refresh_jwt_token
     def patch(self, url, data: Dict):
-        return requests.patch(self.addr + url,  # noqa: DUO123
-                              data=data,
-                              headers=self.get_jwt_header(),
-                              verify=False)
+        return requests.patch(
+            self.addr + url, data=data, headers=self.get_jwt_header(), verify=False  # noqa: DUO123
+        )
 
     @_Decorators.refresh_jwt_token
     def delete(self, url):
         return requests.delete(  # noqa: DOU123
-            self.addr + url,
-            headers=self.get_jwt_header(),
-            verify=False)
+            self.addr + url, headers=self.get_jwt_header(), verify=False
+        )
 
     @_Decorators.refresh_jwt_token
     def get_jwt_header(self):

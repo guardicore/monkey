@@ -83,5 +83,5 @@ ANTI_VIRUS_KNOWN_PROCESS_NAMES = [
     "gc-fastpath.exe",
     "gc-enforcement-channel.exe",
     "gc-enforcement-agent.exe",
-    "gc-agent-ui.exe"
+    "gc-agent-ui.exe",
 ]
