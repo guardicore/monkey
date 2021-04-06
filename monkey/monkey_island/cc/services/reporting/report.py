@@ -32,7 +32,6 @@ logger = logging.getLogger(__name__)
 
 
 class ReportService:
-    exploiter_descriptors = ExploiterDescriptorEnum.__dict__
 
     class DerivedIssueEnum:
         WEAK_PASSWORD = "weak_password"
@@ -145,7 +144,7 @@ class ReportService:
 
     @staticmethod
     def get_exploits_used_on_node(node: dict) -> List[str]:
-        return list(set([ExploiterDescriptorEnum.get_display_name_by_class_name(exploit['exploiter'])
+        return list(set([ExploiterDescriptorEnum.get_by_class_name(exploit['exploiter']).display_name
                          for exploit in node['exploits']
                          if exploit['result']]))
 
@@ -253,9 +252,9 @@ class ReportService:
     @staticmethod
     def process_exploit(exploit) -> ExploiterReportInfo:
         exploiter_type = exploit['data']['exploiter']
-        exploiter_descriptor = ReportService.exploiter_descriptors[exploiter_type].value
+        exploiter_descriptor = ExploiterDescriptorEnum.get_by_class_name(exploiter_type)
         processor = exploiter_descriptor.processor()
-        exploiter_info = processor.get_exploit_info_by_dict(exploiter_descriptor.class_name, exploit)
+        exploiter_info = processor.get_exploit_info_by_dict(exploiter_type, exploit)
         return exploiter_info
 
     @staticmethod
@@ -485,7 +484,7 @@ class ReportService:
         if exploits == default_exploits:
             return ['default']
 
-        return [ExploiterDescriptorEnum.get_display_name_by_class_name(exploit)
+        return [ExploiterDescriptorEnum.get_by_class_name(exploit).display_name
                 for exploit in exploits]
 
     @staticmethod
