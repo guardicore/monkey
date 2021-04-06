@@ -9,6 +9,21 @@ param(
     [Bool]
     $agents = $true
 )
+
+function Configure-precommit([String] $python_command)
+{
+    Write-Output "Installing pre-commit and setting up pre-commit hook"
+    python -m pip install pre-commit
+	if ($LastExitCode) {
+		exit
+	}
+    pre-commit install
+	if ($LastExitCode) {
+		exit
+	}
+    Write-Output "Pre-commit successfully installed"
+}
+
 function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, [String] $branch = "develop")
 {
     Write-Output "Downloading to $monkey_home"
@@ -118,6 +133,8 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     "Installing python packages for ScoutSuite"
     $scoutsuiteRequirements = Join-Path -Path $monkey_home -ChildPath $SCOUTSUITE_DIR | Join-Path -ChildPath "\requirements.txt"
     & python -m pip install --user -r $scoutsuiteRequirements
+
+    Configure-precommit
 
     $user_python_dir = cmd.exe /c 'py -m site --user-site'
     $user_python_dir = Join-Path (Split-Path $user_python_dir) -ChildPath "\Scripts"
