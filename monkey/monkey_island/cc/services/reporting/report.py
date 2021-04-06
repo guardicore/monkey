@@ -2,7 +2,7 @@ import functools
 import ipaddress
 import itertools
 import logging
-from enum import Enum
+from typing import List
 
 from bson import json_util
 
@@ -17,6 +17,11 @@ from common.config_value_paths import (EXPLOITER_CLASSES_PATH, LOCAL_NETWORK_SCA
                                        USER_LIST_PATH)
 from monkey_island.cc.services.configuration.utils import get_config_network_segments_as_subnet_groups
 from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.cred_exploit import \
+    CredentialType
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.exploit import \
+    ExploiterReportInfo
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.services.reporting.report_generation_synchronisation import safe_generate_regular_report
@@ -27,51 +32,11 @@ logger = logging.getLogger(__name__)
 
 
 class ReportService:
-    def __init__(self):
-        pass
 
-    EXPLOIT_DISPLAY_DICT = \
-        {
-            'SmbExploiter': 'SMB Exploiter',
-            'WmiExploiter': 'WMI Exploiter',
-            'SSHExploiter': 'SSH Exploiter',
-            'SambaCryExploiter': 'SambaCry Exploiter',
-            'ElasticGroovyExploiter': 'Elastic Groovy Exploiter',
-            'Ms08_067_Exploiter': 'Conficker Exploiter',
-            'ShellShockExploiter': 'ShellShock Exploiter',
-            'Struts2Exploiter': 'Struts2 Exploiter',
-            'WebLogicExploiter': 'Oracle WebLogic Exploiter',
-            'HadoopExploiter': 'Hadoop/Yarn Exploiter',
-            'MSSQLExploiter': 'MSSQL Exploiter',
-            'VSFTPDExploiter': 'VSFTPD Backdoor Exploiter',
-            'DrupalExploiter': 'Drupal Server Exploiter',
-            'ZerologonExploiter': 'Windows Server Zerologon Exploiter'
-        }
-
-    class ISSUES_DICT(Enum):
-        WEAK_PASSWORD = 0
-        STOLEN_CREDS = 1
-        ELASTIC = 2
-        SAMBACRY = 3
-        SHELLSHOCK = 4
-        CONFICKER = 5
-        AZURE = 6
-        STOLEN_SSH_KEYS = 7
-        STRUTS2 = 8
-        WEBLOGIC = 9
-        HADOOP = 10
-        PTH_CRIT_SERVICES_ACCESS = 11
-        MSSQL = 12
-        VSFTPD = 13
-        DRUPAL = 14
-        ZEROLOGON = 15
-        ZEROLOGON_PASSWORD_RESTORE_FAILED = 16
-
-    class WARNINGS_DICT(Enum):
-        CROSS_SEGMENT = 0
-        TUNNEL = 1
-        SHARED_LOCAL_ADMIN = 2
-        SHARED_PASSWORDS = 3
+    class DerivedIssueEnum:
+        WEAK_PASSWORD = "weak_password"
+        STOLEN_CREDS = "stolen_creds"
+        ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
 
     @staticmethod
     def get_first_monkey_time():
@@ -169,15 +134,19 @@ class ReportService:
                 'label': exploited_node['label'],
                 'ip_addresses': exploited_node['ip_addresses'],
                 'domain_name': exploited_node['domain_name'],
-                'exploits': list(set(
-                    [ReportService.EXPLOIT_DISPLAY_DICT[exploit['exploiter']] for exploit in exploited_node['exploits']
-                     if exploit['result']]))
+                'exploits': ReportService.get_exploits_used_on_node(exploited_node)
             }
             for exploited_node in exploited]
 
         logger.info('Exploited nodes generated for reporting')
 
         return exploited
+
+    @staticmethod
+    def get_exploits_used_on_node(node: dict) -> List[str]:
+        return list(set([ExploiterDescriptorEnum.get_by_class_name(exploit['exploiter']).display_name
+                         for exploit in node['exploits']
+                         if exploit['result']]))
 
     @staticmethod
     def get_stolen_creds():
@@ -281,151 +250,15 @@ class ReportService:
         return creds
 
     @staticmethod
-    def process_general_exploit(exploit):
-        ip_addr = exploit['data']['machine']['ip_addr']
-        return {'machine': NodeService.get_node_hostname(NodeService.get_node_or_monkey_by_ip(ip_addr)),
-                'ip_address': ip_addr}
-
-    @staticmethod
-    def process_general_creds_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-
-        for attempt in exploit['data']['attempts']:
-            if attempt['result']:
-                processed_exploit['username'] = attempt['user']
-                if attempt['password']:
-                    processed_exploit['type'] = 'password'
-                    processed_exploit['password'] = attempt['password']
-                elif attempt['ssh_key']:
-                    processed_exploit['type'] = 'ssh_key'
-                    processed_exploit['ssh_key'] = attempt['ssh_key']
-                else:
-                    processed_exploit['type'] = 'hash'
-                return processed_exploit
-        return processed_exploit
-
-    @staticmethod
-    def process_smb_exploit(exploit):
-        processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        if processed_exploit['type'] == 'password':
-            processed_exploit['type'] = 'smb_password'
-        else:
-            processed_exploit['type'] = 'smb_pth'
-        return processed_exploit
-
-    @staticmethod
-    def process_wmi_exploit(exploit):
-        processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        if processed_exploit['type'] == 'password':
-            processed_exploit['type'] = 'wmi_password'
-        else:
-            processed_exploit['type'] = 'wmi_pth'
-        return processed_exploit
-
-    @staticmethod
-    def process_ssh_exploit(exploit):
-        processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        # Check if it's ssh key or ssh login credentials exploit
-        if processed_exploit['type'] == 'ssh_key':
-            return processed_exploit
-        else:
-            processed_exploit['type'] = 'ssh'
-            return processed_exploit
-
-    @staticmethod
-    def process_vsftpd_exploit(exploit):
-        processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        processed_exploit['type'] = 'vsftp'
-        return processed_exploit
-
-    @staticmethod
-    def process_sambacry_exploit(exploit):
-        processed_exploit = ReportService.process_general_creds_exploit(exploit)
-        processed_exploit['type'] = 'sambacry'
-        return processed_exploit
-
-    @staticmethod
-    def process_elastic_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-        processed_exploit['type'] = 'elastic'
-        return processed_exploit
-
-    @staticmethod
-    def process_conficker_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-        processed_exploit['type'] = 'conficker'
-        return processed_exploit
-
-    @staticmethod
-    def process_shellshock_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-        processed_exploit['type'] = 'shellshock'
-        urls = exploit['data']['info']['vulnerable_urls']
-        processed_exploit['port'] = urls[0].split(':')[2].split('/')[0]
-        processed_exploit['paths'] = ['/' + url.split(':')[2].split('/')[1] for url in urls]
-        return processed_exploit
-
-    @staticmethod
-    def process_struts2_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-        processed_exploit['type'] = 'struts2'
-        return processed_exploit
-
-    @staticmethod
-    def process_weblogic_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-        processed_exploit['type'] = 'weblogic'
-        return processed_exploit
-
-    @staticmethod
-    def process_hadoop_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-        processed_exploit['type'] = 'hadoop'
-        return processed_exploit
-
-    @staticmethod
-    def process_mssql_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-        processed_exploit['type'] = 'mssql'
-        return processed_exploit
-
-    @staticmethod
-    def process_drupal_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-        processed_exploit['type'] = 'drupal'
-        return processed_exploit
-
-    @staticmethod
-    def process_zerologon_exploit(exploit):
-        processed_exploit = ReportService.process_general_exploit(exploit)
-        processed_exploit['type'] = 'zerologon'
-        processed_exploit['password_restored'] = exploit['data']['info']['password_restored']
-        return processed_exploit
-
-    @staticmethod
-    def process_exploit(exploit):
+    def process_exploit(exploit) -> ExploiterReportInfo:
         exploiter_type = exploit['data']['exploiter']
-        EXPLOIT_PROCESS_FUNCTION_DICT = {
-            'SmbExploiter': ReportService.process_smb_exploit,
-            'WmiExploiter': ReportService.process_wmi_exploit,
-            'SSHExploiter': ReportService.process_ssh_exploit,
-            'SambaCryExploiter': ReportService.process_sambacry_exploit,
-            'ElasticGroovyExploiter': ReportService.process_elastic_exploit,
-            'Ms08_067_Exploiter': ReportService.process_conficker_exploit,
-            'ShellShockExploiter': ReportService.process_shellshock_exploit,
-            'Struts2Exploiter': ReportService.process_struts2_exploit,
-            'WebLogicExploiter': ReportService.process_weblogic_exploit,
-            'HadoopExploiter': ReportService.process_hadoop_exploit,
-            'MSSQLExploiter': ReportService.process_mssql_exploit,
-            'VSFTPDExploiter': ReportService.process_vsftpd_exploit,
-            'DrupalExploiter': ReportService.process_drupal_exploit,
-            'ZerologonExploiter': ReportService.process_zerologon_exploit
-        }
-
-        return EXPLOIT_PROCESS_FUNCTION_DICT[exploiter_type](exploit)
+        exploiter_descriptor = ExploiterDescriptorEnum.get_by_class_name(exploiter_type)
+        processor = exploiter_descriptor.processor()
+        exploiter_info = processor.get_exploit_info_by_dict(exploiter_type, exploit)
+        return exploiter_info
 
     @staticmethod
-    def get_exploits():
+    def get_exploits() -> List[dict]:
         query = [{'$match': {'telem_category': 'exploit', 'data.result': True}},
                  {'$group': {'_id': {'ip_address': '$data.machine.ip_addr'},
                              'data': {'$first': '$$ROOT'},
@@ -435,7 +268,7 @@ class ReportService:
         for exploit in mongo.db.telemetry.aggregate(query):
             new_exploit = ReportService.process_exploit(exploit)
             if new_exploit not in exploits:
-                exploits.append(new_exploit)
+                exploits.append(new_exploit.__dict__)
         return exploits
 
     @staticmethod
@@ -585,7 +418,8 @@ class ReportService:
     @staticmethod
     def get_cross_segment_issues():
         scans = mongo.db.telemetry.find({'telem_category': 'scan'},
-                                        {'monkey_guid': 1, 'data.machine.ip_addr': 1, 'data.machine.services': 1, 'data.machine.icmp': 1})
+                                        {'monkey_guid': 1, 'data.machine.ip_addr': 1, 'data.machine.services': 1,
+                                         'data.machine.icmp': 1})
 
         cross_segment_issues = []
 
@@ -599,7 +433,6 @@ class ReportService:
 
     @staticmethod
     def get_domain_issues():
-
         ISSUE_GENERATORS = [
             PTHReportService.get_duplicated_passwords_issues,
             PTHReportService.get_shared_admins_issues,
@@ -628,32 +461,6 @@ class ReportService:
             return None
 
     @staticmethod
-    def get_issues():
-        ISSUE_GENERATORS = [
-            ReportService.get_exploits,
-            ReportService.get_tunnels,
-            ReportService.get_island_cross_segment_issues,
-            ReportService.get_azure_issues,
-            PTHReportService.get_duplicated_passwords_issues,
-            PTHReportService.get_strong_users_on_crit_issues
-        ]
-
-        issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
-
-        issues_dict = {}
-        for issue in issues:
-            if issue.get('is_local', True):
-                machine = issue.get('machine').upper()
-                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get('machine'))
-                if machine not in issues_dict:
-                    issues_dict[machine] = []
-                if aws_instance_id:
-                    issue['aws_instance_id'] = aws_instance_id
-                issues_dict[machine].append(issue)
-        logger.info('Issues generated for reporting')
-        return issues_dict
-
-    @staticmethod
     def get_manual_monkeys():
         return [monkey['hostname'] for monkey in mongo.db.monkey.find({}, {'hostname': 1, 'parent': 1, 'guid': 1}) if
                 NodeService.get_monkey_manual_run(monkey)]
@@ -677,8 +484,8 @@ class ReportService:
         if exploits == default_exploits:
             return ['default']
 
-        return [ReportService.EXPLOIT_DISPLAY_DICT[exploit] for exploit in
-                exploits]
+        return [ExploiterDescriptorEnum.get_by_class_name(exploit).display_name
+                for exploit in exploits]
 
     @staticmethod
     def get_config_ips():
@@ -689,68 +496,41 @@ class ReportService:
         return ConfigService.get_config_value(LOCAL_NETWORK_SCAN_PATH, True, True)
 
     @staticmethod
-    def get_issues_overview(issues, config_users, config_passwords):
-        issues_byte_array = [False] * len(ReportService.ISSUES_DICT)
+    def get_issue_set(issues, config_users, config_passwords):
+        issue_set = set()
 
         for machine in issues:
             for issue in issues[machine]:
-                if issue['type'] == 'elastic':
-                    issues_byte_array[ReportService.ISSUES_DICT.ELASTIC.value] = True
-                elif issue['type'] == 'sambacry':
-                    issues_byte_array[ReportService.ISSUES_DICT.SAMBACRY.value] = True
-                elif issue['type'] == 'vsftp':
-                    issues_byte_array[ReportService.ISSUES_DICT.VSFTPD.value] = True
-                elif issue['type'] == 'shellshock':
-                    issues_byte_array[ReportService.ISSUES_DICT.SHELLSHOCK.value] = True
-                elif issue['type'] == 'conficker':
-                    issues_byte_array[ReportService.ISSUES_DICT.CONFICKER.value] = True
-                elif issue['type'] == 'azure_password':
-                    issues_byte_array[ReportService.ISSUES_DICT.AZURE.value] = True
-                elif issue['type'] == 'ssh_key':
-                    issues_byte_array[ReportService.ISSUES_DICT.STOLEN_SSH_KEYS.value] = True
-                elif issue['type'] == 'struts2':
-                    issues_byte_array[ReportService.ISSUES_DICT.STRUTS2.value] = True
-                elif issue['type'] == 'weblogic':
-                    issues_byte_array[ReportService.ISSUES_DICT.WEBLOGIC.value] = True
-                elif issue['type'] == 'mssql':
-                    issues_byte_array[ReportService.ISSUES_DICT.MSSQL.value] = True
-                elif issue['type'] == 'hadoop':
-                    issues_byte_array[ReportService.ISSUES_DICT.HADOOP.value] = True
-                elif issue['type'] == 'drupal':
-                    issues_byte_array[ReportService.ISSUES_DICT.DRUPAL.value] = True
-                elif issue['type'] == 'zerologon':
-                    if not issue['password_restored']:
-                        issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON_PASSWORD_RESTORE_FAILED.value] = True
-                    issues_byte_array[ReportService.ISSUES_DICT.ZEROLOGON.value] = True
-                elif issue['type'].endswith('_password') and issue['password'] in config_passwords and \
-                        issue['username'] in config_users or issue['type'] == 'ssh':
-                    issues_byte_array[ReportService.ISSUES_DICT.WEAK_PASSWORD.value] = True
-                elif issue['type'] == 'strong_users_on_crit':
-                    issues_byte_array[ReportService.ISSUES_DICT.PTH_CRIT_SERVICES_ACCESS.value] = True
-                elif issue['type'].endswith('_pth') or issue['type'].endswith('_password'):
-                    issues_byte_array[ReportService.ISSUES_DICT.STOLEN_CREDS.value] = True
+                if ReportService._is_weak_credential_issue(issue, config_users, config_passwords):
+                    issue_set.add(ReportService.DerivedIssueEnum.WEAK_PASSWORD)
+                elif ReportService._is_stolen_credential_issue(issue):
+                    issue_set.add(ReportService.DerivedIssueEnum.STOLEN_CREDS)
+                elif ReportService._is_zerologon_pass_restore_failed(issue):
+                    issue_set.add(ReportService.DerivedIssueEnum.ZEROLOGON_PASS_RESTORE_FAILED)
 
-        return issues_byte_array
+                issue_set.add(issue['type'])
+
+        return issue_set
 
     @staticmethod
-    def get_warnings_overview(issues, cross_segment_issues):
-        warnings_byte_array = [False] * len(ReportService.WARNINGS_DICT)
+    def _is_weak_credential_issue(issue: dict, config_usernames: List[str], config_passwords: List[str]) -> bool:
+        # Only credential exploiter issues have 'credential_type'
+        return 'credential_type' in issue and \
+               issue['credential_type'] == CredentialType.PASSWORD.value and \
+               issue['password'] in config_passwords and \
+               issue['username'] in config_usernames
 
-        for machine in issues:
-            for issue in issues[machine]:
-                if issue['type'] == 'island_cross_segment':
-                    warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
-                elif issue['type'] == 'tunnel':
-                    warnings_byte_array[ReportService.WARNINGS_DICT.TUNNEL.value] = True
-                elif issue['type'] == 'shared_admins':
-                    warnings_byte_array[ReportService.WARNINGS_DICT.SHARED_LOCAL_ADMIN.value] = True
-                elif issue['type'] == 'shared_passwords':
-                    warnings_byte_array[ReportService.WARNINGS_DICT.SHARED_PASSWORDS.value] = True
+    @staticmethod
+    def _is_stolen_credential_issue(issue: dict) -> bool:
+        # Only credential exploiter issues have 'credential_type'
+        return 'credential_type' in issue and \
+               (issue['credential_type'] == CredentialType.PASSWORD.value or
+                issue['credential_type'] == CredentialType.HASH.value)
 
-        if len(cross_segment_issues) != 0:
-            warnings_byte_array[ReportService.WARNINGS_DICT.CROSS_SEGMENT.value] = True
-
-        return warnings_byte_array
+    @staticmethod
+    def _is_zerologon_pass_restore_failed(issue: dict):
+        return issue['type'] == ExploiterDescriptorEnum.ZEROLOGON.value.class_name \
+               and not issue['password_restored']
 
     @staticmethod
     def is_report_generated():
@@ -763,6 +543,7 @@ class ReportService:
         issues = ReportService.get_issues()
         config_users = ReportService.get_config_users()
         config_passwords = ReportService.get_config_passwords()
+        issue_set = ReportService.get_issue_set(issues, config_users, config_passwords)
         cross_segment_issues = ReportService.get_cross_segment_issues()
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
 
@@ -780,8 +561,7 @@ class ReportService:
                         'config_scan': ReportService.get_config_scan(),
                         'monkey_start_time': ReportService.get_first_monkey_time().strftime("%d/%m/%Y %H:%M:%S"),
                         'monkey_duration': ReportService.get_monkey_duration(),
-                        'issues': ReportService.get_issues_overview(issues, config_users, config_passwords),
-                        'warnings': ReportService.get_warnings_overview(issues, cross_segment_issues),
+                        'issues': issue_set,
                         'cross_segment_issues': cross_segment_issues
                     },
                 'glance':
@@ -808,6 +588,32 @@ class ReportService:
         mongo.db.report.insert_one(ReportService.encode_dot_char_before_mongo_insert(report))
 
         return report
+
+    @staticmethod
+    def get_issues():
+        ISSUE_GENERATORS = [
+            ReportService.get_exploits,
+            ReportService.get_tunnels,
+            ReportService.get_island_cross_segment_issues,
+            ReportService.get_azure_issues,
+            PTHReportService.get_duplicated_passwords_issues,
+            PTHReportService.get_strong_users_on_crit_issues
+        ]
+
+        issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
+
+        issues_dict = {}
+        for issue in issues:
+            if issue.get('is_local', True):
+                machine = issue.get('machine').upper()
+                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get('machine'))
+                if machine not in issues_dict:
+                    issues_dict[machine] = []
+                if aws_instance_id:
+                    issue['aws_instance_id'] = aws_instance_id
+                issues_dict[machine].append(issue)
+        logger.info('Issues generated for reporting')
+        return issues_dict
 
     @staticmethod
     def encode_dot_char_before_mongo_insert(report_dict):
