@@ -145,7 +145,9 @@ class ReportService:
 
     @staticmethod
     def get_exploits_used_on_node(node: dict) -> List[str]:
-        return list(set([exploit['exploiter'] for exploit in node['exploits'] if exploit['result']]))
+        return list(set([ExploiterDescriptorEnum.get_display_name_by_class_name(exploit['exploiter'])
+                         for exploit in node['exploits']
+                         if exploit['result']]))
 
     @staticmethod
     def get_stolen_creds():
@@ -483,7 +485,8 @@ class ReportService:
         if exploits == default_exploits:
             return ['default']
 
-        return exploits
+        return [ExploiterDescriptorEnum.get_display_name_by_class_name(exploit)
+                for exploit in exploits]
 
     @staticmethod
     def get_config_ips():
