@@ -42,10 +42,10 @@ NODE_DICT_FAILED_EXPLOITS['exploits'][1]['result'] = False
 
 def test_get_exploits_used_on_node():
     exploits = ReportService.get_exploits_used_on_node(NODE_DICT)
-    assert sorted(exploits) == sorted(['ElasticGroovyExploiter', 'DrupalExploiter'])
+    assert sorted(exploits) == sorted(['Elastic Groovy Exploiter', 'Drupal Server Exploiter'])
 
     exploits = ReportService.get_exploits_used_on_node(NODE_DICT_DUPLICATE_EXPLOITS)
-    assert exploits == ['DrupalExploiter']
+    assert exploits == ['Drupal Server Exploiter']
 
     exploits = ReportService.get_exploits_used_on_node(NODE_DICT_FAILED_EXPLOITS)
     assert exploits == []
