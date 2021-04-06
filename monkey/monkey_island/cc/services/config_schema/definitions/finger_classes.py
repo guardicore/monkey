@@ -78,6 +78,7 @@ FINGER_CLASSES = {
                 "PostgreSQLFinger"
             ],
             "title": "PostgreSQLFinger",
+            "safe": True,
             "info": "Checks if PostgreSQL service is running and if its communication is encrypted.",
             "attack_techniques": ["T1210"]
         }
