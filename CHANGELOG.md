@@ -17,3 +17,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Monkey agents are stored in the configurable data_dir when monkey is "run
   from the island". #997
 - Reformated all code using black. #1070
+- Sort all imports usind isort. #1081
