@@ -38,13 +38,13 @@ class NodeStates(Enum):
         ]
         if len(potential_groups) > 1:
             raise MultipleGroupsFoundException(
-                "Multiple groups contain provided keywords. "
-                "Manually build group string to ensure keyword order."
+                    "Multiple groups contain provided keywords. "
+                    "Manually build group string to ensure keyword order."
             )
         elif len(potential_groups) == 0:
             raise NoGroupsFoundException(
-                "No groups found with provided keywords. "
-                "Check for typos and make sure group codes want to find exists."
+                    "No groups found with provided keywords. "
+                    "Check for typos and make sure group codes want to find exists."
             )
         return potential_groups[0]
 

@@ -5,7 +5,6 @@ from monkey_island.cc.services.attack.test_mitre_api_interface import MitreApiIn
 
 
 class Mitigation(EmbeddedDocument):
-
     name = StringField(required=True)
     description = StringField(required=True)
     url = StringField()

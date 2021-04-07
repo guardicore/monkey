@@ -5,7 +5,6 @@ __author__ = "itay.mizeretz"
 
 
 class StandardEnvironment(Environment):
-
     _credentials_required = False
 
     # SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'

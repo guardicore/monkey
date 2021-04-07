@@ -13,9 +13,9 @@ STANDARD = "standard"
 PASSWORD = "password"
 
 ENV_DICT = {
-    STANDARD: standard.StandardEnvironment,
-    AWS: aws.AwsEnvironment,
-    PASSWORD: password.PasswordEnvironment,
+    STANDARD:standard.StandardEnvironment,
+    AWS:aws.AwsEnvironment,
+    PASSWORD:password.PasswordEnvironment,
 }
 
 env = None

@@ -38,8 +38,8 @@ class AwsCmdRunner(CmdRunner):
     def run_command_async(self, command_line):
         doc_name = "AWS-RunShellScript" if self.is_linux else "AWS-RunPowerShellScript"
         command_res = self.ssm.send_command(
-            DocumentName=doc_name,
-            Parameters={"commands": [command_line]},
-            InstanceIds=[self.instance_id],
+                DocumentName=doc_name,
+                Parameters={"commands":[command_line]},
+                InstanceIds=[self.instance_id],
         )
         return command_res["Command"]["CommandId"]

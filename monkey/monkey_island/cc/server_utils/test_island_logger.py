@@ -7,7 +7,7 @@ from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.island_logger import json_setup_logging
 
 TEST_LOGGER_CONFIG_PATH = os.path.join(
-    MONKEY_ISLAND_ABS_PATH, "cc", "testing", "logger_config.json"
+        MONKEY_ISLAND_ABS_PATH, "cc", "testing", "logger_config.json"
 )
 
 

@@ -16,4 +16,4 @@ class TunnelTelem(BaseTelem):
     telem_category = TelemCategoryEnum.TUNNEL
 
     def get_data(self):
-        return {"proxy": self.proxy}
+        return {"proxy":self.proxy}

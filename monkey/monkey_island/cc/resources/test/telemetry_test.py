@@ -10,4 +10,4 @@ class TelemetryTest(flask_restful.Resource):
     @jwt_required
     def get(self, **kw):
         find_query = json_util.loads(request.args.get("find_query"))
-        return {"results": list(mongo.db.telemetry.find(find_query))}
+        return {"results":list(mongo.db.telemetry.find(find_query))}

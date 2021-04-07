@@ -8,7 +8,6 @@ from monkey_island.cc.services.attack.test_mitre_api_interface import MitreApiIn
 
 
 class AttackMitigations(Document):
-
     COLLECTION_NAME = "attack_mitigations"
 
     technique_id = StringField(required=True, primary_key=True)
@@ -39,13 +38,13 @@ class AttackMitigations(Document):
     @staticmethod
     def mitigations_from_attack_pattern(attack_pattern: AttackPattern):
         return AttackMitigations(
-            technique_id=MitreApiInterface.get_stix2_external_reference_id(attack_pattern),
-            mitigations=[],
+                technique_id=MitreApiInterface.get_stix2_external_reference_id(attack_pattern),
+                mitigations=[],
         )
 
     @staticmethod
     def dict_from_stix2_attack_patterns(stix2_dict: Dict[str, AttackPattern]):
         return {
-            key: AttackMitigations.mitigations_from_attack_pattern(attack_pattern)
+            key:AttackMitigations.mitigations_from_attack_pattern(attack_pattern)
             for key, attack_pattern in stix2_dict.items()
         }

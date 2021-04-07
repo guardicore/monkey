@@ -30,7 +30,6 @@ INSTANCE_IDENTITY_DOCUMENT_RESPONSE = """
 }
 """
 
-
 EXPECTED_INSTANCE_ID = "i-1234567890abcdef0"
 
 EXPECTED_REGION = "us-west-2"
@@ -39,14 +38,14 @@ EXPECTED_ACCOUNT_ID = "123456789012"
 
 
 def get_test_aws_instance(
-    text={"instance_id": None, "region": None, "account_id": None},
-    exception={"instance_id": None, "region": None, "account_id": None},
+        text={"instance_id":None, "region":None, "account_id":None},
+        exception={"instance_id":None, "region":None, "account_id":None},
 ):
     with requests_mock.Mocker() as m:
         # request made to get instance_id
         url = f"{AWS_LATEST_METADATA_URI_PREFIX}meta-data/instance-id"
         m.get(url, text=text["instance_id"]) if text["instance_id"] else m.get(
-            url, exc=exception["instance_id"]
+                url, exc=exception["instance_id"]
         )
 
         # request made to get region
@@ -56,7 +55,7 @@ def get_test_aws_instance(
         # request made to get account_id
         url = f"{AWS_LATEST_METADATA_URI_PREFIX}dynamic/instance-identity/document"
         m.get(url, text=text["account_id"]) if text["account_id"] else m.get(
-            url, exc=exception["account_id"]
+                url, exc=exception["account_id"]
         )
 
         test_aws_instance_object = AwsInstance()
@@ -67,11 +66,11 @@ def get_test_aws_instance(
 @pytest.fixture
 def good_data_mock_instance():
     return get_test_aws_instance(
-        text={
-            "instance_id": INSTANCE_ID_RESPONSE,
-            "region": AVAILABILITY_ZONE_RESPONSE,
-            "account_id": INSTANCE_IDENTITY_DOCUMENT_RESPONSE,
-        }
+            text={
+                "instance_id":INSTANCE_ID_RESPONSE,
+                "region":AVAILABILITY_ZONE_RESPONSE,
+                "account_id":INSTANCE_IDENTITY_DOCUMENT_RESPONSE,
+            }
     )
 
 
@@ -99,11 +98,11 @@ def test_get_account_id_good_data(good_data_mock_instance):
 @pytest.fixture
 def bad_region_data_mock_instance():
     return get_test_aws_instance(
-        text={
-            "instance_id": INSTANCE_ID_RESPONSE,
-            "region": "in-a-different-world",
-            "account_id": INSTANCE_IDENTITY_DOCUMENT_RESPONSE,
-        }
+            text={
+                "instance_id":INSTANCE_ID_RESPONSE,
+                "region":"in-a-different-world",
+                "account_id":INSTANCE_IDENTITY_DOCUMENT_RESPONSE,
+            }
     )
 
 
@@ -131,11 +130,11 @@ def test_get_account_id_bad_region_data(bad_region_data_mock_instance):
 @pytest.fixture
 def bad_account_id_data_mock_instance():
     return get_test_aws_instance(
-        text={
-            "instance_id": INSTANCE_ID_RESPONSE,
-            "region": AVAILABILITY_ZONE_RESPONSE,
-            "account_id": "who-am-i",
-        }
+            text={
+                "instance_id":INSTANCE_ID_RESPONSE,
+                "region":AVAILABILITY_ZONE_RESPONSE,
+                "account_id":"who-am-i",
+            }
     )
 
 
@@ -163,12 +162,12 @@ def test_get_account_id_data_bad_account_id_data(bad_account_id_data_mock_instan
 @pytest.fixture
 def bad_instance_id_request_mock_instance(instance_id_exception):
     return get_test_aws_instance(
-        text={
-            "instance_id": None,
-            "region": AVAILABILITY_ZONE_RESPONSE,
-            "account_id": INSTANCE_IDENTITY_DOCUMENT_RESPONSE,
-        },
-        exception={"instance_id": instance_id_exception, "region": None, "account_id": None},
+            text={
+                "instance_id":None,
+                "region":AVAILABILITY_ZONE_RESPONSE,
+                "account_id":INSTANCE_IDENTITY_DOCUMENT_RESPONSE,
+            },
+            exception={"instance_id":instance_id_exception, "region":None, "account_id":None},
     )
 
 
@@ -201,12 +200,12 @@ def test_get_account_id_bad_instance_id_request(bad_instance_id_request_mock_ins
 @pytest.fixture
 def bad_region_request_mock_instance(region_exception):
     return get_test_aws_instance(
-        text={
-            "instance_id": INSTANCE_ID_RESPONSE,
-            "region": None,
-            "account_id": INSTANCE_IDENTITY_DOCUMENT_RESPONSE,
-        },
-        exception={"instance_id": None, "region": region_exception, "account_id": None},
+            text={
+                "instance_id":INSTANCE_ID_RESPONSE,
+                "region":None,
+                "account_id":INSTANCE_IDENTITY_DOCUMENT_RESPONSE,
+            },
+            exception={"instance_id":None, "region":region_exception, "account_id":None},
     )
 
 
@@ -239,12 +238,12 @@ def test_get_account_id_bad_region_request(bad_region_request_mock_instance):
 @pytest.fixture
 def bad_account_id_request_mock_instance(account_id_exception):
     return get_test_aws_instance(
-        text={
-            "instance_id": INSTANCE_ID_RESPONSE,
-            "region": AVAILABILITY_ZONE_RESPONSE,
-            "account_id": None,
-        },
-        exception={"instance_id": None, "region": None, "account_id": account_id_exception},
+            text={
+                "instance_id":INSTANCE_ID_RESPONSE,
+                "region":AVAILABILITY_ZONE_RESPONSE,
+                "account_id":None,
+            },
+            exception={"instance_id":None, "region":None, "account_id":account_id_exception},
     )
 
 

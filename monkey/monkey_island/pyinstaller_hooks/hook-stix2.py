@@ -1,4 +1,5 @@
-# Workaround for packaging Monkey Island using PyInstaller. See https://github.com/oasis-open/cti-python-stix2/issues/218
+# Workaround for packaging Monkey Island using PyInstaller. See
+# https://github.com/oasis-open/cti-python-stix2/issues/218
 
 import os
 

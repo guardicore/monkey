@@ -58,12 +58,12 @@ class EnvironmentConfig:
 
     def to_dict(self) -> Dict:
         config_dict = {
-            "server_config": self.server_config,
-            "deployment": self.deployment,
-            "data_dir": self.data_dir,
+            "server_config":self.server_config,
+            "deployment":self.deployment,
+            "data_dir":self.data_dir,
         }
         if self.aws:
-            config_dict.update({"aws": self.aws})
+            config_dict.update({"aws":self.aws})
         config_dict.update(self.user_creds.to_dict())
         return config_dict
 

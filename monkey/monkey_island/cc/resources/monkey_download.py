@@ -14,47 +14,47 @@ logger = logging.getLogger(__name__)
 
 MONKEY_DOWNLOADS = [
     {
-        "type": "linux",
-        "machine": "x86_64",
-        "filename": "monkey-linux-64",
+        "type":"linux",
+        "machine":"x86_64",
+        "filename":"monkey-linux-64",
     },
     {
-        "type": "linux",
-        "machine": "i686",
-        "filename": "monkey-linux-32",
+        "type":"linux",
+        "machine":"i686",
+        "filename":"monkey-linux-32",
     },
     {
-        "type": "linux",
-        "machine": "i386",
-        "filename": "monkey-linux-32",
+        "type":"linux",
+        "machine":"i386",
+        "filename":"monkey-linux-32",
     },
     {
-        "type": "linux",
-        "filename": "monkey-linux-64",
+        "type":"linux",
+        "filename":"monkey-linux-64",
     },
     {
-        "type": "windows",
-        "machine": "x86",
-        "filename": "monkey-windows-32.exe",
+        "type":"windows",
+        "machine":"x86",
+        "filename":"monkey-windows-32.exe",
     },
     {
-        "type": "windows",
-        "machine": "amd64",
-        "filename": "monkey-windows-64.exe",
+        "type":"windows",
+        "machine":"amd64",
+        "filename":"monkey-windows-64.exe",
     },
     {
-        "type": "windows",
-        "machine": "64",
-        "filename": "monkey-windows-64.exe",
+        "type":"windows",
+        "machine":"64",
+        "filename":"monkey-windows-64.exe",
     },
     {
-        "type": "windows",
-        "machine": "32",
-        "filename": "monkey-windows-32.exe",
+        "type":"windows",
+        "machine":"32",
+        "filename":"monkey-windows-32.exe",
     },
     {
-        "type": "windows",
-        "filename": "monkey-windows-32.exe",
+        "type":"windows",
+        "filename":"monkey-windows-32.exe",
     },
 ]
 
@@ -65,9 +65,8 @@ def get_monkey_executable(host_os, machine):
             logger.info("Monkey exec found for os: {0} and machine: {1}".format(host_os, machine))
             return download
     logger.warning(
-        "No monkey executables could be found for the host os or machine or both: host_os: {0}, machine: {1}".format(
-            host_os, machine
-        )
+            "No monkey executables could be found for the host os or machine or both: host_os: {"
+            "0}, machine: {1}".format(host_os, machine)
     )
     return None
 
@@ -103,7 +102,8 @@ class MonkeyDownload(flask_restful.Resource):
     @staticmethod
     def log_executable_hashes():
         """
-        Logs all the hashes of the monkey executables for debugging ease (can check what Monkey version you have etc.).
+        Logs all the hashes of the monkey executables for debugging ease (can check what Monkey
+        version you have etc.).
         """
         filenames = set([x["filename"] for x in MONKEY_DOWNLOADS])
         for filename in filenames:
@@ -112,9 +112,9 @@ class MonkeyDownload(flask_restful.Resource):
                 with open(filepath, "rb") as monkey_exec_file:
                     file_contents = monkey_exec_file.read()
                     logger.debug(
-                        "{} hashes:\nSHA-256 {}".format(
-                            filename, hashlib.sha256(file_contents).hexdigest()
-                        )
+                            "{} hashes:\nSHA-256 {}".format(
+                                    filename, hashlib.sha256(file_contents).hexdigest()
+                            )
                     )
             else:
                 logger.debug("No monkey executable for {}.".format(filepath))

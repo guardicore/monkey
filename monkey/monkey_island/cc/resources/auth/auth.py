@@ -19,13 +19,14 @@ def init_jwt(app):
     user_store.UserStore.set_users(env_singleton.env.get_auth_users())
     _ = flask_jwt_extended.JWTManager(app)
     logger.debug(
-        "Initialized JWT with secret key that started with " + app.config["JWT_SECRET_KEY"][:4]
+            "Initialized JWT with secret key that started with " + app.config["JWT_SECRET_KEY"][:4]
     )
 
 
 class Authenticate(flask_restful.Resource):
     """
-    Resource for user authentication. The user provides the username and hashed password and we give them a JWT.
+    Resource for user authentication. The user provides the username and hashed password and we
+    give them a JWT.
     See `AuthService.js` file for the frontend counterpart for this code.
     """
 
@@ -50,14 +51,14 @@ class Authenticate(flask_restful.Resource):
         # If the user and password have been previously registered
         if self._authenticate(username, secret):
             access_token = flask_jwt_extended.create_access_token(
-                identity=user_store.UserStore.username_table[username].id
+                    identity=user_store.UserStore.username_table[username].id
             )
             logger.debug(
-                f"Created access token for user {username} that begins with {access_token[:4]}"
+                    f"Created access token for user {username} that begins with {access_token[:4]}"
             )
-            return make_response({"access_token": access_token, "error": ""}, 200)
+            return make_response({"access_token":access_token, "error":""}, 200)
         else:
-            return make_response({"error": "Invalid credentials"}, 401)
+            return make_response({"error":"Invalid credentials"}, 401)
 
 
 # See https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
@@ -67,8 +68,9 @@ def jwt_required(fn):
         try:
             flask_jwt_extended.verify_jwt_in_request()
             return fn(*args, **kwargs)
-        # Catch authentication related errors in the verification or inside the called function. All other exceptions propagate
+        # Catch authentication related errors in the verification or inside the called function.
+        # All other exceptions propagate
         except (JWTExtendedException, PyJWTError) as e:
-            return make_response({"error": f"Authentication error: {str(e)}"}, 401)
+            return make_response({"error":f"Authentication error: {str(e)}"}, 401)
 
     return wrapper

@@ -30,22 +30,23 @@ class ProcessListCollector(SystemInfoCollector):
         for process in psutil.process_iter():
             try:
                 processes[process.pid] = {
-                    "name": process.name(),
-                    "pid": process.pid,
-                    "ppid": process.ppid(),
-                    "cmdline": " ".join(process.cmdline()),
-                    "full_image_path": process.exe(),
+                    "name":process.name(),
+                    "pid":process.pid,
+                    "ppid":process.ppid(),
+                    "cmdline":" ".join(process.cmdline()),
+                    "full_image_path":process.exe(),
                 }
             except (psutil.AccessDenied, WindowsError):
-                # we may be running as non root and some processes are impossible to acquire in Windows/Linux.
+                # we may be running as non root and some processes are impossible to acquire in
+                # Windows/Linux.
                 # In this case we'll just add what we know.
                 processes[process.pid] = {
-                    "name": "null",
-                    "pid": process.pid,
-                    "ppid": process.ppid(),
-                    "cmdline": "ACCESS DENIED",
-                    "full_image_path": "null",
+                    "name":"null",
+                    "pid":process.pid,
+                    "ppid":process.ppid(),
+                    "cmdline":"ACCESS DENIED",
+                    "full_image_path":"null",
                 }
                 continue
 
-        return {"process_list": processes}
+        return {"process_list":processes}

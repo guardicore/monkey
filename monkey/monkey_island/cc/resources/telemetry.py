@@ -28,18 +28,18 @@ class Telemetry(flask_restful.Resource):
         if "null" == timestamp:  # special case to avoid ugly JS code...
             timestamp = None
 
-        result = {"timestamp": datetime.now().isoformat()}
+        result = {"timestamp":datetime.now().isoformat()}
         find_filter = {}
 
         if monkey_guid:
-            find_filter["monkey_guid"] = {"$eq": monkey_guid}
+            find_filter["monkey_guid"] = {"$eq":monkey_guid}
         if telem_category:
-            find_filter["telem_category"] = {"$eq": telem_category}
+            find_filter["telem_category"] = {"$eq":telem_category}
         if timestamp:
-            find_filter["timestamp"] = {"$gt": dateutil.parser.parse(timestamp)}
+            find_filter["timestamp"] = {"$gt":dateutil.parser.parse(timestamp)}
 
         result["objects"] = self.telemetry_to_displayed_telemetry(
-            mongo.db.telemetry.find(find_filter)
+                mongo.db.telemetry.find(find_filter)
         )
         return result
 
@@ -50,8 +50,8 @@ class Telemetry(flask_restful.Resource):
         telemetry_json["data"] = json.loads(telemetry_json["data"])
         telemetry_json["timestamp"] = datetime.now()
         telemetry_json["command_control_channel"] = {
-            "src": request.remote_addr,
-            "dst": request.host,
+            "src":request.remote_addr,
+            "dst":request.host,
         }
 
         # Monkey communicated, so it's alive. Update the TTL.
@@ -63,7 +63,7 @@ class Telemetry(flask_restful.Resource):
         process_telemetry(telemetry_json)
 
         telem_id = mongo.db.telemetry.insert(telemetry_json)
-        return mongo.db.telemetry.find_one_or_404({"_id": telem_id})
+        return mongo.db.telemetry.find_one_or_404({"_id":telem_id})
 
     @staticmethod
     def telemetry_to_displayed_telemetry(telemetry):

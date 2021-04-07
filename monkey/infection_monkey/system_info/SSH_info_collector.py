@@ -38,11 +38,11 @@ class SSHCollector(object):
         possibly hashed)
         """
         return {
-            "name": name,
-            "home_dir": home_dir,
-            "public_key": None,
-            "private_key": None,
-            "known_hosts": None,
+            "name":name,
+            "home_dir":home_dir,
+            "public_key":None,
+            "private_key":None,
+            "known_hosts":None,
         }
 
     @staticmethod
@@ -72,7 +72,8 @@ class SSHCollector(object):
                             try:
                                 with open(public) as f:
                                     info["public_key"] = f.read()
-                                # By default private key has the same name as public, only without .pub
+                                # By default private key has the same name as public,
+                                # only without .pub
                                 private = os.path.splitext(public)[0]
                                 if os.path.exists(private):
                                     try:
@@ -83,7 +84,8 @@ class SSHCollector(object):
                                                 info["private_key"] = private_key
                                                 LOG.info("Found private key in %s" % private)
                                                 T1005Telem(
-                                                    ScanStatus.USED, "SSH key", "Path: %s" % private
+                                                        ScanStatus.USED, "SSH key",
+                                                        "Path: %s" % private
                                                 ).send()
                                             else:
                                                 continue

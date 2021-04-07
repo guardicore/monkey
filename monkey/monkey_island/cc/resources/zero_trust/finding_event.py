@@ -12,7 +12,7 @@ class ZeroTrustFindingEvent(flask_restful.Resource):
     @jwt_required
     def get(self, finding_id: str):
         return {
-            "events_json": json.dumps(
-                MonkeyZTFindingService.get_events_by_finding(finding_id), default=str
+            "events_json":json.dumps(
+                    MonkeyZTFindingService.get_events_by_finding(finding_id), default=str
             )
         }

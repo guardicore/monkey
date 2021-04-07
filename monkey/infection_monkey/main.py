@@ -22,23 +22,24 @@ __author__ = "itamar"
 LOG = None
 
 LOG_CONFIG = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "standard": {
-            "format": "%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s"
+    "version":1,
+    "disable_existing_loggers":False,
+    "formatters":{
+        "standard":{
+            "format":"%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%("
+                     "funcName)s.%(lineno)d: %(message)s"
         },
     },
-    "handlers": {
-        "console": {"class": "logging.StreamHandler", "level": "DEBUG", "formatter": "standard"},
-        "file": {
-            "class": "logging.FileHandler",
-            "level": "DEBUG",
-            "formatter": "standard",
-            "filename": None,
+    "handlers":{
+        "console":{"class":"logging.StreamHandler", "level":"DEBUG", "formatter":"standard"},
+        "file":{
+            "class":"logging.FileHandler",
+            "level":"DEBUG",
+            "formatter":"standard",
+            "filename":None,
         },
     },
-    "root": {"level": "DEBUG", "handlers": ["console"]},
+    "root":{"level":"DEBUG", "handlers":["console"]},
 }
 
 
@@ -71,13 +72,13 @@ def main():
             print("Error loading config: %s, using default" % (e,))
     else:
         print(
-            "Config file wasn't supplied and default path: %s wasn't found, using internal default"
-            % (config_file,)
+                "Config file wasn't supplied and default path: %s wasn't found, using internal "
+                "default" % (config_file,)
         )
 
     print(
-        "Loaded Configuration: %r"
-        % WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict())
+            "Loaded Configuration: %r"
+            % WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict())
     )
 
     # Make sure we're not in a machine that has the kill file
@@ -104,7 +105,8 @@ def main():
 
     if WormConfiguration.use_file_logging:
         if os.path.exists(log_path):
-            # If log exists but can't be removed it means other monkey is running. This usually happens on upgrade
+            # If log exists but can't be removed it means other monkey is running. This usually
+            # happens on upgrade
             # from 32bit to 64bit monkey on Windows. In all cases this shouldn't be a problem.
             try:
                 os.remove(log_path)
@@ -126,7 +128,8 @@ def main():
     sys.excepthook = log_uncaught_exceptions
 
     LOG.info(
-        ">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<", monkey_cls.__name__, os.getpid()
+            ">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<", monkey_cls.__name__,
+            os.getpid()
     )
 
     LOG.info(f"version: {get_version()}")
@@ -141,12 +144,12 @@ def main():
             with open(config_file, "w") as config_fo:
                 json_dict = WormConfiguration.as_dict()
                 json.dump(
-                    json_dict,
-                    config_fo,
-                    skipkeys=True,
-                    sort_keys=True,
-                    indent=4,
-                    separators=(",", ": "),
+                        json_dict,
+                        config_fo,
+                        skipkeys=True,
+                        sort_keys=True,
+                        indent=4,
+                        separators=(",", ": "),
                 )
 
         return True

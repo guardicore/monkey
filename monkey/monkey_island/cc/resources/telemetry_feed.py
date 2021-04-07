@@ -24,38 +24,38 @@ class TelemetryFeed(flask_restful.Resource):
             telemetries = mongo.db.telemetry.find({})
         else:
             telemetries = mongo.db.telemetry.find(
-                {"timestamp": {"$gt": dateutil.parser.parse(timestamp)}}
+                    {"timestamp":{"$gt":dateutil.parser.parse(timestamp)}}
             )
             telemetries = telemetries.sort([("timestamp", flask_pymongo.ASCENDING)])
 
         try:
             return {
-                "telemetries": [
+                "telemetries":[
                     TelemetryFeed.get_displayed_telemetry(telem)
                     for telem in telemetries
                     if TelemetryFeed.should_show_brief(telem)
                 ],
-                "timestamp": datetime.now().isoformat(),
+                "timestamp":datetime.now().isoformat(),
             }
         except KeyError as err:
             logger.error("Failed parsing telemetries. Error: {0}.".format(err))
-            return {"telemetries": [], "timestamp": datetime.now().isoformat()}
+            return {"telemetries":[], "timestamp":datetime.now().isoformat()}
 
     @staticmethod
     def get_displayed_telemetry(telem):
         monkey = NodeService.get_monkey_by_guid(telem["monkey_guid"])
         default_hostname = "GUID-" + telem["monkey_guid"]
         return {
-            "id": telem["_id"],
-            "timestamp": telem["timestamp"].strftime("%d/%m/%Y %H:%M:%S"),
-            "hostname": monkey.get("hostname", default_hostname) if monkey else default_hostname,
-            "brief": TelemetryFeed.get_telem_brief(telem),
+            "id":telem["_id"],
+            "timestamp":telem["timestamp"].strftime("%d/%m/%Y %H:%M:%S"),
+            "hostname":monkey.get("hostname", default_hostname) if monkey else default_hostname,
+            "brief":TelemetryFeed.get_telem_brief(telem),
         }
 
     @staticmethod
     def get_telem_brief(telem):
         telem_brief_parser = TelemetryFeed.get_telem_brief_parser_by_category(
-            telem["telem_category"]
+                telem["telem_category"]
         )
         return telem_brief_parser(telem)
 
@@ -116,11 +116,11 @@ class TelemetryFeed(flask_restful.Resource):
 
 
 TELEM_PROCESS_DICT = {
-    TelemCategoryEnum.TUNNEL: TelemetryFeed.get_tunnel_telem_brief,
-    TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
-    TelemCategoryEnum.EXPLOIT: TelemetryFeed.get_exploit_telem_brief,
-    TelemCategoryEnum.SCAN: TelemetryFeed.get_scan_telem_brief,
-    TelemCategoryEnum.SYSTEM_INFO: TelemetryFeed.get_systeminfo_telem_brief,
-    TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
-    TelemCategoryEnum.POST_BREACH: TelemetryFeed.get_post_breach_telem_brief,
+    TelemCategoryEnum.TUNNEL:TelemetryFeed.get_tunnel_telem_brief,
+    TelemCategoryEnum.STATE:TelemetryFeed.get_state_telem_brief,
+    TelemCategoryEnum.EXPLOIT:TelemetryFeed.get_exploit_telem_brief,
+    TelemCategoryEnum.SCAN:TelemetryFeed.get_scan_telem_brief,
+    TelemCategoryEnum.SYSTEM_INFO:TelemetryFeed.get_systeminfo_telem_brief,
+    TelemCategoryEnum.TRACE:TelemetryFeed.get_trace_telem_brief,
+    TelemCategoryEnum.POST_BREACH:TelemetryFeed.get_post_breach_telem_brief,
 }

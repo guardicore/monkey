@@ -15,5 +15,5 @@ class T1005Telem(AttackTelem):
 
     def get_data(self):
         data = super(T1005Telem, self).get_data()
-        data.update({"gathered_data_type": self.gathered_data_type, "info": self.info})
+        data.update({"gathered_data_type":self.gathered_data_type, "info":self.info})
         return data

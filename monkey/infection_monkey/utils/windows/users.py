@@ -47,13 +47,15 @@ class AutoNewWindowsUser(AutoNewUser):
         import win32security
 
         try:
-            # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-logonusera
+            # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf
+            # -winbase-logonusera
             self.logon_handle = win32security.LogonUser(
-                self.username,
-                ".",  # Use current domain.
-                self.password,
-                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user), since we're using a shell.
-                win32con.LOGON32_PROVIDER_DEFAULT,
+                    self.username,
+                    ".",  # Use current domain.
+                    self.password,
+                    win32con.LOGON32_LOGON_INTERACTIVE,
+                    # Logon type - interactive (normal user), since we're using a shell.
+                    win32con.LOGON32_PROVIDER_DEFAULT,
             )  # Which logon provider to use - whatever Windows offers.
         except Exception as err:
             raise NewUserError("Can't logon as {}. Error: {}".format(self.username, str(err)))
@@ -74,20 +76,25 @@ class AutoNewWindowsUser(AutoNewUser):
             # Open process as that user
             # https://github.com/tjguk/winsys/blob/master/winsys/_advapi32.py
             proc_info = _advapi32.CreateProcessWithLogonW(
-                username=self.username, domain=".", password=self.password, command_line=command
+                    username=self.username, domain=".", password=self.password, command_line=command
             )
             process_handle = proc_info.hProcess
             thread_handle = proc_info.hThread
 
             logger.debug(
-                "Waiting for process to finish. Timeout: {}ms".format(WAIT_TIMEOUT_IN_MILLISECONDS)
+                    "Waiting for process to finish. Timeout: {}ms".format(
+                        WAIT_TIMEOUT_IN_MILLISECONDS)
             )
 
-            # https://social.msdn.microsoft.com/Forums/vstudio/en-US/b6d6a7ae-71e9-4edb-ac8f-408d2a41750d/what-events-on-a-process-handle-signal-satisify-waitforsingleobject?forum=vcgeneral
-            # Ignoring return code, as we'll use `GetExitCode` to determine the state of the process later.
-            _ = win32event.WaitForSingleObject(  # Waits until the specified object is signaled, or time-out.
-                process_handle,  # Ping process handle
-                WAIT_TIMEOUT_IN_MILLISECONDS,  # Timeout in milliseconds
+            # https://social.msdn.microsoft.com/Forums/vstudio/en-US/b6d6a7ae-71e9-4edb-ac8f
+            # -408d2a41750d/what-events-on-a-process-handle-signal-satisify-waitforsingleobject
+            # ?forum=vcgeneral
+            # Ignoring return code, as we'll use `GetExitCode` to determine the state of the
+            # process later.
+            _ = win32event.WaitForSingleObject(
+                    # Waits until the specified object is signaled, or time-out.
+                    process_handle,  # Ping process handle
+                    WAIT_TIMEOUT_IN_MILLISECONDS,  # Timeout in milliseconds
             )
 
             exit_code = win32process.GetExitCodeProcess(process_handle)
@@ -117,12 +124,12 @@ class AutoNewWindowsUser(AutoNewUser):
         try:
             commands_to_deactivate_user = get_windows_commands_to_deactivate_user(self.username)
             logger.debug(
-                "Trying to deactivate {} with commands {}".format(
-                    self.username, str(commands_to_deactivate_user)
-                )
+                    "Trying to deactivate {} with commands {}".format(
+                            self.username, str(commands_to_deactivate_user)
+                    )
             )
             _ = subprocess.check_output(
-                commands_to_deactivate_user, stderr=subprocess.STDOUT, shell=True
+                    commands_to_deactivate_user, stderr=subprocess.STDOUT, shell=True
             )
         except Exception as err:
             raise NewUserError("Can't deactivate user {}. Info: {}".format(self.username, err))
@@ -131,12 +138,12 @@ class AutoNewWindowsUser(AutoNewUser):
         try:
             commands_to_delete_user = get_windows_commands_to_delete_user(self.username)
             logger.debug(
-                "Trying to delete {} with commands {}".format(
-                    self.username, str(commands_to_delete_user)
-                )
+                    "Trying to delete {} with commands {}".format(
+                            self.username, str(commands_to_delete_user)
+                    )
             )
             _ = subprocess.check_output(
-                commands_to_delete_user, stderr=subprocess.STDOUT, shell=True
+                    commands_to_delete_user, stderr=subprocess.STDOUT, shell=True
             )
         except Exception as err:
             raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))

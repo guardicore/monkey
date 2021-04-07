@@ -17,7 +17,6 @@ from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 __author__ = "Barak"
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -34,7 +33,8 @@ def run_local_monkey():
     monkey_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "binaries", result["filename"])
     target_path = os.path.join(env_singleton.env.get_config().data_dir_abs_path, result["filename"])
 
-    # copy the executable to temp path (don't run the monkey from its current location as it may delete itself)
+    # copy the executable to temp path (don't run the monkey from its current location as it may
+    # delete itself)
     try:
         copyfile(monkey_path, target_path)
         os.chmod(target_path, stat.S_IRWXU | stat.S_IRWXG)
@@ -78,4 +78,4 @@ class LocalRun(flask_restful.Resource):
             return jsonify(is_running=local_run[0], error_text=local_run[1])
 
         # default action
-        return make_response({"error": "Invalid action"}, 500)
+        return make_response({"error":"Invalid action"}, 500)

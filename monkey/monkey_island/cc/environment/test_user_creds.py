@@ -9,13 +9,13 @@ class TestUserCreds(TestCase):
         self.assertDictEqual(user_creds.to_dict(), {})
 
         user_creds = UserCreds(username="Test")
-        self.assertDictEqual(user_creds.to_dict(), {"user": "Test"})
+        self.assertDictEqual(user_creds.to_dict(), {"user":"Test"})
 
         user_creds = UserCreds(password_hash="abc1231234")
-        self.assertDictEqual(user_creds.to_dict(), {"password_hash": "abc1231234"})
+        self.assertDictEqual(user_creds.to_dict(), {"password_hash":"abc1231234"})
 
         user_creds = UserCreds(username="Test", password_hash="abc1231234")
-        self.assertDictEqual(user_creds.to_dict(), {"user": "Test", "password_hash": "abc1231234"})
+        self.assertDictEqual(user_creds.to_dict(), {"user":"Test", "password_hash":"abc1231234"})
 
     def test_to_auth_user(self):
         user_creds = UserCreds(username="Test", password_hash="abc1231234")

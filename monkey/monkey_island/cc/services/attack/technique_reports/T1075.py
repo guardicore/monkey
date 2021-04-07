@@ -14,38 +14,38 @@ class T1075(AttackTechnique):
     used_msg = "Monkey successfully used hashed credentials."
 
     login_attempt_query = {
-        "data.attempts": {
-            "$elemMatch": {"$or": [{"ntlm_hash": {"$ne": ""}}, {"lm_hash": {"$ne": ""}}]}
+        "data.attempts":{
+            "$elemMatch":{"$or":[{"ntlm_hash":{"$ne":""}}, {"lm_hash":{"$ne":""}}]}
         }
     }
 
     # Gets data about successful PTH logins
     query = [
         {
-            "$match": {
-                "telem_category": "exploit",
-                "data.attempts": {
-                    "$not": {"$size": 0},
-                    "$elemMatch": {
-                        "$and": [
-                            {"$or": [{"ntlm_hash": {"$ne": ""}}, {"lm_hash": {"$ne": ""}}]},
-                            {"result": True},
+            "$match":{
+                "telem_category":"exploit",
+                "data.attempts":{
+                    "$not":{"$size":0},
+                    "$elemMatch":{
+                        "$and":[
+                            {"$or":[{"ntlm_hash":{"$ne":""}}, {"lm_hash":{"$ne":""}}]},
+                            {"result":True},
                         ]
                     },
                 },
             }
         },
         {
-            "$project": {
-                "_id": 0,
-                "machine": "$data.machine",
-                "info": "$data.info",
-                "attempt_cnt": {"$size": "$data.attempts"},
-                "attempts": {
-                    "$filter": {
-                        "input": "$data.attempts",
-                        "as": "attempt",
-                        "cond": {"$eq": ["$$attempt.result", True]},
+            "$project":{
+                "_id":0,
+                "machine":"$data.machine",
+                "info":"$data.info",
+                "attempt_cnt":{"$size":"$data.attempts"},
+                "attempts":{
+                    "$filter":{
+                        "input":"$data.attempts",
+                        "as":"attempt",
+                        "cond":{"$eq":["$$attempt.result", True]},
                     }
                 },
             }
@@ -66,8 +66,8 @@ class T1075(AttackTechnique):
             return (status, successful_logins)
 
         status, successful_logins = get_technique_status_and_data()
-        data = {"title": T1075.technique_title()}
-        data.update({"successful_logins": successful_logins})
+        data = {"title":T1075.technique_title()}
+        data.update({"successful_logins":successful_logins})
 
         data.update(T1075.get_message_and_status(status))
         data.update(T1075.get_mitigation_by_status(status))

@@ -16,23 +16,23 @@ class Bootloader(flask_restful.Resource):
         elif os == "windows":
             data = Bootloader._get_request_contents_windows(request.data)
         else:
-            return make_response({"status": "OS_NOT_FOUND"}, 404)
+            return make_response({"status":"OS_NOT_FOUND"}, 404)
 
         result = BootloaderService.parse_bootloader_telem(data)
 
         if result:
-            return make_response({"status": "RUN"}, 200)
+            return make_response({"status":"RUN"}, 200)
         else:
-            return make_response({"status": "ABORT"}, 200)
+            return make_response({"status":"ABORT"}, 200)
 
     @staticmethod
     def _get_request_contents_linux(request_data: bytes) -> Dict[str, str]:
         parsed_data = json.loads(
-            request_data.decode()
-            .replace('"\n', "")
-            .replace("\n", "")
-            .replace('NAME="', "")
-            .replace('":",', '":"",')
+                request_data.decode()
+                    .replace('"\n', "")
+                    .replace("\n", "")
+                    .replace('NAME="', "")
+                    .replace('":",', '":"",')
         )
         return parsed_data
 

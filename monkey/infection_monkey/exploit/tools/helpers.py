@@ -29,9 +29,10 @@ def get_target_monkey(host):
 
     if not monkey_path:
         if host.os.get("type") == platform.system().lower():
-            # if exe not found, and we have the same arch or arch is unknown and we are 32bit, use our exe
+            # if exe not found, and we have the same arch or arch is unknown and we are 32bit,
+            # use our exe
             if (not host.os.get("machine") and sys.maxsize < 2 ** 32) or host.os.get(
-                "machine", ""
+                    "machine", ""
             ).lower() == platform.machine().lower():
                 monkey_path = sys.executable
 
@@ -45,7 +46,7 @@ def get_target_monkey_by_os(is_windows, is_32bit):
 
 
 def build_monkey_commandline_explicitly(
-    parent=None, tunnel=None, server=None, depth=None, location=None, vulnerable_port=None
+        parent=None, tunnel=None, server=None, depth=None, location=None, vulnerable_port=None
 ):
     cmdline = ""
 
@@ -71,12 +72,12 @@ def build_monkey_commandline(target_host, depth, vulnerable_port, location=None)
     from infection_monkey.config import GUID
 
     return build_monkey_commandline_explicitly(
-        GUID,
-        target_host.default_tunnel,
-        target_host.default_server,
-        depth,
-        location,
-        vulnerable_port,
+            GUID,
+            target_host.default_tunnel,
+            target_host.default_server,
+            depth,
+            location,
+            vulnerable_port,
     )
 
 
@@ -106,13 +107,13 @@ def get_monkey_dest_path(url_to_monkey):
             return WormConfiguration.dropper_target_path_win_64
         else:
             LOG.error(
-                "Could not figure out what type of monkey server was trying to upload, "
-                "thus destination path can not be chosen."
+                    "Could not figure out what type of monkey server was trying to upload, "
+                    "thus destination path can not be chosen."
             )
             return False
     except AttributeError:
         LOG.error(
-            "Seems like monkey's source configuration property names changed. "
-            "Can not get destination path to upload monkey"
+                "Seems like monkey's source configuration property names changed. "
+                "Can not get destination path to upload monkey"
         )
         return False

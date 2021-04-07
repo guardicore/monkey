@@ -12,4 +12,4 @@ class HostnameCollector(SystemInfoCollector):
         super().__init__(name=HOSTNAME_COLLECTOR)
 
     def collect(self) -> dict:
-        return {"hostname": socket.getfqdn()}
+        return {"hostname":socket.getfqdn()}

@@ -11,28 +11,28 @@ from monkey_island.cc.services.zero_trust.zero_trust_report.principle_service im
 from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 EXPECTED_DICT = {
-    "test_pillar1": [
+    "test_pillar1":[
         {
-            "principle": "Test principle description2",
-            "status": zero_trust_consts.STATUS_FAILED,
-            "tests": [
-                {"status": zero_trust_consts.STATUS_PASSED, "test": "You ran a test2"},
-                {"status": zero_trust_consts.STATUS_FAILED, "test": "You ran a test3"},
+            "principle":"Test principle description2",
+            "status":zero_trust_consts.STATUS_FAILED,
+            "tests":[
+                {"status":zero_trust_consts.STATUS_PASSED, "test":"You ran a test2"},
+                {"status":zero_trust_consts.STATUS_FAILED, "test":"You ran a test3"},
             ],
         }
     ],
-    "test_pillar2": [
+    "test_pillar2":[
         {
-            "principle": "Test principle description",
-            "status": zero_trust_consts.STATUS_PASSED,
-            "tests": [{"status": zero_trust_consts.STATUS_PASSED, "test": "You ran a test1"}],
+            "principle":"Test principle description",
+            "status":zero_trust_consts.STATUS_PASSED,
+            "tests":[{"status":zero_trust_consts.STATUS_PASSED, "test":"You ran a test1"}],
         },
         {
-            "principle": "Test principle description2",
-            "status": zero_trust_consts.STATUS_FAILED,
-            "tests": [
-                {"status": zero_trust_consts.STATUS_PASSED, "test": "You ran a test2"},
-                {"status": zero_trust_consts.STATUS_FAILED, "test": "You ran a test3"},
+            "principle":"Test principle description2",
+            "status":zero_trust_consts.STATUS_FAILED,
+            "tests":[
+                {"status":zero_trust_consts.STATUS_PASSED, "test":"You ran a test2"},
+                {"status":zero_trust_consts.STATUS_FAILED, "test":"You ran a test3"},
             ],
         },
     ],
@@ -46,27 +46,27 @@ def test_get_principles_status():
     zero_trust_consts.PILLARS = (TEST_PILLAR1, TEST_PILLAR2)
 
     principles_to_tests = {
-        "network_policies": ["segmentation"],
-        "endpoint_security": ["tunneling", "scoutsuite_service_security"],
+        "network_policies":["segmentation"],
+        "endpoint_security":["tunneling", "scoutsuite_service_security"],
     }
     zero_trust_consts.PRINCIPLES_TO_TESTS = principles_to_tests
 
     principles_to_pillars = {
-        "network_policies": {"test_pillar2"},
-        "endpoint_security": {"test_pillar1", "test_pillar2"},
+        "network_policies":{"test_pillar2"},
+        "endpoint_security":{"test_pillar1", "test_pillar2"},
     }
     zero_trust_consts.PRINCIPLES_TO_PILLARS = principles_to_pillars
 
     principles = {
-        "network_policies": "Test principle description",
-        "endpoint_security": "Test principle description2",
+        "network_policies":"Test principle description",
+        "endpoint_security":"Test principle description2",
     }
     zero_trust_consts.PRINCIPLES = principles
 
     tests_map = {
-        "segmentation": {"explanation": "You ran a test1"},
-        "tunneling": {"explanation": "You ran a test2"},
-        "scoutsuite_service_security": {"explanation": "You ran a test3"},
+        "segmentation":{"explanation":"You ran a test1"},
+        "tunneling":{"explanation":"You ran a test2"},
+        "scoutsuite_service_security":{"explanation":"You ran a test3"},
     }
     zero_trust_consts.TESTS_MAP = tests_map
 

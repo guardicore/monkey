@@ -21,8 +21,10 @@ class CmdRunner(object):
     * command id - any unique identifier of a command which was already run
     * command result - represents the result of running a command. Always of type CmdResult
     * command status - represents the current status of a command. Always of type CmdStatus
-    * command info - Any consistent structure representing additional information of a command which was already run
-    * instance - a machine that commands will be run on. Can be any dictionary with 'instance_id' as a field
+    * command info - Any consistent structure representing additional information of a command
+    which was already run
+    * instance - a machine that commands will be run on. Can be any dictionary with 'instance_id'
+    as a field
     * instance_id - any unique identifier of an instance (machine). Can be of any format
     """
 
@@ -49,7 +51,8 @@ class CmdRunner(object):
         """
         Run multiple commands on various instances
         :param instances:   List of instances.
-        :param inst_to_cmd: Function which receives an instance, runs a command asynchronously and returns Cmd
+        :param inst_to_cmd: Function which receives an instance, runs a command asynchronously
+        and returns Cmd
         :param inst_n_cmd_res_to_res:   Function which receives an instance and CmdResult
                                         and returns a parsed result (of any format)
         :return: Dictionary with 'instance_id' as key and parsed result as value
@@ -92,7 +95,7 @@ class CmdRunner(object):
 
         while (curr_time - init_time < timeout) and (len(commands) != 0):
             for command in list(
-                commands
+                    commands
             ):  # list(commands) clones the list. We do so because we remove items inside
                 CmdRunner._process_command(command, commands, results, True)
 
@@ -105,9 +108,9 @@ class CmdRunner(object):
         for command, result in results:
             if not result.is_success:
                 logger.error(
-                    "The following command failed: `%s`. status code: %s",
-                    str(command[1]),
-                    str(result.status_code),
+                        "The following command failed: `%s`. status code: %s",
+                        str(command[1]),
+                        str(result.status_code),
                 )
 
         return results
@@ -154,7 +157,7 @@ class CmdRunner(object):
         try:
             command_info = c_runner.query_command(c_id)
             if (not should_process_only_finished) or c_runner.get_command_status(
-                command_info
+                    command_info
             ) != CmdStatus.IN_PROGRESS:
                 commands.remove(command)
                 results.append((command, c_runner.get_command_result(command_info)))

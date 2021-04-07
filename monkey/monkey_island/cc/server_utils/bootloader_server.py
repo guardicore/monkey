@@ -27,14 +27,14 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
         content_length = int(self.headers["Content-Length"])
         post_data = self.rfile.read(content_length).decode()
         island_server_path = BootloaderHTTPRequestHandler.get_bootloader_resource_url(
-            self.request.getsockname()[0]
+                self.request.getsockname()[0]
         )
         island_server_path = parse.urljoin(island_server_path, self.path[1:])
         # The island server doesn't always have a correct SSL cert installed
         # (By default it comes with a self signed one),
         # that's why we're not verifying the cert in this request.
         r = requests.post(
-            url=island_server_path, data=post_data, verify=False, timeout=SHORT_REQUEST_TIMEOUT
+                url=island_server_path, data=post_data, verify=False, timeout=SHORT_REQUEST_TIMEOUT
         )  # noqa: DUO123
 
         try:

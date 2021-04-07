@@ -23,8 +23,8 @@ class Environment(object, metaclass=ABCMeta):
     _MONGO_DB_HOST = "localhost"
     _MONGO_DB_PORT = 27017
     _MONGO_URL = os.environ.get(
-        "MONKEY_MONGO_URL",
-        "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)),
+            "MONKEY_MONGO_URL",
+            "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)),
     )
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(minutes=30)
@@ -62,12 +62,12 @@ class Environment(object, metaclass=ABCMeta):
     def _try_needs_registration(self) -> bool:
         if not self._credentials_required:
             raise CredentialsNotRequiredError(
-                "Credentials are not required " "for current environment."
+                    "Credentials are not required " "for current environment."
             )
         else:
             if self._is_registered():
                 raise AlreadyRegisteredError(
-                    "User has already been registered. " "Reset credentials or login."
+                        "User has already been registered. " "Reset credentials or login."
                 )
             return True
 

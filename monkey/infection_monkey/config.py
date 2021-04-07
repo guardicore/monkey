@@ -227,7 +227,8 @@ class Configuration(object):
     @staticmethod
     def hash_sensitive_data(sensitive_data):
         """
-        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data plain-text, as the log is
+        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data
+        plain-text, as the log is
         saved on client machines plain-text.
 
         :param sensitive_data: the data to hash.

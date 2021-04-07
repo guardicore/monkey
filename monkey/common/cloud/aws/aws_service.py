@@ -20,10 +20,10 @@ logger = logging.getLogger(__name__)
 def filter_instance_data_from_aws_response(response):
     return [
         {
-            "instance_id": x[INSTANCE_ID_KEY],
-            "name": x[COMPUTER_NAME_KEY],
-            "os": x[PLATFORM_TYPE_KEY].lower(),
-            "ip_address": x[IP_ADDRESS_KEY],
+            "instance_id":x[INSTANCE_ID_KEY],
+            "name":x[COMPUTER_NAME_KEY],
+            "os":x[PLATFORM_TYPE_KEY].lower(),
+            "ip_address":x[IP_ADDRESS_KEY],
         }
         for x in response[INSTANCE_INFORMATION_LIST_KEY]
     ]
@@ -31,12 +31,14 @@ def filter_instance_data_from_aws_response(response):
 
 class AwsService(object):
     """
-    A wrapper class around the boto3 client and session modules, which supplies various AWS services.
+    A wrapper class around the boto3 client and session modules, which supplies various AWS
+    services.
 
     This class will assume:
         1. That it's running on an EC2 instance
         2. That the instance is associated with the correct IAM role. See
-        https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam-role for details.
+        https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam-role
+        for details.
     """
 
     region = None
@@ -48,7 +50,7 @@ class AwsService(object):
     @staticmethod
     def get_client(client_type, region=None):
         return boto3.client(
-            client_type, region_name=region if region is not None else AwsService.region
+                client_type, region_name=region if region is not None else AwsService.region
         )
 
     @staticmethod
@@ -73,7 +75,8 @@ class AwsService(object):
         Get the information for all instances with the relevant roles.
 
         This function will assume that it's running on an EC2 instance with the correct IAM role.
-        See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam-role for details.
+        See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam
+        -role for details.
 
         :raises: botocore.exceptions.ClientError if can't describe local instance information.
         :return: All visible instances from this instance

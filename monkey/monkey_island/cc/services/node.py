@@ -25,7 +25,7 @@ class NodeService:
         if ObjectId(node_id) == NodeService.get_monkey_island_pseudo_id():
             return NodeService.get_monkey_island_node()
 
-        new_node = {"id": node_id}
+        new_node = {"id":node_id}
 
         node = NodeService.get_node_by_id(node_id)
         if node is None:
@@ -63,7 +63,7 @@ class NodeService:
                 edge_exploit["origin"] = from_node_label
                 exploits.append(edge_exploit)
 
-        exploits = sorted(exploits, key=lambda exploit: exploit["timestamp"])
+        exploits = sorted(exploits, key=lambda exploit:exploit["timestamp"])
 
         new_node["exploits"] = exploits
         new_node["accessible_from_nodes"] = accessible_from_nodes
@@ -111,7 +111,7 @@ class NodeService:
     @staticmethod
     def get_monkey_critical_services(monkey_id):
         critical_services = mongo.db.monkey.find_one(
-            {"_id": monkey_id}, {"critical_services": 1}
+                {"_id":monkey_id}, {"critical_services":1}
         ).get("critical_services", [])
         return critical_services
 
@@ -156,34 +156,35 @@ class NodeService:
         )
         monkey_group = NodeService.get_monkey_group(monkey)
         return {
-            "id": monkey_id,
-            "label": label,
-            "group": monkey_group,
-            "os": NodeService.get_monkey_os(monkey),
-            # The monkey is running IFF the group contains "_running". Therefore it's dead IFF the group does NOT
+            "id":monkey_id,
+            "label":label,
+            "group":monkey_group,
+            "os":NodeService.get_monkey_os(monkey),
+            # The monkey is running IFF the group contains "_running". Therefore it's dead IFF
+            # the group does NOT
             # contain "_running". This is a small optimisation, to not call "is_dead" twice.
-            "dead": "_running" not in monkey_group,
-            "domain_name": "",
-            "pba_results": monkey["pba_results"] if "pba_results" in monkey else [],
+            "dead":"_running" not in monkey_group,
+            "domain_name":"",
+            "pba_results":monkey["pba_results"] if "pba_results" in monkey else [],
         }
 
     @staticmethod
     def node_to_net_node(node, for_report=False):
         label = node["os"]["version"] if for_report else NodeService.get_node_label(node)
         return {
-            "id": node["_id"],
-            "label": label,
-            "group": NodeService.get_node_group(node),
-            "os": NodeService.get_node_os(node),
+            "id":node["_id"],
+            "label":label,
+            "group":NodeService.get_node_group(node),
+            "os":NodeService.get_node_os(node),
         }
 
     @staticmethod
     def set_node_group(node_id: str, node_group: NodeStates):
-        mongo.db.node.update({"_id": node_id}, {"$set": {"group": node_group.value}}, upsert=False)
+        mongo.db.node.update({"_id":node_id}, {"$set":{"group":node_group.value}}, upsert=False)
 
     @staticmethod
     def unset_all_monkey_tunnels(monkey_id):
-        mongo.db.monkey.update({"_id": monkey_id}, {"$unset": {"tunnel": ""}}, upsert=False)
+        mongo.db.monkey.update({"_id":monkey_id}, {"$unset":{"tunnel":""}}, upsert=False)
 
         edges = EdgeService.get_tunnel_edges_by_src(monkey_id)
         for edge in edges:
@@ -194,15 +195,15 @@ class NodeService:
         tunnel_host_id = NodeService.get_monkey_by_ip(tunnel_host_ip)["_id"]
         NodeService.unset_all_monkey_tunnels(monkey_id)
         mongo.db.monkey.update(
-            {"_id": monkey_id}, {"$set": {"tunnel": tunnel_host_id}}, upsert=False
+                {"_id":monkey_id}, {"$set":{"tunnel":tunnel_host_id}}, upsert=False
         )
         monkey_label = NodeService.get_label_for_endpoint(monkey_id)
         tunnel_host_label = NodeService.get_label_for_endpoint(tunnel_host_id)
         tunnel_edge = EdgeService.get_or_create_edge(
-            src_node_id=monkey_id,
-            dst_node_id=tunnel_host_id,
-            src_label=monkey_label,
-            dst_label=tunnel_host_label,
+                src_node_id=monkey_id,
+                dst_node_id=tunnel_host_id,
+                src_label=monkey_label,
+                dst_label=tunnel_host_label,
         )
         tunnel_edge.tunnel = True
         tunnel_edge.ip_address = tunnel_host_ip
@@ -211,50 +212,50 @@ class NodeService:
     @staticmethod
     def insert_node(ip_address, domain_name=""):
         new_node_insert_result = mongo.db.node.insert_one(
-            {
-                "ip_addresses": [ip_address],
-                "domain_name": domain_name,
-                "exploited": False,
-                "creds": [],
-                "os": {"type": "unknown", "version": "unknown"},
-            }
+                {
+                    "ip_addresses":[ip_address],
+                    "domain_name":domain_name,
+                    "exploited":False,
+                    "creds":[],
+                    "os":{"type":"unknown", "version":"unknown"},
+                }
         )
-        return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
+        return mongo.db.node.find_one({"_id":new_node_insert_result.inserted_id})
 
     @staticmethod
     def create_node_from_bootloader_telem(bootloader_telem: Dict, will_monkey_run: bool):
         new_node_insert_result = mongo.db.node.insert_one(
-            {
-                "ip_addresses": bootloader_telem["ips"],
-                "domain_name": bootloader_telem["hostname"],
-                "will_monkey_run": will_monkey_run,
-                "exploited": False,
-                "creds": [],
-                "os": {
-                    "type": bootloader_telem["system"],
-                    "version": bootloader_telem["os_version"],
-                },
-            }
+                {
+                    "ip_addresses":bootloader_telem["ips"],
+                    "domain_name":bootloader_telem["hostname"],
+                    "will_monkey_run":will_monkey_run,
+                    "exploited":False,
+                    "creds":[],
+                    "os":{
+                        "type":bootloader_telem["system"],
+                        "version":bootloader_telem["os_version"],
+                    },
+                }
         )
-        return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
+        return mongo.db.node.find_one({"_id":new_node_insert_result.inserted_id})
 
     @staticmethod
     def get_or_create_node_from_bootloader_telem(
-        bootloader_telem: Dict, will_monkey_run: bool
+            bootloader_telem: Dict, will_monkey_run: bool
     ) -> Dict:
         if is_local_ips(bootloader_telem["ips"]):
             raise NodeCreationException("Bootloader ran on island, no need to create new node.")
 
-        new_node = mongo.db.node.find_one({"ip_addresses": {"$in": bootloader_telem["ips"]}})
+        new_node = mongo.db.node.find_one({"ip_addresses":{"$in":bootloader_telem["ips"]}})
         # Temporary workaround to not create a node after monkey finishes
-        monkey_node = mongo.db.monkey.find_one({"ip_addresses": {"$in": bootloader_telem["ips"]}})
+        monkey_node = mongo.db.monkey.find_one({"ip_addresses":{"$in":bootloader_telem["ips"]}})
         if monkey_node:
             # Don't create new node, monkey node is already present
             return monkey_node
 
         if new_node is None:
             new_node = NodeService.create_node_from_bootloader_telem(
-                bootloader_telem, will_monkey_run
+                    bootloader_telem, will_monkey_run
             )
             if bootloader_telem["tunnel"]:
                 dst_node = NodeService.get_node_or_monkey_by_ip(bootloader_telem["tunnel"])
@@ -263,10 +264,10 @@ class NodeService:
             src_label = NodeService.get_label_for_endpoint(new_node["_id"])
             dst_label = NodeService.get_label_for_endpoint(dst_node["id"])
             edge = EdgeService.get_or_create_edge(
-                src_node_id=new_node["_id"],
-                dst_node_id=dst_node["id"],
-                src_label=src_label,
-                dst_label=dst_label,
+                    src_node_id=new_node["_id"],
+                    dst_node_id=dst_node["id"],
+                    src_label=src_label,
+                    dst_label=dst_label,
             )
             edge.tunnel = bool(bootloader_telem["tunnel"])
             edge.ip_address = bootloader_telem["ips"][0]
@@ -276,51 +277,51 @@ class NodeService:
 
     @staticmethod
     def get_or_create_node(ip_address, domain_name=""):
-        new_node = mongo.db.node.find_one({"ip_addresses": ip_address})
+        new_node = mongo.db.node.find_one({"ip_addresses":ip_address})
         if new_node is None:
             new_node = NodeService.insert_node(ip_address, domain_name)
         return new_node
 
     @staticmethod
     def get_monkey_by_id(monkey_id):
-        return mongo.db.monkey.find_one({"_id": ObjectId(monkey_id)})
+        return mongo.db.monkey.find_one({"_id":ObjectId(monkey_id)})
 
     @staticmethod
     def get_monkey_by_guid(monkey_guid):
-        return mongo.db.monkey.find_one({"guid": monkey_guid})
+        return mongo.db.monkey.find_one({"guid":monkey_guid})
 
     @staticmethod
     def get_monkey_by_ip(ip_address):
-        return mongo.db.monkey.find_one({"ip_addresses": ip_address})
+        return mongo.db.monkey.find_one({"ip_addresses":ip_address})
 
     @staticmethod
     def get_node_by_ip(ip_address):
-        return mongo.db.node.find_one({"ip_addresses": ip_address})
+        return mongo.db.node.find_one({"ip_addresses":ip_address})
 
     @staticmethod
     def get_node_by_id(node_id):
-        return mongo.db.node.find_one({"_id": ObjectId(node_id)})
+        return mongo.db.node.find_one({"_id":ObjectId(node_id)})
 
     @staticmethod
     def update_monkey_modify_time(monkey_id):
         mongo.db.monkey.update(
-            {"_id": monkey_id}, {"$set": {"modifytime": datetime.now()}}, upsert=False
+                {"_id":monkey_id}, {"$set":{"modifytime":datetime.now()}}, upsert=False
         )
 
     @staticmethod
     def set_monkey_dead(monkey, is_dead):
-        props_to_set = {"dead": is_dead}
+        props_to_set = {"dead":is_dead}
 
         # Cancel the force kill once monkey died
         if is_dead:
             props_to_set["config.alive"] = True
 
-        mongo.db.monkey.update({"guid": monkey["guid"]}, {"$set": props_to_set}, upsert=False)
+        mongo.db.monkey.update({"guid":monkey["guid"]}, {"$set":props_to_set}, upsert=False)
 
     @staticmethod
     def add_communication_info(monkey, info):
         mongo.db.monkey.update(
-            {"guid": monkey["guid"]}, {"$set": {"command_control_channel": info}}, upsert=False
+                {"guid":monkey["guid"]}, {"$set":{"command_control_channel":info}}, upsert=False
         )
 
     @staticmethod
@@ -339,9 +340,9 @@ class NodeService:
     @staticmethod
     def get_monkey_island_pseudo_net_node():
         return {
-            "id": NodeService.get_monkey_island_pseudo_id(),
-            "label": "MonkeyIsland",
-            "group": "island",
+            "id":NodeService.get_monkey_island_pseudo_id(),
+            "label":"MonkeyIsland",
+            "group":"island",
         }
 
     @staticmethod
@@ -353,22 +354,22 @@ class NodeService:
 
     @staticmethod
     def set_node_exploited(node_id):
-        mongo.db.node.update({"_id": node_id}, {"$set": {"exploited": True}})
+        mongo.db.node.update({"_id":node_id}, {"$set":{"exploited":True}})
 
     @staticmethod
     def update_dead_monkeys():
         # Update dead monkeys only if no living monkey transmitted keepalive in the last 10 minutes
         if mongo.db.monkey.find_one(
-            {"dead": {"$ne": True}, "keepalive": {"$gte": datetime.now() - timedelta(minutes=10)}}
+                {"dead":{"$ne":True}, "keepalive":{"$gte":datetime.now() - timedelta(minutes=10)}}
         ):
             return
 
         # config.alive is changed to true to cancel the force kill of dead monkeys
         mongo.db.monkey.update(
-            {"keepalive": {"$lte": datetime.now() - timedelta(minutes=10)}, "dead": {"$ne": True}},
-            {"$set": {"dead": True, "config.alive": True, "modifytime": datetime.now()}},
-            upsert=False,
-            multi=True,
+                {"keepalive":{"$lte":datetime.now() - timedelta(minutes=10)}, "dead":{"$ne":True}},
+                {"$set":{"dead":True, "config.alive":True, "modifytime":datetime.now()}},
+                upsert=False,
+                multi=True,
         )
 
     @staticmethod
@@ -386,11 +387,11 @@ class NodeService:
 
     @staticmethod
     def add_credentials_to_monkey(monkey_id, creds):
-        mongo.db.monkey.update({"_id": monkey_id}, {"$push": {"creds": creds}})
+        mongo.db.monkey.update({"_id":monkey_id}, {"$push":{"creds":creds}})
 
     @staticmethod
     def add_credentials_to_node(node_id, creds):
-        mongo.db.node.update({"_id": node_id}, {"$push": {"creds": creds}})
+        mongo.db.node.update({"_id":node_id}, {"$push":{"creds":creds}})
 
     @staticmethod
     def get_node_or_monkey_by_ip(ip_address):
@@ -413,7 +414,7 @@ class NodeService:
     @staticmethod
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(
-            mongo.db.monkey.find_one({"_id": node_id}, {"hostname": 1})
+                mongo.db.monkey.find_one({"_id":node_id}, {"hostname":1})
         )
 
     @staticmethod

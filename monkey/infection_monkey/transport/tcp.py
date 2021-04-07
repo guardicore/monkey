@@ -71,11 +71,11 @@ class TcpProxy(TransportProxyBase):
             pipe = SocketsPipe(source, dest)
             pipes.append(pipe)
             LOG.debug(
-                "piping sockets %s:%s->%s:%s",
-                address[0],
-                address[1],
-                self.dest_host,
-                self.dest_port,
+                    "piping sockets %s:%s->%s:%s",
+                    address[0],
+                    address[1],
+                    self.dest_host,
+                    self.dest_port,
             )
             pipe.start()
 

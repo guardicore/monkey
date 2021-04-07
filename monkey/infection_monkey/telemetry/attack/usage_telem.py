@@ -13,5 +13,5 @@ class UsageTelem(AttackTelem):
 
     def get_data(self):
         data = super(UsageTelem, self).get_data()
-        data.update({"usage": self.usage})
+        data.update({"usage":self.usage})
         return data

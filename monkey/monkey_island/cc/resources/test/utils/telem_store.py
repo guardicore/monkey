@@ -12,13 +12,11 @@ from monkey_island.cc.services.config import ConfigService
 TELEM_SAMPLE_DIR = "./telem_sample"
 MAX_SAME_CATEGORY_TELEMS = 10000
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class TestTelemStore:
-
     TELEMS_EXPORTED = False
 
     @staticmethod
@@ -32,13 +30,13 @@ class TestTelemStore:
                 endpoint = request.path
                 name = (
                     str(request.url_rule)
-                    .replace("/", "_")
-                    .replace("<", "_")
-                    .replace(">", "_")
-                    .replace(":", "_")
+                        .replace("/", "_")
+                        .replace("<", "_")
+                        .replace(">", "_")
+                        .replace(":", "_")
                 )
                 TestTelem(
-                    name=name, method=method, endpoint=endpoint, content=content, time=time
+                        name=name, method=method, endpoint=endpoint, content=content, time=time
                 ).save()
             return f(*args, **kwargs)
 
@@ -55,8 +53,9 @@ class TestTelemStore:
             mkdir(TELEM_SAMPLE_DIR)
         for test_telem in TestTelem.objects():
             with open(
-                TestTelemStore.get_unique_file_path_for_test_telem(TELEM_SAMPLE_DIR, test_telem),
-                "w",
+                    TestTelemStore.get_unique_file_path_for_test_telem(TELEM_SAMPLE_DIR,
+                                                                       test_telem),
+                    "w",
             ) as file:
                 file.write(test_telem.to_json(indent=2))
         TestTelemStore.TELEMS_EXPORTED = True
@@ -71,7 +70,7 @@ class TestTelemStore:
                 continue
             return potential_filepath
         raise Exception(
-            f"Too many telemetries of the same category. Max amount {MAX_SAME_CATEGORY_TELEMS}"
+                f"Too many telemetries of the same category. Max amount {MAX_SAME_CATEGORY_TELEMS}"
         )
 
     @staticmethod

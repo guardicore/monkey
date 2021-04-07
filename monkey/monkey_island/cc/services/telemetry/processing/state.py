@@ -23,5 +23,6 @@ def process_state_telemetry(telemetry_json):
 
     if telemetry_json["data"]["version"]:
         logger.info(
-            f"monkey {telemetry_json['monkey_guid']} has version {telemetry_json['data']['version']}"
+                f"monkey {telemetry_json['monkey_guid']} has version "
+                f"{telemetry_json['data']['version']}"
         )

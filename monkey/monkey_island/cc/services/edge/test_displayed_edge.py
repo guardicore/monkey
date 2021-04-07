@@ -5,46 +5,45 @@ from monkey_island.cc.services.edge.edge import RIGHT_ARROW, EdgeService
 
 SCAN_DATA_MOCK = [
     {
-        "timestamp": "2020-05-27T14:59:28.944Z",
-        "data": {
-            "os": {"type": "linux", "version": "Ubuntu-4ubuntu2.8"},
-            "services": {
-                "tcp-8088": {"display_name": "unknown(TCP)", "port": 8088},
-                "tcp-22": {
-                    "display_name": "SSH",
-                    "port": 22,
-                    "banner": "SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8\r\n",
-                    "name": "ssh",
+        "timestamp":"2020-05-27T14:59:28.944Z",
+        "data":{
+            "os":{"type":"linux", "version":"Ubuntu-4ubuntu2.8"},
+            "services":{
+                "tcp-8088":{"display_name":"unknown(TCP)", "port":8088},
+                "tcp-22":{
+                    "display_name":"SSH",
+                    "port":22,
+                    "banner":"SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8\r\n",
+                    "name":"ssh",
                 },
             },
-            "monkey_exe": None,
-            "default_tunnel": None,
-            "default_server": None,
+            "monkey_exe":None,
+            "default_tunnel":None,
+            "default_server":None,
         },
     }
 ]
 
 EXPLOIT_DATA_MOCK = [
     {
-        "result": True,
-        "exploiter": "ElasticGroovyExploiter",
-        "info": {
-            "display_name": "Elastic search",
-            "started": "2020-05-11T08:59:38.105Z",
-            "finished": "2020-05-11T08:59:38.106Z",
-            "vulnerable_urls": [],
-            "vulnerable_ports": [],
-            "executed_cmds": [],
+        "result":True,
+        "exploiter":"ElasticGroovyExploiter",
+        "info":{
+            "display_name":"Elastic search",
+            "started":"2020-05-11T08:59:38.105Z",
+            "finished":"2020-05-11T08:59:38.106Z",
+            "vulnerable_urls":[],
+            "vulnerable_ports":[],
+            "executed_cmds":[],
         },
-        "attempts": [],
-        "timestamp": "2020-05-27T14:59:29.048Z",
+        "attempts":[],
+        "timestamp":"2020-05-27T14:59:29.048Z",
     }
 ]
 
 
 class TestDisplayedEdgeService:
     def test_get_displayed_edges_by_to(self):
-
         dst_id = ObjectId()
 
         src_id = ObjectId()
@@ -60,15 +59,15 @@ class TestDisplayedEdgeService:
         src_node_id = ObjectId()
         dst_node_id = ObjectId()
         edge = EdgeService(
-            src_node_id=src_node_id,
-            dst_node_id=dst_node_id,
-            scans=SCAN_DATA_MOCK,
-            exploits=EXPLOIT_DATA_MOCK,
-            exploited=True,
-            domain_name=None,
-            ip_address="10.2.2.2",
-            dst_label="Ubuntu-4ubuntu2.8",
-            src_label="Ubuntu-4ubuntu3.2",
+                src_node_id=src_node_id,
+                dst_node_id=dst_node_id,
+                scans=SCAN_DATA_MOCK,
+                exploits=EXPLOIT_DATA_MOCK,
+                exploited=True,
+                domain_name=None,
+                ip_address="10.2.2.2",
+                dst_label="Ubuntu-4ubuntu2.8",
+                src_label="Ubuntu-4ubuntu3.2",
         )
 
         displayed_edge = DisplayedEdgeService.edge_to_displayed_edge(edge)
@@ -77,7 +76,7 @@ class TestDisplayedEdgeService:
         assert displayed_edge["from"] == src_node_id
         assert displayed_edge["ip_address"] == "10.2.2.2"
         assert displayed_edge["services"] == ["tcp-8088: unknown", "tcp-22: ssh"]
-        assert displayed_edge["os"] == {"type": "linux", "version": "Ubuntu-4ubuntu2.8"}
+        assert displayed_edge["os"] == {"type":"linux", "version":"Ubuntu-4ubuntu2.8"}
         assert displayed_edge["exploits"] == EXPLOIT_DATA_MOCK
         assert displayed_edge["_label"] == "Ubuntu-4ubuntu3.2 " + RIGHT_ARROW + " Ubuntu-4ubuntu2.8"
         assert displayed_edge["group"] == "exploited"
@@ -85,11 +84,11 @@ class TestDisplayedEdgeService:
 
     def test_services_to_displayed_services(self):
         services1 = DisplayedEdgeService.services_to_displayed_services(
-            SCAN_DATA_MOCK[-1]["data"]["services"], True
+                SCAN_DATA_MOCK[-1]["data"]["services"], True
         )
         assert services1 == ["tcp-8088", "tcp-22"]
 
         services2 = DisplayedEdgeService.services_to_displayed_services(
-            SCAN_DATA_MOCK[-1]["data"]["services"], False
+                SCAN_DATA_MOCK[-1]["data"]["services"], False
         )
         assert services2 == ["tcp-8088: unknown", "tcp-22: ssh"]

@@ -52,6 +52,7 @@ if is_windows_os():
         local_hostname = socket.gethostname()
         return socket.gethostbyname_ex(local_hostname)[2]
 
+
     def get_routes():
         raise NotImplementedError()
 
@@ -59,9 +60,11 @@ if is_windows_os():
 else:
     from fcntl import ioctl
 
+
     def local_ips():
         valid_ips = [network["addr"] for network in get_host_subnets()]
         return valid_ips
+
 
     def get_routes():  # based on scapy implementation for route parsing
         try:
@@ -88,7 +91,8 @@ else:
                 continue
             try:
                 ifreq = ioctl(s, SIOCGIFADDR, struct.pack("16s16x", iff))
-            except IOError:  # interface is present in routing tables but does not have any assigned IP
+            except IOError:  # interface is present in routing tables but does not have any
+                # assigned IP
                 ifaddr = "0.0.0.0"
             else:
                 addrfamily = struct.unpack("h", ifreq[16:18])[0]
@@ -97,13 +101,13 @@ else:
                 else:
                     continue
             routes.append(
-                (
-                    socket.htonl(int(dst, 16)) & 0xFFFFFFFF,
-                    socket.htonl(int(msk, 16)) & 0xFFFFFFFF,
-                    socket.inet_ntoa(struct.pack("I", int(gw, 16))),
-                    iff,
-                    ifaddr,
-                )
+                    (
+                        socket.htonl(int(dst, 16)) & 0xFFFFFFFF,
+                        socket.htonl(int(msk, 16)) & 0xFFFFFFFF,
+                        socket.inet_ntoa(struct.pack("I", int(gw, 16))),
+                        iff,
+                        ifaddr,
+                    )
             )
 
         f.close()

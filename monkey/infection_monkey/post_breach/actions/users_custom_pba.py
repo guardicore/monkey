@@ -35,8 +35,8 @@ class UsersPBA(PBA):
                 if WormConfiguration.custom_PBA_linux_cmd:
                     # Add change dir command, because user will try to access his file
                     self.command = (
-                        DIR_CHANGE_LINUX % get_monkey_dir_path()
-                    ) + WormConfiguration.custom_PBA_linux_cmd
+                                           DIR_CHANGE_LINUX % get_monkey_dir_path()
+                                   ) + WormConfiguration.custom_PBA_linux_cmd
             elif WormConfiguration.custom_PBA_linux_cmd:
                 self.command = WormConfiguration.custom_PBA_linux_cmd
         else:
@@ -46,8 +46,8 @@ class UsersPBA(PBA):
                 if WormConfiguration.custom_PBA_windows_cmd:
                     # Add change dir command, because user will try to access his file
                     self.command = (
-                        DIR_CHANGE_WINDOWS % get_monkey_dir_path()
-                    ) + WormConfiguration.custom_PBA_windows_cmd
+                                           DIR_CHANGE_WINDOWS % get_monkey_dir_path()
+                                   ) + WormConfiguration.custom_PBA_windows_cmd
             elif WormConfiguration.custom_PBA_windows_cmd:
                 self.command = WormConfiguration.custom_PBA_windows_cmd
 
@@ -86,10 +86,10 @@ class UsersPBA(PBA):
             status = ScanStatus.USED
 
         T1105Telem(
-            status,
-            WormConfiguration.current_server.split(":")[0],
-            get_interface_to_target(WormConfiguration.current_server.split(":")[0]),
-            filename,
+                status,
+                WormConfiguration.current_server.split(":")[0],
+                get_interface_to_target(WormConfiguration.current_server.split(":")[0]),
+                filename,
         ).send()
 
         if status == ScanStatus.SCANNED:

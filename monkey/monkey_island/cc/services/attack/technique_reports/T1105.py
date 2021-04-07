@@ -11,21 +11,21 @@ class T1105(AttackTechnique):
     used_msg = "Monkey successfully copied files to systems on the network."
 
     query = [
-        {"$match": {"telem_category": "attack", "data.technique": tech_id}},
+        {"$match":{"telem_category":"attack", "data.technique":tech_id}},
         {
-            "$project": {
-                "_id": 0,
-                "src": "$data.src",
-                "dst": "$data.dst",
-                "filename": "$data.filename",
+            "$project":{
+                "_id":0,
+                "src":"$data.src",
+                "dst":"$data.dst",
+                "filename":"$data.filename",
             }
         },
-        {"$group": {"_id": {"src": "$src", "dst": "$dst", "filename": "$filename"}}},
-        {"$replaceRoot": {"newRoot": "$_id"}},
+        {"$group":{"_id":{"src":"$src", "dst":"$dst", "filename":"$filename"}}},
+        {"$replaceRoot":{"newRoot":"$_id"}},
     ]
 
     @staticmethod
     def get_report_data():
         data = T1105.get_tech_base_data()
-        data.update({"files": list(mongo.db.telemetry.aggregate(T1105.query))})
+        data.update({"files":list(mongo.db.telemetry.aggregate(T1105.query))})
         return data

@@ -13,9 +13,9 @@ def populate_exporter_list():
 
     if len(manager.get_exporters_list()) != 0:
         logger.debug(
-            "Populated exporters list with the following exporters: {0}".format(
-                str(manager.get_exporters_list())
-            )
+                "Populated exporters list with the following exporters: {0}".format(
+                        str(manager.get_exporters_list())
+                )
         )
 
 
