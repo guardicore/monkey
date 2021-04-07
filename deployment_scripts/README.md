@@ -16,7 +16,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/guardicore/monkey/develop/de
 
 This will download our deploy script. It's a good idea to read it quickly before executing it!
 
-After downloading that script, execute it in  `powershell`. 
+After downloading that script, execute it in  `powershell`.
 
 The first argument is an empty directory (script can create one). The second argument is which branch you want to clone - by default, the script will check out the `develop` branch. Some example usages:
 
@@ -63,3 +63,22 @@ After the `deploy_linux.sh` script completes, you can start the monkey island.
 cd infection_monkey/monkey
 ./monkey_island/linux/run.sh
 ```
+
+## Pre-commit hooks
+
+Both the Linux and Windows deployment scrips will install and configure
+[pre-commit](https://pre-commit.com/). Pre-commit is a multi-language package
+manager for pre-commit hooks. It will run a set of checks when you attempt to
+commit. If your commit does not pass all checks, it will be reformatted and/or
+you'll be given a list of errors and warnings that need to be fixed before you
+can commit.
+
+Our CI system runs the same checks when pull requests are submitted. This
+system may report that the build has failed if the pre-commit hooks have not
+been run or all issues have not been resolved.
+
+### Manually installing pre-commit
+
+To install and configure pre-commit manually, run `pip install --user
+pre-commit`. Next, go to the top level directory of this repository and run
+`pre-commit install` Now, pre-commit will automatically run whenever you `git commit`.

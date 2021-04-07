@@ -24,7 +24,7 @@ install:
 # Python
 - pip freeze
 - pip install -r monkey/monkey_island/requirements.txt  # for unit tests
-- pip install black flake8 pytest pytest-cov isort # for next stages
+- pip install black==20.8b1 flake8==3.9.0 pytest pytest-cov isort==5.8.0 # for next stages
 - pip install coverage  # for code coverage
 - pip install -r monkey/infection_monkey/requirements.txt  # for unit tests
 - pip install pipdeptree
