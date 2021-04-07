@@ -10,9 +10,10 @@ param(
     $agents = $true
 )
 
-function Configure-precommit([String] $python_command)
+function Configure-precommit([String] $git_repo_dir)
 {
     Write-Output "Installing pre-commit and setting up pre-commit hook"
+    Push-Location $git_repo_dir
     python -m pip install pre-commit
 	if ($LastExitCode) {
 		exit
@@ -21,6 +22,7 @@ function Configure-precommit([String] $python_command)
 	if ($LastExitCode) {
 		exit
 	}
+    Pop-Location
     Write-Output "Pre-commit successfully installed"
 }
 
@@ -134,7 +136,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     $scoutsuiteRequirements = Join-Path -Path $monkey_home -ChildPath $SCOUTSUITE_DIR | Join-Path -ChildPath "\requirements.txt"
     & python -m pip install --user -r $scoutsuiteRequirements
 
-    Configure-precommit
+    Configure-precommit($monkey_home)
 
     $user_python_dir = cmd.exe /c 'py -m site --user-site'
     $user_python_dir = Join-Path (Split-Path $user_python_dir) -ChildPath "\Scripts"
