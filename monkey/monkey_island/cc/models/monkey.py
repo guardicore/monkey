@@ -149,8 +149,8 @@ class Monkey(Document):
         return {"ips": self.ip_addresses, "hostname": self.hostname}
 
     @ring.lru(
-        expire=1
         # data has TTL of 1 second. This is useful for rapid calls for report generation.
+        expire=1
     )
     @staticmethod
     def is_monkey(object_id):
