@@ -1,8 +1,8 @@
 from copy import deepcopy
 
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_consts import (
-    RULE_LEVEL_WARNING,
     RULE_LEVEL_DANGER,
+    RULE_LEVEL_WARNING,
 )
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_rule_service import (
     ScoutSuiteRuleService,

@@ -6,8 +6,8 @@ import pytest
 
 from monkey_island.cc.models.monkey import Monkey, MonkeyNotFoundError
 
-from .monkey_ttl import MonkeyTtl
 from ..test_common.fixtures import FixtureEnum
+from .monkey_ttl import MonkeyTtl
 
 logger = logging.getLogger(__name__)
 

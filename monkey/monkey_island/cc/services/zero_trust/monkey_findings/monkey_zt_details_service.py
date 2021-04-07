@@ -5,7 +5,6 @@ from bson import ObjectId
 from common.utils.exceptions import FindingWithoutDetailsError
 from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
 
-
 # How many events of a single finding to return to UI.
 # 100 will return 50 latest and 50 oldest events from a finding
 MAX_EVENT_FETCH_CNT = 100

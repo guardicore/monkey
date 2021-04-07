@@ -3,8 +3,8 @@ import json
 import dpath.util
 from typing_extensions import Type
 
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
 
 class IslandConfigParser:

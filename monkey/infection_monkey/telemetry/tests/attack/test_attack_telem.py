@@ -5,7 +5,6 @@ import pytest
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.attack_telem import AttackTelem
 
-
 STATUS = ScanStatus.USED
 TECHNIQUE = "T9999"
 

@@ -58,7 +58,7 @@ script:
 - flake8 ./monkey
 
 ## Check import order
-- python -m isort ./monkey --settings-file ./ci_scripts/isort.cfg
+- python -m isort ./monkey --check-only
 
 ## Check that all python is properly formatted. Fail otherwise.
 - python -m black --check .

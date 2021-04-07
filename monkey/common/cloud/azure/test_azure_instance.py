@@ -6,7 +6,6 @@ import simplejson
 from common.cloud.azure.azure_instance import AZURE_METADATA_SERVICE_URL, AzureInstance
 from common.cloud.environment_names import Environment
 
-
 GOOD_DATA = {
     "compute": {
         "azEnvironment": "AZUREPUBLICCLOUD",

@@ -2,9 +2,8 @@ import json
 
 import pytest
 
-from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.model.host import VictimHost
-
+from infection_monkey.telemetry.scan_telem import ScanTelem
 
 DOMAIN_NAME = "domain-name"
 IP = "0.0.0.0"

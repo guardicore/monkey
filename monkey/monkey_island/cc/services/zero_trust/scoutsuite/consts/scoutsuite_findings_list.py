@@ -1,11 +1,11 @@
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.scoutsuite_finding_maps import (
+    DataLossPrevention,
+    Logging,
+    PermissiveFirewallRules,
     RestrictivePolicies,
     SecureAuthentication,
-    DataLossPrevention,
-    UnencryptedData,
-    PermissiveFirewallRules,
     ServiceSecurity,
-    Logging,
+    UnencryptedData,
 )
 
 SCOUTSUITE_FINDINGS = [

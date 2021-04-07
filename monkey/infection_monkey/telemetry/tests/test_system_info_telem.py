@@ -4,7 +4,6 @@ import pytest
 
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 
-
 SYSTEM_INFO = {}
 
 

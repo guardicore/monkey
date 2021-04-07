@@ -5,7 +5,6 @@ import pytest
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 
-
 PATH = "path/to/file.txt"
 STATUS = ScanStatus.USED
 

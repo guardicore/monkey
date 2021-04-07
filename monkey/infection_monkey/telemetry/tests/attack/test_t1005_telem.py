@@ -5,7 +5,6 @@ import pytest
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 
-
 GATHERED_DATA_TYPE = "[Type of data collected]"
 INFO = "[Additional info]"
 STATUS = ScanStatus.USED

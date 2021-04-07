@@ -5,7 +5,6 @@ import pytest
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
 
-
 DST_IP = "0.0.0.1"
 FILENAME = "virus.exe"
 SRC_IP = "0.0.0.0"

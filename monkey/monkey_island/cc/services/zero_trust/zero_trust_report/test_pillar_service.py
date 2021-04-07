@@ -4,13 +4,13 @@ import pytest
 
 from common.common_consts import zero_trust_consts
 from common.common_consts.zero_trust_consts import (
-    DATA,
-    PEOPLE,
-    NETWORKS,
-    WORKLOADS,
-    VISIBILITY_ANALYTICS,
     AUTOMATION_ORCHESTRATION,
+    DATA,
     DEVICES,
+    NETWORKS,
+    PEOPLE,
+    VISIBILITY_ANALYTICS,
+    WORKLOADS,
 )
 from monkey_island.cc.services.zero_trust.zero_trust_report.pillar_service import PillarService
 from monkey_island.cc.services.zero_trust.zero_trust_report.test_common.example_finding_data import (
