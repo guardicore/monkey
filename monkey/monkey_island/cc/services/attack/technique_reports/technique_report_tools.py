@@ -9,10 +9,10 @@ def parse_creds(attempt):
     """
     username = attempt["user"]
     creds = {
-        "lm_hash": {"type": "LM hash", "output": censor_hash(attempt["lm_hash"])},
-        "ntlm_hash": {"type": "NTLM hash", "output": censor_hash(attempt["ntlm_hash"], 20)},
-        "ssh_key": {"type": "SSH key", "output": attempt["ssh_key"]},
-        "password": {"type": "Plaintext password", "output": censor_password(attempt["password"])},
+        "lm_hash":{"type":"LM hash", "output":censor_hash(attempt["lm_hash"])},
+        "ntlm_hash":{"type":"NTLM hash", "output":censor_hash(attempt["ntlm_hash"], 20)},
+        "ssh_key":{"type":"SSH key", "output":attempt["ssh_key"]},
+        "password":{"type":"Plaintext password", "output":censor_password(attempt["password"])},
     }
     for key, cred in list(creds.items()):
         if attempt[key]:

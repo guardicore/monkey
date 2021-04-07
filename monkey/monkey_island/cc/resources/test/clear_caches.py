@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 
 class ClearCaches(flask_restful.Resource):
     """
-    Used for timing tests - we want to get actual execution time of functions in BlackBox without caching -
+    Used for timing tests - we want to get actual execution time of functions in BlackBox without
+    caching -
     so we use this to clear the caches.
     :note: DO NOT CALL THIS IN PRODUCTION CODE as this will slow down the user experience.
     """
@@ -33,4 +34,4 @@ class ClearCaches(flask_restful.Resource):
             logger.error(NOT_ALL_REPORTS_DELETED)
             flask_restful.abort(500, error_info=NOT_ALL_REPORTS_DELETED)
 
-        return {"success": "true"}
+        return {"success":"true"}

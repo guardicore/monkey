@@ -21,4 +21,4 @@ class TraceTelem(BaseTelem):
     telem_category = TelemCategoryEnum.TRACE
 
     def get_data(self):
-        return {"msg": self.msg}
+        return {"msg":self.msg}

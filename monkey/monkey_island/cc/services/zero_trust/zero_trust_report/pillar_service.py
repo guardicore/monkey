@@ -6,9 +6,9 @@ class PillarService:
     @staticmethod
     def get_pillar_report_data():
         return {
-            "statusesToPillars": PillarService._get_statuses_to_pillars(),
-            "pillarsToStatuses": PillarService._get_pillars_to_statuses(),
-            "grades": PillarService._get_pillars_grades(),
+            "statusesToPillars":PillarService._get_statuses_to_pillars(),
+            "pillarsToStatuses":PillarService._get_pillars_to_statuses(),
+            "grades":PillarService._get_pillars_grades(),
         }
 
     @staticmethod
@@ -22,11 +22,11 @@ class PillarService:
     @staticmethod
     def __get_pillar_grade(pillar, all_findings):
         pillar_grade = {
-            "pillar": pillar,
-            zero_trust_consts.STATUS_FAILED: 0,
-            zero_trust_consts.STATUS_VERIFY: 0,
-            zero_trust_consts.STATUS_PASSED: 0,
-            zero_trust_consts.STATUS_UNEXECUTED: 0,
+            "pillar":pillar,
+            zero_trust_consts.STATUS_FAILED:0,
+            zero_trust_consts.STATUS_VERIFY:0,
+            zero_trust_consts.STATUS_PASSED:0,
+            zero_trust_consts.STATUS_UNEXECUTED:0,
         }
 
         tests_of_this_pillar = zero_trust_consts.PILLARS_TO_TESTS[pillar]
@@ -42,7 +42,7 @@ class PillarService:
                 pillar_grade[finding.status] += 1
 
         pillar_grade[zero_trust_consts.STATUS_UNEXECUTED] = list(test_unexecuted.values()).count(
-            True
+                True
         )
 
         return pillar_grade
@@ -50,10 +50,10 @@ class PillarService:
     @staticmethod
     def _get_statuses_to_pillars():
         results = {
-            zero_trust_consts.STATUS_FAILED: [],
-            zero_trust_consts.STATUS_VERIFY: [],
-            zero_trust_consts.STATUS_PASSED: [],
-            zero_trust_consts.STATUS_UNEXECUTED: [],
+            zero_trust_consts.STATUS_FAILED:[],
+            zero_trust_consts.STATUS_VERIFY:[],
+            zero_trust_consts.STATUS_PASSED:[],
+            zero_trust_consts.STATUS_UNEXECUTED:[],
         }
         for pillar in zero_trust_consts.PILLARS:
             results[PillarService.__get_status_of_single_pillar(pillar)].append(pillar)

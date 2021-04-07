@@ -13,26 +13,26 @@ class T1222(AttackTechnique):
 
     query = [
         {
-            "$match": {
-                "telem_category": "attack",
-                "data.technique": "T1222",
-                "data.status": ScanStatus.USED.value,
+            "$match":{
+                "telem_category":"attack",
+                "data.technique":"T1222",
+                "data.status":ScanStatus.USED.value,
             }
         },
         {
-            "$group": {
-                "_id": {
-                    "machine": "$data.machine",
-                    "status": "$data.status",
-                    "command": "$data.command",
+            "$group":{
+                "_id":{
+                    "machine":"$data.machine",
+                    "status":"$data.status",
+                    "command":"$data.command",
                 }
             }
         },
-        {"$replaceRoot": {"newRoot": "$_id"}},
+        {"$replaceRoot":{"newRoot":"$_id"}},
     ]
 
     @staticmethod
     def get_report_data():
         data = T1222.get_tech_base_data()
-        data.update({"commands": list(mongo.db.telemetry.aggregate(T1222.query))})
+        data.update({"commands":list(mongo.db.telemetry.aggregate(T1222.query))})
         return data

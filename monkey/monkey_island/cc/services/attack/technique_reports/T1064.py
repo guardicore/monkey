@@ -14,5 +14,5 @@ class T1064(UsageTechnique):
     def get_report_data():
         data = T1064.get_tech_base_data()
         script_usages = list(mongo.db.telemetry.aggregate(T1064.get_usage_query()))
-        data.update({"scripts": script_usages})
+        data.update({"scripts":script_usages})
         return data

@@ -16,7 +16,7 @@ def T1107_telem_test_instance():
 
 def test_T1107_send(T1107_telem_test_instance, spy_send_telemetry):
     T1107_telem_test_instance.send()
-    expected_data = {"status": STATUS.value, "technique": "T1107", "path": PATH}
+    expected_data = {"status":STATUS.value, "technique":"T1107", "path":PATH}
     expected_data = json.dumps(expected_data, cls=T1107_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "attack"

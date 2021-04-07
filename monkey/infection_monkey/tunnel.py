@@ -27,9 +27,9 @@ def _set_multicast_socket(timeout=DEFAULT_TIMEOUT, adapter=""):
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind((adapter, MCAST_PORT))
     sock.setsockopt(
-        socket.IPPROTO_IP,
-        socket.IP_ADD_MEMBERSHIP,
-        struct.pack("4sl", socket.inet_aton(MCAST_GROUP), socket.INADDR_ANY),
+            socket.IPPROTO_IP,
+            socket.IP_ADD_MEMBERSHIP,
+            struct.pack("4sl", socket.inet_aton(MCAST_GROUP), socket.INADDR_ANY),
     )
     return sock
 
@@ -138,14 +138,14 @@ class MonkeyTunnel(Thread):
             return
 
         proxy = self._proxy_class(
-            local_port=self.local_port, dest_host=self._target_addr, dest_port=self._target_port
+                local_port=self.local_port, dest_host=self._target_addr, dest_port=self._target_port
         )
         LOG.info(
-            "Running tunnel using proxy class: %s, listening on port %s, routing to: %s:%s",
-            proxy.__class__.__name__,
-            self.local_port,
-            self._target_addr,
-            self._target_port,
+                "Running tunnel using proxy class: %s, listening on port %s, routing to: %s:%s",
+                proxy.__class__.__name__,
+                self.local_port,
+                self._target_addr,
+                self._target_port,
         )
         proxy.start()
 
@@ -157,7 +157,7 @@ class MonkeyTunnel(Thread):
                     if ip_match:
                         answer = "%s:%d" % (ip_match, self.local_port)
                         LOG.debug(
-                            "Got tunnel request from %s, answering with %s", address[0], answer
+                                "Got tunnel request from %s, answering with %s", address[0], answer
                         )
                         self._broad_sock.sendto(answer.encode(), (address[0], MCAST_PORT))
                 elif b"+" == search:
@@ -173,7 +173,8 @@ class MonkeyTunnel(Thread):
 
         LOG.info("Stopping tunnel, waiting for clients: %s" % repr(self._clients))
 
-        # wait till all of the tunnel clients has been disconnected, or no one used the tunnel in QUIT_TIMEOUT seconds
+        # wait till all of the tunnel clients has been disconnected, or no one used the tunnel in
+        # QUIT_TIMEOUT seconds
         while self._clients and (time.time() - get_last_serve_time() < QUIT_TIMEOUT):
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)

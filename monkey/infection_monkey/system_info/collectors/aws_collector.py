@@ -31,7 +31,7 @@ class AwsCollector(SystemInfoCollector):
         info = {}
         if aws.is_instance():
             logger.info("Machine is an AWS instance")
-            info = {"instance_id": aws.get_instance_id()}
+            info = {"instance_id":aws.get_instance_id()}
         else:
             logger.info("Machine is NOT an AWS instance")
 

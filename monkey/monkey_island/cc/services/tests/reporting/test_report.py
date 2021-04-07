@@ -5,10 +5,10 @@ from bson import ObjectId
 from monkey_island.cc.services.reporting.report import ReportService
 
 TELEM_ID = {
-    "exploit_creds": ObjectId(b"123456789000"),
-    "system_info_creds": ObjectId(b"987654321000"),
-    "no_creds": ObjectId(b"112233445566"),
-    "monkey": ObjectId(b"665544332211"),
+    "exploit_creds":ObjectId(b"123456789000"),
+    "system_info_creds":ObjectId(b"987654321000"),
+    "no_creds":ObjectId(b"112233445566"),
+    "monkey":ObjectId(b"665544332211"),
 }
 MONKEY_GUID = "67890"
 USER = "user-name"
@@ -23,56 +23,55 @@ EXPLOITER_CLASS_NAME = "exploiter-name"
 # Below telem constants only contain fields relevant to current tests
 
 EXPLOIT_TELEMETRY_TELEM = {
-    "_id": TELEM_ID["exploit_creds"],
-    "monkey_guid": MONKEY_GUID,
-    "telem_category": "exploit",
-    "data": {
-        "machine": {
-            "ip_addr": VICTIM_IP,
-            "domain_name": VICTIM_DOMAIN_NAME,
+    "_id":TELEM_ID["exploit_creds"],
+    "monkey_guid":MONKEY_GUID,
+    "telem_category":"exploit",
+    "data":{
+        "machine":{
+            "ip_addr":VICTIM_IP,
+            "domain_name":VICTIM_DOMAIN_NAME,
         },
-        "info": {
-            "credentials": {
-                USER: {
-                    "username": USER,
-                    "lm_hash": LM_HASH,
-                    "ntlm_hash": NT_HASH,
+        "info":{
+            "credentials":{
+                USER:{
+                    "username":USER,
+                    "lm_hash":LM_HASH,
+                    "ntlm_hash":NT_HASH,
                 }
             }
         },
     },
 }
 
-
 SYSTEM_INFO_TELEMETRY_TELEM = {
-    "_id": TELEM_ID["system_info_creds"],
-    "monkey_guid": MONKEY_GUID,
-    "telem_category": "system_info",
-    "data": {
-        "credentials": {
-            USER: {
-                "password": PWD,
-                "lm_hash": LM_HASH,
-                "ntlm_hash": NT_HASH,
+    "_id":TELEM_ID["system_info_creds"],
+    "monkey_guid":MONKEY_GUID,
+    "telem_category":"system_info",
+    "data":{
+        "credentials":{
+            USER:{
+                "password":PWD,
+                "lm_hash":LM_HASH,
+                "ntlm_hash":NT_HASH,
             }
         }
     },
 }
 
 NO_CREDS_TELEMETRY_TELEM = {
-    "_id": TELEM_ID["no_creds"],
-    "monkey_guid": MONKEY_GUID,
-    "telem_category": "exploit",
-    "data": {
-        "machine": {
-            "ip_addr": VICTIM_IP,
-            "domain_name": VICTIM_DOMAIN_NAME,
+    "_id":TELEM_ID["no_creds"],
+    "monkey_guid":MONKEY_GUID,
+    "telem_category":"exploit",
+    "data":{
+        "machine":{
+            "ip_addr":VICTIM_IP,
+            "domain_name":VICTIM_DOMAIN_NAME,
         },
-        "info": {"credentials": {}},
+        "info":{"credentials":{}},
     },
 }
 
-MONKEY_TELEM = {"_id": TELEM_ID["monkey"], "guid": MONKEY_GUID, "hostname": HOSTNAME}
+MONKEY_TELEM = {"_id":TELEM_ID["monkey"], "guid":MONKEY_GUID, "hostname":HOSTNAME}
 
 
 @pytest.fixture
@@ -88,8 +87,8 @@ def test_get_stolen_creds_exploit(fake_mongo):
 
     stolen_creds_exploit = ReportService.get_stolen_creds()
     expected_stolen_creds_exploit = [
-        {"origin": VICTIM_DOMAIN_NAME, "type": "LM hash", "username": USER},
-        {"origin": VICTIM_DOMAIN_NAME, "type": "NTLM hash", "username": USER},
+        {"origin":VICTIM_DOMAIN_NAME, "type":"LM hash", "username":USER},
+        {"origin":VICTIM_DOMAIN_NAME, "type":"NTLM hash", "username":USER},
     ]
 
     assert expected_stolen_creds_exploit == stolen_creds_exploit
@@ -101,9 +100,9 @@ def test_get_stolen_creds_system_info(fake_mongo):
 
     stolen_creds_system_info = ReportService.get_stolen_creds()
     expected_stolen_creds_system_info = [
-        {"origin": HOSTNAME, "type": "Clear Password", "username": USER},
-        {"origin": HOSTNAME, "type": "LM hash", "username": USER},
-        {"origin": HOSTNAME, "type": "NTLM hash", "username": USER},
+        {"origin":HOSTNAME, "type":"Clear Password", "username":USER},
+        {"origin":HOSTNAME, "type":"LM hash", "username":USER},
+        {"origin":HOSTNAME, "type":"NTLM hash", "username":USER},
     ]
 
     assert expected_stolen_creds_system_info == stolen_creds_system_info

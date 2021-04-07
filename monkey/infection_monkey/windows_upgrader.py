@@ -34,7 +34,7 @@ class WindowsUpgrader(object):
             monkey_64_path = ControlClient.download_monkey_exe_by_os(True, False)
             with monkeyfs.open(monkey_64_path, "rb") as downloaded_monkey_file:
                 with open(
-                    WormConfiguration.dropper_target_path_win_64, "wb"
+                        WormConfiguration.dropper_target_path_win_64, "wb"
                 ) as written_monkey_file:
                     shutil.copyfileobj(downloaded_monkey_file, written_monkey_file)
         except (IOError, AttributeError) as e:
@@ -42,28 +42,29 @@ class WindowsUpgrader(object):
             return
 
         monkey_options = build_monkey_commandline_explicitly(
-            opts.parent, opts.tunnel, opts.server, opts.depth
+                opts.parent, opts.tunnel, opts.server, opts.depth
         )
 
         monkey_cmdline = (
-            MONKEY_CMDLINE_WINDOWS % {"monkey_path": WormConfiguration.dropper_target_path_win_64}
-            + monkey_options
+                MONKEY_CMDLINE_WINDOWS % {
+            "monkey_path":WormConfiguration.dropper_target_path_win_64}
+                + monkey_options
         )
 
         monkey_process = subprocess.Popen(
-            monkey_cmdline,
-            shell=True,
-            stdin=None,
-            stdout=None,
-            stderr=None,
-            close_fds=True,
-            creationflags=DETACHED_PROCESS,
+                monkey_cmdline,
+                shell=True,
+                stdin=None,
+                stdout=None,
+                stderr=None,
+                close_fds=True,
+                creationflags=DETACHED_PROCESS,
         )
 
         LOG.info(
-            "Executed 64bit monkey process (PID=%d) with command line: %s",
-            monkey_process.pid,
-            monkey_cmdline,
+                "Executed 64bit monkey process (PID=%d) with command line: %s",
+                monkey_process.pid,
+                monkey_cmdline,
         )
 
         time.sleep(WindowsUpgrader.__UPGRADE_WAIT_TIME__)

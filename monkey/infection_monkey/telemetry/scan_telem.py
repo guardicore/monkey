@@ -16,4 +16,4 @@ class ScanTelem(BaseTelem):
     telem_category = TelemCategoryEnum.SCAN
 
     def get_data(self):
-        return {"machine": self.machine.as_dict(), "service_count": len(self.machine.services)}
+        return {"machine":self.machine.as_dict(), "service_count":len(self.machine.services)}

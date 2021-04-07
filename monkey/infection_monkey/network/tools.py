@@ -129,7 +129,8 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                 possible_ports.append((port, sock))
                 continue
             if err == 10035:  # WSAEWOULDBLOCK is valid, see
-                # https://msdn.microsoft.com/en-us/library/windows/desktop/ms740668%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
+                # https://msdn.microsoft.com/en-us/library/windows/desktop/ms740668%28v=vs.85%29
+                # .aspx?f=255&MSPPError=-2147217396
                 possible_ports.append((port, sock))
                 continue
             if err == 115:  # EINPROGRESS     115     /* Operation now in progress */
@@ -156,15 +157,16 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                     timeout -= SLEEP_BETWEEN_POLL
 
             LOG.debug(
-                "On host %s discovered the following ports %s"
-                % (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets]))
+                    "On host %s discovered the following ports %s"
+                    % (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets]))
             )
             banners = []
             if get_banner and (len(connected_ports_sockets) != 0):
                 readable_sockets, _, _ = select.select(
-                    [s[1] for s in connected_ports_sockets], [], [], 0
+                        [s[1] for s in connected_ports_sockets], [], [], 0
                 )
-                # read first BANNER_READ bytes. We ignore errors because service might not send a decodable byte string.
+                # read first BANNER_READ bytes. We ignore errors because service might not send a
+                # decodable byte string.
                 banners = [
                     sock.recv(BANNER_READ).decode(errors="ignore")
                     if sock in readable_sockets
@@ -209,7 +211,8 @@ def _get_traceroute_bin_path():
     Its been built using the buildroot utility with the following settings:
         * Statically link to musl and all other required libs
         * Optimize for size
-    This is done because not all linux distros come with traceroute out-of-the-box, and to ensure it behaves as expected
+    This is done because not all linux distros come with traceroute out-of-the-box, and to ensure
+    it behaves as expected
 
     :return: Path to traceroute executable
     """
@@ -223,7 +226,8 @@ def _parse_traceroute(output, regex, ttl):
     :param regex:   Regex for finding an IP address
     :param ttl:     Max TTL. Must be the same as the TTL used as param for traceroute.
     :return:        List of ips which are the hops on the way to the traceroute destination.
-                    If a hop's IP wasn't found by traceroute, instead of an IP, the array will contain None
+                    If a hop's IP wasn't found by traceroute, instead of an IP, the array will
+                    contain None
     """
     ip_lines = output.split("\n")
     trace_list = []
@@ -236,7 +240,7 @@ def _parse_traceroute(output, regex, ttl):
 
     for i in range(first_line_index, first_line_index + ttl):
         if (
-            re.search(r"^\s*" + str(i - first_line_index + 1), ip_lines[i]) is None
+                re.search(r"^\s*" + str(i - first_line_index + 1), ip_lines[i]) is None
         ):  # If trace is finished
             break
 
@@ -288,7 +292,7 @@ def get_interface_to_target(dst):
             ip_to_dst = s.getsockname()[0]
         except KeyError:
             LOG.debug(
-                "Couldn't get an interface to the target, presuming that target is localhost."
+                    "Couldn't get an interface to the target, presuming that target is localhost."
             )
             ip_to_dst = "127.0.0.1"
         finally:

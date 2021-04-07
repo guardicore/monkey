@@ -9,10 +9,9 @@ from monkey_island.cc.services.attack.attack_config import AttackConfig
 
 logger = logging.getLogger(__name__)
 
-
 disabled_msg = (
-    "This technique has been disabled. "
-    + "You can enable it from the [configuration page](../../configure)."
+        "This technique has been disabled. "
+        + "You can enable it from the [configuration page](../../configure)."
 )
 
 
@@ -68,19 +67,19 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         if not cls._is_enabled_in_config():
             return ScanStatus.DISABLED.value
         elif mongo.db.telemetry.find_one(
-            {
-                "telem_category": "attack",
-                "data.status": ScanStatus.USED.value,
-                "data.technique": cls.tech_id,
-            }
+                {
+                    "telem_category":"attack",
+                    "data.status":ScanStatus.USED.value,
+                    "data.technique":cls.tech_id,
+                }
         ):
             return ScanStatus.USED.value
         elif mongo.db.telemetry.find_one(
-            {
-                "telem_category": "attack",
-                "data.status": ScanStatus.SCANNED.value,
-                "data.technique": cls.tech_id,
-            }
+                {
+                    "telem_category":"attack",
+                    "data.status":ScanStatus.SCANNED.value,
+                    "data.technique":cls.tech_id,
+                }
         ):
             return ScanStatus.SCANNED.value
         else:
@@ -93,7 +92,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :param status: Enum from common/attack_utils.py integer value
         :return: Dict with message and status
         """
-        return {"message": cls.get_message_by_status(status), "status": status}
+        return {"message":cls.get_message_by_status(status), "status":status}
 
     @classmethod
     def get_message_by_status(cls, status):
@@ -122,13 +121,14 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     def get_tech_base_data(cls):
         """
         Gathers basic attack technique data into a dict.
-        :return: dict E.g. {'message': 'Brute force used', 'status': 2, 'title': 'T1110 Brute force'}
+        :return: dict E.g. {'message': 'Brute force used', 'status': 2, 'title': 'T1110 Brute
+        force'}
         """
         data = {}
         status = cls.technique_status()
         title = cls.technique_title()
         data.update(
-            {"status": status, "title": title, "message": cls.get_message_by_status(status)}
+                {"status":status, "title":title, "message":cls.get_message_by_status(status)}
         )
         data.update(cls.get_mitigation_by_status(status))
         return data
@@ -136,7 +136,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     @classmethod
     def get_base_data_by_status(cls, status):
         data = cls.get_message_and_status(status)
-        data.update({"title": cls.technique_title()})
+        data.update({"title":cls.technique_title()})
         data.update(cls.get_mitigation_by_status(status))
         return data
 
@@ -144,7 +144,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     def get_mitigation_by_status(cls, status: ScanStatus) -> dict:
         if status == ScanStatus.USED.value:
             mitigation_document = AttackMitigations.get_mitigation_by_technique_id(str(cls.tech_id))
-            return {"mitigations": mitigation_document.to_mongo().to_dict()["mitigations"]}
+            return {"mitigations":mitigation_document.to_mongo().to_dict()["mitigations"]}
         else:
             return {}
 

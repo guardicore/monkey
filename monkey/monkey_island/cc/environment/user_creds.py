@@ -17,9 +17,9 @@ class UserCreds:
     def to_dict(self) -> Dict:
         cred_dict = {}
         if self.username:
-            cred_dict.update({"user": self.username})
+            cred_dict.update({"user":self.username})
         if self.password_hash:
-            cred_dict.update({"password_hash": self.password_hash})
+            cred_dict.update({"password_hash":self.password_hash})
         return cred_dict
 
     def to_auth_user(self) -> User:

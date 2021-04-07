@@ -13,8 +13,8 @@ class MonkeyConfiguration(flask_restful.Resource):
     @jwt_required
     def get(self):
         return jsonify(
-            schema=ConfigService.get_config_schema(),
-            configuration=ConfigService.get_config(False, True),
+                schema=ConfigService.get_config_schema(),
+                configuration=ConfigService.get_config(False, True),
         )
 
     @jwt_required

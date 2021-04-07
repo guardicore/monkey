@@ -8,8 +8,10 @@ class AutoNewUser(metaclass=abc.ABCMeta):
     """
     RAII object to use for creating and using a new user. Use with `with`.
     User will be created when the instance is instantiated.
-    User will be available for use (log on for Windows, for example) at the start of the `with` scope.
-    User will be removed (deactivated and deleted for Windows, for example) at the end of said `with` scope.
+    User will be available for use (log on for Windows, for example) at the start of the `with`
+    scope.
+    User will be removed (deactivated and deleted for Windows, for example) at the end of said
+    `with` scope.
 
     Example:
              # Created                                                 # Logged on

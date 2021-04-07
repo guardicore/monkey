@@ -14,5 +14,5 @@ class T1222Telem(VictimHostTelem):
 
     def get_data(self):
         data = super(T1222Telem, self).get_data()
-        data.update({"command": self.command})
+        data.update({"command":self.command})
         return data

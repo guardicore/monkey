@@ -18,10 +18,10 @@ def T1005_telem_test_instance():
 def test_T1005_send(T1005_telem_test_instance, spy_send_telemetry):
     T1005_telem_test_instance.send()
     expected_data = {
-        "status": STATUS.value,
-        "technique": "T1005",
-        "gathered_data_type": GATHERED_DATA_TYPE,
-        "info": INFO,
+        "status":STATUS.value,
+        "technique":"T1005",
+        "gathered_data_type":GATHERED_DATA_TYPE,
+        "info":INFO,
     }
     expected_data = json.dumps(expected_data, cls=T1005_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data

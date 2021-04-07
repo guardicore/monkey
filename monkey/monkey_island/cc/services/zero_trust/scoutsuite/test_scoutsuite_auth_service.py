@@ -31,10 +31,10 @@ def test_is_aws_keys_setup(tmp_path):
     initialize_encryptor(tmp_path)
     bogus_key_value = get_encryptor().enc("bogus_aws_key")
     dpath.util.set(
-        ConfigService.default_config, AWS_KEYS_PATH + ["aws_secret_access_key"], bogus_key_value
+            ConfigService.default_config, AWS_KEYS_PATH + ["aws_secret_access_key"], bogus_key_value
     )
     dpath.util.set(
-        ConfigService.default_config, AWS_KEYS_PATH + ["aws_access_key_id"], bogus_key_value
+            ConfigService.default_config, AWS_KEYS_PATH + ["aws_access_key_id"], bogus_key_value
     )
 
     assert is_aws_keys_setup()

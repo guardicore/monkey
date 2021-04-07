@@ -8,13 +8,13 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
-
 GCP_METADATA_SERVICE_URL = "http://metadata.google.internal/"
 
 
 class GcpInstance(CloudInstance):
     """
-    Used to determine if on GCP. See https://cloud.google.com/compute/docs/storing-retrieving-metadata#runninggce
+    Used to determine if on GCP. See https://cloud.google.com/compute/docs/storing-retrieving
+    -metadata#runninggce
     """
 
     def is_instance(self):
@@ -39,16 +39,16 @@ class GcpInstance(CloudInstance):
                 else:
                     if not response.headers["Metadata-Flavor"] == "Google":
                         logger.warning(
-                            "Got unexpected Metadata flavor: {}".format(
-                                response.headers["Metadata-Flavor"]
-                            )
+                                "Got unexpected Metadata flavor: {}".format(
+                                        response.headers["Metadata-Flavor"]
+                                )
                         )
             else:
                 logger.warning(
-                    "On GCP, but metadata response not ok: {}".format(response.status_code)
+                        "On GCP, but metadata response not ok: {}".format(response.status_code)
                 )
         except requests.RequestException:
             logger.debug(
-                "Failed to get response from GCP metadata service: This instance is not on GCP"
+                    "Failed to get response from GCP metadata service: This instance is not on GCP"
             )
             self._on_gcp = False

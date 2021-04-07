@@ -48,10 +48,10 @@ def get_linux_usernames():
     # get list of usernames
     USERS = (
         subprocess.check_output(  # noqa: DUO116
-            "cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1", shell=True
+                "cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1", shell=True
         )
-        .decode()
-        .split("\n")[:-1]
+            .decode()
+            .split("\n")[:-1]
     )
 
     return USERS

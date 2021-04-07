@@ -9,6 +9,7 @@ LOGGED_DATA_LENGTH = 300  # How many characters of telemetry data will be logged
 
 __author__ = "itay.mizeretz"
 
+
 # TODO: Rework the interface for telemetry; this class has too many responsibilities
 #       (i.e. too many reasons to change):
 #

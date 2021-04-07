@@ -8,5 +8,5 @@ class Config(EmbeddedDocument):
     See https://mongoengine-odm.readthedocs.io/apireference.html#mongoengine.FieldDoesNotExist
     """
 
-    meta = {"strict": False}
+    meta = {"strict":False}
     pass

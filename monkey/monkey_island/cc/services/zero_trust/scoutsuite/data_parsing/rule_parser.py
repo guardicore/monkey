@@ -2,7 +2,8 @@ from enum import Enum
 
 from common.utils.code_utils import get_value_from_dict
 from common.utils.exceptions import RulePathCreatorNotFound
-from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_path_building.rule_path_creators_list import (
+from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_path_building\
+    .rule_path_creators_list import (
     RULE_PATH_CREATORS_LIST,
 )
 
@@ -35,6 +36,6 @@ class RuleParser:
             return RULE_TO_RULE_PATH_CREATOR_HASHMAP[rule_name]
         except KeyError:
             raise RulePathCreatorNotFound(
-                f"Rule path creator not found for rule {rule_name.value}. Make sure to assign"
-                f"this rule to any rule path creators."
+                    f"Rule path creator not found for rule {rule_name.value}. Make sure to assign"
+                    f"this rule to any rule path creators."
             )

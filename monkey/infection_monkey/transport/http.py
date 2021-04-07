@@ -99,8 +99,8 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         self.send_header("Content-type", "application/octet-stream")
         self.send_header(
-            "Content-Range",
-            "bytes " + str(start_range) + "-" + str(end_range - 1) + "/" + str(size),
+                "Content-Range",
+                "bytes " + str(start_range) + "-" + str(end_range - 1) + "/" + str(size),
         )
         self.send_header("Content-Length", min(end_range - start_range, size))
         self.end_headers()
@@ -108,8 +108,8 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
     def log_message(self, format_string, *args):
         LOG.debug(
-            "FileServHTTPRequestHandler: %s - - [%s] %s"
-            % (self.address_string(), self.log_date_time_string(), format_string % args)
+                "FileServHTTPRequestHandler: %s - - [%s] %s"
+                % (self.address_string(), self.log_date_time_string(), format_string % args)
         )
 
 
@@ -127,11 +127,11 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
             try:
                 dest_path = self.path
                 r = requests.post(
-                    url=dest_path,
-                    data=post_data,
-                    verify=False,
-                    proxies=infection_monkey.control.ControlClient.proxies,
-                    timeout=SHORT_REQUEST_TIMEOUT,
+                        url=dest_path,
+                        data=post_data,
+                        verify=False,
+                        proxies=infection_monkey.control.ControlClient.proxies,
+                        timeout=SHORT_REQUEST_TIMEOUT,
                 )
                 self.send_response(r.status_code)
             except requests.exceptions.ConnectionError as e:
@@ -160,8 +160,8 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
             conn = socket.create_connection(address)
         except socket.error as e:
             LOG.debug(
-                "HTTPConnectProxyHandler: Got exception while trying to connect to %s: %s"
-                % (repr(address), e)
+                    "HTTPConnectProxyHandler: Got exception while trying to connect to %s: %s"
+                    % (repr(address), e)
             )
             self.send_error(504)  # 504 Gateway Timeout
             return
@@ -187,8 +187,8 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
 
     def log_message(self, format_string, *args):
         LOG.debug(
-            "HTTPConnectProxyHandler: %s - [%s] %s"
-            % (self.address_string(), self.log_date_time_string(), format_string % args)
+                "HTTPConnectProxyHandler: %s - [%s] %s"
+                % (self.address_string(), self.log_date_time_string(), format_string % args)
         )
 
 
@@ -213,10 +213,10 @@ class HTTPServer(threading.Thread):
             def report_download(dest=None):
                 LOG.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
                 TempHandler.T1105Telem(
-                    TempHandler.ScanStatus.USED,
-                    get_interface_to_target(dest[0]),
-                    dest[0],
-                    self._filename,
+                        TempHandler.ScanStatus.USED,
+                        get_interface_to_target(dest[0]),
+                        dest[0],
+                        self._filename,
                 ).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
@@ -270,10 +270,10 @@ class LockedHTTPServer(threading.Thread):
             def report_download(dest=None):
                 LOG.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
                 TempHandler.T1105Telem(
-                    TempHandler.ScanStatus.USED,
-                    get_interface_to_target(dest[0]),
-                    dest[0],
-                    self._filename,
+                        TempHandler.ScanStatus.USED,
+                        get_interface_to_target(dest[0]),
+                        dest[0],
+                        self._filename,
                 ).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:

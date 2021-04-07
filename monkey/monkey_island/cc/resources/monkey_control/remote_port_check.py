@@ -9,6 +9,6 @@ class RemotePortCheck(flask_restful.Resource):
     # Used by monkey. can't secure.
     def get(self, port):
         if port and check_tcp_port(request.remote_addr, port):
-            return {"status": "port_visible"}
+            return {"status":"port_visible"}
         else:
-            return {"status": "port_invisible"}
+            return {"status":"port_invisible"}

@@ -14,19 +14,19 @@ def check_tunneling_violation(tunnel_telemetry_json):
         current_monkey = Monkey.get_single_monkey_by_guid(tunnel_telemetry_json["monkey_guid"])
         tunneling_events = [
             Event.create_event(
-                title="Tunneling event",
-                message="Monkey on {hostname} tunneled traffic through {proxy}.".format(
-                    hostname=current_monkey.hostname, proxy=tunnel_host_ip
-                ),
-                event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
-                timestamp=tunnel_telemetry_json["timestamp"],
+                    title="Tunneling event",
+                    message="Monkey on {hostname} tunneled traffic through {proxy}.".format(
+                            hostname=current_monkey.hostname, proxy=tunnel_host_ip
+                    ),
+                    event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
+                    timestamp=tunnel_telemetry_json["timestamp"],
             )
         ]
 
         MonkeyZTFindingService.create_or_add_to_existing(
-            test=zero_trust_consts.TEST_TUNNELING,
-            status=zero_trust_consts.STATUS_FAILED,
-            events=tunneling_events,
+                test=zero_trust_consts.TEST_TUNNELING,
+                status=zero_trust_consts.STATUS_FAILED,
+                events=tunneling_events,
         )
 
         MonkeyZTFindingService.add_malicious_activity_to_timeline(tunneling_events)

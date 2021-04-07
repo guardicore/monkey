@@ -4,7 +4,6 @@ __author__ = "itay.mizeretz"
 
 
 class PasswordEnvironment(Environment):
-
     _credentials_required = True
 
     def get_auth_users(self):

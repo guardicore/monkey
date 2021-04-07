@@ -4,8 +4,10 @@ from gevent.lock import BoundedSemaphore
 
 logger = logging.getLogger(__name__)
 
-# These are pseudo-singletons - global Locks. These locks will allow only one thread to generate a report at a time.
-# Report generation can be quite slow if there is a lot of data, and the UI queries the Root service often; without
+# These are pseudo-singletons - global Locks. These locks will allow only one thread to generate
+# a report at a time.
+# Report generation can be quite slow if there is a lot of data, and the UI queries the Root
+# service often; without
 # the locks, these requests would accumulate, overload the server, eventually causing it to crash.
 logger.debug("Initializing report generation locks.")
 __report_generating_lock = BoundedSemaphore()

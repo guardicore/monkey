@@ -19,13 +19,15 @@ def get_windows_commands_to_modify_shell_startup_files():
 
     STARTUP_FILES_PER_USER = [
         "\\".join(
-            SHELL_STARTUP_FILE_PATH_COMPONENTS[:2] + [user] + SHELL_STARTUP_FILE_PATH_COMPONENTS[3:]
+                SHELL_STARTUP_FILE_PATH_COMPONENTS[:2] + [
+                    user] + SHELL_STARTUP_FILE_PATH_COMPONENTS[3:]
         )
         for user in USERS
     ]
 
     return [
-        "powershell.exe",
-        "infection_monkey/post_breach/shell_startup_files/windows/modify_powershell_startup_file.ps1",
-        "-startup_file_path {0}",
-    ], STARTUP_FILES_PER_USER
+               "powershell.exe",
+               "infection_monkey/post_breach/shell_startup_files/windows"
+               "/modify_powershell_startup_file.ps1",
+               "-startup_file_path {0}",
+           ], STARTUP_FILES_PER_USER

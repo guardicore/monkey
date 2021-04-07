@@ -99,7 +99,7 @@ class IpRange(NetworkRange):
             addresses = ip_range.split("-")
             if len(addresses) != 2:
                 raise ValueError(
-                    "Illegal IP range format: %s. Format is 192.168.0.5-192.168.0.20" % ip_range
+                        "Illegal IP range format: %s. Format is 192.168.0.5-192.168.0.20" % ip_range
                 )
             self._lower_end_ip, self._higher_end_ip = [x.strip() for x in addresses]
         elif (lower_end_ip is not None) and (higher_end_ip is not None):
@@ -112,8 +112,8 @@ class IpRange(NetworkRange):
         self._higher_end_ip_num = self._ip_to_number(self._higher_end_ip)
         if self._higher_end_ip_num < self._lower_end_ip_num:
             raise ValueError(
-                "Higher end IP %s is smaller than lower end IP %s"
-                % (self._lower_end_ip, self._higher_end_ip)
+                    "Higher end IP %s is smaller than lower end IP %s"
+                    % (self._lower_end_ip, self._higher_end_ip)
             )
 
     def __repr__(self):
@@ -159,7 +159,8 @@ class SingleIpRange(NetworkRange):
     @staticmethod
     def string_to_host(string_):
         """
-        Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name and ip
+        Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name
+        and ip
         :param string_: String that was entered in "Scan IP/subnet list"
         :return: A tuple in format (IP, domain_name). Eg. (192.168.55.1, www.google.com)
         """
@@ -176,8 +177,8 @@ class SingleIpRange(NetworkRange):
                 domain_name = string_
             except socket.error:
                 LOG.error(
-                    "Your specified host: {} is not found as a domain name and"
-                    " it's not an IP address".format(string_)
+                        "Your specified host: {} is not found as a domain name and"
+                        " it's not an IP address".format(string_)
                 )
                 return None, string_
         # If a string_ was entered instead of IP we presume that it was domain name and translate it

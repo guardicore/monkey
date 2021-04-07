@@ -16,6 +16,7 @@ class Environment(flask_restful.Resource):
             if env_singleton.env.needs_registration():
                 env_singleton.set_to_standard()
                 logger.warning(
-                    "No user registered, Island on standard mode - no credentials required to access."
+                        "No user registered, Island on standard mode - no credentials required to "
+                        "access."
                 )
         return {}

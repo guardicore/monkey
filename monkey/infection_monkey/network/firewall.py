@@ -5,12 +5,12 @@ import sys
 
 def _run_netsh_cmd(command, args):
     cmd = subprocess.Popen(
-        "netsh %s %s"
-        % (
-            command,
-            " ".join(['%s="%s"' % (key, value) for key, value in list(args.items()) if value]),
-        ),
-        stdout=subprocess.PIPE,
+            "netsh %s %s"
+            % (
+                command,
+                " ".join(['%s="%s"' % (key, value) for key, value in list(args.items()) if value]),
+            ),
+            stdout=subprocess.PIPE,
     )
     return cmd.stdout.read().strip().lower().endswith("ok.")
 
@@ -56,9 +56,9 @@ class WinAdvFirewall(FirewallApp):
             return None
 
     def add_firewall_rule(
-        self, name="Firewall", direction="in", action="allow", program=sys.executable, **kwargs
+            self, name="Firewall", direction="in", action="allow", program=sys.executable, **kwargs
     ):
-        netsh_args = {"name": name, "dir": direction, "action": action, "program": program}
+        netsh_args = {"name":name, "dir":direction, "action":action, "program":program}
         netsh_args.update(kwargs)
         try:
             if _run_netsh_cmd("advfirewall firewall add rule", netsh_args):
@@ -70,7 +70,7 @@ class WinAdvFirewall(FirewallApp):
             return None
 
     def remove_firewall_rule(self, name="Firewall", **kwargs):
-        netsh_args = {"name": name}
+        netsh_args = {"name":name}
         netsh_args.update(kwargs)
 
         try:
@@ -89,10 +89,10 @@ class WinAdvFirewall(FirewallApp):
 
         for rule in list(self._rules.values()):
             if (
-                rule.get("program") == sys.executable
-                and "in" == rule.get("dir")
-                and "allow" == rule.get("action")
-                and 4 == len(list(rule.keys()))
+                    rule.get("program") == sys.executable
+                    and "in" == rule.get("dir")
+                    and "allow" == rule.get("action")
+                    and 4 == len(list(rule.keys()))
             ):
                 return True
         return False
@@ -125,14 +125,14 @@ class WinFirewall(FirewallApp):
             return None
 
     def add_firewall_rule(
-        self,
-        rule="allowedprogram",
-        name="Firewall",
-        mode="ENABLE",
-        program=sys.executable,
-        **kwargs,
+            self,
+            rule="allowedprogram",
+            name="Firewall",
+            mode="ENABLE",
+            program=sys.executable,
+            **kwargs,
     ):
-        netsh_args = {"name": name, "mode": mode, "program": program}
+        netsh_args = {"name":name, "mode":mode, "program":program}
         netsh_args.update(kwargs)
 
         try:
@@ -146,14 +146,14 @@ class WinFirewall(FirewallApp):
             return None
 
     def remove_firewall_rule(
-        self,
-        rule="allowedprogram",
-        name="Firewall",
-        mode="ENABLE",
-        program=sys.executable,
-        **kwargs,
+            self,
+            rule="allowedprogram",
+            name="Firewall",
+            mode="ENABLE",
+            program=sys.executable,
+            **kwargs,
     ):
-        netsh_args = {"program": program}
+        netsh_args = {"program":program}
         netsh_args.update(kwargs)
         try:
             if _run_netsh_cmd("firewall delete %s" % rule, netsh_args):

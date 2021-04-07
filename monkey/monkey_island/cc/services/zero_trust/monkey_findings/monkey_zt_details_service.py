@@ -14,21 +14,21 @@ class MonkeyZTDetailsService:
     @staticmethod
     def fetch_details_for_display(finding_id: ObjectId) -> dict:
         pipeline = [
-            {"$match": {"_id": finding_id}},
+            {"$match":{"_id":finding_id}},
             {
-                "$addFields": {
-                    "oldest_events": {"$slice": ["$events", int(MAX_EVENT_FETCH_CNT / 2)]},
-                    "latest_events": {"$slice": ["$events", int(-1 * MAX_EVENT_FETCH_CNT / 2)]},
-                    "event_count": {"$size": "$events"},
+                "$addFields":{
+                    "oldest_events":{"$slice":["$events", int(MAX_EVENT_FETCH_CNT / 2)]},
+                    "latest_events":{"$slice":["$events", int(-1 * MAX_EVENT_FETCH_CNT / 2)]},
+                    "event_count":{"$size":"$events"},
                 }
             },
-            {"$unset": ["events"]},
+            {"$unset":["events"]},
         ]
         detail_list = list(MonkeyFindingDetails.objects.aggregate(*pipeline))
         if detail_list:
             details = detail_list[0]
             details["latest_events"] = MonkeyZTDetailsService._remove_redundant_events(
-                details["event_count"], details["latest_events"]
+                    details["event_count"], details["latest_events"]
             )
             return details
         else:
@@ -36,7 +36,7 @@ class MonkeyZTDetailsService:
 
     @staticmethod
     def _remove_redundant_events(
-        fetched_event_count: int, latest_events: List[object]
+            fetched_event_count: int, latest_events: List[object]
     ) -> List[object]:
         overlap_count = fetched_event_count - int(MAX_EVENT_FETCH_CNT / 2)
         # None of 'latest_events' are in 'oldest_events'
@@ -48,4 +48,4 @@ class MonkeyZTDetailsService:
         # Some of 'latest_events' are already in 'oldest_events'.
         # Return only those that are not
         else:
-            return latest_events[-1 * overlap_count :]
+            return latest_events[-1 * overlap_count:]

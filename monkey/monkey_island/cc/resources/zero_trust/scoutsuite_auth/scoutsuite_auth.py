@@ -17,9 +17,9 @@ class ScoutSuiteAuth(flask_restful.Resource):
     def get(self, provider: CloudProviders):
         if provider == CloudProviders.AWS.value:
             is_setup, message = is_cloud_authentication_setup(provider)
-            return {"is_setup": is_setup, "message": message}
+            return {"is_setup":is_setup, "message":message}
         else:
-            return {"is_setup": False, "message": ""}
+            return {"is_setup":False, "message":""}
 
     @jwt_required
     def post(self, provider: CloudProviders):
@@ -28,10 +28,10 @@ class ScoutSuiteAuth(flask_restful.Resource):
         if provider == CloudProviders.AWS.value:
             try:
                 set_aws_keys(
-                    access_key_id=key_info["accessKeyId"],
-                    secret_access_key=key_info["secretAccessKey"],
-                    session_token=key_info["sessionToken"],
+                        access_key_id=key_info["accessKeyId"],
+                        secret_access_key=key_info["secretAccessKey"],
+                        session_token=key_info["sessionToken"],
                 )
             except InvalidAWSKeys as e:
                 error_msg = str(e)
-        return {"error_msg": error_msg}
+        return {"error_msg":error_msg}

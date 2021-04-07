@@ -5,7 +5,6 @@ __author__ = "itay.mizeretz"
 
 
 class AwsEnvironment(Environment):
-
     _credentials_required = True
 
     def __init__(self, config):

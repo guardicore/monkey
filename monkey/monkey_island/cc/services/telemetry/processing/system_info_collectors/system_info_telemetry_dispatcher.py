@@ -23,17 +23,18 @@ from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence i
 logger = logging.getLogger(__name__)
 
 SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {
-    AWS_COLLECTOR: [process_aws_telemetry],
-    ENVIRONMENT_COLLECTOR: [process_environment_telemetry],
-    HOSTNAME_COLLECTOR: [process_hostname_telemetry],
-    PROCESS_LIST_COLLECTOR: [check_antivirus_existence],
+    AWS_COLLECTOR:[process_aws_telemetry],
+    ENVIRONMENT_COLLECTOR:[process_environment_telemetry],
+    HOSTNAME_COLLECTOR:[process_hostname_telemetry],
+    PROCESS_LIST_COLLECTOR:[check_antivirus_existence],
 }
 
 
 class SystemInfoTelemetryDispatcher(object):
     def __init__(
-        self,
-        collector_to_parsing_functions: typing.Mapping[str, typing.List[typing.Callable]] = None,
+            self,
+            collector_to_parsing_functions: typing.Mapping[
+                str, typing.List[typing.Callable]] = None,
     ):
         """
         :param collector_to_parsing_functions: Map between collector names and a list of functions
@@ -47,7 +48,8 @@ class SystemInfoTelemetryDispatcher(object):
 
     def dispatch_collector_results_to_relevant_processors(self, telemetry_json):
         """
-        If the telemetry has collectors' results, dispatches the results to the relevant processing functions.
+        If the telemetry has collectors' results, dispatches the results to the relevant
+        processing functions.
         :param telemetry_json: Telemetry sent from the Monkey
         """
         if "collectors" in telemetry_json["data"]:
@@ -58,11 +60,11 @@ class SystemInfoTelemetryDispatcher(object):
 
         for collector_name, collector_results in telemetry_json["data"]["collectors"].items():
             self.dispatch_result_of_single_collector_to_processing_functions(
-                collector_name, collector_results, relevant_monkey_guid
+                    collector_name, collector_results, relevant_monkey_guid
             )
 
     def dispatch_result_of_single_collector_to_processing_functions(
-        self, collector_name, collector_results, relevant_monkey_guid
+            self, collector_name, collector_results, relevant_monkey_guid
     ):
         if collector_name in self.collector_to_processing_functions:
             for processing_function in self.collector_to_processing_functions[collector_name]:
@@ -71,10 +73,10 @@ class SystemInfoTelemetryDispatcher(object):
                     processing_function(collector_results, relevant_monkey_guid)
                 except Exception as e:
                     logger.error(
-                        "Error {} while processing {} system info telemetry".format(
-                            str(e), collector_name
-                        ),
-                        exc_info=True,
+                            "Error {} while processing {} system info telemetry".format(
+                                    str(e), collector_name
+                            ),
+                            exc_info=True,
                     )
         else:
             logger.warning("Unknown system info collector name: {}".format(collector_name))

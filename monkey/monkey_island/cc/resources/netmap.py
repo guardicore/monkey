@@ -13,4 +13,4 @@ class NetMap(flask_restful.Resource):
         net_nodes = NetNodeService.get_all_net_nodes()
         net_edges = NetEdgeService.get_all_net_edges()
 
-        return {"nodes": net_nodes, "edges": net_edges}
+        return {"nodes":net_nodes, "edges":net_edges}

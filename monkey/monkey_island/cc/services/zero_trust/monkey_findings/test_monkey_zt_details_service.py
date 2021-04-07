@@ -7,7 +7,8 @@ from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_details_serv
 def test__remove_redundant_events(monkeypatch):
     monkeypatch.setattr(monkey_zt_details_service, "MAX_EVENT_FETCH_CNT", 6)
 
-    # No events are redundant, 8 events in the database, but we display only 6 (3 latest and 3 oldest)
+    # No events are redundant, 8 events in the database, but we display only 6 (3 latest and 3
+    # oldest)
     latest_events = ["6", "7", "8"]
     _do_redundant_event_removal_test(latest_events, 8, ["6", "7", "8"])
 

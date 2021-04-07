@@ -20,10 +20,10 @@ class InfectionLifecycle:
     @staticmethod
     def kill_all():
         mongo.db.monkey.update(
-            {"dead": False},
-            {"$set": {"config.alive": False, "modifytime": datetime.now()}},
-            upsert=False,
-            multi=True,
+                {"dead":False},
+                {"$set":{"config.alive":False, "modifytime":datetime.now()}},
+                upsert=False,
+                multi=True,
         )
         logger.info("Kill all monkeys was called")
         return jsonify(status="OK")
@@ -40,15 +40,16 @@ class InfectionLifecycle:
             report_done = False
 
         return dict(
-            run_server=True,
-            run_monkey=is_any_exists,
-            infection_done=infection_done,
-            report_done=report_done,
+                run_server=True,
+                run_monkey=is_any_exists,
+                infection_done=infection_done,
+                report_done=report_done,
         )
 
     @staticmethod
     def _on_finished_infection():
-        # Checking is_report_being_generated here, because we don't want to wait to generate a report; rather,
+        # Checking is_report_being_generated here, because we don't want to wait to generate a
+        # report; rather,
         # we want to skip and reply.
         if not is_report_being_generated() and not ReportService.is_latest_report_exists():
             safe_generate_reports()

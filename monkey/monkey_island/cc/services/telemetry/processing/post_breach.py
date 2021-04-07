@@ -18,7 +18,7 @@ def process_communicate_as_new_user_telemetry(telemetry_json):
 
 
 POST_BREACH_TELEMETRY_PROCESSING_FUNCS = {
-    POST_BREACH_COMMUNICATE_AS_NEW_USER: process_communicate_as_new_user_telemetry,
+    POST_BREACH_COMMUNICATE_AS_NEW_USER:process_communicate_as_new_user_telemetry,
 }
 
 
@@ -55,5 +55,5 @@ def process_post_breach_telemetry(telemetry_json):
 
 def update_data(telemetry_json, data):
     mongo.db.monkey.update(
-        {"guid": telemetry_json["monkey_guid"]}, {"$push": {"pba_results": data}}
+            {"guid":telemetry_json["monkey_guid"]}, {"$push":{"pba_results":data}}
     )

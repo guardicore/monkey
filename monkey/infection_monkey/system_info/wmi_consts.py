@@ -17,7 +17,7 @@ WMI_CLASSES = {
 #     monkey should run as *** SYSTEM *** !!!
 #
 WMI_LDAP_CLASSES = {
-    "ds_user": (
+    "ds_user":(
         "DS_sAMAccountName",
         "DS_userPrincipalName",
         "DS_sAMAccountType",
@@ -36,7 +36,7 @@ WMI_LDAP_CLASSES = {
         "DS_logonCount",
         "DS_accountExpires",
     ),
-    "ds_group": (
+    "ds_group":(
         "DS_whenChanged",
         "DS_whenCreated",
         "DS_sAMAccountName",
@@ -52,7 +52,7 @@ WMI_LDAP_CLASSES = {
         "DS_distinguishedName",
         "ADSIPath",
     ),
-    "ds_computer": (
+    "ds_computer":(
         "DS_dNSHostName",
         "ADSIPath",
         "DS_accountExpires",

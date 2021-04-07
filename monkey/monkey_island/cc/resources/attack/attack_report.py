@@ -12,11 +12,11 @@ class AttackReport(flask_restful.Resource):
     @jwt_required
     def get(self):
         response_content = {
-            "techniques": AttackReportService.get_latest_report()["techniques"],
-            "schema": SCHEMA,
+            "techniques":AttackReportService.get_latest_report()["techniques"],
+            "schema":SCHEMA,
         }
         return current_app.response_class(
-            json.dumps(response_content, indent=None, separators=(",", ":"), sort_keys=False)
-            + "\n",
-            mimetype=current_app.config["JSONIFY_MIMETYPE"],
+                json.dumps(response_content, indent=None, separators=(",", ":"), sort_keys=False)
+                + "\n",
+                mimetype=current_app.config["JSONIFY_MIMETYPE"],
         )

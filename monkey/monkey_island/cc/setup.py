@@ -20,7 +20,7 @@ def try_store_mitigations_on_mongo():
         mongo.db.validate_collection(mitigation_collection_name)
         if mongo.db.attack_mitigations.count() == 0:
             raise errors.OperationFailure(
-                "Mitigation collection empty. Try dropping the collection and running again"
+                    "Mitigation collection empty. Try dropping the collection and running again"
             )
     except errors.OperationFailure:
         try:
@@ -34,18 +34,18 @@ def try_store_mitigations_on_mongo():
 def store_mitigations_on_mongo():
     stix2_mitigations = MitreApiInterface.get_all_mitigations()
     mongo_mitigations = AttackMitigations.dict_from_stix2_attack_patterns(
-        MitreApiInterface.get_all_attack_techniques()
+            MitreApiInterface.get_all_attack_techniques()
     )
     mitigation_technique_relationships = (
         MitreApiInterface.get_technique_and_mitigation_relationships()
     )
     for relationship in mitigation_technique_relationships:
         mongo_mitigations[relationship["target_ref"]].add_mitigation(
-            stix2_mitigations[relationship["source_ref"]]
+                stix2_mitigations[relationship["source_ref"]]
         )
     for relationship in mitigation_technique_relationships:
         mongo_mitigations[relationship["target_ref"]].add_no_mitigations_info(
-            stix2_mitigations[relationship["source_ref"]]
+                stix2_mitigations[relationship["source_ref"]]
         )
     for key, mongo_object in mongo_mitigations.items():
         mongo_object.save()
