@@ -226,7 +226,8 @@ SCHEMA = {
                     "value": False,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1216",
-                    "description": "Adversaries may use scripts signed with trusted certificates to "
+                    "description": "Adversaries may use scripts signed with "
+                                   "trusted certificates to "
                     "proxy execution of malicious files on Windows systems.",
                 },
             },
@@ -254,7 +255,8 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1003",
-                    "description": "Mapped with T1078 Valid Accounts because both techniques require"
+                    "description": "Mapped with T1078 Valid Accounts because "
+                                   "both techniques require"
                     " same credential harvesting modules. "
                     "Credential dumping is the process of obtaining account login "
                     "and password "

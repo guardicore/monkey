@@ -56,7 +56,8 @@ class TestPypykatzHandler(TestCase):
             {
                 "credtype": "dpapi",
                 "key_guid": "9123-123ae123de4-121239-3123-421f",
-                "masterkey": "6e81d0cfd5e9ec083cfbdaf4d25b9cc9cc6b72947f5e80920034d1275d8613532025975e"
+                "masterkey": "6e81d0cfd5e9ec083cfbdaf4d25b9cc9cc6b7294"
+                             "7f5e80920034d1275d8613532025975e"
                 "f051e891c30e6e9af6db54500fedfed1c968389bf6262c77fbaa68c9",
                 "sha1_masterkey": "bbdabc3cd2f6bcbe3e2cee6ce4ce4cebcef4c6da",
                 "luid": 123086,
@@ -64,7 +65,8 @@ class TestPypykatzHandler(TestCase):
             {
                 "credtype": "dpapi",
                 "key_guid": "9123-123ae123de4-121239-3123-421f",
-                "masterkey": "6e81d0cfd5e9ec083cfbdaf4d25b9cc9cc6b72947f5e80920034d1275d8613532025975e"
+                "masterkey": "6e81d0cfd5e9ec083cfbdaf4d25b9cc9cc6b729"
+                             "47f5e80920034d1275d8613532025975e"
                 "f051e891c30e6e9af6db54500fedfed1c968389bf6262c77fbaa68c9",
                 "sha1_masterkey": "bbdabc3cd2f6bcbe3e2cee6ce4ce4cebcef4c6da",
                 "luid": 123086,
@@ -72,7 +74,8 @@ class TestPypykatzHandler(TestCase):
             {
                 "credtype": "dpapi",
                 "key_guid": "9123-123ae123de4-121239-3123-421f",
-                "masterkey": "6e81d0cfd5e9ec083cfbdaf4d25b9cc9cc6b72947f5e80920034d1275d8613532025975e"
+                "masterkey": "6e81d0cfd5e9ec083cfbdaf4d25b9cc9cc6b72"
+                             "947f5e80920034d1275d8613532025975e"
                 "f051e891c30e6e9af6db54500fedfed1c968389bf6262c77fbaa68c9",
                 "sha1_masterkey": "bbdabc3cd2f6bcbe3e2cee6ce4ce4cebcef4c6da",
                 "luid": 123086,
@@ -80,7 +83,8 @@ class TestPypykatzHandler(TestCase):
             {
                 "credtype": "dpapi",
                 "key_guid": "9123-123ae123de4-121239-3123-421f",
-                "masterkey": "6e81d0cfd5e9ec083cfbdaf4d25b9cc9cc6b72947f5e80920034d1275d8613532025975e"
+                "masterkey": "6e81d0cfd5e9ec083cfbdaf4d25b9cc9cc6b729"
+                             "47f5e80920034d1275d8613532025975e"
                 "f051e891c30e6e9af6db54500fedfed1c968389bf6262c77fbaa68c9",
                 "sha1_masterkey": "bbdabc3cd2f6bcbe3e2cee6ce4ce4cebcef4c6da",
                 "luid": 123086,
