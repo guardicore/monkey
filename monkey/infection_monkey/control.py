@@ -156,8 +156,7 @@ class ControlClient(object):
         try:
             telemetry = {"monkey_guid": GUID, "telem_category": telem_category, "data": json_data}
             requests.post(
-                "https://%s/api/telemetry" % (WormConfiguration.current_server,),
-                # noqa: DUO123
+                "https://%s/api/telemetry" % (WormConfiguration.current_server,),  # noqa: DUO123
                 data=json.dumps(telemetry),
                 headers={"content-type": "application/json"},
                 verify=False,
@@ -372,8 +371,7 @@ class ControlClient(object):
     def get_pba_file(filename):
         try:
             return requests.get(
-                PBA_FILE_DOWNLOAD % (WormConfiguration.current_server, filename),
-                # noqa: DUO123
+                PBA_FILE_DOWNLOAD % (WormConfiguration.current_server, filename),  # noqa: DUO123
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=LONG_REQUEST_TIMEOUT,

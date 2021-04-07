@@ -81,10 +81,7 @@ PRINCIPLE_DISASTER_RECOVERY = "data_backup"
 PRINCIPLE_SECURE_AUTHENTICATION = "secure_authentication"
 PRINCIPLE_MONITORING_AND_LOGGING = "monitoring_and_logging"
 PRINCIPLES = {
-    PRINCIPLE_SEGMENTATION: "Apply segmentation and micro-segmentation inside your "
-    ""
-    ""
-    "network.",
+    PRINCIPLE_SEGMENTATION: "Apply segmentation and micro-segmentation inside your network.",
     PRINCIPLE_ANALYZE_NETWORK_TRAFFIC: "Analyze network traffic for malicious activity.",
     PRINCIPLE_USER_BEHAVIOUR: "Adopt security user behavior analytics.",
     PRINCIPLE_ENDPOINT_SECURITY: "Use anti-virus and other traditional endpoint "
