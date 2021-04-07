@@ -73,7 +73,7 @@ commit. If your commit does not pass all checks, it will be reformatted and/or
 you'll be given a list of errors and warnings that need to be fixed before you
 can commit.
 
-Our CI system runs the same checks when when pull requests are submitted. This
+Our CI system runs the same checks when pull requests are submitted. This
 system may report that the build has failed if the pre-commit hooks have not
 been run or all issues have not been resolved.
 
