@@ -3,12 +3,7 @@ from typing import List
 
 import dpath.util
 
-from common.config_value_paths import (
-    LM_HASH_LIST_PATH,
-    NTLM_HASH_LIST_PATH,
-    PASSWORD_LIST_PATH,
-    USER_LIST_PATH,
-)
+from common.config_value_paths import LM_HASH_LIST_PATH, NTLM_HASH_LIST_PATH, USER_LIST_PATH
 from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
 from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
