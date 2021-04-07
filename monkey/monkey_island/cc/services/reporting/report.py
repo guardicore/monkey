@@ -22,13 +22,13 @@ from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
 )
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import ( # noqa: E501
     ExploiterDescriptorEnum,
 )
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.cred_exploit import (
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.cred_exploit import ( # noqa: E501
     CredentialType,
 )
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.exploit import (
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.exploit import ( # noqa: E501
     ExploiterReportInfo,
 )
 from monkey_island.cc.services.reporting.pth_report import PTHReportService

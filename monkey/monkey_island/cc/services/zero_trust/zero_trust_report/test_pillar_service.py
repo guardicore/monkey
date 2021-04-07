@@ -13,7 +13,7 @@ from common.common_consts.zero_trust_consts import (
     WORKLOADS,
 )
 from monkey_island.cc.services.zero_trust.zero_trust_report.pillar_service import PillarService
-from monkey_island.cc.services.zero_trust.zero_trust_report.test_common.example_finding_data import (
+from monkey_island.cc.services.zero_trust.zero_trust_report.test_common.example_finding_data import ( # noqa: E501
     save_example_findings,
 )
 from monkey_island.cc.test_common.fixtures import FixtureEnum

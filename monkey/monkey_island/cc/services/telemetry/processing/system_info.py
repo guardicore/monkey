@@ -3,7 +3,7 @@ import logging
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import ( # noqa: E501
     SystemInfoTelemetryDispatcher,
 )
 from monkey_island.cc.services.wmi_handler import WMIHandler

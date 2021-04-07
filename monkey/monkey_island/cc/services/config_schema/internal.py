@@ -175,7 +175,8 @@ INTERNAL = {
                             "title": "TCP scan timeout",
                             "type": "integer",
                             "default": 3000,
-                            "description": "Maximum time (in milliseconds) to wait for TCP response",
+                            "description": "Maximum time (in milliseconds) "
+                                           "to wait for TCP response",
                         },
                         "tcp_scan_get_banner": {
                             "title": "TCP scan - get banner",
