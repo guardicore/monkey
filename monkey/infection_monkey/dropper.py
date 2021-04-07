@@ -53,8 +53,8 @@ class MonkeyDrops(object):
         self.opts, _ = arg_parser.parse_known_args(args)
 
         self._config = {
-            "source_path":os.path.abspath(sys.argv[0]),
-            "destination_path":self.opts.location,
+            "source_path": os.path.abspath(sys.argv[0]),
+            "destination_path": self.opts.location,
         }
 
     def initialize(self):
@@ -80,18 +80,18 @@ class MonkeyDrops(object):
                 shutil.move(self._config["source_path"], self._config["destination_path"])
 
                 LOG.info(
-                        "Moved source file '%s' into '%s'",
-                        self._config["source_path"],
-                        self._config["destination_path"],
+                    "Moved source file '%s' into '%s'",
+                    self._config["source_path"],
+                    self._config["destination_path"],
                 )
 
                 file_moved = True
             except (WindowsError, IOError, OSError) as exc:
                 LOG.debug(
-                        "Error moving source file '%s' into '%s': %s",
-                        self._config["source_path"],
-                        self._config["destination_path"],
-                        exc,
+                    "Error moving source file '%s' into '%s': %s",
+                    self._config["source_path"],
+                    self._config["destination_path"],
+                    exc,
                 )
 
         # if file still need to change path, copy it
@@ -100,16 +100,16 @@ class MonkeyDrops(object):
                 shutil.copy(self._config["source_path"], self._config["destination_path"])
 
                 LOG.info(
-                        "Copied source file '%s' into '%s'",
-                        self._config["source_path"],
-                        self._config["destination_path"],
+                    "Copied source file '%s' into '%s'",
+                    self._config["source_path"],
+                    self._config["destination_path"],
                 )
             except (WindowsError, IOError, OSError) as exc:
                 LOG.error(
-                        "Error copying source file '%s' into '%s': %s",
-                        self._config["source_path"],
-                        self._config["destination_path"],
-                        exc,
+                    "Error copying source file '%s' into '%s': %s",
+                    self._config["source_path"],
+                    self._config["destination_path"],
+                    exc,
                 )
 
                 return False
@@ -117,7 +117,7 @@ class MonkeyDrops(object):
         if WormConfiguration.dropper_set_date:
             if sys.platform == "win32":
                 dropper_date_reference_path = os.path.expandvars(
-                        WormConfiguration.dropper_date_reference_path_windows
+                    WormConfiguration.dropper_date_reference_path_windows
                 )
             else:
                 dropper_date_reference_path = WormConfiguration.dropper_date_reference_path_linux
@@ -125,30 +125,30 @@ class MonkeyDrops(object):
                 ref_stat = os.stat(dropper_date_reference_path)
             except OSError:
                 LOG.warning(
-                        "Cannot set reference date using '%s', file not found",
-                        dropper_date_reference_path,
+                    "Cannot set reference date using '%s', file not found",
+                    dropper_date_reference_path,
                 )
             else:
                 try:
                     os.utime(
-                            self._config["destination_path"], (ref_stat.st_atime, ref_stat.st_mtime)
+                        self._config["destination_path"], (ref_stat.st_atime, ref_stat.st_mtime)
                     )
                 except OSError:
                     LOG.warning("Cannot set reference date to destination file")
 
         monkey_options = build_monkey_commandline_explicitly(
-                parent=self.opts.parent,
-                tunnel=self.opts.tunnel,
-                server=self.opts.server,
-                depth=self.opts.depth,
-                location=None,
-                vulnerable_port=self.opts.vulnerable_port,
+            parent=self.opts.parent,
+            tunnel=self.opts.tunnel,
+            server=self.opts.server,
+            depth=self.opts.depth,
+            location=None,
+            vulnerable_port=self.opts.vulnerable_port,
         )
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             monkey_cmdline = (
-                    MONKEY_CMDLINE_WINDOWS % {"monkey_path":self._config["destination_path"]}
-                    + monkey_options
+                MONKEY_CMDLINE_WINDOWS % {"monkey_path": self._config["destination_path"]}
+                + monkey_options
             )
         else:
             dest_path = self._config["destination_path"]
@@ -156,28 +156,28 @@ class MonkeyDrops(object):
             # and the inner one which actually
             # runs the monkey
             inner_monkey_cmdline = (
-                    MONKEY_CMDLINE_LINUX % {"monkey_filename":dest_path.split("/")[-1]}
-                    + monkey_options
+                MONKEY_CMDLINE_LINUX % {"monkey_filename": dest_path.split("/")[-1]}
+                + monkey_options
             )
             monkey_cmdline = GENERAL_CMDLINE_LINUX % {
-                "monkey_directory":dest_path[0: dest_path.rfind("/")],
-                "monkey_commandline":inner_monkey_cmdline,
+                "monkey_directory": dest_path[0 : dest_path.rfind("/")],
+                "monkey_commandline": inner_monkey_cmdline,
             }
 
         monkey_process = subprocess.Popen(
-                monkey_cmdline,
-                shell=True,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                close_fds=True,
-                creationflags=DETACHED_PROCESS,
+            monkey_cmdline,
+            shell=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            close_fds=True,
+            creationflags=DETACHED_PROCESS,
         )
 
         LOG.info(
-                "Executed monkey process (PID=%d) with command line: %s",
-                monkey_process.pid,
-                monkey_cmdline,
+            "Executed monkey process (PID=%d) with command line: %s",
+            monkey_process.pid,
+            monkey_cmdline,
         )
 
         time.sleep(3)
@@ -189,10 +189,9 @@ class MonkeyDrops(object):
 
         try:
             if (
-                    (self._config["source_path"].lower() != self._config[
-                        "destination_path"].lower())
-                    and os.path.exists(self._config["source_path"])
-                    and WormConfiguration.dropper_try_move_first
+                (self._config["source_path"].lower() != self._config["destination_path"].lower())
+                and os.path.exists(self._config["source_path"])
+                and WormConfiguration.dropper_try_move_first
             ):
 
                 # try removing the file first
@@ -200,24 +199,24 @@ class MonkeyDrops(object):
                     os.remove(self._config["source_path"])
                 except Exception as exc:
                     LOG.debug(
-                            "Error removing source file '%s': %s", self._config["source_path"], exc
+                        "Error removing source file '%s': %s", self._config["source_path"], exc
                     )
 
                     # mark the file for removal on next boot
                     dropper_source_path_ctypes = c_char_p(self._config["source_path"])
                     if 0 == ctypes.windll.kernel32.MoveFileExA(
-                            dropper_source_path_ctypes, None, MOVEFILE_DELAY_UNTIL_REBOOT
+                        dropper_source_path_ctypes, None, MOVEFILE_DELAY_UNTIL_REBOOT
                     ):
                         LOG.debug(
-                                "Error marking source file '%s' for deletion on next boot (error "
-                                "%d)",
-                                self._config["source_path"],
-                                ctypes.windll.kernel32.GetLastError(),
+                            "Error marking source file '%s' for deletion on next boot (error "
+                            "%d)",
+                            self._config["source_path"],
+                            ctypes.windll.kernel32.GetLastError(),
                         )
                     else:
                         LOG.debug(
-                                "Dropper source file '%s' is marked for deletion on next boot",
-                                self._config["source_path"],
+                            "Dropper source file '%s' is marked for deletion on next boot",
+                            self._config["source_path"],
                         )
                         T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
 

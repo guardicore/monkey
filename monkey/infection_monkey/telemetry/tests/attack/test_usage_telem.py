@@ -18,9 +18,9 @@ def usage_telem_test_instance():
 def test_usage_telem_send(usage_telem_test_instance, spy_send_telemetry):
     usage_telem_test_instance.send()
     expected_data = {
-        "status":STATUS.value,
-        "technique":TECHNIQUE,
-        "usage":USAGE.name,
+        "status": STATUS.value,
+        "technique": TECHNIQUE,
+        "usage": USAGE.name,
     }
     expected_data = json.dumps(expected_data, cls=usage_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data

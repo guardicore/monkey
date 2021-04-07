@@ -34,27 +34,26 @@ class AwsInstance(CloudInstance):
 
         try:
             response = requests.get(
-                    AWS_LATEST_METADATA_URI_PREFIX + "meta-data/instance-id", timeout=2
+                AWS_LATEST_METADATA_URI_PREFIX + "meta-data/instance-id", timeout=2
             )
             self.instance_id = response.text if response else None
             self.region = self._parse_region(
-                    requests.get(
-                            AWS_LATEST_METADATA_URI_PREFIX + "meta-data/placement/availability-zone"
-                    ).text
+                requests.get(
+                    AWS_LATEST_METADATA_URI_PREFIX + "meta-data/placement/availability-zone"
+                ).text
             )
         except (requests.RequestException, IOError) as e:
             logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e))
 
         try:
             self.account_id = self._extract_account_id(
-                    requests.get(
-                            AWS_LATEST_METADATA_URI_PREFIX + "dynamic/instance-identity/document",
-                            timeout=2
-                    ).text
+                requests.get(
+                    AWS_LATEST_METADATA_URI_PREFIX + "dynamic/instance-identity/document", timeout=2
+                ).text
             )
         except (requests.RequestException, json.decoder.JSONDecodeError, IOError) as e:
             logger.debug(
-                    "Failed init of AwsInstance while getting dynamic instance data: {}".format(e)
+                "Failed init of AwsInstance while getting dynamic instance data: {}".format(e)
             )
 
     @staticmethod

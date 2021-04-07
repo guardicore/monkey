@@ -157,13 +157,13 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                     timeout -= SLEEP_BETWEEN_POLL
 
             LOG.debug(
-                    "On host %s discovered the following ports %s"
-                    % (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets]))
+                "On host %s discovered the following ports %s"
+                % (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets]))
             )
             banners = []
             if get_banner and (len(connected_ports_sockets) != 0):
                 readable_sockets, _, _ = select.select(
-                        [s[1] for s in connected_ports_sockets], [], [], 0
+                    [s[1] for s in connected_ports_sockets], [], [], 0
                 )
                 # read first BANNER_READ bytes. We ignore errors because service might not send a
                 # decodable byte string.
@@ -240,7 +240,7 @@ def _parse_traceroute(output, regex, ttl):
 
     for i in range(first_line_index, first_line_index + ttl):
         if (
-                re.search(r"^\s*" + str(i - first_line_index + 1), ip_lines[i]) is None
+            re.search(r"^\s*" + str(i - first_line_index + 1), ip_lines[i]) is None
         ):  # If trace is finished
             break
 
@@ -292,7 +292,7 @@ def get_interface_to_target(dst):
             ip_to_dst = s.getsockname()[0]
         except KeyError:
             LOG.debug(
-                    "Couldn't get an interface to the target, presuming that target is localhost."
+                "Couldn't get an interface to the target, presuming that target is localhost."
             )
             ip_to_dst = "127.0.0.1"
         finally:

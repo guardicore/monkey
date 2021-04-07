@@ -67,8 +67,8 @@ class TestMonkey:
     @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
     def test_get_os(self):
         linux_monkey = Monkey(
-                guid=str(uuid.uuid4()),
-                description="Linux shay-Virtual-Machine 4.15.0-50-generic #54-Ubuntu",
+            guid=str(uuid.uuid4()),
+            description="Linux shay-Virtual-Machine 4.15.0-50-generic #54-Ubuntu",
         )
         windows_monkey = Monkey(guid=str(uuid.uuid4()), description="Windows bla bla bla")
         unknown_monkey = Monkey(guid=str(uuid.uuid4()), description="bla bla bla")
@@ -84,20 +84,20 @@ class TestMonkey:
     def test_get_tunneled_monkeys(self):
         linux_monkey = Monkey(guid=str(uuid.uuid4()), description="Linux shay-Virtual-Machine")
         windows_monkey = Monkey(
-                guid=str(uuid.uuid4()), description="Windows bla bla bla", tunnel=linux_monkey
+            guid=str(uuid.uuid4()), description="Windows bla bla bla", tunnel=linux_monkey
         )
         unknown_monkey = Monkey(
-                guid=str(uuid.uuid4()), description="bla bla bla", tunnel=windows_monkey
+            guid=str(uuid.uuid4()), description="bla bla bla", tunnel=windows_monkey
         )
         linux_monkey.save()
         windows_monkey.save()
         unknown_monkey.save()
         tunneled_monkeys = Monkey.get_tunneled_monkeys()
         test = bool(
-                windows_monkey in tunneled_monkeys
-                and unknown_monkey in tunneled_monkeys
-                and linux_monkey not in tunneled_monkeys
-                and len(tunneled_monkeys) == 2
+            windows_monkey in tunneled_monkeys
+            and unknown_monkey in tunneled_monkeys
+            and linux_monkey not in tunneled_monkeys
+            and len(tunneled_monkeys) == 2
         )
         assert test
 
@@ -106,10 +106,10 @@ class TestMonkey:
         hostname_example = "a_hostname"
         ip_example = "1.1.1.1"
         linux_monkey = Monkey(
-                guid=str(uuid.uuid4()),
-                description="Linux shay-Virtual-Machine",
-                hostname=hostname_example,
-                ip_addresses=[ip_example],
+            guid=str(uuid.uuid4()),
+            description="Linux shay-Virtual-Machine",
+            hostname=hostname_example,
+            ip_addresses=[ip_example],
         )
         linux_monkey.save()
 

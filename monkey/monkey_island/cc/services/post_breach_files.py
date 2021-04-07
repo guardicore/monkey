@@ -21,10 +21,10 @@ ABS_UPLOAD_PATH = Path(MONKEY_ISLAND_ABS_PATH, "cc", UPLOADS_DIR_NAME)
 def remove_PBA_files():
     if monkey_island.cc.services.config.ConfigService.get_config():
         windows_filename = monkey_island.cc.services.config.ConfigService.get_config_value(
-                PBA_WINDOWS_FILENAME_PATH
+            PBA_WINDOWS_FILENAME_PATH
         )
         linux_filename = monkey_island.cc.services.config.ConfigService.get_config_value(
-                PBA_LINUX_FILENAME_PATH
+            PBA_LINUX_FILENAME_PATH
         )
         if linux_filename:
             remove_file(linux_filename)
@@ -48,10 +48,10 @@ def set_config_PBA_files(config_json):
     """
     if monkey_island.cc.services.config.ConfigService.get_config():
         linux_filename = monkey_island.cc.services.config.ConfigService.get_config_value(
-                PBA_LINUX_FILENAME_PATH
+            PBA_LINUX_FILENAME_PATH
         )
         windows_filename = monkey_island.cc.services.config.ConfigService.get_config_value(
-                PBA_WINDOWS_FILENAME_PATH
+            PBA_WINDOWS_FILENAME_PATH
         )
         config_json["monkey"]["post_breach"]["PBA_linux_filename"] = linux_filename
         config_json["monkey"]["post_breach"]["PBA_windows_filename"] = windows_filename

@@ -13,7 +13,7 @@ from .monkey_ttl import MonkeyTtl  # noqa: F401
 from .pba_results import PbaResults  # noqa: F401
 
 connect(
-        db=env_singleton.env.mongo_db_name,
-        host=env_singleton.env.mongo_db_host,
-        port=env_singleton.env.mongo_db_port,
+    db=env_singleton.env.mongo_db_name,
+    host=env_singleton.env.mongo_db_host,
+    port=env_singleton.env.mongo_db_port,
 )

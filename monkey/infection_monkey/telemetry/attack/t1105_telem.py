@@ -17,5 +17,5 @@ class T1105Telem(AttackTelem):
 
     def get_data(self):
         data = super(T1105Telem, self).get_data()
-        data.update({"filename":self.filename, "src":self.src, "dst":self.dst})
+        data.update({"filename": self.filename, "src": self.src, "dst": self.dst})
         return data

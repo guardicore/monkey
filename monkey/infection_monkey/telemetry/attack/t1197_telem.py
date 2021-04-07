@@ -18,5 +18,5 @@ class T1197Telem(VictimHostTelem):
 
     def get_data(self):
         data = super(T1197Telem, self).get_data()
-        data.update({"usage":self.usage})
+        data.update({"usage": self.usage})
         return data

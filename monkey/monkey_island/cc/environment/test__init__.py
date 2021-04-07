@@ -19,7 +19,7 @@ WITH_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_with_credenti
 NO_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_no_credentials.json")
 PARTIAL_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_partial_credentials.json")
 STANDARD_WITH_CREDENTIALS = os.path.join(
-        TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
+    TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
 )
 STANDARD_ENV = os.path.join(TEST_RESOURCES_DIR, "server_config_standard_env.json")
 
@@ -132,7 +132,7 @@ class TestEnvironment(TestCase):
         self._test_bool_env_method("_is_credentials_set_up", env, STANDARD_ENV, False)
 
     def _test_bool_env_method(
-            self, method_name: str, env: Environment, config: Dict, expected_result: bool
+        self, method_name: str, env: Environment, config: Dict, expected_result: bool
     ):
         env._config = EnvironmentConfig(config)
         method = getattr(env, method_name)

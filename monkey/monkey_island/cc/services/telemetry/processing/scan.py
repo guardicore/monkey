@@ -25,16 +25,16 @@ def update_edges_and_nodes_based_on_scan_telemetry(telemetry_json):
     edge = get_edge_by_scan_or_exploit_telemetry(telemetry_json)
     edge.update_based_on_scan_telemetry(telemetry_json)
 
-    node = mongo.db.node.find_one({"_id":edge.dst_node_id})
+    node = mongo.db.node.find_one({"_id": edge.dst_node_id})
     if node is not None:
         scan_os = telemetry_json["data"]["machine"]["os"]
         if "type" in scan_os:
             mongo.db.node.update(
-                    {"_id":node["_id"]}, {"$set":{"os.type":scan_os["type"]}}, upsert=False
+                {"_id": node["_id"]}, {"$set": {"os.type": scan_os["type"]}}, upsert=False
             )
         if "version" in scan_os:
             mongo.db.node.update(
-                    {"_id":node["_id"]}, {"$set":{"os.version":scan_os["version"]}}, upsert=False
+                {"_id": node["_id"]}, {"$set": {"os.version": scan_os["version"]}}, upsert=False
             )
         label = NodeService.get_label_for_endpoint(node["_id"])
         edge.update_label(node["_id"], label)

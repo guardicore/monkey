@@ -46,14 +46,14 @@ class RemoteRunAwsService:
         """
         instances_bitness = RemoteRunAwsService.get_bitness(instances)
         return CmdRunner.run_multiple_commands(
-                instances,
-                lambda instance:RemoteRunAwsService.run_aws_monkey_cmd_async(
-                        instance["instance_id"],
-                        RemoteRunAwsService._is_linux(instance["os"]),
-                        island_ip,
-                        instances_bitness[instance["instance_id"]],
-                ),
-                lambda _, result:result.is_success,
+            instances,
+            lambda instance: RemoteRunAwsService.run_aws_monkey_cmd_async(
+                instance["instance_id"],
+                RemoteRunAwsService._is_linux(instance["os"]),
+                island_ip,
+                instances_bitness[instance["instance_id"]],
+            ),
+            lambda _, result: result.is_success,
         )
 
     @staticmethod
@@ -76,13 +76,13 @@ class RemoteRunAwsService:
         False otherwise
         """
         return CmdRunner.run_multiple_commands(
-                instances,
-                lambda instance:RemoteRunAwsService.run_aws_bitness_cmd_async(
-                        instance["instance_id"], RemoteRunAwsService._is_linux(instance["os"])
-                ),
-                lambda instance, result:RemoteRunAwsService._get_bitness_by_result(
-                        RemoteRunAwsService._is_linux(instance["os"]), result
-                ),
+            instances,
+            lambda instance: RemoteRunAwsService.run_aws_bitness_cmd_async(
+                instance["instance_id"], RemoteRunAwsService._is_linux(instance["os"])
+            ),
+            lambda instance, result: RemoteRunAwsService._get_bitness_by_result(
+                RemoteRunAwsService._is_linux(instance["os"]), result
+            ),
         )
 
     @staticmethod
@@ -93,7 +93,7 @@ class RemoteRunAwsService:
             return result.stdout.find("i686") == -1  # i686 means 32bit
         else:
             return (
-                    result.stdout.lower().find("programfiles(x86)") != -1
+                result.stdout.lower().find("programfiles(x86)") != -1
             )  # if not found it means 32bit
 
     @staticmethod
@@ -132,30 +132,30 @@ class RemoteRunAwsService:
     @staticmethod
     def _get_run_monkey_cmd_linux_line(bit_text, island_ip):
         return (
-                r"wget --no-check-certificate https://"
-                + island_ip
-                + r":5000/api/monkey/download/monkey-linux-"
-                + bit_text
-                + r"; chmod +x monkey-linux-"
-                + bit_text
-                + r"; ./monkey-linux-"
-                + bit_text
-                + r" m0nk3y -s "
-                + island_ip
-                + r":5000"
+            r"wget --no-check-certificate https://"
+            + island_ip
+            + r":5000/api/monkey/download/monkey-linux-"
+            + bit_text
+            + r"; chmod +x monkey-linux-"
+            + bit_text
+            + r"; ./monkey-linux-"
+            + bit_text
+            + r" m0nk3y -s "
+            + island_ip
+            + r":5000"
         )
 
     @staticmethod
     def _get_run_monkey_cmd_windows_line(bit_text, island_ip):
         return (
-                r"[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {"
-                r"$true}; (New-Object System.Net.WebClient).DownloadFile('https://"
-                + island_ip
-                + r":5000/api/monkey/download/monkey-windows-"
-                + bit_text
-                + r".exe','.\\monkey.exe'); "
-                  r";Start-Process -FilePath '.\\monkey.exe' "
-                  r"-ArgumentList 'm0nk3y -s " + island_ip + r":5000'; "
+            r"[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {"
+            r"$true}; (New-Object System.Net.WebClient).DownloadFile('https://"
+            + island_ip
+            + r":5000/api/monkey/download/monkey-windows-"
+            + bit_text
+            + r".exe','.\\monkey.exe'); "
+            r";Start-Process -FilePath '.\\monkey.exe' "
+            r"-ArgumentList 'm0nk3y -s " + island_ip + r":5000'; "
         )
 
     @staticmethod

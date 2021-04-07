@@ -13,7 +13,7 @@ PORT = 9999
 
 @pytest.fixture
 def config(monkeypatch):
-    monkeypatch.setattr("monkey_island.cc.services.config.local_ip_addresses", lambda:IPS)
+    monkeypatch.setattr("monkey_island.cc.services.config.local_ip_addresses", lambda: IPS)
     monkeypatch.setattr(Environment, "_ISLAND_PORT", PORT)
     config = ConfigService.get_default_config(True)
     return config

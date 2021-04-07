@@ -28,7 +28,7 @@ class Monkey(flask_restful.Resource):
             guid = request.args.get("guid")
 
         if guid:
-            monkey_json = mongo.db.monkey.find_one_or_404({"guid":guid})
+            monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
             monkey_json["config"] = ConfigService.decrypt_flat_config(monkey_json["config"])
             return monkey_json
 
@@ -38,7 +38,7 @@ class Monkey(flask_restful.Resource):
     @TestTelemStore.store_test_telem
     def patch(self, guid):
         monkey_json = json.loads(request.data)
-        update = {"$set":{"modifytime":datetime.now()}}
+        update = {"$set": {"modifytime": datetime.now()}}
         monkey = NodeService.get_monkey_by_guid(guid)
         if "keepalive" in monkey_json:
             update["$set"]["keepalive"] = dateutil.parser.parse(monkey_json["keepalive"])
@@ -56,7 +56,7 @@ class Monkey(flask_restful.Resource):
         ttl = create_monkey_ttl_document(DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
         update["$set"]["ttl_ref"] = ttl.id
 
-        return mongo.db.monkey.update({"_id":monkey["_id"]}, update, upsert=False)
+        return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
     # Used by monkey. can't secure.
     # Called on monkey wakeup to initialize local configuration
@@ -75,7 +75,7 @@ class Monkey(flask_restful.Resource):
         ConfigService.save_initial_config_if_needed()
 
         # if new monkey telem, change config according to "new monkeys" config.
-        db_monkey = mongo.db.monkey.find_one({"guid":monkey_json["guid"]})
+        db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
 
         # Update monkey configuration
         new_config = ConfigService.get_flat_config(False, False)
@@ -89,12 +89,12 @@ class Monkey(flask_restful.Resource):
             exploit_telem = [
                 x
                 for x in mongo.db.telemetry.find(
-                        {
-                            "telem_category":{"$eq":"exploit"},
-                            "data.result":{"$eq":True},
-                            "data.machine.ip_addr":{"$in":monkey_json["ip_addresses"]},
-                            "monkey_guid":{"$eq":parent},
-                        }
+                    {
+                        "telem_category": {"$eq": "exploit"},
+                        "data.result": {"$eq": True},
+                        "data.machine.ip_addr": {"$in": monkey_json["ip_addresses"]},
+                        "monkey_guid": {"$eq": parent},
+                    }
                 )
             ]
             if 1 == len(exploit_telem):
@@ -108,11 +108,11 @@ class Monkey(flask_restful.Resource):
             exploit_telem = [
                 x
                 for x in mongo.db.telemetry.find(
-                        {
-                            "telem_category":{"$eq":"exploit"},
-                            "data.result":{"$eq":True},
-                            "data.machine.ip_addr":{"$in":monkey_json["ip_addresses"]},
-                        }
+                    {
+                        "telem_category": {"$eq": "exploit"},
+                        "data.result": {"$eq": True},
+                        "data.machine.ip_addr": {"$in": monkey_json["ip_addresses"]},
+                    }
                 )
             ]
 
@@ -135,17 +135,17 @@ class Monkey(flask_restful.Resource):
         ttl = create_monkey_ttl_document(DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
         monkey_json["ttl_ref"] = ttl.id
 
-        mongo.db.monkey.update({"guid":monkey_json["guid"]}, {"$set":monkey_json}, upsert=True)
+        mongo.db.monkey.update({"guid": monkey_json["guid"]}, {"$set": monkey_json}, upsert=True)
 
         # Merge existing scanned node with new monkey
 
-        new_monkey_id = mongo.db.monkey.find_one({"guid":monkey_json["guid"]})["_id"]
+        new_monkey_id = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})["_id"]
 
         if tunnel_host_ip is not None:
             NodeService.set_monkey_tunnel(new_monkey_id, tunnel_host_ip)
 
         existing_node = mongo.db.node.find_one(
-                {"ip_addresses":{"$in":monkey_json["ip_addresses"]}}
+            {"ip_addresses": {"$in": monkey_json["ip_addresses"]}}
         )
 
         if existing_node:
@@ -153,6 +153,6 @@ class Monkey(flask_restful.Resource):
             EdgeService.update_all_dst_nodes(old_dst_node_id=node_id, new_dst_node_id=new_monkey_id)
             for creds in existing_node["creds"]:
                 NodeService.add_credentials_to_monkey(new_monkey_id, creds)
-            mongo.db.node.remove({"_id":node_id})
+            mongo.db.node.remove({"_id": node_id})
 
-        return {"id":new_monkey_id}
+        return {"id": new_monkey_id}

@@ -37,22 +37,22 @@ def test_get_all_findings():
 
     description = TESTS_MAP[TEST_SCOUTSUITE_SERVICE_SECURITY]["finding_explanation"][STATUS_FAILED]
     expected_finding0 = EnrichedFinding(
-            finding_id=findings[0].finding_id,
-            pillars=[DEVICES, NETWORKS],
-            status=STATUS_FAILED,
-            test=description,
-            test_key=TEST_SCOUTSUITE_SERVICE_SECURITY,
-            details=None,
+        finding_id=findings[0].finding_id,
+        pillars=[DEVICES, NETWORKS],
+        status=STATUS_FAILED,
+        test=description,
+        test_key=TEST_SCOUTSUITE_SERVICE_SECURITY,
+        details=None,
     )
 
     description = TESTS_MAP[TEST_ENDPOINT_SECURITY_EXISTS]["finding_explanation"][STATUS_PASSED]
     expected_finding1 = EnrichedFinding(
-            finding_id=findings[1].finding_id,
-            pillars=[DEVICES],
-            status=STATUS_PASSED,
-            test=description,
-            test_key=TEST_ENDPOINT_SECURITY_EXISTS,
-            details=None,
+        finding_id=findings[1].finding_id,
+        pillars=[DEVICES],
+        status=STATUS_PASSED,
+        test=description,
+        test_key=TEST_ENDPOINT_SECURITY_EXISTS,
+        details=None,
     )
 
     # Don't test details

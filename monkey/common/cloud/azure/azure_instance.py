@@ -9,8 +9,7 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 
 LATEST_AZURE_METADATA_API_VERSION = "2019-04-30"
 AZURE_METADATA_SERVICE_URL = (
-        "http://169.254.169.254/metadata/instance?api-version=%s" %
-        LATEST_AZURE_METADATA_API_VERSION
+    "http://169.254.169.254/metadata/instance?api-version=%s" % LATEST_AZURE_METADATA_API_VERSION
 )
 
 logger = logging.getLogger(__name__)
@@ -40,9 +39,9 @@ class AzureInstance(CloudInstance):
 
         try:
             response = requests.get(
-                    AZURE_METADATA_SERVICE_URL,
-                    headers={"Metadata":"true"},
-                    timeout=SHORT_REQUEST_TIMEOUT,
+                AZURE_METADATA_SERVICE_URL,
+                headers={"Metadata": "true"},
+                timeout=SHORT_REQUEST_TIMEOUT,
             )
 
             # If not on cloud, the metadata URL is non-routable and the connection will fail.
@@ -55,8 +54,8 @@ class AzureInstance(CloudInstance):
                 logger.warning(f"Metadata response not ok: {response.status_code}")
         except requests.RequestException:
             logger.debug(
-                    "Failed to get response from Azure metadata service: This instance is not on "
-                    "Azure."
+                "Failed to get response from Azure metadata service: This instance is not on "
+                "Azure."
             )
 
     def try_parse_response(self, response):

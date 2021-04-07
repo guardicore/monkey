@@ -41,10 +41,10 @@ class AutoNewLinuxUser(AutoNewUser):
 
         commands_to_add_user = get_linux_commands_to_add_user(username)
         logger.debug(
-                "Trying to add {} with commands {}".format(self.username, str(commands_to_add_user))
+            "Trying to add {} with commands {}".format(self.username, str(commands_to_add_user))
         )
         _ = subprocess.check_output(
-                " ".join(commands_to_add_user), stderr=subprocess.STDOUT, shell=True
+            " ".join(commands_to_add_user), stderr=subprocess.STDOUT, shell=True
         )
 
     def __enter__(self):
@@ -52,7 +52,7 @@ class AutoNewLinuxUser(AutoNewUser):
 
     def run_as(self, command):
         command_as_new_user = "sudo -u {username} {command}".format(
-                username=self.username, command=command
+            username=self.username, command=command
         )
         return os.system(command_as_new_user)
 
@@ -60,10 +60,10 @@ class AutoNewLinuxUser(AutoNewUser):
         # delete the user.
         commands_to_delete_user = get_linux_commands_to_delete_user(self.username)
         logger.debug(
-                "Trying to delete {} with commands {}".format(
-                        self.username, str(commands_to_delete_user)
-                )
+            "Trying to delete {} with commands {}".format(
+                self.username, str(commands_to_delete_user)
+            )
         )
         _ = subprocess.check_output(
-                " ".join(commands_to_delete_user), stderr=subprocess.STDOUT, shell=True
+            " ".join(commands_to_delete_user), stderr=subprocess.STDOUT, shell=True
         )

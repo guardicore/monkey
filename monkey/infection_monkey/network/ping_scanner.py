@@ -34,9 +34,9 @@ class PingScanner(HostScanner, HostFinger):
             timeout /= 1000
 
         return 0 == subprocess.call(
-                ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
-                stdout=self._devnull,
-                stderr=self._devnull,
+            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
+            stdout=self._devnull,
+            stderr=self._devnull,
         )
 
     def get_host_fingerprint(self, host):
@@ -46,10 +46,10 @@ class PingScanner(HostScanner, HostFinger):
             timeout /= 1000
 
         sub_proc = subprocess.Popen(
-                ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
+            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
         )
 
         output = " ".join(sub_proc.communicate())

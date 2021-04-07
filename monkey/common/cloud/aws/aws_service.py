@@ -20,10 +20,10 @@ logger = logging.getLogger(__name__)
 def filter_instance_data_from_aws_response(response):
     return [
         {
-            "instance_id":x[INSTANCE_ID_KEY],
-            "name":x[COMPUTER_NAME_KEY],
-            "os":x[PLATFORM_TYPE_KEY].lower(),
-            "ip_address":x[IP_ADDRESS_KEY],
+            "instance_id": x[INSTANCE_ID_KEY],
+            "name": x[COMPUTER_NAME_KEY],
+            "os": x[PLATFORM_TYPE_KEY].lower(),
+            "ip_address": x[IP_ADDRESS_KEY],
         }
         for x in response[INSTANCE_INFORMATION_LIST_KEY]
     ]
@@ -50,7 +50,7 @@ class AwsService(object):
     @staticmethod
     def get_client(client_type, region=None):
         return boto3.client(
-                client_type, region_name=region if region is not None else AwsService.region
+            client_type, region_name=region if region is not None else AwsService.region
         )
 
     @staticmethod

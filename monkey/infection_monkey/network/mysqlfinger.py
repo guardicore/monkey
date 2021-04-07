@@ -49,7 +49,7 @@ class MySQLFinger(HostFinger):
                 return False
 
             version, curpos = struct_unpack_tracker_string(
-                    data, curpos
+                data, curpos
             )  # special coded to solve string parsing
             version = version[0].decode()
             self.init_service(host.services, SQL_SERVICE, MYSQL_PORT)

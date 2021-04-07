@@ -34,7 +34,7 @@ class Finding(Document):
     """
 
     # http://docs.mongoengine.org/guide/defining-documents.html#document-inheritance
-    meta = {"allow_inheritance":True}
+    meta = {"allow_inheritance": True}
 
     # SCHEMA
     test = StringField(required=True, choices=zero_trust_consts.TESTS)

@@ -27,7 +27,7 @@ class DisplayedEdgeService:
 
         if len(edge.scans) > 0:
             services = DisplayedEdgeService.services_to_displayed_services(
-                    edge.scans[-1]["data"]["services"], for_report
+                edge.scans[-1]["data"]["services"], for_report
             )
             os = edge.scans[-1]["data"]["os"]
 
@@ -46,12 +46,12 @@ class DisplayedEdgeService:
     @staticmethod
     def generate_pseudo_edge(edge_id, src_node_id, dst_node_id, src_label, dst_label):
         edge = {
-            "id":edge_id,
-            "from":src_node_id,
-            "to":dst_node_id,
-            "group":"island",
-            "src_label":src_label,
-            "dst_label":dst_label,
+            "id": edge_id,
+            "from": src_node_id,
+            "to": dst_node_id,
+            "group": "island",
+            "src_label": src_label,
+            "dst_label": dst_label,
         }
         edge["_label"] = DisplayedEdgeService.get_pseudo_label(edge)
         return edge
@@ -73,12 +73,12 @@ class DisplayedEdgeService:
     @staticmethod
     def edge_to_net_edge(edge: EdgeService):
         return {
-            "id":edge.id,
-            "from":edge.src_node_id,
-            "to":edge.dst_node_id,
-            "group":edge.get_group(),
-            "src_label":edge.src_label,
-            "dst_label":edge.dst_label,
+            "id": edge.id,
+            "from": edge.src_node_id,
+            "to": edge.dst_node_id,
+            "group": edge.get_group(),
+            "src_label": edge.src_label,
+            "dst_label": edge.dst_label,
         }
 
 

@@ -13,27 +13,27 @@ class T1086(AttackTechnique):
 
     query = [
         {
-            "$match":{
-                "telem_category":"exploit",
-                "data.info.executed_cmds":{"$elemMatch":{"powershell":True}},
+            "$match": {
+                "telem_category": "exploit",
+                "data.info.executed_cmds": {"$elemMatch": {"powershell": True}},
             }
         },
-        {"$project":{"machine":"$data.machine", "info":"$data.info"}},
+        {"$project": {"machine": "$data.machine", "info": "$data.info"}},
         {
-            "$project":{
-                "_id":0,
-                "machine":1,
-                "info.finished":1,
-                "info.executed_cmds":{
-                    "$filter":{
-                        "input":"$info.executed_cmds",
-                        "as":"command",
-                        "cond":{"$eq":["$$command.powershell", True]},
+            "$project": {
+                "_id": 0,
+                "machine": 1,
+                "info.finished": 1,
+                "info.executed_cmds": {
+                    "$filter": {
+                        "input": "$info.executed_cmds",
+                        "as": "command",
+                        "cond": {"$eq": ["$$command.powershell", True]},
                     }
                 },
             }
         },
-        {"$group":{"_id":"$machine", "data":{"$push":"$$ROOT"}}},
+        {"$group": {"_id": "$machine", "data": {"$push": "$$ROOT"}}},
     ]
 
     @staticmethod
@@ -48,7 +48,7 @@ class T1086(AttackTechnique):
             return (status, cmd_data)
 
         status, cmd_data = get_technique_status_and_data()
-        data = {"title":T1086.technique_title(), "cmds":cmd_data}
+        data = {"title": T1086.technique_title(), "cmds": cmd_data}
 
         data.update(T1086.get_mitigation_by_status(status))
         data.update(T1086.get_message_and_status(status))

@@ -22,11 +22,11 @@ class PostBreachTelem(BaseTelem):
 
     def get_data(self):
         return {
-            "command":self.pba.command,
-            "result":self.result,
-            "name":self.pba.name,
-            "hostname":self.hostname,
-            "ip":self.ip,
+            "command": self.pba.command,
+            "result": self.result,
+            "name": self.pba.name,
+            "hostname": self.hostname,
+            "ip": self.ip,
         }
 
     @staticmethod

@@ -17,4 +17,4 @@ class StateTelem(BaseTelem):
     telem_category = TelemCategoryEnum.STATE
 
     def get_data(self):
-        return {"done":self.is_done, "version":self.version}
+        return {"done": self.is_done, "version": self.version}

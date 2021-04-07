@@ -35,10 +35,10 @@ class TcpScanner(HostScanner, HostFinger):
         shuffle(target_ports)
 
         ports, banners = check_tcp_ports(
-                host.ip_addr,
-                target_ports,
-                self._config.tcp_scan_timeout / 1000.0,
-                self._config.tcp_scan_get_banner,
+            host.ip_addr,
+            target_ports,
+            self._config.tcp_scan_timeout / 1000.0,
+            self._config.tcp_scan_get_banner,
         )
         for target_port, banner in zip_longest(ports, banners, fillvalue=None):
             service = tcp_port_to_service(target_port)

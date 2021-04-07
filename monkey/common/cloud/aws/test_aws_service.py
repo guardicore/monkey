@@ -50,9 +50,9 @@ class TestFilterInstanceDataFromAwsResponse(TestCase):
             """
 
         self.assertEqual(
-                filter_instance_data_from_aws_response(json.loads(json_response_empty)), []
+            filter_instance_data_from_aws_response(json.loads(json_response_empty)), []
         )
         self.assertEqual(
-                filter_instance_data_from_aws_response(json.loads(json_response_full)),
-                [{"instance_id":"string", "ip_address":"string", "name":"string", "os":"string"}],
+            filter_instance_data_from_aws_response(json.loads(json_response_full)),
+            [{"instance_id": "string", "ip_address": "string", "name": "string", "os": "string"}],
         )

@@ -11,14 +11,14 @@ class AttackConfiguration(flask_restful.Resource):
     @jwt_required
     def get(self):
         return current_app.response_class(
-                json.dumps(
-                        {"configuration":AttackConfig.get_config()},
-                        indent=None,
-                        separators=(",", ":"),
-                        sort_keys=False,
-                )
-                + "\n",
-                mimetype=current_app.config["JSONIFY_MIMETYPE"],
+            json.dumps(
+                {"configuration": AttackConfig.get_config()},
+                indent=None,
+                separators=(",", ":"),
+                sort_keys=False,
+            )
+            + "\n",
+            mimetype=current_app.config["JSONIFY_MIMETYPE"],
         )
 
     @jwt_required
@@ -32,6 +32,6 @@ class AttackConfiguration(flask_restful.Resource):
             AttackConfig.reset_config()
             return jsonify(configuration=AttackConfig.get_config())
         else:
-            AttackConfig.update_config({"properties":json.loads(request.data)})
+            AttackConfig.update_config({"properties": json.loads(request.data)})
             AttackConfig.apply_to_monkey_config()
             return {}

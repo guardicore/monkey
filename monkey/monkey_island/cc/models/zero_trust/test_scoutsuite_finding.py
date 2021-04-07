@@ -20,9 +20,9 @@ class TestScoutSuiteFinding:
     def test_save_finding_validation(self):
         with pytest.raises(ValidationError):
             _ = ScoutSuiteFinding.save_finding(
-                    test=zero_trust_consts.TEST_SEGMENTATION,
-                    status="bla bla",
-                    detail_ref=SCOUTSUITE_FINDING_DETAIL_MOCK,
+                test=zero_trust_consts.TEST_SEGMENTATION,
+                status="bla bla",
+                detail_ref=SCOUTSUITE_FINDING_DETAIL_MOCK,
             )
 
     @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
@@ -34,9 +34,9 @@ class TestScoutSuiteFinding:
         scoutsuite_details_example.scoutsuite_rules.append(rule_example)
         scoutsuite_details_example.save()
         ScoutSuiteFinding.save_finding(
-                test=zero_trust_consts.TEST_SEGMENTATION,
-                status=zero_trust_consts.STATUS_FAILED,
-                detail_ref=scoutsuite_details_example,
+            test=zero_trust_consts.TEST_SEGMENTATION,
+            status=zero_trust_consts.STATUS_FAILED,
+            detail_ref=scoutsuite_details_example,
         )
 
         assert len(ScoutSuiteFinding.objects(test=zero_trust_consts.TEST_SEGMENTATION)) == 1

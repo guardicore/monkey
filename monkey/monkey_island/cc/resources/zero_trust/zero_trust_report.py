@@ -31,7 +31,7 @@ class ZeroTrustReport(flask_restful.Resource):
         elif report_data == REPORT_DATA_SCOUTSUITE:
             # Raw ScoutSuite data is already solved as json, no need to jsonify
             return Response(
-                    ScoutSuiteRawDataService.get_scoutsuite_data_json(), mimetype="application/json"
+                ScoutSuiteRawDataService.get_scoutsuite_data_json(), mimetype="application/json"
             )
 
         flask_restful.abort(http.client.NOT_FOUND)

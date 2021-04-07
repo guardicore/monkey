@@ -35,11 +35,11 @@ class NetEdgeService:
             monkey_label = NodeService.get_label_for_endpoint(monkey_id)
             island_label = NodeService.get_label_for_endpoint(island_id)
             island_pseudo_edge = DisplayedEdgeService.generate_pseudo_edge(
-                    edge_id=fake_id,
-                    src_node_id=monkey_id,
-                    dst_node_id=island_id,
-                    src_label=monkey_label,
-                    dst_label=island_label,
+                edge_id=fake_id,
+                src_node_id=monkey_id,
+                dst_node_id=island_id,
+                src_label=monkey_label,
+                dst_label=island_label,
             )
             edges.append(island_pseudo_edge)
         return edges
@@ -54,8 +54,8 @@ class NetEdgeService:
             x.id
             for x in Monkey.objects()
             if ("tunnel" not in x)
-               and (x.id not in existing_ids)
-               and (x.id != monkey_island_monkey["_id"])
+            and (x.id not in existing_ids)
+            and (x.id != monkey_island_monkey["_id"])
         ]
         edges = []
 
@@ -68,11 +68,11 @@ class NetEdgeService:
             src_label = NodeService.get_label_for_endpoint(monkey_id)
             dst_label = NodeService.get_label_for_endpoint(monkey_island_monkey["_id"])
             edge = DisplayedEdgeService.generate_pseudo_edge(
-                    edge_id=fake_id,
-                    src_node_id=monkey_id,
-                    dst_node_id=monkey_island_monkey["_id"],
-                    src_label=src_label,
-                    dst_label=dst_label,
+                edge_id=fake_id,
+                src_node_id=monkey_id,
+                dst_node_id=monkey_island_monkey["_id"],
+                src_label=src_label,
+                dst_label=dst_label,
             )
             edges.append(edge)
 

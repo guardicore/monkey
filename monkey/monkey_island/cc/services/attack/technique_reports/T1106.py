@@ -12,5 +12,5 @@ class T1106(UsageTechnique):
     @staticmethod
     def get_report_data():
         data = T1106.get_tech_base_data()
-        data.update({"api_uses":T1106.get_usage_data()})
+        data.update({"api_uses": T1106.get_usage_data()})
         return data

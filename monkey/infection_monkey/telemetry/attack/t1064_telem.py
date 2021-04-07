@@ -15,5 +15,5 @@ class T1064Telem(AttackTelem):
 
     def get_data(self):
         data = super(T1064Telem, self).get_data()
-        data.update({"usage":self.usage})
+        data.update({"usage": self.usage})
         return data

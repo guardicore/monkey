@@ -14,4 +14,4 @@ class ScoutSuiteTelem(BaseTelem):
     telem_category = TelemCategoryEnum.SCOUTSUITE
 
     def get_data(self):
-        return {"data":self.provider_data}
+        return {"data": self.provider_data}

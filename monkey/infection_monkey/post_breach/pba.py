@@ -62,8 +62,7 @@ class PBA(Plugin):
             result = exec_funct()
             if self.scripts_were_used_successfully(result):
                 T1064Telem(
-                        ScanStatus.USED,
-                        f"Scripts were used to execute {self.name} post breach action."
+                    ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action."
                 ).send()
             PostBreachTelem(self, result).send()
         else:
@@ -92,7 +91,7 @@ class PBA(Plugin):
         """
         try:
             output = subprocess.check_output(
-                    self.command, stderr=subprocess.STDOUT, shell=True
+                self.command, stderr=subprocess.STDOUT, shell=True
             ).decode()
             return output, True
         except subprocess.CalledProcessError as e:
