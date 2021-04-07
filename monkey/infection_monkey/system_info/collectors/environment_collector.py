@@ -21,4 +21,4 @@ class EnvironmentCollector(SystemInfoCollector):
         super().__init__(name=ENVIRONMENT_COLLECTOR)
 
     def collect(self) -> dict:
-        return {"environment":get_monkey_environment()}
+        return {"environment": get_monkey_environment()}

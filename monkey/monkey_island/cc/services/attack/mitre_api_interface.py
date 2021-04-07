@@ -11,7 +11,7 @@ class MitreApiInterface:
         file_system = FileSystemSource(MitreApiInterface.ATTACK_DATA_PATH)
         mitigation_filter = [Filter("type", "=", "course-of-action")]
         all_mitigations = file_system.query(mitigation_filter)
-        all_mitigations = {mitigation["id"]:mitigation for mitigation in all_mitigations}
+        all_mitigations = {mitigation["id"]: mitigation for mitigation in all_mitigations}
         return all_mitigations
 
     @staticmethod
@@ -19,7 +19,7 @@ class MitreApiInterface:
         file_system = FileSystemSource(MitreApiInterface.ATTACK_DATA_PATH)
         technique_filter = [Filter("type", "=", "attack-pattern")]
         all_techniques = file_system.query(technique_filter)
-        all_techniques = {technique["id"]:technique for technique in all_techniques}
+        all_techniques = {technique["id"]: technique for technique in all_techniques}
         return all_techniques
 
     @staticmethod

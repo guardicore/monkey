@@ -40,7 +40,7 @@ class CommunicateAsNewUser(PBA):
         try:
             with create_auto_new_user(username, PASSWORD) as new_user:
                 http_request_commandline = CommunicateAsNewUser.get_commandline_for_http_request(
-                        INFECTION_MONKEY_WEBSITE_URL
+                    INFECTION_MONKEY_WEBSITE_URL
                 )
                 exit_status = new_user.run_as(http_request_commandline)
                 self.send_result_telemetry(exit_status, http_request_commandline, username)
@@ -52,7 +52,7 @@ class CommunicateAsNewUser(PBA):
     @staticmethod
     def get_random_new_user_name():
         return USERNAME_PREFIX + "".join(
-                random.choice(string.ascii_lowercase) for _ in range(5)
+            random.choice(string.ascii_lowercase) for _ in range(5)
         )  # noqa: DUO102
 
     @staticmethod
@@ -81,18 +81,17 @@ class CommunicateAsNewUser(PBA):
         """
         if exit_status == 0:
             PostBreachTelem(
-                    self,
-                    (CREATED_PROCESS_AS_USER_SUCCESS_FORMAT.format(commandline, username), True)
+                self, (CREATED_PROCESS_AS_USER_SUCCESS_FORMAT.format(commandline, username), True)
             ).send()
         else:
             PostBreachTelem(
-                    self,
-                    (
-                        CREATED_PROCESS_AS_USER_FAILED_FORMAT.format(
-                                commandline, username, exit_status, twos_complement(exit_status)
-                        ),
-                        False,
+                self,
+                (
+                    CREATED_PROCESS_AS_USER_FAILED_FORMAT.format(
+                        commandline, username, exit_status, twos_complement(exit_status)
                     ),
+                    False,
+                ),
             ).send()
 
 

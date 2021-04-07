@@ -35,8 +35,8 @@ class MongoUtils:
                 # objectSid property of ds_user is problematic and need this special treatment.
                 # ISWbemObjectEx interface. Class Uint8Array ?
                 if (
-                        str(o._oleobj_.GetTypeInfo().GetTypeAttr().iid)
-                        == "{269AD56A-8A67-4129-BC8C-0506DCFE9880}"
+                    str(o._oleobj_.GetTypeInfo().GetTypeAttr().iid)
+                    == "{269AD56A-8A67-4129-BC8C-0506DCFE9880}"
                 ):
                     return o.Value
             except Exception:

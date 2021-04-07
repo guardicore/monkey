@@ -95,7 +95,7 @@ class CmdRunner(object):
 
         while (curr_time - init_time < timeout) and (len(commands) != 0):
             for command in list(
-                    commands
+                commands
             ):  # list(commands) clones the list. We do so because we remove items inside
                 CmdRunner._process_command(command, commands, results, True)
 
@@ -108,9 +108,9 @@ class CmdRunner(object):
         for command, result in results:
             if not result.is_success:
                 logger.error(
-                        "The following command failed: `%s`. status code: %s",
-                        str(command[1]),
-                        str(result.status_code),
+                    "The following command failed: `%s`. status code: %s",
+                    str(command[1]),
+                    str(result.status_code),
                 )
 
         return results
@@ -157,7 +157,7 @@ class CmdRunner(object):
         try:
             command_info = c_runner.query_command(c_id)
             if (not should_process_only_finished) or c_runner.get_command_status(
-                    command_info
+                command_info
             ) != CmdStatus.IN_PROGRESS:
                 commands.remove(command)
                 results.append((command, c_runner.get_command_result(command_info)))

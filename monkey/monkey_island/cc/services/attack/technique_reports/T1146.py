@@ -17,19 +17,19 @@ class T1146(PostBreachTechnique):
     def get_pba_query(*args):
         return [
             {
-                "$match":{
-                    "telem_category":"post_breach",
-                    "data.name":POST_BREACH_CLEAR_CMD_HISTORY,
+                "$match": {
+                    "telem_category": "post_breach",
+                    "data.name": POST_BREACH_CLEAR_CMD_HISTORY,
                 }
             },
             {
-                "$project":{
-                    "_id":0,
-                    "machine":{
-                        "hostname":{"$arrayElemAt":["$data.hostname", 0]},
-                        "ips":[{"$arrayElemAt":["$data.ip", 0]}],
+                "$project": {
+                    "_id": 0,
+                    "machine": {
+                        "hostname": {"$arrayElemAt": ["$data.hostname", 0]},
+                        "ips": [{"$arrayElemAt": ["$data.ip", 0]}],
                     },
-                    "result":"$data.result",
+                    "result": "$data.result",
                 }
             },
         ]

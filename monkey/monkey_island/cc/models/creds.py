@@ -6,5 +6,5 @@ class Creds(EmbeddedDocument):
     TODO get an example of this data, and make it strict
     """
 
-    meta = {"strict":False}
+    meta = {"strict": False}
     pass

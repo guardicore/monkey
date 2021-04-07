@@ -43,7 +43,7 @@ def _get_creds_from_pypykatz_session(pypykatz_session: Dict) -> List[WindowsCred
 
 
 def _get_creds_from_pypykatz_creds(
-        pypykatz_creds: List[PypykatzCredential],
+    pypykatz_creds: List[PypykatzCredential],
 ) -> List[WindowsCredentials]:
     creds = _filter_empty_creds(pypykatz_creds)
     return [_get_windows_cred(cred) for cred in creds]
@@ -72,7 +72,7 @@ def _get_windows_cred(pypykatz_cred: PypykatzCredential):
     if "LMhash" in pypykatz_cred:
         lm_hash = _hash_to_string(pypykatz_cred["LMhash"])
     return WindowsCredentials(
-            username=username, password=password, ntlm_hash=ntlm_hash, lm_hash=lm_hash
+        username=username, password=password, ntlm_hash=ntlm_hash, lm_hash=lm_hash
     )
 
 

@@ -19,11 +19,11 @@ def T1105_telem_test_instance():
 def test_T1105_send(T1105_telem_test_instance, spy_send_telemetry):
     T1105_telem_test_instance.send()
     expected_data = {
-        "status":STATUS.value,
-        "technique":"T1105",
-        "filename":FILENAME,
-        "src":SRC_IP,
-        "dst":DST_IP,
+        "status": STATUS.value,
+        "technique": "T1105",
+        "filename": FILENAME,
+        "src": SRC_IP,
+        "dst": DST_IP,
     }
     expected_data = json.dumps(expected_data, cls=T1105_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data

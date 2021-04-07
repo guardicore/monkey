@@ -12,16 +12,16 @@ from monkey_island.cc.services.telemetry.processing.tunnel import process_tunnel
 logger = logging.getLogger(__name__)
 
 TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
-    TelemCategoryEnum.TUNNEL:process_tunnel_telemetry,
-    TelemCategoryEnum.STATE:process_state_telemetry,
-    TelemCategoryEnum.EXPLOIT:process_exploit_telemetry,
-    TelemCategoryEnum.SCAN:process_scan_telemetry,
-    TelemCategoryEnum.SYSTEM_INFO:process_system_info_telemetry,
-    TelemCategoryEnum.POST_BREACH:process_post_breach_telemetry,
-    TelemCategoryEnum.SCOUTSUITE:process_scoutsuite_telemetry,
+    TelemCategoryEnum.TUNNEL: process_tunnel_telemetry,
+    TelemCategoryEnum.STATE: process_state_telemetry,
+    TelemCategoryEnum.EXPLOIT: process_exploit_telemetry,
+    TelemCategoryEnum.SCAN: process_scan_telemetry,
+    TelemCategoryEnum.SYSTEM_INFO: process_system_info_telemetry,
+    TelemCategoryEnum.POST_BREACH: process_post_breach_telemetry,
+    TelemCategoryEnum.SCOUTSUITE: process_scoutsuite_telemetry,
     # `lambda *args, **kwargs: None` is a no-op.
-    TelemCategoryEnum.TRACE:lambda *args, **kwargs:None,
-    TelemCategoryEnum.ATTACK:lambda *args, **kwargs:None,
+    TelemCategoryEnum.TRACE: lambda *args, **kwargs: None,
+    TelemCategoryEnum.ATTACK: lambda *args, **kwargs: None,
 }
 
 
@@ -34,5 +34,5 @@ def process_telemetry(telemetry_json):
             logger.info("Got unknown type of telemetry: %s" % telem_category)
     except Exception as ex:
         logger.error(
-                "Exception caught while processing telemetry. Info: {}".format(ex), exc_info=True
+            "Exception caught while processing telemetry. Info: {}".format(ex), exc_info=True
         )

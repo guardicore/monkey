@@ -34,4 +34,4 @@ class ClearCaches(flask_restful.Resource):
             logger.error(NOT_ALL_REPORTS_DELETED)
             flask_restful.abort(500, error_info=NOT_ALL_REPORTS_DELETED)
 
-        return {"success":"true"}
+        return {"success": "true"}

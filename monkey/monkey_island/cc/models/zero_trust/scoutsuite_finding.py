@@ -13,7 +13,7 @@ class ScoutSuiteFinding(Finding):
 
     @staticmethod
     def save_finding(
-            test: str, status: str, detail_ref: ScoutSuiteFindingDetails
+        test: str, status: str, detail_ref: ScoutSuiteFindingDetails
     ) -> ScoutSuiteFinding:
         finding = ScoutSuiteFinding(test=test, status=status, details=detail_ref)
         finding.save()

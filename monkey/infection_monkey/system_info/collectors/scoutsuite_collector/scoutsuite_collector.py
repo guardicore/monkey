@@ -24,10 +24,10 @@ def scan_cloud_security(cloud_type: CloudProviders):
 
 def run_scoutsuite(cloud_type: str) -> Union[BaseProvider, dict]:
     return ScoutSuite.api_run.run(
-            provider=cloud_type,
-            aws_access_key_id=WormConfiguration.aws_access_key_id,
-            aws_secret_access_key=WormConfiguration.aws_secret_access_key,
-            aws_session_token=WormConfiguration.aws_session_token,
+        provider=cloud_type,
+        aws_access_key_id=WormConfiguration.aws_access_key_id,
+        aws_secret_access_key=WormConfiguration.aws_secret_access_key,
+        aws_session_token=WormConfiguration.aws_session_token,
     )
 
 

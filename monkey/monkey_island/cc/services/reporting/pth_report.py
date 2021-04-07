@@ -32,22 +32,22 @@ class PTHReportService(object):
         """
 
         pipeline = [
-            {"$match":{"NTLM_secret":{"$exists":"true", "$ne":None}}},
+            {"$match": {"NTLM_secret": {"$exists": "true", "$ne": None}}},
             {
-                "$group":{
-                    "_id":{"NTLM_secret":"$NTLM_secret"},
-                    "count":{"$sum":1},
-                    "Docs":{
-                        "$push":{
-                            "_id":"$_id",
-                            "name":"$name",
-                            "domain_name":"$domain_name",
-                            "machine_id":"$machine_id",
+                "$group": {
+                    "_id": {"NTLM_secret": "$NTLM_secret"},
+                    "count": {"$sum": 1},
+                    "Docs": {
+                        "$push": {
+                            "_id": "$_id",
+                            "name": "$name",
+                            "domain_name": "$domain_name",
+                            "machine_id": "$machine_id",
                         }
                     },
                 }
             },
-            {"$match":{"count":{"$gt":1}}},
+            {"$match": {"count": {"$gt": 1}}},
         ]
         return mongo.db.groupsandusers.aggregate(pipeline)
 
@@ -61,7 +61,7 @@ class PTHReportService(object):
         :return:
         A list of formatted machines names *domain*/*hostname*, to use in shared admins issues.
         """
-        machines = mongo.db.monkey.find({"_id":{"$in":admin_on_machines}}, {"hostname":1})
+        machines = mongo.db.monkey.find({"_id": {"$in": admin_on_machines}}, {"hostname": 1})
         return [domain_name + "\\" + i["hostname"] for i in list(machines)]
 
     @staticmethod
@@ -76,18 +76,18 @@ class PTHReportService(object):
             A list of said users
         """
         pipeline = [
-            {"$unwind":"$admin_on_machines"},
-            {"$match":{"type":USERTYPE, "domain_name":{"$ne":None}}},
+            {"$unwind": "$admin_on_machines"},
+            {"$match": {"type": USERTYPE, "domain_name": {"$ne": None}}},
             {
-                "$lookup":{
-                    "from":"monkey",
-                    "localField":"admin_on_machines",
-                    "foreignField":"_id",
-                    "as":"critical_machine",
+                "$lookup": {
+                    "from": "monkey",
+                    "localField": "admin_on_machines",
+                    "foreignField": "_id",
+                    "as": "critical_machine",
                 }
             },
-            {"$match":{"critical_machine.critical_services":{"$ne":[]}}},
-            {"$unwind":"$critical_machine"},
+            {"$match": {"critical_machine.critical_services": {"$ne": []}}},
+            {"$unwind": "$critical_machine"},
         ]
         return mongo.db.groupsandusers.aggregate(pipeline)
 
@@ -106,15 +106,15 @@ class PTHReportService(object):
         for doc in docs:
             users_list = [
                 {
-                    "username":user["name"],
-                    "domain_name":user["domain_name"],
-                    "hostname":NodeService.get_hostname_by_id(ObjectId(user["machine_id"]))
+                    "username": user["name"],
+                    "domain_name": user["domain_name"],
+                    "hostname": NodeService.get_hostname_by_id(ObjectId(user["machine_id"]))
                     if user["machine_id"]
                     else None,
                 }
                 for user in doc["Docs"]
             ]
-            users_cred_groups.append({"cred_groups":users_list})
+            users_cred_groups.append({"cred_groups": users_list})
 
         return users_cred_groups
 
@@ -125,18 +125,18 @@ class PTHReportService(object):
         for group in user_groups:
             user_info = group["cred_groups"][0]
             issues.append(
-                    {
-                        "type":"shared_passwords_domain"
-                        if user_info["domain_name"]
-                        else "shared_passwords",
-                        "machine":user_info["hostname"]
-                        if user_info["hostname"]
-                        else user_info["domain_name"],
-                        "shared_with":[
-                            PTHReportService.__build_dup_user_label(i) for i in group["cred_groups"]
-                        ],
-                        "is_local":False if user_info["domain_name"] else True,
-                    }
+                {
+                    "type": "shared_passwords_domain"
+                    if user_info["domain_name"]
+                    else "shared_passwords",
+                    "machine": user_info["hostname"]
+                    if user_info["hostname"]
+                    else user_info["domain_name"],
+                    "shared_with": [
+                        PTHReportService.__build_dup_user_label(i) for i in group["cred_groups"]
+                    ],
+                    "is_local": False if user_info["domain_name"] else True,
+                }
             )
         return issues
 
@@ -150,19 +150,19 @@ class PTHReportService(object):
         # Administrator account
         # is shared.
         admins = mongo.db.groupsandusers.find(
-                {
-                    "type":USERTYPE,
-                    "name":{"$ne":"Administrator"},
-                    "admin_on_machines.1":{"$exists":True},
-                },
-                {"admin_on_machines":1, "name":1, "domain_name":1},
+            {
+                "type": USERTYPE,
+                "name": {"$ne": "Administrator"},
+                "admin_on_machines.1": {"$exists": True},
+            },
+            {"admin_on_machines": 1, "name": 1, "domain_name": 1},
         )
         return [
             {
-                "name":admin["name"],
-                "domain_name":admin["domain_name"],
-                "admin_on_machines":PTHReportService.__get_admin_on_machines_format(
-                        admin["admin_on_machines"], admin["domain_name"]
+                "name": admin["name"],
+                "domain_name": admin["domain_name"],
+                "admin_on_machines": PTHReportService.__get_admin_on_machines_format(
+                    admin["admin_on_machines"], admin["domain_name"]
                 ),
             }
             for admin in admins
@@ -173,11 +173,11 @@ class PTHReportService(object):
         admins_info = PTHReportService.get_shared_admins_nodes()
         return [
             {
-                "is_local":False,
-                "type":"shared_admins_domain",
-                "machine":admin["domain_name"],
-                "username":admin["domain_name"] + "\\" + admin["name"],
-                "shared_machines":admin["admin_on_machines"],
+                "is_local": False,
+                "type": "shared_admins_domain",
+                "machine": admin["domain_name"],
+                "username": admin["domain_name"] + "\\" + admin["name"],
+                "shared_machines": admin["admin_on_machines"],
             }
             for admin in admins_info
         ]
@@ -192,14 +192,14 @@ class PTHReportService(object):
             hostname = str(doc["critical_machine"]["hostname"])
             if hostname not in crit_machines:
                 crit_machines[hostname] = {
-                    "threatening_users":[],
-                    "critical_services":doc["critical_machine"]["critical_services"],
+                    "threatening_users": [],
+                    "critical_services": doc["critical_machine"]["critical_services"],
                 }
             crit_machines[hostname]["threatening_users"].append(
-                    {
-                        "name":str(doc["domain_name"]) + "\\" + str(doc["name"]),
-                        "creds_location":doc["secret_location"],
-                    }
+                {
+                    "name": str(doc["domain_name"]) + "\\" + str(doc["name"]),
+                    "creds_location": doc["secret_location"],
+                }
             )
         return crit_machines
 
@@ -209,10 +209,10 @@ class PTHReportService(object):
 
         return [
             {
-                "type":"strong_users_on_crit",
-                "machine":machine,
-                "services":crit_machines[machine].get("critical_services"),
-                "threatening_users":[
+                "type": "strong_users_on_crit",
+                "machine": machine,
+                "services": crit_machines[machine].get("critical_services"),
+                "threatening_users": [
                     i["name"] for i in crit_machines[machine]["threatening_users"]
                 ],
             }
@@ -227,15 +227,15 @@ class PTHReportService(object):
             for user in crit_machines[machine]["threatening_users"]:
                 username = user["name"]
                 if username not in user_details:
-                    user_details[username] = {"machines":[], "services":[]}
+                    user_details[username] = {"machines": [], "services": []}
                 user_details[username]["machines"].append(machine)
                 user_details[username]["services"] += crit_machines[machine]["critical_services"]
 
         return [
             {
-                "username":user,
-                "machines":user_details[user]["machines"],
-                "services_names":user_details[user]["services"],
+                "username": user,
+                "machines": user_details[user]["machines"],
+                "services_names": user_details[user]["services"],
             }
             for user in user_details
         ]
@@ -246,11 +246,11 @@ class PTHReportService(object):
 
         return [
             {
-                "id":monkey.guid,
-                "label":"{0} : {1}".format(monkey.hostname, monkey.ip_addresses[0]),
-                "group":"critical" if monkey.critical_services is not None else "normal",
-                "services":monkey.critical_services,
-                "hostname":monkey.hostname,
+                "id": monkey.guid,
+                "label": "{0} : {1}".format(monkey.hostname, monkey.ip_addresses[0]),
+                "group": "critical" if monkey.critical_services is not None else "normal",
+                "services": monkey.critical_services,
+                "hostname": monkey.hostname,
             }
             for monkey in monkeys
         ]
@@ -260,8 +260,8 @@ class PTHReportService(object):
         edges_list = []
 
         comp_users = mongo.db.groupsandusers.find(
-                {"admin_on_machines":{"$ne":[]}, "secret_location":{"$ne":[]}, "type":USERTYPE},
-                {"admin_on_machines":1, "secret_location":1},
+            {"admin_on_machines": {"$ne": []}, "secret_location": {"$ne": []}, "type": USERTYPE},
+            {"admin_on_machines": 1, "secret_location": 1},
         )
 
         for user in comp_users:
@@ -272,15 +272,15 @@ class PTHReportService(object):
                 if pair[0] != pair[1]
             ]:
                 edges_list.append(
-                        {"from":pair[1], "to":pair[0], "id":str(pair[1]) + str(pair[0])}
+                    {"from": pair[1], "to": pair[0], "id": str(pair[1]) + str(pair[0])}
                 )
         return edges_list
 
     @staticmethod
     def get_pth_map():
         return {
-            "nodes":PTHReportService.generate_map_nodes(),
-            "edges":PTHReportService.generate_edges(),
+            "nodes": PTHReportService.generate_map_nodes(),
+            "edges": PTHReportService.generate_edges(),
         }
 
     @staticmethod
@@ -288,10 +288,10 @@ class PTHReportService(object):
         pth_map = PTHReportService.get_pth_map()
         PTHReportService.get_strong_users_on_critical_machines_nodes()
         report = {
-            "report_info":{
-                "strong_users_table":PTHReportService.get_strong_users_on_crit_details()
+            "report_info": {
+                "strong_users_table": PTHReportService.get_strong_users_on_crit_details()
             },
-            "pthmap":{"nodes":pth_map.get("nodes"), "edges":pth_map.get("edges")},
+            "pthmap": {"nodes": pth_map.get("nodes"), "edges": pth_map.get("edges")},
         }
 
         return report

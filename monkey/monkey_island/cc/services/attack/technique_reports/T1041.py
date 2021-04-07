@@ -18,8 +18,8 @@ class T1041(AttackTechnique):
             monkeys = list(Monkey.objects())
             info = [
                 {
-                    "src":monkey["command_control_channel"]["src"],
-                    "dst":monkey["command_control_channel"]["dst"],
+                    "src": monkey["command_control_channel"]["src"],
+                    "dst": monkey["command_control_channel"]["dst"],
                 }
                 for monkey in monkeys
                 if monkey["command_control_channel"]
@@ -33,5 +33,5 @@ class T1041(AttackTechnique):
         status, info = get_technique_status_and_data()
 
         data = T1041.get_base_data_by_status(status)
-        data.update({"command_control_channel":info})
+        data.update({"command_control_channel": info})
         return data

@@ -100,8 +100,7 @@ class InfectionMonkey(object):
                 WormConfiguration.command_servers.insert(0, self._default_server)
             else:
                 LOG.debug(
-                        "Default server: %s is already in command servers list" %
-                        self._default_server
+                    "Default server: %s is already in command servers list" % self._default_server
                 )
 
     def start(self):
@@ -162,8 +161,8 @@ class InfectionMonkey(object):
                     break
 
                 machines = self._network.get_victim_machines(
-                        max_find=WormConfiguration.victims_max_find,
-                        stop_callback=ControlClient.check_for_stop,
+                    max_find=WormConfiguration.victims_max_find,
+                    stop_callback=ControlClient.check_for_stop,
                 )
                 is_empty = True
                 for machine in machines:
@@ -173,17 +172,17 @@ class InfectionMonkey(object):
                     is_empty = False
                     for finger in self._fingerprint:
                         LOG.info(
-                                "Trying to get OS fingerprint from %r with module %s",
-                                machine,
-                                finger.__class__.__name__,
+                            "Trying to get OS fingerprint from %r with module %s",
+                            machine,
+                            finger.__class__.__name__,
                         )
                         try:
                             finger.get_host_fingerprint(machine)
                         except BaseException as exc:
                             LOG.error(
-                                    "Failed to run fingerprinter %s, exception %s"
-                                    % finger.__class__.__name__,
-                                    str(exc),
+                                "Failed to run fingerprinter %s, exception %s"
+                                % finger.__class__.__name__,
+                                str(exc),
                             )
 
                     ScanTelem(machine).send()
@@ -204,23 +203,23 @@ class InfectionMonkey(object):
                     if self._default_server:
                         if self._network.on_island(self._default_server):
                             machine.set_default_server(
-                                    get_interface_to_target(machine.ip_addr)
-                                    + (
-                                        ":" + self._default_server_port
-                                        if self._default_server_port
-                                        else ""
-                                    )
+                                get_interface_to_target(machine.ip_addr)
+                                + (
+                                    ":" + self._default_server_port
+                                    if self._default_server_port
+                                    else ""
+                                )
                             )
                         else:
                             machine.set_default_server(self._default_server)
                         LOG.debug(
-                                "Default server for machine: %r set to %s"
-                                % (machine, machine.default_server)
+                            "Default server for machine: %r set to %s"
+                            % (machine, machine.default_server)
                         )
 
                     # Order exploits according to their type
                     self._exploiters = sorted(
-                            self._exploiters, key=lambda exploiter_:exploiter_.EXPLOIT_TYPE.value
+                        self._exploiters, key=lambda exploiter_: exploiter_.EXPLOIT_TYPE.value
                     )
                     host_exploited = False
                     for exploiter in [exploiter(machine) for exploiter in self._exploiters]:
@@ -252,8 +251,7 @@ class InfectionMonkey(object):
             if len(self._exploited_machines) > 0:
                 time_to_sleep = WormConfiguration.keep_tunnel_open_time
                 LOG.info(
-                        "Sleeping %d seconds for exploited machines to connect to tunnel",
-                        time_to_sleep
+                    "Sleeping %d seconds for exploited machines to connect to tunnel", time_to_sleep
                 )
                 time.sleep(time_to_sleep)
 
@@ -265,8 +263,8 @@ class InfectionMonkey(object):
 
         except PlannedShutdownException:
             LOG.info(
-                    "A planned shutdown of the Monkey occurred. Logging the reason and finishing "
-                    "execution."
+                "A planned shutdown of the Monkey occurred. Logging the reason and finishing "
+                "execution."
             )
             LOG.exception("Planned shutdown, reason:")
 
@@ -311,7 +309,7 @@ class InfectionMonkey(object):
             firewall.close()
         else:
             StateTelem(
-                    is_done=True, version=get_version()
+                is_done=True, version=get_version()
             ).send()  # Signal the server (before closing the tunnel)
             InfectionMonkey.close_tunnel()
             firewall.close()
@@ -346,12 +344,12 @@ class InfectionMonkey(object):
                     startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = SW_HIDE
                     subprocess.Popen(
-                            DELAY_DELETE_CMD % {"file_path":sys.executable},
-                            stdin=None,
-                            stdout=None,
-                            stderr=None,
-                            close_fds=True,
-                            startupinfo=startupinfo,
+                        DELAY_DELETE_CMD % {"file_path": sys.executable},
+                        stdin=None,
+                        stdout=None,
+                        stderr=None,
+                        close_fds=True,
+                        startupinfo=startupinfo,
                     )
                 else:
                     os.remove(sys.executable)
@@ -381,10 +379,10 @@ class InfectionMonkey(object):
         """
         if not exploiter.is_os_supported():
             LOG.info(
-                    "Skipping exploiter %s host:%r, os %s is not supported",
-                    exploiter.__class__.__name__,
-                    machine,
-                    machine.os,
+                "Skipping exploiter %s host:%r, os %s is not supported",
+                exploiter.__class__.__name__,
+                machine,
+                machine.os,
             )
             return False
 
@@ -398,31 +396,30 @@ class InfectionMonkey(object):
                 return True
             else:
                 LOG.info(
-                        "Failed exploiting %r with exploiter %s", machine,
-                        exploiter.__class__.__name__
+                    "Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__
                 )
         except ExploitingVulnerableMachineError as exc:
             LOG.error(
-                    "Exception while attacking %s using %s: %s",
-                    machine,
-                    exploiter.__class__.__name__,
-                    exc,
+                "Exception while attacking %s using %s: %s",
+                machine,
+                exploiter.__class__.__name__,
+                exc,
             )
             self.successfully_exploited(machine, exploiter, exploiter.RUNS_AGENT_ON_SUCCESS)
             return True
         except FailedExploitationError as e:
             LOG.info(
-                    "Failed exploiting %r with exploiter %s, %s",
-                    machine,
-                    exploiter.__class__.__name__,
-                    e,
+                "Failed exploiting %r with exploiter %s, %s",
+                machine,
+                exploiter.__class__.__name__,
+                e,
             )
         except Exception as exc:
             LOG.exception(
-                    "Exception while attacking %s using %s: %s",
-                    machine,
-                    exploiter.__class__.__name__,
-                    exc,
+                "Exception while attacking %s using %s: %s",
+                machine,
+                exploiter.__class__.__name__,
+                exc,
             )
         finally:
             exploiter.send_exploit_telemetry(result)
@@ -458,8 +455,7 @@ class InfectionMonkey(object):
         """
         if not ControlClient.find_server(default_tunnel=self._default_tunnel):
             raise PlannedShutdownException(
-                    "Monkey couldn't find server with {} default tunnel.".format(
-                        self._default_tunnel)
+                "Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel)
             )
         self._default_server = WormConfiguration.current_server
         LOG.debug("default server set to: %s" % self._default_server)

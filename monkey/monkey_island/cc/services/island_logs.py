@@ -26,7 +26,7 @@ class IslandLogService:
                 log_file_path = handler.baseFilename
                 with open(log_file_path, "rt") as f:
                     log_file = f.read()
-                return {"log_file":log_file}
+                return {"log_file": log_file}
 
         logger.warning("No log file could be found, check logger config.")
         return None

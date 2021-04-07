@@ -20,10 +20,10 @@ class InfectionLifecycle:
     @staticmethod
     def kill_all():
         mongo.db.monkey.update(
-                {"dead":False},
-                {"$set":{"config.alive":False, "modifytime":datetime.now()}},
-                upsert=False,
-                multi=True,
+            {"dead": False},
+            {"$set": {"config.alive": False, "modifytime": datetime.now()}},
+            upsert=False,
+            multi=True,
         )
         logger.info("Kill all monkeys was called")
         return jsonify(status="OK")
@@ -40,10 +40,10 @@ class InfectionLifecycle:
             report_done = False
 
         return dict(
-                run_server=True,
-                run_monkey=is_any_exists,
-                infection_done=infection_done,
-                report_done=report_done,
+            run_server=True,
+            run_monkey=is_any_exists,
+            infection_done=infection_done,
+            report_done=report_done,
         )
 
     @staticmethod

@@ -40,7 +40,7 @@ def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_P
 
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(
-            target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True
+        target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True
     )
 
     bootloader_server_thread.start()
@@ -69,10 +69,10 @@ def start_island_server(should_setup_only):
         app.run(host="0.0.0.0", debug=True, ssl_context=(crt_path, key_path))
     else:
         http_server = WSGIServer(
-                ("0.0.0.0", env_singleton.env.get_island_port()),
-                app,
-                certfile=os.environ.get("SERVER_CRT", crt_path),
-                keyfile=os.environ.get("SERVER_KEY", key_path),
+            ("0.0.0.0", env_singleton.env.get_island_port()),
+            app,
+            certfile=os.environ.get("SERVER_CRT", crt_path),
+            keyfile=os.environ.get("SERVER_KEY", key_path),
         )
         log_init_info()
         http_server.serve_forever()
@@ -82,14 +82,14 @@ def log_init_info():
     logger.info("Monkey Island Server is running!")
     logger.info(f"version: {get_version()}")
     logger.info(
-            "Listening on the following URLs: {}".format(
-                    ", ".join(
-                            [
-                                "https://{}:{}".format(x, env_singleton.env.get_island_port())
-                                for x in local_ip_addresses()
-                            ]
-                    )
+        "Listening on the following URLs: {}".format(
+            ", ".join(
+                [
+                    "https://{}:{}".format(x, env_singleton.env.get_island_port())
+                    for x in local_ip_addresses()
+                ]
             )
+        )
     )
     MonkeyDownload.log_executable_hashes()
 
@@ -110,9 +110,9 @@ def assert_mongo_db_version(mongo_url):
     server_version = get_db_version(mongo_url)
     if server_version < required_version:
         logger.error(
-                "Mongo DB version too old. {0} is required, but got {1}".format(
-                        str(required_version), str(server_version)
-                )
+            "Mongo DB version too old. {0} is required, but got {1}".format(
+                str(required_version), str(server_version)
+            )
         )
         sys.exit(-1)
     else:

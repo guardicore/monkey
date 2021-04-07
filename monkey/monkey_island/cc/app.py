@@ -66,11 +66,11 @@ def serve_static_file(static_path):
         # intention.
         if static_path == HOME_FILE:
             flask_restful.abort(
-                    Response(
-                            "Page not found. Make sure you ran the npm script and the cwd is "
-                            "monkey\\monkey.",
-                            500,
-                    )
+                Response(
+                    "Page not found. Make sure you ran the npm script and the cwd is "
+                    "monkey\\monkey.",
+                    500,
+                )
             )
         return serve_home()
 
@@ -125,15 +125,15 @@ def init_api_resources(api):
     api.add_resource(LocalRun, "/api/local-monkey", "/api/local-monkey/")
     api.add_resource(ClientRun, "/api/client-monkey", "/api/client-monkey/")
     api.add_resource(
-            Telemetry, "/api/telemetry", "/api/telemetry/", "/api/telemetry/<string:monkey_guid>"
+        Telemetry, "/api/telemetry", "/api/telemetry/", "/api/telemetry/<string:monkey_guid>"
     )
     api.add_resource(MonkeyConfiguration, "/api/configuration", "/api/configuration/")
     api.add_resource(IslandConfiguration, "/api/configuration/island", "/api/configuration/island/")
     api.add_resource(
-            MonkeyDownload,
-            "/api/monkey/download",
-            "/api/monkey/download/",
-            "/api/monkey/download/<string:path>",
+        MonkeyDownload,
+        "/api/monkey/download",
+        "/api/monkey/download/",
+        "/api/monkey/download/<string:path>",
     )
     api.add_resource(NetMap, "/api/netmap", "/api/netmap/")
     api.add_resource(Edge, "/api/netmap/edge", "/api/netmap/edge/")
@@ -151,10 +151,10 @@ def init_api_resources(api):
     api.add_resource(PBAFileDownload, "/api/pba/download/<string:path>")
     api.add_resource(T1216PBAFileDownload, T1216_PBA_FILE_DOWNLOAD_PATH)
     api.add_resource(
-            FileUpload,
-            "/api/fileUpload/<string:file_type>",
-            "/api/fileUpload/<string:file_type>?load=<string:filename>",
-            "/api/fileUpload/<string:file_type>?restore=<string:filename>",
+        FileUpload,
+        "/api/fileUpload/<string:file_type>",
+        "/api/fileUpload/<string:file_type>?load=<string:filename>",
+        "/api/fileUpload/<string:file_type>?restore=<string:filename>",
     )
     api.add_resource(RemoteRun, "/api/remote-monkey", "/api/remote-monkey/")
     api.add_resource(AttackConfiguration, "/api/attack")
@@ -175,7 +175,7 @@ def init_app(mongo_url):
     app = Flask(__name__)
 
     api = flask_restful.Api(app)
-    api.representations = {"application/json":output_json}
+    api.representations = {"application/json": output_json}
 
     init_app_config(app, mongo_url)
     init_app_services(app)

@@ -17,7 +17,7 @@ class AttackConfig(object):
 
     @staticmethod
     def get_config():
-        config = mongo.db.attack.find_one({"name":"newconfig"})["properties"]
+        config = mongo.db.attack.find_one({"name": "newconfig"})["properties"]
         return config
 
     @staticmethod
@@ -44,7 +44,7 @@ class AttackConfig(object):
 
     @staticmethod
     def update_config(config_json):
-        mongo.db.attack.update({"name":"newconfig"}, {"$set":config_json}, upsert=True)
+        mongo.db.attack.update({"name": "newconfig"}, {"$set": config_json}, upsert=True)
         return True
 
     @staticmethod
@@ -74,11 +74,11 @@ class AttackConfig(object):
                 # Check if current array field has attack_techniques assigned to it
                 if "attack_techniques" in array_field and array_field["attack_techniques"]:
                     should_remove = not AttackConfig.should_enable_field(
-                            array_field["attack_techniques"], attack_techniques
+                        array_field["attack_techniques"], attack_techniques
                     )
                     # If exploiter's attack technique is disabled, disable the exploiter/scanner/PBA
                     AttackConfig.r_alter_array(
-                            monkey_config, key, array_field["enum"][0], remove=should_remove
+                        monkey_config, key, array_field["enum"][0], remove=should_remove
                     )
 
     @staticmethod
@@ -109,16 +109,15 @@ class AttackConfig(object):
             dictionary = {}
             # If 'value' is a boolean value that should be set:
             if (
-                    "type" in value
-                    and value["type"] == "boolean"
-                    and "attack_techniques" in value
-                    and value["attack_techniques"]
+                "type" in value
+                and value["type"] == "boolean"
+                and "attack_techniques" in value
+                and value["attack_techniques"]
             ):
                 AttackConfig.set_bool_conf_val(
-                        path,
-                        AttackConfig.should_enable_field(value["attack_techniques"],
-                                                         attack_techniques),
-                        monkey_config,
+                    path,
+                    AttackConfig.should_enable_field(value["attack_techniques"], attack_techniques),
+                    monkey_config,
                 )
             # If 'value' is dict, we go over each of it's fields to search for booleans
             elif "properties" in value:
@@ -156,7 +155,7 @@ class AttackConfig(object):
                     return False
             except KeyError:
                 logger.error(
-                        "Attack technique %s is defined in schema, but not implemented." % technique
+                    "Attack technique %s is defined in schema, but not implemented." % technique
                 )
         return True
 
@@ -202,7 +201,7 @@ class AttackConfig(object):
         for type_name, attack_type in list(attack_config.items()):
             for key, technique in list(attack_type["properties"].items()):
                 techniques[key] = {
-                    "selected":technique["value"],
-                    "type":SCHEMA["properties"][type_name]["title"],
+                    "selected": technique["value"],
+                    "type": SCHEMA["properties"][type_name]["title"],
                 }
         return techniques

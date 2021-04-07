@@ -3,8 +3,7 @@ import logging
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.system_info_collectors\
-    .system_info_telemetry_dispatcher import (
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (
     SystemInfoTelemetryDispatcher,
 )
 from monkey_island.cc.services.wmi_handler import WMIHandler
@@ -34,10 +33,10 @@ def safe_process_telemetry(processing_function, telemetry_json):
         processing_function(telemetry_json)
     except Exception as err:
         logger.error(
-                "Error {} while in {} stage of processing telemetry.".format(
-                        str(err), processing_function.__name__
-                ),
-                exc_info=True,
+            "Error {} while in {} stage of processing telemetry.".format(
+                str(err), processing_function.__name__
+            ),
+            exc_info=True,
         )
 
 
@@ -58,7 +57,7 @@ def add_system_info_ssh_keys_to_config(ssh_info):
         # Public key is useless without private key
         if user["public_key"] and user["private_key"]:
             ConfigService.ssh_add_keys(
-                    user["public_key"], user["private_key"], user["name"], user["ip"]
+                user["public_key"], user["private_key"], user["name"], user["ip"]
             )
 
 

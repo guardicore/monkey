@@ -9,9 +9,9 @@ __author__ = "Maor.Rayzin"
 
 
 def json_setup_logging(
-        default_path=DEFAULT_LOGGER_CONFIG_PATH,
-        default_level=logging.INFO,
-        env_key="LOG_CFG",
+    default_path=DEFAULT_LOGGER_CONFIG_PATH,
+    default_level=logging.INFO,
+    env_key="LOG_CFG",
 ):
     """
     Setup the logging configuration

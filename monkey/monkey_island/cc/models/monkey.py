@@ -59,11 +59,11 @@ class Monkey(Document):
 
     # Environment related fields
     environment = StringField(
-            default=environment_names.Environment.UNKNOWN.value,
-            choices=environment_names.ALL_ENVIRONMENTS_NAMES,
+        default=environment_names.Environment.UNKNOWN.value,
+        choices=environment_names.ALL_ENVIRONMENTS_NAMES,
     )
     aws_instance_id = StringField(
-            required=False
+        required=False
     )  # This field only exists when the monkey is running on an AWS
 
     # instance. See https://github.com/guardicore/monkey/issues/426.
@@ -146,11 +146,11 @@ class Monkey(Document):
         Formats network info from monkey's model
         :return: dictionary with an array of IP's and a hostname
         """
-        return {"ips":self.ip_addresses, "hostname":self.hostname}
+        return {"ips": self.ip_addresses, "hostname": self.hostname}
 
     @ring.lru(
-            expire=1
-            # data has TTL of 1 second. This is useful for rapid calls for report generation.
+        expire=1
+        # data has TTL of 1 second. This is useful for rapid calls for report generation.
     )
     @staticmethod
     def is_monkey(object_id):

@@ -33,4 +33,4 @@ class Log(flask_restful.Resource):
         log_data = str(telemetry_json["log"])
         log_id = LogService.add_log(monkey_id, log_data)
 
-        return mongo.db.log.find_one_or_404({"_id":log_id})
+        return mongo.db.log.find_one_or_404({"_id": log_id})

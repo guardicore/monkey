@@ -20,10 +20,10 @@ class NetstatCollector(object):
     AF_INET6 = getattr(socket, "AF_INET6", object())
 
     proto_map = {
-        (AF_INET, SOCK_STREAM):"tcp",
-        (AF_INET6, SOCK_STREAM):"tcp6",
-        (AF_INET, SOCK_DGRAM):"udp",
-        (AF_INET6, SOCK_DGRAM):"udp6",
+        (AF_INET, SOCK_STREAM): "tcp",
+        (AF_INET6, SOCK_STREAM): "tcp6",
+        (AF_INET, SOCK_DGRAM): "udp",
+        (AF_INET6, SOCK_DGRAM): "udp6",
     }
 
     @staticmethod
@@ -34,11 +34,11 @@ class NetstatCollector(object):
     @staticmethod
     def _parse_connection(c):
         return {
-            "proto":NetstatCollector.proto_map[(c.family, c.type)],
-            "local_address":c.laddr[0],
-            "local_port":c.laddr[1],
-            "remote_address":c.raddr[0] if c.raddr else None,
-            "remote_port":c.raddr[1] if c.raddr else None,
-            "status":c.status,
-            "pid":c.pid,
+            "proto": NetstatCollector.proto_map[(c.family, c.type)],
+            "local_address": c.laddr[0],
+            "local_port": c.laddr[1],
+            "remote_address": c.raddr[0] if c.raddr else None,
+            "remote_port": c.raddr[1] if c.raddr else None,
+            "status": c.status,
+            "pid": c.pid,
         }

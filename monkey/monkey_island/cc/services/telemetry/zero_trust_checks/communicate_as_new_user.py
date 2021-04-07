@@ -14,22 +14,22 @@ COMM_AS_NEW_USER_SUCCEEDED_FORMAT = (
 def check_new_user_communication(current_monkey, success, message):
     status = zero_trust_consts.STATUS_FAILED if success else zero_trust_consts.STATUS_PASSED
     MonkeyZTFindingService.create_or_add_to_existing(
-            test=zero_trust_consts.TEST_COMMUNICATE_AS_NEW_USER,
-            status=status,
-            events=[
-                get_attempt_event(current_monkey),
-                get_result_event(current_monkey, message, success),
-            ],
+        test=zero_trust_consts.TEST_COMMUNICATE_AS_NEW_USER,
+        status=status,
+        events=[
+            get_attempt_event(current_monkey),
+            get_result_event(current_monkey, message, success),
+        ],
     )
 
 
 def get_attempt_event(current_monkey):
     tried_to_communicate_event = Event.create_event(
-            title="Communicate as new user",
-            message="Monkey on {} tried to create a new user and communicate from it.".format(
-                    current_monkey.hostname
-            ),
-            event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
+        title="Communicate as new user",
+        message="Monkey on {} tried to create a new user and communicate from it.".format(
+            current_monkey.hostname
+        ),
+        event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
     )
     return tried_to_communicate_event
 
@@ -40,7 +40,7 @@ def get_result_event(current_monkey, message, success):
     )
 
     return Event.create_event(
-            title="Communicate as new user",
-            message=message_format.format(current_monkey.hostname, message),
-            event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
+        title="Communicate as new user",
+        message=message_format.format(current_monkey.hostname, message),
+        event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
     )

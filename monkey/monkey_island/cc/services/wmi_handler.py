@@ -38,7 +38,7 @@ class WMIHandler(object):
 
     def update_critical_services(self):
         critical_names = ("W3svc", "MSExchangeServiceHost", "dns", "MSSQL$SQLEXPRES")
-        mongo.db.monkey.update({"_id":self.monkey_id}, {"$set":{"critical_services":[]}})
+        mongo.db.monkey.update({"_id": self.monkey_id}, {"$set": {"critical_services": []}})
 
         services_names_list = [str(i["Name"])[2:-1] for i in self.services]
         products_names_list = [str(i["Name"])[2:-2] for i in self.products]
@@ -46,16 +46,16 @@ class WMIHandler(object):
         for name in critical_names:
             if name in services_names_list or name in products_names_list:
                 mongo.db.monkey.update(
-                        {"_id":self.monkey_id}, {"$addToSet":{"critical_services":name}}
+                    {"_id": self.monkey_id}, {"$addToSet": {"critical_services": name}}
                 )
 
     def build_entity_document(self, entity_info, monkey_id=None):
         general_properties_dict = {
-            "SID":str(entity_info["SID"])[4:-1],
-            "name":str(entity_info["Name"])[2:-1],
-            "machine_id":monkey_id,
-            "member_of":[],
-            "admin_on_machines":[],
+            "SID": str(entity_info["SID"])[4:-1],
+            "name": str(entity_info["Name"])[2:-1],
+            "machine_id": monkey_id,
+            "member_of": [],
+            "admin_on_machines": [],
         }
 
         if monkey_id:
@@ -72,7 +72,7 @@ class WMIHandler(object):
             else:
                 base_entity = self.build_entity_document(user, self.monkey_id)
             base_entity["NTLM_secret"] = self.users_secrets.get(base_entity["name"], {}).get(
-                    "ntlm_hash"
+                "ntlm_hash"
             )
             base_entity["SAM_secret"] = self.users_secrets.get(base_entity["name"], {}).get("sam")
             base_entity["secret_location"] = []
@@ -105,25 +105,25 @@ class WMIHandler(object):
                 if "cimv2:Win32_UserAccount" in child_part:
                     # domain user
                     domain_name = child_part.split('cimv2:Win32_UserAccount.Domain="')[1].split(
-                            '",Name="'
+                        '",Name="'
                     )[0]
                     name = child_part.split('cimv2:Win32_UserAccount.Domain="')[1].split(
-                            '",Name="'
+                        '",Name="'
                     )[1][:-2]
 
                 if "cimv2:Win32_Group" in child_part:
                     # domain group
                     domain_name = child_part.split('cimv2:Win32_Group.Domain="')[1].split(
-                            '",Name="'
+                        '",Name="'
                     )[0]
                     name = child_part.split('cimv2:Win32_Group.Domain="')[1].split('",Name="')[1][
-                           :-2
-                           ]
+                        :-2
+                    ]
 
                 for entity in self.info_for_mongo:
                     if (
-                            self.info_for_mongo[entity]["name"] == name
-                            and self.info_for_mongo[entity]["domain"] == domain_name
+                        self.info_for_mongo[entity]["name"] == name
+                        and self.info_for_mongo[entity]["domain"] == domain_name
                     ):
                         child_sid = self.info_for_mongo[entity]["SID"]
             else:
@@ -141,12 +141,11 @@ class WMIHandler(object):
             if entity["machine_id"]:
                 # Handling for local entities.
                 mongo.db.groupsandusers.update(
-                        {"SID":entity["SID"], "machine_id":entity["machine_id"]}, entity,
-                        upsert=True
+                    {"SID": entity["SID"], "machine_id": entity["machine_id"]}, entity, upsert=True
                 )
             else:
                 # Handlings for domain entities.
-                if not mongo.db.groupsandusers.find_one({"SID":entity["SID"]}):
+                if not mongo.db.groupsandusers.find_one({"SID": entity["SID"]}):
                     mongo.db.groupsandusers.insert_one(entity)
                 else:
                     # if entity is domain entity, add the monkey id of current machine to
@@ -154,32 +153,31 @@ class WMIHandler(object):
                     # (found on this machine)
                     if entity.get("NTLM_secret"):
                         mongo.db.groupsandusers.update_one(
-                                {"SID":entity["SID"], "type":USERTYPE},
-                                {"$addToSet":{"secret_location":self.monkey_id}},
+                            {"SID": entity["SID"], "type": USERTYPE},
+                            {"$addToSet": {"secret_location": self.monkey_id}},
                         )
 
     def update_admins_retrospective(self):
         for profile in self.info_for_mongo:
             groups_from_mongo = mongo.db.groupsandusers.find(
-                    {"SID":{"$in":self.info_for_mongo[profile]["member_of"]}},
-                    {"admin_on_machines":1},
+                {"SID": {"$in": self.info_for_mongo[profile]["member_of"]}},
+                {"admin_on_machines": 1},
             )
 
             for group in groups_from_mongo:
                 if group["admin_on_machines"]:
                     mongo.db.groupsandusers.update_one(
-                            {"SID":self.info_for_mongo[profile]["SID"]},
-                            {"$addToSet":{
-                                "admin_on_machines":{"$each":group["admin_on_machines"]}}},
+                        {"SID": self.info_for_mongo[profile]["SID"]},
+                        {"$addToSet": {"admin_on_machines": {"$each": group["admin_on_machines"]}}},
                     )
 
     def add_admin(self, group, machine_id):
         for sid in group["entities_list"]:
             mongo.db.groupsandusers.update_one(
-                    {"SID":sid}, {"$addToSet":{"admin_on_machines":machine_id}}
+                {"SID": sid}, {"$addToSet": {"admin_on_machines": machine_id}}
             )
             entity_details = mongo.db.groupsandusers.find_one(
-                    {"SID":sid}, {"type":USERTYPE, "entities_list":1}
+                {"SID": sid}, {"type": USERTYPE, "entities_list": 1}
             )
             if entity_details.get("type") == GROUPTYPE:
                 self.add_admin(entity_details, machine_id)

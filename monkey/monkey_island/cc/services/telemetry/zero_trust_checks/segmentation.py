@@ -34,17 +34,17 @@ def check_segmentation_violation(current_monkey, target_ip):
             target_subnet = subnet_pair[1]
             if is_segmentation_violation(current_monkey, target_ip, source_subnet, target_subnet):
                 event = get_segmentation_violation_event(
-                        current_monkey, source_subnet, target_ip, target_subnet
+                    current_monkey, source_subnet, target_ip, target_subnet
                 )
                 MonkeyZTFindingService.create_or_add_to_existing(
-                        test=zero_trust_consts.TEST_SEGMENTATION,
-                        status=zero_trust_consts.STATUS_FAILED,
-                        events=[event],
+                    test=zero_trust_consts.TEST_SEGMENTATION,
+                    status=zero_trust_consts.STATUS_FAILED,
+                    events=[event],
                 )
 
 
 def is_segmentation_violation(
-        current_monkey: Monkey, target_ip: str, source_subnet: str, target_subnet: str
+    current_monkey: Monkey, target_ip: str, source_subnet: str, target_subnet: str
 ) -> bool:
     """
     Checks is a specific communication is a segmentation violation.
@@ -62,7 +62,7 @@ def is_segmentation_violation(
 
     if target_subnet_range.is_in_range(str(target_ip)):
         cross_segment_ip = get_ip_in_src_and_not_in_dst(
-                current_monkey.ip_addresses, source_subnet_range, target_subnet_range
+            current_monkey.ip_addresses, source_subnet_range, target_subnet_range
         )
 
         return cross_segment_ip is not None
@@ -70,17 +70,17 @@ def is_segmentation_violation(
 
 def get_segmentation_violation_event(current_monkey, source_subnet, target_ip, target_subnet):
     return Event.create_event(
-            title="Segmentation event",
-            message=SEGMENTATION_VIOLATION_EVENT_TEXT.format(
-                    hostname=current_monkey.hostname,
-                    source_ip=get_ip_if_in_subnet(
-                            current_monkey.ip_addresses, NetworkRange.get_range_obj(source_subnet)
-                    ),
-                    source_seg=source_subnet,
-                    target_ip=target_ip,
-                    target_seg=target_subnet,
+        title="Segmentation event",
+        message=SEGMENTATION_VIOLATION_EVENT_TEXT.format(
+            hostname=current_monkey.hostname,
+            source_ip=get_ip_if_in_subnet(
+                current_monkey.ip_addresses, NetworkRange.get_range_obj(source_subnet)
             ),
-            event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
+            source_seg=source_subnet,
+            target_ip=target_ip,
+            target_seg=target_subnet,
+        ),
+        event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
     )
 
 
@@ -96,8 +96,8 @@ def create_or_add_findings_for_all_pairs(all_subnets, current_monkey):
     this_monkey_subnets = []
     for subnet in all_subnets:
         if (
-                get_ip_if_in_subnet(current_monkey.ip_addresses, NetworkRange.get_range_obj(subnet))
-                is not None
+            get_ip_if_in_subnet(current_monkey.ip_addresses, NetworkRange.get_range_obj(subnet))
+            is not None
         ):
             this_monkey_subnets.append(subnet)
 
@@ -111,17 +111,17 @@ def create_or_add_findings_for_all_pairs(all_subnets, current_monkey):
 
     for subnet_pair in all_subnets_pairs_for_this_monkey:
         MonkeyZTFindingService.create_or_add_to_existing(
-                status=zero_trust_consts.STATUS_PASSED,
-                events=[get_segmentation_done_event(current_monkey, subnet_pair)],
-                test=zero_trust_consts.TEST_SEGMENTATION,
+            status=zero_trust_consts.STATUS_PASSED,
+            events=[get_segmentation_done_event(current_monkey, subnet_pair)],
+            test=zero_trust_consts.TEST_SEGMENTATION,
         )
 
 
 def get_segmentation_done_event(current_monkey, subnet_pair):
     return Event.create_event(
-            title="Segmentation test done",
-            message=SEGMENTATION_DONE_EVENT_TEXT.format(
-                    hostname=current_monkey.hostname, src_seg=subnet_pair[0], dst_seg=subnet_pair[1]
-            ),
-            event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
+        title="Segmentation test done",
+        message=SEGMENTATION_DONE_EVENT_TEXT.format(
+            hostname=current_monkey.hostname, src_seg=subnet_pair[0], dst_seg=subnet_pair[1]
+        ),
+        event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
     )

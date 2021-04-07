@@ -16,7 +16,7 @@ def attack_telem_test_instance():
 
 def test_attack_telem_send(attack_telem_test_instance, spy_send_telemetry):
     attack_telem_test_instance.send()
-    expected_data = {"status":STATUS.value, "technique":TECHNIQUE}
+    expected_data = {"status": STATUS.value, "technique": TECHNIQUE}
     expected_data = json.dumps(expected_data, cls=attack_telem_test_instance.json_encoder)
 
     assert spy_send_telemetry.data == expected_data

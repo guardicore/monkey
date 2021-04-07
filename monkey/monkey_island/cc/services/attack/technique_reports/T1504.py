@@ -18,21 +18,21 @@ class T1504(PostBreachTechnique):
     def get_pba_query(*args):
         return [
             {
-                "$match":{
-                    "telem_category":"post_breach",
-                    "data.name":POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
+                "$match": {
+                    "telem_category": "post_breach",
+                    "data.name": POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
                 }
             },
             {
-                "$project":{
-                    "_id":0,
-                    "machine":{
-                        "hostname":{"$arrayElemAt":["$data.hostname", 0]},
-                        "ips":[{"$arrayElemAt":["$data.ip", 0]}],
+                "$project": {
+                    "_id": 0,
+                    "machine": {
+                        "hostname": {"$arrayElemAt": ["$data.hostname", 0]},
+                        "ips": [{"$arrayElemAt": ["$data.ip", 0]}],
                     },
-                    "result":"$data.result",
+                    "result": "$data.result",
                 }
             },
-            {"$unwind":"$result"},
-            {"$match":{"result":{"$regex":r"profile\.ps1"}}},
+            {"$unwind": "$result"},
+            {"$match": {"result": {"$regex": r"profile\.ps1"}}},
         ]

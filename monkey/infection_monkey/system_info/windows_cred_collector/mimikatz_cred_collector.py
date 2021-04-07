@@ -22,5 +22,5 @@ class MimikatzCredentialCollector(object):
             # Lets not use "." and "$" in keys, because it will confuse mongo.
             # Ideally we should refactor island not to use a dict and simply parse credential list.
             key = cred.username.replace(".", ",").replace("$", "")
-            cred_dict.update({key:cred.to_dict()})
+            cred_dict.update({key: cred.to_dict()})
         return cred_dict

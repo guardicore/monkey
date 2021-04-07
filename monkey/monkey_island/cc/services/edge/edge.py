@@ -44,7 +44,7 @@ class EdgeService(Edge):
             self.dst_label = label
         else:
             raise DoesNotExist(
-                    "Node id provided does not match with any endpoint of an self provided."
+                "Node id provided does not match with any endpoint of an self provided."
             )
         self.save()
 
@@ -67,7 +67,7 @@ class EdgeService(Edge):
 
     def update_based_on_scan_telemetry(self, telemetry: Dict):
         machine_info = copy.deepcopy(telemetry["data"]["machine"])
-        new_scan = {"timestamp":telemetry["timestamp"], "data":machine_info}
+        new_scan = {"timestamp": telemetry["timestamp"], "data": machine_info}
         ip_address = machine_info.pop("ip_addr")
         domain_name = machine_info.pop("domain_name")
         self.scans.append(new_scan)

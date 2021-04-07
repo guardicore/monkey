@@ -23,5 +23,5 @@ class T1090(AttackTechnique):
         status, monkeys = get_technique_status_and_data()
 
         data = T1090.get_base_data_by_status(status)
-        data.update({"proxies":monkeys})
+        data.update({"proxies": monkeys})
         return data

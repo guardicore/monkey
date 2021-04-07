@@ -12,61 +12,61 @@ class T1082(AttackTechnique):
     used_msg = "Monkey gathered system info from machines in the network."
 
     query = [
-        {"$match":{"telem_category":"system_info", "data.network_info":{"$exists":True}}},
+        {"$match": {"telem_category": "system_info", "data.network_info": {"$exists": True}}},
         {
-            "$project":{
-                "machine":{"hostname":"$data.hostname", "ips":"$data.network_info.networks"},
-                "aws":"$data.aws",
-                "netstat":"$data.network_info.netstat",
-                "process_list":"$data.process_list",
-                "ssh_info":"$data.ssh_info",
-                "azure_info":"$data.Azure",
+            "$project": {
+                "machine": {"hostname": "$data.hostname", "ips": "$data.network_info.networks"},
+                "aws": "$data.aws",
+                "netstat": "$data.network_info.netstat",
+                "process_list": "$data.process_list",
+                "ssh_info": "$data.ssh_info",
+                "azure_info": "$data.Azure",
             }
         },
         {
-            "$project":{
-                "_id":0,
-                "machine":1,
-                "collections":[
+            "$project": {
+                "_id": 0,
+                "machine": 1,
+                "collections": [
                     {
-                        "used":{"$and":[{"$ifNull":["$netstat", False]}, {"$gt":["$aws", {}]}]},
-                        "name":{"$literal":"Amazon Web Services info"},
+                        "used": {"$and": [{"$ifNull": ["$netstat", False]}, {"$gt": ["$aws", {}]}]},
+                        "name": {"$literal": "Amazon Web Services info"},
                     },
                     {
-                        "used":{
-                            "$and":[
-                                {"$ifNull":["$process_list", False]},
-                                {"$gt":["$process_list", {}]},
+                        "used": {
+                            "$and": [
+                                {"$ifNull": ["$process_list", False]},
+                                {"$gt": ["$process_list", {}]},
                             ]
                         },
-                        "name":{"$literal":"Running process list"},
+                        "name": {"$literal": "Running process list"},
                     },
                     {
-                        "used":{
-                            "$and":[{"$ifNull":["$netstat", False]}, {"$ne":["$netstat", []]}]
+                        "used": {
+                            "$and": [{"$ifNull": ["$netstat", False]}, {"$ne": ["$netstat", []]}]
                         },
-                        "name":{"$literal":"Network connections"},
+                        "name": {"$literal": "Network connections"},
                     },
                     {
-                        "used":{
-                            "$and":[{"$ifNull":["$ssh_info", False]}, {"$ne":["$ssh_info", []]}]
+                        "used": {
+                            "$and": [{"$ifNull": ["$ssh_info", False]}, {"$ne": ["$ssh_info", []]}]
                         },
-                        "name":{"$literal":"SSH info"},
+                        "name": {"$literal": "SSH info"},
                     },
                     {
-                        "used":{
-                            "$and":[
-                                {"$ifNull":["$azure_info", False]},
-                                {"$ne":["$azure_info", []]},
+                        "used": {
+                            "$and": [
+                                {"$ifNull": ["$azure_info", False]},
+                                {"$ne": ["$azure_info", []]},
                             ]
                         },
-                        "name":{"$literal":"Azure info"},
+                        "name": {"$literal": "Azure info"},
                     },
                 ],
             }
         },
-        {"$group":{"_id":{"machine":"$machine", "collections":"$collections"}}},
-        {"$replaceRoot":{"newRoot":"$_id"}},
+        {"$group": {"_id": {"machine": "$machine", "collections": "$collections"}}},
+        {"$replaceRoot": {"newRoot": "$_id"}},
     ]
 
     @staticmethod
@@ -81,8 +81,8 @@ class T1082(AttackTechnique):
             return (status, system_info)
 
         status, system_info = get_technique_status_and_data()
-        data = {"title":T1082.technique_title()}
-        data.update({"system_info":system_info})
+        data = {"title": T1082.technique_title()}
+        data.update({"system_info": system_info})
 
         data.update(T1082.get_mitigation_by_status(status))
         data.update(T1082.get_message_and_status(status))

@@ -14,18 +14,18 @@ class T1110(AttackTechnique):
 
     # Gets data about brute force attempts
     query = [
-        {"$match":{"telem_category":"exploit", "data.attempts":{"$not":{"$size":0}}}},
+        {"$match": {"telem_category": "exploit", "data.attempts": {"$not": {"$size": 0}}}},
         {
-            "$project":{
-                "_id":0,
-                "machine":"$data.machine",
-                "info":"$data.info",
-                "attempt_cnt":{"$size":"$data.attempts"},
-                "attempts":{
-                    "$filter":{
-                        "input":"$data.attempts",
-                        "as":"attempt",
-                        "cond":{"$eq":["$$attempt.result", True]},
+            "$project": {
+                "_id": 0,
+                "machine": "$data.machine",
+                "info": "$data.info",
+                "attempt_cnt": {"$size": "$data.attempts"},
+                "attempts": {
+                    "$filter": {
+                        "input": "$data.attempts",
+                        "as": "attempt",
+                        "cond": {"$eq": ["$$attempt.result", True]},
                     }
                 },
             }
@@ -59,5 +59,5 @@ class T1110(AttackTechnique):
         # Remove data with no successful brute force attempts
         attempts = [attempt for attempt in attempts if attempt["attempts"]]
 
-        data.update({"services":attempts})
+        data.update({"services": attempts})
         return data

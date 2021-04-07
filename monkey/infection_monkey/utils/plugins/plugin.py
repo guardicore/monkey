@@ -33,7 +33,7 @@ class Plugin(metaclass=ABCMeta):
         objects = []
         candidate_files = _get_candidate_files(cls.base_package_file())
         LOG.info(
-                "looking for classes of type {} in {}".format(cls.__name__, cls.base_package_name())
+            "looking for classes of type {} in {}".format(cls.__name__, cls.base_package_name())
         )
         # Go through all of files
         for file in candidate_files:
@@ -55,9 +55,9 @@ class Plugin(metaclass=ABCMeta):
                         LOG.debug("Added {} to list".format(class_object.__name__))
                 except Exception as e:
                     LOG.warning(
-                            "Exception {} when checking if {} should run".format(
-                                    str(e), class_object.__name__
-                            )
+                        "Exception {} when checking if {} should run".format(
+                            str(e), class_object.__name__
+                        )
                     )
         return objects
 
@@ -76,7 +76,7 @@ class Plugin(metaclass=ABCMeta):
                 instances.append(instance)
             except Exception as e:
                 LOG.warning(
-                        "Exception {} when initializing {}".format(str(e), class_object.__name__)
+                    "Exception {} when initializing {}".format(str(e), class_object.__name__)
                 )
         return instances
 

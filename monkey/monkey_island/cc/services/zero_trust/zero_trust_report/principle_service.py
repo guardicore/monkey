@@ -14,11 +14,11 @@ class PrincipleService:
         for principle, principle_tests in list(zero_trust_consts.PRINCIPLES_TO_TESTS.items()):
             for pillar in zero_trust_consts.PRINCIPLES_TO_PILLARS[principle]:
                 all_principles_statuses[pillar].append(
-                        {
-                            "principle":zero_trust_consts.PRINCIPLES[principle],
-                            "tests":PrincipleService.__get_tests_status(principle_tests),
-                            "status":PrincipleService.__get_principle_status(principle_tests),
-                        }
+                    {
+                        "principle": zero_trust_consts.PRINCIPLES[principle],
+                        "tests": PrincipleService.__get_tests_status(principle_tests),
+                        "status": PrincipleService.__get_principle_status(principle_tests),
+                    }
                 )
 
         return all_principles_statuses
@@ -32,7 +32,7 @@ class PrincipleService:
 
         for status in all_statuses:
             if zero_trust_consts.ORDERED_TEST_STATUSES.index(
-                    status
+                status
             ) < zero_trust_consts.ORDERED_TEST_STATUSES.index(worst_status):
                 worst_status = status
 
@@ -44,12 +44,12 @@ class PrincipleService:
         for test in principle_tests:
             test_findings = Finding.objects(test=test)
             results.append(
-                    {
-                        "test":zero_trust_consts.TESTS_MAP[test][
-                            zero_trust_consts.TEST_EXPLANATION_KEY
-                        ],
-                        "status":PrincipleService.__get_lcd_worst_status_for_test(test_findings),
-                    }
+                {
+                    "test": zero_trust_consts.TESTS_MAP[test][
+                        zero_trust_consts.TEST_EXPLANATION_KEY
+                    ],
+                    "status": PrincipleService.__get_lcd_worst_status_for_test(test_findings),
+                }
             )
         return results
 
@@ -64,7 +64,7 @@ class PrincipleService:
         current_worst_status = zero_trust_consts.STATUS_UNEXECUTED
         for finding in all_findings_for_test:
             if zero_trust_consts.ORDERED_TEST_STATUSES.index(
-                    finding.status
+                finding.status
             ) < zero_trust_consts.ORDERED_TEST_STATUSES.index(current_worst_status):
                 current_worst_status = finding.status
 

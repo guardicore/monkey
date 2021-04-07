@@ -78,4 +78,4 @@ class LocalRun(flask_restful.Resource):
             return jsonify(is_running=local_run[0], error_text=local_run[1])
 
         # default action
-        return make_response({"error":"Invalid action"}, 500)
+        return make_response({"error": "Invalid action"}, 500)

@@ -10,10 +10,10 @@ class AwsCmdResult(CmdResult):
 
     def __init__(self, command_info):
         super(AwsCmdResult, self).__init__(
-                self.is_successful(command_info, True),
-                command_info["ResponseCode"],
-                command_info["StandardOutputContent"],
-                command_info["StandardErrorContent"],
+            self.is_successful(command_info, True),
+            command_info["ResponseCode"],
+            command_info["StandardOutputContent"],
+            command_info["StandardErrorContent"],
         )
         self.command_info = command_info
 
@@ -27,5 +27,5 @@ class AwsCmdResult(CmdResult):
         :return:                True if successful, False otherwise.
         """
         return (command_info["Status"] == "Success") or (
-                is_timeout and (command_info["Status"] == "InProgress")
+            is_timeout and (command_info["Status"] == "InProgress")
         )

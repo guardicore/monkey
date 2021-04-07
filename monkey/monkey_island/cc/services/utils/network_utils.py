@@ -22,7 +22,6 @@ if sys.platform == "win32":
 else:
     import fcntl
 
-
     def local_ips():
         result = []
         try:
@@ -34,12 +33,12 @@ else:
                 struct_bytes = max_possible * struct_size
                 names = array.array("B", "\0" * struct_bytes)
                 outbytes = struct.unpack(
-                        "iL",
-                        fcntl.ioctl(
-                                s.fileno(),
-                                0x8912,  # SIOCGIFCONF
-                                struct.pack("iL", struct_bytes, names.buffer_info()[0]),
-                        ),
+                    "iL",
+                    fcntl.ioctl(
+                        s.fileno(),
+                        0x8912,  # SIOCGIFCONF
+                        struct.pack("iL", struct_bytes, names.buffer_info()[0]),
+                    ),
                 )[0]
                 if outbytes == struct_bytes:
                     max_possible *= 2
@@ -48,7 +47,7 @@ else:
             namestr = names.tostring()
 
             for i in range(0, outbytes, struct_size):
-                addr = socket.inet_ntoa(namestr[i + 20: i + 24])
+                addr = socket.inet_ntoa(namestr[i + 20 : i + 24])
                 if not addr.startswith("127"):
                     result.append(addr)
                     # name of interface is (namestr[i:i+16].split('\0', 1)[0]
@@ -90,10 +89,10 @@ def get_subnets():
     for interface in interfaces():
         addresses = ifaddresses(interface).get(AF_INET, [])
         subnets.extend(
-                [
-                    ipaddress.ip_interface(link["addr"] + "/" + link["netmask"]).network
-                    for link in addresses
-                    if link["addr"] != "127.0.0.1"
-                ]
+            [
+                ipaddress.ip_interface(link["addr"] + "/" + link["netmask"]).network
+                for link in addresses
+                if link["addr"] != "127.0.0.1"
+            ]
         )
     return subnets

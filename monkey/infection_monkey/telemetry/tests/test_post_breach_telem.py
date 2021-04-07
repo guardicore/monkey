@@ -20,18 +20,18 @@ class StubSomePBA:
 @pytest.fixture
 def post_breach_telem_test_instance(monkeypatch):
     PBA = StubSomePBA()
-    monkeypatch.setattr(PostBreachTelem, "_get_hostname_and_ip", lambda:(HOSTNAME, IP))
+    monkeypatch.setattr(PostBreachTelem, "_get_hostname_and_ip", lambda: (HOSTNAME, IP))
     return PostBreachTelem(PBA, RESULT)
 
 
 def test_post_breach_telem_send(post_breach_telem_test_instance, spy_send_telemetry):
     post_breach_telem_test_instance.send()
     expected_data = {
-        "command":PBA_COMMAND,
-        "result":RESULT,
-        "name":PBA_NAME,
-        "hostname":HOSTNAME,
-        "ip":IP,
+        "command": PBA_COMMAND,
+        "result": RESULT,
+        "name": PBA_NAME,
+        "hostname": HOSTNAME,
+        "ip": IP,
     }
     expected_data = json.dumps(expected_data, cls=post_breach_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data

@@ -21,10 +21,10 @@ def T1222_telem_test_instance():
 def test_T1222_send(T1222_telem_test_instance, spy_send_telemetry):
     T1222_telem_test_instance.send()
     expected_data = {
-        "status":STATUS.value,
-        "technique":"T1222",
-        "machine":{"domain_name":DOMAIN_NAME, "ip_addr":IP},
-        "command":COMMAND,
+        "status": STATUS.value,
+        "technique": "T1222",
+        "machine": {"domain_name": DOMAIN_NAME, "ip_addr": IP},
+        "command": COMMAND,
     }
     expected_data = json.dumps(expected_data, cls=T1222_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data

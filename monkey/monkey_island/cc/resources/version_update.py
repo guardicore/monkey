@@ -18,7 +18,7 @@ class VersionUpdate(flask_restful.Resource):
     # even when not authenticated
     def get(self):
         return {
-            "current_version":get_version(),
-            "newer_version":VersionUpdateService.get_newer_version(),
-            "download_link":VersionUpdateService.get_download_link(),
+            "current_version": get_version(),
+            "newer_version": VersionUpdateService.get_newer_version(),
+            "download_link": VersionUpdateService.get_download_link(),
         }

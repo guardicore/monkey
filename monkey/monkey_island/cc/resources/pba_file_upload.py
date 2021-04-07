@@ -90,6 +90,6 @@ class FileUpload(flask_restful.Resource):
         file_path = ABS_UPLOAD_PATH.joinpath(filename).absolute()
         request_.files["filepond"].save(str(file_path))
         ConfigService.set_config_value(
-                (PBA_LINUX_FILENAME_PATH if is_linux else PBA_WINDOWS_FILENAME_PATH), filename
+            (PBA_LINUX_FILENAME_PATH if is_linux else PBA_WINDOWS_FILENAME_PATH), filename
         )
         return filename

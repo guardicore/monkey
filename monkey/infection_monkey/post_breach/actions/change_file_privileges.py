@@ -9,5 +9,5 @@ class ChangeSetuidSetgid(PBA):
     def __init__(self):
         linux_cmds = get_commands_to_change_setuid_setgid()
         super(ChangeSetuidSetgid, self).__init__(
-                POST_BREACH_SETUID_SETGID, linux_cmd=" ".join(linux_cmds)
+            POST_BREACH_SETUID_SETGID, linux_cmd=" ".join(linux_cmds)
         )

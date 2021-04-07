@@ -80,8 +80,8 @@ class InfoCollector(object):
         """
         LOG.debug("Reading subnets")
         self.info["network_info"] = {
-            "networks":get_host_subnets(),
-            "netstat":NetstatCollector.get_netstat_info(),
+            "networks": get_host_subnets(),
+            "netstat": NetstatCollector.get_netstat_info(),
         }
 
     def get_azure_info(self):

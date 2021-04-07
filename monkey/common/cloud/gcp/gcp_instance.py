@@ -39,16 +39,16 @@ class GcpInstance(CloudInstance):
                 else:
                     if not response.headers["Metadata-Flavor"] == "Google":
                         logger.warning(
-                                "Got unexpected Metadata flavor: {}".format(
-                                        response.headers["Metadata-Flavor"]
-                                )
+                            "Got unexpected Metadata flavor: {}".format(
+                                response.headers["Metadata-Flavor"]
+                            )
                         )
             else:
                 logger.warning(
-                        "On GCP, but metadata response not ok: {}".format(response.status_code)
+                    "On GCP, but metadata response not ok: {}".format(response.status_code)
                 )
         except requests.RequestException:
             logger.debug(
-                    "Failed to get response from GCP metadata service: This instance is not on GCP"
+                "Failed to get response from GCP metadata service: This instance is not on GCP"
             )
             self._on_gcp = False

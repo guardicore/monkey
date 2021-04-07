@@ -34,5 +34,5 @@ def create_scoutsuite_findings(cloud_services: dict):
 
 def update_data(telemetry_json):
     mongo.db.scoutsuite.insert_one(
-            {"guid":telemetry_json["monkey_guid"]}, {"results":telemetry_json["data"]}
+        {"guid": telemetry_json["monkey_guid"]}, {"results": telemetry_json["data"]}
     )

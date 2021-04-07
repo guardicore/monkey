@@ -49,28 +49,28 @@ class MSSQLFinger(HostFinger):
             data, server = sock.recvfrom(self.BUFFER_SIZE)
         except socket.timeout:
             LOG.info(
-                    "Socket timeout reached, maybe browser service on host: {0} doesnt "
-                    "exist".format(host)
+                "Socket timeout reached, maybe browser service on host: {0} doesnt "
+                "exist".format(host)
             )
             sock.close()
             return False
         except socket.error as e:
             if e.errno == errno.ECONNRESET:
                 LOG.info(
-                        "Connection was forcibly closed by the remote host. The host: {0} is "
-                        "rejecting the packet.".format(host)
+                    "Connection was forcibly closed by the remote host. The host: {0} is "
+                    "rejecting the packet.".format(host)
                 )
             else:
                 LOG.error(
-                        "An unknown socket error occurred while trying the mssql fingerprint, "
-                        "closing socket.",
-                        exc_info=True,
+                    "An unknown socket error occurred while trying the mssql fingerprint, "
+                    "closing socket.",
+                    exc_info=True,
                 )
             sock.close()
             return False
 
         self.init_service(
-                host.services, self._SCANNED_SERVICE, MSSQLFinger.SQL_BROWSER_DEFAULT_PORT
+            host.services, self._SCANNED_SERVICE, MSSQLFinger.SQL_BROWSER_DEFAULT_PORT
         )
 
         # Loop through the server data

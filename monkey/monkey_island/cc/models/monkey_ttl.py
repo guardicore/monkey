@@ -31,7 +31,7 @@ class MonkeyTtl(Document):
         # -documents.
         return MonkeyTtl(expire_at=datetime.utcnow() + timedelta(seconds=expiry_in_seconds))
 
-    meta = {"indexes":[{"name":"TTL_index", "fields":["expire_at"], "expireAfterSeconds":0}]}
+    meta = {"indexes": [{"name": "TTL_index", "fields": ["expire_at"], "expireAfterSeconds": 0}]}
 
     expire_at = DateTimeField()
 

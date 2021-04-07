@@ -33,7 +33,7 @@ class RemoteRun(flask_restful.Resource):
         action = request.args.get("action")
         if action == "list_aws":
             is_aws = RemoteRunAwsService.is_running_on_aws()
-            resp = {"is_aws":is_aws}
+            resp = {"is_aws": is_aws}
             if is_aws:
                 try:
                     resp["instances"] = AwsService.get_instances()
@@ -58,4 +58,4 @@ class RemoteRun(flask_restful.Resource):
             return jsonify(resp)
 
         # default action
-        return make_response({"error":"Invalid action"}, 500)
+        return make_response({"error": "Invalid action"}, 500)

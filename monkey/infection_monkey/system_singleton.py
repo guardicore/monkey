@@ -38,14 +38,13 @@ class WindowsSystemSingleton(_SystemSingleton):
         assert self._mutex_handle is None, "Singleton already locked"
 
         handle = ctypes.windll.kernel32.CreateMutexA(
-                None, ctypes.c_bool(True), ctypes.c_char_p(self._mutex_name.encode())
+            None, ctypes.c_bool(True), ctypes.c_char_p(self._mutex_name.encode())
         )
         last_error = ctypes.windll.kernel32.GetLastError()
 
         if not handle:
             LOG.error(
-                    "Cannot acquire system singleton %r, unknown error %d", self._mutex_name,
-                    last_error
+                "Cannot acquire system singleton %r, unknown error %d", self._mutex_name, last_error
             )
             return False
         if winerror.ERROR_ALREADY_EXISTS == last_error:
@@ -81,10 +80,10 @@ class LinuxSystemSingleton(_SystemSingleton):
             sock.bind("\0" + self._unix_sock_name)
         except socket.error as e:
             LOG.error(
-                    "Cannot acquire system singleton %r, error code %d, error: %s",
-                    self._unix_sock_name,
-                    e.args[0],
-                    e.args[1],
+                "Cannot acquire system singleton %r, error code %d, error: %s",
+                self._unix_sock_name,
+                e.args[0],
+                e.args[1],
             )
             return False
 
