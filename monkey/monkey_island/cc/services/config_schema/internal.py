@@ -176,7 +176,7 @@ INTERNAL = {
                             "type": "integer",
                             "default": 3000,
                             "description": "Maximum time (in milliseconds) "
-                                           "to wait for TCP response",
+                            "to wait for TCP response",
                         },
                         "tcp_scan_get_banner": {
                             "title": "TCP scan - get banner",

@@ -1,7 +1,7 @@
 import uuid
 
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import ( # noqa: E501
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (  # noqa: E501
     SystemInfoTelemetryDispatcher,
 )
 
