@@ -598,7 +598,7 @@ class ReportPageComponent extends AuthComponent {
     let issueDescriptor = this.IssueDescriptorEnum[issue.type];
 
     let reportFnc = (issue) => {};
-    if (issue.hasOwnProperty('credential_type')) {
+    if (issue.hasOwnProperty('credential_type') && issue.credential_type !== null) {
       reportFnc = issueDescriptor[this.issueContentTypes.REPORT][issue.credential_type];
     } else {
       reportFnc = issueDescriptor[this.issueContentTypes.REPORT];
