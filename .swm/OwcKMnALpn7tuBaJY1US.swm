@@ -37,7 +37,7 @@
             "firstLineNumber": 1,
             "lines": [
                 " import logging",
-                "*import socket",
+                " import socket",
                 "*",
                 "*from common.common_consts.system_info_collectors_names import HOSTNAME_COLLECTOR",
                 "*from infection_monkey.system_info.system_info_collector import SystemInfoCollector",
@@ -149,10 +149,10 @@
                 " import logging",
                 " import typing",
                 " ",
-                "*from common.common_consts.system_info_collectors_names import (",
+                " from common.common_consts.system_info_collectors_names import (",
                 "     AWS_COLLECTOR,",
                 "     ENVIRONMENT_COLLECTOR,",
-                "     HOSTNAME_COLLECTOR,"
+                "*     HOSTNAME_COLLECTOR,"
             ]
         },
         {
@@ -176,7 +176,7 @@
                 " )",
                 " from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import (",
                 "     process_environment_telemetry,",
-                "*)",
+                " )",
                 "*from monkey_island.cc.services.telemetry.processing.system_info_collectors.hostname import (",
                 "*    process_hostname_telemetry,",
                 "*)",
