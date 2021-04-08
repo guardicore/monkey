@@ -34,7 +34,8 @@
                 "*        )",
                 "*",
                 "*    def run(self):",
-                "*        super(ScheduleJobs, self).run()"
+                "*        super(ScheduleJobs, self).run()",
+                "*        remove_scheduled_jobs()"
             ]
         },
         {
