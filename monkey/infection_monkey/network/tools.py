@@ -129,7 +129,8 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                 possible_ports.append((port, sock))
                 continue
             if err == 10035:  # WSAEWOULDBLOCK is valid, see
-                # https://msdn.microsoft.com/en-us/library/windows/desktop/ms740668%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
+                # https://msdn.microsoft.com/en-us/library/windows/desktop/ms740668%28v=vs.85%29
+                # .aspx?f=255&MSPPError=-2147217396
                 possible_ports.append((port, sock))
                 continue
             if err == 115:  # EINPROGRESS     115     /* Operation now in progress */
@@ -164,7 +165,8 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                 readable_sockets, _, _ = select.select(
                     [s[1] for s in connected_ports_sockets], [], [], 0
                 )
-                # read first BANNER_READ bytes. We ignore errors because service might not send a decodable byte string.
+                # read first BANNER_READ bytes. We ignore errors because service might not send a
+                # decodable byte string.
                 banners = [
                     sock.recv(BANNER_READ).decode(errors="ignore")
                     if sock in readable_sockets
@@ -209,7 +211,8 @@ def _get_traceroute_bin_path():
     Its been built using the buildroot utility with the following settings:
         * Statically link to musl and all other required libs
         * Optimize for size
-    This is done because not all linux distros come with traceroute out-of-the-box, and to ensure it behaves as expected
+    This is done because not all linux distros come with traceroute out-of-the-box, and to ensure
+    it behaves as expected
 
     :return: Path to traceroute executable
     """
@@ -223,7 +226,8 @@ def _parse_traceroute(output, regex, ttl):
     :param regex:   Regex for finding an IP address
     :param ttl:     Max TTL. Must be the same as the TTL used as param for traceroute.
     :return:        List of ips which are the hops on the way to the traceroute destination.
-                    If a hop's IP wasn't found by traceroute, instead of an IP, the array will contain None
+                    If a hop's IP wasn't found by traceroute, instead of an IP, the array will
+                    contain None
     """
     ip_lines = output.split("\n")
     trace_list = []

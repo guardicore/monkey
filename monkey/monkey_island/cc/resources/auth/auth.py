@@ -25,7 +25,8 @@ def init_jwt(app):
 
 class Authenticate(flask_restful.Resource):
     """
-    Resource for user authentication. The user provides the username and hashed password and we give them a JWT.
+    Resource for user authentication. The user provides the username and hashed password and we
+    give them a JWT.
     See `AuthService.js` file for the frontend counterpart for this code.
     """
 
@@ -67,7 +68,8 @@ def jwt_required(fn):
         try:
             flask_jwt_extended.verify_jwt_in_request()
             return fn(*args, **kwargs)
-        # Catch authentication related errors in the verification or inside the called function. All other exceptions propagate
+        # Catch authentication related errors in the verification or inside the called function.
+        # All other exceptions propagate
         except (JWTExtendedException, PyJWTError) as e:
             return make_response({"error": f"Authentication error: {str(e)}"}, 401)
 

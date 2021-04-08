@@ -4,7 +4,6 @@ from stix2 import AttackPattern, CourseOfAction, FileSystemSource, Filter
 
 
 class MitreApiInterface:
-
     ATTACK_DATA_PATH = "monkey_island/cc/services/attack/attack_data/enterprise-attack"
 
     @staticmethod

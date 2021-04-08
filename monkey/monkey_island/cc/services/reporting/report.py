@@ -22,13 +22,13 @@ from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
 )
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (  # noqa: E501
     ExploiterDescriptorEnum,
 )
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.cred_exploit import (
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.cred_exploit import (  # noqa: E501
     CredentialType,
 )
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.exploit import (
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.exploit import (  # noqa: E501
     ExploiterReportInfo,
 )
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
@@ -384,10 +384,13 @@ class ReportService:
     @staticmethod
     def get_cross_segment_issues_of_single_machine(source_subnet_range, target_subnet_range):
         """
-        Gets list of cross segment issues of a single machine. Meaning a machine has an interface for each of the
+        Gets list of cross segment issues of a single machine. Meaning a machine has an interface
+        for each of the
         subnets.
-        :param source_subnet_range:   The subnet range which shouldn't be able to access target_subnet.
-        :param target_subnet_range:   The subnet range which shouldn't be accessible from source_subnet.
+        :param source_subnet_range:   The subnet range which shouldn't be able to access
+        target_subnet.
+        :param target_subnet_range:   The subnet range which shouldn't be accessible from
+        source_subnet.
         :return:
         """
         cross_segment_issues = []
@@ -426,7 +429,8 @@ class ReportService:
     def get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet):
         """
         Gets list of cross segment issues from source_subnet to target_subnet.
-        :param scans:           List of all scan telemetry entries. Must have monkey_guid, ip_addr and services.
+        :param scans:           List of all scan telemetry entries. Must have monkey_guid,
+        ip_addr and services.
                                 This should be a PyMongo cursor object.
         :param source_subnet:   The subnet which shouldn't be able to access target_subnet.
         :param target_subnet:   The subnet which shouldn't be accessible from source_subnet.
@@ -468,7 +472,8 @@ class ReportService:
     def get_cross_segment_issues_per_subnet_group(scans, subnet_group):
         """
         Gets list of cross segment issues within given subnet_group.
-        :param scans:           List of all scan telemetry entries. Must have monkey_guid, ip_addr and services.
+        :param scans:           List of all scan telemetry entries. Must have monkey_guid,
+        ip_addr and services.
                                 This should be a PyMongo cursor object.
         :param subnet_group:    List of subnets which shouldn't be accessible from each other.
         :return:                Cross segment issues regarding the subnets in the group.
@@ -708,7 +713,8 @@ class ReportService:
     @staticmethod
     def encode_dot_char_before_mongo_insert(report_dict):
         """
-        mongodb doesn't allow for '.' and '$' in a key's name, this function replaces the '.' char with the unicode
+        mongodb doesn't allow for '.' and '$' in a key's name, this function replaces the '.'
+        char with the unicode
         ,,, combo instead.
         :return: dict with formatted keys with no dots.
         """
@@ -719,7 +725,8 @@ class ReportService:
     def is_latest_report_exists():
         """
         This function checks if a monkey report was already generated and if it's the latest one.
-        :return: True if report is the latest one, False if there isn't a report or its not the latest.
+        :return: True if report is the latest one, False if there isn't a report or its not the
+        latest.
         """
         latest_report_doc = mongo.db.report.find_one({}, {"meta.latest_monkey_modifytime": 1})
 

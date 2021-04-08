@@ -19,7 +19,8 @@ class PTHReportService(object):
     @staticmethod
     def __dup_passwords_mongoquery():
         """
-            This function builds and queries the mongoDB for users that are using the same passwords. this is done
+            This function builds and queries the mongoDB for users that are using the same
+            passwords. this is done
             by comparing the NTLM hash found for each user by mimikatz.
         :return:
             A list of mongo documents (dicts in python) that look like this:
@@ -53,7 +54,8 @@ class PTHReportService(object):
     @staticmethod
     def __get_admin_on_machines_format(admin_on_machines, domain_name):
         """
-        This function finds for each admin user, which machines its an admin of, and compile them to a list.
+        This function finds for each admin user, which machines its an admin of, and compile them
+        to a list.
         :param admin_on_machines: A list of "monkey" documents "_id"s
         :param domain_name: The admins' domain name
         :return:
@@ -65,8 +67,10 @@ class PTHReportService(object):
     @staticmethod
     def __strong_users_on_crit_query():
         """
-            This function build and query the mongoDB for users that mimikatz was able to find cached NTLM hashes and
-            are administrators on machines with services predefined as important services thus making these machines
+            This function build and query the mongoDB for users that mimikatz was able to find
+            cached NTLM hashes and
+            are administrators on machines with services predefined as important services thus
+            making these machines
             critical.
         :return:
             A list of said users
@@ -140,8 +144,10 @@ class PTHReportService(object):
     def get_shared_admins_nodes():
 
         # This mongo queries users the best solution to figure out if an array
-        # object has at least two objects in it, by making sure any value exists in the array index 1.
-        # Excluding the name Administrator - its spamming the lists and not a surprise the domain Administrator account
+        # object has at least two objects in it, by making sure any value exists in the array
+        # index 1.
+        # Excluding the name Administrator - its spamming the lists and not a surprise the domain
+        # Administrator account
         # is shared.
         admins = mongo.db.groupsandusers.find(
             {

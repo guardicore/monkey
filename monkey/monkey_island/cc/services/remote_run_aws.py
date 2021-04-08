@@ -72,7 +72,8 @@ class RemoteRunAwsService:
         """
         For all given instances, checks whether they're 32 or 64 bit.
         :param instances: List of instances to check
-        :return: Dictionary with instance ids as keys, and True/False as values. True if 64bit, False otherwise
+        :return: Dictionary with instance ids as keys, and True/False as values. True if 64bit,
+        False otherwise
         """
         return CmdRunner.run_multiple_commands(
             instances,

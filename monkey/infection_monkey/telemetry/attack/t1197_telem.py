@@ -5,7 +5,8 @@ __author__ = "itay.mizeretz"
 
 class T1197Telem(VictimHostTelem):
     def __init__(self, status, machine, usage):
-        # TODO: rename parameter "usage" to avoid confusion with parameter "usage" in UsageTelem techniques
+        # TODO: rename parameter "usage" to avoid confusion with parameter "usage" in UsageTelem
+        #  techniques
         """
         T1197 telemetry.
         :param status: ScanStatus of technique

@@ -26,7 +26,8 @@ class TestMonkey:
         mia_monkey_ttl.save()
         mia_monkey = Monkey(guid=str(uuid.uuid4()), dead=False, ttl_ref=mia_monkey_ttl.id)
         mia_monkey.save()
-        # Emulate timeout - ttl is manually deleted here, since we're using mongomock and not a real mongo instance.
+        # Emulate timeout - ttl is manually deleted here, since we're using mongomock and not a
+        # real mongo instance.
         sleep(1)
         mia_monkey_ttl.delete()
 

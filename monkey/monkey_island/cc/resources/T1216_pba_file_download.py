@@ -8,7 +8,8 @@ from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 class T1216PBAFileDownload(flask_restful.Resource):
     """
-    File download endpoint used by monkey to download executable file for T1216 ("Signed Script Proxy Execution" PBA)
+    File download endpoint used by monkey to download executable file for T1216 ("Signed Script
+    Proxy Execution" PBA)
     """
 
     def get(self):

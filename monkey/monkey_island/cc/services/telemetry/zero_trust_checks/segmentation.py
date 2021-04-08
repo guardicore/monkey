@@ -18,7 +18,8 @@ SEGMENTATION_DONE_EVENT_TEXT = (
 )
 
 SEGMENTATION_VIOLATION_EVENT_TEXT = (
-    "Segmentation violation! Monkey on '{hostname}', with the {source_ip} IP address (in segment {source_seg}) "
+    "Segmentation violation! Monkey on '{hostname}', with the {source_ip} IP address (in segment "
+    "{source_seg}) "
     "managed to communicate cross segment to {target_ip} (in segment {target_seg})."
 )
 
@@ -51,7 +52,8 @@ def is_segmentation_violation(
     :param target_ip:       The target with which the current monkey communicated with.
     :param source_subnet:   The segment the monkey belongs to.
     :param target_subnet:   Another segment which the monkey isn't supposed to communicate with.
-    :return:    True if this is a violation of segmentation between source_subnet and target_subnet; Otherwise, False.
+    :return:    True if this is a violation of segmentation between source_subnet and
+    target_subnet; Otherwise, False.
     """
     if source_subnet == target_subnet:
         return False
@@ -102,7 +104,8 @@ def create_or_add_findings_for_all_pairs(all_subnets, current_monkey):
     # Get all the other subnets.
     other_subnets = list(set(all_subnets) - set(this_monkey_subnets))
 
-    # Calculate the cartesian product - (this monkey subnets X other subnets). These pairs are the pairs that the monkey
+    # Calculate the cartesian product - (this monkey subnets X other subnets). These pairs are
+    # the pairs that the monkey
     # should have tested.
     all_subnets_pairs_for_this_monkey = itertools.product(this_monkey_subnets, other_subnets)
 

@@ -152,7 +152,8 @@ class MonkeyDrops(object):
             )
         else:
             dest_path = self._config["destination_path"]
-            # In linux we have a more complex commandline. There's a general outer one, and the inner one which actually
+            # In linux we have a more complex commandline. There's a general outer one,
+            # and the inner one which actually
             # runs the monkey
             inner_monkey_cmdline = (
                 MONKEY_CMDLINE_LINUX % {"monkey_filename": dest_path.split("/")[-1]}
@@ -207,7 +208,8 @@ class MonkeyDrops(object):
                         dropper_source_path_ctypes, None, MOVEFILE_DELAY_UNTIL_REBOOT
                     ):
                         LOG.debug(
-                            "Error marking source file '%s' for deletion on next boot (error %d)",
+                            "Error marking source file '%s' for deletion on next boot (error "
+                            "%d)",
                             self._config["source_path"],
                             ctypes.windll.kernel32.GetLastError(),
                         )

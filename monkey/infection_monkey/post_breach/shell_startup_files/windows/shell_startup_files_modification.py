@@ -26,6 +26,7 @@ def get_windows_commands_to_modify_shell_startup_files():
 
     return [
         "powershell.exe",
-        "infection_monkey/post_breach/shell_startup_files/windows/modify_powershell_startup_file.ps1",
+        "infection_monkey/post_breach/shell_startup_files/windows"
+        "/modify_powershell_startup_file.ps1",
         "-startup_file_path {0}",
     ], STARTUP_FILES_PER_USER

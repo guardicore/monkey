@@ -20,7 +20,8 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
     @classmethod
     def get_pba_query(cls, post_breach_action_names):
         """
-        :param post_breach_action_names: Names of post-breach actions with which the technique is associated
+        :param post_breach_action_names: Names of post-breach actions with which the technique is
+        associated
         (example - `["Communicate as new user", "Backdoor user"]` for T1136)
         :return: Mongo query that parses attack telemetries for a simple report component
         (gets machines and post-breach action usage).

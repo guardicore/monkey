@@ -26,7 +26,8 @@ LOG_CONFIG = {
     "disable_existing_loggers": False,
     "formatters": {
         "standard": {
-            "format": "%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s"
+            "format": "%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%("
+            "funcName)s.%(lineno)d: %(message)s"
         },
     },
     "handlers": {
@@ -71,8 +72,8 @@ def main():
             print("Error loading config: %s, using default" % (e,))
     else:
         print(
-            "Config file wasn't supplied and default path: %s wasn't found, using internal default"
-            % (config_file,)
+            "Config file wasn't supplied and default path: %s wasn't found, using internal "
+            "default" % (config_file,)
         )
 
     print(
@@ -104,7 +105,8 @@ def main():
 
     if WormConfiguration.use_file_logging:
         if os.path.exists(log_path):
-            # If log exists but can't be removed it means other monkey is running. This usually happens on upgrade
+            # If log exists but can't be removed it means other monkey is running. This usually
+            # happens on upgrade
             # from 32bit to 64bit monkey on Windows. In all cases this shouldn't be a problem.
             try:
                 os.remove(log_path)

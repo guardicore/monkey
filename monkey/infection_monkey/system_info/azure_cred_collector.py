@@ -97,7 +97,8 @@ class AzureCollector(object):
             # we're going to do as much of this in PS as we can.
             ps_block = ";\n".join(
                 [
-                    '[System.Reflection.Assembly]::LoadWithPartialName("System.Security") | Out-Null',
+                    '[System.Reflection.Assembly]::LoadWithPartialName("System.Security") | '
+                    "Out-Null",
                     '$base64 = "%s"' % protected_data,
                     "$content = [Convert]::FromBase64String($base64)",
                     "$env = New-Object Security.Cryptography.Pkcs.EnvelopedCms",

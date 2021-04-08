@@ -43,7 +43,8 @@ def check_open_data_endpoints(telemetry_json):
             events.append(
                 Event.create_event(
                     title="Scan telemetry analysis",
-                    message="Service {} on {} recognized as an open data endpoint! Service details: {}".format(
+                    message="Service {} on {} recognized as an open data endpoint! "
+                    "Service details: {}".format(
                         service_data["display_name"],
                         telemetry_json["data"]["machine"]["ip_addr"],
                         json.dumps(service_data),
@@ -56,7 +57,8 @@ def check_open_data_endpoints(telemetry_json):
             events.append(
                 Event.create_event(
                     title="Scan telemetry analysis",
-                    message="Service {} on {} recognized as an open data endpoint! Service details: {}".format(
+                    message="Service {} on {} recognized as an open data endpoint! "
+                    "Service details: {}".format(
                         service_data["display_name"],
                         telemetry_json["data"]["machine"]["ip_addr"],
                         json.dumps(service_data),
@@ -69,7 +71,8 @@ def check_open_data_endpoints(telemetry_json):
             events.append(
                 Event.create_event(
                     title="Scan telemetry analysis",
-                    message="Service {} on {} recognized as an open data endpoint! Service details: {}".format(
+                    message="Service {} on {} recognized as an open data endpoint! "
+                    "Service details: {}".format(
                         service_data["display_name"],
                         telemetry_json["data"]["machine"]["ip_addr"],
                         json.dumps(service_data),

@@ -4,7 +4,6 @@ from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.rule_name
 
 
 class SQSRules(RuleNameEnum):
-
     # Permissive policies
     SQS_QUEUE_WORLD_SENDMESSAGE_POLICY = "sqs-queue-world-SendMessage-policy"
     SQS_QUEUE_WORLD_RECEIVEMESSAGE_POLICY = "sqs-queue-world-ReceiveMessage-policy"

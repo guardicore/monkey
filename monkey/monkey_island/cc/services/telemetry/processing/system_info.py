@@ -3,7 +3,7 @@ import logging
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (  # noqa: E501
     SystemInfoTelemetryDispatcher,
 )
 from monkey_island.cc.services.wmi_handler import WMIHandler
@@ -20,7 +20,8 @@ def process_system_info_telemetry(telemetry_json):
         dispatcher.dispatch_collector_results_to_relevant_processors,
     ]
 
-    # Calling safe_process_telemetry so if one of the stages fail, we log and move on instead of failing the rest of
+    # Calling safe_process_telemetry so if one of the stages fail, we log and move on instead of
+    # failing the rest of
     # them, as they are independent.
     for stage in telemetry_processing_stages:
         safe_process_telemetry(stage, telemetry_json)
@@ -44,7 +45,8 @@ def process_ssh_info(telemetry_json):
         ssh_info = telemetry_json["data"]["ssh_info"]
         encrypt_system_info_ssh_keys(ssh_info)
         if telemetry_json["data"]["network_info"]["networks"]:
-            # We use user_name@machine_ip as the name of the ssh key stolen, thats why we need ip from telemetry
+            # We use user_name@machine_ip as the name of the ssh key stolen, thats why we need ip
+            # from telemetry
             add_ip_to_ssh_keys(telemetry_json["data"]["network_info"]["networks"][0], ssh_info)
         add_system_info_ssh_keys_to_config(ssh_info)
 

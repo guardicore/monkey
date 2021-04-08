@@ -47,7 +47,8 @@ FINGER_CLASSES = {
             "enum": ["MSSQLFinger"],
             "title": "MSSQLFinger",
             "safe": True,
-            "info": "Checks if Microsoft SQL service is running and tries to gather information about it.",
+            "info": "Checks if Microsoft SQL service is running and tries to gather "
+            "information about it.",
             "attack_techniques": ["T1210"],
         },
         {
@@ -55,7 +56,7 @@ FINGER_CLASSES = {
             "enum": ["ElasticFinger"],
             "title": "ElasticFinger",
             "safe": True,
-            "info": "Checks if ElasticSearch is running and attempts to find it's version.",
+            "info": "Checks if ElasticSearch is running and attempts to find it's " "version.",
             "attack_techniques": ["T1210"],
         },
         {
@@ -63,7 +64,8 @@ FINGER_CLASSES = {
             "enum": ["PostgreSQLFinger"],
             "title": "PostgreSQLFinger",
             "safe": True,
-            "info": "Checks if PostgreSQL service is running and if its communication is encrypted.",
+            "info": "Checks if PostgreSQL service is running and if "
+            "its communication is encrypted.",
             "attack_techniques": ["T1210"],
         },
     ],

@@ -27,7 +27,8 @@ logger = logging.getLogger(__name__)
 
 class CommunicateAsNewUser(PBA):
     """
-    This PBA creates a new user, and then creates HTTPS requests as that user. This is used for a Zero Trust test of the
+    This PBA creates a new user, and then creates HTTPS requests as that user. This is used for a
+    Zero Trust test of the
     People pillar. See the relevant telemetry processing to see what findings are created.
     """
 
@@ -58,7 +59,8 @@ class CommunicateAsNewUser(PBA):
     def get_commandline_for_http_request(url, is_windows=is_windows_os()):
         if is_windows:
             format_string = (
-                'powershell.exe -command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; '
+                'powershell.exe -command "[Net.ServicePointManager]::SecurityProtocol = ['
+                "Net.SecurityProtocolType]::Tls12; "
                 'Invoke-WebRequest {url} -UseBasicParsing"'
             )
         else:

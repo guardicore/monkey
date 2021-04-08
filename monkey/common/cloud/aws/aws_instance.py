@@ -9,7 +9,6 @@ from common.cloud.instance import CloudInstance
 
 __author__ = "itay.mizeretz"
 
-
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
 AWS_LATEST_METADATA_URI_PREFIX = "http://{0}/latest/".format(AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS)
 ACCOUNT_ID_KEY = "accountId"
@@ -60,7 +59,8 @@ class AwsInstance(CloudInstance):
     @staticmethod
     def _parse_region(region_url_response):
         # For a list of regions, see:
-        # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html
+        # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts
+        # .RegionsAndAvailabilityZones.html
         # This regex will find any AWS region format string in the response.
         re_phrase = r"((?:us|eu|ap|ca|cn|sa)-[a-z]*-[0-9])"
         finding = re.findall(re_phrase, region_url_response, re.IGNORECASE)
@@ -79,9 +79,11 @@ class AwsInstance(CloudInstance):
     def _extract_account_id(instance_identity_document_response):
         """
         Extracts the account id from the dynamic/instance-identity/document metadata path.
-        Based on https://forums.aws.amazon.com/message.jspa?messageID=409028 which has a few more solutions,
+        Based on https://forums.aws.amazon.com/message.jspa?messageID=409028 which has a few more
+        solutions,
         in case Amazon break this mechanism.
-        :param instance_identity_document_response: json returned via the web page ../dynamic/instance-identity/document
+        :param instance_identity_document_response: json returned via the web page
+        ../dynamic/instance-identity/document
         :return: The account id
         """
         return json.loads(instance_identity_document_response)[ACCOUNT_ID_KEY]

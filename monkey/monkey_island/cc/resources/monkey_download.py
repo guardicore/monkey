@@ -65,9 +65,8 @@ def get_monkey_executable(host_os, machine):
             logger.info("Monkey exec found for os: {0} and machine: {1}".format(host_os, machine))
             return download
     logger.warning(
-        "No monkey executables could be found for the host os or machine or both: host_os: {0}, machine: {1}".format(
-            host_os, machine
-        )
+        "No monkey executables could be found for the host os or machine or both: host_os: {"
+        "0}, machine: {1}".format(host_os, machine)
     )
     return None
 
@@ -103,7 +102,8 @@ class MonkeyDownload(flask_restful.Resource):
     @staticmethod
     def log_executable_hashes():
         """
-        Logs all the hashes of the monkey executables for debugging ease (can check what Monkey version you have etc.).
+        Logs all the hashes of the monkey executables for debugging ease (can check what Monkey
+        version you have etc.).
         """
         filenames = set([x["filename"] for x in MONKEY_DOWNLOADS])
         for filename in filenames:

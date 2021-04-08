@@ -15,16 +15,22 @@ RULES = [
         description="Security Group Opens All Ports to All",
         flagged_items=2,
         items=[
-            "ec2.regions.eu-central-1.vpcs.vpc-0ee259b1a13c50229.security_groups.sg-035779fe5c293fc72"
+            "ec2.regions.eu-central-1.vpcs.vpc-0ee259b1a13c50229.security_groups.sg"
+            "-035779fe5c293fc72"
             ".rules.ingress.protocols.ALL.ports.1-65535.cidrs.2.CIDR",
-            "ec2.regions.eu-central-1.vpcs.vpc-00015526b6695f9aa.security_groups.sg-019eb67135ec81e65"
+            "ec2.regions.eu-central-1.vpcs.vpc-00015526b6695f9aa.security_groups.sg"
+            "-019eb67135ec81e65"
             ".rules.ingress.protocols.ALL.ports.1-65535.cidrs.0.CIDR",
         ],
         level="danger",
-        path="ec2.regions.id.vpcs.id.security_groups.id.rules.id.protocols.id.ports.id.cidrs.id.CIDR",
-        rationale="It was detected that all ports in the security group are open, and any source IP address"
-        " could send traffic to these ports, which creates a wider attack surface for resources "
-        "assigned to it. Open ports should be reduced to the minimum needed to correctly",
+        path="ec2.regions.id.vpcs.id.security_groups.id.rules.id.protocols.id.ports.id.cidrs"
+        ".id.CIDR",
+        rationale="It was detected that all ports in the security group are open, "
+        "and any source IP address"
+        " could send traffic to these ports, which creates a wider attack surface "
+        "for resources "
+        "assigned to it. Open ports should be reduced to the minimum needed to "
+        "correctly",
         references=[],
         remediation=None,
         service="EC2",
@@ -43,7 +49,8 @@ RULES = [
         description="Security Group Opens RDP Port to All",
         flagged_items=7,
         items=[
-            "ec2.regions.eu-central-1.vpcs.vpc-076500a2138ee09da.security_groups.sg-00bdef5951797199c"
+            "ec2.regions.eu-central-1.vpcs.vpc-076500a2138ee09da.security_groups.sg"
+            "-00bdef5951797199c"
             ".rules.ingress.protocols.TCP.ports.3389.cidrs.0.CIDR",
             "ec2.regions.eu-central-1.vpcs.vpc-d33026b8.security_groups.sg-007931ba8a364e330"
             ".rules.ingress.protocols.TCP.ports.3389.cidrs.0.CIDR",
@@ -55,14 +62,19 @@ RULES = [
             ".rules.ingress.protocols.TCP.ports.3389.cidrs.0.CIDR",
             "ec2.regions.us-east-1.vpcs.vpc-9e56cae4.security_groups.sg-0dc253aa79062835a"
             ".rules.ingress.protocols.TCP.ports.3389.cidrs.0.CIDR",
-            "ec2.regions.us-east-1.vpcs.vpc-002d543353cd4e97d.security_groups.sg-01902f153d4f938da"
+            "ec2.regions.us-east-1.vpcs.vpc-002d543353cd4e97d.security_groups.sg"
+            "-01902f153d4f938da"
             ".rules.ingress.protocols.TCP.ports.3389.cidrs.0.CIDR",
         ],
         level="danger",
-        path="ec2.regions.id.vpcs.id.security_groups.id.rules.id.protocols.id.ports.id.cidrs.id.CIDR",
-        rationale="The security group was found to be exposing a well-known port to all source addresses."
-        " Well-known ports are commonly probed by automated scanning tools, and could be an indicator "
-        "of sensitive services exposed to Internet. If such services need to be expos",
+        path="ec2.regions.id.vpcs.id.security_groups.id.rules.id.protocols.id.ports.id.cidrs"
+        ".id.CIDR",
+        rationale="The security group was found to be exposing a well-known port to all "
+        "source addresses."
+        " Well-known ports are commonly probed by automated scanning tools, "
+        "and could be an indicator "
+        "of sensitive services exposed to Internet. If such services need to be "
+        "expos",
         references=[],
         remediation="Remove the inbound rules that expose open ports",
         service="EC2",

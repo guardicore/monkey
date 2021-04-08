@@ -63,7 +63,8 @@ class AttackConfig(object):
     @staticmethod
     def set_arrays(attack_techniques, monkey_config, monkey_schema):
         """
-        Sets exploiters/scanners/PBAs and other array type fields in monkey's config according to ATT&CK matrix
+        Sets exploiters/scanners/PBAs and other array type fields in monkey's config according to
+        ATT&CK matrix
         :param attack_techniques: ATT&CK techniques dict. Format: {'T1110': True, ...}
         :param monkey_config: Monkey island's configuration
         :param monkey_schema: Monkey configuration schema
@@ -83,7 +84,8 @@ class AttackConfig(object):
     @staticmethod
     def set_booleans(attack_techniques, monkey_config, monkey_schema):
         """
-        Sets boolean type fields, like "should use mimikatz?" in monkey's config according to ATT&CK matrix
+        Sets boolean type fields, like "should use mimikatz?" in monkey's config according to
+        ATT&CK matrix
         :param attack_techniques: ATT&CK techniques dict. Format: {'T1110': True, ...}
         :param monkey_config: Monkey island's configuration
         :param monkey_schema: Monkey configuration schema
@@ -94,9 +96,11 @@ class AttackConfig(object):
     @staticmethod
     def r_set_booleans(path, value, attack_techniques, monkey_config):
         """
-        Recursively walks trough monkey configuration (DFS) to find which boolean fields needs to be set and sets them
+        Recursively walks trough monkey configuration (DFS) to find which boolean fields needs to
+        be set and sets them
         according to ATT&CK matrix.
-        :param path: Property names that leads to current value. E.g. ['monkey', 'system_info', 'should_use_mimikatz']
+        :param path: Property names that leads to current value. E.g. ['monkey', 'system_info',
+        'should_use_mimikatz']
         :param value: Value of config property
         :param attack_techniques: ATT&CK techniques dict. Format: {'T1110': True, ...}
         :param monkey_config: Monkey island's configuration
@@ -130,7 +134,8 @@ class AttackConfig(object):
     def set_bool_conf_val(path, val, monkey_config):
         """
         Changes monkey's configuration by setting one of its boolean fields value
-        :param path: Path to boolean value in monkey's configuration. ['monkey', 'system_info', 'should_use_mimikatz']
+        :param path: Path to boolean value in monkey's configuration. ['monkey', 'system_info',
+        'should_use_mimikatz']
         :param val: Boolean
         :param monkey_config: Monkey's configuration
         """

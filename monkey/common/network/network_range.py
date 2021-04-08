@@ -159,7 +159,8 @@ class SingleIpRange(NetworkRange):
     @staticmethod
     def string_to_host(string_):
         """
-        Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name and ip
+        Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name
+        and ip
         :param string_: String that was entered in "Scan IP/subnet list"
         :return: A tuple in format (IP, domain_name). Eg. (192.168.55.1, www.google.com)
         """

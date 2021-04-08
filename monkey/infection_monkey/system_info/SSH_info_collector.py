@@ -72,7 +72,8 @@ class SSHCollector(object):
                             try:
                                 with open(public) as f:
                                     info["public_key"] = f.read()
-                                # By default private key has the same name as public, only without .pub
+                                # By default private key has the same name as public,
+                                # only without .pub
                                 private = os.path.splitext(public)[0]
                                 if os.path.exists(private):
                                     try:

@@ -33,7 +33,8 @@ class PerformanceAnalyzer(Analyzer):
 
         if self.performance_test_config.break_on_timeout and not performance_is_good_enough:
             LOGGER.warning(
-                "Calling breakpoint - pausing to enable investigation of island. Type 'c' to continue once you're done "
+                "Calling breakpoint - pausing to enable investigation of island. "
+                "Type 'c' to continue once you're done "
                 "investigating. Type 'p timings' and 'p total_time' to see performance information."
             )
             breakpoint()

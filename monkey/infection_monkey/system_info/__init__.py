@@ -29,7 +29,8 @@ class OperatingSystem(IntEnum):
 
 class SystemInfoCollector(object):
     """
-    A class that checks the current operating system and calls system information collecting modules accordingly
+    A class that checks the current operating system and calls system information collecting
+    modules accordingly
     """
 
     def __init__(self):
@@ -113,5 +114,6 @@ class InfoCollector(object):
                 self.info["Azure"] = {}
                 self.info["Azure"]["usernames"] = [cred[0] for cred in azure_creds]
         except Exception:
-            # If we failed to collect azure info, no reason to fail all the collection. Log and continue.
+            # If we failed to collect azure info, no reason to fail all the collection. Log and
+            # continue.
             LOG.error("Failed collecting Azure info.", exc_info=True)

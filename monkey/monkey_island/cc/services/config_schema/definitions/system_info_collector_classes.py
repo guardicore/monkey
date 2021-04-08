@@ -17,7 +17,7 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             "enum": [ENVIRONMENT_COLLECTOR],
             "title": "Environment collector",
             "safe": True,
-            "info": "Collects information about machine's environment (on premise/GCP/AWS).",
+            "info": "Collects information about machine's environment (on " "premise/GCP/AWS).",
             "attack_techniques": ["T1082"],
         },
         {
@@ -33,7 +33,8 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             "enum": [AWS_COLLECTOR],
             "title": "AWS collector",
             "safe": True,
-            "info": "If on AWS, collects more information about the AWS instance currently running on.",
+            "info": "If on AWS, collects more information about the AWS instance "
+            "currently running on.",
             "attack_techniques": ["T1082"],
         },
         {

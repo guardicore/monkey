@@ -6,7 +6,10 @@ __author__ = "shreyamalviya"
 
 class T1504(PostBreachTechnique):
     tech_id = "T1504"
-    unscanned_msg = "Monkey didn't try modifying powershell startup files since it didn't run on any Windows machines."
+    unscanned_msg = (
+        "Monkey didn't try modifying powershell startup files since it didn't run on "
+        "any Windows machines."
+    )
     scanned_msg = "Monkey tried modifying powershell startup files but failed."
     used_msg = "Monkey successfully modified powershell startup files."
     pba_names = [POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION]

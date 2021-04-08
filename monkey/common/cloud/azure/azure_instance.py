@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 class AzureInstance(CloudInstance):
     """
     Access to useful information about the current machine if it's an Azure VM.
-    Based on Azure metadata service: https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service
+    Based on Azure metadata service:
+    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service
     """
 
     def is_instance(self):
@@ -44,7 +45,8 @@ class AzureInstance(CloudInstance):
             )
 
             # If not on cloud, the metadata URL is non-routable and the connection will fail.
-            # If on AWS, should get 404 since the metadata service URL is different, so bool(response) will be false.
+            # If on AWS, should get 404 since the metadata service URL is different,
+            # so bool(response) will be false.
             if response:
                 logger.debug("Trying to parse Azure metadata.")
                 self.try_parse_response(response)
@@ -52,7 +54,8 @@ class AzureInstance(CloudInstance):
                 logger.warning(f"Metadata response not ok: {response.status_code}")
         except requests.RequestException:
             logger.debug(
-                "Failed to get response from Azure metadata service: This instance is not on Azure."
+                "Failed to get response from Azure metadata service: This instance is not on "
+                "Azure."
             )
 
     def try_parse_response(self, response):

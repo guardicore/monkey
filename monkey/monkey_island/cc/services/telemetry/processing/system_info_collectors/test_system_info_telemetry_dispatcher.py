@@ -3,7 +3,7 @@ import uuid
 import pytest
 
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (
+from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (  # noqa: E501
     SystemInfoTelemetryDispatcher,
     process_aws_telemetry,
 )
@@ -15,7 +15,6 @@ TEST_SYS_INFO_TO_PROCESSING = {
 
 class TestSystemInfoTelemetryDispatcher:
     def test_dispatch_to_relevant_collector_bad_inputs(self):
-
         dispatcher = SystemInfoTelemetryDispatcher(TEST_SYS_INFO_TO_PROCESSING)
 
         # Bad format telem JSONs - throws

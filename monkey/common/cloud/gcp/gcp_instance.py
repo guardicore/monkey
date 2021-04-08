@@ -8,13 +8,13 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
-
 GCP_METADATA_SERVICE_URL = "http://metadata.google.internal/"
 
 
 class GcpInstance(CloudInstance):
     """
-    Used to determine if on GCP. See https://cloud.google.com/compute/docs/storing-retrieving-metadata#runninggce
+    Used to determine if on GCP. See https://cloud.google.com/compute/docs/storing-retrieving
+    -metadata#runninggce
     """
 
     def is_instance(self):

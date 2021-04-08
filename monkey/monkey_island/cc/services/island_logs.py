@@ -13,7 +13,8 @@ class IslandLogService:
     def get_log_file():
         """
         This static function is a helper function for the monkey island log download function.
-        It finds the logger handlers and checks if one of them is a fileHandler of any kind by checking if the handler
+        It finds the logger handlers and checks if one of them is a fileHandler of any kind by
+        checking if the handler
         has the property handler.baseFilename.
         :return:
         a dict with the log file content.

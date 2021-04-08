@@ -127,7 +127,8 @@ RAW_SCOUTSUITE_DATA = {
                     "checked_items": 179,
                     "flagged_items": 2,
                     "service": "EC2",
-                    "rationale": "It was detected that all ports in the security group are open <...>",
+                    "rationale": "It was detected that all ports in the security group are "
+                    "open <...>",
                     "remediation": None,
                     "compliance": None,
                     "references": None,

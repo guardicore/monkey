@@ -44,9 +44,11 @@ class NetworkScanner(object):
     def _get_inaccessible_subnets_ips(self):
         """
         For each of the machine's IPs, checks if it's in one of the subnets specified in the
-        'inaccessible_subnets' config value. If so, all other subnets in the config value shouldn't be accessible.
+        'inaccessible_subnets' config value. If so, all other subnets in the config value
+        shouldn't be accessible.
         All these subnets are returned.
-        :return: A list of subnets that shouldn't be accessible from the machine the monkey is running on.
+        :return: A list of subnets that shouldn't be accessible from the machine the monkey is
+        running on.
         """
         subnets_to_scan = []
         if len(WormConfiguration.inaccessible_subnets) > 1:
@@ -54,7 +56,8 @@ class NetworkScanner(object):
                 if NetworkScanner._is_any_ip_in_subnet(
                     [str(x) for x in self._ip_addresses], subnet_str
                 ):
-                    # If machine has IPs from 2 different subnets in the same group, there's no point checking the other
+                    # If machine has IPs from 2 different subnets in the same group, there's no
+                    # point checking the other
                     # subnet.
                     for other_subnet_str in WormConfiguration.inaccessible_subnets:
                         if other_subnet_str == subnet_str:
@@ -74,9 +77,12 @@ class NetworkScanner(object):
         :param stop_callback: A callback to check at any point if we should stop scanning
         :return: yields a sequence of VictimHost instances
         """
-        # We currently use the ITERATION_BLOCK_SIZE as the pool size, however, this may not be the best decision
-        # However, the decision what ITERATION_BLOCK_SIZE also requires balancing network usage (pps and bw)
-        # Because we are using this to spread out IO heavy tasks, we can probably go a lot higher than CPU core size
+        # We currently use the ITERATION_BLOCK_SIZE as the pool size, however, this may not be
+        # the best decision
+        # However, the decision what ITERATION_BLOCK_SIZE also requires balancing network usage (
+        # pps and bw)
+        # Because we are using this to spread out IO heavy tasks, we can probably go a lot higher
+        # than CPU core size
         # But again, balance
         pool = Pool(ITERATION_BLOCK_SIZE)
         victim_generator = VictimHostGenerator(

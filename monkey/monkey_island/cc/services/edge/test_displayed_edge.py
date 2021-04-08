@@ -44,7 +44,6 @@ EXPLOIT_DATA_MOCK = [
 
 class TestDisplayedEdgeService:
     def test_get_displayed_edges_by_to(self):
-
         dst_id = ObjectId()
 
         src_id = ObjectId()

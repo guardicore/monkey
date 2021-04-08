@@ -51,12 +51,14 @@ class PostgreSQLFinger(HostFinger):
             self.init_service(host.services, self._SCANNED_SERVICE, self.POSTGRESQL_DEFAULT_PORT)
             host.services[self._SCANNED_SERVICE]["communication_encryption_details"] = (
                 "The PostgreSQL server was unexpectedly accessible with the credentials - "
-                + f"user: '{self.CREDS['username']}' and password: '{self.CREDS['password']}'. Is this a honeypot?"
+                + f"user: '{self.CREDS['username']}' and password: '"
+                f"{self.CREDS['password']}'. Is this a honeypot?"
             )
             return True
 
         except psycopg2.OperationalError as ex:
-            # try block will throw an OperationalError since the credentials are wrong, which we then analyze
+            # try block will throw an OperationalError since the credentials are wrong, which we
+            # then analyze
             try:
                 exception_string = str(ex)
 

@@ -30,7 +30,8 @@ GOOD_DATA = {
         ],
         "publisher": "RDFE-Test-Microsoft-Windows-Server-Group",
         "resourceGroupName": "macikgo-test-may-23",
-        "resourceId": "/subscriptions/xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/resourceGroups/macikgo-test-may-23/"
+        "resourceId": "/subscriptions/xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx/resourceGroups/macikgo-test"
+        "-may-23/"
         "providers/Microsoft.Compute/virtualMachines/examplevmname",
         "securityProfile": {"secureBootEnabled": "true", "virtualTpmEnabled": "false"},
         "sku": "Windows-Server-2012-R2-Datacenter",
@@ -101,12 +102,16 @@ GOOD_DATA = {
     },
 }
 
-
-BAD_DATA_NOT_JSON = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/\
-xhtml1-transitional.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml">\n<head>\n<meta content="text/html; charset=utf-8" \
-http-equiv="Content-Type" />\n<meta content="no-cache" http-equiv="Pragma" />\n<title>Waiting...</title>\n<script type="text/\
-javascript">\nvar pageName = \'/\';\ntop.location.replace(pageName);\n</script>\n</head>\n<body> </body>\n</html>\n'
-
+BAD_DATA_NOT_JSON = (
+    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
+    '"http://www.w3.org/TR/xhtml1/DTD/\
+xhtml1-transitional.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml">\n<head>\n<meta '
+    'content="text/html; charset=utf-8" \
+http-equiv="Content-Type" />\n<meta content="no-cache" http-equiv="Pragma" '
+    "/>\n<title>Waiting...</title>\n<script type=\"text/\
+javascript\">\nvar pageName = '/';\ntop.location.replace(pageName);\n</script>\n</head>\n<body> "
+    "</body>\n</html>\n"
+)
 
 BAD_DATA_JSON = {"": ""}
 

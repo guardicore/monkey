@@ -56,7 +56,8 @@ class PrincipleService:
     @staticmethod
     def __get_lcd_worst_status_for_test(all_findings_for_test):
         """
-        :param all_findings_for_test:   All findings of a specific test (get this using Finding.objects(test={A_TEST}))
+        :param all_findings_for_test:   All findings of a specific test (get this using
+        Finding.objects(test={A_TEST}))
         :return:    the "worst" (i.e. most severe) status out of the given findings.
                     lcd stands for lowest common denominator.
         """

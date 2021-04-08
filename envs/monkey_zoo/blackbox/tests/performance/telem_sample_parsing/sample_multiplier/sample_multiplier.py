@@ -9,10 +9,10 @@ from tqdm import tqdm
 from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_file_parser import (
     SampleFileParser,
 )
-from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_ip_generator import (
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_ip_generator import (  # noqa: E501
     FakeIpGenerator,
 )
-from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_monkey import (
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_monkey import (  # noqa: E501
     FakeMonkey,
 )
 

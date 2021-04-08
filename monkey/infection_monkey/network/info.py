@@ -88,7 +88,8 @@ else:
                 continue
             try:
                 ifreq = ioctl(s, SIOCGIFADDR, struct.pack("16s16x", iff))
-            except IOError:  # interface is present in routing tables but does not have any assigned IP
+            except IOError:  # interface is present in routing tables but does not have any
+                # assigned IP
                 ifaddr = "0.0.0.0"
             else:
                 addrfamily = struct.unpack("h", ifreq[16:18])[0]

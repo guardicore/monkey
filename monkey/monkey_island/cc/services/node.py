@@ -160,7 +160,8 @@ class NodeService:
             "label": label,
             "group": monkey_group,
             "os": NodeService.get_monkey_os(monkey),
-            # The monkey is running IFF the group contains "_running". Therefore it's dead IFF the group does NOT
+            # The monkey is running IFF the group contains "_running". Therefore it's dead IFF
+            # the group does NOT
             # contain "_running". This is a small optimisation, to not call "is_dead" twice.
             "dead": "_running" not in monkey_group,
             "domain_name": "",

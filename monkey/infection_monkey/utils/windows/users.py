@@ -47,12 +47,14 @@ class AutoNewWindowsUser(AutoNewUser):
         import win32security
 
         try:
-            # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-logonusera
+            # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf
+            # -winbase-logonusera
             self.logon_handle = win32security.LogonUser(
                 self.username,
                 ".",  # Use current domain.
                 self.password,
-                win32con.LOGON32_LOGON_INTERACTIVE,  # Logon type - interactive (normal user), since we're using a shell.
+                # Logon type - interactive (normal user), since we're using a shell.
+                win32con.LOGON32_LOGON_INTERACTIVE,
                 win32con.LOGON32_PROVIDER_DEFAULT,
             )  # Which logon provider to use - whatever Windows offers.
         except Exception as err:
@@ -83,9 +85,13 @@ class AutoNewWindowsUser(AutoNewUser):
                 "Waiting for process to finish. Timeout: {}ms".format(WAIT_TIMEOUT_IN_MILLISECONDS)
             )
 
-            # https://social.msdn.microsoft.com/Forums/vstudio/en-US/b6d6a7ae-71e9-4edb-ac8f-408d2a41750d/what-events-on-a-process-handle-signal-satisify-waitforsingleobject?forum=vcgeneral
-            # Ignoring return code, as we'll use `GetExitCode` to determine the state of the process later.
-            _ = win32event.WaitForSingleObject(  # Waits until the specified object is signaled, or time-out.
+            # https://social.msdn.microsoft.com/Forums/vstudio/en-US/b6d6a7ae-71e9-4edb-ac8f
+            # -408d2a41750d/what-events-on-a-process-handle-signal-satisify-waitforsingleobject
+            # ?forum=vcgeneral
+            # Ignoring return code, as we'll use `GetExitCode` to determine the state of the
+            # process later.
+            _ = win32event.WaitForSingleObject(
+                # Waits until the specified object is signaled, or time-out.
                 process_handle,  # Ping process handle
                 WAIT_TIMEOUT_IN_MILLISECONDS,  # Timeout in milliseconds
             )

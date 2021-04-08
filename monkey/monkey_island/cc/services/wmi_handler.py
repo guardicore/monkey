@@ -148,7 +148,8 @@ class WMIHandler(object):
                 if not mongo.db.groupsandusers.find_one({"SID": entity["SID"]}):
                     mongo.db.groupsandusers.insert_one(entity)
                 else:
-                    # if entity is domain entity, add the monkey id of current machine to secrets_location.
+                    # if entity is domain entity, add the monkey id of current machine to
+                    # secrets_location.
                     # (found on this machine)
                     if entity.get("NTLM_secret"):
                         mongo.db.groupsandusers.update_one(

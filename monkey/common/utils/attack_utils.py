@@ -15,7 +15,8 @@ class ScanStatus(Enum):
 class UsageEnum(Enum):
     SMB = {
         ScanStatus.USED.value: "SMB exploiter ran the monkey by creating a service via MS-SCMR.",
-        ScanStatus.SCANNED.value: "SMB exploiter failed to run the monkey by creating a service via MS-SCMR.",
+        ScanStatus.SCANNED.value: "SMB exploiter failed to run the monkey by creating a service "
+        "via MS-SCMR.",
     }
     MIMIKATZ = {
         ScanStatus.USED.value: "Windows module loader was used to load Mimikatz DLL.",
@@ -29,7 +30,8 @@ class UsageEnum(Enum):
         ScanStatus.USED.value: "WinAPI was used to mark monkey files for deletion on next boot."
     }
     SINGLETON_WINAPI = {
-        ScanStatus.USED.value: "WinAPI was called to acquire system singleton for monkey's process.",
+        ScanStatus.USED.value: "WinAPI was called to acquire system singleton for monkey's "
+        "process.",
         ScanStatus.SCANNED.value: "WinAPI call to acquire system singleton"
         " for monkey process wasn't successful.",
     }

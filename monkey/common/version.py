@@ -1,4 +1,5 @@
-# To get the version from shell, run `python ./version.py` (see `python ./version.py -h` for details).
+# To get the version from shell, run `python ./version.py` (see `python ./version.py -h` for
+# details).
 import argparse
 from pathlib import Path
 

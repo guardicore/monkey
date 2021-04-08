@@ -1,4 +1,5 @@
-# Inspired by Giampaolo Rodola's psutil example from https://github.com/giampaolo/psutil/blob/master/scripts/netstat.py
+# Inspired by Giampaolo Rodola's psutil example from
+# https://github.com/giampaolo/psutil/blob/master/scripts/netstat.py
 
 import logging
 import socket

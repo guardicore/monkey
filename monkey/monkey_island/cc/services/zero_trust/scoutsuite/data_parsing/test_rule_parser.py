@@ -17,7 +17,8 @@ ALL_PORTS_OPEN = EC2Rules.SECURITY_GROUP_ALL_PORTS_TO_ALL
 
 EXPECTED_RESULT = {
     "description": "Security Group Opens All Ports to All",
-    "path": "ec2.regions.id.vpcs.id.security_groups.id.rules.id.protocols.id.ports.id.cidrs.id.CIDR",
+    "path": "ec2.regions.id.vpcs.id.security_groups.id.rules.id.protocols.id.ports.id"
+    ".cidrs.id.CIDR",
     "level": "danger",
     "display_path": "ec2.regions.id.vpcs.id.security_groups.id",
     "items": [

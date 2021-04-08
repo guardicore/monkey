@@ -43,7 +43,6 @@ EXPLOIT_TELEMETRY_TELEM = {
     },
 }
 
-
 SYSTEM_INFO_TELEMETRY_TELEM = {
     "_id": TELEM_ID["system_info_creds"],
     "monkey_guid": MONKEY_GUID,

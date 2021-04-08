@@ -20,7 +20,8 @@ class AwsCmdResult(CmdResult):
     @staticmethod
     def is_successful(command_info, is_timeout=False):
         """
-        Determines whether the command was successful. If it timed out and was still in progress, we assume it worked.
+        Determines whether the command was successful. If it timed out and was still in progress,
+        we assume it worked.
         :param command_info:    Command info struct (returned by ssm.get_command_invocation)
         :param is_timeout:      Whether the given command timed out
         :return:                True if successful, False otherwise.

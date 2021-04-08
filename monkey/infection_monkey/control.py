@@ -23,7 +23,6 @@ from infection_monkey.utils.exceptions.planned_shutdown_exception import Planned
 
 __author__ = "hoffer"
 
-
 requests.packages.urllib3.disable_warnings()
 
 LOG = logging.getLogger(__name__)
@@ -32,7 +31,8 @@ DOWNLOAD_CHUNK = 1024
 PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
 # random number greater than 5,
-# to prevent the monkey from just waiting forever to try and connect to an island before going elsewhere.
+# to prevent the monkey from just waiting forever to try and connect to an island before going
+# elsewhere.
 TIMEOUT_IN_SECONDS = 15
 
 
@@ -412,7 +412,10 @@ class ControlClient(object):
     @staticmethod
     def can_island_see_port(port):
         try:
-            url = f"https://{WormConfiguration.current_server}/api/monkey_control/check_remote_port/{port}"
+            url = (
+                f"https://{WormConfiguration.current_server}/api/monkey_control"
+                f"/check_remote_port/{port}"
+            )
             response = requests.get(url, verify=False, timeout=SHORT_REQUEST_TIMEOUT)
             response = json.loads(response.content.decode())
             return response["status"] == "port_visible"

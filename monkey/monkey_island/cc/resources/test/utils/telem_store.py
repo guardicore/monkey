@@ -12,13 +12,11 @@ from monkey_island.cc.services.config import ConfigService
 TELEM_SAMPLE_DIR = "./telem_sample"
 MAX_SAME_CATEGORY_TELEMS = 10000
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class TestTelemStore:
-
     TELEMS_EXPORTED = False
 
     @staticmethod

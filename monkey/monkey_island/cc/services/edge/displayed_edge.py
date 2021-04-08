@@ -36,8 +36,8 @@ class DisplayedEdgeService:
         displayed_edge["ip_address"] = edge.ip_address
         displayed_edge["services"] = services
         displayed_edge["os"] = os
-        # we need to deepcopy all mutable edge properties, because weak-reference link is made otherwise,
-        # which is destroyed after method is exited and causes an error later.
+        # we need to deepcopy all mutable edge properties, because weak-reference link is made
+        # otherwise, which is destroyed after method is exited and causes an error later.
         displayed_edge["exploits"] = deepcopy(edge.exploits)
         displayed_edge["_label"] = edge.get_label()
         return displayed_edge

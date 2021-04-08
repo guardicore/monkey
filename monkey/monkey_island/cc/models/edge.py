@@ -2,7 +2,6 @@ from mongoengine import BooleanField, Document, DynamicField, ListField, ObjectI
 
 
 class Edge(Document):
-
     meta = {"allow_inheritance": True}
 
     # SCHEMA

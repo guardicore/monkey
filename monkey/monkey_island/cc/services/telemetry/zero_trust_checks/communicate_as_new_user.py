@@ -5,7 +5,10 @@ from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_serv
 )
 
 COMM_AS_NEW_USER_FAILED_FORMAT = "Monkey on {} couldn't communicate as new user. Details: {}"
-COMM_AS_NEW_USER_SUCCEEDED_FORMAT = "New user created by Monkey on {} successfully tried to communicate with the internet. Details: {}"
+COMM_AS_NEW_USER_SUCCEEDED_FORMAT = (
+    "New user created by Monkey on {} successfully tried to "
+    "communicate with the internet. Details: {}"
+)
 
 
 def check_new_user_communication(current_monkey, success, message):

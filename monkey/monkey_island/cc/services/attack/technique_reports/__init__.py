@@ -9,7 +9,6 @@ from monkey_island.cc.services.attack.attack_config import AttackConfig
 
 logger = logging.getLogger(__name__)
 
-
 disabled_msg = (
     "This technique has been disabled. "
     + "You can enable it from the [configuration page](../../configure)."
@@ -122,7 +121,8 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     def get_tech_base_data(cls):
         """
         Gathers basic attack technique data into a dict.
-        :return: dict E.g. {'message': 'Brute force used', 'status': 2, 'title': 'T1110 Brute force'}
+        :return: dict E.g. {'message': 'Brute force used', 'status': 2, 'title': 'T1110 Brute
+        force'}
         """
         data = {}
         status = cls.technique_status()

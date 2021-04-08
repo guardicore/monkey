@@ -21,8 +21,10 @@ class CmdRunner(object):
     * command id - any unique identifier of a command which was already run
     * command result - represents the result of running a command. Always of type CmdResult
     * command status - represents the current status of a command. Always of type CmdStatus
-    * command info - Any consistent structure representing additional information of a command which was already run
-    * instance - a machine that commands will be run on. Can be any dictionary with 'instance_id' as a field
+    * command info - Any consistent structure representing additional information of a command
+    which was already run
+    * instance - a machine that commands will be run on. Can be any dictionary with 'instance_id'
+    as a field
     * instance_id - any unique identifier of an instance (machine). Can be of any format
     """
 
@@ -49,7 +51,8 @@ class CmdRunner(object):
         """
         Run multiple commands on various instances
         :param instances:   List of instances.
-        :param inst_to_cmd: Function which receives an instance, runs a command asynchronously and returns Cmd
+        :param inst_to_cmd: Function which receives an instance, runs a command asynchronously
+        and returns Cmd
         :param inst_n_cmd_res_to_res:   Function which receives an instance and CmdResult
                                         and returns a parsed result (of any format)
         :return: Dictionary with 'instance_id' as key and parsed result as value

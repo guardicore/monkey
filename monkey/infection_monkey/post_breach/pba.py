@@ -16,7 +16,8 @@ __author__ = "VakarisZ"
 
 class PBA(Plugin):
     """
-    Post breach action object. Can be extended to support more than command execution on target machine.
+    Post breach action object. Can be extended to support more than command execution on target
+    machine.
     """
 
     @staticmethod

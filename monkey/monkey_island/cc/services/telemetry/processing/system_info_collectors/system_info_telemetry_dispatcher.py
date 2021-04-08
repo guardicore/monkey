@@ -47,7 +47,8 @@ class SystemInfoTelemetryDispatcher(object):
 
     def dispatch_collector_results_to_relevant_processors(self, telemetry_json):
         """
-        If the telemetry has collectors' results, dispatches the results to the relevant processing functions.
+        If the telemetry has collectors' results, dispatches the results to the relevant
+        processing functions.
         :param telemetry_json: Telemetry sent from the Monkey
         """
         if "collectors" in telemetry_json["data"]:

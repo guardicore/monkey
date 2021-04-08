@@ -13,7 +13,8 @@ SCHEMA = {
                     "value": True,
                     "necessary": True,
                     "link": "https://attack.mitre.org/techniques/T1059",
-                    "description": "Adversaries may use command-line interfaces to interact with systems "
+                    "description": "Adversaries may use command-line interfaces to interact with "
+                    "systems "
                     "and execute other software during the course of an operation.",
                 },
                 "T1129": {
@@ -22,8 +23,10 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1129",
-                    "description": "The Windows module loader can be instructed to load DLLs from arbitrary "
-                    "local paths and arbitrary Universal Naming Convention (UNC) network paths.",
+                    "description": "The Windows module loader can be instructed to load DLLs from "
+                    "arbitrary "
+                    "local paths and arbitrary Universal Naming Convention (UNC) "
+                    "network paths.",
                     "depends_on": ["T1078", "T1003"],
                 },
                 "T1106": {
@@ -60,8 +63,10 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1035",
-                    "description": "Adversaries may execute a binary, command, or script via a method "
-                    "that interacts with Windows services, such as the Service Control Manager.",
+                    "description": "Adversaries may execute a binary, command, or script via a "
+                    "method "
+                    "that interacts with Windows services, such as the Service "
+                    "Control Manager.",
                     "depends_on": ["T1210"],
                 },
                 "T1154": {
@@ -70,7 +75,8 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1154",
-                    "description": "Adversaries can use the trap command to register code to be executed "
+                    "description": "Adversaries can use the trap command to register code to be "
+                    "executed "
                     "when the shell encounters specific interrupts.",
                 },
             },
@@ -88,7 +94,8 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1156",
                     "description": "Adversaries may abuse shell scripts by "
                     "inserting arbitrary shell commands to gain persistence, which "
-                    "would be executed every time the user logs in or opens a new shell.",
+                    "would be executed every time the user logs in or opens a new "
+                    "shell.",
                     "depends_on": ["T1504"],
                 },
                 "T1136": {
@@ -117,8 +124,10 @@ SCHEMA = {
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1168/",
                     "description": "Linux supports multiple methods for creating pre-scheduled and "
-                    "periodic background jobs. Job scheduling can be used by adversaries to "
-                    "schedule running malicious code at some specified date and time.",
+                    "periodic background jobs. Job scheduling can be used by "
+                    "adversaries to "
+                    "schedule running malicious code at some specified date and "
+                    "time.",
                     "depends_on": ["T1053"],
                 },
                 "T1504": {
@@ -138,9 +147,12 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1053",
-                    "description": "Windows utilities can be used to schedule programs or scripts to "
-                    "be executed at a date and time. An adversary may use task scheduling to "
-                    "execute programs at system startup or on a scheduled basis for persistence.",
+                    "description": "Windows utilities can be used to schedule programs or scripts "
+                    "to "
+                    "be executed at a date and time. An adversary may use task "
+                    "scheduling to "
+                    "execute programs at system startup or on a scheduled basis for "
+                    "persistence.",
                     "depends_on": ["T1168"],
                 },
                 "T1166": {
@@ -149,7 +161,8 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1166",
-                    "description": "Adversaries can set the setuid or setgid bits to get code running in "
+                    "description": "Adversaries can set the setuid or setgid bits to get code "
+                    "running in "
                     "a different user’s context.",
                 },
             },
@@ -193,7 +206,8 @@ SCHEMA = {
                     "value": True,
                     "necessary": True,
                     "link": "https://attack.mitre.org/techniques/T1222",
-                    "description": "Adversaries may modify file permissions/attributes to evade intended DACLs.",
+                    "description": "Adversaries may modify file permissions/attributes to evade "
+                    "intended DACLs.",
                 },
                 "T1099": {
                     "title": "Timestomping",
@@ -201,8 +215,10 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1099",
-                    "description": "Adversaries may modify file time attributes to hide new/changes to existing "
-                    "files to avoid attention from forensic investigators or file analysis tools.",
+                    "description": "Adversaries may modify file time attributes to hide "
+                    "new/changes to existing "
+                    "files to avoid attention from forensic investigators or file "
+                    "analysis tools.",
                 },
                 "T1216": {
                     "title": "Signed script proxy execution",
@@ -210,7 +226,8 @@ SCHEMA = {
                     "value": False,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1216",
-                    "description": "Adversaries may use scripts signed with trusted certificates to "
+                    "description": "Adversaries may use scripts signed with "
+                    "trusted certificates to "
                     "proxy execution of malicious files on Windows systems.",
                 },
             },
@@ -226,8 +243,10 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1110",
-                    "description": "Adversaries may use brute force techniques to attempt access to accounts "
-                    "when passwords are unknown or when password hashes are obtained.",
+                    "description": "Adversaries may use brute force techniques to attempt access "
+                    "to accounts "
+                    "when passwords are unknown or when password hashes are "
+                    "obtained.",
                     "depends_on": ["T1210", "T1021"],
                 },
                 "T1003": {
@@ -236,10 +255,13 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1003",
-                    "description": "Mapped with T1078 Valid Accounts because both techniques require"
+                    "description": "Mapped with T1078 Valid Accounts because "
+                    "both techniques require"
                     " same credential harvesting modules. "
-                    "Credential dumping is the process of obtaining account login and password "
-                    "information, normally in the form of a hash or a clear text password, "
+                    "Credential dumping is the process of obtaining account login "
+                    "and password "
+                    "information, normally in the form of a hash or a clear text "
+                    "password, "
                     "from the operating system and software.",
                     "depends_on": ["T1078"],
                 },
@@ -249,8 +271,10 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1145",
-                    "description": "Adversaries may gather private keys from compromised systems for use in "
-                    "authenticating to Remote Services like SSH or for use in decrypting "
+                    "description": "Adversaries may gather private keys from compromised systems "
+                    "for use in "
+                    "authenticating to Remote Services like SSH or for use in "
+                    "decrypting "
                     "other collected files such as email.",
                     "depends_on": ["T1110", "T1210"],
                 },
@@ -267,8 +291,10 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1087",
-                    "description": "Adversaries may attempt to get a listing of accounts on a system or "
-                    "within an environment. This information can help adversaries determine which "
+                    "description": "Adversaries may attempt to get a listing of accounts on a "
+                    "system or "
+                    "within an environment. This information can help adversaries "
+                    "determine which "
                     "accounts exist to aid in follow-on behavior.",
                 },
                 "T1018": {
@@ -277,8 +303,10 @@ SCHEMA = {
                     "value": True,
                     "necessary": True,
                     "link": "https://attack.mitre.org/techniques/T1018",
-                    "description": "Adversaries will likely attempt to get a listing of other systems by IP address, "
-                    "hostname, or other logical identifier on a network for lateral movement.",
+                    "description": "Adversaries will likely attempt to get a listing of other "
+                    "systems by IP address, "
+                    "hostname, or other logical identifier on a network for lateral"
+                    " movement.",
                 },
                 "T1082": {
                     "title": "System information discovery",
@@ -288,7 +316,8 @@ SCHEMA = {
                     "link": "https://attack.mitre.org/techniques/T1082",
                     "depends_on": ["T1016", "T1005"],
                     "description": "An adversary may attempt to get detailed information about the "
-                    "operating system and hardware, including version, patches, hotfixes, "
+                    "operating system and hardware, including version, patches, "
+                    "hotfixes, "
                     "service packs, and architecture.",
                 },
                 "T1016": {
@@ -298,8 +327,10 @@ SCHEMA = {
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1016",
                     "depends_on": ["T1005", "T1082"],
-                    "description": "Adversaries will likely look for details about the network configuration "
-                    "and settings of systems they access or through information discovery"
+                    "description": "Adversaries will likely look for details about the network "
+                    "configuration "
+                    "and settings of systems they access or through information "
+                    "discovery"
                     " of remote systems.",
                 },
             },
@@ -315,9 +346,12 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1210",
-                    "description": "Exploitation of a software vulnerability occurs when an adversary "
-                    "takes advantage of a programming error in a program, service, or within the "
-                    "operating system software or kernel itself to execute adversary-controlled code.",
+                    "description": "Exploitation of a software vulnerability occurs when an "
+                    "adversary "
+                    "takes advantage of a programming error in a program, service, "
+                    "or within the "
+                    "operating system software or kernel itself to execute "
+                    "adversary-controlled code.",
                 },
                 "T1075": {
                     "title": "Pass the hash",
@@ -325,7 +359,8 @@ SCHEMA = {
                     "value": True,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1075",
-                    "description": "Pass the hash (PtH) is a method of authenticating as a user without "
+                    "description": "Pass the hash (PtH) is a method of authenticating as a user "
+                    "without "
                     "having access to the user's cleartext password.",
                 },
                 "T1105": {
@@ -361,8 +396,10 @@ SCHEMA = {
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1005",
                     "depends_on": ["T1016", "T1082"],
-                    "description": "Sensitive data can be collected from local system sources, such as the file system "
-                    "or databases of information residing on the system prior to Exfiltration.",
+                    "description": "Sensitive data can be collected from local system sources, "
+                    "such as the file system "
+                    "or databases of information residing on the system prior to "
+                    "Exfiltration.",
                 }
             },
         },
@@ -377,7 +414,8 @@ SCHEMA = {
                     "value": True,
                     "necessary": True,
                     "link": "https://attack.mitre.org/techniques/T1090",
-                    "description": "A connection proxy is used to direct network traffic between systems "
+                    "description": "A connection proxy is used to direct network traffic between "
+                    "systems "
                     "or act as an intermediary for network communications.",
                 },
                 "T1065": {
@@ -387,7 +425,8 @@ SCHEMA = {
                     "necessary": True,
                     "link": "https://attack.mitre.org/techniques/T1065",
                     "description": "Adversaries may conduct C2 communications over a non-standard "
-                    "port to bypass proxies and firewalls that have been improperly configured.",
+                    "port to bypass proxies and firewalls that have been improperly "
+                    "configured.",
                 },
                 "T1188": {
                     "title": "Multi-hop proxy",
@@ -411,7 +450,8 @@ SCHEMA = {
                     "value": True,
                     "necessary": True,
                     "link": "https://attack.mitre.org/techniques/T1041",
-                    "description": "Data exfiltration is performed over the Command and Control channel.",
+                    "description": "Data exfiltration is performed over the Command and Control "
+                    "channel.",
                 }
             },
         },

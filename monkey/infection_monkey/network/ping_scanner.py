@@ -59,7 +59,8 @@ class PingScanner(HostScanner, HostFinger):
                 ttl = int(regex_result.group(0))
                 if ttl <= LINUX_TTL:
                     host.os["type"] = "linux"
-                else:  # as far we we know, could also be OSX/BSD but lets handle that when it comes up.
+                else:  # as far we we know, could also be OSX/BSD but lets handle that when it
+                    # comes up.
                     host.os["type"] = "windows"
 
                 host.icmp = True

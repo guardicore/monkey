@@ -40,7 +40,8 @@ BASIC = {
                     "uniqueItems": True,
                     "items": {"type": "string"},
                     "default": ["Administrator", "root", "user"],
-                    "description": "List of user names that will be used by exploiters that need credentials, like "
+                    "description": "List of user names that will be used by exploiters that need "
+                    "credentials, like "
                     "SSH brute-forcing.",
                 },
                 "exploit_password_list": {
@@ -57,7 +58,8 @@ BASIC = {
                         "111111",
                         "iloveyou",
                     ],
-                    "description": "List of passwords that will be used by exploiters that need credentials, like "
+                    "description": "List of passwords that will be used by exploiters that need "
+                    "credentials, like "
                     "SSH brute-forcing.",
                 },
             },

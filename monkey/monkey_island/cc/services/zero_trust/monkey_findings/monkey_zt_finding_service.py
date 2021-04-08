@@ -12,10 +12,12 @@ class MonkeyZTFindingService:
     @staticmethod
     def create_or_add_to_existing(test: str, status: str, events: List[Event]):
         """
-        Create a new finding or add the events to an existing one if it's the same (same meaning same status and same
+        Create a new finding or add the events to an existing one if it's the same (same meaning
+        same status and same
         test).
 
-        :raises: Assertion error if this is used when there's more then one finding which fits the query - this is not
+        :raises: Assertion error if this is used when there's more then one finding which fits
+        the query - this is not
         when this function should be used.
         """
         existing_findings = list(MonkeyFinding.objects(test=test, status=status))

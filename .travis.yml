@@ -55,7 +55,7 @@ install:
 script:
 # Check Python code
 ## Check syntax errors and fail the build if any are found.
-- flake8 ./monkey
+- flake8 .
 
 ## Check import order
 - python -m isort ./monkey --check-only

@@ -109,7 +109,8 @@ MONKEY = {
                     "type": "integer",
                     "default": 1,
                     "minimum": 1,
-                    "description": "Determines how many iterations of the monkey's full lifecycle should occur "
+                    "description": "Determines how many iterations of the monkey's full lifecycle "
+                    "should occur "
                     "(how many times to do the scan)",
                 },
                 "timeout_between_iterations": {
@@ -117,7 +118,8 @@ MONKEY = {
                     "type": "integer",
                     "default": 100,
                     "minimum": 0,
-                    "description": "Determines for how long (in seconds) should the monkey wait before starting another scan",
+                    "description": "Determines for how long (in seconds) should the monkey wait "
+                    "before starting another scan",
                 },
                 "retry_failed_explotation": {
                     "title": "Retry failed exploitation",

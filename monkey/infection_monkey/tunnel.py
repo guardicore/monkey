@@ -173,7 +173,8 @@ class MonkeyTunnel(Thread):
 
         LOG.info("Stopping tunnel, waiting for clients: %s" % repr(self._clients))
 
-        # wait till all of the tunnel clients has been disconnected, or no one used the tunnel in QUIT_TIMEOUT seconds
+        # wait till all of the tunnel clients has been disconnected, or no one used the tunnel in
+        # QUIT_TIMEOUT seconds
         while self._clients and (time.time() - get_last_serve_time() < QUIT_TIMEOUT):
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)

@@ -26,8 +26,10 @@ MAX_MONKEYS_AMOUNT_TO_CACHE = 100
 class Monkey(Document):
     """
     This class has 2 main section:
-        *   The schema section defines the DB fields in the document. This is the data of the object.
-        *   The logic section defines complex questions we can ask about a single document which are asked multiple
+        *   The schema section defines the DB fields in the document. This is the data of the
+        object.
+        *   The logic section defines complex questions we can ask about a single document which
+        are asked multiple
             times, somewhat like an API.
     """
 
@@ -42,7 +44,8 @@ class Monkey(Document):
     ip_addresses = ListField(StringField())
     keepalive = DateTimeField()
     modifytime = DateTimeField()
-    # TODO make "parent" an embedded document, so this can be removed and the schema explained (and validated) verbosely.
+    # TODO make "parent" an embedded document, so this can be removed and the schema explained (
+    #  and validated) verbosely.
     # This is a temporary fix, since mongoengine doesn't allow for lists of strings to be null
     # (even with required=False of null=True).
     # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904
@@ -146,7 +149,8 @@ class Monkey(Document):
         return {"ips": self.ip_addresses, "hostname": self.hostname}
 
     @ring.lru(
-        expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.
+        # data has TTL of 1 second. This is useful for rapid calls for report generation.
+        expire=1
     )
     @staticmethod
     def is_monkey(object_id):

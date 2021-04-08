@@ -28,7 +28,8 @@ class NetEdgeService:
         count = 0
         for monkey_id in monkey_ids:
             count += 1
-            # generating fake ID, because front end requires unique ID's for each edge. Collision improbable
+            # generating fake ID, because front end requires unique ID's for each edge. Collision
+            # improbable
             fake_id = ObjectId(hex(count)[2:].zfill(24))
             island_id = ObjectId("000000000000000000000000")
             monkey_label = NodeService.get_label_for_endpoint(monkey_id)
@@ -61,7 +62,8 @@ class NetEdgeService:
         count = 0
         for monkey_id in monkey_ids:
             count += 1
-            # generating fake ID, because front end requires unique ID's for each edge. Collision improbable
+            # generating fake ID, because front end requires unique ID's for each edge. Collision
+            # improbable
             fake_id = ObjectId(hex(count)[2:].zfill(24))
             src_label = NodeService.get_label_for_endpoint(monkey_id)
             dst_label = NodeService.get_label_for_endpoint(monkey_island_monkey["_id"])

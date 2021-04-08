@@ -5,7 +5,8 @@ import time
 from pathlib import Path
 from threading import Thread
 
-# Add the monkey_island directory to the path, to make sure imports that don't start with "monkey_island." work.
+# Add the monkey_island directory to the path, to make sure imports that don't start with
+# "monkey_island." work.
 from gevent.pywsgi import WSGIServer
 
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
@@ -48,7 +49,6 @@ def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_P
 
 
 def start_island_server(should_setup_only):
-
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)
     assert_mongo_db_version(mongo_url)

@@ -28,7 +28,8 @@ class SignedScriptProxyExecution(PBA):
             super().run()
         except Exception as e:
             LOG.warning(
-                f"An exception occurred on running PBA {POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC}: {str(e)}"
+                f"An exception occurred on running PBA "
+                f"{POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC}: {str(e)}"
             )
         finally:
             cleanup_changes(original_comspec)

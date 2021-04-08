@@ -227,7 +227,8 @@ class InfectionMonkey(object):
                             host_exploited = True
                             VictimHostTelem("T1210", ScanStatus.USED, machine=machine).send()
                             if exploiter.RUNS_AGENT_ON_SUCCESS:
-                                break  # if adding machine to exploited, won't try other exploits on it
+                                break  # if adding machine to exploited, won't try other exploits
+                                # on it
                     if not host_exploited:
                         self._fail_exploitation_machines.add(machine)
                         VictimHostTelem("T1210", ScanStatus.SCANNED, machine=machine).send()
@@ -244,7 +245,8 @@ class InfectionMonkey(object):
             elif not WormConfiguration.alive:
                 LOG.info("Marked not alive from configuration")
 
-            # if host was exploited, before continue to closing the tunnel ensure the exploited host had its chance to
+            # if host was exploited, before continue to closing the tunnel ensure the exploited
+            # host had its chance to
             # connect to the tunnel
             if len(self._exploited_machines) > 0:
                 time_to_sleep = WormConfiguration.keep_tunnel_open_time
@@ -261,7 +263,8 @@ class InfectionMonkey(object):
 
         except PlannedShutdownException:
             LOG.info(
-                "A planned shutdown of the Monkey occurred. Logging the reason and finishing execution."
+                "A planned shutdown of the Monkey occurred. Logging the reason and finishing "
+                "execution."
             )
             LOG.exception("Planned shutdown, reason:")
 

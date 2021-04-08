@@ -62,11 +62,13 @@ def serve_static_file(static_path):
     try:
         return send_from_directory(os.path.join(MONKEY_ISLAND_ABS_PATH, "cc/ui/dist"), static_path)
     except NotFound:
-        # Because react uses various urls for same index page, this is probably the user's intention.
+        # Because react uses various urls for same index page, this is probably the user's
+        # intention.
         if static_path == HOME_FILE:
             flask_restful.abort(
                 Response(
-                    "Page not found. Make sure you ran the npm script and the cwd is monkey\\monkey.",
+                    "Page not found. Make sure you ran the npm script and the cwd is "
+                    "monkey\\monkey.",
                     500,
                 )
             )
@@ -82,11 +84,13 @@ def init_app_config(app, mongo_url):
 
     # See https://flask-jwt-extended.readthedocs.io/en/stable/options
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = env_singleton.env.get_auth_expiration_time()
-    # Invalidate the signature of JWTs if the server process restarts. This avoids the edge case of getting a JWT,
+    # Invalidate the signature of JWTs if the server process restarts. This avoids the edge case
+    # of getting a JWT,
     # deciding to reset credentials and then still logging in with the old JWT.
     app.config["JWT_SECRET_KEY"] = str(uuid.uuid4())
 
-    # By default, Flask sorts keys of JSON objects alphabetically, which messes with the ATT&CK matrix in the
+    # By default, Flask sorts keys of JSON objects alphabetically, which messes with the ATT&CK
+    # matrix in the
     # configuration. See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
 
@@ -101,7 +105,8 @@ def init_app_services(app):
         database.init()
         Database.init_db()
 
-    # If running on AWS, this will initialize the instance data, which is used "later" in the execution of the island.
+    # If running on AWS, this will initialize the instance data, which is used "later" in the
+    # execution of the island.
     RemoteRunAwsService.init()
 
 

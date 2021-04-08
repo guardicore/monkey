@@ -12,19 +12,22 @@ INTERNAL = {
                     "title": "Singleton mutex name",
                     "type": "string",
                     "default": "{2384ec59-0df8-4ab9-918c-843740924a28}",
-                    "description": "The name of the mutex used to determine whether the monkey is already running",
+                    "description": "The name of the mutex used to determine whether the monkey is "
+                    "already running",
                 },
                 "keep_tunnel_open_time": {
                     "title": "Keep tunnel open time",
                     "type": "integer",
                     "default": 60,
-                    "description": "Time to keep tunnel open before going down after last exploit (in seconds)",
+                    "description": "Time to keep tunnel open before going down after last exploit "
+                    "(in seconds)",
                 },
                 "monkey_dir_name": {
                     "title": "Monkey's directory name",
                     "type": "string",
                     "default": r"monkey_dir",
-                    "description": "Directory name for the directory which will contain all of the monkey files",
+                    "description": "Directory name for the directory which will contain all of the"
+                    " monkey files",
                 },
                 "started_on_island": {
                     "title": "Started on island",
@@ -43,7 +46,8 @@ INTERNAL = {
                     "title": "Max victims to find",
                     "type": "integer",
                     "default": 100,
-                    "description": "Determines the maximum number of machines the monkey is allowed to scan",
+                    "description": "Determines the maximum number of machines the monkey is "
+                    "allowed to scan",
                 },
                 "victims_max_exploit": {
                     "title": "Max victims to exploit",
@@ -52,7 +56,8 @@ INTERNAL = {
                     "description": "Determines the maximum number of machines the monkey"
                     " is allowed to successfully exploit. "
                     + WARNING_SIGN
-                    + " Note that setting this value too high may result in the monkey propagating to "
+                    + " Note that setting this value too high may result in the "
+                    "monkey propagating to "
                     "a high number of machines",
                 },
                 "internet_services": {
@@ -61,7 +66,8 @@ INTERNAL = {
                     "uniqueItems": True,
                     "items": {"type": "string"},
                     "default": ["monkey.guardicore.com", "www.google.com"],
-                    "description": "List of internet services to try and communicate with to determine internet"
+                    "description": "List of internet services to try and communicate with to "
+                    "determine internet"
                     " connectivity (use either ip or domain)",
                 },
                 "self_delete_in_cleanup": {
@@ -108,7 +114,8 @@ INTERNAL = {
                     "uniqueItems": True,
                     "items": {"type": "string"},
                     "default": ["192.0.2.0:5000"],
-                    "description": "List of command servers/network interfaces to try to communicate with "
+                    "description": "List of command servers/network interfaces to try to "
+                    "communicate with "
                     "(format is <ip>:<port>)",
                 },
                 "current_server": {
@@ -133,7 +140,8 @@ INTERNAL = {
                             "uniqueItems": True,
                             "items": {"type": "integer"},
                             "default": [80, 8080, 443, 8008, 7001, 9200],
-                            "description": "List of ports the monkey will check if are being used for HTTP",
+                            "description": "List of ports the monkey will check if are being used "
+                            "for HTTP",
                         },
                         "tcp_target_ports": {
                             "title": "TCP target ports",
@@ -154,7 +162,8 @@ INTERNAL = {
                                 7001,
                                 8088,
                             ],
-                            "description": "List of TCP ports the monkey will check whether they're open",
+                            "description": "List of TCP ports the monkey will check whether "
+                            "they're open",
                         },
                         "tcp_scan_interval": {
                             "title": "TCP scan interval",
@@ -166,13 +175,15 @@ INTERNAL = {
                             "title": "TCP scan timeout",
                             "type": "integer",
                             "default": 3000,
-                            "description": "Maximum time (in milliseconds) to wait for TCP response",
+                            "description": "Maximum time (in milliseconds) "
+                            "to wait for TCP response",
                         },
                         "tcp_scan_get_banner": {
                             "title": "TCP scan - get banner",
                             "type": "boolean",
                             "default": True,
-                            "description": "Determines whether the TCP scan should try to get the banner",
+                            "description": "Determines whether the TCP scan should try to get the "
+                            "banner",
                         },
                     },
                 },
@@ -184,7 +195,8 @@ INTERNAL = {
                             "title": "Ping scan timeout",
                             "type": "integer",
                             "default": 1000,
-                            "description": "Maximum time (in milliseconds) to wait for ping response",
+                            "description": "Maximum time (in milliseconds) to wait for ping "
+                            "response",
                         }
                     },
                 },
@@ -238,48 +250,55 @@ INTERNAL = {
                     "title": "Dropper sets date",
                     "type": "boolean",
                     "default": True,
-                    "description": "Determines whether the dropper should set the monkey's file date to be the same as"
+                    "description": "Determines whether the dropper should set the monkey's file "
+                    "date to be the same as"
                     " another file",
                 },
                 "dropper_date_reference_path_windows": {
                     "title": "Dropper date reference path (Windows)",
                     "type": "string",
                     "default": "%windir%\\system32\\kernel32.dll",
-                    "description": "Determines which file the dropper should copy the date from if it's configured to do"
+                    "description": "Determines which file the dropper should copy the date from if "
+                    "it's configured to do"
                     " so on Windows (use fullpath)",
                 },
                 "dropper_date_reference_path_linux": {
                     "title": "Dropper date reference path (Linux)",
                     "type": "string",
                     "default": "/bin/sh",
-                    "description": "Determines which file the dropper should copy the date from if it's configured to do"
+                    "description": "Determines which file the dropper should copy the date from if "
+                    "it's configured to do"
                     " so on Linux (use fullpath)",
                 },
                 "dropper_target_path_linux": {
                     "title": "Dropper target path on Linux",
                     "type": "string",
                     "default": "/tmp/monkey",
-                    "description": "Determines where should the dropper place the monkey on a Linux machine",
+                    "description": "Determines where should the dropper place the monkey on a "
+                    "Linux machine",
                 },
                 "dropper_target_path_win_32": {
                     "title": "Dropper target path on Windows (32bit)",
                     "type": "string",
                     "default": "C:\\Windows\\temp\\monkey32.exe",
-                    "description": "Determines where should the dropper place the monkey on a Windows machine "
+                    "description": "Determines where should the dropper place the monkey on a "
+                    "Windows machine "
                     "(32bit)",
                 },
                 "dropper_target_path_win_64": {
                     "title": "Dropper target path on Windows (64bit)",
                     "type": "string",
                     "default": "C:\\Windows\\temp\\monkey64.exe",
-                    "description": "Determines where should the dropper place the monkey on a Windows machine "
+                    "description": "Determines where should the dropper place the monkey on a "
+                    "Windows machine "
                     "(64 bit)",
                 },
                 "dropper_try_move_first": {
                     "title": "Try to move first",
                     "type": "boolean",
                     "default": True,
-                    "description": "Determines whether the dropper should try to move itself instead of copying itself"
+                    "description": "Determines whether the dropper should try to move itself "
+                    "instead of copying itself"
                     " to target path",
                 },
             },
@@ -316,7 +335,8 @@ INTERNAL = {
                     "title": "Send log to server",
                     "type": "boolean",
                     "default": True,
-                    "description": "Determines whether the monkey sends its log to the Monkey Island server",
+                    "description": "Determines whether the monkey sends its log to the Monkey "
+                    "Island server",
                 },
             },
         },
@@ -356,7 +376,8 @@ INTERNAL = {
                             "title": "Skip exploit if file exists",
                             "type": "boolean",
                             "default": False,
-                            "description": "Determines whether the monkey should skip the exploit if the monkey's file"
+                            "description": "Determines whether the monkey should skip the exploit "
+                            "if the monkey's file"
                             " is already on the remote machine",
                         }
                     },
@@ -410,7 +431,8 @@ INTERNAL = {
                                 "/shares",
                                 "/home",
                             ],
-                            "description": "List of full paths to share folder for SambaCry to guess",
+                            "description": "List of full paths to share folder for SambaCry to "
+                            "guess",
                         },
                         "sambacry_shares_not_to_check": {
                             "title": "SambaCry shares not to check",
@@ -418,7 +440,8 @@ INTERNAL = {
                             "uniqueItems": True,
                             "items": {"type": "string"},
                             "default": ["IPC$", "print$"],
-                            "description": "These shares won't be checked when exploiting with SambaCry",
+                            "description": "These shares won't be checked when exploiting with "
+                            "SambaCry",
                         },
                     },
                 },
@@ -431,13 +454,15 @@ INTERNAL = {
                         "title": "SMB download timeout",
                         "type": "integer",
                         "default": 300,
-                        "description": "Timeout (in seconds) for SMB download operation (used in various exploits using SMB)",
+                        "description": "Timeout (in seconds) for SMB download operation (used in "
+                        "various exploits using SMB)",
                     },
                     "smb_service_name": {
                         "title": "SMB service name",
                         "type": "string",
                         "default": "InfectionMonkey",
-                        "description": "Name of the SMB service that will be set up to download monkey",
+                        "description": "Name of the SMB service that will be set up to download "
+                        "monkey",
                     },
                 },
             },
@@ -450,7 +475,8 @@ INTERNAL = {
                     "title": "Export monkey telemetries",
                     "type": "boolean",
                     "default": False,
-                    "description": "Exports unencrypted telemetries that can be used for tests in development."
+                    "description": "Exports unencrypted telemetries that "
+                    "can be used for tests in development."
                     " Do not turn on!",
                 }
             },
