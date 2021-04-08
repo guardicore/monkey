@@ -81,6 +81,7 @@ MonkeyZoo/*
 !MonkeyZoo/README.MD
 !MonkeyZoo/config.tf
 !MonkeyZoo/MonkeyZooDocs.pdf
+monkey/logs
 
 # Exported monkey telemetries
 /monkey/telem_sample/
