@@ -32,7 +32,7 @@ This Debian package has been tested on Ubuntu Bionic 18.04 LTS and Ubuntu Focal 
     ```
 1. Install the Monkey Island Debian package:
     ```sh
-    sudo dpkg -i monkey_island.deb  # this might print errors
+    sudo dpkg -i monkey_island_deb.deb  # this might print errors
     ```
 1. If, at this point, you receive dpkg errors that look like this:
 
@@ -86,4 +86,3 @@ If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
 ![Export configuration](../../images/setup/export-configuration.png "Export configuration")
-
