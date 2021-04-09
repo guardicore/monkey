@@ -1,4 +1,4 @@
-from infection_monkey.utils.plugins.pluginTests.PluginTestClass import TestPlugin  # noqa: F401
+from infection_monkey.utils.plugins.pluginTests.PluginTestClass import PluginTester  # noqa: F401
 
 
 class SomeDummyPlugin:

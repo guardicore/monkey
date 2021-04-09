@@ -2,7 +2,7 @@ import infection_monkey.utils.plugins.pluginTests
 from infection_monkey.utils.plugins.plugin import Plugin
 
 
-class TestPlugin(Plugin):
+class PluginTester(Plugin):
     classes_to_load = []
 
     @staticmethod
@@ -11,7 +11,7 @@ class TestPlugin(Plugin):
         Decides if post breach action is enabled in config
         :return: True if it needs to be ran, false otherwise
         """
-        return class_name in TestPlugin.classes_to_load
+        return class_name in PluginTester.classes_to_load
 
     @staticmethod
     def base_package_file():
