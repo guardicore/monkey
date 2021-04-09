@@ -24,8 +24,8 @@ Architecturally, Infection Monkey is comprised of two components:
 * Monkey Agent (Monkey for short) - a safe, worm-like binary program which scans, propagates and simulates attack techniques on the **local network**.
 * Monkey Island Server (Island for short) - a C&C web server which provides a GUI for users and interacts with the Monkey Agents.
 
-The user can run the Monkey Agent on the Island server machine or distribute Monkey Agent binaries on the network manually. Based on 
-the configuration parameters, Monkey Agents scan, propagate and simulate an attacker's behavior on the local network. All of the 
+The user can run the Monkey Agent on the Island server machine or distribute Monkey Agent binaries on the network manually. Based on
+the configuration parameters, Monkey Agents scan, propagate and simulate an attacker's behavior on the local network. All of the
 information gathered about the network is aggregated in the Island Server and displayed once all Monkey Agents are finished.
 
 ## Results
@@ -35,12 +35,12 @@ The results of running Monkey Agents are:
  - A security report, which displays security issues that Monkey Agents discovered and/or exploited.
  - A MITRE ATT&CK report, which displays the information about the ATT&CK techniques that Monkey Agents tried to use.
  - A Zero Trust report, which displays violations of Zero Trust principles that Monkey Agents found.
- 
-A more in-depth description of reports generated can be found in the [reports documentation page](/reports).
+
+A more in-depth description of reports generated can be found in the [reports documentation page]({{< ref "/reports" >}}).
 
 ## Getting Started
 
-If you haven't downloaded Infection Monkey yet you can do so [from our homepage](https://www.guardicore.com/infectionmonkey/#download). After downloading the Monkey, install it using one of our [setup guides](setup), and read our [getting started guide](usage/getting-started) for a quick-start on Monkey!
+If you haven't downloaded Infection Monkey yet you can do so [from our homepage](https://www.guardicore.com/infectionmonkey/#download). After downloading the Monkey, install it using one of our [setup guides] ({{< ref "/setup" >}}), and read our [getting started guide] ({{< ref "/usage/getting-started" >}}) for a quick-start on Monkey!
 
 ## Support and community
 
