@@ -4,7 +4,7 @@ date = 2020-05-26T20:55:04+03:00
 weight = 30
 chapter = true
 pre = '<i class="fas fa-code"></i> '
-tags = ["development", "contribute"] 
+tags = ["development", "contribute"]
 +++
 
 # Securing networks together
@@ -15,7 +15,7 @@ Want to help secure networks? That's great!
 
 Here are a few short links to help you get started:
 
-* [Getting up and running](./setup-development-environment) - These instructions will help you get a working development setup.
+* [Getting up and running]({{< ref "/development/setup-development-environment" >}}) - These instructions will help you get a working development setup.
 * [Contributing guidelines](https://github.com/guardicore/monkey/blob/master/CONTRIBUTING.md) - These guidelines will help you submit.
 
 ## What are we looking for?
@@ -30,7 +30,7 @@ It's important to note that the Infection Monkey must be absolutely reliable. Ot
 
 ### Analysis plugins 🔬
 
-Successfully attacking every server in the network has little value if the Infection Monkey can't provide recommendations for reducing future risk. Whether it's explaining how the Infection Monkey used stolen credentials or escaped from locked-down networks, analysis is what helps users translate the Infection Monkey's activities into actionable next steps for improving security. 
+Successfully attacking every server in the network has little value if the Infection Monkey can't provide recommendations for reducing future risk. Whether it's explaining how the Infection Monkey used stolen credentials or escaped from locked-down networks, analysis is what helps users translate the Infection Monkey's activities into actionable next steps for improving security.
 
 ### Better code 💪
 

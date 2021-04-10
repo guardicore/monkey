@@ -39,9 +39,9 @@ The Monkey shuts off either when it can't find new victims, or when it has excee
 ## How to reset the password?
 
 On your first access of Monkey Island server, you'll be prompted to create an account. If you forgot the credentials you
- entered or just want to change them, you need to manually alter the `server_config.json` file. On Linux, this file is 
- located on `/var/monkey/monkey_island/cc/server_config.json`. On windows, it's based on your install directory (typically 
- `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file 
+ entered or just want to change them, you need to manually alter the `server_config.json` file. On Linux, this file is
+ located on `/var/monkey/monkey_island/cc/server_config.json`. On windows, it's based on your install directory (typically
+ `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file
  leaving the **deployment option unchanged** (it might be "vmware" or "linux" in your case):
 
 ```json
@@ -50,7 +50,7 @@ On your first access of Monkey Island server, you'll be prompted to create an ac
   "deployment": "windows"
 }
 ```
- Then reset the Island process (`sudo systemctl restart monkey-island.service` for linux, restart program for windows). 
+ Then reset the Island process (`sudo systemctl restart monkey-island.service` for linux, restart program for windows).
  Finally, go to the Island's URL and create a new account.
 
 ## Should I run the Monkey continuously?
@@ -134,7 +134,7 @@ If you do experience any performance issues please let us know on [our Slack cha
 
 Absolutely! User credentials are stored encrypted in the Monkey Island server. This information is then accessible only to users that have access to the Island.
 
-We advise to limit access to the Monkey Island server by following our [password protection guide](../usage/island/password-guide).
+We advise to limit access to the Monkey Island server by following our [password protection guide]({{< ref "/setup/accounts-and-security" >}}).
 
 ### How do you store sensitive information on Monkey Island?
 
@@ -150,7 +150,7 @@ This means we avoid using some very strong (and famous) exploits such as [Eterna
 
 ## After I've set up Monkey Island, how can I execute the Monkey?
 
-See our detailed [getting started](../content/usage/getting-started) guide.
+See our detailed [getting started]({{< ref "/usage/getting-started" >}}) guide.
 
 ## How can I make the monkey propagate “deeper” into the network?
 
@@ -169,7 +169,7 @@ This is sometimes caused when Monkey Island is installed with an old version of 
 
 ## How can I get involved with the project?
 
-The Monkey is an open-source project, and we weclome contributions and contributors. Check out the [contribution documentation](../development) for more information.
+The Monkey is an open-source project, and we weclome contributions and contributors. Check out the [contribution documentation]({{< ref "/development" >}}) for more information.
 
 ## About the project 🐵
 

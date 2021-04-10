@@ -4,7 +4,7 @@ date = 2020-05-26T20:55:04+03:00
 weight = 5
 chapter = true
 pre = '<i class="fas fa-cogs"></i> '
-tags = ["setup"] 
+tags = ["setup"]
 +++
 
 # Setting up Infection Monkey
@@ -15,7 +15,7 @@ Once you've downloaded an installer, follow the relevant guide for your environm
 
 {{% children %}}
 
-After setting the Monkey up, check out our [Getting Started](../usage/getting-started) guide!
+After setting the Monkey up, check out our [Getting Started](/usage/getting-started) guide!
 
 {{% notice tip %}}
 You can find information about [operating system compatibility and support here](../reference/operating_systems_support).

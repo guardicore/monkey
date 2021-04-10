@@ -6,7 +6,7 @@ description: "Provides actionable recommendations and insight into an attacker's
 ---
 
 {{% notice info %}}
-Check out [the documentation for other reports available in the Infection Monkey](../).
+Check out [the documentation for other reports available in the Infection Monkey]({{< ref "/reports" >}}).
 {{% /notice %}}
 
 The Infection Monkey's **Security Report** provides you with actionable recommendations and insight into an attacker's view of your network. You can download a PDF of an example report here:
