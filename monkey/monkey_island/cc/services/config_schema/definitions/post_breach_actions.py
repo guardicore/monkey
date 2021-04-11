@@ -10,7 +10,7 @@ POST_BREACH_ACTIONS = {
             "enum": ["BackdoorUser"],
             "title": "Back door user",
             "safe": True,
-            "info": "Attempts to create a new user on the system and delete it " "afterwards.",
+            "info": "Attempts to create a new user on the system and delete it afterwards.",
             "attack_techniques": ["T1136"],
         },
         {
