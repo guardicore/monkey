@@ -33,20 +33,6 @@ log_message() {
   echo -e "DEPLOYMENT SCRIPT: $1"
 }
 
-setup_python_37_appdir() {
-    PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python3.7.9-cp37-cp37m-manylinux1_x86_64.AppImage"
-    PYTHON_APPIMAGE="python3.7.9_x86_64.AppImage"
-    rm -rf "$APPDIR" || true
-    curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
-
-    chmod u+x "$PYTHON_APPIMAGE"
-
-    ./"$PYTHON_APPIMAGE" --appimage-extract
-    rm "$PYTHON_APPIMAGE"
-    mv ./squashfs-root "$APPDIR"
-    mkdir -p "$INSTALL_DIR"
-}
-
 install_nodejs() {
   NODE_SRC=https://deb.nodesource.com/setup_12.x
 
@@ -99,6 +85,37 @@ clone_monkey_repo() {
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
 
   chmod 774 -R "${REPO_MONKEY_HOME}"
+}
+
+setup_appdir() {
+	setup_python_37_appdir
+
+	copy_monkey_island_to_appdir
+	download_monkey_agent_binaries
+
+	install_monkey_island_python_dependencies
+	install_mongodb
+
+	generate_ssl_cert
+	build_frontend
+
+	add_monkey_icon
+	add_desktop_file
+	add_apprun
+}
+
+setup_python_37_appdir() {
+    PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python3.7.9-cp37-cp37m-manylinux1_x86_64.AppImage"
+    PYTHON_APPIMAGE="python3.7.9_x86_64.AppImage"
+    rm -rf "$APPDIR" || true
+    curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
+
+    chmod u+x "$PYTHON_APPIMAGE"
+
+    ./"$PYTHON_APPIMAGE" --appimage-extract
+    rm "$PYTHON_APPIMAGE"
+    mv ./squashfs-root "$APPDIR"
+    mkdir -p "$INSTALL_DIR"
 }
 
 copy_monkey_island_to_appdir() {
@@ -163,6 +180,23 @@ build_frontend() {
     popd || handle_error
 }
 
+add_monkey_icon() {
+	unlink "$APPDIR"/python.png
+	mkdir -p "$APPDIR"/usr/share/icons
+	cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/monkey-icon.svg
+	ln -s "$APPDIR"/usr/share/icons/monkey-icon.svg "$APPDIR"/monkey-icon.svg
+}
+
+add_desktop_file() {
+	unlink "$APPDIR"/python3.7.9.desktop
+	cp ./monkey-island.desktop "$APPDIR"/usr/share/applications
+	ln -s "$APPDIR"/usr/share/applications/monkey-island.desktop "$APPDIR"/monkey-island.desktop
+}
+
+add_apprun() {
+	cp ./AppRun "$APPDIR"
+}
+
 build_appimage() {
     log_message "Building AppImage"
     ARCH="x86_64" appimagetool "$APPDIR"
@@ -183,33 +217,10 @@ fi
 install_build_prereqs
 install_appimage_tool
 
-setup_python_37_appdir
-
-
 load_monkey_binary_config
 clone_monkey_repo "$@"
 
-copy_monkey_island_to_appdir
-download_monkey_agent_binaries
-
-install_monkey_island_python_dependencies
-
-install_mongodb
-
-generate_ssl_cert
-
-build_frontend
-
-unlink "$APPDIR"/python.png
-mkdir -p "$APPDIR"/usr/share/icons
-cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/monkey-icon.svg
-ln -s "$APPDIR"/usr/share/icons/monkey-icon.svg "$APPDIR"/monkey-icon.svg
-
-unlink "$APPDIR"/python3.7.9.desktop
-cp ./monkey-island.desktop "$APPDIR"/usr/share/applications
-ln -s "$APPDIR"/usr/share/applications/monkey-island.desktop "$APPDIR"/monkey-island.desktop
-
-cp ./AppRun "$APPDIR"
+setup_appdir
 
 build_appimage
 
