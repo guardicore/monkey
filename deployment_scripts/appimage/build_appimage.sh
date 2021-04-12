@@ -192,10 +192,6 @@ clone_monkey_repo "$@"
 copy_monkey_island_to_appdir
 download_monkey_agent_binaries
 
-# Create folders
-log_message "Creating island dirs under $ISLAND_PATH"
-mkdir -p "${MONGO_PATH}" || handle_error
-
 install_monkey_island_python_dependencies
 
 install_mongodb
