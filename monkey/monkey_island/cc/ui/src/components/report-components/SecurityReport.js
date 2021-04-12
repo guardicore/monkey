@@ -58,7 +58,7 @@ class ReportPageComponent extends AuthComponent {
   credentialTypes = {
     PASSWORD: 'password',
     HASH: 'hash',
-    KEY: 'key',
+    KEY: 'key'
   }
 
   issueContentTypes = {
@@ -152,7 +152,7 @@ class ReportPageComponent extends AuthComponent {
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'zerologon_pass_restore_failed': {
-        [this.issueContentTypes.OVERVIEW]: zerologonOverviewWithFailedPassResetWarning,
+        [this.issueContentTypes.OVERVIEW]: zerologonOverviewWithFailedPassResetWarning
       },
       'island_cross_segment': {
         [this.issueContentTypes.OVERVIEW]: crossSegmentIssueOverview,
