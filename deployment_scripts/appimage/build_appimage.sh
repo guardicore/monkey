@@ -199,7 +199,7 @@ Run \`sudo -v\`, enter your password, and then re-run this script."
   exit 1
 fi
 
-config_url="https://raw.githubusercontent.com/mssalvatore/monkey/linux-deploy-binaries/deployment_scripts/config"
+config_url="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
 
 setup_appdir
 
