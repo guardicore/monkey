@@ -13,6 +13,10 @@ ISLAND_PATH="$INSTALL_DIR/monkey_island"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 
+NODE_SRC=https://deb.nodesource.com/setup_12.x
+APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
+PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python3.7.9-cp37-cp37m-manylinux1_x86_64.AppImage"
+
 is_root() {
   return "$(id -u)"
 }
@@ -34,8 +38,6 @@ log_message() {
 }
 
 install_nodejs() {
-  NODE_SRC=https://deb.nodesource.com/setup_12.x
-
   log_message "Installing nodejs"
 
   curl -sL $NODE_SRC | sudo -E bash -
@@ -56,7 +58,6 @@ install_build_prereqs() {
 
 install_appimage_tool() {
     APP_TOOL_BIN=$HOME/bin/appimagetool
-    APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
 
     mkdir -p "$HOME"/bin
     curl -L -o "$APP_TOOL_BIN" "$APP_TOOL_URL"
@@ -105,7 +106,6 @@ setup_appdir() {
 }
 
 setup_python_37_appdir() {
-    PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python3.7.9-cp37-cp37m-manylinux1_x86_64.AppImage"
     PYTHON_APPIMAGE="python3.7.9_x86_64.AppImage"
     rm -rf "$APPDIR" || true
     curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
