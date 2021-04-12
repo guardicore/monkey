@@ -18,10 +18,9 @@ NOTE: This script is intended to be run from a clean VM. You can also manually
 remove build artifacts by removing the following files and directories.
 
 - $HOME/.monkey_island (optional)
-- $HOME/monkey-appdir
+- $HOME/squashfs-root
 - $HOME/git/monkey
-- $HOME/appimage/appimage-builder-cache
-- $HOME/appimage/"Monkey\ Island-\*-x86-64.Appimage"
+- $HOME/appimage/Infection_Monkey-x86_64.AppImage
 
 After removing the above files and directories, you can again execute `bash
 build_appimage.sh`.
