@@ -52,7 +52,7 @@
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/internal.py",
             "comments": [],
-            "firstLineNumber": 39,
+            "firstLineNumber": 42,
             "lines": [
                 "             \"title\": \"Monkey\",",
                 "             \"type\": \"object\",",
@@ -61,7 +61,8 @@
                 "*                    \"title\": \"Max victims to find\",",
                 "*                    \"type\": \"integer\",",
                 "*                    \"default\": 100,",
-                "*                    \"description\": \"Determines the maximum number of machines the monkey is allowed to scan\",",
+                "*                    \"description\": \"Determines the maximum number of machines the monkey is \"",
+                "*                    \"allowed to scan\",",
                 "*                },",
                 "                 \"victims_max_exploit\": {",
                 "                     \"title\": \"Max victims to exploit\",",
@@ -78,9 +79,9 @@
     "meta": {
         "app_version": "0.4.1-1",
         "file_blobs": {
-            "monkey/infection_monkey/config.py": "7aeaccee2a663d2b69d62d4692acc2aa24e2d1f7",
-            "monkey/infection_monkey/monkey.py": "7123d8b9ef8c02870534bdf0008df1245bb1392a",
-            "monkey/monkey_island/cc/services/config_schema/internal.py": "890e74efab70c4610f4a17cc531e09e5afcb5368"
+            "monkey/infection_monkey/config.py": "ffdea551eb1ae2b65d4700db896c746771e7954c",
+            "monkey/infection_monkey/monkey.py": "c81a6251746e3af4e93eaa7d50af44d33debe05c",
+            "monkey/monkey_island/cc/services/config_schema/internal.py": "d03527b89c21dfb832a15e4f7d55f4027d83b453"
         }
     }
 }
