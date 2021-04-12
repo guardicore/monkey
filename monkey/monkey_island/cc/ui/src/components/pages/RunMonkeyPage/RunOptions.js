@@ -27,7 +27,7 @@ function RunOptions(props) {
       .then(res => {
         let commandServers = res.configuration.internal.island_server.command_servers;
         let ipAddresses = commandServers.map(ip => {
-          return ip.split(":", 1);
+          return ip.split(':', 1);
         });
         setIps(ipAddresses);
         setInitialized(true);
