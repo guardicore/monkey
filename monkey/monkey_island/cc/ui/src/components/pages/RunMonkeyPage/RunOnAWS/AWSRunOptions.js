@@ -56,7 +56,7 @@ const getContents = (props) => {
         // update existing state, not run-over
         let prevRes = result;
         for (let key in result) {
-          if (result.hasOwnProperty(key)) {
+          if (Object.prototype.hasOwnProperty.call(result, key)) {
             prevRes[key] = result[key];
           }
         }
