@@ -61,10 +61,10 @@ install_build_prereqs() {
     sudo apt upgrade
 
     # appimage-builder prereqs
-    sudo apt install -y python3 python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace
+    sudo apt install -y patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace
 
-    #monkey island prereqs
-    sudo apt install -y curl libcurl4 python3.7 python3.7-dev openssl git build-essential moreutils
+    # monkey island prereqs
+    sudo apt install -y curl libcurl4 openssl git build-essential moreutils
     install_nodejs
 }
 

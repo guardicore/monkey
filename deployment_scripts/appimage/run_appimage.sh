@@ -1,5 +1,6 @@
 #!/bin/bash
 
+PYTHON_CMD="$APPDIR/opt/python3.7/bin/python3.7"
 DOT_MONKEY=$HOME/.monkey_island/
 
 configure_default_logging() {
@@ -16,17 +17,6 @@ configure_default_server() {
 
 
 
-# Detecting command that calls python 3.7
-python_cmd=""
-if [[ $(python --version 2>&1) == *"Python 3.7"* ]]; then
-  python_cmd="python"
-fi
-if [[ $(python37 --version 2>&1) == *"Python 3.7"* ]]; then
-  python_cmd="python37"
-fi
-if [[ $(python3.7 --version 2>&1) == *"Python 3.7"* ]]; then
-  python_cmd="python3.7"
-fi
 
 mkdir --mode=0700 --parents $DOT_MONKEY
 
@@ -38,4 +28,4 @@ configure_default_server
 
 cd $APPDIR/usr/src
 ./monkey_island/bin/mongodb/bin/mongod --dbpath $DB_DIR &
-${python_cmd} ./monkey_island.py --server-config $DOT_MONKEY/server_config.json --logger-config $DOT_MONKEY/island_logger_config.json
+${PYTHON_CMD} ./monkey_island.py --server-config $DOT_MONKEY/server_config.json --logger-config $DOT_MONKEY/island_logger_config.json
