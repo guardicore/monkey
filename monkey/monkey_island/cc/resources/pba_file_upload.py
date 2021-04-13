@@ -1,15 +1,16 @@
 import copy
 import logging
 import os
+from pathlib import Path
 
 import flask_restful
 from flask import Response, request, send_from_directory
 from werkzeug.utils import secure_filename
 
+import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.post_breach_files import (
-    ABS_UPLOAD_PATH,
     PBA_LINUX_FILENAME_PATH,
     PBA_WINDOWS_FILENAME_PATH,
 )
@@ -29,7 +30,7 @@ class FileUpload(flask_restful.Resource):
 
     def __init__(self):
         # Create all directories on the way if they don't exist
-        ABS_UPLOAD_PATH.mkdir(parents=True, exist_ok=True)
+        Path(env_singleton.env.get_config().data_dir_abs_path).mkdir(parents=True, exist_ok=True)
 
     @jwt_required
     def get(self, file_type):
@@ -43,7 +44,7 @@ class FileUpload(flask_restful.Resource):
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_LINUX_FILENAME_PATH))
         else:
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_WINDOWS_FILENAME_PATH))
-        return send_from_directory(ABS_UPLOAD_PATH, filename)
+        return send_from_directory(env_singleton.env.get_config().data_dir_abs_path, filename)
 
     @jwt_required
     def post(self, file_type):
@@ -68,7 +69,7 @@ class FileUpload(flask_restful.Resource):
             PBA_LINUX_FILENAME_PATH if file_type == "PBAlinux" else PBA_WINDOWS_FILENAME_PATH
         )
         filename = ConfigService.get_config_value(filename_path)
-        file_path = ABS_UPLOAD_PATH.joinpath(filename)
+        file_path = Path(env_singleton.env.get_config().data_dir_abs_path).joinpath(filename)
         try:
             if os.path.exists(file_path):
                 os.remove(file_path)
@@ -87,7 +88,9 @@ class FileUpload(flask_restful.Resource):
         :return: filename string
         """
         filename = secure_filename(request_.files["filepond"].filename)
-        file_path = ABS_UPLOAD_PATH.joinpath(filename).absolute()
+        file_path = (
+            Path(env_singleton.env.get_config().data_dir_abs_path).joinpath(filename).absolute()
+        )
         request_.files["filepond"].save(str(file_path))
         ConfigService.set_config_value(
             (PBA_LINUX_FILENAME_PATH if is_linux else PBA_WINDOWS_FILENAME_PATH), filename
