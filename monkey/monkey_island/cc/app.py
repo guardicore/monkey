@@ -37,9 +37,9 @@ from monkey_island.cc.resources.T1216_pba_file_download import T1216PBAFileDownl
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.test.clear_caches import ClearCaches
-from monkey_island.cc.resources.test.log_test import LogTest
-from monkey_island.cc.resources.test.monkey_test import MonkeyTest
-from monkey_island.cc.resources.test.telemetry_test import TelemetryTest
+from monkey_island.cc.resources.test.log_test_endpoint import LogTestEndpoint
+from monkey_island.cc.resources.test.monkey_test_endpoint import MonkeyTestEndpoint
+from monkey_island.cc.resources.test.telemetry_test_endpoint import TelemetryTestEndpoint
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
 from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
@@ -165,10 +165,10 @@ def init_api_resources(api):
     api.add_resource(AWSKeys, "/api/aws_keys")
 
     # Resources used by black box tests
-    api.add_resource(MonkeyTest, "/api/test/monkey")
+    api.add_resource(MonkeyTestEndpoint, "/api/test/monkey")
     api.add_resource(ClearCaches, "/api/test/clear_caches")
-    api.add_resource(LogTest, "/api/test/log")
-    api.add_resource(TelemetryTest, "/api/test/telemetry")
+    api.add_resource(LogTestEndpoint, "/api/test/log")
+    api.add_resource(TelemetryTestEndpoint, "/api/test/telemetry")
 
 
 def init_app(mongo_url):
