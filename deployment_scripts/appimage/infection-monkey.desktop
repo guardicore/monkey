@@ -2,7 +2,7 @@
 Type=Application
 Name=Infection Monkey
 Exec=bash
-Comment=Infection Monkey FILL ME IN
+Comment=An automated breach and attack simulation platform
 Icon=infection-monkey
 Categories=Development;
 Terminal=true
