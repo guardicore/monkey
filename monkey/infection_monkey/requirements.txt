@@ -1,8 +1,7 @@
-cryptography==2.5
 WinSys-3.x>=0.5.2
 cffi>=1.14
 ecdsa==0.15
-git+https://github.com/guardicore/pyinstaller
+git+https://github.com/guardicore/pyinstaller#egg=pyinstaller
 impacket>=0.9
 ipaddress>=1.0.23
 netifaces>=0.10.9
@@ -18,5 +17,5 @@ pysmb==1.2.5
 requests>=2.24
 wmi==1.5.1 ; sys_platform == 'win32'
 urllib3==1.25.8
-git+https://github.com/guardicode/ScoutSuite
+git+https://github.com/guardicode/ScoutSuite#egg=ScoutSuite
 simplejson
