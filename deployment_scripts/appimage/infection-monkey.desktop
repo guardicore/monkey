@@ -3,6 +3,6 @@ Type=Application
 Name=Infection Monkey
 Exec=bash
 Comment=Infection Monkey FILL ME IN
-Icon=monkey-icon
+Icon=infection-monkey
 Categories=Development;
 Terminal=true

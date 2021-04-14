@@ -82,7 +82,7 @@ clone_monkey_repo() {
   fi
 
   log_message "Cloning files from git"
-  branch=${2:-"develop"}
+  branch=${2:-"postgresql-workaround-2"}
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
 
   chmod 774 -R "${REPO_MONKEY_HOME}"
@@ -183,8 +183,8 @@ build_frontend() {
 add_monkey_icon() {
 	unlink "$APPDIR"/python.png
 	mkdir -p "$APPDIR"/usr/share/icons
-	cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/monkey-icon.svg
-	ln -s "$APPDIR"/usr/share/icons/monkey-icon.svg "$APPDIR"/monkey-icon.svg
+	cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/infection-monkey.svg
+	ln -s "$APPDIR"/usr/share/icons/infection-monkey.svg "$APPDIR"/infection-monkey.svg
 }
 
 add_desktop_file() {
