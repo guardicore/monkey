@@ -1,0 +1,32 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+cffi = ">=1.14"
+ecdsa = "==0.15"
+pyinstaller = {git = "https://github.com/guardicore/pyinstaller"}
+impacket = ">=0.9"
+ipaddress = ">=1.0.23"
+netifaces = ">=0.10.9"
+odict = "==1.7.0"
+paramiko = ">=2.7.1"
+psutil = ">=5.7.0"
+psycopg2-binary = "==2.8.6"
+pycryptodome = "==3.9.8"
+pyftpdlib = "==1.5.6"
+pymssql = "<3.0"
+pypykatz = "==0.3.12"
+pysmb = "==1.2.5"
+requests = ">=2.24"
+urllib3 = "==1.25.8"
+simplejson = "*"
+"WinSys-3.x" = ">=0.5.2"
+WMI = "==1.5.1"
+ScoutSuite = {git = "https://github.com/guardicode/ScoutSuite"}
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
