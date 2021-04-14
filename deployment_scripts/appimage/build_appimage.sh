@@ -189,8 +189,8 @@ add_monkey_icon() {
 
 add_desktop_file() {
 	unlink "$APPDIR"/python3.7.9.desktop
-	cp ./monkey-island.desktop "$APPDIR"/usr/share/applications
-	ln -s "$APPDIR"/usr/share/applications/monkey-island.desktop "$APPDIR"/monkey-island.desktop
+	cp ./infection-monkey.desktop "$APPDIR"/usr/share/applications
+	ln -s "$APPDIR"/usr/share/applications/infection-monkey.desktop "$APPDIR"/infection-monkey.desktop
 }
 
 add_apprun() {
