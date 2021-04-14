@@ -4,7 +4,7 @@ from common.network.network_range import CidrRange, SingleIpRange
 from infection_monkey.model.victim_host_generator import VictimHostGenerator
 
 
-class VictimHostGeneratorTester(TestCase):
+class TestVictimHostGenerator(TestCase):
     def setUp(self):
         self.cidr_range = CidrRange("10.0.0.0/28", False)  # this gives us 15 hosts
         self.local_host_range = SingleIpRange("localhost")

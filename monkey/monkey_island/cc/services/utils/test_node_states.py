@@ -3,7 +3,7 @@ from unittest import TestCase
 from monkey_island.cc.services.utils.node_states import NodeStates, NoGroupsFoundException
 
 
-class TestNodeGroups(TestCase):
+class TestNodeStates(TestCase):
     def test_get_group_by_keywords(self):
         self.assertEqual(NodeStates.get_by_keywords(["island"]), NodeStates.ISLAND)
         self.assertEqual(

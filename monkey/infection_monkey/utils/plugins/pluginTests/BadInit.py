@@ -1,6 +1,6 @@
-from infection_monkey.utils.plugins.pluginTests.PluginTestClass import TestPlugin
+from infection_monkey.utils.plugins.pluginTests.PluginTestClass import PluginTester
 
 
-class BadPluginInit(TestPlugin):
+class BadPluginInit(PluginTester):
     def __init__(self):
         raise Exception("TestException")

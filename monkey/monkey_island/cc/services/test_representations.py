@@ -6,7 +6,7 @@ import bson
 from monkey_island.cc.services.representations import normalize_obj
 
 
-class TestJsonRepresentations(TestCase):
+class TestRepresentations(TestCase):
     def test_normalize_obj(self):
         # empty
         self.assertEqual({}, normalize_obj({}))

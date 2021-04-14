@@ -81,7 +81,7 @@
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
             "comments": [],
-            "firstLineNumber": 4,
+            "firstLineNumber": 5,
             "lines": [
                 "     \"might do after breaching a new machine. Used in ATT&CK and Zero trust reports.\",",
                 "     \"type\": \"string\",",
@@ -113,7 +113,7 @@
             "monkey/common/common_consts/post_breach_consts.py": "25e6679cb1623aae1a732deb05cc011a452743e3",
             "monkey/infection_monkey/post_breach/actions/add_user.py": "cae5a2428fa01b333a2e70365c9da1e189e31bc4",
             "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py": "dfc5945a362b88c1135f4476526c6c82977b02ee",
-            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "ea9b18aba7f71da12c9c82ac39d8a0cf2c472a9c"
+            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "086dc85693ae02ddfa106099245c0f155139805c"
         }
     }
 }
