@@ -35,6 +35,11 @@ virtualenv = ">=20.0.26"
 mongomock = "==3.19.0"
 pytest = ">=5.4"
 requests-mock = "==1.8.0"
+black = "==20.8b1"
+flake8 = "==3.9.0"
+pytest-cov = "*"
+isort = "==5.8.0"
+coverage = "*"
 
 [requires]
 python_version = "3.7"

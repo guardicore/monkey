@@ -25,14 +25,11 @@ install:
 - pip install pipenv
 # Install island and monkey requirements as they are needed by UT's
 - pushd monkey/monkey_island
-- pipenv sync  # This installs dependencies from lock
+- pipenv sync --dev  # This installs dependencies from lock
 - popd
 - pushd monkey/infection_monkey
-- pipenv sync  # This installs dependencies from lock
+- pipenv sync --dev  # This installs dependencies from lock
 - popd
-- pipenv install black==20.8b1 flake8==3.9.0 pytest pytest-cov isort==5.8.0 # for next stages
-- pipenv install coverage  # for code coverage
-
 
 # node + npm + eslint
 - node --version
