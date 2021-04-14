@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import jsonify
 
 from monkey_island.cc.database import mongo
-from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
+from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.report import ReportService

@@ -12,6 +12,10 @@ from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
 from monkey_island.cc.resources.auth.registration import Registration
+from monkey_island.cc.resources.blackbox.clear_caches import ClearCaches
+from monkey_island.cc.resources.blackbox.log_test_endpoint import LogTestEndpoint
+from monkey_island.cc.resources.blackbox.monkey_test_endpoint import MonkeyTestEndpoint
+from monkey_island.cc.resources.blackbox.telemetry_test_endpoint import TelemetryTestEndpoint
 from monkey_island.cc.resources.bootloader import Bootloader
 from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.edge import Edge
@@ -36,10 +40,6 @@ from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.T1216_pba_file_download import T1216PBAFileDownload
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
-from monkey_island.cc.resources.test.clear_caches import ClearCaches
-from monkey_island.cc.resources.test.log_test_endpoint import LogTestEndpoint
-from monkey_island.cc.resources.test.monkey_test_endpoint import MonkeyTestEndpoint
-from monkey_island.cc.resources.test.telemetry_test_endpoint import TelemetryTestEndpoint
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
 from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
