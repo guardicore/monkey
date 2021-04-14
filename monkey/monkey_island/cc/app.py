@@ -13,9 +13,9 @@ from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
 from monkey_island.cc.resources.auth.registration import Registration
 from monkey_island.cc.resources.blackbox.clear_caches import ClearCaches
-from monkey_island.cc.resources.blackbox.log_test_endpoint import LogTestEndpoint
-from monkey_island.cc.resources.blackbox.monkey_test_endpoint import MonkeyTestEndpoint
-from monkey_island.cc.resources.blackbox.telemetry_test_endpoint import TelemetryTestEndpoint
+from monkey_island.cc.resources.blackbox.log_blackbox_endpoint import LogTestEndpoint
+from monkey_island.cc.resources.blackbox.monkey_blackbox_endpoint import MonkeyTestEndpoint
+from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import TelemetryTestEndpoint
 from monkey_island.cc.resources.bootloader import Bootloader
 from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.edge import Edge
