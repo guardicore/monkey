@@ -48,9 +48,6 @@ install_build_prereqs() {
     sudo apt update
     sudo apt upgrade
 
-    # appimage-builder prereqs
-    sudo apt install -y patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace
-
     # monkey island prereqs
     sudo apt install -y curl libcurl4 openssl git build-essential moreutils
     install_nodejs
