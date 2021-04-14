@@ -13,9 +13,11 @@ from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
 from monkey_island.cc.resources.auth.registration import Registration
 from monkey_island.cc.resources.blackbox.clear_caches import ClearCaches
-from monkey_island.cc.resources.blackbox.log_blackbox_endpoint import LogTestEndpoint
-from monkey_island.cc.resources.blackbox.monkey_blackbox_endpoint import MonkeyTestEndpoint
-from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import TelemetryTestEndpoint
+from monkey_island.cc.resources.blackbox.log_blackbox_endpoint import LogBlackboxEndpoint
+from monkey_island.cc.resources.blackbox.monkey_blackbox_endpoint import MonkeyBlackboxEndpoint
+from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
+    TelemetryBlackboxEndpoint,
+)
 from monkey_island.cc.resources.bootloader import Bootloader
 from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.edge import Edge
@@ -165,10 +167,10 @@ def init_api_resources(api):
     api.add_resource(AWSKeys, "/api/aws_keys")
 
     # Resources used by black box tests
-    api.add_resource(MonkeyTestEndpoint, "/api/test/monkey")
+    api.add_resource(MonkeyBlackboxEndpoint, "/api/test/monkey")
     api.add_resource(ClearCaches, "/api/test/clear_caches")
-    api.add_resource(LogTestEndpoint, "/api/test/log")
-    api.add_resource(TelemetryTestEndpoint, "/api/test/telemetry")
+    api.add_resource(LogBlackboxEndpoint, "/api/test/log")
+    api.add_resource(TelemetryBlackboxEndpoint, "/api/test/telemetry")
 
 
 def init_app(mongo_url):
