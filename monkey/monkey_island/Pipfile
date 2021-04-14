@@ -1,0 +1,38 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask-jwt-extended = "==3.24.1"
+flask-pymongo = ">=2.3.0"
+flask-restful = ">=0.3.8"
+pyinstaller = "==3.6"
+awscli = "==1.18.131"
+boto3 = "==1.14.54"
+botocore = "==1.17.54"
+cffi = "!=1.11.3,>=1.8"
+dpath = ">=2.0"
+flask = ">=1.1"
+gevent = ">=20.9.0"
+ipaddress = ">=1.0.23"
+jsonschema = "==3.2.0"
+mongoengine = "==0.20"
+netifaces = ">=0.10.9"
+pycryptodome = "==3.9.8"
+python-dateutil = ">=2.1,<3.0.0"
+requests = ">=2.24"
+ring = ">=0.7.3"
+stix2 = ">=2.0.2"
+six = ">=1.13.0"
+tqdm = ">=4.47"
+werkzeug = ">=1.0.1"
+
+[dev-packages]
+virtualenv = ">=20.0.26"
+pytest = ">=5.4"
+requests-mock = "==1.8.0"
+mongomock = "==3.19.0"
+
+[requires]
+python_version = "3.7"
