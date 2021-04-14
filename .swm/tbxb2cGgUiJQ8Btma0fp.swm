@@ -92,7 +92,7 @@
                 "*            \"enum\": [\"BackdoorUser\"],",
                 "*            \"title\": \"Back door user\",",
                 "*            \"safe\": True,",
-                "*            \"info\": \"Attempts to create a new user on the system and delete it \" \"afterwards.\",",
+                "*            \"info\": \"Attempts to create a new user on the system and delete it afterwards.\",",
                 "*            \"attack_techniques\": [\"T1136\"],",
                 "*        },",
                 "         {",
@@ -113,7 +113,7 @@
             "monkey/common/common_consts/post_breach_consts.py": "25e6679cb1623aae1a732deb05cc011a452743e3",
             "monkey/infection_monkey/post_breach/actions/add_user.py": "cae5a2428fa01b333a2e70365c9da1e189e31bc4",
             "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py": "dfc5945a362b88c1135f4476526c6c82977b02ee",
-            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "2c1104bcbe3ba0f885907d9d00210bd658ce8f74"
+            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "086dc85693ae02ddfa106099245c0f155139805c"
         }
     }
 }
