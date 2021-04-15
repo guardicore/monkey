@@ -32,4 +32,4 @@ repos:
     rev: v7.24.0
     hooks:
       - id: eslint
-        args: ["monkey/monkey_island/cc/ui/src/", "--fix"]
+        args: ["monkey/monkey_island/cc/ui/src/", "--fix", "--max-warnings=0"]
