@@ -25,17 +25,5 @@ do
     fi
 done
 
-# Get the executable name, i.e. the AppImage or the python binary if running from an
-# extracted image
-executable="${APPDIR}/opt/python3.7/bin/python3.7"
-if [[ "${ARGV0}" =~ "/" ]]; then
-    executable="$(cd $(dirname ${ARGV0}) && pwd)/$(basename ${ARGV0})"
-elif [[ "${ARGV0}" != "" ]]; then
-    executable=$(which "${ARGV0}")
-fi
-
-# Wrap the call to Python in order to mimic a call from the source
-# executable ($ARGV0), but potentially located outside of the Python
-# install ($PYTHONHOME)
 (PYTHONHOME="${APPDIR}/opt/python3.7" exec "/bin/bash" "${APPDIR}/usr/src/monkey_island/linux/run_appimage.sh")
 exit "$?"
