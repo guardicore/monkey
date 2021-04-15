@@ -15,9 +15,6 @@ configure_default_server() {
     fi
 }
 
-
-
-
 # shellcheck disable=SC2174
 mkdir --mode=0700 --parents "$DOT_MONKEY"
 
