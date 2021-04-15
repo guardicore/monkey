@@ -126,15 +126,19 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         return
     }
 
+    "Installing pipx"
+    pip install --user -U pipx
+    pipx ensurepath
+    pipx install pipenv
+
     "Installing python packages for island"
-    $islandRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\requirements.txt" -ErrorAction Stop
-    & python -m pip install --user -r $islandRequirements
+    Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR) -ErrorAction Stop
+    pipenv install --dev
+    Pop-Location
     "Installing python packages for monkey"
-    $monkeyRequirements = Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR | Join-Path -ChildPath "\requirements.txt"
-    & python -m pip install --user -r $monkeyRequirements
-    "Installing python packages for ScoutSuite"
-    $scoutsuiteRequirements = Join-Path -Path $monkey_home -ChildPath $SCOUTSUITE_DIR | Join-Path -ChildPath "\requirements.txt"
-    & python -m pip install --user -r $scoutsuiteRequirements
+    Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR) -ErrorAction Stop
+    pipenv install --dev
+    Pop-Location
 
     Configure-precommit($monkey_home)
 
