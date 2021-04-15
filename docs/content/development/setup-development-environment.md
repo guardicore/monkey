@@ -23,3 +23,11 @@ This means setting up an environment with Linux 32/64-bit with Python installed 
 The Monkey Island is a Python backend React frontend project. Similar to the agent, the backend's requirements are listed in the matching [`requirements.txt`](https://github.com/guardicore/monkey/blob/master/monkey/monkey_island/requirements.txt).
 
 To setup a working front environment, run the instructions listed in the [`readme.txt`](https://github.com/guardicore/monkey/blob/master/monkey/monkey_island/readme.txt)
+
+## Pre-commit
+
+Pre-commit is a multi-language package manager for pre-commit hooks. It will run a set of checks when you attempt to commit. If your commit does not pass all checks, it will be reformatted and/or you'll be given a list of errors and warnings that need to be fixed before you can commit.
+
+Our CI system runs the same checks when pull requests are submitted. This system may report that the build has failed if the pre-commit hooks have not been run or all issues have not been resolved.
+
+To install and configure pre-commit, run `pip install --user pre-commit`. Next, go to the top level directory of this repository and run `pre-commit install`. Pre-commit will now run automatically whenever you `git commit`.

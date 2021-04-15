@@ -28,3 +28,8 @@ repos:
       - id: detect-private-key
       - id: end-of-file-fixer
       - id: trailing-whitespace
+  - repo: https://github.com/eslint/eslint
+    rev: v7.24.0
+    hooks:
+      - id: eslint
+        args: ["monkey/monkey_island/cc/ui/src/", "--fix", "--max-warnings=0"]

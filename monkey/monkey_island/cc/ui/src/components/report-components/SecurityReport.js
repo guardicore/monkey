@@ -58,7 +58,7 @@ class ReportPageComponent extends AuthComponent {
   credentialTypes = {
     PASSWORD: 'password',
     HASH: 'hash',
-    KEY: 'key',
+    KEY: 'key'
   }
 
   issueContentTypes = {
@@ -152,7 +152,7 @@ class ReportPageComponent extends AuthComponent {
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'zerologon_pass_restore_failed': {
-        [this.issueContentTypes.OVERVIEW]: zerologonOverviewWithFailedPassResetWarning,
+        [this.issueContentTypes.OVERVIEW]: zerologonOverviewWithFailedPassResetWarning
       },
       'island_cross_segment': {
         [this.issueContentTypes.OVERVIEW]: crossSegmentIssueOverview,
@@ -437,9 +437,9 @@ class ReportPageComponent extends AuthComponent {
 
   isIssuePotentialSecurityIssue(issueName) {
     let issueDescriptor = this.IssueDescriptorEnum[issueName];
-    return issueDescriptor.hasOwnProperty(this.issueContentTypes.TYPE) &&
+    return Object.prototype.hasOwnProperty.call(issueDescriptor, this.issueContentTypes.TYPE) &&
       issueDescriptor[this.issueContentTypes.TYPE] === this.issueTypes.WARNING &&
-      issueDescriptor.hasOwnProperty(this.issueContentTypes.OVERVIEW);
+      Object.prototype.hasOwnProperty.call(issueDescriptor, this.issueContentTypes.OVERVIEW);
   }
 
   getImmediateThreats() {
@@ -476,9 +476,9 @@ class ReportPageComponent extends AuthComponent {
 
   isIssueImmediateThreat(issueName) {
     let issueDescriptor = this.IssueDescriptorEnum[issueName];
-    return issueDescriptor.hasOwnProperty(this.issueContentTypes.TYPE) &&
+    return Object.prototype.hasOwnProperty.call(issueDescriptor, this.issueContentTypes.TYPE) &&
       issueDescriptor[this.issueContentTypes.TYPE] === this.issueTypes.DANGER &&
-      issueDescriptor.hasOwnProperty(this.issueContentTypes.OVERVIEW);
+      Object.prototype.hasOwnProperty.call(issueDescriptor, this.issueContentTypes.OVERVIEW);
   }
 
   getImmediateThreatsOverviews() {
@@ -597,8 +597,8 @@ class ReportPageComponent extends AuthComponent {
   generateIssue = (issue) => {
     let issueDescriptor = this.IssueDescriptorEnum[issue.type];
 
-    let reportFnc = (issue) => {};
-    if (issue.hasOwnProperty('credential_type') && issue.credential_type !== null) {
+    let reportFnc = {};
+    if (Object.prototype.hasOwnProperty.call(issue, 'credential_type') && issue.credential_type !== null) {
       reportFnc = issueDescriptor[this.issueContentTypes.REPORT][issue.credential_type];
     } else {
       reportFnc = issueDescriptor[this.issueContentTypes.REPORT];

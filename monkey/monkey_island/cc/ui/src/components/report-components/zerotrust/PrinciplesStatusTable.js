@@ -12,7 +12,7 @@ const columns = [
     columns: [
       {
         Header: 'Status', id: 'status',
-        accessor: x => {
+        accessor: function getAccessor (x) {
           return <StatusLabel status={x.status} size="3x" showText={false}/>;
         },
         maxWidth: MAX_WIDTH_STATUS_COLUMN
@@ -24,7 +24,7 @@ const columns = [
       {
         Header: 'Monkey Tests', id: 'tests',
         style: {'whiteSpace': 'unset'},  // This enables word wrap
-        accessor: x => {
+        accessor: function getAccessor (x) {
           return <TestsStatus tests={x.tests}/>;
         }
       }
