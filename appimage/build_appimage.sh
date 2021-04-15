@@ -105,6 +105,8 @@ setup_appdir() {
 setup_python_37_appdir() {
     PYTHON_APPIMAGE="python3.7.9_x86_64.AppImage"
     rm -rf "$APPDIR" || true
+
+    log_message "downloading Python3.7 Appimage"
     curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
 
     chmod u+x "$PYTHON_APPIMAGE"
