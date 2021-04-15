@@ -2,8 +2,8 @@
 
 ## About
 
-This directory contains the necessary artifacts for building a prototype
-monkey_island AppImage using appimage-builder.
+This directory contains the necessary artifacts for building an Infection
+Monkey AppImage
 
 ## Building an AppImage
 
@@ -27,9 +27,9 @@ build_appimage.sh`.
 
 ## Running the AppImage
 
-The build script will produce an AppImage executible named something like
-`Monkey Island-VERSION-x86-64.AppImage`. Simply execute this file and you're
-off to the races.
+The build script will produce an AppImage executible named
+`Infection_Monkey-x86_64.AppImage`. Simply execute this file and you're off to
+the races.
 
 A new directory, `$HOME/.monkey_island` will be created to store runtime
 artifacts.
