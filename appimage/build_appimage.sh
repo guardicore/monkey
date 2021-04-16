@@ -1,7 +1,7 @@
 #!/bin/bash
 
-python_cmd="python3.7"
-APPDIR="$HOME/monkey-appdir"
+APPDIR="$HOME/squashfs-root"
+CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
 INSTALL_DIR="$APPDIR/usr/src"
 
 GIT=$HOME/git
@@ -12,6 +12,10 @@ REPO_MONKEY_SRC=$REPO_MONKEY_HOME/monkey
 ISLAND_PATH="$INSTALL_DIR/monkey_island"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
+
+NODE_SRC=https://deb.nodesource.com/setup_12.x
+APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
+PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python3.7.9-cp37-cp37m-manylinux1_x86_64.AppImage"
 
 is_root() {
   return "$(id -u)"
@@ -33,21 +37,7 @@ log_message() {
   echo -e "DEPLOYMENT SCRIPT: $1"
 }
 
-setup_appdir() {
-    rm -rf "$APPDIR" || true
-    mkdir -p "$INSTALL_DIR"
-}
-
-install_pip_37() {
-    pip_url=https://bootstrap.pypa.io/get-pip.py
-    curl $pip_url -o get-pip.py
-    ${python_cmd} get-pip.py
-    rm get-pip.py
-}
-
 install_nodejs() {
-  NODE_SRC=https://deb.nodesource.com/setup_12.x
-
   log_message "Installing nodejs"
 
   curl -sL $NODE_SRC | sudo -E bash -
@@ -56,28 +46,17 @@ install_nodejs() {
 
 install_build_prereqs() {
     sudo apt update
-    sudo apt upgrade
+    sudo apt upgrade -y
 
-    # appimage-builder prereqs
-    sudo apt install -y python3 python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace
-
-    #monkey island prereqs
-    sudo apt install -y curl libcurl4 python3.7 python3.7-dev openssl git build-essential moreutils
-    install_pip_37
+    # monkey island prereqs
+    sudo apt install -y curl libcurl4 openssl git build-essential moreutils
     install_nodejs
-}
-
-install_appimage_builder() {
-    sudo pip3 install appimage-builder
-
-    install_appimage_tool
 }
 
 install_appimage_tool() {
     APP_TOOL_BIN=$HOME/bin/appimagetool
-    APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
 
-    mkdir "$HOME"/bin
+    mkdir -p "$HOME"/bin
     curl -L -o "$APP_TOOL_BIN" "$APP_TOOL_URL"
     chmod u+x "$APP_TOOL_BIN"
 
@@ -88,7 +67,7 @@ load_monkey_binary_config() {
   tmpfile=$(mktemp)
 
   log_message "downloading configuration"
-  curl -L -s -o "$tmpfile" "$config_url"
+  curl -L -s -o "$tmpfile" "$CONFIG_URL"
 
   log_message "loading configuration"
   source "$tmpfile"
@@ -100,17 +79,49 @@ clone_monkey_repo() {
   fi
 
   log_message "Cloning files from git"
-  branch=${2:-"develop"}
+  branch=${1:-"develop"}
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
 
-  chmod 774 -R "${MONKEY_HOME}"
+  chmod 774 -R "${REPO_MONKEY_HOME}"
+}
+
+setup_appdir() {
+	setup_python_37_appdir
+
+	copy_monkey_island_to_appdir
+	download_monkey_agent_binaries
+
+	install_monkey_island_python_dependencies
+	install_mongodb
+
+	generate_ssl_cert
+	build_frontend
+
+	add_monkey_icon
+	add_desktop_file
+	add_apprun
+}
+
+setup_python_37_appdir() {
+    PYTHON_APPIMAGE="python3.7.9_x86_64.AppImage"
+    rm -rf "$APPDIR" || true
+
+    log_message "downloading Python3.7 Appimage"
+    curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
+
+    chmod u+x "$PYTHON_APPIMAGE"
+
+    ./"$PYTHON_APPIMAGE" --appimage-extract
+    rm "$PYTHON_APPIMAGE"
+    mv ./squashfs-root "$APPDIR"
+    mkdir -p "$INSTALL_DIR"
 }
 
 copy_monkey_island_to_appdir() {
   cp "$REPO_MONKEY_SRC"/__init__.py "$INSTALL_DIR"
   cp "$REPO_MONKEY_SRC"/monkey_island.py "$INSTALL_DIR"
-  cp -r "$REPO_MONKEY_SRC"/common "$INSTALL_DIR"
-  cp -r "$REPO_MONKEY_SRC"/monkey_island "$INSTALL_DIR"
+  cp -r "$REPO_MONKEY_SRC"/common "$INSTALL_DIR/"
+  cp -r "$REPO_MONKEY_SRC"/monkey_island "$INSTALL_DIR/"
   cp ./run_appimage.sh "$INSTALL_DIR"/monkey_island/linux/
   cp ./island_logger_config.json "$INSTALL_DIR"/
   cp ./server_config.json.standard "$INSTALL_DIR"/monkey_island/cc/
@@ -128,7 +139,7 @@ install_monkey_island_python_dependencies() {
   #       dependencies and should not be installed as a runtime requirement.
   cat "$requirements_island" | grep -Piv "virtualenv|pyinstaller" | sponge "$requirements_island"
 
-  ${python_cmd} -m pip install -r "${requirements_island}"  --ignore-installed --prefix /usr --root="$APPDIR" || handle_error
+  "$APPDIR"/AppRun -m pip install -r "${requirements_island}"  --ignore-installed || handle_error
 }
 
 download_monkey_agent_binaries() {
@@ -168,24 +179,26 @@ build_frontend() {
     popd || handle_error
 }
 
+add_monkey_icon() {
+	unlink "$APPDIR"/python.png
+	mkdir -p "$APPDIR"/usr/share/icons
+	cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/infection-monkey.svg
+	ln -s "$APPDIR"/usr/share/icons/infection-monkey.svg "$APPDIR"/infection-monkey.svg
+}
+
+add_desktop_file() {
+	unlink "$APPDIR"/python3.7.9.desktop
+	cp ./infection-monkey.desktop "$APPDIR"/usr/share/applications
+	ln -s "$APPDIR"/usr/share/applications/infection-monkey.desktop "$APPDIR"/infection-monkey.desktop
+}
+
+add_apprun() {
+	cp ./AppRun "$APPDIR"
+}
+
 build_appimage() {
     log_message "Building AppImage"
-    appimage-builder --recipe monkey_island_builder.yml --log DEBUG --skip-appimage
-
-    # There is a bug or unwanted behavior in appimage-builder that causes issues
-    # if 32-bit binaries are present in the appimage. To work around this, we:
-    #   1. Build the AppDir with appimage-builder and skip building the appimage
-    #   2. Add the 32-bit binaries to the AppDir
-    #   3. Build the AppImage with appimage-builder from the already-built AppDir
-    #
-    # Note that appimage-builder replaces the interpreter on the monkey agent binaries
-    # when building the AppDir. This is unwanted as the monkey agents may execute in
-    # environments where the AppImage isn't loaded.
-    #
-    # See https://github.com/AppImageCrafters/appimage-builder/issues/93 for more info.
-    download_monkey_agent_binaries
-
-    appimage-builder --recipe monkey_island_builder.yml --log DEBUG --skip-build
+    ARCH="x86_64" appimagetool "$APPDIR"
 }
 
 if is_root; then
@@ -199,33 +212,14 @@ Run \`sudo -v\`, enter your password, and then re-run this script."
   exit 1
 fi
 
-config_url="https://raw.githubusercontent.com/mssalvatore/monkey/linux-deploy-binaries/deployment_scripts/config"
-
-setup_appdir
 
 install_build_prereqs
-install_appimage_builder
-
+install_appimage_tool
 
 load_monkey_binary_config
 clone_monkey_repo "$@"
 
-copy_monkey_island_to_appdir
-
-# Create folders
-log_message "Creating island dirs under $ISLAND_PATH"
-mkdir -p "${MONGO_PATH}" || handle_error
-
-install_monkey_island_python_dependencies
-
-install_mongodb
-
-generate_ssl_cert
-
-build_frontend
-
-mkdir -p "$APPDIR"/usr/share/icons
-cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/monkey-icon.svg
+setup_appdir
 
 build_appimage
 

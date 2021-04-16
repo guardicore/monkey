@@ -30,14 +30,15 @@ def run_local_monkey():
     if not result:
         return False, "OS Type not found"
 
-    monkey_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "binaries", result["filename"])
-    target_path = os.path.join(env_singleton.env.get_config().data_dir_abs_path, result["filename"])
+    src_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "binaries", result["filename"])
+    dest_dir = env_singleton.env.get_config().data_dir_abs_path
+    dest_path = os.path.join(dest_dir, result["filename"])
 
     # copy the executable to temp path (don't run the monkey from its current location as it may
     # delete itself)
     try:
-        copyfile(monkey_path, target_path)
-        os.chmod(target_path, stat.S_IRWXU | stat.S_IRWXG)
+        copyfile(src_path, dest_path)
+        os.chmod(dest_path, stat.S_IRWXU | stat.S_IRWXG)
     except Exception as exc:
         logger.error("Copy file failed", exc_info=True)
         return False, "Copy file failed: %s" % exc
@@ -46,11 +47,11 @@ def run_local_monkey():
     try:
         args = [
             '"%s" m0nk3y -s %s:%s'
-            % (target_path, local_ip_addresses()[0], env_singleton.env.get_island_port())
+            % (dest_path, local_ip_addresses()[0], env_singleton.env.get_island_port())
         ]
         if sys.platform == "win32":
             args = "".join(args)
-        subprocess.Popen(args, shell=True).pid
+        subprocess.Popen(args, cwd=dest_dir, shell=True).pid
     except Exception as exc:
         logger.error("popen failed", exc_info=True)
         return False, "popen failed: %s" % exc

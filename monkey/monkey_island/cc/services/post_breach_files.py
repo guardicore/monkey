@@ -1,12 +1,11 @@
 import logging
 import os
-from pathlib import Path
 
 import monkey_island.cc.services.config
 
 __author__ = "VakarisZ"
 
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+import monkey_island.cc.environment.environment_singleton as env_singleton
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +13,6 @@ logger = logging.getLogger(__name__)
 PBA_WINDOWS_FILENAME_PATH = ["monkey", "post_breach", "PBA_windows_filename"]
 PBA_LINUX_FILENAME_PATH = ["monkey", "post_breach", "PBA_linux_filename"]
 UPLOADS_DIR_NAME = "userUploads"
-
-ABS_UPLOAD_PATH = Path(MONKEY_ISLAND_ABS_PATH, "cc", UPLOADS_DIR_NAME)
 
 
 def remove_PBA_files():
@@ -33,7 +30,7 @@ def remove_PBA_files():
 
 
 def remove_file(file_name):
-    file_path = os.path.join(ABS_UPLOAD_PATH, file_name)
+    file_path = os.path.join(env_singleton.env.get_config().data_dir_abs_path, file_name)
     try:
         if os.path.exists(file_path):
             os.remove(file_path)
