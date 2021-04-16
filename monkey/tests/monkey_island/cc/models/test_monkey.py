@@ -5,9 +5,8 @@ from time import sleep
 import pytest
 
 from monkey_island.cc.models.monkey import Monkey, MonkeyNotFoundError
-
-from ..test_common.fixtures import FixtureEnum
-from .monkey_ttl import MonkeyTtl
+from monkey_island.cc.models.monkey_ttl import MonkeyTtl
+from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 logger = logging.getLogger(__name__)
 
