@@ -60,8 +60,8 @@ You may also pass in an optional third `false` parameter to disable downloading 
 After the `deploy_linux.sh` script completes, you can start the monkey island.
 
 ```sh
-cd infection_monkey/monkey
-./monkey_island/linux/run.sh
+cd infection_monkey/monkey/monkey_island
+pipenv run ./linux/run.sh
 ```
 
 ## Pre-commit hooks
