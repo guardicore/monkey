@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 cffi = ">=1.14"
 ecdsa = "==0.15"
-pyinstaller = {git = "https://github.com/guardicore/pyinstaller"}
+pyinstaller = {git = "git://github.com/guardicore/pyinstaller"}
 impacket = ">=0.9"
 ipaddress = ">=1.0.23"
 netifaces = ">=0.10.9"
@@ -24,7 +24,7 @@ urllib3 = "==1.25.8"
 simplejson = "*"
 "WinSys-3.x" = ">=0.5.2"
 WMI = "==1.5.1"
-ScoutSuite = {git = "https://github.com/guardicode/ScoutSuite"}
+ScoutSuite = {git = "git://github.com/guardicode/ScoutSuite"}
 
 [dev-packages]
 
