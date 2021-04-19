@@ -118,7 +118,7 @@ if [[ ${python_cmd} == "" ]]; then
   log_message "Python 3.7 command not found. Installing python 3.7."
   sudo add-apt-repository ppa:deadsnakes/ppa
   sudo apt-get update
-  sudo apt-get install -y python3.7 python3.7-dev
+  sudo apt-get install -y python3.7 python3.7-dev python3.7-venv
   log_message "Python 3.7 is now available with command 'python3.7'."
   python_cmd="python3.7"
 fi
