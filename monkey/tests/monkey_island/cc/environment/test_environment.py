@@ -4,6 +4,8 @@ from typing import Dict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from common.utils.exceptions import (
     AlreadyRegisteredError,
     CredentialsNotRequiredError,
@@ -11,17 +13,35 @@ from common.utils.exceptions import (
     RegistrationNotNeededError,
 )
 from monkey_island.cc.environment import Environment, EnvironmentConfig, UserCreds
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
-TEST_RESOURCES_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "testing", "environment")
+WITH_CREDENTIALS = None
+NO_CREDENTIALS = None
+PARTIAL_CREDENTIALS = None
+STANDARD_WITH_CREDENTIALS = None
+STANDARD_ENV = None
 
-WITH_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_with_credentials.json")
-NO_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_no_credentials.json")
-PARTIAL_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_partial_credentials.json")
-STANDARD_WITH_CREDENTIALS = os.path.join(
-    TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
-)
-STANDARD_ENV = os.path.join(TEST_RESOURCES_DIR, "server_config_standard_env.json")
+
+# This fixture is a dirty hack that can be removed once these tests are converted from
+# unittest to pytest. Instead, the appropriate fixtures from conftest.py can be used.
+@pytest.fixture(scope="module", autouse=True)
+def configure_resources(environment_resources_dir):
+    global WITH_CREDENTIALS
+    global NO_CREDENTIALS
+    global PARTIAL_CREDENTIALS
+    global STANDARD_WITH_CREDENTIALS
+    global STANDARD_ENV
+
+    WITH_CREDENTIALS = os.path.join(
+        environment_resources_dir, "server_config_with_credentials.json"
+    )
+    NO_CREDENTIALS = os.path.join(environment_resources_dir, "server_config_no_credentials.json")
+    PARTIAL_CREDENTIALS = os.path.join(
+        environment_resources_dir, "server_config_partial_credentials.json"
+    )
+    STANDARD_WITH_CREDENTIALS = os.path.join(
+        environment_resources_dir, "server_config_standard_with_credentials.json"
+    )
+    STANDARD_ENV = os.path.join(environment_resources_dir, "server_config_standard_env.json")
 
 
 def get_tmp_file():
