@@ -41,3 +41,4 @@ repos:
         language: system
         files: "monkey/"
         exclude: "monkey/monkey_island/cc/ui"
+        stages: [push]
