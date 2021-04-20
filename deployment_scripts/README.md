@@ -59,6 +59,9 @@ You may also pass in an optional third `false` parameter to disable downloading 
 
 After the `deploy_linux.sh` script completes, you can start the monkey island.
 
+Note: You'll need to run the commands below in a new shell in order to ensure
+your PATH environment variable is up to date.
+
 ```sh
 cd infection_monkey/monkey/monkey_island
 pipenv run ./linux/run.sh
