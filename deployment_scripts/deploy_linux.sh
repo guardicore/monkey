@@ -91,6 +91,7 @@ fi
 
 log_message "Cloning files from git"
 branch=${2:-"develop"}
+log_message "Branch selected: ${branch}"
 if [[ ! -d "$monkey_home/monkey" ]]; then # If not already cloned
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${monkey_home}" 2>&1 || handle_error
   chmod 774 -R "${monkey_home}"
@@ -147,13 +148,13 @@ pipx install pipenv
 
 log_message "Installing island requirements"
 pushd $ISLAND_PATH
-pipenv install --dev
+pipenv install --dev --system
 popd
 
 log_message "Installing monkey requirements"
 sudo apt-get install -y libffi-dev upx libssl-dev libc++1
 pushd $INFECTION_MONKEY_DIR
-pipenv install --dev
+pipenv install --dev --system
 popd
 
 agents=${3:-true}
