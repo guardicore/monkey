@@ -179,13 +179,21 @@ generate_ssl_cert() {
 }
 
 build_frontend() {
-    pushd "$ISLAND_PATH/cc/ui" || handle_error
-    npm install sass-loader node-sass webpack --save-dev
-    npm update
+  pushd "$ISLAND_PATH/cc/ui" || handle_error
+  npm install sass-loader node-sass webpack --save-dev
+  npm update
 
-    log_message "Generating front end"
-    npm run dist
-    popd || handle_error
+  log_message "Generating front end"
+  npm run dist
+  popd || handle_error
+
+  remove_node_modules
+}
+
+remove_node_modules() {
+  # Node has served its purpose. We don't need to deliver the node modules with
+  # the AppImage.
+  rm -rf "$ISLAND_PATH"/cc/ui/node_modules
 }
 
 add_monkey_icon() {
