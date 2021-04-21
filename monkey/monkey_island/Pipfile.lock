@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9d575bcb35dba0389e8a68dd285f9ed7015fbcc4a42cffff5301777497337616"
+            "sha256": "4fdfe90af14139cf855a0363ad0acbe7fb307b35b038e2c099c4d1227322a13b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -171,7 +171,7 @@
                 "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff",
                 "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"
             ],
-            "markers": "python_version != '3.4' and sys_platform == 'win32'",
+            "markers": "python_version != '3.4'",
             "version": "==0.4.3"
         },
         "coloredlogs": {
@@ -1076,7 +1076,7 @@
                 "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff",
                 "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"
             ],
-            "markers": "python_version != '3.4' and sys_platform == 'win32'",
+            "markers": "python_version != '3.4'",
             "version": "==0.4.3"
         },
         "coverage": {
@@ -1143,6 +1143,13 @@
                 "sha256:edf6116872c863e1aa9d5bb7cb5e05a022c519a4594dc703843343a9ddd9bff1"
             ],
             "version": "==0.3.1"
+        },
+        "dlint": {
+            "hashes": [
+                "sha256:e7297325f57e6b5318d88fba2497f9fea6830458cd5aecb36150856db010f409"
+            ],
+            "index": "pypi",
+            "version": "==0.11.0"
         },
         "filelock": {
             "hashes": [
