@@ -8,12 +8,23 @@
 ### On Windows
 
 1. Exclude the folder you are planning to install the Monkey in from your AV software, as it might block or delete files from the installation.
-2. Create folder "bin" under monkey\monkey_island
-3. Place portable version of Python 3.7.4
+
+1. Create folder "bin" under monkey\monkey_island
+
+1. Place portable version of Python 3.7.4
     - Download and install from: <https://www.python.org/ftp/python/3.7.4/>
-4. Install Island's requirements
-    - `python -m pip install -r monkey\monkey_island\requirements.txt`
-4. Setup mongodb (Use one of the following two options):
+
+1. Install pipx
+    - `pip install --user -U pipx`
+    - `pipx ensurepath`
+
+1. Install pipenv
+    - `pipx install pipenv`
+
+1. From the `monkey\monkey_island` directory, install python dependencies:
+    - `pipenv sync --dev`
+
+1. Setup mongodb (Use one of the following two options):
     - Place portable version of mongodb
        1. Download from: <https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.1.zip>
        2. Extract contents of bin folder to \monkey\monkey_island\bin\mongodb.
@@ -23,21 +34,26 @@
     - Use already running instance of mongodb
         1. Run 'set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkeyisland"'. Replace '<SERVER ADDR>' with address of mongo server
 
-5. Place portable version of OpenSSL
+1. Place portable version of OpenSSL
     - Download from: <https://indy.fulgan.com/SSL/Archive/openssl-1.0.2p-i386-win32.zip>
     - Extract contents to monkey_island\bin\openssl
-6. Download and install Microsoft Visual C++ redistributable for Visual Studio 2017
+
+1. Download and install Microsoft Visual C++ redistributable for Visual Studio 2017
     - Download and install from: <https://go.microsoft.com/fwlink/?LinkId=746572>
-7. Generate SSL Certificate
+
+1. Generate SSL Certificate
     - run `./windows/create_certificate.bat` when your current working directory is monkey_island
-8. Put Infection Monkey binaries inside monkey_island/cc/binaries (binaries can be found in releases on github or build from source)
+
+1. Put Infection Monkey binaries inside monkey_island/cc/binaries (binaries can be found in releases on github or build from source)
     monkey-linux-64 - monkey binary for linux 64bit
     monkey-linux-32 - monkey binary for linux 32bit
     monkey-windows-32.exe - monkey binary for windows 32bit
     monkey-windows-64.exe - monkey binary for windows 64bit
-9. Install npm
+
+1. Install npm
     - Download and install from: <https://www.npmjs.com/get-npm>
-10. Build Monkey Island frontend
+
+1. Build Monkey Island frontend
     - cd to 'monkey_island\cc\ui'
     - run 'npm update'
     - run 'npm run dist'
