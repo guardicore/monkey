@@ -1,8 +1,7 @@
 from unittest.mock import Mock
 
 import monkey_island.cc.services.telemetry.processing.post_breach as post_breach
-
-from .post_breach import EXECUTION_WITHOUT_OUTPUT
+from monkey_island.cc.services.telemetry.processing.post_breach import EXECUTION_WITHOUT_OUTPUT
 
 original_telem_multiple_results = {
     "data": {

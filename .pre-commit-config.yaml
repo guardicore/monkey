@@ -1,3 +1,4 @@
+default_stages: [commit]
 repos:
   - repo: https://github.com/pycqa/isort
     rev: 5.8.0
@@ -33,3 +34,12 @@ repos:
     hooks:
       - id: eslint
         args: ["monkey/monkey_island/cc/ui/src/", "--fix", "--max-warnings=0"]
+  - repo: local
+    hooks:
+    -   id: pytest
+        name: pytest
+        entry: bash -c "cd monkey && pytest"
+        language: system
+        files: "monkey/"
+        exclude: "monkey/monkey_island/cc/ui"
+        stages: [push]

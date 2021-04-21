@@ -18,7 +18,7 @@ function Configure-precommit([String] $git_repo_dir)
 	if ($LastExitCode) {
 		exit
 	}
-    pre-commit install
+    pre-commit install -t pre-commit -t pre-push
 	if ($LastExitCode) {
 		exit
 	}

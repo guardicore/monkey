@@ -6,18 +6,7 @@ import pytest
 
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
 from monkey_island.cc.environment.user_creds import UserCreds
-from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR, MONKEY_ISLAND_ABS_PATH
-
-TEST_RESOURCES_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "testing", "environment")
-
-WITH_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_with_credentials.json")
-NO_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_no_credentials.json")
-PARTIAL_CREDENTIALS = os.path.join(TEST_RESOURCES_DIR, "server_config_partial_credentials.json")
-STANDARD_WITH_CREDENTIALS = os.path.join(
-    TEST_RESOURCES_DIR, "server_config_standard_with_credentials.json"
-)
-WITH_DATA_DIR = os.path.join(TEST_RESOURCES_DIR, "server_config_with_data_dir.json")
-WITH_DATA_DIR_HOME = os.path.join(TEST_RESOURCES_DIR, "server_config_with_data_dir_home.json")
+from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR
 
 
 @pytest.fixture
@@ -25,8 +14,8 @@ def config_file(tmpdir):
     return os.path.join(tmpdir, "test_config.json")
 
 
-def test_get_with_credentials():
-    config_dict = EnvironmentConfig(WITH_CREDENTIALS).to_dict()
+def test_get_with_credentials(with_credentials):
+    config_dict = EnvironmentConfig(with_credentials).to_dict()
 
     assert len(config_dict.keys()) == 5
     assert config_dict["server_config"] == "password"
@@ -36,8 +25,8 @@ def test_get_with_credentials():
     assert config_dict["data_dir"] == DEFAULT_DATA_DIR
 
 
-def test_get_with_no_credentials():
-    config_dict = EnvironmentConfig(NO_CREDENTIALS).to_dict()
+def test_get_with_no_credentials(no_credentials):
+    config_dict = EnvironmentConfig(no_credentials).to_dict()
 
     assert len(config_dict.keys()) == 3
     assert config_dict["server_config"] == "password"
@@ -45,8 +34,8 @@ def test_get_with_no_credentials():
     assert config_dict["data_dir"] == DEFAULT_DATA_DIR
 
 
-def test_get_with_partial_credentials():
-    config_dict = EnvironmentConfig(PARTIAL_CREDENTIALS).to_dict()
+def test_get_with_partial_credentials(partial_credentials):
+    config_dict = EnvironmentConfig(partial_credentials).to_dict()
 
     assert len(config_dict.keys()) == 4
     assert config_dict["server_config"] == "password"
@@ -55,8 +44,8 @@ def test_get_with_partial_credentials():
     assert config_dict["data_dir"] == DEFAULT_DATA_DIR
 
 
-def test_save_to_file(config_file):
-    shutil.copyfile(STANDARD_WITH_CREDENTIALS, config_file)
+def test_save_to_file(config_file, standard_with_credentials):
+    shutil.copyfile(standard_with_credentials, config_file)
 
     environment_config = EnvironmentConfig(config_file)
     environment_config.aws = "test_aws"
@@ -74,12 +63,12 @@ def test_save_to_file(config_file):
     assert from_file["data_dir"] == DEFAULT_DATA_DIR
 
 
-def test_add_user(config_file):
+def test_add_user(config_file, standard_with_credentials):
     new_user = "new_user"
     new_password_hash = "fedcba"
     new_user_creds = UserCreds(new_user, new_password_hash)
 
-    shutil.copyfile(STANDARD_WITH_CREDENTIALS, config_file)
+    shutil.copyfile(standard_with_credentials, config_file)
 
     environment_config = EnvironmentConfig(config_file)
     environment_config.add_user(new_user_creds)
@@ -92,8 +81,8 @@ def test_add_user(config_file):
     assert from_file["password_hash"] == new_password_hash
 
 
-def test_get_users():
-    environment_config = EnvironmentConfig(STANDARD_WITH_CREDENTIALS)
+def test_get_users(standard_with_credentials):
+    environment_config = EnvironmentConfig(standard_with_credentials)
     users = environment_config.get_users()
 
     assert len(users) == 1
@@ -115,8 +104,8 @@ def test_generate_default_file(config_file):
     assert environment_config.data_dir == DEFAULT_DATA_DIR
 
 
-def test_data_dir():
-    environment_config = EnvironmentConfig(WITH_DATA_DIR)
+def test_data_dir(with_data_dir):
+    environment_config = EnvironmentConfig(with_data_dir)
     assert environment_config.data_dir == "/test/data/dir"
 
 
@@ -124,8 +113,8 @@ def set_home_env(monkeypatch, tmpdir):
     monkeypatch.setenv("HOME", str(tmpdir))
 
 
-def test_data_dir_abs_path_from_file(monkeypatch, tmpdir):
+def test_data_dir_abs_path_from_file(monkeypatch, tmpdir, with_data_dir_home):
     set_home_env(monkeypatch, tmpdir)
 
-    config = EnvironmentConfig(WITH_DATA_DIR_HOME)
+    config = EnvironmentConfig(with_data_dir_home)
     assert config.data_dir_abs_path == os.path.join(tmpdir, "data_dir")
