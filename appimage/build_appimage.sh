@@ -15,7 +15,8 @@ ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 
 NODE_SRC=https://deb.nodesource.com/setup_12.x
 APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
-PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python3.7.9-cp37-cp37m-manylinux1_x86_64.AppImage"
+PYTHON_VERSION="3.7.10"
+PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
 
 is_root() {
   return "$(id -u)"
@@ -103,7 +104,7 @@ setup_appdir() {
 }
 
 setup_python_37_appdir() {
-    PYTHON_APPIMAGE="python3.7.9_x86_64.AppImage"
+    PYTHON_APPIMAGE="python${PYTHON_VERSION}_x86_64.AppImage"
     rm -rf "$APPDIR" || true
 
     log_message "downloading Python3.7 Appimage"
@@ -204,7 +205,7 @@ add_monkey_icon() {
 }
 
 add_desktop_file() {
-	unlink "$APPDIR"/python3.7.9.desktop
+	unlink "$APPDIR/python${PYTHON_VERSION}.desktop"
 	cp ./infection-monkey.desktop "$APPDIR"/usr/share/applications
 	ln -s "$APPDIR"/usr/share/applications/infection-monkey.desktop "$APPDIR"/infection-monkey.desktop
 }
