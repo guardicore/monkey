@@ -1,6 +1,5 @@
 import datetime
 import logging
-import os
 import subprocess
 
 from infection_monkey.utils.auto_new_user import AutoNewUser
@@ -54,7 +53,7 @@ class AutoNewLinuxUser(AutoNewUser):
         command_as_new_user = "sudo -u {username} {command}".format(
             username=self.username, command=command
         )
-        return os.system(command_as_new_user)
+        return subprocess.call(command_as_new_user, shell=True)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # delete the user.
