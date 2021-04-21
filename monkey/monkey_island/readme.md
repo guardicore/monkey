@@ -48,36 +48,53 @@
 
 ### On Linux
 
+1. Set your current working directory to `monkey/`.
+
 1. Get python 3.7 and pip if your linux distribution doesn't have it built in (following steps are for Ubuntu 16):
     - `sudo add-apt-repository ppa:deadsnakes/ppa`
     - `sudo apt-get update`
-    - `sudo apt install python3.7 python3-pip python3.7-dev`
+    - `sudo apt install python3.7 python3-pip python3.7-dev python3.7-venv`
     - `python3.7 -m pip install pip`
-2. Install required packages:
+
+1. Install pipx:
+    - `python3.7 -m pip install --user pipx`
+    - `python3.7 -m pipx ensurepath`
+    - `source ~/.profile`
+
+1. Install pipenv:
+    - `pipx install pipenv`
+
+1. Install required packages:
     - `sudo apt-get install libffi-dev upx libssl-dev libc++1 openssl`
-3. Create the following directories in monkey island folder (execute from ./monkey):
+
+1. Install the Monkey Island python dependencies:
+    - `cd ./monkey_island`
+    - `pipenv sync --dev`
+    - `cd ..`
+
+1. Set the linux `run.sh` to be executible:
+    - `chmod u+x monkey_island/linux/run.sh`
+
+1. Create the following directories in monkey island folder (execute from ./monkey):
     - `mkdir -p ./monkey_island/bin/mongodb`
     - `mkdir -p ./monkey_island/db`
     - `mkdir -p ./monkey_island/cc/binaries`
 
-4. Install the packages from monkey_island/requirements.txt:
-    - `sudo python3.7 -m pip install -r ./monkey_island/requirements.txt`
+1. Put monkey binaries in /monkey_island/cc/binaries (binaries can be found in releases on github).
 
-5. Put monkey binaries in /monkey_island/cc/binaries (binaries can be found in releases on github).
-    
     monkey-linux-64 - monkey binary for linux 64bit
-    
+
     monkey-linux-32 - monkey binary for linux 32bit
-    
+
     monkey-windows-32.exe - monkey binary for windows 32bit
-    
+
     monkey-windows-64.exe - monkey binary for windows 64bit
-    
+
     Also, if you're going to run monkeys on local machine execute:
     - `chmod 755 ./monkey_island/cc/binaries/monkey-linux-64`
     - `chmod 755 ./monkey_island/cc/binaries/monkey-linux-32`
 
-6. Setup MongoDB (Use one of the two following options):
+1. Setup MongoDB (Use one of the two following options):
     - Download MongoDB and extract it to monkey/monkey_island/bin/mongodb:
         1. Run `./monkey_island/linux/install_mongo.sh ./monkey_island/bin/mongodb`. This will download and extract the relevant mongoDB for your OS.
 
@@ -85,17 +102,17 @@
     - Use already running instance of mongodb
         1. Run `set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkeyisland"`. Replace '<SERVER ADDR>' with address of mongo server
 
-7. Generate SSL Certificate:
+1. Generate SSL Certificate:
     - `cd ./monkey_island`
     - `chmod 755 ./linux/create_certificate.sh`
     - `./linux/create_certificate.sh`
 
-8. Install npm and node by running:
+1. Install npm and node by running:
     - `sudo apt-get install curl`
     - `curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -`
     - `sudo apt-get install -y nodejs`
 
-9. Build Monkey Island frontend
+1. Build Monkey Island frontend
     - cd to 'monkey_island/cc/ui'
     - `npm install sass-loader node-sass webpack --save-dev`
     - `npm update`
@@ -103,4 +120,4 @@
 
 #### How to run
 
-1. When your current working directory is monkey, run `chmod 755 ./monkey_island/linux/run.sh` followed by `./monkey_island/linux/run.sh` (located under /linux)
+1. From the `monkey/monkey_island` directory, run `pipenv run ./linux/run.sh`
