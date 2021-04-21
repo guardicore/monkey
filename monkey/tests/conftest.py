@@ -8,9 +8,6 @@ MONKEY_BASE_PATH = str(Path(__file__).parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
 
 
-print("imported")
-
-
 @pytest.fixture(scope="session")
 def resources_dir(pytestconfig):
     return os.path.join(pytestconfig.rootdir, "monkey", "tests", "resources")
