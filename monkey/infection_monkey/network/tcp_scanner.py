@@ -1,5 +1,5 @@
 from itertools import zip_longest
-from random import shuffle
+from random import shuffle  # noqa: DUO102
 
 import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
