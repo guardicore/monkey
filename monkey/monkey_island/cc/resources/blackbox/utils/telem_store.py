@@ -6,7 +6,7 @@ from os import mkdir, path
 
 from flask import request
 
-from monkey_island.cc.models.test_telem import TestTelem
+from monkey_island.cc.models.exported_telem import ExportedTelem
 from monkey_island.cc.services.config import ConfigService
 
 TELEM_SAMPLE_DIR = "./telem_sample"
@@ -20,7 +20,7 @@ class TestTelemStore:
     TELEMS_EXPORTED = False
 
     @staticmethod
-    def store_test_telem(f):
+    def store_exported_telem(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if ConfigService.is_test_telem_export_enabled():
@@ -35,7 +35,7 @@ class TestTelemStore:
                     .replace(">", "_")
                     .replace(":", "_")
                 )
-                TestTelem(
+                ExportedTelem(
                     name=name, method=method, endpoint=endpoint, content=content, time=time
                 ).save()
             return f(*args, **kwargs)
@@ -43,7 +43,7 @@ class TestTelemStore:
         return decorated_function
 
     @staticmethod
-    def export_test_telems():
+    def export_telems():
         logger.info(f"Exporting all telemetries to {TELEM_SAMPLE_DIR}")
         try:
             mkdir(TELEM_SAMPLE_DIR)
@@ -51,9 +51,9 @@ class TestTelemStore:
             logger.info("Deleting all previous telemetries.")
             shutil.rmtree(TELEM_SAMPLE_DIR)
             mkdir(TELEM_SAMPLE_DIR)
-        for test_telem in TestTelem.objects():
+        for test_telem in ExportedTelem.objects():
             with open(
-                TestTelemStore.get_unique_file_path_for_test_telem(TELEM_SAMPLE_DIR, test_telem),
+                TestTelemStore.get_unique_file_path_for_export_telem(TELEM_SAMPLE_DIR, test_telem),
                 "w",
             ) as file:
                 file.write(test_telem.to_json(indent=2))
@@ -61,8 +61,8 @@ class TestTelemStore:
         logger.info("Telemetries exported!")
 
     @staticmethod
-    def get_unique_file_path_for_test_telem(target_dir: str, test_telem: TestTelem):
-        telem_filename = TestTelemStore._get_filename_by_test_telem(test_telem)
+    def get_unique_file_path_for_export_telem(target_dir: str, test_telem: ExportedTelem):
+        telem_filename = TestTelemStore._get_filename_by_export_telem(test_telem)
         for i in range(MAX_SAME_CATEGORY_TELEMS):
             potential_filepath = path.join(target_dir, (telem_filename + str(i)))
             if path.exists(potential_filepath):
@@ -73,10 +73,10 @@ class TestTelemStore:
         )
 
     @staticmethod
-    def _get_filename_by_test_telem(test_telem: TestTelem):
+    def _get_filename_by_export_telem(test_telem: ExportedTelem):
         endpoint_part = test_telem.name
         return endpoint_part + "_" + test_telem.method
 
 
 if __name__ == "__main__":
-    TestTelemStore.export_test_telems()
+    TestTelemStore.export_telems()
