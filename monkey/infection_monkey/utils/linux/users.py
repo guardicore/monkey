@@ -1,5 +1,6 @@
 import datetime
 import logging
+import shlex
 import subprocess
 
 from infection_monkey.utils.auto_new_user import AutoNewUser
@@ -42,18 +43,16 @@ class AutoNewLinuxUser(AutoNewUser):
         logger.debug(
             "Trying to add {} with commands {}".format(self.username, str(commands_to_add_user))
         )
-        _ = subprocess.check_output(
-            " ".join(commands_to_add_user), stderr=subprocess.STDOUT, shell=True
-        )
+        _ = subprocess.check_output(commands_to_add_user, stderr=subprocess.STDOUT)
 
     def __enter__(self):
         return self  # No initialization/logging on needed in Linux
 
     def run_as(self, command):
-        command_as_new_user = "sudo -u {username} {command}".format(
-            username=self.username, command=command
+        command_as_new_user = shlex.split(
+            "sudo -u {username} {command}".format(username=self.username, command=command)
         )
-        return subprocess.call(command_as_new_user, shell=True)
+        return subprocess.call(command_as_new_user)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # delete the user.
@@ -63,6 +62,4 @@ class AutoNewLinuxUser(AutoNewUser):
                 self.username, str(commands_to_delete_user)
             )
         )
-        _ = subprocess.check_output(
-            " ".join(commands_to_delete_user), stderr=subprocess.STDOUT, shell=True
-        )
+        _ = subprocess.check_output(commands_to_delete_user, stderr=subprocess.STDOUT)
