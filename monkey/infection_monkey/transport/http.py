@@ -126,7 +126,7 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
             LOG.info("Received bootloader's request: {}".format(post_data))
             try:
                 dest_path = self.path
-                r = requests.post(
+                r = requests.post(  # noqa: DUO123
                     url=dest_path,
                     data=post_data,
                     verify=False,

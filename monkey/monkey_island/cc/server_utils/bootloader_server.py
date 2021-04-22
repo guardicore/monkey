@@ -33,9 +33,9 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
         # The island server doesn't always have a correct SSL cert installed
         # (By default it comes with a self signed one),
         # that's why we're not verifying the cert in this request.
-        r = requests.post(
+        r = requests.post(  # noqa: DUO123
             url=island_server_path, data=post_data, verify=False, timeout=SHORT_REQUEST_TIMEOUT
-        )  # noqa: DUO123
+        )
 
         try:
             if r.status_code != 200:
