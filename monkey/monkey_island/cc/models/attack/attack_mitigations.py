@@ -4,7 +4,7 @@ from mongoengine import Document, DoesNotExist, EmbeddedDocumentField, ListField
 from stix2 import AttackPattern, CourseOfAction
 
 from monkey_island.cc.models.attack.mitigation import Mitigation
-from monkey_island.cc.services.attack.test_mitre_api_interface import MitreApiInterface
+from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterface
 
 
 class AttackMitigations(Document):
