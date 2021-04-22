@@ -59,14 +59,5 @@ FINGER_CLASSES = {
             "info": "Checks if ElasticSearch is running and attempts to find it's " "version.",
             "attack_techniques": ["T1210"],
         },
-        {
-            "type": "string",
-            "enum": ["PostgreSQLFinger"],
-            "title": "PostgreSQLFinger",
-            "safe": True,
-            "info": "Checks if PostgreSQL service is running and if "
-            "its communication is encrypted.",
-            "attack_techniques": ["T1210"],
-        },
     ],
 }

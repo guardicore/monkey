@@ -175,7 +175,7 @@ class Configuration(object):
         8008,  # HTTP alternate
         7001,  # Oracle Weblogic default server port
     ]
-    tcp_target_ports = [22, 2222, 445, 135, 3389, 80, 8080, 443, 8008, 3306, 9200, 5432]
+    tcp_target_ports = [22, 2222, 445, 135, 3389, 80, 8080, 443, 8008, 3306, 9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
     tcp_scan_interval = 0  # in milliseconds
