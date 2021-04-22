@@ -35,7 +35,7 @@ class Monkey(flask_restful.Resource):
         return {}
 
     # Used by monkey. can't secure.
-    @TestTelemStore.store_test_telem
+    @TestTelemStore.store_exported_telem
     def patch(self, guid):
         monkey_json = json.loads(request.data)
         update = {"$set": {"modifytime": datetime.now()}}
@@ -60,7 +60,7 @@ class Monkey(flask_restful.Resource):
 
     # Used by monkey. can't secure.
     # Called on monkey wakeup to initialize local configuration
-    @TestTelemStore.store_test_telem
+    @TestTelemStore.store_exported_telem
     def post(self, **kw):
         monkey_json = json.loads(request.data)
         monkey_json["creds"] = []

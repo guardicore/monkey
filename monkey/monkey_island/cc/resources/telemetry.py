@@ -44,7 +44,7 @@ class Telemetry(flask_restful.Resource):
         return result
 
     # Used by monkey. can't secure.
-    @TestTelemStore.store_test_telem
+    @TestTelemStore.store_exported_telem
     def post(self):
         telemetry_json = json.loads(request.data)
         telemetry_json["data"] = json.loads(telemetry_json["data"])
