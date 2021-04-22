@@ -54,4 +54,4 @@ class InfectionLifecycle:
         if not is_report_being_generated() and not ReportService.is_latest_report_exists():
             safe_generate_reports()
         if ConfigService.is_test_telem_export_enabled() and not TestTelemStore.TELEMS_EXPORTED:
-            TestTelemStore.export_test_telems()
+            TestTelemStore.export_telems()
