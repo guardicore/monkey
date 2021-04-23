@@ -8,7 +8,9 @@ cryptography = "==2.5" # We can't build 32bit ubuntu12 binary with newer version
 cffi = ">=1.14"
 ecdsa = "==0.15"
 pyinstaller = {git = "git://github.com/guardicore/pyinstaller"}
+pyinstaller-hooks-contrib = "==2021.1"
 impacket = ">=0.9"
+importlib-metadata = "==4.0.1"
 ipaddress = ">=1.0.23"
 netifaces = ">=0.10.9"
 odict = "==1.7.0"
