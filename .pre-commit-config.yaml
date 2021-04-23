@@ -16,11 +16,11 @@ repos:
     hooks:
       - id: black
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.0
+    rev: 3.9.1
     hooks:
       - id: flake8
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v3.4.0
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -36,7 +36,7 @@ repos:
         args: ["monkey/monkey_island/cc/ui/src/", "--fix", "--max-warnings=0"]
   - repo: local
     hooks:
-    -   id: pytest
+      - id: pytest
         name: pytest
         entry: bash -c "cd monkey && pytest"
         language: system
