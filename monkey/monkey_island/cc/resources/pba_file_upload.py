@@ -18,7 +18,7 @@ from monkey_island.cc.services.post_breach_files import (
 __author__ = "VakarisZ"
 
 LOG = logging.getLogger(__name__)
-# Front end uses these strings to identify which files to work with (linux of windows)
+# Front end uses these strings to identify which files to work with (linux or windows)
 LINUX_PBA_TYPE = "PBAlinux"
 WINDOWS_PBA_TYPE = "PBAwindows"
 
@@ -71,12 +71,8 @@ class FileUpload(flask_restful.Resource):
         filename = ConfigService.get_config_value(filename_path)
         if filename:
             file_path = Path(env_singleton.env.get_config().data_dir_abs_path).joinpath(filename)
-            try:
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                ConfigService.set_config_value(filename_path, "")
-            except OSError as e:
-                LOG.error("Can't remove previously uploaded post breach files: %s" % e)
+            FileUpload._delete_file(file_path)
+            ConfigService.set_config_value(filename_path, "")
 
         return {}
 
@@ -97,3 +93,11 @@ class FileUpload(flask_restful.Resource):
             (PBA_LINUX_FILENAME_PATH if is_linux else PBA_WINDOWS_FILENAME_PATH), filename
         )
         return filename
+
+    @staticmethod
+    def _delete_file(file_path):
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except OSError as e:
+            LOG.error("Couldn't remove previously uploaded post breach files: %s" % e)
