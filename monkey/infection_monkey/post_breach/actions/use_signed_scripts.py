@@ -21,10 +21,9 @@ class SignedScriptProxyExecution(PBA):
         try:
             original_comspec = ""
             if is_windows_os():
-                original_comspec = subprocess.check_output(
+                original_comspec = subprocess.check_output(  # noqa: DUO116
                     "if defined COMSPEC echo %COMSPEC%", shell=True
-                ).decode()  # noqa: DUO116
-
+                ).decode()
             super().run()
         except Exception as e:
             LOG.warning(
