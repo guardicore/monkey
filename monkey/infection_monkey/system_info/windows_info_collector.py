@@ -1,4 +1,5 @@
 import logging
+import shlex
 import subprocess
 import sys
 
@@ -51,10 +52,10 @@ class WindowsInfoCollector(InfoCollector):
     def get_installed_packages(self):
         LOG.info("Getting installed packages")
 
-        packages = subprocess.check_output("dism /online /get-packages", shell=True)
+        packages = subprocess.check_output(shlex.split("dism /online /get-packages"))
         self.info["installed_packages"] = packages.decode("utf-8", errors="ignore")
 
-        features = subprocess.check_output("dism /online /get-features", shell=True)
+        features = subprocess.check_output(shlex.split("dism /online /get-features"))
         self.info["installed_features"] = features.decode("utf-8", errors="ignore")
 
         LOG.debug("Got installed packages")

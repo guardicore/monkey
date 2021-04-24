@@ -4,6 +4,7 @@ import filecmp
 import logging
 import os
 import pprint
+import shlex
 import shutil
 import subprocess
 import sys
@@ -164,9 +165,10 @@ class MonkeyDrops(object):
                 "monkey_commandline": inner_monkey_cmdline,
             }
 
+        monkey_cmdline_split = shlex.split(monkey_cmdline)
+
         monkey_process = subprocess.Popen(
-            monkey_cmdline,
-            shell=True,
+            monkey_cmdline_split,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

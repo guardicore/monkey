@@ -1,4 +1,5 @@
 import logging
+import shlex
 import shutil
 import subprocess
 import sys
@@ -50,9 +51,10 @@ class WindowsUpgrader(object):
             + monkey_options
         )
 
+        monkey_cmdline_split = shlex.split(monkey_cmdline)
+
         monkey_process = subprocess.Popen(
-            monkey_cmdline,
-            shell=True,
+            monkey_cmdline_split,
             stdin=None,
             stdout=None,
             stderr=None,
