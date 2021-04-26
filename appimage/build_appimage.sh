@@ -82,8 +82,6 @@ clone_monkey_repo() {
   log_message "Cloning files from git"
   branch=${1:-"develop"}
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
-
-  chmod 774 -R "${REPO_MONKEY_HOME}"
 }
 
 setup_appdir() {
