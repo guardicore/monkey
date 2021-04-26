@@ -239,6 +239,15 @@ else
   curl -o ${MONKEY_BIN_DIR}/traceroute32 ${TRACEROUTE_32_BINARY_URL}
 fi
 
+# Download Swimm
+if exists wget; then
+  wget ${SWIMM_URL} -O $HOME/swimm
+else
+  curl ${SWIMM_URL} -o $HOME/swimm
+fi
+sudo dpkg -i $HOME/swimm || (sudo apt-get update && sudo apt-get -f install)
+sudo chmod +x $HOME/swimm
+
 sudo chmod +x "${INFECTION_MONKEY_DIR}/build_linux.sh"
 
 configure_precommit ${python_cmd} ${monkey_home}
