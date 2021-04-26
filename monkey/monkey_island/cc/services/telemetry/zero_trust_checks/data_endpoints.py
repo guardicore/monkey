@@ -9,7 +9,6 @@ from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_serv
 )
 
 HTTP_SERVERS_SERVICES_NAMES = ["tcp-80"]
-POSTGRESQL_SERVER_SERVICE_NAME = "PostgreSQL"
 
 
 def check_open_data_endpoints(telemetry_json):
@@ -17,7 +16,6 @@ def check_open_data_endpoints(telemetry_json):
     current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
     found_http_server_status = zero_trust_consts.STATUS_PASSED
     found_elastic_search_server = zero_trust_consts.STATUS_PASSED
-    found_postgresql_server = zero_trust_consts.STATUS_PASSED
 
     events = [
         Event.create_event(
@@ -66,20 +64,6 @@ def check_open_data_endpoints(telemetry_json):
                     event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
                 )
             )
-        if service_name == POSTGRESQL_SERVER_SERVICE_NAME:
-            found_postgresql_server = zero_trust_consts.STATUS_FAILED
-            events.append(
-                Event.create_event(
-                    title="Scan telemetry analysis",
-                    message="Service {} on {} recognized as an open data endpoint! "
-                    "Service details: {}".format(
-                        service_data["display_name"],
-                        telemetry_json["data"]["machine"]["ip_addr"],
-                        json.dumps(service_data),
-                    ),
-                    event_type=zero_trust_consts.EVENT_TYPE_MONKEY_NETWORK,
-                )
-            )
 
     MonkeyZTFindingService.create_or_add_to_existing(
         test=zero_trust_consts.TEST_DATA_ENDPOINT_HTTP,
@@ -90,12 +74,6 @@ def check_open_data_endpoints(telemetry_json):
     MonkeyZTFindingService.create_or_add_to_existing(
         test=zero_trust_consts.TEST_DATA_ENDPOINT_ELASTIC,
         status=found_elastic_search_server,
-        events=events,
-    )
-
-    MonkeyZTFindingService.create_or_add_to_existing(
-        test=zero_trust_consts.TEST_DATA_ENDPOINT_POSTGRESQL,
-        status=found_postgresql_server,
         events=events,
     )
 

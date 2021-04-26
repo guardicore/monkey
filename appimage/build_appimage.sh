@@ -134,12 +134,21 @@ copy_monkey_island_to_appdir() {
 install_monkey_island_python_dependencies() {
   log_message "Installing island requirements"
 
-  requirements_island="$ISLAND_PATH/requirements.txt"
-  # TODO: This is an ugly hack. PyInstaller and VirtualEnv are build-time
-  #       dependencies and should not be installed as a runtime requirement.
-  cat "$requirements_island" | grep -Piv "virtualenv|pyinstaller" | sponge "$requirements_island"
+  log_message "Installing pipenv"
+  "$APPDIR"/AppRun -m pip install pipenv || handle_error
 
+  requirements_island="$ISLAND_PATH/requirements.txt"
+  generate_requirements_from_pipenv_lock $requirements_island
+
+  log_message "Installing island python requirements"
   "$APPDIR"/AppRun -m pip install -r "${requirements_island}"  --ignore-installed || handle_error
+}
+
+generate_requirements_from_pipenv_lock () {
+  log_message "Generating a requirements.txt file with 'pipenv lock -r'"
+  cd $ISLAND_PATH
+  "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" lock -r > "$1" || handle_error
+  cd -
 }
 
 download_monkey_agent_binaries() {

@@ -1,16 +1,21 @@
 #!/bin/bash
 
-# Detecting command that calls python 3.7
-python_cmd=""
-if [[ $(python --version 2>&1) == *"Python 3.7"* ]]; then
-  python_cmd="python"
-fi
-if [[ $(python37 --version 2>&1) == *"Python 3.7"* ]]; then
-  python_cmd="python37"
-fi
-if [[ $(python3.7 --version 2>&1) == *"Python 3.7"* ]]; then
-  python_cmd="python3.7"
-fi
+start_mongo() {
+    # TODO: Handle starting and cleaning up mongo inside monkey_island.py or
+    # monkey_island/main.py.
+    ./bin/mongodb/bin/mongod --dbpath ./bin/mongodb/db &
+}
 
-./monkey_island/bin/mongodb/bin/mongod --dbpath ./monkey_island/bin/mongodb/db &
-${python_cmd} ./monkey_island.py
+cd_to_monkey() {
+    # Pipenv must be run from monkey/monkey/monkey_island, but monkey_island.py
+    # must be executed from monkey/monkey.
+    cd ..
+}
+
+start_monkey_island() {
+    cd_to_monkey
+    python ./monkey_island.py
+}
+
+start_mongo
+start_monkey_island

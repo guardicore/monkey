@@ -1,0 +1,35 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+cryptography = "==2.5" # We can't build 32bit ubuntu12 binary with newer versions of cryptography
+cffi = ">=1.14"
+ecdsa = "==0.15"
+pyinstaller = {git = "git://github.com/guardicore/pyinstaller"}
+pyinstaller-hooks-contrib = "==2021.1"
+impacket = ">=0.9"
+importlib-metadata = "==4.0.1"
+ipaddress = ">=1.0.23"
+netifaces = ">=0.10.9"
+odict = "==1.7.0"
+paramiko = ">=2.7.1"
+psutil = ">=5.7.0"
+pycryptodome = "==3.9.8"
+pyftpdlib = "==1.5.6"
+pymssql = "==2.1.5"
+pypykatz = "==0.3.12"
+pysmb = "==1.2.5"
+requests = ">=2.24"
+urllib3 = "==1.25.8"
+simplejson = "*"
+"WinSys-3.x" = ">=0.5.2"
+WMI = {version = "==1.5.1", sys_platform = "== 'win32'"}
+ScoutSuite = {git = "git://github.com/guardicode/ScoutSuite"}
+pyopenssl = "==19.0.0" # We can't build 32bit ubuntu12 binary with newer versions of pyopenssl
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
