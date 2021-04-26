@@ -35,7 +35,7 @@ install:
 - node --version
 - npm --version
 - nvm --version
-- nvm install node
+- nvm install 12
 - nvm use node
 - npm i -g eslint
 - node --version
