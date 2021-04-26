@@ -28,7 +28,7 @@ This Debian package has been tested on Ubuntu Bionic 18.04 LTS and Ubuntu Focal 
     ```
 1. Extract the tarball by running:
     ```sh
-    tar -xvzf monkey-island-debian.tgz
+    tar -xvzf infection_monkey_deb.tgz
     ```
 1. Install the Monkey Island Debian package:
     ```sh
