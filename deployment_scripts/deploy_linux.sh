@@ -148,13 +148,13 @@ pipx install pipenv
 
 log_message "Installing island requirements"
 pushd $ISLAND_PATH
-pipenv install --dev --system
+pipenv install --dev
 popd
 
 log_message "Installing monkey requirements"
 sudo apt-get install -y libffi-dev upx libssl-dev libc++1
 pushd $INFECTION_MONKEY_DIR
-pipenv install --dev --system
+pipenv install --dev
 popd
 
 agents=${3:-true}
