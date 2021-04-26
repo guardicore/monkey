@@ -19,3 +19,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Reformated all code using black. #1070
 - Sorted all imports usind isort. #1081
 - Addressed all flake8 issues. #1071
+- Use pipenv for python dependency management. #1091
+- Moved unit tests to a dedicated `tests/` directory to improve pytest
+  collection time. #1102
