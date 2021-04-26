@@ -267,6 +267,12 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         $webClient.DownloadFile($SAMBA_64_BINARY_URL, $samba64_path)
     }
 
+    # Get Swimm
+    "Downloading Swimm..."
+    $swimm_filename = Join-Path -Path $HOME -ChildPath "swimm.exe"
+    $webClient.DownloadFile($SWIMM_URL, $swimm_filename)
+    Start-Process $swimm_filename
+
     "Script finished"
 
 }
