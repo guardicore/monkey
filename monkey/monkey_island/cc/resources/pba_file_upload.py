@@ -58,24 +58,6 @@ class FileUpload(flask_restful.Resource):
         response = Response(response=filename, status=200, mimetype="text/plain")
         return response
 
-    @jwt_required
-    def delete(self, file_type):
-        """
-        Deletes file that has been deleted on the front end
-        :param file_type: Type indicates which file was deleted, linux of windows
-        :return: Empty response
-        """
-        filename_path = (
-            PBA_LINUX_FILENAME_PATH if file_type == "PBAlinux" else PBA_WINDOWS_FILENAME_PATH
-        )
-        filename = ConfigService.get_config_value(filename_path)
-        if filename:
-            file_path = Path(env_singleton.env.get_config().data_dir_abs_path).joinpath(filename)
-            FileUpload._delete_file(file_path)
-            ConfigService.set_config_value(filename_path, "")
-
-        return {}
-
     @staticmethod
     def upload_pba_file(request_, is_linux=True):
         """
@@ -93,6 +75,24 @@ class FileUpload(flask_restful.Resource):
             (PBA_LINUX_FILENAME_PATH if is_linux else PBA_WINDOWS_FILENAME_PATH), filename
         )
         return filename
+
+    @jwt_required
+    def delete(self, file_type):
+        """
+        Deletes file that has been deleted on the front end
+        :param file_type: Type indicates which file was deleted, linux of windows
+        :return: Empty response
+        """
+        filename_path = (
+            PBA_LINUX_FILENAME_PATH if file_type == "PBAlinux" else PBA_WINDOWS_FILENAME_PATH
+        )
+        filename = ConfigService.get_config_value(filename_path)
+        if filename:
+            file_path = Path(env_singleton.env.get_config().data_dir_abs_path).joinpath(filename)
+            FileUpload._delete_file(file_path)
+            ConfigService.set_config_value(filename_path, "")
+
+        return {}
 
     @staticmethod
     def _delete_file(file_path):
