@@ -36,4 +36,4 @@ To install and configure pre-commit, run `pip install --user pre-commit`. Next, 
 
 Infection Monkey has development tutorials that use [`swimm.io`](https://swimm.io/) to help teach new developers how to perform common code tasks in the Infection Monkey codebase and accelerate the ramp-up process. The tutorials include adding new configuration values, new system info collectors and more.
 
-In order to pass the pre-commit checks, you'll have to [install Swimm successfully](../swimm).
+In order to pass the pre-commit checks, you'll have to [install Swimm successfully](https://www.guardicore.com/infectionmonkey/docs/development/swimm/). Both the Linux and Windows deployment scrips will install [Swimm](https://swimm.io/), but you'll have to sign up [here](https://swimm.io/sign-beta) to complete the process.
