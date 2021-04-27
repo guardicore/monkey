@@ -23,6 +23,10 @@ function Configure-precommit([String] $git_repo_dir)
 		exit
 	}
     Pop-Location
+
+    # Set env variable to skip Swimm verification during pre-commit, Windows not supported yet
+    [System.Environment]::SetEnvironmentVariable('SKIP','swimm-verify',[System.EnvironmentVariableTarget]::User)
+
     Write-Output "Pre-commit successfully installed"
 }
 
@@ -272,6 +276,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     $swimm_filename = Join-Path -Path $HOME -ChildPath "swimm.exe"
     $webClient.DownloadFile($SWIMM_URL, $swimm_filename)
     Start-Process $swimm_filename
+
 
     "Script finished"
 
