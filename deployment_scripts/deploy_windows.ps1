@@ -25,7 +25,15 @@ function Configure-precommit([String] $git_repo_dir)
     Pop-Location
 
     # Set env variable to skip Swimm verification during pre-commit, Windows not supported yet
-    [System.Environment]::SetEnvironmentVariable('SKIP','swimm-verify',[System.EnvironmentVariableTarget]::User)
+    $skipValue = [System.Environment]::GetEnvironmentVariable('SKIP', [System.EnvironmentVariableTarget]::User)
+    if ($skipValue) {  # if `SKIP` is not empty
+        if (-Not ($skipValue -split ',' -contains 'swimm-verify')) {  # if `SKIP` doesn't already have "swimm-verify"
+            [System.Environment]::SetEnvironmentVariable('SKIP', $env:SKIP + ',swimm-verify', [System.EnvironmentVariableTarget]::User)
+        }
+    }
+    else {
+        [System.Environment]::SetEnvironmentVariable('SKIP', 'swimm-verify', [System.EnvironmentVariableTarget]::User)
+    }
 
     Write-Output "Pre-commit successfully installed"
 }
