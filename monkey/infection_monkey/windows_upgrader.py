@@ -51,7 +51,10 @@ class WindowsUpgrader(object):
             + monkey_options
         )
 
-        monkey_cmdline_split = shlex.split(monkey_cmdline)
+        monkey_cmdline_split = shlex.split(
+            monkey_cmdline,
+            posix=False,  # won't try resolving "\" in paths as part of escape sequences
+        )
 
         monkey_process = subprocess.Popen(
             monkey_cmdline_split,

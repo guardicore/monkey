@@ -14,11 +14,7 @@ from ctypes import c_char_p
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from infection_monkey.config import WormConfiguration
 from infection_monkey.exploit.tools.helpers import build_monkey_commandline_explicitly
-from infection_monkey.model import (
-    GENERAL_CMDLINE_LINUX,
-    MONKEY_CMDLINE_LINUX,
-    MONKEY_CMDLINE_WINDOWS,
-)
+from infection_monkey.model import MONKEY_CMDLINE_LINUX, MONKEY_CMDLINE_WINDOWS
 from infection_monkey.system_info import OperatingSystem, SystemInfoCollector
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 
@@ -151,30 +147,38 @@ class MonkeyDrops(object):
                 MONKEY_CMDLINE_WINDOWS % {"monkey_path": self._config["destination_path"]}
                 + monkey_options
             )
+            monkey_cmdline_split = shlex.split(
+                monkey_cmdline,
+                posix=False,  # won't try resolving "\" in paths as part of escape sequences
+            )
+
+            monkey_process = subprocess.Popen(
+                monkey_cmdline_split,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                close_fds=True,
+                creationflags=DETACHED_PROCESS,
+            )
         else:
             dest_path = self._config["destination_path"]
-            # In linux we have a more complex commandline. There's a general outer one,
-            # and the inner one which actually
-            # runs the monkey
-            inner_monkey_cmdline = (
+            # In Linux, we need to change the directory first, which is done
+            # using thw `cwd` argument in `subprocess.Popen` below
+            monkey_cmdline = (
                 MONKEY_CMDLINE_LINUX % {"monkey_filename": dest_path.split("/")[-1]}
                 + monkey_options
             )
-            monkey_cmdline = GENERAL_CMDLINE_LINUX % {
-                "monkey_directory": dest_path[0 : dest_path.rfind("/")],
-                "monkey_commandline": inner_monkey_cmdline,
-            }
+            monkey_cmdline_split = shlex.split(monkey_cmdline)
 
-        monkey_cmdline_split = shlex.split(monkey_cmdline)
-
-        monkey_process = subprocess.Popen(
-            monkey_cmdline_split,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            close_fds=True,
-            creationflags=DETACHED_PROCESS,
-        )
+            monkey_process = subprocess.Popen(
+                monkey_cmdline_split,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                close_fds=True,
+                cwd="/".join(dest_path.split("/")[0:-1]),
+                creationflags=DETACHED_PROCESS,
+            )
 
         LOG.info(
             "Executed monkey process (PID=%d) with command line: %s",
