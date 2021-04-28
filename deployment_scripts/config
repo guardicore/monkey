@@ -43,3 +43,6 @@ export TRACEROUTE_32_BINARY_URL="https://github.com/guardicore/monkey/releases/d
 
 export SAMBACRY_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/sc_monkey_runner64.so"
 export SAMBACRY_32_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/sc_monkey_runner32.so"
+
+# Swimm
+export SWIMM_URL=https://github.com/swimmio/SwimmReleases/releases/download/v0.4.4-0/Swimm_0.4.4-0_Setup.deb
