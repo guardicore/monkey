@@ -240,13 +240,16 @@ else
 fi
 
 # Download Swimm
+log_message "Downloading swimm"
 if exists wget; then
   wget ${SWIMM_URL} -O $HOME/swimm
 else
   curl ${SWIMM_URL} -o $HOME/swimm
 fi
+
+log_message "Installing swimm"
 sudo dpkg -i $HOME/swimm || (sudo apt-get update && sudo apt-get -f install)
-sudo chmod +x $HOME/swimm
+rm $HOME/swimm
 
 sudo chmod +x "${INFECTION_MONKEY_DIR}/build_linux.sh"
 
