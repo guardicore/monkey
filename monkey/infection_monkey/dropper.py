@@ -143,6 +143,8 @@ class MonkeyDrops(object):
         )
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
+            # TODO: Replace all of this string templating with a function that accepts
+            #       the necessary parameters and returns a list of arguments.
             monkey_cmdline = (
                 MONKEY_CMDLINE_WINDOWS % {"monkey_path": self._config["destination_path"]}
                 + monkey_options
@@ -164,6 +166,8 @@ class MonkeyDrops(object):
             dest_path = self._config["destination_path"]
             # In Linux, we need to change the directory first, which is done
             # using thw `cwd` argument in `subprocess.Popen` below
+            # TODO: Replace all of this string templating with a function that accepts
+            #       the necessary parameters and returns a list of arguments.
             monkey_cmdline = (
                 MONKEY_CMDLINE_LINUX % {"monkey_filename": dest_path.split("/")[-1]}
                 + monkey_options

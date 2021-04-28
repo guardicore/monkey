@@ -46,6 +46,8 @@ class WindowsUpgrader(object):
             opts.parent, opts.tunnel, opts.server, opts.depth
         )
 
+        # TODO: Replace all of this string templating with a function that accepts
+        #       the necessary parameters and returns a list of arguments.
         monkey_cmdline = (
             MONKEY_CMDLINE_WINDOWS % {"monkey_path": WormConfiguration.dropper_target_path_win_64}
             + monkey_options
