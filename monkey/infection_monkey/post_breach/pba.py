@@ -90,7 +90,7 @@ class PBA(Plugin):
         :return: Tuple of command's output string and boolean, indicating if it succeeded
         """
         try:
-            output = subprocess.check_output(
+            output = subprocess.check_output(  # noqa: DUO116
                 self.command, stderr=subprocess.STDOUT, shell=True
             ).decode()
             return output, True

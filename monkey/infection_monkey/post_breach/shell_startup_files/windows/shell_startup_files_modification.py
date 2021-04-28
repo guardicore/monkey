@@ -13,8 +13,10 @@ def get_windows_commands_to_modify_shell_startup_files():
 
     # get list of usernames
     USERS = (
-        subprocess.check_output("dir C:\\Users /b", shell=True).decode().split("\r\n")[:-1]
-    )  # noqa: DUO116
+        subprocess.check_output("dir C:\\Users /b", shell=True)  # noqa: DUO116
+        .decode()
+        .split("\r\n")[:-1]
+    )
     USERS.remove("Public")
 
     STARTUP_FILES_PER_USER = [

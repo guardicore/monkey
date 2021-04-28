@@ -1,4 +1,5 @@
 import logging
+import shlex
 import shutil
 import subprocess
 import sys
@@ -45,14 +46,20 @@ class WindowsUpgrader(object):
             opts.parent, opts.tunnel, opts.server, opts.depth
         )
 
+        # TODO: Replace all of this string templating with a function that accepts
+        #       the necessary parameters and returns a list of arguments.
         monkey_cmdline = (
             MONKEY_CMDLINE_WINDOWS % {"monkey_path": WormConfiguration.dropper_target_path_win_64}
             + monkey_options
         )
 
-        monkey_process = subprocess.Popen(
+        monkey_cmdline_split = shlex.split(
             monkey_cmdline,
-            shell=True,
+            posix=False,  # won't try resolving "\" in paths as part of escape sequences
+        )
+
+        monkey_process = subprocess.Popen(
+            monkey_cmdline_split,
             stdin=None,
             stdout=None,
             stderr=None,

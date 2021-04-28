@@ -39,7 +39,7 @@ class AutoNewWindowsUser(AutoNewUser):
 
         windows_cmds = get_windows_commands_to_add_user(self.username, self.password, True)
         logger.debug("Trying to add {} with commands {}".format(self.username, str(windows_cmds)))
-        _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT, shell=True)
+        _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT)
 
     def __enter__(self):
         # Importing these only on windows, as they won't exist on linux.
@@ -127,9 +127,7 @@ class AutoNewWindowsUser(AutoNewUser):
                     self.username, str(commands_to_deactivate_user)
                 )
             )
-            _ = subprocess.check_output(
-                commands_to_deactivate_user, stderr=subprocess.STDOUT, shell=True
-            )
+            _ = subprocess.check_output(commands_to_deactivate_user, stderr=subprocess.STDOUT)
         except Exception as err:
             raise NewUserError("Can't deactivate user {}. Info: {}".format(self.username, err))
 
@@ -141,8 +139,6 @@ class AutoNewWindowsUser(AutoNewUser):
                     self.username, str(commands_to_delete_user)
                 )
             )
-            _ = subprocess.check_output(
-                commands_to_delete_user, stderr=subprocess.STDOUT, shell=True
-            )
+            _ = subprocess.check_output(commands_to_delete_user, stderr=subprocess.STDOUT)
         except Exception as err:
             raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))

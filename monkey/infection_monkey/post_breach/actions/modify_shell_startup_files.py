@@ -58,8 +58,8 @@ class ModifyShellStartupFiles(PBA):
             def run(self):
                 if self.command:
                     try:
-                        output = subprocess.check_output(
-                            self.command, stderr=subprocess.STDOUT, shell=True  # noqa: DUO116
+                        output = subprocess.check_output(  # noqa: DUO116
+                            self.command, stderr=subprocess.STDOUT, shell=True
                         ).decode()
                         return output, True
                     except subprocess.CalledProcessError as e:

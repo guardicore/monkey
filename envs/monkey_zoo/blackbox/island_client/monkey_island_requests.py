@@ -66,8 +66,8 @@ class MonkeyIslandRequests(object):
             return request_function_wrapper
 
     def get_jwt_from_server(self):
-        resp = requests.post(
-            self.addr + "api/auth",  # noqa: DUO123
+        resp = requests.post(  # noqa: DUO123
+            self.addr + "api/auth",
             json={"username": NO_AUTH_CREDS, "password": NO_AUTH_CREDS},
             verify=False,
         )
@@ -75,8 +75,8 @@ class MonkeyIslandRequests(object):
 
     @_Decorators.refresh_jwt_token
     def get(self, url, data=None):
-        return requests.get(
-            self.addr + url,  # noqa: DUO123
+        return requests.get(  # noqa: DUO123
+            self.addr + url,
             headers=self.get_jwt_header(),
             params=data,
             verify=False,
@@ -84,25 +84,25 @@ class MonkeyIslandRequests(object):
 
     @_Decorators.refresh_jwt_token
     def post(self, url, data):
-        return requests.post(
-            self.addr + url, data=data, headers=self.get_jwt_header(), verify=False  # noqa: DUO123
+        return requests.post(  # noqa: DUO123
+            self.addr + url, data=data, headers=self.get_jwt_header(), verify=False
         )
 
     @_Decorators.refresh_jwt_token
     def post_json(self, url, data: Dict):
-        return requests.post(
-            self.addr + url, json=data, headers=self.get_jwt_header(), verify=False  # noqa: DUO123
+        return requests.post(  # noqa: DUO123
+            self.addr + url, json=data, headers=self.get_jwt_header(), verify=False
         )
 
     @_Decorators.refresh_jwt_token
     def patch(self, url, data: Dict):
-        return requests.patch(
-            self.addr + url, data=data, headers=self.get_jwt_header(), verify=False  # noqa: DUO123
+        return requests.patch(  # noqa: DUO123
+            self.addr + url, data=data, headers=self.get_jwt_header(), verify=False
         )
 
     @_Decorators.refresh_jwt_token
     def delete(self, url):
-        return requests.delete(  # noqa: DOU123
+        return requests.delete(  # noqa: DUO123
             self.addr + url, headers=self.get_jwt_header(), verify=False
         )
 

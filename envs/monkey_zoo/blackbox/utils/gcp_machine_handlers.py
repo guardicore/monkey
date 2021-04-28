@@ -23,9 +23,9 @@ class GCPHandler(object):
             subprocess.call(GCPHandler.get_auth_command(key_path), shell=True)  # noqa: DUO116
             LOGGER.info("GCP Handler passed key")
             # set project
-            subprocess.call(
+            subprocess.call(  # noqa: DUO116
                 GCPHandler.get_set_project_command(project_id), shell=True
-            )  # noqa: DUO116
+            )
             LOGGER.info("GCP Handler set project")
             LOGGER.info("GCP Handler initialized successfully")
         except Exception as e:
@@ -39,18 +39,18 @@ class GCPHandler(object):
         """
         LOGGER.info("Setting up all GCP machines...")
         try:
-            subprocess.call(
+            subprocess.call(  # noqa: DUO116
                 (GCPHandler.MACHINE_STARTING_COMMAND % (machine_list, self.zone)), shell=True
-            )  # noqa: DUO116
+            )
             LOGGER.info("GCP machines successfully started.")
         except Exception as e:
             LOGGER.error("GCP Handler failed to start GCP machines: %s" % e)
 
     def stop_machines(self, machine_list):
         try:
-            subprocess.call(
+            subprocess.call(  # noqa: DUO116
                 (GCPHandler.MACHINE_STOPPING_COMMAND % (machine_list, self.zone)), shell=True
-            )  # noqa: DUO116
+            )
             LOGGER.info("GCP machines stopped successfully.")
         except Exception as e:
             LOGGER.error("GCP Handler failed to stop network machines: %s" % e)
