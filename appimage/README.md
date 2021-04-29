@@ -18,7 +18,7 @@ NOTE: This script is intended to be run from a clean VM. You can also manually
 remove build artifacts by removing the following files and directories.
 
 - $HOME/.monkey_island (optional)
-- $HOME/squashfs-root
+- $HOME/appimage/squashfs-root
 - $HOME/git/monkey
 - $HOME/appimage/Infection_Monkey-x86_64.AppImage
 

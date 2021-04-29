@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APPDIR="$HOME/squashfs-root"
+APPDIR="./squashfs-root"
 CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
 INSTALL_DIR="$APPDIR/usr/src"
 
@@ -112,7 +112,6 @@ setup_python_37_appdir() {
 
     ./"$PYTHON_APPIMAGE" --appimage-extract
     rm "$PYTHON_APPIMAGE"
-    mv ./squashfs-root "$APPDIR"
     mkdir -p "$INSTALL_DIR"
 }
 
