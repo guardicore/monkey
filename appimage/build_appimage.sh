@@ -78,8 +78,7 @@ clone_monkey_repo() {
   fi
 
   log_message "Cloning files from git"
-  branch=${1:-"develop"}
-  git clone --single-branch --recurse-submodules -b "$branch" "$MONKEY_ORIGIN_URL" "$REPO_MONKEY_HOME" 2>&1 || handle_error
+  git clone --single-branch --recurse-submodules -b "$1" "$MONKEY_ORIGIN_URL" "$REPO_MONKEY_HOME" 2>&1 || handle_error
 }
 
 setup_appdir() {
@@ -259,6 +258,7 @@ fi
 
 monkey_version="dev"
 agent_binary_dir=""
+branch="develop"
 
 while (( "$#" )); do
 case "$1" in
@@ -278,6 +278,13 @@ case "$1" in
       missing_argument "$1"
     fi
     ;;
+   --branch)
+    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+      branch=$2
+      shift 2
+    else
+      missing_argument "$1"
+    fi
   esac
 done
 
@@ -285,7 +292,7 @@ done
 install_build_prereqs
 install_appimage_tool
 
-clone_monkey_repo "$@"
+clone_monkey_repo "$branch"
 
 setup_appdir "$agent_binary_dir"
 
