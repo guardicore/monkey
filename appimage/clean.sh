@@ -6,4 +6,4 @@
 rm -rf "$HOME/.monkey_island"
 rm -rf "$HOME/appimage/squashfs-root"
 rm -rf "$HOME/git/monkey"
-rm "$HOME/appimage/Infection_Monkey-x86_64.AppImage"
+rm $HOME/appimage/Infection_Monkey*x86_64.AppImage

@@ -220,6 +220,11 @@ add_apprun() {
 build_appimage() {
   log_message "Building AppImage"
   ARCH="x86_64" appimagetool "$APPDIR"
+  apply_version_to_appimage "$1"
+}
+
+apply_version_to_appimage() {
+  mv "Infection_Monkey-x86_64.AppImage" "Infection_Monkey-$1-x86_64.AppImage"
 }
 
 if is_root; then
@@ -233,6 +238,21 @@ Run \`sudo -v\`, enter your password, and then re-run this script."
   exit 1
 fi
 
+monkey_version="dev"
+
+while (( "$#" )); do
+case "$1" in
+  --version)
+    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+      monkey_version=$2
+      shift 2
+    else
+      echo "Error: Argument for $1 is missing" >&2
+      exit 1
+    fi
+  esac
+done
+
 
 install_build_prereqs
 install_appimage_tool
@@ -241,7 +261,7 @@ clone_monkey_repo "$@"
 
 setup_appdir
 
-build_appimage
+build_appimage "$monkey_version"
 
 log_message "Deployment script finished."
 exit 0
