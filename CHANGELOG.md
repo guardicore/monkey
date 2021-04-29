@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Use pipenv for python dependency management. #1091
 - Moved unit tests to a dedicated `tests/` directory to improve pytest
   collection time. #1102
+- Added `--run-performance-tests` flag to BB tests. If this flag is not specified,
+ performance tests are skipped.
 
 ### Fixed
 - Attempted to delete a directory when monkey config reset was called. #1054
