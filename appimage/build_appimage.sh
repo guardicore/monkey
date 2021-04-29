@@ -25,6 +25,34 @@ missing_argument() {
   exit 1
 }
 
+echo_help() {
+  echo "usage: build_appimage.sh [--help] [--agent-binary-dir <PATH>] [--branch <BRANCH>]"
+  echo "                         [--monkey-repo <PATH>] [--version <MONKEY_VERSION>]"
+  echo ""
+  echo "Creates an AppImage package for Infection Monkey."
+  echo ""
+  echo "--agent-binary-dir             A directory containing the agent binaries that"
+  echo "                               you'd like to include with the AppImage. If this"
+  echo "                               parameter is unspecified, the latest release"
+  echo "                               binaries will be downloaded from GitHub."
+  echo ""
+  echo "--branch                       The git branch you'd like the AppImage to be"
+  echo "                               built from. (Default: develop)"
+  echo ""
+  echo "--monkey-repo                  A directory containing the Infection Monkey git"
+  echo "                               repository. If the directory is empty or does"
+  echo "                               not exist, a new repo will be cloned from GitHub."
+  echo "                               If the directory is already a valid GitHub repo,"
+  echo "                               it will be used as-is and the --branch parameter"
+  echo "                               will have no effect."
+  echo "                               (Default: $DEFAULT_REPO_MONKEY_HOME)"
+  echo ""
+  echo "--version                      A version number for the AppImage package."
+  echo "                               (Default: dev)"
+
+  exit 0
+}
+
 is_root() {
   return "$(id -u)"
 }
@@ -293,6 +321,9 @@ case "$1" in
       missing_argument "$1"
     fi
 	;;
+  -h|--help)
+	echo_help
+	;;
   --monkey-repo)
     if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
       monkey_repo=$2
@@ -312,6 +343,7 @@ case "$1" in
   -*)
 	echo "Error: Unsupported parameter $1" >&2
 	exit 1
+	;;
   esac
 done
 
