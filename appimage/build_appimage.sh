@@ -49,22 +49,22 @@ install_nodejs() {
 }
 
 install_build_prereqs() {
-    sudo apt update
-    sudo apt upgrade -y
+  sudo apt update
+  sudo apt upgrade -y
 
-    # monkey island prereqs
-    sudo apt install -y curl libcurl4 openssl git build-essential moreutils
-    install_nodejs
+  # monkey island prereqs
+  sudo apt install -y curl libcurl4 openssl git build-essential moreutils
+  install_nodejs
 }
 
 install_appimage_tool() {
-    APP_TOOL_BIN=$WORKSPACE/bin/appimagetool
+  APP_TOOL_BIN=$WORKSPACE/bin/appimagetool
 
-    mkdir -p "$WORKSPACE"/bin
-    curl -L -o "$APP_TOOL_BIN" "$APP_TOOL_URL"
-    chmod u+x "$APP_TOOL_BIN"
+  mkdir -p "$WORKSPACE"/bin
+  curl -L -o "$APP_TOOL_BIN" "$APP_TOOL_URL"
+  chmod u+x "$APP_TOOL_BIN"
 
-    PATH=$PATH:$WORKSPACE/bin
+  PATH=$PATH:$WORKSPACE/bin
 }
 
 clone_monkey_repo() {
@@ -78,34 +78,34 @@ clone_monkey_repo() {
 }
 
 setup_appdir() {
-	setup_python_37_appdir
+  setup_python_37_appdir
 
-	copy_monkey_island_to_appdir
-	download_monkey_agent_binaries
+  copy_monkey_island_to_appdir
+  download_monkey_agent_binaries
 
-	install_monkey_island_python_dependencies
-	install_mongodb
+  install_monkey_island_python_dependencies
+  install_mongodb
 
-	generate_ssl_cert
-	build_frontend
+  generate_ssl_cert
+  build_frontend
 
-	add_monkey_icon
-	add_desktop_file
-	add_apprun
+  add_monkey_icon
+  add_desktop_file
+  add_apprun
 }
 
 setup_python_37_appdir() {
-    PYTHON_APPIMAGE="python${PYTHON_VERSION}_x86_64.AppImage"
-    rm -rf "$APPDIR" || true
+  PYTHON_APPIMAGE="python${PYTHON_VERSION}_x86_64.AppImage"
+  rm -rf "$APPDIR" || true
 
-    log_message "downloading Python3.7 Appimage"
-    curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
+  log_message "downloading Python3.7 Appimage"
+  curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
 
-    chmod u+x "$PYTHON_APPIMAGE"
+  chmod u+x "$PYTHON_APPIMAGE"
 
-    ./"$PYTHON_APPIMAGE" --appimage-extract
-    rm "$PYTHON_APPIMAGE"
-    mkdir -p "$INSTALL_DIR"
+  ./"$PYTHON_APPIMAGE" --appimage-extract
+  rm "$PYTHON_APPIMAGE"
+  mkdir -p "$INSTALL_DIR"
 }
 
 copy_monkey_island_to_appdir() {
@@ -201,25 +201,25 @@ remove_node_modules() {
 }
 
 add_monkey_icon() {
-	unlink "$APPDIR"/python.png
-	mkdir -p "$APPDIR"/usr/share/icons
-	cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/infection-monkey.svg
-	ln -s "$APPDIR"/usr/share/icons/infection-monkey.svg "$APPDIR"/infection-monkey.svg
+  unlink "$APPDIR"/python.png
+  mkdir -p "$APPDIR"/usr/share/icons
+  cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/infection-monkey.svg
+  ln -s "$APPDIR"/usr/share/icons/infection-monkey.svg "$APPDIR"/infection-monkey.svg
 }
 
 add_desktop_file() {
-	unlink "$APPDIR/python${PYTHON_VERSION}.desktop"
-	cp ./infection-monkey.desktop "$APPDIR"/usr/share/applications
-	ln -s "$APPDIR"/usr/share/applications/infection-monkey.desktop "$APPDIR"/infection-monkey.desktop
+  unlink "$APPDIR/python${PYTHON_VERSION}.desktop"
+  cp ./infection-monkey.desktop "$APPDIR"/usr/share/applications
+  ln -s "$APPDIR"/usr/share/applications/infection-monkey.desktop "$APPDIR"/infection-monkey.desktop
 }
 
 add_apprun() {
-	cp ./AppRun "$APPDIR"
+  cp ./AppRun "$APPDIR"
 }
 
 build_appimage() {
-    log_message "Building AppImage"
-    ARCH="x86_64" appimagetool "$APPDIR"
+  log_message "Building AppImage"
+  ARCH="x86_64" appimagetool "$APPDIR"
 }
 
 if is_root; then
