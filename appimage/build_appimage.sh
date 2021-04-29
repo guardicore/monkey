@@ -203,11 +203,11 @@ generate_ssl_cert() {
 
 build_frontend() {
   pushd "$ISLAND_PATH/cc/ui" || handle_error
-  npm install sass-loader node-sass webpack --save-dev
-  npm update
 
   log_message "Generating front end"
+  npm ci
   npm run dist
+
   popd || handle_error
 
   remove_node_modules
