@@ -262,14 +262,6 @@ branch="develop"
 
 while (( "$#" )); do
 case "$1" in
-  --version)
-    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
-      monkey_version=$2
-      shift 2
-    else
-      missing_argument "$1"
-    fi
-    ;;
   --agent-binary-dir)
     if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
       agent_binary_dir=$2
@@ -285,6 +277,15 @@ case "$1" in
     else
       missing_argument "$1"
     fi
+	;;
+  --version)
+    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+      monkey_version=$2
+      shift 2
+    else
+      missing_argument "$1"
+    fi
+    ;;
   esac
 done
 
