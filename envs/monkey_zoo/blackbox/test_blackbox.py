@@ -254,12 +254,15 @@ class TestMonkeyBlackbox:
             LOGGER.error("This test doesn't support 'quick_performance_tests' option.")
             assert False
 
+    @pytest.mark.no_performance_tests
     def test_report_generation_from_fake_telemetries(self, island_client, quick_performance_tests):
         ReportGenerationFromTelemetryTest(island_client, quick_performance_tests).run()
 
+    @pytest.mark.no_performance_tests
     def test_map_generation_from_fake_telemetries(self, island_client, quick_performance_tests):
         MapGenerationFromTelemetryTest(island_client, quick_performance_tests).run()
 
+    @pytest.mark.no_performance_tests
     def test_telem_performance(self, island_client, quick_performance_tests):
         TelemetryPerformanceTest(
             island_client, quick_performance_tests

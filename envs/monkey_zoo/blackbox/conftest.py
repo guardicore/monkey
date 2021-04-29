@@ -21,6 +21,12 @@ def pytest_addoption(parser):
         help="If enabled performance tests won't reset island and won't send telemetries, "
         "instead will just test performance of already present island state.",
     )
+    parser.addoption(
+        "--no-performance-tests",
+        action="store_true",
+        default=False,
+        help="If enabled all performance tests will be skipped.",
+    )
 
 
 @pytest.fixture(scope="session")
@@ -36,3 +42,10 @@ def no_gcp(request):
 @pytest.fixture(scope="session")
 def quick_performance_tests(request):
     return request.config.getoption("--quick-performance-tests")
+
+
+def pytest_runtest_setup(item):
+    if "no_performance_tests" in item.keywords and item.config.getoption("--no-performance-tests"):
+        pytest.skip(
+            "Skipping performance test because " "--no-performance-tests flag is specified."
+        )
