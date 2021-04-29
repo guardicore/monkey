@@ -3,7 +3,6 @@
 WORKSPACE=${WORKSPACE:-$HOME}
 
 APPDIR="$PWD/squashfs-root"
-CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
 INSTALL_DIR="$APPDIR/usr/src"
 
 GIT=$WORKSPACE/git
@@ -15,6 +14,8 @@ ISLAND_PATH="$INSTALL_DIR/monkey_island"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 
+MONKEY_ORIGIN_URL="https://github.com/guardicore/monkey.git"
+CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
 NODE_SRC=https://deb.nodesource.com/setup_12.x
 APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
 PYTHON_VERSION="3.7.10"
@@ -66,16 +67,6 @@ install_appimage_tool() {
     PATH=$PATH:$WORKSPACE/bin
 }
 
-load_monkey_binary_config() {
-  tmpfile=$(mktemp)
-
-  log_message "downloading configuration"
-  curl -L -s -o "$tmpfile" "$CONFIG_URL"
-
-  log_message "loading configuration"
-  source "$tmpfile"
-}
-
 clone_monkey_repo() {
   if [[ ! -d ${GIT} ]]; then
     mkdir -p "${GIT}"
@@ -83,7 +74,7 @@ clone_monkey_repo() {
 
   log_message "Cloning files from git"
   branch=${1:-"develop"}
-  git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
+  git clone --single-branch --recurse-submodules -b "$branch" "$MONKEY_ORIGIN_URL" "$REPO_MONKEY_HOME" 2>&1 || handle_error
 }
 
 setup_appdir() {
@@ -152,7 +143,10 @@ generate_requirements_from_pipenv_lock () {
 }
 
 download_monkey_agent_binaries() {
-log_message "Downloading monkey agent binaries to ${ISLAND_BINARIES_PATH}"
+  log_message "Downloading monkey agent binaries to ${ISLAND_BINARIES_PATH}"
+
+  load_monkey_binary_config
+
   mkdir -p "${ISLAND_BINARIES_PATH}" || handle_error
   curl -L -o "${ISLAND_BINARIES_PATH}/${LINUX_32_BINARY_NAME}" "${LINUX_32_BINARY_URL}"
   curl -L -o "${ISLAND_BINARIES_PATH}/${LINUX_64_BINARY_NAME}" "${LINUX_64_BINARY_URL}"
@@ -162,6 +156,16 @@ log_message "Downloading monkey agent binaries to ${ISLAND_BINARIES_PATH}"
   # Allow them to be executed
   chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
   chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
+}
+
+load_monkey_binary_config() {
+  tmpfile=$(mktemp)
+
+  log_message "Downloading prebuilt binary configuration"
+  curl -L -s -o "$tmpfile" "$CONFIG_URL"
+
+  log_message "Loading configuration"
+  source "$tmpfile"
 }
 
 install_mongodb() {
@@ -233,7 +237,6 @@ fi
 install_build_prereqs
 install_appimage_tool
 
-load_monkey_binary_config
 clone_monkey_repo "$@"
 
 setup_appdir
