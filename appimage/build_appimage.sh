@@ -1,10 +1,12 @@
 #!/bin/bash
 
-APPDIR="./squashfs-root"
+WORKSPACE=${WORKSPACE:-$HOME}
+
+APPDIR="$PWD/squashfs-root"
 CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
 INSTALL_DIR="$APPDIR/usr/src"
 
-GIT=$HOME/git
+GIT=$WORKSPACE/git
 
 REPO_MONKEY_HOME=$GIT/monkey
 REPO_MONKEY_SRC=$REPO_MONKEY_HOME/monkey
@@ -55,13 +57,13 @@ install_build_prereqs() {
 }
 
 install_appimage_tool() {
-    APP_TOOL_BIN=$HOME/bin/appimagetool
+    APP_TOOL_BIN=$WORKSPACE/bin/appimagetool
 
-    mkdir -p "$HOME"/bin
+    mkdir -p "$WORKSPACE"/bin
     curl -L -o "$APP_TOOL_BIN" "$APP_TOOL_URL"
     chmod u+x "$APP_TOOL_BIN"
 
-    PATH=$PATH:$HOME/bin
+    PATH=$PATH:$WORKSPACE/bin
 }
 
 load_monkey_binary_config() {
