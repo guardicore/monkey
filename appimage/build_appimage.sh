@@ -287,17 +287,6 @@ apply_version_to_appimage() {
   mv "Infection_Monkey-x86_64.AppImage" "Infection_Monkey-$1-x86_64.AppImage"
 }
 
-if is_root; then
-  log_message "Please don't run this script as root"
-  exit 1
-fi
-
-if ! has_sudo; then
-  log_message "You need root permissions for some of this script operations. \
-Run \`sudo -v\`, enter your password, and then re-run this script."
-  exit 1
-fi
-
 monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
 monkey_version="dev"
 agent_binary_dir=""
@@ -346,6 +335,17 @@ case "$1" in
 	;;
   esac
 done
+
+if is_root; then
+  log_message "Please don't run this script as root"
+  exit 1
+fi
+
+if ! has_sudo; then
+  log_message "You need root permissions for some of this script operations. \
+Run \`sudo -v\`, enter your password, and then re-run this script."
+  exit 1
+fi
 
 
 install_build_prereqs
