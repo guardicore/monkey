@@ -7,8 +7,7 @@ INSTALL_DIR="$APPDIR/usr/src"
 
 GIT=$WORKSPACE/git
 
-REPO_MONKEY_HOME=$GIT/monkey
-REPO_MONKEY_SRC=$REPO_MONKEY_HOME/monkey
+DEFAULT_REPO_MONKEY_HOME=$GIT/monkey
 
 ISLAND_PATH="$INSTALL_DIR/monkey_island"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
@@ -72,20 +71,35 @@ install_appimage_tool() {
   PATH=$PATH:$WORKSPACE/bin
 }
 
+is_valid_git_repo() {
+  pushd "$1" 2>/dev/null || return 1
+  git status >/dev/null 2>&1
+  success="$?"
+  popd || exit 1
+
+  return $success
+}
+
 clone_monkey_repo() {
-  if [[ ! -d ${GIT} ]]; then
-    mkdir -p "${GIT}"
+  local repo_dir=$1
+  local branch=$2
+
+  if [[ ! -d "$repo_dir" ]]; then
+    mkdir -p "$repo_dir"
   fi
 
   log_message "Cloning files from git"
-  git clone --single-branch --recurse-submodules -b "$1" "$MONKEY_ORIGIN_URL" "$REPO_MONKEY_HOME" 2>&1 || handle_error
+  git clone --single-branch --recurse-submodules -b "$branch" "$MONKEY_ORIGIN_URL" "$repo_dir" 2>&1 || handle_error
 }
 
 setup_appdir() {
+  local agent_binary_dir=$1
+  local monkey_repo=$2
+
   setup_python_37_appdir
 
-  copy_monkey_island_to_appdir
-  add_agent_binaries_to_appdir $1
+  copy_monkey_island_to_appdir "$monkey_repo"/monkey
+  add_agent_binaries_to_appdir "$agent_binary_dir"
 
   install_monkey_island_python_dependencies
   install_mongodb
@@ -93,7 +107,7 @@ setup_appdir() {
   generate_ssl_cert
   build_frontend
 
-  add_monkey_icon
+  add_monkey_icon "$monkey_repo"/monkey
   add_desktop_file
   add_apprun
 }
@@ -113,10 +127,10 @@ setup_python_37_appdir() {
 }
 
 copy_monkey_island_to_appdir() {
-  cp "$REPO_MONKEY_SRC"/__init__.py "$INSTALL_DIR"
-  cp "$REPO_MONKEY_SRC"/monkey_island.py "$INSTALL_DIR"
-  cp -r "$REPO_MONKEY_SRC"/common "$INSTALL_DIR/"
-  cp -r "$REPO_MONKEY_SRC"/monkey_island "$INSTALL_DIR/"
+  cp "$1"/__init__.py "$INSTALL_DIR"
+  cp "$1"/monkey_island.py "$INSTALL_DIR"
+  cp -r "$1"/common "$INSTALL_DIR/"
+  cp -r "$1"/monkey_island "$INSTALL_DIR/"
   cp ./run_appimage.sh "$INSTALL_DIR"/monkey_island/linux/
   cp ./island_logger_config.json "$INSTALL_DIR"/
   cp ./server_config.json.standard "$INSTALL_DIR"/monkey_island/cc/
@@ -221,7 +235,7 @@ remove_node_modules() {
 add_monkey_icon() {
   unlink "$APPDIR"/python.png
   mkdir -p "$APPDIR"/usr/share/icons
-  cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/infection-monkey.svg
+  cp "$1"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/infection-monkey.svg
   ln -s "$APPDIR"/usr/share/icons/infection-monkey.svg "$APPDIR"/infection-monkey.svg
 }
 
@@ -256,6 +270,7 @@ Run \`sudo -v\`, enter your password, and then re-run this script."
   exit 1
 fi
 
+monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
 monkey_version="dev"
 agent_binary_dir=""
 branch="develop"
@@ -278,6 +293,14 @@ case "$1" in
       missing_argument "$1"
     fi
 	;;
+  --monkey-repo)
+    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+      monkey_repo=$2
+      shift 2
+    else
+      missing_argument "$1"
+    fi
+    ;;
   --version)
     if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
       monkey_version=$2
@@ -293,9 +316,11 @@ done
 install_build_prereqs
 install_appimage_tool
 
-clone_monkey_repo "$branch"
+if ! is_valid_git_repo "$monkey_repo"; then
+  clone_monkey_repo "$monkey_repo" "$branch"
+fi
 
-setup_appdir "$agent_binary_dir"
+setup_appdir "$agent_binary_dir" "$monkey_repo"
 
 build_appimage "$monkey_version"
 
