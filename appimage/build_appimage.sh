@@ -21,6 +21,11 @@ APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appima
 PYTHON_VERSION="3.7.10"
 PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
 
+missing_argument() {
+  echo "Error: Argument for $1 is missing" >&2
+  exit 1
+}
+
 is_root() {
   return "$(id -u)"
 }
@@ -81,7 +86,7 @@ setup_appdir() {
   setup_python_37_appdir
 
   copy_monkey_island_to_appdir
-  download_monkey_agent_binaries
+  add_agent_binaries_to_appdir $1
 
   install_monkey_island_python_dependencies
   install_mongodb
@@ -142,7 +147,17 @@ generate_requirements_from_pipenv_lock () {
   cd -
 }
 
-download_monkey_agent_binaries() {
+add_agent_binaries_to_appdir() {
+  if [ -z "$1" ]; then
+    download_monkey_agent_binaries_to_appdir
+  else
+    copy_agent_binaries_to_appdir $1
+  fi
+
+  make_linux_binaries_executable
+}
+
+download_monkey_agent_binaries_to_appdir() {
   log_message "Downloading monkey agent binaries to ${ISLAND_BINARIES_PATH}"
 
   load_monkey_binary_config
@@ -152,10 +167,14 @@ download_monkey_agent_binaries() {
   curl -L -o "${ISLAND_BINARIES_PATH}/${LINUX_64_BINARY_NAME}" "${LINUX_64_BINARY_URL}"
   curl -L -o "${ISLAND_BINARIES_PATH}/${WINDOWS_32_BINARY_NAME}" "${WINDOWS_32_BINARY_URL}"
   curl -L -o "${ISLAND_BINARIES_PATH}/${WINDOWS_64_BINARY_NAME}" "${WINDOWS_64_BINARY_URL}"
+}
 
-  # Allow them to be executed
-  chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
-  chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
+copy_agent_binaries_to_appdir() {
+  cp "$1"/* "$ISLAND_BINARIES_PATH/"
+}
+
+make_linux_binaries_executable() {
+  chmod a+x "$ISLAND_BINARIES_PATH"/monkey-linux-*
 }
 
 load_monkey_binary_config() {
@@ -239,6 +258,7 @@ Run \`sudo -v\`, enter your password, and then re-run this script."
 fi
 
 monkey_version="dev"
+agent_binary_dir=""
 
 while (( "$#" )); do
 case "$1" in
@@ -247,9 +267,17 @@ case "$1" in
       monkey_version=$2
       shift 2
     else
-      echo "Error: Argument for $1 is missing" >&2
-      exit 1
+      missing_argument "$1"
     fi
+    ;;
+  --agent-binary-dir)
+    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+      agent_binary_dir=$2
+      shift 2
+    else
+      missing_argument "$1"
+    fi
+    ;;
   esac
 done
 
@@ -259,7 +287,7 @@ install_appimage_tool
 
 clone_monkey_repo "$@"
 
-setup_appdir
+setup_appdir "$agent_binary_dir"
 
 build_appimage "$monkey_version"
 
