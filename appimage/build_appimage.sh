@@ -309,6 +309,9 @@ case "$1" in
       missing_argument "$1"
     fi
     ;;
+  -*)
+	echo "Error: Unsupported parameter $1" >&2
+	exit 1
   esac
 done
 
