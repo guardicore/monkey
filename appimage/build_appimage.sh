@@ -36,6 +36,9 @@ echo_help() {
   echo "                               parameter is unspecified, the latest release"
   echo "                               binaries will be downloaded from GitHub."
   echo ""
+  echo "--as-root                      Throw caution to the wind and allow this script"
+  echo "                               to be run as root."
+  echo ""
   echo "--branch                       The git branch you'd like the AppImage to be"
   echo "                               built from. (Default: develop)"
   echo ""
@@ -287,6 +290,7 @@ apply_version_to_appimage() {
   mv "Infection_Monkey-x86_64.AppImage" "Infection_Monkey-$1-x86_64.AppImage"
 }
 
+as_root=false
 monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
 monkey_version="dev"
 agent_binary_dir=""
@@ -302,7 +306,11 @@ case "$1" in
       missing_argument "$1"
     fi
     ;;
-   --branch)
+  --as-root)
+	as_root=true
+	shift
+	;;
+  --branch)
     if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
       branch=$2
       shift 2
@@ -336,7 +344,7 @@ case "$1" in
   esac
 done
 
-if is_root; then
+if ! $as_root && is_root; then
   log_message "Please don't run this script as root"
   exit 1
 fi
