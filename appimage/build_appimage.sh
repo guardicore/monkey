@@ -84,11 +84,11 @@ install_nodejs() {
 }
 
 install_build_prereqs() {
-  sudo apt update
-  sudo apt upgrade -y
+  sudo apt-get update
+  sudo apt-get upgrade -y
 
   # monkey island prereqs
-  sudo apt install -y curl libcurl4 openssl git build-essential moreutils
+  sudo apt-get install -y curl libcurl4 openssl git build-essential moreutils
   install_nodejs
 }
 
