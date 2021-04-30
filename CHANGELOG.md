@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - PostgreSQL fingerprinter. #892
 - A runtime-configurable option to specify a data directory where runtime
   configuration and other artifacts can be stored. #994
-- Scripts to build an AppImage for Monkey Island. #1069, #1090
+- Scripts to build an AppImage for Monkey Island. #1069, #1090, #1136
 
 ### Changed
 - server_config.json can be selected at runtime. #963
