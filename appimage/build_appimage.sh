@@ -93,6 +93,7 @@ install_build_prereqs() {
 }
 
 install_appimage_tool() {
+  log_message "Installing appimagetool"
   APP_TOOL_BIN=$WORKSPACE/bin/appimagetool
 
   mkdir -p "$WORKSPACE"/bin
@@ -287,6 +288,7 @@ build_appimage() {
 }
 
 apply_version_to_appimage() {
+  log_message "Renaming Infection_Monkey-x86_64.AppImage -> Infection_Monkey-$1-x86_64.AppImage"
   mv "Infection_Monkey-x86_64.AppImage" "Infection_Monkey-$1-x86_64.AppImage"
 }
 
