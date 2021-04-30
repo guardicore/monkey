@@ -179,7 +179,7 @@ install_monkey_island_python_dependencies() {
   "$APPDIR"/AppRun -m pip install pipenv || handle_error
 
   requirements_island="$ISLAND_PATH/requirements.txt"
-  generate_requirements_from_pipenv_lock $requirements_island
+  generate_requirements_from_pipenv_lock "$requirements_island"
 
   log_message "Installing island python requirements"
   "$APPDIR"/AppRun -m pip install -r "${requirements_island}"  --ignore-installed || handle_error
@@ -187,16 +187,16 @@ install_monkey_island_python_dependencies() {
 
 generate_requirements_from_pipenv_lock () {
   log_message "Generating a requirements.txt file with 'pipenv lock -r'"
-  cd $ISLAND_PATH
+  cd "$ISLAND_PATH" || exit 1
   "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" lock -r > "$1" || handle_error
-  cd -
+  cd - || exit 1
 }
 
 add_agent_binaries_to_appdir() {
   if [ -z "$1" ]; then
     download_monkey_agent_binaries_to_appdir
   else
-    copy_agent_binaries_to_appdir $1
+    copy_agent_binaries_to_appdir "$1"
   fi
 
   make_linux_binaries_executable
