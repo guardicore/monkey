@@ -309,9 +309,9 @@ case "$1" in
     fi
     ;;
   --as-root)
-	as_root=true
-	shift
-	;;
+    as_root=true
+    shift
+    ;;
   --branch)
     if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
       branch=$2
@@ -319,10 +319,10 @@ case "$1" in
     else
       missing_argument "$1"
     fi
-	;;
+    ;;
   -h|--help)
-	echo_help
-	;;
+    echo_help
+    ;;
   --monkey-repo)
     if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
       monkey_repo=$2
@@ -340,9 +340,9 @@ case "$1" in
     fi
     ;;
   -*)
-	echo "Error: Unsupported parameter $1" >&2
-	exit 1
-	;;
+    echo "Error: Unsupported parameter $1" >&2
+    exit 1
+    ;;
   esac
 done
 
