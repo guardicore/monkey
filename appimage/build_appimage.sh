@@ -73,7 +73,7 @@ handle_error() {
 
 log_message() {
   echo -e "\n\n"
-  echo -e "DEPLOYMENT SCRIPT: $1"
+  echo -e "APPIMAGE BUILDER: $1"
 }
 
 install_nodejs() {
@@ -344,6 +344,8 @@ case "$1" in
   esac
 done
 
+log_message "Building Monkey Island AppImage package."
+
 if ! $as_root && is_root; then
   log_message "Please don't run this script as root"
   exit 1
@@ -367,5 +369,5 @@ setup_appdir "$agent_binary_dir" "$monkey_repo"
 
 build_appimage "$monkey_version"
 
-log_message "Deployment script finished."
+log_message "AppImage build script finished."
 exit 0
