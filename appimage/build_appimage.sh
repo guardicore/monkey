@@ -20,9 +20,11 @@ APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appima
 PYTHON_VERSION="3.7.10"
 PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
 
-missing_argument() {
-  echo "Error: Argument for $1 is missing" >&2
-  exit 1
+exit_if_missing_argument() {
+  if [ -z "$2" ] || [ "${2:0:1}" == "-" ]; then
+    echo "Error: Argument for $1 is missing" >&2
+    exit 1
+  fi
 }
 
 echo_help() {
@@ -292,52 +294,45 @@ apply_version_to_appimage() {
   mv "Infection_Monkey-x86_64.AppImage" "Infection_Monkey-$1-x86_64.AppImage"
 }
 
+agent_binary_dir=""
 as_root=false
+branch="develop"
 monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
 monkey_version="dev"
-agent_binary_dir=""
-branch="develop"
+
 
 while (( "$#" )); do
 case "$1" in
   --agent-binary-dir)
-    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
-      agent_binary_dir=$2
-      shift 2
-    else
-      missing_argument "$1"
-    fi
+    exit_if_missing_argument "$1" "$2"
+
+    agent_binary_dir=$2
+    shift 2
     ;;
   --as-root)
     as_root=true
     shift
     ;;
   --branch)
-    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
-      branch=$2
-      shift 2
-    else
-      missing_argument "$1"
-    fi
+    exit_if_missing_argument "$1" "$2"
+
+    branch=$2
+    shift 2
     ;;
   -h|--help)
     echo_help
     ;;
   --monkey-repo)
-    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
-      monkey_repo=$2
-      shift 2
-    else
-      missing_argument "$1"
-    fi
+    exit_if_missing_argument "$1" "$2"
+
+    monkey_repo=$2
+    shift 2
     ;;
   --version)
-    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
-      monkey_version=$2
-      shift 2
-    else
-      missing_argument "$1"
-    fi
+    exit_if_missing_argument "$1" "$2"
+
+    monkey_version=$2
+    shift 2
     ;;
   *)
     echo "Error: Unsupported parameter $1" >&2
