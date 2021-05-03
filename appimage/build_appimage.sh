@@ -1,21 +1,62 @@
 #!/bin/bash
 
-APPDIR="$HOME/squashfs-root"
-CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
+WORKSPACE=${WORKSPACE:-$HOME}
+
+APPDIR="$PWD/squashfs-root"
 INSTALL_DIR="$APPDIR/usr/src"
 
-GIT=$HOME/git
+GIT=$WORKSPACE/git
 
-REPO_MONKEY_HOME=$GIT/monkey
-REPO_MONKEY_SRC=$REPO_MONKEY_HOME/monkey
+DEFAULT_REPO_MONKEY_HOME=$GIT/monkey
 
 ISLAND_PATH="$INSTALL_DIR/monkey_island"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 
+MONKEY_ORIGIN_URL="https://github.com/guardicore/monkey.git"
+CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
 NODE_SRC=https://deb.nodesource.com/setup_12.x
 APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
-PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python3.7.9-cp37-cp37m-manylinux1_x86_64.AppImage"
+PYTHON_VERSION="3.7.10"
+PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
+
+exit_if_missing_argument() {
+  if [ -z "$2" ] || [ "${2:0:1}" == "-" ]; then
+    echo "Error: Argument for $1 is missing" >&2
+    exit 1
+  fi
+}
+
+echo_help() {
+  echo "usage: build_appimage.sh [--help] [--agent-binary-dir <PATH>] [--branch <BRANCH>]"
+  echo "                         [--monkey-repo <PATH>] [--version <MONKEY_VERSION>]"
+  echo ""
+  echo "Creates an AppImage package for Infection Monkey."
+  echo ""
+  echo "--agent-binary-dir             A directory containing the agent binaries that"
+  echo "                               you'd like to include with the AppImage. If this"
+  echo "                               parameter is unspecified, the latest release"
+  echo "                               binaries will be downloaded from GitHub."
+  echo ""
+  echo "--as-root                      Throw caution to the wind and allow this script"
+  echo "                               to be run as root."
+  echo ""
+  echo "--branch                       The git branch you'd like the AppImage to be"
+  echo "                               built from. (Default: develop)"
+  echo ""
+  echo "--monkey-repo                  A directory containing the Infection Monkey git"
+  echo "                               repository. If the directory is empty or does"
+  echo "                               not exist, a new repo will be cloned from GitHub."
+  echo "                               If the directory is already a valid GitHub repo,"
+  echo "                               it will be used as-is and the --branch parameter"
+  echo "                               will have no effect."
+  echo "                               (Default: $DEFAULT_REPO_MONKEY_HOME)"
+  echo ""
+  echo "--version                      A version number for the AppImage package."
+  echo "                               (Default: dev)"
+
+  exit 0
+}
 
 is_root() {
   return "$(id -u)"
@@ -34,7 +75,7 @@ handle_error() {
 
 log_message() {
   echo -e "\n\n"
-  echo -e "DEPLOYMENT SCRIPT: $1"
+  echo -e "APPIMAGE BUILDER: $1"
 }
 
 install_nodejs() {
@@ -45,83 +86,85 @@ install_nodejs() {
 }
 
 install_build_prereqs() {
-    sudo apt update
-    sudo apt upgrade -y
+  sudo apt-get update
+  sudo apt-get upgrade -y
 
-    # monkey island prereqs
-    sudo apt install -y curl libcurl4 openssl git build-essential moreutils
-    install_nodejs
+  # monkey island prereqs
+  sudo apt-get install -y curl libcurl4 openssl git build-essential moreutils
+  install_nodejs
 }
 
 install_appimage_tool() {
-    APP_TOOL_BIN=$HOME/bin/appimagetool
+  log_message "Installing appimagetool"
+  APP_TOOL_BIN=$WORKSPACE/bin/appimagetool
 
-    mkdir -p "$HOME"/bin
-    curl -L -o "$APP_TOOL_BIN" "$APP_TOOL_URL"
-    chmod u+x "$APP_TOOL_BIN"
+  mkdir -p "$WORKSPACE"/bin
+  curl -L -o "$APP_TOOL_BIN" "$APP_TOOL_URL"
+  chmod u+x "$APP_TOOL_BIN"
 
-    PATH=$PATH:$HOME/bin
+  PATH=$PATH:$WORKSPACE/bin
 }
 
-load_monkey_binary_config() {
-  tmpfile=$(mktemp)
+is_valid_git_repo() {
+  pushd "$1" 2>/dev/null || return 1
+  git status >/dev/null 2>&1
+  success="$?"
+  popd || exit 1
 
-  log_message "downloading configuration"
-  curl -L -s -o "$tmpfile" "$CONFIG_URL"
-
-  log_message "loading configuration"
-  source "$tmpfile"
+  return $success
 }
 
 clone_monkey_repo() {
-  if [[ ! -d ${GIT} ]]; then
-    mkdir -p "${GIT}"
+  local repo_dir=$1
+  local branch=$2
+
+  if [[ ! -d "$repo_dir" ]]; then
+    mkdir -p "$repo_dir"
   fi
 
   log_message "Cloning files from git"
-  branch=${1:-"develop"}
-  git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${REPO_MONKEY_HOME}" 2>&1 || handle_error
-
-  chmod 774 -R "${REPO_MONKEY_HOME}"
+  git clone --single-branch --recurse-submodules -b "$branch" "$MONKEY_ORIGIN_URL" "$repo_dir" 2>&1 || handle_error
 }
 
 setup_appdir() {
-	setup_python_37_appdir
+  local agent_binary_dir=$1
+  local monkey_repo=$2
 
-	copy_monkey_island_to_appdir
-	download_monkey_agent_binaries
+  setup_python_37_appdir
 
-	install_monkey_island_python_dependencies
-	install_mongodb
+  copy_monkey_island_to_appdir "$monkey_repo"/monkey
+  add_agent_binaries_to_appdir "$agent_binary_dir"
 
-	generate_ssl_cert
-	build_frontend
+  install_monkey_island_python_dependencies
+  install_mongodb
 
-	add_monkey_icon
-	add_desktop_file
-	add_apprun
+  generate_ssl_cert
+  build_frontend
+
+  add_monkey_icon "$monkey_repo"/monkey
+  add_desktop_file
+  add_apprun
 }
 
 setup_python_37_appdir() {
-    PYTHON_APPIMAGE="python3.7.9_x86_64.AppImage"
-    rm -rf "$APPDIR" || true
+  PYTHON_APPIMAGE="python${PYTHON_VERSION}_x86_64.AppImage"
+  rm -rf "$APPDIR" || true
 
-    log_message "downloading Python3.7 Appimage"
-    curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
+  log_message "downloading Python3.7 Appimage"
+  curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
 
-    chmod u+x "$PYTHON_APPIMAGE"
+  chmod u+x "$PYTHON_APPIMAGE"
 
-    ./"$PYTHON_APPIMAGE" --appimage-extract
-    rm "$PYTHON_APPIMAGE"
-    mv ./squashfs-root "$APPDIR"
-    mkdir -p "$INSTALL_DIR"
+  ./"$PYTHON_APPIMAGE" --appimage-extract
+  rm "$PYTHON_APPIMAGE"
+  mkdir -p "$INSTALL_DIR"
 }
 
 copy_monkey_island_to_appdir() {
-  cp "$REPO_MONKEY_SRC"/__init__.py "$INSTALL_DIR"
-  cp "$REPO_MONKEY_SRC"/monkey_island.py "$INSTALL_DIR"
-  cp -r "$REPO_MONKEY_SRC"/common "$INSTALL_DIR/"
-  cp -r "$REPO_MONKEY_SRC"/monkey_island "$INSTALL_DIR/"
+  cp "$1"/__init__.py "$INSTALL_DIR"
+  cp "$1"/monkey_island.py "$INSTALL_DIR"
+  cp -r "$1"/common "$INSTALL_DIR/"
+  cp -r "$1"/monkey_island "$INSTALL_DIR/"
   cp ./run_appimage.sh "$INSTALL_DIR"/monkey_island/linux/
   cp ./island_logger_config.json "$INSTALL_DIR"/
   cp ./server_config.json.standard "$INSTALL_DIR"/monkey_island/cc/
@@ -138,7 +181,7 @@ install_monkey_island_python_dependencies() {
   "$APPDIR"/AppRun -m pip install pipenv || handle_error
 
   requirements_island="$ISLAND_PATH/requirements.txt"
-  generate_requirements_from_pipenv_lock $requirements_island
+  generate_requirements_from_pipenv_lock "$requirements_island"
 
   log_message "Installing island python requirements"
   "$APPDIR"/AppRun -m pip install -r "${requirements_island}"  --ignore-installed || handle_error
@@ -146,22 +189,49 @@ install_monkey_island_python_dependencies() {
 
 generate_requirements_from_pipenv_lock () {
   log_message "Generating a requirements.txt file with 'pipenv lock -r'"
-  cd $ISLAND_PATH
+  cd "$ISLAND_PATH" || exit 1
   "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" lock -r > "$1" || handle_error
-  cd -
+  cd - || exit 1
 }
 
-download_monkey_agent_binaries() {
-log_message "Downloading monkey agent binaries to ${ISLAND_BINARIES_PATH}"
+add_agent_binaries_to_appdir() {
+  if [ -z "$1" ]; then
+    download_monkey_agent_binaries_to_appdir
+  else
+    copy_agent_binaries_to_appdir "$1"
+  fi
+
+  make_linux_binaries_executable
+}
+
+download_monkey_agent_binaries_to_appdir() {
+  log_message "Downloading monkey agent binaries to ${ISLAND_BINARIES_PATH}"
+
+  load_monkey_binary_config
+
   mkdir -p "${ISLAND_BINARIES_PATH}" || handle_error
   curl -L -o "${ISLAND_BINARIES_PATH}/${LINUX_32_BINARY_NAME}" "${LINUX_32_BINARY_URL}"
   curl -L -o "${ISLAND_BINARIES_PATH}/${LINUX_64_BINARY_NAME}" "${LINUX_64_BINARY_URL}"
   curl -L -o "${ISLAND_BINARIES_PATH}/${WINDOWS_32_BINARY_NAME}" "${WINDOWS_32_BINARY_URL}"
   curl -L -o "${ISLAND_BINARIES_PATH}/${WINDOWS_64_BINARY_NAME}" "${WINDOWS_64_BINARY_URL}"
+}
 
-  # Allow them to be executed
-  chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
-  chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
+copy_agent_binaries_to_appdir() {
+  cp "$1"/* "$ISLAND_BINARIES_PATH/"
+}
+
+make_linux_binaries_executable() {
+  chmod a+x "$ISLAND_BINARIES_PATH"/monkey-linux-*
+}
+
+load_monkey_binary_config() {
+  tmpfile=$(mktemp)
+
+  log_message "Downloading prebuilt binary configuration"
+  curl -L -s -o "$tmpfile" "$CONFIG_URL"
+
+  log_message "Loading configuration"
+  source "$tmpfile"
 }
 
 install_mongodb() {
@@ -179,38 +249,101 @@ generate_ssl_cert() {
 }
 
 build_frontend() {
-    pushd "$ISLAND_PATH/cc/ui" || handle_error
-    npm install sass-loader node-sass webpack --save-dev
-    npm update
+  pushd "$ISLAND_PATH/cc/ui" || handle_error
 
-    log_message "Generating front end"
-    npm run dist
-    popd || handle_error
+  log_message "Generating front end"
+  npm ci
+  npm run dist
+
+  popd || handle_error
+
+  remove_node_modules
+}
+
+remove_node_modules() {
+  # Node has served its purpose. We don't need to deliver the node modules with
+  # the AppImage.
+  rm -rf "$ISLAND_PATH"/cc/ui/node_modules
 }
 
 add_monkey_icon() {
-	unlink "$APPDIR"/python.png
-	mkdir -p "$APPDIR"/usr/share/icons
-	cp "$REPO_MONKEY_SRC"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/infection-monkey.svg
-	ln -s "$APPDIR"/usr/share/icons/infection-monkey.svg "$APPDIR"/infection-monkey.svg
+  unlink "$APPDIR"/python.png
+  mkdir -p "$APPDIR"/usr/share/icons
+  cp "$1"/monkey_island/cc/ui/src/images/monkey-icon.svg "$APPDIR"/usr/share/icons/infection-monkey.svg
+  ln -s "$APPDIR"/usr/share/icons/infection-monkey.svg "$APPDIR"/infection-monkey.svg
 }
 
 add_desktop_file() {
-	unlink "$APPDIR"/python3.7.9.desktop
-	cp ./infection-monkey.desktop "$APPDIR"/usr/share/applications
-	ln -s "$APPDIR"/usr/share/applications/infection-monkey.desktop "$APPDIR"/infection-monkey.desktop
+  unlink "$APPDIR/python${PYTHON_VERSION}.desktop"
+  cp ./infection-monkey.desktop "$APPDIR"/usr/share/applications
+  ln -s "$APPDIR"/usr/share/applications/infection-monkey.desktop "$APPDIR"/infection-monkey.desktop
 }
 
 add_apprun() {
-	cp ./AppRun "$APPDIR"
+  cp ./AppRun "$APPDIR"
 }
 
 build_appimage() {
-    log_message "Building AppImage"
-    ARCH="x86_64" appimagetool "$APPDIR"
+  log_message "Building AppImage"
+  ARCH="x86_64" appimagetool "$APPDIR"
+  apply_version_to_appimage "$1"
 }
 
-if is_root; then
+apply_version_to_appimage() {
+  log_message "Renaming Infection_Monkey-x86_64.AppImage -> Infection_Monkey-$1-x86_64.AppImage"
+  mv "Infection_Monkey-x86_64.AppImage" "Infection_Monkey-$1-x86_64.AppImage"
+}
+
+agent_binary_dir=""
+as_root=false
+branch="develop"
+monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
+monkey_version="dev"
+
+
+while (( "$#" )); do
+  case "$1" in
+    --agent-binary-dir)
+      exit_if_missing_argument "$1" "$2"
+
+      agent_binary_dir=$2
+      shift 2
+      ;;
+    --as-root)
+      as_root=true
+      shift
+      ;;
+    --branch)
+      exit_if_missing_argument "$1" "$2"
+
+      branch=$2
+      shift 2
+      ;;
+    -h|--help)
+      echo_help
+      ;;
+    --monkey-repo)
+      exit_if_missing_argument "$1" "$2"
+
+      monkey_repo=$2
+      shift 2
+      ;;
+    --version)
+      exit_if_missing_argument "$1" "$2"
+
+      monkey_version=$2
+      shift 2
+      ;;
+    *)
+      echo "Error: Unsupported parameter $1" >&2
+      exit 1
+      ;;
+  esac
+done
+
+log_message "Building Monkey Island AppImage package."
+
+if ! $as_root && is_root; then
   log_message "Please don't run this script as root"
   exit 1
 fi
@@ -225,12 +358,13 @@ fi
 install_build_prereqs
 install_appimage_tool
 
-load_monkey_binary_config
-clone_monkey_repo "$@"
+if ! is_valid_git_repo "$monkey_repo"; then
+  clone_monkey_repo "$monkey_repo" "$branch"
+fi
 
-setup_appdir
+setup_appdir "$agent_binary_dir" "$monkey_repo"
 
-build_appimage
+build_appimage "$monkey_version"
 
-log_message "Deployment script finished."
+log_message "AppImage build script finished."
 exit 0

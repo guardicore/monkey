@@ -4,6 +4,6 @@
 # in order to speed up development and debugging.
 
 rm -rf "$HOME/.monkey_island"
-rm -rf "$HOME/squashfs-root"
+rm -rf "$HOME/appimage/squashfs-root"
 rm -rf "$HOME/git/monkey"
-rm "$HOME/appimage/Infection_Monkey-x86_64.AppImage"
+rm $HOME/appimage/Infection_Monkey*x86_64.AppImage
