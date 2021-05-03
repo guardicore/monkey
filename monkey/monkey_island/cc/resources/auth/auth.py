@@ -1,14 +1,13 @@
 import json
 import logging
 from functools import wraps
-from hashlib import sha3_512
 
+import bcrypt
 import flask_jwt_extended
 import flask_restful
 from flask import make_response, request
 from flask_jwt_extended.exceptions import JWTExtendedException
 from jwt import PyJWTError
-from werkzeug.security import safe_str_cmp
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
 import monkey_island.cc.resources.auth.user_store as user_store
@@ -32,9 +31,9 @@ class Authenticate(flask_restful.Resource):
     """
 
     @staticmethod
-    def _authenticate(username, secret):
+    def _authenticate(username, password):
         user = user_store.UserStore.username_table.get(username, None)
-        if user and safe_str_cmp(user.secret.encode('utf-8'), secret.encode('utf-8')):
+        if user and bcrypt.checkpw(password.encode("utf-8"), user.secret.encode("utf-8")):
             return user
 
     def post(self):
@@ -42,16 +41,15 @@ class Authenticate(flask_restful.Resource):
         Example request:
         {
             "username": "my_user",
-            "password": "mypassword...."
+            "password": "my_password"
         }
         """
         credentials = json.loads(request.data)
         # Unpack auth info from request
         username = credentials["username"]
         password = credentials["password"]
-        secret = sha3_512(password.encode("utf-8")).hexdigest()
         # If the user and password have been previously registered
-        if self._authenticate(username, secret):
+        if self._authenticate(username, password):
             access_token = flask_jwt_extended.create_access_token(
                 identity=user_store.UserStore.username_table[username].id
             )

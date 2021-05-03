@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import json
-from hashlib import sha3_512
 from typing import Dict
+
+import bcrypt
 
 from monkey_island.cc.resources.auth.auth_user import User
 
@@ -32,7 +33,9 @@ class UserCreds:
         if "user" in data_dict:
             creds.username = data_dict["user"]
         if "password" in data_dict:
-            creds.password_hash = sha3_512(data_dict["password"].encode("utf-8")).hexdigest()
+            creds.password_hash = bcrypt.hashpw(
+                data_dict["password"].encode("utf-8"), bcrypt.gensalt()
+            )
         return creds
 
     @staticmethod
