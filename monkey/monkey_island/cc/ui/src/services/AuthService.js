@@ -1,4 +1,3 @@
-import {SHA3} from 'sha3';
 import decode from 'jwt-decode';
 
 export default class AuthService {
@@ -42,11 +41,7 @@ export default class AuthService {
   };
 
   register = (username, password) => {
-    if (password !== '') {
-      return this._register(username, password);
-    } else {
-      return this._register(username, password);
-    }
+    return this._register(username, password);
   };
 
   _register = (username, password) => {
