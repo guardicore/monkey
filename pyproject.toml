@@ -21,3 +21,7 @@ log_cli_format = "%(asctime)s [%(levelname)s] %(module)s.%(funcName)s.%(lineno)d
 log_cli_date_format = "%H:%M:%S"
 addopts = "-v --capture=sys tests"
 norecursedirs = "node_modules dist"
+
+[tool.vulture]
+exclude = ["monkey/monkey_island/cc/ui"]
+paths = ["."]
