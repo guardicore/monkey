@@ -31,7 +31,7 @@ class FirewallApp(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, value, traceback):
+    def __exit__(self, _exc_type, value, traceback):
         self.close()
 
     def close(self):
