@@ -302,42 +302,42 @@ monkey_version="dev"
 
 
 while (( "$#" )); do
-case "$1" in
-  --agent-binary-dir)
-    exit_if_missing_argument "$1" "$2"
+  case "$1" in
+    --agent-binary-dir)
+      exit_if_missing_argument "$1" "$2"
 
-    agent_binary_dir=$2
-    shift 2
-    ;;
-  --as-root)
-    as_root=true
-    shift
-    ;;
-  --branch)
-    exit_if_missing_argument "$1" "$2"
+      agent_binary_dir=$2
+      shift 2
+      ;;
+    --as-root)
+      as_root=true
+      shift
+      ;;
+    --branch)
+      exit_if_missing_argument "$1" "$2"
 
-    branch=$2
-    shift 2
-    ;;
-  -h|--help)
-    echo_help
-    ;;
-  --monkey-repo)
-    exit_if_missing_argument "$1" "$2"
+      branch=$2
+      shift 2
+      ;;
+    -h|--help)
+      echo_help
+      ;;
+    --monkey-repo)
+      exit_if_missing_argument "$1" "$2"
 
-    monkey_repo=$2
-    shift 2
-    ;;
-  --version)
-    exit_if_missing_argument "$1" "$2"
+      monkey_repo=$2
+      shift 2
+      ;;
+    --version)
+      exit_if_missing_argument "$1" "$2"
 
-    monkey_version=$2
-    shift 2
-    ;;
-  *)
-    echo "Error: Unsupported parameter $1" >&2
-    exit 1
-    ;;
+      monkey_version=$2
+      shift 2
+      ;;
+    *)
+      echo "Error: Unsupported parameter $1" >&2
+      exit 1
+      ;;
   esac
 done
 
