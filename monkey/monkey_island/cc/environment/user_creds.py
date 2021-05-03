@@ -35,7 +35,7 @@ class UserCreds:
         if "password" in data_dict:
             creds.password_hash = bcrypt.hashpw(
                 data_dict["password"].encode("utf-8"), bcrypt.gensalt()
-            )
+            ).decode()
         return creds
 
     @staticmethod
