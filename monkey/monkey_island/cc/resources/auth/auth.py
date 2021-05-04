@@ -41,12 +41,7 @@ class Authenticate(flask_restful.Resource):
         (username, password) = Authenticate._get_credentials_from_request(request)
 
         if self._credentials_match_registered_user(username, password):
-            access_token = flask_jwt_extended.create_access_token(
-                identity=user_store.UserStore.username_table[username].id
-            )
-            logger.debug(
-                f"Created access token for user {username} that begins with {access_token[:4]}"
-            )
+            access_token = Authenticate._create_access_token(username)
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
             return make_response({"error": "Invalid credentials"}, 401)
@@ -67,6 +62,17 @@ class Authenticate(flask_restful.Resource):
             return True
 
         return False
+
+    @staticmethod
+    def _create_access_token(username):
+        access_token = flask_jwt_extended.create_access_token(
+            identity=user_store.UserStore.username_table[username].id
+        )
+        logger.debug(
+            f"Created access token for user {username} that begins with {access_token[:4]}"
+        )
+
+        return access_token
 
 
 # See https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
