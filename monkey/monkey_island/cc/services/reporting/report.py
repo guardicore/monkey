@@ -763,12 +763,3 @@ class ReportService:
         if ReportService.is_latest_report_exists():
             return ReportService.decode_dot_char_before_mongo_insert(mongo.db.report.find_one())
         return safe_generate_regular_report()
-
-    @staticmethod
-    def did_exploit_type_succeed(exploit_type):
-        return (
-            mongo.db.edge.count(
-                {"exploits": {"$elemMatch": {"exploiter": exploit_type, "result": True}}}, limit=1
-            )
-            > 0
-        )
