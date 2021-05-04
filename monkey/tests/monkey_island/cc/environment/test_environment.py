@@ -20,6 +20,8 @@ PARTIAL_CREDENTIALS = None
 STANDARD_WITH_CREDENTIALS = None
 STANDARD_ENV = None
 
+EMPTY_CREDS = UserCreds("", "")
+
 
 # This fixture is a dirty hack that can be removed once these tests are converted from
 # unittest to pytest. Instead, the appropriate fixtures from conftest.py can be used.
@@ -67,7 +69,7 @@ def get_server_config_file_path_test_version():
 class TestEnvironment(TestCase):
     class EnvironmentCredentialsNotRequired(Environment):
         def __init__(self):
-            config = StubEnvironmentConfig("test", "test", UserCreds())
+            config = StubEnvironmentConfig("test", "test", EMPTY_CREDS)
             super().__init__(config)
 
         _credentials_required = False
@@ -77,7 +79,7 @@ class TestEnvironment(TestCase):
 
     class EnvironmentCredentialsRequired(Environment):
         def __init__(self):
-            config = StubEnvironmentConfig("test", "test", UserCreds())
+            config = StubEnvironmentConfig("test", "test", EMPTY_CREDS)
             super().__init__(config)
 
         _credentials_required = True
@@ -101,7 +103,7 @@ class TestEnvironment(TestCase):
         credentials = UserCreds(username="test", password_hash="1231234")
         env.try_add_user(credentials)
 
-        credentials = UserCreds(username="test")
+        credentials = UserCreds(username="test", password_hash="")
         with self.assertRaises(InvalidRegistrationCredentialsError):
             env.try_add_user(credentials)
 

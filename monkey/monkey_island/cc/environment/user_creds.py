@@ -8,7 +8,7 @@ from monkey_island.cc.resources.auth.auth_user import User
 
 
 class UserCreds:
-    def __init__(self, username="", password_hash=""):
+    def __init__(self, username, password_hash):
         self.username = username
         self.password_hash = password_hash
 

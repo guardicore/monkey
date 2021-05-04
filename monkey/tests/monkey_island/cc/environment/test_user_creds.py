@@ -6,7 +6,7 @@ TEST_SALT = b"$2b$12$JA7GdT1iyfIsquF2cTZv2."
 
 
 def test_to_dict_empty_creds():
-    user_creds = UserCreds()
+    user_creds = UserCreds("", "")
     assert user_creds.to_dict() == {}
 
 
@@ -21,14 +21,6 @@ def test_to_auth_user_full_credentials():
     assert auth_user.id == 1
     assert auth_user.username == "Test"
     assert auth_user.secret == "abc1231234"
-
-
-def test_to_auth_user_username_only():
-    user_creds = UserCreds(username="Test")
-    auth_user = user_creds.to_auth_user()
-    assert auth_user.id == 1
-    assert auth_user.username == "Test"
-    assert auth_user.secret == ""
 
 
 def test_get_from_cleartext(monkeypatch):
