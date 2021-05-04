@@ -27,6 +27,12 @@ class UserCreds:
     def to_auth_user(self) -> User:
         return User(1, self.username, self.password_hash)
 
+    @classmethod
+    def from_cleartext(cls, username, cleartext_password):
+        password_hash = bcrypt.hashpw(cleartext_password.encode("utf-8"), bcrypt.gensalt()).decode()
+
+        return cls(username, password_hash)
+
     @staticmethod
     def get_from_new_registration_dict(data_dict: Dict) -> UserCreds:
         creds = UserCreds()
