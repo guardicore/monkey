@@ -38,10 +38,9 @@ class Authenticate(flask_restful.Resource):
             "password": "my_password"
         }
         """
-
         (username, password) = Authenticate._get_credentials_from_request(request)
-        # If the user and password have been previously registered
-        if self._authenticate(username, password):
+
+        if self._credentials_match_registered_user(username, password):
             access_token = flask_jwt_extended.create_access_token(
                 identity=user_store.UserStore.username_table[username].id
             )
@@ -62,7 +61,7 @@ class Authenticate(flask_restful.Resource):
         return (username, password)
 
     @staticmethod
-    def _authenticate(username, password):
+    def _credentials_match_registered_user(username, password):
         user = user_store.UserStore.username_table.get(username, None)
         if user and bcrypt.checkpw(password.encode("utf-8"), user.secret.encode("utf-8")):
             return True
