@@ -38,10 +38,8 @@ class Authenticate(flask_restful.Resource):
             "password": "my_password"
         }
         """
-        credentials = json.loads(request.data)
-        # Unpack auth info from request
-        username = credentials["username"]
-        password = credentials["password"]
+
+        (username, password) = Authenticate._get_credentials_from_request(request)
         # If the user and password have been previously registered
         if self._authenticate(username, password):
             access_token = flask_jwt_extended.create_access_token(
@@ -53,6 +51,15 @@ class Authenticate(flask_restful.Resource):
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
             return make_response({"error": "Invalid credentials"}, 401)
+
+    @staticmethod
+    def _get_credentials_from_request(request):
+        credentials = json.loads(request.data)
+
+        username = credentials["username"]
+        password = credentials["password"]
+
+        return (username, password)
 
     @staticmethod
     def _authenticate(username, password):
