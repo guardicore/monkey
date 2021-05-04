@@ -34,7 +34,9 @@ class Authenticate(flask_restful.Resource):
     def _authenticate(username, password):
         user = user_store.UserStore.username_table.get(username, None)
         if user and bcrypt.checkpw(password.encode("utf-8"), user.secret.encode("utf-8")):
-            return user
+            return True
+
+        return False
 
     def post(self):
         """
