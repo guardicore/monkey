@@ -28,7 +28,7 @@ class UserCreds:
         return User(1, self.username, self.password_hash)
 
     @staticmethod
-    def get_from_dict_new_registration(data_dict: Dict) -> UserCreds:
+    def get_from_new_registration_dict(data_dict: Dict) -> UserCreds:
         creds = UserCreds()
         if "user" in data_dict:
             creds.username = data_dict["user"]
@@ -39,7 +39,7 @@ class UserCreds:
         return creds
 
     @staticmethod
-    def get_from_dict_server_config(data_dict: Dict) -> UserCreds:
+    def get_from_server_config_dict(data_dict: Dict) -> UserCreds:
         creds = UserCreds()
         if "user" in data_dict:
             creds.username = data_dict["user"]
@@ -50,4 +50,4 @@ class UserCreds:
     @staticmethod
     def get_from_json(json_data: bytes) -> UserCreds:
         cred_dict = json.loads(json_data)
-        return UserCreds.get_from_dict_new_registration(cred_dict)
+        return UserCreds.get_from_new_registration_dict(cred_dict)
