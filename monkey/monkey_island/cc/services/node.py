@@ -105,17 +105,6 @@ class NodeService:
         return True
 
     @staticmethod
-    def get_monkey_label_by_id(monkey_id):
-        return NodeService.get_monkey_label(NodeService.get_monkey_by_id(monkey_id))
-
-    @staticmethod
-    def get_monkey_critical_services(monkey_id):
-        critical_services = mongo.db.monkey.find_one(
-            {"_id": monkey_id}, {"critical_services": 1}
-        ).get("critical_services", [])
-        return critical_services
-
-    @staticmethod
     def get_monkey_label(monkey):
         # todo
         label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]
