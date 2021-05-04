@@ -38,41 +38,39 @@ class Authenticate(flask_restful.Resource):
             "password": "my_password"
         }
         """
-        (username, password) = Authenticate._get_credentials_from_request(request)
+        (username, password) = _get_credentials_from_request(request)
 
-        if self._credentials_match_registered_user(username, password):
-            access_token = Authenticate._create_access_token(username)
+        if _credentials_match_registered_user(username, password):
+            access_token = _create_access_token(username)
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
             return make_response({"error": "Invalid credentials"}, 401)
 
-    @staticmethod
-    def _get_credentials_from_request(request):
-        credentials = json.loads(request.data)
 
-        username = credentials["username"]
-        password = credentials["password"]
+def _get_credentials_from_request(request):
+    credentials = json.loads(request.data)
 
-        return (username, password)
+    username = credentials["username"]
+    password = credentials["password"]
 
-    @staticmethod
-    def _credentials_match_registered_user(username, password):
-        user = user_store.UserStore.username_table.get(username, None)
-        if user and bcrypt.checkpw(password.encode("utf-8"), user.secret.encode("utf-8")):
-            return True
+    return (username, password)
 
-        return False
 
-    @staticmethod
-    def _create_access_token(username):
-        access_token = flask_jwt_extended.create_access_token(
-            identity=user_store.UserStore.username_table[username].id
-        )
-        logger.debug(
-            f"Created access token for user {username} that begins with {access_token[:4]}"
-        )
+def _credentials_match_registered_user(username, password):
+    user = user_store.UserStore.username_table.get(username, None)
+    if user and bcrypt.checkpw(password.encode("utf-8"), user.secret.encode("utf-8")):
+        return True
 
-        return access_token
+    return False
+
+
+def _create_access_token(username):
+    access_token = flask_jwt_extended.create_access_token(
+        identity=user_store.UserStore.username_table[username].id
+    )
+    logger.debug(f"Created access token for user {username} that begins with {access_token[:4]}")
+
+    return access_token
 
 
 # See https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
