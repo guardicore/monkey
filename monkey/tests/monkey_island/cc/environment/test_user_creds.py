@@ -5,6 +5,22 @@ from monkey_island.cc.environment.user_creds import UserCreds
 TEST_SALT = b"$2b$12$JA7GdT1iyfIsquF2cTZv2."
 
 
+def test_bool_true():
+    assert UserCreds("Test", "abc1231234")
+
+
+def test_bool_false_empty_password_hash():
+    assert not UserCreds("Test", "")
+
+
+def test_bool_false_empty_user():
+    assert not UserCreds("", "abc1231234")
+
+
+def test_bool_false_empty_user_and_password_hash():
+    assert not UserCreds("", "")
+
+
 def test_to_dict_empty_creds():
     user_creds = UserCreds("", "")
     assert user_creds.to_dict() == {}
