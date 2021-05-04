@@ -37,14 +37,6 @@ class PBA(Plugin):
         self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
 
-    def get_pba(self):
-        """
-        This method returns a PBA object based on a worm's configuration.
-        Return None or False if you don't want the pba to be executed.
-        :return: A pba object.
-        """
-        return self
-
     @staticmethod
     def should_run(class_name):
         """
