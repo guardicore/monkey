@@ -9,8 +9,6 @@ LOG = logging.getLogger(__name__)
 
 __author__ = "VakarisZ"
 
-PATH_TO_ACTIONS = "infection_monkey.post_breach.actions."
-
 
 class PostBreach(object):
     """
