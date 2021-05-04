@@ -3,7 +3,6 @@ from multiprocessing.dummy import Pool
 from typing import Sequence
 
 from infection_monkey.post_breach.pba import PBA
-from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
 
@@ -16,7 +15,6 @@ class PostBreach(object):
     """
 
     def __init__(self):
-        self.os_is_linux = not is_windows_os()
         self.pba_list = self.config_to_pba_list()
 
     def execute_all_configured(self):
