@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   collection time. #1102
 - Changed default BB test suite: if `--run-performance-tests` flag is not specified,
  performance tests are skipped.
+- Zerologon exploiter writes runtime artifacts to a secure temporary directory
+  instead of $HOME. #1143
 
 ### Fixed
 - Attempted to delete a directory when monkey config reset was called. #1054
