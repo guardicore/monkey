@@ -30,14 +30,6 @@ class Authenticate(flask_restful.Resource):
     See `AuthService.js` file for the frontend counterpart for this code.
     """
 
-    @staticmethod
-    def _authenticate(username, password):
-        user = user_store.UserStore.username_table.get(username, None)
-        if user and bcrypt.checkpw(password.encode("utf-8"), user.secret.encode("utf-8")):
-            return True
-
-        return False
-
     def post(self):
         """
         Example request:
@@ -61,6 +53,14 @@ class Authenticate(flask_restful.Resource):
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
             return make_response({"error": "Invalid credentials"}, 401)
+
+    @staticmethod
+    def _authenticate(username, password):
+        user = user_store.UserStore.username_table.get(username, None)
+        if user and bcrypt.checkpw(password.encode("utf-8"), user.secret.encode("utf-8")):
+            return True
+
+        return False
 
 
 # See https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
