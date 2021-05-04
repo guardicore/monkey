@@ -1,3 +1,5 @@
+import json
+
 import flask_restful
 from flask import make_response, request
 
@@ -11,9 +13,19 @@ class Registration(flask_restful.Resource):
         return {"needs_registration": env_singleton.env.needs_registration()}
 
     def post(self):
-        credentials = UserCreds.get_from_json(request.data)
+        credentials = _get_user_credentials_from_request(request)
+
         try:
             env_singleton.env.try_add_user(credentials)
             return make_response({"error": ""}, 200)
         except (InvalidRegistrationCredentialsError, RegistrationNotNeededError) as e:
             return make_response({"error": str(e)}, 400)
+
+
+def _get_user_credentials_from_request(request):
+    cred_dict = json.loads(request.data)
+
+    username = cred_dict.get("user", "")
+    password = cred_dict.get("password", "")
+
+    return UserCreds.from_cleartext(username, password)

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from typing import Dict
 
 import bcrypt
@@ -32,19 +31,3 @@ class UserCreds:
         password_hash = bcrypt.hashpw(cleartext_password.encode("utf-8"), bcrypt.gensalt()).decode()
 
         return cls(username, password_hash)
-
-    @staticmethod
-    def get_from_new_registration_dict(data_dict: Dict) -> UserCreds:
-        creds = UserCreds()
-        if "user" in data_dict:
-            creds.username = data_dict["user"]
-        if "password" in data_dict:
-            creds.password_hash = bcrypt.hashpw(
-                data_dict["password"].encode("utf-8"), bcrypt.gensalt()
-            ).decode()
-        return creds
-
-    @staticmethod
-    def get_from_json(json_data: bytes) -> UserCreds:
-        cred_dict = json.loads(json_data)
-        return UserCreds.get_from_new_registration_dict(cred_dict)
