@@ -63,10 +63,6 @@ class StubEnvironmentConfig(EnvironmentConfig):
         os.remove(self.server_config_path)
 
 
-def get_server_config_file_path_test_version():
-    return os.path.join(os.getcwd(), "test_config.json")
-
-
 class TestEnvironment(TestCase):
     class EnvironmentCredentialsNotRequired(Environment):
         def __init__(self):

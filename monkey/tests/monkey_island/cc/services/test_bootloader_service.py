@@ -2,17 +2,6 @@ from unittest import TestCase
 
 from monkey_island.cc.services.bootloader import BootloaderService
 
-WINDOWS_VERSIONS = {
-    "5.0": "Windows 2000",
-    "5.1": "Windows XP",
-    "5.2": "Windows XP/server 2003",
-    "6.0": "Windows Vista/server 2008",
-    "6.1": "Windows 7/server 2008R2",
-    "6.2": "Windows 8/server 2012",
-    "6.3": "Windows 8.1/server 2012R2",
-    "10.0": "Windows 10/server 2016-2019",
-}
-
 MIN_GLIBC_VERSION = 2.14
 
 
