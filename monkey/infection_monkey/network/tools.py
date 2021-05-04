@@ -82,31 +82,6 @@ def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
     return True, banner
 
 
-def check_udp_port(ip, port, timeout=DEFAULT_TIMEOUT):
-    """
-    Checks if a given UDP port is open by checking if it replies to an empty message
-    :param ip:  Target IP
-    :param port: Target port
-    :param timeout: Timeout to wait
-    :return: Tuple, T/F + banner
-    """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.settimeout(timeout)
-
-    data = None
-    is_open = False
-
-    try:
-        sock.sendto(b"-", (ip, port))
-        data, _ = sock.recvfrom(BANNER_READ)
-        is_open = True
-    except socket.error:
-        pass
-    sock.close()
-
-    return is_open, data
-
-
 def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
     """
     Checks whether any of the given ports are open on a target IP.
@@ -189,20 +164,6 @@ def tcp_port_to_service(port):
     return "tcp-" + str(port)
 
 
-def traceroute(target_ip, ttl=64):
-    """
-    Traceroute for a specific IP/name.
-    Note, may throw exception on failure that should be handled by caller.
-    :param target_ip: IP/name of target
-    :param ttl: Max TTL
-    :return: Sequence of IPs in the way
-    """
-    if sys.platform == "win32":
-        return _traceroute_windows(target_ip, ttl)
-    else:  # linux based hopefully
-        return _traceroute_linux(target_ip, ttl)
-
-
 def _get_traceroute_bin_path():
     """
     Gets the path to the prebuilt traceroute executable
@@ -252,32 +213,6 @@ def _parse_traceroute(output, regex, ttl):
         trace_list.append(ip_addr)
 
     return trace_list
-
-
-def _traceroute_windows(target_ip, ttl):
-    """
-    Traceroute for a specific IP/name - Windows implementation
-    """
-    # we'll just use tracert because that's always there
-    cli = ["tracert", "-d", "-w", "250", "-h", str(ttl), target_ip]
-    proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
-    stdout, stderr = proc_obj.communicate()
-    stdout = stdout.replace("\r", "")
-    return _parse_traceroute(stdout, IP_ADDR_RE, ttl)
-
-
-def _traceroute_linux(target_ip, ttl):
-    """
-    Traceroute for a specific IP/name - Linux implementation
-    """
-
-    cli = [_get_traceroute_bin_path(), "-m", str(ttl), target_ip]
-    proc_obj = subprocess.Popen(cli, stdout=subprocess.PIPE)
-    stdout, stderr = proc_obj.communicate()
-
-    lines = _parse_traceroute(stdout, IP_ADDR_PARENTHESES_RE, ttl)
-    lines = [x[1:-1] if x else None for x in lines]  # Removes parenthesis
-    return lines
 
 
 def get_interface_to_target(dst):
