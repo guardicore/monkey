@@ -58,6 +58,7 @@ def _get_credentials_from_request(request):
 
 def _credentials_match_registered_user(username, password):
     user = user_store.UserStore.username_table.get(username, None)
+
     if user and bcrypt.checkpw(password.encode("utf-8"), user.secret.encode("utf-8")):
         return True
 
