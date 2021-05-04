@@ -45,15 +45,6 @@ class UserCreds:
         return creds
 
     @staticmethod
-    def get_from_server_config_dict(data_dict: Dict) -> UserCreds:
-        creds = UserCreds()
-        if "user" in data_dict:
-            creds.username = data_dict["user"]
-        if "password_hash" in data_dict:
-            creds.password_hash = data_dict["password_hash"]
-        return creds
-
-    @staticmethod
     def get_from_json(json_data: bytes) -> UserCreds:
         cred_dict = json.loads(json_data)
         return UserCreds.get_from_new_registration_dict(cred_dict)

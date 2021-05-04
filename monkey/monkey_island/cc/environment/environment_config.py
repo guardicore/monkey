@@ -38,13 +38,12 @@ class EnvironmentConfig:
         self._load_from_dict(data)
 
     def _load_from_dict(self, dict_data: Dict):
-        user_creds = UserCreds.get_from_server_config_dict(dict_data)
         aws = dict_data["aws"] if "aws" in dict_data else None
         data_dir = dict_data["data_dir"] if "data_dir" in dict_data else DEFAULT_DATA_DIR
 
         self.server_config = dict_data["server_config"]
         self.deployment = dict_data["deployment"]
-        self.user_creds = user_creds
+        self.user_creds = _get_user_credentials_from_config(dict_data)
         self.aws = aws
         self.data_dir = data_dir
 
@@ -75,3 +74,10 @@ class EnvironmentConfig:
     def get_users(self) -> List[User]:
         auth_user = self.user_creds.to_auth_user()
         return [auth_user] if auth_user else []
+
+
+def _get_user_credentials_from_config(dict_data: Dict):
+    username = dict_data.get("user", "")
+    password_hash = dict_data.get("password_hash", "")
+
+    return UserCreds(username, password_hash)
