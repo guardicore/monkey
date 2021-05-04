@@ -44,3 +44,11 @@ def test_get_from_cleartext(monkeypatch):
 
     creds = UserCreds.from_cleartext("Test", "Test_Password")
     assert creds.password_hash == "$2b$12$JA7GdT1iyfIsquF2cTZv2.NdGFuYbX1WGfQAOyHlpEsgDTNGZ0TXG"
+
+
+def test_member_values(monkeypatch):
+    monkeypatch.setattr(bcrypt, "gensalt", lambda: TEST_SALT)
+
+    creds = UserCreds("Test", "abc1231234")
+    assert creds.username == "Test"
+    assert creds.password_hash == "abc1231234"
