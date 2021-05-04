@@ -1,5 +1,6 @@
 import json
 
+import bcrypt
 import flask_restful
 from flask import make_response, request
 
@@ -27,5 +28,6 @@ def _get_user_credentials_from_request(request):
 
     username = cred_dict.get("user", "")
     password = cred_dict.get("password", "")
+    password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode()
 
-    return UserCreds.from_cleartext(username, password)
+    return UserCreds(username, password_hash)

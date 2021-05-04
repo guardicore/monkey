@@ -1,5 +1,3 @@
-import bcrypt
-
 from monkey_island.cc.environment.user_creds import UserCreds
 
 TEST_USER = "Test"
@@ -41,16 +39,7 @@ def test_to_auth_user_full_credentials():
     assert auth_user.secret == TEST_HASH
 
 
-def test_get_from_cleartext(monkeypatch):
-    monkeypatch.setattr(bcrypt, "gensalt", lambda: TEST_SALT)
-
-    creds = UserCreds.from_cleartext(TEST_USER, "Test_Password")
-    assert creds.password_hash == "$2b$12$JA7GdT1iyfIsquF2cTZv2.NdGFuYbX1WGfQAOyHlpEsgDTNGZ0TXG"
-
-
 def test_member_values(monkeypatch):
-    monkeypatch.setattr(bcrypt, "gensalt", lambda: TEST_SALT)
-
     creds = UserCreds(TEST_USER, TEST_HASH)
     assert creds.username == TEST_USER
     assert creds.password_hash == TEST_HASH
