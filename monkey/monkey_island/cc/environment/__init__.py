@@ -1,4 +1,3 @@
-import hashlib
 import logging
 import os
 from abc import ABCMeta, abstractmethod
@@ -105,12 +104,6 @@ class Environment(object, metaclass=ABCMeta):
 
     def get_auth_expiration_time(self):
         return self._AUTH_EXPIRATION_TIME
-
-    @staticmethod
-    def hash_secret(secret):
-        hash_obj = hashlib.sha3_512()
-        hash_obj.update(secret.encode("utf-8"))
-        return hash_obj.hexdigest()
 
     def get_deployment(self) -> str:
         deployment = "unknown"
