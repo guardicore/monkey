@@ -118,9 +118,6 @@ class Environment(object, metaclass=ABCMeta):
             deployment = self._config.deployment
         return deployment
 
-    def set_deployment(self, deployment: str):
-        self._config.deployment = deployment
-
     @property
     def mongo_db_name(self):
         return self._MONGO_DB_NAME
