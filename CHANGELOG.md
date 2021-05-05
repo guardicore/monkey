@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
  performance tests are skipped.
 - Zerologon exploiter writes runtime artifacts to a secure temporary directory
   instead of $HOME. #1143
+- Authentication mechanism to use bcrypt on server side. #1139
 
 ### Fixed
 - Attempted to delete a directory when monkey config reset was called. #1054

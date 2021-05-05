@@ -20,6 +20,9 @@ PARTIAL_CREDENTIALS = None
 STANDARD_WITH_CREDENTIALS = None
 STANDARD_ENV = None
 
+EMPTY_USER_CREDENTIALS = UserCreds("", "")
+FULL_USER_CREDENTIALS = UserCreds(username="test", password_hash="1231234")
+
 
 # This fixture is a dirty hack that can be removed once these tests are converted from
 # unittest to pytest. Instead, the appropriate fixtures from conftest.py can be used.
@@ -67,7 +70,7 @@ def get_server_config_file_path_test_version():
 class TestEnvironment(TestCase):
     class EnvironmentCredentialsNotRequired(Environment):
         def __init__(self):
-            config = StubEnvironmentConfig("test", "test", UserCreds())
+            config = StubEnvironmentConfig("test", "test", EMPTY_USER_CREDENTIALS)
             super().__init__(config)
 
         _credentials_required = False
@@ -77,7 +80,7 @@ class TestEnvironment(TestCase):
 
     class EnvironmentCredentialsRequired(Environment):
         def __init__(self):
-            config = StubEnvironmentConfig("test", "test", UserCreds())
+            config = StubEnvironmentConfig("test", "test", EMPTY_USER_CREDENTIALS)
             super().__init__(config)
 
         _credentials_required = True
@@ -98,15 +101,15 @@ class TestEnvironment(TestCase):
     @patch.object(target=EnvironmentConfig, attribute="save_to_file", new=MagicMock())
     def test_try_add_user(self):
         env = TestEnvironment.EnvironmentCredentialsRequired()
-        credentials = UserCreds(username="test", password_hash="1231234")
+        credentials = FULL_USER_CREDENTIALS
         env.try_add_user(credentials)
 
-        credentials = UserCreds(username="test")
+        credentials = UserCreds(username="test", password_hash="")
         with self.assertRaises(InvalidRegistrationCredentialsError):
             env.try_add_user(credentials)
 
         env = TestEnvironment.EnvironmentCredentialsNotRequired()
-        credentials = UserCreds(username="test", password_hash="1231234")
+        credentials = FULL_USER_CREDENTIALS
         with self.assertRaises(RegistrationNotNeededError):
             env.try_add_user(credentials)
 

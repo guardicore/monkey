@@ -7,9 +7,9 @@ import flask_restful
 from flask import make_response, request
 from flask_jwt_extended.exceptions import JWTExtendedException
 from jwt import PyJWTError
-from werkzeug.security import safe_str_cmp
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
+import monkey_island.cc.resources.auth.password_utils as password_utils
 import monkey_island.cc.resources.auth.user_store as user_store
 
 logger = logging.getLogger(__name__)
@@ -25,40 +25,53 @@ def init_jwt(app):
 
 class Authenticate(flask_restful.Resource):
     """
-    Resource for user authentication. The user provides the username and hashed password and we
+    Resource for user authentication. The user provides the username and password and we
     give them a JWT.
     See `AuthService.js` file for the frontend counterpart for this code.
     """
-
-    @staticmethod
-    def _authenticate(username, secret):
-        user = user_store.UserStore.username_table.get(username, None)
-        if user and safe_str_cmp(user.secret.encode("utf-8"), secret.encode("utf-8")):
-            return user
 
     def post(self):
         """
         Example request:
         {
             "username": "my_user",
-            "password": "343bb87e553b05430e5c44baf99569d4b66..."
+            "password": "my_password"
         }
         """
-        credentials = json.loads(request.data)
-        # Unpack auth info from request
-        username = credentials["username"]
-        secret = credentials["password"]
-        # If the user and password have been previously registered
-        if self._authenticate(username, secret):
-            access_token = flask_jwt_extended.create_access_token(
-                identity=user_store.UserStore.username_table[username].id
-            )
-            logger.debug(
-                f"Created access token for user {username} that begins with {access_token[:4]}"
-            )
+        (username, password) = _get_credentials_from_request(request)
+
+        if _credentials_match_registered_user(username, password):
+            access_token = _create_access_token(username)
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
             return make_response({"error": "Invalid credentials"}, 401)
+
+
+def _get_credentials_from_request(request):
+    credentials = json.loads(request.data)
+
+    username = credentials["username"]
+    password = credentials["password"]
+
+    return (username, password)
+
+
+def _credentials_match_registered_user(username, password):
+    user = user_store.UserStore.username_table.get(username, None)
+
+    if user and password_utils.password_matches_hash(password, user.secret):
+        return True
+
+    return False
+
+
+def _create_access_token(username):
+    access_token = flask_jwt_extended.create_access_token(
+        identity=user_store.UserStore.username_table[username].id
+    )
+    logger.debug(f"Created access token for user {username} that begins with {access_token[:4]}")
+
+    return access_token
 
 
 # See https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
