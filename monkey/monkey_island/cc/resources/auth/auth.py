@@ -2,7 +2,6 @@ import json
 import logging
 from functools import wraps
 
-import bcrypt
 import flask_jwt_extended
 import flask_restful
 from flask import make_response, request
@@ -10,6 +9,7 @@ from flask_jwt_extended.exceptions import JWTExtendedException
 from jwt import PyJWTError
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
+import monkey_island.cc.resources.auth.password_utils as password_utils
 import monkey_island.cc.resources.auth.user_store as user_store
 
 logger = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ def _get_credentials_from_request(request):
 def _credentials_match_registered_user(username, password):
     user = user_store.UserStore.username_table.get(username, None)
 
-    if user and bcrypt.checkpw(password.encode("utf-8"), user.secret.encode("utf-8")):
+    if user and password_utils.password_matches_hash(password, user.secret):
         return True
 
     return False
