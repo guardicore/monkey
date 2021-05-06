@@ -1,7 +1,7 @@
 [flake8]
 ## Warn about linter issues.
 
-exclude = monkey/monkey_island/cc/ui
+exclude = monkey/monkey_island/cc/ui,whitelist.py
 show-source = True
 max-complexity = 10
 max-line-length = 100
@@ -15,4 +15,3 @@ statistics = True
 
 ### --count will print the total number of errors.
 count = True
-
