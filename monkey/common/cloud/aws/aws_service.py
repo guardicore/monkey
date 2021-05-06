@@ -2,7 +2,6 @@ import logging
 
 import boto3
 import botocore
-from botocore.exceptions import ClientError
 
 from common.cloud.aws.aws_instance import AwsInstance
 
@@ -52,22 +51,6 @@ class AwsService(object):
         return boto3.client(
             client_type, region_name=region if region is not None else AwsService.region
         )
-
-    @staticmethod
-    def get_session():
-        return boto3.session.Session()
-
-    @staticmethod
-    def get_regions():
-        return AwsService.get_session().get_available_regions("ssm")
-
-    @staticmethod
-    def test_client():
-        try:
-            AwsService.get_client("ssm").describe_instance_information()
-            return True
-        except ClientError:
-            return False
 
     @staticmethod
     def get_instances():
