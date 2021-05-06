@@ -2,7 +2,6 @@ from monkey_island.cc.environment.user_creds import UserCreds
 
 TEST_USER = "Test"
 TEST_HASH = "abc1231234"
-TEST_SALT = b"$2b$12$JA7GdT1iyfIsquF2cTZv2."
 
 
 def test_bool_true():
