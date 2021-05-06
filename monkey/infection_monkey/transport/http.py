@@ -115,9 +115,6 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     timeout = 30  # timeout with clients, set to None not to make persistent connection
-    proxy_via = (
-        None  # pseudonym of the proxy in Via header, set to None not to modify original Via header
-    )
 
     def do_POST(self):
         try:
