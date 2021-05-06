@@ -108,9 +108,6 @@ class AutoNewWindowsUser(AutoNewUser):
 
         return exit_code
 
-    def get_logon_handle(self):
-        return self.logon_handle
-
     def __exit__(self, _exc_type, value, traceback):
         # Logoff
         self.logon_handle.Close()
