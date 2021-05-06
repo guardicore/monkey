@@ -1,17 +1,13 @@
 import logging
-import re
 import select
 import socket
 import struct
-import subprocess
 import sys
 import time
 
 from common.network.network_utils import get_host_from_network_location
 from infection_monkey.config import WormConfiguration
 from infection_monkey.network.info import get_routes, local_ips
-from infection_monkey.pyinstaller_utils import get_binary_file_path
-from infection_monkey.utils.environment import is_64bit_python
 
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
@@ -162,57 +158,6 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
 
 def tcp_port_to_service(port):
     return "tcp-" + str(port)
-
-
-def _get_traceroute_bin_path():
-    """
-    Gets the path to the prebuilt traceroute executable
-
-    This is the traceroute utility from: http://traceroute.sourceforge.net
-    Its been built using the buildroot utility with the following settings:
-        * Statically link to musl and all other required libs
-        * Optimize for size
-    This is done because not all linux distros come with traceroute out-of-the-box, and to ensure
-    it behaves as expected
-
-    :return: Path to traceroute executable
-    """
-    return get_binary_file_path("traceroute64" if is_64bit_python() else "traceroute32")
-
-
-def _parse_traceroute(output, regex, ttl):
-    """
-    Parses the output of traceroute (from either Linux or Windows)
-    :param output:  The output of the traceroute
-    :param regex:   Regex for finding an IP address
-    :param ttl:     Max TTL. Must be the same as the TTL used as param for traceroute.
-    :return:        List of ips which are the hops on the way to the traceroute destination.
-                    If a hop's IP wasn't found by traceroute, instead of an IP, the array will
-                    contain None
-    """
-    ip_lines = output.split("\n")
-    trace_list = []
-
-    first_line_index = None
-    for i in range(len(ip_lines)):
-        if re.search(r"^\s*1", ip_lines[i]) is not None:
-            first_line_index = i
-            break
-
-    for i in range(first_line_index, first_line_index + ttl):
-        if (
-            re.search(r"^\s*" + str(i - first_line_index + 1), ip_lines[i]) is None
-        ):  # If trace is finished
-            break
-
-        re_res = re.search(regex, ip_lines[i])
-        if re_res is None:
-            ip_addr = None
-        else:
-            ip_addr = re_res.group()
-        trace_list.append(ip_addr)
-
-    return trace_list
 
 
 def get_interface_to_target(dst):
