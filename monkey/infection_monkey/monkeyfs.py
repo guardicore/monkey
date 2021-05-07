@@ -15,7 +15,6 @@ class VirtualFile(BytesIO):
         if not name.startswith(MONKEYFS_PREFIX):
             name = MONKEYFS_PREFIX + name
         self.name = name
-        self._mode = mode
         if name in VirtualFile._vfs:
             super(VirtualFile, self).__init__(self._vfs[name])
         else:

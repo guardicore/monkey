@@ -1,4 +1,3 @@
-import hashlib
 import logging
 import os
 from abc import ABCMeta, abstractmethod
@@ -106,20 +105,11 @@ class Environment(object, metaclass=ABCMeta):
     def get_auth_expiration_time(self):
         return self._AUTH_EXPIRATION_TIME
 
-    @staticmethod
-    def hash_secret(secret):
-        hash_obj = hashlib.sha3_512()
-        hash_obj.update(secret.encode("utf-8"))
-        return hash_obj.hexdigest()
-
     def get_deployment(self) -> str:
         deployment = "unknown"
         if self._config and self._config.deployment:
             deployment = self._config.deployment
         return deployment
-
-    def set_deployment(self, deployment: str):
-        self._config.deployment = deployment
 
     @property
     def mongo_db_name(self):

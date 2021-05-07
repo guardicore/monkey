@@ -1,5 +1,4 @@
 import logging
-import threading
 
 import flask_restful
 from flask import jsonify, make_response, request
@@ -16,9 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 class Root(flask_restful.Resource):
-    def __init__(self):
-        self.report_generating_lock = threading.Event()
-
     def get(self, action=None):
         if not action:
             action = request.args.get("action")

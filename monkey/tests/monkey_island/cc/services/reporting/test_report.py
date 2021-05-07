@@ -21,7 +21,6 @@ NT_HASH = "a9fdfa038c4b75ebc76dc855dd74f0da"
 VICTIM_IP = "0.0.0.0"
 VICTIM_DOMAIN_NAME = "domain-name"
 HOSTNAME = "name-of-host"
-EXPLOITER_CLASS_NAME = "exploiter-name"
 
 # Below telem constants only contain fields relevant to current tests
 

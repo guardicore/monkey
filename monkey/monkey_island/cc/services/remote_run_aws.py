@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 class RemoteRunAwsService:
     aws_instance = None
-    is_auth = False
 
     def __init__(self):
         pass

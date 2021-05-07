@@ -11,11 +11,6 @@ LOG = logging.getLogger(__name__)
 
 
 class _SystemSingleton(object, metaclass=ABCMeta):
-    @property
-    @abstractmethod
-    def locked(self):
-        raise NotImplementedError()
-
     @abstractmethod
     def try_lock(self):
         raise NotImplementedError()
@@ -29,10 +24,6 @@ class WindowsSystemSingleton(_SystemSingleton):
     def __init__(self):
         self._mutex_name = r"Global\%s" % (WormConfiguration.singleton_mutex_name,)
         self._mutex_handle = None
-
-    @property
-    def locked(self):
-        return self._mutex_handle is not None
 
     def try_lock(self):
         assert self._mutex_handle is None, "Singleton already locked"
@@ -66,10 +57,6 @@ class LinuxSystemSingleton(_SystemSingleton):
     def __init__(self):
         self._unix_sock_name = str(WormConfiguration.singleton_mutex_name)
         self._sock_handle = None
-
-    @property
-    def locked(self):
-        return self._sock_handle is not None
 
     def try_lock(self):
         assert self._sock_handle is None, "Singleton already locked"

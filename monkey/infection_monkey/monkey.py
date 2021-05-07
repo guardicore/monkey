@@ -56,12 +56,10 @@ class InfectionMonkey(object):
         self._default_tunnel = None
         self._args = args
         self._network = None
-        self._dropper_path = None
         self._exploiters = None
         self._fingerprint = None
         self._default_server = None
         self._default_server_port = None
-        self._depth = 0
         self._opts = None
         self._upgrading_to_64 = False
 
@@ -92,7 +90,6 @@ class InfectionMonkey(object):
 
         self._keep_running = True
         self._network = NetworkScanner()
-        self._dropper_path = sys.argv[0]
 
         if self._default_server:
             if self._default_server not in WormConfiguration.command_servers:

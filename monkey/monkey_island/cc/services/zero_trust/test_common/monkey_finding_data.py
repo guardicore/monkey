@@ -26,8 +26,6 @@ EVENTS_DTO = [
     for event in EVENTS
 ]
 
-DETAILS_DTO = []
-
 
 def get_monkey_details_dto() -> MonkeyFindingDetails:
     monkey_details = MonkeyFindingDetails()

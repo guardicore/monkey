@@ -120,19 +120,6 @@ class AttackReportService:
         return report
 
     @staticmethod
-    def get_latest_attack_telem_time():
-        """
-        Gets timestamp of latest attack telem
-        :return: timestamp of latest attack telem
-        """
-        return [
-            x["timestamp"]
-            for x in mongo.db.telemetry.find({"telem_category": "attack"})
-            .sort("timestamp", -1)
-            .limit(1)
-        ][0]
-
-    @staticmethod
     def get_latest_report():
         """
         Gets latest report (by retrieving it from db or generating a new one).

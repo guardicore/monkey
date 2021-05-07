@@ -63,6 +63,9 @@ script:
 ## Check that all python is properly formatted. Fail otherwise.
 - python -m black --check .
 
+## Check that there is no dead python code
+- python -m vulture .
+
 ## Run unit tests and generate coverage data
 - cd monkey  # This is our source dir
 - python -m pytest --cov=. # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.

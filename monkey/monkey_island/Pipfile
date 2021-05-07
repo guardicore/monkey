@@ -42,6 +42,7 @@ flake8 = "==3.9.0"
 pytest-cov = "*"
 isort = "==5.8.0"
 coverage = "*"
+vulture = "==2.3"
 
 [requires]
 python_version = "3.7"

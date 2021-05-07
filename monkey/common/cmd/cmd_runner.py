@@ -2,7 +2,6 @@ import logging
 import time
 from abc import abstractmethod
 
-from common.cmd.cmd import Cmd
 from common.cmd.cmd_result import CmdResult
 from common.cmd.cmd_status import CmdStatus
 
@@ -35,16 +34,6 @@ class CmdRunner(object):
 
     def __init__(self, is_linux):
         self.is_linux = is_linux
-
-    def run_command(self, command_line, timeout=DEFAULT_TIMEOUT):
-        """
-        Runs the given command on the remote machine
-        :param command_line: The command line to run
-        :param timeout: Timeout in seconds for command.
-        :return: Command result
-        """
-        c_id = self.run_command_async(command_line)
-        return self.wait_commands([Cmd(self, c_id)], timeout)[1]
 
     @staticmethod
     def run_multiple_commands(instances, inst_to_cmd, inst_n_cmd_res_to_res):

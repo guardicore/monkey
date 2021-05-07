@@ -2,7 +2,6 @@ import itertools
 import socket
 import struct
 from random import randint  # noqa: DUO102
-from subprocess import check_output
 
 import netifaces
 import psutil
@@ -157,22 +156,3 @@ def get_interfaces_ranges():
         # limit subnet scans to class C only
         res.append(CidrRange(cidr_range="%s/%s" % (address_str, netmask_str)))
     return res
-
-
-if is_windows_os():
-
-    def get_ip_for_connection(target_ip):
-        return None
-
-
-else:
-
-    def get_ip_for_connection(target_ip):
-        try:
-            query_str = "ip route get %s" % target_ip
-            resp = check_output(query_str.split())
-            substr = resp.split()
-            src = substr[substr.index("src") + 1]
-            return src
-        except Exception:
-            return None

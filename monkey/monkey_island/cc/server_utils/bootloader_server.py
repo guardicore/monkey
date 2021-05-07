@@ -3,7 +3,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 from urllib import parse
 
-import pymongo
 import requests
 import urllib3
 
@@ -17,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 class BootloaderHttpServer(ThreadingMixIn, HTTPServer):
     def __init__(self, mongo_url):
-        self.mongo_client = pymongo.MongoClient(mongo_url)
         server_address = ("", 5001)
         super().__init__(server_address, BootloaderHTTPRequestHandler)
 
