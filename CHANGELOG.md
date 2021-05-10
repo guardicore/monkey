@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Attempted to delete a directory when monkey config reset was called. #1054
+- An errant space in the windows commands to run monkey manually. #1153
 
 ### Security
 - Address minor issues discovered by Dlint. #1075
