@@ -11,10 +11,6 @@ DEFAULT_DEVELOP_SERVER_CONFIG_PATH = os.path.join(
     MONKEY_ISLAND_ABS_PATH, "cc", "server_config.json.develop"
 )
 
-DEFAULT_LOGGER_CONFIG_PATH = os.path.join(
-    MONKEY_ISLAND_ABS_PATH, "cc", "island_logger_default_config.json"
-)
-
 DEFAULT_LOG_LEVEL = "NOTSET"
 
 DEFAULT_DATA_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc")

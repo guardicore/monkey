@@ -10,7 +10,7 @@ from pathlib import Path  # noqa: E402
 
 import monkey_island.cc.environment.server_config_generator as server_config_generator  # noqa: E402
 from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR, DEFAULT_LOG_LEVEL  # noqa: E402
-from monkey_island.cc.server_utils.island_logger import json_setup_logging  # noqa: E402
+from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E402
 
 if "__main__" == __name__:
     island_args = parse_cli_args()
@@ -32,7 +32,7 @@ if "__main__" == __name__:
         )
         log_level = data["log_level"] if "log_level" in data else DEFAULT_LOG_LEVEL
 
-        # json_setup_logging(data_dir, log_level)
+        setup_logging(data_dir, log_level)
 
     except json.JSONDecodeError as ex:
         print(f"Error loading logging config: {ex}")
