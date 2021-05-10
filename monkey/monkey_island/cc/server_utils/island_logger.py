@@ -48,11 +48,11 @@ def setup_logging(
     """
 
     logger_configuration = deepcopy(LOGGER_CONFIG_DICT)
-    _expanduser_log_file_paths(logger_configuration)
     logger_configuration["root"]["level"] = log_level
     logger_configuration["handlers"]["info_file_handler"]["filename"] = os.path.join(
         data_dir_path, "monkey_island.log"
     )
+    _expanduser_log_file_paths(logger_configuration)
     logging.config.dictConfig(logger_configuration)
 
 
