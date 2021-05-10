@@ -36,10 +36,7 @@ LOGGER_CONFIG_DICT = {
 }
 
 
-def setup_logging(
-    data_dir_path,
-    log_level,
-):
+def setup_logging(data_dir_path, log_level):
     """
     Setup the logging configuration
     :param data_dir_path: data directory file path
@@ -48,11 +45,16 @@ def setup_logging(
     """
 
     logger_configuration = deepcopy(LOGGER_CONFIG_DICT)
-    logger_configuration["root"]["level"] = log_level
+
+    if not os.path.exists(data_dir_path):
+        os.makedirs(data_dir_path, mode=0o700, exist_ok=True)
+
     logger_configuration["handlers"]["info_file_handler"]["filename"] = os.path.join(
         data_dir_path, "monkey_island.log"
     )
+    logger_configuration["root"]["level"] = log_level
     _expanduser_log_file_paths(logger_configuration)
+
     logging.config.dictConfig(logger_configuration)
 
 

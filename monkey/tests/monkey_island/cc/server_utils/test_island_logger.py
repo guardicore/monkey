@@ -3,12 +3,7 @@ import os
 
 import pytest
 
-from monkey_island.cc.server_utils.island_logger import json_setup_logging
-
-
-@pytest.fixture()
-def test_logger_config_path(resources_dir):
-    return os.path.join(resources_dir, "logger_config.json")
+from monkey_island.cc.server_utils.island_logger import setup_logging
 
 
 # TODO move into monkey/monkey_island/cc/test_common/fixtures after rebase/backmerge
@@ -17,11 +12,13 @@ def mock_home_env(monkeypatch, tmpdir):
     monkeypatch.setenv("HOME", str(tmpdir))
 
 
-def test_expanduser_filename(mock_home_env, tmpdir, test_logger_config_path):
-    INFO_LOG = os.path.join(tmpdir, "info.log")
+def test_expanduser_filename(mock_home_env, tmpdir):
+    DATA_DIR = tmpdir
+    INFO_LOG = os.path.join(DATA_DIR, "monkey_island.log")
+    LOG_LEVEL = "DEBUG"
     TEST_STRING = "Hello, Monkey!"
 
-    json_setup_logging(test_logger_config_path)
+    setup_logging(DATA_DIR, LOG_LEVEL)
 
     logger = logging.getLogger("TestLogger")
     logger.info(TEST_STRING)
