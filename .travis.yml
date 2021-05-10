@@ -41,16 +41,11 @@ install:
 - node --version
 - npm --version
 
-# linuxbrew (for hugo)
-- git clone https://github.com/Homebrew/brew ~/.linuxbrew/Homebrew
-- mkdir ~/.linuxbrew/bin
-- ln -s ~/.linuxbrew/Homebrew/bin/brew ~/.linuxbrew/bin
-- eval $(~/.linuxbrew/bin/brew shellenv)
-
 # hugo (for documentation)
-- brew install hugo
+- curl --output - -L https://api.github.com/repos/gohugoio/hugo/releases/latest | grep --color=never "browser_download_url.*Linux-64bit.tar.gz" | grep -v extended | cut -d ':' -f2,3 | tr -d '"' | xargs -n 1 curl -L --output hugo.tar.gz
 # print hugo version (useful for debugging documentation build errors)
-- hugo version
+- tar -zxf hugo.tar.gz
+- ./hugo version
 
 script:
 # Check Python code
@@ -79,7 +74,7 @@ script:
 
 # Build documentation
 - cd $TRAVIS_BUILD_DIR/docs
-- hugo --verbose --environment staging
+- ../hugo --verbose --environment staging
 
 # verify swimm
 - cd $TRAVIS_BUILD_DIR
