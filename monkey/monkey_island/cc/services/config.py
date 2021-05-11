@@ -9,6 +9,8 @@ import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
+
+# TODO: Remove circular dependency between ConfigService and PostBreachFilesService.
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 

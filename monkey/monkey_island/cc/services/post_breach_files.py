@@ -1,6 +1,8 @@
 import logging
 import os
+from pathlib import Path
 
+# TODO: Remove circular dependency between ConfigService and PostBreachFilesService.
 import monkey_island.cc.services.config
 
 __author__ = "VakarisZ"
@@ -15,6 +17,14 @@ PBA_LINUX_FILENAME_PATH = ["monkey", "post_breach", "PBA_linux_filename"]
 class PostBreachFilesService:
     DATA_DIR = None
     CUSTOM_PBA_DIRNAME = "custom_pbas"
+
+    # TODO: A number of these services should be instance objects instead of
+    # static/singleton hybrids. At the moment, this requires invasive refactoring that's
+    # not a priority.
+    @classmethod
+    def initialize(cls, data_dir):
+        cls.DATA_DIR = data_dir
+        Path(cls.get_custom_pba_directory()).mkdir(mode=0o0700, parents=True, exist_ok=True)
 
     @staticmethod
     def remove_PBA_files():

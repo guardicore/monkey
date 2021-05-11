@@ -6,4 +6,4 @@ def initialize_services(data_dir):
 
 
 def initialize_post_breach_file_service(data_dir):
-    PostBreachFilesService.DATA_DIR = data_dir
+    PostBreachFilesService.initialize(data_dir)

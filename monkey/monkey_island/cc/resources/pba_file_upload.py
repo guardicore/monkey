@@ -28,10 +28,6 @@ class FileUpload(flask_restful.Resource):
     File upload endpoint used to exchange files with filepond component on the front-end
     """
 
-    def __init__(self):
-        # Create all directories on the way if they don't exist
-        Path(env_singleton.env.get_config().data_dir_abs_path).mkdir(parents=True, exist_ok=True)
-
     @jwt_required
     def get(self, file_type):
         """
