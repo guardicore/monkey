@@ -64,3 +64,17 @@ def test_setup_logging_console_log_level_info(capsys, tmpdir):
 
     captured = capsys.readouterr()
     assert TEST_STRING not in captured.out
+
+
+def test_setup_logging_console_log_level_lower_case(capsys, tmpdir):
+    DATA_DIR = tmpdir
+    LOG_LEVEL = "debug"
+    TEST_STRING = "Hello, Monkey! (Console; Log level: debug)"
+
+    setup_logging(DATA_DIR, LOG_LEVEL)
+
+    logger = logging.getLogger("TestLogger")
+    logger.debug(TEST_STRING)
+
+    captured = capsys.readouterr()
+    assert TEST_STRING in captured.out

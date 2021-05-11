@@ -48,6 +48,6 @@ def setup_logging(data_dir_path, log_level):
     logger_configuration["handlers"]["file_handler"]["filename"] = os.path.join(
         data_dir_path, ISLAND_LOG_FILENAME
     )
-    logger_configuration["root"]["level"] = log_level
+    logger_configuration["root"]["level"] = log_level.upper()
 
     logging.config.dictConfig(logger_configuration)
