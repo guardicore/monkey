@@ -7,12 +7,12 @@ import flask_restful
 from flask import Response, request, send_from_directory
 from werkzeug.utils import secure_filename
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.post_breach_files import (
     PBA_LINUX_FILENAME_PATH,
     PBA_WINDOWS_FILENAME_PATH,
+    PostBreachFilesService,
 )
 
 __author__ = "VakarisZ"
@@ -40,7 +40,7 @@ class FileUpload(flask_restful.Resource):
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_LINUX_FILENAME_PATH))
         else:
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_WINDOWS_FILENAME_PATH))
-        return send_from_directory(env_singleton.env.get_config().data_dir_abs_path, filename)
+        return send_from_directory(PostBreachFilesService.get_custom_pba_directory(), filename)
 
     @jwt_required
     def post(self, file_type):
@@ -64,7 +64,7 @@ class FileUpload(flask_restful.Resource):
         """
         filename = secure_filename(request_.files["filepond"].filename)
         file_path = (
-            Path(env_singleton.env.get_config().data_dir_abs_path).joinpath(filename).absolute()
+            Path(PostBreachFilesService.get_custom_pba_directory()).joinpath(filename).absolute()
         )
         request_.files["filepond"].save(str(file_path))
         ConfigService.set_config_value(
@@ -84,7 +84,7 @@ class FileUpload(flask_restful.Resource):
         )
         filename = ConfigService.get_config_value(filename_path)
         if filename:
-            file_path = Path(env_singleton.env.get_config().data_dir_abs_path).joinpath(filename)
+            file_path = Path(PostBreachFilesService.get_custom_pba_directory()).joinpath(filename)
             FileUpload._delete_file(file_path)
             ConfigService.set_config_value(filename_path, "")
 
