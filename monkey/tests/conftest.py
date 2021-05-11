@@ -46,3 +46,20 @@ def with_data_dir(environment_resources_dir):
 @pytest.fixture(scope="session")
 def with_data_dir_home(environment_resources_dir):
     return os.path.join(environment_resources_dir, "server_config_with_data_dir_home.json")
+
+
+@pytest.fixture(scope="session")
+def server_config_resources_dir(resources_dir):
+    return os.path.join(resources_dir, "server_configs")
+
+
+@pytest.fixture(scope="session")
+def test_server_config(server_config_resources_dir):
+    return os.path.join(server_config_resources_dir, "test_server_config.json")
+
+
+@pytest.fixture
+def mock_home_env(monkeypatch, tmpdir):
+    monkeypatch.setenv("HOME", str(tmpdir))
+
+    return tmpdir
