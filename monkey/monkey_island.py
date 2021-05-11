@@ -7,8 +7,25 @@ gevent_monkey.patch_all()
 import json  # noqa: E402
 import os  # noqa: E402
 
-from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR, DEFAULT_LOG_LEVEL  # noqa: E402
+from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E402
+
+DEFAULT_LOG_LEVEL = "INFO"
+
+
+def load_server_config(path):
+    with open(server_config_path, "r") as f:
+        config_content = f.read()
+        data = json.loads(config_content)
+        data_dir = os.path.abspath(
+            os.path.expanduser(
+                os.path.expandvars(data["data_dir"] if "data_dir" in data else DEFAULT_DATA_DIR)
+            )
+        )
+        log_level = data["log_level"] if "log_level" in data else DEFAULT_LOG_LEVEL
+
+        return data_dir, log_level
+
 
 if "__main__" == __name__:
     island_args = parse_cli_args()
@@ -17,15 +34,8 @@ if "__main__" == __name__:
     # imports, so the log init needs to be first.
     try:
         server_config_path = os.path.expanduser(island_args.server_config)
-        with open(server_config_path, "r") as f:
-            config_content = f.read()
-        data = json.loads(config_content)
-        data_dir = os.path.abspath(
-            os.path.expanduser(
-                os.path.expandvars(data["data_dir"] if "data_dir" in data else DEFAULT_DATA_DIR)
-            )
-        )
-        log_level = data["log_level"] if "log_level" in data else DEFAULT_LOG_LEVEL
+
+        data_dir, log_level = load_server_config(server_config_path)
 
         setup_logging(data_dir, log_level)
 
