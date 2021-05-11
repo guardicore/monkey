@@ -35,8 +35,10 @@ MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_PATH):
     logger.info("Starting bootloader server")
+
+    data_dir = env_singleton.env.get_config().data_dir_abs_path
     env_singleton.initialize_from_file(server_config_filename)
-    initialize_encryptor(env_singleton.env.get_config().data_dir_abs_path)
+    initialize_encryptor(data_dir)
 
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(
@@ -44,17 +46,17 @@ def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_P
     )
 
     bootloader_server_thread.start()
-    start_island_server(should_setup_only)
+    start_island_server(should_setup_only, data_dir)
     bootloader_server_thread.join()
 
 
-def start_island_server(should_setup_only):
+def start_island_server(should_setup_only, data_dir):
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)
     assert_mongo_db_version(mongo_url)
 
     populate_exporter_list()
-    app = init_app(mongo_url)
+    app = init_app(mongo_url, data_dir)
 
     crt_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
     key_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))

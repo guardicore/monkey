@@ -20,7 +20,7 @@ __author__ = "Barak"
 logger = logging.getLogger(__name__)
 
 
-def run_local_monkey():
+def run_local_monkey(dest_dir):
     import platform
     import stat
     import subprocess
@@ -31,7 +31,6 @@ def run_local_monkey():
         return False, "OS Type not found"
 
     src_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "binaries", result["filename"])
-    dest_dir = env_singleton.env.get_config().data_dir_abs_path
     dest_path = os.path.join(dest_dir, result["filename"])
 
     # copy the executable to temp path (don't run the monkey from its current location as it may
@@ -60,6 +59,9 @@ def run_local_monkey():
 
 
 class LocalRun(flask_restful.Resource):
+    def __init__(self, data_dir):
+        self._data_dir = data_dir
+
     @jwt_required
     def get(self):
         NodeService.update_dead_monkeys()
@@ -75,7 +77,7 @@ class LocalRun(flask_restful.Resource):
     def post(self):
         body = json.loads(request.data)
         if body.get("action") == "run":
-            local_run = run_local_monkey()
+            local_run = run_local_monkey(self._data_dir)
             return jsonify(is_running=local_run[0], error_text=local_run[1])
 
         # default action
