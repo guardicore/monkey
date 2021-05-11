@@ -28,17 +28,8 @@ class PostBreachFilesService:
 
     @staticmethod
     def remove_PBA_files():
-        if monkey_island.cc.services.config.ConfigService.get_config():
-            windows_filename = monkey_island.cc.services.config.ConfigService.get_config_value(
-                PBA_WINDOWS_FILENAME_PATH
-            )
-            linux_filename = monkey_island.cc.services.config.ConfigService.get_config_value(
-                PBA_LINUX_FILENAME_PATH
-            )
-            if linux_filename:
-                PostBreachFilesService.remove_file(linux_filename)
-            if windows_filename:
-                PostBreachFilesService.remove_file(windows_filename)
+        for f in os.listdir(PostBreachFilesService.get_custom_pba_directory()):
+            PostBreachFilesService.remove_file(f)
 
     @staticmethod
     def remove_file(file_name):

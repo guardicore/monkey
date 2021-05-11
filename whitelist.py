@@ -20,6 +20,7 @@ set_os_windows  # unused variable (monkey/tests/infection_monkey/post_breach/act
 patch_new_user_classes  # unused variable (monkey/tests/infection_monkey/utils/test_auto_new_user_factory.py:25)
 patch_new_user_classes  # unused variable (monkey/tests/infection_monkey/utils/test_auto_new_user_factory.py:31)
 mock_home_env  # unused variable (monkey/tests/monkey_island/cc/server_utils/test_island_logger.py:20)
+custom_pba_directory  # unused variable (monkey/tests/monkey_island/cc/services/test_post_breach_files.py:20)
 configure_resources  # unused function (monkey/tests/monkey_island/cc/environment/test_environment.py:26)
 change_to_mongo_mock  # unused function (monkey/monkey_island/cc/test_common/fixtures/mongomock_fixtures.py:9)
 uses_database  # unused function (monkey/monkey_island/cc/test_common/fixtures/mongomock_fixtures.py:16)
