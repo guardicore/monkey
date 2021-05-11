@@ -9,9 +9,11 @@ import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
-
-# TODO: Remove circular dependency between ConfigService and PostBreachFilesService.
-from monkey_island.cc.services.post_breach_files import PostBreachFilesService
+from monkey_island.cc.services.post_breach_files import (
+    PBA_LINUX_FILENAME_PATH,
+    PBA_WINDOWS_FILENAME_PATH,
+    PostBreachFilesService,
+)
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
@@ -193,7 +195,7 @@ class ConfigService:
         # PBA file upload happens on pba_file_upload endpoint and corresponding config options
         # are set there
         config_json = ConfigService._filter_none_values(config_json)
-        PostBreachFilesService.set_config_PBA_files(config_json)
+        ConfigService.set_config_PBA_files(config_json)
         if should_encrypt:
             try:
                 ConfigService.encrypt_config(config_json)
@@ -203,6 +205,19 @@ class ConfigService:
         mongo.db.config.update({"name": "newconfig"}, {"$set": config_json}, upsert=True)
         logger.info("monkey config was updated")
         return True
+
+    @staticmethod
+    def set_config_PBA_files(config_json):
+        """
+        Sets PBA file info in config_json to current config's PBA file info values.
+        :param config_json: config_json that will be modified
+        """
+        if ConfigService.get_config():
+            linux_filename = ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
+            windows_filename = ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
+
+            config_json["monkey"]["post_breach"]["PBA_linux_filename"] = linux_filename
+            config_json["monkey"]["post_breach"]["PBA_windows_filename"] = windows_filename
 
     @staticmethod
     def init_default_config():
