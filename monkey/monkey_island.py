@@ -18,9 +18,9 @@ if "__main__" == __name__:
     try:
         server_config_path = os.path.expanduser(island_args.server_config)
 
-        data_dir, log_level = config_loader.load_server_config(server_config_path)
+        config = config_loader.load_server_config(server_config_path)
 
-        setup_logging(data_dir, log_level)
+        setup_logging(config["data_dir"], config["log_level"])
 
     except OSError as ex:
         print(f"Error opening server config file: {ex}")
