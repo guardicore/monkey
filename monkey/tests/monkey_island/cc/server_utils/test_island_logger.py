@@ -36,3 +36,31 @@ def test_setup_logging_log_level_info(tmpdir):
     with open(LOG_FILE, "r") as f:
         line = f.readline()
         assert TEST_STRING not in line
+
+
+def test_setup_logging_console_log_level_debug(capsys, tmpdir):
+    DATA_DIR = tmpdir
+    LOG_LEVEL = "DEBUG"
+    TEST_STRING = "Hello, Monkey! (Log level: debug)"
+
+    setup_logging(DATA_DIR, LOG_LEVEL)
+
+    logger = logging.getLogger("TestLogger")
+    logger.debug(TEST_STRING)
+
+    captured = capsys.readouterr()
+    assert TEST_STRING in captured.out
+
+
+def test_setup_logging_console_log_level_info(capsys, tmpdir):
+    DATA_DIR = tmpdir
+    LOG_LEVEL = "INFO"
+    TEST_STRING = "Hello, Monkey! (Log level: info)"
+
+    setup_logging(DATA_DIR, LOG_LEVEL)
+
+    logger = logging.getLogger("TestLogger")
+    logger.debug(TEST_STRING)
+
+    captured = capsys.readouterr()
+    assert TEST_STRING not in captured.out
