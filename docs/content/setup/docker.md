@@ -9,6 +9,8 @@ tags: ["setup", "docker", "linux", "windows"]
 
 ## Deployment
 
+### Linux
+
 To extract the `tar.gz` file, run `tar -xvzf monkey-island-docker.tar.gz`.
 
 Once you've extracted the container from the tar.gz file, run the following commands:
@@ -20,6 +22,12 @@ sudo mkdir -p /var/monkey-mongo/data/db
 sudo docker run --name monkey-mongo --network=host -v /var/monkey-mongo/data/db:/data/db -d mongo:4.2
 sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:1.10.0
 ```
+
+Wait until the Island is done setting up and it will be available on https://localhost:5000
+
+### Windows and Mac OS X
+
+Not supported yet, since docker doesn't support `--network=host` parameter on these OS's.
 
 ## Upgrading
 
