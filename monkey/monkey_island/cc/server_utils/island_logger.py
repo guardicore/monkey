@@ -3,9 +3,6 @@ import os
 from copy import deepcopy
 from typing import Dict
 
-__author__ = "Maor.Rayzin"
-
-
 LOGGER_CONFIG_DICT = {
     "version": 1,
     "disable_existing_loggers": False,
