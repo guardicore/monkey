@@ -17,10 +17,9 @@ def load_server_config_from_file(server_config_path):
 
 def add_default_values_to_config(config):
     config["data_dir"] = os.path.abspath(
-        os.path.expanduser(
-            os.path.expandvars(config["data_dir"] if "data_dir" in config else DEFAULT_DATA_DIR)
-        )
+        os.path.expanduser(os.path.expandvars(config.get("data_dir", DEFAULT_DATA_DIR)))
     )
-    config["log_level"] = config["log_level"] if "log_level" in config else DEFAULT_LOG_LEVEL
+
+    config.setdefault("log_level", DEFAULT_LOG_LEVEL)
 
     return config
