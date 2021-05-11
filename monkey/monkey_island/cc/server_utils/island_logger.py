@@ -46,9 +46,6 @@ def setup_logging(data_dir_path, log_level):
 
     logger_configuration = deepcopy(LOGGER_CONFIG_DICT)
 
-    if not os.path.exists(data_dir_path):
-        os.makedirs(data_dir_path, mode=0o700, exist_ok=True)
-
     logger_configuration["handlers"]["info_file_handler"]["filename"] = os.path.join(
         data_dir_path, "monkey_island.log"
     )
