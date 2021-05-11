@@ -17,6 +17,8 @@ if [ ! -f /tmp/foo.txt ]; then  # If the file already exists, assume that the co
   CREATED_RND_FILE=true
 fi
 
+umask 377
+
 echo "Generating key in $server_root/server.key..."
 openssl genrsa -out "$server_root"/server.key 2048
 echo "Generating csr in $server_root/server.csr..."
