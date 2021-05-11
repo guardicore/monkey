@@ -14,6 +14,7 @@ PBA_LINUX_FILENAME_PATH = ["monkey", "post_breach", "PBA_linux_filename"]
 
 class PostBreachFilesService:
     DATA_DIR = None
+    CUSTOM_PBA_DIRNAME = "custom_pbas"
 
     @staticmethod
     def remove_PBA_files():
@@ -31,12 +32,18 @@ class PostBreachFilesService:
 
     @staticmethod
     def _remove_file(file_name):
-        file_path = os.path.join(PostBreachFilesService.DATA_DIR, file_name)
+        file_path = os.path.join(PostBreachFilesService.get_custom_pba_directory(), file_name)
         try:
             if os.path.exists(file_path):
                 os.remove(file_path)
         except OSError as e:
             logger.error("Can't remove previously uploaded post breach files: %s" % e)
+
+    @staticmethod
+    def get_custom_pba_directory():
+        return os.path.join(
+            PostBreachFilesService.DATA_DIR, PostBreachFilesService.CUSTOM_PBA_DIRNAME
+        )
 
     @staticmethod
     def set_config_PBA_files(config_json):
