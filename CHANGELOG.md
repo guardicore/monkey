@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Authentication mechanism to use bcrypt on server side. #1139
 - Removed relevant dead code as reported by Vulture. #1149
 - Removed island logger config and added "log_level" to server config. #1151
+- `server_config.json` puts environment config options in a separate section
+  named "environment". #1161
 
 ### Fixed
 - Attempted to delete a directory when monkey config reset was called. #1054
