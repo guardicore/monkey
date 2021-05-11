@@ -18,7 +18,7 @@ if "__main__" == __name__:
     try:
         server_config_path = os.path.expanduser(island_args.server_config)
 
-        config = config_loader.load_server_config(server_config_path)
+        config = config_loader.load_server_config_from_file(server_config_path)
 
         setup_logging(config["data_dir"], config["log_level"])
 
