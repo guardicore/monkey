@@ -1,4 +1,5 @@
 {
   "server_config": "password",
-  "deployment": "develop"
+  "deployment": "develop",
+  "log_level": "DEBUG"
 }

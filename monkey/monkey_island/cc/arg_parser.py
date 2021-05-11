@@ -1,16 +1,12 @@
 from dataclasses import dataclass
 
-from monkey_island.cc.server_utils.consts import (
-    DEFAULT_LOGGER_CONFIG_PATH,
-    DEFAULT_SERVER_CONFIG_PATH,
-)
+from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH
 
 
 @dataclass
 class IslandArgs:
     setup_only: bool
     server_config: str
-    logger_config: str
 
 
 def parse_cli_args() -> IslandArgs:
@@ -34,12 +30,6 @@ def parse_cli_args() -> IslandArgs:
         help="The path to the server configuration file.",
         default=DEFAULT_SERVER_CONFIG_PATH,
     )
-    parser.add_argument(
-        "--logger-config",
-        action="store",
-        help="The path to the logging configuration file.",
-        default=DEFAULT_LOGGER_CONFIG_PATH,
-    )
     args = parser.parse_args()
 
-    return IslandArgs(args.setup_only, args.server_config, args.logger_config)
+    return IslandArgs(args.setup_only, args.server_config)

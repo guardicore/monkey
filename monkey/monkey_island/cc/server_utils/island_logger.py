@@ -1,43 +1,53 @@
-import json
 import logging.config
 import os
-from typing import Dict
+from copy import deepcopy
 
-from monkey_island.cc.server_utils.consts import DEFAULT_LOGGER_CONFIG_PATH
+ISLAND_LOG_FILENAME = "monkey_island.log"
 
-__author__ = "Maor.Rayzin"
+LOGGER_CONFIG_DICT = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s - %(filename)s:%(lineno)s - "
+            + "%(funcName)10s() - %(levelname)s - %(message)s"
+        }
+    },
+    "handlers": {
+        "console_handler": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout",
+        },
+        "file_handler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "simple",
+            "filename": None,  # set in setup_logging()
+            "maxBytes": 10485760,
+            "backupCount": 20,
+            "encoding": "utf8",
+        },
+    },
+    "root": {
+        "level": None,  # set in setup_logging()
+        "handlers": ["console_handler", "file_handler"],
+    },
+}
 
 
-def json_setup_logging(
-    default_path=DEFAULT_LOGGER_CONFIG_PATH,
-    default_level=logging.INFO,
-    env_key="LOG_CFG",
-):
+def setup_logging(data_dir_path, log_level):
     """
     Setup the logging configuration
-    :param default_path: the default log configuration file path
-    :param default_level: Default level to log from
-    :param env_key: SYS ENV key to use for external configuration file path
+    :param data_dir_path: data directory file path
+    :param log_level: level to log from
     :return:
     """
-    path = os.path.expanduser(default_path)
-    value = os.getenv(env_key, None)
 
-    if value:
-        path = value
+    logger_configuration = deepcopy(LOGGER_CONFIG_DICT)
 
-    if os.path.exists(path):
-        with open(path, "rt") as f:
-            config = json.load(f)
-            _expanduser_log_file_paths(config)
-            logging.config.dictConfig(config)
-    else:
-        logging.basicConfig(level=default_level)
+    logger_configuration["handlers"]["file_handler"]["filename"] = os.path.join(
+        data_dir_path, ISLAND_LOG_FILENAME
+    )
+    logger_configuration["root"]["level"] = log_level.upper()
 
-
-def _expanduser_log_file_paths(config: Dict):
-    handlers = config.get("handlers", {})
-
-    for handler_settings in handlers.values():
-        if "filename" in handler_settings:
-            handler_settings["filename"] = os.path.expanduser(handler_settings["filename"])
+    logging.config.dictConfig(logger_configuration)
