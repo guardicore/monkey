@@ -6,7 +6,6 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.post_breach_files import remove_PBA_files
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +17,6 @@ class Database(object):
     @staticmethod
     def reset_db():
         logger.info("Resetting database")
-        remove_PBA_files()
         # We can't drop system collections.
         [
             Database.drop_collection(x)
