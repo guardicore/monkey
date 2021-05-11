@@ -1,7 +1,9 @@
 {
+  "data_dir": "/test/data/dir",
+  "environment" : {
     "server_config": "password",
     "deployment": "develop",
     "user": "test",
-    "password_hash": "abcdef",
-    "data_dir": "/test/data/dir"
+    "password_hash": "abcdef"
+  }
 }

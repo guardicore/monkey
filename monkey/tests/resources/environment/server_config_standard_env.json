@@ -1,4 +1,6 @@
 {
-  "server_config": "standard",
-  "deployment": "develop"
+  "environment" : {
+    "server_config": "standard",
+    "deployment": "develop"
+  }
 }

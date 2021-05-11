@@ -54,13 +54,29 @@ def test_save_to_file(config_file, standard_with_credentials):
     with open(config_file, "r") as f:
         from_file = json.load(f)
 
-    assert len(from_file.keys()) == 6
-    assert from_file["server_config"] == "standard"
-    assert from_file["deployment"] == "develop"
-    assert from_file["user"] == "test"
-    assert from_file["password_hash"] == "abcdef"
-    assert from_file["aws"] == "test_aws"
-    assert from_file["data_dir"] == DEFAULT_DATA_DIR
+    assert len(from_file.keys()) == 2
+    assert len(from_file["environment"].keys()) == 6
+    assert from_file["environment"]["server_config"] == "standard"
+    assert from_file["environment"]["deployment"] == "develop"
+    assert from_file["environment"]["user"] == "test"
+    assert from_file["environment"]["password_hash"] == "abcdef"
+    assert from_file["environment"]["aws"] == "test_aws"
+    assert from_file["environment"]["data_dir"] == DEFAULT_DATA_DIR
+
+
+def test_save_to_file_preserve_log_level(config_file, standard_with_credentials):
+    shutil.copyfile(standard_with_credentials, config_file)
+
+    environment_config = EnvironmentConfig(config_file)
+    environment_config.aws = "test_aws"
+    environment_config.save_to_file()
+
+    with open(config_file, "r") as f:
+        from_file = json.load(f)
+
+    assert len(from_file.keys()) == 2
+    assert "log_level" in from_file
+    assert from_file["log_level"] == "NOTICE"
 
 
 def test_add_user(config_file, standard_with_credentials):
@@ -76,9 +92,9 @@ def test_add_user(config_file, standard_with_credentials):
     with open(config_file, "r") as f:
         from_file = json.load(f)
 
-    assert len(from_file.keys()) == 5
-    assert from_file["user"] == new_user
-    assert from_file["password_hash"] == new_password_hash
+    assert len(from_file["environment"].keys()) == 5
+    assert from_file["environment"]["user"] == new_user
+    assert from_file["environment"]["password_hash"] == new_password_hash
 
 
 def test_get_users(standard_with_credentials):

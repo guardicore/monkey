@@ -35,7 +35,7 @@ class EnvironmentConfig:
 
     def _load_from_json(self, config_json: str) -> EnvironmentConfig:
         data = json.loads(config_json)
-        self._load_from_dict(data)
+        self._load_from_dict(data["environment"])
 
     def _load_from_dict(self, dict_data: Dict):
         aws = dict_data["aws"] if "aws" in dict_data else None
@@ -52,8 +52,13 @@ class EnvironmentConfig:
         return os.path.abspath(os.path.expanduser(os.path.expandvars(self.data_dir)))
 
     def save_to_file(self):
+        with open(self._server_config_path, "r") as f:
+            config = json.load(f)
+
+        config["environment"] = self.to_dict()
+
         with open(self._server_config_path, "w") as f:
-            f.write(json.dumps(self.to_dict(), indent=2))
+            f.write(json.dumps(config, indent=2))
 
     def to_dict(self) -> Dict:
         config_dict = {
