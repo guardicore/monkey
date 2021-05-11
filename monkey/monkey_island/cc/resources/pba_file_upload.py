@@ -1,6 +1,5 @@
 import copy
 import logging
-import os
 from pathlib import Path
 
 import flask_restful
@@ -84,16 +83,7 @@ class FileUpload(flask_restful.Resource):
         )
         filename = ConfigService.get_config_value(filename_path)
         if filename:
-            file_path = Path(PostBreachFilesService.get_custom_pba_directory()).joinpath(filename)
-            FileUpload._delete_file(file_path)
+            PostBreachFilesService.remove_file(filename)
             ConfigService.set_config_value(filename_path, "")
 
         return {}
-
-    @staticmethod
-    def _delete_file(file_path):
-        try:
-            if os.path.exists(file_path):
-                os.remove(file_path)
-        except OSError as e:
-            LOG.error("Couldn't remove previously uploaded post breach files: %s" % e)

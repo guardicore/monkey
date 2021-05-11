@@ -36,12 +36,12 @@ class PostBreachFilesService:
                 PBA_LINUX_FILENAME_PATH
             )
             if linux_filename:
-                PostBreachFilesService._remove_file(linux_filename)
+                PostBreachFilesService.remove_file(linux_filename)
             if windows_filename:
-                PostBreachFilesService._remove_file(windows_filename)
+                PostBreachFilesService.remove_file(windows_filename)
 
     @staticmethod
-    def _remove_file(file_name):
+    def remove_file(file_name):
         file_path = os.path.join(PostBreachFilesService.get_custom_pba_directory(), file_name)
         try:
             if os.path.exists(file_path):
