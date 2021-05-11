@@ -1,7 +1,8 @@
 import logging.config
 import os
 from copy import deepcopy
-from typing import Dict
+
+ISLAND_LOG_FILENAME = "monkey_island.log"
 
 LOGGER_CONFIG_DICT = {
     "version": 1,
@@ -13,15 +14,13 @@ LOGGER_CONFIG_DICT = {
         }
     },
     "handlers": {
-        "console": {
+        "console_handler": {
             "class": "logging.StreamHandler",
-            "level": "DEBUG",
             "formatter": "simple",
             "stream": "ext://sys.stdout",
         },
-        "info_file_handler": {
+        "file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
-            "level": "INFO",
             "formatter": "simple",
             "filename": None,  # set in setup_logging()
             "maxBytes": 10485760,
@@ -29,7 +28,10 @@ LOGGER_CONFIG_DICT = {
             "encoding": "utf8",
         },
     },
-    "root": {"level": None, "handlers": ["console", "info_file_handler"]},  # set in setup_logging()
+    "root": {
+        "level": None,  # set in setup_logging()
+        "handlers": ["console_handler", "file_handler"],
+    },
 }
 
 
@@ -43,18 +45,9 @@ def setup_logging(data_dir_path, log_level):
 
     logger_configuration = deepcopy(LOGGER_CONFIG_DICT)
 
-    logger_configuration["handlers"]["info_file_handler"]["filename"] = os.path.join(
-        data_dir_path, "monkey_island.log"
+    logger_configuration["handlers"]["file_handler"]["filename"] = os.path.join(
+        data_dir_path, ISLAND_LOG_FILENAME
     )
     logger_configuration["root"]["level"] = log_level
-    _expanduser_log_file_paths(logger_configuration)
 
     logging.config.dictConfig(logger_configuration)
-
-
-def _expanduser_log_file_paths(config: Dict):
-    handlers = config.get("handlers", {})
-
-    for handler_settings in handlers.values():
-        if "filename" in handler_settings:
-            handler_settings["filename"] = os.path.expanduser(handler_settings["filename"])
