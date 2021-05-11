@@ -5,8 +5,6 @@ import monkey_island.cc.services.config
 
 __author__ = "VakarisZ"
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
-
 logger = logging.getLogger(__name__)
 
 # Where to find file names in config
@@ -15,6 +13,8 @@ PBA_LINUX_FILENAME_PATH = ["monkey", "post_breach", "PBA_linux_filename"]
 
 
 class PostBreachFilesService:
+    DATA_DIR = None
+
     @staticmethod
     def remove_PBA_files():
         if monkey_island.cc.services.config.ConfigService.get_config():
@@ -31,7 +31,7 @@ class PostBreachFilesService:
 
     @staticmethod
     def _remove_file(file_name):
-        file_path = os.path.join(env_singleton.env.get_config().data_dir_abs_path, file_name)
+        file_path = os.path.join(PostBreachFilesService.DATA_DIR, file_name)
         try:
             if os.path.exists(file_path):
                 os.remove(file_path)
