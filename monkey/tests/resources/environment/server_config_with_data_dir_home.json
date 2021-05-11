@@ -1,9 +1,0 @@
-{
-  "data_dir": "~/data_dir",
-  "environment" : {
-    "server_config": "password",
-    "deployment": "develop",
-    "user": "test",
-    "password_hash": "abcdef"
-  }
-}

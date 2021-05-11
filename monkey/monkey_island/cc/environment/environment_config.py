@@ -9,7 +9,6 @@ import monkey_island.cc.environment.server_config_generator as server_config_gen
 from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.resources.auth.user_store import UserStore
-from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR
 
 
 class EnvironmentConfig:
@@ -19,7 +18,6 @@ class EnvironmentConfig:
         self.deployment = None
         self.user_creds = None
         self.aws = None
-        self.data_dir = None
 
         self._load_from_file(self._server_config_path)
 
@@ -39,17 +37,11 @@ class EnvironmentConfig:
 
     def _load_from_dict(self, dict_data: Dict):
         aws = dict_data["aws"] if "aws" in dict_data else None
-        data_dir = dict_data["data_dir"] if "data_dir" in dict_data else DEFAULT_DATA_DIR
 
         self.server_config = dict_data["server_config"]
         self.deployment = dict_data["deployment"]
         self.user_creds = _get_user_credentials_from_config(dict_data)
         self.aws = aws
-        self.data_dir = data_dir
-
-    @property
-    def data_dir_abs_path(self):
-        return os.path.abspath(os.path.expanduser(os.path.expandvars(self.data_dir)))
 
     def save_to_file(self):
         with open(self._server_config_path, "r") as f:
@@ -64,7 +56,6 @@ class EnvironmentConfig:
         config_dict = {
             "server_config": self.server_config,
             "deployment": self.deployment,
-            "data_dir": self.data_dir,
         }
         if self.aws:
             config_dict.update({"aws": self.aws})
