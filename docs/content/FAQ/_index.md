@@ -14,6 +14,7 @@ Below are some of the most common questions we receive about the Infection Monke
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
 - [Where can I find the log files of the Infection Monkey agent and the Monkey Island server, and how can I read them?](#where-can-i-find-the-log-files-of-the-infection-monkey-agent-and-the-monkey-island-and-how-can-i-read-them)
   - [Monkey Island server](#monkey-island-server)
+    - [How do I change the log level of the Monkey Island logger?](#how-do-i-change-the-log-level-of-the-monkey-island-logger)
   - [Infection Monkey agent](#infection-monkey-agent)
 - [Running the Infection Monkey in a production environment](#running-the-infection-monkey-in-a-production-environment)
   - [How much of a footprint does the Infection Monkey leave?](#how-much-of-a-footprint-does-the-infection-monkey-leave)
@@ -48,7 +49,7 @@ This file is located in your specified data directory. On Linux, the default dat
   "deployment": "windows"
 }
 ```
- Then, reset the Monkey Island process. Use `sudo systemctl restart monkey-island.service` on Linux or, on Windows, restart program.
+ Then, reset the Monkey Island process. Use `sudo systemctl restart monkey-island.service` on Linux, or on Windows, restart program.
  Finally, go to the Monkey Island's URL and create a new account.
 
 ## Should I run the Infection Monkey continuously?
@@ -88,6 +89,12 @@ The log enables you to see which requests were requested from the server and ext
 2019-07-23 10:52:23,989 - client_run.py:23 -        get() - INFO - Monkey is not running
 2019-07-23 10:52:24,027 - report.py:580 - get_domain_issues() - INFO - Domain issues generated for reporting
 ```
+
+#### How do I change the log level of the Monkey Island logger?
+
+The log level of the Monkey Island logger is set in the `log_level` field in the `server_config.json` file which is present in your specified data directory. On Linux, the default data directory is `$HOME/.monkey_island`, and on Windows, it is `%AppData%\monkey_island`. Make sure you leave everything else in `server_config.json` unchanged.
+
+To apply the changes, reset the Monkey Island process. Use `sudo systemctl restart monkey-island.service` on Linux, or on Windows, restart the program. Now, any logging in the program will be done according to the new log level.
 
 ### Infection Monkey agent
 
