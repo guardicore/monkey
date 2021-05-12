@@ -48,17 +48,17 @@ def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_P
     )
 
     bootloader_server_thread.start()
-    start_island_server(should_setup_only, data_dir)
+    start_island_server(should_setup_only)
     bootloader_server_thread.join()
 
 
-def start_island_server(should_setup_only, data_dir):
+def start_island_server(should_setup_only):
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)
     assert_mongo_db_version(mongo_url)
 
     populate_exporter_list()
-    app = init_app(mongo_url, data_dir)
+    app = init_app(mongo_url)
 
     crt_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
     key_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))

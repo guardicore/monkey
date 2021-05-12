@@ -1,67 +1,15 @@
 import json
-import logging
-import os
-import sys
-from shutil import copyfile
 
 import flask_restful
 from flask import jsonify, make_response, request
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.resources.monkey_download import get_monkey_executable
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.utils.network_utils import local_ip_addresses
-
-__author__ = "Barak"
-
-logger = logging.getLogger(__name__)
-
-
-def run_local_monkey(dest_dir):
-    import platform
-    import stat
-    import subprocess
-
-    # get the monkey executable suitable to run on the server
-    result = get_monkey_executable(platform.system().lower(), platform.machine().lower())
-    if not result:
-        return False, "OS Type not found"
-
-    src_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "binaries", result["filename"])
-    dest_path = os.path.join(dest_dir, result["filename"])
-
-    # copy the executable to temp path (don't run the monkey from its current location as it may
-    # delete itself)
-    try:
-        copyfile(src_path, dest_path)
-        os.chmod(dest_path, stat.S_IRWXU | stat.S_IRWXG)
-    except Exception as exc:
-        logger.error("Copy file failed", exc_info=True)
-        return False, "Copy file failed: %s" % exc
-
-    # run the monkey
-    try:
-        args = [
-            '"%s" m0nk3y -s %s:%s'
-            % (dest_path, local_ip_addresses()[0], env_singleton.env.get_island_port())
-        ]
-        if sys.platform == "win32":
-            args = "".join(args)
-        subprocess.Popen(args, cwd=dest_dir, shell=True).pid
-    except Exception as exc:
-        logger.error("popen failed", exc_info=True)
-        return False, "popen failed: %s" % exc
-
-    return True, ""
+from monkey_island.cc.services.run_local_monkey import RunLocalMonkeyService
 
 
 class LocalRun(flask_restful.Resource):
-    def __init__(self, data_dir):
-        self._data_dir = data_dir
-
     @jwt_required
     def get(self):
         NodeService.update_dead_monkeys()
@@ -77,7 +25,7 @@ class LocalRun(flask_restful.Resource):
     def post(self):
         body = json.loads(request.data)
         if body.get("action") == "run":
-            local_run = run_local_monkey(self._data_dir)
+            local_run = RunLocalMonkeyService.run_local_monkey()
             return jsonify(is_running=local_run[0], error_text=local_run[1])
 
         # default action
