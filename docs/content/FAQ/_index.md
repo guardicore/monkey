@@ -9,6 +9,7 @@ Below are some of the most common questions we receive about the Infection Monke
 
 - [Where can I get the latest version of the Infection Monkey?](#where-can-i-get-the-latest-version-of-the-infection-monkey)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
+- [Where does Infection Monkey store runtime artifacts?](#where-does-infection-monkey-store-runtime-artifacts)
 - [How do I reset the Monkey Island password?](#how-do-i-reset-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
@@ -36,6 +37,14 @@ If you want to see what has changed between versions, refer to the [releases pag
 ## How long does a single Infection Monkey agent run? Is there a time limit?
 
 The Infection Monkey agent shuts off either when it can't find new victims or it has exceeded the quota of victims as defined in the configuration.
+
+## Where does Infection Monkey store runtime artifacts?
+
+The Infection Monkey agent may need to access or create some files on systems while running, such as during the execution of custom post-breach actions or when attempting the Zerologon exploit.
+
+For this, it uses a "data directory" which can be configured in the `data_dir` field in the `server_config.json` file. The default data directory on Linux is `$HOME/.monkey_island`, and on Windows is `%AppData%\monkey_island`.
+
+Any runtime artifacts will be stored in the data directory.
 
 ## How do I reset the Monkey Island password?
 
