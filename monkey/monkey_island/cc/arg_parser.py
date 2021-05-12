@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH
-
 
 @dataclass
 class IslandArgs:
@@ -25,10 +23,7 @@ def parse_cli_args() -> IslandArgs:
         "compiling/packaging Islands.",
     )
     parser.add_argument(
-        "--server-config",
-        action="store",
-        help="The path to the server configuration file.",
-        default=DEFAULT_SERVER_CONFIG_PATH,
+        "--server-config", action="store", help="The path to the server configuration file."
     )
     args = parser.parse_args()
 

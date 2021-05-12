@@ -16,7 +16,10 @@ if "__main__" == __name__:
     # This is here in order to catch EVERYTHING, some functions are being called on
     # imports, so the log init needs to be first.
     try:
-        server_config_path = os.path.expanduser(island_args.server_config)
+        if island_args.server_config:
+            server_config_path = os.path.expanduser(island_args.server_config)
+        else:
+            server_config_path = config_loader.create_default_server_config_path()
 
         config = config_loader.load_server_config_from_file(server_config_path)
 
@@ -32,4 +35,4 @@ if "__main__" == __name__:
 
     from monkey_island.cc.main import main  # noqa: E402
 
-    main(config["data_dir"], island_args.setup_only, island_args.server_config)
+    main(config["data_dir"], island_args.setup_only, server_config_path)

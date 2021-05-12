@@ -1,9 +1,18 @@
 import json
 import os
 
-from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR
+import monkey_island.cc.environment.server_config_generator as server_config_generator
+from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR, DEFAULT_SERVER_CONFIG_PATH
 
 DEFAULT_LOG_LEVEL = "INFO"
+
+
+def create_default_server_config_path():
+    if not os.path.isfile(DEFAULT_SERVER_CONFIG_PATH):
+        if not os.path.isdir(DEFAULT_DATA_DIR):
+            os.mkdir(DEFAULT_DATA_DIR, mode=0o700)
+        server_config_generator.create_default_config_file(DEFAULT_SERVER_CONFIG_PATH)
+    return DEFAULT_SERVER_CONFIG_PATH
 
 
 def load_server_config_from_file(server_config_path):
