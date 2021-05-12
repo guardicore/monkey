@@ -6,13 +6,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class GCPHandler(object):
-    # gcloud commands
     AUTHENTICATION_COMMAND = "gcloud auth activate-service-account --key-file=%s"
     SET_PROPERTY_PROJECT = "gcloud config set project %s"
     MACHINE_STARTING_COMMAND = "gcloud compute instances start %s --zone=%s"
     MACHINE_STOPPING_COMMAND = "gcloud compute instances stop %s --zone=%s"
 
-    # Default configuration parameters
+    # Key path location relative to this file
     DEFAULT_RELATIVE_KEY_PATH = "../../gcp_keys/gcp_key.json"
     DEFAULT_ZONE = "europe-west3-a"
     DEFAULT_PROJECT = "guardicore-22050661"
@@ -25,10 +24,10 @@ class GCPHandler(object):
     ):
         self.zone = zone
         abs_key_path = GCPHandler.get_absolute_key_path(relative_key_path)
-        # pass the key file to gcp
+
         subprocess.call(GCPHandler.get_auth_command(abs_key_path), shell=True)  # noqa: DUO116
         LOGGER.info("GCP Handler passed key")
-        # set project
+
         subprocess.call(GCPHandler.get_set_project_command(project_id), shell=True)  # noqa: DUO116
         LOGGER.info("GCP Handler set project")
         LOGGER.info("GCP Handler initialized successfully")
@@ -37,11 +36,12 @@ class GCPHandler(object):
     def get_absolute_key_path(relative_key_path: str) -> str:
         file_dir = os.path.dirname(os.path.realpath(__file__))
         absolute_key_path = os.path.join(file_dir, relative_key_path)
+
         if not os.path.isfile(absolute_key_path):
             raise FileNotFoundError(
                 "GCP key not found. " "Add a service key to envs/monkey_zoo/gcp_keys/gcp_key.json"
             )
-        return os.path.join(file_dir, relative_key_path)
+        return os.path.normpath(absolute_key_path)
 
     def start_machines(self, machine_list):
         """
