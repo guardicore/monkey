@@ -3,7 +3,6 @@ import os
 import platform
 import stat
 import subprocess
-import sys
 from shutil import copyfile
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
@@ -45,13 +44,11 @@ class RunLocalMonkeyService:
 
         # run the monkey
         try:
-            args = [
-                '"%s" m0nk3y -s %s:%s'
-                % (dest_path, local_ip_addresses()[0], env_singleton.env.get_island_port())
-            ]
-            if sys.platform == "win32":
-                args = "".join(args)
-            subprocess.Popen(args, cwd=RunLocalMonkeyService.DATA_DIR, shell=True).pid
+            ip = local_ip_addresses()[0]
+            port = env_singleton.env.get_island_port()
+
+            args = [dest_path, "m0nk3y", "-s", f"{ip}:{port}"]
+            subprocess.Popen(args, cwd=RunLocalMonkeyService.DATA_DIR)
         except Exception as exc:
             logger.error("popen failed", exc_info=True)
             return False, "popen failed: %s" % exc
