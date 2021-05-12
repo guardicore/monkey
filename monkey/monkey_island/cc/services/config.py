@@ -9,11 +9,7 @@ import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
-from monkey_island.cc.services.post_breach_files import (
-    PBA_LINUX_FILENAME_PATH,
-    PBA_WINDOWS_FILENAME_PATH,
-    PostBreachFilesService,
-)
+from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
@@ -24,6 +20,8 @@ from common.config_value_paths import (
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
     PASSWORD_LIST_PATH,
+    PBA_LINUX_FILENAME_PATH,
+    PBA_WINDOWS_FILENAME_PATH,
     SSH_KEYS_PATH,
     STARTED_ON_ISLAND_PATH,
     USER_LIST_PATH,
@@ -216,8 +214,8 @@ class ConfigService:
             linux_filename = ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
             windows_filename = ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
 
-            config_json["monkey"]["post_breach"]["PBA_linux_filename"] = linux_filename
-            config_json["monkey"]["post_breach"]["PBA_windows_filename"] = windows_filename
+            ConfigService.set_config_value(PBA_LINUX_FILENAME_PATH, linux_filename)
+            ConfigService.set_config_value(PBA_WINDOWS_FILENAME_PATH, windows_filename)
 
     @staticmethod
     def init_default_config():

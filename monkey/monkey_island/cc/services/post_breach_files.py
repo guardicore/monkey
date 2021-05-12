@@ -2,13 +2,7 @@ import logging
 import os
 from pathlib import Path
 
-__author__ = "VakarisZ"
-
 logger = logging.getLogger(__name__)
-
-# Where to find file names in config
-PBA_LINUX_FILENAME_PATH = ["monkey", "post_breach", "PBA_linux_filename"]
-PBA_WINDOWS_FILENAME_PATH = ["monkey", "post_breach", "PBA_windows_filename"]
 
 
 class PostBreachFilesService:

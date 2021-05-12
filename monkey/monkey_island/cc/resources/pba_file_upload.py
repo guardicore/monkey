@@ -6,13 +6,10 @@ import flask_restful
 from flask import Response, request, send_from_directory
 from werkzeug.utils import secure_filename
 
+from common.config_value_paths import PBA_LINUX_FILENAME_PATH, PBA_WINDOWS_FILENAME_PATH
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.post_breach_files import (
-    PBA_LINUX_FILENAME_PATH,
-    PBA_WINDOWS_FILENAME_PATH,
-    PostBreachFilesService,
-)
+from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 
 __author__ = "VakarisZ"
 
