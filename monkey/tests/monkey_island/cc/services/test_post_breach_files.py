@@ -25,13 +25,14 @@ def test_remove_pba_files():
     create_custom_pba_file("linux_file")
     create_custom_pba_file("windows_file")
 
-    custom_pda_dir_contents = os.listdir(PostBreachFilesService.get_custom_pba_directory())
-    assert len(custom_pda_dir_contents) == 2
-
+    assert not dir_is_empty(PostBreachFilesService.get_custom_pba_directory())
     PostBreachFilesService.remove_PBA_files()
+    assert dir_is_empty(PostBreachFilesService.get_custom_pba_directory())
 
-    custom_pda_dir_contents = os.listdir(PostBreachFilesService.get_custom_pba_directory())
-    assert len(custom_pda_dir_contents) == 0
+
+def dir_is_empty(dir_path):
+    dir_contents = os.listdir(dir_path)
+    return len(dir_contents) == 0
 
 
 @pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
