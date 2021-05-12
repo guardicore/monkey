@@ -166,7 +166,6 @@ copy_monkey_island_to_appdir() {
   cp -r "$1"/common "$INSTALL_DIR/"
   cp -r "$1"/monkey_island "$INSTALL_DIR/"
   cp ./run_appimage.sh "$INSTALL_DIR"/monkey_island/linux/
-  cp ./island_logger_config.json "$INSTALL_DIR"/
   cp ./server_config.json.standard "$INSTALL_DIR"/monkey_island/cc/
 
   # TODO: This is a workaround that may be able to be removed after PR #848 is
