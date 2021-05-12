@@ -18,6 +18,12 @@ class PostBreachFilesService:
         Path(cls.get_custom_pba_directory()).mkdir(mode=0o0700, parents=True, exist_ok=True)
 
     @staticmethod
+    def save_file(filename: str, file_contents: bytes):
+        file_path = os.path.join(PostBreachFilesService.get_custom_pba_directory(), filename)
+        with open(file_path, "wb") as f:
+            f.write(file_contents)
+
+    @staticmethod
     def remove_PBA_files():
         for f in os.listdir(PostBreachFilesService.get_custom_pba_directory()):
             PostBreachFilesService.remove_file(f)

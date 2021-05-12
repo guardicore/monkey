@@ -15,10 +15,7 @@ def custom_pba_directory(tmpdir):
 
 
 def create_custom_pba_file(filename):
-    assert os.path.isdir(PostBreachFilesService.get_custom_pba_directory())
-
-    file_path = os.path.join(PostBreachFilesService.get_custom_pba_directory(), filename)
-    open(file_path, "a").close()
+    PostBreachFilesService.save_file(filename, b"")
 
 
 def test_remove_pba_files():
@@ -59,3 +56,14 @@ def test_remove_nonexistant_file(monkeypatch):
         PostBreachFilesService.remove_file("/nonexistant/file")
     except Exception as ex:
         pytest.fail(f"Unxepected exception: {ex}")
+
+
+def test_save_file():
+    FILE_NAME = "test_file"
+    FILE_CONTENTS = b"hello"
+    PostBreachFilesService.save_file(FILE_NAME, FILE_CONTENTS)
+
+    expected_file_path = os.path.join(PostBreachFilesService.get_custom_pba_directory(), FILE_NAME)
+
+    assert os.path.isfile(expected_file_path)
+    assert FILE_CONTENTS == open(expected_file_path, "rb").read()

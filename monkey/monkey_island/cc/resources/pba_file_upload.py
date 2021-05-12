@@ -1,9 +1,9 @@
 import copy
 import logging
-from pathlib import Path
 
 import flask_restful
 from flask import Response, request, send_from_directory
+from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 from common.config_value_paths import PBA_LINUX_FILENAME_PATH, PBA_WINDOWS_FILENAME_PATH
@@ -45,27 +45,30 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file was received, linux or windows
         :return: Returns flask response object with uploaded file's filename
         """
-        filename = FileUpload.upload_pba_file(request, (file_type == LINUX_PBA_TYPE))
+        filename = FileUpload.upload_pba_file(
+            request.files["filepond"], (file_type == LINUX_PBA_TYPE)
+        )
 
         response = Response(response=filename, status=200, mimetype="text/plain")
         return response
 
     @staticmethod
-    def upload_pba_file(request_, is_linux=True):
+    def upload_pba_file(file_storage: FileStorage, is_linux=True):
         """
         Uploads PBA file to island's file system
         :param request_: Request object containing PBA file
         :param is_linux: Boolean indicating if this file is for windows or for linux
         :return: filename string
         """
-        filename = secure_filename(request_.files["filepond"].filename)
-        file_path = (
-            Path(PostBreachFilesService.get_custom_pba_directory()).joinpath(filename).absolute()
-        )
-        request_.files["filepond"].save(str(file_path))
+        filename = secure_filename(file_storage.filename)
+        file_contents = file_storage.read()
+
+        PostBreachFilesService.save_file(filename, file_contents)
+
         ConfigService.set_config_value(
             (PBA_LINUX_FILENAME_PATH if is_linux else PBA_WINDOWS_FILENAME_PATH), filename
         )
+
         return filename
 
     @jwt_required
