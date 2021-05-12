@@ -40,7 +40,7 @@ The Infection Monkey agent shuts off either when it can't find new victims or it
 
 When you first access the Monkey Island server, you'll be prompted to create an account. If you forget the credentials you entered, or just want to change them, you need to alter the `server_config.json` file manually.
 
-On Linux, this file is located at `/var/monkey/monkey_island/cc/server_config.json`. On Windows, it's based on your install directory (typically it is `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file leaving the **deployment option unchanged** (it might be "VMware" or "Linux" in your case):
+This file is located in your specified data directory. On Linux, the default data directory is `$HOME/.monkey_island`, and on Windows, it is `%AppData%\monkey_island`. Reset the contents of this file leaving the **deployment option unchanged** (it might be "VMware" or "Linux" in your case):
 
 ```json
 {
