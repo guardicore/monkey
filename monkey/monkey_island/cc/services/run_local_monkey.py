@@ -13,7 +13,7 @@ from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 logger = logging.getLogger(__name__)
 
 
-class RunLocalMonkeyService:
+class LocalMonkeyRunService:
     DATA_DIR = None
 
     # TODO: A number of these services should be instance objects instead of
@@ -31,7 +31,7 @@ class RunLocalMonkeyService:
             return False, "OS Type not found"
 
         src_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "binaries", result["filename"])
-        dest_path = os.path.join(RunLocalMonkeyService.DATA_DIR, result["filename"])
+        dest_path = os.path.join(LocalMonkeyRunService.DATA_DIR, result["filename"])
 
         # copy the executable to temp path (don't run the monkey from its current location as it may
         # delete itself)
@@ -48,7 +48,7 @@ class RunLocalMonkeyService:
             port = env_singleton.env.get_island_port()
 
             args = [dest_path, "m0nk3y", "-s", f"{ip}:{port}"]
-            subprocess.Popen(args, cwd=RunLocalMonkeyService.DATA_DIR)
+            subprocess.Popen(args, cwd=LocalMonkeyRunService.DATA_DIR)
         except Exception as exc:
             logger.error("popen failed", exc_info=True)
             return False, "popen failed: %s" % exc
