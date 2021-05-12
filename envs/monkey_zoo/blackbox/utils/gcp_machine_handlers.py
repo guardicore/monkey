@@ -11,7 +11,7 @@ class GCPHandler(object):
     MACHINE_STARTING_COMMAND = "gcloud compute instances start %s --zone=%s"
     MACHINE_STOPPING_COMMAND = "gcloud compute instances stop %s --zone=%s"
 
-    # Key path location relative to this file
+    # Key path location relative to this file's directory
     RELATIVE_KEY_PATH = "../../gcp_keys/gcp_key.json"
     DEFAULT_ZONE = "europe-west3-a"
     DEFAULT_PROJECT = "guardicore-22050661"
@@ -33,7 +33,8 @@ class GCPHandler(object):
 
     @staticmethod
     def get_absolute_key_path() -> str:
-        absolute_key_path = os.path.join(__file__, GCPHandler.RELATIVE_KEY_PATH)
+        file_dir = os.path.dirname(os.path.realpath(__file__))
+        absolute_key_path = os.path.join(file_dir, GCPHandler.RELATIVE_KEY_PATH)
         absolute_key_path = os.path.realpath(absolute_key_path)
 
         if not os.path.isfile(absolute_key_path):
