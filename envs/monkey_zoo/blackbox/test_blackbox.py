@@ -159,7 +159,8 @@ class TestMonkeyBlackbox:
         return os.path.abspath(LOG_DIR_PATH)
 
     def test_server_online(self, island_client):
-        assert island_client.get_api_status() is not None
+        if not island_client.get_api_status():
+            pytest.exit("BB tests couldn't reach the Island server, quiting.")
 
     def test_ssh_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Ssh, "SSH_exploiter_and_keys")
