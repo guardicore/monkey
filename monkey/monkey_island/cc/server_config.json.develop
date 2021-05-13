@@ -1,5 +1,4 @@
 {
-  "deployment": "develop",
   "log_level": "DEBUG",
   "environment": {
     "server_config": "password",
