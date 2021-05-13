@@ -32,4 +32,4 @@ if "__main__" == __name__:
 
     from monkey_island.cc.main import main  # noqa: E402
 
-    main(island_args.setup_only, island_args.server_config)
+    main(config["data_dir"], island_args.setup_only, island_args.server_config)

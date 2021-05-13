@@ -34,10 +34,13 @@ from monkey_island.cc.setup import setup  # noqa: E402
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 
-def main(should_setup_only=False, server_config_filename=DEFAULT_SERVER_CONFIG_PATH):
+def main(
+    data_dir,
+    should_setup_only=False,
+    server_config_filename=DEFAULT_SERVER_CONFIG_PATH,
+):
     logger.info("Starting bootloader server")
 
-    data_dir = env_singleton.env.get_config().data_dir_abs_path
     env_singleton.initialize_from_file(server_config_filename)
     initialize_encryptor(data_dir)
     initialize_services(data_dir)

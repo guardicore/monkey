@@ -39,16 +39,6 @@ def standard_with_credentials(environment_resources_dir):
 
 
 @pytest.fixture(scope="session")
-def with_data_dir(environment_resources_dir):
-    return os.path.join(environment_resources_dir, "server_config_with_data_dir.json")
-
-
-@pytest.fixture(scope="session")
-def with_data_dir_home(environment_resources_dir):
-    return os.path.join(environment_resources_dir, "server_config_with_data_dir_home.json")
-
-
-@pytest.fixture(scope="session")
 def server_config_resources_dir(resources_dir):
     return os.path.join(resources_dir, "server_configs")
 

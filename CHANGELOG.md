@@ -28,6 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Zerologon exploiter writes runtime artifacts to a secure temporary directory
   instead of $HOME. #1143
 - Authentication mechanism to use bcrypt on server side. #1139
+- `server_config.json` puts environment config options in a separate section
+  named "environment". #1161
 
 ### Removed
 - Relevant dead code as reported by Vulture. #1149
