@@ -6,10 +6,10 @@ import logging
 from jsonschema import Draft4Validator, validators
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-import monkey_island.cc.services.post_breach_files
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
+from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 __author__ = "itay.mizeretz"
@@ -20,6 +20,8 @@ from common.config_value_paths import (
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
     PASSWORD_LIST_PATH,
+    PBA_LINUX_FILENAME_PATH,
+    PBA_WINDOWS_FILENAME_PATH,
     SSH_KEYS_PATH,
     STARTED_ON_ISLAND_PATH,
     USER_LIST_PATH,
@@ -191,7 +193,7 @@ class ConfigService:
         # PBA file upload happens on pba_file_upload endpoint and corresponding config options
         # are set there
         config_json = ConfigService._filter_none_values(config_json)
-        monkey_island.cc.services.post_breach_files.set_config_PBA_files(config_json)
+        ConfigService.set_config_PBA_files(config_json)
         if should_encrypt:
             try:
                 ConfigService.encrypt_config(config_json)
@@ -201,6 +203,19 @@ class ConfigService:
         mongo.db.config.update({"name": "newconfig"}, {"$set": config_json}, upsert=True)
         logger.info("monkey config was updated")
         return True
+
+    @staticmethod
+    def set_config_PBA_files(config_json):
+        """
+        Sets PBA file info in config_json to current config's PBA file info values.
+        :param config_json: config_json that will be modified
+        """
+        if ConfigService.get_config():
+            linux_filename = ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
+            windows_filename = ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
+
+            ConfigService.set_config_value(PBA_LINUX_FILENAME_PATH, linux_filename)
+            ConfigService.set_config_value(PBA_WINDOWS_FILENAME_PATH, windows_filename)
 
     @staticmethod
     def init_default_config():
@@ -229,7 +244,7 @@ class ConfigService:
 
     @staticmethod
     def reset_config():
-        monkey_island.cc.services.post_breach_files.remove_PBA_files()
+        PostBreachFilesService.remove_PBA_files()
         config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
         ConfigService.update_config(config, should_encrypt=False)

@@ -150,7 +150,7 @@ def init_api_resources(api):
     api.add_resource(TelemetryFeed, "/api/telemetry-feed", "/api/telemetry-feed/")
     api.add_resource(Log, "/api/log", "/api/log/")
     api.add_resource(IslandLog, "/api/log/island/download", "/api/log/island/download/")
-    api.add_resource(PBAFileDownload, "/api/pba/download/<string:path>")
+    api.add_resource(PBAFileDownload, "/api/pba/download/<string:filename>")
     api.add_resource(T1216PBAFileDownload, T1216_PBA_FILE_DOWNLOAD_PATH)
     api.add_resource(
         FileUpload,
