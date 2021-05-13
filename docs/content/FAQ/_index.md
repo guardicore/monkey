@@ -54,8 +54,10 @@ This file is located in your specified data directory. On Linux, the default dat
 
 ```json
 {
-  "server_config": "password",
-  "deployment": "windows"
+  "environment": {
+    "server_config": "password",
+    "deployment": "windows"
+  }
 }
 ```
  Then, reset the Monkey Island process. Use `sudo systemctl restart monkey-island.service` on Linux, or on Windows, restart program.
@@ -101,8 +103,17 @@ The log enables you to see which requests were requested from the server and ext
 
 #### How do I change the log level of the Monkey Island logger?
 
-The log level of the Monkey Island logger is set in the `log_level` field in the `server_config.json` file which is present in your specified data directory. On Linux, the default data directory is `$HOME/.monkey_island`, and on Windows, it is `%AppData%\monkey_island`. Make sure you leave everything else in `server_config.json` unchanged.
+The log level of the Monkey Island logger is set in the `log_level` field in the `server_config.json` file which is present in your specified data directory. On Linux, the default data directory is `$HOME/.monkey_island`, and on Windows, it is `%AppData%\monkey_island`. Make sure you leave everything else in `server_config.json` unchanged:
 
+```json
+{
+  "log_level": "DEBUG",
+  "environment": {
+    "server_config": "password",
+    "deployment": "linux"
+  }
+}
+```
 To apply the changes, reset the Monkey Island process. Use `sudo systemctl restart monkey-island.service` on Linux, or on Windows, restart the program. Now, any logging in the program will be done according to the new log level.
 
 ### Infection Monkey agent
