@@ -41,8 +41,6 @@ def main(
 ):
     logger.info("Starting bootloader server")
 
-    create_data_dir(data_dir)
-
     env_singleton.initialize_from_file(server_config_filename)
     initialize_encryptor(data_dir)
     initialize_services(data_dir)
@@ -55,11 +53,6 @@ def main(
     bootloader_server_thread.start()
     start_island_server(should_setup_only)
     bootloader_server_thread.join()
-
-
-def create_data_dir(data_dir):
-    if not os.path.isdir(data_dir):
-        os.makedirs(data_dir, mode=0o700)
 
 
 def start_island_server(should_setup_only):
