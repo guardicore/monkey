@@ -15,7 +15,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [How do I reset the Monkey Island password?](#how-do-i-reset-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
-- [Where can I find the log files of the Infection Monkey agent and the Monkey Island server, and how can I read them?](#where-can-i-find-the-log-files-of-the-infection-monkey-agent-and-the-monkey-island-and-how-can-i-read-them)
+- [Logging and how to find logs](#logging-and-how-to-find-logs)
   - [Monkey Island server](#monkey-island-server)
     - [How do I change the log level of the Monkey Island logger?](#how-do-i-change-the-log-level-of-the-monkey-island-logger)
   - [Infection Monkey agent](#infection-monkey-agent)
@@ -91,7 +91,7 @@ The Monkey performs queries out to the Internet on two separate occasions:
 1. The Infection Monkey agent checks if it has internet access by performing requests to pre-configured domains. By default, these domains are `updates.infectionmonkey.com` and `www.google.com.` The request doesn't include any extra information - it's a GET request with no extra parameters. Since the Infection Monkey is 100% open-source, you can find the domains in the configuration [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/config.py#L152) and the code that performs the internet check [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/network/info.py#L123). This **IS NOT** used for statistics collection.
 1. After installing the Monkey Island, it sends a request to check for updates. The request doesn't include any PII other than the IP address of the request. It also includes the server's deployment type (e.g., Windows Server, Debian Package, AWS Marketplace) and the server's version (e.g., "1.6.3"), so we can check if we have an update available for this type of deployment. Since the Infection Monkey is 100% open-source, you can inspect the code that performs this [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/monkey_island/cc/services/version_update.py#L37). This **IS** used for statistics collection. However, due to this data's anonymous nature, we use this to get an aggregate assumption of how many deployments we see over a specific time period - it's not used for "personal" tracking.
 
-## Where can I find the log files of the Infection Monkey agent and the Monkey Island, and how can I read them?
+## Logging and how to find logs
 
 ### Monkey Island server
 
