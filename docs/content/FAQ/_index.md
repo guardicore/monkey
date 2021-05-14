@@ -100,13 +100,15 @@ The Monkey performs queries out to the Internet on two separate occasions:
 
 ## Logging and how to find logs
 
-### Monkey Island server
+### Monkey Island server logs
 
 You can download the Monkey Island's log file directly from the UI. Click the "log" section and choose **Download Monkey Island internal logfile**, like so:
 
 ![How to download Monkey Island internal log file](/images/faq/download_log_monkey_island.png "How to download Monkey Island internal log file")
 
-It can also be found as a local file on the Monkey Island server, where the Monkey Island was executed, called `info.log`.
+It can also be found as a local file on the Monkey Island server system.
+ By default, on Linux it's `$HOME/.monkey_island/info.log`,
+ on Windows it's `%AppData%\monkey_island\info.log`
 
 The log enables you to see which requests were requested from the server and extra logs from the backend logic. The log will contain entries like these:
 
