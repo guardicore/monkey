@@ -12,7 +12,7 @@ this information in the GCP Console `Compute Engine/VM Instances` under _Externa
 
 #### Running in command line
 Either run pytest from `/monkey` directory or set `PYTHONPATH` environment variable to
-`/monkey` directory so that blackbox tests could import other monkey code.
+`/monkey` directory so that blackbox tests can import other monkey code.
 Blackbox tests have following parameters:
 - `--island=IP` Sets island's IP
 - `--no-gcp` (Optional) Use for no interaction with the cloud (local test).
