@@ -7,10 +7,10 @@ from infection_monkey.utils.users import get_commands_to_add_user
 
 class BackdoorUser(PBA):
     def __init__(self):
-        remote_user_pwd = get_random_password()
+        random_password = get_random_password()
 
         linux_cmds, windows_cmds = get_commands_to_add_user(
-            WormConfiguration.user_to_add, remote_user_pwd
+            WormConfiguration.user_to_add, random_password
         )
 
         super(BackdoorUser, self).__init__(
