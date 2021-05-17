@@ -38,18 +38,20 @@
                 "*from common.common_consts.post_breach_consts import POST_BREACH_BACKDOOR_USER",
                 "*from infection_monkey.config import WormConfiguration",
                 "*from infection_monkey.post_breach.pba import PBA",
+                "*from infection_monkey.utils.random_password_generator import get_random_password",
                 "*from infection_monkey.utils.users import get_commands_to_add_user",
                 "*",
                 "*",
                 "*class BackdoorUser(PBA):",
                 "*    def __init__(self):",
+                "*        remote_user_pwd = get_random_password()",
+                "*",
                 "*        linux_cmds, windows_cmds = get_commands_to_add_user(",
-                "*            WormConfiguration.user_to_add, WormConfiguration.remote_user_pass",
+                "*            WormConfiguration.user_to_add, remote_user_pwd",
                 "*        )",
                 "*        super(BackdoorUser, self).__init__(",
                 "*            POST_BREACH_BACKDOOR_USER, linux_cmd=\" \".join(linux_cmds), windows_cmd=windows_cmds",
-                "*        )",
-                "*"
+                "*        )"
             ]
         },
         {
@@ -108,7 +110,7 @@
     "symbols": {},
     "file_version": "2.0.1",
     "meta": {
-        "app_version": "0.4.1-1",
+        "app_version": "0.4.4-0",
         "file_blobs": {
             "monkey/common/common_consts/post_breach_consts.py": "25e6679cb1623aae1a732deb05cc011a452743e3",
             "monkey/infection_monkey/post_breach/actions/add_user.py": "cae5a2428fa01b333a2e70365c9da1e189e31bc4",
