@@ -49,6 +49,7 @@
                 "*        linux_cmds, windows_cmds = get_commands_to_add_user(",
                 "*            WormConfiguration.user_to_add, remote_user_pwd",
                 "*        )",
+                "*",
                 "*        super(BackdoorUser, self).__init__(",
                 "*            POST_BREACH_BACKDOOR_USER, linux_cmd=\" \".join(linux_cmds), windows_cmd=windows_cmds",
                 "*        )"
@@ -113,7 +114,7 @@
         "app_version": "0.4.4-0",
         "file_blobs": {
             "monkey/common/common_consts/post_breach_consts.py": "25e6679cb1623aae1a732deb05cc011a452743e3",
-            "monkey/infection_monkey/post_breach/actions/add_user.py": "cae5a2428fa01b333a2e70365c9da1e189e31bc4",
+            "monkey/infection_monkey/post_breach/actions/add_user.py": "7e92eaf84bb507b51c17fe4f448e47a5ea1dd9e2",
             "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py": "dfc5945a362b88c1135f4476526c6c82977b02ee",
             "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "086dc85693ae02ddfa106099245c0f155139805c"
         }
