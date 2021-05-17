@@ -25,7 +25,7 @@ class EnvironmentConfig:
         file_path = os.path.expanduser(file_path)
 
         if not Path(file_path).is_file():
-            server_config_generator.create_default_config_file(file_path)
+            server_config_generator.write_default_server_config_to_file(file_path)
         with open(file_path, "r") as f:
             config_content = f.read()
 
