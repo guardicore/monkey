@@ -7,9 +7,10 @@ gevent_monkey.patch_all()
 import json  # noqa: E402
 import os  # noqa: E402
 
+import monkey_island.cc.environment.server_config_generator as server_config_generator  # noqa: E402
 from monkey_island import config_loader  # noqa: E402
+from monkey_island.cc.environment.data_dir_generator import create_data_dir  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E402
-from monkey_island.cc.setup import create_data_dir  # noqa: E402
 
 if "__main__" == __name__:
     island_args = parse_cli_args()
@@ -20,7 +21,7 @@ if "__main__" == __name__:
         if island_args.server_config:
             server_config_path = os.path.expanduser(island_args.server_config)
         else:
-            server_config_path = config_loader.create_default_server_config_path()
+            server_config_path = server_config_generator.create_default_server_config_file()
 
         config = config_loader.load_server_config_from_file(server_config_path)
 
