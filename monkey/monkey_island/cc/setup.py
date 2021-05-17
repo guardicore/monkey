@@ -1,4 +1,5 @@
 import logging
+import os
 
 from pymongo import errors
 
@@ -49,3 +50,8 @@ def store_mitigations_on_mongo():
         )
     for key, mongo_object in mongo_mitigations.items():
         mongo_object.save()
+
+
+def create_data_dir(data_dir):
+    if not os.path.isdir(data_dir):
+        os.makedirs(data_dir, mode=0o700)

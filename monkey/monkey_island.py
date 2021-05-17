@@ -9,12 +9,7 @@ import os  # noqa: E402
 
 from monkey_island import config_loader  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E402
-
-
-def create_data_dir(data_dir):
-    if not os.path.isdir(data_dir):
-        os.makedirs(data_dir, mode=0o700)
-
+from monkey_island.cc.setup import create_data_dir  # noqa: E402
 
 if "__main__" == __name__:
     island_args = parse_cli_args()
