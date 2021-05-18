@@ -9,7 +9,7 @@ Below are some of the most common questions we receive about the Infection Monke
 
 - [Where can I get the latest version of the Infection Monkey?](#where-can-i-get-the-latest-version-of-the-infection-monkey)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
-- [How do I reset the Monkey Island password?](#how-do-i-reset-the-monkey-island-password)
+- [Reset/enable the Monkey Island password](#resetenable-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
 - [Logging and how to find logs](#logging-and-how-to-find-logs)
@@ -37,23 +37,39 @@ If you want to see what has changed between versions, refer to the [releases pag
 
 The Infection Monkey agent shuts off either when it can't find new victims or it has exceeded the quota of victims as defined in the configuration.
 
-## How do I reset the Monkey Island password?
+## Reset/enable the Monkey Island password
 
 When you first access the Monkey Island server, you'll be prompted to create an account.
-If you forget the credentials you entered, or just want to change them, you need to alter
-the `server_config.json` file manually.
+To reset the credentials or enable/disable the authentication,
+edit the `server_config.json` file manually
+(located in [data directory](/reference/data_directory)).
 
-On Linux, the default path to `server_config.json` is `$HOME/.monkey_island/server_config.json`.
-On Windows, it is `%AppData%\monkey_island\server_config.json`.
-Reset the contents of this file leaving the **deployment option unchanged**
-(it might be "VMware" or "Linux" in your case):
-
+The following edits need to be made:
+1. Delete the `user` field if one exists. It will look like this:
 ```json
 {
+  ...
+  "user": "username",
+  ...
+}
+```
+1. Delete `password_hash` field if one exist. It will look like this:
+```json
+{
+  ...
+  "password_hash": "$2b$12$d050I/MsR5.F5E15Sm7EkunmmwMkUKaZE0P0tJXG.M9tF.Kmkd342",
+  ...
+}
+```
+1. Set `server_config` to `password`. It should look like this:
+```json
+{
+  ...
   "environment": {
     "server_config": "password",
-    "deployment": "windows"
-  }
+    ...
+  },
+  ...
 }
 ```
  Then, reset the Monkey Island process.
