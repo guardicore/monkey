@@ -105,9 +105,8 @@ You can download the Monkey Island's log file directly from the UI. Click the "l
 
 ![How to download Monkey Island internal log file](/images/faq/download_log_monkey_island.png "How to download Monkey Island internal log file")
 
-It can also be found as a local file on the Monkey Island server system in the specified data directory.
-On Linux, the default path of the log file is `$HOME/.monkey_island/monkey_island.log`.
-On Windows, it's `%AppData%\monkey_island\monkey_island.log`.
+It can also be found as a local file on the Monkey Island server system in the specified
+[data directory](/reference/data_directory).
 
 The log enables you to see which requests were requested from the server and extra logs from the backend logic. The log will contain entries like these:
 
@@ -143,19 +142,16 @@ The logs contain information about the internals of the Infection Monkey agent's
 ### How do I change the log level of the Monkey Island logger?
 
 The log level of the Monkey Island logger is set in the `log_level` field
-in the `server_config.json` file.
-On Linux, the default path of `server_config.json` file
-is `$HOME/.monkey_island/server_config.json`.
-On Windows, it's `%AppData%\monkey_island\server_config.json`.
+in the `server_config.json` file (located in [data directory](/reference/data_directory)).
 Make sure to leave everything else in `server_config.json` unchanged:
 
 ```json
 {
   "log_level": "DEBUG",
   "environment": {
-    "server_config": "password",
-    "deployment": "linux"
-  }
+    ...
+  },
+  ...
 }
 ```
 
