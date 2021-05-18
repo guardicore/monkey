@@ -6,14 +6,13 @@ pre: '<i class="fas fa-folder"></i> '
 weight: 9
 ---
 
-## About data directory
+## What is the data directory?
 
-Data directory is where the Island server stores runtime artifacts.
-Those arfifacts include the Island logs, any custom post-breach action files,
+The data directory is where the Island server stores runtime artifacts.
+These include the Island logs, any custom post-breach action files,
 configuration files, etc.
 
-## Where is data directory
+## Where is it located?
 
-On **Linux** it's in `$HOME/.monkey_island`.
-
-On **Windows** it's in `%AppData%\monkey_island`.
+On Linux, the default path is `$HOME/.monkey_island`.
+On Windows, the default path is `%AppData%\monkey_island`.

@@ -42,9 +42,9 @@ The Infection Monkey agent shuts off either when it can't find new victims or it
 When you first access the Monkey Island server, you'll be prompted to create an account.
 To reset the credentials or enable/disable the authentication,
 edit the `server_config.json` file manually
-(located in [data directory](/reference/data_directory)).
+(located in the [data directory](/reference/data_directory)).
 
-The following edits need to be made:
+In order to reset the credentials, the following edits need to be made:
 1. Delete the `user` field if one exists. It will look like this:
 ```json
 {
@@ -53,7 +53,7 @@ The following edits need to be made:
   ...
 }
 ```
-1. Delete `password_hash` field if one exist. It will look like this:
+1. Delete the `password_hash` field if one exists. It will look like this:
 ```json
 {
   ...
@@ -66,6 +66,7 @@ The following edits need to be made:
 {
   ...
   "environment": {
+    ...
     "server_config": "password",
     ...
   },
@@ -142,15 +143,13 @@ The logs contain information about the internals of the Infection Monkey agent's
 ### How do I change the log level of the Monkey Island logger?
 
 The log level of the Monkey Island logger is set in the `log_level` field
-in the `server_config.json` file (located in [data directory](/reference/data_directory)).
+in the `server_config.json` file (located in the [data directory](/reference/data_directory)).
 Make sure to leave everything else in `server_config.json` unchanged:
 
 ```json
 {
+  ...
   "log_level": "DEBUG",
-  "environment": {
-    ...
-  },
   ...
 }
 ```
@@ -158,7 +157,7 @@ Make sure to leave everything else in `server_config.json` unchanged:
 Logging levels correspond to [the logging level constants in python](https://docs.python.org/3.7/library/logging.html#logging-levels).
 
 To apply the changes, reset the Monkey Island process.
-On Linux use `sudo systemctl restart monkey-island.service`.
+On Linux, use `sudo systemctl restart monkey-island.service`.
 On Windows, restart the program.
 
 ## Running the Infection Monkey in a production environment
