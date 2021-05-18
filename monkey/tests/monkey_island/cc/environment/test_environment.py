@@ -27,7 +27,7 @@ FULL_USER_CREDENTIALS = UserCreds(username="test", password_hash="1231234")
 # This fixture is a dirty hack that can be removed once these tests are converted from
 # unittest to pytest. Instead, the appropriate fixtures from conftest.py can be used.
 @pytest.fixture(scope="module", autouse=True)
-def configure_resources(environment_resources_dir):
+def configure_resources(mocked_server_configs_dir):
     global WITH_CREDENTIALS
     global NO_CREDENTIALS
     global PARTIAL_CREDENTIALS
@@ -35,16 +35,16 @@ def configure_resources(environment_resources_dir):
     global STANDARD_ENV
 
     WITH_CREDENTIALS = os.path.join(
-        environment_resources_dir, "server_config_with_credentials.json"
+        mocked_server_configs_dir, "server_config_with_credentials.json"
     )
-    NO_CREDENTIALS = os.path.join(environment_resources_dir, "server_config_no_credentials.json")
+    NO_CREDENTIALS = os.path.join(mocked_server_configs_dir, "server_config_no_credentials.json")
     PARTIAL_CREDENTIALS = os.path.join(
-        environment_resources_dir, "server_config_partial_credentials.json"
+        mocked_server_configs_dir, "server_config_partial_credentials.json"
     )
     STANDARD_WITH_CREDENTIALS = os.path.join(
-        environment_resources_dir, "server_config_standard_with_credentials.json"
+        mocked_server_configs_dir, "server_config_standard_with_credentials.json"
     )
-    STANDARD_ENV = os.path.join(environment_resources_dir, "server_config_standard_env.json")
+    STANDARD_ENV = os.path.join(mocked_server_configs_dir, "server_config_standard_env.json")
 
 
 def get_tmp_file():
