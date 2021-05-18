@@ -397,12 +397,6 @@ INTERNAL = {
                             "default": "Monkey_IUSER_SUPPORT",
                             "description": "Username to add on successful exploit",
                         },
-                        "remote_user_pass": {
-                            "title": "Remote user password",
-                            "type": "string",
-                            "default": "Password1!",
-                            "description": "Password to use for created user",
-                        },
                     },
                 },
                 "sambacry": {
