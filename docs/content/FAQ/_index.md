@@ -9,12 +9,13 @@ Below are some of the most common questions we receive about the Infection Monke
 
 - [Where can I get the latest version of the Infection Monkey?](#where-can-i-get-the-latest-version-of-the-infection-monkey)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
-- [How do I reset the Monkey Island password?](#how-do-i-reset-the-monkey-island-password)
+- [Reset/enable the Monkey Island password](#resetenable-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
-- [Where can I find the log files of the Infection Monkey agent and the Monkey Island server, and how can I read them?](#where-can-i-find-the-log-files-of-the-infection-monkey-agent-and-the-monkey-island-and-how-can-i-read-them)
+- [Logging and how to find logs](#logging-and-how-to-find-logs)
   - [Monkey Island server](#monkey-island-server)
   - [Infection Monkey agent](#infection-monkey-agent)
+  - [How do I change the log level of the Monkey Island logger?](#how-do-i-change-the-log-level-of-the-monkey-island-logger)
 - [Running the Infection Monkey in a production environment](#running-the-infection-monkey-in-a-production-environment)
   - [How much of a footprint does the Infection Monkey leave?](#how-much-of-a-footprint-does-the-infection-monkey-leave)
   - [What's the Infection Monkey's impact on system resources usage?](#whats-the-infection-monkeys-impact-on-system-resources-usage)
@@ -36,19 +37,45 @@ If you want to see what has changed between versions, refer to the [releases pag
 
 The Infection Monkey agent shuts off either when it can't find new victims or it has exceeded the quota of victims as defined in the configuration.
 
-## How do I reset the Monkey Island password?
+## Reset/enable the Monkey Island password
 
-When you first access the Monkey Island server, you'll be prompted to create an account. If you forget the credentials you entered, or just want to change them, you need to alter the `server_config.json` file manually.
+When you first access the Monkey Island server, you'll be prompted to create an account.
+To reset the credentials or enable/disable the authentication,
+edit the `server_config.json` file manually
+(located in the [data directory](/reference/data_directory)).
 
-On Linux, this file is located at `/var/monkey/monkey_island/cc/server_config.json`. On Windows, it's based on your install directory (typically it is `C:\Program Files\Guardicore\Monkey Island\monkey_island\cc\server_config.json`). Reset the contents of this file leaving the **deployment option unchanged** (it might be "VMware" or "Linux" in your case):
-
+In order to reset the credentials, the following edits need to be made:
+1. Delete the `user` field if one exists. It will look like this:
 ```json
 {
-  "server_config": "password",
-  "deployment": "windows"
+  ...
+  "user": "username",
+  ...
 }
 ```
- Then, reset the Monkey Island process. Use `sudo systemctl restart monkey-island.service` on Linux or, on Windows, restart program.
+1. Delete the `password_hash` field if one exists. It will look like this:
+```json
+{
+  ...
+  "password_hash": "$2b$12$d050I/MsR5.F5E15Sm7EkunmmwMkUKaZE0P0tJXG.M9tF.Kmkd342",
+  ...
+}
+```
+1. Set `server_config` to `password`. It should look like this:
+```json
+{
+  ...
+  "environment": {
+    ...
+    "server_config": "password",
+    ...
+  },
+  ...
+}
+```
+ Then, reset the Monkey Island process.
+ On Linux, use `sudo systemctl restart monkey-island.service`.
+ On Windows, restart the program.
  Finally, go to the Monkey Island's URL and create a new account.
 
 ## Should I run the Infection Monkey continuously?
@@ -71,15 +98,16 @@ The Monkey performs queries out to the Internet on two separate occasions:
 1. The Infection Monkey agent checks if it has internet access by performing requests to pre-configured domains. By default, these domains are `updates.infectionmonkey.com` and `www.google.com.` The request doesn't include any extra information - it's a GET request with no extra parameters. Since the Infection Monkey is 100% open-source, you can find the domains in the configuration [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/config.py#L152) and the code that performs the internet check [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/network/info.py#L123). This **IS NOT** used for statistics collection.
 1. After installing the Monkey Island, it sends a request to check for updates. The request doesn't include any PII other than the IP address of the request. It also includes the server's deployment type (e.g., Windows Server, Debian Package, AWS Marketplace) and the server's version (e.g., "1.6.3"), so we can check if we have an update available for this type of deployment. Since the Infection Monkey is 100% open-source, you can inspect the code that performs this [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/monkey_island/cc/services/version_update.py#L37). This **IS** used for statistics collection. However, due to this data's anonymous nature, we use this to get an aggregate assumption of how many deployments we see over a specific time period - it's not used for "personal" tracking.
 
-## Where can I find the log files of the Infection Monkey agent and the Monkey Island, and how can I read them?
+## Logging and how to find logs
 
-### Monkey Island server
+### Monkey Island server logs
 
 You can download the Monkey Island's log file directly from the UI. Click the "log" section and choose **Download Monkey Island internal logfile**, like so:
 
 ![How to download Monkey Island internal log file](/images/faq/download_log_monkey_island.png "How to download Monkey Island internal log file")
 
-It can also be found as a local file on the Monkey Island server, where the Monkey Island was executed, called `info.log`.
+It can also be found as a local file on the Monkey Island server system in the specified
+[data directory](/reference/data_directory).
 
 The log enables you to see which requests were requested from the server and extra logs from the backend logic. The log will contain entries like these:
 
@@ -89,7 +117,7 @@ The log enables you to see which requests were requested from the server and ext
 2019-07-23 10:52:24,027 - report.py:580 - get_domain_issues() - INFO - Domain issues generated for reporting
 ```
 
-### Infection Monkey agent
+### Infection Monkey agent logs
 
 The Infection Monkey agent log file can be found in the following paths on machines where it was executed:
 
@@ -111,6 +139,26 @@ The logs contain information about the internals of the Infection Monkey agent's
 2019-07-22 19:16:44,253 [77598:140654230214464:DEBUG] connectionpool._new_conn.815: Starting new HTTPS connection (1): updates.infectionmonkey.com:443
 2019-07-22 19:16:45,013 [77598:140654230214464:DEBUG] connectionpool._make_request.396: https://updates.infectionmonkey.com:443 "GET / HTTP/1.1" 200 61
 ```
+
+### How do I change the log level of the Monkey Island logger?
+
+The log level of the Monkey Island logger is set in the `log_level` field
+in the `server_config.json` file (located in the [data directory](/reference/data_directory)).
+Make sure to leave everything else in `server_config.json` unchanged:
+
+```json
+{
+  ...
+  "log_level": "DEBUG",
+  ...
+}
+```
+
+Logging levels correspond to [the logging level constants in python](https://docs.python.org/3.7/library/logging.html#logging-levels).
+
+To apply the changes, reset the Monkey Island process.
+On Linux, use `sudo systemctl restart monkey-island.service`.
+On Windows, restart the program.
 
 ## Running the Infection Monkey in a production environment
 

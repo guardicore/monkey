@@ -15,4 +15,4 @@ If you want an island to be accessible without credentials, press *I want anyone
 
 ## Resetting your account credentials
 
-This procedure is documented in [the FAQ.]({{< ref "/faq/#how-do-i-reset-the-monkey-island-password" >}})
+This procedure is documented in [the FAQ]({{< ref "/faq/#how-do-i-reset-the-monkey-island-password" >}}).
