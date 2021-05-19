@@ -8,20 +8,20 @@ PLAINTEXT = "Hello, Monkey!"
 CYPHERTEXT = "vKgvD6SjRyIh1dh2AM/rnTa0NI/vjfwnbZLbMocWtE4e42WJmSUz2ordtbQrH1Fq"
 
 
-def test_aes_cbc_encryption(mocked_data_dir):
-    initialize_encryptor(mocked_data_dir)
+def test_aes_cbc_encryption(data_for_tests_dir):
+    initialize_encryptor(data_for_tests_dir)
 
     assert get_encryptor().enc(PLAINTEXT) != PLAINTEXT
 
 
-def test_aes_cbc_decryption(mocked_data_dir):
-    initialize_encryptor(mocked_data_dir)
+def test_aes_cbc_decryption(data_for_tests_dir):
+    initialize_encryptor(data_for_tests_dir)
 
     assert get_encryptor().dec(CYPHERTEXT) == PLAINTEXT
 
 
-def test_aes_cbc_enc_dec(mocked_data_dir):
-    initialize_encryptor(mocked_data_dir)
+def test_aes_cbc_enc_dec(data_for_tests_dir):
+    initialize_encryptor(data_for_tests_dir)
 
     assert get_encryptor().dec(get_encryptor().enc(PLAINTEXT)) == PLAINTEXT
 
