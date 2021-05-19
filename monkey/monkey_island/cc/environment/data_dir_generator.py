@@ -1,14 +1,15 @@
 import os
 import sys
 
-import ntsecuritycon
-import win32api
-import win32con
-import win32security
-
 from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR
 
 is_windows_os = sys.platform.startswith("win")
+
+if is_windows_os:
+    import ntsecuritycon
+    import win32api
+    import win32con
+    import win32security
 
 
 def create_data_dir(data_dir: str) -> None:
