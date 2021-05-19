@@ -15,17 +15,17 @@ def create_data_dir(data_dir: str) -> None:
     if not os.path.isdir(data_dir):
         os.makedirs(data_dir, mode=0o700)
         if is_windows_os:  # `mode=0o700` doesn't work on Windows
-            set_data_dir_security_to_read_by_owner(data_dir_path=data_dir)
+            set_data_dir_security_to_read_and_write_by_owner(data_dir_path=data_dir)
 
 
 def create_default_data_dir() -> None:
     if not os.path.isdir(DEFAULT_DATA_DIR):
         os.mkdir(DEFAULT_DATA_DIR, mode=0o700)
         if is_windows_os:  # `mode=0o700` doesn't work on Windows
-            set_data_dir_security_to_read_by_owner(data_dir_path=DEFAULT_DATA_DIR)
+            set_data_dir_security_to_read_and_write_by_owner(data_dir_path=DEFAULT_DATA_DIR)
 
 
-def set_data_dir_security_to_read_by_owner(data_dir_path: str) -> None:
+def set_data_dir_security_to_read_and_write_by_owner(data_dir_path: str) -> None:
     user = get_user_pySID_object()  # current user is newly created data dir's owner
 
     security_descriptor = win32security.GetFileSecurity(
