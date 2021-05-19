@@ -3,10 +3,10 @@ import uuid
 from time import sleep
 
 import pytest
+from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from monkey_island.cc.models.monkey import Monkey, MonkeyNotFoundError
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,7 @@
 from typing import List
 
 import pytest
+from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.common_consts import zero_trust_consts
 from common.common_consts.zero_trust_consts import (
@@ -16,7 +17,6 @@ from monkey_island.cc.services.zero_trust.zero_trust_report.pillar_service impor
 from monkey_island.cc.services.zero_trust.zero_trust_report.test_common.example_finding_data import (  # noqa: E501
     save_example_findings,
 )
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 
 @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)

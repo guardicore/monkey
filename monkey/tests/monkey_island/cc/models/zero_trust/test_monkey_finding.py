@@ -1,12 +1,12 @@
 import pytest
 from mongoengine import ValidationError
+from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
 from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 MONKEY_FINDING_DETAIL_MOCK = MonkeyFindingDetails()
 MONKEY_FINDING_DETAIL_MOCK.events = ["mock1", "mock2"]

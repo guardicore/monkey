@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pytest
+from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
@@ -9,7 +10,6 @@ from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import (
     MonkeyZTFindingService,
 )
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 EVENTS = [
     Event.create_event(

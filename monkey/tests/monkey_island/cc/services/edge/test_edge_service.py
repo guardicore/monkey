@@ -2,10 +2,10 @@ import logging
 
 import pytest
 from mongomock import ObjectId
+from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.services.edge.edge import EdgeService
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 logger = logging.getLogger(__name__)
 

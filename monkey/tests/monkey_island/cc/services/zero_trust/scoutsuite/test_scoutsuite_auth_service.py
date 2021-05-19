@@ -2,6 +2,7 @@ from unittest.mock import MagicMock
 
 import dpath.util
 import pytest
+from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.config_value_paths import AWS_KEYS_PATH
 from monkey_island.cc.database import mongo
@@ -10,7 +11,6 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_auth_service import (
     is_aws_keys_setup,
 )
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 
 class MockObject:

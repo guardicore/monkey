@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.common_consts.zero_trust_consts import (
     DEVICES,
@@ -22,7 +23,6 @@ from monkey_island.cc.services.zero_trust.zero_trust_report.finding_service impo
     EnrichedFinding,
     FindingService,
 )
-from monkey_island.cc.test_common.fixtures.fixture_enum import FixtureEnum
 
 
 @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)

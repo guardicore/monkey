@@ -1,4 +1,5 @@
 import pytest
+from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.services.zero_trust.test_common.finding_data import (
@@ -8,7 +9,6 @@ from monkey_island.cc.services.zero_trust.test_common.finding_data import (
 from monkey_island.cc.services.zero_trust.zero_trust_report.principle_service import (
     PrincipleService,
 )
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 EXPECTED_DICT = {
     "test_pillar1": [
