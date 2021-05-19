@@ -1,7 +1,6 @@
 from typing import List
 
 import pytest
-from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.common_consts import zero_trust_consts
 from common.common_consts.zero_trust_consts import (
@@ -19,7 +18,7 @@ from monkey_island.cc.services.zero_trust.zero_trust_report.test_common.example_
 )
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_get_pillars_grades():
     save_example_findings()
     expected_grades = _get_expected_pillar_grades()
@@ -97,7 +96,7 @@ def _get_cnt_of_tests_in_pillar(pillar: str):
     return len(tests_in_pillar)
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_get_pillars_to_statuses():
     # Test empty database
     expected = {

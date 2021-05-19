@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pytest
-from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
@@ -40,7 +39,7 @@ STATUS = [
 
 
 class TestMonkeyZTFindingService:
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_create_or_add_to_existing_creation(self):
         # Create new finding
         MonkeyZTFindingService.create_or_add_to_existing(
@@ -55,7 +54,7 @@ class TestMonkeyZTFindingService:
         assert len(finding_details.events) == 1
         assert finding_details.events[0].message == EVENTS[0].message
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_create_or_add_to_existing_addition(self):
         # Create new finding
         MonkeyZTFindingService.create_or_add_to_existing(

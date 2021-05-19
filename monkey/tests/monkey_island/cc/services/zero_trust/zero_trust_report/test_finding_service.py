@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock
 
 import pytest
-from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.common_consts.zero_trust_consts import (
     DEVICES,
@@ -25,7 +24,7 @@ from monkey_island.cc.services.zero_trust.zero_trust_report.finding_service impo
 )
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_get_all_findings():
     get_scoutsuite_finding_dto().save()
     get_monkey_finding_dto().save()

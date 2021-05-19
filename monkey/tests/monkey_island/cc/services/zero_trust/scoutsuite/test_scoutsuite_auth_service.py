@@ -2,7 +2,6 @@ from unittest.mock import MagicMock
 
 import dpath.util
 import pytest
-from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.config_value_paths import AWS_KEYS_PATH
 from monkey_island.cc.database import mongo
@@ -17,7 +16,7 @@ class MockObject:
     pass
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_is_aws_keys_setup(tmp_path):
     # Mock default configuration
     ConfigService.init_default_config()

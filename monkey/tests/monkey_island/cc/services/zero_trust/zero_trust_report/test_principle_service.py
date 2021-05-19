@@ -1,5 +1,4 @@
 import pytest
-from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.services.zero_trust.test_common.finding_data import (
@@ -39,7 +38,7 @@ EXPECTED_DICT = {
 }
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_get_principles_status():
     TEST_PILLAR1 = "test_pillar1"
     TEST_PILLAR2 = "test_pillar2"

@@ -1,6 +1,5 @@
 import pytest
 from mongoengine import ValidationError
-from tests.monkey_island.cc.fixture_enum import FixtureEnum
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
@@ -13,7 +12,7 @@ MONKEY_FINDING_DETAIL_MOCK.events = ["mock1", "mock2"]
 
 
 class TestMonkeyFinding:
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_save_finding_validation(self):
         with pytest.raises(ValidationError):
             _ = MonkeyFinding.save_finding(
@@ -22,7 +21,7 @@ class TestMonkeyFinding:
                 detail_ref=MONKEY_FINDING_DETAIL_MOCK,
             )
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_save_finding_sanity(self):
         assert len(Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION)) == 0
 
