@@ -50,13 +50,7 @@ def test_save_to_file(config_file, standard_with_credentials):
     with open(config_file, "r") as f:
         from_file = json.load(f)
 
-    assert len(from_file.keys()) == 2
-    assert len(from_file["environment"].keys()) == 5
-    assert from_file["environment"]["server_config"] == "standard"
-    assert from_file["environment"]["deployment"] == "develop"
-    assert from_file["environment"]["user"] == "test"
-    assert from_file["environment"]["password_hash"] == "abcdef"
-    assert from_file["environment"]["aws"] == "test_aws"
+    assert environment_config.to_dict() == from_file["environment"]
 
 
 def test_save_to_file_preserve_log_level(config_file, standard_with_credentials):
@@ -69,7 +63,6 @@ def test_save_to_file_preserve_log_level(config_file, standard_with_credentials)
     with open(config_file, "r") as f:
         from_file = json.load(f)
 
-    assert len(from_file.keys()) == 2
     assert "log_level" in from_file
     assert from_file["log_level"] == "NOTICE"
 
