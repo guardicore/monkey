@@ -25,7 +25,7 @@ if "__main__" == __name__:
 
         config = config_loader.load_server_config_from_file(server_config_path)
 
-        create_data_dir(config["data_dir"])
+        create_data_dir(config["data_dir"], True)
 
         setup_logging(config["data_dir"], config["log_level"])
 
