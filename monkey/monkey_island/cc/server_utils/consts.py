@@ -1,12 +1,12 @@
 import os
-import sys
+
+from monkey_island.cc.environment.utils import is_windows_os
 
 __author__ = "itay.mizeretz"
 
 
 def get_default_data_dir() -> str:
-    is_windows_os = sys.platform.startswith("win")
-    if is_windows_os:
+    if is_windows_os():
         return r"%AppData%\monkey_island"
     else:
         return r"$HOME/.monkey_island"
