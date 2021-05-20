@@ -98,7 +98,15 @@ def wait_machine_bootup():
 
 @pytest.fixture(scope="class")
 def island_client(island, quick_performance_tests):
-    island_client_object = MonkeyIslandClient(island)
+    client_established = False
+    try:
+        island_client_object = MonkeyIslandClient(island)
+        client_established = island_client_object.get_api_status()
+    except Exception:
+        logging.exception("message")
+    finally:
+        if not client_established:
+            pytest.exit("BB tests couldn't establish communication to the island.")
     if not quick_performance_tests:
         island_client_object.reset_env()
     yield island_client_object
@@ -157,10 +165,6 @@ class TestMonkeyBlackbox:
     @staticmethod
     def get_log_dir_path():
         return os.path.abspath(LOG_DIR_PATH)
-
-    def test_server_online(self, island_client):
-        if not island_client.get_api_status():
-            pytest.exit("BB tests couldn't reach the Island server, quiting.")
 
     def test_ssh_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Ssh, "SSH_exploiter_and_keys")
