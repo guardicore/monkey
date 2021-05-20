@@ -1,6 +1,5 @@
 import os
 
-from monkey_island import config_file_parser
 from monkey_island.cc.arg_parser import IslandArgs
 from monkey_island.setup.setup_params import SetupParams
 
