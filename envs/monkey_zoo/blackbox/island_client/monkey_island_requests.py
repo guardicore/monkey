@@ -12,6 +12,10 @@ NO_AUTH_CREDS = "1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()"
 LOGGER = logging.getLogger(__name__)
 
 
+class AuthenticationFailedError(Exception):
+    pass
+
+
 # noinspection PyArgumentList
 class MonkeyIslandRequests(object):
     def __init__(self, server_address):
@@ -43,6 +47,9 @@ class MonkeyIslandRequests(object):
     def try_get_jwt_from_server(self):
         try:
             return self.get_jwt_from_server()
+        except AuthenticationFailedError:
+            self.try_set_island_to_no_password()
+            return self.get_jwt_from_server()
         except requests.ConnectionError as err:
             LOGGER.error(
                 "Unable to connect to island, aborting! Error information: {}. Server: {}".format(
@@ -50,6 +57,21 @@ class MonkeyIslandRequests(object):
                 )
             )
             assert False
+
+    def get_jwt_from_server(self):
+        resp = requests.post(  # noqa: DUO123
+            self.addr + "api/auth",
+            json={"username": NO_AUTH_CREDS, "password": NO_AUTH_CREDS},
+            verify=False,
+        )
+        if resp.status_code == 401:
+            raise AuthenticationFailedError
+        return resp.json()["access_token"]
+
+    def try_set_island_to_no_password(self):
+        requests.patch(  # noqa: DUO123
+            self.addr + "api/environment", json={"server_config": "standard"}, verify=False
+        )
 
     class _Decorators:
         @classmethod
@@ -61,14 +83,6 @@ class MonkeyIslandRequests(object):
                 return request_function(self, *args, **kwargs)
 
             return request_function_wrapper
-
-    def get_jwt_from_server(self):
-        resp = requests.post(  # noqa: DUO123
-            self.addr + "api/auth",
-            json={"username": NO_AUTH_CREDS, "password": NO_AUTH_CREDS},
-            verify=False,
-        )
-        return resp.json()["access_token"]
 
     @_Decorators.refresh_jwt_token
     def get(self, url, data=None):
