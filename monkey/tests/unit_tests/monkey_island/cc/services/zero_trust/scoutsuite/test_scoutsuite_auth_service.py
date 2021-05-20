@@ -10,14 +10,13 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_auth_service import (
     is_aws_keys_setup,
 )
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 
 class MockObject:
     pass
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_is_aws_keys_setup(tmp_path):
     # Mock default configuration
     ConfigService.init_default_config()

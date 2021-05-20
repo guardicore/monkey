@@ -8,7 +8,6 @@ from monkey_island.cc.services.zero_trust.test_common.finding_data import (
 from monkey_island.cc.services.zero_trust.zero_trust_report.principle_service import (
     PrincipleService,
 )
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 EXPECTED_DICT = {
     "test_pillar1": [
@@ -39,7 +38,7 @@ EXPECTED_DICT = {
 }
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_get_principles_status():
     TEST_PILLAR1 = "test_pillar1"
     TEST_PILLAR2 = "test_pillar2"

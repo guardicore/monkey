@@ -16,10 +16,9 @@ from monkey_island.cc.services.zero_trust.zero_trust_report.pillar_service impor
 from monkey_island.cc.services.zero_trust.zero_trust_report.test_common.example_finding_data import (  # noqa: E501
     save_example_findings,
 )
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_get_pillars_grades():
     save_example_findings()
     expected_grades = _get_expected_pillar_grades()
@@ -97,7 +96,7 @@ def _get_cnt_of_tests_in_pillar(pillar: str):
     return len(tests_in_pillar)
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_get_pillars_to_statuses():
     # Test empty database
     expected = {

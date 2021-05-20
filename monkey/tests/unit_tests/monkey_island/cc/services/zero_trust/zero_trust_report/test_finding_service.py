@@ -22,10 +22,9 @@ from monkey_island.cc.services.zero_trust.zero_trust_report.finding_service impo
     EnrichedFinding,
     FindingService,
 )
-from monkey_island.cc.test_common.fixtures.fixture_enum import FixtureEnum
 
 
-@pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+@pytest.mark.usefixtures("uses_database")
 def test_get_all_findings():
     get_scoutsuite_finding_dto().save()
     get_monkey_finding_dto().save()

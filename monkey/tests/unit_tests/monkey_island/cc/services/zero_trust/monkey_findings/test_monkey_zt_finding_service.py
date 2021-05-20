@@ -9,7 +9,6 @@ from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import (
     MonkeyZTFindingService,
 )
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 EVENTS = [
     Event.create_event(
@@ -40,7 +39,7 @@ STATUS = [
 
 
 class TestMonkeyZTFindingService:
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_create_or_add_to_existing_creation(self):
         # Create new finding
         MonkeyZTFindingService.create_or_add_to_existing(
@@ -55,7 +54,7 @@ class TestMonkeyZTFindingService:
         assert len(finding_details.events) == 1
         assert finding_details.events[0].message == EVENTS[0].message
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_create_or_add_to_existing_addition(self):
         # Create new finding
         MonkeyZTFindingService.create_or_add_to_existing(

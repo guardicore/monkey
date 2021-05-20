@@ -7,7 +7,6 @@ from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFind
 from monkey_island.cc.models.zero_trust.scoutsuite_finding import ScoutSuiteFinding
 from monkey_island.cc.models.zero_trust.scoutsuite_finding_details import ScoutSuiteFindingDetails
 from monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data import RULES
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 MONKEY_FINDING_DETAIL_MOCK = MonkeyFindingDetails()
 MONKEY_FINDING_DETAIL_MOCK.events = ["mock1", "mock2"]
@@ -16,7 +15,7 @@ SCOUTSUITE_FINDING_DETAIL_MOCK.scoutsuite_rules = []
 
 
 class TestScoutSuiteFinding:
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_save_finding_validation(self):
         with pytest.raises(ValidationError):
             _ = ScoutSuiteFinding.save_finding(
@@ -25,7 +24,7 @@ class TestScoutSuiteFinding:
                 detail_ref=SCOUTSUITE_FINDING_DETAIL_MOCK,
             )
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_save_finding_sanity(self):
         assert len(Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION)) == 0
 

@@ -6,13 +6,12 @@ import pytest
 
 from monkey_island.cc.models.monkey import Monkey, MonkeyNotFoundError
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 logger = logging.getLogger(__name__)
 
 
 class TestMonkey:
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_is_dead(self):
         # Arrange
         alive_monkey_ttl = MonkeyTtl.create_ttl_expire_in(30)
@@ -38,7 +37,7 @@ class TestMonkey:
         assert mia_monkey.is_dead()
         assert not alive_monkey.is_dead()
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_ttl_renewal(self):
         # Arrange
         monkey = Monkey(guid=str(uuid.uuid4()))
@@ -49,7 +48,7 @@ class TestMonkey:
         monkey.renew_ttl()
         assert monkey.ttl_ref
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_get_single_monkey_by_id(self):
         # Arrange
         a_monkey = Monkey(guid=str(uuid.uuid4()))
@@ -63,7 +62,7 @@ class TestMonkey:
         with pytest.raises(MonkeyNotFoundError) as _:
             _ = Monkey.get_single_monkey_by_id("abcdefabcdefabcdefabcdef")
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_get_os(self):
         linux_monkey = Monkey(
             guid=str(uuid.uuid4()),
@@ -79,7 +78,7 @@ class TestMonkey:
         assert 1 == len([m for m in Monkey.objects() if m.get_os() == "linux"])
         assert 1 == len([m for m in Monkey.objects() if m.get_os() == "unknown"])
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_get_tunneled_monkeys(self):
         linux_monkey = Monkey(guid=str(uuid.uuid4()), description="Linux shay-Virtual-Machine")
         windows_monkey = Monkey(
@@ -100,7 +99,7 @@ class TestMonkey:
         )
         assert test
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_get_label_by_id(self):
         hostname_example = "a_hostname"
         ip_example = "1.1.1.1"
@@ -148,7 +147,7 @@ class TestMonkey:
         assert cache_info_after_query_3.hits == 1
         assert cache_info_after_query_3.misses == 2
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_is_monkey(self):
         a_monkey = Monkey(guid=str(uuid.uuid4()))
         a_monkey.save()

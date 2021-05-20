@@ -6,14 +6,13 @@ from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
 from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
-from monkey_island.cc.test_common.fixtures import FixtureEnum
 
 MONKEY_FINDING_DETAIL_MOCK = MonkeyFindingDetails()
 MONKEY_FINDING_DETAIL_MOCK.events = ["mock1", "mock2"]
 
 
 class TestMonkeyFinding:
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_save_finding_validation(self):
         with pytest.raises(ValidationError):
             _ = MonkeyFinding.save_finding(
@@ -22,7 +21,7 @@ class TestMonkeyFinding:
                 detail_ref=MONKEY_FINDING_DETAIL_MOCK,
             )
 
-    @pytest.mark.usefixtures(FixtureEnum.USES_DATABASE)
+    @pytest.mark.usefixtures("uses_database")
     def test_save_finding_sanity(self):
         assert len(Finding.objects(test=zero_trust_consts.TEST_SEGMENTATION)) == 0
 
