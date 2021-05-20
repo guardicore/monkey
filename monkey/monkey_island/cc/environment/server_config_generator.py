@@ -3,6 +3,7 @@ from pathlib import Path
 
 from monkey_island.cc.environment.data_dir_generator import create_data_dir
 from monkey_island.cc.server_utils.consts import (
+    DEFAULT_DATA_DIR,
     DEFAULT_DEVELOP_SERVER_CONFIG_PATH,
     DEFAULT_SERVER_CONFIG_PATH,
 )
@@ -10,7 +11,7 @@ from monkey_island.cc.server_utils.consts import (
 
 def create_default_server_config_file() -> str:
     if not os.path.isfile(DEFAULT_SERVER_CONFIG_PATH):
-        create_data_dir(DEFAULT_SERVER_CONFIG_PATH, False)
+        create_data_dir(DEFAULT_DATA_DIR, False)
         write_default_server_config_to_file(DEFAULT_SERVER_CONFIG_PATH)
     return DEFAULT_SERVER_CONFIG_PATH
 
