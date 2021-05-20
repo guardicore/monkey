@@ -1,7 +1,8 @@
 from gevent import monkey as gevent_monkey
-from setup_param_factory import SetupParamFactory
 
 from monkey_island.cc.arg_parser import parse_cli_args
+from monkey_island.config_file_parser import load_server_config_from_file
+from monkey_island.setup.setup_param_factory import SetupParamFactory
 
 gevent_monkey.patch_all()
 
@@ -11,8 +12,9 @@ from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E
 
 if "__main__" == __name__:
     island_args = parse_cli_args()
+    config_contents = load_server_config_from_file(island_args.server_config_path)
 
-    setup_params = SetupParamFactory.build(island_args)
+    setup_params = SetupParamFactory().build(island_args, config_contents)
 
     try:
 
