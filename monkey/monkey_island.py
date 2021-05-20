@@ -32,4 +32,4 @@ if "__main__" == __name__:
 
     from monkey_island.cc.main import main  # noqa: E402
 
-    main(setup_params.data_dir, setup_params.setup_only, setup_params.server_config_path)
+    main(setup_params)

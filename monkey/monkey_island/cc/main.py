@@ -9,6 +9,8 @@ from threading import Thread
 # "monkey_island." work.
 from gevent.pywsgi import WSGIServer
 
+from monkey_island.setup.setup_params import SetupParams
+
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
@@ -24,7 +26,6 @@ from monkey_island.cc.database import get_db_version  # noqa: E402
 from monkey_island.cc.database import is_db_server_up  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
-from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH  # noqa: E402
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
@@ -34,16 +35,12 @@ from monkey_island.cc.setup import setup  # noqa: E402
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 
-def main(
-    data_dir,
-    should_setup_only=False,
-    server_config_filename=DEFAULT_SERVER_CONFIG_PATH,
-):
+def main(setup_params: SetupParams):
     logger.info("Starting bootloader server")
 
-    env_singleton.initialize_from_file(server_config_filename)
-    initialize_encryptor(data_dir)
-    initialize_services(data_dir)
+    env_singleton.initialize_from_file(setup_params.server_config_path)
+    initialize_encryptor(setup_params.data_dir)
+    initialize_services(setup_params.data_dir)
 
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(
@@ -51,7 +48,7 @@ def main(
     )
 
     bootloader_server_thread.start()
-    start_island_server(should_setup_only)
+    start_island_server(setup_params.setup_only)
     bootloader_server_thread.join()
 
 
