@@ -1,8 +1,8 @@
 from gevent import monkey as gevent_monkey
 
 from monkey_island.cc.arg_parser import parse_cli_args
-from monkey_island.config_file_parser import load_server_config_from_file
-from monkey_island.setup.setup_param_factory import SetupParamFactory
+from monkey_island.config_file_parser import load_island_config_from_file
+from monkey_island.setup.island_config_options import IslandConfigOptions
 
 gevent_monkey.patch_all()
 
@@ -12,15 +12,13 @@ from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E
 
 if "__main__" == __name__:
     island_args = parse_cli_args()
-    config_contents = load_server_config_from_file(island_args.server_config_path)
-
-    setup_params = SetupParamFactory().build(island_args, config_contents)
+    config_options = IslandConfigOptions()
 
     try:
-
         # This is here in order to catch EVERYTHING, some functions are being called on
         # imports, so the log init needs to be first.
-        setup_logging(setup_params.data_dir, setup_params.log_level)
+        config_options = load_island_config_from_file(island_args.server_config_path)
+        setup_logging(config_options.data_dir, config_options.log_level)
 
     except OSError as ex:
         print(f"Error opening server config file: {ex}")
@@ -32,4 +30,4 @@ if "__main__" == __name__:
 
     from monkey_island.cc.main import main  # noqa: E402
 
-    main(setup_params)
+    main(island_args.setup_only, island_args.server_config_path, config_options)

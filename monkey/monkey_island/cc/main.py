@@ -9,7 +9,7 @@ from threading import Thread
 # "monkey_island." work.
 from gevent.pywsgi import WSGIServer
 
-from monkey_island.setup.setup_params import SetupParams
+from monkey_island.setup.island_config_options import IslandConfigOptions
 
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
@@ -35,12 +35,11 @@ from monkey_island.cc.setup import setup  # noqa: E402
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 
-def main(setup_params: SetupParams):
-    logger.info("Starting bootloader server")
+def main(setup_only: bool, server_config_path: str, config_options: IslandConfigOptions):
 
-    env_singleton.initialize_from_file(setup_params.server_config_path)
-    initialize_encryptor(setup_params.data_dir)
-    initialize_services(setup_params.data_dir)
+    env_singleton.initialize_from_file(server_config_path)
+    initialize_encryptor(config_options.data_dir)
+    initialize_services(config_options.data_dir)
 
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(
@@ -48,7 +47,7 @@ def main(setup_params: SetupParams):
     )
 
     bootloader_server_thread.start()
-    start_island_server(setup_params.setup_only)
+    start_island_server(setup_only)
     bootloader_server_thread.join()
 
 
