@@ -103,7 +103,7 @@ def island_client(island, quick_performance_tests):
         island_client_object = MonkeyIslandClient(island)
         client_established = island_client_object.get_api_status()
     except Exception:
-        logging.exception("message")
+        logging.exception("Got an exception while trying to establish connection to the Island.")
     finally:
         if not client_established:
             pytest.exit("BB tests couldn't establish communication to the island.")
