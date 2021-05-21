@@ -93,15 +93,3 @@ def test_get_users(standard_with_credentials):
     assert users[0].id == 1
     assert users[0].username == "test"
     assert users[0].secret == "abcdef"
-
-
-def test_generate_default_file(config_file):
-    environment_config = EnvironmentConfig(config_file)
-
-    assert os.path.isfile(config_file)
-
-    assert environment_config.server_config == "password"
-    assert environment_config.deployment == "develop"
-    assert environment_config.user_creds.username == ""
-    assert environment_config.user_creds.password_hash == ""
-    assert environment_config.aws is None
