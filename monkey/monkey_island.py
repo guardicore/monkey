@@ -15,8 +15,8 @@ if "__main__" == __name__:
     # This is here in order to catch EVERYTHING, some functions are being called on
     # imports, so the log init needs to be first.
     try:
-        if island_args.server_config:
-            config, server_config_path = setup_config_by_cmd_arg(island_args.server_config)
+        if island_args.server_config_path:
+            config, server_config_path = setup_config_by_cmd_arg(island_args.server_config_path)
         else:
             config, server_config_path = setup_default_config()
 

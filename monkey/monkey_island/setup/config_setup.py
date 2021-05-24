@@ -11,7 +11,7 @@ def setup_config_by_cmd_arg(server_config_path) -> Tuple[IslandConfigOptions, st
     server_config_path = os.path.expandvars(os.path.expanduser(server_config_path))
     config = server_config_handler.load_server_config_from_file(server_config_path)
 
-    create_data_dir(config["data_dir"], create_parent_dirs=True)
+    create_data_dir(config.data_dir, create_parent_dirs=True)
     return config, server_config_path
 
 
