@@ -14,6 +14,8 @@ def get_default_data_dir() -> str:
 
 SERVER_CONFIG_FILENAME = "server_config.json"
 
+DEFAULT_LOG_LEVEL = "INFO"
+
 MONKEY_ISLAND_ABS_PATH = os.path.join(os.getcwd(), "monkey_island")
 
 DEFAULT_DATA_DIR = os.path.expandvars(get_default_data_dir())
