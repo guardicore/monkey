@@ -12,14 +12,14 @@ from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E
 if "__main__" == __name__:
     island_args = parse_cli_args()
 
+    # This is here in order to catch EVERYTHING, some functions are being called on
+    # imports, so the log init needs to be first.
     try:
         if island_args.server_config:
             config, server_config_path = setup_config_by_cmd_arg(island_args.server_config)
         else:
             config, server_config_path = setup_default_config()
 
-        # This is here in order to catch EVERYTHING, some functions are being called on
-        # imports, so the log init needs to be first.
         setup_logging(config["data_dir"], config["log_level"])
 
     except OSError as ex:
