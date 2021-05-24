@@ -11,9 +11,9 @@ from monkey_island.cc.server_utils.consts import (
 
 @dataclass
 class IslandConfigOptions:
-    log_level = DEFAULT_LOG_LEVEL
-    data_dir = DEFAULT_DATA_DIR
-    start_mongodb = DEFAULT_START_MONGO_DB
+    log_level: str = DEFAULT_LOG_LEVEL
+    data_dir: str = DEFAULT_DATA_DIR
+    start_mongodb: bool = DEFAULT_START_MONGO_DB
 
     @staticmethod
     def build_from_config_file_contents(config_contents: dict) -> IslandConfigOptions:
