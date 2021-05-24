@@ -1,5 +1,6 @@
 from gevent import monkey as gevent_monkey
 
+import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args
 from monkey_island.setup.config_setup import setup_config_by_cmd_arg, setup_default_config
 
@@ -30,6 +31,11 @@ if "__main__" == __name__:
         print(f"Error loading server config: {ex}")
         exit(1)
 
+    # We need to initialize environment singleton before importing main,
+    # because main imports modules from monkey_island/cc/models and models need a connection to the
+    # mongodb. Mongodb connection parameters are initialized in environment singleton.
+    env_singleton.initialize_from_file(server_config_path)
+
     from monkey_island.cc.main import main  # noqa: E402
 
-    main(island_args.setup_only, server_config_path, config)
+    main(island_args.setup_only, config)
