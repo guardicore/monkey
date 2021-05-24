@@ -9,6 +9,8 @@ from threading import Thread
 # "monkey_island." work.
 from gevent.pywsgi import WSGIServer
 
+from monkey_island.setup.island_config_options import IslandConfigOptions
+
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
@@ -22,28 +24,22 @@ from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.database import get_db_version  # noqa: E402
 from monkey_island.cc.database import is_db_server_up  # noqa: E402
+from monkey_island.cc.mongo_setup import init_collections, launch_mongodb  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
-from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH  # noqa: E402
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
-from monkey_island.cc.setup import setup  # noqa: E402
 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 
-def main(
-    data_dir,
-    should_setup_only=False,
-    server_config_filename=DEFAULT_SERVER_CONFIG_PATH,
-):
-    logger.info("Starting bootloader server")
+def main(setup_only: bool, server_config_path: str, config_options: IslandConfigOptions):
 
-    env_singleton.initialize_from_file(server_config_filename)
-    initialize_encryptor(data_dir)
-    initialize_services(data_dir)
+    env_singleton.initialize_from_file(server_config_path)
+    initialize_encryptor(config_options.data_dir)
+    initialize_services(config_options.data_dir)
 
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(
@@ -51,11 +47,13 @@ def main(
     )
 
     bootloader_server_thread.start()
-    start_island_server(should_setup_only)
+    start_island_server(setup_only, config_options)
     bootloader_server_thread.join()
 
 
-def start_island_server(should_setup_only):
+def start_island_server(should_setup_only, config_options: IslandConfigOptions):
+    if config_options.start_mongodb:
+        launch_mongodb()
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)
     assert_mongo_db_version(mongo_url)
@@ -66,7 +64,7 @@ def start_island_server(should_setup_only):
     crt_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
     key_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
 
-    setup()
+    init_collections()
 
     if should_setup_only:
         logger.warning("Setup only flag passed. Exiting.")

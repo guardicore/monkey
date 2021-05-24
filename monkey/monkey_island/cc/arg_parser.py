@@ -1,15 +1,21 @@
-from dataclasses import dataclass
-
-from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH
-
-
-@dataclass
-class IslandArgs:
-    setup_only: bool
-    server_config: str
+from monkey_island.cc.server_utils.consts import (
+    DEFAULT_SERVER_CONFIG_PATH,
+    DEFAULT_SHOULD_SETUP_ONLY,
+)
 
 
-def parse_cli_args() -> IslandArgs:
+class IslandCmdArgs:
+    setup_only: bool = DEFAULT_SHOULD_SETUP_ONLY
+    server_config_path: str = DEFAULT_SERVER_CONFIG_PATH
+
+    def __init__(self, setup_only: None, server_config_path: None):
+        if setup_only:
+            self.setup_only = setup_only
+        if server_config_path:
+            self.server_config_path = server_config_path
+
+
+def parse_cli_args() -> IslandCmdArgs:
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -25,11 +31,8 @@ def parse_cli_args() -> IslandArgs:
         "compiling/packaging Islands.",
     )
     parser.add_argument(
-        "--server-config",
-        action="store",
-        help="The path to the server configuration file.",
-        default=DEFAULT_SERVER_CONFIG_PATH,
+        "--server-config", action="store", help="The path to the server configuration file."
     )
     args = parser.parse_args()
 
-    return IslandArgs(args.setup_only, args.server_config)
+    return IslandCmdArgs(args.setup_only, args.server_config)
