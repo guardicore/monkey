@@ -7,7 +7,7 @@ from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR, DEFAULT_SERVE
 
 
 def setup_config_by_cmd_arg(server_config_path) -> Tuple[dict, str]:
-    server_config_path = os.path.expanduser(server_config_path)
+    server_config_path = os.path.expandvars(os.path.expanduser(server_config_path))
     config = server_config_handler.load_server_config_from_file(server_config_path)
     create_data_dir(config["data_dir"], create_parent_dirs=True)
     return config, server_config_path
