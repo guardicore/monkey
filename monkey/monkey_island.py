@@ -1,15 +1,12 @@
 from gevent import monkey as gevent_monkey
 
 from monkey_island.cc.arg_parser import parse_cli_args
+from monkey_island.setup.config_setup import setup_config_by_cmd_arg, setup_default_config
 
 gevent_monkey.patch_all()
 
 import json  # noqa: E402
-import os  # noqa: E402
 
-import monkey_island.cc.environment.server_config_generator as server_config_generator  # noqa: E402
-from monkey_island import config_loader  # noqa: E402
-from monkey_island.cc.environment.data_dir_generator import create_data_dir  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E402
 
 if "__main__" == __name__:
@@ -19,13 +16,9 @@ if "__main__" == __name__:
     # imports, so the log init needs to be first.
     try:
         if island_args.server_config:
-            server_config_path = os.path.expanduser(island_args.server_config)
+            config, server_config_path = setup_config_by_cmd_arg(island_args.server_config)
         else:
-            server_config_path = server_config_generator.create_default_server_config_file()
-
-        config = config_loader.load_server_config_from_file(server_config_path)
-
-        create_data_dir(config["data_dir"], True)
+            config, server_config_path = setup_default_config()
 
         setup_logging(config["data_dir"], config["log_level"])
 

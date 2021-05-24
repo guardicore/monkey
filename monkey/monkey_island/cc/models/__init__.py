@@ -2,11 +2,12 @@ from mongoengine import connect
 
 # Needed so that a server_config.json file exists at the default path,
 # otherwise, unit tests will error while importing `env_singleton` below.
-from monkey_island.cc.environment.server_config_generator import (  # noqa: E402
-    create_default_server_config_file,
-)
+from monkey_island.cc.environment import data_dir_generator, server_config_handler  # noqa: E402
 
-create_default_server_config_file()
+from ..server_utils.consts import DEFAULT_DATA_DIR
+
+data_dir_generator.create_data_dir(DEFAULT_DATA_DIR, False)
+server_config_handler.create_default_server_config_file()
 
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
 
