@@ -2,7 +2,6 @@ from gevent import monkey as gevent_monkey
 
 from monkey_island.cc.arg_parser import parse_cli_args
 from monkey_island.config_file_parser import load_island_config_from_file
-from monkey_island.setup.island_config_options import IslandConfigOptions
 
 gevent_monkey.patch_all()
 
@@ -12,7 +11,6 @@ from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E
 
 if "__main__" == __name__:
     island_args = parse_cli_args()
-    config_options = IslandConfigOptions()
 
     try:
         # This is here in order to catch EVERYTHING, some functions are being called on
