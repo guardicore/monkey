@@ -1,18 +1,15 @@
+from dataclasses import dataclass
+
 from monkey_island.cc.server_utils.consts import (
     DEFAULT_SERVER_CONFIG_PATH,
     DEFAULT_SHOULD_SETUP_ONLY,
 )
 
 
+@dataclass
 class IslandCmdArgs:
-    setup_only: bool = DEFAULT_SHOULD_SETUP_ONLY
-    server_config_path: str = DEFAULT_SERVER_CONFIG_PATH
-
-    def __init__(self, setup_only: None, server_config_path: None):
-        if setup_only:
-            self.setup_only = setup_only
-        if server_config_path:
-            self.server_config_path = server_config_path
+    setup_only: bool
+    server_config_path: str
 
 
 def parse_cli_args() -> IslandCmdArgs:
@@ -29,9 +26,13 @@ def parse_cli_args() -> IslandCmdArgs:
         help="Pass this flag to cause the Island to setup and exit without actually starting. "
         "This is useful for preparing Island to boot faster later-on, so for "
         "compiling/packaging Islands.",
+        default=DEFAULT_SHOULD_SETUP_ONLY,
     )
     parser.add_argument(
-        "--server-config", action="store", help="The path to the server configuration file."
+        "--server-config",
+        action="store",
+        help="The path to the server configuration file.",
+        default=DEFAULT_SERVER_CONFIG_PATH,
     )
     args = parser.parse_args()
 
