@@ -25,18 +25,24 @@ from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.database import get_db_version  # noqa: E402
 from monkey_island.cc.database import is_db_server_up  # noqa: E402
+from monkey_island.cc.mongo_setup import init_collections, launch_mongodb  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
-from monkey_island.cc.setup.mongo_process_runner import MongoDbRunner  # noqa: E402
+from monkey_island.cc.setup.mongo_process_runner import (  # noqa: E402
+    MongoDbRunner,
+    init_collections,
+)
 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 
-def main(setup_only: bool, config_options: IslandConfigOptions):
+def main(setup_only: bool, server_config_path: str, config_options: IslandConfigOptions):
+
+    env_singleton.initialize_from_file(server_config_path)
     initialize_encryptor(config_options.data_dir)
     initialize_services(config_options.data_dir)
 
