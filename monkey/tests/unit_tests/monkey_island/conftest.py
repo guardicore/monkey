@@ -9,5 +9,10 @@ def server_configs_dir(data_for_tests_dir):
 
 
 @pytest.fixture(scope="module")
-def test_server_config(server_configs_dir):
-    return os.path.join(server_configs_dir, "test_server_config.json")
+def server_config_init_only(server_configs_dir):
+    return os.path.join(server_configs_dir, "server_config_init_only.json")
+
+
+@pytest.fixture(scope="module")
+def server_config_empty(server_configs_dir):
+    return os.path.join(server_configs_dir, "server_config_empty.json")

@@ -14,8 +14,6 @@ def get_default_data_dir() -> str:
 
 SERVER_CONFIG_FILENAME = "server_config.json"
 
-DEFAULT_LOG_LEVEL = "INFO"
-
 MONKEY_ISLAND_ABS_PATH = os.path.join(os.getcwd(), "monkey_island")
 
 DEFAULT_DATA_DIR = os.path.expandvars(get_default_data_dir())
@@ -29,3 +27,7 @@ DEFAULT_SERVER_CONFIG_PATH = os.path.expandvars(
 DEFAULT_DEVELOP_SERVER_CONFIG_PATH = os.path.join(
     MONKEY_ISLAND_ABS_PATH, "cc", f"{SERVER_CONFIG_FILENAME}.develop"
 )
+
+DEFAULT_LOG_LEVEL = "INFO"
+DEFAULT_START_MONGO_DB = True
+DEFAULT_SHOULD_SETUP_ONLY = False

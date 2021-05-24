@@ -9,7 +9,12 @@ from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterfa
 logger = logging.getLogger(__name__)
 
 
-def setup():
+def launch_mongodb():
+    # TODO: Implement the launch of mongodb process
+    pass
+
+
+def init_collections():
     logger.info("Setting up the Monkey Island, this might take a while...")
     try_store_mitigations_on_mongo()
 

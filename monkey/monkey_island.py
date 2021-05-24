@@ -20,7 +20,7 @@ if "__main__" == __name__:
         else:
             config, server_config_path = setup_default_config()
 
-        setup_logging(config["data_dir"], config["log_level"])
+        setup_logging(config.data_dir, config.log_level)
 
     except OSError as ex:
         print(f"Error opening server config file: {ex}")
@@ -32,4 +32,4 @@ if "__main__" == __name__:
 
     from monkey_island.cc.main import main  # noqa: E402
 
-    main(config["data_dir"], island_args.setup_only, server_config_path)
+    main(island_args.setup_only, island_args.server_config_path, config)
