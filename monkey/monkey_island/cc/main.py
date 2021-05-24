@@ -120,7 +120,3 @@ def assert_mongo_db_version(mongo_url):
         sys.exit(-1)
     else:
         logger.info("Mongo DB version OK. Got {0}".format(str(server_version)))
-
-
-if __name__ == "__main__":
-    main()
