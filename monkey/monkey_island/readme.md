@@ -28,7 +28,6 @@
     - Place portable version of mongodb
        1. Download from: <https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.1.zip>
        2. Extract contents of bin folder to \monkey\monkey_island\bin\mongodb.
-       3. Create monkey_island\db folder.
 
     OR
     - Use already running instance of mongodb
@@ -88,12 +87,8 @@
     - `pipenv sync --dev`
     - `cd ..`
 
-1. Set the linux `run.sh` to be executible:
-    - `chmod u+x monkey_island/linux/run.sh`
-
 1. Create the following directories in monkey island folder (execute from ./monkey):
     - `mkdir -p ./monkey_island/bin/mongodb`
-    - `mkdir -p ./monkey_island/db`
     - `mkdir -p ./monkey_island/cc/binaries`
 
 1. Put monkey binaries in /monkey_island/cc/binaries (binaries can be found in releases on github).
@@ -136,4 +131,4 @@
 
 #### How to run
 
-1. From the `monkey/monkey_island` directory, run `pipenv run ./linux/run.sh`
+1. From the `monkey` directory, run `python3.7 ./monkey_island.py`
