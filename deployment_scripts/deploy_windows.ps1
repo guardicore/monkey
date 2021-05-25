@@ -176,7 +176,6 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         } | Select-Object -ExpandProperty Name
         # Move all files from extracted folder to mongodb folder
         New-Item -ItemType directory -Path (Join-Path -Path $binDir -ChildPath "mongodb")
-        New-Item -ItemType directory -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "db")
         "Moving extracted files"
         Move-Item -Path (Join-Path -Path $binDir -ChildPath $mongodb_folder | Join-Path -ChildPath "\bin\*") -Destination (Join-Path -Path $binDir -ChildPath "mongodb\")
         "Removing zip file"
