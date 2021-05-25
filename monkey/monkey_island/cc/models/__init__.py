@@ -12,6 +12,7 @@ from .monkey import Monkey  # noqa: F401, E402
 from .monkey_ttl import MonkeyTtl  # noqa: F401, E402
 from .pba_results import PbaResults  # noqa: F401, E402
 
+# TODO refactor into explicit call when implementing mongodb startup
 connect(
     db=env_singleton.env.mongo_db_name,
     host=env_singleton.env.mongo_db_host,
