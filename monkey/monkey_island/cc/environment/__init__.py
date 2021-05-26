@@ -1,5 +1,4 @@
 import logging
-import os
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
 
@@ -18,13 +17,6 @@ logger = logging.getLogger(__name__)
 
 class Environment(object, metaclass=ABCMeta):
     _ISLAND_PORT = 5000
-    _MONGO_DB_NAME = "monkeyisland"
-    _MONGO_DB_HOST = "localhost"
-    _MONGO_DB_PORT = 27017
-    _MONGO_URL = os.environ.get(
-        "MONKEY_MONGO_URL",
-        "mongodb://{0}:{1}/{2}".format(_MONGO_DB_HOST, _MONGO_DB_PORT, str(_MONGO_DB_NAME)),
-    )
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(minutes=30)
 
@@ -96,9 +88,6 @@ class Environment(object, metaclass=ABCMeta):
     def get_island_port(self):
         return self._ISLAND_PORT
 
-    def get_mongo_url(self):
-        return self._MONGO_URL
-
     def is_debug(self):
         return self._DEBUG_SERVER
 
@@ -110,15 +99,3 @@ class Environment(object, metaclass=ABCMeta):
         if self._config and self._config.deployment:
             deployment = self._config.deployment
         return deployment
-
-    @property
-    def mongo_db_name(self):
-        return self._MONGO_DB_NAME
-
-    @property
-    def mongo_db_host(self):
-        return self._MONGO_DB_HOST
-
-    @property
-    def mongo_db_port(self):
-        return self._MONGO_DB_PORT
