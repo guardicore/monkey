@@ -9,6 +9,7 @@ from threading import Thread
 # "monkey_island." work.
 from gevent.pywsgi import WSGIServer
 
+from monkey_island.cc.setup.database_initializer import init_collections
 from monkey_island.setup.island_config_options import IslandConfigOptions
 
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
@@ -30,10 +31,7 @@ from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
-from monkey_island.cc.setup.mongo_process_runner import (  # noqa: E402
-    MongoDbRunner,
-    init_collections,
-)
+from monkey_island.cc.setup.mongo_process_runner import MongoDbRunner  # noqa: E402
 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
