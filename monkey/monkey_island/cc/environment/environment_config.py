@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
 from typing import Dict, List
 
-import monkey_island.cc.environment.server_config_generator as server_config_generator
 from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.resources.auth.user_store import UserStore
@@ -24,8 +22,6 @@ class EnvironmentConfig:
     def _load_from_file(self, file_path):
         file_path = os.path.expanduser(file_path)
 
-        if not Path(file_path).is_file():
-            server_config_generator.create_default_config_file(file_path)
         with open(file_path, "r") as f:
             config_content = f.read()
 

@@ -2,7 +2,6 @@ import logging
 
 import monkey_island.cc.resources.auth.user_store as user_store
 from monkey_island.cc.environment import EnvironmentConfig, aws, password, standard
-from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH
 
 __author__ = "itay.mizeretz"
 
@@ -48,8 +47,3 @@ def initialize_from_file(file_path):
     except Exception:
         logger.error("Failed initializing environment", exc_info=True)
         raise
-
-
-# TODO: This is only needed so that unit tests pass. After PR #848 is merged, we may be
-# able to remove this line.
-initialize_from_file(DEFAULT_SERVER_CONFIG_PATH)

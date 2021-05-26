@@ -35,9 +35,7 @@ from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 
-def main(setup_only: bool, server_config_path: str, config_options: IslandConfigOptions):
-
-    env_singleton.initialize_from_file(server_config_path)
+def main(setup_only: bool, config_options: IslandConfigOptions):
     initialize_encryptor(config_options.data_dir)
     initialize_services(config_options.data_dir)
 
@@ -122,7 +120,3 @@ def assert_mongo_db_version(mongo_url):
         sys.exit(-1)
     else:
         logger.info("Mongo DB version OK. Got {0}".format(str(server_version)))
-
-
-if __name__ == "__main__":
-    main()

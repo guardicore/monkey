@@ -1,18 +1,10 @@
-from monkey_island.cc.server_utils.consts import (
-    DEFAULT_SERVER_CONFIG_PATH,
-    DEFAULT_SHOULD_SETUP_ONLY,
-)
+from dataclasses import dataclass
 
 
+@dataclass
 class IslandCmdArgs:
-    setup_only: bool = DEFAULT_SHOULD_SETUP_ONLY
-    server_config_path: str = DEFAULT_SERVER_CONFIG_PATH
-
-    def __init__(self, setup_only: None, server_config_path: None):
-        if setup_only:
-            self.setup_only = setup_only
-        if server_config_path:
-            self.server_config_path = server_config_path
+    setup_only: bool
+    server_config_path: str
 
 
 def parse_cli_args() -> IslandCmdArgs:

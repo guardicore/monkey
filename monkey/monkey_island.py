@@ -1,22 +1,25 @@
-from gevent import monkey as gevent_monkey
+# This import patches other imports and needs to be first
+import monkey_island.setup.gevent_setup  # noqa: F401 isort:skip
 
+import json
+
+import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.arg_parser import parse_cli_args
-from monkey_island.config_file_parser import load_island_config_from_file
-
-gevent_monkey.patch_all()
-
-import json  # noqa: E402
-
-from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E402
+from monkey_island.cc.server_utils.island_logger import setup_logging
+from monkey_island.setup.config_setup import setup_config_by_cmd_arg, setup_default_config
 
 if "__main__" == __name__:
     island_args = parse_cli_args()
 
+    # This is here in order to catch EVERYTHING, some functions are being called on
+    # imports, so the log init needs to be first.
     try:
-        # This is here in order to catch EVERYTHING, some functions are being called on
-        # imports, so the log init needs to be first.
-        config_options = load_island_config_from_file(island_args.server_config_path)
-        setup_logging(config_options.data_dir, config_options.log_level)
+        if island_args.server_config_path:
+            config, server_config_path = setup_config_by_cmd_arg(island_args.server_config_path)
+        else:
+            config, server_config_path = setup_default_config()
+
+        setup_logging(config.data_dir, config.log_level)
 
     except OSError as ex:
         print(f"Error opening server config file: {ex}")
@@ -26,6 +29,11 @@ if "__main__" == __name__:
         print(f"Error loading server config: {ex}")
         exit(1)
 
+    # We need to initialize environment singleton before importing main,
+    # because main imports modules from monkey_island/cc/models and models need a connection to the
+    # mongodb. Mongodb connection parameters are initialized in environment singleton.
+    env_singleton.initialize_from_file(server_config_path)
+
     from monkey_island.cc.main import main  # noqa: E402
 
-    main(island_args.setup_only, island_args.server_config_path, config_options)
+    main(island_args.setup_only, config)
