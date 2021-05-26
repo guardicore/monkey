@@ -19,6 +19,18 @@ def config(monkeypatch):
     return config
 
 
+class MockClass:
+    pass
+
+
+@pytest.fixture(scope="function", autouse=True)
+def mock_port_in_env_singleton(monkeypatch):
+    mock_singleton = MockClass()
+    mock_singleton.env = MockClass()
+    mock_singleton.env.get_island_port = lambda: PORT
+    monkeypatch.setattr("monkey_island.cc.services.config.env_singleton", mock_singleton)
+
+
 def test_set_server_ips_in_config_command_servers(config):
     ConfigService.set_server_ips_in_config(config)
     expected_config_command_servers = [f"{ip}:{PORT}" for ip in IPS]
