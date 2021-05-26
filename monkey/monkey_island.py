@@ -1,11 +1,11 @@
 # This import patches other imports and needs to be first
-import monkey_island.setup.gevent_setup  # noqa: E402 F401 isort:skip
+import monkey_island.setup.gevent_setup  # noqa: F401 isort:skip
 
-import json  # noqa: E402
+import json
 
-import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
+import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.arg_parser import parse_cli_args
-from monkey_island.cc.server_utils.island_logger import setup_logging  # noqa: E402
+from monkey_island.cc.server_utils.island_logger import setup_logging
 from monkey_island.setup.config_setup import setup_config_by_cmd_arg, setup_default_config
 
 if "__main__" == __name__:
