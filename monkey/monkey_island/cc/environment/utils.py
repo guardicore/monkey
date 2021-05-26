@@ -1,5 +1,5 @@
-import sys
+import platform
 
 
 def is_windows_os() -> bool:
-    return sys.platform.startswith("win")
+    return platform.system() == "Windows"

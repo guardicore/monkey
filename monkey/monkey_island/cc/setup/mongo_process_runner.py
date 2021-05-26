@@ -3,7 +3,7 @@ import os
 import subprocess
 from typing import List
 
-from monkey_island.cc.server_utils.common_methods import WINDOWS, get_runtime_os
+from monkey_island.cc.environment.utils import is_windows_os
 from monkey_island.cc.server_utils.consts import (
     MONGO_EXECUTABLE_PATH_LINUX,
     MONGO_EXECUTABLE_PATH_WIN,
@@ -53,7 +53,7 @@ class MongoDbRunner:
 
     @staticmethod
     def _get_path_of_mongo_exec():
-        if get_runtime_os() == WINDOWS:
+        if is_windows_os():
             return MONGO_EXECUTABLE_PATH_WIN
         else:
             return MONGO_EXECUTABLE_PATH_LINUX
