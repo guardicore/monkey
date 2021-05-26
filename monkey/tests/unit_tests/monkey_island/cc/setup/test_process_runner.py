@@ -7,9 +7,13 @@ from monkey_island.cc.setup.mongo_process_runner import MongoDbRunner
 TEST_DIR_NAME = "test_dir"
 
 
+@pytest.fixture(autouse=True)
+def fake_db_dir(monkeypatch, tmpdir):
+    monkeypatch.setattr("monkey_island.cc.setup.mongo_process_runner.DB_DIR_NAME", TEST_DIR_NAME)
+
+
 @pytest.fixture
 def expected_path(monkeypatch, tmpdir):
-    monkeypatch.setattr("monkey_island.cc.setup.mongo_process_runner.DB_DIR_NAME", TEST_DIR_NAME)
     expected_path = os.path.join(tmpdir, TEST_DIR_NAME)
     return expected_path
 
