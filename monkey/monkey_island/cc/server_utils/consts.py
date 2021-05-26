@@ -20,13 +20,16 @@ DEFAULT_DATA_DIR = os.path.expandvars(get_default_data_dir())
 
 DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 60 * 5
 
+_MONGO_BINARY_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "mongodb")
+_MONGO_EXECUTABLE_PATH_WIN = os.path.join(_MONGO_BINARY_DIR, "mongod.exe")
+_MONGO_EXECUTABLE_PATH_LINUX = os.path.join(_MONGO_BINARY_DIR, "bin", "mongod")
+MONGO_EXECUTABLE_PATH = (
+    _MONGO_EXECUTABLE_PATH_WIN if is_windows_os() else _MONGO_EXECUTABLE_PATH_LINUX
+)
+
 DEFAULT_SERVER_CONFIG_PATH = os.path.expandvars(
     os.path.join(DEFAULT_DATA_DIR, SERVER_CONFIG_FILENAME)
 )
-_MONGO_EXECUTABLE_PATH = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "mongodb")
-MONGO_EXECUTABLE_PATH_WIN = os.path.join(_MONGO_EXECUTABLE_PATH, "mongod.exe")
-MONGO_EXECUTABLE_PATH_LINUX = os.path.join(_MONGO_EXECUTABLE_PATH, "bin", "mongod")
-
 
 DEFAULT_DEVELOP_SERVER_CONFIG_PATH = os.path.join(
     MONKEY_ISLAND_ABS_PATH, "cc", f"{SERVER_CONFIG_FILENAME}.develop"

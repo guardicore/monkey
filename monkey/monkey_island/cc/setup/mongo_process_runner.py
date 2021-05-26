@@ -3,11 +3,7 @@ import os
 import subprocess
 from typing import List
 
-from monkey_island.cc.environment.utils import is_windows_os
-from monkey_island.cc.server_utils.consts import (
-    MONGO_EXECUTABLE_PATH_LINUX,
-    MONGO_EXECUTABLE_PATH_WIN,
-)
+from monkey_island.cc.server_utils.consts import MONGO_EXECUTABLE_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -39,9 +35,8 @@ class MongoDbRunner:
 
     def _start_mongodb_process(self, db_dir_path: str):
         logger.info("Starting MongoDb process.")
-        mongo_exec = MongoDbRunner._get_path_of_mongo_exec()
 
-        mongo_run_cmd = MongoDbRunner._build_mongo_launch_cmd(mongo_exec, db_dir_path)
+        mongo_run_cmd = MongoDbRunner._build_mongo_launch_cmd(MONGO_EXECUTABLE_PATH, db_dir_path)
         logger.info(f"Mongodb will be launched with command: f{' '.join(mongo_run_cmd)}.")
 
         mongo_log_path = os.path.join(self.logging_dir_path, MONGO_LOG_FILENAME)
@@ -50,13 +45,6 @@ class MongoDbRunner:
         with open(mongo_log_path, "w") as log:
             subprocess.Popen(mongo_run_cmd, stderr=subprocess.STDOUT, stdout=log)
         logger.info("MongoDb launched successfully!")
-
-    @staticmethod
-    def _get_path_of_mongo_exec():
-        if is_windows_os():
-            return MONGO_EXECUTABLE_PATH_WIN
-        else:
-            return MONGO_EXECUTABLE_PATH_LINUX
 
     @staticmethod
     def _build_mongo_launch_cmd(exec_path: str, db_path: str) -> List[str]:
