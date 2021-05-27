@@ -3,6 +3,7 @@ import os
 import subprocess
 from typing import List
 
+from monkey_island.cc.environment.utils import create_secure_directory
 from monkey_island.cc.server_utils.consts import MONGO_EXECUTABLE_PATH
 
 logger = logging.getLogger(__name__)
@@ -28,9 +29,7 @@ class MongoDbRunner:
     def _create_db_dir(self) -> str:
         db_path = os.path.join(self.db_dir_parent_path, DB_DIR_NAME)
         logger.info(f"Database content directory: {db_path}.")
-        if not os.path.isdir(db_path):
-            logger.info("Database content directory not found, creating one.")
-            os.mkdir(os.path.join(self.db_dir_parent_path, DB_DIR_NAME))
+        create_secure_directory(db_path)
         return db_path
 
     def _start_mongodb_process(self, db_dir_path: str):

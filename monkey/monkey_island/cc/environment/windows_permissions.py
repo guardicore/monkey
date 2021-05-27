@@ -1,10 +1,7 @@
-from monkey_island.cc.environment.utils import is_windows_os
-
-if is_windows_os():
-    import ntsecuritycon
-    import win32api
-    import win32con
-    import win32security
+import ntsecuritycon
+import win32api
+import win32con
+import win32security
 
 
 def set_full_folder_access(folder_path: str) -> None:
