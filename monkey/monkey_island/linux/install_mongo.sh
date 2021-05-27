@@ -58,7 +58,6 @@ popd || {
 }
 
 mkdir -p "${MONGODB_DIR}"/bin
-mkdir -p "${MONGODB_DIR}"/db
 cp "${TEMP_MONGO}"/mongodb-*/bin/mongod "${MONGODB_DIR}"/bin/mongod
 cp "${TEMP_MONGO}"/mongodb-*/LICENSE-Community.txt "${MONGODB_DIR}"/
 chmod a+x "${MONGODB_DIR}"/bin/mongod

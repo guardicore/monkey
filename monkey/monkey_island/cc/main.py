@@ -9,6 +9,7 @@ from threading import Thread
 # "monkey_island." work.
 from gevent.pywsgi import WSGIServer
 
+from monkey_island.cc.setup.database_initializer import init_collections
 from monkey_island.setup.island_config_options import IslandConfigOptions
 
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
@@ -24,13 +25,13 @@ from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.database import get_db_version  # noqa: E402
 from monkey_island.cc.database import is_db_server_up  # noqa: E402
-from monkey_island.cc.mongo_setup import init_collections, launch_mongodb  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
+from monkey_island.cc.setup.mongo_process_runner import MongoDbRunner  # noqa: E402
 
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
@@ -51,7 +52,9 @@ def main(setup_only: bool, config_options: IslandConfigOptions):
 
 def start_island_server(should_setup_only, config_options: IslandConfigOptions):
     if config_options.start_mongodb:
-        launch_mongodb()
+        MongoDbRunner(
+            db_dir_parent_path=config_options.data_dir, logging_dir_path=config_options.data_dir
+        ).launch_mongodb()
     mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     wait_for_mongo_db_server(mongo_url)
     assert_mongo_db_version(mongo_url)

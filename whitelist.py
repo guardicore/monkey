@@ -166,6 +166,8 @@ IBM  # unused variable (monkey/common/cloud/environment_names.py:11)
 DigitalOcean  # unused variable (monkey/common/cloud/environment_names.py:12)
 _.aws_info  # unused attribute (monkey/monkey_island/cc/environment/aws.py:13)
 build_from_config_file_contents  # unused method 'build_from_config_file_contents' (\monkey_island\setup\island_config_options.py:18)
+fake_db_dir  # unused function 'fake_db_dir' (monkey/tests/unit_tests/monkey_island/cc/setup/test_process_runner.py:10)
+
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)

@@ -9,17 +9,12 @@ from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterfa
 logger = logging.getLogger(__name__)
 
 
-def launch_mongodb():
-    # TODO: Implement the launch of mongodb process
-    pass
-
-
 def init_collections():
     logger.info("Setting up the Monkey Island, this might take a while...")
-    try_store_mitigations_on_mongo()
+    _try_store_mitigations_on_mongo()
 
 
-def try_store_mitigations_on_mongo():
+def _try_store_mitigations_on_mongo():
     mitigation_collection_name = AttackMitigations.COLLECTION_NAME
     try:
         mongo.db.validate_collection(mitigation_collection_name)
@@ -33,10 +28,10 @@ def try_store_mitigations_on_mongo():
         except errors.CollectionInvalid:
             pass
         finally:
-            store_mitigations_on_mongo()
+            _store_mitigations_on_mongo()
 
 
-def store_mitigations_on_mongo():
+def _store_mitigations_on_mongo():
     stix2_mitigations = MitreApiInterface.get_all_mitigations()
     mongo_mitigations = AttackMitigations.dict_from_stix2_attack_patterns(
         MitreApiInterface.get_all_attack_techniques()

@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improved the structure of unit tests by scoping fixtures only to relevant modules
   instead of having a one huge fixture file, improved and renamed the directory
   structure of unit tests and unit test infrastructure. #1178
+- MongoDb now gets launched by the Island via python. #1148
 - Create/check data directory on Island init. #1170
 
 ### Removed

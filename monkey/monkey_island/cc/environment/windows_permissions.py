@@ -1,13 +1,10 @@
-from monkey_island.cc.environment.utils import is_windows_os
-
-if is_windows_os():
-    import ntsecuritycon
-    import win32api
-    import win32con
-    import win32security
+import ntsecuritycon
+import win32api
+import win32con
+import win32security
 
 
-def set_full_folder_access(folder_path: str) -> None:
+def set_perms_to_owner_only(folder_path: str) -> None:
     user = get_user_pySID_object()
 
     security_descriptor = win32security.GetFileSecurity(
