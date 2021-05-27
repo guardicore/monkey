@@ -4,7 +4,7 @@ import win32con
 import win32security
 
 
-def set_full_folder_access(folder_path: str) -> None:
+def set_perms_to_owner_only(folder_path: str) -> None:
     user = get_user_pySID_object()
 
     security_descriptor = win32security.GetFileSecurity(

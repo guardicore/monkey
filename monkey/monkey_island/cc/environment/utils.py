@@ -8,11 +8,9 @@ def is_windows_os() -> bool:
 
 
 if is_windows_os():
-    from monkey_island.cc.environment.windows_permissions import (  # noqa: E402
-        set_full_folder_access,
-    )
+    import monkey_island.cc.environment.windows_permissions as windows_permissions
 else:
-    from monkey_island.cc.environment.linux_permissions import set_perms_to_owner_only  # noqa: E402
+    import monkey_island.cc.environment.linux_permissions as linux_permissions  # noqa: E402
 
 LOG = logging.getLogger(__name__)
 
@@ -31,7 +29,7 @@ def create_directory(path: str, create_parent_dirs: bool):
             os.mkdir(path)
     except Exception as ex:
         LOG.error(
-            f'Could not create a directory at "{path}" (maybe `$HOME` could not be '
+            f'Could not create a directory at "{path}" (maybe environmental variables could not be '
             f"resolved?): {str(ex)}"
         )
         raise ex
@@ -40,9 +38,9 @@ def create_directory(path: str, create_parent_dirs: bool):
 def set_secure_permissions(dir_path: str):
     try:
         if is_windows_os():
-            set_full_folder_access(folder_path=dir_path)
+            windows_permissions.set_perms_to_owner_only(folder_path=dir_path)
         else:
-            set_perms_to_owner_only(path=dir_path)
+            linux_permissions.set_perms_to_owner_only(path=dir_path)
     except Exception as ex:
-        LOG.error(f"Permissions could not be " f"set successfully for {dir_path}: {str(ex)}")
+        LOG.error(f"Permissions could not be set successfully for {dir_path}: {str(ex)}")
         raise ex
