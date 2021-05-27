@@ -29,17 +29,17 @@ class MongoDbRunner:
     def _create_db_dir(self) -> str:
         db_path = os.path.join(self.db_dir_parent_path, DB_DIR_NAME)
         logger.info(f"Database content directory: {db_path}.")
-        create_secure_directory(db_path)
+        create_secure_directory(db_path, create_parent_dirs=False)
         return db_path
 
     def _start_mongodb_process(self, db_dir_path: str):
         logger.info("Starting MongoDb process.")
 
         mongo_run_cmd = MongoDbRunner._build_mongo_launch_cmd(MONGO_EXECUTABLE_PATH, db_dir_path)
-        logger.info(f"Mongodb will be launched with command: f{' '.join(mongo_run_cmd)}.")
+        logger.info(f"Mongodb will be launched with command: {' '.join(mongo_run_cmd)}.")
 
         mongo_log_path = os.path.join(self.logging_dir_path, MONGO_LOG_FILENAME)
-        logger.info(f"Mongodb log will be available at f{mongo_log_path}.")
+        logger.info(f"Mongodb log will be available at {mongo_log_path}.")
 
         with open(mongo_log_path, "w") as log:
             subprocess.Popen(mongo_run_cmd, stderr=subprocess.STDOUT, stdout=log)
