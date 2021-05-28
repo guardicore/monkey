@@ -14,6 +14,7 @@ import InternalConfig from '../configuration-components/InternalConfig';
 import UnsafeOptionsConfirmationModal from '../configuration-components/UnsafeOptionsConfirmationModal.js';
 import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
+import ConfigExportModal from '../configuration-components/ExportConfigModal';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -40,7 +41,8 @@ class ConfigurePageComponent extends AuthComponent {
       selectedSection: 'attack',
       showAttackAlert: false,
       showUnsafeOptionsConfirmation: false,
-      showUnsafeAttackOptionsWarning: false
+      showUnsafeAttackOptionsWarning: false,
+      showConfigExportModal: false
     };
   }
 
@@ -219,6 +221,14 @@ class ConfigurePageComponent extends AuthComponent {
     }
     this.setState({configuration: newConfig, lastAction: 'none'});
   };
+
+  renderConfigExportModal = () => {
+    return (<ConfigExportModal show={this.state.showConfigExportModal}
+                               onClick={this.onExport} />)}
+
+  onExport = () => {
+    this.setState({showConfigExportModal: false})
+  }
 
   renderAttackAlertModal = () => {
     return (<Modal show={this.state.showAttackAlert} onHide={() => {
@@ -488,6 +498,7 @@ class ConfigurePageComponent extends AuthComponent {
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
            className={'main'}>
+        {this.renderConfigExportModal()}
         {this.renderAttackAlertModal()}
         {this.renderUnsafeOptionsConfirmationModal()}
         {this.renderUnsafeAttackOptionsWarningModal()}
@@ -509,7 +520,9 @@ class ConfigurePageComponent extends AuthComponent {
           </button>
           <input id='uploadInputInternal' type='file' accept='.conf' onChange={this.importConfig}
                  style={{display: 'none'}}/>
-          <button type='button' onClick={this.exportConfig} className='btn btn-info btn-lg' style={{margin: '5px'}}>
+          <button type='button'
+                  onClick={() => {this.setState({showConfigExportModal: true})}}
+                  className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Export config
           </button>
         </div>
