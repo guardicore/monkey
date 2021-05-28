@@ -358,6 +358,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.authFetch(apiEndpoint, request_options);
   }
 
+  // TODO remove after import implementation
   setConfigOnImport = (event) => {
     try {
       var newConfig = JSON.parse(event.target.result);
@@ -377,6 +378,7 @@ class ConfigurePageComponent extends AuthComponent {
     );
   }
 
+  // TODO remove after import implementation
   setConfigFromImportCandidate(){
     this.setState({
       configuration: this.state.importCandidateConfig,
@@ -388,6 +390,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.currentFormData = {};
   }
 
+  // TODO remove after export implementation
   exportConfig = () => {
     this.updateConfigSection();
     const configAsJson = JSON.stringify(this.state.configuration, null, 2);
@@ -415,6 +418,7 @@ class ConfigurePageComponent extends AuthComponent {
       }));
   }
 
+  // TODO remove after import implementation
   importConfig = (event) => {
     let reader = new FileReader();
     reader.onload = this.setConfigOnImport;
