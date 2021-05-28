@@ -4,6 +4,7 @@ import monkey_island.setup.gevent_setup  # noqa: F401 isort:skip
 import json
 
 from monkey_island.cc.arg_parser import parse_cli_args
+from monkey_island.cc.server_setup import setup_island
 from monkey_island.cc.server_utils.island_logger import setup_logging
 from monkey_island.setup.config_setup import setup_config_by_cmd_arg, setup_default_config
 
@@ -27,11 +28,5 @@ if "__main__" == __name__:
     except json.JSONDecodeError as ex:
         print(f"Error loading server config: {ex}")
         exit(1)
-
-    # We need to initialize environment singleton before importing main,
-    # because main imports modules from monkey_island/cc/models and models need a connection to the
-    # mongodb. Mongodb connection parameters are initialized in environment singleton.
-
-    from monkey_island.cc.server_setup import setup_island  # noqa: E402
 
     setup_island(island_args.setup_only, config, server_config_path)
