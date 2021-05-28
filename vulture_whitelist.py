@@ -188,7 +188,7 @@ delete_logs  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:85)
 MongoQueryJSONEncoder  # unused class (envs/monkey_zoo/blackbox/utils/json_encoder.py:6)
 
 
-# exists in common/, monkey_island/, or infection_monkey/, but is used in tests/unit_tests/
+# exists in common/, monkey_island/, or infection_monkey/, but is used in tests/unit_tests/ which is skipped by Vulture
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
 SomeDummyPlugin  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/BadImport.py:4)
