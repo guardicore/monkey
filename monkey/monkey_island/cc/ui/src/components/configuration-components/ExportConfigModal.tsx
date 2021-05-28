@@ -33,6 +33,9 @@ const ConfigExportModal = (props: Props) => {
         })
       }
     )
+    .then(res => {
+      console.log(res.json());
+    })
   }
 
   return (
