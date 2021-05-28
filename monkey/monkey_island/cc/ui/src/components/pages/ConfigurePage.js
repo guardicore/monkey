@@ -15,6 +15,7 @@ import UnsafeOptionsConfirmationModal from '../configuration-components/UnsafeOp
 import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
+import ConfigImportModal from '../configuration-components/ImportConfigModal';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -42,7 +43,8 @@ class ConfigurePageComponent extends AuthComponent {
       showAttackAlert: false,
       showUnsafeOptionsConfirmation: false,
       showUnsafeAttackOptionsWarning: false,
-      showConfigExportModal: false
+      showConfigExportModal: false,
+      showConfigImportModal: false
     };
   }
 
@@ -228,6 +230,14 @@ class ConfigurePageComponent extends AuthComponent {
 
   onExport = () => {
     this.setState({showConfigExportModal: false})
+  }
+
+  renderConfigImportModal = () => {
+    return (<ConfigImportModal show={this.state.showConfigImportModal}
+                               onClick={this.onImport} />)}
+
+  onImport = () => {
+    this.setState({showConfigImportModal: false})
   }
 
   renderAttackAlertModal = () => {
@@ -499,6 +509,7 @@ class ConfigurePageComponent extends AuthComponent {
            lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
            className={'main'}>
         {this.renderConfigExportModal()}
+        {this.renderConfigImportModal()}
         {this.renderAttackAlertModal()}
         {this.renderUnsafeOptionsConfirmationModal()}
         {this.renderUnsafeAttackOptionsWarningModal()}
@@ -514,12 +525,10 @@ class ConfigurePageComponent extends AuthComponent {
           </button>
         </div>
         <div className='text-center'>
-          <button onClick={() => document.getElementById('uploadInputInternal').click()}
+          <button onClick={()=> {this.setState({showConfigImportModal: true})}}
                   className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Import config
           </button>
-          <input id='uploadInputInternal' type='file' accept='.conf' onChange={this.importConfig}
-                 style={{display: 'none'}}/>
           <button type='button'
                   onClick={() => {this.setState({showConfigExportModal: true})}}
                   className='btn btn-info btn-lg' style={{margin: '5px'}}>
