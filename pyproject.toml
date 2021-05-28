@@ -23,5 +23,5 @@ addopts = "-v --capture=sys tests"
 norecursedirs = "node_modules dist"
 
 [tool.vulture]
-exclude = ["monkey/monkey_island/cc/ui"]
+exclude = ["monkey/monkey_island/cc/ui/", "monkey/tests/unit_tests/"]
 paths = ["."]
