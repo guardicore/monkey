@@ -186,3 +186,20 @@ _.get_wmi_info  # unused method (monkey/infection_monkey/system_info/windows_inf
 LOG_DIR_NAME  # unused variable (envs/monkey_zoo/blackbox/log_handlers/test_logs_handler.py:8)
 delete_logs  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:85)
 MongoQueryJSONEncoder  # unused class (envs/monkey_zoo/blackbox/utils/json_encoder.py:6)
+
+
+# exists in common/, monkey_island/, or infection_monkey/, but is used in tests/unit_tests/
+_.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
+_.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
+SomeDummyPlugin  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/BadImport.py:4)
+BadPluginInit  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/BadInit.py:4)
+BadInit  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/ComboFile.py:4)
+ProperClass  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/ComboFile.py:9)
+PluginWorking  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/PluginWorking.py:4)
+environment  # unused variable (monkey/monkey_island/cc/models/monkey.py:59)
+_.environment  # unused attribute (monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/environment.py:10)
+ISLAND  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:14)
+MONKEY_LINUX_RUNNING  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:26)
+RAW_SCOUTSUITE_DATA  # unused variable (monkey/monkey_island/cc/services/zero_trust/test_common/raw_scoutsute_data.py:3)
+save_example_findings  # unused function (monkey/monkey_island/cc/services/zero_trust/zero_trust_report/test_common/example_finding_data.py:8)
+data_for_tests_dir  # unused function (monkey/tests/conftest.py:11)
