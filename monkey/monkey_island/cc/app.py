@@ -42,6 +42,7 @@ from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.T1216_pba_file_download import T1216PBAFileDownload
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
+from monkey_island.cc.resources.temp_configuration import TempConfiguration
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
 from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
@@ -118,6 +119,9 @@ def init_app_url_rules(app):
 
 
 def init_api_resources(api):
+    # TODO hook up to a proper endpoint
+    api.add_resource(TempConfiguration, "/api/temp_configuration")
+
     api.add_resource(Root, "/api")
     api.add_resource(Registration, "/api/registration")
     api.add_resource(Authenticate, "/api/auth")
