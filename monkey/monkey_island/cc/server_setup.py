@@ -1,66 +1,55 @@
 import logging
 import os
 import sys
-import time
 from pathlib import Path
 from threading import Thread
 
-# Add the monkey_island directory to the path, to make sure imports that don't start with
-# "monkey_island." work.
 from gevent.pywsgi import WSGIServer
 
-from monkey_island.cc.setup.database_initializer import init_collections
-from monkey_island.setup.island_config_options import IslandConfigOptions
-
+# Add the monkey_island directory to the path, to make sure imports that don't start with
+# "monkey_island." work.
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH  # noqa: E402
-
-logger = logging.getLogger(__name__)
-
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
-from monkey_island.cc.database import get_db_version  # noqa: E402
-from monkey_island.cc.database import is_db_server_up  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH  # noqa: E402
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
-from monkey_island.cc.setup.mongo_process_runner import MongoDbRunner  # noqa: E402
+from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
+from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL, setup_mongodb  # noqa: E402
+from monkey_island.setup.island_config_options import IslandConfigOptions  # noqa: E402
 
-MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
+logger = logging.getLogger(__name__)
 
 
-def main(setup_only: bool, config_options: IslandConfigOptions):
+def setup_island(setup_only: bool, config_options: IslandConfigOptions, server_config_path: str):
+    env_singleton.initialize_from_file(server_config_path)
+
     initialize_encryptor(config_options.data_dir)
     initialize_services(config_options.data_dir)
 
-    mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
     bootloader_server_thread = Thread(
-        target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True
+        target=BootloaderHttpServer(MONGO_URL).serve_forever, daemon=True
     )
 
     bootloader_server_thread.start()
-    start_island_server(setup_only, config_options)
+    _start_island_server(setup_only, config_options)
     bootloader_server_thread.join()
 
 
-def start_island_server(should_setup_only, config_options: IslandConfigOptions):
-    if config_options.start_mongodb:
-        MongoDbRunner(
-            db_dir_parent_path=config_options.data_dir, logging_dir_path=config_options.data_dir
-        ).launch_mongodb()
-    mongo_url = os.environ.get("MONGO_URL", env_singleton.env.get_mongo_url())
-    wait_for_mongo_db_server(mongo_url)
-    assert_mongo_db_version(mongo_url)
+def _start_island_server(should_setup_only, config_options: IslandConfigOptions):
+
+    setup_mongodb(config_options)
 
     populate_exporter_list()
-    app = init_app(mongo_url)
+    app = init_app(MONGO_URL)
 
     crt_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
     key_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
@@ -80,11 +69,11 @@ def start_island_server(should_setup_only, config_options: IslandConfigOptions):
             certfile=os.environ.get("SERVER_CRT", crt_path),
             keyfile=os.environ.get("SERVER_KEY", key_path),
         )
-        log_init_info()
+        _log_init_info()
         http_server.serve_forever()
 
 
-def log_init_info():
+def _log_init_info():
     logger.info("Monkey Island Server is running!")
     logger.info(f"version: {get_version()}")
     logger.info(
@@ -98,28 +87,3 @@ def log_init_info():
         )
     )
     MonkeyDownload.log_executable_hashes()
-
-
-def wait_for_mongo_db_server(mongo_url):
-    while not is_db_server_up(mongo_url):
-        logger.info("Waiting for MongoDB server on {0}".format(mongo_url))
-        time.sleep(1)
-
-
-def assert_mongo_db_version(mongo_url):
-    """
-    Checks if the mongodb version is new enough for running the app.
-    If the DB is too old, quits.
-    :param mongo_url: URL to the mongo the Island will use
-    """
-    required_version = tuple(MINIMUM_MONGO_DB_VERSION_REQUIRED.split("."))
-    server_version = get_db_version(mongo_url)
-    if server_version < required_version:
-        logger.error(
-            "Mongo DB version too old. {0} is required, but got {1}".format(
-                str(required_version), str(server_version)
-            )
-        )
-        sys.exit(-1)
-    else:
-        logger.info("Mongo DB version OK. Got {0}".format(str(server_version)))
