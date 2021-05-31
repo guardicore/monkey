@@ -1,6 +1,7 @@
 import {Button, Modal, Form} from 'react-bootstrap';
 import React, {useState} from 'react';
 
+import FileSaver from 'file-saver';
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/configuration-components/ExportConfigModal.scss';
 
@@ -33,8 +34,12 @@ const ConfigExportModal = (props: Props) => {
         })
       }
     )
-    .then(res => {
-      console.log(res.json());
+    .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        const configAsBinary = new Blob([res['encrypted_config']]);
+
+        FileSaver.saveAs(configAsBinary, 'monkey.conf');
     })
   }
 

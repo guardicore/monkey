@@ -4,18 +4,18 @@ from typing import Dict
 
 import pyAesCrypt
 
+# TODO use from pyAesCrypt
 BUFFER_SIZE = 64 * 1024
 
 
-def encrypt_config(config: Dict, password: str) -> bytes:
+def encrypt_config(config: Dict, password: str) -> str:
     plaintext_config_stream = io.BytesIO(json.dumps(config).encode())
     ciphertext_config_stream = io.BytesIO()
 
     pyAesCrypt.encryptStream(
         plaintext_config_stream, ciphertext_config_stream, password, BUFFER_SIZE
     )
-
-    ciphertext_config_bytes = ciphertext_config_stream.getvalue()
+    ciphertext_config_bytes = str(ciphertext_config_stream.getvalue())
     return ciphertext_config_bytes
 
 
