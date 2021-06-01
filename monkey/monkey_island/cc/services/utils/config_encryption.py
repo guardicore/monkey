@@ -1,3 +1,4 @@
+import base64
 import io
 import json
 from typing import Dict
@@ -17,15 +18,18 @@ def encrypt_config(config: Dict, password: str) -> str:
         plaintext_config_stream, ciphertext_config_stream, password, BUFFER_SIZE
     )
 
-    ciphertext_config_bytes = str(ciphertext_config_stream.getvalue())
-    return ciphertext_config_bytes
+    ciphertext_b64 = base64.b64encode(ciphertext_config_stream.getvalue())
+
+    return str(ciphertext_b64)
 
 
-def decrypt_config(enc_config: bytes, password: str) -> Dict:
+def decrypt_config(cyphertext: str, password: str) -> Dict:
     if not password:
         raise NoCredentialsError
 
-    ciphertext_config_stream = io.BytesIO(enc_config)
+    cyphertext = base64.b64decode(cyphertext)
+
+    ciphertext_config_stream = io.BytesIO(cyphertext)
     dec_plaintext_config_stream = io.BytesIO()
 
     len_ciphertext_config_stream = len(ciphertext_config_stream.getvalue())

@@ -4,11 +4,10 @@ from dataclasses import dataclass
 import flask_restful
 from flask import request
 
-from common.utils.exceptions import (
-    InvalidConfigurationError,
-    # InvalidCredentialsError,
-    NoCredentialsError,
+from common.utils.exceptions import (  # InvalidCredentialsError,
     FailedDecryption,
+    InvalidConfigurationError,
+    NoCredentialsError,
 )
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.utils.config_encryption import decrypt_config
@@ -32,7 +31,7 @@ class TempConfiguration(flask_restful.Resource):
     def post(self):
         request_contents = json.loads(request.data)
         try:
-            decrypt_config(request_contents["encrypted_config"], request_contents["password"])
+            decrypt_config(request_contents["config"], request_contents["password"])
             self.import_config()
             return ResponseContents().form_response()
         # except InvalidCredentialsError:
