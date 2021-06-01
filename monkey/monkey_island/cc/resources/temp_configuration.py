@@ -6,10 +6,12 @@ from flask import request
 
 from common.utils.exceptions import (
     InvalidConfigurationError,
-    InvalidCredentialsError,
+    # InvalidCredentialsError,
     NoCredentialsError,
+    FailedDecryption,
 )
 from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.services.utils.config_encryption import decrypt_config
 
 
 @dataclass
@@ -30,12 +32,19 @@ class TempConfiguration(flask_restful.Resource):
     def post(self):
         request_contents = json.loads(request.data)
         try:
-            self.decrypt(request_contents["password"])
+            decrypt_config(request_contents["encrypted_config"], request_contents["password"])
             self.import_config()
             return ResponseContents().form_response()
-        except InvalidCredentialsError:
+        # except InvalidCredentialsError:
+        #     return ResponseContents(
+        #         import_status="wrong_password", message="Wrong password supplied", status_code=403
+        #     ).form_response()
+        except FailedDecryption as ex:
             return ResponseContents(
-                import_status="wrong_password", message="Wrong password supplied", status_code=403
+                import_status="decryption_failure",
+                message="Decryptioon of configuration failed. Error thrown during decryption: "
+                + f"{str(ex)}",
+                status_code=403,
             ).form_response()
         except InvalidConfigurationError:
             return ResponseContents(
@@ -52,12 +61,12 @@ class TempConfiguration(flask_restful.Resource):
                 status_code=403,
             ).form_response()
 
-    def decrypt(self, password=""):
-        if not password:
-            raise NoCredentialsError
-        if not password == "abc":
-            raise InvalidCredentialsError
-        return False
+    # def decrypt(self, password=""):
+    #     if not password:
+    #         raise NoCredentialsError
+    #     if not password == "abc":
+    #         raise InvalidCredentialsError
+    #     return False
 
     def import_config(self):
         return True
