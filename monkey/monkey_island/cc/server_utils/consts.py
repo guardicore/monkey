@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from monkey_island.cc.environment.utils import is_windows_os
 
@@ -14,7 +15,7 @@ def get_default_data_dir() -> str:
 
 SERVER_CONFIG_FILENAME = "server_config.json"
 
-MONKEY_ISLAND_ABS_PATH = os.path.join(os.getcwd(), "monkey_island")
+MONKEY_ISLAND_ABS_PATH = str(Path(__file__).resolve().parent.parent.parent)
 
 DEFAULT_DATA_DIR = os.path.expandvars(get_default_data_dir())
 
