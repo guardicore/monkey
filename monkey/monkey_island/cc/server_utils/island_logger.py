@@ -1,38 +1,15 @@
-import logging.config
+import logging
+import logging.handlers
 import os
-from copy import deepcopy
+import sys
 
 ISLAND_LOG_FILENAME = "monkey_island.log"
-
-LOGGER_CONFIG_DICT = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "simple": {
-            "format": "%(asctime)s - %(filename)s:%(lineno)s - "
-            + "%(funcName)10s() - %(levelname)s - %(message)s"
-        }
-    },
-    "handlers": {
-        "console_handler": {
-            "class": "logging.StreamHandler",
-            "formatter": "simple",
-            "stream": "ext://sys.stdout",
-        },
-        "file_handler": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "formatter": "simple",
-            "filename": None,  # set in setup_logging()
-            "maxBytes": 10485760,
-            "backupCount": 20,
-            "encoding": "utf8",
-        },
-    },
-    "root": {
-        "level": None,  # set in setup_logging()
-        "handlers": ["console_handler", "file_handler"],
-    },
-}
+LOG_FORMAT = (
+    "%(asctime)s - %(filename)s:%(lineno)s - %(funcName)10s() - %(levelname)s - %(message)s"
+)
+FILE_MAX_BYTES = 10485760
+FILE_BACKUP_COUNT = 20
+FILE_ENCODING = "utf8"
 
 
 def setup_logging(data_dir_path, log_level):
@@ -42,12 +19,32 @@ def setup_logging(data_dir_path, log_level):
     :param log_level: level to log from
     :return:
     """
+    logger = logging.getLogger()
+    logger.setLevel(log_level.upper())
 
-    logger_configuration = deepcopy(LOGGER_CONFIG_DICT)
+    formatter = _get_log_formatter()
 
-    logger_configuration["handlers"]["file_handler"]["filename"] = os.path.join(
-        data_dir_path, ISLAND_LOG_FILENAME
+    log_file_path = os.path.join(data_dir_path, ISLAND_LOG_FILENAME)
+    _add_file_handler(logger, formatter, log_file_path)
+
+    _add_console_handler(logger, formatter)
+
+
+def _get_log_formatter():
+    return logging.Formatter(LOG_FORMAT)
+
+
+def _add_file_handler(logger, formatter, file_path):
+    fh = logging.handlers.RotatingFileHandler(
+        file_path, maxBytes=FILE_MAX_BYTES, backupCount=FILE_BACKUP_COUNT, encoding=FILE_ENCODING
     )
-    logger_configuration["root"]["level"] = log_level.upper()
+    fh.setFormatter(formatter)
 
-    logging.config.dictConfig(logger_configuration)
+    logger.addHandler(fh)
+
+
+def _add_console_handler(logger, formatter):
+    ch = logging.StreamHandler(stream=sys.stdout)
+    ch.setFormatter(formatter)
+
+    logger.addHandler(ch)
