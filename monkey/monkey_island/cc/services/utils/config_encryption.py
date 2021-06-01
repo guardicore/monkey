@@ -15,6 +15,7 @@ def encrypt_config(config: Dict, password: str) -> str:
     pyAesCrypt.encryptStream(
         plaintext_config_stream, ciphertext_config_stream, password, BUFFER_SIZE
     )
+
     ciphertext_config_bytes = str(ciphertext_config_stream.getvalue())
     return ciphertext_config_bytes
 

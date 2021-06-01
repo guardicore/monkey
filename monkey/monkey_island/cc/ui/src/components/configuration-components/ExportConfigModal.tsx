@@ -35,11 +35,17 @@ const ConfigExportModal = (props: Props) => {
       }
     )
     .then(res => res.json())
-      .then(res => {
-        console.log(res);
-        const configAsBinary = new Blob([res['encrypted_config']]);
-
+    .then(res => {
+      let configToExport = res['to_export'];
+      if (res['is_plaintext'] === true) {
+        const configAsBinary = new Blob([configToExport], {type: 'text/plain;charset=utf-8'});
         FileSaver.saveAs(configAsBinary, 'monkey.conf');
+      }
+      else {
+        const configAsBinary = new Blob([configToExport.slice(2, -1)]);
+        FileSaver.saveAs(configAsBinary, 'monkey.conf');
+
+      }
     })
   }
 
