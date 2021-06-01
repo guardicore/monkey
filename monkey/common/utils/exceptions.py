@@ -55,12 +55,16 @@ class DomainControllerNameFetchError(FailedExploitationError):
 
 
 class InvalidCredentialsError(Exception):
-    """ Raise when credentials supplied are invalid"""
+    """ Raise when credentials supplied are invalid """
 
 
 class NoCredentialsError(Exception):
-    """ Raise when no credentials have been supplied"""
+    """ Raise when no credentials have been supplied """
 
 
 class InvalidConfigurationError(Exception):
     """ Raise when configuration is invalid """
+
+
+class FailedDecryption(Exception):
+    """ Raise when any kind of decryption fails """
