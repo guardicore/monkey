@@ -1,44 +1,24 @@
-import {Button, Modal, Form} from 'react-bootstrap';
+import {Button, Modal, Form, Alert} from 'react-bootstrap';
 import React, {useEffect, useState} from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-
 
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/configuration-components/ImportConfigModal.scss';
-import {faCheck, faCross} from '@fortawesome/free-solid-svg-icons';
+import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 
 type Props = {
   show: boolean,
-  onClick: () => void
+  onClose: (importSuccessful: boolean) => void
 }
 
 
-const UploadStatuses = {
-  clean: 'clean',
-  success: 'success',
-  error: 'error'
-}
-
-
-const UploadStatusIcon = (props: { status: string }) => {
-  switch (props.status) {
-    case UploadStatuses.success:
-      return (<FontAwesomeIcon icon={faCheck} className={'success'}/>);
-    case UploadStatuses.error:
-      return (<FontAwesomeIcon icon={faCross} className={'error'}/>);
-    default:
-      return null;
-  }
-}
-
-// TODO add types
 const ConfigImportModal = (props: Props) => {
   // TODO implement the back end
   const configImportEndpoint = '/api/temp_configuration';
 
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
-  const [importDisabled, setImportDisabled] = useState(true);
   const [configContents, setConfigContents] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -52,8 +32,8 @@ const ConfigImportModal = (props: Props) => {
   }, [configContents])
 
 
-  function sendConfigToServer() {
-    authComponent.authFetch(configImportEndpoint,
+  function sendConfigToServer(): Promise<string> {
+    return authComponent.authFetch(configImportEndpoint,
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -75,12 +55,22 @@ const ConfigImportModal = (props: Props) => {
         } else {
           setUploadStatus(UploadStatuses.success);
         }
-        if (res.status == 200) {
-          setImportDisabled(false);
-        }
+        console.log(res['import_status']);
+        return res['import_status'];
       })
   }
 
+  function isImportDisabled(): boolean {
+    return uploadStatus !== UploadStatuses.success
+  }
+
+  function resetState() {
+    setUploadStatus(UploadStatuses.clean);
+    setPassword('');
+    setConfigContents('');
+    setErrorMessage('');
+    setShowPassword(false);
+  }
 
   function uploadFile(event) {
     let reader = new FileReader();
@@ -88,38 +78,51 @@ const ConfigImportModal = (props: Props) => {
       setConfigContents(JSON.stringify(event.target.result))
     };
     reader.readAsText(event.target.files[0]);
-    event.target.value = null;
+
   }
 
   function onImportClick() {
+    sendConfigToServer().then((importStatus) => {
+      if(importStatus === 'imported'){
+        resetState();
+        props.onClose(true);
+      }
+    });
   }
 
   return (
     <Modal show={props.show}
-           onHide={props.onClick}
+           onHide={()=> {resetState(); props.onClose(false)}}
            size={'lg'}
-           className={'config-export-modal'}>
+           className={'config-import-modal'}>
       <Modal.Header closeButton>
         <Modal.Title>Configuration import</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div key={'config-export-option'}
-             className={`mb-3 export-type-radio-buttons`}>
+        <div className={`mb-3 config-import-option`}>
           <Form>
             <Form.File id='exampleFormControlFile1'
                        label='Please choose a configuration file'
                        accept='.conf'
-                       onChange={uploadFile}/>
+                       onChange={uploadFile}
+                        className={'file-input'}/>
             <UploadStatusIcon status={uploadStatus}/>
-            {showPassword && <PasswordInput onChange={setPassword} />}
-          </Form>
 
+            {showPassword && <PasswordInput onChange={setPassword} />}
+
+            { errorMessage &&
+              <Alert variant={'danger'} className={'import-error'}>
+                <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
+                {errorMessage}
+              </Alert>
+            }
+          </Form>
         </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant={'info'}
                 onClick={onImportClick}
-                disabled={importDisabled}>
+                disabled={isImportDisabled()}>
           Import
         </Button>
       </Modal.Footer>
@@ -130,8 +133,8 @@ const PasswordInput = (props: {
   onChange: (passValue) => void,
 }) => {
   return (
-    <div className={'config-export-password-input'}>
-      <p>Encrypt with a password:</p>
+    <div className={'config-import-password-input'}>
+      <p>File is protected. Enter password:</p>
       <Form.Control type='password'
                     placeholder='Password'
                     onChange={evt => (props.onChange(evt.target.value))}/>
