@@ -12,7 +12,6 @@ type Props = {
 }
 
 const ConfigExportModal = (props: Props) => {
-  // TODO implement the back end
   const configExportEndpoint = '/api/configuration/export';
 
   const [pass, setPass] = useState('');
@@ -34,20 +33,19 @@ const ConfigExportModal = (props: Props) => {
         })
       }
     )
-    .then(res => res.json())
-    .then(res => {
-      let configToExport = res['to_export'];
-      if (res['is_plaintext'] === true) {
-        const configAsBinary = new Blob([JSON.stringify(configToExport, null, 2)],
-                                        {type: 'text/plain;charset=utf-8'});
-        FileSaver.saveAs(configAsBinary, 'monkey.conf');
-      }
-      else {
-        const configAsBinary = new Blob([configToExport.slice(2, -1)]);
-        FileSaver.saveAs(configAsBinary, 'monkey.conf');
-
-      }
-    })
+      .then(res => res.json())
+      .then(res => {
+        let configToExport = res['config_export'];
+        if (res['encrypted']) {
+          configToExport = new Blob([configToExport]);
+        } else {
+          configToExport = new Blob(
+            [JSON.stringify(configToExport, null, 2)],
+            {type: 'text/plain;charset=utf-8'}
+            );
+        }
+        FileSaver.saveAs(configToExport, 'monkey.conf');
+      })
   }
 
   return (

@@ -20,7 +20,7 @@ def encrypt_config(config: Dict, password: str) -> str:
 
     ciphertext_b64 = base64.b64encode(ciphertext_config_stream.getvalue())
 
-    return str(ciphertext_b64)
+    return ciphertext_b64.decode()
 
 
 def decrypt_config(cyphertext: str, password: str) -> Dict:

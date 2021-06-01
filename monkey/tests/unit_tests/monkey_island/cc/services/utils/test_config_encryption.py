@@ -21,6 +21,6 @@ def plaintext_config(data_for_tests_dir):
 
 
 def test_encrypt_decrypt_config(plaintext_config):
-    encrypted_config = encrypt_config(plaintext_config, PASSWORD)  # str of the form: `b'a1b2c3'`
-    encrypted_config = encrypted_config[2:-1]  # so we slice it here
+    encrypted_config = encrypt_config(plaintext_config, PASSWORD)
+    encrypted_config = encrypted_config
     assert decrypt_config(encrypted_config, PASSWORD) == plaintext_config
