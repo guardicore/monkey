@@ -6,8 +6,7 @@ import pyAesCrypt
 
 from common.utils.exceptions import FailedDecryption, NoCredentialsError
 
-# TODO use from pyAesCrypt
-BUFFER_SIZE = 64 * 1024
+BUFFER_SIZE = pyAesCrypt.crypto.bufferSizeDef
 
 
 def encrypt_config(config: Dict, password: str) -> str:
