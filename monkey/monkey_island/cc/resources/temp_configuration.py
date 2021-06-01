@@ -1,6 +1,8 @@
+import json
 from dataclasses import dataclass
 
 import flask_restful
+from flask import request
 
 from common.utils.exceptions import (
     InvalidConfigurationError,
@@ -26,9 +28,9 @@ class TempConfiguration(flask_restful.Resource):
 
     @jwt_required
     def post(self):
-        # request_contents = json.loads(request.data)
+        request_contents = json.loads(request.data)
         try:
-            self.decrypt()
+            self.decrypt(request_contents["password"])
             self.import_config()
             return ResponseContents().form_response()
         except InvalidCredentialsError:
@@ -50,7 +52,11 @@ class TempConfiguration(flask_restful.Resource):
                 status_code=403,
             ).form_response()
 
-    def decrypt(self):
+    def decrypt(self, password=""):
+        if not password:
+            raise NoCredentialsError
+        if not password == "abc":
+            raise InvalidCredentialsError
         return False
 
     def import_config(self):
