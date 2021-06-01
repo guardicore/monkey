@@ -1,3 +1,5 @@
+import os
+
 from monkey_island.cc.server_utils.consts import (
     DEFAULT_DATA_DIR,
     DEFAULT_LOG_LEVEL,
@@ -37,3 +39,16 @@ def test_island_config_options__mongodb():
     assert options.start_mongodb == DEFAULT_START_MONGO_DB
     options = IslandConfigOptions(TEST_CONFIG_FILE_CONTENTS_NO_STARTMONGO)
     assert options.start_mongodb == DEFAULT_START_MONGO_DB
+
+
+def set_home_env(monkeypatch, tmpdir):
+    monkeypatch.setenv("HOME", str(tmpdir))
+
+
+def test_island_config_options__data_dir_expanduser(monkeypatch, tmpdir):
+    set_home_env(monkeypatch, tmpdir)
+    DATA_DIR_NAME = "test_data_dir"
+
+    options = IslandConfigOptions({"data_dir": f"~/{DATA_DIR_NAME}"})
+
+    assert options.data_dir == os.path.join(tmpdir, DATA_DIR_NAME)
