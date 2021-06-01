@@ -134,7 +134,7 @@ const PasswordInput = (props: {
 }) => {
   return (
     <div className={'config-import-password-input'}>
-      <p>File is protected. Enter password:</p>
+      <p>File is protected. Please enter the password:</p>
       <Form.Control type='password'
                     placeholder='Password'
                     onChange={evt => (props.onChange(evt.target.value))}/>
