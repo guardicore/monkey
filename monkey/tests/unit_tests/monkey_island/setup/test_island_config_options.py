@@ -52,3 +52,12 @@ def test_island_config_options__data_dir_expanduser(monkeypatch, tmpdir):
     options = IslandConfigOptions({"data_dir": f"~/{DATA_DIR_NAME}"})
 
     assert options.data_dir == os.path.join(tmpdir, DATA_DIR_NAME)
+
+
+def test_island_config_options__data_dir_expandvars(monkeypatch, tmpdir):
+    set_home_env(monkeypatch, tmpdir)
+    DATA_DIR_NAME = "test_data_dir"
+
+    options = IslandConfigOptions({"data_dir": f"$HOME/{DATA_DIR_NAME}"})
+
+    assert options.data_dir == os.path.join(tmpdir, DATA_DIR_NAME)
