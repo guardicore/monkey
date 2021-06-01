@@ -25,5 +25,5 @@ do
     fi
 done
 
-(PYTHONHOME="${APPDIR}/opt/python3.7" exec "/bin/bash" "${APPDIR}/usr/src/monkey_island/linux/run_appimage.sh")
+(PYTHONHOME="${APPDIR}/opt/python3.7" exec "${APPDIR}/opt/python3.7/bin/python3.7" "${APPDIR}/usr/src/monkey_island.py" $@)
 exit "$?"
