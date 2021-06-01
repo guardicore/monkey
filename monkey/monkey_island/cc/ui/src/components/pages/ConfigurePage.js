@@ -369,6 +369,11 @@ class ConfigurePageComponent extends AuthComponent {
     this.authFetch(apiEndpoint, request_options);
   }
 
+  exportConfig = () => {
+    this.updateConfigSection();
+    this.setState({showConfigExportModal: true});
+  };
+
   sendConfig() {
     return (
       this.authFetch('/api/configuration/island',
@@ -500,9 +505,7 @@ class ConfigurePageComponent extends AuthComponent {
             Import config
           </button>
           <button type='button'
-                  onClick={() => {
-                    this.setState({showConfigExportModal: true})
-                  }}
+                  onClick={this.exportConfig}
                   className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Export config
           </button>

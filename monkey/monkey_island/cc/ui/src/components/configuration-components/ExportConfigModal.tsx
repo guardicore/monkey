@@ -38,7 +38,8 @@ const ConfigExportModal = (props: Props) => {
     .then(res => {
       let configToExport = res['to_export'];
       if (res['is_plaintext'] === true) {
-        const configAsBinary = new Blob([configToExport], {type: 'text/plain;charset=utf-8'});
+        const configAsBinary = new Blob([JSON.stringify(configToExport, null, 2)],
+                                        {type: 'text/plain;charset=utf-8'});
         FileSaver.saveAs(configAsBinary, 'monkey.conf');
       }
       else {
