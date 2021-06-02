@@ -6,7 +6,7 @@ import time
 from monkey_island.cc.database import get_db_version, is_db_server_up
 from monkey_island.cc.setup.mongo import mongo_connector
 from monkey_island.cc.setup.mongo.mongo_connector import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
-from monkey_island.cc.setup.mongo.mongo_process_runner import MongoDbRunner
+from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
 from monkey_island.setup.island_config_options import IslandConfigOptions
 
 MONGO_URL = os.environ.get(
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 def start_mongodb(config_options: IslandConfigOptions):
     if config_options.start_mongodb:
-        MongoDbRunner(
+        MongoDbProcess(
             db_dir_parent_path=config_options.data_dir, logging_dir_path=config_options.data_dir
         ).launch_mongodb()
     wait_for_mongo_db_server(MONGO_URL)

@@ -13,7 +13,7 @@ DB_DIR_PARAM = "--dbpath"
 MONGO_LOG_FILENAME = "mongo_log.txt"
 
 
-class MongoDbRunner:
+class MongoDbProcess:
     def __init__(self, db_dir_parent_path: str, logging_dir_path: str):
         """
         @param db_dir_parent_path: Path where a folder for database contents will be created
@@ -35,7 +35,7 @@ class MongoDbRunner:
     def _start_mongodb_process(self, db_dir_path: str):
         logger.info("Starting MongoDb process.")
 
-        mongo_run_cmd = MongoDbRunner._build_mongo_launch_cmd(MONGO_EXECUTABLE_PATH, db_dir_path)
+        mongo_run_cmd = MongoDbProcess._build_mongo_launch_cmd(MONGO_EXECUTABLE_PATH, db_dir_path)
         logger.info(f"Mongodb will be launched with command: {' '.join(mongo_run_cmd)}.")
 
         mongo_log_path = os.path.join(self.logging_dir_path, MONGO_LOG_FILENAME)
