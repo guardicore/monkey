@@ -1,8 +1,10 @@
+import json
 import logging
 import os
 import sys
 from pathlib import Path
 from threading import Thread
+from typing import Tuple
 
 from gevent.pywsgi import WSGIServer
 
@@ -13,8 +15,10 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
+import monkey_island.setup.config_setup as config_setup  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
+from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
@@ -31,7 +35,6 @@ from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
     register_mongo_shutdown_callback,
     start_mongodb,
 )
-from monkey_island.setup.config_setup import setup_data_dir  # noqa: E402
 from monkey_island.setup.island_config_options import IslandConfigOptions  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -39,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 def run_monkey_island():
     island_args = parse_cli_args()
-    config_options, server_config_path = setup_data_dir(island_args)
+    config_options, server_config_path = _setup_data_dir(island_args)
 
     _configure_logging(config_options)
     _initialize_global_resources(config_options, server_config_path)
@@ -51,6 +54,17 @@ def run_monkey_island():
     connect_to_mongodb()
 
     _start_island_server(island_args.setup_only, config_options)
+
+
+def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, str]:
+    try:
+        return config_setup.setup_data_dir(island_args)
+    except OSError as ex:
+        print(f"Error opening server config file: {ex}")
+        exit(1)
+    except json.JSONDecodeError as ex:
+        print(f"Error loading server config: {ex}")
+        exit(1)
 
 
 def _configure_logging(config_options):

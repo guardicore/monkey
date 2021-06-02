@@ -8,7 +8,7 @@ from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR, DEFAULT_SERVE
 from monkey_island.setup.island_config_options import IslandConfigOptions
 
 
-def setup_data_dir(island_args: IslandCmdArgs):
+def setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, str]:
     if island_args.server_config_path:
         return _setup_config_by_cmd_arg(island_args.server_config_path)
 
