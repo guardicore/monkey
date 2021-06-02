@@ -30,6 +30,15 @@ def setup_logging(data_dir_path, log_level):
     _add_console_handler(logger, formatter)
 
 
+def setup_default_failsafe_logging():
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
+    formatter = _get_log_formatter()
+
+    _add_console_handler(logger, formatter)
+
+
 def _get_log_formatter():
     return logging.Formatter(LOG_FORMAT)
 

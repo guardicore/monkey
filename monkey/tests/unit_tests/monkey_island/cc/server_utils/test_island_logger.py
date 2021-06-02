@@ -87,3 +87,15 @@ def test_setup_logging_console_log_level_lower_case(capsys, tmpdir):
 
     captured = capsys.readouterr()
     assert TEST_STRING in captured.out
+
+
+def test_setup_defailt_failsafe_logging(capsys):
+    TEST_STRING = "Hello, Monkey! (Console; Log level: debug)"
+
+    island_logger.setup_default_failsafe_logging()
+    logger = logging.getLogger("TestLogger")
+    logger.debug(TEST_STRING)
+
+    captured = capsys.readouterr()
+    assert TEST_STRING in captured.out
+    assert "DEBUG" in captured.out
