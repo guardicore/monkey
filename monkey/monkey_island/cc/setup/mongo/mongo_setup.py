@@ -1,3 +1,4 @@
+import atexit
 import logging
 import os
 import sys
@@ -18,11 +19,18 @@ MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 logger = logging.getLogger(__name__)
 
 
-def start_mongodb(config_options: IslandConfigOptions):
-    if config_options.start_mongodb:
-        MongoDbProcess(
-            db_dir_parent_path=config_options.data_dir, logging_dir_path=config_options.data_dir
-        ).start()
+def start_mongodb(config_options: IslandConfigOptions) -> MongoDbProcess:
+    mongo_db_process = MongoDbProcess(
+        db_dir_parent_path=config_options.data_dir, logging_dir_path=config_options.data_dir
+    )
+
+    mongo_db_process.start()
+
+    return mongo_db_process
+
+
+def register_mongo_shutdown_callback(mongo_db_process: MongoDbProcess):
+    atexit.register(mongo_db_process.stop)
 
 
 def connect_to_mongodb():

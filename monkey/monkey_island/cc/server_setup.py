@@ -28,6 +28,7 @@ from monkey_island.cc.setup.mongo.database_initializer import init_collections  
 from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
     MONGO_URL,
     connect_to_mongodb,
+    register_mongo_shutdown_callback,
     start_mongodb,
 )
 from monkey_island.setup.config_setup import setup_data_dir  # noqa: E402
@@ -43,7 +44,10 @@ def run_monkey_island():
     _configure_logging(config_options)
     _initialize_global_resources(config_options, server_config_path)
 
-    start_mongodb(config_options)
+    if config_options.start_mongodb:
+        mongo_db_process = start_mongodb(config_options)
+        register_mongo_shutdown_callback(mongo_db_process)
+
     connect_to_mongodb()
 
     bootloader_server_thread = _start_bootloader_server(MONGO_URL)

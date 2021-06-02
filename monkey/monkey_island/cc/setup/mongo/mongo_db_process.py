@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 DB_DIR_NAME = "db"
 DB_DIR_PARAM = "--dbpath"
 MONGO_LOG_FILENAME = "mongo_log.txt"
+TERMINATE_TIMEOUT = 10
 
 
 class MongoDbProcess:
@@ -21,10 +22,24 @@ class MongoDbProcess:
         """
         self.db_dir_parent_path = db_dir_parent_path
         self.logging_dir_path = logging_dir_path
+        self._process = None
 
     def start(self):
         db_path = self._create_db_dir()
         self._start_mongodb_process(db_path)
+
+    def stop(self):
+        if self._process:
+            logger.info("Terminating MongoDB process")
+            self._process.terminate()
+            try:
+                self._process.wait(timeout=TERMINATE_TIMEOUT)
+                logger.info("MongoDB process terminated successfully")
+            except subprocess.TimeoutExpired as te:
+                logger.warning(
+                    f"MongoDB did not terminate gracefully and will be forcefully killed: {te}"
+                )
+                self._process.kill()
 
     def _create_db_dir(self) -> str:
         db_path = os.path.join(self.db_dir_parent_path, DB_DIR_NAME)
@@ -42,7 +57,7 @@ class MongoDbProcess:
         logger.info(f"Mongodb log will be available at {mongo_log_path}.")
 
         with open(mongo_log_path, "w") as log:
-            subprocess.Popen(mongo_run_cmd, stderr=subprocess.STDOUT, stdout=log)
+            self._process = subprocess.Popen(mongo_run_cmd, stderr=subprocess.STDOUT, stdout=log)
         logger.info("MongoDb launched successfully!")
 
     @staticmethod
