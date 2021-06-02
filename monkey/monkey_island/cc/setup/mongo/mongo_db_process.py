@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 DB_DIR_NAME = "db"
 DB_DIR_PARAM = "--dbpath"
-MONGO_LOG_FILENAME = "mongo_log.txt"
+MONGO_LOG_FILENAME = "mongodb.log"
 TERMINATE_TIMEOUT = 10
 
 
