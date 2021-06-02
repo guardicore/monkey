@@ -22,7 +22,7 @@ def start_mongodb(config_options: IslandConfigOptions):
     if config_options.start_mongodb:
         MongoDbProcess(
             db_dir_parent_path=config_options.data_dir, logging_dir_path=config_options.data_dir
-        ).launch_mongodb()
+        ).start()
     wait_for_mongo_db_server(MONGO_URL)
     assert_mongo_db_version(MONGO_URL)
     mongo_connector.connect_dal_to_mongodb()

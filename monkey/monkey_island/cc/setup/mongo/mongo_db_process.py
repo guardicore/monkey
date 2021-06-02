@@ -22,7 +22,7 @@ class MongoDbProcess:
         self.db_dir_parent_path = db_dir_parent_path
         self.logging_dir_path = logging_dir_path
 
-    def launch_mongodb(self):
+    def start(self):
         db_path = self._create_db_dir()
         self._start_mongodb_process(db_path)
 
