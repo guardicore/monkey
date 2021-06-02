@@ -13,13 +13,13 @@ TERMINATE_TIMEOUT = 10
 
 
 class MongoDbProcess:
-    def __init__(self, db_dir: str, logging_dir_path: str):
+    def __init__(self, db_dir: str, logging_dir: str):
         """
         @param db_dir: Path where a folder for database contents will be created
-        @param logging_dir_path: Path to a folder where mongodb logs will be created
+        @param logging_dir: Path to a folder where mongodb logs will be created
         """
         self._db_dir = db_dir
-        self.logging_dir_path = logging_dir_path
+        self._logging_dir = logging_dir
         self._process = None
 
     def start(self):
@@ -44,7 +44,7 @@ class MongoDbProcess:
         mongo_run_cmd = MongoDbProcess._build_mongo_launch_cmd(MONGO_EXECUTABLE_PATH, self._db_dir)
         logger.info(f"Mongodb will be launched with command: {' '.join(mongo_run_cmd)}.")
 
-        mongo_log_path = os.path.join(self.logging_dir_path, MONGO_LOG_FILENAME)
+        mongo_log_path = os.path.join(self._logging_dir, MONGO_LOG_FILENAME)
         logger.info(f"Mongodb log will be available at {mongo_log_path}.")
 
         with open(mongo_log_path, "w") as log:

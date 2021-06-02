@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 def start_mongodb(config_options: IslandConfigOptions) -> MongoDbProcess:
     db_dir = _create_db_dir(config_options.data_dir)
 
-    mongo_db_process = MongoDbProcess(db_dir=db_dir, logging_dir_path=config_options.data_dir)
+    mongo_db_process = MongoDbProcess(db_dir=db_dir, logging_dir=config_options.data_dir)
     mongo_db_process.start()
 
     return mongo_db_process
