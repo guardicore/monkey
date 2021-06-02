@@ -64,7 +64,3 @@ class NoCredentialsError(Exception):
 
 class InvalidConfigurationError(Exception):
     """ Raise when configuration is invalid """
-
-
-class FailedDecryption(Exception):
-    """ Raise when any kind of decryption fails """
