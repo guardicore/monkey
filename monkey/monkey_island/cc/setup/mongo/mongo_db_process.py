@@ -36,17 +36,21 @@ class MongoDbProcess:
         logger.info("MongoDB launched successfully!")
 
     def stop(self):
-        if self._process:
-            logger.info("Terminating MongoDB process")
-            self._process.terminate()
-            try:
-                self._process.wait(timeout=TERMINATE_TIMEOUT)
-                logger.info("MongoDB process terminated successfully")
-            except subprocess.TimeoutExpired as te:
-                logger.warning(
-                    f"MongoDB did not terminate gracefully and will be forcefully killed: {te}"
-                )
-                self._process.kill()
+        if not self._process:
+            logger.warning("Failed to stop MongoDB process: No process found")
+            return
+
+        logger.info("Terminating MongoDB process")
+        self._process.terminate()
+
+        try:
+            self._process.wait(timeout=TERMINATE_TIMEOUT)
+            logger.info("MongoDB process terminated successfully")
+        except subprocess.TimeoutExpired as te:
+            logger.warning(
+                f"MongoDB did not terminate gracefully and will be forcefully killed: {te}"
+            )
+            self._process.kill()
 
     @staticmethod
     def _build_mongo_run_cmd(exec_path: str, db_dir: str) -> List[str]:
