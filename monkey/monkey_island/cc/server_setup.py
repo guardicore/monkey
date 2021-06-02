@@ -25,7 +25,11 @@ from monkey_island.cc.services.initialize import initialize_services  # noqa: E4
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
-from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL, start_mongodb  # noqa: E402
+from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
+    MONGO_URL,
+    connect_to_mongodb,
+    start_mongodb,
+)
 from monkey_island.setup.config_setup import setup_data_dir  # noqa: E402
 from monkey_island.setup.island_config_options import IslandConfigOptions  # noqa: E402
 
@@ -40,6 +44,8 @@ def run_monkey_island():
     _initialize_global_resources(config_options, server_config_path)
 
     start_mongodb(config_options)
+    connect_to_mongodb()
+
     bootloader_server_thread = _start_bootloader_server(MONGO_URL)
     _start_island_server(island_args.setup_only, config_options)
     bootloader_server_thread.join()

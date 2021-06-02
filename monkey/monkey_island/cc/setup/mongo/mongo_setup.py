@@ -23,18 +23,21 @@ def start_mongodb(config_options: IslandConfigOptions):
         MongoDbProcess(
             db_dir_parent_path=config_options.data_dir, logging_dir_path=config_options.data_dir
         ).start()
-    wait_for_mongo_db_server(MONGO_URL)
-    assert_mongo_db_version(MONGO_URL)
+
+
+def connect_to_mongodb():
+    _wait_for_mongo_db_server(MONGO_URL)
+    _assert_mongo_db_version(MONGO_URL)
     mongo_connector.connect_dal_to_mongodb()
 
 
-def wait_for_mongo_db_server(mongo_url):
+def _wait_for_mongo_db_server(mongo_url):
     while not is_db_server_up(mongo_url):
         logger.info("Waiting for MongoDB server on {0}".format(mongo_url))
         time.sleep(1)
 
 
-def assert_mongo_db_version(mongo_url):
+def _assert_mongo_db_version(mongo_url):
     """
     Checks if the mongodb version is new enough for running the app.
     If the DB is too old, quits.
