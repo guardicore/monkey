@@ -22,13 +22,13 @@ from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH  # noqa: E402
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
+from monkey_island.cc.setup.certificate.certificate_setup import setup_certificate  # noqa: E402
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
     MONGO_URL,
@@ -83,8 +83,7 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
     populate_exporter_list()
     app = init_app(MONGO_URL)
 
-    crt_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
-    key_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
+    crt_path, key_path = setup_certificate(config_options)
 
     init_collections()
 
