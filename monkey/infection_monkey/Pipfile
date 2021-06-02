@@ -22,7 +22,7 @@ pymssql = "==2.1.5"
 pypykatz = "==0.3.12"
 pysmb = "==1.2.5"
 requests = ">=2.24"
-urllib3 = "==1.25.8"
+urllib3 = "==1.26.5"
 simplejson = "*"
 "WinSys-3.x" = ">=0.5.2"
 WMI = {version = "==1.5.1", sys_platform = "== 'win32'"}
