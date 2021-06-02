@@ -1,10 +1,15 @@
+import os
 from typing import Dict, List
 
 from stix2 import AttackPattern, CourseOfAction, FileSystemSource, Filter
 
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+
 
 class MitreApiInterface:
-    ATTACK_DATA_PATH = "monkey_island/cc/services/attack/attack_data/enterprise-attack"
+    ATTACK_DATA_PATH = os.path.join(
+        MONKEY_ISLAND_ABS_PATH, "cc", "services", "attack", "attack_data", "enterprise-attack"
+    )
 
     @staticmethod
     def get_all_mitigations() -> Dict[str, CourseOfAction]:
