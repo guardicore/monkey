@@ -25,7 +25,7 @@ class MongoDbProcess:
     def start(self):
         logger.info("Starting MongoDb process.")
 
-        mongo_run_cmd = MongoDbProcess._build_mongo_launch_cmd(MONGO_EXECUTABLE_PATH, self._db_dir)
+        mongo_run_cmd = MongoDbProcess._build_mongo_run_cmd(MONGO_EXECUTABLE_PATH, self._db_dir)
         logger.info(f"Mongodb will be launched with command: {' '.join(mongo_run_cmd)}.")
 
         mongo_log_path = os.path.join(self._logging_dir, MONGO_LOG_FILENAME)
@@ -49,5 +49,5 @@ class MongoDbProcess:
                 self._process.kill()
 
     @staticmethod
-    def _build_mongo_launch_cmd(exec_path: str, db_dir: str) -> List[str]:
+    def _build_mongo_run_cmd(exec_path: str, db_dir: str) -> List[str]:
         return [exec_path, DB_DIR_PARAM, db_dir]
