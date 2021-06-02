@@ -169,6 +169,7 @@ build_from_config_file_contents  # unused method 'build_from_config_file_content
 mock_port_in_env_singleton  # monkey\tests\unit_tests\monkey_island\cc\services\test_config.py:26:
 ISLAND  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:14)
 MONKEY_LINUX_RUNNING  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:26)
+import_status  # \monkey_island\cc\resources\configuration_import.py:19
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
