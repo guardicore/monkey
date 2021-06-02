@@ -19,21 +19,21 @@ class MongoDbProcess:
         @param logging_dir: Path to a folder where mongodb logs will be created
         """
         self._db_dir = db_dir
-        self._logging_dir = logging_dir
+        self._log_file = os.path.join(logging_dir, MONGO_LOG_FILENAME)
         self._process = None
 
     def start(self):
-        logger.info("Starting MongoDb process.")
+        logger.info("Starting MongoDB process.")
 
         mongo_run_cmd = MongoDbProcess._build_mongo_run_cmd(MONGO_EXECUTABLE_PATH, self._db_dir)
-        logger.info(f"Mongodb will be launched with command: {' '.join(mongo_run_cmd)}.")
 
-        mongo_log_path = os.path.join(self._logging_dir, MONGO_LOG_FILENAME)
-        logger.info(f"Mongodb log will be available at {mongo_log_path}.")
+        logger.info(f"MongoDB will be launched with command: {' '.join(mongo_run_cmd)}.")
+        logger.info(f"MongoDB log will be available at {self._log_file}.")
 
-        with open(mongo_log_path, "w") as log:
+        with open(self._log_file, "w") as log:
             self._process = subprocess.Popen(mongo_run_cmd, stderr=subprocess.STDOUT, stdout=log)
-        logger.info("MongoDb launched successfully!")
+
+        logger.info("MongoDB launched successfully!")
 
     def stop(self):
         if self._process:
