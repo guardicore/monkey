@@ -21,6 +21,8 @@ class ResponseContents:
     import_status: str = "imported"
     message: str = ""
     status_code: int = 200
+    config: str = ""
+    config_schema: str = ""
 
     def form_response(self):
         return self.__dict__, self.status_code
@@ -40,8 +42,17 @@ class ConfigurationImport(flask_restful.Resource):
                 config = json.loads(request_contents["config"])
             except JSONDecodeError:
                 config = decrypt_config(request_contents["config"], request_contents["password"])
-            ConfigurationImport.import_config(config)
-            return ResponseContents().form_response()
+
+            if request_contents["unsafeOptionsVerified"]:
+                ConfigurationImport.import_config(config)
+                return ResponseContents().form_response()
+            else:
+                return ResponseContents(
+                    config=config,
+                    config_schema=ConfigService.get_config_schema(),
+                    import_status="unsafe_options_verification_required",
+                    status_code=403,
+                ).form_response()
         except InvalidCredentialsError:
             return ResponseContents(
                 import_status="wrong_password", message="Wrong password supplied", status_code=403

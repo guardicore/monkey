@@ -1,11 +1,14 @@
 import {Button, Modal, Form, Alert} from 'react-bootstrap';
 import React, {useEffect, useState} from 'react';
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/configuration-components/ImportConfigModal.scss';
+import UnsafeOptionsConfirmationModal
+  from '../configuration-components/UnsafeOptionsConfirmationModal.js';
 import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
-import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 
 
 type Props = {
@@ -19,9 +22,15 @@ const ConfigImportModal = (props: Props) => {
 
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
   const [configContents, setConfigContents] = useState(null);
+  const [candidateConfig, setCandidateConfig] = useState(null);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [unsafeOptionsVerified, setUnsafeOptionsVerified] = useState(false);
+  const [showUnsafeOptionsConfirmation,
+    setShowUnsafeOptionsConfirmation] = useState(false);
+  const [fileFieldKey, setFileFieldKey] = useState(Date.now());
+
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
@@ -38,21 +47,31 @@ const ConfigImportModal = (props: Props) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           config: configContents,
-          password: password
+          password: password,
+          unsafeOptionsVerified: unsafeOptionsVerified
         })
       }
     ).then(res => res.json())
       .then(res => {
         if (res['import_status'] === 'password_required') {
+          setUploadStatus(UploadStatuses.success);
           setShowPassword(true);
-        } else if (res['import_status'] === 'wrong_password'){
+        } else if (res['import_status'] === 'wrong_password') {
           setErrorMessage(res['message']);
-        }
-        if (res['import_status'] === 'invalid_configuration'){
+        } else if (res['import_status'] === 'invalid_configuration') {
           setUploadStatus(UploadStatuses.error);
           setErrorMessage(res['message']);
-        } else {
-          setUploadStatus(UploadStatuses.success);
+        } else if (res['import_status'] === 'unsafe_options_verification_required') {
+          if (isUnsafeOptionSelected(res['config_schema'], res['config'])) {
+            setShowUnsafeOptionsConfirmation(true);
+            setCandidateConfig(JSON.stringify(res['config']));
+          } else {
+            setUnsafeOptionsVerified(true);
+            setConfigContents(res['config']);
+          }
+        } else if (res['import_status'] === 'imported'){
+          resetState();
+          props.onClose(true);
         }
         return res['import_status'];
       })
@@ -68,6 +87,9 @@ const ConfigImportModal = (props: Props) => {
     setConfigContents(null);
     setErrorMessage('');
     setShowPassword(false);
+    setShowUnsafeOptionsConfirmation(false);
+    setUnsafeOptionsVerified(false);
+    setFileFieldKey(Date.now());  // Resets the file input
   }
 
   function uploadFile(event) {
@@ -76,50 +98,66 @@ const ConfigImportModal = (props: Props) => {
       setConfigContents(event.target.result);
     };
     reader.readAsText(event.target.files[0]);
-
   }
 
-  function onImportClick() {
-    sendConfigToServer().then((importStatus) => {
-      if(importStatus === 'imported'){
-        resetState();
-        props.onClose(true);
-      }
-    });
+  function showVerificationDialog() {
+    return (
+      <UnsafeOptionsConfirmationModal
+        show={showUnsafeOptionsConfirmation}
+        onCancelClick={() => {
+          resetState();
+        }}
+        onContinueClick={() => {
+          setUnsafeOptionsVerified(true);
+          setConfigContents(candidateConfig);
+        }}
+      />
+    );
   }
 
   return (
-    <Modal show={props.show}
-           onHide={()=> {resetState(); props.onClose(false)}}
-           size={'lg'}
-           className={'config-import-modal'}>
-      <Modal.Header closeButton>
-        <Modal.Title>Configuration import</Modal.Title>
+    <
+      Modal
+      show={props.show}
+      onHide={() => {
+        resetState();
+        props.onClose(false)
+      }}
+      size={'lg'}
+      className={'config-import-modal'}>
+      < Modal.Header
+        closeButton>
+        < Modal.Title>
+          Configuration
+          import
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {showVerificationDialog()}
         <div className={`mb-3 config-import-option`}>
           <Form>
-            <Form.File id='exampleFormControlFile1'
+            <Form.File id='importConfigFileSelector'
                        label='Please choose a configuration file'
                        accept='.conf'
                        onChange={uploadFile}
-                        className={'file-input'}/>
+                       className={'file-input'}
+                       key={fileFieldKey}/>
             <UploadStatusIcon status={uploadStatus}/>
 
-            {showPassword && <PasswordInput onChange={setPassword} />}
+            {showPassword && <PasswordInput onChange={setPassword}/>}
 
-            { errorMessage &&
-              <Alert variant={'danger'} className={'import-error'}>
-                <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
-                {errorMessage}
-              </Alert>
+            {errorMessage &&
+            <Alert variant={'danger'} className={'import-error'}>
+              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
+              {errorMessage}
+            </Alert>
             }
           </Form>
         </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant={'info'}
-                onClick={onImportClick}
+                onClick={sendConfigToServer}
                 disabled={isImportDisabled()}>
           Import
         </Button>
