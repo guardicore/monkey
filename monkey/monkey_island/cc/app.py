@@ -21,6 +21,7 @@ from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
 from monkey_island.cc.resources.bootloader import Bootloader
 from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.configuration_export import ConfigurationExport
+from monkey_island.cc.resources.configuration_import import ConfigurationImport
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.environment import Environment
 from monkey_island.cc.resources.island_configuration import IslandConfiguration
@@ -43,7 +44,6 @@ from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.T1216_pba_file_download import T1216PBAFileDownload
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
-from monkey_island.cc.resources.temp_configuration import TempConfiguration
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
 from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
@@ -120,9 +120,6 @@ def init_app_url_rules(app):
 
 
 def init_api_resources(api):
-    # TODO hook up to a proper endpoint
-    api.add_resource(TempConfiguration, "/api/temp_configuration")
-
     api.add_resource(Root, "/api")
     api.add_resource(Registration, "/api/registration")
     api.add_resource(Authenticate, "/api/auth")
@@ -136,7 +133,8 @@ def init_api_resources(api):
     )
     api.add_resource(MonkeyConfiguration, "/api/configuration", "/api/configuration/")
     api.add_resource(IslandConfiguration, "/api/configuration/island", "/api/configuration/island/")
-    api.add_resource(ConfigurationExport, "/api/configuration/export", "/api/configuration/export/")
+    api.add_resource(ConfigurationExport, "/api/configuration/export")
+    api.add_resource(ConfigurationImport, "/api/configuration/import")
     api.add_resource(
         MonkeyDownload,
         "/api/monkey/download",

@@ -15,8 +15,7 @@ type Props = {
 
 
 const ConfigImportModal = (props: Props) => {
-  // TODO implement the back end
-  const configImportEndpoint = '/api/temp_configuration';
+  const configImportEndpoint = '/api/configuration/import';
 
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
   const [configContents, setConfigContents] = useState('');

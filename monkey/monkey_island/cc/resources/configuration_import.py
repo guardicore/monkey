@@ -1,15 +1,17 @@
 import json
+import logging
 from dataclasses import dataclass
 
 import flask_restful
 from flask import request
 
-from common.utils.exceptions import (  # InvalidCredentialsError,
-    FailedDecryption,
+from common.utils.exceptions import (
     InvalidConfigurationError,
+    InvalidCredentialsError,
     NoCredentialsError,
 )
 from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.utils.config_encryption import decrypt_config
 
 
@@ -23,8 +25,10 @@ class ResponseContents:
         return self.__dict__, self.status_code
 
 
-# TODO remove once backend implementation is done
-class TempConfiguration(flask_restful.Resource):
+logger = logging.getLogger(__name__)
+
+
+class ConfigurationImport(flask_restful.Resource):
     SUCCESS = False
 
     @jwt_required
@@ -32,24 +36,17 @@ class TempConfiguration(flask_restful.Resource):
         request_contents = json.loads(request.data)
         try:
             decrypt_config(request_contents["config"], request_contents["password"])
-            self.import_config()
+            ConfigurationImport.import_config(request_contents["config"])
             return ResponseContents().form_response()
-        # except InvalidCredentialsError:
-        #     return ResponseContents(
-        #         import_status="wrong_password", message="Wrong password supplied", status_code=403
-        #     ).form_response()
-        except FailedDecryption as ex:
+        except InvalidCredentialsError:
             return ResponseContents(
-                import_status="decryption_failure",
-                message="Decryptioon of configuration failed. Error thrown during decryption: "
-                + f"{str(ex)}",
-                status_code=403,
+                import_status="wrong_password", message="Wrong password supplied", status_code=403
             ).form_response()
         except InvalidConfigurationError:
             return ResponseContents(
                 import_status="invalid_configuration",
                 message="Invalid configuration supplied. "
-                "Maybe the format is outdated or the file is malformed",
+                "Maybe the format is outdated or the file is corrupted.",
                 status_code=400,
             ).form_response()
         except NoCredentialsError:
@@ -60,12 +57,7 @@ class TempConfiguration(flask_restful.Resource):
                 status_code=403,
             ).form_response()
 
-    # def decrypt(self, password=""):
-    #     if not password:
-    #         raise NoCredentialsError
-    #     if not password == "abc":
-    #         raise InvalidCredentialsError
-    #     return False
-
-    def import_config(self):
-        return True
+    @staticmethod
+    def import_config(config_json):
+        if not ConfigService.update_config(config_json, should_encrypt=True):
+            raise InvalidConfigurationError
