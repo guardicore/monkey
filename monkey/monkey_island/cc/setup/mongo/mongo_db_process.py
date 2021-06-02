@@ -3,30 +3,27 @@ import os
 import subprocess
 from typing import List
 
-from monkey_island.cc.environment.utils import create_secure_directory
 from monkey_island.cc.server_utils.consts import MONGO_EXECUTABLE_PATH
 
 logger = logging.getLogger(__name__)
 
-DB_DIR_NAME = "db"
 DB_DIR_PARAM = "--dbpath"
 MONGO_LOG_FILENAME = "mongodb.log"
 TERMINATE_TIMEOUT = 10
 
 
 class MongoDbProcess:
-    def __init__(self, db_dir_parent_path: str, logging_dir_path: str):
+    def __init__(self, db_dir: str, logging_dir_path: str):
         """
-        @param db_dir_parent_path: Path where a folder for database contents will be created
+        @param db_dir: Path where a folder for database contents will be created
         @param logging_dir_path: Path to a folder where mongodb logs will be created
         """
-        self.db_dir_parent_path = db_dir_parent_path
+        self._db_dir = db_dir
         self.logging_dir_path = logging_dir_path
         self._process = None
 
     def start(self):
-        db_path = self._create_db_dir()
-        self._start_mongodb_process(db_path)
+        self._start_mongodb_process()
 
     def stop(self):
         if self._process:
@@ -41,16 +38,10 @@ class MongoDbProcess:
                 )
                 self._process.kill()
 
-    def _create_db_dir(self) -> str:
-        db_path = os.path.join(self.db_dir_parent_path, DB_DIR_NAME)
-        logger.info(f"Database content directory: {db_path}.")
-        create_secure_directory(db_path, create_parent_dirs=False)
-        return db_path
-
-    def _start_mongodb_process(self, db_dir_path: str):
+    def _start_mongodb_process(self):
         logger.info("Starting MongoDb process.")
 
-        mongo_run_cmd = MongoDbProcess._build_mongo_launch_cmd(MONGO_EXECUTABLE_PATH, db_dir_path)
+        mongo_run_cmd = MongoDbProcess._build_mongo_launch_cmd(MONGO_EXECUTABLE_PATH, self._db_dir)
         logger.info(f"Mongodb will be launched with command: {' '.join(mongo_run_cmd)}.")
 
         mongo_log_path = os.path.join(self.logging_dir_path, MONGO_LOG_FILENAME)
@@ -61,5 +52,5 @@ class MongoDbProcess:
         logger.info("MongoDb launched successfully!")
 
     @staticmethod
-    def _build_mongo_launch_cmd(exec_path: str, db_path: str) -> List[str]:
-        return [exec_path, DB_DIR_PARAM, db_path]
+    def _build_mongo_launch_cmd(exec_path: str, db_dir: str) -> List[str]:
+        return [exec_path, DB_DIR_PARAM, db_dir]

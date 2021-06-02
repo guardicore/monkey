@@ -5,11 +5,13 @@ import sys
 import time
 
 from monkey_island.cc.database import get_db_version, is_db_server_up
+from monkey_island.cc.environment.utils import create_secure_directory
 from monkey_island.cc.setup.mongo import mongo_connector
 from monkey_island.cc.setup.mongo.mongo_connector import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
 from monkey_island.setup.island_config_options import IslandConfigOptions
 
+DB_DIR_NAME = "db"
 MONGO_URL = os.environ.get(
     "MONKEY_MONGO_URL",
     "mongodb://{0}:{1}/{2}".format(MONGO_DB_HOST, MONGO_DB_PORT, MONGO_DB_NAME),
@@ -20,13 +22,20 @@ logger = logging.getLogger(__name__)
 
 
 def start_mongodb(config_options: IslandConfigOptions) -> MongoDbProcess:
-    mongo_db_process = MongoDbProcess(
-        db_dir_parent_path=config_options.data_dir, logging_dir_path=config_options.data_dir
-    )
+    db_dir = _create_db_dir(config_options.data_dir)
 
+    mongo_db_process = MongoDbProcess(db_dir=db_dir, logging_dir_path=config_options.data_dir)
     mongo_db_process.start()
 
     return mongo_db_process
+
+
+def _create_db_dir(db_dir_parent_path) -> str:
+    db_dir = os.path.join(db_dir_parent_path, DB_DIR_NAME)
+    logger.info(f"Database content directory: {db_dir}.")
+
+    create_secure_directory(db_dir, create_parent_dirs=False)
+    return db_dir
 
 
 def register_mongo_shutdown_callback(mongo_db_process: MongoDbProcess):
