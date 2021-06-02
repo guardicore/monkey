@@ -50,9 +50,7 @@ def run_monkey_island():
 
     connect_to_mongodb()
 
-    bootloader_server_thread = _start_bootloader_server(MONGO_URL)
     _start_island_server(island_args.setup_only, config_options)
-    bootloader_server_thread.join()
 
 
 def _configure_logging(config_options):
@@ -65,16 +63,6 @@ def _initialize_global_resources(config_options: IslandConfigOptions, server_con
 
     initialize_encryptor(config_options.data_dir)
     initialize_services(config_options.data_dir)
-
-
-def _start_bootloader_server(mongo_url) -> Thread:
-    bootloader_server_thread = Thread(
-        target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True
-    )
-
-    bootloader_server_thread.start()
-
-    return bootloader_server_thread
 
 
 def _start_island_server(should_setup_only, config_options: IslandConfigOptions):
@@ -90,6 +78,8 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
         logger.warning("Setup only flag passed. Exiting.")
         return
 
+    bootloader_server_thread = _start_bootloader_server(MONGO_URL)
+
     if env_singleton.env.is_debug():
         app.run(host="0.0.0.0", debug=True, ssl_context=(crt_path, key_path))
     else:
@@ -101,6 +91,18 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
         )
         _log_init_info()
         http_server.serve_forever()
+
+    bootloader_server_thread.join()
+
+
+def _start_bootloader_server(mongo_url) -> Thread:
+    bootloader_server_thread = Thread(
+        target=BootloaderHttpServer(mongo_url).serve_forever, daemon=True
+    )
+
+    bootloader_server_thread.start()
+
+    return bootloader_server_thread
 
 
 def _log_init_info():
