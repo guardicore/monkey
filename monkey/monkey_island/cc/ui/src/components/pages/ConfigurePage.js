@@ -228,16 +228,14 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
-                               onClick={this.onExport}/>)
-  }
-
-  onExport = () => {
-    this.setState({showConfigExportModal: false})
+                               onHide={() => {
+                                 this.setState({showConfigExportModal: false});
+                               }}/>);
   }
 
   renderConfigImportModal = () => {
     return (<ConfigImportModal show={this.state.showConfigImportModal}
-                               onClose={this.onClose}/>)
+                               onClose={this.onClose}/>);
   }
 
   onClose = (importSuccessful) => {

@@ -8,7 +8,7 @@ import '../../styles/components/configuration-components/ExportConfigModal.scss'
 
 type Props = {
   show: boolean,
-  onClick: () => void
+  onHide: () => void
 }
 
 const ConfigExportModal = (props: Props) => {
@@ -45,12 +45,13 @@ const ConfigExportModal = (props: Props) => {
             );
         }
         FileSaver.saveAs(configToExport, 'monkey.conf');
+        props.onHide();
       })
   }
 
   return (
     <Modal show={props.show}
-           onHide={props.onClick}
+           onHide={props.onHide}
            size={'lg'}
            className={'config-export-modal'}>
       <Modal.Header closeButton>
