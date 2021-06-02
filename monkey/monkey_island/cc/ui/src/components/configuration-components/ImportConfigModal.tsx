@@ -18,14 +18,14 @@ const ConfigImportModal = (props: Props) => {
   const configImportEndpoint = '/api/configuration/import';
 
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
-  const [configContents, setConfigContents] = useState('');
+  const [configContents, setConfigContents] = useState(null);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
-    if (configContents !== '') {
+    if (configContents !== null) {
       sendConfigToServer();
     }
   }, [configContents])
@@ -54,7 +54,6 @@ const ConfigImportModal = (props: Props) => {
         } else {
           setUploadStatus(UploadStatuses.success);
         }
-        console.log(res['import_status']);
         return res['import_status'];
       })
   }
@@ -66,7 +65,7 @@ const ConfigImportModal = (props: Props) => {
   function resetState() {
     setUploadStatus(UploadStatuses.clean);
     setPassword('');
-    setConfigContents('');
+    setConfigContents(null);
     setErrorMessage('');
     setShowPassword(false);
   }
@@ -74,7 +73,7 @@ const ConfigImportModal = (props: Props) => {
   function uploadFile(event) {
     let reader = new FileReader();
     reader.onload = (event) => {
-      setConfigContents(JSON.stringify(event.target.result))
+      setConfigContents(event.target.result);
     };
     reader.readAsText(event.target.files[0]);
 

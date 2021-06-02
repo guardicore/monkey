@@ -31,12 +31,7 @@ def decrypt_config(cyphertext: Union[str, dict], password: str) -> Dict:
     if not password:
         raise NoCredentialsError
 
-    try:
-        cyphertext = base64.b64decode(cyphertext)
-    except TypeError:
-        logger.info("Configuration doesn't require decryption.")
-        return cyphertext
-
+    cyphertext = base64.b64decode(cyphertext)
     ciphertext_config_stream = io.BytesIO(cyphertext)
     dec_plaintext_config_stream = io.BytesIO()
 

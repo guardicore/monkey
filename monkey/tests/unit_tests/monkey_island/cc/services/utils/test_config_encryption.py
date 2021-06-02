@@ -7,7 +7,7 @@ from tests.unit_tests.monkey_island.cc.services.utils.cyphertexts_for_encryption
     MALFORMED_CYPHER_TEXT_TOO_SHORT,
 )
 
-from common.utils.exceptions import InvalidCredentialsError
+from common.utils.exceptions import InvalidCredentialsError, NoCredentialsError
 from monkey_island.cc.services.utils.config_encryption import decrypt_config, encrypt_config
 
 MONKEY_CONFIGS_DIR_PATH = "monkey_configs"
@@ -43,5 +43,7 @@ def test_encrypt_decrypt_config__malformed():
         decrypt_config(MALFORMED_CYPHER_TEXT_CORRUPTED, PASSWORD)
 
 
-def test_decrypt_config__unencrypted(plaintext_config):
-    assert plaintext_config == decrypt_config(plaintext_config, PASSWORD)
+def test_decrypt_config__no_password(plaintext_config):
+    encrypted_config = encrypt_config(plaintext_config, PASSWORD)
+    with pytest.raises(NoCredentialsError):
+        decrypt_config(encrypted_config, "")

@@ -1,6 +1,7 @@
 import json
 import logging
 from dataclasses import dataclass
+from json.decoder import JSONDecodeError
 
 import flask_restful
 from flask import request
@@ -35,8 +36,11 @@ class ConfigurationImport(flask_restful.Resource):
     def post(self):
         request_contents = json.loads(request.data)
         try:
-            decrypt_config(request_contents["config"], request_contents["password"])
-            ConfigurationImport.import_config(request_contents["config"])
+            try:
+                config = json.loads(request_contents["config"])
+            except JSONDecodeError:
+                config = decrypt_config(request_contents["config"], request_contents["password"])
+            ConfigurationImport.import_config(config)
             return ResponseContents().form_response()
         except InvalidCredentialsError:
             return ResponseContents(
