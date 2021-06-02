@@ -1,13 +1,13 @@
 import pytest
+from tests.unit_tests.monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data import (  # noqa: E501
+    RULES,
+    SCOUTSUITE_FINDINGS,
+)
 
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.scoutsuite_finding import ScoutSuiteFinding
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_zt_finding_service import (
     ScoutSuiteZTFindingService,
-)
-from monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data import (
-    RULES,
-    SCOUTSUITE_FINDINGS,
 )
 
 

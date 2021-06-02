@@ -1,12 +1,14 @@
 from enum import Enum
 
 import pytest
+from tests.unit_tests.monkey_island.cc.services.zero_trust.raw_scoutsute_data import (
+    RAW_SCOUTSUITE_DATA,
+)
 
 from common.utils.exceptions import RulePathCreatorNotFound
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_names.ec2_rules import EC2Rules
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.service_consts import SERVICES
 from monkey_island.cc.services.zero_trust.scoutsuite.data_parsing.rule_parser import RuleParser
-from monkey_island.cc.services.zero_trust.test_common.raw_scoutsute_data import RAW_SCOUTSUITE_DATA
 
 
 class ExampleRules(Enum):

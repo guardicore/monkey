@@ -1,4 +1,5 @@
-import infection_monkey.utils.plugins.pluginTests
+import tests.unit_tests.infection_monkey.utils.plugins.pluginTests
+
 from infection_monkey.utils.plugins.plugin import Plugin
 
 
@@ -15,8 +16,8 @@ class PluginTester(Plugin):
 
     @staticmethod
     def base_package_file():
-        return infection_monkey.utils.plugins.pluginTests.__file__
+        return tests.unit_tests.infection_monkey.utils.plugins.pluginTests.__file__
 
     @staticmethod
     def base_package_name():
-        return infection_monkey.utils.plugins.pluginTests.__package__
+        return tests.unit_tests.infection_monkey.utils.plugins.pluginTests.__package__

@@ -1,5 +1,9 @@
 from copy import deepcopy
 
+from tests.unit_tests.monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data import (  # noqa: E501
+    RULES,
+)
+
 from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_consts import (
     RULE_LEVEL_DANGER,
     RULE_LEVEL_WARNING,
@@ -7,7 +11,6 @@ from monkey_island.cc.services.zero_trust.scoutsuite.consts.rule_consts import (
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_rule_service import (
     ScoutSuiteRuleService,
 )
-from monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data import RULES
 
 example_scoutsuite_data = {
     "checked_items": 179,

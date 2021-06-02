@@ -167,6 +167,8 @@ DigitalOcean  # unused variable (monkey/common/cloud/environment_names.py:12)
 _.aws_info  # unused attribute (monkey/monkey_island/cc/environment/aws.py:13)
 build_from_config_file_contents  # unused method 'build_from_config_file_contents' (\monkey_island\setup\island_config_options.py:18)
 mock_port_in_env_singleton  # monkey\tests\unit_tests\monkey_island\cc\services\test_config.py:26:
+ISLAND  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:14)
+MONKEY_LINUX_RUNNING  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:26)
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
@@ -182,24 +184,15 @@ thread_id  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:61)
 _.get_wmi_info  # unused method (monkey/infection_monkey/system_info/windows_info_collector.py:63)
 
 
-# not 100% sure about these? are these being/will be used somewhere else?
+# potentially unused (there may also be unit tests referencing these)
 LOG_DIR_NAME  # unused variable (envs/monkey_zoo/blackbox/log_handlers/test_logs_handler.py:8)
 delete_logs  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:85)
 MongoQueryJSONEncoder  # unused class (envs/monkey_zoo/blackbox/utils/json_encoder.py:6)
-
-
-# exists in common/, monkey_island/, or infection_monkey/, but is used in tests/unit_tests/ which is skipped by Vulture
-_.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
-_.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
-SomeDummyPlugin  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/BadImport.py:4)
-BadPluginInit  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/BadInit.py:4)
-BadInit  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/ComboFile.py:4)
-ProperClass  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/ComboFile.py:9)
-PluginWorking  # unused class (monkey/infection_monkey/utils/plugins/pluginTests/PluginWorking.py:4)
 environment  # unused variable (monkey/monkey_island/cc/models/monkey.py:59)
 _.environment  # unused attribute (monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/environment.py:10)
-ISLAND  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:14)
-MONKEY_LINUX_RUNNING  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:26)
-RAW_SCOUTSUITE_DATA  # unused variable (monkey/monkey_island/cc/services/zero_trust/test_common/raw_scoutsute_data.py:3)
-save_example_findings  # unused function (monkey/monkey_island/cc/services/zero_trust/zero_trust_report/test_common/example_finding_data.py:8)
+_.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
+_.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
+
+
+# used in tests/unit_tests/ which is skipped by Vulture
 data_for_tests_dir  # unused function (monkey/tests/conftest.py:11)

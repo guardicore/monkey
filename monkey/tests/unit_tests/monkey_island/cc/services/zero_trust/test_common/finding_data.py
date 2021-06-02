@@ -1,3 +1,10 @@
+from tests.unit_tests.monkey_island.cc.services.zero_trust.test_common.monkey_finding_data import (
+    get_monkey_details_dto,
+)
+from tests.unit_tests.monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data import (  # noqa: E501
+    get_scoutsuite_details_dto,
+)
+
 from common.common_consts.zero_trust_consts import (
     STATUS_FAILED,
     STATUS_PASSED,
@@ -7,12 +14,6 @@ from common.common_consts.zero_trust_consts import (
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
 from monkey_island.cc.models.zero_trust.scoutsuite_finding import ScoutSuiteFinding
-from monkey_island.cc.services.zero_trust.test_common.monkey_finding_data import (
-    get_monkey_details_dto,
-)
-from monkey_island.cc.services.zero_trust.test_common.scoutsuite_finding_data import (
-    get_scoutsuite_details_dto,
-)
 
 
 def get_scoutsuite_finding_dto() -> Finding:
