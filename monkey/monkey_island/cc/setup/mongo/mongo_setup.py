@@ -18,7 +18,7 @@ MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 logger = logging.getLogger(__name__)
 
 
-def setup_mongodb(config_options: IslandConfigOptions):
+def start_mongodb(config_options: IslandConfigOptions):
     if config_options.start_mongodb:
         MongoDbRunner(
             db_dir_parent_path=config_options.data_dir, logging_dir_path=config_options.data_dir
