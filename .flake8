@@ -1,7 +1,7 @@
 [flake8]
 ## Warn about linter issues.
 
-exclude = monkey/monkey_island/cc/ui,vulture_whitelist.py
+exclude = monkey/monkey_island/cc/ui,vulture_allowlist.py
 show-source = True
 max-complexity = 10
 max-line-length = 100
