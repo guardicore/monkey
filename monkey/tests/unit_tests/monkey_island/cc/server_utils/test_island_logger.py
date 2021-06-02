@@ -1,16 +1,25 @@
 import logging
 import os
 
-from monkey_island.cc.server_utils.island_logger import ISLAND_LOG_FILENAME, setup_logging
+import pytest
+
+import monkey_island.cc.server_utils.island_logger as island_logger
+
+
+@pytest.fixture(autouse=True)
+def reset_logger():
+    yield
+
+    island_logger.reset_logger()
 
 
 def test_setup_logging_file_log_level_debug(tmpdir):
     DATA_DIR = tmpdir
-    LOG_FILE = os.path.join(DATA_DIR, ISLAND_LOG_FILENAME)
+    LOG_FILE = os.path.join(DATA_DIR, island_logger.ISLAND_LOG_FILENAME)
     LOG_LEVEL = "DEBUG"
     TEST_STRING = "Hello, Monkey! (File; Log level: debug)"
 
-    setup_logging(DATA_DIR, LOG_LEVEL)
+    island_logger.setup_logging(DATA_DIR, LOG_LEVEL)
 
     logger = logging.getLogger("TestLogger")
     logger.debug(TEST_STRING)
@@ -23,11 +32,11 @@ def test_setup_logging_file_log_level_debug(tmpdir):
 
 def test_setup_logging_file_log_level_info(tmpdir):
     DATA_DIR = tmpdir
-    LOG_FILE = os.path.join(DATA_DIR, ISLAND_LOG_FILENAME)
+    LOG_FILE = os.path.join(DATA_DIR, island_logger.ISLAND_LOG_FILENAME)
     LOG_LEVEL = "INFO"
     TEST_STRING = "Hello, Monkey! (File; Log level: info)"
 
-    setup_logging(DATA_DIR, LOG_LEVEL)
+    island_logger.setup_logging(DATA_DIR, LOG_LEVEL)
 
     logger = logging.getLogger("TestLogger")
     logger.debug(TEST_STRING)
@@ -43,7 +52,7 @@ def test_setup_logging_console_log_level_debug(capsys, tmpdir):
     LOG_LEVEL = "DEBUG"
     TEST_STRING = "Hello, Monkey! (Console; Log level: debug)"
 
-    setup_logging(DATA_DIR, LOG_LEVEL)
+    island_logger.setup_logging(DATA_DIR, LOG_LEVEL)
 
     logger = logging.getLogger("TestLogger")
     logger.debug(TEST_STRING)
@@ -57,7 +66,7 @@ def test_setup_logging_console_log_level_info(capsys, tmpdir):
     LOG_LEVEL = "INFO"
     TEST_STRING = "Hello, Monkey! (Console; Log level: info)"
 
-    setup_logging(DATA_DIR, LOG_LEVEL)
+    island_logger.setup_logging(DATA_DIR, LOG_LEVEL)
 
     logger = logging.getLogger("TestLogger")
     logger.debug(TEST_STRING)
@@ -71,7 +80,7 @@ def test_setup_logging_console_log_level_lower_case(capsys, tmpdir):
     LOG_LEVEL = "debug"
     TEST_STRING = "Hello, Monkey! (Console; Log level: debug)"
 
-    setup_logging(DATA_DIR, LOG_LEVEL)
+    island_logger.setup_logging(DATA_DIR, LOG_LEVEL)
 
     logger = logging.getLogger("TestLogger")
     logger.debug(TEST_STRING)

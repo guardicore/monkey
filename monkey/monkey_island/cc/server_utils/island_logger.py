@@ -48,3 +48,10 @@ def _add_console_handler(logger, formatter):
     ch.setFormatter(formatter)
 
     logger.addHandler(ch)
+
+
+def reset_logger():
+    logger = logging.getLogger()
+
+    for handler in logger.handlers:
+        logger.removeHandler(handler)
