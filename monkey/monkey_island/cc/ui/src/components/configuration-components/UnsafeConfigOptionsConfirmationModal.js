@@ -1,15 +1,17 @@
 import React from 'react';
 import {Modal, Button} from 'react-bootstrap';
 
-function UnsafeOptionsConfirmationModal(props) {
+function UnsafeConfigOptionsConfirmationModal(props) {
   return (
-    <Modal show={props.show}>
+    <Modal show={props.show}
+           className={'unsafe-config-options-confirmation-modal'}
+           backdropClassName={'unsafe-config-options-confirmation-modal-backdrop'}>
       <Modal.Body>
         <h2>
           <div className='text-center'>Warning</div>
         </h2>
         <p className='text-center' style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
-          Some of the selected options could cause systems to become unstable or malfunction.
+          Some of the configuration options could cause systems to become unstable or malfunction.
           Are you sure you want to submit the selected settings?
         </p>
         <div className='text-center'>
@@ -33,4 +35,4 @@ function UnsafeOptionsConfirmationModal(props) {
   )
 }
 
-export default UnsafeOptionsConfirmationModal;
+export default UnsafeConfigOptionsConfirmationModal;

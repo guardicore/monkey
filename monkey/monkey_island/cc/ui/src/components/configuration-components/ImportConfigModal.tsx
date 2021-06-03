@@ -5,8 +5,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/configuration-components/ImportConfigModal.scss';
-import UnsafeOptionsConfirmationModal
-  from '../configuration-components/UnsafeOptionsConfirmationModal.js';
+import UnsafeConfigOptionsConfirmationModal
+  from './UnsafeConfigOptionsConfirmationModal.js';
 import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 
@@ -102,7 +102,7 @@ const ConfigImportModal = (props: Props) => {
 
   function showVerificationDialog() {
     return (
-      <UnsafeOptionsConfirmationModal
+      <UnsafeConfigOptionsConfirmationModal
         show={showUnsafeOptionsConfirmation}
         onCancelClick={() => {
           resetState();

@@ -10,8 +10,8 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamati
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import InternalConfig from '../configuration-components/InternalConfig';
-import UnsafeOptionsConfirmationModal
-  from '../configuration-components/UnsafeOptionsConfirmationModal.js';
+import UnsafeConfigOptionsConfirmationModal
+  from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
@@ -277,7 +277,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderUnsafeOptionsConfirmationModal() {
     return (
-      <UnsafeOptionsConfirmationModal
+      <UnsafeConfigOptionsConfirmationModal
         show={this.state.showUnsafeOptionsConfirmation}
         onCancelClick={this.onUnsafeConfirmationCancelClick}
         onContinueClick={this.onUnsafeConfirmationContinueClick}
