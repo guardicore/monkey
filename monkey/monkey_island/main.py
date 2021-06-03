@@ -4,7 +4,7 @@ import monkey_island.setup.gevent_setup  # noqa: F401 isort:skip
 from monkey_island.cc.server_utils.island_logger import setup_default_failsafe_logging
 
 
-def start_island():
+def main():
     # This is here in order to catch EVERYTHING, some functions are being called on
     # imports, so the log init needs to be first.
     try:
@@ -19,4 +19,4 @@ def start_island():
 
 
 if "__main__" == __name__:
-    start_island()
+    main()
