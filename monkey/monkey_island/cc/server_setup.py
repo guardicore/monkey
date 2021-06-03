@@ -15,7 +15,7 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
-import monkey_island.setup.config_setup as config_setup  # noqa: E402
+import monkey_island.cc.setup.config_setup as config_setup  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
