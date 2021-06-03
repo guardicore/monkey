@@ -1,7 +1,10 @@
+import logging
 import os
 
 from common.utils.exceptions import InsecurePermissionsError
 from monkey_island.setup.island_config_options import IslandConfigOptions
+
+logger = logging.getLogger(__name__)
 
 
 def setup_certificate(config_options: IslandConfigOptions) -> (str, str):
@@ -17,6 +20,8 @@ def setup_certificate(config_options: IslandConfigOptions) -> (str, str):
             raise InsecurePermissionsError(
                 f"{file} has insecure permissions. Required permissions: r--------. Exiting."
             )
+
+    logger.INFO(f"Using certificate path: {crt_path}, and key path: {key_path}.")
 
     return crt_path, key_path
 
