@@ -14,10 +14,17 @@ def setup_certificate(config_options: IslandConfigOptions) -> (str, str):
             raise FileNotFoundError(f"File not found at {file}. Exiting.")
 
         if not has_sufficient_permissions(file):
-            raise InsecurePermissionsError(f"{file} has insecure permissions. Exiting.")
+            raise InsecurePermissionsError(
+                f"{file} has insecure permissions. Required permissions: r--------. Exiting."
+            )
 
     return crt_path, key_path
 
 
-def has_sufficient_permissions():
-    pass
+def has_sufficient_permissions(path: str) -> bool:
+    required_permissions = "0o400"
+
+    file_mode = os.stat(path).st_mode
+    file_permissions = oct(file_mode & 0o777)
+
+    return file_permissions == required_permissions
