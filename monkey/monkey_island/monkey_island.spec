@@ -16,7 +16,7 @@ def main():
         ("../monkey_island/cc/services/attack/attack_data", "/monkey_island/cc/services/attack/attack_data")
     ]
 
-    a = Analysis(['startup.py'],
+    a = Analysis(['main.py'],
                  pathex=['..'],
                  hiddenimports=get_hidden_imports(),
                  hookspath=[os.path.join(".", "pyinstaller_hooks")],
