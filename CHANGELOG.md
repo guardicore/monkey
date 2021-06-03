@@ -48,3 +48,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Security
 - Address minor issues discovered by Dlint. #1075
 - Generate random passwords when creating a new user (create user PBA, ms08_67 exploit). #1174
+- Implemented configuration encryption/decryption #1172
