@@ -1,4 +1,4 @@
-from infection_monkey.utils.plugins.pluginTests.PluginTestClass import PluginTester
+from tests.unit_tests.infection_monkey.utils.plugins.pluginTests.PluginTestClass import PluginTester
 
 
 class BadInit(PluginTester):

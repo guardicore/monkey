@@ -1,10 +1,13 @@
 from unittest import TestCase
 
-from infection_monkey.utils.plugins.pluginTests.BadImport import SomeDummyPlugin
-from infection_monkey.utils.plugins.pluginTests.BadInit import BadPluginInit
-from infection_monkey.utils.plugins.pluginTests.ComboFile import BadInit, ProperClass
-from infection_monkey.utils.plugins.pluginTests.PluginTestClass import PluginTester
-from infection_monkey.utils.plugins.pluginTests.PluginWorking import PluginWorking
+from tests.unit_tests.infection_monkey.utils.plugins.pluginTests.BadImport import SomeDummyPlugin
+from tests.unit_tests.infection_monkey.utils.plugins.pluginTests.BadInit import BadPluginInit
+from tests.unit_tests.infection_monkey.utils.plugins.pluginTests.ComboFile import (
+    BadInit,
+    ProperClass,
+)
+from tests.unit_tests.infection_monkey.utils.plugins.pluginTests.PluginTestClass import PluginTester
+from tests.unit_tests.infection_monkey.utils.plugins.pluginTests.PluginWorking import PluginWorking
 
 
 class TestPlugin(TestCase):

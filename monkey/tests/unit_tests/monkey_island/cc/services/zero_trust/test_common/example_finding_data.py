@@ -1,8 +1,9 @@
-from common.common_consts import zero_trust_consts
-from monkey_island.cc.services.zero_trust.test_common.finding_data import (
+from tests.unit_tests.monkey_island.cc.services.zero_trust.test_common.finding_data import (
     get_monkey_finding_dto,
     get_scoutsuite_finding_dto,
 )
+
+from common.common_consts import zero_trust_consts
 
 
 def save_example_findings():
