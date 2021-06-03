@@ -1,5 +1,4 @@
 import logging
-import os
 import subprocess
 
 from monkey_island.cc.server_utils.consts import MONGO_EXECUTABLE_PATH
@@ -7,18 +6,17 @@ from monkey_island.cc.server_utils.consts import MONGO_EXECUTABLE_PATH
 logger = logging.getLogger(__name__)
 
 DB_DIR_PARAM = "--dbpath"
-MONGO_LOG_FILENAME = "mongodb.log"
 TERMINATE_TIMEOUT = 10
 
 
 class MongoDbProcess:
-    def __init__(self, db_dir: str, logging_dir: str):
+    def __init__(self, db_dir: str, log_file: str):
         """
         @param db_dir: Path where a folder for database contents will be created
-        @param logging_dir: Path to a folder where mongodb logs will be created
+        @param log_file: Path to the file that will contain mongodb logs
         """
         self._mongo_run_cmd = [MONGO_EXECUTABLE_PATH, DB_DIR_PARAM, db_dir]
-        self._log_file = os.path.join(logging_dir, MONGO_LOG_FILENAME)
+        self._log_file = log_file
         self._process = None
 
     def start(self):

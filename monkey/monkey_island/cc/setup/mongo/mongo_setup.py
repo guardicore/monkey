@@ -11,6 +11,7 @@ from monkey_island.cc.setup.mongo.mongo_connector import MONGO_DB_HOST, MONGO_DB
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
 
 DB_DIR_NAME = "db"
+MONGO_LOG_FILENAME = "mongodb.log"
 MONGO_URL = os.environ.get(
     "MONKEY_MONGO_URL",
     "mongodb://{0}:{1}/{2}".format(MONGO_DB_HOST, MONGO_DB_PORT, MONGO_DB_NAME),
@@ -22,8 +23,9 @@ logger = logging.getLogger(__name__)
 
 def start_mongodb(data_dir: str) -> MongoDbProcess:
     db_dir = _create_db_dir(data_dir)
+    log_file = os.path.join(data_dir, MONGO_LOG_FILENAME)
 
-    mongo_db_process = MongoDbProcess(db_dir=db_dir, logging_dir=data_dir)
+    mongo_db_process = MongoDbProcess(db_dir=db_dir, log_file=log_file)
     mongo_db_process.start()
 
     return mongo_db_process
