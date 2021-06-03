@@ -45,7 +45,7 @@ def run_monkey_island():
     config_options, server_config_path = _setup_data_dir(island_args)
 
     _configure_logging(config_options)
-    _initialize_global_resources(config_options, server_config_path)
+    _initialize_globals(config_options, server_config_path)
 
     if config_options.start_mongodb:
         mongo_db_process = start_mongodb(config_options.data_dir)
@@ -72,7 +72,7 @@ def _configure_logging(config_options):
     setup_logging(config_options.data_dir, config_options.log_level)
 
 
-def _initialize_global_resources(config_options: IslandConfigOptions, server_config_path: str):
+def _initialize_globals(config_options: IslandConfigOptions, server_config_path: str):
     env_singleton.initialize_from_file(server_config_path)
 
     initialize_encryptor(config_options.data_dir)
