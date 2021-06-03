@@ -6,7 +6,7 @@ from monkey_island.cc.server_utils.consts import (
     DEFAULT_DEVELOP_SERVER_CONFIG_PATH,
     DEFAULT_SERVER_CONFIG_PATH,
 )
-from monkey_island.setup.island_config_options import IslandConfigOptions
+from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 
 def create_default_server_config_file() -> None:

@@ -1,4 +1,4 @@
-from monkey_island.startup import start_island
+from monkey_island.main import main
 
 if "__main__" == __name__:
-    start_island()
+    main()

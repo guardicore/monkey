@@ -5,7 +5,7 @@ from monkey_island.cc.server_utils.consts import (
     DEFAULT_LOG_LEVEL,
     DEFAULT_START_MONGO_DB,
 )
-from monkey_island.setup.island_config_options import IslandConfigOptions
+from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 TEST_CONFIG_FILE_CONTENTS_SPECIFIED = {
     "data_dir": "/tmp",
