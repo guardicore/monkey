@@ -2,6 +2,7 @@ import logging
 import os
 
 from common.utils.exceptions import InsecurePermissionsError
+from monkey_island.cc.services.utils.file_permissions import has_sufficient_permissions
 from monkey_island.setup.island_config_options import IslandConfigOptions
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ def setup_certificate(config_options: IslandConfigOptions) -> (str, str):
         if not os.path.exists(file):
             raise FileNotFoundError(f"File not found at {file}. Exiting.")
 
-        if not has_sufficient_permissions(file):
+        if not has_sufficient_permissions(path=file, required_permissions="0o400"):
             raise InsecurePermissionsError(
                 f"{file} has insecure permissions. Required permissions: r--------. Exiting."
             )
@@ -24,12 +25,3 @@ def setup_certificate(config_options: IslandConfigOptions) -> (str, str):
     logger.INFO(f"Using certificate path: {crt_path}, and key path: {key_path}.")
 
     return crt_path, key_path
-
-
-def has_sufficient_permissions(path: str) -> bool:
-    required_permissions = "0o400"
-
-    file_mode = os.stat(path).st_mode
-    file_permissions = oct(file_mode & 0o777)
-
-    return file_permissions == required_permissions
