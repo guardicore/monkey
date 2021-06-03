@@ -13,9 +13,17 @@ def get_default_data_dir() -> str:
         return r"$HOME/.monkey_island"
 
 
+# TODO: Figure out why windows requires the use of `os.getcwd()`. See issue #1207.
+def _get_monkey_island_abs_path() -> str:
+    if is_windows_os():
+        return os.path.join(os.getcwd(), "monkey_island")
+    else:
+        return str(Path(__file__).resolve().parent.parent.parent)
+
+
 SERVER_CONFIG_FILENAME = "server_config.json"
 
-MONKEY_ISLAND_ABS_PATH = str(Path(__file__).resolve().parent.parent.parent)
+MONKEY_ISLAND_ABS_PATH = _get_monkey_island_abs_path()
 
 DEFAULT_DATA_DIR = os.path.expandvars(get_default_data_dir())
 
