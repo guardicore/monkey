@@ -9,7 +9,6 @@ from monkey_island.cc.environment.utils import create_secure_directory
 from monkey_island.cc.setup.mongo import mongo_connector
 from monkey_island.cc.setup.mongo.mongo_connector import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
-from monkey_island.setup.island_config_options import IslandConfigOptions
 
 DB_DIR_NAME = "db"
 MONGO_URL = os.environ.get(
@@ -21,10 +20,10 @@ MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 logger = logging.getLogger(__name__)
 
 
-def start_mongodb(config_options: IslandConfigOptions) -> MongoDbProcess:
-    db_dir = _create_db_dir(config_options.data_dir)
+def start_mongodb(data_dir: str) -> MongoDbProcess:
+    db_dir = _create_db_dir(data_dir)
 
-    mongo_db_process = MongoDbProcess(db_dir=db_dir, logging_dir=config_options.data_dir)
+    mongo_db_process = MongoDbProcess(db_dir=db_dir, logging_dir=data_dir)
     mongo_db_process.start()
 
     return mongo_db_process

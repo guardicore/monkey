@@ -48,7 +48,7 @@ def run_monkey_island():
     _initialize_global_resources(config_options, server_config_path)
 
     if config_options.start_mongodb:
-        mongo_db_process = start_mongodb(config_options)
+        mongo_db_process = start_mongodb(config_options.data_dir)
         register_mongo_shutdown_callback(mongo_db_process)
 
     connect_to_mongodb()
