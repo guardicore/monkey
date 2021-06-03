@@ -48,7 +48,7 @@ class ConfigurationImport(flask_restful.Resource):
                 return ResponseContents().form_response()
             else:
                 return ResponseContents(
-                    config=config,
+                    config=json.dumps(config),
                     config_schema=ConfigService.get_config_schema(),
                     import_status="unsafe_options_verification_required",
                     status_code=403,

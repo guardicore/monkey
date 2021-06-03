@@ -19,3 +19,11 @@
   display: inline-block;
   width: auto;
 }
+
+.fade.modal.show.unsafe-config-options-confirmation-modal {
+  z-index: 2000;
+}
+
+.modal-backdrop.unsafe-config-options-confirmation-modal-backdrop {
+  z-index: 1900;
+}

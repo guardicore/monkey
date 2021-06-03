@@ -62,9 +62,9 @@ const ConfigImportModal = (props: Props) => {
           setUploadStatus(UploadStatuses.error);
           setErrorMessage(res['message']);
         } else if (res['import_status'] === 'unsafe_options_verification_required') {
-          if (isUnsafeOptionSelected(res['config_schema'], res['config'])) {
+          if (isUnsafeOptionSelected(res['config_schema'], JSON.parse(res['config']))) {
             setShowUnsafeOptionsConfirmation(true);
-            setCandidateConfig(JSON.stringify(res['config']));
+            setCandidateConfig(res['config']);
           } else {
             setUnsafeOptionsVerified(true);
             setConfigContents(res['config']);
@@ -133,8 +133,8 @@ const ConfigImportModal = (props: Props) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {showVerificationDialog()}
         <div className={`mb-3 config-import-option`}>
+          {showVerificationDialog()}
           <Form>
             <Form.File id='importConfigFileSelector'
                        label='Please choose a configuration file'
