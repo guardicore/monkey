@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class BootloaderHttpServer(ThreadingMixIn, HTTPServer):
-    def __init__(self, mongo_url):
+    def __init__(self):
         server_address = ("", 5001)
         super().__init__(server_address, BootloaderHTTPRequestHandler)
 
