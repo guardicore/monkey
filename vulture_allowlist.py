@@ -192,7 +192,3 @@ environment  # unused variable (monkey/monkey_island/cc/models/monkey.py:59)
 _.environment  # unused attribute (monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/environment.py:10)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
-
-
-# used in tests/unit_tests/ which is skipped by Vulture
-data_for_tests_dir  # unused function (monkey/tests/conftest.py:11)
