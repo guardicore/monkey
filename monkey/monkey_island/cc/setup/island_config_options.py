@@ -23,5 +23,9 @@ class IslandConfigOptions:
             "mongodb", {"start_mongodb": DEFAULT_START_MONGO_DB}
         ).get("start_mongodb", DEFAULT_START_MONGO_DB)
 
-        self.crt_path = config_contents.get("cert_path", DEFAULT_CRT_PATH)
-        self.key_path = config_contents.get("cert_path", DEFAULT_KEY_PATH)
+        self.crt_path = os.path.expandvars(
+            os.path.expanduser(config_contents.get("cert_path", DEFAULT_CRT_PATH))
+        )
+        self.key_path = os.path.expandvars(
+            os.path.expanduser(config_contents.get("key_path", DEFAULT_KEY_PATH))
+        )
