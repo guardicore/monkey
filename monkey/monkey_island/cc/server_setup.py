@@ -83,7 +83,7 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
     populate_exporter_list()
     app = init_app(MONGO_URL)
 
-    crt_path, key_path = setup_certificate(config_options)
+    crt_path, key_path = setup_certificate(config_options.crt_path, config_options.key_path)
 
     init_collections()
 
