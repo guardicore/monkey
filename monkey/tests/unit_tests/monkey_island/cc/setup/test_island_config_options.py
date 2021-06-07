@@ -3,6 +3,7 @@ import os
 from monkey_island.cc.server_utils.consts import (
     DEFAULT_CRT_PATH,
     DEFAULT_DATA_DIR,
+    DEFAULT_KEY_PATH,
     DEFAULT_LOG_LEVEL,
     DEFAULT_START_MONGO_DB,
 )
@@ -107,6 +108,43 @@ def test_crt_path_expandvars(monkeypatch, tmpdir):
 def assert_ssl_certificate_file_equals(config_file_contents, expected_ssl_certificate_file):
     assert_island_config_option_equals(
         config_file_contents, "crt_path", expected_ssl_certificate_file
+    )
+
+
+def test_key_path_uses_default():
+    assert_ssl_certificate_key_file_equals(TEST_CONFIG_FILE_CONTENTS_UNSPECIFIED, DEFAULT_KEY_PATH)
+
+
+def test_key_path_specified():
+    assert_ssl_certificate_key_file_equals(
+        TEST_CONFIG_FILE_CONTENTS_SPECIFIED,
+        TEST_CONFIG_FILE_CONTENTS_SPECIFIED["ssl_certificate"]["ssl_certificate_key_file"],
+    )
+
+
+def test_key_path_expanduser(monkeypatch, tmpdir):
+    set_home_env(monkeypatch, tmpdir)
+    FILE_NAME = "test.key"
+
+    assert_ssl_certificate_key_file_equals(
+        {"ssl_certificate": {"ssl_certificate_key_file": os.path.join("~", FILE_NAME)}},
+        os.path.join(tmpdir, FILE_NAME),
+    )
+
+
+def test_key_path_expandvars(monkeypatch, tmpdir):
+    set_home_env(monkeypatch, tmpdir)
+    FILE_NAME = "test.key"
+
+    assert_ssl_certificate_key_file_equals(
+        {"ssl_certificate": {"ssl_certificate_key_file": os.path.join("$HOME", FILE_NAME)}},
+        os.path.join(tmpdir, FILE_NAME),
+    )
+
+
+def assert_ssl_certificate_key_file_equals(config_file_contents, expected_ssl_certificate_file):
+    assert_island_config_option_equals(
+        config_file_contents, "key_path", expected_ssl_certificate_file
     )
 
 
