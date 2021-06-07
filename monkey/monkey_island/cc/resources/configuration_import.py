@@ -63,7 +63,7 @@ class ConfigurationImport(flask_restful.Resource):
             return ResponseContents(
                 import_status=ImportStatuses.INVALID_CONFIGURATION,
                 message="Invalid configuration supplied. "
-                "Maybe the format is outdated or the file is corrupted.",
+                "Maybe the format is outdated or the file has been corrupted.",
             ).form_response()
         except NoCredentialsError:
             return ResponseContents(

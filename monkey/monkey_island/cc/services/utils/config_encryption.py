@@ -50,7 +50,7 @@ def decrypt_config(cyphertext: str, password: str) -> Dict:
             logger.info("Wrong password for configuration provided.")
             raise InvalidCredentialsError
         else:
-            logger.info("Configuration is corrupted.")
+            logger.info("The provided configuration file is corrupt.")
             raise ex
     plaintext_config = json.loads(dec_plaintext_config_stream.getvalue().decode("utf-8"))
     return plaintext_config

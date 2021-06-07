@@ -119,7 +119,7 @@ const ExportPlaintextChoiceField = (props: {
       />
       <p className={`export-warning text-secondary`}>
         Configuration may contain stolen credentials or sensitive data.<br/>
-        It is advised to use the <b>Encrypt with a password</b> option.
+        It is recommended that you use the <b>Encrypt with a password</b> option.
       </p>
     </div>
   )
