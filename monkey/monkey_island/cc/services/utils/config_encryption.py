@@ -2,7 +2,7 @@ import base64
 import io
 import json
 import logging
-from typing import Dict, Union
+from typing import Dict
 
 import pyAesCrypt
 
@@ -27,7 +27,7 @@ def encrypt_config(config: Dict, password: str) -> str:
     return ciphertext_b64.decode()
 
 
-def decrypt_config(cyphertext: Union[str, dict], password: str) -> Dict:
+def decrypt_config(cyphertext: str, password: str) -> Dict:
     if not password:
         raise NoCredentialsError
 
