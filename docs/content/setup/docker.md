@@ -60,7 +60,7 @@ been signed by a private certificate authority.
         guardicore/monkey-island:1.10.0
     ```
 
-### 3b. Start Monkey Island with User-Provided Certificate
+### 3b. Start Monkey Island with user-provided certificate
 
 1. Create a directory named `monkey_island_data`. This will serve as the
    location where Infection Monkey stores its configuration and runtime
