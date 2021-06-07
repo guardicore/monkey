@@ -30,6 +30,7 @@ Flask = ">=1.1"
 Werkzeug = ">=1.0.1"
 ScoutSuite = {git = "https://github.com/guardicode/ScoutSuite"}
 PyJWT = "==1.7"
+pyaescrypt = "*"
 
 [dev-packages]
 virtualenv = ">=20.0.26"
