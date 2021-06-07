@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import sys
 from pathlib import Path
 from threading import Thread
@@ -99,9 +98,8 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
         http_server = WSGIServer(
             ("0.0.0.0", env_singleton.env.get_island_port()),
             app,
-            # TODO: modify next two lines?
-            certfile=os.environ.get("SERVER_CRT", crt_path),
-            keyfile=os.environ.get("SERVER_KEY", key_path),
+            certfile=crt_path,
+            keyfile=key_path,
         )
         _log_init_info()
         http_server.serve_forever()
