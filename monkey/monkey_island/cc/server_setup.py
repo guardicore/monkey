@@ -26,7 +26,7 @@ from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logg
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
-from monkey_island.cc.setup import island_config_options  # noqa: E402
+from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
@@ -70,7 +70,7 @@ def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, st
 
 def _exit_on_invalid_config_options(config_options: IslandConfigOptions):
     try:
-        island_config_options.raise_on_invalid_options(config_options)
+        island_config_options_validator.raise_on_invalid_options(config_options)
     except Exception as ex:
         print(f"Configuration error: {ex}")
         exit(1)
