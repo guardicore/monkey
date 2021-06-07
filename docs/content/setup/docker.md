@@ -7,6 +7,10 @@ weight: 4
 tags: ["setup", "docker", "linux", "windows"]
 ---
 
+## Supported operating systems
+
+The Infection Monkey Docker container works on Linux only. It is not compatible with Docker for Windows or Docker for Mac.
+
 ## Deployment
 
 ### Linux
@@ -24,10 +28,6 @@ sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:
 ```
 
 Wait until the Island is done setting up and it will be available on https://localhost:5000
-
-### Windows and Mac OS X
-
-Not supported yet, since docker doesn't support `--network=host` parameter on these OS's.
 
 ## Upgrading
 
