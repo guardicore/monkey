@@ -13,3 +13,12 @@ def patched_home_env(monkeypatch, tmpdir):
     monkeypatch.setenv("HOME", str(tmpdir))
 
     return tmpdir
+
+
+@pytest.fixture
+def create_empty_file():
+    def inner(file_name):
+        with open(file_name, "w"):
+            pass
+
+    return inner

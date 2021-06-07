@@ -20,7 +20,7 @@ def test_expand_vars(patched_home_env):
 
 
 @pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
-def test_has_expected_permissions_true(tmpdir):
+def test_has_expected_permissions_true(tmpdir, create_empty_file):
     file_name = f"{tmpdir}/test"
 
     create_empty_file(file_name)
@@ -30,15 +30,10 @@ def test_has_expected_permissions_true(tmpdir):
 
 
 @pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
-def test_has_expected_permissions_false(tmpdir):
+def test_has_expected_permissions_false(tmpdir, create_empty_file):
     file_name = f"{tmpdir}/test"
 
     create_empty_file(file_name)
     os.chmod(file_name, 0o755)
 
     assert not file_utils.has_expected_permissions(file_name, 0o700)
-
-
-def create_empty_file(file_name):
-    with open(file_name, "w"):
-        pass
