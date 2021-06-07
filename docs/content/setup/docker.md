@@ -82,7 +82,7 @@ been signed by a private certificate authority.
         guardicore/monkey-island:1.10.0 --setup-only
     ```
 
-1. (Optional but recommended) Copy your `.crt` and `.key` files to `./monkey_island_data`.
+1. (Optional but recommended) Move your `.crt` and `.key` files to `./monkey_island_data`.
 
 1. Make sure that your `.crt` and `.key` files are read-only and readable only by you.
 
