@@ -99,6 +99,7 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
         http_server = WSGIServer(
             ("0.0.0.0", env_singleton.env.get_island_port()),
             app,
+            # TODO: modify next two lines?
             certfile=os.environ.get("SERVER_CRT", crt_path),
             keyfile=os.environ.get("SERVER_KEY", key_path),
         )

@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 
 from monkey_island.cc.server_utils.consts import (
+    DEFAULT_CERTIFICATE_PATHS,
     DEFAULT_CRT_PATH,
     DEFAULT_DATA_DIR,
     DEFAULT_KEY_PATH,
@@ -24,10 +25,14 @@ class IslandConfigOptions:
         ).get("start_mongodb", DEFAULT_START_MONGO_DB)
 
         self.crt_path = IslandConfigOptions._expand_path(
-            config_contents.get("cert_path", DEFAULT_CRT_PATH)
+            config_contents.get("ssl_certificate", DEFAULT_CERTIFICATE_PATHS).get(
+                "ssl_certificate_file", DEFAULT_CRT_PATH
+            )
         )
         self.key_path = IslandConfigOptions._expand_path(
-            config_contents.get("key_path", DEFAULT_KEY_PATH)
+            config_contents.get("ssl_certificate", DEFAULT_CERTIFICATE_PATHS).get(
+                "ssl_certificate_key_file", DEFAULT_KEY_PATH
+            )
         )
 
     @staticmethod
