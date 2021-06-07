@@ -51,8 +51,12 @@ def set_home_env(monkeypatch, tmpdir):
 
 
 def assert_island_config_options_data_dir_equals(config_file_contents, expected_data_dir):
+    assert_island_config_option_equals(config_file_contents, "data_dir", expected_data_dir)
+
+
+def assert_island_config_option_equals(config_file_contents, option_name, expected_value):
     options = IslandConfigOptions(config_file_contents)
-    assert options.data_dir == expected_data_dir
+    assert getattr(options, option_name) == expected_value
 
 
 def test_island_config_options__log_level():
