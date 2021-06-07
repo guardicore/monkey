@@ -11,7 +11,7 @@ def ensure_file_existence(file: str) -> None:
 def ensure_file_permissions(file: str) -> None:
     if not file_has_expected_permissions(path=file, expected_permissions="0o400"):
         raise InsecurePermissionsError(
-            f"{file} has insecure permissions. Required permissions: r--------. Exiting."
+            f"{file} has insecure permissions. Required permissions: 400. Exiting."
         )
 
 
