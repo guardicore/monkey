@@ -4,7 +4,7 @@ from typing import Tuple
 from monkey_island.cc.arg_parser import IslandCmdArgs
 from monkey_island.cc.environment import server_config_handler
 from monkey_island.cc.environment.utils import create_secure_directory
-from monkey_island.cc.server_utils.consts import DEFAULT_DATA_DIR, DEFAULT_SERVER_CONFIG_PATH
+from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 
@@ -23,8 +23,7 @@ def _setup_config_by_cmd_arg(server_config_path) -> Tuple[IslandConfigOptions, s
 
 
 def _setup_default_config() -> Tuple[IslandConfigOptions, str]:
-    server_config_path = DEFAULT_SERVER_CONFIG_PATH
-    create_secure_directory(DEFAULT_DATA_DIR, create_parent_dirs=False)
-    server_config_handler.create_default_server_config_file()
-    config = server_config_handler.load_server_config_from_file(server_config_path)
+    config = server_config_handler.load_server_config_from_file(DEFAULT_SERVER_CONFIG_PATH)
+    create_secure_directory(config.data_dir, create_parent_dirs=False)
+    server_config_path = server_config_handler.create_default_server_config_file(config.data_dir)
     return config, server_config_path

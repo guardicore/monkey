@@ -21,9 +21,6 @@ python:
 
 os: linux
 
-before_install:
-# Init server_config.json to default
-- cp monkey/monkey_island/cc/server_config.json.develop monkey/monkey_island/cc/server_config.json
 
 install:
 # Python
