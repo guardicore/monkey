@@ -36,9 +36,12 @@ def test_encrypt_decrypt_config__wrong_password(plaintext_config):
         decrypt_config(encrypted_config, INCORRECT_PASSWORD)
 
 
-def test_encrypt_decrypt_config__malformed():
+def test_encrypt_decrypt_config__malformed_too_short():
     with pytest.raises(ValueError):
         decrypt_config(MALFORMED_CYPHER_TEXT_TOO_SHORT, PASSWORD)
+
+
+def test_encrypt_decrypt_config__malformed_corrupted():
     with pytest.raises(ValueError):
         decrypt_config(MALFORMED_CYPHER_TEXT_CORRUPTED, PASSWORD)
 
