@@ -43,7 +43,7 @@ def test_encrypt_decrypt_config__malformed():
         decrypt_config(MALFORMED_CYPHER_TEXT_CORRUPTED, PASSWORD)
 
 
-def test_decrypt_config__no_password(plaintext_config):
+def test_encrypt_decrypt_config__decrypt_no_password(plaintext_config):
     encrypted_config = encrypt_config(plaintext_config, PASSWORD)
     with pytest.raises(NoCredentialsError):
         decrypt_config(encrypted_config, "")
