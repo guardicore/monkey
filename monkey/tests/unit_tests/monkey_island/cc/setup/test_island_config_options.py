@@ -32,26 +32,22 @@ def test_data_dir_uses_default():
     assert_data_dir_equals(TEST_CONFIG_FILE_CONTENTS_UNSPECIFIED, DEFAULT_DATA_DIR)
 
 
-def test_data_dir_expanduser(monkeypatch, tmpdir):
-    set_home_env(monkeypatch, tmpdir)
+def test_data_dir_expanduser(patched_home_env):
     DATA_DIR_NAME = "test_data_dir"
 
     assert_data_dir_equals(
-        {"data_dir": os.path.join("~", DATA_DIR_NAME)}, os.path.join(tmpdir, DATA_DIR_NAME)
+        {"data_dir": os.path.join("~", DATA_DIR_NAME)},
+        os.path.join(patched_home_env, DATA_DIR_NAME),
     )
 
 
-def test_data_dir_expandvars(monkeypatch, tmpdir):
-    set_home_env(monkeypatch, tmpdir)
+def test_data_dir_expandvars(patched_home_env):
     DATA_DIR_NAME = "test_data_dir"
 
     assert_data_dir_equals(
-        {"data_dir": os.path.join("$HOME", DATA_DIR_NAME)}, os.path.join(tmpdir, DATA_DIR_NAME)
+        {"data_dir": os.path.join("$HOME", DATA_DIR_NAME)},
+        os.path.join(patched_home_env, DATA_DIR_NAME),
     )
-
-
-def set_home_env(monkeypatch, tmpdir):
-    monkeypatch.setenv("HOME", str(tmpdir))
 
 
 def assert_data_dir_equals(config_file_contents, expected_data_dir):
@@ -85,23 +81,21 @@ def test_crt_path_specified():
     )
 
 
-def test_crt_path_expanduser(monkeypatch, tmpdir):
-    set_home_env(monkeypatch, tmpdir)
+def test_crt_path_expanduser(patched_home_env):
     FILE_NAME = "test.crt"
 
     assert_ssl_certificate_file_equals(
         {"ssl_certificate": {"ssl_certificate_file": os.path.join("~", FILE_NAME)}},
-        os.path.join(tmpdir, FILE_NAME),
+        os.path.join(patched_home_env, FILE_NAME),
     )
 
 
-def test_crt_path_expandvars(monkeypatch, tmpdir):
-    set_home_env(monkeypatch, tmpdir)
+def test_crt_path_expandvars(patched_home_env):
     FILE_NAME = "test.crt"
 
     assert_ssl_certificate_file_equals(
         {"ssl_certificate": {"ssl_certificate_file": os.path.join("$HOME", FILE_NAME)}},
-        os.path.join(tmpdir, FILE_NAME),
+        os.path.join(patched_home_env, FILE_NAME),
     )
 
 
@@ -122,23 +116,21 @@ def test_key_path_specified():
     )
 
 
-def test_key_path_expanduser(monkeypatch, tmpdir):
-    set_home_env(monkeypatch, tmpdir)
+def test_key_path_expanduser(patched_home_env):
     FILE_NAME = "test.key"
 
     assert_ssl_certificate_key_file_equals(
         {"ssl_certificate": {"ssl_certificate_key_file": os.path.join("~", FILE_NAME)}},
-        os.path.join(tmpdir, FILE_NAME),
+        os.path.join(patched_home_env, FILE_NAME),
     )
 
 
-def test_key_path_expandvars(monkeypatch, tmpdir):
-    set_home_env(monkeypatch, tmpdir)
+def test_key_path_expandvars(patched_home_env):
     FILE_NAME = "test.key"
 
     assert_ssl_certificate_key_file_equals(
         {"ssl_certificate": {"ssl_certificate_key_file": os.path.join("$HOME", FILE_NAME)}},
-        os.path.join(tmpdir, FILE_NAME),
+        os.path.join(patched_home_env, FILE_NAME),
     )
 
 
