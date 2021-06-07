@@ -27,8 +27,8 @@ from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logg
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
+from monkey_island.cc.setup.certificate_setup import setup_certificate  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
-from monkey_island.cc.setup.certificate.certificate_setup import setup_certificate  # noqa: E402
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
     MONGO_URL,
