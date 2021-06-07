@@ -6,7 +6,7 @@ from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH, SER
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 
-def create_default_server_config_file(data_dir) -> None:
+def create_default_server_config_file(data_dir: str) -> str:
     config_file_path = os.path.join(data_dir, SERVER_CONFIG_FILENAME)
     if not os.path.isfile(config_file_path):
         write_default_server_config_to_file(config_file_path)
