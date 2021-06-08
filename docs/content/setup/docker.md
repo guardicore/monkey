@@ -87,7 +87,8 @@ been signed by a private certificate authority.
 1. Make sure that your `.crt` and `.key` files are read-only and readable only by you.
 
     ```bash
-    chmod 400 ./monkey_island_data/{*.key,*.crt}
+    chmod 400 <PATH_TO_KEY_FILE>
+    chmod 400 <PATH_TO_CRT_FILE>
     ```
 
 1.  Edit `./monkey_island_data/server_config.json` to configure Monkey Island
