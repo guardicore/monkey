@@ -45,7 +45,8 @@ private certificate authority.
    by you.
 
     ```bash
-    chmod 400 $HOME/.monkey_island/{*.key,*.crt}
+    chmod 400 <PATH_TO_KEY_FILE>
+    chmod 400 <PATH_TO_CRT_FILE>
     ```
 
 1.  Edit `$HOME/.monkey_island/server_config.json` to configure Monkey Island
