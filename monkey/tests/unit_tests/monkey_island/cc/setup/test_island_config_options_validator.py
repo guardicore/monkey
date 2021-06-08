@@ -26,6 +26,7 @@ def island_config_options(tmpdir, create_empty_file):
     )
 
 
+@pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
 def test_valid_crt_and_key_paths(island_config_options):
     try:
         raise_on_invalid_options(island_config_options)
@@ -34,6 +35,7 @@ def test_valid_crt_and_key_paths(island_config_options):
         assert False
 
 
+@pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
 def test_crt_path_does_not_exist(island_config_options):
     os.remove(island_config_options.crt_path)
 
@@ -41,6 +43,7 @@ def test_crt_path_does_not_exist(island_config_options):
         raise_on_invalid_options(island_config_options)
 
 
+@pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
 def test_crt_path_insecure_permissions(island_config_options):
     os.chmod(island_config_options.crt_path, 0o777)
 
@@ -48,6 +51,7 @@ def test_crt_path_insecure_permissions(island_config_options):
         raise_on_invalid_options(island_config_options)
 
 
+@pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
 def test_key_path_does_not_exist(island_config_options):
     os.remove(island_config_options.key_path)
 
@@ -55,6 +59,7 @@ def test_key_path_does_not_exist(island_config_options):
         raise_on_invalid_options(island_config_options)
 
 
+@pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
 def test_key_path_insecure_permissions(island_config_options):
     os.chmod(island_config_options.key_path, 0o777)
 
