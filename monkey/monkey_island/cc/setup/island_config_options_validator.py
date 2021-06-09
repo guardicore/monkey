@@ -7,11 +7,14 @@ from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 
 def raise_on_invalid_options(options: IslandConfigOptions):
+    LINUX_READ_ONLY_BY_USER = 0o400
+    WINDOWS_READ_ONLY = 1179817
+
     _raise_if_not_isfile(options.crt_path)
-    _raise_if_incorrect_permissions(options.crt_path, 0o400, 1179817)
+    _raise_if_incorrect_permissions(options.crt_path, LINUX_READ_ONLY_BY_USER, WINDOWS_READ_ONLY)
 
     _raise_if_not_isfile(options.key_path)
-    _raise_if_incorrect_permissions(options.key_path, 0o400, 1179817)
+    _raise_if_incorrect_permissions(options.key_path, LINUX_READ_ONLY_BY_USER, WINDOWS_READ_ONLY)
 
 
 def _raise_if_not_isfile(f: str):
