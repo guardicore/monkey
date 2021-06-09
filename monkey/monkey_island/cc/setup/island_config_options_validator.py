@@ -26,7 +26,7 @@ def _raise_if_incorrect_permissions(
     f: str, linux_expected_permissions: int, windows_expected_permissions: int
 ):
     expected_permissions = (
-        windows_expected_permissions if is_windows_os() else oct(linux_expected_permissions)
+        windows_expected_permissions if is_windows_os() else linux_expected_permissions
     )
     if not has_expected_permissions(f, expected_permissions):
         raise InsecurePermissionsError(
