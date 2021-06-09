@@ -9,8 +9,15 @@ def expand_path(path: str) -> str:
 
 def has_expected_permissions(path: str, expected_permissions: int) -> bool:
     if is_windows_os():
+        # checks that admin has any permissions, user has `expected_permissions`,
+        # and everyone else has no permissions
+
         import win32api  # noqa: E402
         import win32security  # noqa: E402
+
+        FULL_CONTROL = 2032127
+        ACE_TYPE_ALLOW = 0
+        ACE_TYPE_DENY = 1
 
         admins_sid, _, _ = win32security.LookupAccountName("", "Administrators")
         user_sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
@@ -23,15 +30,18 @@ def has_expected_permissions(path: str, expected_permissions: int) -> bool:
 
         for i in range(acl.GetAceCount()):
             ace = acl.GetAce(i)
-            sid = ace[-1]
+            ace_type, _ = ace[0]  # 0 for allow, 1 for deny
             permissions = ace[1]
+            sid = ace[-1]
+
             if sid == user_sid:
-                if permissions != expected_permissions:
+                if not (permissions == expected_permissions and ace_type == ACE_TYPE_ALLOW):
                     return False
             elif sid == admins_sid:
                 continue
+            # TODO: consider removing; so many system accounts/groups exist, it's likely to fail
             else:
-                if permissions != 2032127:  # everyone but user & admins should have no permissions
+                if not (permissions == FULL_CONTROL and ace_type == ACE_TYPE_DENY):
                     return False
 
         return True
