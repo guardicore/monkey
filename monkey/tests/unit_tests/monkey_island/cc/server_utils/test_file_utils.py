@@ -1,6 +1,7 @@
 import os
 
 import pytest
+import subprocess
 
 from monkey_island.cc.server_utils import file_utils
 
@@ -20,7 +21,7 @@ def test_expand_vars(patched_home_env):
 
 
 @pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
-def test_has_expected_permissions_true(tmpdir, create_empty_file):
+def test_has_expected_permissions_true_linux(tmpdir, create_empty_file):
     file_name = f"{tmpdir}/test"
 
     create_empty_file(file_name)
@@ -30,10 +31,30 @@ def test_has_expected_permissions_true(tmpdir, create_empty_file):
 
 
 @pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
-def test_has_expected_permissions_false(tmpdir, create_empty_file):
+def test_has_expected_permissions_false_linux(tmpdir, create_empty_file):
     file_name = f"{tmpdir}/test"
 
     create_empty_file(file_name)
     os.chmod(file_name, 0o755)
 
     assert not file_utils.has_expected_permissions(file_name, 0o700)
+
+
+@pytest.mark.skipif(os.name == "posix", reason="Tests Windows (not Posix) permissions.")
+def test_has_expected_permissions_true_windows(tmpdir, create_empty_file):
+    file_name = f"{tmpdir}/test"
+
+    create_empty_file(file_name)
+    subprocess.run(f"echo y| cacls {file_name} /p %USERNAME%:F", shell=True)
+
+    assert file_utils.has_expected_permissions(file_name, 2032127)
+
+
+@pytest.mark.skipif(os.name == "posix", reason="Tests Windows (not Posix) permissions.")
+def test_has_expected_permissions_false_windows(tmpdir, create_empty_file):
+    file_name = f"{tmpdir}/test"
+
+    create_empty_file(file_name)
+    subprocess.run(f"echo y| cacls {file_name} /p %USERNAME%:R", shell=True)
+
+    assert not file_utils.has_expected_permissions(file_name, 2032127)
