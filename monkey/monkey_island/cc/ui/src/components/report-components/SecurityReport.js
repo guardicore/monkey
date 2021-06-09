@@ -52,6 +52,7 @@ import {
   zerologonIssueReport,
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
+import {powershellIssueOverview, powershellIssueReport} from './security/issues/PowershellIssue';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -140,6 +141,11 @@ class ReportPageComponent extends AuthComponent {
       'ShellShockExploiter': {
         [this.issueContentTypes.OVERVIEW]: shellShockIssueOverview,
         [this.issueContentTypes.REPORT]: shellShockIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'PowershellExploiter': {
+        [this.issueContentTypes.OVERVIEW]: powershellIssueOverview,
+        [this.issueContentTypes.REPORT]: powershellIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'Ms08_067_Exploiter': {
@@ -297,8 +303,7 @@ class ReportPageComponent extends AuthComponent {
             <p className='alert alert-info'>
               <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
               To improve the monkey's detection rates, try adding users and passwords and enable the "Local
-              network
-              scan" config value under <b>Basic - Network</b>.
+              network scan" config value under <b>Basic - Network</b>.
             </p>
         }
         <p>

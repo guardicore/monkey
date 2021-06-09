@@ -26,6 +26,7 @@ BASIC = {
                         "VSFTPDExploiter",
                         "MSSQLExploiter",
                         "DrupalExploiter",
+                        "PowershellExploiter",
                     ],
                 }
             },
