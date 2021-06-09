@@ -102,7 +102,7 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
 
     logger.info(
         f"Using certificate path: {config_options.crt_path}, and key path: "
-        "{config_options.key_path}."
+        f"{config_options.key_path}."
     )
 
     if env_singleton.env.is_debug():
