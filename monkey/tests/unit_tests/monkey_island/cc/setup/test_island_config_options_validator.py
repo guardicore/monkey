@@ -7,9 +7,9 @@ from common.utils.exceptions import InsecurePermissionsError
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 from monkey_island.cc.setup.island_config_options_validator import raise_on_invalid_options
 
-
 LINUX_READ_ONLY_BY_USER = 0o400
 LINUX_RWX_BY_ALL = 0o777
+
 
 @pytest.fixture
 def linux_island_config_options(tmpdir, create_empty_file):
@@ -76,12 +76,12 @@ def test_linux_key_path_insecure_permissions(linux_island_config_options):
 def windows_island_config_options(tmpdir, create_empty_file):
     crt_file = os.path.join(tmpdir, "test.crt")
     create_empty_file(crt_file)
-    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(crt_file, 'R')
+    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(crt_file, "R")
     subprocess.run(cmd_to_change_permissions, shell=True)
 
     key_file = os.path.join(tmpdir, "test.key")
     create_empty_file(key_file)
-    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(key_file, 'R')
+    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(key_file, "R")
     subprocess.run(cmd_to_change_permissions, shell=True)
 
     return IslandConfigOptions(
@@ -121,7 +121,9 @@ def test_windows_crt_path_does_not_exist(windows_island_config_options):
 
 @pytest.mark.skipif(os.name == "posix", reason="Tests Windows (not Posix) permissions.")
 def test_windows_crt_path_insecure_permissions(windows_island_config_options):
-    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(windows_island_config_options.crt_path, 'W')
+    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(
+        windows_island_config_options.crt_path, "W"
+    )
     subprocess.run(cmd_to_change_permissions, shell=True)
 
     with pytest.raises(InsecurePermissionsError):
@@ -138,7 +140,9 @@ def test_windows_key_path_does_not_exist(windows_island_config_options):
 
 @pytest.mark.skipif(os.name == "posix", reason="Tests Windows (not Posix) permissions.")
 def test_windows_key_path_insecure_permissions(windows_island_config_options):
-    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(windows_island_config_options.key_path, 'W')
+    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(
+        windows_island_config_options.key_path, "W"
+    )
     subprocess.run(cmd_to_change_permissions, shell=True)
 
     with pytest.raises(InsecurePermissionsError):
