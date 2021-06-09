@@ -1,5 +1,6 @@
 import os
 import subprocess
+from collections.abc import Callable
 
 import pytest
 
@@ -11,16 +12,7 @@ LINUX_READ_ONLY_BY_USER = 0o400
 LINUX_RWX_BY_ALL = 0o777
 
 
-@pytest.fixture
-def linux_island_config_options(tmpdir, create_empty_file):
-    crt_file = os.path.join(tmpdir, "test.crt")
-    create_empty_file(crt_file)
-    os.chmod(crt_file, LINUX_READ_ONLY_BY_USER)
-
-    key_file = os.path.join(tmpdir, "test.key")
-    create_empty_file(key_file)
-    os.chmod(key_file, LINUX_READ_ONLY_BY_USER)
-
+def certificate_test_island_config_options(crt_file, key_file):
     return IslandConfigOptions(
         {
             "ssl_certificate": {
@@ -29,6 +21,26 @@ def linux_island_config_options(tmpdir, create_empty_file):
             }
         }
     )
+
+
+@pytest.fixture
+def linux_island_config_options(create_read_only_linux_file: Callable):
+    crt_file = create_read_only_linux_file("test.crt")
+    key_file = create_read_only_linux_file("test.key")
+
+    return certificate_test_island_config_options(crt_file, key_file)
+
+
+@pytest.fixture
+def create_read_only_linux_file(tmpdir: str, create_empty_file: Callable) -> Callable:
+    def inner(file_name: str) -> str:
+        new_file = os.path.join(tmpdir, file_name)
+        create_empty_file(new_file)
+        os.chmod(new_file, LINUX_READ_ONLY_BY_USER)
+
+        return new_file
+
+    return inner
 
 
 @pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
@@ -73,25 +85,24 @@ def test_linux_key_path_insecure_permissions(linux_island_config_options):
 
 
 @pytest.fixture
-def windows_island_config_options(tmpdir, create_empty_file):
-    crt_file = os.path.join(tmpdir, "test.crt")
-    create_empty_file(crt_file)
-    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(crt_file, "R")
-    subprocess.run(cmd_to_change_permissions, shell=True)
+def windows_island_config_options(tmpdir: str, create_read_only_windows_file: Callable):
+    crt_file = create_read_only_windows_file("test.crt")
+    key_file = create_read_only_windows_file("test.key")
 
-    key_file = os.path.join(tmpdir, "test.key")
-    create_empty_file(key_file)
-    cmd_to_change_permissions = get_windows_cmd_to_change_permissions(key_file, "R")
-    subprocess.run(cmd_to_change_permissions, shell=True)
+    return certificate_test_island_config_options(crt_file, key_file)
 
-    return IslandConfigOptions(
-        {
-            "ssl_certificate": {
-                "ssl_certificate_file": crt_file,
-                "ssl_certificate_key_file": key_file,
-            }
-        }
-    )
+
+@pytest.fixture
+def create_read_only_windows_file(tmpdir: str, create_empty_file: Callable) -> Callable:
+    def inner(file_name: str) -> str:
+        new_file = os.path.join(tmpdir, file_name)
+        create_empty_file(new_file)
+        cmd_to_change_permissions = get_windows_cmd_to_change_permissions(new_file, "R")
+        subprocess.run(cmd_to_change_permissions, shell=True)  # noqa DUO116
+
+        return new_file
+
+    return inner
 
 
 def get_windows_cmd_to_change_permissions(file_name, permissions):
@@ -124,7 +135,7 @@ def test_windows_crt_path_insecure_permissions(windows_island_config_options):
     cmd_to_change_permissions = get_windows_cmd_to_change_permissions(
         windows_island_config_options.crt_path, "W"
     )
-    subprocess.run(cmd_to_change_permissions, shell=True)
+    subprocess.run(cmd_to_change_permissions, shell=True)  # noqa DUO116
 
     with pytest.raises(InsecurePermissionsError):
         raise_on_invalid_options(windows_island_config_options)
@@ -143,7 +154,7 @@ def test_windows_key_path_insecure_permissions(windows_island_config_options):
     cmd_to_change_permissions = get_windows_cmd_to_change_permissions(
         windows_island_config_options.key_path, "W"
     )
-    subprocess.run(cmd_to_change_permissions, shell=True)
+    subprocess.run(cmd_to_change_permissions, shell=True)  # noqa DUO116
 
     with pytest.raises(InsecurePermissionsError):
         raise_on_invalid_options(windows_island_config_options)
