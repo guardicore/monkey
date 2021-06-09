@@ -1,4 +1,5 @@
 import os
+from collections.abc import Callable
 
 import pytest
 
@@ -16,9 +17,12 @@ def patched_home_env(monkeypatch, tmpdir):
 
 
 @pytest.fixture
-def create_empty_file():
-    def inner(file_name):
-        with open(file_name, "w"):
+def create_empty_tmp_file(tmpdir: str) -> Callable:
+    def inner(file_name: str):
+        new_file = os.path.join(tmpdir, file_name)
+        with open(new_file, "w"):
             pass
+
+        return new_file
 
     return inner

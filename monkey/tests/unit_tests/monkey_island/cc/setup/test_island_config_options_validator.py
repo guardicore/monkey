@@ -32,13 +32,12 @@ def linux_island_config_options(create_read_only_linux_file: Callable):
 
 
 @pytest.fixture
-def create_read_only_linux_file(tmpdir: str, create_empty_file: Callable) -> Callable:
+def create_read_only_linux_file(tmpdir: str, create_empty_tmp_file: Callable) -> Callable:
     def inner(file_name: str) -> str:
-        new_file = os.path.join(tmpdir, file_name)
-        create_empty_file(new_file)
-        os.chmod(new_file, LINUX_READ_ONLY_BY_USER)
+        full_file_path = create_empty_tmp_file(file_name)
+        os.chmod(full_file_path, LINUX_READ_ONLY_BY_USER)
 
-        return new_file
+        return full_file_path
 
     return inner
 
@@ -93,14 +92,13 @@ def windows_island_config_options(tmpdir: str, create_read_only_windows_file: Ca
 
 
 @pytest.fixture
-def create_read_only_windows_file(tmpdir: str, create_empty_file: Callable) -> Callable:
+def create_read_only_windows_file(tmpdir: str, create_empty_tmp_file: Callable) -> Callable:
     def inner(file_name: str) -> str:
-        new_file = os.path.join(tmpdir, file_name)
-        create_empty_file(new_file)
-        cmd_to_change_permissions = get_windows_cmd_to_change_permissions(new_file, "R")
+        full_file_path = create_empty_tmp_file(file_name)
+        cmd_to_change_permissions = get_windows_cmd_to_change_permissions(full_file_path, "R")
         subprocess.run(cmd_to_change_permissions, shell=True)  # noqa DUO116
 
-        return new_file
+        return full_file_path
 
     return inner
 
