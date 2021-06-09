@@ -50,3 +50,30 @@ def test_create_secure_directory__perm_linux(test_path_nested):
     create_secure_directory(test_path_nested, create_parent_dirs=True)
     st = os.stat(test_path_nested)
     return bool(st.st_mode & stat.S_IRWXU)
+
+
+@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
+def test_create_secure_directory__perm_windows(test_path):
+    import win32api  # noqa: E402
+    import win32security  # noqa: E402
+
+    FULL_CONTROL = 2032127
+    ACE_TYPE_ALLOW = 0
+
+    create_secure_directory(test_path, create_parent_dirs=False)
+
+    user_sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
+    security_descriptor = win32security.GetNamedSecurityInfo(
+        test_path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
+    )
+    acl = security_descriptor.GetSecurityDescriptorDacl()
+
+    assert acl.GetAceCount() == 1
+
+    ace = acl.GetAce(0)
+    ace_type, _ = ace[0]  # 0 for allow, 1 for deny
+    permissions = ace[1]
+    sid = ace[-1]
+
+    assert sid == user_sid
+    assert permissions == FULL_CONTROL and ace_type == ACE_TYPE_ALLOW
