@@ -1,7 +1,7 @@
 import os
+import subprocess
 
 import pytest
-import subprocess
 
 from monkey_island.cc.server_utils import file_utils
 
@@ -45,7 +45,7 @@ def test_has_expected_permissions_true_windows(tmpdir, create_empty_file):
     file_name = f"{tmpdir}/test"
 
     create_empty_file(file_name)
-    subprocess.run(f"echo y| cacls {file_name} /p %USERNAME%:F", shell=True)
+    subprocess.run(f"echo y| cacls {file_name} /p %USERNAME%:F", shell=True)  # noqa: DUO116
 
     assert file_utils.has_expected_permissions(file_name, 2032127)
 
@@ -55,6 +55,6 @@ def test_has_expected_permissions_false_windows(tmpdir, create_empty_file):
     file_name = f"{tmpdir}/test"
 
     create_empty_file(file_name)
-    subprocess.run(f"echo y| cacls {file_name} /p %USERNAME%:R", shell=True)
+    subprocess.run(f"echo y| cacls {file_name} /p %USERNAME%:R", shell=True)  # noqa: DUO116
 
     assert not file_utils.has_expected_permissions(file_name, 2032127)
