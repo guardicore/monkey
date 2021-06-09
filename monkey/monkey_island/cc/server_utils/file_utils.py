@@ -26,12 +26,12 @@ def has_expected_permissions(path: str, expected_permissions: int) -> bool:
             sid = ace[-1]
             permissions = ace[1]
             if sid == user_sid:
-                if oct(permissions & 0o777) != expected_permissions:
+                if permissions != expected_permissions:
                     return False
             elif sid == admins_sid:
                 continue
             else:
-                if oct(permissions) != 0:  # everyone but user & admins should have no permissions
+                if permissions != 2032127:  # everyone but user & admins should have no permissions
                     return False
 
         return True
