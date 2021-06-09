@@ -22,8 +22,6 @@ def _has_expected_linux_permissions(path: str, expected_permissions: int) -> boo
 
 
 def _has_expected_windows_permissions(path: str, expected_permissions: int) -> bool:
-    # checks that user has `expected_permissions` and everyone else has no permissions
-
     import win32api  # noqa: E402
     import win32security  # noqa: E402
 
