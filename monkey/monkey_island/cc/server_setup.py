@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import sys
 from pathlib import Path
 from threading import Thread
@@ -22,12 +21,12 @@ from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH  # noqa: E402
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
+from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
@@ -43,6 +42,8 @@ logger = logging.getLogger(__name__)
 def run_monkey_island():
     island_args = parse_cli_args()
     config_options, server_config_path = _setup_data_dir(island_args)
+
+    _exit_on_invalid_config_options(config_options)
 
     _configure_logging(config_options)
     _initialize_globals(config_options, server_config_path)
@@ -67,6 +68,14 @@ def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, st
         exit(1)
 
 
+def _exit_on_invalid_config_options(config_options: IslandConfigOptions):
+    try:
+        island_config_options_validator.raise_on_invalid_options(config_options)
+    except Exception as ex:
+        print(f"Configuration error: {ex}")
+        exit(1)
+
+
 def _configure_logging(config_options):
     reset_logger()
     setup_logging(config_options.data_dir, config_options.log_level)
@@ -83,9 +92,6 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
     populate_exporter_list()
     app = init_app(MONGO_URL)
 
-    crt_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
-    key_path = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
-
     init_collections()
 
     if should_setup_only:
@@ -94,14 +100,23 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
 
     bootloader_server_thread = _start_bootloader_server()
 
+    logger.info(
+        f"Using certificate path: {config_options.crt_path}, and key path: "
+        "{config_options.key_path}."
+    )
+
     if env_singleton.env.is_debug():
-        app.run(host="0.0.0.0", debug=True, ssl_context=(crt_path, key_path))
+        app.run(
+            host="0.0.0.0",
+            debug=True,
+            ssl_context=(config_options.crt_path, config_options.key_path),
+        )
     else:
         http_server = WSGIServer(
             ("0.0.0.0", env_singleton.env.get_island_port()),
             app,
-            certfile=os.environ.get("SERVER_CRT", crt_path),
-            keyfile=os.environ.get("SERVER_KEY", key_path),
+            certfile=config_options.crt_path,
+            keyfile=config_options.key_path,
         )
         _log_init_info()
         http_server.serve_forever()

@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from monkey_island.cc.environment.utils import is_windows_os
+from monkey_island.cc.server_utils import file_utils
 
 __author__ = "itay.mizeretz"
 
@@ -25,7 +26,7 @@ SERVER_CONFIG_FILENAME = "server_config.json"
 
 MONKEY_ISLAND_ABS_PATH = _get_monkey_island_abs_path()
 
-DEFAULT_DATA_DIR = os.path.expandvars(get_default_data_dir())
+DEFAULT_DATA_DIR = file_utils.expand_path(get_default_data_dir())
 
 DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 60 * 5
 
@@ -36,9 +37,18 @@ MONGO_EXECUTABLE_PATH = (
     _MONGO_EXECUTABLE_PATH_WIN if is_windows_os() else _MONGO_EXECUTABLE_PATH_LINUX
 )
 
-DEFAULT_SERVER_CONFIG_PATH = os.path.expandvars(
+DEFAULT_SERVER_CONFIG_PATH = file_utils.expand_path(
     os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", SERVER_CONFIG_FILENAME)
 )
 
 DEFAULT_LOG_LEVEL = "INFO"
+
 DEFAULT_START_MONGO_DB = True
+
+DEFAULT_CRT_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
+DEFAULT_KEY_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
+
+DEFAULT_CERTIFICATE_PATHS = {
+    "ssl_certificate_file": DEFAULT_CRT_PATH,
+    "ssl_certificate_key_file": DEFAULT_KEY_PATH,
+}

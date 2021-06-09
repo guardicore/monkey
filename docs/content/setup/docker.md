@@ -7,27 +7,125 @@ weight: 4
 tags: ["setup", "docker", "linux", "windows"]
 ---
 
+## Supported operating systems
+
+The Infection Monkey Docker container works on Linux only. It is not compatible with Docker for Windows or Docker for Mac.
+
 ## Deployment
 
-### Linux
+### 1. Load the docker images
+1. Pull the MongoDB v4.2 Docker image:
 
-To extract the `tar.gz` file, run `tar -xvzf monkey-island-docker.tar.gz`.
+    ```bash
+    sudo docker pull mongo:4.2
+    ```
 
-Once you've extracted the container from the tar.gz file, run the following commands:
+1. Extract the Monkey Island Docker tarball:
 
-```sh
-sudo docker load -i dk.monkeyisland.1.10.0.tar
-sudo docker pull mongo:4.2
-sudo mkdir -p /var/monkey-mongo/data/db
-sudo docker run --name monkey-mongo --network=host -v /var/monkey-mongo/data/db:/data/db -d mongo:4.2
-sudo docker run --name monkey-island --network=host -d guardicore/monkey-island:1.10.0
-```
+    ```bash
+    tar -xvzf monkey-island-docker.tar.gz
+    ```
 
-Wait until the Island is done setting up and it will be available on https://localhost:5000
+1. Load the Monkey Island Docker image:
 
-### Windows and Mac OS X
+    ```bash
+    sudo docker load -i dk.monkeyisland.1.10.0.tar
+    ```
 
-Not supported yet, since docker doesn't support `--network=host` parameter on these OS's.
+### 2. Start MongoDB
+
+1. Start a MongoDB Docker container:
+
+    ```bash
+    sudo docker run \
+        --name monkey-mongo \
+        --network=host \
+        --volume db:/data/db \
+        --detach mongo:4.2
+    ```
+
+### 3a. Start Monkey Island with default certificate
+
+By default, Infection Monkey comes with a [self-signed SSL certificate](https://aboutssl.org/what-is-self-sign-certificate/). In
+enterprise or other security-sensitive environments, it is recommended that the
+user [provide Infection Monkey with a
+certificate](#3b-start-monkey-island-with-user-provided-certificate) that has
+been signed by a private certificate authority.
+
+1. Run the Monkey Island server
+    ```bash
+    sudo docker run \
+        --name monkey-island \
+        --network=host \
+        guardicore/monkey-island:1.10.0
+    ```
+
+### 3b. Start Monkey Island with user-provided certificate
+
+1. Create a directory named `monkey_island_data`. This will serve as the
+   location where Infection Monkey stores its configuration and runtime
+   artifacts.
+
+    ```bash
+    mkdir ./monkey_island_data
+    ```
+
+1. Run Monkey Island with the `--setup-only` flag to populate the `./monkey_island_data` directory with a default `server_config.json` file.
+
+    ```bash
+    sudo docker run \
+        --rm \
+        --name monkey-island \
+        --network=host \
+        --user $(id -u ${USER}):$(id -g ${USER}) \
+        --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
+        guardicore/monkey-island:1.10.0 --setup-only
+    ```
+
+1. (Optional but recommended) Move your `.crt` and `.key` files to `./monkey_island_data`.
+
+1. Make sure that your `.crt` and `.key` files are read-only and readable only by you.
+
+    ```bash
+    chmod 400 <PATH_TO_KEY_FILE>
+    chmod 400 <PATH_TO_CRT_FILE>
+    ```
+
+1.  Edit `./monkey_island_data/server_config.json` to configure Monkey Island
+    to use your certificate. Your config should look something like this:
+
+    ```json {linenos=inline,hl_lines=["11-14"]}
+    {
+      "data_dir": "/monkey_island_data",
+      "log_level": "DEBUG",
+      "environment": {
+        "server_config": "password",
+        "deployment": "docker"
+      },
+      "mongodb": {
+        "start_mongodb": false
+     },
+      "ssl_certificate": {
+        "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
+        "ssl_certificate_key_file": "<PATH_TO_KEY_FILE>",
+      }
+    }
+    ```
+
+1. Start the Monkey Island server:
+
+    ```bash
+    sudo docker run \
+        --name monkey-island \
+        --network=host \
+        --user $(id -u ${USER}):$(id -g ${USER}) \
+        --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
+        guardicore/monkey-island:1.10.0
+    ```
+
+### 4. Accessing Monkey Island
+
+After the Monkey Island docker container starts, you can access Monkey Island by pointing your browser at `https://localhost:5000`.
 
 ## Upgrading
 
@@ -43,12 +141,27 @@ using the *Export config* button and then import it to the new Monkey Island.
 ## Troubleshooting
 
 ### The Monkey Island container crashes due to a 'UnicodeDecodeError'
-`UnicodeDecodeError: 'utf-8' codec can't decode byte 0xee in position 0: invalid continuation byte`
 
-You may encounter this error because of the existence of different MongoDB keys in the `monkey-island` and `monkey-mongo` containers.
+You will encounter a `UnicodeDecodeError` if the `monkey-island` container is
+using a different secret key to encrypt sensitive data than was initially used
+to store data in the `monkey-mongo` container.
 
-Starting a new container from the `guardicore/monkey-island:1.10.0` image generates a new secret key for storing sensitive information in MongoDB. If you have an old database instance running (from a previous run of Monkey), the key in the `monkey-mongo` container is different than the newly generated key in the `monkey-island` container. Since encrypted data (obtained from the previous run) is stored in MongoDB with the old key, decryption fails and you get this error.
+```
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xee in position 0: invalid continuation byte
+```
 
-You can fix this in two ways:
+Starting a new container from the `guardicore/monkey-island:1.10.0` image
+generates a new secret key for storing sensitive information in MongoDB. If you
+have an old database instance running (from a previous instance of Infection
+Monkey), the data stored in the `monkey-mongo` container has been encrypted
+with a key that is different from the one that Monkey Island is currently
+using. When MongoDB attempts to decrypt its data with the new key, decryption
+fails and you get this error.
+
+You can fix this in one of three ways:
 1. Instead of starting a new container for the Monkey Island, you can run `docker container start -a monkey-island` to restart the existing container, which will contain the correct key material.
-2. Kill and remove the existing MongoDB container, and start a new one. This will remove the old database entirely. Then, start the new Monkey Island container.
+1. Kill and remove the existing MongoDB container, and start a new one. This will remove the old database entirely. Then, start the new Monkey Island container.
+1. When you start the Monkey Island container, use `--volume
+   monkey_island_data:/monkey_island_data`. This will store all of Monkey
+   Island's runtime artifacts (including the encryption key file) in a docker
+   volume that can be reused by subsequent Monkey Island containers.
