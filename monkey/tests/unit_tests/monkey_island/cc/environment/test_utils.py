@@ -1,5 +1,4 @@
 import os
-import shutil
 import stat
 
 import pytest
@@ -11,22 +10,16 @@ from monkey_island.cc.environment.utils import create_secure_directory, is_windo
 def test_path_nested(tmpdir):
     nested_path = "test1/test2/test3"
     path = os.path.join(tmpdir, nested_path)
-    yield path
-    try:
-        shutil.rmtree(os.path.join(tmpdir, "test1"))
-    except Exception:
-        pass
+
+    return path
 
 
 @pytest.fixture
 def test_path(tmpdir):
     test_path = "test1"
     path = os.path.join(tmpdir, test_path)
-    yield path
-    try:
-        shutil.rmtree(path)
-    except Exception:
-        pass
+
+    return path
 
 
 def test_create_secure_directory__parent_dirs(test_path_nested):
