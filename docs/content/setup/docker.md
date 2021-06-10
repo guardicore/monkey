@@ -85,7 +85,7 @@ been signed by a private certificate authority.
 
 1. Move your `.crt` and `.key` files to `./monkey_island_data`.
 
-1. Make sure that your `.crt` and `.key` files are readable only by you.
+1. Make sure that your `.crt` and `.key` files are readable and writeable only by you.
 
     ```bash
     chmod 600 ./monkey_island_data/<KEY_FILE>
