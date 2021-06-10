@@ -21,9 +21,9 @@ After running the installer, the following prompt should appear on the screen:
 ### Support
 
 Only **English** system locale is supported. If your command prompt gives output in a different
-language the Infection Monkey is not guaranteed to work.
+language, the Infection Monkey is not guaranteed to work.
 
-For supported Windows versions take a look at [OS support page.](../../reference/operating_systems_support)
+For supported Windows versions, take a look at the [OS support page](../../reference/operating_systems_support).
 
 ### Missing Windows update
 
