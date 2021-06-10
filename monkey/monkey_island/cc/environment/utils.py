@@ -46,6 +46,6 @@ def _create_secure_directory_windows(path: str):
         win32file.CreateDirectory(path, security_attributes)
     except Exception as ex:
         LOG.error(
-            f'Could not create a directory at "{path}": {str(ex)}"
+            f'Could not create a directory at "{path}": {str(ex)}'
         )
         raise ex

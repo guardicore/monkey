@@ -1,4 +1,5 @@
 import os
+import stat
 
 import pytest
 
@@ -28,6 +29,13 @@ def test_create_secure_directory__already_created(test_path):
 def test_create_secure_directory__no_parent_dir(test_path_nested):
     with pytest.raises(Exception):
         create_secure_directory(test_path_nested)
+
+
+@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
+def test_create_secure_directory__perm_linux(test_path):
+    create_secure_directory(test_path)
+    st = os.stat(test_path)
+    return bool(st.st_mode & stat.S_IRWXU)
 
 
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
