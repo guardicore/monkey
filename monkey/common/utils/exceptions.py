@@ -52,7 +52,3 @@ class FindingWithoutDetailsError(Exception):
 
 class DomainControllerNameFetchError(FailedExploitationError):
     """ Raise on failed attempt to extract domain controller's name """
-
-
-class InsecurePermissionsError(Exception):
-    """ Raise when a file does not have permissions that are secure enough """

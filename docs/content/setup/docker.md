@@ -68,6 +68,7 @@ been signed by a private certificate authority.
 
     ```bash
     mkdir ./monkey_island_data
+    chmod 700 ./monkey_island_data
     ```
 
 1. Run Monkey Island with the `--setup-only` flag to populate the `./monkey_island_data` directory with a default `server_config.json` file.
@@ -77,18 +78,18 @@ been signed by a private certificate authority.
         --rm \
         --name monkey-island \
         --network=host \
-        --user $(id -u ${USER}):$(id -g ${USER}) \
+        --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
         guardicore/monkey-island:1.10.0 --setup-only
     ```
 
-1. (Optional but recommended) Move your `.crt` and `.key` files to `./monkey_island_data`.
+1. Move your `.crt` and `.key` files to `./monkey_island_data`.
 
-1. Make sure that your `.crt` and `.key` files are read-only and readable only by you.
+1. Make sure that your `.crt` and `.key` files are readable and writeable only by you.
 
     ```bash
-    chmod 400 <PATH_TO_KEY_FILE>
-    chmod 400 <PATH_TO_CRT_FILE>
+    chmod 600 ./monkey_island_data/<KEY_FILE>
+    chmod 600 ./monkey_island_data/<CRT_FILE>
     ```
 
 1.  Edit `./monkey_island_data/server_config.json` to configure Monkey Island
@@ -106,8 +107,8 @@ been signed by a private certificate authority.
         "start_mongodb": false
      },
       "ssl_certificate": {
-        "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
-        "ssl_certificate_key_file": "<PATH_TO_KEY_FILE>",
+        "ssl_certificate_file": "/monkey_island_data/<CRT_FILE>",
+        "ssl_certificate_key_file": "/monkey_island_data/<KEY_FILE>"
       }
     }
     ```
@@ -118,7 +119,7 @@ been signed by a private certificate authority.
     sudo docker run \
         --name monkey-island \
         --network=host \
-        --user $(id -u ${USER}):$(id -g ${USER}) \
+        --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
         guardicore/monkey-island:1.10.0
     ```
