@@ -82,13 +82,13 @@ been signed by a private certificate authority.
         guardicore/monkey-island:1.10.0 --setup-only
     ```
 
-1. (Optional but recommended) Move your `.crt` and `.key` files to `./monkey_island_data`.
+1. Move your `.crt` and `.key` files to `./monkey_island_data`.
 
-1. Make sure that your `.crt` and `.key` files are read-only and readable only by you.
+1. Make sure that your `.crt` and `.key` files are readable only by you.
 
     ```bash
-    chmod 400 <PATH_TO_KEY_FILE>
-    chmod 400 <PATH_TO_CRT_FILE>
+    chmod 600 ./monkey_island_data/<KEY_FILE>
+    chmod 600 ./monkey_island_data/<CRT_FILE>
     ```
 
 1.  Edit `./monkey_island_data/server_config.json` to configure Monkey Island
@@ -106,8 +106,8 @@ been signed by a private certificate authority.
         "start_mongodb": false
      },
       "ssl_certificate": {
-        "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
-        "ssl_certificate_key_file": "<PATH_TO_KEY_FILE>",
+        "ssl_certificate_file": "/monkey_island_data/<CRT_FILE>",
+        "ssl_certificate_key_file": "/monkey_island_data/<KEY_FILE>"
       }
     }
     ```
