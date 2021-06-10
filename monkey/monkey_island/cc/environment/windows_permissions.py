@@ -4,7 +4,7 @@ import win32con
 import win32security
 
 
-def get_sd_for_owner_only_perms() -> None:
+def get_security_descriptor_for_owner_only_perms() -> None:
     user = get_user_pySID_object()
     security_descriptor = win32security.SECURITY_DESCRIPTOR()
 

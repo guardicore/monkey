@@ -40,7 +40,9 @@ def _create_secure_directory_linux(path: str):
 def _create_secure_directory_windows(path: str):
     try:
         security_attributes = win32security.SECURITY_ATTRIBUTES()
-        security_attributes.SECURITY_DESCRIPTOR = windows_permissions.get_sd_for_owner_only_perms()
+        security_attributes.SECURITY_DESCRIPTOR = (
+            windows_permissions.get_security_descriptor_for_owner_only_perms()
+        )
         win32file.CreateDirectory(path, security_attributes)
     except Exception as ex:
         LOG.error(
