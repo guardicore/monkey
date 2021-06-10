@@ -8,6 +8,8 @@ def is_windows_os() -> bool:
 
 
 if is_windows_os():
+    import win32file
+
     import monkey_island.cc.environment.windows_permissions as windows_permissions
 
 LOG = logging.getLogger(__name__)
@@ -15,11 +17,13 @@ LOG = logging.getLogger(__name__)
 
 def create_secure_directory(path: str, create_parent_dirs: bool):
     if not os.path.isdir(path):
-        _create_secure_directory(path, create_parent_dirs)
-        set_secure_permissions(path)
+        if is_windows_os():
+            _create_secure_directory_windows(path)
+        else:
+            _create_secure_directory_linux(path, create_parent_dirs)
 
 
-def _create_secure_directory(path: str, create_parent_dirs: bool):
+def _create_secure_directory_linux(path: str, create_parent_dirs: bool):
     try:
         if create_parent_dirs:
             # Don't split directory creation and permission setting
@@ -35,10 +39,13 @@ def _create_secure_directory(path: str, create_parent_dirs: bool):
         raise ex
 
 
-def set_secure_permissions(dir_path: str):
+def _create_secure_directory_windows(path: str):
+    security_descriptor = windows_permissions.get_sd_for_owner_only_perms()
     try:
-        if is_windows_os():
-            windows_permissions.set_perms_to_owner_only(folder_path=dir_path)
+        win32file.CreateDirectory(path, security_descriptor)
     except Exception as ex:
-        LOG.error(f"Permissions could not be set successfully for {dir_path}: {str(ex)}")
+        LOG.error(
+            f'Could not create a directory at "{path}" (maybe environmental variables could not be '
+            f"resolved?): {str(ex)}"
+        )
         raise ex
