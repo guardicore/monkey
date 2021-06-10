@@ -41,12 +41,11 @@ private certificate authority.
 1. (Optional but recommended) Move your `.crt` and `.key` files to
    `$HOME/.monkey_island`.
 
-1. Make sure that your `.crt` and `.key` files are read-only and readable only
-   by you.
+1. Make sure that your `.crt` and `.key` files are readable only by you.
 
     ```bash
-    chmod 400 <PATH_TO_KEY_FILE>
-    chmod 400 <PATH_TO_CRT_FILE>
+    chmod 600 <PATH_TO_KEY_FILE>
+    chmod 600 <PATH_TO_CRT_FILE>
     ```
 
 1.  Edit `$HOME/.monkey_island/server_config.json` to configure Monkey Island
