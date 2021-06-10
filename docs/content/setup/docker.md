@@ -68,6 +68,7 @@ been signed by a private certificate authority.
 
     ```bash
     mkdir ./monkey_island_data
+    chmod 700 ./monkey_island_data
     ```
 
 1. Run Monkey Island with the `--setup-only` flag to populate the `./monkey_island_data` directory with a default `server_config.json` file.
