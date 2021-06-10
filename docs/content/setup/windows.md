@@ -18,6 +18,13 @@ After running the installer, the following prompt should appear on the screen:
 
 ## Troubleshooting
 
+### Support
+
+Only **English** system locale is supported. If your command prompt gives output in a different
+language, the Infection Monkey is not guaranteed to work.
+
+For supported Windows versions, take a look at the [OS support page](../../reference/operating_systems_support).
+
 ### Missing Windows update
 
 The installer requires [Windows update #2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
