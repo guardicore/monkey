@@ -18,7 +18,7 @@ def setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, str
 def _setup_config_by_cmd_arg(server_config_path) -> Tuple[IslandConfigOptions, str]:
     server_config_path = file_utils.expand_path(server_config_path)
     config = server_config_handler.load_server_config_from_file(server_config_path)
-    create_secure_directory(config.data_dir, create_parent_dirs=True)
+    create_secure_directory(config.data_dir)
     return config, server_config_path
 
 
@@ -26,7 +26,7 @@ def _setup_default_config() -> Tuple[IslandConfigOptions, str]:
     default_config = server_config_handler.load_server_config_from_file(DEFAULT_SERVER_CONFIG_PATH)
     default_data_dir = default_config.data_dir
 
-    create_secure_directory(default_data_dir, create_parent_dirs=False)
+    create_secure_directory(default_data_dir)
 
     server_config_path = server_config_handler.create_default_server_config_file(default_data_dir)
     config = server_config_handler.load_server_config_from_file(server_config_path)

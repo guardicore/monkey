@@ -16,22 +16,19 @@ if is_windows_os():
 LOG = logging.getLogger(__name__)
 
 
-def create_secure_directory(path: str, create_parent_dirs: bool):
+def create_secure_directory(path: str):
     if not os.path.isdir(path):
         if is_windows_os():
             _create_secure_directory_windows(path)
         else:
-            _create_secure_directory_linux(path, create_parent_dirs)
+            _create_secure_directory_linux(path)
 
 
-def _create_secure_directory_linux(path: str, create_parent_dirs: bool):
+def _create_secure_directory_linux(path: str):
     try:
-        if create_parent_dirs:
-            # Don't split directory creation and permission setting
-            # because it will temporarily create an accessible directory which anyone can use.
-            os.makedirs(path, mode=0o700)
-        else:
-            os.mkdir(path, mode=0o700)
+        # Don't split directory creation and permission setting
+        # because it will temporarily create an accessible directory which anyone can use.
+        os.mkdir(path, mode=0o700)
     except Exception as ex:
         LOG.error(
             f'Could not create a directory at "{path}" (maybe environmental variables could not be '

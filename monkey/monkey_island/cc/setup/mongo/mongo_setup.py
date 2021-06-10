@@ -35,7 +35,7 @@ def _create_db_dir(db_dir_parent_path) -> str:
     db_dir = os.path.join(db_dir_parent_path, DB_DIR_NAME)
     logger.info(f"Database content directory: {db_dir}.")
 
-    create_secure_directory(db_dir, create_parent_dirs=False)
+    create_secure_directory(db_dir)
     return db_dir
 
 
