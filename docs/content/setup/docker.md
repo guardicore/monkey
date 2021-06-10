@@ -78,7 +78,7 @@ been signed by a private certificate authority.
         --rm \
         --name monkey-island \
         --network=host \
-        --user $(id -u ${USER}):$(id -g ${USER}) \
+        --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
         guardicore/monkey-island:1.10.0 --setup-only
     ```
@@ -119,7 +119,7 @@ been signed by a private certificate authority.
     sudo docker run \
         --name monkey-island \
         --network=host \
-        --user $(id -u ${USER}):$(id -g ${USER}) \
+        --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
         guardicore/monkey-island:1.10.0
     ```
