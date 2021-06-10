@@ -64,7 +64,7 @@ private certificate authority.
      },
       "ssl_certificate": {
         "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
-        "ssl_certificate_key_file": "<PATH_TO_KEY_FILE>",
+        "ssl_certificate_key_file": "<PATH_TO_KEY_FILE>"
       }
     }
     ```
