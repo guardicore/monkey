@@ -9,6 +9,7 @@ def is_windows_os() -> bool:
 
 if is_windows_os():
     import win32file
+    import win32security
 
     import monkey_island.cc.environment.windows_permissions as windows_permissions
 
@@ -40,9 +41,10 @@ def _create_secure_directory_linux(path: str, create_parent_dirs: bool):
 
 
 def _create_secure_directory_windows(path: str):
-    security_descriptor = windows_permissions.get_sd_for_owner_only_perms()
     try:
-        win32file.CreateDirectory(path, security_descriptor)
+        security_attributes = win32security.SECURITY_ATTRIBUTES()
+        security_attributes.SECURITY_DESCRIPTOR = windows_permissions.get_sd_for_owner_only_perms()
+        win32file.CreateDirectory(path, security_attributes)
     except Exception as ex:
         LOG.error(
             f'Could not create a directory at "{path}" (maybe environmental variables could not be '
