@@ -87,3 +87,12 @@ private certificate authority.
    `https://localhost:5000`.
 
 ## Upgrading
+
+Currently, there's no "upgrade-in-place" option when a new version is released.
+To get an updated version, download the updated AppImage package and follow the deployment
+instructions again.
+
+If you'd like to keep your existing configuration, you can export it to a file
+using the *Export config* button and then import it to the new Monkey Island.
+
+![Export configuration](../../images/setup/export-configuration.png "Export configuration")
