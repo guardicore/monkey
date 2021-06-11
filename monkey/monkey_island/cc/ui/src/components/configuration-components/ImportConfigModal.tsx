@@ -40,8 +40,8 @@ const ConfigImportModal = (props: Props) => {
   }, [configContents])
 
 
-  function sendConfigToServer(): Promise<string> {
-    return authComponent.authFetch(configImportEndpoint,
+  function sendConfigToServer() {
+    authComponent.authFetch(configImportEndpoint,
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -53,27 +53,30 @@ const ConfigImportModal = (props: Props) => {
       }
     ).then(res => res.json())
       .then(res => {
-        if (res['import_status'] === 'password_required') {
+        if (res['import_status'] === 'invalid_credentials') {
           setUploadStatus(UploadStatuses.success);
-          setShowPassword(true);
-        } else if (res['import_status'] === 'wrong_password') {
-          setErrorMessage(res['message']);
+          if (showPassword){
+            setErrorMessage(res['message']);
+          } else {
+            setShowPassword(true);
+            setErrorMessage('');
+          }
         } else if (res['import_status'] === 'invalid_configuration') {
           setUploadStatus(UploadStatuses.error);
           setErrorMessage(res['message']);
         } else if (res['import_status'] === 'unsafe_options_verification_required') {
+          setUploadStatus(UploadStatuses.success);
+          setErrorMessage('');
           if (isUnsafeOptionSelected(res['config_schema'], JSON.parse(res['config']))) {
             setShowUnsafeOptionsConfirmation(true);
             setCandidateConfig(res['config']);
           } else {
             setUnsafeOptionsVerified(true);
-            setConfigContents(res['config']);
           }
         } else if (res['import_status'] === 'imported'){
           resetState();
           props.onClose(true);
         }
-        return res['import_status'];
       })
   }
 
@@ -93,6 +96,7 @@ const ConfigImportModal = (props: Props) => {
   }
 
   function uploadFile(event) {
+    setShowPassword(false);
     let reader = new FileReader();
     reader.onload = (event) => {
       setConfigContents(event.target.result);

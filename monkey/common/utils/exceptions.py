@@ -54,13 +54,5 @@ class DomainControllerNameFetchError(FailedExploitationError):
     """ Raise on failed attempt to extract domain controller's name """
 
 
-class InvalidCredentialsError(Exception):
-    """ Raise when credentials supplied are invalid """
-
-
-class NoCredentialsError(Exception):
-    """ Raise when no credentials have been supplied """
-
-
 class InvalidConfigurationError(Exception):
     """ Raise when configuration is invalid """

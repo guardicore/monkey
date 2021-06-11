@@ -6,14 +6,14 @@ from json.decoder import JSONDecodeError
 import flask_restful
 from flask import request
 
-from common.utils.exceptions import (
-    InvalidConfigurationError,
-    InvalidCredentialsError,
-    NoCredentialsError,
-)
+from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.utils.config_encryption import decrypt_config
+from monkey_island.cc.services.utils.config_encryption import (
+    InvalidCredentialsError,
+    decrypt_config,
+    is_encrypted,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +21,7 @@ logger = logging.getLogger(__name__)
 class ImportStatuses:
     UNSAFE_OPTION_VERIFICATION_REQUIRED = "unsafe_options_verification_required"
     INVALID_CONFIGURATION = "invalid_configuration"
-    PASSWORD_REQUIRED = "password_required"
-    WRONG_PASSWORD = "wrong_password"
+    INVALID_CREDENTIALS = "invalid_credentials"
     IMPORTED = "imported"
 
 
@@ -57,7 +56,8 @@ class ConfigurationImport(flask_restful.Resource):
                 ).form_response()
         except InvalidCredentialsError:
             return ResponseContents(
-                import_status=ImportStatuses.WRONG_PASSWORD, message="Wrong password supplied"
+                import_status=ImportStatuses.INVALID_CREDENTIALS,
+                message="Invalid credentials provided",
             ).form_response()
         except InvalidConfigurationError:
             return ResponseContents(
@@ -65,20 +65,30 @@ class ConfigurationImport(flask_restful.Resource):
                 message="Invalid configuration supplied. "
                 "Maybe the format is outdated or the file has been corrupted.",
             ).form_response()
-        except NoCredentialsError:
-            return ResponseContents(
-                import_status=ImportStatuses.PASSWORD_REQUIRED,
-            ).form_response()
 
     @staticmethod
     def _get_plaintext_config_from_request(request_contents: dict) -> dict:
-        try:
-            config = json.loads(request_contents["config"])
-        except JSONDecodeError:
-            config = decrypt_config(request_contents["config"], request_contents["password"])
-        return config
+        if ConfigurationImport.is_config_encrypted(request_contents["config"]):
+            return decrypt_config(request_contents["config"], request_contents["password"])
+        else:
+            try:
+                return json.loads(request_contents["config"])
+            except JSONDecodeError:
+                raise InvalidConfigurationError
 
     @staticmethod
     def import_config(config_json):
         if not ConfigService.update_config(config_json, should_encrypt=True):
+            raise InvalidConfigurationError
+
+    @staticmethod
+    def is_config_encrypted(config: str):
+        try:
+            if config.startswith("{"):
+                return False
+            elif is_encrypted(config):
+                return True
+            else:
+                raise InvalidConfigurationError
+        except Exception:
             raise InvalidConfigurationError

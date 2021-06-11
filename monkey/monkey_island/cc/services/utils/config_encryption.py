@@ -6,7 +6,7 @@ from typing import Dict
 
 import pyAesCrypt
 
-from common.utils.exceptions import InvalidCredentialsError, NoCredentialsError
+from common.utils.exceptions import InvalidConfigurationError
 
 BUFFER_SIZE = pyAesCrypt.crypto.bufferSizeDef
 
@@ -28,9 +28,6 @@ def encrypt_config(config: Dict, password: str) -> str:
 
 
 def decrypt_config(cyphertext: str, password: str) -> Dict:
-    if not password:
-        raise NoCredentialsError
-
     cyphertext = base64.b64decode(cyphertext)
     ciphertext_config_stream = io.BytesIO(cyphertext)
     dec_plaintext_config_stream = io.BytesIO()
@@ -51,6 +48,15 @@ def decrypt_config(cyphertext: str, password: str) -> Dict:
             raise InvalidCredentialsError
         else:
             logger.info("The provided configuration file is corrupt.")
-            raise ex
+            raise InvalidConfigurationError
     plaintext_config = json.loads(dec_plaintext_config_stream.getvalue().decode("utf-8"))
     return plaintext_config
+
+
+def is_encrypted(ciphertext: str) -> bool:
+    ciphertext = base64.b64decode(ciphertext)
+    return ciphertext.startswith(b"AES")
+
+
+class InvalidCredentialsError(Exception):
+    """ Raise when credentials supplied are invalid """
