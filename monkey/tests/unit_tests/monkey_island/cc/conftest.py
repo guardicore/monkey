@@ -18,3 +18,8 @@ def monkey_config(data_for_tests_dir):
     )
     plaintext_config = json.loads(open(plaintext_monkey_config_standard_path, "r").read())
     return plaintext_config
+
+
+@pytest.fixture
+def monkey_config_json(monkey_config):
+    return json.dumps(monkey_config)

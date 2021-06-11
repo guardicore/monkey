@@ -9,9 +9,10 @@ from flask import request
 from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.utils.config_encryption import (
+from monkey_island.cc.services.utils.encryption import (
+    InvalidCiphertextError,
     InvalidCredentialsError,
-    decrypt_config,
+    decrypt_ciphertext,
     is_encrypted,
 )
 
@@ -68,13 +69,13 @@ class ConfigurationImport(flask_restful.Resource):
 
     @staticmethod
     def _get_plaintext_config_from_request(request_contents: dict) -> dict:
-        if ConfigurationImport.is_config_encrypted(request_contents["config"]):
-            return decrypt_config(request_contents["config"], request_contents["password"])
-        else:
-            try:
-                return json.loads(request_contents["config"])
-            except JSONDecodeError:
-                raise InvalidConfigurationError
+        try:
+            config = request_contents["config"]
+            if ConfigurationImport.is_config_encrypted(request_contents["config"]):
+                config = decrypt_ciphertext(config, request_contents["password"])
+            return json.loads(config)
+        except (JSONDecodeError, InvalidCiphertextError):
+            raise InvalidConfigurationError
 
     @staticmethod
     def import_config(config_json):

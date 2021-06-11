@@ -3,10 +3,10 @@ from tests.unit_tests.monkey_island.cc.services.utils.ciphertexts_for_encryption
     MALFORMED_CIPHER_TEXT_CORRUPTED,
 )
 
-from monkey_island.cc.services.utils.config_encryption import (
+from monkey_island.cc.services.utils.encryption import (
     InvalidCredentialsError,
-    decrypt_config,
-    encrypt_config,
+    decrypt_ciphertext,
+    encrypt_string,
 )
 
 MONKEY_CONFIGS_DIR_PATH = "monkey_configs"
@@ -15,23 +15,23 @@ PASSWORD = "hello123"
 INCORRECT_PASSWORD = "goodbye321"
 
 
-def test_encrypt_decrypt_config(monkey_config):
-    encrypted_config = encrypt_config(monkey_config, PASSWORD)
-    assert decrypt_config(encrypted_config, PASSWORD) == monkey_config
+def test_encrypt_decrypt_string(monkey_config_json):
+    encrypted_config = encrypt_string(monkey_config_json, PASSWORD)
+    assert decrypt_ciphertext(encrypted_config, PASSWORD) == monkey_config_json
 
 
-def test_encrypt_decrypt_config__wrong_password(monkey_config):
-    encrypted_config = encrypt_config(monkey_config, PASSWORD)
+def test_encrypt_decrypt_string__wrong_password(monkey_config_json):
+    encrypted_config = encrypt_string(monkey_config_json, PASSWORD)
     with pytest.raises(InvalidCredentialsError):
-        decrypt_config(encrypted_config, INCORRECT_PASSWORD)
+        decrypt_ciphertext(encrypted_config, INCORRECT_PASSWORD)
 
 
-def test_encrypt_decrypt_config__malformed_corrupted():
+def test_encrypt_decrypt_string__malformed_corrupted():
     with pytest.raises(ValueError):
-        decrypt_config(MALFORMED_CIPHER_TEXT_CORRUPTED, PASSWORD)
+        decrypt_ciphertext(MALFORMED_CIPHER_TEXT_CORRUPTED, PASSWORD)
 
 
-def test_encrypt_decrypt_config__decrypt_no_password(monkey_config):
-    encrypted_config = encrypt_config(monkey_config, PASSWORD)
+def test_encrypt_decrypt_string__decrypt_no_password(monkey_config_json):
+    encrypted_config = encrypt_string(monkey_config_json, PASSWORD)
     with pytest.raises(InvalidCredentialsError):
-        decrypt_config(encrypted_config, "")
+        decrypt_ciphertext(encrypted_config, "")
