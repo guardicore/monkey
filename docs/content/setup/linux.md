@@ -9,8 +9,11 @@ tags: ["setup", "AppImage", "linux"]
 
 ## Supported operating systems
 
-The Infection Monkey AppImage package is supported on the following operating systems (not an
-exhaustive list):
+An AppImage is a distribution-agnostic package or a self-running bundle that contains an
+application and everything that it may need to run.
+
+The Infection Monkey AppImage package should run on most modern Linux distros that have FUSE
+installed, but the ones that we've tested are:
 - CentOS
 - Debian
 - Kali
