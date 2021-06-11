@@ -9,6 +9,15 @@ tags: ["setup", "AppImage", "linux"]
 
 ## Supported operating systems
 
+The Infection Monkey AppImage package is supported on the following operating systems (not an
+exhaustive list):
+- Debian  <!-- TODO: which? -->
+- Kali  <!--- TODO: which? -->
+- Ubuntu 18.04
+
+The following do NOT support the Infection Monkey AppImage package (not an exhaustive list):
+- Ubuntu 16.04
+
 ## Deployment
 
 1. Make the AppImage package executable:
