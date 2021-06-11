@@ -27,9 +27,9 @@ def encrypt_config(config: Dict, password: str) -> str:
     return ciphertext_b64.decode()
 
 
-def decrypt_config(cyphertext: str, password: str) -> Dict:
-    cyphertext = base64.b64decode(cyphertext)
-    ciphertext_config_stream = io.BytesIO(cyphertext)
+def decrypt_config(ciphertext: str, password: str) -> Dict:
+    ciphertext = base64.b64decode(ciphertext)
+    ciphertext_config_stream = io.BytesIO(ciphertext)
     dec_plaintext_config_stream = io.BytesIO()
 
     len_ciphertext_config_stream = len(ciphertext_config_stream.getvalue())

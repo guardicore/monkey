@@ -1,8 +1,8 @@
 import json
 
 import pytest
-from tests.unit_tests.monkey_island.cc.services.utils.cyphertexts_for_encryption_test import (
-    MALFORMED_CYPHER_TEXT_CORRUPTED,
+from tests.unit_tests.monkey_island.cc.services.utils.ciphertexts_for_encryption_test import (
+    MALFORMED_CIPHER_TEXT_CORRUPTED,
 )
 from tests.unit_tests.monkey_island.cc.services.utils.test_config_encryption import PASSWORD
 
@@ -23,7 +23,7 @@ def test_is_config_encrypted__ciphertext(monkey_config):
 
 def test_is_config_encrypted__corrupt_ciphertext():
     with pytest.raises(InvalidConfigurationError):
-        assert ConfigurationImport.is_config_encrypted(MALFORMED_CYPHER_TEXT_CORRUPTED)
+        assert ConfigurationImport.is_config_encrypted(MALFORMED_CIPHER_TEXT_CORRUPTED)
 
 
 def test_is_config_encrypted__unknown_format():

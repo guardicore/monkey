@@ -1,6 +1,6 @@
 import pytest
-from tests.unit_tests.monkey_island.cc.services.utils.cyphertexts_for_encryption_test import (
-    MALFORMED_CYPHER_TEXT_CORRUPTED,
+from tests.unit_tests.monkey_island.cc.services.utils.ciphertexts_for_encryption_test import (
+    MALFORMED_CIPHER_TEXT_CORRUPTED,
 )
 
 from monkey_island.cc.services.utils.config_encryption import (
@@ -28,7 +28,7 @@ def test_encrypt_decrypt_config__wrong_password(monkey_config):
 
 def test_encrypt_decrypt_config__malformed_corrupted():
     with pytest.raises(ValueError):
-        decrypt_config(MALFORMED_CYPHER_TEXT_CORRUPTED, PASSWORD)
+        decrypt_config(MALFORMED_CIPHER_TEXT_CORRUPTED, PASSWORD)
 
 
 def test_encrypt_decrypt_config__decrypt_no_password(monkey_config):
