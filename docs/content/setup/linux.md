@@ -15,9 +15,6 @@ exhaustive list):
 - Kali  <!--- TODO: which? -->
 - Ubuntu 18.04
 
-The following do NOT support the Infection Monkey AppImage package (not an exhaustive list):
-- Ubuntu 16.04
-
 ## Deployment
 
 1. Make the AppImage package executable:
