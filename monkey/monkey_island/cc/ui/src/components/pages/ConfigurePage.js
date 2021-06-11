@@ -121,7 +121,6 @@ class ConfigurePageComponent extends AuthComponent {
     }
   };
 
-  // TODO add a safety check to config import
   canSafelySubmitConfig(config) {
     return !isUnsafeOptionSelected(this.state.schema, config);
   }

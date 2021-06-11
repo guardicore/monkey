@@ -81,7 +81,7 @@ const ConfigImportModal = (props: Props) => {
   }
 
   function isImportDisabled(): boolean {
-    return uploadStatus !== UploadStatuses.success
+    return uploadStatus !== UploadStatuses.success || (showPassword && password === '')
   }
 
   function resetState() {

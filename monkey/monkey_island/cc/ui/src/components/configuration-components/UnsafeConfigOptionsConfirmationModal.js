@@ -11,7 +11,8 @@ function UnsafeConfigOptionsConfirmationModal(props) {
           <div className='text-center'>Warning</div>
         </h2>
         <p className='text-center' style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
-          Some of the configuration options could cause systems to become unstable or malfunction.
+          Some of the configuration options selected could cause systems
+          to become unstable or malfunction.<br/><br/>
           Are you sure you want to submit the selected settings?
         </p>
         <div className='text-center'>
