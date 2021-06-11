@@ -9,6 +9,17 @@ tags: ["setup", "AppImage", "linux"]
 
 ## Supported operating systems
 
+An [AppImage](https://appimage.org/) is a distribution-agnostic, self-running
+package that contains an application and everything that it may need to run.
+
+The Infection Monkey AppImage package should run on most modern Linux distros that have FUSE
+installed, but the ones that we've tested are:
+- CentOS
+- Debian
+- Kali
+- Ubuntu 18.04
+- Ubuntu 20.04
+
 ## Deployment
 
 1. Make the AppImage package executable:
@@ -78,3 +89,12 @@ private certificate authority.
    `https://localhost:5000`.
 
 ## Upgrading
+
+Currently, there's no "upgrade-in-place" option when a new version is released.
+To get an updated version, download the updated AppImage package and follow the deployment
+instructions again.
+
+If you'd like to keep your existing configuration, you can export it to a file
+using the *Export config* button and then import it to the new Monkey Island.
+
+![Export configuration](../../images/setup/export-configuration.png "Export configuration")
