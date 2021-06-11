@@ -20,6 +20,8 @@ from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
 )
 from monkey_island.cc.resources.bootloader import Bootloader
 from monkey_island.cc.resources.client_run import ClientRun
+from monkey_island.cc.resources.configuration_export import ConfigurationExport
+from monkey_island.cc.resources.configuration_import import ConfigurationImport
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.environment import Environment
 from monkey_island.cc.resources.island_configuration import IslandConfiguration
@@ -131,6 +133,8 @@ def init_api_resources(api):
     )
     api.add_resource(MonkeyConfiguration, "/api/configuration", "/api/configuration/")
     api.add_resource(IslandConfiguration, "/api/configuration/island", "/api/configuration/island/")
+    api.add_resource(ConfigurationExport, "/api/configuration/export")
+    api.add_resource(ConfigurationImport, "/api/configuration/import")
     api.add_resource(
         MonkeyDownload,
         "/api/monkey/download",

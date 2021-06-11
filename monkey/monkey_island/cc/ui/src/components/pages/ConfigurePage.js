@@ -1,7 +1,6 @@
 import React from 'react';
 import Form from 'react-jsonschema-form-bs4';
-import {Col, Modal, Nav, Button} from 'react-bootstrap';
-import FileSaver from 'file-saver';
+import {Button, Col, Modal, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ConfigMatrixComponent from '../attack/ConfigMatrixComponent';
 import UiSchema from '../configuration-components/UiSchema';
@@ -11,10 +10,12 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamati
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import InternalConfig from '../configuration-components/InternalConfig';
-import UnsafeOptionsConfirmationModal from '../configuration-components/UnsafeOptionsConfirmationModal.js';
+import UnsafeConfigOptionsConfirmationModal
+  from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
+import ConfigImportModal from '../configuration-components/ImportConfigModal';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -42,7 +43,8 @@ class ConfigurePageComponent extends AuthComponent {
       showAttackAlert: false,
       showUnsafeOptionsConfirmation: false,
       showUnsafeAttackOptionsWarning: false,
-      showConfigExportModal: false
+      showConfigExportModal: false,
+      showConfigImportModal: false
     };
   }
 
@@ -69,7 +71,10 @@ class ConfigurePageComponent extends AuthComponent {
           if (sectionKey === 'attack') {
             sections.push({key: sectionKey, title: 'ATT&CK'})
           } else {
-            sections.push({key: sectionKey, title: monkeyConfig.schema.properties[sectionKey].title});
+            sections.push({
+              key: sectionKey,
+              title: monkeyConfig.schema.properties[sectionKey].title
+            });
           }
         }
         this.setState({
@@ -89,10 +94,8 @@ class ConfigurePageComponent extends AuthComponent {
   onUnsafeConfirmationContinueClick = () => {
     this.setState({showUnsafeOptionsConfirmation: false});
 
-    if (this.state.lastAction == 'submit_attempt') {
+    if (this.state.lastAction === 'submit_attempt') {
       this.configSubmit();
-    } else if (this.state.lastAction == 'import_attempt') {
-      this.setConfigFromImportCandidate();
     }
   }
 
@@ -101,7 +104,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
 
-  updateConfig = (callback=null) => {
+  updateConfig = (callback = null) => {
     this.authFetch(CONFIG_URL)
       .then(res => res.json())
       .then(data => {
@@ -224,10 +227,25 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
-                               onClick={this.onExport} />)}
+                               onHide={() => {
+                                 this.setState({showConfigExportModal: false});
+                               }}/>);
+  }
 
-  onExport = () => {
-    this.setState({showConfigExportModal: false})
+  renderConfigImportModal = () => {
+    return (<ConfigImportModal show={this.state.showConfigImportModal}
+                               onClose={this.onClose}/>);
+  }
+
+  onClose = (importSuccessful) => {
+    if(importSuccessful === true){
+      this.updateConfig();
+      this.setState({lastAction: 'import_success',
+                          showConfigImportModal: false});
+
+    } else {
+      this.setState({showConfigImportModal: false});
+    }
   }
 
   renderAttackAlertModal = () => {
@@ -258,7 +276,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderUnsafeOptionsConfirmationModal() {
     return (
-      <UnsafeOptionsConfirmationModal
+      <UnsafeConfigOptionsConfirmationModal
         show={this.state.showUnsafeOptionsConfirmation}
         onCancelClick={this.onUnsafeConfirmationCancelClick}
         onContinueClick={this.onUnsafeConfirmationContinueClick}
@@ -348,42 +366,9 @@ class ConfigurePageComponent extends AuthComponent {
     this.authFetch(apiEndpoint, request_options);
   }
 
-  setConfigOnImport = (event) => {
-    try {
-      var newConfig = JSON.parse(event.target.result);
-    } catch (SyntaxError) {
-      this.setState({lastAction: 'import_failure'});
-      return;
-    }
-
-    this.setState({lastAction: 'import_attempt', importCandidateConfig: newConfig},
-      () => {
-        if (this.canSafelySubmitConfig(newConfig)) {
-          this.setConfigFromImportCandidate();
-        } else {
-          this.setState({showUnsafeOptionsConfirmation: true});
-        }
-      }
-    );
-  }
-
-  setConfigFromImportCandidate(){
-    this.setState({
-      configuration: this.state.importCandidateConfig,
-      lastAction: 'import_success'
-    }, () => {
-      this.sendConfig();
-      this.setInitialConfig(this.state.importCandidateConfig);
-    });
-    this.currentFormData = {};
-  }
-
   exportConfig = () => {
     this.updateConfigSection();
-    const configAsJson = JSON.stringify(this.state.configuration, null, 2);
-    const configAsBinary = new Blob([configAsJson], {type: 'text/plain;charset=utf-8'});
-
-    FileSaver.saveAs(configAsBinary, 'monkey.conf');
+    this.setState({showConfigExportModal: true});
   };
 
   sendConfig() {
@@ -404,13 +389,6 @@ class ConfigurePageComponent extends AuthComponent {
         this.setState({lastAction: 'invalid_configuration'});
       }));
   }
-
-  importConfig = (event) => {
-    let reader = new FileReader();
-    reader.onload = this.setConfigOnImport;
-    reader.readAsText(event.target.files[0]);
-    event.target.value = null;
-  };
 
   renderMatrix = () => {
     return (<ConfigMatrixComponent configuration={this.state.attackConfig}
@@ -499,6 +477,7 @@ class ConfigurePageComponent extends AuthComponent {
            lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
            className={'main'}>
         {this.renderConfigExportModal()}
+        {this.renderConfigImportModal()}
         {this.renderAttackAlertModal()}
         {this.renderUnsafeOptionsConfirmationModal()}
         {this.renderUnsafeAttackOptionsWarningModal()}
@@ -506,22 +485,24 @@ class ConfigurePageComponent extends AuthComponent {
         {this.renderNav()}
         {content}
         <div className='text-center'>
-          <button type='submit' onClick={this.onSubmit} className='btn btn-success btn-lg' style={{margin: '5px'}}>
+          <button type='submit' onClick={this.onSubmit} className='btn btn-success btn-lg'
+                  style={{margin: '5px'}}>
             Submit
           </button>
-          <button type='button' onClick={this.resetConfig} className='btn btn-danger btn-lg' style={{margin: '5px'}}>
+          <button type='button' onClick={this.resetConfig} className='btn btn-danger btn-lg'
+                  style={{margin: '5px'}}>
             Reset to defaults
           </button>
         </div>
         <div className='text-center'>
-          <button onClick={() => document.getElementById('uploadInputInternal').click()}
+          <button onClick={() => {
+            this.setState({showConfigImportModal: true})
+          }}
                   className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Import config
           </button>
-          <input id='uploadInputInternal' type='file' accept='.conf' onChange={this.importConfig}
-                 style={{display: 'none'}}/>
           <button type='button'
-                  onClick={() => {this.setState({showConfigExportModal: true})}}
+                  onClick={this.exportConfig}
                   className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Export config
           </button>
@@ -537,12 +518,6 @@ class ConfigurePageComponent extends AuthComponent {
             <div className='alert alert-success'>
               <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration saved successfully.
-            </div>
-            : ''}
-          {this.state.lastAction === 'import_failure' ?
-            <div className='alert alert-danger'>
-              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
-              Failed importing configuration. Invalid config file.
             </div>
             : ''}
           {this.state.lastAction === 'invalid_configuration' ?

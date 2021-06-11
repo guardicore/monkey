@@ -52,3 +52,7 @@ class FindingWithoutDetailsError(Exception):
 
 class DomainControllerNameFetchError(FailedExploitationError):
     """ Raise on failed attempt to extract domain controller's name """
+
+
+class InvalidConfigurationError(Exception):
+    """ Raise when configuration is invalid """

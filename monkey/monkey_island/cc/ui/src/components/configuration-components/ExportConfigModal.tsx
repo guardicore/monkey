@@ -1,17 +1,17 @@
 import {Button, Modal, Form} from 'react-bootstrap';
 import React, {useState} from 'react';
 
+import FileSaver from 'file-saver';
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/configuration-components/ExportConfigModal.scss';
 
 
 type Props = {
   show: boolean,
-  onClick: () => void
+  onHide: () => void
 }
 
 const ConfigExportModal = (props: Props) => {
-  // TODO implement the back end
   const configExportEndpoint = '/api/configuration/export';
 
   const [pass, setPass] = useState('');
@@ -33,11 +33,25 @@ const ConfigExportModal = (props: Props) => {
         })
       }
     )
+      .then(res => res.json())
+      .then(res => {
+        let configToExport = res['config_export'];
+        if (res['encrypted']) {
+          configToExport = new Blob([configToExport]);
+        } else {
+          configToExport = new Blob(
+            [JSON.stringify(configToExport, null, 2)],
+            {type: 'text/plain;charset=utf-8'}
+            );
+        }
+        FileSaver.saveAs(configToExport, 'monkey.conf');
+        props.onHide();
+      })
   }
 
   return (
     <Modal show={props.show}
-           onHide={props.onClick}
+           onHide={props.onHide}
            size={'lg'}
            className={'config-export-modal'}>
       <Modal.Header closeButton>
@@ -105,7 +119,7 @@ const ExportPlaintextChoiceField = (props: {
       />
       <p className={`export-warning text-secondary`}>
         Configuration may contain stolen credentials or sensitive data.<br/>
-        It is advised to use password encryption.
+        It is recommended that you use the <b>Encrypt with a password</b> option.
       </p>
     </div>
   )
