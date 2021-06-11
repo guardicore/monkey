@@ -75,6 +75,9 @@ class ConfigurationImport(flask_restful.Resource):
                 config = decrypt_ciphertext(config, request_contents["password"])
             return json.loads(config)
         except (JSONDecodeError, InvalidCiphertextError):
+            logger.exception(
+                "Exception encountered when trying " "to extract plaintext configuraiton."
+            )
             raise InvalidConfigurationError
 
     @staticmethod
