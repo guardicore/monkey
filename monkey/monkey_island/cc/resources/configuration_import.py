@@ -76,7 +76,7 @@ class ConfigurationImport(flask_restful.Resource):
             return json.loads(config)
         except (JSONDecodeError, InvalidCiphertextError):
             logger.exception(
-                "Exception encountered when trying " "to extract plaintext configuraiton."
+                "Exception encountered when trying to extract plaintext configuration."
             )
             raise InvalidConfigurationError
 
