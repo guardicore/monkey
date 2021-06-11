@@ -11,9 +11,11 @@ tags: ["setup", "AppImage", "linux"]
 
 The Infection Monkey AppImage package is supported on the following operating systems (not an
 exhaustive list):
-- Debian  <!-- TODO: which? -->
-- Kali  <!--- TODO: which? -->
+- CentOS
+- Debian
+- Kali
 - Ubuntu 18.04
+- Ubuntu 20.04
 
 ## Deployment
 
