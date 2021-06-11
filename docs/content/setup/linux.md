@@ -9,8 +9,8 @@ tags: ["setup", "AppImage", "linux"]
 
 ## Supported operating systems
 
-An [AppImage](https://appimage.org/) is a distribution-agnostic package or a self-running bundle that contains an
-application and everything that it may need to run.
+An [AppImage](https://appimage.org/) is a distribution-agnostic, self-running
+package that contains an application and everything that it may need to run.
 
 The Infection Monkey AppImage package should run on most modern Linux distros that have FUSE
 installed, but the ones that we've tested are:
