@@ -36,7 +36,7 @@ def _get_acl_and_sid_from_path(path: str):
 
     sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
     security_descriptor = win32security.GetNamedSecurityInfo(
-        test_path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
+        path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
     )
     acl = security_descriptor.GetSecurityDescriptorDacl()
     return acl, sid
@@ -64,7 +64,7 @@ def test_create_secure_directory__perm_linux(test_path):
 def test_create_secure_directory__perm_windows(test_path):
     create_secure_directory(test_path)
 
-    acl, user_sid = _get_acl_and_sid_from_path()
+    acl, user_sid = _get_acl_and_sid_from_path(test_path)
 
     assert acl.GetAceCount() == 1
 
@@ -99,7 +99,7 @@ def test_create_secure_file__perm_linux(test_path):
 def test_create_secure_file__perm_windows(test_path):
     create_secure_file(test_path)
 
-    acl, user_sid = _get_acl_and_sid_from_path()
+    acl, user_sid = _get_acl_and_sid_from_path(test_path)
 
     assert acl.GetAceCount() == 1
 
