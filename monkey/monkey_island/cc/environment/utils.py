@@ -9,6 +9,7 @@ def is_windows_os() -> bool:
 
 if is_windows_os():
     import win32file
+    import win32job
     import win32security
 
     import monkey_island.cc.environment.windows_permissions as windows_permissions
@@ -83,13 +84,15 @@ def _create_secure_file_windows(path: str):
         file_attributes = win32file.FILE_ATTRIBUTE_NORMAL
 
         with win32file.CreateFile(
-            fileName=path,
-            desiredAccess=file_access,
-            shareMode=file_sharing,
-            attributes=security_attributes,
-            CreationDisposition=file_creation,
-            flagsAndAttributes=file_attributes,
-            hTemplateFile=win32file.NULL,
+            path,
+            file_access,
+            file_sharing,
+            security_attributes,
+            file_creation,
+            file_attributes,
+            win32job.CreateJobObject(
+                None, ""
+            ),  # https://stackoverflow.com/questions/46800142/in-python-with-pywin32-win32job-the-createjobobject-function-how-do-i-pass-nu  # noqa: E501
         ) as x:  # noqa: F841
             pass
 
