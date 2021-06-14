@@ -9,6 +9,13 @@ from monkey_island.cc.environment.utils import (
     is_windows_os,
 )
 
+if is_windows_os():
+    import win32api
+    import win32security
+
+    FULL_CONTROL = 2032127
+    ACE_TYPE_ALLOW = 0
+
 
 @pytest.fixture
 def test_path_nested(tmpdir):
@@ -22,6 +29,17 @@ def test_path(tmpdir):
     path = os.path.join(tmpdir, test_path)
 
     return path
+
+
+def _get_acl_and_sid_from_path(path: str):
+    create_secure_file(path)
+
+    sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
+    security_descriptor = win32security.GetNamedSecurityInfo(
+        test_path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
+    )
+    acl = security_descriptor.GetSecurityDescriptorDacl()
+    return acl, sid
 
 
 def test_create_secure_directory__already_created(test_path):
@@ -44,19 +62,9 @@ def test_create_secure_directory__perm_linux(test_path):
 
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
 def test_create_secure_directory__perm_windows(test_path):
-    import win32api
-    import win32security
-
-    FULL_CONTROL = 2032127
-    ACE_TYPE_ALLOW = 0
-
     create_secure_directory(test_path)
 
-    user_sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
-    security_descriptor = win32security.GetNamedSecurityInfo(
-        test_path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
-    )
-    acl = security_descriptor.GetSecurityDescriptorDacl()
+    acl, user_sid = _get_acl_and_sid_from_path()
 
     assert acl.GetAceCount() == 1
 
@@ -89,19 +97,9 @@ def test_create_secure_file__perm_linux(test_path):
 
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
 def test_create_secure_file__perm_windows(test_path):
-    import win32api
-    import win32security
-
-    FULL_CONTROL = 2032127
-    ACE_TYPE_ALLOW = 0
-
     create_secure_file(test_path)
 
-    user_sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
-    security_descriptor = win32security.GetNamedSecurityInfo(
-        test_path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
-    )
-    acl = security_descriptor.GetSecurityDescriptorDacl()
+    acl, user_sid = _get_acl_and_sid_from_path()
 
     assert acl.GetAceCount() == 1
 
