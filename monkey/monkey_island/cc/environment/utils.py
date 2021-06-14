@@ -58,7 +58,9 @@ def create_secure_file(path: str):
 
 def _create_secure_file_linux(path: str):
     try:
-        flags = os.O_RDWR | os.O_CREAT  # read/write, create new
+        flags = (
+            os.O_RDWR | os.O_CREAT | os.O_EXCL
+        )  # read/write, create new, throw error if file exists
         mode = 0o700  # read/write/execute permissions to owner
 
         with os.open(path, flags, mode) as x:  # noqa: F841
