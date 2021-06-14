@@ -39,7 +39,7 @@ def test_create_secure_directory__no_parent_dir(test_path_nested):
 def test_create_secure_directory__perm_linux(test_path):
     create_secure_directory(test_path)
     st = os.stat(test_path)
-    return bool(st.st_mode & stat.S_IRWXU)
+    assert (st.st_mode & 0o777) == stat.S_IRWXU
 
 
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
