@@ -61,7 +61,7 @@ def _create_secure_file_linux(path: str):
         flags = os.O_RDWR | os.O_CREAT  # read/write, create new
         mode = 0o700  # read/write/execute permissions to owner
 
-        with os.open(path, flags, mode) as _:
+        with os.open(path, flags, mode) as x:  # noqa: F841
             pass
 
     except Exception as ex:
@@ -90,7 +90,7 @@ def _create_secure_file_windows(path: str):
             CreationDisposition=file_creation,
             flagsAndAttributes=file_attributes,
             hTemplateFile=win32file.NULL,
-        ) as _:
+        ) as x:  # noqa: F841
             pass
 
     except Exception as ex:
