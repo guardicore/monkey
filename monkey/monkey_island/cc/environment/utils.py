@@ -83,7 +83,7 @@ def _create_secure_file_windows(path: str):
         file_creation = win32file.CREATE_NEW  # fails if file exists
         file_attributes = win32file.FILE_ATTRIBUTE_NORMAL
 
-        with win32file.CreateFile(
+        win32file.CloseHandle(win32file.CreateFile(
             path,
             file_access,
             file_sharing,
@@ -93,8 +93,7 @@ def _create_secure_file_windows(path: str):
             win32job.CreateJobObject(
                 None, ""
             ),  # https://stackoverflow.com/questions/46800142/in-python-with-pywin32-win32job-the-createjobobject-function-how-do-i-pass-nu  # noqa: E501
-        ) as x:  # noqa: F841
-            pass
+        ))
 
     except Exception as ex:
         LOG.error(f'Could not create a file at "{path}": {str(ex)}')
