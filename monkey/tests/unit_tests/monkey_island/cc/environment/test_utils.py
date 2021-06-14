@@ -32,8 +32,6 @@ def test_path(tmpdir):
 
 
 def _get_acl_and_sid_from_path(path: str):
-    create_secure_file(path)
-
     sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
     security_descriptor = win32security.GetNamedSecurityInfo(
         path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
