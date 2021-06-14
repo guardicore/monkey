@@ -49,9 +49,9 @@ Then execute the resulting script with your shell.
 After downloading that script, execute it in a shell. The first argument should be an absolute path of an empty directory (the script will create one if doesn't exist, default is ./infection_monkey). The second parameter is the branch you want to clone (develop by default). Some example usages:
 
 - `./deploy_linux.sh` (deploys under ./infection_monkey)
-- `./deploy_linux.sh "/home/test/monkey"` (deploys under /home/test/monkey)
+- `./deploy_linux.sh /home/test/monkey` (deploys under /home/test/monkey)
 - `./deploy_linux.sh "" "master"` (deploys master branch in script directory)
-- `./deploy_linux.sh "/home/user/new" "master"` (if directory "new" is not found creates it and clones master branch into it)
+- `./deploy_linux.sh /home/user/new "master"` (if directory "new" is not found creates it and clones master branch into it)
 
 You may also pass in an optional third `false` parameter to disable downloading the latest agent binaries.
 
