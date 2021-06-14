@@ -64,7 +64,7 @@ your PATH environment variable is up to date.
 
 ```sh
 cd infection_monkey/monkey/monkey_island
-pipenv run ./linux/run.sh
+pipenv run python ../monkey_island.py
 ```
 
 ## Pre-commit hooks
