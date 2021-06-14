@@ -81,7 +81,7 @@ def _create_secure_file_windows(path: str):
             windows_permissions.get_security_descriptor_for_owner_only_perms()
         )
         file_creation = win32file.CREATE_NEW  # fails if file exists
-        file_attributes = win32file.FILE_ATTRIBUTE_NORMAL
+        file_attributes = win32file.FILE_FLAG_BACKUP_SEMANTICS
 
         win32file.CloseHandle(win32file.CreateFile(
             path,
