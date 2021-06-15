@@ -5,13 +5,14 @@ import pytest
 
 from monkey_island.cc.server_utils.file_utils import (
     create_secure_directory,
-    create_secure_file,
     expand_path,
+    get_file_descriptor_for_new_secure_file,
     is_windows_os,
 )
 
 if is_windows_os():
     import win32api
+    import win32file
     import win32security
 
     FULL_CONTROL = 2032127
@@ -97,17 +98,18 @@ def test_create_secure_directory__perm_windows(test_path):
 def test_create_secure_file__already_created(test_path):
     os.close(os.open(test_path, os.O_CREAT, stat.S_IRWXU))
     assert os.path.isfile(test_path)
-    create_secure_file(test_path)  # test fails if any exceptions are thrown
+    # test fails if any exceptions are thrown
+    get_file_descriptor_for_new_secure_file(test_path)
 
 
 def test_create_secure_file__no_parent_dir(test_path_nested):
     with pytest.raises(Exception):
-        create_secure_file(test_path_nested)
+        get_file_descriptor_for_new_secure_file(test_path_nested)
 
 
 @pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
 def test_create_secure_file__perm_linux(test_path):
-    create_secure_file(test_path)
+    os.close(get_file_descriptor_for_new_secure_file(test_path))
     st = os.stat(test_path)
 
     expected_mode = stat.S_IRUSR | stat.S_IWUSR
@@ -118,7 +120,7 @@ def test_create_secure_file__perm_linux(test_path):
 
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
 def test_create_secure_file__perm_windows(test_path):
-    create_secure_file(test_path)
+    win32file.CloseHandle(get_file_descriptor_for_new_secure_file(test_path))
 
     acl, user_sid = _get_acl_and_sid_from_path(test_path)
 
