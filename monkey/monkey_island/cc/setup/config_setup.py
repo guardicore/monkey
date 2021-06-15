@@ -2,9 +2,9 @@ from typing import Tuple
 
 from monkey_island.cc.arg_parser import IslandCmdArgs
 from monkey_island.cc.environment import server_config_handler
-from monkey_island.cc.server_utils.file_utils import create_secure_directory
 from monkey_island.cc.server_utils import file_utils
 from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH
+from monkey_island.cc.server_utils.file_utils import create_secure_directory
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 

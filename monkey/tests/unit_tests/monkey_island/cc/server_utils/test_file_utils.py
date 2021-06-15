@@ -1,5 +1,4 @@
 import os
-
 import stat
 
 import pytest
@@ -7,8 +6,8 @@ import pytest
 from monkey_island.cc.server_utils.file_utils import (
     create_secure_directory,
     create_secure_file,
+    expand_path,
     is_windows_os,
-    expand_path
 )
 
 if is_windows_os():
@@ -17,7 +16,6 @@ if is_windows_os():
 
     FULL_CONTROL = 2032127
     ACE_TYPE_ALLOW = 0
-
 
 
 def test_expand_user(patched_home_env):
@@ -32,6 +30,7 @@ def test_expand_vars(patched_home_env):
     expected_path = os.path.join(patched_home_env, "test")
 
     assert expand_path(input_path) == expected_path
+
 
 @pytest.fixture
 def test_path_nested(tmpdir):
