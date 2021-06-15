@@ -98,8 +98,9 @@ def test_create_secure_directory__perm_windows(test_path):
 def test_create_secure_file__already_created(test_path):
     os.close(os.open(test_path, os.O_CREAT, stat.S_IRWXU))
     assert os.path.isfile(test_path)
-    # test fails if any exceptions are thrown
-    get_file_descriptor_for_new_secure_file(test_path)
+
+    with pytest.raises(Exception):
+        get_file_descriptor_for_new_secure_file(test_path)
 
 
 def test_create_secure_file__no_parent_dir(test_path_nested):

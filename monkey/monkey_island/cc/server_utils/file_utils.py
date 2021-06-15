@@ -55,11 +55,10 @@ def _create_secure_directory_windows(path: str):
 
 
 def get_file_descriptor_for_new_secure_file(path: str) -> int:
-    if not os.path.isfile(path):
-        if is_windows_os():
-            return _get_file_descriptor_for_new_secure_file_windows(path)
-        else:
-            return _get_file_descriptor_for_new_secure_file_linux(path)
+    if is_windows_os():
+        return _get_file_descriptor_for_new_secure_file_windows(path)
+    else:
+        return _get_file_descriptor_for_new_secure_file_linux(path)
 
 
 def _get_file_descriptor_for_new_secure_file_linux(path: str) -> int:
