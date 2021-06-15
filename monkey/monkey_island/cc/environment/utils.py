@@ -1,6 +1,7 @@
 import logging
 import os
 import platform
+import stat
 
 
 def is_windows_os() -> bool:
@@ -29,7 +30,7 @@ def _create_secure_directory_linux(path: str):
     try:
         # Don't split directory creation and permission setting
         # because it will temporarily create an accessible directory which anyone can use.
-        os.mkdir(path, mode=0o700)
+        os.mkdir(path, mode=stat.S_IRWXU)
 
     except Exception as ex:
         LOG.error(f'Could not create a directory at "{path}": {str(ex)}')
@@ -62,7 +63,7 @@ def _create_secure_file_linux(path: str):
         flags = (
             os.O_RDWR | os.O_CREAT | os.O_EXCL
         )  # read/write, create new, throw error if file exists
-        mode = 0o700  # read/write/execute permissions to owner
+        mode = stat.S_IRWXU  # read/write/execute permissions to owner
         os.close(os.open(path, flags, mode))
 
     except Exception as ex:
