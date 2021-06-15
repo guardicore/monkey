@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from monkey_island.cc.environment.utils import is_windows_os
+from monkey_island.cc.server_utils.file_utils import is_windows_os
 from monkey_island.cc.server_utils import file_utils
 
 __author__ = "itay.mizeretz"

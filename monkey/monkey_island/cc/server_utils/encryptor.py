@@ -6,7 +6,7 @@ import os
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
-from monkey_island.cc.environment.utils import create_secure_file
+from monkey_island.cc.server_utils.file_utils import create_secure_file
 
 __author__ = "itay.mizeretz"
 
