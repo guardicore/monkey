@@ -27,7 +27,7 @@ class Encryptor:
 
     def _init_key(self, password_file):
         self._cipher_key = Random.new().read(self._BLOCK_SIZE)
-        with open(get_file_descriptor_for_new_secure_file(path=password_file)) as f:
+        with open(get_file_descriptor_for_new_secure_file(path=password_file), "wb") as f:
             f.write(self._cipher_key)
 
     def _load_existing_key(self, password_file):
