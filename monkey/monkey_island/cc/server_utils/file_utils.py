@@ -2,7 +2,6 @@ import logging
 import os
 import platform
 import stat
-from pathlib import Path
 
 LOG = logging.getLogger(__name__)
 
@@ -55,25 +54,30 @@ def _create_secure_directory_windows(path: str):
         raise ex
 
 
-def create_secure_file(path: str):
+def get_file_descriptor_for_new_secure_file(path: str):
     if not os.path.isfile(path):
         if is_windows_os():
-            _create_secure_file_windows(path)
+            return _get_file_descriptor_for_new_secure_file_windows(path)
         else:
-            _create_secure_file_linux(path)
+            return _get_file_descriptor_for_new_secure_file_linux(path)
 
 
-def _create_secure_file_linux(path: str):
+def _get_file_descriptor_for_new_secure_file_linux(path: str):
     try:
         mode = stat.S_IRUSR | stat.S_IWUSR
-        Path(path).touch(mode=mode, exist_ok=False)
+        flags = (
+            os.O_RDWR | os.O_CREAT | os.O_EXCL
+        )  # read/write, create new, throw error if file exists
+        fd = os.open(path, flags, mode)
+
+        return fd
 
     except Exception as ex:
         LOG.error(f'Could not create a file at "{path}": {str(ex)}')
         raise ex
 
 
-def _create_secure_file_windows(path: str):
+def _get_file_descriptor_for_new_secure_file_windows(path: str):
     try:
         file_access = win32file.GENERIC_READ | win32file.GENERIC_WRITE
         file_sharing = (
@@ -86,19 +90,19 @@ def _create_secure_file_windows(path: str):
         file_creation = win32file.CREATE_NEW  # fails if file exists
         file_attributes = win32file.FILE_FLAG_BACKUP_SEMANTICS
 
-        win32file.CloseHandle(
-            win32file.CreateFile(
-                path,
-                file_access,
-                file_sharing,
-                security_attributes,
-                file_creation,
-                file_attributes,
-                win32job.CreateJobObject(
-                    None, ""
-                ),  # https://stackoverflow.com/questions/46800142/in-python-with-pywin32-win32job-the-createjobobject-function-how-do-i-pass-nu  # noqa: E501
-            )
+        fd = win32file.CreateFile(
+            path,
+            file_access,
+            file_sharing,
+            security_attributes,
+            file_creation,
+            file_attributes,
+            win32job.CreateJobObject(
+                None, ""
+            ),  # https://stackoverflow.com/questions/46800142/in-python-with-pywin32-win32job-the-createjobobject-function-how-do-i-pass-nu  # noqa: E501
         )
+
+        return fd
 
     except Exception as ex:
         LOG.error(f'Could not create a file at "{path}": {str(ex)}')
