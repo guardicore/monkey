@@ -91,7 +91,7 @@ def test_create_secure_directory__perm_windows(test_path):
 
 
 def test_create_secure_file__already_created(test_path):
-    os.close(os.open(test_path, os.O_CREAT, 0o700))
+    os.close(os.open(test_path, os.O_CREAT, stat.S_IRWXU))
     assert os.path.isfile(test_path)
     create_secure_file(test_path)  # test fails if any exceptions are thrown
 
@@ -105,7 +105,11 @@ def test_create_secure_file__no_parent_dir(test_path_nested):
 def test_create_secure_file__perm_linux(test_path):
     create_secure_file(test_path)
     st = os.stat(test_path)
-    assert (st.st_mode & 0o777) == stat.S_IRWXU
+
+    expected_mode = stat.S_IRUSR | stat.S_IWUSR
+    actual_mode = st.st_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+
+    assert expected_mode == actual_mode
 
 
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")

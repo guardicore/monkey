@@ -65,7 +65,7 @@ def create_secure_file(path: str):
 
 def _create_secure_file_linux(path: str):
     try:
-        mode = stat.S_IRWXU  # read/write/execute permissions to owner
+        mode = stat.S_IRUSR | stat.S_IWUSR
         Path(path).touch(mode=mode, exist_ok=False)
 
     except Exception as ex:
