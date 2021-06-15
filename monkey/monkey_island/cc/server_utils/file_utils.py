@@ -54,7 +54,7 @@ def _create_secure_directory_windows(path: str):
         raise ex
 
 
-def get_file_descriptor_for_new_secure_file(path: str):
+def get_file_descriptor_for_new_secure_file(path: str) -> int:
     if not os.path.isfile(path):
         if is_windows_os():
             return _get_file_descriptor_for_new_secure_file_windows(path)
@@ -62,7 +62,7 @@ def get_file_descriptor_for_new_secure_file(path: str):
             return _get_file_descriptor_for_new_secure_file_linux(path)
 
 
-def _get_file_descriptor_for_new_secure_file_linux(path: str):
+def _get_file_descriptor_for_new_secure_file_linux(path: str) -> int:
     try:
         mode = stat.S_IRUSR | stat.S_IWUSR
         flags = (
@@ -77,7 +77,7 @@ def _get_file_descriptor_for_new_secure_file_linux(path: str):
         raise ex
 
 
-def _get_file_descriptor_for_new_secure_file_windows(path: str):
+def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
     try:
         file_access = win32file.GENERIC_READ | win32file.GENERIC_WRITE
         # subsequent open operations on the object will succeed only if read access is requested
