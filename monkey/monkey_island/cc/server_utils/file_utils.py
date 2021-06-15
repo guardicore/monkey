@@ -80,9 +80,8 @@ def _get_file_descriptor_for_new_secure_file_linux(path: str):
 def _get_file_descriptor_for_new_secure_file_windows(path: str):
     try:
         file_access = win32file.GENERIC_READ | win32file.GENERIC_WRITE
-        file_sharing = (
-            win32file.FILE_SHARE_READ
-        )  # subsequent open operations on the object will succeed only if read access is requested
+        # subsequent open operations on the object will succeed only if read access is requested
+        file_sharing = win32file.FILE_SHARE_READ
         security_attributes = win32security.SECURITY_ATTRIBUTES()
         security_attributes.SECURITY_DESCRIPTOR = (
             windows_permissions.get_security_descriptor_for_owner_only_perms()
