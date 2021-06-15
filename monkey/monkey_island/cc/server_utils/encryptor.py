@@ -6,6 +6,8 @@ import os
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
+from monkey_island.cc.server_utils.file_utils import get_file_descriptor_for_new_secure_file
+
 __author__ = "itay.mizeretz"
 
 _encryptor = None
@@ -25,7 +27,7 @@ class Encryptor:
 
     def _init_key(self, password_file):
         self._cipher_key = Random.new().read(self._BLOCK_SIZE)
-        with open(password_file, "wb") as f:
+        with open(get_file_descriptor_for_new_secure_file(path=password_file), "wb") as f:
             f.write(self._cipher_key)
 
     def _load_existing_key(self, password_file):
