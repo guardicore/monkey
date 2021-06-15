@@ -2,6 +2,7 @@ import logging
 import os
 import platform
 import stat
+from pathlib import Path
 
 LOG = logging.getLogger(__name__)
 
@@ -64,11 +65,8 @@ def create_secure_file(path: str):
 
 def _create_secure_file_linux(path: str):
     try:
-        flags = (
-            os.O_RDWR | os.O_CREAT | os.O_EXCL
-        )  # read/write, create new, throw error if file exists
         mode = stat.S_IRWXU  # read/write/execute permissions to owner
-        os.close(os.open(path, flags, mode))
+        Path(path).touch(mode=mode, exist_ok=False)
 
     except Exception as ex:
         LOG.error(f'Could not create a file at "{path}": {str(ex)}')
