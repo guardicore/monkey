@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "080af5d3991ee621eb9fd84535c6399f297d6eaa72e97dc90871e27dd7a69435"
+            "sha256": "1c464331fa9697084cb9fac3a2f6cf5fca45fa63c528928318f1031acd0f5eff"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -23,6 +23,14 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==0.0.4"
+        },
+        "altgraph": {
+            "hashes": [
+                "sha256:1f05a47122542f97028caf78775a095fbe6a2699b5089de8477eb583167d69aa",
+                "sha256:c623e5f3408ca61d4016f23a681b9adb100802ca3e3da5e718915a9e4052cebe"
+            ],
+            "index": "pypi",
+            "version": "==0.17"
         },
         "asn1crypto": {
             "hashes": [
@@ -486,6 +494,13 @@
             ],
             "index": "pypi",
             "version": "==1.7.0"
+        },
+        "oscrypto": {
+            "hashes": [
+                "sha256:7d2cca6235d89d1af6eb9cfcd4d2c0cb405849868157b2f7b278beb644d48694",
+                "sha256:988087e05b17df8bfcc7c5fac51f54595e46d3e4dffa7b3d15955cf61a633529"
+            ],
+            "version": "==1.2.1"
         },
         "paramiko": {
             "hashes": [
