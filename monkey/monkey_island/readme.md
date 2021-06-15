@@ -132,3 +132,19 @@
 #### How to run
 
 1. From the `monkey` directory, run `python3.7 ./monkey_island.py`
+
+
+#### Troubleshooting
+
+When committing your changes for the first time, you may encounter some errors thrown by the pre-commit hooks. This is most likely because some python dependencies are missing from your system.
+To resolve this, use `pipenv` to create a `requirements.txt` for both the `infection_monkey/` and `monkey_island/` requirements and install it with `pip`.
+
+   - `cd [code location]/infection_monkey`
+   - `python3.7 -m pipenv lock -r --dev > requirements.txt`
+   - `python3.7 -m pip install -r requirements.txt`
+
+   and
+
+   - `cd [code location]/monkey_island`
+   - `python3.7 -m pipenv lock -r --dev > requirements.txt`
+   - `python3.7 -m pip install -r requirements.txt`
