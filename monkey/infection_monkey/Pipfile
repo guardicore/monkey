@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+altgraph = "*"
 cryptography = "==2.5" # We can't build 32bit ubuntu12 binary with newer versions of cryptography
 cffi = ">=1.14"
 ecdsa = "==0.15"
