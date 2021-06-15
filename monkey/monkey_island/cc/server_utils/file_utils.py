@@ -96,9 +96,7 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str):
             security_attributes,
             file_creation,
             file_attributes,
-            win32job.CreateJobObject(
-                None, ""
-            ),  # https://stackoverflow.com/questions/46800142/in-python-with-pywin32-win32job-the-createjobobject-function-how-do-i-pass-nu  # noqa: E501
+            _get_null_value_for_win32(),
         )
 
         return fd
@@ -106,3 +104,8 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str):
     except Exception as ex:
         LOG.error(f'Could not create a file at "{path}": {str(ex)}')
         raise ex
+
+
+def _get_null_value_for_win32() -> None:
+    # https://stackoverflow.com/questions/46800142/in-python-with-pywin32-win32job-the-createjobobject-function-how-do-i-pass-nu  # noqa: E501
+    return win32job.CreateJobObject(None, "")
