@@ -4,7 +4,6 @@ import filecmp
 import logging
 import os
 import pprint
-import shlex
 import shutil
 import subprocess
 import sys
@@ -17,6 +16,7 @@ from infection_monkey.exploit.tools.helpers import build_monkey_commandline_expl
 from infection_monkey.model import MONKEY_CMDLINE_LINUX, MONKEY_CMDLINE_WINDOWS
 from infection_monkey.system_info import OperatingSystem, SystemInfoCollector
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
+from infection_monkey.utils.commands import get_monkey_cmd_lines_linux, get_monkey_cmd_lines_windows
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -145,13 +145,9 @@ class MonkeyDrops(object):
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
             # TODO: Replace all of this string templating with a function that accepts
             #       the necessary parameters and returns a list of arguments.
-            monkey_cmdline = (
-                MONKEY_CMDLINE_WINDOWS % {"monkey_path": self._config["destination_path"]}
-                + monkey_options
-            )
-            monkey_cmdline_split = shlex.split(
-                monkey_cmdline,
-                posix=False,  # won't try resolving "\" in paths as part of escape sequences
+
+            monkey_cmdline, monkey_cmdline_split = get_monkey_cmd_lines_windows(
+                MONKEY_CMDLINE_WINDOWS, self._config["destination_path"], monkey_options
             )
 
             monkey_process = subprocess.Popen(
@@ -168,11 +164,10 @@ class MonkeyDrops(object):
             # using thw `cwd` argument in `subprocess.Popen` below
             # TODO: Replace all of this string templating with a function that accepts
             #       the necessary parameters and returns a list of arguments.
-            monkey_cmdline = (
-                MONKEY_CMDLINE_LINUX % {"monkey_filename": dest_path.split("/")[-1]}
-                + monkey_options
+
+            monkey_cmdline, monkey_cmdline_split = get_monkey_cmd_lines_linux(
+                MONKEY_CMDLINE_LINUX, dest_path, monkey_options
             )
-            monkey_cmdline_split = shlex.split(monkey_cmdline)
 
             monkey_process = subprocess.Popen(
                 monkey_cmdline_split,
