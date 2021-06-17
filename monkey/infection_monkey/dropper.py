@@ -12,11 +12,13 @@ from ctypes import c_char_p
 
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from infection_monkey.config import WormConfiguration
-from infection_monkey.exploit.tools.helpers import build_monkey_commandline_explicitly
-from infection_monkey.model import MONKEY_CMDLINE_LINUX, MONKEY_CMDLINE_WINDOWS
 from infection_monkey.system_info import OperatingSystem, SystemInfoCollector
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
-from infection_monkey.utils.commands import get_monkey_cmd_lines_linux, get_monkey_cmd_lines_windows
+from infection_monkey.utils.commands import (
+    build_monkey_commandline_explicitly,
+    get_monkey_cmd_lines_linux,
+    get_monkey_cmd_lines_windows,
+)
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -143,15 +145,13 @@ class MonkeyDrops(object):
         )
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
-            # TODO: Replace all of this string templating with a function that accepts
-            #       the necessary parameters and returns a list of arguments.
 
-            monkey_cmdline, monkey_cmdline_split = get_monkey_cmd_lines_windows(
-                MONKEY_CMDLINE_WINDOWS, self._config["destination_path"], monkey_options
+            monkey_cmdline = get_monkey_cmd_lines_windows(
+                self._config["destination_path"], monkey_options
             )
 
             monkey_process = subprocess.Popen(
-                monkey_cmdline_split,
+                monkey_cmdline,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -162,15 +162,13 @@ class MonkeyDrops(object):
             dest_path = self._config["destination_path"]
             # In Linux, we need to change the directory first, which is done
             # using thw `cwd` argument in `subprocess.Popen` below
-            # TODO: Replace all of this string templating with a function that accepts
-            #       the necessary parameters and returns a list of arguments.
 
-            monkey_cmdline, monkey_cmdline_split = get_monkey_cmd_lines_linux(
-                MONKEY_CMDLINE_LINUX, dest_path, monkey_options
-            )
+            monkey_cmdline = get_monkey_cmd_lines_linux(dest_path, monkey_options)
+
+            LOG.info("Commands of monkey cmdline_split %s", monkey_cmdline)
 
             monkey_process = subprocess.Popen(
-                monkey_cmdline_split,
+                monkey_cmdline,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -182,7 +180,7 @@ class MonkeyDrops(object):
         LOG.info(
             "Executed monkey process (PID=%d) with command line: %s",
             monkey_process.pid,
-            monkey_cmdline,
+            " ".join(monkey_cmdline),
         )
 
         time.sleep(3)

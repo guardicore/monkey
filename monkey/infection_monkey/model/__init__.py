@@ -7,7 +7,9 @@ DROPPER_ARG = "dr0pp3r"
 ID_STRING = "M0NK3Y3XPL0ITABLE"
 
 # CMD prefix for windows commands
-CMD_PREFIX = "cmd.exe /c"
+CMD_EXE = "cmd.exe"
+CMD_CARRY_OUT = "/c"
+CMD_PREFIX = CMD_EXE + " " + CMD_CARRY_OUT
 DROPPER_CMDLINE_WINDOWS = "%s %%(dropper_path)s %s" % (
     CMD_PREFIX,
     DROPPER_ARG,
@@ -16,7 +18,6 @@ MONKEY_CMDLINE_WINDOWS = "%s %%(monkey_path)s %s" % (
     CMD_PREFIX,
     MONKEY_ARG,
 )
-MONKEY_CMDLINE_LINUX = "./%%(monkey_filename)s %s" % (MONKEY_ARG,)
 DROPPER_CMDLINE_DETACHED_WINDOWS = "%s start cmd /c %%(dropper_path)s %s" % (
     CMD_PREFIX,
     DROPPER_ARG,
