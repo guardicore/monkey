@@ -23,13 +23,7 @@ class TestHelpers(unittest.TestCase):
             101010, "10.10.101.10", "127.127.127.127:5000", 0, "C:\\windows\\abc", 80
         )
 
-        test2 = ["-p", "parent", "-s", "127.127.127.127:5000", "-d", "0", "-vp", "80"]
-        result2 = build_monkey_commandline_explicitly(
-            parent="parent", server="127.127.127.127:5000", depth="0", vulnerable_port="80"
-        )
-
         self.assertEqual(test1, result1)
-        self.assertEqual(test2, result2)
 
 
 if __name__ == "__main__":
