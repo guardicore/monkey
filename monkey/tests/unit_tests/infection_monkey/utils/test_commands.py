@@ -1,4 +1,7 @@
-from infection_monkey.utils.commands import build_monkey_commandline_explicitly
+from infection_monkey.utils.commands import (
+    build_monkey_commandline_explicitly,
+    get_monkey_cmd_lines_windows,
+)
 
 
 def test_build_monkey_commandline_explicitly():
@@ -59,3 +62,27 @@ def test_build_monkey_commandline_explicitly():
     assert test1 == result1
     assert test2 == result2
     assert test3 == result3
+
+
+def test_get_monkey_cmd_lines_windows():
+    test1 = [
+        "cmd.exe",
+        "/c",
+        "C:\\windows\\abc",
+        "m0nk3y",
+        "-p",
+        "101010",
+        "-t",
+        "10.10.101.10",
+    ]
+    result1 = get_monkey_cmd_lines_windows(
+        "C:\\windows\\abc",
+        [
+            "-p",
+            "101010",
+            "-t",
+            "10.10.101.10",
+        ],
+    )
+
+    assert test1 == result1
