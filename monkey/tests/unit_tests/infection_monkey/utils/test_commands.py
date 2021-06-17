@@ -1,5 +1,6 @@
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
+    get_monkey_cmd_lines_linux,
     get_monkey_cmd_lines_windows,
 )
 
@@ -77,6 +78,28 @@ def test_get_monkey_cmd_lines_windows():
     ]
     result1 = get_monkey_cmd_lines_windows(
         "C:\\windows\\abc",
+        [
+            "-p",
+            "101010",
+            "-t",
+            "10.10.101.10",
+        ],
+    )
+
+    assert test1 == result1
+
+
+def test_get_monkey_cmd_lines_linux():
+    test1 = [
+        "monkey-linux-64",
+        "m0nk3y",
+        "-p",
+        "101010",
+        "-t",
+        "10.10.101.10",
+    ]
+    result1 = get_monkey_cmd_lines_linux(
+        "/home/user/monkey-linux-64",
         [
             "-p",
             "101010",
