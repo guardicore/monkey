@@ -145,7 +145,6 @@ class MonkeyDrops(object):
         )
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
-
             monkey_commandline = get_monkey_commandline_windows(
                 self._config["destination_path"], monkey_options
             )
@@ -164,8 +163,6 @@ class MonkeyDrops(object):
             # using thw `cwd` argument in `subprocess.Popen` below
 
             monkey_commandline = get_monkey_commandline_linux(dest_path, monkey_options)
-
-            LOG.info("Commands of monkey cmdline_split %s", monkey_commandline)
 
             monkey_process = subprocess.Popen(
                 monkey_commandline,
