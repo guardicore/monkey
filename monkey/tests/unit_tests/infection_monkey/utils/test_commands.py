@@ -5,8 +5,8 @@ from infection_monkey.utils.commands import (
 )
 
 
-def test_build_monkey_commandline_explicitly():
-    test1 = [
+def test_build_monkey_commandline_explicitly_arguments():
+    expected = [
         "-p",
         "101010",
         "-t",
@@ -20,53 +20,35 @@ def test_build_monkey_commandline_explicitly():
         "-vp",
         "80",
     ]
-    result1 = build_monkey_commandline_explicitly(
+    actual = build_monkey_commandline_explicitly(
         101010, "10.10.101.10", "127.127.127.127:5000", 0, "C:\\windows\\abc", 80
     )
 
-    test2 = [
-        "-p",
-        "101010",
-        "-t",
-        "10.10.101.10",
-        "-s",
-        "200.150.100.50:5000",
+    assert expected == actual
+
+
+def test_build_monkey_commandline_explicitly_depth_condition_less():
+    expected = [
         "-d",
         "0",
-        "-l",
-        "C:\\windows\\abc",
-        "-vp",
-        "443",
     ]
-    result2 = build_monkey_commandline_explicitly(
-        101010, "10.10.101.10", "200.150.100.50:5000", -50, "C:\\windows\\abc", 443
-    )
+    actual = build_monkey_commandline_explicitly(depth=-50)
 
-    test3 = [
-        "-p",
-        "101010",
-        "-t",
-        "10.10.101.10",
-        "-s",
-        "200.150.100.50:5000",
+    assert expected == actual
+
+
+def test_build_monkey_commandline_explicitly_depth_condition_greater():
+    expected = [
         "-d",
-        "100",
-        "-l",
-        "C:\\windows\\ghi",
-        "-vp",
-        "443",
+        "50",
     ]
-    result3 = build_monkey_commandline_explicitly(
-        101010, "10.10.101.10", "200.150.100.50:5000", 100, "C:\\windows\\ghi", 443
-    )
+    actual = build_monkey_commandline_explicitly(depth=50)
 
-    assert test1 == result1
-    assert test2 == result2
-    assert test3 == result3
+    assert expected == actual
 
 
 def test_get_monkey_commandline_windows():
-    test1 = [
+    expected = [
         "cmd.exe",
         "/c",
         "C:\\windows\\abc",
@@ -76,7 +58,7 @@ def test_get_monkey_commandline_windows():
         "-t",
         "10.10.101.10",
     ]
-    result1 = get_monkey_commandline_windows(
+    actual = get_monkey_commandline_windows(
         "C:\\windows\\abc",
         [
             "-p",
@@ -86,11 +68,11 @@ def test_get_monkey_commandline_windows():
         ],
     )
 
-    assert test1 == result1
+    assert expected == actual
 
 
 def test_get_monkey_commandline_linux():
-    test1 = [
+    expected = [
         "monkey-linux-64",
         "m0nk3y",
         "-p",
@@ -98,7 +80,7 @@ def test_get_monkey_commandline_linux():
         "-t",
         "10.10.101.10",
     ]
-    result1 = get_monkey_commandline_linux(
+    actual = get_monkey_commandline_linux(
         "/home/user/monkey-linux-64",
         [
             "-p",
@@ -108,4 +90,4 @@ def test_get_monkey_commandline_linux():
         ],
     )
 
-    assert test1 == result1
+    assert expected == actual
