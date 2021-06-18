@@ -56,6 +56,6 @@ def get_monkey_commandline_windows(destination_path, monkey_options):
 
 
 def get_monkey_commandline_linux(destination_path, monkey_options):
-    monkey_cmdline = [destination_path.split("/")[-1], MONKEY_ARG]
+    monkey_cmdline = [destination_path, MONKEY_ARG]
 
     return monkey_cmdline + monkey_options

@@ -73,7 +73,7 @@ def test_get_monkey_commandline_windows():
 
 def test_get_monkey_commandline_linux():
     expected = [
-        "monkey-linux-64",
+        "/home/user/monkey-linux-64",
         "m0nk3y",
         "-p",
         "101010",
