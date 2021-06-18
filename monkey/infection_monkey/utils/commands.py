@@ -49,13 +49,13 @@ def build_monkey_commandline_explicitly(
     return cmdline
 
 
-def get_monkey_cmd_lines_windows(destination_path, monkey_options):
+def get_monkey_commandline_windows(destination_path, monkey_options):
     monkey_cmdline = [CMD_EXE, CMD_CARRY_OUT, destination_path, MONKEY_ARG]
 
     return monkey_cmdline + monkey_options
 
 
-def get_monkey_cmd_lines_linux(destination_path, monkey_options):
+def get_monkey_commandline_linux(destination_path, monkey_options):
     monkey_cmdline = [destination_path.split("/")[-1], MONKEY_ARG]
 
     return monkey_cmdline + monkey_options

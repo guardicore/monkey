@@ -9,7 +9,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
-    get_monkey_cmd_lines_windows,
+    get_monkey_commandline_windows,
 )
 from infection_monkey.utils.environment import is_64bit_python, is_64bit_windows_os, is_windows_os
 
@@ -47,7 +47,7 @@ class WindowsUpgrader(object):
             opts.parent, opts.tunnel, opts.server, opts.depth
         )
 
-        monkey_cmdline = get_monkey_cmd_lines_windows(
+        monkey_cmdline = get_monkey_commandline_windows(
             WormConfiguration.dropper_target_path_win_64, monkey_options
         )
 

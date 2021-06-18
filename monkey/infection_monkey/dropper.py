@@ -16,8 +16,8 @@ from infection_monkey.system_info import OperatingSystem, SystemInfoCollector
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
-    get_monkey_cmd_lines_linux,
-    get_monkey_cmd_lines_windows,
+    get_monkey_commandline_linux,
+    get_monkey_commandline_windows,
 )
 
 if "win32" == sys.platform:
@@ -146,12 +146,12 @@ class MonkeyDrops(object):
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
 
-            monkey_cmdline = get_monkey_cmd_lines_windows(
+            monkey_commandline = get_monkey_commandline_windows(
                 self._config["destination_path"], monkey_options
             )
 
             monkey_process = subprocess.Popen(
-                monkey_cmdline,
+                monkey_commandline,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -163,12 +163,12 @@ class MonkeyDrops(object):
             # In Linux, we need to change the directory first, which is done
             # using thw `cwd` argument in `subprocess.Popen` below
 
-            monkey_cmdline = get_monkey_cmd_lines_linux(dest_path, monkey_options)
+            monkey_commandline = get_monkey_commandline_linux(dest_path, monkey_options)
 
-            LOG.info("Commands of monkey cmdline_split %s", monkey_cmdline)
+            LOG.info("Commands of monkey cmdline_split %s", monkey_commandline)
 
             monkey_process = subprocess.Popen(
-                monkey_cmdline,
+                monkey_commandline,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -180,7 +180,7 @@ class MonkeyDrops(object):
         LOG.info(
             "Executed monkey process (PID=%d) with command line: %s",
             monkey_process.pid,
-            " ".join(monkey_cmdline),
+            " ".join(monkey_commandline),
         )
 
         time.sleep(3)
