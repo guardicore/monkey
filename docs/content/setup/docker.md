@@ -41,7 +41,8 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
         --name monkey-mongo \
         --network=host \
         --volume db:/data/db \
-        --detach mongo:4.2
+        --detach \
+        mongo:4.2
     ```
 
 ### 3a. Start Monkey Island with default certificate
