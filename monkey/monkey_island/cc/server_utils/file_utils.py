@@ -79,8 +79,7 @@ def _get_file_descriptor_for_new_secure_file_linux(path: str) -> int:
 def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
     try:
         file_access = win32file.GENERIC_READ | win32file.GENERIC_WRITE
-        # subsequent open operations on the object will succeed only if read access is requested
-        file_sharing = win32file.FILE_SHARE_READ
+        file_sharing = win32file.FILE_SHARE_READ | win32file.FILE_SHARE_WRITE
         security_attributes = win32security.SECURITY_ATTRIBUTES()
         security_attributes.SECURITY_DESCRIPTOR = (
             windows_permissions.get_security_descriptor_for_owner_only_perms()
@@ -88,7 +87,7 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
         file_creation = win32file.CREATE_NEW  # fails if file exists
         file_attributes = win32file.FILE_FLAG_BACKUP_SEMANTICS
 
-        fd = win32file.CreateFile(
+        handle = win32file.CreateFile(
             path,
             file_access,
             file_sharing,
@@ -98,7 +97,9 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
             _get_null_value_for_win32(),
         )
 
-        return fd
+        detached_handle = handle.Detach()
+
+        return win32file._open_osfhandle(detached_handle, os.O_RDWR)
 
     except Exception as ex:
         LOG.error(f'Could not create a file at "{path}": {str(ex)}')

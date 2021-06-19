@@ -12,7 +12,6 @@ from monkey_island.cc.server_utils.file_utils import (
 
 if is_windows_os():
     import win32api
-    import win32file
     import win32security
 
     FULL_CONTROL = 2032127
@@ -125,7 +124,7 @@ def test_get_file_descriptor_for_new_secure_file__perm_linux(test_path):
 
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
 def test_get_file_descriptor_for_new_secure_file__perm_windows(test_path):
-    win32file.CloseHandle(get_file_descriptor_for_new_secure_file(test_path))
+    os.close(get_file_descriptor_for_new_secure_file(test_path))
 
     acl, user_sid = _get_acl_and_sid_from_path(test_path)
 
