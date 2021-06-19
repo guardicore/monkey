@@ -2,6 +2,8 @@ import logging
 import os
 import platform
 import stat
+from contextlib import contextmanager
+from typing import Generator
 
 LOG = logging.getLogger(__name__)
 
@@ -54,11 +56,15 @@ def _create_secure_directory_windows(path: str):
         raise ex
 
 
-def get_file_descriptor_for_new_secure_file(path: str) -> int:
+@contextmanager
+def open_new_securely_permissioned_file(path: str, mode: str = "w") -> Generator:
     if is_windows_os():
-        return _get_file_descriptor_for_new_secure_file_windows(path)
+        fd = _get_file_descriptor_for_new_secure_file_windows(path)
     else:
-        return _get_file_descriptor_for_new_secure_file_linux(path)
+        fd = _get_file_descriptor_for_new_secure_file_linux(path)
+
+    with open(fd, mode) as f:
+        yield f
 
 
 def _get_file_descriptor_for_new_secure_file_linux(path: str) -> int:
