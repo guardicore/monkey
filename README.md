@@ -20,18 +20,6 @@ The Infection Monkey is comprised of two parts:
 
 To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonkey.com). 
 
-## 💥 We're Hiring 💥
-We are looking for a strong, full-stack developer with a passion for
-cybersecurity to join the Infection Monkey development team. Infection Monkey
-is an open-source, automated, breach and attack simulation platform, consisting
-of a worm-like agent and C&C server. This is a remote position and is open
-world-wide. If you're excited about Infection Monkey, we want to see your
-resume. You can learn more about Infection Monkey on our
-[website](https://www.guardicore.com/infectionmonkey/).
-
-For more information, or to apply, see the official job post
-[here](https://www.guardicore.com/careers/co/labs/65.D16/full-stack-developer/all/?coref=1.10.r36_60E&t=1617025683094).
-
 ## Screenshots
 
 ### Map
