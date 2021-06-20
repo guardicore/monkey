@@ -9,7 +9,7 @@
 
 ## Data center Security Testing Tool
 
-Welcome to the Infection Monkey! 
+Welcome to the Infection Monkey!
 
 The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island server.
 
@@ -18,7 +18,7 @@ The Infection Monkey is comprised of two parts:
 * **Monkey** - A tool which infects other machines and propagates to them.
 * **Monkey Island** - A dedicated server to control and visualize the Infection Monkey's progress inside the data center.
 
-To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonkey.com). 
+To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonkey.com).
 
 ## Screenshots
 
@@ -59,28 +59,28 @@ Check out the [Setup](https://www.guardicore.com/infectionmonkey/docs/setup/) pa
 The Infection Monkey supports a variety of platforms, documented [in our documentation hub](https://www.guardicore.com/infectionmonkey/docs/reference/operating_systems_support/).
 
 ## Building the Monkey from source
-To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts) 
+To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts)
 folder or follow documentation in [documentation hub](https://www.guardicore.com/infectionmonkey/docs/development/setup-development-environment/).
 
 ### Build status
 | Branch | Status |
 | ------ | :----: |
 | Develop | [![Build Status](https://travis-ci.com/guardicore/monkey.svg?branch=develop)](https://travis-ci.com/guardicore/monkey) |
-| Master | [![Build Status](https://travis-ci.com/guardicore/monkey.svg?branch=master)](https://travis-ci.com/guardicore/monkey) | 
+| Master | [![Build Status](https://travis-ci.com/guardicore/monkey.svg?branch=master)](https://travis-ci.com/guardicore/monkey) |
 
 ## Tests
 
 ### Unit Tests
 
-In order to run all of the Unit Tests, run the command `python -m pytest` in the `monkey` directory. 
+In order to run all of the Unit Tests, run the command `python -m pytest` in the `monkey` directory.
 
-To get a coverage report, first make sure the `coverage` package is installed using `pip install coverage`. Run the command 
-`coverage run -m unittest` in the `monkey` directory and then `coverage html`. The coverage report can be found in 
-`htmlcov.index`.  
+To get a coverage report, first make sure the `coverage` package is installed using `pip install coverage`. Run the command
+`coverage run -m unittest` in the `monkey` directory and then `coverage html`. The coverage report can be found in
+`htmlcov.index`.
 
 ### Blackbox tests
 
-In order to run the Blackbox tests, refer to `envs/monkey_zoo/blackbox/README.md`. 
+In order to run the Blackbox tests, refer to `envs/monkey_zoo/blackbox/README.md`.
 
 # License
 
