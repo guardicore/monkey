@@ -1,8 +1,4 @@
-import logging
-
 from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
-
-LOG = logging.getLogger(__name__)
 
 
 def build_monkey_commandline(target_host, depth, vulnerable_port, location=None):
