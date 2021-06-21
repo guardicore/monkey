@@ -85,7 +85,12 @@ def _get_file_descriptor_for_new_secure_file_linux(path: str) -> int:
 def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
     try:
         file_access = win32file.GENERIC_READ | win32file.GENERIC_WRITE
-        file_sharing = win32file.FILE_SHARE_READ | win32file.FILE_SHARE_WRITE
+
+        # Enables other processes to open this file with read-only access.
+        # Attempts by other processes to open the file for writing while this
+        # process still holds it open will fail.
+        file_sharing = win32file.FILE_SHARE_READ
+
         security_attributes = win32security.SECURITY_ATTRIBUTES()
         security_attributes.SECURITY_DESCRIPTOR = (
             windows_permissions.get_security_descriptor_for_owner_only_perms()
