@@ -21,7 +21,7 @@ def test_build_monkey_commandline_explicitly_arguments():
         "80",
     ]
     actual = build_monkey_commandline_explicitly(
-        101010, "10.10.101.10", "127.127.127.127:5000", 0, "C:\\windows\\abc", 80
+        "101010", "10.10.101.10", "127.127.127.127:5000", 0, "C:\\windows\\abc", "80"
     )
 
     assert expected == actual

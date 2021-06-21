@@ -1,7 +1,10 @@
 from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
+from infection_monkey.model.host import VictimHost
 
 
-def build_monkey_commandline(target_host, depth, vulnerable_port, location=None):
+def build_monkey_commandline(
+    target_host: VictimHost, depth: int, vulnerable_port: str, location: str = None
+) -> str:
     from infection_monkey.config import GUID
 
     return "".join(
@@ -17,8 +20,13 @@ def build_monkey_commandline(target_host, depth, vulnerable_port, location=None)
 
 
 def build_monkey_commandline_explicitly(
-    parent=None, tunnel=None, server=None, depth=None, location=None, vulnerable_port=None
-):
+    parent: str = None,
+    tunnel: str = None,
+    server: str = None,
+    depth: int = None,
+    location: str = None,
+    vulnerable_port: str = None,
+) -> list:
     cmdline = []
 
     if parent is not None:
@@ -45,13 +53,13 @@ def build_monkey_commandline_explicitly(
     return cmdline
 
 
-def get_monkey_commandline_windows(destination_path, monkey_options):
+def get_monkey_commandline_windows(destination_path: str, monkey_options: list) -> list:
     monkey_cmdline = [CMD_EXE, CMD_CARRY_OUT, destination_path, MONKEY_ARG]
 
     return monkey_cmdline + monkey_options
 
 
-def get_monkey_commandline_linux(destination_path, monkey_options):
+def get_monkey_commandline_linux(destination_path: str, monkey_options: list) -> list:
     monkey_cmdline = [destination_path, MONKEY_ARG]
 
     return monkey_cmdline + monkey_options
