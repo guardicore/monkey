@@ -53,13 +53,13 @@ def build_monkey_commandline_explicitly(
     return cmdline
 
 
-def get_monkey_commandline_windows(destination_path: str, monkey_options: list) -> list:
+def get_monkey_commandline_windows(destination_path: str, monkey_cmd_args: list) -> list:
     monkey_cmdline = [CMD_EXE, CMD_CARRY_OUT, destination_path, MONKEY_ARG]
 
-    return monkey_cmdline + monkey_options
+    return monkey_cmdline + monkey_cmd_args
 
 
-def get_monkey_commandline_linux(destination_path: str, monkey_options: list) -> list:
+def get_monkey_commandline_linux(destination_path: str, monkey_cmd_args: list) -> list:
     monkey_cmdline = [destination_path, MONKEY_ARG]
 
-    return monkey_cmdline + monkey_options
+    return monkey_cmdline + monkey_cmd_args
