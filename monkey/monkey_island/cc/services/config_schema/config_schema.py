@@ -10,6 +10,7 @@ from monkey_island.cc.services.config_schema.definitions.system_info_collector_c
 )
 from monkey_island.cc.services.config_schema.internal import INTERNAL
 from monkey_island.cc.services.config_schema.monkey import MONKEY
+from monkey_island.cc.services.config_schema.ransomware import RANSOMWARE
 
 SCHEMA = {
     "title": "Monkey",
@@ -27,6 +28,7 @@ SCHEMA = {
         "basic": BASIC,
         "basic_network": BASIC_NETWORK,
         "monkey": MONKEY,
+        "ransomware": RANSOMWARE,
         "internal": INTERNAL,
     },
     "options": {"collapsed": True},
