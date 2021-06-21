@@ -2,6 +2,8 @@ import logging
 import os
 import platform
 import stat
+from contextlib import contextmanager
+from typing import Generator
 
 LOG = logging.getLogger(__name__)
 
@@ -54,11 +56,15 @@ def _create_secure_directory_windows(path: str):
         raise ex
 
 
-def get_file_descriptor_for_new_secure_file(path: str) -> int:
+@contextmanager
+def open_new_securely_permissioned_file(path: str, mode: str = "w") -> Generator:
     if is_windows_os():
-        return _get_file_descriptor_for_new_secure_file_windows(path)
+        fd = _get_file_descriptor_for_new_secure_file_windows(path)
     else:
-        return _get_file_descriptor_for_new_secure_file_linux(path)
+        fd = _get_file_descriptor_for_new_secure_file_linux(path)
+
+    with open(fd, mode) as f:
+        yield f
 
 
 def _get_file_descriptor_for_new_secure_file_linux(path: str) -> int:
@@ -79,8 +85,12 @@ def _get_file_descriptor_for_new_secure_file_linux(path: str) -> int:
 def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
     try:
         file_access = win32file.GENERIC_READ | win32file.GENERIC_WRITE
-        # subsequent open operations on the object will succeed only if read access is requested
+
+        # Enables other processes to open this file with read-only access.
+        # Attempts by other processes to open the file for writing while this
+        # process still holds it open will fail.
         file_sharing = win32file.FILE_SHARE_READ
+
         security_attributes = win32security.SECURITY_ATTRIBUTES()
         security_attributes.SECURITY_DESCRIPTOR = (
             windows_permissions.get_security_descriptor_for_owner_only_perms()
@@ -88,7 +98,7 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
         file_creation = win32file.CREATE_NEW  # fails if file exists
         file_attributes = win32file.FILE_FLAG_BACKUP_SEMANTICS
 
-        fd = win32file.CreateFile(
+        handle = win32file.CreateFile(
             path,
             file_access,
             file_sharing,
@@ -98,13 +108,15 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
             _get_null_value_for_win32(),
         )
 
-        return fd
+        detached_handle = handle.Detach()
+
+        return win32file._open_osfhandle(detached_handle, os.O_RDWR)
 
     except Exception as ex:
         LOG.error(f'Could not create a file at "{path}": {str(ex)}')
         raise ex
 
 
-def _get_null_value_for_win32() -> None:
+def _get_null_value_for_win32():
     # https://stackoverflow.com/questions/46800142/in-python-with-pywin32-win32job-the-createjobobject-function-how-do-i-pass-nu  # noqa: E501
     return win32job.CreateJobObject(None, "")
