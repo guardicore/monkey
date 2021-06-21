@@ -1,4 +1,7 @@
+from infection_monkey.config import GUID
+from infection_monkey.model.host import VictimHost
 from infection_monkey.utils.commands import (
+    build_monkey_commandline,
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
@@ -88,6 +91,18 @@ def test_get_monkey_commandline_linux():
             "-t",
             "10.10.101.10",
         ],
+    )
+
+    assert expected == actual
+
+
+def test_build_monkey_commandline():
+    example_host = VictimHost(ip_addr="bla")
+    example_host.set_default_server("101010")
+
+    expected = "-p " + GUID + " -s 101010 -d 0 -l /home/bla -vp 80"
+    actual = build_monkey_commandline(
+        target_host=example_host, depth=0, vulnerable_port="80", location="/home/bla"
     )
 
     assert expected == actual

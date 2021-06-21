@@ -7,7 +7,7 @@ def build_monkey_commandline(
     target_host: VictimHost, depth: int, vulnerable_port: str, location: str = None
 ) -> str:
 
-    return "".join(
+    return " ".join(
         build_monkey_commandline_explicitly(
             GUID,
             target_host.default_tunnel,
