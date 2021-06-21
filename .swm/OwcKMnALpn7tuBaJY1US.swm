@@ -71,9 +71,9 @@
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/definitions/system_info_collector_classes.py",
             "comments": [],
-            "firstLineNumber": 36,
+            "firstLineNumber": 37,
             "lines": [
-                "             \"info\": \"If on AWS, collects more information about the AWS instance currently running on.\",",
+                "             \"currently running on.\",",
                 "             \"attack_techniques\": [\"T1082\"],",
                 "         },",
                 "*        {",
@@ -96,13 +96,15 @@
             "comments": [],
             "firstLineNumber": 1,
             "lines": [
-                " from common.common_consts.system_info_collectors_names import (",
-                "     AWS_COLLECTOR,",
-                "     AZURE_CRED_COLLECTOR,",
-                "*                                                      HOSTNAME_COLLECTOR,",
-                "     HOSTNAME_COLLECTOR,",
-                "     MIMIKATZ_COLLECTOR,",
-                "     PROCESS_LIST_COLLECTOR,"
+                "*from common.common_consts.system_info_collectors_names import (",
+                "*    AWS_COLLECTOR,",
+                "*    AZURE_CRED_COLLECTOR,",
+                "*    ENVIRONMENT_COLLECTOR,",
+                "*    HOSTNAME_COLLECTOR,",
+                "*    MIMIKATZ_COLLECTOR,",
+                "*    PROCESS_LIST_COLLECTOR,",
+                "*)",
+                " "
             ]
         },
         {
@@ -152,7 +154,7 @@
                 " from common.common_consts.system_info_collectors_names import (",
                 "     AWS_COLLECTOR,",
                 "     ENVIRONMENT_COLLECTOR,",
-                "*     HOSTNAME_COLLECTOR,"
+                "*    HOSTNAME_COLLECTOR,"
             ]
         },
         {
@@ -196,14 +198,14 @@
     "symbols": {},
     "file_version": "2.0.1",
     "meta": {
-        "app_version": "0.4.1-1",
+        "app_version": "0.4.9-1",
         "file_blobs": {
-            "monkey/common/common_consts/system_info_collectors_names.py": "c93cb2537ca94c9e46980d0cd06cc86a0ab34e29",
+            "monkey/common/common_consts/system_info_collectors_names.py": "175a054e1408805a4cebbe27e2f9616db40988cf",
             "monkey/infection_monkey/system_info/collectors/hostname_collector.py": "0aeecd9fb7bde83cccd4501ec03e0da199ec5fc3",
-            "monkey/monkey_island/cc/services/config_schema/definitions/system_info_collector_classes.py": "487166ec6f6d0559abd07e04d72fe55f230fc518",
-            "monkey/monkey_island/cc/services/config_schema/monkey.py": "0d69c5aa4fee48943f7847048942d257d27c2472",
+            "monkey/monkey_island/cc/services/config_schema/definitions/system_info_collector_classes.py": "9a4a39050eb088876df4fa629e14faf820e714a0",
+            "monkey/monkey_island/cc/services/config_schema/monkey.py": "e745da5828c63e975625ac2e9b80ce9626324970",
             "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/hostname.py": "e2de4519cbd71bba70e81cf3ff61817437d95a21",
-            "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/system_info_telemetry_dispatcher.py": "894bdce75f0ae2b892bd5b3c6c70949be52b36e7"
+            "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/system_info_telemetry_dispatcher.py": "7ce4b6fcfbce0d6cd8a60297213c5be1699b22df"
         }
     }
 }
