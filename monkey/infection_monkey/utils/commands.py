@@ -1,3 +1,4 @@
+from infection_monkey.config import GUID
 from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
 from infection_monkey.model.host import VictimHost
 
@@ -5,7 +6,6 @@ from infection_monkey.model.host import VictimHost
 def build_monkey_commandline(
     target_host: VictimHost, depth: int, vulnerable_port: str, location: str = None
 ) -> str:
-    from infection_monkey.config import GUID
 
     return "".join(
         build_monkey_commandline_explicitly(
