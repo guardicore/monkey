@@ -16,7 +16,8 @@ if is_windows_os():
     import win32security
 
     FULL_CONTROL = 2032127
-    ACE_TYPE_ALLOW = 0
+    ACE_ACCESS_MODE_GRANT_ACCESS = win32security.GRANT_ACCESS
+    ACE_INHERIT_OBJECT_AND_CONTAINER = 3
 
 
 def test_expand_user(patched_home_env):
@@ -86,13 +87,16 @@ def test_create_secure_directory__perm_windows(test_path):
 
     assert acl.GetAceCount() == 1
 
-    ace = acl.GetAce(0)
-    ace_type, _ = ace[0]  # 0 for allow, 1 for deny
-    permissions = ace[1]
-    sid = ace[-1]
+    ace = acl.GetExplicitEntriesFromAcl()[0]
 
-    assert sid == user_sid
-    assert permissions == FULL_CONTROL and ace_type == ACE_TYPE_ALLOW
+    ace_access_mode = ace["AccessMode"]
+    ace_permissions = ace["AccessPermissions"]
+    ace_inheritance = ace["Inheritance"]
+    ace_sid = ace["Trustee"]["Identifier"]
+
+    assert ace_sid == user_sid
+    assert ace_permissions == FULL_CONTROL and ace_access_mode == ACE_ACCESS_MODE_GRANT_ACCESS
+    assert ace_inheritance == ACE_INHERIT_OBJECT_AND_CONTAINER
 
 
 def test_get_file_descriptor_for_new_secure_file__already_exists(test_path):
@@ -127,10 +131,13 @@ def test_get_file_descriptor_for_new_secure_file__perm_windows(test_path):
 
     assert acl.GetAceCount() == 1
 
-    ace = acl.GetAce(0)
-    ace_type, _ = ace[0]  # 0 for allow, 1 for deny
-    permissions = ace[1]
-    sid = ace[-1]
+    ace = acl.GetExplicitEntriesFromAcl()[0]
 
-    assert sid == user_sid
-    assert permissions == FULL_CONTROL and ace_type == ACE_TYPE_ALLOW
+    ace_access_mode = ace["AccessMode"]
+    ace_permissions = ace["AccessPermissions"]
+    ace_inheritance = ace["Inheritance"]
+    ace_sid = ace["Trustee"]["Identifier"]
+
+    assert ace_sid == user_sid
+    assert ace_permissions == FULL_CONTROL and ace_access_mode == ACE_ACCESS_MODE_GRANT_ACCESS
+    assert ace_inheritance == ACE_INHERIT_OBJECT_AND_CONTAINER
