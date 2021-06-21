@@ -112,6 +112,6 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
         raise ex
 
 
-def _get_null_value_for_win32() -> None:
+def _get_null_value_for_win32():
     # https://stackoverflow.com/questions/46800142/in-python-with-pywin32-win32job-the-createjobobject-function-how-do-i-pass-nu  # noqa: E501
     return win32job.CreateJobObject(None, "")
