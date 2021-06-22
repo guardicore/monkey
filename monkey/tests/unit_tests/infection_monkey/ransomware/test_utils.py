@@ -3,8 +3,8 @@ import os
 import infection_monkey.ransomware.utils
 
 VALID_FILE_EXTENSION_1 = "file.3ds"
-VALID_FILE_EXTENSION_2 = "file.zip"
-INVALID_FILE_EXTENSION_1 = "file.jpe"
+VALID_FILE_EXTENSION_2 = "file.jpg.zip"
+INVALID_FILE_EXTENSION_1 = "file.pqr"
 INVALID_FILE_EXTENSION_2 = "file.xyz"
 SUBDIR_1 = "subdir1"
 SUBDIR_2 = "subdir2"
