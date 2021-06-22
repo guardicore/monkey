@@ -5,7 +5,7 @@ from infection_monkey.ransomware.valid_file_extensions import VALID_FILE_EXTENSI
 from infection_monkey.utils.dir_utils import (
     file_extension_filter,
     filter_files,
-    get_all_files_in_directory,
+    get_all_regular_files_in_directory,
 )
 from infection_monkey.utils.environment import is_windows_os
 
@@ -26,7 +26,7 @@ class RansomewarePayload:
     def _find_files(self):
         file_filters = [file_extension_filter(VALID_FILE_EXTENSIONS_FOR_ENCRYPTION)]
 
-        all_files = get_all_files_in_directory(self.target_dir)
+        all_files = get_all_regular_files_in_directory(self.target_dir)
         return filter_files(all_files, file_filters)
 
     def _encrypt_files(self, file_list):
