@@ -1,4 +1,5 @@
 from infection_monkey.utils.dir_utils import (
+    file_extension_filter,
     filter_files,
     get_all_files_in_directory,
 )
@@ -73,3 +74,14 @@ def test_filter_files__all_true(tmp_path):
     filtered_files = filter_files(files_in_dir, lambda _: True)
 
     assert sorted(filtered_files) == expected_return_value
+
+
+def test_file_extension_filter(tmp_path):
+    valid_extensions = {".zip", ".tar"}
+
+    files = add_files_to_dir(tmp_path)
+
+    files_in_dir = get_all_files_in_directory(tmp_path)
+    filtered_files = filter_files(files_in_dir, file_extension_filter(valid_extensions))
+
+    assert files[0:1] == filtered_files
