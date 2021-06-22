@@ -1,4 +1,7 @@
-from infection_monkey.utils.dir_utils import get_all_files_in_directory
+from infection_monkey.utils.dir_utils import (
+    filter_files,
+    get_all_files_in_directory,
+)
 
 FILE_1 = "file.jpg.zip"
 FILE_2 = "file.xyz"
@@ -51,3 +54,22 @@ def test_get_all_files_in_directory__subdir_has_files(tmp_path, monkeypatch):
 
     expected_return_value = sorted(files)
     assert sorted(get_all_files_in_directory(tmp_path)) == expected_return_value
+
+
+def test_filter_files__no_results(tmp_path):
+    add_files_to_dir(tmp_path)
+
+    files_in_dir = get_all_files_in_directory(tmp_path)
+    filtered_files = filter_files(files_in_dir, lambda _: False)
+
+    assert len(filtered_files) == 0
+
+
+def test_filter_files__all_true(tmp_path):
+    files = add_files_to_dir(tmp_path)
+    expected_return_value = sorted(files)
+
+    files_in_dir = get_all_files_in_directory(tmp_path)
+    filtered_files = filter_files(files_in_dir, lambda _: True)
+
+    assert sorted(filtered_files) == expected_return_value
