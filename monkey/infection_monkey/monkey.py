@@ -19,6 +19,7 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.network.tools import get_interface_to_target, is_running_on_island
 from infection_monkey.post_breach.post_breach_handler import PostBreach
+from infection_monkey.ransomware import start_ransomware
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
@@ -231,6 +232,8 @@ class InfectionMonkey(object):
                         VictimHostTelem("T1210", ScanStatus.SCANNED, machine=machine).send()
                     if not self._keep_running:
                         break
+
+                start_ransomware()
 
                 if (not is_empty) and (WormConfiguration.max_iterations > iteration_index + 1):
                     time_to_sleep = WormConfiguration.timeout_between_iterations
