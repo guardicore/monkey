@@ -100,7 +100,7 @@ def test_build_monkey_commandline():
     example_host = VictimHost(ip_addr="bla")
     example_host.set_default_server("101010")
 
-    expected = "-p " + GUID + " -s 101010 -d 0 -l /home/bla -vp 80"
+    expected = f"-p {GUID} -s 101010 -d 0 -l /home/bla -vp 80"
     actual = build_monkey_commandline(
         target_host=example_host, depth=0, vulnerable_port="80", location="/home/bla"
     )
