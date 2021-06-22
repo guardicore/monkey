@@ -5,14 +5,11 @@ from infection_monkey.utils.dir_utils import (
 )
 
 FILES = ["file.jpg.zip", "file.xyz", "1.tar", "2.tgz"]
-SUBDIR_1 = "subdir1"
-SUBDIR_2 = "subdir2"
+SUBDIRS = ["subdir1", "subdir2"]
 
 
 def add_subdirs_to_dir(parent_dir):
-    subdir1 = parent_dir / SUBDIR_1
-    subdir2 = parent_dir / SUBDIR_2
-    subdirs = [subdir1, subdir2]
+    subdirs = [parent_dir / s for s in SUBDIRS]
 
     for subdir in subdirs:
         subdir.mkdir()
