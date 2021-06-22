@@ -63,7 +63,7 @@ class WindowsUpgrader(object):
         LOG.info(
             "Executed 64bit monkey process (PID=%d) with command line: %s",
             monkey_process.pid,
-            "".join(monkey_cmdline),
+            " ".join(monkey_cmdline),
         )
 
         time.sleep(WindowsUpgrader.__UPGRADE_WAIT_TIME__)
