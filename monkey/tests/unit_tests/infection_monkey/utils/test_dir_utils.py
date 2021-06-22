@@ -4,7 +4,7 @@ from infection_monkey.utils.dir_utils import (
     get_all_regular_files_in_directory,
 )
 
-FILES = ["file.jpg.zip", "file.xyz", "1.tar", "2.tgz"]
+FILES = ["file.jpg.zip", "file.xyz", "1.tar", "2.tgz", "2.png", "2.mpg"]
 SUBDIRS = ["subdir1", "subdir2"]
 
 
@@ -66,6 +66,18 @@ def test_filter_files__all_true(tmp_path):
 
     files_in_dir = get_all_regular_files_in_directory(tmp_path)
     filtered_files = filter_files(files_in_dir, [lambda _: True])
+
+    assert sorted(filtered_files) == expected_return_value
+
+
+def test_filter_files__multiple_filters(tmp_path):
+    files = add_files_to_dir(tmp_path)
+    expected_return_value = sorted(files[4:6])
+
+    files_in_dir = get_all_regular_files_in_directory(tmp_path)
+    filtered_files = filter_files(
+        files_in_dir, [lambda f: f.name.startswith("2"), lambda f: f.name.endswith("g")]
+    )
 
     assert sorted(filtered_files) == expected_return_value
 
