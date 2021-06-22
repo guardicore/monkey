@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from infection_monkey.ransomware.valid_file_extensions import VALID_FILE_EXTENSIONS_FOR_ENCRYPTION
-from infection_monkey.utils.file_utils import get_all_files_in_directory
+from infection_monkey.utils.dir_utils import get_all_files_in_directory
 
 
 def get_files_to_encrypt(dir_path: str) -> List[str]:
