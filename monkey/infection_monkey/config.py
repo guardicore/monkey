@@ -197,8 +197,7 @@ class Configuration(object):
     # ransomware config
     ###########################
 
-    windows_dir_ransom = ""
-    linux_dir_ransom = ""
+    ransomware = ""
 
     def get_exploit_user_password_pairs(self):
         """

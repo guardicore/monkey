@@ -6,14 +6,14 @@ RANSOMWARE = {
             "title": "Directories to encrypt",
             "type": "object",
             "properties": {
-                "linux_dir_ransom": {
+                "linux_dir": {
                     "title": "Linux encryptable directory",
                     "type": "string",
                     "default": "",
                     "description": "Files in the specified directory will be encrypted "
                     "using bitflip to simulate ransomware.",
                 },
-                "windows_dir_ransom": {
+                "windows_dir": {
                     "title": "Windows encryptable directory",
                     "type": "string",
                     "default": "",
