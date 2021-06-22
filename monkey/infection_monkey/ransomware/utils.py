@@ -2,6 +2,7 @@ import os
 from typing import List
 
 from infection_monkey.ransomware.valid_file_extensions import VALID_FILE_EXTENSIONS_FOR_ENCRYPTION
+from infection_monkey.utils.file_utils import get_all_files_in_directory
 
 
 def get_files_to_encrypt(dir_path: str) -> List[str]:
@@ -13,9 +14,3 @@ def get_files_to_encrypt(dir_path: str) -> List[str]:
             files_to_encrypt.append(file)
 
     return files_to_encrypt
-
-
-def get_all_files_in_directory(dir_path: str) -> List:
-    return list(
-        filter(os.path.isfile, [os.path.join(dir_path, item) for item in os.listdir(dir_path)])
-    )
