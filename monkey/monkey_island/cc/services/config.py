@@ -106,6 +106,10 @@ class ConfigService:
         config_json = ConfigService.get_config(is_initial_config, should_decrypt)
         flat_config_json = {}
         for i in config_json:
+            if i == "ransomware":
+                # Don't flatten the ransomware because ransomware payload expects a dictionary #1260
+                flat_config_json[i] = config_json[i]
+                continue
             for j in config_json[i]:
                 for k in config_json[i][j]:
                     if isinstance(config_json[i][j][k], dict):

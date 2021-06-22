@@ -193,7 +193,11 @@ class Configuration(object):
     ms08_067_exploit_attempts = 5
     user_to_add = "Monkey_IUSER_SUPPORT"
 
-    # User and password dictionaries for exploits.
+    ###########################
+    # ransomware config
+    ###########################
+
+    ransomware = ""
 
     def get_exploit_user_password_pairs(self):
         """
