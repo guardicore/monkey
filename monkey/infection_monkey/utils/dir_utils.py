@@ -1,12 +1,12 @@
 from pathlib import Path
-from typing import Callable, List, Set
+from typing import Callable, Iterable, List, Set
 
 
 def get_all_regular_files_in_directory(dir_path: Path) -> List[Path]:
-    return [f for f in dir_path.iterdir() if f.is_file()]
+    return filter_files(dir_path.iterdir(), [lambda f: f.is_file()])
 
 
-def filter_files(files: List[Path], file_filters: List[Callable[[Path], bool]]):
+def filter_files(files: Iterable[Path], file_filters: List[Callable[[Path], bool]]):
     filtered_files = files
     for file_filter in file_filters:
         filtered_files = [f for f in filtered_files if file_filter(f)]
