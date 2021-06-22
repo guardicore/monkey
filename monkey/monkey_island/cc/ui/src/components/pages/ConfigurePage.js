@@ -30,7 +30,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.currentFormData = {};
     this.initialConfig = {};
     this.initialAttackConfig = {};
-    this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'internal'];
+    this.sectionsOrder = ['attack', 'basic', 'basic_network', 'ransomware', 'monkey', 'internal'];
 
     this.state = {
       attackConfig: {},
