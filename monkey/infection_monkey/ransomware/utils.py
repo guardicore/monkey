@@ -1,5 +1,5 @@
 import os
-from typing import Iterator, List
+from typing import List
 
 VALID_FILE_EXTENSIONS_FOR_ENCRYPTION = {
     ".3ds",
@@ -90,5 +90,7 @@ def get_files_to_encrypt(dir_path: str) -> List[str]:
     return files_to_encrypt
 
 
-def get_all_files_in_directory(dir_path: str) -> Iterator:
-    return filter(os.path.isfile, [os.path.join(dir_path, item) for item in os.listdir(dir_path)])
+def get_all_files_in_directory(dir_path: str) -> List:
+    return list(
+        filter(os.path.isfile, [os.path.join(dir_path, item) for item in os.listdir(dir_path)])
+    )
