@@ -23,3 +23,7 @@ def file_extension_filter(file_extensions: Set):
 
 def is_not_symlink_filter(f: Path):
     return not f.is_symlink()
+
+
+def is_not_shortcut_filter(f: Path):
+    return f.suffix != ".lnk"
