@@ -19,3 +19,7 @@ def file_extension_filter(file_extensions: Set):
         return f.suffix in file_extensions
 
     return inner_filter
+
+
+def is_not_symlink_filter(f: Path):
+    return not f.is_symlink()
