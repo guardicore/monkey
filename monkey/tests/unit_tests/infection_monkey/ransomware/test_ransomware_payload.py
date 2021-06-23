@@ -48,10 +48,11 @@ def with_extension(filename):
 
 @pytest.fixture
 def ransomware_target(tmp_path, data_for_tests_dir):
-    ransomware_target_data = Path(data_for_tests_dir) / "ransomware_targets"
-    shutil.copytree(ransomware_target_data, tmp_path, dirs_exist_ok=True)
+    ransomware_test_data = Path(data_for_tests_dir) / "ransomware_targets"
+    ransomware_target = tmp_path / "ransomware_target"
+    shutil.copytree(ransomware_test_data, ransomware_target)
 
-    return tmp_path
+    return ransomware_target
 
 
 @pytest.fixture
@@ -64,66 +65,71 @@ def ransomware_payload(ransomware_payload_config):
     return RansomewarePayload(ransomware_payload_config)
 
 
-def test_file_with_excluded_extension_not_encrypted(tmp_path, ransomware_payload):
+def test_file_with_excluded_extension_not_encrypted(ransomware_target, ransomware_payload):
     ransomware_payload.run_payload()
 
-    assert hash_file(tmp_path / TEST_LIB_DLL) == TEST_LIB_DLL_CLEARTEXT_SHA256
+    assert hash_file(ransomware_target / TEST_LIB_DLL) == TEST_LIB_DLL_CLEARTEXT_SHA256
 
 
-def test_shortcut_not_encrypted(tmp_path, ransomware_payload):
+def test_shortcut_not_encrypted(ransomware_target, ransomware_payload):
     ransomware_payload.run_payload()
 
-    assert hash_file(tmp_path / SHORTCUT_LNK) == SHORTCUT_LNK_CLEARTEXT_SHA256
+    assert hash_file(ransomware_target / SHORTCUT_LNK) == SHORTCUT_LNK_CLEARTEXT_SHA256
 
 
 @pytest.mark.skipif(
     os.name == "nt" and not is_user_admin(), reason="Test requires admin rights on Windows"
 )
-def test_symlink_not_encrypted(tmp_path, ransomware_payload):
+def test_symlink_not_encrypted(ransomware_target, ransomware_payload):
     SYMLINK = "symlink.pdf"
-    link_path = tmp_path / SYMLINK
-    link_path.symlink_to(tmp_path / TEST_LIB_DLL)
+    link_path = ransomware_target / SYMLINK
+    link_path.symlink_to(ransomware_target / TEST_LIB_DLL)
 
     ransomware_payload.run_payload()
 
-    assert hash_file(tmp_path / SYMLINK) == TEST_LIB_DLL_CLEARTEXT_SHA256
+    assert hash_file(ransomware_target / SYMLINK) == TEST_LIB_DLL_CLEARTEXT_SHA256
 
 
-def test_encryption_not_recursive(tmp_path, ransomware_payload):
+def test_encryption_not_recursive(ransomware_target, ransomware_payload):
     ransomware_payload.run_payload()
 
-    assert hash_file(tmp_path / SUBDIR / HELLO_TXT) == HELLO_TXT_CLEARTEXT_SHA256
+    assert hash_file(ransomware_target / SUBDIR / HELLO_TXT) == HELLO_TXT_CLEARTEXT_SHA256
 
 
-def test_file_with_included_extension_encrypted(tmp_path, ransomware_payload):
-    assert hash_file(tmp_path / ALL_ZEROS_PDF) == ALL_ZEROS_PDF_CLEARTEXT_SHA256
-    assert hash_file(tmp_path / TEST_KEYBOARD_TXT) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
+def test_file_with_included_extension_encrypted(ransomware_target, ransomware_payload):
+    assert hash_file(ransomware_target / ALL_ZEROS_PDF) == ALL_ZEROS_PDF_CLEARTEXT_SHA256
+    assert hash_file(ransomware_target / TEST_KEYBOARD_TXT) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
 
     ransomware_payload.run_payload()
 
-    assert hash_file(tmp_path / with_extension(ALL_ZEROS_PDF)) == ALL_ZEROS_PDF_ENCRYPTED_SHA256
     assert (
-        hash_file(tmp_path / with_extension(TEST_KEYBOARD_TXT))
+        hash_file(ransomware_target / with_extension(ALL_ZEROS_PDF))
+        == ALL_ZEROS_PDF_ENCRYPTED_SHA256
+    )
+    assert (
+        hash_file(ransomware_target / with_extension(TEST_KEYBOARD_TXT))
         == TEST_KEYBOARD_TXT_ENCRYPTED_SHA256
     )
 
 
-def test_file_encrypted_in_place(tmp_path, ransomware_payload):
-    expected_all_zeros_inode = os.stat(tmp_path / ALL_ZEROS_PDF).st_ino
-    expected_test_keyboard_inode = os.stat(tmp_path / TEST_KEYBOARD_TXT).st_ino
+def test_file_encrypted_in_place(ransomware_target, ransomware_payload):
+    expected_all_zeros_inode = os.stat(ransomware_target / ALL_ZEROS_PDF).st_ino
+    expected_test_keyboard_inode = os.stat(ransomware_target / TEST_KEYBOARD_TXT).st_ino
 
     ransomware_payload.run_payload()
 
-    actual_all_zeros_inode = os.stat(tmp_path / with_extension(ALL_ZEROS_PDF)).st_ino
-    actual_test_keyboard_inode = os.stat(tmp_path / with_extension(TEST_KEYBOARD_TXT)).st_ino
+    actual_all_zeros_inode = os.stat(ransomware_target / with_extension(ALL_ZEROS_PDF)).st_ino
+    actual_test_keyboard_inode = os.stat(
+        ransomware_target / with_extension(TEST_KEYBOARD_TXT)
+    ).st_ino
 
     assert expected_all_zeros_inode == actual_all_zeros_inode
     assert expected_test_keyboard_inode == actual_test_keyboard_inode
 
 
-def test_encryption_reversible(tmp_path, ransomware_payload):
-    orig_path = tmp_path / TEST_KEYBOARD_TXT
-    new_path = tmp_path / with_extension(TEST_KEYBOARD_TXT)
+def test_encryption_reversible(ransomware_target, ransomware_payload):
+    orig_path = ransomware_target / TEST_KEYBOARD_TXT
+    new_path = ransomware_target / with_extension(TEST_KEYBOARD_TXT)
     assert hash_file(orig_path) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
 
     ransomware_payload.run_payload()
@@ -132,16 +138,16 @@ def test_encryption_reversible(tmp_path, ransomware_payload):
     new_path.rename(orig_path)
     ransomware_payload.run_payload()
     assert (
-        hash_file(tmp_path / with_extension(TEST_KEYBOARD_TXT))
+        hash_file(ransomware_target / with_extension(TEST_KEYBOARD_TXT))
         == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
     )
 
 
-def test_skip_already_encrypted_file(tmp_path, ransomware_payload):
+def test_skip_already_encrypted_file(ransomware_target, ransomware_payload):
     ransomware_payload.run_payload()
 
-    assert not (tmp_path / with_extension(ALREADY_ENCRYPTED_TXT_M0NK3Y)).exists()
+    assert not (ransomware_target / with_extension(ALREADY_ENCRYPTED_TXT_M0NK3Y)).exists()
     assert (
-        hash_file(tmp_path / ALREADY_ENCRYPTED_TXT_M0NK3Y)
+        hash_file(ransomware_target / ALREADY_ENCRYPTED_TXT_M0NK3Y)
         == ALREADY_ENCRYPTED_TXT_M0NK3Y_CLEARTEXT_SHA256
     )
