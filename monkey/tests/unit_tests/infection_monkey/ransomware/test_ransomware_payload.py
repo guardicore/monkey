@@ -1,10 +1,9 @@
-import hashlib
 import os
 import shutil
 from pathlib import Path
 
 import pytest
-from tests.utils import is_user_admin
+from tests.utils import hash_file, is_user_admin
 
 from infection_monkey.ransomware.ransomware_payload import EXTENSION, RansomewarePayload
 
@@ -31,15 +30,6 @@ ALL_ZEROS_PDF_ENCRYPTED_SHA256 = "779c176e820dbdaf643419232cb4d2760360c8633d6fe2
 TEST_KEYBOARD_TXT_ENCRYPTED_SHA256 = (
     "80701f3694abdd25ef3df7166b3fc5189b2afb4df32f7d5adbfed61ad07b9cd5"
 )
-
-
-def hash_file(filepath: Path):
-    sha256 = hashlib.sha256()
-    with open(filepath, "rb") as f:
-        for block in iter(lambda: f.read(65536), b""):
-            sha256.update(block)
-
-    return sha256.hexdigest()
 
 
 def with_extension(filename):
