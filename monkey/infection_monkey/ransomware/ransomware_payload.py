@@ -9,9 +9,12 @@ class RansomewarePayload:
 
     def run_payload(self):
         LOG.info(
-            f"Windows dir configured for encryption is " f"{self.config['windows_dir_ransom']}"
+            f"Windows dir configured for encryption is "
+            f"{self.config['directories']['windows_dir']}"
         )
-        LOG.info(f"Linux dir configured for encryption is " f"{self.config['linux_dir_ransom']}")
+        LOG.info(
+            f"Linux dir configured for encryption is " f"{self.config['directories']['linux_dir']}"
+        )
 
         file_list = self._find_files()
         self._encrypt_files(file_list)
