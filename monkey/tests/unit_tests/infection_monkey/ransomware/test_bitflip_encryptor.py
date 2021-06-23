@@ -7,7 +7,7 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 )
 from tests.utils import hash_file
 
-from infection_monkey.ransomware.ransomware_bitflip_encryptor import RansomwareBitflipEncryptor
+from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
 
 
 def test_file_encrypted(ransomware_target):
@@ -15,7 +15,7 @@ def test_file_encrypted(ransomware_target):
 
     assert hash_file(test_keyboard) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
 
-    encryptor = RansomwareBitflipEncryptor(chunk_size=64)
+    encryptor = BitflipEncryptor(chunk_size=64)
     encryptor.encrypt_file_in_place(test_keyboard)
 
     assert hash_file(test_keyboard) == TEST_KEYBOARD_TXT_ENCRYPTED_SHA256
@@ -26,7 +26,7 @@ def test_file_encrypted_in_place(ransomware_target):
 
     expected_inode = os.stat(test_keyboard).st_ino
 
-    encryptor = RansomwareBitflipEncryptor(chunk_size=64)
+    encryptor = BitflipEncryptor(chunk_size=64)
     encryptor.encrypt_file_in_place(test_keyboard)
 
     actual_inode = os.stat(test_keyboard).st_ino

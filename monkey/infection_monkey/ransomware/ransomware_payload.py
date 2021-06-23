@@ -2,8 +2,8 @@ import logging
 from pathlib import Path
 from typing import List, Optional, Tuple
 
+from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
 from infection_monkey.ransomware.file_selectors import select_production_safe_target_files
-from infection_monkey.ransomware.ransomware_bitflip_encryptor import RansomwareBitflipEncryptor
 from infection_monkey.ransomware.valid_file_extensions import VALID_FILE_EXTENSIONS_FOR_ENCRYPTION
 from infection_monkey.utils.environment import is_windows_os
 
@@ -24,7 +24,7 @@ class RansomewarePayload:
         self._valid_file_extensions_for_encryption = VALID_FILE_EXTENSIONS_FOR_ENCRYPTION.copy()
         self._valid_file_extensions_for_encryption.discard(self._new_file_extension)
 
-        self._encryptor = RansomwareBitflipEncryptor(chunk_size=CHUNK_SIZE)
+        self._encryptor = BitflipEncryptor(chunk_size=CHUNK_SIZE)
 
     def run_payload(self):
         file_list = self._find_files()

@@ -3,7 +3,7 @@ from pathlib import Path
 from infection_monkey.utils import bit_manipulators
 
 
-class RansomwareBitflipEncryptor:
+class BitflipEncryptor:
     def __init__(self, chunk_size=64):
         self._chunk_size = chunk_size
 
