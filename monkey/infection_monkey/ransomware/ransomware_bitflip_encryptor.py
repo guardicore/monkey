@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Tuple
 
 from infection_monkey.utils import bit_manipulators
 
@@ -13,10 +13,17 @@ class RansomwareBitflipEncryptor:
         new_filepath = filepath.with_suffix(f"{filepath.suffix}{self._new_file_extension}")
         filepath.rename(new_filepath)
 
-    def encrypt_files(self, file_list: List[Path]):
+    def encrypt_files(self, file_list: List[Path]) -> List[Tuple[Path, Optional[Exception]]]:
+        results = []
         for filepath in file_list:
-            self._encrypt_single_file_in_place(filepath)
-            self._add_extension(filepath)
+            try:
+                self._encrypt_single_file_in_place(filepath)
+                self._add_extension(filepath)
+                results.append((filepath, None))
+            except Exception as ex:
+                results.append((filepath, ex))
+
+        return results
 
     def _encrypt_single_file_in_place(self, filepath: Path):
         with open(filepath, "rb+") as f:
