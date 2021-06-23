@@ -8,14 +8,20 @@ from tests.utils import is_user_admin
 
 from infection_monkey.ransomware.ransomware_payload import RansomewarePayload
 
+EXTENSION = ".m0nk3y"
+
 SUBDIR = "subdir"
 ALL_ZEROS_PDF = "all_zeros.pdf"
+ALREADY_ENCRYPTED_TXT_M0NK3Y = "already_encrypted.txt.m0nk3y"
 HELLO_TXT = "hello.txt"
 SHORTCUT_LNK = "shortcut.lnk"
 TEST_KEYBOARD_TXT = "test_keyboard.txt"
 TEST_LIB_DLL = "test_lib.dll"
 
 ALL_ZEROS_PDF_CLEARTEXT_SHA256 = "ab3df617aaa3140f04dc53f65b5446f34a6b2bdbb1f7b78db8db4d067ba14db9"
+ALREADY_ENCRYPTED_TXT_M0NK3Y_CLEARTEXT_SHA256 = (
+    "ff5e58498962ab8bd619d3a9cd24b9298e7efc25b4967b1ce3f03b0e6de2aa7a"
+)
 HELLO_TXT_CLEARTEXT_SHA256 = "0ba904eae8773b70c75333db4de2f3ac45a8ad4ddba1b242f0b3cfc199391dd8"
 SHORTCUT_LNK_CLEARTEXT_SHA256 = "5069c8b7c3c70fad55bf0f0790de787080b1b4397c4749affcd3e570ff53aad9"
 TEST_KEYBOARD_TXT_CLEARTEXT_SHA256 = (
@@ -36,6 +42,10 @@ def hash_file(filepath: Path):
             sha256.update(block)
 
     return sha256.hexdigest()
+
+
+def with_extension(filename):
+    return f"{filename}{EXTENSION}"
 
 
 @pytest.fixture
@@ -87,8 +97,11 @@ def test_file_with_included_extension_encrypted(tmp_path, ransomware_payload):
 
     ransomware_payload.run_payload()
 
-    assert hash_file(tmp_path / ALL_ZEROS_PDF) == ALL_ZEROS_PDF_ENCRYPTED_SHA256
-    assert hash_file(tmp_path / TEST_KEYBOARD_TXT) == TEST_KEYBOARD_TXT_ENCRYPTED_SHA256
+    assert hash_file(tmp_path / with_extension(ALL_ZEROS_PDF)) == ALL_ZEROS_PDF_ENCRYPTED_SHA256
+    assert (
+        hash_file(tmp_path / with_extension(TEST_KEYBOARD_TXT))
+        == TEST_KEYBOARD_TXT_ENCRYPTED_SHA256
+    )
 
 
 def test_file_encrypted_in_place(tmp_path, ransomware_payload):
@@ -97,18 +110,34 @@ def test_file_encrypted_in_place(tmp_path, ransomware_payload):
 
     ransomware_payload.run_payload()
 
-    actual_all_zeros_inode = os.stat(tmp_path / ALL_ZEROS_PDF).st_ino
-    actual_test_keyboard_inode = os.stat(tmp_path / TEST_KEYBOARD_TXT).st_ino
+    actual_all_zeros_inode = os.stat(tmp_path / with_extension(ALL_ZEROS_PDF)).st_ino
+    actual_test_keyboard_inode = os.stat(tmp_path / with_extension(TEST_KEYBOARD_TXT)).st_ino
 
     assert expected_all_zeros_inode == actual_all_zeros_inode
     assert expected_test_keyboard_inode == actual_test_keyboard_inode
 
 
 def test_encryption_reversible(tmp_path, ransomware_payload):
-    assert hash_file(tmp_path / TEST_KEYBOARD_TXT) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
+    orig_path = tmp_path / TEST_KEYBOARD_TXT
+    new_path = tmp_path / with_extension(TEST_KEYBOARD_TXT)
+    assert hash_file(orig_path) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
 
     ransomware_payload.run_payload()
-    assert hash_file(tmp_path / TEST_KEYBOARD_TXT) == TEST_KEYBOARD_TXT_ENCRYPTED_SHA256
+    assert hash_file(new_path) == TEST_KEYBOARD_TXT_ENCRYPTED_SHA256
 
+    new_path.rename(orig_path)
     ransomware_payload.run_payload()
-    assert hash_file(tmp_path / TEST_KEYBOARD_TXT) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
+    assert (
+        hash_file(tmp_path / with_extension(TEST_KEYBOARD_TXT))
+        == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
+    )
+
+
+def test_skip_already_encrypted_file(tmp_path, ransomware_payload):
+    ransomware_payload.run_payload()
+
+    assert not (tmp_path / with_extension(ALREADY_ENCRYPTED_TXT_M0NK3Y)).exists()
+    assert (
+        hash_file(tmp_path / ALREADY_ENCRYPTED_TXT_M0NK3Y)
+        == ALREADY_ENCRYPTED_TXT_M0NK3Y_CLEARTEXT_SHA256
+    )
