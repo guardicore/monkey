@@ -16,8 +16,8 @@ LOG = logging.getLogger(__name__)
 
 class RansomewarePayload:
     def __init__(self, config: dict):
-        LOG.info(f"Windows dir configured for encryption is " f"{config['windows_dir']}")
-        LOG.info(f"Linux dir configured for encryption is " f"{config['linux_dir']}")
+        LOG.info(f"Windows dir configured for encryption is {config['windows_dir']}")
+        LOG.info(f"Linux dir configured for encryption is {config['linux_dir']}")
 
         self.target_dir = Path(config["windows_dir"] if is_windows_os() else config["linux_dir"])
 
