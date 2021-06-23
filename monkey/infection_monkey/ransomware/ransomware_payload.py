@@ -15,6 +15,7 @@ from infection_monkey.utils.environment import is_windows_os
 LOG = logging.getLogger(__name__)
 
 EXTENSION = ".m0nk3y"
+CHUNK_SIZE = 4096 * 24
 
 
 class RansomewarePayload:
@@ -25,7 +26,7 @@ class RansomewarePayload:
         self._target_dir = config["windows_dir"] if is_windows_os() else config["linux_dir"]
         self._valid_file_extensions_for_encryption = VALID_FILE_EXTENSIONS_FOR_ENCRYPTION.copy()
         self._valid_file_extensions_for_encryption.discard(EXTENSION)
-        self._encryptor = RansomwareBitflipEncryptor(EXTENSION)
+        self._encryptor = RansomwareBitflipEncryptor(EXTENSION, chunk_size=CHUNK_SIZE)
 
     def run_payload(self):
         file_list = self._find_files()
