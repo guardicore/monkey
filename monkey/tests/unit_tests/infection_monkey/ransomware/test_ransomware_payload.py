@@ -6,9 +6,7 @@ from pathlib import Path
 import pytest
 from tests.utils import is_user_admin
 
-from infection_monkey.ransomware.ransomware_payload import RansomewarePayload
-
-EXTENSION = ".m0nk3y"
+from infection_monkey.ransomware.ransomware_payload import EXTENSION, RansomewarePayload
 
 SUBDIR = "subdir"
 ALL_ZEROS_PDF = "all_zeros.pdf"
