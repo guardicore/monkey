@@ -91,6 +91,12 @@ def test_symlink_not_encrypted(tmp_path, ransomware_payload):
     assert hash_file(tmp_path / SYMLINK) == TEST_LIB_DLL_CLEARTEXT_SHA256
 
 
+def test_encryption_not_recursive(tmp_path, ransomware_payload):
+    ransomware_payload.run_payload()
+
+    assert hash_file(tmp_path / SUBDIR / HELLO_TXT) == HELLO_TXT_CLEARTEXT_SHA256
+
+
 def test_file_with_included_extension_encrypted(tmp_path, ransomware_payload):
     assert hash_file(tmp_path / ALL_ZEROS_PDF) == ALL_ZEROS_PDF_CLEARTEXT_SHA256
     assert hash_file(tmp_path / TEST_KEYBOARD_TXT) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
