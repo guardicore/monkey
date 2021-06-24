@@ -7,11 +7,12 @@ weight: 10
 ---
 
 The Infection Monkey has the capability of simulating a ransomware attack on your network.
-All actions performed by the encryption routine are safe for production environments.
+All actions performed by the encryption routine are designed to be safe for production
+environments.
 
-To ensure minimum intereference and easy recoverability, the ransomware simulation will only run if
-it is configured properly. To do so, you must specify the path to a directory in the configuration.
-If no directory is specified, the simulation will not run.
+To ensure minimum interference and easy recoverability, the ransomware simulation will encrypt
+files if the user specifies a directory that contains files that are safe to encrypt.
+If no directory is specified, no files will be encrypted.
 
 <!-- add config screenshot here -->
 
@@ -38,7 +39,7 @@ To "decrypt" your files, you can simply perform a bit flip on them again.
 
 Encryption attempts are only performed on regular files with the following extensions.
 
-This list is based on the [analysis of the ??? ransomware by ???]().
+This list is based on the [analysis of the Goldeneye ransomware by BitDefender](https://labs.bitdefender.com/2017/07/a-technical-look-into-the-goldeneye-ransomware-attack/).
 
 - .3ds
 - .7z
