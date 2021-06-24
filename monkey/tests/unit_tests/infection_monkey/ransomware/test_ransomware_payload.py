@@ -85,17 +85,14 @@ def test_all_files_with_included_extension_encrypted(ransomware_target, ransomwa
 
 
 def test_file_encrypted_in_place(ransomware_target, ransomware_payload):
-    expected_all_zeros_inode = os.stat(ransomware_target / ALL_ZEROS_PDF).st_ino
     expected_test_keyboard_inode = os.stat(ransomware_target / TEST_KEYBOARD_TXT).st_ino
 
     ransomware_payload.run_payload()
 
-    actual_all_zeros_inode = os.stat(ransomware_target / with_extension(ALL_ZEROS_PDF)).st_ino
     actual_test_keyboard_inode = os.stat(
         ransomware_target / with_extension(TEST_KEYBOARD_TXT)
     ).st_ino
 
-    assert expected_all_zeros_inode == actual_all_zeros_inode
     assert expected_test_keyboard_inode == actual_test_keyboard_inode
 
 
