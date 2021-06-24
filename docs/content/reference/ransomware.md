@@ -16,6 +16,16 @@ If no directory is specified, no files will be encrypted.
 
 <!-- add config screenshot here -->
 
+## How are the files encrypted?
+
+Files are "encrypted" in place with a simple bit flip. Encrypted files are renamed to have
+`.m0nk3y` appended to their names.
+
+This is a safe way to simulate encryption since it is easy to "decrypt" your files. You can simply perform a bit flip on the files again and rename them to remove the appended `.m0nk3y` extension.
+
+This is sufficient for a ransomware simulation as your files are unusuable and are renamed with a different extension, similar to how many ransomwares act. These changes should trigger your security solutions.
+
+
 ## Which files are encrypted?
 
 All regular files with [relevant extensions](#relevant-file-extensions-for-encryption) in the
@@ -25,14 +35,6 @@ The simulation is not recursive, i.e. it will not touch any files in sub-directo
 configured directory — only appropriate files in the top level of the tree.
 
 Symlinks and shortcuts are ignored.
-
-
-## How are the files encrypted?
-
-Files are "encrypted" in place with a simple bit flip. Encrypted files are renamed to have
-`.m0nk3y` appended to their names.
-
-To "decrypt" your files, you can simply perform a bit flip on them again.
 
 
 ## Relevant file extensions for encryption
