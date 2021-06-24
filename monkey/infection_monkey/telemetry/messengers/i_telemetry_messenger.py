@@ -1,9 +1,9 @@
 import abc
 
-from infection_monkey.telemetry.base_telem import BaseTelem
+from infection_monkey.telemetry.i_telem import ITelem
 
 
 class ITelemetryMessenger(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def send_telemetry(self, telemetry: BaseTelem):
+    def send_telemetry(self, telemetry: ITelem):
         pass
