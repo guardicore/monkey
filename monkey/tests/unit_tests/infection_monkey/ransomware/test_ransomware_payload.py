@@ -68,7 +68,7 @@ def test_encryption_not_recursive(ransomware_target, ransomware_payload):
     assert hash_file(ransomware_target / SUBDIR / HELLO_TXT) == HELLO_TXT_CLEARTEXT_SHA256
 
 
-def test_file_with_included_extension_encrypted(ransomware_target, ransomware_payload):
+def test_all_files_with_included_extension_encrypted(ransomware_target, ransomware_payload):
     assert hash_file(ransomware_target / ALL_ZEROS_PDF) == ALL_ZEROS_PDF_CLEARTEXT_SHA256
     assert hash_file(ransomware_target / TEST_KEYBOARD_TXT) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
 
