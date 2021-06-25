@@ -236,8 +236,7 @@ class InfectionMonkey(object):
                     if not self._keep_running:
                         break
 
-                telemetry_messenger = TelemetryMessengerWrapper()
-                RansomewarePayload(WormConfiguration.ransomware, telemetry_messenger).run_payload()
+                InfectionMonkey.run_ransomware()
 
                 if (not is_empty) and (WormConfiguration.max_iterations > iteration_index + 1):
                     time_to_sleep = WormConfiguration.timeout_between_iterations
@@ -467,3 +466,8 @@ class InfectionMonkey(object):
     def log_arguments(self):
         arg_string = " ".join([f"{key}: {value}" for key, value in vars(self._opts).items()])
         LOG.info(f"Monkey started with arguments: {arg_string}")
+
+    @staticmethod
+    def run_ransomware():
+        telemetry_messenger = TelemetryMessengerWrapper()
+        RansomewarePayload(WormConfiguration.ransomware, telemetry_messenger).run_payload()
