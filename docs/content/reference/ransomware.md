@@ -16,6 +16,7 @@ If no directory is specified, no files will be encrypted.
 
 <!-- add config screenshot here -->
 
+
 ## How are the files encrypted?
 
 Files are "encrypted" in place with a simple bit flip. Encrypted files are renamed to have
@@ -23,7 +24,7 @@ Files are "encrypted" in place with a simple bit flip. Encrypted files are renam
 
 This is a safe way to simulate encryption since it is easy to "decrypt" your files. You can simply perform a bit flip on the files again and rename them to remove the appended `.m0nk3y` extension.
 
-This is sufficient for a ransomware simulation as your files are unusuable and are renamed with a different extension, similar to how many ransomwares act. These changes should trigger your security solutions.
+This is sufficient to mock a ransomware attack on your network as your files are left unusuable and are renamed with a different extension, similar to the way that many ransomwares act. As this is a simulation, your security solutions should be triggered to notify and prevent these changes from taking place.
 
 
 ## Which files are encrypted?
