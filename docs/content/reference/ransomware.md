@@ -11,7 +11,7 @@ All actions performed by the encryption routine are designed to be safe for prod
 environments.
 
 To ensure minimum interference and easy recoverability, the ransomware simulation will encrypt
-files if the user specifies a directory that contains files that are safe to encrypt.
+files only if the user specifies a directory that contains files that are safe to encrypt.
 If no directory is specified, no files will be encrypted.
 
 <!-- add config screenshot here -->
