@@ -41,7 +41,9 @@ def with_extension(filename):
 
 @pytest.fixture
 def ransomware_payload_config(ransomware_target):
-    return {"linux_dir": str(ransomware_target), "windows_dir": str(ransomware_target)}
+    return {
+        "directories": {"linux_dir": str(ransomware_target), "windows_dir": str(ransomware_target)}
+    }
 
 
 @pytest.fixture

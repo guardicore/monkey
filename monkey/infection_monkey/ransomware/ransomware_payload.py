@@ -17,10 +17,17 @@ CHUNK_SIZE = 4096 * 24
 
 class RansomewarePayload:
     def __init__(self, config: dict, telemetry_messenger: ITelemetryMessenger):
-        LOG.info(f"Windows dir configured for encryption is \"{config['windows_dir']}\"")
-        LOG.info(f"Linux dir configured for encryption is \"{config['linux_dir']}\"")
+        target_directories = config["directories"]
+        LOG.info(
+            f"Windows dir configured for encryption is \"{target_directories['windows_dir']}\""
+        )
+        LOG.info(f"Linux dir configured for encryption is \"{target_directories['linux_dir']}\"")
 
-        self._target_dir = config["windows_dir"] if is_windows_os() else config["linux_dir"]
+        self._target_dir = (
+            target_directories["windows_dir"]
+            if is_windows_os()
+            else target_directories["linux_dir"]
+        )
 
         self._new_file_extension = EXTENSION
         self._valid_file_extensions_for_encryption = VALID_FILE_EXTENSIONS_FOR_ENCRYPTION.copy()
