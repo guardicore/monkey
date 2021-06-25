@@ -28,16 +28,14 @@ This is sufficient for a ransomware simulation as your files are unusuable and a
 
 ## Which files are encrypted?
 
-All regular files with [relevant extensions](#relevant-file-extensions-for-encryption) in the
-configured directory are attempted to be encrypted during the simulation.
+All regular files with [valid extensions](#file-extensions-targeted-for-encryption) in the configured directory are attempted to be encrypted during the simulation.
 
-The simulation is not recursive, i.e. it will not touch any files in sub-directories of the
-configured directory. Symlinks and shortcuts are ignored.
+The simulation is not recursive, i.e. it will not touch any files in sub-directories of the configured directory. Symlinks and shortcuts are ignored.
 
 These precautions are taken to prevent the monkey from going rogue and accidentally encrypting files that you didn't intend to encrypt.
 
 
-## Relevant file extensions for encryption
+## File extensions targeted for encryption
 
 Encryption attempts are only performed on regular files with the following extensions.
 
