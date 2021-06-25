@@ -32,9 +32,9 @@ All regular files with [relevant extensions](#relevant-file-extensions-for-encry
 configured directory are attempted to be encrypted during the simulation.
 
 The simulation is not recursive, i.e. it will not touch any files in sub-directories of the
-configured directory — only appropriate files in the top level of the tree.
+configured directory. Symlinks and shortcuts are ignored.
 
-Symlinks and shortcuts are ignored.
+These precautions are taken to prevent the monkey from going rogue and accidentally encrypting files that you didn't intend to encrypt.
 
 
 ## Relevant file extensions for encryption
