@@ -1,4 +1,5 @@
 import os
+from pathlib import PurePath
 
 import pytest
 from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
@@ -20,7 +21,18 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 )
 from tests.utils import hash_file, is_user_admin
 
+from infection_monkey.ransomware import ransomware_payload as ransomware_payload_module
 from infection_monkey.ransomware.ransomware_payload import EXTENSION, RansomewarePayload
+from infection_monkey.telemetry.i_telem import ITelem
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
+
+
+class TelemetryMessengerSpy(ITelemetryMessenger):
+    def __init__(self):
+        self.telemetries = []
+
+    def send_telemetry(self, telemetry: ITelem):
+        self.telemetries.append(telemetry)
 
 
 def with_extension(filename):
@@ -33,8 +45,13 @@ def ransomware_payload_config(ransomware_target):
 
 
 @pytest.fixture
-def ransomware_payload(ransomware_payload_config):
-    return RansomewarePayload(ransomware_payload_config)
+def telemetry_messenger_spy():
+    return TelemetryMessengerSpy()
+
+
+@pytest.fixture
+def ransomware_payload(ransomware_payload_config, telemetry_messenger_spy):
+    return RansomewarePayload(ransomware_payload_config, telemetry_messenger_spy)
 
 
 def test_file_with_excluded_extension_not_encrypted(ransomware_target, ransomware_payload):
@@ -120,3 +137,30 @@ def test_skip_already_encrypted_file(ransomware_target, ransomware_payload):
         hash_file(ransomware_target / ALREADY_ENCRYPTED_TXT_M0NK3Y)
         == ALREADY_ENCRYPTED_TXT_M0NK3Y_CLEARTEXT_SHA256
     )
+
+
+def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
+    ransomware_payload.run_payload()
+
+    assert len(telemetry_messenger_spy.telemetries) == 2
+    telem_1 = telemetry_messenger_spy.telemetries[0]
+    telem_2 = telemetry_messenger_spy.telemetries[1]
+
+    assert ALL_ZEROS_PDF in telem_1.get_data()["ransomware_attempts"][0]
+    assert telem_1.get_data()["ransomware_attempts"][1] == ""
+    assert TEST_KEYBOARD_TXT in telem_2.get_data()["ransomware_attempts"][0]
+    assert telem_2.get_data()["ransomware_attempts"][1] == ""
+
+
+def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_spy):
+    monkeypatch.setattr(
+        ransomware_payload_module,
+        "select_production_safe_target_files",
+        lambda a, b: [PurePath("/file/not/exist")],
+    ),
+
+    ransomware_payload.run_payload()
+    telem_1 = telemetry_messenger_spy.telemetries[0]
+
+    assert "/file/not/exist" in telem_1.get_data()["ransomware_attempts"][0]
+    assert "No such file or directory" in telem_1.get_data()["ransomware_attempts"][1]

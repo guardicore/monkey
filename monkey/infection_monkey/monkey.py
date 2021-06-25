@@ -25,6 +25,9 @@ from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
+from infection_monkey.telemetry.messengers.telemetry_messenger_wrapper import (
+    TelemetryMessengerWrapper,
+)
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
@@ -233,7 +236,7 @@ class InfectionMonkey(object):
                     if not self._keep_running:
                         break
 
-                RansomewarePayload(WormConfiguration.ransomware).run_payload()
+                InfectionMonkey.run_ransomware()
 
                 if (not is_empty) and (WormConfiguration.max_iterations > iteration_index + 1):
                     time_to_sleep = WormConfiguration.timeout_between_iterations
@@ -463,3 +466,8 @@ class InfectionMonkey(object):
     def log_arguments(self):
         arg_string = " ".join([f"{key}: {value}" for key, value in vars(self._opts).items()])
         LOG.info(f"Monkey started with arguments: {arg_string}")
+
+    @staticmethod
+    def run_ransomware():
+        telemetry_messenger = TelemetryMessengerWrapper()
+        RansomewarePayload(WormConfiguration.ransomware, telemetry_messenger).run_payload()
