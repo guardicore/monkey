@@ -23,16 +23,6 @@ from tests.utils import hash_file, is_user_admin
 
 from infection_monkey.ransomware import ransomware_payload as ransomware_payload_module
 from infection_monkey.ransomware.ransomware_payload import EXTENSION, RansomewarePayload
-from infection_monkey.telemetry.i_telem import ITelem
-from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
-
-
-class TelemetryMessengerSpy(ITelemetryMessenger):
-    def __init__(self):
-        self.telemetries = []
-
-    def send_telemetry(self, telemetry: ITelem):
-        self.telemetries.append(telemetry)
 
 
 def with_extension(filename):
@@ -44,11 +34,6 @@ def ransomware_payload_config(ransomware_target):
     return {
         "directories": {"linux_dir": str(ransomware_target), "windows_dir": str(ransomware_target)}
     }
-
-
-@pytest.fixture
-def telemetry_messenger_spy():
-    return TelemetryMessengerSpy()
 
 
 @pytest.fixture
