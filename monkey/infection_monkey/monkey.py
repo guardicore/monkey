@@ -25,8 +25,8 @@ from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
-from infection_monkey.telemetry.messengers.telemetry_messenger_wrapper import (
-    TelemetryMessengerWrapper,
+from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
+    LegacyTelemetryMessengerAdapter,
 )
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.state_telem import StateTelem
@@ -470,7 +470,7 @@ class InfectionMonkey(object):
     @staticmethod
     def run_ransomware():
         try:
-            telemetry_messenger = TelemetryMessengerWrapper()
+            telemetry_messenger = LegacyTelemetryMessengerAdapter()
             RansomewarePayload(WormConfiguration.ransomware, telemetry_messenger).run_payload()
         except Exception as ex:
             LOG.error(f"An unexpected error occurred while running the ransomware payload: {ex}")
