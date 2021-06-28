@@ -1,7 +1,9 @@
 import os
 
 import pytest
+from tests.monkey_island.utils import assert_windows_permissions
 
+from monkey_island.cc.server_utils.file_utils import is_windows_os
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 
 
@@ -32,11 +34,18 @@ def dir_is_empty(dir_path):
     return len(dir_contents) == 0
 
 
-@pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
-def test_custom_pba_dir_permissions():
+@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
+def test_custom_pba_dir_permissions_linux():
     st = os.stat(PostBreachFilesService.get_custom_pba_directory())
 
     assert st.st_mode == 0o40700
+
+
+@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
+def test_custom_pba_dir_permissions_windows():
+    pba_dir = PostBreachFilesService.get_custom_pba_directory()
+
+    assert_windows_permissions(pba_dir)
 
 
 def test_remove_failure(monkeypatch):

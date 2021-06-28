@@ -1,6 +1,7 @@
 import logging
 import os
-from pathlib import Path
+
+from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,8 @@ class PostBreachFilesService:
     @classmethod
     def initialize(cls, data_dir):
         cls.DATA_DIR = data_dir
-        Path(cls.get_custom_pba_directory()).mkdir(mode=0o0700, parents=True, exist_ok=True)
+        custom_pba_dir = cls.get_custom_pba_directory()
+        create_secure_directory(custom_pba_dir)
 
     @staticmethod
     def save_file(filename: str, file_contents: bytes):

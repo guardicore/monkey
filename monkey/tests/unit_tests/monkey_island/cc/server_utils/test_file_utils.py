@@ -2,6 +2,7 @@ import os
 import stat
 
 import pytest
+from tests.monkey_island.utils import assert_windows_permissions
 
 from monkey_island.cc.server_utils.file_utils import (
     create_secure_directory,
@@ -9,14 +10,6 @@ from monkey_island.cc.server_utils.file_utils import (
     is_windows_os,
     open_new_securely_permissioned_file,
 )
-
-if is_windows_os():
-    import win32api
-    import win32security
-
-    FULL_CONTROL = 2032127
-    ACE_ACCESS_MODE_GRANT_ACCESS = win32security.GRANT_ACCESS
-    ACE_INHERIT_OBJECT_AND_CONTAINER = 3
 
 
 def test_expand_user(patched_home_env):
@@ -47,15 +40,6 @@ def test_path(tmpdir):
     return path
 
 
-def _get_acl_and_sid_from_path(path: str):
-    sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
-    security_descriptor = win32security.GetNamedSecurityInfo(
-        path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
-    )
-    acl = security_descriptor.GetSecurityDescriptorDacl()
-    return acl, sid
-
-
 def test_create_secure_directory__already_exists(test_path):
     os.mkdir(test_path)
     assert os.path.isdir(test_path)
@@ -82,20 +66,7 @@ def test_create_secure_directory__perm_linux(test_path):
 def test_create_secure_directory__perm_windows(test_path):
     create_secure_directory(test_path)
 
-    acl, user_sid = _get_acl_and_sid_from_path(test_path)
-
-    assert acl.GetAceCount() == 1
-
-    ace = acl.GetExplicitEntriesFromAcl()[0]
-
-    ace_access_mode = ace["AccessMode"]
-    ace_permissions = ace["AccessPermissions"]
-    ace_inheritance = ace["Inheritance"]
-    ace_sid = ace["Trustee"]["Identifier"]
-
-    assert ace_sid == user_sid
-    assert ace_permissions == FULL_CONTROL and ace_access_mode == ACE_ACCESS_MODE_GRANT_ACCESS
-    assert ace_inheritance == ACE_INHERIT_OBJECT_AND_CONTAINER
+    assert_windows_permissions(test_path)
 
 
 def test_open_new_securely_permissioned_file__already_exists(test_path):
@@ -131,20 +102,7 @@ def test_open_new_securely_permissioned_file__perm_windows(test_path):
     with open_new_securely_permissioned_file(test_path):
         pass
 
-    acl, user_sid = _get_acl_and_sid_from_path(test_path)
-
-    assert acl.GetAceCount() == 1
-
-    ace = acl.GetExplicitEntriesFromAcl()[0]
-
-    ace_access_mode = ace["AccessMode"]
-    ace_permissions = ace["AccessPermissions"]
-    ace_inheritance = ace["Inheritance"]
-    ace_sid = ace["Trustee"]["Identifier"]
-
-    assert ace_sid == user_sid
-    assert ace_permissions == FULL_CONTROL and ace_access_mode == ACE_ACCESS_MODE_GRANT_ACCESS
-    assert ace_inheritance == ACE_INHERIT_OBJECT_AND_CONTAINER
+    assert_windows_permissions(test_path)
 
 
 def test_open_new_securely_permissioned_file__write(test_path):
