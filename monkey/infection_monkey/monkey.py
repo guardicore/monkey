@@ -474,12 +474,10 @@ class InfectionMonkey(object):
     def run_ransomware():
         telemetry_messenger = LegacyTelemetryMessengerAdapter()
         batching_telemetry_messenger = BatchingTelemetryMessenger(telemetry_messenger)
-        batching_telemetry_messenger.start()
+
         try:
             RansomewarePayload(
                 WormConfiguration.ransomware, batching_telemetry_messenger
             ).run_payload()
         except Exception as ex:
             LOG.error(f"An unexpected error occurred while running the ransomware payload: {ex}")
-        finally:
-            batching_telemetry_messenger.stop()

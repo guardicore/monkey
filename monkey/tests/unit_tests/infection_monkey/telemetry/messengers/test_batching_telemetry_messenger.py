@@ -56,11 +56,7 @@ class BatchableTelemStub(BatchableTelemMixin, BaseTelem, IBatchableTelem):
 @pytest.fixture
 def batching_telemetry_messenger(monkeypatch, telemetry_messenger_spy):
     patch_time(monkeypatch, 0)
-    btm = BatchingTelemetryMessenger(telemetry_messenger_spy, period=0.001)
-    btm.start()
-    yield btm
-
-    btm.stop()
+    return BatchingTelemetryMessenger(telemetry_messenger_spy, period=0.001)
 
 
 def test_send_immediately(batching_telemetry_messenger, telemetry_messenger_spy):
