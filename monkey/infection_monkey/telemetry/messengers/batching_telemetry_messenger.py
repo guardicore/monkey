@@ -21,7 +21,7 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
         self._telemetry_messenger = telemetry_messenger
         self._period = period
 
-        self._run_batch_thread = True
+        self._should_run_batch_thread = True
         self._queue: queue.Queue[ITelem] = queue.Queue()
         # TODO: Create a "timer" or "countdown" class and inject an object instead of
         #       using time.time()
@@ -37,7 +37,7 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
         self.stop()
 
     def stop(self):
-        self._run_batch_thread = False
+        self._should_run_batch_thread = False
         self._manage_telemetry_batches_thread.join()
 
     def send_telemetry(self, telemetry: ITelem):
@@ -46,7 +46,7 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
     def _manage_telemetry_batches(self):
         self._reset()
 
-        while self._run_batch_thread:
+        while self._should_run_batch_thread:
             try:
                 telemetry = self._queue.get(block=True, timeout=self._period / WAKES_PER_PERIOD)
 
