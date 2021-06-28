@@ -469,5 +469,8 @@ class InfectionMonkey(object):
 
     @staticmethod
     def run_ransomware():
-        telemetry_messenger = TelemetryMessengerWrapper()
-        RansomewarePayload(WormConfiguration.ransomware, telemetry_messenger).run_payload()
+        try:
+            telemetry_messenger = TelemetryMessengerWrapper()
+            RansomewarePayload(WormConfiguration.ransomware, telemetry_messenger).run_payload()
+        except Exception as ex:
+            LOG.error(f"An unexpected error occurred while running the ransomware payload: {ex}")
