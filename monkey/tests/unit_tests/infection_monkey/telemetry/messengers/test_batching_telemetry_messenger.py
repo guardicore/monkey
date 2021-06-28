@@ -57,6 +57,7 @@ class BatchableTelemStub(BatchableTelemMixin, BaseTelem, IBatchableTelem):
 def batching_telemetry_messenger(monkeypatch, telemetry_messenger_spy):
     patch_time(monkeypatch, 0)
     btm = BatchingTelemetryMessenger(telemetry_messenger_spy, period=0.001)
+    btm.start()
     yield btm
 
     btm.stop()

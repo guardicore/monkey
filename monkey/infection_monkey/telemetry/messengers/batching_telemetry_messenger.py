@@ -28,13 +28,15 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
         self._last_sent_time = time.time()
         self._telemetry_batches: Dict[str, IBatchableTelem] = {}
 
+    def __del__(self):
+        self.stop()
+
+    def start(self):
+        self._should_run_batch_thread = True
         self._manage_telemetry_batches_thread = threading.Thread(
             target=self._manage_telemetry_batches
         )
         self._manage_telemetry_batches_thread.start()
-
-    def __del__(self):
-        self.stop()
 
     def stop(self):
         self._should_run_batch_thread = False
