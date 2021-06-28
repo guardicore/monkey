@@ -22,8 +22,8 @@ RANSOMWARE = {
                 },
             },
         },
-        "notifications": {
-            "title": "Notifications",
+        "other_behaviors": {
+            "title": "Other Behaviors",
             "type": "object",
             "properties": {
                 "readme": {
