@@ -8,7 +8,7 @@ from infection_monkey.telemetry.i_telem import ITelem
 
 class IBatchableTelem(ITelem, metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def get_telemetry_entries(self) -> Iterable:
+    def get_telemetry_batch(self) -> Iterable:
         pass
 
     @abc.abstractmethod

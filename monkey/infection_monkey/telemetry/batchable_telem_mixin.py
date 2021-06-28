@@ -15,8 +15,8 @@ class BatchableTelemMixin:
 
         return self._list
 
-    def get_telemetry_entries(self) -> Iterable:
+    def get_telemetry_batch(self) -> Iterable:
         return self._telemetry_entries
 
     def add_telemetry_to_batch(self, telemetry: IBatchableTelem):
-        self._telemetry_entries.extend(telemetry.get_telemetry_entries())
+        self._telemetry_entries.extend(telemetry.get_telemetry_batch())
