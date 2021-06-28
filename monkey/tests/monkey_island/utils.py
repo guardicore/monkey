@@ -17,6 +17,7 @@ def _get_acl_and_sid_from_path(path: str):
     acl = security_descriptor.GetSecurityDescriptorDacl()
     return acl, sid
 
+
 def assert_windows_permissions(path: str):
     acl, user_sid = _get_acl_and_sid_from_path(path)
 
