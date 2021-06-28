@@ -21,6 +21,18 @@ RANSOMWARE = {
                     "using bitflip to simulate ransomware.",
                 },
             },
-        }
+        },
+        "other_behaviors": {
+            "title": "Other Behaviors",
+            "type": "object",
+            "properties": {
+                "readme": {
+                    "title": "Create a README.TXT file",
+                    "type": "boolean",
+                    "default": True,
+                    "description": "Creates a README.txt ransomware note on infected systems.",
+                }
+            },
+        },
     },
 }
