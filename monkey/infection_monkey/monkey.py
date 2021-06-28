@@ -472,9 +472,9 @@ class InfectionMonkey(object):
 
     @staticmethod
     def run_ransomware():
+        telemetry_messenger = LegacyTelemetryMessengerAdapter()
+        batching_telemetry_messenger = BatchingTelemetryMessenger(telemetry_messenger)
         try:
-            telemetry_messenger = LegacyTelemetryMessengerAdapter()
-            batching_telemetry_messenger = BatchingTelemetryMessenger(telemetry_messenger)
             RansomewarePayload(
                 WormConfiguration.ransomware, batching_telemetry_messenger
             ).run_payload()
