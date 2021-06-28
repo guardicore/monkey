@@ -1,5 +1,5 @@
 import os
-from pathlib import PurePath
+from pathlib import PurePosixPath
 
 import pytest
 from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
@@ -143,7 +143,7 @@ def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_
     monkeypatch.setattr(
         ransomware_payload_module,
         "select_production_safe_target_files",
-        lambda a, b: [PurePath("/file/not/exist")],
+        lambda a, b: [PurePosixPath("/file/not/exist")],
     ),
 
     ransomware_payload.run_payload()
