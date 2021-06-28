@@ -57,7 +57,7 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
         def _manage_telemetry_batches(self):
             self._reset()
 
-            while self._should_run_batch_thread:
+            while self._should_run_batch_thread or not self._queue.empty():
                 try:
                     telemetry = self._queue.get(block=True, timeout=self._period / WAKES_PER_PERIOD)
 
