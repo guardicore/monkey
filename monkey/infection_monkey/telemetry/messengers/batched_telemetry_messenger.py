@@ -1,0 +1,82 @@
+import queue
+import threading
+import time
+from typing import Dict
+
+from infection_monkey.telemetry.i_batchable_telem import IBatchableTelem
+from infection_monkey.telemetry.i_telem import ITelem
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
+
+WAKES_PER_PERIOD = 4
+
+
+class BatchedTelemetryMessenger(ITelemetryMessenger):
+    """
+    An ITelemetryMessenger decorator that aggregates IBatchableTelem telemetries
+    and periodically sends them to Monkey Island.
+    """
+
+    def __init__(self, telemetry_messenger: ITelemetryMessenger, period=5):
+        self._telemetry_messenger = telemetry_messenger
+        self._period = period
+
+        self._run_batch_thread = True
+        self._queue: queue.Queue[ITelem] = queue.Queue()
+        # TODO: Create a "timer" or "countdown" class and inject an object instead of
+        #       using time.time()
+        self._last_sent_time = time.time()
+        self._telemetry_batches: Dict[str, IBatchableTelem] = {}
+
+        self._manage_telemetry_batches_thread = threading.Thread(
+            target=self._manage_telemetry_batches
+        )
+        self._manage_telemetry_batches_thread.start()
+
+    def __del__(self):
+        self.stop()
+
+    def stop(self):
+        self._run_batch_thread = False
+        self._manage_telemetry_batches_thread.join()
+
+    def send_telemetry(self, telemetry: ITelem):
+        self._queue.put(telemetry)
+
+    def _manage_telemetry_batches(self):
+        self._reset()
+
+        while self._run_batch_thread:
+            try:
+                telemetry = self._queue.get(block=True, timeout=self._period / WAKES_PER_PERIOD)
+
+                if isinstance(telemetry, IBatchableTelem):
+                    self._add_telemetry_to_batch(telemetry)
+                else:
+                    self._telemetry_messenger.send_telemetry(telemetry)
+            except queue.Empty:
+                pass
+
+            if self._period_elapsed():
+                self._send_telemetry_batches()
+                self._reset()
+
+        self._send_telemetry_batches()
+
+    def _reset(self):
+        self._last_sent_time = time.time()
+        self._telemetry_batches = {}
+
+    def _add_telemetry_to_batch(self, new_telemetry: IBatchableTelem):
+        telem_category = new_telemetry.telem_category
+
+        if telem_category in self._telemetry_batches:
+            self._telemetry_batches[telem_category].add_telemetry_to_batch(new_telemetry)
+        else:
+            self._telemetry_batches[telem_category] = new_telemetry
+
+    def _period_elapsed(self):
+        return (time.time() - self._last_sent_time) > self._period
+
+    def _send_telemetry_batches(self):
+        for batchable_telemetry in self._telemetry_batches.values():
+            self._telemetry_messenger.send_telemetry(batchable_telemetry)
