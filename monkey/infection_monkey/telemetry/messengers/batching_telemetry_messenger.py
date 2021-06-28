@@ -10,7 +10,7 @@ from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemet
 WAKES_PER_PERIOD = 4
 
 
-class BatchedTelemetryMessenger(ITelemetryMessenger):
+class BatchingTelemetryMessenger(ITelemetryMessenger):
     """
     An ITelemetryMessenger decorator that aggregates IBatchableTelem telemetries
     and periodically sends them to Monkey Island.
