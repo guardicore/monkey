@@ -6,10 +6,10 @@ from infection_monkey.telemetry.batchable_telem_mixin import BatchableTelemMixin
 from infection_monkey.telemetry.i_batchable_telem import IBatchableTelem
 
 
-class RansomwareTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
+class FileEncryptionTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
     def __init__(self, entry: Tuple[str, str]):
         """
-        Ransomware telemetry constructor
+        File Encryption telemetry constructor
         :param attempts: List of tuples with each tuple containing the path
                          of a file it tried encrypting and its result.
                          If ransomware fails completely - list of one tuple
@@ -19,7 +19,7 @@ class RansomwareTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
 
         self._telemetry_entries.append(entry)
 
-    telem_category = TelemCategoryEnum.RANSOMWARE
+    telem_category = TelemCategoryEnum.FILE_ENCRYPTION
 
     def get_data(self):
-        return {"ransomware_attempts": self._telemetry_entries}
+        return {"files": self._telemetry_entries}

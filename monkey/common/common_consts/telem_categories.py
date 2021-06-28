@@ -8,4 +8,4 @@ class TelemCategoryEnum:
     TRACE = "trace"
     TUNNEL = "tunnel"
     ATTACK = "attack"
-    RANSOMWARE = "ransomware"
+    FILE_ENCRYPTION = "file_encryption"
