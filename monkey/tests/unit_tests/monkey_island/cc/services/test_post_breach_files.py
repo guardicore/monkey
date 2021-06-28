@@ -41,7 +41,7 @@ def dir_is_empty(dir_path):
     return len(dir_contents) == 0
 
 
-@pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
+@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
 def test_custom_pba_dir_permissions_linux():
     st = os.stat(PostBreachFilesService.get_custom_pba_directory())
 
@@ -57,7 +57,7 @@ def _get_acl_and_sid_from_path(path: str):
     return acl, sid
 
 
-@pytest.mark.skipif(os.name == "posix", reason="Tests Windows (not Posix) permissions.")
+@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
 def test_custom_pba_dir_permissions_windows():
     pba_dir = PostBreachFilesService.get_custom_pba_directory()
 
