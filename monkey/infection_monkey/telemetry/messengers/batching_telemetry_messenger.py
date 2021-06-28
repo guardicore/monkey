@@ -7,6 +7,7 @@ from infection_monkey.telemetry.i_batchable_telem import IBatchableTelem
 from infection_monkey.telemetry.i_telem import ITelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
+DEFAULT_PERIOD = 5
 WAKES_PER_PERIOD = 4
 
 
@@ -16,7 +17,7 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
     and periodically sends them to Monkey Island.
     """
 
-    def __init__(self, telemetry_messenger: ITelemetryMessenger, period=5):
+    def __init__(self, telemetry_messenger: ITelemetryMessenger, period=DEFAULT_PERIOD):
         self._telemetry_messenger = telemetry_messenger
         self._period = period
 
