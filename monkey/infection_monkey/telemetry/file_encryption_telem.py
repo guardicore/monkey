@@ -7,7 +7,7 @@ from infection_monkey.telemetry.i_batchable_telem import IBatchableTelem
 
 
 class FileEncryptionTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
-    def __init__(self, filepath: Path, error: str):
+    def __init__(self, filepath: Path, success: bool, error: str):
         """
         File Encryption telemetry constructor
         :param attempts: List of tuples with each tuple containing the path
@@ -17,7 +17,7 @@ class FileEncryptionTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
         """
         super().__init__()
 
-        self._telemetry_entries.append({"path": filepath, "error": error})
+        self._telemetry_entries.append({"path": filepath, "success": success, "error": error})
 
     telem_category = TelemCategoryEnum.FILE_ENCRYPTION
 

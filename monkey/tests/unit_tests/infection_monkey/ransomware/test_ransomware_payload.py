@@ -134,8 +134,10 @@ def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
     telem_2 = telemetry_messenger_spy.telemetries[1]
 
     assert ALL_ZEROS_PDF in telem_1.get_data()["files"][0]["path"]
+    assert telem_1.get_data()["files"][0]["success"]
     assert telem_1.get_data()["files"][0]["error"] == ""
     assert TEST_KEYBOARD_TXT in telem_2.get_data()["files"][0]["path"]
+    assert telem_2.get_data()["files"][0]["success"]
     assert telem_2.get_data()["files"][0]["error"] == ""
 
 
@@ -150,4 +152,5 @@ def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_
     telem_1 = telemetry_messenger_spy.telemetries[0]
 
     assert "/file/not/exist" in telem_1.get_data()["files"][0]["path"]
+    assert not telem_1.get_data()["files"][0]["success"]
     assert "No such file or directory" in telem_1.get_data()["files"][0]["error"]
