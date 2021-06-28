@@ -1,4 +1,4 @@
-from typing import Tuple
+from pathlib import Path
 
 from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
@@ -7,7 +7,7 @@ from infection_monkey.telemetry.i_batchable_telem import IBatchableTelem
 
 
 class FileEncryptionTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
-    def __init__(self, entry: Tuple[str, str]):
+    def __init__(self, filepath: Path, error: str):
         """
         File Encryption telemetry constructor
         :param attempts: List of tuples with each tuple containing the path
@@ -17,7 +17,7 @@ class FileEncryptionTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
         """
         super().__init__()
 
-        self._telemetry_entries.append(entry)
+        self._telemetry_entries.append({"path": filepath, "error": error})
 
     telem_category = TelemCategoryEnum.FILE_ENCRYPTION
 

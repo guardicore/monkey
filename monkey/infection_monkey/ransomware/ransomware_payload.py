@@ -68,5 +68,5 @@ class RansomewarePayload:
         filepath.rename(new_filepath)
 
     def _send_telemetry(self, filepath: Path, error: str):
-        encryption_attempt = FileEncryptionTelem((str(filepath), str(error)))
+        encryption_attempt = FileEncryptionTelem(str(filepath), str(error))
         self._telemetry_messenger.send_telemetry(encryption_attempt)
