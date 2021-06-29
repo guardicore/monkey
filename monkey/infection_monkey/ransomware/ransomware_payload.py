@@ -21,7 +21,10 @@ README_DEST = "README.txt"
 
 class RansomwarePayload:
     def __init__(self, config: dict, telemetry_messenger: ITelemetryMessenger):
-        target_directories = config["directories"]
+        self.should_encrypt = config["encryption"]["should_encrypt"]
+        LOG.info(f"Encryption routine for ransomware simulation enabled: {self.should_encrypt}")
+
+        target_directories = config["encryption"]["directories"]
         LOG.info(
             f"Windows dir configured for encryption is \"{target_directories['windows_dir']}\""
         )
@@ -44,9 +47,11 @@ class RansomwarePayload:
         self._telemetry_messenger = telemetry_messenger
 
     def run_payload(self):
-        LOG.info("Running ransomware payload")
-        file_list = self._find_files()
-        self._encrypt_files(file_list)
+        if self.should_encrypt:
+            LOG.info("Running ransomware payload")
+            file_list = self._find_files()
+            self._encrypt_files(file_list)
+
         self._leave_readme()
 
     def _find_files(self) -> List[Path]:
