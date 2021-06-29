@@ -22,11 +22,7 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 from tests.utils import hash_file, is_user_admin
 
 from infection_monkey.ransomware import ransomware_payload as ransomware_payload_module
-from infection_monkey.ransomware.ransomware_payload import (
-    EXTENSION,
-    README_DEST,
-    RansomewarePayload,
-)
+from infection_monkey.ransomware.ransomware_payload import EXTENSION, README_DEST, RansomwarePayload
 
 
 def with_extension(filename):
@@ -43,7 +39,7 @@ def ransomware_payload_config(ransomware_target):
 
 @pytest.fixture
 def ransomware_payload(ransomware_payload_config, telemetry_messenger_spy):
-    return RansomewarePayload(ransomware_payload_config, telemetry_messenger_spy)
+    return RansomwarePayload(ransomware_payload_config, telemetry_messenger_spy)
 
 
 def test_file_with_excluded_extension_not_encrypted(ransomware_target, ransomware_payload):
@@ -163,7 +159,7 @@ def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_
 
 def test_readme_false(ransomware_payload_config, ransomware_target, telemetry_messenger_spy):
     ransomware_payload_config["other_behaviors"]["readme"] = False
-    ransomware_payload = RansomewarePayload(ransomware_payload_config, telemetry_messenger_spy)
+    ransomware_payload = RansomwarePayload(ransomware_payload_config, telemetry_messenger_spy)
 
     ransomware_payload.run_payload()
     assert not Path(ransomware_target / README_DEST).exists()
@@ -171,7 +167,7 @@ def test_readme_false(ransomware_payload_config, ransomware_target, telemetry_me
 
 def test_readme_true(ransomware_payload_config, ransomware_target, telemetry_messenger_spy):
     ransomware_payload_config["other_behaviors"]["readme"] = True
-    ransomware_payload = RansomewarePayload(ransomware_payload_config, telemetry_messenger_spy)
+    ransomware_payload = RansomwarePayload(ransomware_payload_config, telemetry_messenger_spy)
 
     ransomware_payload.run_payload()
     assert Path(ransomware_target / README_DEST).exists()

@@ -19,7 +19,7 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.network.tools import get_interface_to_target, is_running_on_island
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.ransomware.ransomware_payload import RansomewarePayload
+from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
@@ -476,7 +476,7 @@ class InfectionMonkey(object):
         batching_telemetry_messenger = BatchingTelemetryMessenger(telemetry_messenger)
 
         try:
-            RansomewarePayload(
+            RansomwarePayload(
                 WormConfiguration.ransomware, batching_telemetry_messenger
             ).run_payload()
         except Exception as ex:

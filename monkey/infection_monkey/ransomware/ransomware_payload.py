@@ -19,7 +19,7 @@ README_SRC = Path(__file__).parent / "ransomware_readme.txt"
 README_DEST = "README.txt"
 
 
-class RansomewarePayload:
+class RansomwarePayload:
     def __init__(self, config: dict, telemetry_messenger: ITelemetryMessenger):
         target_directories = config["directories"]
         LOG.info(
