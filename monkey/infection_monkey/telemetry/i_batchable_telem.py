@@ -7,6 +7,11 @@ from infection_monkey.telemetry.i_telem import ITelem
 
 
 class IBatchableTelem(ITelem, metaclass=abc.ABCMeta):
+    """
+    Extends the ITelem interface and enables telemetries to be aggregated into
+    batches.
+    """
+
     @abc.abstractmethod
     def get_telemetry_batch(self) -> Iterable:
         pass
