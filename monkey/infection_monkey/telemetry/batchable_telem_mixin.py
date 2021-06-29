@@ -5,7 +5,8 @@ from infection_monkey.telemetry.i_batchable_telem import IBatchableTelem
 
 class BatchableTelemMixin:
     """
-    Implements the IBatchableTelem interface methods using a list.
+    Implements the get_telemetry_batch() and add_telemetry_to_batch() methods from the
+    IBatchableTelem interface using a list.
     """
 
     @property
