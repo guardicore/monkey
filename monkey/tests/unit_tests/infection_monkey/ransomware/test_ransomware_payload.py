@@ -1,5 +1,5 @@
 import os
-from pathlib import Path, PurePath
+from pathlib import Path, PurePosixPath
 
 import pytest
 from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
@@ -138,24 +138,27 @@ def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
     telem_1 = telemetry_messenger_spy.telemetries[0]
     telem_2 = telemetry_messenger_spy.telemetries[1]
 
-    assert ALL_ZEROS_PDF in telem_1.get_data()["files"][0][0]
-    assert telem_1.get_data()["files"][0][1] == ""
-    assert TEST_KEYBOARD_TXT in telem_2.get_data()["files"][0][0]
-    assert telem_2.get_data()["files"][0][1] == ""
+    assert ALL_ZEROS_PDF in telem_1.get_data()["files"][0]["path"]
+    assert telem_1.get_data()["files"][0]["success"]
+    assert telem_1.get_data()["files"][0]["error"] == ""
+    assert TEST_KEYBOARD_TXT in telem_2.get_data()["files"][0]["path"]
+    assert telem_2.get_data()["files"][0]["success"]
+    assert telem_2.get_data()["files"][0]["error"] == ""
 
 
 def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_spy):
     monkeypatch.setattr(
         ransomware_payload_module,
         "select_production_safe_target_files",
-        lambda a, b: [PurePath("/file/not/exist")],
+        lambda a, b: [PurePosixPath("/file/not/exist")],
     ),
 
     ransomware_payload.run_payload()
     telem_1 = telemetry_messenger_spy.telemetries[0]
 
-    assert "/file/not/exist" in telem_1.get_data()["files"][0][0]
-    assert "No such file or directory" in telem_1.get_data()["files"][0][1]
+    assert "/file/not/exist" in telem_1.get_data()["files"][0]["path"]
+    assert not telem_1.get_data()["files"][0]["success"]
+    assert "No such file or directory" in telem_1.get_data()["files"][0]["error"]
 
 
 def test_readme_false(ransomware_payload_config, ransomware_target, telemetry_messenger_spy):
