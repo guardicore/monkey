@@ -45,6 +45,8 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
             self._last_sent_time = time.time()
             self._telemetry_batches: Dict[str, IBatchableTelem] = {}
 
+            self._manage_telemetry_batches_thread = None
+
         def start(self):
             self._should_run_batch_thread = True
             self._manage_telemetry_batches_thread = threading.Thread(
@@ -55,6 +57,7 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
         def stop(self):
             self._should_run_batch_thread = False
             self._manage_telemetry_batches_thread.join()
+            self._manage_telemetry_batches_thread = None
 
         def _manage_telemetry_batches(self):
             self._reset()
