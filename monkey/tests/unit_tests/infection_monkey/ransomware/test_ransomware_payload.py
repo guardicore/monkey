@@ -23,16 +23,6 @@ from tests.utils import hash_file, is_user_admin
 
 from infection_monkey.ransomware import ransomware_payload as ransomware_payload_module
 from infection_monkey.ransomware.ransomware_payload import EXTENSION, RansomewarePayload
-from infection_monkey.telemetry.i_telem import ITelem
-from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
-
-
-class TelemetryMessengerSpy(ITelemetryMessenger):
-    def __init__(self):
-        self.telemetries = []
-
-    def send_telemetry(self, telemetry: ITelem):
-        self.telemetries.append(telemetry)
 
 
 def with_extension(filename):
@@ -44,11 +34,6 @@ def ransomware_payload_config(ransomware_target):
     return {
         "directories": {"linux_dir": str(ransomware_target), "windows_dir": str(ransomware_target)}
     }
-
-
-@pytest.fixture
-def telemetry_messenger_spy():
-    return TelemetryMessengerSpy()
 
 
 @pytest.fixture
@@ -148,10 +133,10 @@ def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
     telem_1 = telemetry_messenger_spy.telemetries[0]
     telem_2 = telemetry_messenger_spy.telemetries[1]
 
-    assert ALL_ZEROS_PDF in telem_1.get_data()["ransomware_attempts"][0]
-    assert telem_1.get_data()["ransomware_attempts"][1] == ""
-    assert TEST_KEYBOARD_TXT in telem_2.get_data()["ransomware_attempts"][0]
-    assert telem_2.get_data()["ransomware_attempts"][1] == ""
+    assert ALL_ZEROS_PDF in telem_1.get_data()["ransomware_attempts"][0][0]
+    assert telem_1.get_data()["ransomware_attempts"][0][1] == ""
+    assert TEST_KEYBOARD_TXT in telem_2.get_data()["ransomware_attempts"][0][0]
+    assert telem_2.get_data()["ransomware_attempts"][0][1] == ""
 
 
 def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_spy):
@@ -164,5 +149,5 @@ def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_
     ransomware_payload.run_payload()
     telem_1 = telemetry_messenger_spy.telemetries[0]
 
-    assert "/file/not/exist" in telem_1.get_data()["ransomware_attempts"][0]
-    assert "No such file or directory" in telem_1.get_data()["ransomware_attempts"][1]
+    assert "/file/not/exist" in telem_1.get_data()["ransomware_attempts"][0][0]
+    assert "No such file or directory" in telem_1.get_data()["ransomware_attempts"][0][1]
