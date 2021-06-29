@@ -27,7 +27,7 @@ RANSOMWARE = {
             "type": "object",
             "properties": {
                 "readme": {
-                    "title": "Create a README.TXT file",
+                    "title": "Create a README.txt file",
                     "type": "boolean",
                     "default": True,
                     "description": "Creates a README.txt ransomware note on infected systems.",
