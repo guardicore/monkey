@@ -55,6 +55,7 @@
 1. Build Monkey Island frontend
     - cd to 'monkey_island\cc\ui'
     - run 'npm update'
+    - run 'npm ci'  
     - run 'npm run dist'
 
 #### How to run
