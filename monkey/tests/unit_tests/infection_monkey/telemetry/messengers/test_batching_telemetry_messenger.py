@@ -122,3 +122,22 @@ def test_send_two_batches(monkeypatch, batching_telemetry_messenger, telemetry_m
 
     assert len(telemetry_messenger_spy.telemetries) == 2
     assert telemetry_messenger_spy.telemetries[1] == telem2
+
+
+def test_send_remaining_telem_after_stop(monkeypatch, telemetry_messenger_spy):
+    patch_time(monkeypatch, 0)
+    batching_telemetry_messenger = BatchingTelemetryMessenger(
+        telemetry_messenger_spy, period=PERIOD
+    )
+
+    expected_data = {"entries": [1]}
+    telem = BatchableTelemStub(1)
+
+    batching_telemetry_messenger.send_telemetry(telem)
+    release_GIL()
+
+    assert len(telemetry_messenger_spy.telemetries) == 0
+    del batching_telemetry_messenger
+
+    assert len(telemetry_messenger_spy.telemetries) == 1
+    assert telemetry_messenger_spy.telemetries[0].get_data() == expected_data

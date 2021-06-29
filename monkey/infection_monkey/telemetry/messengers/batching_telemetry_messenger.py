@@ -62,26 +62,29 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
         def _manage_telemetry_batches(self):
             self._reset()
 
-            while self._should_run_batch_thread or not self._queue.empty():
-                try:
-                    telemetry = self._queue.get(block=True, timeout=self._period / WAKES_PER_PERIOD)
-
-                    if isinstance(telemetry, IBatchableTelem):
-                        self._add_telemetry_to_batch(telemetry)
-                    else:
-                        self._telemetry_messenger.send_telemetry(telemetry)
-                except queue.Empty:
-                    pass
+            while self._should_run_batch_thread:
+                self._process_next_telemetry()
 
                 if self._period_elapsed():
                     self._send_telemetry_batches()
                     self._reset()
 
-            self._send_telemetry_batches()
+            self._send_remaining_telemetry_batches()
 
         def _reset(self):
             self._last_sent_time = time.time()
             self._telemetry_batches = {}
+
+        def _process_next_telemetry(self):
+            try:
+                telemetry = self._queue.get(block=True, timeout=self._period / WAKES_PER_PERIOD)
+
+                if isinstance(telemetry, IBatchableTelem):
+                    self._add_telemetry_to_batch(telemetry)
+                else:
+                    self._telemetry_messenger.send_telemetry(telemetry)
+            except queue.Empty:
+                pass
 
         def _add_telemetry_to_batch(self, new_telemetry: IBatchableTelem):
             telem_category = new_telemetry.telem_category
@@ -93,6 +96,12 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
 
         def _period_elapsed(self):
             return (time.time() - self._last_sent_time) > self._period
+
+        def _send_remaining_telemetry_batches(self):
+            while not self._queue.empty():
+                self._process_next_telemetry()
+
+            self._send_telemetry_batches()
 
         def _send_telemetry_batches(self):
             for batchable_telemetry in self._telemetry_batches.values():
