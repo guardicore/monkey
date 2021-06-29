@@ -17,9 +17,10 @@ files only if the user specifies a directory that contains files that are safe t
 If no directory is specified, no files will be encrypted.
 
 #### Leaving a README.txt file
-If a target directory is specified for the encryption routine, the ransomware simulation can be configured to leave a README.txt file there.
+If a target directory is specified for the encryption routine, the ransomware simulation can be configured to leave a README.txt file there. This file clearly states that there is no need to panic and only a simulation is taking place.
 
-This file clearly states that there is no need to panic and only a simulation is taking place.
+The contents of the file can be found [here](https://github.com/guardicore/monkey/tree/develop/monkey/infection_monkey/ransomware/ransomware_readme.txt).
+
 
 <!-- add config screenshot here -->
 
