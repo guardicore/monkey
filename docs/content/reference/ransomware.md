@@ -6,13 +6,20 @@ pre: '<i class="fas fa-lock"></i> '
 weight: 10
 ---
 
-The Infection Monkey has the capability of simulating a ransomware attack on your network.
+The Infection Monkey has the capability of simulating a ransomware attack on your network through a series of activities.
+
+#### Encrypting user-specified files
 All actions performed by the encryption routine are designed to be safe for production
 environments.
 
 To ensure minimum interference and easy recoverability, the ransomware simulation will encrypt
 files only if the user specifies a directory that contains files that are safe to encrypt.
 If no directory is specified, no files will be encrypted.
+
+#### Leaving a README.txt file
+If a target directory is specified for the encryption routine, the ransomware simulation can be configured to leave a README.txt file there.
+
+This file clearly states that there is no need to panic and only a simulation is taking place.
 
 <!-- add config screenshot here -->
 
