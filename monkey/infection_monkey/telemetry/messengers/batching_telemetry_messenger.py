@@ -19,7 +19,7 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
 
     def __init__(self, telemetry_messenger: ITelemetryMessenger, period=DEFAULT_PERIOD):
         self._queue: queue.Queue[ITelem] = queue.Queue()
-        self._thread = BatchingTelemetryMessenger._BatchingTelemetryMessengerThread(
+        self._thread = self._BatchingTelemetryMessengerThread(
             self._queue, telemetry_messenger, period
         )
 
@@ -32,8 +32,10 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
         self._queue.put(telemetry)
 
     class _BatchingTelemetryMessengerThread:
-        def __init__(self, queue: queue.Queue, telemetry_messenger: ITelemetryMessenger, period):
-            self._queue: queue.Queue[ITelem] = queue
+        def __init__(
+            self, telem_queue: queue.Queue, telemetry_messenger: ITelemetryMessenger, period: int
+        ):
+            self._queue: queue.Queue[ITelem] = telem_queue
             self._telemetry_messenger = telemetry_messenger
             self._period = period
 
