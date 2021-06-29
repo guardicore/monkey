@@ -138,10 +138,10 @@ def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
     telem_1 = telemetry_messenger_spy.telemetries[0]
     telem_2 = telemetry_messenger_spy.telemetries[1]
 
-    assert ALL_ZEROS_PDF in telem_1.get_data()["ransomware_attempts"][0][0]
-    assert telem_1.get_data()["ransomware_attempts"][0][1] == ""
-    assert TEST_KEYBOARD_TXT in telem_2.get_data()["ransomware_attempts"][0][0]
-    assert telem_2.get_data()["ransomware_attempts"][0][1] == ""
+    assert ALL_ZEROS_PDF in telem_1.get_data()["files"][0][0]
+    assert telem_1.get_data()["files"][0][1] == ""
+    assert TEST_KEYBOARD_TXT in telem_2.get_data()["files"][0][0]
+    assert telem_2.get_data()["files"][0][1] == ""
 
 
 def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_spy):
@@ -154,8 +154,8 @@ def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_
     ransomware_payload.run_payload()
     telem_1 = telemetry_messenger_spy.telemetries[0]
 
-    assert "/file/not/exist" in telem_1.get_data()["ransomware_attempts"][0][0]
-    assert "No such file or directory" in telem_1.get_data()["ransomware_attempts"][0][1]
+    assert "/file/not/exist" in telem_1.get_data()["files"][0][0]
+    assert "No such file or directory" in telem_1.get_data()["files"][0][1]
 
 
 def test_readme_false(ransomware_payload_config, ransomware_target, telemetry_messenger_spy):

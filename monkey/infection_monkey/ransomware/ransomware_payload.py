@@ -6,8 +6,8 @@ from typing import List, Optional, Tuple
 from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
 from infection_monkey.ransomware.file_selectors import select_production_safe_target_files
 from infection_monkey.ransomware.valid_file_extensions import VALID_FILE_EXTENSIONS_FOR_ENCRYPTION
+from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
-from infection_monkey.telemetry.ransomware_telem import RansomwareTelem
 from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ class RansomewarePayload:
         filepath.rename(new_filepath)
 
     def _send_telemetry(self, filepath: Path, error: str):
-        encryption_attempt = RansomwareTelem((str(filepath), str(error)))
+        encryption_attempt = FileEncryptionTelem((str(filepath), str(error)))
         self._telemetry_messenger.send_telemetry(encryption_attempt)
 
     def _leave_readme(self):
