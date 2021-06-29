@@ -10,10 +10,9 @@ class FileEncryptionTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
     def __init__(self, filepath: Path, success: bool, error: str):
         """
         File Encryption telemetry constructor
-        :param attempts: List of tuples with each tuple containing the path
-                         of a file it tried encrypting and its result.
-                         If ransomware fails completely - list of one tuple
-                         containing the directory path and error string.
+        :param filepath: The path to the file that monkey attempted to encrypt
+        :param success: True if encryption was successful, false otherwise
+        :param error: An error message describing the failure. Empty unless success == False
         """
         super().__init__()
 
