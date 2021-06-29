@@ -36,7 +36,7 @@ RANSOMWARE = {
             },
         },
         "other_behaviors": {
-            "title": "Other Behaviors",
+            "title": "Other behavior",
             "type": "object",
             "properties": {
                 "readme": {
