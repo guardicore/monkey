@@ -6,6 +6,7 @@ import os
 import sys
 import traceback
 from multiprocessing import freeze_support
+from pprint import pformat
 
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
@@ -76,10 +77,8 @@ def main():
             "default" % (config_file,)
         )
 
-    print(
-        "Loaded Configuration: %r"
-        % WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict())
-    )
+    formatted_config = pformat(WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()))
+    print(f"Loaded Configuration:\n{formatted_config}")
 
     # Make sure we're not in a machine that has the kill file
     kill_path = (

@@ -1,6 +1,7 @@
 import json
 import logging
 import platform
+from pprint import pformat
 from socket import gethostname
 from urllib.parse import urljoin
 
@@ -206,10 +207,10 @@ class ControlClient(object):
 
         try:
             unknown_variables = WormConfiguration.from_kv(reply.json().get("config"))
-            LOG.info(
-                "New configuration was loaded from server: %r"
-                % (WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()),)
+            formatted_config = pformat(
+                WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict())
             )
+            LOG.info(f"New configuration was loaded from server:\n{formatted_config}")
         except Exception as exc:
             # we don't continue with default conf here because it might be dangerous
             LOG.error(
