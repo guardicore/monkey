@@ -17,6 +17,7 @@ import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
+import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -411,6 +412,7 @@ class ConfigurePageComponent extends AuthComponent {
       setPbaFilenameLinux: this.setPbaFilenameLinux,
       selectedSection: this.state.selectedSection
     })
+    formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
     formProperties['formData'] = this.state.currentFormData;
     formProperties['onChange'] = this.onChange;
     formProperties['customFormats'] = formValidationFormats;
