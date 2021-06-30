@@ -1,8 +1,7 @@
 ---
-title: "Ransomware"
+title: "Ransomware Simulation"
 date: 2021-06-23T18:13:59+05:30
 draft: true
-pre: '<i class="fas fa-lock"></i> '
 weight: 10
 ---
 
