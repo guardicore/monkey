@@ -17,9 +17,11 @@ files only if the user specifies a directory that contains files that are safe t
 If no directory is specified, no files will be encrypted.
 
 #### Leaving a README.txt file
-If a target directory is specified for the encryption routine, the ransomware simulation can be configured to leave a README.txt file there. This file clearly states that there is no need to panic and only a simulation is taking place.
+Many ransomware packages leave a README.txt file on the victim machine with an explanation of what has occurred and instructions for paying the attacker. Infection Monkey can also leave a README.txt file on the victim machine in order to replicate this behavior. This can be enabled or disabled by checking the box in the configuration screen. Note that if no target directory is specified, Infection Monkey will not leave a README.txt file.
 
-The contents of the file can be found [here](https://github.com/guardicore/monkey/tree/develop/monkey/infection_monkey/ransomware/ransomware_readme.txt).
+<!-- add screenshot highlighting readme option -->
+
+The README.txt file informs the user that a ransomware simulation has taken place and that they should contact their administrator. The contents of the file can be found [here](https://github.com/guardicore/monkey/tree/develop/monkey/infection_monkey/ransomware/ransomware_readme.txt).
 
 
 <!-- add config screenshot here -->
