@@ -17,7 +17,7 @@ files only if the user specifies a directory that contains files that are safe t
 If no directory is specified, no files will be encrypted.
 
 #### Leaving a README.txt file
-Many ransomware packages leave a README.txt file on the victim machine with an explanation of what has occurred and instructions for paying the attacker. Infection Monkey can also leave a README.txt file on the victim machine in order to replicate this behavior. This can be enabled or disabled by checking the box in the configuration screen. Note that if no target directory is specified, Infection Monkey will not leave a README.txt file.
+Many ransomware packages leave a README.txt file on the victim machine with an explanation of what has occurred and instructions for paying the attacker. Infection Monkey can also leave a README.txt file in the target directory on the victim machine in order to replicate this behavior. This can be enabled or disabled by checking the box on the configuration screen. Note that if no target directory is specified for encryption, Infection Monkey will not leave a README.txt file.
 
 <!-- add screenshot highlighting readme option -->
 
