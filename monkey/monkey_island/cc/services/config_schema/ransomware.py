@@ -21,16 +21,16 @@ RANSOMWARE = {
                             "title": "Linux target directory",
                             "type": "string",
                             "default": "",
-                            "description": "A path to a directory on Linux systems that can be "
-                            "used to safely simulate the encryption behavior of ransomware. If no "
+                            "description": "A path to a directory on Linux systems that contains "
+                            "files that you will allow Infection Monkey to encrypt. If no "
                             "directory is specified, no files will be encrypted.",
                         },
                         "windows_target_dir": {
                             "title": "Windows target directory",
                             "type": "string",
                             "default": "",
-                            "description": "A path to a directory on Windows systems that can be "
-                            "used to safely simulate the encryption behavior of ransomware. If no "
+                            "description": "A path to a directory on Windows systems that contains "
+                            "files that you will allow Infection Monkey to encrypt. If no "
                             "directory is specified, no files will be encrypted.",
                         },
                     },
