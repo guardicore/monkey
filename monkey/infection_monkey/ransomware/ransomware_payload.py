@@ -6,7 +6,7 @@ from typing import List, Optional, Tuple
 
 from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
 from infection_monkey.ransomware.file_selectors import select_production_safe_target_files
-from infection_monkey.ransomware.valid_file_extensions import VALID_FILE_EXTENSIONS_FOR_ENCRYPTION
+from infection_monkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
@@ -35,7 +35,7 @@ class RansomwarePayload:
         )
 
         self._new_file_extension = EXTENSION
-        self._valid_file_extensions_for_encryption = VALID_FILE_EXTENSIONS_FOR_ENCRYPTION.copy()
+        self._valid_file_extensions_for_encryption = TARGETED_FILE_EXTENSIONS.copy()
         self._valid_file_extensions_for_encryption.discard(self._new_file_extension)
 
         self._encryptor = BitflipEncryptor(chunk_size=CHUNK_SIZE)
