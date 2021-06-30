@@ -21,17 +21,17 @@ RANSOMWARE = {
                             "title": "Linux target directory",
                             "type": "string",
                             "default": "",
-                            "description": "Files in the specified directory will be encrypted "
-                            "using bitflip. If no directory is specified, no files will be "
-                            "encrypted.",
+                            "description": "A path to a directory on Linux systems that can be "
+                            "used to safely simulate the encryption behavior of ransomware. If no "
+                            "directory is specified, no files will be encrypted.",
                         },
                         "windows_dir": {
                             "title": "Windows target directory",
                             "type": "string",
                             "default": "",
-                            "description": "Files in the specified directory will be encrypted "
-                            "using bitflip. If no directory is specified, no files will be "
-                            "encrypted.",
+                            "description": "A path to a directory on Windows systems that can be "
+                            "used to safely simulate the encryption behavior of ransomware. If no "
+                            "directory is specified, no files will be encrypted.",
                         },
                     },
                 },
