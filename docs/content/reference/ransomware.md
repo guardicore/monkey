@@ -6,7 +6,7 @@ pre: '<i class="fas fa-lock"></i> '
 weight: 10
 ---
 
-The Infection Monkey has the capability of simulating a ransomware attack on your network through a series of activities.
+The Infection Monkey is capable of simulating a ransomware attack on your network using a set of behaviors.
 
 #### Encrypting user-specified files
 All actions performed by the encryption routine are designed to be safe for production
