@@ -56,8 +56,8 @@ notify and prevent these changes from taking place.
 
 ## Which files are encrypted?
 
-All regular files with [valid
-extensions](#file-extensions-targeted-for-encryption) in the configured
+All regular files with [targeted file
+extensions](#files-targeted-for-encryption) in the configured
 directory are attempted to be encrypted during the simulation.
 
 The simulation is not recursive, i.e. it will not touch any files in
@@ -68,12 +68,10 @@ These precautions are taken to prevent the monkey from going rogue and
 accidentally encrypting files that you didn't intend to encrypt.
 
 
-## File extensions targeted for encryption
+## Files targeted for encryption
 
-Encryption attempts are only performed on regular files with the following
-extensions.
-
-This list is based on the [analysis of the Goldeneye ransomware by
+Only regular files with certain extensions are encrypted by the ransomware
+simulation. This list is based on the [analysis of the Goldeneye ransomware by
 BitDefender](https://labs.bitdefender.com/2017/07/a-technical-look-into-the-goldeneye-ransomware-attack/).
 
 - .3ds
