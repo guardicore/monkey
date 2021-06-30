@@ -7,17 +7,17 @@ weight: 10
 ---
 
 The Infection Monkey is capable of simulating a ransomware attack on your
-network using a set of behaviors.
+network using a set of configurable behaviors.
 
 ## Leaving a README.txt file
 
 Many ransomware packages leave a README.txt file on the victim machine with an
 explanation of what has occurred and instructions for paying the attacker.
-Infection Monkey can also leave a README.txt file in the target directory on
+The Infection Monkey can also leave a README.txt file in the target directory on
 the victim machine in order to replicate this behavior. This can be enabled or
 disabled by checking the box on the configuration screen. Note that if no
-target directory is specified for encryption, Infection Monkey will not leave a
-README.txt file.
+target directory is specified for encryption, the Infection Monkey will not
+leave a README.txt file.
 
 <!-- add screenshot highlighting readme option -->
 
@@ -33,21 +33,21 @@ file can be found
 ## Encryption
 
 In order to simulate the behavior of ransomware as accurately as possible,
-Infection Monkey can [encrypt user-specified files](#configuring-encryption)
+the Infection Monkey can [encrypt user-specified files](#configuring-encryption)
 using a [fully reversible algorithm](#how-are-the-files-encrypted). A number of
 mechanisms are in place to ensure that all actions performed by the encryption
 routine are safe for production environments.
 
 ### Preparing your environment for a ransomware simulation
 
-Infection Monkey will only encrypt files that you allow it to. In
-order to take full advantage of Infection Monkey's ransomware simulation, you'll
-need to provide Infection Monkey with a directory that contains files that
+The Infection Monkey will only encrypt files that you allow it to. In
+order to take full advantage of the Infection Monkey's ransomware simulation, you'll
+need to provide the Infection Monkey with a directory that contains files that
 are safe for it to encrypt. The recommended approach is to use a remote
 administration tool, such as
 [Ansible](https://docs.ansible.com/ansible/latest/user_guide/) or
 [PsExec](https://theitbros.com/using-psexec-to-run-commands-remotely/) to add a
-"ransomware target" directory to each machine in your environment. Infection
+"ransomware target" directory to each machine in your environment. The Infection
 Monkey can then be configured to encrypt files in this directory.
 
 ### Configuring encryption
@@ -79,10 +79,10 @@ from taking place.
 During the ransomware simulation, attempts will be made to encrypt all regular
 files with [targeted file extensions](#files-targeted-for-encryption) in the
 configured directory. The simulation is not recursive, i.e. it will not touch
-any files in sub-directories of the configured directory. Infection Monkey will
+any files in sub-directories of the configured directory. The Infection Monkey will
 not follow any symlinks or shortcuts.
 
-These precautions are taken to prevent Infection Monkey from accidentally
+These precautions are taken to prevent the Infection Monkey from accidentally
 encrypting files that you didn't intend to encrypt.
 
 ### Files targeted for encryption
