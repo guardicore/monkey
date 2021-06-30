@@ -9,16 +9,8 @@ weight: 10
 The Infection Monkey is capable of simulating a ransomware attack on your
 network using a set of behaviors.
 
-#### Encrypting user-specified files
-All actions performed by the encryption routine are designed to be safe for
-production environments.
+## Leaving a README.txt file
 
-To ensure minimum interference and easy recoverability, the ransomware
-simulation will encrypt files only if the user specifies a directory that
-contains files that are safe to encrypt.  If no directory is specified, no
-files will be encrypted.
-
-#### Leaving a README.txt file
 Many ransomware packages leave a README.txt file on the victim machine with an
 explanation of what has occurred and instructions for paying the attacker.
 Infection Monkey can also leave a README.txt file in the target directory on
@@ -38,37 +30,62 @@ file can be found
 <!-- add config screenshot here -->
 
 
-## How are the files encrypted?
+## Encryption
+
+In order to simulate the behavior of ransomware as accurately as possible,
+Infection Monkey can [encrypt user-specified files](#configuring-encryption)
+using a [fully reversible algorithm](#how-are-the-files-encrypted). A number of
+mechanisms are in place to ensure that all actions performed by the encryption
+routine are safe for production environments.
+
+### Preparing your environment for a ransomware simulation
+
+Infection Monkey will only encrypt files that you allow it to. In
+order to take full advantage of Infection Monkey's ransomware simulation, you'll
+need to provide Infection Monkey with a directory that contains files that
+are safe for it to encrypt. The recommended approach is to use a remote
+administration tool, such as
+[Ansible](https://docs.ansible.com/ansible/latest/user_guide/) or
+[PsExec](https://theitbros.com/using-psexec-to-run-commands-remotely/) to add a
+"ransomware target" directory to each machine in your environment. Infection
+Monkey can then be configured to encrypt files in this directory.
+
+### Configuring encryption
+
+To ensure minimum interference and easy recoverability, the ransomware
+simulation will only encrypt files contained in a user-specified directory. If
+no directory is specified, no files will be encrypted.
+
+<!-- add screenshot highlighting encryption options -->
+
+### How are the files encrypted?
 
 Files are "encrypted" in place with a simple bit flip. Encrypted files are
-renamed to have `.m0nk3y` appended to their names.
+renamed to have `.m0nk3y` appended to their names. This is a safe way to
+simulate encryption since it is easy to "decrypt" your files. You can simply
+perform a bit flip on the files again and rename them to remove the appended
+`.m0nk3y` extension.
 
-This is a safe way to simulate encryption since it is easy to "decrypt" your
-files. You can simply perform a bit flip on the files again and rename them to
-remove the appended `.m0nk3y` extension.
+Flipping a file's bits is sufficient to simulate the encryption behavior of
+ransomware, as the data in your files has been manipulated (leaving them
+temporarily unusuable). Files are then renamed with a new extension appended,
+which is similar to the way that many ransomwares behave. As this is a
+simulation, your
+security solutions should be triggered to notify you or prevent these changes
+from taking place.
 
-This is sufficient to mock a ransomware attack on your network as the data in
-your files has been manipulated (temporarily leaving them unusuable) and are
-renamed with a different extension, similar to the way that many ransomwares
-act. As this is a simulation, your security solutions should be triggered to
-notify and prevent these changes from taking place.
+### Which files are encrypted?
 
+During the ransomware simulation, attempts will be made to encrypt all regular
+files with [targeted file extensions](#files-targeted-for-encryption) in the
+configured directory. The simulation is not recursive, i.e. it will not touch
+any files in sub-directories of the configured directory. Infection Monkey will
+not follow any symlinks or shortcuts.
 
-## Which files are encrypted?
+These precautions are taken to prevent Infection Monkey from accidentally
+encrypting files that you didn't intend to encrypt.
 
-All regular files with [targeted file
-extensions](#files-targeted-for-encryption) in the configured
-directory are attempted to be encrypted during the simulation.
-
-The simulation is not recursive, i.e. it will not touch any files in
-sub-directories of the configured directory. Symlinks and shortcuts are
-ignored.
-
-These precautions are taken to prevent the monkey from going rogue and
-accidentally encrypting files that you didn't intend to encrypt.
-
-
-## Files targeted for encryption
+### Files targeted for encryption
 
 Only regular files with certain extensions are encrypted by the ransomware
 simulation. This list is based on the [analysis of the Goldeneye ransomware by
