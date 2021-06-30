@@ -1,6 +1,7 @@
 import logging
 import shutil
 from pathlib import Path
+from pprint import pformat
 from typing import List, Optional, Tuple
 
 from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
@@ -21,27 +22,17 @@ README_DEST = "README.txt"
 
 class RansomwarePayload:
     def __init__(self, config: dict, telemetry_messenger: ITelemetryMessenger):
+        LOG.debug(f"Ransomware payload configuration:\n{pformat(config)}")
+
         self._encryption_enabled = config["encryption"]["enabled"]
-        LOG.info(
-            f"Encryption routine for ransomware simulation enabled: {self._encryption_enabled}"
-        )
+        self._readme_enabled = config["other_behaviors"]["readme"]
 
         target_directories = config["encryption"]["directories"]
-        LOG.info(
-            "Windows dir configured for encryption is " + target_directories["windows_target_dir"]
-        )
-        LOG.info(
-            f"Linux dir configured for encryption is \"{target_directories['linux_target_dir']}\""
-        )
-
         self._target_dir = (
             target_directories["windows_target_dir"]
             if is_windows_os()
             else target_directories["linux_target_dir"]
         )
-
-        self._readme_enabled = config["other_behaviors"]["readme"]
-        LOG.info(f"README enabled: {self._readme_enabled}")
 
         self._new_file_extension = EXTENSION
         self._valid_file_extensions_for_encryption = VALID_FILE_EXTENSIONS_FOR_ENCRYPTION.copy()
@@ -59,6 +50,7 @@ class RansomwarePayload:
         self._leave_readme()
 
     def _find_files(self) -> List[Path]:
+        LOG.info(f"Collecting files in {self._target_dir}")
         if not self._target_dir:
             return []
 
@@ -67,6 +59,8 @@ class RansomwarePayload:
         )
 
     def _encrypt_files(self, file_list: List[Path]) -> List[Tuple[Path, Optional[Exception]]]:
+        LOG.info(f"Encrypting files in {self._target_dir}")
+
         results = []
         for filepath in file_list:
             try:
