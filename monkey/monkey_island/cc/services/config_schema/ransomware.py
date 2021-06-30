@@ -17,7 +17,7 @@ RANSOMWARE = {
                     "title": "Directories to encrypt",
                     "type": "object",
                     "properties": {
-                        "linux_dir": {
+                        "linux_target_dir": {
                             "title": "Linux target directory",
                             "type": "string",
                             "default": "",
@@ -25,7 +25,7 @@ RANSOMWARE = {
                             "used to safely simulate the encryption behavior of ransomware. If no "
                             "directory is specified, no files will be encrypted.",
                         },
-                        "windows_dir": {
+                        "windows_target_dir": {
                             "title": "Windows target directory",
                             "type": "string",
                             "default": "",

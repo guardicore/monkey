@@ -28,14 +28,16 @@ class RansomwarePayload:
 
         target_directories = config["encryption"]["directories"]
         LOG.info(
-            f"Windows dir configured for encryption is \"{target_directories['windows_dir']}\""
+            "Windows dir configured for encryption is " + target_directories["windows_target_dir"]
         )
-        LOG.info(f"Linux dir configured for encryption is \"{target_directories['linux_dir']}\"")
+        LOG.info(
+            f"Linux dir configured for encryption is \"{target_directories['linux_target_dir']}\""
+        )
 
         self._target_dir = (
-            target_directories["windows_dir"]
+            target_directories["windows_target_dir"]
             if is_windows_os()
-            else target_directories["linux_dir"]
+            else target_directories["linux_target_dir"]
         )
 
         self._readme_enabled = config["other_behaviors"]["readme"]

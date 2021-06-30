@@ -35,8 +35,8 @@ def ransomware_payload_config(ransomware_target):
         "encryption": {
             "enabled": True,
             "directories": {
-                "linux_dir": str(ransomware_target),
-                "windows_dir": str(ransomware_target),
+                "linux_target_dir": str(ransomware_target),
+                "windows_target_dir": str(ransomware_target),
             },
         },
         "other_behaviors": {"readme": False},
