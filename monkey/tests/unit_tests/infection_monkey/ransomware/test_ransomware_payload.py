@@ -32,7 +32,13 @@ def with_extension(filename):
 @pytest.fixture
 def ransomware_payload_config(ransomware_target):
     return {
-        "directories": {"linux_dir": str(ransomware_target), "windows_dir": str(ransomware_target)},
+        "encryption": {
+            "enabled": True,
+            "directories": {
+                "linux_target_dir": str(ransomware_target),
+                "windows_target_dir": str(ransomware_target),
+            },
+        },
         "other_behaviors": {"readme": False},
     }
 
@@ -125,6 +131,18 @@ def test_skip_already_encrypted_file(ransomware_target, ransomware_payload):
         hash_file(ransomware_target / ALREADY_ENCRYPTED_TXT_M0NK3Y)
         == ALREADY_ENCRYPTED_TXT_M0NK3Y_CLEARTEXT_SHA256
     )
+
+
+def test_encryption_skipped_if_configured_false(
+    ransomware_payload_config, ransomware_target, telemetry_messenger_spy
+):
+    ransomware_payload_config["encryption"]["enabled"] = False
+
+    ransomware_payload = RansomwarePayload(ransomware_payload_config, telemetry_messenger_spy)
+    ransomware_payload.run_payload()
+
+    assert hash_file(ransomware_target / ALL_ZEROS_PDF) == ALL_ZEROS_PDF_CLEARTEXT_SHA256
+    assert hash_file(ransomware_target / TEST_KEYBOARD_TXT) == TEST_KEYBOARD_TXT_CLEARTEXT_SHA256
 
 
 def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
