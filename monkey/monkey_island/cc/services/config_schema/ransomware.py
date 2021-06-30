@@ -6,7 +6,7 @@ RANSOMWARE = {
             "title": "Encryption",
             "type": "object",
             "properties": {
-                "should_encrypt": {
+                "enabled": {
                     "title": "Encrypt files",
                     "type": "boolean",
                     "default": True,

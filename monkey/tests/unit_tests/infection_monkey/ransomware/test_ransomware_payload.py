@@ -33,7 +33,7 @@ def with_extension(filename):
 def ransomware_payload_config(ransomware_target):
     return {
         "encryption": {
-            "should_encrypt": True,
+            "enabled": True,
             "directories": {
                 "linux_dir": str(ransomware_target),
                 "windows_dir": str(ransomware_target),
@@ -136,7 +136,7 @@ def test_skip_already_encrypted_file(ransomware_target, ransomware_payload):
 def test_encryption_skipped_if_configured_false(
     ransomware_payload_config, ransomware_target, telemetry_messenger_spy
 ):
-    ransomware_payload_config["encryption"]["should_encrypt"] = False
+    ransomware_payload_config["encryption"]["enabled"] = False
 
     ransomware_payload = RansomwarePayload(ransomware_payload_config, telemetry_messenger_spy)
     ransomware_payload.run_payload()
