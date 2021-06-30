@@ -71,6 +71,13 @@ export default function UiSchema(props) {
         }
       }
     },
+    ransomware: {
+      encryption: {
+        directories: {
+            // Directory inputs are dynamically hidden
+        }
+      }
+    },
     internal: {
       general: {
         started_on_island: {'ui:widget': 'hidden'}

@@ -16,6 +16,7 @@ import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptions
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
+import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -27,7 +28,6 @@ class ConfigurePageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.currentSection = 'attack';
-    this.currentFormData = {};
     this.initialConfig = {};
     this.initialAttackConfig = {};
     this.sectionsOrder = ['attack', 'basic', 'basic_network', 'ransomware', 'monkey', 'internal'];
@@ -35,6 +35,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.state = {
       attackConfig: {},
       configuration: {},
+      currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
       schema: {},
@@ -213,14 +214,15 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onChange = ({formData}) => {
-    this.currentFormData = formData;
+    let configuration = this.state.configuration;
+    configuration[this.state.selectedSection] = formData;
+    this.setState({currentFormData: formData, configuration: configuration});
   };
 
   updateConfigSection = () => {
     let newConfig = this.state.configuration;
-    if (Object.keys(this.currentFormData).length > 0) {
-      newConfig[this.currentSection] = this.currentFormData;
-      this.currentFormData = {};
+    if (Object.keys(this.state.currentFormData).length > 0) {
+      newConfig[this.currentSection] = this.state.currentFormData;
     }
     this.setState({configuration: newConfig, lastAction: 'none'});
   };
@@ -295,8 +297,8 @@ class ConfigurePageComponent extends AuthComponent {
 
   userChangedConfig() {
     if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
-      if (Object.keys(this.currentFormData).length === 0 ||
-        JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.currentFormData)) {
+      if (Object.keys(this.state.currentFormData).length === 0 ||
+        JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
         return false;
       }
     }
@@ -316,7 +318,8 @@ class ConfigurePageComponent extends AuthComponent {
     this.updateConfigSection();
     this.currentSection = key;
     this.setState({
-      selectedSection: key
+      selectedSection: key,
+      currentFormData: this.state.configuration[key]
     });
   };
 
@@ -332,7 +335,8 @@ class ConfigurePageComponent extends AuthComponent {
           this.setState({
             lastAction: 'reset',
             schema: res.schema,
-            configuration: res.configuration
+            configuration: res.configuration,
+            currentFormData: res.configuration[this.state.selectedSection]
           });
           this.setInitialConfig(res.configuration);
           this.props.onStatusChange();
@@ -407,12 +411,16 @@ class ConfigurePageComponent extends AuthComponent {
       setPbaFilenameLinux: this.setPbaFilenameLinux,
       selectedSection: this.state.selectedSection
     })
-    formProperties['formData'] = this.state.configuration[this.state.selectedSection];
+    formProperties['formData'] = this.state.currentFormData;
     formProperties['onChange'] = this.onChange;
     formProperties['customFormats'] = formValidationFormats;
     formProperties['transformErrors'] = transformErrors;
     formProperties['className'] = 'config-form';
     formProperties['liveValidate'] = true;
+
+    applyUiSchemaManipulators(this.state.selectedSection,
+                              formProperties['formData'],
+                              formProperties['uiSchema']);
 
     if (this.state.selectedSection === 'internal') {
       return (<InternalConfig {...formProperties}/>)
