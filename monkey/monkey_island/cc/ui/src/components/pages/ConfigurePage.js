@@ -16,6 +16,7 @@ import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptions
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
+import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -416,6 +417,10 @@ class ConfigurePageComponent extends AuthComponent {
     formProperties['transformErrors'] = transformErrors;
     formProperties['className'] = 'config-form';
     formProperties['liveValidate'] = true;
+
+    applyUiSchemaManipulators(this.state.selectedSection,
+                              formProperties['formData'],
+                              formProperties['uiSchema']);
 
     if (this.state.selectedSection === 'internal') {
       return (<InternalConfig {...formProperties}/>)
