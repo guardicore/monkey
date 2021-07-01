@@ -1,3 +1,5 @@
+from common.common_consts.validation_formats import VALID_DIR_LINUX, VALID_DIR_WINDOWS
+
 RANSOMWARE = {
     "title": "Ransomware",
     "type": "object",
@@ -20,6 +22,7 @@ RANSOMWARE = {
                         "linux_target_dir": {
                             "title": "Linux target directory",
                             "type": "string",
+                            "format": VALID_DIR_LINUX,
                             "default": "",
                             "description": "A path to a directory on Linux systems that contains "
                             "files that you will allow Infection Monkey to encrypt. If no "
@@ -28,6 +31,7 @@ RANSOMWARE = {
                         "windows_target_dir": {
                             "title": "Windows target directory",
                             "type": "string",
+                            "format": VALID_DIR_WINDOWS,
                             "default": "",
                             "description": "A path to a directory on Windows systems that contains "
                             "files that you will allow Infection Monkey to encrypt. If no "
