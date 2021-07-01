@@ -1,13 +1,22 @@
 const ipRegex = '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
 const cidrNotationRegex = '([0-9]|1[0-9]|2[0-9]|3[0-2])'
 const hostnameRegex = '^([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*.?)*([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*)$'
+// path starts with `/` OR `$`
+const linuxDirRegex = '^/|\\$'
+// path starts like `C:\` OR `C:/` OR `$` OR `%abc%`
+const windowsDirRegex = '^([A-Za-z]:(\\\\|\\/))|\\$|(%\\w*\\d*\\s*%)'
+
 
 export const IP_RANGE = 'ip-range';
 export const IP = 'ip';
+export const VALID_DIR_LINUX = 'valid-directory-linux'
+export const VALID_DIR_WINDOWS = 'valid-directory-windows'
 
 export const formValidationFormats = {
   [IP_RANGE]: buildIpRangeRegex(),
-  [IP]: buildIpRegex()
+  [IP]: buildIpRegex(),
+  [VALID_DIR_LINUX]: buildValidDirLinuxRegex(),
+  [VALID_DIR_WINDOWS]: buildValidDirWindowsRegex()
 };
 
 function buildIpRangeRegex(){
@@ -21,4 +30,12 @@ function buildIpRangeRegex(){
 
 function buildIpRegex(){
   return new RegExp('^'+ipRegex+'$')
+}
+
+function buildValidDirLinuxRegex() {
+  return new RegExp(linuxDirRegex)
+}
+
+function buildValidDirWindowsRegex() {
+  return new RegExp(windowsDirRegex)
 }
