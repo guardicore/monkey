@@ -1,22 +1,26 @@
 const ipRegex = '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
 const cidrNotationRegex = '([0-9]|1[0-9]|2[0-9]|3[0-2])'
 const hostnameRegex = '^([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*.?)*([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*)$'
-// path is empty, or starts with `/` OR `$`
-const linuxDirRegex = '(^\\s*$)|^/|^\\$'
-// path is empty, or starts like `C:\` OR `C:/` OR `$` OR `%abc%`
-const windowsDirRegex = '(^\\s*$)|^([A-Za-z]:(\\\\|\\/))|^\\$|^(%\\w*\\d*\\s*%)'
+
+const linuxAbsolutePathRegex = '^/' // path starts with `/`
+const linuxPathStartsWithEnvVariableRegex = '^\\$' // path starts with `$`
+
+const windowsAbsolutePathRegex = '^([A-Za-z]:(\\\\|\\/))' // path starts like `C:\` OR `C:/`
+const windowsPathStartsWithEnvVariableRegex = '^\\$|^(%\\w*\\d*\\s*%)' // path starts like `$` OR `%abc%`
+
+const whitespacesOnlyRegex = '^\\s*$'
 
 
 export const IP_RANGE = 'ip-range';
 export const IP = 'ip';
-export const VALID_DIR_LINUX = 'valid-directory-linux'
-export const VALID_DIR_WINDOWS = 'valid-directory-windows'
+export const VALID_RANSOMWARE_TARGET_PATH_LINUX = 'valid-ransomware-target-path-linux'
+export const VALID_RANSOMWARE_TARGET_PATH_WINDOWS = 'valid-ransomware-target-path-windows'
 
 export const formValidationFormats = {
   [IP_RANGE]: buildIpRangeRegex(),
   [IP]: buildIpRegex(),
-  [VALID_DIR_LINUX]: buildValidDirLinuxRegex(),
-  [VALID_DIR_WINDOWS]: buildValidDirWindowsRegex()
+  [VALID_RANSOMWARE_TARGET_PATH_LINUX]: buildValidRansomwarePathLinuxRegex(),
+  [VALID_RANSOMWARE_TARGET_PATH_WINDOWS]: buildValidRansomwarePathWindowsRegex()
 };
 
 function buildIpRangeRegex(){
@@ -32,10 +36,18 @@ function buildIpRegex(){
   return new RegExp('^'+ipRegex+'$')
 }
 
-function buildValidDirLinuxRegex() {
-  return new RegExp(linuxDirRegex)
+function buildValidRansomwarePathLinuxRegex() {
+  return new RegExp([
+    whitespacesOnlyRegex,
+    linuxAbsolutePathRegex,
+    linuxPathStartsWithEnvVariableRegex
+  ].join('|'))
 }
 
-function buildValidDirWindowsRegex() {
-  return new RegExp(windowsDirRegex)
+function buildValidRansomwarePathWindowsRegex() {
+  return new RegExp([
+    whitespacesOnlyRegex,
+    windowsAbsolutePathRegex,
+    windowsPathStartsWithEnvVariableRegex
+  ].join('|'))
 }

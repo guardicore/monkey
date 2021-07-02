@@ -1,5 +1,5 @@
 # Defined in UI on ValidationFormats.js
 IP_RANGE = "ip-range"
 IP = "ip"
-VALID_DIR_LINUX = "valid-directory-linux"
-VALID_DIR_WINDOWS = "valid-directory-windows"
+VALID_RANSOMWARE_TARGET_PATH_LINUX = "valid-ransomware-target-path-linux"
+VALID_RANSOMWARE_TARGET_PATH_WINDOWS = "valid-ransomware-target-path-windows"
