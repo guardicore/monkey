@@ -171,6 +171,9 @@ class AppComponent extends AuthComponent {
             {this.renderRoute('/report/zeroTrust',
               <StandardLayoutComponent component={ReportPage}
                                        completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute('/report/ransomware',
+              <StandardLayoutComponent component={ReportPage}
+                                       completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/license',
               <StandardLayoutComponent component={LicensePage}
                                        onStatusChange={this.updateStatus}
