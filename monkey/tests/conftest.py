@@ -11,10 +11,3 @@ sys.path.insert(0, MONKEY_BASE_PATH)
 @pytest.fixture(scope="session")
 def data_for_tests_dir(pytestconfig):
     return os.path.join(pytestconfig.rootdir, "monkey", "tests", "data_for_tests")
-
-
-@pytest.fixture
-def mock_home_env(monkeypatch, tmpdir):
-    monkeypatch.setenv("HOME", str(tmpdir))
-
-    return tmpdir
