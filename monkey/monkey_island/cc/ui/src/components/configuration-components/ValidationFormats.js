@@ -2,9 +2,9 @@ const ipRegex = '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0
 const cidrNotationRegex = '([0-9]|1[0-9]|2[0-9]|3[0-2])'
 const hostnameRegex = '^([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*.?)*([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*)$'
 // path starts with `/` OR `$`
-const linuxDirRegex = '^/|\\$'
+const linuxDirRegex = '^/|^\\$'
 // path starts like `C:\` OR `C:/` OR `$` OR `%abc%`
-const windowsDirRegex = '^([A-Za-z]:(\\\\|\\/))|\\$|(%\\w*\\d*\\s*%)'
+const windowsDirRegex = '^([A-Za-z]:(\\\\|\\/))|^\\$|^(%\\w*\\d*\\s*%)'
 
 
 export const IP_RANGE = 'ip-range';
