@@ -1,4 +1,5 @@
 import logging
+import os
 import shutil
 from pathlib import Path
 from pprint import pformat
@@ -55,7 +56,7 @@ class RansomwarePayload:
             return []
 
         return select_production_safe_target_files(
-            Path(self._target_dir), self._valid_file_extensions_for_encryption
+            Path(os.path.expandvars(self._target_dir)), self._valid_file_extensions_for_encryption
         )
 
     def _encrypt_files(self, file_list: List[Path]) -> List[Tuple[Path, Optional[Exception]]]:
@@ -84,7 +85,7 @@ class RansomwarePayload:
 
     def _leave_readme(self):
         if self._readme_enabled:
-            readme_dest_path = Path(self._target_dir) / README_DEST
+            readme_dest_path = Path(os.path.expandvars(self._target_dir)) / README_DEST
             LOG.info(f"Leaving a ransomware README file at {readme_dest_path}")
 
             try:
