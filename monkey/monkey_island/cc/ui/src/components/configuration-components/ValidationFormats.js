@@ -12,8 +12,8 @@ const windowsAbsolutePathRegex = /^([A-Za-z]:(\\|\/))/ // path starts like `C:\`
 const windowsEnvVarNonNumeric = '[A-Za-z#\\$\'\\(\\)\\*\\+,-\\.\\?@\\[\\]_`\\{\\}~+ ]'
 const windowsPathStartsWithEnvVariableRegex = new RegExp(
 	`^%(${windowsEnvVarNonNumeric}+(${windowsEnvVarNonNumeric}|\\d)*)%`
-);// path starts like `$` OR `%abc%`
-
+) // path starts like `$` OR `%abc%`
+const windowsUncPathRegex = /^\\{2}/ // Path starts like `\\`
 const emptyRegex = /^$/
 
 
@@ -55,6 +55,7 @@ function buildValidRansomwarePathWindowsRegex() {
   return new RegExp([
 		emptyRegex.source,
     windowsAbsolutePathRegex.source,
-    windowsPathStartsWithEnvVariableRegex.source
+    windowsPathStartsWithEnvVariableRegex.source,
+    windowsUncPathRegex.source
   ].join('|'))
 }
