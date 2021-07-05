@@ -1,6 +1,13 @@
 RANSOMWARE = {
     "title": "Ransomware",
     "type": "object",
+    "description": "This page allows you to configure the Infection Monkey to execute a ransomware "
+    "simulation. The Infection Monkey is capable of simulating a ransomware attack on your network "
+    "using a set of configurable behaviors. A number of precautions have been taken to ensure that "
+    "this ransomware simulation is safe for production environments.\n\nFor more information about "
+    "configuring the ransomware simulation, see "
+    '<a href="https://guardicore.com/infectionmonkey/docs/usage/use-cases/ransomware-simulation" '
+    'target="_blank"> the documentation</a>.',
     "properties": {
         "encryption": {
             "title": "Encryption",
