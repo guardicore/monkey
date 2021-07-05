@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Scripts to build an AppImage for Monkey Island. #1069, #1090, #1136
 - `log_level` option to server config. #1151
 - A ransomware simulation payload. #1238
+- The capability for a user to specify their own SSL certificate. #1208
 
 ### Changed
 - server_config.json can be selected at runtime. #963
@@ -37,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   structure of unit tests and unit test infrastructure. #1178
 - MongoDb now gets launched by the Island via python. #1148
 - Create/check data directory on Island init. #1170
+- The formatting of some log messages to make them more readable. #1283
 
 ### Removed
 - Relevant dead code as reported by Vulture. #1149
@@ -50,3 +52,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Address minor issues discovered by Dlint. #1075
 - Generate random passwords when creating a new user (create user PBA, ms08_67 exploit). #1174
 - Implemented configuration encryption/decryption. #1189, #1204
+- Create local custom PBA directory with secure permissions. #1270
+- Create encryption key file for MongoDB with secure permissions. #1232
