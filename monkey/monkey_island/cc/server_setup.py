@@ -1,3 +1,4 @@
+import atexit
 import json
 import logging
 import sys
@@ -5,6 +6,7 @@ from pathlib import Path
 from threading import Thread
 from typing import Tuple
 
+import gevent.hub
 from gevent.pywsgi import WSGIServer
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with
@@ -21,12 +23,14 @@ from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
+from monkey_island.cc.server_utils.consts import GEVENT_EXCEPTION_LOG  # noqa: E402
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
+from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
@@ -54,6 +58,7 @@ def run_monkey_island():
 
     connect_to_mongodb()
 
+    _configure_gevent_exception_handling(Path(config_options.data_dir))
     _start_island_server(island_args.setup_only, config_options)
 
 
@@ -86,6 +91,18 @@ def _initialize_globals(config_options: IslandConfigOptions, server_config_path:
 
     initialize_encryptor(config_options.data_dir)
     initialize_services(config_options.data_dir)
+
+
+def _configure_gevent_exception_handling(data_dir):
+    hub = gevent.hub.get_hub()
+
+    gevent_exception_log = open(data_dir / GEVENT_EXCEPTION_LOG, "w+", buffering=1)
+    atexit.register(gevent_exception_log.close)
+
+    # Send gevent's exception output to a log file.
+    # https://www.gevent.org/api/gevent.hub.html#gevent.hub.Hub.exception_stream
+    hub.exception_stream = gevent_exception_log
+    hub.handle_error = GeventHubErrorHandler(hub, logger)
 
 
 def _start_island_server(should_setup_only, config_options: IslandConfigOptions):
