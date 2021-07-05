@@ -26,8 +26,7 @@ class ReportPageComponent extends AuthComponent {
       selectedSection: ReportPageComponent.selectReport(this.sectionsOrder),
       sections: [{key: 'security', title: 'Security report'},
         {key: 'zeroTrust', title: 'Zero trust report'},
-        {key: 'attack', title: 'ATT&CK report'},
-        {key: 'ransomware', title: 'Ransomware report'}]
+        {key: 'attack', title: 'ATT&CK report'}]
     };
   }
 
@@ -60,8 +59,8 @@ class ReportPageComponent extends AuthComponent {
         this.setState({zeroTrustReport: ztReport})
       });
       this.setState({
-        ransomwareReport: {'report': ''}
-      });
+        ransomwareReport: {'report': '',
+                           'show': true}})
       // this.authFetch('/api/report/ransomware')
       //   .then(res => res.json())
       //   .then(res => {
@@ -69,6 +68,9 @@ class ReportPageComponent extends AuthComponent {
       //       ransomwareReport: res
       //     });
       //   });
+      if (this.state.ransomwareReport['show'] === true) {
+        this.state.sections.push({key: 'ransomware', title: 'Ransomware report'})
+      }
     }
   }
 
