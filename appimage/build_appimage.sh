@@ -17,7 +17,7 @@ MONKEY_ORIGIN_URL="https://github.com/guardicore/monkey.git"
 CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
 NODE_SRC=https://deb.nodesource.com/setup_12.x
 APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
-PYTHON_VERSION="3.7.10"
+PYTHON_VERSION="3.7.11"
 PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
 
 exit_if_missing_argument() {
