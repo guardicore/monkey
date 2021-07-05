@@ -1,5 +1,4 @@
 import logging
-import shlex
 import shutil
 import subprocess
 import sys
@@ -8,8 +7,10 @@ import time
 import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
-from infection_monkey.exploit.tools.helpers import build_monkey_commandline_explicitly
-from infection_monkey.model import MONKEY_CMDLINE_WINDOWS
+from infection_monkey.utils.commands import (
+    build_monkey_commandline_explicitly,
+    get_monkey_commandline_windows,
+)
 from infection_monkey.utils.environment import is_64bit_python, is_64bit_windows_os, is_windows_os
 
 __author__ = "itay.mizeretz"
@@ -46,20 +47,12 @@ class WindowsUpgrader(object):
             opts.parent, opts.tunnel, opts.server, opts.depth
         )
 
-        # TODO: Replace all of this string templating with a function that accepts
-        #       the necessary parameters and returns a list of arguments.
-        monkey_cmdline = (
-            MONKEY_CMDLINE_WINDOWS % {"monkey_path": WormConfiguration.dropper_target_path_win_64}
-            + monkey_options
-        )
-
-        monkey_cmdline_split = shlex.split(
-            monkey_cmdline,
-            posix=False,  # won't try resolving "\" in paths as part of escape sequences
+        monkey_cmdline = get_monkey_commandline_windows(
+            WormConfiguration.dropper_target_path_win_64, monkey_options
         )
 
         monkey_process = subprocess.Popen(
-            monkey_cmdline_split,
+            monkey_cmdline,
             stdin=None,
             stdout=None,
             stderr=None,
@@ -70,7 +63,7 @@ class WindowsUpgrader(object):
         LOG.info(
             "Executed 64bit monkey process (PID=%d) with command line: %s",
             monkey_process.pid,
-            monkey_cmdline,
+            " ".join(monkey_cmdline),
         )
 
         time.sleep(WindowsUpgrader.__UPGRADE_WAIT_TIME__)
