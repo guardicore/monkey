@@ -4,6 +4,7 @@ const hostnameRegex = '^([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*.?)*([A-Za-z0-9]*[A-Za
 
 const linuxAbsolutePathRegex = '^/' // path starts with `/`
 const linuxPathStartsWithEnvVariableRegex = '^\\$' // path starts with `$`
+const linuxPathStartsWithTilde = '^~' // path starts with `~`
 
 const windowsAbsolutePathRegex = '^([A-Za-z]:(\\\\|\\/))' // path starts like `C:\` OR `C:/`
 const windowsPathStartsWithEnvVariableRegex = '^\\$|^(%\\w*\\d*\\s*%)' // path starts like `$` OR `%abc%`
@@ -40,7 +41,8 @@ function buildValidRansomwarePathLinuxRegex() {
   return new RegExp([
     whitespacesOnlyRegex,
     linuxAbsolutePathRegex,
-    linuxPathStartsWithEnvVariableRegex
+    linuxPathStartsWithEnvVariableRegex,
+    linuxPathStartsWithTilde
   ].join('|'))
 }
 
