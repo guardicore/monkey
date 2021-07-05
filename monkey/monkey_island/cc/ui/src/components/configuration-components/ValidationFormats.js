@@ -2,14 +2,19 @@ const ipRegex = '((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0
 const cidrNotationRegex = '([0-9]|1[0-9]|2[0-9]|3[0-2])'
 const hostnameRegex = '^([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*.?)*([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*)$'
 
-const linuxAbsolutePathRegex = '^/' // path starts with `/`
-const linuxPathStartsWithEnvVariableRegex = '^\\$' // path starts with `$`
-const linuxPathStartsWithTilde = '^~' // path starts with `~`
 
-const windowsAbsolutePathRegex = '^([A-Za-z]:(\\\\|\\/))' // path starts like `C:\` OR `C:/`
-const windowsPathStartsWithEnvVariableRegex = '^\\$|^(%\\w*\\d*\\s*%)' // path starts like `$` OR `%abc%`
+const linuxAbsolutePathRegex = /^\// // path starts with `/`
+const linuxPathStartsWithEnvVariableRegex = /^\$/ // path starts with `$`
+const linuxPathStartsWithTildeRegex = /^~/ // path starts with `~`
 
-const whitespacesOnlyRegex = '^\\s*$'
+
+const windowsAbsolutePathRegex = /^([A-Za-z]:(\\|\/))/ // path starts like `C:\` OR `C:/`
+const windowsEnvVarNonNumeric = '[A-Za-z#\\$\'\\(\\)\\*\\+,-\\.\\?@\\[\\]_`\\{\\}~+ ]'
+const windowsPathStartsWithEnvVariableRegex = new RegExp(
+	`^\\$|^%(${windowsEnvVarNonNumeric}+(${windowsEnvVarNonNumeric}|\\d)*)%`
+);// path starts like `$` OR `%abc%`
+
+const emptyRegex = /^$/
 
 
 export const IP_RANGE = 'ip-range';
@@ -39,17 +44,17 @@ function buildIpRegex(){
 
 function buildValidRansomwarePathLinuxRegex() {
   return new RegExp([
-    whitespacesOnlyRegex,
-    linuxAbsolutePathRegex,
-    linuxPathStartsWithEnvVariableRegex,
-    linuxPathStartsWithTilde
+		emptyRegex.source,
+    linuxAbsolutePathRegex.source,
+    linuxPathStartsWithEnvVariableRegex.source,
+    linuxPathStartsWithTildeRegex.source
   ].join('|'))
 }
 
 function buildValidRansomwarePathWindowsRegex() {
   return new RegExp([
-    whitespacesOnlyRegex,
-    windowsAbsolutePathRegex,
-    windowsPathStartsWithEnvVariableRegex
+		emptyRegex.source,
+    windowsAbsolutePathRegex.source,
+    windowsPathStartsWithEnvVariableRegex.source
   ].join('|'))
 }
