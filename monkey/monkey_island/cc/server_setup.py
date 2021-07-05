@@ -117,6 +117,8 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
             app,
             certfile=config_options.crt_path,
             keyfile=config_options.key_path,
+            log=logger,
+            error_log=logger,
         )
         _log_init_info()
         http_server.serve_forever()
