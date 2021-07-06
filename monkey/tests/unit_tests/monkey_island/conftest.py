@@ -10,13 +10,6 @@ def server_configs_dir(data_for_tests_dir):
 
 
 @pytest.fixture
-def patched_home_env(monkeypatch, tmpdir):
-    monkeypatch.setenv("HOME", str(tmpdir))
-
-    return tmpdir
-
-
-@pytest.fixture
 def create_empty_tmp_file(tmpdir: str) -> Callable:
     def inner(file_name: str):
         new_file = os.path.join(tmpdir, file_name)
