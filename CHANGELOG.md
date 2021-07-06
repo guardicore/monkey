@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `log_level` option to server config. #1151
 - A ransomware simulation payload. #1238
 - The capability for a user to specify their own SSL certificate. #1208
+- API endpoint for ransomware report. #1297
 
 ### Changed
 - server_config.json can be selected at runtime. #963

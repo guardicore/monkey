@@ -38,6 +38,7 @@ from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
+from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
@@ -149,6 +150,7 @@ def init_api_resources(api):
     api.add_resource(SecurityReport, "/api/report/security")
     api.add_resource(ZeroTrustReport, "/api/report/zero-trust/<string:report_data>")
     api.add_resource(AttackReport, "/api/report/attack")
+    api.add_resource(RansomwareReport, "/api/report/ransomware")
 
     api.add_resource(ZeroTrustFindingEvent, "/api/zero-trust/finding-event/<string:finding_id>")
     api.add_resource(TelemetryFeed, "/api/telemetry-feed", "/api/telemetry-feed/")
