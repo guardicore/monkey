@@ -59,8 +59,7 @@ class ReportPageComponent extends AuthComponent {
         this.setState({zeroTrustReport: ztReport})
       });
       this.setState({
-        ransomwareReport: {'report': '',
-                           'show': true}})
+        ransomwareReport: {'report': ''}})
       // this.authFetch('/api/report/ransomware')
       //   .then(res => res.json())
       //   .then(res => {
@@ -68,7 +67,7 @@ class ReportPageComponent extends AuthComponent {
       //       ransomwareReport: res
       //     });
       //   });
-      if (this.state.ransomwareReport['show'] === true) {
+      if (this.shouldShowRansomwareReport(this.state.ransomwareReport)) {
         this.state.sections.push({key: 'ransomware', title: 'Ransomware report'})
       }
     }
@@ -98,6 +97,12 @@ class ReportPageComponent extends AuthComponent {
       });
     return ztReport
   };
+
+  shouldShowRansomwareReport(report) { // TODO: Add proper check
+    if (report) {
+      return true;
+    }
+  }
 
   componentWillUnmount() {
     clearInterval(this.state.ztReportRefreshInterval);
