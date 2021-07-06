@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Scripts to build an AppImage for Monkey Island. #1069, #1090, #1136
 - `log_level` option to server config. #1151
 - A ransomware simulation payload. #1238
+- API endpoint for ransomware report. #1297
 
 ### Changed
 - server_config.json can be selected at runtime. #963
