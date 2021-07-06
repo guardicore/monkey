@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 from infection_monkey.telemetry.batchable_telem_mixin import BatchableTelemMixin
@@ -5,7 +7,7 @@ from infection_monkey.telemetry.i_batchable_telem import IBatchableTelem
 
 
 class FileEncryptionTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
-    def __init__(self, filepath: str, success: bool, error: str):
+    def __init__(self, filepath: Path, success: bool, error: str):
         """
         File Encryption telemetry constructor
         :param filepath: The path to the file that monkey attempted to encrypt
