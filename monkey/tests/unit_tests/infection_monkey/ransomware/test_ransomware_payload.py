@@ -48,6 +48,24 @@ def ransomware_payload(ransomware_payload_config, telemetry_messenger_spy):
     return RansomwarePayload(ransomware_payload_config, telemetry_messenger_spy)
 
 
+def test_env_variables_in_target_dir_resolved_linux(
+    ransomware_payload_config, ransomware_target, telemetry_messenger_spy, patched_home_env
+):
+    path_with_env_variable = "$HOME/ransomware_target"
+
+    ransomware_payload_config["encryption"]["directories"][
+        "linux_target_dir"
+    ] = ransomware_payload_config["encryption"]["directories"][
+        "windows_target_dir"
+    ] = path_with_env_variable
+    RansomwarePayload(ransomware_payload_config, telemetry_messenger_spy).run_payload()
+
+    assert (
+        hash_file(ransomware_target / with_extension(ALL_ZEROS_PDF))
+        == ALL_ZEROS_PDF_ENCRYPTED_SHA256
+    )
+
+
 def test_file_with_excluded_extension_not_encrypted(ransomware_target, ransomware_payload):
     ransomware_payload.run_payload()
 

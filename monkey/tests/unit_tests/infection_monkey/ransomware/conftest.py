@@ -5,6 +5,13 @@ import pytest
 
 
 @pytest.fixture
+def patched_home_env(monkeypatch, tmp_path):
+    monkeypatch.setenv("HOME", str(tmp_path))
+
+    return tmp_path
+
+
+@pytest.fixture
 def ransomware_target(tmp_path, data_for_tests_dir):
     ransomware_test_data = Path(data_for_tests_dir) / "ransomware_targets"
     ransomware_target = tmp_path / "ransomware_target"

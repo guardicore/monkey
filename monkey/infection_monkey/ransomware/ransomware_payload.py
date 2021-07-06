@@ -4,6 +4,7 @@ from pathlib import Path
 from pprint import pformat
 from typing import List, Optional, Tuple
 
+from common.utils.file_utils import expand_path
 from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
 from infection_monkey.ransomware.file_selectors import select_production_safe_target_files
 from infection_monkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
@@ -28,10 +29,12 @@ class RansomwarePayload:
         self._readme_enabled = config["other_behaviors"]["readme"]
 
         target_directories = config["encryption"]["directories"]
-        self._target_dir = (
-            target_directories["windows_target_dir"]
-            if is_windows_os()
-            else target_directories["linux_target_dir"]
+        self._target_dir = Path(
+            expand_path(
+                target_directories["windows_target_dir"]
+                if is_windows_os()
+                else target_directories["linux_target_dir"]
+            )
         )
 
         self._new_file_extension = EXTENSION
@@ -55,7 +58,7 @@ class RansomwarePayload:
             return []
 
         return select_production_safe_target_files(
-            Path(self._target_dir), self._valid_file_extensions_for_encryption
+            self._target_dir, self._valid_file_extensions_for_encryption
         )
 
     def _encrypt_files(self, file_list: List[Path]) -> List[Tuple[Path, Optional[Exception]]]:
@@ -84,7 +87,7 @@ class RansomwarePayload:
 
     def _leave_readme(self):
         if self._readme_enabled:
-            readme_dest_path = Path(self._target_dir) / README_DEST
+            readme_dest_path = self._target_dir / README_DEST
             LOG.info(f"Leaving a ransomware README file at {readme_dest_path}")
 
             try:

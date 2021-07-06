@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from monkey_island.cc.server_utils import file_utils
+from common.utils.file_utils import expand_path
 from monkey_island.cc.server_utils.file_utils import is_windows_os
 
 __author__ = "itay.mizeretz"
@@ -26,7 +26,7 @@ SERVER_CONFIG_FILENAME = "server_config.json"
 
 MONKEY_ISLAND_ABS_PATH = _get_monkey_island_abs_path()
 
-DEFAULT_DATA_DIR = file_utils.expand_path(get_default_data_dir())
+DEFAULT_DATA_DIR = expand_path(get_default_data_dir())
 
 DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 60 * 5
 
@@ -37,7 +37,7 @@ MONGO_EXECUTABLE_PATH = (
     _MONGO_EXECUTABLE_PATH_WIN if is_windows_os() else _MONGO_EXECUTABLE_PATH_LINUX
 )
 
-DEFAULT_SERVER_CONFIG_PATH = file_utils.expand_path(
+DEFAULT_SERVER_CONFIG_PATH = expand_path(
     os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", SERVER_CONFIG_FILENAME)
 )
 

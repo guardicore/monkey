@@ -20,10 +20,6 @@ if is_windows_os():
     import monkey_island.cc.server_utils.windows_permissions as windows_permissions
 
 
-def expand_path(path: str) -> str:
-    return os.path.expandvars(os.path.expanduser(path))
-
-
 def create_secure_directory(path: str):
     if not os.path.isdir(path):
         if is_windows_os():
