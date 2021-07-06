@@ -4,9 +4,9 @@ import {Col, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarning';
 import AttackReport from '../report-components/AttackReport';
-import RansomwareReport from '../report-components/RansomwareReport';
 import SecurityReport from '../report-components/SecurityReport';
 import ZeroTrustReport from '../report-components/ZeroTrustReport';
+import RansomwareReport from '../report-components/RansomwareReport';
 import {extractExecutionStatusFromServerResponse} from '../report-components/common/ExecutionStatus';
 import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
 
