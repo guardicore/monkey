@@ -4,16 +4,8 @@ import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 
 class RansomwareReport extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-        report: props.report
-    };
-  }
-
   stillLoadingDataFromServer() {
-    return Object.keys(this.state.report).length === 0;
+    return Object.keys(this.props.report).length === 0;
   }
 
   generateReportContent() {
