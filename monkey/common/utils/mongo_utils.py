@@ -4,8 +4,6 @@ if sys.platform == "win32":
     import win32com
     import wmi
 
-__author__ = "maor.rayzin"
-
 
 class MongoUtils:
     def __init__(self):

@@ -24,8 +24,6 @@ from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
 from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 
-__author__ = "hoffer"
-
 requests.packages.urllib3.disable_warnings()
 
 LOG = logging.getLogger(__name__)

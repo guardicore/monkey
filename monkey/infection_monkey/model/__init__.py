@@ -1,7 +1,5 @@
 from infection_monkey.model.host import VictimHost  # noqa: F401
 
-__author__ = "itamar"
-
 MONKEY_ARG = "m0nk3y"
 DROPPER_ARG = "dr0pp3r"
 ID_STRING = "M0NK3Y3XPL0ITABLE"

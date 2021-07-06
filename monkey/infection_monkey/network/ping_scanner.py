@@ -8,8 +8,6 @@ import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.HostScanner import HostScanner
 
-__author__ = "itamar"
-
 PING_COUNT_FLAG = "-n" if "win32" == sys.platform else "-c"
 PING_TIMEOUT_FLAG = "-w" if "win32" == sys.platform else "-W"
 TTL_REGEX_STR = r"(?<=TTL\=)[0-9]+"

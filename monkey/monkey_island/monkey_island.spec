@@ -3,7 +3,7 @@ import os
 import platform
 import sys
 
-__author__ = 'itay.mizeretz'
+
 
 block_cipher = None
 

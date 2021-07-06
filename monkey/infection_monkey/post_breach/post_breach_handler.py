@@ -6,8 +6,6 @@ from infection_monkey.post_breach.pba import PBA
 
 LOG = logging.getLogger(__name__)
 
-__author__ = "VakarisZ"
-
 
 class PostBreach(object):
     """

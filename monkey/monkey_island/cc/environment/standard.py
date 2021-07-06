@@ -1,8 +1,6 @@
 from monkey_island.cc.environment import Environment
 from monkey_island.cc.resources.auth.auth_user import User
 
-__author__ = "itay.mizeretz"
-
 
 class StandardEnvironment(Environment):
     _credentials_required = False

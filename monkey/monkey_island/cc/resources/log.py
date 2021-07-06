@@ -10,8 +10,6 @@ from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.log import LogService
 from monkey_island.cc.services.node import NodeService
 
-__author__ = "itay.mizeretz"
-
 
 class Log(flask_restful.Resource):
     @jwt_required

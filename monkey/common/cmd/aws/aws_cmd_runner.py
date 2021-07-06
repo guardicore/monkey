@@ -5,8 +5,6 @@ from common.cmd.aws.aws_cmd_result import AwsCmdResult
 from common.cmd.cmd_runner import CmdRunner
 from common.cmd.cmd_status import CmdStatus
 
-__author__ = "itay.mizeretz"
-
 logger = logging.getLogger(__name__)
 
 

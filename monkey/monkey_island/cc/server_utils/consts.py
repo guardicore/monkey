@@ -4,8 +4,6 @@ from pathlib import Path
 from common.utils.file_utils import expand_path
 from monkey_island.cc.server_utils.file_utils import is_windows_os
 
-__author__ = "itay.mizeretz"
-
 
 def get_default_data_dir() -> str:
     if is_windows_os():

@@ -13,8 +13,6 @@ from monkey_island.cc.services.node import NodeService
 
 logger = logging.getLogger(__name__)
 
-__author__ = "itay.mizeretz"
-
 
 class TelemetryFeed(flask_restful.Resource):
     @jwt_required

@@ -1,7 +1,5 @@
 from infection_monkey.telemetry.attack.attack_telem import AttackTelem
 
-__author__ = "VakarisZ"
-
 
 class VictimHostTelem(AttackTelem):
     def __init__(self, technique, status, machine):

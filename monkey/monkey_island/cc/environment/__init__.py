@@ -2,8 +2,6 @@ import logging
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
 
-__author__ = "itay.mizeretz"
-
 from common.utils.exceptions import (
     AlreadyRegisteredError,
     CredentialsNotRequiredError,

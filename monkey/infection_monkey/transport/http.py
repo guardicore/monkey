@@ -15,8 +15,6 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 
-__author__ = "hoffer"
-
 LOG = getLogger(__name__)
 
 

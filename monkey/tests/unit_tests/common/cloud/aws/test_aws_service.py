@@ -3,8 +3,6 @@ from unittest import TestCase
 
 from common.cloud.aws.aws_service import filter_instance_data_from_aws_response
 
-__author__ = "shay.nehmad"
-
 
 class TestAwsService(TestCase):
     def test_filter_instance_data_from_aws_response(self):

@@ -5,8 +5,6 @@ import socket
 import struct
 from abc import ABCMeta, abstractmethod
 
-__author__ = "itamar"
-
 LOG = logging.getLogger(__name__)
 
 

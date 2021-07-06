@@ -6,8 +6,6 @@ import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.utils.exceptions import VersionServerConnectionError
 from common.version import get_version
 
-__author__ = "itay.mizeretz"
-
 logger = logging.getLogger(__name__)
 
 

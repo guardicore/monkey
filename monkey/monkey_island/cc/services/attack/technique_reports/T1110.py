@@ -3,8 +3,6 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 from monkey_island.cc.services.attack.technique_reports.technique_report_tools import parse_creds
 
-__author__ = "VakarisZ"
-
 
 class T1110(AttackTechnique):
     tech_id = "T1110"

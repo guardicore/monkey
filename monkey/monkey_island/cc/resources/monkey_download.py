@@ -8,8 +8,6 @@ from flask import request, send_from_directory
 
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
-__author__ = "Barak"
-
 logger = logging.getLogger(__name__)
 
 MONKEY_DOWNLOADS = [

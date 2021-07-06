@@ -8,8 +8,6 @@ from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
-__author__ = "itay.mizeretz"
-
 _encryptor = None
 
 

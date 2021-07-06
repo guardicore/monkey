@@ -39,8 +39,6 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
 )
 from monkey_island.cc.services.utils.network_utils import get_subnets, local_ip_addresses
 
-__author__ = "itay.mizeretz"
-
 logger = logging.getLogger(__name__)
 
 

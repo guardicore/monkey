@@ -6,8 +6,6 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.attack_schema import SCHEMA
 from monkey_island.cc.services.config import ConfigService
 
-__author__ = "VakarisZ"
-
 logger = logging.getLogger(__name__)
 
 

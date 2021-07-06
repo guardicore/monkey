@@ -1,8 +1,6 @@
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports.usage_technique import UsageTechnique
 
-__author__ = "VakarisZ"
-
 
 class T1064(UsageTechnique):
     tech_id = "T1064"

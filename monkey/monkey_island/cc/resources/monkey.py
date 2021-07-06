@@ -13,9 +13,6 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
 
-__author__ = "Barak"
-
-
 # TODO: separate logic from interface
 
 

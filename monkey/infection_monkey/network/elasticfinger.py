@@ -12,7 +12,6 @@ from infection_monkey.network.HostFinger import HostFinger
 ES_PORT = 9200
 ES_HTTP_TIMEOUT = 5
 LOG = logging.getLogger(__name__)
-__author__ = "danielg"
 
 
 class ElasticFinger(HostFinger):

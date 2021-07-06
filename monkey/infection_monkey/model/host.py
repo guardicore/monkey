@@ -1,6 +1,3 @@
-__author__ = "itamar"
-
-
 class VictimHost(object):
     def __init__(self, ip_addr, domain_name=""):
         self.ip_addr = ip_addr

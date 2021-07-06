@@ -6,8 +6,6 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.HostScanner import HostScanner
 from infection_monkey.network.tools import check_tcp_ports, tcp_port_to_service
 
-__author__ = "itamar"
-
 BANNER_READ = 1024
 
 

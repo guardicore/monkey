@@ -5,8 +5,6 @@ from bson import ObjectId
 
 from monkey_island.cc.services.edge.edge import EdgeService
 
-__author__ = "itay.mizeretz"
-
 
 class DisplayedEdgeService:
     @staticmethod

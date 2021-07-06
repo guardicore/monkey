@@ -7,8 +7,6 @@ from socket import AF_INET, SOCK_DGRAM, SOCK_STREAM
 
 import psutil
 
-__author__ = "itay.mizeretz"
-
 LOG = logging.getLogger(__name__)
 
 

@@ -45,8 +45,6 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
     safe_generate_attack_report,
 )
 
-__author__ = "VakarisZ"
-
 LOG = logging.getLogger(__name__)
 
 TECHNIQUES = {

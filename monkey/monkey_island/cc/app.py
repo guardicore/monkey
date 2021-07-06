@@ -58,8 +58,6 @@ from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
 
-__author__ = "Barak"
-
 HOME_FILE = "index.html"
 
 

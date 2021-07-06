@@ -3,8 +3,6 @@ import socket
 from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 
-__author__ = "itay.mizeretz"
-
 
 class PostBreachTelem(BaseTelem):
     def __init__(self, pba, result):

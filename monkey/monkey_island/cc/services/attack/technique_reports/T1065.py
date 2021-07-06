@@ -1,10 +1,7 @@
+from common.config_value_paths import CURRENT_SERVER_PATH
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 from monkey_island.cc.services.config import ConfigService
-
-__author__ = "VakarisZ"
-
-from common.config_value_paths import CURRENT_SERVER_PATH
 
 
 class T1065(AttackTechnique):

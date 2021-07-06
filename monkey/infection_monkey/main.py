@@ -18,8 +18,6 @@ from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
 from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
 
-__author__ = "itamar"
-
 LOG = None
 
 LOG_CONFIG = {

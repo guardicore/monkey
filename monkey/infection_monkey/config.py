@@ -5,8 +5,6 @@ import uuid
 from abc import ABCMeta
 from itertools import product
 
-__author__ = "itamar"
-
 GUID = str(uuid.getnode())
 
 EXTERNAL_CONFIG_FILE = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "monkey.bin")

@@ -19,8 +19,6 @@ except NameError:
     # noinspection PyShadowingBuiltins
     WindowsError = psutil.AccessDenied
 
-__author__ = "uri"
-
 
 class OperatingSystem(IntEnum):
     Windows = 0

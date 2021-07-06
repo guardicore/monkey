@@ -6,8 +6,6 @@ import pwd
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 
-__author__ = "VakarisZ"
-
 LOG = logging.getLogger(__name__)
 
 

@@ -4,8 +4,6 @@ from flask import request
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.node import NodeService
 
-__author__ = "Barak"
-
 
 class Node(flask_restful.Resource):
     @jwt_required

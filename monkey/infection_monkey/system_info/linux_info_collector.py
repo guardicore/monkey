@@ -3,8 +3,6 @@ import logging
 from infection_monkey.system_info import InfoCollector
 from infection_monkey.system_info.SSH_info_collector import SSHCollector
 
-__author__ = "uri"
-
 LOG = logging.getLogger(__name__)
 
 

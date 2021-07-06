@@ -2,8 +2,6 @@ import gridfs
 from flask_pymongo import MongoClient, PyMongo
 from pymongo.errors import ServerSelectionTimeoutError
 
-__author__ = "Barak"
-
 mongo = PyMongo()
 
 

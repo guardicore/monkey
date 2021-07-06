@@ -1,7 +1,5 @@
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
 
-__author__ = "itay.mizeretz"
-
 
 class T1197Telem(VictimHostTelem):
     def __init__(self, status, machine, usage):

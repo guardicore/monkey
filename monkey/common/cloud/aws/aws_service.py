@@ -5,8 +5,6 @@ import botocore
 
 from common.cloud.aws.aws_instance import AwsInstance
 
-__author__ = ["itay.mizeretz", "shay.nehmad"]
-
 INSTANCE_INFORMATION_LIST_KEY = "InstanceInformationList"
 INSTANCE_ID_KEY = "InstanceId"
 COMPUTER_NAME_KEY = "ComputerName"

@@ -5,8 +5,6 @@ from abc import abstractmethod
 from common.cmd.cmd_result import CmdResult
 from common.cmd.cmd_status import CmdStatus
 
-__author__ = "itay.mizeretz"
-
 logger = logging.getLogger(__name__)
 
 

@@ -32,7 +32,6 @@ except NameError:
     # noinspection PyShadowingBuiltins
     WindowsError = IOError
 
-__author__ = "itamar"
 
 LOG = logging.getLogger(__name__)
 

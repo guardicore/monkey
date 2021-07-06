@@ -1,7 +1,5 @@
 from monkey_island.cc.services.attack.technique_reports.usage_technique import UsageTechnique
 
-__author__ = "VakarisZ"
-
 
 class T1106(UsageTechnique):
     tech_id = "T1106"

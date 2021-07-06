@@ -4,8 +4,6 @@ from common.common_consts.post_breach_consts import (
 )
 from monkey_island.cc.services.attack.technique_reports.pba_technique import PostBreachTechnique
 
-__author__ = "shreyamalviya"
-
 
 class T1136(PostBreachTechnique):
     tech_id = "T1136"

@@ -5,8 +5,6 @@ from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.attack.attack_report import AttackReportService
 from monkey_island.cc.services.attack.attack_schema import SCHEMA
 
-__author__ = "VakarisZ"
-
 
 class AttackReport(flask_restful.Resource):
     @jwt_required

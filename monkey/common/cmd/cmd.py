@@ -1,6 +1,3 @@
-__author__ = "itay.mizeretz"
-
-
 class Cmd(object):
     """
     Class representing a command

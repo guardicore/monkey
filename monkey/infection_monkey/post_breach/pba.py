@@ -11,8 +11,6 @@ from infection_monkey.utils.plugins.plugin import Plugin
 
 LOG = logging.getLogger(__name__)
 
-__author__ = "VakarisZ"
-
 
 class PBA(Plugin):
     """

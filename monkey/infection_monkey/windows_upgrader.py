@@ -13,8 +13,6 @@ from infection_monkey.utils.commands import (
 )
 from infection_monkey.utils.environment import is_64bit_python, is_64bit_windows_os, is_windows_os
 
-__author__ = "itay.mizeretz"
-
 LOG = logging.getLogger(__name__)
 
 if "win32" == sys.platform:

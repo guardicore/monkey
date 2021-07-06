@@ -4,8 +4,6 @@ from flask import current_app, json, jsonify, request
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 
-__author__ = "VakarisZ"
-
 
 class AttackConfiguration(flask_restful.Resource):
     @jwt_required

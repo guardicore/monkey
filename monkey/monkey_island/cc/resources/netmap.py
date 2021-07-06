@@ -4,8 +4,6 @@ from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.netmap.net_edge import NetEdgeService
 from monkey_island.cc.services.netmap.net_node import NetNodeService
 
-__author__ = "Barak"
-
 
 class NetMap(flask_restful.Resource):
     @jwt_required

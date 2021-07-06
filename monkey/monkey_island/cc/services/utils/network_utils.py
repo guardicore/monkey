@@ -9,8 +9,6 @@ from typing import List
 from netifaces import AF_INET, ifaddresses, interfaces
 from ring import lru
 
-__author__ = "Barak"
-
 # Local ips function
 if sys.platform == "win32":
 

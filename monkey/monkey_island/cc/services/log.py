@@ -3,8 +3,6 @@ from datetime import datetime
 import monkey_island.cc.services.node
 from monkey_island.cc.database import database, mongo
 
-__author__ = "itay.mizeretz"
-
 
 class LogService:
     def __init__(self):

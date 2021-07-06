@@ -1,8 +1,6 @@
 import os
 import sys
 
-__author__ = "itay.mizeretz"
-
 
 def get_binaries_dir_path():
     """

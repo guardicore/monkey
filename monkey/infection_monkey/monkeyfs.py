@@ -1,8 +1,6 @@
 import os
 from io import BytesIO
 
-__author__ = "hoffer"
-
 MONKEYFS_PREFIX = "monkeyfs://"
 
 open_orig = open

@@ -9,8 +9,6 @@ from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.infection_lifecycle import InfectionLifecycle
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
-__author__ = "Barak"
-
 logger = logging.getLogger(__name__)
 
 

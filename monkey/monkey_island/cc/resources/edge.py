@@ -3,8 +3,6 @@ from flask import request
 
 from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
 
-__author__ = "Barak"
-
 
 class Edge(flask_restful.Resource):
     def get(self):

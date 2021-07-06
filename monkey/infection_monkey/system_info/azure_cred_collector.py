@@ -9,8 +9,6 @@ from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 
-__author__ = "danielg"
-
 LOG = logging.getLogger(__name__)
 
 

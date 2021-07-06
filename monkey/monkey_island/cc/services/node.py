@@ -13,8 +13,6 @@ from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.utils.network_utils import is_local_ips, local_ip_addresses
 from monkey_island.cc.services.utils.node_states import NodeStates
 
-__author__ = "itay.mizeretz"
-
 
 class NodeService:
     def __init__(self):

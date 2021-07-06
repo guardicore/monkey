@@ -17,8 +17,6 @@ from infection_monkey.system_info.wmi_consts import WMI_CLASSES  # noqa: E402
 LOG = logging.getLogger(__name__)
 LOG.info("started windows info collector")
 
-__author__ = "uri"
-
 
 class WindowsInfoCollector(InfoCollector):
     """

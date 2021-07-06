@@ -42,7 +42,6 @@ from infection_monkey.windows_upgrader import WindowsUpgrader
 
 MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, shutting down"
 
-__author__ = "itamar"
 
 LOG = logging.getLogger(__name__)
 

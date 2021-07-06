@@ -5,8 +5,6 @@ import socket
 import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
 
-__author__ = "Maor Rayzin"
-
 LOG = logging.getLogger(__name__)
 
 

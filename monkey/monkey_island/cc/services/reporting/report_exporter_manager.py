@@ -1,7 +1,5 @@
 import logging
 
-__author__ = "maor.rayzin"
-
 logger = logging.getLogger(__name__)
 
 

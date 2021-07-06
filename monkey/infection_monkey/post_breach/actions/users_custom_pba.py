@@ -13,7 +13,6 @@ from infection_monkey.utils.monkey_dir import get_monkey_dir_path
 
 LOG = logging.getLogger(__name__)
 
-__author__ = "VakarisZ"
 
 DIR_CHANGE_WINDOWS = "cd %s & "
 DIR_CHANGE_LINUX = "cd %s ; "

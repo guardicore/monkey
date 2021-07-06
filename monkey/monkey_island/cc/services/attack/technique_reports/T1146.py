@@ -1,8 +1,6 @@
 from common.common_consts.post_breach_consts import POST_BREACH_CLEAR_CMD_HISTORY
 from monkey_island.cc.services.attack.technique_reports.pba_technique import PostBreachTechnique
 
-__author__ = "shreyamalviya"
-
 
 class T1146(PostBreachTechnique):
     tech_id = "T1146"

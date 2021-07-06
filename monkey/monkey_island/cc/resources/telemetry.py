@@ -14,8 +14,6 @@ from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
 
-__author__ = "Barak"
-
 logger = logging.getLogger(__name__)
 
 

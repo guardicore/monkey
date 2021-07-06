@@ -8,8 +8,6 @@ from infection_monkey.telemetry.i_telem import ITelem
 logger = logging.getLogger(__name__)
 LOGGED_DATA_LENGTH = 300  # How many characters of telemetry data will be logged
 
-__author__ = "itay.mizeretz"
-
 
 # TODO: Rework the interface for telemetry; this class has too many responsibilities
 #       (i.e. too many reasons to change):
