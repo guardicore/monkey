@@ -52,3 +52,5 @@ DEFAULT_CERTIFICATE_PATHS = {
     "ssl_certificate_file": DEFAULT_CRT_PATH,
     "ssl_certificate_key_file": DEFAULT_KEY_PATH,
 }
+
+GEVENT_EXCEPTION_LOG = "gevent_exceptions.log"
