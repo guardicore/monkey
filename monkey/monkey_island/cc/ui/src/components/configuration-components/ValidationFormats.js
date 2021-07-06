@@ -9,7 +9,7 @@ const linuxPathStartsWithTildeRegex = /^~/ // path starts with `~`
 
 
 const windowsAbsolutePathRegex = /^([A-Za-z]:(\\|\/))/ // path starts like `C:\` OR `C:/`
-const windowsEnvVarNonNumeric = '[A-Za-z#\\$\'\\(\\)\\*\\+,-\\.\\?@\\[\\]_`\\{\\}~+ ]'
+const windowsEnvVarNonNumeric = '[A-Za-z#\\$\'\\(\\)\\*\\+,\\-\\.\\?@\\[\\]_`\\{\\}~+ ]'
 const windowsPathStartsWithEnvVariableRegex = new RegExp(
 	`^%(${windowsEnvVarNonNumeric}+(${windowsEnvVarNonNumeric}|\\d)*)%`
 ) // path starts like `$` OR `%abc%`
