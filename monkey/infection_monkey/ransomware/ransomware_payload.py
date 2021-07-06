@@ -4,13 +4,13 @@ from pathlib import Path
 from pprint import pformat
 from typing import List, Optional, Tuple
 
+from common.utils.file_utils import expand_path
 from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
 from infection_monkey.ransomware.file_selectors import select_production_safe_target_files
 from infection_monkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.file_utils import expand_path
 
 LOG = logging.getLogger(__name__)
 

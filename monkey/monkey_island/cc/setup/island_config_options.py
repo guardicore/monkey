@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from common.utils.file_utils import expand_path
 from monkey_island.cc.server_utils.consts import (
     DEFAULT_CERTIFICATE_PATHS,
     DEFAULT_CRT_PATH,
@@ -8,7 +9,6 @@ from monkey_island.cc.server_utils.consts import (
     DEFAULT_LOG_LEVEL,
     DEFAULT_START_MONGO_DB,
 )
-from monkey_island.cc.server_utils.file_utils import expand_path
 
 
 class IslandConfigOptions:
