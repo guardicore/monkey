@@ -45,7 +45,7 @@ class RansomwarePayload:
             target_dir_field = target_directories["linux_target_dir"]
 
         try:
-            return Path(expand_path(target_dir_field))
+            return expand_path(target_dir_field)
         except InvalidPath as e:
             LOG.debug(f"Target ransomware dir set to None: {e}")
             return None
