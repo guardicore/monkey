@@ -3,9 +3,10 @@ import {Route} from 'react-router-dom';
 import {Col, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarning';
-import AttackReport from '../report-components/AttackReport'
-import SecurityReport from '../report-components/SecurityReport'
-import ZeroTrustReport from '../report-components/ZeroTrustReport'
+import AttackReport from '../report-components/AttackReport';
+import SecurityReport from '../report-components/SecurityReport';
+import ZeroTrustReport from '../report-components/ZeroTrustReport';
+import RansomwareReport from '../report-components/RansomwareReport';
 import {extractExecutionStatusFromServerResponse} from '../report-components/common/ExecutionStatus';
 import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
 
@@ -14,11 +15,12 @@ class ReportPageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.sectionsOrder = ['security', 'zeroTrust', 'attack'];
+    this.sectionsOrder = ['security', 'zeroTrust', 'attack', 'ransomware'];
     this.state = {
       securityReport: {},
       attackReport: {},
       zeroTrustReport: {},
+      ransomwareReport: {},
       allMonkeysAreDead: false,
       runStarted: true,
       selectedSection: ReportPageComponent.selectReport(this.sectionsOrder),
@@ -56,6 +58,18 @@ class ReportPageComponent extends AuthComponent {
       this.getZeroTrustReportFromServer().then((ztReport) => {
         this.setState({zeroTrustReport: ztReport})
       });
+      this.setState({
+        ransomwareReport: {'report': ''}})
+      // this.authFetch('/api/report/ransomware')
+      //   .then(res => res.json())
+      //   .then(res => {
+      //     this.setState({
+      //       ransomwareReport: res
+      //     });
+      //   });
+      if (this.shouldShowRansomwareReport(this.state.ransomwareReport)) {
+        this.state.sections.push({key: 'ransomware', title: 'Ransomware report'})
+      }
     }
   }
 
@@ -83,6 +97,12 @@ class ReportPageComponent extends AuthComponent {
       });
     return ztReport
   };
+
+  shouldShowRansomwareReport(report) { // TODO: Add proper check
+    if (report) {
+      return true;
+    }
+  }
 
   componentWillUnmount() {
     clearInterval(this.state.ztReportRefreshInterval);
@@ -144,6 +164,8 @@ class ReportPageComponent extends AuthComponent {
         return (<AttackReport report={this.state.attackReport}/>);
       case 'zeroTrust':
         return (<ZeroTrustReport report={this.state.zeroTrustReport}/>);
+      case 'ransomware':
+        return (<RansomwareReport report={this.state.ransomwareReport}/>);
     }
   }
 
