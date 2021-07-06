@@ -20,13 +20,13 @@ copy "%mydir%windows\openssl.cfg" "%mydir%bin\openssl\openssl.cfg"
 
 :: Change file permissions
 SET adminsIdentity="BUILTIN\Administrators"
-FOR /f %%O IN ('whoami') DO SET ownIdentity=%%O
+FOR /f "delims=''" %%O IN ('whoami') DO SET ownIdentity=%%O
 
 FOR %%F IN ("%mydir%cc\server.key", "%mydir%cc\server.csr", "%mydir%cc\server.crt") DO (
 
 	:: Remove all others and add admins rule (with full control)
-	echo y| cacls %%F" /p %adminsIdentity%:F
+	echo y| cacls %%F /p %adminsIdentity%:F
 
 	:: Add user rule (with read)
-	echo y| cacls %%F /e /p %ownIdentity%:R
+	echo y| cacls %%F /e /p "%ownIdentity%":R
 )
