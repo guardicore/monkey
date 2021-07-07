@@ -46,7 +46,8 @@ class RansomwarePayload:
 
         try:
             return Path(expand_path(target_dir_field))
-        except InvalidPath:
+        except InvalidPath as e:
+            LOG.debug(f"Target ransomware dir set to None: {e}")
             return None
 
     def run_payload(self):
