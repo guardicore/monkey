@@ -170,15 +170,9 @@ def test_encryption_skipped_if_no_directory(
     ransomware_payload_config["encryption"]["directories"]["linux_target_dir"] = ""
     ransomware_payload_config["encryption"]["directories"]["windows_target_dir"] = ""
 
-    def _file_encryption_method_mock(*args, **kwargs):
-        raise Exception(
-            "Ransomware payload attempted to "
-            "encrypt files even though no directory was provided!"
-        )
-
     ransomware_payload = RansomwarePayload(ransomware_payload_config, telemetry_messenger_spy)
-    monkeypatch.setattr(ransomware_payload, "_encrypt_files", _file_encryption_method_mock)
     ransomware_payload.run_payload()
+    assert len(telemetry_messenger_spy.telemetries) == 0
 
 
 def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
