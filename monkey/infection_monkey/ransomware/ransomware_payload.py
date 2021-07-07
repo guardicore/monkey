@@ -4,7 +4,7 @@ from pathlib import Path
 from pprint import pformat
 from typing import List, Optional, Tuple
 
-from common.utils.file_utils import expand_path
+from common.utils.file_utils import InvalidPath, expand_path
 from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
 from infection_monkey.ransomware.file_selectors import select_production_safe_target_files
 from infection_monkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
@@ -28,21 +28,26 @@ class RansomwarePayload:
         self._encryption_enabled = config["encryption"]["enabled"]
         self._readme_enabled = config["other_behaviors"]["readme"]
 
-        target_directories = config["encryption"]["directories"]
-        self._target_dir = Path(
-            expand_path(
-                target_directories["windows_target_dir"]
-                if is_windows_os()
-                else target_directories["linux_target_dir"]
-            )
-        )
-
+        self._target_dir = RansomwarePayload.get_target_dir(config)
         self._new_file_extension = EXTENSION
         self._valid_file_extensions_for_encryption = TARGETED_FILE_EXTENSIONS.copy()
         self._valid_file_extensions_for_encryption.discard(self._new_file_extension)
 
         self._encryptor = BitflipEncryptor(chunk_size=CHUNK_SIZE)
         self._telemetry_messenger = telemetry_messenger
+
+    @staticmethod
+    def get_target_dir(config: dict):
+        target_directories = config["encryption"]["directories"]
+        if is_windows_os():
+            target_dir_field = target_directories["windows_target_dir"]
+        else:
+            target_dir_field = target_directories["linux_target_dir"]
+
+        try:
+            return Path(expand_path(target_dir_field))
+        except InvalidPath:
+            return None
 
     def run_payload(self):
         if self._encryption_enabled:
