@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from monkey_island.cc.server_utils.consts import (
     DEFAULT_CRT_PATH,
@@ -37,7 +38,7 @@ def test_data_dir_expanduser(patched_home_env):
 
     assert_data_dir_equals(
         {"data_dir": os.path.join("~", DATA_DIR_NAME)},
-        os.path.join(patched_home_env, DATA_DIR_NAME),
+        patched_home_env / DATA_DIR_NAME,
     )
 
 
@@ -46,12 +47,12 @@ def test_data_dir_expandvars(patched_home_env):
 
     assert_data_dir_equals(
         {"data_dir": os.path.join("$HOME", DATA_DIR_NAME)},
-        os.path.join(patched_home_env, DATA_DIR_NAME),
+        patched_home_env / DATA_DIR_NAME,
     )
 
 
 def assert_data_dir_equals(config_file_contents, expected_data_dir):
-    assert_island_config_option_equals(config_file_contents, "data_dir", expected_data_dir)
+    assert_island_config_option_equals(config_file_contents, "data_dir", Path(expected_data_dir))
 
 
 def test_log_level():
@@ -86,7 +87,7 @@ def test_crt_path_expanduser(patched_home_env):
 
     assert_ssl_certificate_file_equals(
         {"ssl_certificate": {"ssl_certificate_file": os.path.join("~", FILE_NAME)}},
-        os.path.join(patched_home_env, FILE_NAME),
+        patched_home_env / FILE_NAME,
     )
 
 
@@ -95,13 +96,13 @@ def test_crt_path_expandvars(patched_home_env):
 
     assert_ssl_certificate_file_equals(
         {"ssl_certificate": {"ssl_certificate_file": os.path.join("$HOME", FILE_NAME)}},
-        os.path.join(patched_home_env, FILE_NAME),
+        patched_home_env / FILE_NAME,
     )
 
 
 def assert_ssl_certificate_file_equals(config_file_contents, expected_ssl_certificate_file):
     assert_island_config_option_equals(
-        config_file_contents, "crt_path", expected_ssl_certificate_file
+        config_file_contents, "crt_path", Path(expected_ssl_certificate_file)
     )
 
 
@@ -121,7 +122,7 @@ def test_key_path_expanduser(patched_home_env):
 
     assert_ssl_certificate_key_file_equals(
         {"ssl_certificate": {"ssl_certificate_key_file": os.path.join("~", FILE_NAME)}},
-        os.path.join(patched_home_env, FILE_NAME),
+        patched_home_env / FILE_NAME,
     )
 
 
@@ -130,13 +131,13 @@ def test_key_path_expandvars(patched_home_env):
 
     assert_ssl_certificate_key_file_equals(
         {"ssl_certificate": {"ssl_certificate_key_file": os.path.join("$HOME", FILE_NAME)}},
-        os.path.join(patched_home_env, FILE_NAME),
+        patched_home_env / FILE_NAME,
     )
 
 
 def assert_ssl_certificate_key_file_equals(config_file_contents, expected_ssl_certificate_file):
     assert_island_config_option_equals(
-        config_file_contents, "key_path", expected_ssl_certificate_file
+        config_file_contents, "key_path", Path(expected_ssl_certificate_file)
     )
 
 
