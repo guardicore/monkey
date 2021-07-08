@@ -65,9 +65,6 @@ class RansomwarePayload:
 
     def _find_files(self) -> List[Path]:
         LOG.info(f"Collecting files in {self._target_dir}")
-        if not self._target_dir:
-            return []
-
         return select_production_safe_target_files(self._target_dir, self._targeted_file_extensions)
 
     def _encrypt_files(self, file_list: List[Path]) -> List[Tuple[Path, Optional[Exception]]]:
