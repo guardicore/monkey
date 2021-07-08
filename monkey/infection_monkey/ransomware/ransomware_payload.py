@@ -25,7 +25,7 @@ class RansomwarePayload:
         self,
         config: dict,
         telemetry_messenger: ITelemetryMessenger,
-        copy_file: Callable[[str, str], None],
+        copy_file: Callable[[Path, Path], None],
     ):
         LOG.debug(f"Ransomware payload configuration:\n{pformat(config)}")
 
