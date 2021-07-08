@@ -1,8 +1,7 @@
 import logging
-import shutil
 from pathlib import Path
 from pprint import pformat
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 from common.utils.file_utils import InvalidPath, expand_path
 from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
@@ -22,7 +21,12 @@ README_DEST = "README.txt"
 
 
 class RansomwarePayload:
-    def __init__(self, config: dict, telemetry_messenger: ITelemetryMessenger):
+    def __init__(
+        self,
+        config: dict,
+        telemetry_messenger: ITelemetryMessenger,
+        copy_file: Callable[[Path, Path], None],
+    ):
         LOG.debug(f"Ransomware payload configuration:\n{pformat(config)}")
 
         self._encryption_enabled = config["encryption"]["enabled"]
@@ -34,6 +38,7 @@ class RansomwarePayload:
         self._valid_file_extensions_for_encryption.discard(self._new_file_extension)
 
         self._encryptor = BitflipEncryptor(chunk_size=CHUNK_SIZE)
+        self._copy_file = copy_file
         self._telemetry_messenger = telemetry_messenger
 
     @staticmethod
@@ -92,11 +97,21 @@ class RansomwarePayload:
         self._telemetry_messenger.send_telemetry(encryption_attempt)
 
     def _leave_readme(self):
-        if self._readme_enabled:
-            readme_dest_path = self._target_dir / README_DEST
-            LOG.info(f"Leaving a ransomware README file at {readme_dest_path}")
+        if not self._readme_enabled:
+            return
 
-            try:
-                shutil.copyfile(README_SRC, readme_dest_path)
-            except Exception as ex:
-                LOG.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")
+        readme_dest_path = self._target_dir / README_DEST
+
+        if readme_dest_path.exists():
+            LOG.warning(f"{readme_dest_path} already exists, not leaving a new README.txt")
+            return
+
+        self._copy_readme_file(readme_dest_path)
+
+    def _copy_readme_file(self, dest: Path):
+        LOG.info(f"Leaving a ransomware README file at {dest}")
+
+        try:
+            self._copy_file(README_SRC, dest)
+        except Exception as ex:
+            LOG.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")

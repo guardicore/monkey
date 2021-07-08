@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -477,7 +478,7 @@ class InfectionMonkey(object):
 
         try:
             RansomwarePayload(
-                WormConfiguration.ransomware, batching_telemetry_messenger
+                WormConfiguration.ransomware, batching_telemetry_messenger, shutil.copyfile
             ).run_payload()
         except Exception as ex:
             LOG.error(f"An unexpected error occurred while running the ransomware payload: {ex}")
