@@ -34,8 +34,8 @@ class RansomwarePayload:
 
         self._target_dir = RansomwarePayload.get_target_dir(config)
         self._new_file_extension = EXTENSION
-        self._valid_file_extensions_for_encryption = TARGETED_FILE_EXTENSIONS.copy()
-        self._valid_file_extensions_for_encryption.discard(self._new_file_extension)
+        self._targeted_file_extensions = TARGETED_FILE_EXTENSIONS.copy()
+        self._targeted_file_extensions.discard(self._new_file_extension)
 
         self._encryptor = BitflipEncryptor(chunk_size=CHUNK_SIZE)
         self._copy_file = copy_file
@@ -68,9 +68,7 @@ class RansomwarePayload:
         if not self._target_dir:
             return []
 
-        return select_production_safe_target_files(
-            self._target_dir, self._valid_file_extensions_for_encryption
-        )
+        return select_production_safe_target_files(self._target_dir, self._targeted_file_extensions)
 
     def _encrypt_files(self, file_list: List[Path]) -> List[Tuple[Path, Optional[Exception]]]:
         LOG.info(f"Encrypting files in {self._target_dir}")
