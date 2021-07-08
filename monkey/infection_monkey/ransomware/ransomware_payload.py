@@ -97,15 +97,21 @@ class RansomwarePayload:
         self._telemetry_messenger.send_telemetry(encryption_attempt)
 
     def _leave_readme(self):
-        if self._readme_enabled:
-            readme_dest_path = self._target_dir / README_DEST
-            if readme_dest_path.exists():
-                LOG.warning(f"{readme_dest_path} already exists, not leaving a new README.txt")
-                return
+        if not self._readme_enabled:
+            return
 
-            LOG.info(f"Leaving a ransomware README file at {readme_dest_path}")
+        readme_dest_path = self._target_dir / README_DEST
 
-            try:
-                self._copy_file(README_SRC, readme_dest_path)
-            except Exception as ex:
-                LOG.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")
+        if readme_dest_path.exists():
+            LOG.warning(f"{readme_dest_path} already exists, not leaving a new README.txt")
+            return
+
+        self._copy_readme_file(readme_dest_path)
+
+    def _copy_readme_file(self, dest: Path):
+        LOG.info(f"Leaving a ransomware README file at {dest}")
+
+        try:
+            self._copy_file(README_SRC, dest)
+        except Exception as ex:
+            LOG.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")
