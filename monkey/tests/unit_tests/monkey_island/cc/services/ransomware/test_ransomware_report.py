@@ -1,8 +1,78 @@
+import mongomock
+from tests.data_for_tests.mongo_documents.edges import EDGE_EXPLOITED, EDGE_SCANNED
+from tests.data_for_tests.mongo_documents.monkeys import MONKEY_AT_ISLAND, MONKEY_AT_VICTIM
+from tests.data_for_tests.mongo_documents.telemetries.file_encryption import (
+    ENCRYPTED,
+    ENCRYPTED_2,
+    ENCRYPTION_ERROR,
+    ENCRYPTION_ONE_FILE,
+)
 import pytest
 
 from monkey_island.cc.services.ransomware import ransomware_report
 from monkey_island.cc.services.reporting.report import ReportService
 
+from monkey_island.cc.services.ransomware.ransomware_report import RansomwareReportService
+
+
+@pytest.fixture
+def fake_mongo(monkeypatch):
+    mongo = mongomock.MongoClient()
+    monkeypatch.setattr("monkey_island.cc.services.ransomware.ransomware_report.mongo", mongo)
+    return mongo
+
+
+@pytest.mark.skip(
+    reason="A bug in mongomock prevents " "projecting the first element of an empty array"
+)
+@pytest.mark.usefixtures("uses_database")
+def test_get_encrypted_files_table(fake_mongo):
+    fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
+    fake_mongo.db.monkey.insert(MONKEY_AT_VICTIM)
+    fake_mongo.db.edge.insert(EDGE_EXPLOITED)
+    fake_mongo.db.edge.insert(EDGE_SCANNED)
+    fake_mongo.db.telemetry.insert(ENCRYPTED)
+    fake_mongo.db.telemetry.insert(ENCRYPTED_2)
+    fake_mongo.db.telemetry.insert(ENCRYPTION_ERROR)
+    fake_mongo.db.telemetry.insert(ENCRYPTION_ONE_FILE)
+
+    results = RansomwareReportService.get_encrypted_files_table()
+
+    assert results == [
+        {"hostname": "test-pc-2", "exploit": "Manual execution", "files_encrypted": True},
+        {"hostname": "WinDev2010Eval", "exploit": "SMB", "files_encrypted": True},
+    ]
+
+
+@pytest.mark.skip(
+    reason="A bug in mongomock prevents " "projecting the first element of an empty array"
+)
+@pytest.mark.usefixtures("uses_database")
+def test_get_encrypted_files_table__only_errors(fake_mongo):
+    fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
+    fake_mongo.db.monkey.insert(MONKEY_AT_VICTIM)
+    fake_mongo.db.edge.insert(EDGE_EXPLOITED)
+    fake_mongo.db.edge.insert(EDGE_SCANNED)
+    fake_mongo.db.telemetry.insert(ENCRYPTION_ERROR)
+
+    results = RansomwareReportService.get_encrypted_files_table()
+
+    assert results == []
+
+
+@pytest.mark.skip(
+    reason="A bug in mongomock prevents " "projecting the first element of an empty array"
+)
+@pytest.mark.usefixtures("uses_database")
+def test_get_encrypted_files_table__no_telemetries(fake_mongo):
+    fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
+    fake_mongo.db.monkey.insert(MONKEY_AT_VICTIM)
+    fake_mongo.db.edge.insert(EDGE_EXPLOITED)
+    fake_mongo.db.edge.insert(EDGE_SCANNED)
+
+    results = RansomwareReportService.get_encrypted_files_table()
+
+    assert results == []
 
 @pytest.fixture
 def patch_report_service_for_stats(monkeypatch):
