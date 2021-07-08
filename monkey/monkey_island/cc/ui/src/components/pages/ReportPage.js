@@ -58,15 +58,13 @@ class ReportPageComponent extends AuthComponent {
       this.getZeroTrustReportFromServer().then((ztReport) => {
         this.setState({zeroTrustReport: ztReport})
       });
-      this.setState({
-        ransomwareReport: {'report': ''}})
-      // this.authFetch('/api/report/ransomware')
-      //   .then(res => res.json())
-      //   .then(res => {
-      //     this.setState({
-      //       ransomwareReport: res
-      //     });
-      //   });
+      this.authFetch('/api/report/ransomware')
+        .then(res => res.json())
+        .then(res => {
+          this.setState({
+            ransomwareReport: res
+          });
+        });
       if (this.shouldShowRansomwareReport(this.state.ransomwareReport)) {
         this.state.sections.push({key: 'ransomware', title: 'Ransomware report'})
       }
