@@ -6,7 +6,7 @@ class RansomwareReportService:
         pass
 
     @staticmethod
-    def get_exploitation_stats():
+    def get_exploitation_details():
         scanned = ReportService.get_scanned()
         exploited = ReportService.get_exploited()
 
