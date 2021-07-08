@@ -8,4 +8,4 @@ from monkey_island.cc.services.ransomware_report import get_exploitation_details
 class RansomwareReport(flask_restful.Resource):
     @jwt_required
     def get(self):
-        return jsonify({"report": None, "stats": get_exploitation_details()})
+        return jsonify({"report": None, "propagation": get_exploitation_details()})
