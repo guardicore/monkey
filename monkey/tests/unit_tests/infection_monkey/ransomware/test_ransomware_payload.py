@@ -1,6 +1,7 @@
 import os
 import shutil
 from pathlib import Path, PurePosixPath
+from unittest.mock import MagicMock
 
 import pytest
 from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
@@ -228,3 +229,18 @@ def test_readme_true(build_ransomware_payload, ransomware_payload_config, ransom
 
     ransomware_payload.run_payload()
     assert Path(ransomware_target / README_DEST).exists()
+
+
+def test_readme_already_exists(
+    monkeypatch, ransomware_payload_config, telemetry_messenger_spy, ransomware_target
+):
+    monkeypatch.setattr(ransomware_payload_module, "TARGETED_FILE_EXTENSIONS", set()),
+    mock_copy_file = MagicMock()
+
+    ransomware_payload_config["other_behaviors"]["readme"] = True
+    Path(ransomware_target / README_DEST).touch()
+    RansomwarePayload(
+        ransomware_payload_config, telemetry_messenger_spy, mock_copy_file
+    ).run_payload()
+
+    mock_copy_file.assert_not_called()

@@ -99,6 +99,10 @@ class RansomwarePayload:
     def _leave_readme(self):
         if self._readme_enabled:
             readme_dest_path = self._target_dir / README_DEST
+            if readme_dest_path.exists():
+                LOG.warning(f"{readme_dest_path} already exists, not leaving a new README.txt")
+                return
+
             LOG.info(f"Leaving a ransomware README file at {readme_dest_path}")
 
             try:
