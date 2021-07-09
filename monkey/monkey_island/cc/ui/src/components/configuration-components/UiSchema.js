@@ -76,12 +76,9 @@ export default function UiSchema(props) {
         directories: {
             // Directory inputs are dynamically hidden
         },
-      enabled: {
-
-        'ui:widget': 'hidden'
-        }
+      enabled: {'ui:widget': 'hidden'}
       },
-      other_behaviors : {'ui:widget': 'hidden'}   
+      other_behaviors : {'ui:widget': 'hidden'}
     },
     internal: {
       general: {
