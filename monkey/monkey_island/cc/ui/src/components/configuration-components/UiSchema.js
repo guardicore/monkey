@@ -18,8 +18,8 @@ export default function UiSchema(props) {
     basic_network: {
       'ui:order': ['scope', 'network_analysis'],
       scope: {
-        blocked_ips: {
-          'ui:field': FieldWithInfo
+        info_box: {
+          'ui:field': InfoField
         },
         subnet_scan_list: {
           format: 'ip-list'
