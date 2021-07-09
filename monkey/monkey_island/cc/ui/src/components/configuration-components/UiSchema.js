@@ -1,7 +1,6 @@
 import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
-import FieldWithInfo from './FieldWithInfo';
 import InfoField from './InfoField';
 
 export default function UiSchema(props) {
