@@ -2,6 +2,7 @@ import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
 import FieldWithInfo from './FieldWithInfo';
+import InfoField from './InfoField';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -73,6 +74,9 @@ export default function UiSchema(props) {
     },
     ransomware: {
       encryption: {
+        info_box: {
+          'ui:field': InfoField
+        },
         directories: {
             // Directory inputs are dynamically hidden
         }
