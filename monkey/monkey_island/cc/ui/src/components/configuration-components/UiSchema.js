@@ -75,8 +75,10 @@ export default function UiSchema(props) {
       encryption: {
         directories: {
             // Directory inputs are dynamically hidden
-        }
-      }
+        },
+      enabled: {'ui:widget': 'hidden'}
+      },
+      other_behaviors : {'ui:widget': 'hidden'}
     },
     internal: {
       general: {

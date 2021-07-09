@@ -56,12 +56,17 @@ class RansomwarePayload:
             return None
 
     def run_payload(self):
-        if self._encryption_enabled and self._target_dir:
-            LOG.info("Running ransomware payload")
+        if not self._target_dir:
+            return
+
+        LOG.info("Running ransomware payload")
+
+        if self._encryption_enabled:
             file_list = self._find_files()
             self._encrypt_files(file_list)
 
-        self._leave_readme()
+        if self._readme_enabled:
+            self._leave_readme()
 
     def _find_files(self) -> List[Path]:
         LOG.info(f"Collecting files in {self._target_dir}")
@@ -92,8 +97,6 @@ class RansomwarePayload:
         self._telemetry_messenger.send_telemetry(encryption_attempt)
 
     def _leave_readme(self):
-        if not self._readme_enabled:
-            return
 
         readme_dest_path = self._target_dir / README_DEST
 
