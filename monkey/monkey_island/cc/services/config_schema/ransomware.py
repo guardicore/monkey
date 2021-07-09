@@ -52,7 +52,8 @@ RANSOMWARE = {
                 "readme_note": {
                     "title": "",
                     "type": "object",
-                    "description": "A README.txt file will be left alongside the encrypted files.",
+                    "description": "Note: README.txt will be left in the target directory specified"
+                    " for encryption.",
                 },
             },
         },
