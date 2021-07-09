@@ -61,7 +61,8 @@ class RansomwarePayload:
             file_list = self._find_files()
             self._encrypt_files(file_list)
 
-        self._leave_readme()
+        if self._target_dir:
+            self._leave_readme()
 
     def _find_files(self) -> List[Path]:
         LOG.info(f"Collecting files in {self._target_dir}")
