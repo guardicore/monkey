@@ -247,13 +247,18 @@ def test_readme_already_exists(
 
 
 def test_no_readme_if_no_directory(
-    build_ransomware_payload, ransomware_payload_config, ransomware_target
+    monkeypatch, ransomware_payload_config, telemetry_messenger_spy, ransomware_target
 ):
+    monkeypatch.setattr(ransomware_payload_module, "TARGETED_FILE_EXTENSIONS", set()),
+    mock_copy_file = MagicMock()
+
     ransomware_payload_config["encryption"]["enabled"] = True
     ransomware_payload_config["encryption"]["directories"]["linux_target_dir"] = ""
     ransomware_payload_config["encryption"]["directories"]["windows_target_dir"] = ""
     ransomware_payload_config["other_behaviors"]["readme"] = True
-    ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
-    ransomware_payload.run_payload()
-    assert not Path(ransomware_target / README_DEST).exists()
+    RansomwarePayload(
+        ransomware_payload_config, telemetry_messenger_spy, mock_copy_file
+    ).run_payload()
+
+    mock_copy_file.assert_not_called()
