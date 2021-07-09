@@ -47,7 +47,14 @@ RANSOMWARE = {
                             "files that you will allow Infection Monkey to encrypt. If no "
                             "directory is specified, no files will be encrypted.",
                         },
+
                     },
+
+                },
+                "readme_note": {
+                        "title": "",
+                        "type": "object",
+                        "description": "A README.txt file will be left alongside the encrypted files.",
                 },
             },
         },
