@@ -6,17 +6,14 @@ from common.common_consts.validation_formats import (
 RANSOMWARE = {
     "title": "Ransomware",
     "type": "object",
-    "description": "This page allows you to configure the Infection Monkey to execute a ransomware "
-    "simulation. The Infection Monkey is capable of simulating a ransomware attack on your network "
-    "using a set of configurable behaviors. A number of precautions have been taken to ensure that "
-    "this ransomware simulation is safe for production environments.\n\nFor more information about "
-    "configuring the ransomware simulation, see "
-    '<a href="https://guardicore.com/infectionmonkey/docs/usage/use-cases/ransomware-simulation" '
-    'target="_blank"> the documentation</a>.',
     "properties": {
         "encryption": {
-            "title": "Encryption",
+            "title": "Simulation",
             "type": "object",
+            "description": "To simulate ransomware encryption, create a directory and put some "
+            "files there to be encrypted. Do this on each machine on which you want to run the "
+            "ransomware encryption simulation.\n\nProvide the path to the directory that was "
+            "created on each machine:",
             "properties": {
                 "enabled": {
                     "title": "Encrypt files",
@@ -24,6 +21,12 @@ RANSOMWARE = {
                     "default": True,
                     "description": "Ransomware encryption will be simulated by flipping every bit "
                     "in the files contained within the target directories.",
+                },
+                "info_box": {
+                    "title": "",
+                    "type": "object",
+                    "info": "No files will be encrypted if a directory is not specified or doesn't "
+                    "exist on a victim machine.",
                 },
                 "directories": {
                     "title": "Directories to encrypt",
