@@ -49,6 +49,11 @@ RANSOMWARE = {
                         },
                     },
                 },
+                "readme_note": {
+                    "title": "",
+                    "type": "object",
+                    "description": "A README.txt file will be left alongside the encrypted files.",
+                },
             },
         },
         "other_behaviors": {
