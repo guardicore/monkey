@@ -1,3 +1,6 @@
+import mongoengine
+import pytest
+from mongoengine import get_connection
 import mongomock
 from tests.data_for_tests.mongo_documents.edges import EDGE_EXPLOITED, EDGE_SCANNED
 from tests.data_for_tests.mongo_documents.monkeys import MONKEY_AT_ISLAND, MONKEY_AT_VICTIM
@@ -17,14 +20,15 @@ from monkey_island.cc.services.ransomware.ransomware_report import RansomwareRep
 
 @pytest.fixture
 def fake_mongo(monkeypatch):
-    mongo = mongomock.MongoClient()
+    mongoengine.connect("mongoenginetest", host="mongomock://localhost")
+    mongo = get_connection()
     monkeypatch.setattr("monkey_island.cc.services.ransomware.ransomware_report.mongo", mongo)
+    monkeypatch.setattr("monkey_island.cc.services.reporting.report.mongo", mongo)
+    monkeypatch.setattr("monkey_island.cc.services.node.mongo", mongo)
     return mongo
 
 
-@pytest.mark.skip(
-    reason="A bug in mongomock prevents " "projecting the first element of an empty array"
-)
+@pytest.mark.skip(reason="Can't find a way to use the same mock database client in Monkey model")
 @pytest.mark.usefixtures("uses_database")
 def test_get_encrypted_files_table(fake_mongo):
     fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
@@ -44,9 +48,7 @@ def test_get_encrypted_files_table(fake_mongo):
     ]
 
 
-@pytest.mark.skip(
-    reason="A bug in mongomock prevents " "projecting the first element of an empty array"
-)
+@pytest.mark.skip(reason="Can't find a way to use the same mock database client in Monkey model")
 @pytest.mark.usefixtures("uses_database")
 def test_get_encrypted_files_table__only_errors(fake_mongo):
     fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
@@ -60,9 +62,7 @@ def test_get_encrypted_files_table__only_errors(fake_mongo):
     assert results == []
 
 
-@pytest.mark.skip(
-    reason="A bug in mongomock prevents " "projecting the first element of an empty array"
-)
+@pytest.mark.skip(reason="Can't find a way to use the same mock database client in Monkey model")
 @pytest.mark.usefixtures("uses_database")
 def test_get_encrypted_files_table__no_telemetries(fake_mongo):
     fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)

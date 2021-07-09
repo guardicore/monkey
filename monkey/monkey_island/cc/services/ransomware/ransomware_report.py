@@ -1,4 +1,5 @@
 from monkey_island.cc.database import mongo
+from monkey_island.cc.services.reporting.report import ReportService
 from typing import Dict, List
 
 from monkey_island.cc.services.reporting.report import ReportService
@@ -38,53 +39,30 @@ class RansomwareReportService:
                     "files_encrypted": "$files_encrypted",
                 }
             },
-            {
-                "$lookup": {
-                    "from": "edge",
-                    "localField": "monkey._id",
-                    "foreignField": "dst_node_id",
-                    "as": "edge",
-                }
-            },
-            {
-                "$project": {
-                    "monkey": "$monkey",
-                    "files_encrypted": "$files_encrypted",
-                    "edge": {"$arrayElemAt": ["$edge", 0]},
-                }
-            },
-            {
-                "$project": {
-                    "hostname": "$monkey.hostname",
-                    "successful_exploits": {
-                        "$filter": {
-                            "input": "$edge.exploits",
-                            "as": "exploit",
-                            "cond": {"$eq": ["$$exploit.result", True]},
-                        }
-                    },
-                    "files_encrypted": "$files_encrypted",
-                }
-            },
-            {
-                "$addFields": {
-                    "successful_exploit": {"$arrayElemAt": ["$successful_exploits", 0]},
-                }
-            },
-            {
-                "$project": {
-                    "hostname": "$hostname",
-                    "exploiter": "$successful_exploit.info.display_name",
-                    "files_encrypted": "$files_encrypted",
-                }
-            },
         ]
 
-        table_data = list(mongo.db.telemetry.aggregate(query))
-        for encryption_entry in table_data:
-            if "exploiter" not in encryption_entry:
-                encryption_entry["exploiter"] = "Manual run"
-        return table_data
+        monkeys = list(mongo.db.telemetry.aggregate(query))
+        exploited_nodes = ReportService.get_exploited()
+        for monkey in monkeys:
+            monkey["exploits"] = RansomwareReportService.get_monkey_origin_exploits(
+                monkey["monkey"]["hostname"], exploited_nodes
+            )
+            monkey["hostname"] = monkey["monkey"]["hostname"]
+            del monkey["monkey"]
+            del monkey["_id"]
+        return monkeys
+
+    @staticmethod
+    def get_monkey_origin_exploits(monkey_hostname, exploited_nodes):
+        origin_exploits = [
+            exploited_node["exploits"]
+            for exploited_node in exploited_nodes
+            if exploited_node["label"] == monkey_hostname
+        ]
+        if origin_exploits:
+            return origin_exploits[0]
+        else:
+            return ["Manual execution"]
 
 def get_propagation_stats() -> Dict:
     scanned = ReportService.get_scanned()
