@@ -1,4 +1,4 @@
-import mongoengine
+import mongomock
 import pytest
 from mongoengine import get_connection
 import mongomock
@@ -15,22 +15,19 @@ import pytest
 from monkey_island.cc.services.ransomware import ransomware_report
 from monkey_island.cc.services.reporting.report import ReportService
 
-from monkey_island.cc.services.ransomware.ransomware_report import RansomwareReportService
+from monkey_island.cc.services.ransomware.ransomware_report import get_encrypted_files_table
+from monkey_island.cc.services.reporting.report import ReportService
 
 
 @pytest.fixture
 def fake_mongo(monkeypatch):
-    mongoengine.connect("mongoenginetest", host="mongomock://localhost")
-    mongo = get_connection()
+    mongo = mongomock.MongoClient()
     monkeypatch.setattr("monkey_island.cc.services.ransomware.ransomware_report.mongo", mongo)
-    monkeypatch.setattr("monkey_island.cc.services.reporting.report.mongo", mongo)
-    monkeypatch.setattr("monkey_island.cc.services.node.mongo", mongo)
     return mongo
 
 
-@pytest.mark.skip(reason="Can't find a way to use the same mock database client in Monkey model")
 @pytest.mark.usefixtures("uses_database")
-def test_get_encrypted_files_table(fake_mongo):
+def test_get_encrypted_files_table(fake_mongo, monkeypatch):
     fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
     fake_mongo.db.monkey.insert(MONKEY_AT_VICTIM)
     fake_mongo.db.edge.insert(EDGE_EXPLOITED)
@@ -40,37 +37,56 @@ def test_get_encrypted_files_table(fake_mongo):
     fake_mongo.db.telemetry.insert(ENCRYPTION_ERROR)
     fake_mongo.db.telemetry.insert(ENCRYPTION_ONE_FILE)
 
-    results = RansomwareReportService.get_encrypted_files_table()
+    monkeypatch.setattr(
+        ReportService,
+        "get_exploited",
+        lambda: [{"label": "WinDev2010Eval", "exploits": ["SMB Exploiter"]}],
+    )
+
+    results = get_encrypted_files_table()
 
     assert results == [
-        {"hostname": "test-pc-2", "exploit": "Manual execution", "files_encrypted": True},
-        {"hostname": "WinDev2010Eval", "exploit": "SMB", "files_encrypted": True},
+        {"hostname": "test-pc-2", "exploits": ["Manual execution"], "files_encrypted": True},
+        {"hostname": "WinDev2010Eval", "exploits": ["SMB Exploiter"], "files_encrypted": True},
     ]
 
 
-@pytest.mark.skip(reason="Can't find a way to use the same mock database client in Monkey model")
 @pytest.mark.usefixtures("uses_database")
-def test_get_encrypted_files_table__only_errors(fake_mongo):
+def test_get_encrypted_files_table__only_errors(fake_mongo, monkeypatch):
     fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
     fake_mongo.db.monkey.insert(MONKEY_AT_VICTIM)
     fake_mongo.db.edge.insert(EDGE_EXPLOITED)
     fake_mongo.db.edge.insert(EDGE_SCANNED)
     fake_mongo.db.telemetry.insert(ENCRYPTION_ERROR)
 
-    results = RansomwareReportService.get_encrypted_files_table()
+    monkeypatch.setattr(
+        ReportService,
+        "get_exploited",
+        lambda: [{"label": "WinDev2010Eval", "exploits": ["SMB Exploiter"]}],
+    )
 
-    assert results == []
+    results = get_encrypted_files_table()
+
+    assert results == [
+        {"hostname": "test-pc-2", "exploits": ["Manual execution"], "files_encrypted": False}
+    ]
 
 
 @pytest.mark.skip(reason="Can't find a way to use the same mock database client in Monkey model")
 @pytest.mark.usefixtures("uses_database")
-def test_get_encrypted_files_table__no_telemetries(fake_mongo):
+def test_get_encrypted_files_table__no_telemetries(fake_mongo, monkeypatch):
     fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
     fake_mongo.db.monkey.insert(MONKEY_AT_VICTIM)
     fake_mongo.db.edge.insert(EDGE_EXPLOITED)
     fake_mongo.db.edge.insert(EDGE_SCANNED)
 
-    results = RansomwareReportService.get_encrypted_files_table()
+    monkeypatch.setattr(
+        ReportService,
+        "get_exploited",
+        lambda: [{"label": "WinDev2010Eval", "exploits": ["SMB Exploiter"]}],
+    )
+
+    results = get_encrypted_files_table()
 
     assert results == []
 
