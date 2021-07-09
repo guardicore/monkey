@@ -252,7 +252,6 @@ def test_no_readme_if_no_directory(
     monkeypatch.setattr(ransomware_payload_module, "TARGETED_FILE_EXTENSIONS", set()),
     mock_copy_file = MagicMock()
 
-    ransomware_payload_config["encryption"]["enabled"] = True
     ransomware_payload_config["encryption"]["directories"]["linux_target_dir"] = ""
     ransomware_payload_config["encryption"]["directories"]["windows_target_dir"] = ""
     ransomware_payload_config["other_behaviors"]["readme"] = True
