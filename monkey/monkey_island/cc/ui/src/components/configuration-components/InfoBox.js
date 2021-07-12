@@ -6,12 +6,11 @@ class InfoBox extends React.Component {
 
   render() {
     return (
-      <>
-        <div className='alert alert-info'>
-          <FontAwesomeIcon icon={faInfoCircle} style={{'marginRight': '5px'}}/>
-          {this.props.schema.info}
-        </div>
-      </>);
+      <div className='alert alert-info'>
+        <FontAwesomeIcon icon={faInfoCircle} style={{'marginRight': '5px'}}/>
+        {this.props.schema.info}
+      </div>
+    );
   }
 }
 
