@@ -10,7 +10,7 @@ def get_propagation_stats() -> Dict:
     return {
         "num_scanned_nodes": len(scanned),
         "num_exploited_nodes": len(exploited),
-        "count_per_exploit": _get_exploit_counts(exploited),
+        "num_exploited_per_exploit": _get_exploit_counts(exploited),
     }
 
 

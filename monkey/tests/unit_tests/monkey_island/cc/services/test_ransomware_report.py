@@ -29,9 +29,9 @@ def test_get_propagation_stats__num_exploited():
     assert stats["num_exploited_nodes"] == 3
 
 
-def test_get_propagation_stats__count_per_exploit():
+def test_get_propagation_stats__num_exploited_per_exploit():
     stats = ransomware_report.get_propagation_stats()
 
-    assert stats["count_per_exploit"]["SSH Exploiter"] == 2
-    assert stats["count_per_exploit"]["SMB Exploiter"] == 1
-    assert stats["count_per_exploit"]["WMI Exploiter"] == 1
+    assert stats["num_exploited_per_exploit"]["SSH Exploiter"] == 2
+    assert stats["num_exploited_per_exploit"]["SMB Exploiter"] == 1
+    assert stats["num_exploited_per_exploit"]["WMI Exploiter"] == 1
