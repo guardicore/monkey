@@ -2,6 +2,7 @@ import React from 'react';
 
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
+import pluralize from 'pluralize'
 
 class RansomwareReport extends React.Component {
   stillLoadingDataFromServer() {
@@ -41,22 +42,13 @@ class RansomwareReport extends React.Component {
 
     for (let exploit in exploit_counts) {
       let count = exploit_counts[exploit];
-      if (count === 1) {
-        exploitation_details.push(
-          <div>
-            <span className='badge badge-danger'>{count}</span> machine was exploited by
-            the <span className='badge badge-danger'>{exploit}</span>.
-          </div>
-        );
-      }
-      else {
-        exploitation_details.push(
-          <div>
-            <span className='badge badge-danger'>{count}</span> machines were exploited by
-            the <span className='badge badge-danger'>{exploit}</span>.
-          </div>
-        );
-      }
+      exploitation_details.push(
+        <div>
+          <span className='badge badge-danger'>{count}</span>&nbsp;
+          {pluralize('machine', count)} {pluralize('was', count)} exploited by the&nbsp;
+          <span className='badge badge-danger'>{exploit}</span>.
+        </div>
+      );
     }
 
     return exploitation_details;
