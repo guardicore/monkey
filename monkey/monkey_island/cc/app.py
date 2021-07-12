@@ -26,6 +26,7 @@ from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.environment import Environment
 from monkey_island.cc.resources.island_configuration import IslandConfiguration
 from monkey_island.cc.resources.island_logs import IslandLog
+from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.monkey import Monkey
@@ -132,6 +133,8 @@ def init_api_resources(api):
     api.add_resource(
         Telemetry, "/api/telemetry", "/api/telemetry/", "/api/telemetry/<string:monkey_guid>"
     )
+
+    api.add_resource(IslandMode, "/api/island-mode")
     api.add_resource(MonkeyConfiguration, "/api/configuration", "/api/configuration/")
     api.add_resource(IslandConfiguration, "/api/configuration/island", "/api/configuration/island/")
     api.add_resource(ConfigurationExport, "/api/configuration/export")
