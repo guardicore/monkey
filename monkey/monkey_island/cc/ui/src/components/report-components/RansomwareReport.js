@@ -26,6 +26,9 @@ class RansomwareReport extends React.Component {
 
     return (
       <div>
+        <h2>
+          Propagation
+        </h2>
         <p>
           The Monkey discovered <span className='badge badge-warning'>{num_scanned}</span> machines
           and successfully breached <span className='badge badge-danger'>{num_exploited}</span> of them.
