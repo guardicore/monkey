@@ -11,12 +11,9 @@ class RansomwareReport extends React.Component {
 
   generateReportContent() {
     return (
-        <div>
-          <p>
-            This report shows information about the ransomware simulation run by Infection Monkey.
-          </p>
-          {this.getExploitationStats()}
-        </div>
+      <div>
+        {this.getExploitationStats()}
+      </div>
     )
   }
 
