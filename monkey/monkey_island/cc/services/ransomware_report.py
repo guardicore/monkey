@@ -18,11 +18,7 @@ def _get_exploit_counts(exploited: List[Dict]) -> Dict:
     exploit_counts = {}
 
     for node in exploited:
-        exploits = node["exploits"]
-        for exploit in exploits:
-            if exploit in exploit_counts:
-                exploit_counts[exploit] += 1
-            else:
-                exploit_counts[exploit] = 1
+        for exploit in node["exploits"]:
+            exploit_counts[exploit] = exploit_counts.get(exploit, 0) + 1
 
     return exploit_counts
