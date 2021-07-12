@@ -52,7 +52,7 @@ This folder controls many of the parameters regarding the site generation.
 
 ### Themes
 
-This is the theme we're using. It's a submodule (to get it you need to run `git submodule update`). It's our own fork of the [learn](https://themes.gohugo.io/hugo-theme-learn/) theme. If you want to make changes to the theme itself, or pull updates from the upstream, you'll do it here. 
+This is the theme we're using. It's a submodule (to get it you need to run `git submodule update`). It's our own fork of the [learn](https://themes.gohugo.io/hugo-theme-learn/) theme. If you want to make changes to the theme itself, or pull updates from the upstream, you'll do it here.
 
 ### Layouts and archtypes
 
@@ -60,13 +60,15 @@ This directory includes custom [HTML partials](https://gohugo.io/templates/parti
 
 ### Public and resources
 
-These are the build output of `hugo` and should never be `commit`-ed to git.   
+These are the build output of `hugo` and should never be `commit`-ed to git.
 
 ## How to contribute
 
 ### Requirements
 
 You'll have to [install `hugo`](https://gohugo.io/getting-started/installing/), a text editor that's good for markdown (`vscode` and `vim` are good options) and `git`.
+
+Note: Installing `hugo` via `apt` is not recommended because Hugo is usually few [versions behind](https://github.com/wowchemy/wowchemy-hugo-modules/issues/703) the latest for Debian and Ubuntu package managers. Refer to latest [releases](https://github.com/gohugoio/hugo/releases) of Hugo.
 
 ### Adding and editing content
 
@@ -93,7 +95,7 @@ Run `hugo --environment staging` or `hugo --environment production`. This will c
 ##### `Error: Unable to locate config file or config directory. Perhaps you need to create a new site.`
 
 Did you confirm your working directory? It should be `monkey/docs`.
-  
+
 ##### `failed to extract shortcode: template for shortcode "children" not found` or theme doesn't seem right?
 
 Have you run `git submodule update`?
