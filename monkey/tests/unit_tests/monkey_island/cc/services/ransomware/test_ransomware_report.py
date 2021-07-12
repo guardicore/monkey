@@ -1,6 +1,6 @@
 import pytest
 
-import monkey_island.cc.services.ransomware_report as ransomware_report
+from monkey_island.cc.services.ransomware import ransomware_report
 from monkey_island.cc.services.reporting.report import ReportService
 
 TEST_SCANNED_RESULTS = [{}, {}, {}, {}]
