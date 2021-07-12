@@ -18,20 +18,26 @@ class RansomwareReport extends React.Component {
   }
 
   getExploitationStats() {
-    let num_scanned = this.props.report.propagation_stats.num_scanned_nodes;
-    let num_exploited = this.props.report.propagation_stats.num_exploited_nodes;
-
     return (
       <div>
         <h2>
           Propagation
         </h2>
-        <p>
-          The Monkey discovered <span className='badge badge-warning'>{num_scanned}</span> machines
-          and successfully breached <span className='badge badge-danger'>{num_exploited}</span> of them.
-        </p>
+        {this.getScannedVsExploitedStats()}
         {this.getExploitationStatsPerExploit()}
       </div>
+    )
+  }
+
+  getScannedVsExploitedStats() {
+    let num_scanned = this.props.report.propagation_stats.num_scanned_nodes;
+    let num_exploited = this.props.report.propagation_stats.num_exploited_nodes;
+
+    return(
+      <p>
+        The Monkey discovered <span className='badge badge-warning'>{num_scanned}</span> machines
+        and successfully breached <span className='badge badge-danger'>{num_exploited}</span> of them.
+      </p>
     )
   }
 
