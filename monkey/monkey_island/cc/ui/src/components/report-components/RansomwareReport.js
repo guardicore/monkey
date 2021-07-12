@@ -22,9 +22,23 @@ class RansomwareReport extends React.Component {
   getExploitationStats() {
     let num_scanned = this.props.report.propagation_stats.num_scanned_nodes;
     let num_exploited = this.props.report.propagation_stats.num_exploited_nodes;
+
+    return (
+      <div>
+        <p>
+          The Monkey discovered <span className='badge badge-warning'>{num_scanned}</span> machines
+          and successfully breached <span className='badge badge-danger'>{num_exploited}</span> of them.
+        </p>
+        {this.getExploitationStatsPerExploit()}
+      </div>
+    )
+  }
+
+  getExploitationStatsPerExploit() {
     let exploit_counts = this.props.report.propagation_stats.num_exploited_per_exploit;
 
     let exploitation_details = [];
+
     for (let exploit in exploit_counts) {
       let count = exploit_counts[exploit];
       if (count === 1) {
@@ -33,7 +47,7 @@ class RansomwareReport extends React.Component {
             <span className='badge badge-danger'>{count}</span> machine was exploited by
             the <span className='badge badge-danger'>{exploit}</span>.
           </div>
-        )
+        );
       }
       else {
         exploitation_details.push(
@@ -41,19 +55,11 @@ class RansomwareReport extends React.Component {
             <span className='badge badge-danger'>{count}</span> machines were exploited by
             the <span className='badge badge-danger'>{exploit}</span>.
           </div>
-        )
+        );
       }
     }
 
-    return (
-      <div>
-        <p>
-          The Monkey discovered <span className='badge badge-warning'>{num_scanned}</span> machines
-          and successfully breached <span className='badge badge-danger'>{num_exploited}</span> of them.
-        </p>
-        {exploitation_details}
-      </div>
-    )
+    return exploitation_details;
   }
 
   render() {
