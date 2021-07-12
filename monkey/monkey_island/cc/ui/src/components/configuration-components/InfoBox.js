@@ -2,7 +2,7 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 
-class InfoField extends React.Component {
+class InfoBox extends React.Component {
 
   render() {
     return (
@@ -15,4 +15,4 @@ class InfoField extends React.Component {
   }
 }
 
-export default InfoField;
+export default InfoBox;
