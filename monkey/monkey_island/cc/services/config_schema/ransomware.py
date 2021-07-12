@@ -10,10 +10,10 @@ RANSOMWARE = {
         "encryption": {
             "title": "Simulation",
             "type": "object",
-            "description": "To simulate ransomware encryption, create a directory and put some "
-            "files there to be encrypted. Do this on each machine on which you want to run the "
-            "ransomware encryption simulation.\n\nProvide the path to the directory that was "
-            "created on each machine:",
+            "description": "To simulate ransomware encryption, you'll need to provide Infection "
+            "Monkey with files that it can safely encrypt. On each machine where you would like "
+            "the ransomware simulation to run, create a directory and put some files in it."
+            "\n\nProvide the path to the directory that was created on each machine.",
             "properties": {
                 "enabled": {
                     "title": "Encrypt files",
