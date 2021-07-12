@@ -1,7 +1,7 @@
 import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
-import FieldWithInfo from './FieldWithInfo';
+import InfoBox from './InfoBox';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -17,8 +17,8 @@ export default function UiSchema(props) {
     basic_network: {
       'ui:order': ['scope', 'network_analysis'],
       scope: {
-        blocked_ips: {
-          'ui:field': FieldWithInfo
+        info_box: {
+          'ui:field': InfoBox
         },
         subnet_scan_list: {
           format: 'ip-list'
@@ -73,6 +73,9 @@ export default function UiSchema(props) {
     },
     ransomware: {
       encryption: {
+        info_box: {
+          'ui:field': InfoBox
+        },
         directories: {
             // Directory inputs are dynamically hidden
         },
