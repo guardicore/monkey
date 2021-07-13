@@ -15,7 +15,7 @@ class ReportPageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.sectionsOrder = ['security', 'zeroTrust', 'attack', 'ransomware'];
+    this.sections = ['security', 'zeroTrust', 'attack', 'ransomware'];
     this.state = {
       securityReport: {},
       attackReport: {},
@@ -23,8 +23,8 @@ class ReportPageComponent extends AuthComponent {
       ransomwareReport: {},
       allMonkeysAreDead: false,
       runStarted: true,
-      selectedSection: ReportPageComponent.selectReport(this.sectionsOrder),
-      sections: [{key: 'security', title: 'Security report'},
+      selectedSection: ReportPageComponent.selectReport(this.sections),
+      orderedSections: [{key: 'security', title: 'Security report'},
         {key: 'zeroTrust', title: 'Zero trust report'},
         {key: 'attack', title: 'ATT&CK report'}]
     };
@@ -117,10 +117,10 @@ class ReportPageComponent extends AuthComponent {
 
     let mode = 'ransomware';
     if (mode === 'ransomware') {
-      this.state.sections.splice(0, 0, ransomwareTab);
+      this.state.orderedSections.splice(0, 0, ransomwareTab);
     }
     else {
-      this.state.sections.push(ransomwareTab);
+      this.state.orderedSections.push(ransomwareTab);
     }
   }
 
@@ -160,7 +160,7 @@ class ReportPageComponent extends AuthComponent {
                history.push(key)
              }}
              className={'report-nav'}>
-          {this.state.sections.map(section => this.renderNavButton(section))}
+          {this.state.orderedSections.map(section => this.renderNavButton(section))}
         </Nav>)}/>)
   };
 
