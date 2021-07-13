@@ -18,3 +18,7 @@ def hash_file(filepath: Path):
             sha256.update(block)
 
     return sha256.hexdigest()
+
+
+def raise_(ex):
+    raise ex

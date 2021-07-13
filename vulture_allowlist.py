@@ -171,6 +171,7 @@ MONKEY_LINUX_RUNNING  # unused variable (monkey/monkey_island/cc/services/utils/
 import_status  # monkey_island\cc\resources\configuration_import.py:19
 config_schema  # monkey_island\cc\resources\configuration_import.py:25
 exception_stream  # unused attribute (monkey_island/cc/server_setup.py:104)
+ADVANCED  # unused attribute (monkey/monkey_island/cc/services/mode/mode_enum.py:6:)
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
