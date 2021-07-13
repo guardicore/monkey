@@ -26,5 +26,3 @@ class IslandMode(flask_restful.Resource):
             return make_response({}, 400)
         except ValueError:
             return make_response({}, 422)
-        except Exception:
-            return make_response({}, 500)
