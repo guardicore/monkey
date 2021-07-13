@@ -1,7 +1,5 @@
 import mongomock
 import pytest
-from mongoengine import get_connection
-import mongomock
 from tests.data_for_tests.mongo_documents.edges import EDGE_EXPLOITED, EDGE_SCANNED
 from tests.data_for_tests.mongo_documents.monkeys import MONKEY_AT_ISLAND, MONKEY_AT_VICTIM
 from tests.data_for_tests.mongo_documents.telemetries.file_encryption import (
@@ -10,11 +8,8 @@ from tests.data_for_tests.mongo_documents.telemetries.file_encryption import (
     ENCRYPTION_ERROR,
     ENCRYPTION_ONE_FILE,
 )
-import pytest
 
 from monkey_island.cc.services.ransomware import ransomware_report
-from monkey_island.cc.services.reporting.report import ReportService
-
 from monkey_island.cc.services.ransomware.ransomware_report import get_encrypted_files_table
 from monkey_island.cc.services.reporting.report import ReportService
 
@@ -87,7 +82,6 @@ def test_get_encrypted_files_table__only_errors(fake_mongo, monkeypatch):
     ]
 
 
-@pytest.mark.skip(reason="Can't find a way to use the same mock database client in Monkey model")
 @pytest.mark.usefixtures("uses_database")
 def test_get_encrypted_files_table__no_telemetries(fake_mongo, monkeypatch):
     fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
@@ -104,6 +98,7 @@ def test_get_encrypted_files_table__no_telemetries(fake_mongo, monkeypatch):
     results = get_encrypted_files_table()
 
     assert results == []
+
 
 @pytest.fixture
 def patch_report_service_for_stats(monkeypatch):

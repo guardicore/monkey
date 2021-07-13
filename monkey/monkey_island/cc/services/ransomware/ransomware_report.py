@@ -1,7 +1,6 @@
-from monkey_island.cc.database import mongo
-from monkey_island.cc.services.reporting.report import ReportService
 from typing import Dict, List
 
+from monkey_island.cc.database import mongo
 from monkey_island.cc.services.reporting.report import ReportService
 
 
@@ -79,6 +78,7 @@ def _get_monkey_origin_exploits(monkey_hostname, exploited_nodes):
         return origin_exploits[0]
     else:
         return ["Manual execution"]
+
 
 def get_propagation_stats() -> Dict:
     scanned = ReportService.get_scanned()
