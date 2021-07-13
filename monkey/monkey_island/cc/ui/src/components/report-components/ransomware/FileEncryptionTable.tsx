@@ -54,9 +54,13 @@ function renderFileEncryptionStats(successful: number, total: number) {
   let textClassName = ''
 
   if(successful > 0) {
-    textClassName = 'text-success'
+    if (successful === total) {
+      textClassName = 'text-danger'
+    } else {
+      textClassName = 'text-warning'
+    }
   } else {
-    textClassName = 'text-danger'
+    textClassName = 'text-success'
   }
 
   return (<p className={textClassName}>{successful} out of {total}</p>);
