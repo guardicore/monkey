@@ -3,8 +3,12 @@ import React from 'react';
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 import pluralize from 'pluralize'
+import FileEncryptionTable from './ransomware/FileEncryptionTable';
+
+import '../../styles/pages/report/RansomwareReport.scss';
 
 class RansomwareReport extends React.Component {
+
   stillLoadingDataFromServer() {
     return Object.keys(this.props.report).length === 0;
   }
@@ -13,6 +17,7 @@ class RansomwareReport extends React.Component {
     return (
       <div>
         {this.getExploitationStats()}
+        <FileEncryptionTable tableData={this.props.report.encrypted_files_table} />
       </div>
     )
   }
@@ -20,9 +25,9 @@ class RansomwareReport extends React.Component {
   getExploitationStats() {
     return (
       <div>
-        <h2>
+        <h3 className={'report-section-header'}>
           Propagation
-        </h2>
+        </h3>
         {this.getScannedVsExploitedStats()}
         {this.getExploitationStatsPerExploit()}
       </div>
@@ -69,7 +74,7 @@ class RansomwareReport extends React.Component {
     }
 
     return (
-    <div className='report-page'>
+    <div className={`report-page ransomware-report`}>
       <ReportHeader report_type={ReportTypes.ransomware}/>
       <hr/>
       {content}
