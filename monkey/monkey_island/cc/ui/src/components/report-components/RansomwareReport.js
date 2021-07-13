@@ -9,28 +9,15 @@ import '../../styles/pages/report/RansomwareReport.scss';
 
 class RansomwareReport extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-        report: props.report
-    };
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.report !== prevProps.report) {
-     this.setState({report: this.props.report})
-    }
-  }
-
   stillLoadingDataFromServer() {
-    return Object.keys(this.state.report).length === 0;
+    return Object.keys(this.props.report).length === 0;
   }
 
   generateReportContent() {
     return (
       <div>
         {this.getExploitationStats()}
-        <FileEncryptionTable tableData={this.state.report.encrypted_files_table} />
+        <FileEncryptionTable tableData={this.props.report.encrypted_files_table} />
       </div>
     )
   }
