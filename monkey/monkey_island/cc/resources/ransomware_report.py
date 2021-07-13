@@ -9,5 +9,9 @@ class RansomwareReport(flask_restful.Resource):
     @jwt_required
     def get(self):
         encrypted_files_table = ransomware_report.get_encrypted_files_table()
-        return jsonify({"encrypted_files_table": encrypted_files_table,
-                        "propagation_stats": ransomware_report.get_propagation_stats()})
+        return jsonify(
+            {
+                "encrypted_files_table": encrypted_files_table,
+                "propagation_stats": ransomware_report.get_propagation_stats(),
+            }
+        )
