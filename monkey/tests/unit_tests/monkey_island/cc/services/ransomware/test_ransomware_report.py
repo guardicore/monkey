@@ -46,8 +46,18 @@ def test_get_encrypted_files_table(fake_mongo, monkeypatch):
     results = get_encrypted_files_table()
 
     assert results == [
-        {"hostname": "test-pc-2", "exploits": ["Manual execution"], "files_encrypted": True},
-        {"hostname": "WinDev2010Eval", "exploits": ["SMB Exploiter"], "files_encrypted": True},
+        {
+            "hostname": "test-pc-2",
+            "exploits": ["Manual execution"],
+            "successful_encryptions": 3,
+            "total_attempts": 3,
+        },
+        {
+            "hostname": "WinDev2010Eval",
+            "exploits": ["SMB Exploiter"],
+            "successful_encryptions": 1,
+            "total_attempts": 1,
+        },
     ]
 
 
@@ -68,7 +78,12 @@ def test_get_encrypted_files_table__only_errors(fake_mongo, monkeypatch):
     results = get_encrypted_files_table()
 
     assert results == [
-        {"hostname": "test-pc-2", "exploits": ["Manual execution"], "files_encrypted": False}
+        {
+            "hostname": "test-pc-2",
+            "exploits": ["Manual execution"],
+            "successful_encryptions": 0,
+            "total_attempts": 1,
+        }
     ]
 
 

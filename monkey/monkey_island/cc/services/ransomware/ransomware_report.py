@@ -8,19 +8,36 @@ from monkey_island.cc.services.reporting.report import ReportService
 def get_encrypted_files_table():
     query = [
         {"$match": {"telem_category": "file_encryption"}},
-        {"$unwind": "$data.files"},
+        {"$addFields": {"total_attempts": {"$size": "$data.files"}}},
+        {
+            "$addFields": {
+                "successful_encryptions": {
+                    "$filter": {
+                        "input": "$data.files",
+                        "as": "files",
+                        "cond": {"$eq": ["$$files.success", True]},
+                    }
+                }
+            }
+        },
+        {"$addFields": {"successful_encryptions": {"$size": "$successful_encryptions"}}},
         {
             "$group": {
-                "_id": {"monkey_guid": "$monkey_guid", "files_encrypted": "$data.files.success"}
+                "_id": {
+                    "monkey_guid": "$monkey_guid",
+                    "successful_encryptions": "$successful_encryptions",
+                    "total_attempts": "$total_attempts",
+                }
             }
         },
         {"$replaceRoot": {"newRoot": "$_id"}},
-        {"$sort": {"files_encrypted": -1}},
+        {"$sort": {"successful_encryptions": -1}},
         {
             "$group": {
                 "_id": {"monkey_guid": "$monkey_guid"},
                 "monkey_guid": {"$first": "$monkey_guid"},
-                "files_encrypted": {"$first": "$files_encrypted"},
+                "total_attempts": {"$first": "$total_attempts"},
+                "successful_encryptions": {"$first": "$successful_encryptions"},
             }
         },
         {
@@ -34,7 +51,8 @@ def get_encrypted_files_table():
         {
             "$project": {
                 "monkey": {"$arrayElemAt": ["$monkey", 0]},
-                "files_encrypted": "$files_encrypted",
+                "total_attempts": "$total_attempts",
+                "successful_encryptions": "$successful_encryptions",
             }
         },
     ]
