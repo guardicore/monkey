@@ -21,7 +21,7 @@ def test_island_mode_post__invalid_mode(flask_client):
     resp = flask_client.post(
         "/api/island-mode", data=json.dumps({"mode": "bogus mode"}), follow_redirects=True
     )
-    assert resp.status_code == 404
+    assert resp.status_code == 422
 
 
 def test_island_mode_post__set_model(flask_client, uses_database):
