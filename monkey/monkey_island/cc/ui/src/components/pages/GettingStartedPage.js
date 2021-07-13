@@ -4,9 +4,9 @@ import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlayCircle} from '@fortawesome/free-regular-svg-icons';
 import {faBookOpen, faCogs} from '@fortawesome/free-solid-svg-icons';
-import '../../styles/pages/RunServerPage.scss';
+import '../../styles/pages/GettingStartedPage.scss';
 
-class RunServerPageComponent extends React.Component {
+class GettingStartedPageComponent extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -15,12 +15,9 @@ class RunServerPageComponent extends React.Component {
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
-           className={'main'}>
-        <h1 className="page-title">Welcome to the Monkey Island Server</h1>
+           className={'main getting-started-page'}>
+        <h1 className="page-title" >Getting Started</h1>
         <div style={{'fontSize': '1.2em'}}>
-          <p style={{'marginTop': '30px'}}>
-            Congratulations! You have successfully set up the Monkey Island server. &#x1F44F; &#x1F44F;
-          </p>
           <br/>
           <HomepageCallToActions />
           <br/>
@@ -31,7 +28,7 @@ class RunServerPageComponent extends React.Component {
   }
 }
 
-export default RunServerPageComponent;
+export default GettingStartedPageComponent;
 
 function HomepageCallToActions() {
   return (
