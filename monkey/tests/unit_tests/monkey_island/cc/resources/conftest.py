@@ -1,11 +1,13 @@
 import flask_jwt_extended
 import flask_restful
+import mongoengine
 import pytest
 from flask import Flask
 
 import monkey_island.cc.app
 import monkey_island.cc.resources.auth.auth
 import monkey_island.cc.resources.island_mode
+from monkey_island.cc.models.island_mode_model import IslandMode
 from monkey_island.cc.services.representations import output_json
 
 
@@ -30,3 +32,14 @@ def mock_init_app():
     monkey_island.cc.app.init_api_resources(api)
 
     return app
+
+
+@pytest.fixture(scope="module", autouse=True)
+def fake_mongo():
+    mongoengine.disconnect()
+    mongoengine.connect("mongoenginetest", host="mongomock://localhost")
+
+
+@pytest.fixture(scope="function")
+def uses_database():
+    IslandMode.objects().delete()
