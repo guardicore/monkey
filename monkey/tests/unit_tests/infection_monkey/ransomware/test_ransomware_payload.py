@@ -22,13 +22,14 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 )
 from tests.utils import hash_file, is_user_admin
 
-from infection_monkey.ransomware import ransomware_payload as ransomware_payload_module
+from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
 from infection_monkey.ransomware.ransomware_payload import (
     EXTENSION,
     README_DEST,
     README_SRC,
     RansomwarePayload,
 )
+from infection_monkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 
 
 def with_extension(filename):
@@ -55,11 +56,18 @@ def ransomware_payload(build_ransomware_payload, ransomware_payload_config):
 
 
 @pytest.fixture
-def build_ransomware_payload(telemetry_messenger_spy, mock_leave_readme):
+def build_ransomware_payload(telemetry_messenger_spy, mock_file_selector, mock_leave_readme):
     def inner(config):
-        return RansomwarePayload(config, mock_leave_readme, telemetry_messenger_spy)
+        return RansomwarePayload(
+            config, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
+        )
 
     return inner
+
+
+@pytest.fixture
+def mock_file_selector():
+    return ProductionSafeTargetFileSelector(TARGETED_FILE_EXTENSIONS)
 
 
 @pytest.fixture
@@ -209,10 +217,12 @@ def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
     assert telem_2.get_data()["files"][0]["error"] == ""
 
 
-def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_spy):
+def test_telemetry_failure(
+    monkeypatch, mock_file_selector, ransomware_payload, telemetry_messenger_spy
+):
     monkeypatch.setattr(
-        ransomware_payload_module,
-        "select_production_safe_target_files",
+        ProductionSafeTargetFileSelector,
+        "__call__",
         lambda a, b: [PurePosixPath("/file/not/exist")],
     ),
 
@@ -251,14 +261,12 @@ def test_no_readme_if_no_directory(
     telemetry_messenger_spy,
     ransomware_target,
 ):
-    monkeypatch.setattr(ransomware_payload_module, "TARGETED_FILE_EXTENSIONS", set()),
-
     ransomware_payload_config["encryption"]["directories"]["linux_target_dir"] = ""
     ransomware_payload_config["encryption"]["directories"]["windows_target_dir"] = ""
     ransomware_payload_config["other_behaviors"]["readme"] = True
 
     RansomwarePayload(
-        ransomware_payload_config, mock_leave_readme, telemetry_messenger_spy
+        ransomware_payload_config, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
     ).run_payload()
 
     mock_leave_readme.assert_not_called()

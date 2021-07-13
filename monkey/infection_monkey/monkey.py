@@ -6,6 +6,8 @@ import sys
 import time
 from threading import Thread
 
+from InfectionMonkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
+
 import infection_monkey.tunnel as tunnel
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.utils.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
@@ -19,7 +21,8 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.network.tools import get_interface_to_target, is_running_on_island
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.ransomware import readme_utils
+from infection_monkey.ransomware import ransomware_payload, readme_utils
+from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
 from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
@@ -476,9 +479,14 @@ class InfectionMonkey(object):
         telemetry_messenger = LegacyTelemetryMessengerAdapter()
         batching_telemetry_messenger = BatchingTelemetryMessenger(telemetry_messenger)
 
+        targeted_file_extensions = TARGETED_FILE_EXTENSIONS.copy()
+        targeted_file_extensions.discard(ransomware_payload.EXTENSION)
+        file_selector = ProductionSafeTargetFileSelector(targeted_file_extensions)
+
         try:
             RansomwarePayload(
                 WormConfiguration.ransomware,
+                file_selector,
                 readme_utils.leave_readme,
                 batching_telemetry_messenger,
             ).run_payload()

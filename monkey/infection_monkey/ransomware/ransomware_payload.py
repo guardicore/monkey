@@ -5,8 +5,6 @@ from typing import Callable, List, Optional, Tuple
 
 from common.utils.file_utils import InvalidPath, expand_path
 from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
-from infection_monkey.ransomware.file_selectors import select_production_safe_target_files
-from infection_monkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
@@ -24,6 +22,7 @@ class RansomwarePayload:
     def __init__(
         self,
         config: dict,
+        select_files: Callable[[Path], List[Path]],
         leave_readme: Callable[[Path, Path], None],
         telemetry_messenger: ITelemetryMessenger,
     ):
@@ -34,10 +33,9 @@ class RansomwarePayload:
 
         self._target_dir = RansomwarePayload.get_target_dir(config)
         self._new_file_extension = EXTENSION
-        self._targeted_file_extensions = TARGETED_FILE_EXTENSIONS.copy()
-        self._targeted_file_extensions.discard(self._new_file_extension)
 
         self._encryptor = BitflipEncryptor(chunk_size=CHUNK_SIZE)
+        self._select_files = select_files
         self._leave_readme = leave_readme
         self._telemetry_messenger = telemetry_messenger
 
@@ -70,9 +68,7 @@ class RansomwarePayload:
 
     def _find_files(self) -> List[Path]:
         LOG.info(f"Collecting files in {self._target_dir}")
-        return sorted(
-            select_production_safe_target_files(self._target_dir, self._targeted_file_extensions)
-        )
+        return sorted(self._select_files(self._target_dir))
 
     def _encrypt_files(self, file_list: List[Path]) -> List[Tuple[Path, Optional[Exception]]]:
         LOG.info(f"Encrypting files in {self._target_dir}")
