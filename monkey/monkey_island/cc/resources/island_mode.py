@@ -18,7 +18,7 @@ class IslandMode(flask_restful.Resource):
         mode_str = body.get("mode")
         try:
             mode = IslandModeEnum(mode_str)
-            mode_value = set_mode(mode)
-            return make_response({"status": "MODE_FOUND", "mode": mode_value}, 200)
+            set_mode(mode)
+            return make_response({}, 200)
         except ValueError:
-            return make_response({"status": "MODE_NOT_FOUND"}, 404)
+            return make_response({}, 404)

@@ -6,4 +6,3 @@ def set_mode(mode: IslandModeEnum):
     island_mode_model = IslandMode()
     island_mode_model.mode = mode.value
     island_mode_model.save()
-    return mode.value
