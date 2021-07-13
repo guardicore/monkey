@@ -15,8 +15,8 @@ class RunServerPageComponent extends React.Component {
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
-           className={'main'}>
-        <h1 className="page-title" style={{'margin-bottom': '0px'}}>Getting Started</h1>
+           className={'main getting-started-page'}>
+        <h1 className="page-title" >Getting Started</h1>
         <div style={{'fontSize': '1.2em'}}>
           <br/>
           <HomepageCallToActions />
@@ -32,7 +32,7 @@ export default RunServerPageComponent;
 
 function HomepageCallToActions() {
   return (
-    <section id="homepage-shortcuts" style={{'margin-bottom': '20px'}}>
+    <section id="homepage-shortcuts">
       <div className="container">
         <Row className="justify-content-center">
           <div className="col-lg-4 col-sm-6">
