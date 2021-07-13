@@ -12,9 +12,10 @@ def uses_database():
     IslandMode.objects().delete()
 
 
-def test_island_mode_post(flask_client):
+@pytest.mark.parametrize("mode", ["ransomware", "advanced"])
+def test_island_mode_post(flask_client, mode):
     resp = flask_client.post(
-        "/api/island-mode", data=json.dumps({"mode": "ransomware"}), follow_redirects=True
+        "/api/island-mode", data=json.dumps({"mode": mode}), follow_redirects=True
     )
     assert resp.status_code == 200
 
