@@ -8,6 +8,10 @@ from monkey_island.cc.services.ransomware import ransomware_report
 class RansomwareReport(flask_restful.Resource):
     @jwt_required
     def get(self):
+        encrypted_files_table = ransomware_report.get_encrypted_files_table()
         return jsonify(
-            {"report": None, "propagation_stats": ransomware_report.get_propagation_stats()}
+            {
+                "encrypted_files_table": encrypted_files_table,
+                "propagation_stats": ransomware_report.get_propagation_stats(),
+            }
         )
