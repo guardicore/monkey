@@ -1,38 +1,29 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import {renderArray} from '../common/RenderArrays';
-import renderBool from "../common/RenderBool";
+import renderFileEncryptionStats from "../common/renderFileEncryptionStats";
 
-
-const columns = [
-  {
-    Header: 'Ransomware info',
-    columns: [
-      {Header: 'Machine', id: 'machine', accessor: x => x.hostname},
-      {Header: 'Exploits', id: 'exploits', accessor: x => renderArray(x.exploits)},
-      {Header: 'Files got encrypted?', id: 'files_encrypted', accessor: x => renderBool(x.files_encrypted)}
-    ]
-  }
-];
-
-const pageSize = 10;
-
-type TableRow = {
-  exploits: [string],
-  files_encrypted: boolean,
-  hostname: string
-}
 
 type Props = {
   tableData: [TableRow]
 }
+
+type TableRow = {
+  exploits: [string],
+  total_attempts: number,
+  successful_encryptions: number,
+  hostname: string
+}
+
+const pageSize = 10;
+
 
 const FileEncryptionTable = (props: Props) => {
   let defaultPageSize = props.tableData.length > pageSize ? pageSize : props.tableData.length;
   let showPagination = props.tableData.length > pageSize;
   return (
     <>
-      <h3>
+      <h3 className={'report-section-header'}>
           File encryption
       </h3>
       <div className="data-table-container">
@@ -46,5 +37,19 @@ const FileEncryptionTable = (props: Props) => {
     </>
   );
 }
+
+const columns = [
+  {
+    Header: 'Ransomware info',
+    columns: [
+      {Header: 'Machine', id: 'machine', accessor: x => x.hostname},
+      {Header: 'Exploits', id: 'exploits', accessor: x => renderArray(x.exploits)},
+      {Header: 'Files encrypted',
+        id: 'files_encrypted',
+        accessor: x => renderFileEncryptionStats(x.successful_encryptions, x.total_attempts)}
+    ]
+  }
+];
+
 
 export default FileEncryptionTable;
