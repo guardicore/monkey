@@ -10,4 +10,4 @@ sys.path.insert(0, MONKEY_BASE_PATH)
 
 @pytest.fixture(scope="session")
 def data_for_tests_dir(pytestconfig):
-    return os.path.join(pytestconfig.rootdir, "monkey", "tests", "data_for_tests")
+    return Path(os.path.join(pytestconfig.rootdir, "monkey", "tests", "data_for_tests"))

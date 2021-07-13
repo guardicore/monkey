@@ -1,6 +1,5 @@
 import os
-import shutil
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
 from unittest.mock import MagicMock
 
 import pytest
@@ -24,7 +23,12 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 from tests.utils import hash_file, is_user_admin
 
 from infection_monkey.ransomware import ransomware_payload as ransomware_payload_module
-from infection_monkey.ransomware.ransomware_payload import EXTENSION, README_DEST, RansomwarePayload
+from infection_monkey.ransomware.ransomware_payload import (
+    EXTENSION,
+    README_DEST,
+    README_SRC,
+    RansomwarePayload,
+)
 
 
 def with_extension(filename):
@@ -51,11 +55,16 @@ def ransomware_payload(build_ransomware_payload, ransomware_payload_config):
 
 
 @pytest.fixture
-def build_ransomware_payload(telemetry_messenger_spy):
+def build_ransomware_payload(telemetry_messenger_spy, mock_leave_readme):
     def inner(config):
-        return RansomwarePayload(config, telemetry_messenger_spy, shutil.copyfile)
+        return RansomwarePayload(config, mock_leave_readme, telemetry_messenger_spy)
 
     return inner
+
+
+@pytest.fixture
+def mock_leave_readme():
+    return MagicMock()
 
 
 def test_env_variables_in_target_dir_resolved_linux(
@@ -215,49 +224,41 @@ def test_telemetry_failure(monkeypatch, ransomware_payload, telemetry_messenger_
     assert "No such file or directory" in telem_1.get_data()["files"][0]["error"]
 
 
-def test_readme_false(build_ransomware_payload, ransomware_payload_config, ransomware_target):
+def test_readme_false(
+    build_ransomware_payload, ransomware_payload_config, mock_leave_readme, ransomware_target
+):
     ransomware_payload_config["other_behaviors"]["readme"] = False
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
     ransomware_payload.run_payload()
-    assert not Path(ransomware_target / README_DEST).exists()
+    mock_leave_readme.assert_not_called()
 
 
-def test_readme_true(build_ransomware_payload, ransomware_payload_config, ransomware_target):
+def test_readme_true(
+    build_ransomware_payload, ransomware_payload_config, mock_leave_readme, ransomware_target
+):
     ransomware_payload_config["other_behaviors"]["readme"] = True
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
     ransomware_payload.run_payload()
-    assert Path(ransomware_target / README_DEST).exists()
-
-
-def test_readme_already_exists(
-    monkeypatch, ransomware_payload_config, telemetry_messenger_spy, ransomware_target
-):
-    monkeypatch.setattr(ransomware_payload_module, "TARGETED_FILE_EXTENSIONS", set()),
-    mock_copy_file = MagicMock()
-
-    ransomware_payload_config["other_behaviors"]["readme"] = True
-    Path(ransomware_target / README_DEST).touch()
-    RansomwarePayload(
-        ransomware_payload_config, telemetry_messenger_spy, mock_copy_file
-    ).run_payload()
-
-    mock_copy_file.assert_not_called()
+    mock_leave_readme.assert_called_with(README_SRC, ransomware_target / README_DEST)
 
 
 def test_no_readme_if_no_directory(
-    monkeypatch, ransomware_payload_config, telemetry_messenger_spy, ransomware_target
+    monkeypatch,
+    ransomware_payload_config,
+    mock_leave_readme,
+    telemetry_messenger_spy,
+    ransomware_target,
 ):
     monkeypatch.setattr(ransomware_payload_module, "TARGETED_FILE_EXTENSIONS", set()),
-    mock_copy_file = MagicMock()
 
     ransomware_payload_config["encryption"]["directories"]["linux_target_dir"] = ""
     ransomware_payload_config["encryption"]["directories"]["windows_target_dir"] = ""
     ransomware_payload_config["other_behaviors"]["readme"] = True
 
     RansomwarePayload(
-        ransomware_payload_config, telemetry_messenger_spy, mock_copy_file
+        ransomware_payload_config, mock_leave_readme, telemetry_messenger_spy
     ).run_payload()
 
-    mock_copy_file.assert_not_called()
+    mock_leave_readme.assert_not_called()

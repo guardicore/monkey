@@ -1,7 +1,6 @@
 import argparse
 import logging
 import os
-import shutil
 import subprocess
 import sys
 import time
@@ -20,6 +19,7 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.network.tools import get_interface_to_target, is_running_on_island
 from infection_monkey.post_breach.post_breach_handler import PostBreach
+from infection_monkey.ransomware import readme_utils
 from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
@@ -478,7 +478,9 @@ class InfectionMonkey(object):
 
         try:
             RansomwarePayload(
-                WormConfiguration.ransomware, batching_telemetry_messenger, shutil.copyfile
+                WormConfiguration.ransomware,
+                readme_utils.leave_readme,
+                batching_telemetry_messenger,
             ).run_payload()
         except Exception as ex:
             LOG.error(f"An unexpected error occurred while running the ransomware payload: {ex}")
