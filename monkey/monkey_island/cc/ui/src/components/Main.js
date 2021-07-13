@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import {Container} from 'react-bootstrap';
 
-import RunServerPage from 'components/pages/RunServerPage';
+import GettingStartedPage from 'components/pages/GettingStartedPage';
 import ConfigurePage from 'components/pages/ConfigurePage';
 import RunMonkeyPage from 'components/pages/RunMonkeyPage/RunMonkeyPage';
 import MapPage from 'components/pages/MapPage';
@@ -136,7 +136,7 @@ class AppComponent extends AuthComponent {
             <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
             <Route path='/register' render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
             {this.renderRoute('/',
-              <StandardLayoutComponent component={RunServerPage}
+              <StandardLayoutComponent component={GettingStartedPage}
                                        completedSteps={this.state.completedSteps}
                                        onStatusChange={this.updateStatus}
               />,
