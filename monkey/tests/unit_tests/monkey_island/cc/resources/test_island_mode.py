@@ -54,3 +54,18 @@ def test_island_mode_post__set_invalid_model(flask_client, uses_database):
         "/api/island-mode", data=json.dumps({"mode": "bogus mode"}), follow_redirects=True
     )
     assert len(IslandMode.objects) == 0
+
+
+@pytest.mark.parametrize("mode", ["ransomware", "advanced"])
+def test_island_mode_get(flask_client, uses_database, mode):
+    flask_client.post("/api/island-mode", data=json.dumps({"mode": mode}), follow_redirects=True)
+    resp = flask_client.get("/api/island-mode", follow_redirects=True)
+    assert json.loads(resp.data)["mode"] == mode
+
+
+def test_island_mode_get__invalid_mode(flask_client, uses_database):
+    flask_client.post(
+        "/api/island-mode", data=json.dumps({"mode": "bogus_mode"}), follow_redirects=True
+    )
+    resp = flask_client.get("/api/island-mode", follow_redirects=True)
+    assert resp.status_code == 422
