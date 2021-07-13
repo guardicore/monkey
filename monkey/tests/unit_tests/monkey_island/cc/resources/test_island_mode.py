@@ -27,6 +27,12 @@ def test_island_mode_post__invalid_mode(flask_client):
     assert resp.status_code == 422
 
 
+@pytest.mark.parametrize("invalid_json", ["42", "{test"])
+def test_island_mode_post__invalid_json(flask_client, invalid_json):
+    resp = flask_client.post("/api/island-mode", data="{test", follow_redirects=True)
+    assert resp.status_code == 400
+
+
 def test_island_mode_post__internal_server_error(monkeypatch, flask_client):
     monkeypatch.setattr(island_mode_resource, "set_mode", lambda x: raise_(Exception()))
 

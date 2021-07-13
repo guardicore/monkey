@@ -14,12 +14,16 @@ logger = logging.getLogger(__name__)
 class IslandMode(flask_restful.Resource):
     @jwt_required
     def post(self):
-        body = json.loads(request.data)
-        mode_str = body.get("mode")
         try:
+            body = json.loads(request.data)
+            mode_str = body.get("mode")
+
             mode = IslandModeEnum(mode_str)
             set_mode(mode)
+
             return make_response({}, 200)
+        except (AttributeError, json.decoder.JSONDecodeError):
+            return make_response({}, 400)
         except ValueError:
             return make_response({}, 422)
         except Exception:
