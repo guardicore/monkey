@@ -68,7 +68,7 @@ class ReportPageComponent extends AuthComponent {
       //     });
       //   });
       if (this.shouldShowRansomwareReport(this.state.ransomwareReport)) {
-        this.state.sections.push({key: 'ransomware', title: 'Ransomware report'})
+        this.addRansomwareReportTab();
       }
     }
   }
@@ -101,6 +101,26 @@ class ReportPageComponent extends AuthComponent {
   shouldShowRansomwareReport(report) { // TODO: Add proper check
     if (report) {
       return true;
+    }
+  }
+
+  addRansomwareReportTab() { // TODO: Fetch mode from API endpoint
+    let ransomwareTab = {key: 'ransomware', title: 'Ransomware report'};
+
+    // let mode = "";
+    // this.authFetch('/api/mode')
+    //   .then(res => res.json())
+    //     .then(res => {
+    //       mode = res.mode
+    //     }
+    //   );
+
+    let mode = 'ransomware';
+    if (mode === 'ransomware') {
+      this.state.sections.splice(0, 0, ransomwareTab);
+    }
+    else {
+      this.state.sections.push(ransomwareTab);
     }
   }
 
