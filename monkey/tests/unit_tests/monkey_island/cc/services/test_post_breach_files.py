@@ -2,13 +2,10 @@ import os
 
 import pytest
 from tests.monkey_island.utils import assert_windows_permissions
+from tests.utils import raise_
 
 from monkey_island.cc.server_utils.file_utils import is_windows_os
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
-
-
-def raise_(ex):
-    raise ex
 
 
 @pytest.fixture(autouse=True)
