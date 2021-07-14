@@ -12,6 +12,7 @@ import LicensePage from './pages/LicensePage';
 import AuthComponent from './AuthComponent';
 import LoginPageComponent from './pages/LoginPage';
 import RegisterPageComponent from './pages/RegisterPage';
+import LandingPage from "./pages/LandingPage";
 import Notifier from 'react-desktop-notification';
 import NotFoundPage from './pages/NotFoundPage';
 import GettingStartedPage from './pages/GettingStartedPage';
@@ -24,16 +25,21 @@ import 'react-toggle/style.css';
 import 'react-table/react-table.css';
 import {StandardLayoutComponent} from './layouts/StandardLayoutComponent';
 import LoadingScreen from './ui-components/LoadingScreen';
-import LandingPageComponent from "./pages/LandingPage";
 import {DisabledSidebarLayoutComponent} from "./layouts/DisabledSidebarLayoutComponent";
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import Timeout = NodeJS.Timeout;
+import IslandHttpClient from "./IslandHttpClient";
 
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
 const reportZeroTrustRoute = '/report/zeroTrust';
 
+
+const Routes = {
+  LandingPage: '/landing-page',
+  GettingStartedPage: '/'
+}
 
 class AppComponent extends AuthComponent {
   private interval: Timeout;
@@ -43,7 +49,7 @@ class AppComponent extends AuthComponent {
     let completedSteps = new CompletedSteps(false);
     this.state = {
       completedSteps: completedSteps,
-      islandMode: undefined,
+      islandMode: null,
       noAuthLoginAttempted: undefined
     };
     this.interval = undefined;
@@ -70,35 +76,38 @@ class AppComponent extends AuthComponent {
             })
         }
 
-        this.checkMode();
-
         if (res) {
-          this.authFetch('/api')
-            .then(res => res.json())
-            .then(res => {
-              // This check is used to prevent unnecessary re-rendering
-              let isChanged = false;
-              for (let step in this.state.completedSteps) {
-                if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
-                  isChanged = true;
-                  break;
-                }
+          this.checkMode()
+            .then(() => {
+              if(this.state.islandMode === null) {
+                return
               }
-              if (isChanged) {
-                this.setState({completedSteps: res['completed_steps']});
-                this.showInfectionDoneNotification();
-              }
-            });
+              this.authFetch('/api')
+                .then(res => res.json())
+                .then(res => {
+                  // This check is used to prevent unnecessary re-rendering
+                  let isChanged = false;
+                  for (let step in this.state.completedSteps) {
+                    if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
+                      isChanged = true;
+                      break;
+                    }
+                  }
+                  if (isChanged) {
+                    this.setState({completedSteps: res['completed_steps']});
+                    this.showInfectionDoneNotification();
+                  }
+                });}
+            )
+
         }
       });
   };
 
   checkMode = () => {
-    // TODO change to fetch the mode from UI
-    this.authFetch('/api')
-      .then(res => res.json())
+    return IslandHttpClient.get('/api/island-mode')
       .then(res => {
-        this.setState({IslandMode: undefined})
+        this.setState({islandMode: res.body.mode});
       });
   }
 
@@ -106,8 +115,10 @@ class AppComponent extends AuthComponent {
     let render_func = () => {
       switch (this.state.isLoggedIn) {
         case true:
-          if(this.state.islandMode === undefined){
-            return this.getLandingPage();
+          if (this.state.islandMode === null && route_path !== Routes.LandingPage) {
+            return <Redirect to={{pathname: Routes.LandingPage}}/>
+          } else if(route_path === Routes.LandingPage && this.state.islandMode !== null){
+            return <Redirect to={{pathname: Routes.GettingStartedPage}}/>
           }
           return page_component;
         case false:
@@ -130,12 +141,6 @@ class AppComponent extends AuthComponent {
       return <Route path={route_path} render={render_func}/>;
     }
   };
-
-  getLandingPage() {
-    return <DisabledSidebarLayoutComponent component={LandingPageComponent}
-                                           completedSteps={new CompletedSteps()}
-                                           onStatusChange={this.updateStatus}/>
-  }
 
   redirectTo = (userPath, targetPath) => {
     let pathQuery = new RegExp(userPath + '[/]?$', 'g');
@@ -160,7 +165,11 @@ class AppComponent extends AuthComponent {
           <Switch>
             <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
             <Route path='/register' render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
-            {this.renderRoute('/',
+            {this.renderRoute(Routes.LandingPage,
+              <DisabledSidebarLayoutComponent component={LandingPage}
+                                              completedSteps={new CompletedSteps()}
+                                              onStatusChange={this.updateStatus}/>)}
+            {this.renderRoute(Routes.GettingStartedPage,
               <StandardLayoutComponent component={GettingStartedPage}
                                        completedSteps={this.state.completedSteps}
                                        onStatusChange={this.updateStatus}

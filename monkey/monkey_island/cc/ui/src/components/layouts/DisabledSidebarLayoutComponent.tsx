@@ -1,6 +1,6 @@
-import React from 'react'
-import {Route} from 'react-router-dom'
-import SideNavComponent from '../SideNavComponent.tsx'
+import React from 'react';
+import {Route} from 'react-router-dom';
+import SideNavComponent from '../SideNavComponent.tsx';
 import {Col, Row} from 'react-bootstrap';
 
 export const DisabledSidebarLayoutComponent = ({component: Component, ...rest}) => (
