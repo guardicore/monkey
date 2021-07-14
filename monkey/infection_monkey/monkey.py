@@ -6,8 +6,6 @@ import sys
 import time
 from threading import Thread
 
-from InfectionMonkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
-
 import infection_monkey.tunnel as tunnel
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.utils.exceptions import ExploitingVulnerableMachineError, FailedExploitationError
@@ -21,27 +19,17 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.network.tools import get_interface_to_target, is_running_on_island
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.ransomware import ransomware_payload, readme_utils
-from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
-from infection_monkey.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
-from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
+from infection_monkey.ransomware.ransomware_payload_builder import build_ransomware_payload
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
-from infection_monkey.telemetry.messengers.batching_telemetry_messenger import (
-    BatchingTelemetryMessenger,
-)
-from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
-    LegacyTelemetryMessengerAdapter,
-)
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
-from infection_monkey.utils.bit_manipulators import flip_bits
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 from infection_monkey.utils.monkey_dir import (
@@ -478,24 +466,8 @@ class InfectionMonkey(object):
 
     @staticmethod
     def run_ransomware():
-        telemetry_messenger = LegacyTelemetryMessengerAdapter()
-        batching_telemetry_messenger = BatchingTelemetryMessenger(telemetry_messenger)
-
-        file_encryptor = InPlaceFileEncryptor(
-            encrypt_bytes=flip_bits, new_file_extension=".m0nk3y", chunk_size=(4096 * 24)
-        )
-
-        targeted_file_extensions = TARGETED_FILE_EXTENSIONS.copy()
-        targeted_file_extensions.discard(ransomware_payload.EXTENSION)
-        file_selector = ProductionSafeTargetFileSelector(targeted_file_extensions)
-
         try:
-            RansomwarePayload(
-                WormConfiguration.ransomware,
-                file_encryptor,
-                file_selector,
-                readme_utils.leave_readme,
-                batching_telemetry_messenger,
-            ).run_payload()
+            ransomware_payload = build_ransomware_payload(WormConfiguration.ransomware)
+            ransomware_payload.run_payload()
         except Exception as ex:
             LOG.error(f"An unexpected error occurred while running the ransomware payload: {ex}")
