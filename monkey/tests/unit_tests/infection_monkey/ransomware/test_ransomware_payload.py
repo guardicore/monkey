@@ -22,14 +22,12 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 )
 from tests.utils import hash_file, is_user_admin
 
-from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
 from infection_monkey.ransomware.ransomware_payload import (
     EXTENSION,
     README_DEST,
     README_SRC,
     RansomwarePayload,
 )
-from infection_monkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 
 
 def with_extension(filename):
@@ -56,7 +54,7 @@ def ransomware_payload(build_ransomware_payload, ransomware_payload_config):
 
 
 @pytest.fixture
-def build_ransomware_payload(telemetry_messenger_spy, mock_file_selector, mock_leave_readme):
+def build_ransomware_payload(mock_file_selector, mock_leave_readme, telemetry_messenger_spy):
     def inner(config):
         return RansomwarePayload(
             config, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
@@ -66,8 +64,15 @@ def build_ransomware_payload(telemetry_messenger_spy, mock_file_selector, mock_l
 
 
 @pytest.fixture
-def mock_file_selector():
-    return ProductionSafeTargetFileSelector(TARGETED_FILE_EXTENSIONS)
+def mock_file_selector(ransomware_target):
+    mock_file_selector.return_value = [
+        ransomware_target / ALL_ZEROS_PDF,
+        ransomware_target / TEST_KEYBOARD_TXT,
+    ]
+    return MagicMock(return_value=mock_file_selector.return_value)
+
+
+mock_file_selector.return_value = None
 
 
 @pytest.fixture
@@ -76,7 +81,11 @@ def mock_leave_readme():
 
 
 def test_env_variables_in_target_dir_resolved_linux(
-    ransomware_payload_config, build_ransomware_payload, ransomware_target, patched_home_env
+    ransomware_payload_config,
+    build_ransomware_payload,
+    ransomware_target,
+    patched_home_env,
+    mock_file_selector,
 ):
     path_with_env_variable = "$HOME/ransomware_target"
 
@@ -87,10 +96,7 @@ def test_env_variables_in_target_dir_resolved_linux(
     ] = path_with_env_variable
     build_ransomware_payload(ransomware_payload_config).run_payload()
 
-    assert (
-        hash_file(ransomware_target / with_extension(ALL_ZEROS_PDF))
-        == ALL_ZEROS_PDF_ENCRYPTED_SHA256
-    )
+    mock_file_selector.assert_called_with(ransomware_target)
 
 
 def test_file_with_excluded_extension_not_encrypted(ransomware_target, ransomware_payload):
@@ -220,11 +226,7 @@ def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
 def test_telemetry_failure(
     monkeypatch, mock_file_selector, ransomware_payload, telemetry_messenger_spy
 ):
-    monkeypatch.setattr(
-        ProductionSafeTargetFileSelector,
-        "__call__",
-        lambda a, b: [PurePosixPath("/file/not/exist")],
-    ),
+    mock_file_selector.return_value = [PurePosixPath("/file/not/exist")]
 
     ransomware_payload.run_payload()
     telem_1 = telemetry_messenger_spy.telemetries[0]
