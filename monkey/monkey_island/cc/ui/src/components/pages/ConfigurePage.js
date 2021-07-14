@@ -83,8 +83,7 @@ class ConfigurePageComponent extends AuthComponent {
           schema: monkeyConfig.schema,
           configuration: monkeyConfig.configuration,
           attackConfig: attackConfig.configuration,
-          sections: sections,
-          selectedSection: 'attack'
+          sections: sections
         })
       });
   };
