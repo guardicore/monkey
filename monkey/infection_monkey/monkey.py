@@ -23,6 +23,7 @@ from infection_monkey.network.tools import get_interface_to_target, is_running_o
 from infection_monkey.post_breach.post_breach_handler import PostBreach
 from infection_monkey.ransomware import ransomware_payload, readme_utils
 from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
+from infection_monkey.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
 from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
@@ -40,6 +41,7 @@ from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.telemetry.trace_telem import TraceTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
+from infection_monkey.utils.bit_manipulators import flip_bits
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 from infection_monkey.utils.monkey_dir import (
@@ -479,6 +481,10 @@ class InfectionMonkey(object):
         telemetry_messenger = LegacyTelemetryMessengerAdapter()
         batching_telemetry_messenger = BatchingTelemetryMessenger(telemetry_messenger)
 
+        file_encryptor = InPlaceFileEncryptor(
+            encrypt_bytes=flip_bits, new_file_extension=".m0nk3y", chunk_size=(4096 * 24)
+        )
+
         targeted_file_extensions = TARGETED_FILE_EXTENSIONS.copy()
         targeted_file_extensions.discard(ransomware_payload.EXTENSION)
         file_selector = ProductionSafeTargetFileSelector(targeted_file_extensions)
@@ -486,6 +492,7 @@ class InfectionMonkey(object):
         try:
             RansomwarePayload(
                 WormConfiguration.ransomware,
+                file_encryptor,
                 file_selector,
                 readme_utils.leave_readme,
                 batching_telemetry_messenger,

@@ -4,15 +4,11 @@ from pprint import pformat
 from typing import Callable, List, Optional, Tuple
 
 from common.utils.file_utils import InvalidPath, expand_path
-from infection_monkey.ransomware.bitflip_encryptor import BitflipEncryptor
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
 
 LOG = logging.getLogger(__name__)
-
-EXTENSION = ".m0nk3y"
-CHUNK_SIZE = 4096 * 24
 
 README_SRC = Path(__file__).parent / "ransomware_readme.txt"
 README_DEST = "README.txt"
@@ -22,6 +18,7 @@ class RansomwarePayload:
     def __init__(
         self,
         config: dict,
+        encrypt_file: Callable[[Path], None],
         select_files: Callable[[Path], List[Path]],
         leave_readme: Callable[[Path, Path], None],
         telemetry_messenger: ITelemetryMessenger,
@@ -32,9 +29,8 @@ class RansomwarePayload:
         self._readme_enabled = config["other_behaviors"]["readme"]
 
         self._target_dir = RansomwarePayload.get_target_dir(config)
-        self._new_file_extension = EXTENSION
 
-        self._encryptor = BitflipEncryptor(chunk_size=CHUNK_SIZE)
+        self._encrypt_file = encrypt_file
         self._select_files = select_files
         self._leave_readme = leave_readme
         self._telemetry_messenger = telemetry_messenger
@@ -77,18 +73,13 @@ class RansomwarePayload:
         for filepath in file_list:
             try:
                 LOG.debug(f"Encrypting {filepath}")
-                self._encryptor.encrypt_file_in_place(filepath)
-                self._add_extension(filepath)
+                self._encrypt_file(filepath)
                 self._send_telemetry(filepath, True, "")
             except Exception as ex:
                 LOG.warning(f"Error encrypting {filepath}: {ex}")
                 self._send_telemetry(filepath, False, str(ex))
 
         return results
-
-    def _add_extension(self, filepath: Path):
-        new_filepath = filepath.with_suffix(f"{filepath.suffix}{self._new_file_extension}")
-        filepath.rename(new_filepath)
 
     def _send_telemetry(self, filepath: Path, success: bool, error: str):
         encryption_attempt = FileEncryptionTelem(str(filepath), success, error)

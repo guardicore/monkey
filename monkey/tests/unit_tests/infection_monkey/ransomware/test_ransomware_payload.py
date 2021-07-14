@@ -54,13 +54,27 @@ def ransomware_payload(build_ransomware_payload, ransomware_payload_config):
 
 
 @pytest.fixture
-def build_ransomware_payload(mock_file_selector, mock_leave_readme, telemetry_messenger_spy):
+def build_ransomware_payload(
+    mock_file_encryptor, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
+):
     def inner(config):
         return RansomwarePayload(
-            config, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
+            config,
+            mock_file_encryptor,
+            mock_file_selector,
+            mock_leave_readme,
+            telemetry_messenger_spy,
         )
 
     return inner
+
+
+@pytest.fixture
+def mock_file_encryptor(ransomware_target):
+    from infection_monkey.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
+    from infection_monkey.utils.bit_manipulators import flip_bits
+
+    return InPlaceFileEncryptor(encrypt_bytes=flip_bits, new_file_extension=".m0nk3y")
 
 
 @pytest.fixture
@@ -259,6 +273,8 @@ def test_readme_true(
 def test_no_readme_if_no_directory(
     monkeypatch,
     ransomware_payload_config,
+    mock_file_encryptor,
+    mock_file_selector,
     mock_leave_readme,
     telemetry_messenger_spy,
     ransomware_target,
@@ -268,7 +284,11 @@ def test_no_readme_if_no_directory(
     ransomware_payload_config["other_behaviors"]["readme"] = True
 
     RansomwarePayload(
-        ransomware_payload_config, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
+        ransomware_payload_config,
+        mock_file_encryptor,
+        mock_file_selector,
+        mock_leave_readme,
+        telemetry_messenger_spy,
     ).run_payload()
 
     mock_leave_readme.assert_not_called()
