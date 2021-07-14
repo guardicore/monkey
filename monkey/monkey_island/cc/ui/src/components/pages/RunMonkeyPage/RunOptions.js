@@ -58,20 +58,18 @@ function RunOptions(props) {
   }
 
   function getIslandMode() {
-    let mode = '';
+    let mode = 'advanced';
     authComponent.authFetch(MODE_URL)
       .then(res => res.json())
         .then(res => {
           mode = res.mode
         }
       );
+    return mode;
+  }
 
-    if (mode === 'ransomware') {
-      return false;
-    }
-    else {
-      return true;
-    }
+  function shouldShowScoutsuite(){
+    return getIslandMode() === 'advanced';
   }
 
   function defaultContents() {
@@ -87,8 +85,8 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
-        {getIslandMode() && <AWSRunButton setComponent={setComponent}/> }
-        {getIslandMode() && <NextSelectionButton title={'Cloud security scan'}
+        {shouldShowScoutsuite() && <AWSRunButton setComponent={setComponent}/> }
+        {shouldShowScoutsuite() && <NextSelectionButton title={'Cloud security scan'}
                              description={'Explains how to enable cloud security scan.'}
                              icon={faCloud}
                              onButtonClick={() => {
