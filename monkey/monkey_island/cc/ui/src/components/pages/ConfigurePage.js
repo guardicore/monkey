@@ -31,8 +31,7 @@ class ConfigurePageComponent extends AuthComponent {
     super(props);
     this.initialConfig = {};
     this.initialAttackConfig = {};
-    this.sectionsOrder = this.getSectionsOrder();
-    this.currentSection = this.sectionsOrder[0];
+    this.currentSection = this.getSectionsOrder()[0];
 
     this.state = {
       attackConfig: {},
@@ -51,18 +50,9 @@ class ConfigurePageComponent extends AuthComponent {
     };
   }
 
-  getSectionsOrder() { // TODO: Fetch mode from API endpoint
-    // let mode = "";
-    // this.authFetch('/api/mode')
-    //   .then(res => res.json())
-    //     .then(res => {
-    //       mode = res.mode
-    //     }
-    //   );
-
-    // let mode = 'ransomware';
-    let mode = 'advanced';
-    return CONFIGURATION_TABS_PER_MODE[mode];
+  getSectionsOrder() {
+    let islandMode = this.props.islandMode ? this.props.islandMode : 'advanced'
+    return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
   setInitialConfig(config) {
@@ -85,7 +75,7 @@ class ConfigurePageComponent extends AuthComponent {
         let monkeyConfig = data[0];
         this.setInitialConfig(monkeyConfig.configuration);
         this.setInitialAttackConfig(attackConfig.configuration);
-        for (let sectionKey of this.sectionsOrder) {
+        for (let sectionKey of this.getSectionsOrder()) {
           if (sectionKey === 'attack') {
             sections.push({key: sectionKey, title: 'ATT&CK'})
           } else {

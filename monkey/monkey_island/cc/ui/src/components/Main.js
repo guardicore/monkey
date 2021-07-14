@@ -155,6 +155,7 @@ class AppComponent extends AuthComponent {
               true)}
             {this.renderRoute('/configure',
               <StandardLayoutComponent component={ConfigurePage}
+                                       islandMode={this.state.islandMode}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/run-monkey',
