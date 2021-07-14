@@ -23,15 +23,23 @@ const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
 export const API_PBA_LINUX = '/api/fileUpload/PBAlinux';
 export const API_PBA_WINDOWS = '/api/fileUpload/PBAwindows';
+const CONFIGURATION_TABS = {
+  ATTACK: 'attack',
+  BASIC: 'basic',
+  BASIC_NETWORK: 'basic_network',
+  RANSOMWARE: 'ransomware',
+  MONKEY: 'monkey',
+  INTERNAL: 'internal'
+};
 
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.currentSection = 'attack';
     this.initialConfig = {};
     this.initialAttackConfig = {};
-    this.sectionsOrder = ['attack', 'basic', 'basic_network', 'ransomware', 'monkey', 'internal'];
+    this.sectionsOrder = this.getSectionsOrder();
+    this.currentSection = this.sectionsOrder[0];
 
     this.state = {
       attackConfig: {},
@@ -41,13 +49,48 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       schema: {},
       sections: [],
-      selectedSection: 'attack',
+      selectedSection: this.currentSection,
       showAttackAlert: false,
       showUnsafeOptionsConfirmation: false,
       showUnsafeAttackOptionsWarning: false,
       showConfigExportModal: false,
       showConfigImportModal: false
     };
+  }
+
+  getSectionsOrder() { // TODO: Fetch mode from API endpoint
+    // let mode = "";
+    // this.authFetch('/api/mode')
+    //   .then(res => res.json())
+    //     .then(res => {
+    //       mode = res.mode
+    //     }
+    //   );
+
+    let advancedModeConfigTabs = [
+      CONFIGURATION_TABS.ATTACK,
+      CONFIGURATION_TABS.BASIC,
+      CONFIGURATION_TABS.BASIC_NETWORK,
+      CONFIGURATION_TABS.RANSOMWARE,
+      CONFIGURATION_TABS.MONKEY,
+      CONFIGURATION_TABS.INTERNAL
+    ]
+
+    let ransomwareModeConfigTabs = [
+      CONFIGURATION_TABS.BASIC,
+      CONFIGURATION_TABS.BASIC_NETWORK,
+      CONFIGURATION_TABS.RANSOMWARE
+    ]
+
+    let mode = 'ransomware';
+    // let mode = '';
+
+    if (mode === 'ransomware') {
+      return ransomwareModeConfigTabs;
+    }
+    else {
+      return advancedModeConfigTabs;
+    }
   }
 
   setInitialConfig(config) {
