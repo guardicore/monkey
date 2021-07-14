@@ -5,7 +5,7 @@ from typing import Callable
 FILE_EXTENSION_REGEX = re.compile(r"^\.[^\\/]+$")
 
 
-class InPlaceEncryptor:
+class InPlaceFileEncryptor:
     def __init__(
         self,
         encrypt_bytes: Callable[[bytes], bytes],

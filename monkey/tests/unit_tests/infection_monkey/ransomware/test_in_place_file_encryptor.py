@@ -11,7 +11,7 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 )
 from tests.utils import hash_file
 
-from infection_monkey.ransomware.in_place_encryptor import InPlaceEncryptor
+from infection_monkey.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
 from infection_monkey.utils.bit_manipulators import flip_bits
 
 EXTENSION = ".m0nk3y"
@@ -22,14 +22,14 @@ def with_extension(filename):
 
 
 @pytest.fixture(scope="module")
-def in_place_bitflip_encryptor():
-    return InPlaceEncryptor(encrypt_bytes=flip_bits, chunk_size=64)
+def in_place_bitflip_file_encryptor():
+    return InPlaceFileEncryptor(encrypt_bytes=flip_bits, chunk_size=64)
 
 
 @pytest.mark.parametrize("invalid_extension", ["no_dot", ".has/slash", ".has\\slash"])
 def test_invalid_file_extension(invalid_extension):
     with pytest.raises(ValueError):
-        InPlaceEncryptor(encrypt_bytes=None, new_file_extension=invalid_extension)
+        InPlaceFileEncryptor(encrypt_bytes=None, new_file_extension=invalid_extension)
 
 
 @pytest.mark.parametrize(
@@ -40,22 +40,22 @@ def test_invalid_file_extension(invalid_extension):
     ],
 )
 def test_file_encrypted(
-    in_place_bitflip_encryptor, ransomware_target, file_name, cleartext_hash, encrypted_hash
+    in_place_bitflip_file_encryptor, ransomware_target, file_name, cleartext_hash, encrypted_hash
 ):
     test_keyboard = ransomware_target / file_name
 
     assert hash_file(test_keyboard) == cleartext_hash
 
-    in_place_bitflip_encryptor(test_keyboard)
+    in_place_bitflip_file_encryptor(test_keyboard)
 
     assert hash_file(test_keyboard) == encrypted_hash
 
 
-def test_file_encrypted_in_place(in_place_bitflip_encryptor, ransomware_target):
+def test_file_encrypted_in_place(in_place_bitflip_file_encryptor, ransomware_target):
     test_keyboard = ransomware_target / TEST_KEYBOARD_TXT
 
     expected_inode = os.stat(test_keyboard).st_ino
-    in_place_bitflip_encryptor(test_keyboard)
+    in_place_bitflip_file_encryptor(test_keyboard)
     actual_inode = os.stat(test_keyboard).st_ino
 
     assert expected_inode == actual_inode
@@ -64,7 +64,7 @@ def test_file_encrypted_in_place(in_place_bitflip_encryptor, ransomware_target):
 def test_encrypted_file_has_new_extension(ransomware_target):
     test_keyboard = ransomware_target / TEST_KEYBOARD_TXT
     encrypted_test_keyboard = ransomware_target / with_extension(TEST_KEYBOARD_TXT)
-    encryptor = InPlaceEncryptor(encrypt_bytes=flip_bits, new_file_extension=EXTENSION)
+    encryptor = InPlaceFileEncryptor(encrypt_bytes=flip_bits, new_file_extension=EXTENSION)
 
     encryptor(test_keyboard)
 
