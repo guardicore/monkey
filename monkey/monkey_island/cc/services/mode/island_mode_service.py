@@ -8,6 +8,15 @@ def set_mode(mode: IslandModeEnum):
     island_mode_model.save()
 
 
-def get_mode():
-    mode = IslandMode.objects[0].mode
-    return mode
+def get_mode() -> str:
+    if IslandMode.objects:
+        mode = IslandMode.objects[0].mode
+        return mode
+    else:
+        raise ModeNotSetError
+
+
+class ModeNotSetError(Exception):
+    """
+    Throw this exception when island mode is not set.
+    """
