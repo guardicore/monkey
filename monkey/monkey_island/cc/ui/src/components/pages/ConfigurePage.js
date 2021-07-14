@@ -18,19 +18,12 @@ import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
+import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
 export const API_PBA_LINUX = '/api/fileUpload/PBAlinux';
 export const API_PBA_WINDOWS = '/api/fileUpload/PBAwindows';
-const CONFIGURATION_TABS = {
-  ATTACK: 'attack',
-  BASIC: 'basic',
-  BASIC_NETWORK: 'basic_network',
-  RANSOMWARE: 'ransomware',
-  MONKEY: 'monkey',
-  INTERNAL: 'internal'
-};
 
 class ConfigurePageComponent extends AuthComponent {
 
@@ -67,30 +60,9 @@ class ConfigurePageComponent extends AuthComponent {
     //     }
     //   );
 
-    let advancedModeConfigTabs = [
-      CONFIGURATION_TABS.ATTACK,
-      CONFIGURATION_TABS.BASIC,
-      CONFIGURATION_TABS.BASIC_NETWORK,
-      CONFIGURATION_TABS.RANSOMWARE,
-      CONFIGURATION_TABS.MONKEY,
-      CONFIGURATION_TABS.INTERNAL
-    ]
-
-    let ransomwareModeConfigTabs = [
-      CONFIGURATION_TABS.BASIC,
-      CONFIGURATION_TABS.BASIC_NETWORK,
-      CONFIGURATION_TABS.RANSOMWARE
-    ]
-
-    let mode = 'ransomware';
-    // let mode = '';
-
-    if (mode === 'ransomware') {
-      return ransomwareModeConfigTabs;
-    }
-    else {
-      return advancedModeConfigTabs;
-    }
+    // let mode = 'ransomware';
+    let mode = 'advanced';
+    return CONFIGURATION_TABS_PER_MODE[mode];
   }
 
   setInitialConfig(config) {
