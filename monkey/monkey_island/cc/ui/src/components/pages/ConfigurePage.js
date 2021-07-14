@@ -18,6 +18,7 @@ import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
+import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -28,10 +29,9 @@ class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.currentSection = 'attack';
     this.initialConfig = {};
     this.initialAttackConfig = {};
-    this.sectionsOrder = ['attack', 'basic', 'basic_network', 'ransomware', 'monkey', 'internal'];
+    this.currentSection = this.getSectionsOrder()[0];
 
     this.state = {
       attackConfig: {},
@@ -41,13 +41,25 @@ class ConfigurePageComponent extends AuthComponent {
       lastAction: 'none',
       schema: {},
       sections: [],
-      selectedSection: 'attack',
+      selectedSection: this.currentSection,
       showAttackAlert: false,
       showUnsafeOptionsConfirmation: false,
       showUnsafeAttackOptionsWarning: false,
       showConfigExportModal: false,
       showConfigImportModal: false
     };
+  }
+
+  componentDidUpdate() {
+    if (!this.getSectionsOrder().includes(this.currentSection)) {
+      this.currentSection = this.getSectionsOrder()[0]
+      this.setState({selectedSection: this.currentSection})
+    }
+  }
+
+  getSectionsOrder() {
+    let islandMode = this.props.islandMode ? this.props.islandMode : 'advanced'
+    return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
   setInitialConfig(config) {
@@ -62,6 +74,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   componentDidMount = () => {
     let urls = [CONFIG_URL, ATTACK_URL];
+    // ??? Why fetch config here and not in `render()`?
     Promise.all(urls.map(url => this.authFetch(url).then(res => res.json())))
       .then(data => {
         let sections = [];
@@ -69,7 +82,7 @@ class ConfigurePageComponent extends AuthComponent {
         let monkeyConfig = data[0];
         this.setInitialConfig(monkeyConfig.configuration);
         this.setInitialAttackConfig(attackConfig.configuration);
-        for (let sectionKey of this.sectionsOrder) {
+        for (let sectionKey of this.getSectionsOrder()) {
           if (sectionKey === 'attack') {
             sections.push({key: sectionKey, title: 'ATT&CK'})
           } else {
@@ -83,8 +96,7 @@ class ConfigurePageComponent extends AuthComponent {
           schema: monkeyConfig.schema,
           configuration: monkeyConfig.configuration,
           attackConfig: attackConfig.configuration,
-          sections: sections,
-          selectedSection: 'attack'
+          sections: sections
         })
       });
   };
@@ -479,7 +491,7 @@ class ConfigurePageComponent extends AuthComponent {
     let content = '';
     if (this.state.selectedSection === 'attack' && Object.entries(this.state.attackConfig).length !== 0) {
       content = this.renderMatrix()
-    } else if (this.state.selectedSection !== 'attack') {
+    } else if (this.state.selectedSection !== 'attack' && Object.entries(this.state.configuration).length !== 0) {
       content = this.renderConfigContent(displayedSchema)
     }
     return (
