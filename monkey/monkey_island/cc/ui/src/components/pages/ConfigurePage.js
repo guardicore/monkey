@@ -105,6 +105,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   componentDidMount = () => {
     let urls = [CONFIG_URL, ATTACK_URL];
+    // ??? Why fetch config here and not in `render()`?
     Promise.all(urls.map(url => this.authFetch(url).then(res => res.json())))
       .then(data => {
         let sections = [];
@@ -521,7 +522,7 @@ class ConfigurePageComponent extends AuthComponent {
     let content = '';
     if (this.state.selectedSection === 'attack' && Object.entries(this.state.attackConfig).length !== 0) {
       content = this.renderMatrix()
-    } else if (this.state.selectedSection !== 'attack') {
+    } else if (this.state.selectedSection !== 'attack' && Object.entries(this.state.configuration).length !== 0) {
       content = this.renderConfigContent(displayedSchema)
     }
     return (
