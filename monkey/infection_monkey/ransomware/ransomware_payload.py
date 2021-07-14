@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from pprint import pformat
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, List
 
 from common.utils.file_utils import InvalidPath, expand_path
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
@@ -66,10 +66,9 @@ class RansomwarePayload:
         LOG.info(f"Collecting files in {self._target_dir}")
         return sorted(self._select_files(self._target_dir))
 
-    def _encrypt_files(self, file_list: List[Path]) -> List[Tuple[Path, Optional[Exception]]]:
+    def _encrypt_files(self, file_list: List[Path]):
         LOG.info(f"Encrypting files in {self._target_dir}")
 
-        results = []
         for filepath in file_list:
             try:
                 LOG.debug(f"Encrypting {filepath}")
@@ -78,8 +77,6 @@ class RansomwarePayload:
             except Exception as ex:
                 LOG.warning(f"Error encrypting {filepath}: {ex}")
                 self._send_telemetry(filepath, False, str(ex))
-
-        return results
 
     def _send_telemetry(self, filepath: Path, success: bool, error: str):
         encryption_attempt = FileEncryptionTelem(str(filepath), success, error)
