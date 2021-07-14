@@ -56,7 +56,11 @@ function RunOptions(props) {
     return InlineSelection(defaultContents, newProps);
   }
 
-  function defaultContents() {
+  function shouldShowScoutsuite(islandMode){
+    return islandMode !== 'ransomware';
+  }
+
+  function defaultContents(props) {
     return (
       <>
         <RunOnIslandButton title={'From Island'}
@@ -69,14 +73,15 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
-        <AWSRunButton setComponent={setComponent}/>
-        <NextSelectionButton title={'Cloud security scan'}
+        {shouldShowScoutsuite(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
+        {shouldShowScoutsuite(props.islandMode) && <NextSelectionButton title={'Cloud security scan'}
                              description={'Explains how to enable cloud security scan.'}
                              icon={faCloud}
                              onButtonClick={() => {
                                setComponent(CloudOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
+        }
       </>
     );
   }

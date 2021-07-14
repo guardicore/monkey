@@ -17,7 +17,7 @@ class RunMonkeyPageComponent extends AuthComponent {
           Go ahead and run the monkey!
           <i> (Or <Link to="/configure">configure the monkey</Link> to fine tune its behavior)</i>
         </p>
-        <RunOptions />
+        <RunOptions islandMode={this.props.islandMode}/>
       </Col>
     );
   }
