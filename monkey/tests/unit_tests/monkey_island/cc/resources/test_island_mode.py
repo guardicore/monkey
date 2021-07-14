@@ -42,28 +42,15 @@ def test_island_mode_post__internal_server_error(monkeypatch, flask_client):
     assert resp.status_code == 500
 
 
-def test_island_mode_post__set_model(flask_client, uses_database):
-    flask_client.post(
-        "/api/island-mode", data=json.dumps({"mode": "ransomware"}), follow_redirects=True
-    )
-    assert IslandMode.objects[0].mode == "ransomware"
-
-
-def test_island_mode_post__set_invalid_model(flask_client, uses_database):
-    flask_client.post(
-        "/api/island-mode", data=json.dumps({"mode": "bogus mode"}), follow_redirects=True
-    )
-    assert len(IslandMode.objects) == 0
-
-
 @pytest.mark.parametrize("mode", ["ransomware", "advanced"])
-def test_island_mode_get(flask_client, uses_database, mode):
+def test_island_mode_endpoint(flask_client, uses_database, mode):
     flask_client.post("/api/island-mode", data=json.dumps({"mode": mode}), follow_redirects=True)
     resp = flask_client.get("/api/island-mode", follow_redirects=True)
+    assert resp.status_code == 200
     assert json.loads(resp.data)["mode"] == mode
 
 
-def test_island_mode_get__invalid_mode(flask_client, uses_database):
+def test_island_mode_endpoint__invalid_mode(flask_client, uses_database):
     flask_client.post(
         "/api/island-mode", data=json.dumps({"mode": "bogus_mode"}), follow_redirects=True
     )
